@@ -1,22 +1,33 @@
 {
-  "compileOnSave": false,
-  "compilerOptions": {
-    "rootDir": ".",
-    "sourceMap": true,
-    "declaration": false,
-    "moduleResolution": "node",
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "importHelpers": true,
-    "target": "es2015",
-    "module": "esnext",
-    "lib": ["es2020", "dom"],
-    "skipLibCheck": true,
-    "skipDefaultLibCheck": true,
-    "baseUrl": ".",
-    "paths": {
-      "@crczp/d3-service": ["libs/d3-service/src/index.ts"]
-    }
-  },
-  "exclude": ["node_modules", "tmp"]
+    "compileOnSave": false,
+    "compilerOptions": {
+        "rootDir": ".",
+        "sourceMap": true,
+        "declaration": false,
+        "moduleResolution": "node",
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "importHelpers": true,
+        "target": "es2015",
+        "module": "esnext",
+        "lib": ["es2020", "dom"],
+        "skipLibCheck": true,
+        "skipDefaultLibCheck": true,
+        "baseUrl": ".",
+        "paths": {
+            "@crczp/api-common": ["libs/api/api-common/src/index.ts"],
+            "@crczp/d3-service": ["libs/visualization/d3-service/src/index.ts"],
+            "@crczp/sandbox-api": ["libs/api/sandbox-api/src/index.ts"],
+            "@crczp/sandbox-model": ["libs/model/sandbox-model/src/index.ts"],
+            "@crczp/training-api": ["libs/api/training-api/src/index.ts"],
+            "@crczp/training-model": ["libs/model/training-model/src/index.ts"],
+            "@crczp/user-and-group-api": [
+                "libs/api/user-and-group-api/src/index.ts"
+            ],
+            "@crczp/user-and-group-model": [
+                "libs/model/user-and-group-model/src/index.ts"
+            ]
+        }
+    },
+    "exclude": ["node_modules", "tmp"]
 }

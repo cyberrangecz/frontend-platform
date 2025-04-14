@@ -1,0 +1,16 @@
+{
+    "name": "@crczp/user-and-group-api",
+    "version": "1.1.0",
+    "license": "MIT",
+    "peerDependencies": {
+        "@angular/common": "^19.2.0",
+        "@angular/core": "^19.2.0",
+        "@sentinel/common": "^19.1.0",
+        "@crczp/user-and-group-model": "*"
+    },
+    "sideEffects": false,
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/cyberrangecz/frontend-user-and-group-api.git"
+    }
+}
