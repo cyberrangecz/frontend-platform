@@ -8,6 +8,7 @@ import { Link } from '@crczp/topology-graph-model';
     selector: '[linkVisual]',
     templateUrl: './graph-link-visual.component.html',
     styleUrls: ['./graph-link-visual.component.css'],
+    standalone: false
 })
 export class GraphLinkVisualComponent {
     @Input('linkVisual') link: Link;

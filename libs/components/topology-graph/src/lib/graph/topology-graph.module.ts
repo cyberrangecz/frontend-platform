@@ -10,14 +10,21 @@ import { TopologyApi } from '../services/topology-api.service';
 import { GraphVisualComponentsModule } from '../visuals/graph-visual-components.module';
 import { GraphMaterialModule } from './graph-material.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { DirectivesModule } from '../directives/directives.module';
 import { TopologyGraphConfig } from '../others/topology-graph-config';
 import { ConfigService } from '../services/config.service';
 import { TopologyMapper } from '../services/topology-mapper.service';
 import { TopologyLoadingService } from '../services/topology-loading.service';
 import { TopologyErrorService } from '../services/topology-error.service';
-import { TopologyLegendModule } from '../legend/topology-legend.module';
-import { LogoSpinnerComponent } from '@crczp/theme';
+import { LogoSpinnerComponent } from '@crczp/components-common';
+import { SandboxService } from '../services/sandbox.service';
+import { HostService } from '../services/host.service';
+import { D3Service } from '../services/d3.service';
+import { ContextMenuService } from '../services/context-menu.service';
+import { GraphEventService } from '../services/graph-event.service';
+import { GraphLockService } from '../services/graph-lock.service';
+import { DraggedNodeService } from '../services/dragged-node.service';
+import { ResourcePollingService } from '../services/resource-polling.service';
+import { TopologyLegendComponent } from '../legend/topology-legend.component';
 
 @NgModule({
     imports: [
@@ -26,9 +33,8 @@ import { LogoSpinnerComponent } from '@crczp/theme';
         ReactiveFormsModule,
         GraphMaterialModule,
         GraphVisualComponentsModule,
-        DirectivesModule,
-        TopologyLegendModule,
         LogoSpinnerComponent,
+        TopologyLegendComponent
     ],
     declarations: [TopologyGraphComponent],
     providers: [
@@ -37,6 +43,14 @@ import { LogoSpinnerComponent } from '@crczp/theme';
         TopologyMapper,
         TopologyLoadingService,
         TopologyErrorService,
+        SandboxService,
+        HostService,
+        D3Service,
+        ContextMenuService,
+        GraphEventService,
+        GraphLockService,
+        DraggedNodeService,
+        ResourcePollingService,
     ],
     exports: [TopologyGraphComponent],
 })

@@ -1,0 +1,19 @@
+.user-picture-container {
+    overflow: hidden;
+    aspect-ratio: 1 !important;
+    flex-shrink: 0 !important;
+}
+
+.user-picture-container img {
+    height: 100% !important;
+    width: 100% !important;
+    aspect-ratio: 1 !important;
+}
+
+.user-details .mat-headline-6 {
+    margin-bottom: 0.25rem !important;
+}
+
+.user-details .mat-caption {
+    margin-left: 0.25rem !important;
+}

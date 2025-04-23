@@ -1,0 +1,5 @@
+<svg #chart class="svg">
+    <g class="content" [attr.transform]="getMarginTransform()">
+        <g *ngIf="data" chart-base [usersData]="data.usersData" [svgHeight]="innerHeight()" [svgWidth]="innerWidth()" />
+    </g>
+</svg>

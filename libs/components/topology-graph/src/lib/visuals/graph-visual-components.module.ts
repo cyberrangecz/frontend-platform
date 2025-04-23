@@ -4,15 +4,16 @@ import { GraphVisualComponent } from './graph-visual/graph-visual.component';
 import { GraphLinkVisualComponent } from './graph-link-visual/graph-link-visual.component';
 import { GraphNodeVisualComponent } from './graph-node-visual/graph-node-visual.component';
 import { CommonModule } from '@angular/common';
-import { DirectivesModule } from '../directives/directives.module';
 import { LabelShortenerPipe } from '../pipes/label-shortener.pipe';
 import { MatCard } from '@angular/material/card';
+import { ContextMenuDirective } from '../directives/context-menu.directive';
+import { DraggableDirective } from '../directives/draggable.directive';
 
 /**
  * Main module of visual (svg and d3) components
  */
 @NgModule({
-    imports: [CommonModule, DirectivesModule, MatCard],
+    imports: [CommonModule, MatCard, ContextMenuDirective, DraggableDirective],
     declarations: [
         LabelShortenerPipe,
         NodeContextMenuComponent,

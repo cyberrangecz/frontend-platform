@@ -1,0 +1,68 @@
+<h1>Summary Graph</h1>
+<div class="summary-graph-content">
+    <div class="legend">
+        <h4>Legend</h4>
+        <table>
+            <tr>
+                <td>
+                    <svg height="40" width="75">
+                        <ellipse class="mandatory-node" cx="35" cy="20" rx="30" ry="15" />
+                    </svg>
+                </td>
+                <td>
+                    <span>Mandatory node</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <svg height="40" width="75">
+                        <ellipse class="error-node" cx="35" cy="20" rx="30" ry="15" />
+                    </svg>
+                </td>
+                <td>
+                    <span>Error node</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <svg height="40" width="75">
+                        <ellipse class="optional-node" cx="35" cy="20" rx="30" ry="15" />
+                    </svg>
+                </td>
+                <td>
+                    <span>Optional node</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <svg height="40" width="75">
+                        <ellipse class="remaining-node" cx="35" cy="20" rx="30" ry="15" />
+                    </svg>
+                </td>
+                <td>
+                    <span>At least one must be fulfilled</span>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="right-panel">
+        <div class="info-container">
+            <mat-list>
+                <mat-list-item>
+                    <mat-icon matListIcon color="primary">zoom_in</mat-icon>
+                    <span matLine
+                        >Scroll for zoom
+                        <span style="cursor: pointer" (click)="onResetZoom()"><b>(reset)</b></span></span
+                    >
+                </mat-list-item>
+                <mat-list-item>
+                    <mat-icon matListIcon color="primary">mouse</mat-icon>
+                    <span matLine>Use mouse to move the graph</span>
+                </mat-list-item>
+            </mat-list>
+        </div>
+        <div class="graph">
+            <h2 *ngIf="error">{{ error }}</h2>
+        </div>
+    </div>
+</div>

@@ -5,5 +5,13 @@
         "@angular/common": "^19.2.0",
         "@angular/core": "^19.2.0"
     },
-    "sideEffects": false
+    "sideEffects": false,
+    "files": [
+        "assets",
+        "theming"
+    ],
+    "exports": {
+        "./assets/*": "./assets/*",
+        "./theming/*": "./theming/*"
+    }
 }

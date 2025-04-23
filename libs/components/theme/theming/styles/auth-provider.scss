@@ -1,0 +1,21 @@
+crczp-auth-provider-picker {
+    width: 500px;
+    display: block;
+    margin: 10% auto;
+}
+
+.sentinel-auth-provider-list {
+    display: flex;
+    justify-content: center;
+}
+
+.providers {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.providers button {
+    max-width: 500px;
+}

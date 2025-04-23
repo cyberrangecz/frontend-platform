@@ -1,0 +1,32 @@
+@import '../../definitions/variables.scss';
+
+/* Add unique styled scrollbars, using the theme colors */
+
+::-webkit-scrollbar {
+    width: 0.6em;
+    height: 0.6rem;
+}
+
+::-webkit-scrollbar-track {
+    background-color: var(--primary-80);
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: var(--primary-10);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: var(--primary-25);
+}
+
+/*
+ * Round scrollbar needs to be applied manually, otherwise regular
+ * scrollbar with square edges will be applied
+ */
+.round-scrollbar::-webkit-scrollbar-thumb {
+    border-radius: 1rem;
+}
+
+.round-scrollbar::-webkit-scrollbar-track {
+    border-radius: 1rem;
+}

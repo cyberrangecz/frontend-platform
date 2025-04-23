@@ -23,6 +23,7 @@ import { Dimensions } from '../../model/others/dimensions';
     selector: '[context]',
     templateUrl: './graph-node-context-menu.component.html',
     styleUrls: ['./graph-node-context-menu.component.css'],
+    standalone: false
 })
 export class NodeContextMenuComponent implements OnInit, OnChanges {
     MENU_ROW_HEIGHT = 20;

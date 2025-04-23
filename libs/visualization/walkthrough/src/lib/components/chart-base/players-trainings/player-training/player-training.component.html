@@ -1,0 +1,32 @@
+<svg:text
+    (click)="userSelected()"
+    [matTooltip]="userData.user.fullName"
+    style="cursor: pointer"
+    [attr.y]="5 + yCoordinate"
+    x="-50"
+>
+    {{ userData.user.userRefId }}
+</svg:text>
+<svg:g
+    event-connector
+    *ngFor="let userEvent of userData.events.slice(1); let myIndex = index"
+    (click)="userSelected()"
+    (tooltipShownChanged)="triggerTooltipShownChanged($event)"
+    [isSelected]="isUserSelected"
+    [startX]="getXCoordinate(myIndex)"
+    [endX]="getXCoordinate(myIndex + 1)"
+    [startY]="getYCoordinate(myIndex)"
+    [endY]="getYCoordinate(myIndex + 1)"
+    [commands]="userData.events[myIndex + 1].commands"
+    [maxYPosition]="maxYPosition"
+/>
+<svg:g
+    player-event
+    *ngFor="let userEvent of userData.events; let myIndex = index"
+    [userEvent]="userEvent"
+    (click)="userSelected()"
+    [isSelected]="isUserSelected"
+    [xPosition]="getXCoordinate(myIndex)"
+    [yPosition]="getYCoordinate(myIndex)"
+    [maxYPosition]="maxYPosition"
+/>

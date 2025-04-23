@@ -1,0 +1,22 @@
+.mdc-label {
+    font-size: 1rem;
+}
+
+:root {
+    // increase table row size
+    --mat-table-row-item-container-height: 3.5rem;
+
+    .mat-mdc-dialog-title {
+        font-size: 2rem !important;
+        font-weight: 500;
+        line-height: 1.2;
+    }
+}
+
+sentinel-error {
+    margin: 1rem;
+}
+
+sentinel-nav a {
+    width: 100%;
+}

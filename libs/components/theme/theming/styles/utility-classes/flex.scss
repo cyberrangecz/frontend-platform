@@ -1,0 +1,47 @@
+.vertical-flex,
+.vflex {
+    display: flex;
+    flex-direction: column;
+}
+
+.horizontal-flex,
+.hflex {
+    display: flex;
+    flex-direction: row;
+}
+
+.center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+$justify-content: (
+    fs: flex-start,
+    fe: flex-end,
+    c: center,
+    s: stretch,
+    sb: space-between,
+    sa: space-around,
+    se: space-evenly,
+);
+
+@each $key, $value in $justify-content {
+    .jc-#{$key} {
+        justify-content: $value;
+    }
+}
+
+$align-items: (
+    fs: flex-start,
+    fe: flex-end,
+    c: center,
+    b: baseline,
+    s: stretch,
+);
+
+@each $key, $value in $align-items {
+    .ai-#{$key} {
+        align-items: $value;
+    }
+}

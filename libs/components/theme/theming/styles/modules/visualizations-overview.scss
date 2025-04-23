@@ -1,0 +1,206 @@
+.overview-visualization-container .focus-line {
+    fill: none;
+    stroke: black;
+    stroke-width: 1px;
+}
+
+.overview-visualization-container .x-axis {
+    stroke-width: 2px;
+    stroke-linecap: butt;
+}
+
+.overview-visualization-container .basic-container {
+    padding: 30px;
+}
+
+.overview-visualization-container .x-axis text {
+    fill: #4e4e4e;
+    font-size: 14px;
+}
+
+.overview-visualization-container .y-axis {
+    stroke-width: 5px;
+    stroke-linecap: round;
+}
+
+.overview-visualization-container path,
+.overview-visualization-container line {
+    stroke: #888888;
+}
+
+.overview-visualization-container .mdc-checkbox path {
+    stroke: #ffffff;
+}
+
+.overview-visualization-container .y-axis-nolabel {
+    stroke: #888888;
+    stroke-width: 1.95px;
+    stroke-linecap: round;
+    stroke-dasharray: 5, 5;
+}
+
+.overview-visualization-container #score-level-container .y-axis .tick line {
+    stroke-width: 10px;
+}
+
+.overview-visualization-container #container .y-axis .tick line {
+    stroke-width: 10px;
+}
+
+.overview-visualization-container .score-progress-player {
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 3px;
+    mix-blend-mode: multiply;
+}
+
+.overview-visualization-container .score-progress-player-highlight {
+    stroke-width: 5px;
+    cursor: pointer;
+}
+
+.overview-visualization-container .y-axis .tick text {
+    opacity: 0.65;
+    font-size: initial;
+}
+
+.overview-visualization-container .score-progress path,
+.overview-visualization-container .score-progress line {
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke: #817f7f;
+}
+
+.overview-visualization-container #stripe line {
+    fill: white;
+    stroke: white;
+    stroke-linecap: square;
+    stroke-linejoin: miter;
+    stroke-width: 5px;
+    opacity: 0.8;
+}
+
+.overview-visualization-container .score-progress-thresholds path {
+    stroke-dasharray: 15;
+}
+
+.overview-visualization-container .score-progress-list {
+    padding: 0;
+    margin: 0;
+    display: inline-block;
+    width: 150px;
+}
+
+.overview-visualization-container .score-progress-list li {
+    list-style: none;
+    margin: 1px;
+    padding: 3px;
+    vertical-align: middle;
+}
+
+.overview-visualization-container input[type='checkbox'] {
+    vertical-align: middle;
+}
+
+.overview-visualization-container .score-progress-player-name-highlight {
+    font-weight: bold;
+}
+
+.overview-visualization-container .score-progress-context-player {
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 3px;
+    mix-blend-mode: multiply;
+}
+
+.overview-visualization-container .score-progress-zoom {
+    fill: none;
+    pointer-events: all;
+    cursor: grab;
+    cursor: -webkit-grab !important;
+}
+
+.overview-visualization-container .grabbed {
+    cursor: grabbing;
+    cursor: -webkit-grabbing !important;
+}
+
+.overview-visualization-container .brush {
+    cursor: grab !important;
+    cursor: -webkit-grab !important;
+}
+
+.overview-visualization-container .table tbody tr:hover {
+    background: #d2d2cd !important;
+}
+
+.overview-visualization-container .table tbody .checked {
+    background: #bbbbbb !important;
+}
+
+.overview-visualization-container .player-point,
+.player-point-selected,
+.player-point-highlighted {
+    stroke: black;
+    stroke-width: 0.3px;
+}
+
+.overview-visualization-container .container {
+    display: flex;
+}
+
+.clustering-overview-player-tooltip {
+    position: absolute;
+    font-size: 12px;
+    color: white;
+    z-index: 1;
+    text-align: center;
+    padding: 2px;
+    background: #5b5c5e;
+    border: 0;
+    border-radius: 8px;
+    opacity: 0.9;
+}
+
+.clustering-overview-player-tooltip p {
+    padding: 4px 10px;
+    margin: 0;
+}
+
+.score-progress-tooltip {
+    position: absolute;
+    font-size: 12px;
+    background: #5b5c5e;
+    color: white;
+    z-index: 1;
+    text-align: center;
+    padding: 8px;
+    border: 0;
+    border-radius: 8px;
+}
+
+.score-progress-line-tooltip {
+    font-size: 12px;
+    background: #5b5c5e;
+    color: white;
+    position: absolute;
+    z-index: 1;
+    text-align: center;
+    padding: 8px;
+    border: 0;
+    border-radius: 8px;
+}
+
+.average-time-line-tooltip {
+    font-size: 11px;
+    background: #5b5c5e;
+    color: white;
+    position: absolute;
+    z-index: 1;
+    text-align: center;
+    padding: 8px;
+    border: 0;
+    border-radius: 8px;
+}

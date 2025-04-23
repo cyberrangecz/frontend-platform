@@ -24,6 +24,7 @@ import { Dimensions } from '../../model/others/dimensions';
     selector: '[nodeVisual]',
     templateUrl: './graph-node-visual.component.html',
     styleUrls: ['./graph-node-visual.component.css'],
+    standalone: false
 })
 export class GraphNodeVisualComponent implements OnDestroy, OnInit {
     private readonly DEFAULT_NODE_WIDTH = 92;

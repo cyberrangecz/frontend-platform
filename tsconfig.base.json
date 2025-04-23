@@ -19,6 +19,7 @@
                 "libs/visualization/adaptive/src/index.ts"
             ],
             "@crczp/api-common": ["libs/api/api-common/src/index.ts"],
+            "@crczp/assets-bundler": ["assets-bundler/src/index.ts"],
             "@crczp/command-visualization": [
                 "libs/visualization/command/src/index.ts"
             ],
@@ -43,6 +44,7 @@
             "@crczp/user-and-group-model": [
                 "libs/model/user-and-group-model/src/index.ts"
             ],
+            "@crczp/walkthrough-api": ["libs/api/walkthrough-api/src/index.ts"],
             "@crczp/walkthrough-visualization": [
                 "libs/visualization/walkthrough/src/index.ts"
             ]

@@ -1,0 +1,42 @@
+@function decimal-to-name($decimal) {
+    $integer: floor($decimal);
+    $fraction: str-slice(#{$decimal}, 3);
+    @if $fraction == '' {
+        @return $integer;
+    }
+    @return $integer + '-' + $fraction;
+}
+
+$gaps: [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 2.5, 3];
+
+$positions: (
+    t: top,
+    r: right,
+    b: bottom,
+    l: left,
+);
+@for $i from 1 through 16 {
+    $size: calc($i / 4);
+
+    .g-#{decimal-to-name($size)}rem {
+        gap: #{$size}rem;
+    }
+
+    .m-#{decimal-to-name($size)}rem {
+        margin: #{$size}rem;
+    }
+
+    .p-#{decimal-to-name($size)}rem {
+        padding: #{$size}rem;
+    }
+
+    @each $key, $value in $positions {
+        .m-#{decimal-to-name($size)}rem-#{$key} {
+            margin-#{$value}: #{$size}rem;
+        }
+
+        .p-#{decimal-to-name($size)}rem-#{$key} {
+            padding-#{$value}: #{$size}rem;
+        }
+    }
+}

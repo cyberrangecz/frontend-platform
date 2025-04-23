@@ -1,0 +1,21 @@
+@use '@angular/material' as mat;
+@use '@sentinel/layout/theming' as sentinel-variables;
+@use '@sentinel/layout/sentinel-layout-theme' as layout;
+@use '@sentinel/layout/notification-card-mixin' as sentinel-layout-notification-card;
+@use '@sentinel/layout/sidebar-mixin' as sentinel-layout-sidebar;
+@use '@sentinel/components/theming' as sentinel-components;
+@use '@sentinel/components/typography' as sentinel-typography;
+
+@use 'forward-all' as theme;
+
+:root {
+    @include mat.core();
+    @include mat.core-theme($theme);
+
+    @include mat.color-variants-backwards-compatibility(theme.$theme);
+    @include mat.all-component-themes(theme.$theme);
+    @include mat.system-level-colors(theme.$theme);
+    @include sentinel-components.all-component-themes(theme.$theme);
+    @include layout.sentinel-layout-theme(theme.$theme);
+    @include sentinel-layout-sidebar.sidebar-page-layout-theme(theme.$theme);
+}

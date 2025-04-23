@@ -1,0 +1,35 @@
+.level-grid-container,
+.progress-bar,
+.trainee-grid-container,
+.container-fluid,
+.visualization-container,
+.trainee-detail-container,
+.trainee-selection {
+    background-color: white;
+    border-radius: 2px;
+}
+
+.trainee-grid-container,
+.trainee-selection {
+    margin: 10px 20px 1px;
+    padding: 10px 0;
+}
+
+.level-grid-container {
+    margin: 1px 20px 0 !important;
+    padding: 1px 0;
+}
+
+.vis-participant-grid {
+    margin: 10px auto 0 !important;
+}
+
+.visualization-container {
+    margin: 1px 20px;
+    padding: 10px 0;
+}
+
+.trainee-detail-container {
+    margin: 1px 20px 0 !important;
+    padding: 1px 0;
+}

@@ -1,0 +1,20 @@
+<svg:g
+    player-training
+    *ngFor="let userData of usersData; let myIndex = index"
+    [userData]="userData"
+    [isUserSelected]="isUserSelected(userData)"
+    (userSelectedEvent)="setUserSelected(userData)"
+    (tooltipShownChanged)="tooltipShownChanged($event)"
+    [userIndex]="myIndex"
+    [yCoordinate]="absolutePositionService.getStartYPositionOfUser(myIndex)"
+    [axesCount]="getAxesCount()"
+    [maxYPosition]="absolutePositionService.getMaxYPositionOfUser(myIndex, usersData.length)"
+></svg:g>
+<svg:g
+    commands-tooltip
+    *ngIf="tooltip && tooltip.visible"
+    [xPosition]="tooltip.x"
+    [yPosition]="tooltip.y"
+    [commands]="tooltip.commands"
+    [visible]="tooltip.visible"
+/>

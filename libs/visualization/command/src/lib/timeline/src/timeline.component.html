@@ -1,0 +1,54 @@
+<div *ngIf="!trainingRunId" class="selection-container">
+    <div class="selection-content">
+        <mat-form-field appearance="fill">
+            <mat-label>Choose a trainee</mat-label>
+            <mat-select [value]="selectedTrainingRun$ | async" (selectionChange)="onTraineeSelect($event)">
+                <mat-option>--</mat-option>
+                <mat-option *ngFor="let trainingRun of trainingRuns$ | async" [value]="trainingRun.id">
+                    <div class="resource-info">
+                        <span class="resource-title">{{ trainingRun.participantRef.fullName }}</span>
+                        <span class="resource-subtitle"> (Training Run ID: {{ trainingRun.id }})</span>
+                    </div>
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <button
+            mat-raised-button
+            color="primary"
+            [disabled]="(selectedTrainingRun$ | async) === null"
+            (click)="onSubmit()"
+        >
+            Show Timeline
+        </button>
+    </div>
+</div>
+
+<div *ngIf="commands$ | async as commands">
+    <div class="timeline-content" *ngIf="commands.length && commands.length > 0; else noCommands">
+        <mgl-timeline [toggle]="true" [alternate]="false" [side]="'right'">
+            <mgl-timeline-entry *ngFor="let command of commands; let i = index">
+                <mgl-timeline-entry-side class="time">
+                    {{ command.trainingTime }}
+                </mgl-timeline-entry-side>
+                <mgl-timeline-entry-header>
+                    <div>{{ command.cmd }} {{ command.options }}</div>
+                </mgl-timeline-entry-header>
+
+                <mgl-timeline-entry-content
+                    [expandAnimationTiming]="'200ms ease'"
+                    [collapseAnimationTiming]="'100ms ease'"
+                >
+                    <div>
+                        <div><b>Command type: </b>{{ command.commandType }}</div>
+                        <div><b>IP: </b>{{ command.fromHostIp }}</div>
+                    </div>
+                </mgl-timeline-entry-content>
+                <mgl-timeline-entry-dot [size]="SIZE" />
+            </mgl-timeline-entry>
+        </mgl-timeline>
+    </div>
+</div>
+
+<ng-template #noCommands>
+    <h3 class="no-commands-content">No commands for selected training run present</h3>
+</ng-template>

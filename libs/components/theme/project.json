@@ -7,10 +7,24 @@
     "tags": [],
     "targets": {
         "build": {
-            "executor": "@nx/angular:ng-packagr-lite",
+            "executor": "@nx/js:tsc",
             "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
             "options": {
-                "project": "libs/components/theme/ng-package.json"
+                "main": "libs/components/theme/dummy.ts",
+                "project": "libs/components/theme/ng-package.json",
+                "outputPath": "dist/libs/components/theme",
+                "assets": [
+                    {
+                        "input": "./libs/components/theme/assets",
+                        "glob": "**/!(*.ts)",
+                        "output": "./assets"
+                    },
+                    {
+                        "input": "./libs/components/theme/theming",
+                        "glob": "**/!(*.ts)",
+                        "output": "./theme"
+                    }
+                ]
             },
             "configurations": {
                 "production": {

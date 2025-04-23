@@ -7,5 +7,4 @@ export { TopologyError } from './lib/model/others/topology-error.model';
 export { TopologyApi } from './lib/services/topology-api.service';
 export { ConsoleUrl } from './lib/model/others/console-url';
 export { TopologyApiModule } from './lib/topology-api.module';
-export { TopologyLegendModule } from './lib/legend/topology-legend.module';
 export { TopologyLegendComponent } from './lib/legend/topology-legend.component';

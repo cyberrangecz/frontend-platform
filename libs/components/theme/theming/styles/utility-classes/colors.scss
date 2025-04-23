@@ -1,0 +1,53 @@
+@import '../../definitions/variables.scss';
+
+@each $shade in $shades {
+    .bg-#{$shade} {
+        background-color: var(--primary-#{$shade});
+    }
+
+    .fg-#{$shade} {
+        color: var(--primary-#{$shade});
+    }
+
+    .bg-#{$shade}-f {
+        background-color: var(--primary-#{$shade}) !important;
+    }
+
+    .fg-#{$shade}-f {
+        color: var(--primary-#{$shade}) !important;
+    }
+
+    @each $prefix in $prefixes {
+        .bg-#{$prefix}-#{$shade} {
+            background-color: var(--#{$prefix}-#{$shade});
+        }
+
+        .fg-#{$prefix}-#{$shade} {
+            color: var(--#{$prefix}-#{$shade});
+        }
+
+        .bg-#{$prefix}-#{$shade}-f {
+            background-color: var(--#{$prefix}-#{$shade}) !important;
+        }
+
+        .fg-#{$prefix}-#{$shade}-f {
+            color: var(--#{$prefix}-#{$shade}) !important;
+        }
+    }
+}
+
+.bg-primary {
+    background-color: var(--primary);
+}
+
+.bg-primary-f {
+    background-color: var(--primary) !important;
+}
+
+.bg-neutral-f {
+    background-color: var(--neutral-98) !important;
+}
+
+.bg-neutral {
+    background-color: var(--neutral-98);
+}

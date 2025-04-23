@@ -1,0 +1,102 @@
+.selection-container {
+    padding-left: 50px;
+    padding-top: 50px;
+}
+
+.selection-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    max-width: 300px;
+    padding-bottom: 20px;
+}
+
+.no-commands-content {
+    display: flex;
+    justify-content: center;
+    color: rgba(0, 0, 0, 0.54);
+}
+
+.timeline-content {
+    padding-left: calc(35%);
+}
+
+mgl-timeline-entry-dot {
+    background-color: lightblue;
+}
+
+mgl-timeline-entry-side {
+    text-align: start !important;
+    padding-top: 15px;
+}
+
+mgl-timeline-entry.alternate {
+    margin-left: calc(10%) !important;
+}
+
+mgl-timeline-entry-side.alternate {
+    left: -20%;
+}
+
+::ng-deep mgl-timeline-entry .mgl-timeline-entry-card {
+    margin-left: 5px;
+}
+
+::ng-deep mgl-timeline div.mgl-timeline-line {
+    left: 10%;
+}
+
+.time {
+    margin-left: calc(-5%);
+}
+
+.odd-time {
+    left: -15% !important;
+}
+
+:host {
+    width: 100%;
+}
+
+.resource-info {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.resource-title {
+    font-size: 16px;
+}
+
+.resource-subtitle {
+    font-size: 14px;
+}
+
+.mat-select-panel mat-option.mat-option {
+    height: unset;
+}
+
+.mat-option-text.mat-option-text {
+    white-space: normal;
+}
+
+@media only screen and (max-width: 1544px) {
+    .time {
+        margin-left: calc(-10%) !important;
+    }
+}
+
+@media only screen and (max-width: 1337px) {
+    .time {
+        margin-left: calc(-15%) !important;
+    }
+
+    ::ng-deep .mgl-timeline-line {
+        left: calc(8%) !important;
+    }
+
+    mgl-timeline-entry-side.mobile {
+        display: block;
+    }
+}

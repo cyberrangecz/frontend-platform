@@ -9,21 +9,16 @@ import {
     OnInit,
     Output,
     SimpleChanges,
-    ViewChild,
+    ViewChild
 } from '@angular/core';
 import { Link, Node } from '@crczp/topology-graph-model';
 import { TopologyApi } from '../services/topology-api.service';
-
-import { D3Service } from '../services/d3.service';
 import { ConfigService } from '../services/config.service';
 import { DraggedNodeService } from '../services/dragged-node.service';
 import { BehaviorSubject, EMPTY, Observable, takeWhile } from 'rxjs';
 import { SandboxService } from '../services/sandbox.service';
 import { TopologyLoadingService } from '../services/topology-loading.service';
-import { HostService } from '../services/host.service';
-import { ContextMenuService } from '../services/context-menu.service';
 import { GraphEventService } from '../services/graph-event.service';
-import { GraphLockService } from '../services/graph-lock.service';
 import { catchError, map, take } from 'rxjs/operators';
 import { ResourcePollingService } from '../services/resource-polling.service';
 import { ConsoleUrl } from '../model/others/console-url';
@@ -37,22 +32,12 @@ import { ConsoleUrl } from '../model/others/console-url';
  */
 @Component({
     selector: 'crczp-topology-graph',
+    standalone: false,
     templateUrl: './topology-graph.component.html',
-    styleUrls: ['./topology-graph.component.css'],
-    providers: [
-        SandboxService,
-        HostService,
-        D3Service,
-        ContextMenuService,
-        GraphEventService,
-        GraphLockService,
-        DraggedNodeService,
-        ResourcePollingService,
-    ],
+    styleUrl: './topology-graph.component.css'
 })
 export class TopologyGraphComponent
-    implements OnInit, OnChanges, OnDestroy, AfterViewInit
-{
+    implements OnInit, OnChanges, OnDestroy, AfterViewInit {
     @Input() sandboxUuid: string;
     @Input() sandboxDefinitionId: number;
     @Output() topologyLoadEmitter: EventEmitter<boolean> = new EventEmitter();
@@ -91,7 +76,8 @@ export class TopologyGraphComponent
         private topologyApiService: TopologyApi,
         private draggedNodeService: DraggedNodeService,
         private resourcePollingService: ResourcePollingService
-    ) {}
+    ) {
+    }
 
     /**
      * Loads first topology and decorators and subscribes for periodical refresh of decorators and decorator reload requests.

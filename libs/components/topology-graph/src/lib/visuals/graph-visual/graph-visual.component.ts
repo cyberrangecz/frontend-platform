@@ -33,6 +33,7 @@ import { GraphLockService } from '../../services/graph-lock.service';
     selector: 'crczp-graph',
     templateUrl: './graph-visual.component.html',
     styleUrls: ['./graph-visual.component.css'],
+    standalone: false
 })
 export class GraphVisualComponent implements OnInit, OnChanges, OnDestroy {
     @Input() nodes: Node[];

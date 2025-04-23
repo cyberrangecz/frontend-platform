@@ -1,0 +1,59 @@
+<h1>Reference Graph</h1>
+<div class="content-container">
+    <div class="legend">
+        <h3>Legend</h3>
+        <table>
+            <tr>
+                <td>
+                    <svg height="40" width="75">
+                        <ellipse class="green-node" cx="35" cy="20" rx="30" ry="15" />
+                    </svg>
+                </td>
+                <td>
+                    <span>Mandatory node</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <svg height="40" width="75">
+                        <ellipse class="gray-node" cx="35" cy="20" rx="30" ry="15" />
+                    </svg>
+                </td>
+                <td>
+                    <span>Optional node</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <svg height="40" width="75">
+                        <ellipse class="blue-node" cx="35" cy="20" rx="30" ry="15" />
+                    </svg>
+                </td>
+                <td>
+                    <span>At least one must be fulfilled</span>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="right-panel">
+        <div class="info-container">
+            <mat-list>
+                <mat-list-item>
+                    <mat-icon matListIcon color="primary">zoom_in</mat-icon>
+                    <span matLine
+                        >Scroll for zoom
+                        <span style="cursor: pointer" (click)="onResetZoom()"><b>(reset)</b></span></span
+                    >
+                </mat-list-item>
+                <mat-list-item>
+                    <mat-icon matListIcon color="primary">mouse</mat-icon>
+                    <span matLine>Use mouse to move the graph</span>
+                </mat-list-item>
+            </mat-list>
+        </div>
+        <div class="reference-graph">
+            <h2 *ngIf="hasError">An error has occurred while obtaining the reference graph.</h2>
+        </div>
+    </div>
+</div>

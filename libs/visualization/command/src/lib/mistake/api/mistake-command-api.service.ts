@@ -1,0 +1,74 @@
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { AggregatedCommands } from '../model/aggregated-commands';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { AggregatedCommandMapper } from './mappers/aggregated-command-mapper';
+import { VisualizationConfigService } from '@crczp/command-visualizations/internal';
+import { AggregatedCommandsDTO } from './dto/aggregated-commands-dto';
+import { TrainingRun } from '../model/training-run';
+import { TrainingRunDTO } from './dto/training-run-dto';
+import { TrainingRunMapper } from './mappers/training-run-mapper';
+
+@Injectable()
+export class MistakeCommandApiService {
+    private readonly visualizationsEndpoint = `${this.configService.config.trainingBasePath}visualizations`;
+
+    constructor(
+        private http: HttpClient,
+        private configService: VisualizationConfigService,
+    ) {}
+
+    /**
+     * Get correct/incorrect commands executed during the given training runs.
+     * Incorrect commands can be filtered by specific mistake types.
+     * @param instanceId id of training instance
+     * @param runIds training run ids
+     * @param correct if correct or incorrect commands are requested
+     * @param mistakeType desired type of mistake
+     */
+    getAggregatedCommandsForOrganizer(
+        instanceId: number,
+        runIds: number[],
+        correct: boolean,
+        mistakeType: string[],
+    ): Observable<AggregatedCommands[]> {
+        const params = { runIds: runIds, correct: correct, mistakeTypes: mistakeType };
+        return this.http
+            .get<
+                AggregatedCommandsDTO[]
+            >(`${this.visualizationsEndpoint}/commands/training-instances/${instanceId}/aggregated`, { params })
+            .pipe(map((response) => AggregatedCommandMapper.fromDTOs(response)));
+    }
+
+    /**
+     * Get correct/incorrect commands executed during the given training run.
+     * Incorrect commands can be filtered by specific mistake types.
+     * @param runId training run id
+     * @param correct if correct or incorrect commands are requested
+     * @param mistakeType desired type of mistake
+     */
+    getAggregatedCommandsForTrainee(
+        runId: number,
+        correct: boolean,
+        mistakeType: string[],
+    ): Observable<AggregatedCommands[]> {
+        const params = { correct: correct, mistakeTypes: mistakeType };
+        return this.http
+            .get<AggregatedCommandsDTO[]>(`${this.visualizationsEndpoint}/commands/training-runs/${runId}/aggregated`, {
+                params,
+            })
+            .pipe(map((response) => AggregatedCommandMapper.fromDTOs(response)));
+    }
+
+    /**
+     * Get all trainees instances
+     */
+    getTrainingRuns(trainingInstanceId: number): Observable<TrainingRun[]> {
+        return this.http
+            .get<
+                TrainingRunDTO[]
+            >(`${this.visualizationsEndpoint}/training-instances/${trainingInstanceId}/training-runs`)
+            .pipe(map((response) => TrainingRunMapper.fromDTOs(response)));
+    }
+}

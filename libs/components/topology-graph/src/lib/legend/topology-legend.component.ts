@@ -1,10 +1,12 @@
 import { Component, Input, OnChanges, OnInit } from '@angular/core';
 import { ICONS_PATH } from '../icons-path';
+import { CommonModule } from '@angular/common';
 
 @Component({
     selector: 'crczp-topology-app-legend',
     templateUrl: './topology-legend.component.html',
     styleUrls: ['./topology-legend.component.css'],
+    imports: [CommonModule]
 })
 export class TopologyLegendComponent implements OnInit, OnChanges {
     @Input() width: number;

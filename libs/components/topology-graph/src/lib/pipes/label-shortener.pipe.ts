@@ -1,6 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
-@Pipe({ name: 'labelShortener' })
+@Pipe({ name: 'labelShortener', standalone: false })
 export class LabelShortenerPipe implements PipeTransform {
     readonly MAX_LENGTH = 18;
 
