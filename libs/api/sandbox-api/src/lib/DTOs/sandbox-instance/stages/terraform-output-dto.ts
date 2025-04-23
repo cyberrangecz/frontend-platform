@@ -1,3 +1,3 @@
 export class TerraformOutputDTO {
-    content!: string;
+    content: string;
 }

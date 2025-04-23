@@ -7,19 +7,18 @@ import { map } from 'rxjs/operators';
 import { DjangoResourceDTO } from '../../DTOs/other/django-resource-dto';
 import { SandboxDefinitionDTO } from '../../DTOs/sandbox-definition/sandbox-definition-dto';
 import { SandboxDefinitionRefDTO } from '../../DTOs/sandbox-definition/sandbox-definition-ref-dto';
-import { PaginationParams } from '../../http/pagination-params';
-import { PaginationMapper } from '../../mappers/pagination-mapper';
 import { SandboxDefinitionMapper } from '../../mappers/sandbox-definition/sandbox-definition-mapper';
 import { SandboxDefinitionRefMapper } from '../../mappers/sandbox-definition/sandbox-definition-ref-mapper';
 import { SandboxApiConfigService } from '../../others/sandbox-api-config.service';
 import { SandboxDefinitionApi } from './sandbox-definition-api.service';
+import { PaginationMapper, ParamsBuilder } from '@crczp/api-common';
 
 /**
  * Service abstracting http communication with sandbox definition endpoints.
  */
 @Injectable()
 export class SandboxDefinitionDefaultApi extends SandboxDefinitionApi {
-    private readonly sandboxDefsEndpoint ;
+    private readonly sandboxDefsEndpoint: string;
 
     constructor(
         private http: HttpClient,
@@ -42,14 +41,14 @@ export class SandboxDefinitionDefaultApi extends SandboxDefinitionApi {
         return this.http
             .get<DjangoResourceDTO<SandboxDefinitionDTO>>(this.sandboxDefsEndpoint, {
                 headers: this.createDefaultHeaders(),
-                params: PaginationParams.create(pagination),
+                params: ParamsBuilder.djangoPaginationParams(pagination),
             })
             .pipe(
                 map(
                     (response) =>
                         new PaginatedResource<SandboxDefinition>(
                             SandboxDefinitionMapper.fromDTOs(response.results),
-                            PaginationMapper.fromDjangoAPI(response),
+                            PaginationMapper.fromDjangoDTO(response),
                         ),
                 ),
             );
@@ -98,14 +97,14 @@ export class SandboxDefinitionDefaultApi extends SandboxDefinitionApi {
         return this.http
             .get<DjangoResourceDTO<SandboxDefinitionRefDTO>>(`${this.sandboxDefsEndpoint}/${id}/refs`, {
                 headers: this.createDefaultHeaders(),
-                params: PaginationParams.create(pagination),
+                params: ParamsBuilder.djangoPaginationParams(pagination),
             })
             .pipe(
                 map(
                     (response) =>
                         new PaginatedResource<SandboxDefinitionRef>(
                             SandboxDefinitionRefMapper.fromDTOs(response.results),
-                            PaginationMapper.fromDjangoAPI(response),
+                            PaginationMapper.fromDjangoDTO(response),
                         ),
                 ),
             );

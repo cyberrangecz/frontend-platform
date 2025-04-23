@@ -1,5 +1,5 @@
 export class MicroserviceRoleDTO {
-    default!: boolean;
-    description!: string;
-    role_type!: string;
+    default: boolean;
+    description: string;
+    role_type: string;
 }

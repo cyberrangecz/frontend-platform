@@ -1,13 +1,8 @@
 {
     "name": "@crczp/api-common",
-    "version": "0.0.1",
     "peerDependencies": {
         "@angular/common": "^19.2.0",
         "@angular/core": "^19.2.0"
-    },
-    "devDependencies": {
-        "vitest": "*",
-        "@analogjs/vitest-angular": "*"
     },
     "sideEffects": false
 }

@@ -1,4 +1,4 @@
 export class RouterDTO {
-    name!: string;
-    cidr!: string;
+    name: string;
+    cidr: string;
 }

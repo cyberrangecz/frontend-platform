@@ -3,8 +3,8 @@ import { User } from '@crczp/user-and-group-model';
 import { RestResourceDTO } from '../DTO/rest-resource-dto.model';
 import { UserDTO } from '../DTO/user/user-dto.model';
 import { UserForGroupsDTO } from '../DTO/user/user-for-groups-dto.model';
-import { PaginationMapper } from './pagination-mapper';
 import { RoleMapper } from './role-mapper';
+import { PaginationMapper } from '@crczp/api-common';
 
 /**
  * Service to map internal model to dtos and other way
@@ -17,7 +17,7 @@ export class UserMapper {
     static mapUserDTOsToUsers(restResource: RestResourceDTO<UserDTO>): PaginatedResource<User> {
         const result = new PaginatedResource<User>(
             restResource.content.map((userDTO) => this.mapUserDTOToUser(userDTO)),
-            PaginationMapper.mapDTOToPagination(restResource.pagination),
+            PaginationMapper.fromJavaDTO(restResource.pagination),
         );
         return result;
     }

@@ -1,4 +1,4 @@
 export class LockDTO {
-    id!: number;
-    pool_id!: number;
+    id: number;
+    pool_id: number;
 }

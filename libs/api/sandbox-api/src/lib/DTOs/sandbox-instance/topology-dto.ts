@@ -5,9 +5,9 @@ import { RouterDTO } from './topology-elements/router-dto';
 import { SwitchDTO } from './topology-elements/switch-dto';
 
 export class TopologyDTO {
-    hosts: HostDTO[] = [];
-    routers: RouterDTO[] = [];
-    switches: SwitchDTO[] = [];
-    links: LinkDTO[] = [];
-    ports: PortDTO[] = [];
+    hosts: HostDTO[];
+    routers: RouterDTO[];
+    switches: SwitchDTO[];
+    links: LinkDTO[];
+    ports: PortDTO[];
 }

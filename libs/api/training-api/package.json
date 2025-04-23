@@ -1,9 +1,12 @@
 {
     "name": "@crczp/training-api",
-    "version": "0.0.1",
     "peerDependencies": {
         "@angular/common": "^19.2.0",
-        "@angular/core": "^19.2.0"
+        "@angular/core": "^19.2.0",
+        "@sentinel/common": "*",
+        "@crczp/training-model": "*",
+        "@crczp/api-common": "*",
+        "file-saver": "*"
     },
     "sideEffects": false
 }

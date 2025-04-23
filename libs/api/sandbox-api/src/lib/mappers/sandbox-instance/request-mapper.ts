@@ -18,11 +18,11 @@ export class RequestMapper {
     }
 
     static fromCleanupDTOs(dtos: RequestDTO[]): CleanupRequest[] {
-        return dtos.filter(dto=> !!dto)
-            .map((dto) => RequestMapper.fromCleanupDTO(dto));
+        return dtos.map((dto) => RequestMapper.fromCleanupDTO(dto));
     }
 
     static fromCleanupDTO(dto: RequestDTO): CleanupRequest {
+        if (!dto) return;
         const request = new CleanupRequest();
         this.setGeneralAttributes(request, dto);
         return request;
@@ -43,7 +43,7 @@ export class RequestMapper {
         return stages.map((stage) => this.stageResolver(stage));
     }
 
-    private static stageResolver(stage: string): RequestStageState {
+    private static stageResolver(stage: string) {
         switch (stage) {
             case 'RUNNING':
                 return RequestStageState.RUNNING;
@@ -54,7 +54,7 @@ export class RequestMapper {
             case 'IN_QUEUE':
                 return RequestStageState.IN_QUEUE;
             default:
-                throw new Error('Unrecognized stage stage');
+                return;
         }
     }
 }

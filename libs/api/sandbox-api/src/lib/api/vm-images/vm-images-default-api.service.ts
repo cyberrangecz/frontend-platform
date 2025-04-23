@@ -8,12 +8,10 @@ import { VirtualImage } from '@crczp/sandbox-model';
 import { SentinelParamsMerger } from '@sentinel/common';
 import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
 import { SentinelFilter } from '@sentinel/common/filter';
-import { PaginationParams } from '../../http/pagination-params';
-import { PaginationMapper } from '../../mappers/pagination-mapper';
 import { DjangoResourceDTO } from '../../DTOs/other/django-resource-dto';
 import { VMImagesApi } from './vm-images-api.service';
 import { map } from 'rxjs/operators';
-import { FilterParams } from '../../http/filter-params';
+import { PaginationMapper, ParamsBuilder } from '@crczp/api-common';
 
 /**
  * Default implementation of service abstracting http communication with vm images endpoints.
@@ -21,7 +19,7 @@ import { FilterParams } from '../../http/filter-params';
 @Injectable()
 export class VMImagesDefaultApi extends VMImagesApi {
     private readonly virtualImagesUriExtension = 'images';
-    private readonly virtualImagesEndpointUri;
+    private readonly virtualImagesEndpointUri: string;
 
     constructor(
         private http: HttpClient,
@@ -34,7 +32,8 @@ export class VMImagesDefaultApi extends VMImagesApi {
                 ' or provide own implementation of API services'
             );
         }
-        this.virtualImagesEndpointUri = this.context.config.sandboxRestBasePath + this.virtualImagesUriExtension;
+        this.virtualImagesEndpointUri =
+            this.context.config.sandboxRestBasePath + this.virtualImagesUriExtension;
     }
 
     /**
@@ -52,7 +51,7 @@ export class VMImagesDefaultApi extends VMImagesApi {
         cached = false,
         filters?: SentinelFilter[]
     ): Observable<PaginatedResource<VirtualImage>> {
-        const params = SentinelParamsMerger.merge([PaginationParams.create(pagination), FilterParams.create(filters)])
+        const params = SentinelParamsMerger.merge([ParamsBuilder.djangoPaginationParams(pagination), ParamsBuilder.filterParams(filters)])
             .append('onlyCustom', onlyCrczpImages)
             .append('GUI', onlyGuiAccess)
             .append('cached', cached);
@@ -66,7 +65,7 @@ export class VMImagesDefaultApi extends VMImagesApi {
                     (response) =>
                         new PaginatedResource<VirtualImage>(
                             VirtualImagesMapper.fromDTOs(response.results),
-                            PaginationMapper.fromDjangoAPI(response)
+                            PaginationMapper.fromDjangoDTO(response)
                         )
                 )
             );

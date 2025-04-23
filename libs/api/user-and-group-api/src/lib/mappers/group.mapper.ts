@@ -5,9 +5,9 @@ import { CreateGroupDTO } from '../DTO/group/new-group-dto.model';
 import { UpdateGroupDTO } from '../DTO/group/update-group-dto.model';
 import { RestResourceDTO } from '../DTO/rest-resource-dto.model';
 import { AddUsersToGroupDTO } from '../DTO/user/add-user-to-group-dto.model';
-import { PaginationMapper } from './pagination-mapper';
 import { RoleMapper } from './role-mapper';
 import { UserMapper } from './user.mapper';
+import { PaginationMapper } from '@crczp/api-common';
 
 /**
  * Maps internal model to group DTOs and other way
@@ -21,7 +21,7 @@ export class GroupMapper {
     static mapPaginatedGroupDTOsToGroups(restResource: RestResourceDTO<GroupDTO>): PaginatedResource<Group> {
         return new PaginatedResource<Group>(
             restResource.content.map((groupDTO) => this.mapGroupDTOToGroup(groupDTO)),
-            PaginationMapper.mapDTOToPagination(restResource.pagination),
+            PaginationMapper.fromJavaDTO(restResource.pagination),
         );
     }
 

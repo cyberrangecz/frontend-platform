@@ -5,7 +5,7 @@ import {
     CleanupRequest,
     NetworkingAnsibleCleanupStage,
     TerraformCleanupStage,
-    UserAnsibleCleanupStage
+    UserAnsibleCleanupStage,
 } from '@crczp/sandbox-model';
 import { HttpClient } from '@angular/common/http';
 import { SandboxApiConfigService } from '../../../others/sandbox-api-config.service';
@@ -24,7 +24,7 @@ export class CleanupRequestsDefaultApi extends CleanupRequestsApi {
     private readonly cleanupRequestUriExtension = 'cleanup-requests';
     private readonly stagesUriExtension = 'stages';
 
-    private readonly requestsEndpointUri;
+    private readonly requestsEndpointUri: string;
 
     constructor(
         private http: HttpClient,

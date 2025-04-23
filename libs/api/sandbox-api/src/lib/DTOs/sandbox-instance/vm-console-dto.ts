@@ -1,3 +1,3 @@
 export class VMConsoleDTO {
-    url!: string;
+    url: string;
 }

@@ -1,3 +1,3 @@
 export class HostDTO {
-    name!: string;
+    name: string;
 }

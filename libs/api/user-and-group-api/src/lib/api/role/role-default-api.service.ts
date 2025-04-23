@@ -13,9 +13,8 @@ import { RoleMapper } from '../../mappers/role-mapper';
 import { UserMapper } from '../../mappers/user.mapper';
 import { UserAndGroupApiConfig } from '../../other/user-and-group-api-config';
 import { UserAndGroupContext } from '../../other/user-and-group.context.service';
-import { FilterParams } from '../../utils/filter-params';
-import { PaginationHttpParams } from '../../utils/pagination-http-params';
 import { RoleApi } from './role-api.service';
+import { ParamsBuilder } from '@crczp/api-common';
 
 /**
  * Default implementation of service abstracting http communication with roles endpoint
@@ -40,8 +39,8 @@ export class RoleDefaultApi extends RoleApi {
      */
     getAll(pagination: OffsetPaginationEvent, filters: SentinelFilter[] = []): Observable<PaginatedResource<UserRole>> {
         const params = SentinelParamsMerger.merge([
-            PaginationHttpParams.createPaginationParams(pagination),
-            FilterParams.create(filters),
+            ParamsBuilder.javaPaginationParams(pagination),
+            ParamsBuilder.filterParams(filters),
         ]);
         return this.http
             .get<
@@ -62,8 +61,8 @@ export class RoleDefaultApi extends RoleApi {
         filters?: SentinelFilter[],
     ): Observable<PaginatedResource<UserRole>> {
         const params = SentinelParamsMerger.merge([
-            PaginationHttpParams.createPaginationParams(pagination),
-            FilterParams.create(filters),
+            ParamsBuilder.javaPaginationParams(pagination),
+            ParamsBuilder.filterParams(filters),
         ]);
         return this.http
             .get<
@@ -94,8 +93,8 @@ export class RoleDefaultApi extends RoleApi {
         filters?: SentinelFilter[],
     ): Observable<PaginatedResource<User>> {
         const params = SentinelParamsMerger.merge([
-            PaginationHttpParams.createPaginationParams(pagination),
-            FilterParams.create(filters),
+            ParamsBuilder.javaPaginationParams(pagination),
+            ParamsBuilder.filterParams(filters),
         ]);
         return this.http
             .get<RestResourceDTO<UserDTO>>(
@@ -120,8 +119,8 @@ export class RoleDefaultApi extends RoleApi {
     ): Observable<PaginatedResource<User>> {
         const typeParam = new HttpParams().set('roleType', type);
         const params = SentinelParamsMerger.merge([
-            PaginationHttpParams.createPaginationParams(pagination),
-            FilterParams.create(filters),
+            ParamsBuilder.javaPaginationParams(pagination),
+            ParamsBuilder.filterParams(filters),
             typeParam,
         ]);
         return this.http
@@ -147,8 +146,8 @@ export class RoleDefaultApi extends RoleApi {
         const idParams = new HttpParams().set('ids', ids.toString());
         const typeParam = new HttpParams().set('roleType', type);
         const params = SentinelParamsMerger.merge([
-            PaginationHttpParams.createPaginationParams(pagination),
-            FilterParams.create(filters),
+            ParamsBuilder.javaPaginationParams(pagination),
+            ParamsBuilder.filterParams(filters),
             idParams,
             typeParam,
         ]);

@@ -17,7 +17,7 @@ import { HardwareUsageMapper } from '../../mappers/sandbox-instance/hardware-usa
 export class ResourceDefaultApi extends ResourcesApi {
     private readonly resourcesUriExtension = 'info';
     private readonly limitsUriExtension = 'limits';
-    private readonly resourcesEndpointUri : string;
+    private readonly resourcesEndpointUri: string;
     private readonly limitsEndpointUri: string;
 
     constructor(

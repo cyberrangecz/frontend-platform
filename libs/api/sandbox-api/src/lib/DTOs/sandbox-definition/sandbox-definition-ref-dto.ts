@@ -1,3 +1,3 @@
 export class SandboxDefinitionRefDTO {
-    name!: string;
+    name: string;
 }

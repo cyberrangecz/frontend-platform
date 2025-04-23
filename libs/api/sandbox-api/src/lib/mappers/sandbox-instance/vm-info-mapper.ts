@@ -23,8 +23,6 @@ export class VMInfoMapper {
                 return VMStatus.REBOOT;
             case 'SUSPENDED':
                 return VMStatus.SUSPENDED;
-            default:
-                throw new Error('Unknown VM status');
         }
     }
 }

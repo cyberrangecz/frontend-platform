@@ -12,9 +12,8 @@ import { RestResourceDTO } from '../../DTO/rest-resource-dto.model';
 import { MicroserviceMapper } from '../../mappers/microservice.mapper';
 import { UserAndGroupApiConfig } from '../../other/user-and-group-api-config';
 import { UserAndGroupContext } from '../../other/user-and-group.context.service';
-import { FilterParams } from '../../utils/filter-params';
-import { PaginationHttpParams } from '../../utils/pagination-http-params';
 import { MicroserviceApi } from './microservice-api.service';
+import { ParamsBuilder } from '@crczp/api-common';
 
 /**
  * Implementation of http communication with microservice endpoints.
@@ -56,8 +55,8 @@ export class MicroserviceDefaultApi extends MicroserviceApi {
      */
     getAll(pagination: OffsetPaginationEvent, filter?: SentinelFilter[]): Observable<PaginatedResource<Microservice>> {
         const params = SentinelParamsMerger.merge([
-            PaginationHttpParams.createPaginationParams(pagination),
-            FilterParams.create(filter),
+            ParamsBuilder.javaPaginationParams(pagination),
+            ParamsBuilder.filterParams(filter),
         ]);
         return this.http
             .get<RestResourceDTO<MicroserviceDTO>>(`${this.config.userAndGroupRestBasePath}microservices`, { params })

@@ -13,9 +13,8 @@ import { GroupMapper } from '../../mappers/group.mapper';
 import { RoleMapper } from '../../mappers/role-mapper';
 import { UserAndGroupApiConfig } from '../../other/user-and-group-api-config';
 import { UserAndGroupContext } from '../../other/user-and-group.context.service';
-import { FilterParams } from '../../utils/filter-params';
-import { PaginationHttpParams } from '../../utils/pagination-http-params';
 import { GroupApi } from './group-api.service';
+import { ParamsBuilder } from '@crczp/api-common';
 
 /**
  * Default implementation of service abstracting http communication with group endpoints.
@@ -42,8 +41,8 @@ export class GroupDefaultApi extends GroupApi {
      */
     getAll(pagination: OffsetPaginationEvent, filter: SentinelFilter[] = []): Observable<PaginatedResource<Group>> {
         const params = SentinelParamsMerger.merge([
-            PaginationHttpParams.createPaginationParams(pagination),
-            FilterParams.create(filter),
+            ParamsBuilder.javaPaginationParams(pagination),
+            ParamsBuilder.filterParams(filter),
         ]);
         return this.http
             .get<
@@ -140,8 +139,8 @@ export class GroupDefaultApi extends GroupApi {
         filter: SentinelFilter[] = [],
     ): Observable<PaginatedResource<UserRole>> {
         const params = SentinelParamsMerger.merge([
-            PaginationHttpParams.createPaginationParams(pagination),
-            FilterParams.create(filter),
+            ParamsBuilder.javaPaginationParams(pagination),
+            ParamsBuilder.filterParams(filter),
         ]);
         return this.http
             .get<

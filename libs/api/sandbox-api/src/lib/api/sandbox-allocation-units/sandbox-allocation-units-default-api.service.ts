@@ -19,17 +19,17 @@ export class SandboxAllocationUnitsDefaultApi extends SandboxAllocationUnitsApi 
     private readonly allocationRequestUriExtension = 'allocation-request';
     private readonly cleanupRequestUriExtension = 'cleanup-request';
 
-    private readonly sauEndpointUri;
+    private sauEndpointUri: string;
 
     constructor(
         private http: HttpClient,
-        private context: SandboxApiConfigService,
+        private context: SandboxApiConfigService
     ) {
         super();
         if (this.context.config === undefined || this.context.config === null) {
             throw new Error(
                 'SandboxApiConfig is null or undefined. Please provide it in forRoot() method of SandboxApiModule' +
-                    ' or provide own implementation of API services',
+                ' or provide own implementation of API services'
             );
         }
         this.sauEndpointUri = this.context.config.sandboxRestBasePath + this.sandboxAllocationUnitsUriExtension;
@@ -74,7 +74,7 @@ export class SandboxAllocationUnitsDefaultApi extends SandboxAllocationUnitsApi 
         const param = new HttpParams();
         return this.http
             .patch<SandboxAllocationUnitDTO>(`${this.sauEndpointUri}/${unitId}/allocation-stages/restart`, {
-                params: param,
+                params: param
             })
             .pipe(map((dto) => SandboxAllocationUnitMapper.fromDTO(dto)));
     }

@@ -1,3 +1,3 @@
 export class AnsibleAllocationOutputDTO {
-    content!: string;
+    content: string;
 }

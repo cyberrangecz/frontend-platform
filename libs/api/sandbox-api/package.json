@@ -1,9 +1,10 @@
 {
     "name": "@crczp/sandbox-api",
-    "version": "0.0.1",
     "peerDependencies": {
         "@angular/common": "^19.2.0",
         "@angular/core": "^19.2.0",
+        "@sentinel/common": "*",
+        "@crczp/sandbox-model": "*",
         "file-saver": "*"
     },
     "sideEffects": false

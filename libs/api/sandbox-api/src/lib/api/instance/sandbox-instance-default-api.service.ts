@@ -4,15 +4,13 @@ import { ResponseHeaderContentDispositionReader } from '@sentinel/common';
 import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
 import { Lock, SandboxInstance, SandboxKeyPair, Topology, VMConsole, VMInfo, VMStatus } from '@crczp/sandbox-model';
 import { Observable } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { DjangoResourceDTO } from '../../DTOs/other/django-resource-dto';
 import { LockDTO } from '../../DTOs/sandbox-instance/lock-dto';
 import { SandboxInstanceDTO } from '../../DTOs/sandbox-instance/sandbox-instance-dto';
 import { SandboxKeyPairDTO } from '../../DTOs/sandbox-instance/sandbox-key-pair-dto';
 import { TopologyDTO } from '../../DTOs/sandbox-instance/topology-dto';
 import { VMInfoDTO } from '../../DTOs/sandbox-instance/vm-info-dto';
-import { PaginationParams } from '../../http/pagination-params';
-import { PaginationMapper } from '../../mappers/pagination-mapper';
 import { SandboxInstanceMapper } from '../../mappers/sandbox-instance/sandbox-instance-mapper';
 import { TopologyMapper } from '../../mappers/sandbox-instance/topology-mapper';
 import { SandboxApiConfigService } from '../../others/sandbox-api-config.service';
@@ -21,8 +19,7 @@ import { SandboxKeyPairMapper } from '../../mappers/sandbox-instance/sandbox-key
 import { VMConsoleMapper } from '../../mappers/sandbox-instance/vm-console-mapper';
 import { VMInfoMapper } from '../../mappers/sandbox-instance/vm-info-mapper';
 import { SandboxInstanceApi } from './sandbox-instance-api.service';
-import { JSONErrorConverter } from '../../http/json-error-converter';
-import { FileSaver } from '../../http/response-headers/file-saver';
+import { BlobFileSaver, handleJsonError, PaginationMapper, ParamsBuilder } from '@crczp/api-common';
 
 /**
  * Default implementation of service abstracting http communication with sandbox instances endpoints.
@@ -35,9 +32,9 @@ export class SandboxInstanceDefaultApi extends SandboxInstanceApi {
     private readonly locksUriExtension = 'lock';
     private readonly vmsUriExtension = 'vms';
 
-    private readonly poolsEndpointUri;
-    private readonly sandboxEndpointUri;
-    private readonly unitsEndpointUri;
+    private readonly poolsEndpointUri: string;
+    private readonly sandboxEndpointUri: string;
+    private readonly unitsEndpointUri: string;
 
     constructor(
         private http: HttpClient,
@@ -65,7 +62,7 @@ export class SandboxInstanceDefaultApi extends SandboxInstanceApi {
             .get<DjangoResourceDTO<SandboxInstanceDTO>>(
                 `${this.poolsEndpointUri}/${poolId}/${this.sandboxInstancesUriExtension}`,
                 {
-                    params: PaginationParams.create(pagination),
+                    params: ParamsBuilder.djangoPaginationParams(pagination),
                 },
             )
             .pipe(
@@ -73,7 +70,7 @@ export class SandboxInstanceDefaultApi extends SandboxInstanceApi {
                     (response) =>
                         new PaginatedResource<SandboxInstance>(
                             SandboxInstanceMapper.fromDTOs(response.results),
-                            PaginationMapper.fromDjangoAPI(response),
+                            PaginationMapper.fromDjangoDTO(response),
                         ),
                 ),
             );
@@ -125,14 +122,14 @@ export class SandboxInstanceDefaultApi extends SandboxInstanceApi {
     getSandboxLocks(sandboxId: number, pagination: OffsetPaginationEvent): Observable<PaginatedResource<Lock>> {
         return this.http
             .get<DjangoResourceDTO<LockDTO>>(`${this.unitsEndpointUri}/${sandboxId}/${this.locksUriExtension}`, {
-                params: PaginationParams.create(pagination),
+                params: ParamsBuilder.djangoPaginationParams(pagination),
             })
             .pipe(
                 map(
                     (response) =>
                         new PaginatedResource<Lock>(
                             LockMapper.fromDTOs(response.results),
-                            PaginationMapper.fromDjangoAPI(response),
+                            PaginationMapper.fromDjangoDTO(response),
                         ),
                 ),
             );
@@ -163,10 +160,10 @@ export class SandboxInstanceDefaultApi extends SandboxInstanceApi {
                 headers,
             })
             .pipe(
-                catchError((err) => JSONErrorConverter.handleError(err)),
+                handleJsonError(),
                 map((resp) => {
-                    FileSaver.fromBlob(
-                        resp.body!,
+                    BlobFileSaver.saveBlob(
+                        resp.body,
                         ResponseHeaderContentDispositionReader.getFilenameFromResponse(resp, 'user-ssh-access.zip'),
                     );
                     return true;

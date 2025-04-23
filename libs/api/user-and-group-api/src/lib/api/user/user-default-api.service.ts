@@ -4,20 +4,17 @@ import { ResponseHeaderContentDispositionReader, SentinelParamsMerger } from '@s
 import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
 import { SentinelFilter } from '@sentinel/common/filter';
 import { User, UserRole } from '@crczp/user-and-group-model';
-import { fromEvent, mergeMap, Observable, throwError } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { fromEvent, mergeMap, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { RestResourceDTO } from '../../DTO/rest-resource-dto.model';
 import { RoleDTO } from '../../DTO/role/role-dto';
 import { UserDTO } from '../../DTO/user/user-dto.model';
 import { RoleMapper } from '../../mappers/role-mapper';
 import { UserMapper } from '../../mappers/user.mapper';
-import { JSONErrorConverter } from '../../utils/json-error-converter';
 import { UserAndGroupApiConfig } from '../../other/user-and-group-api-config';
 import { UserAndGroupContext } from '../../other/user-and-group.context.service';
-import { FilterParams } from '../../utils/filter-params';
-import { PaginationHttpParams } from '../../utils/pagination-http-params';
 import { UserApi } from './user-api.service';
-import { FileSaver } from '../../utils/file-saver';
+import { BlobFileSaver, handleJsonError, ParamsBuilder } from '@crczp/api-common';
 
 /**
  * Default implementation of abstracting http communication with user endpoints
@@ -42,8 +39,8 @@ export class UserDefaultApi extends UserApi {
      */
     getAll(pagination: OffsetPaginationEvent, filter: SentinelFilter[] = []): Observable<PaginatedResource<User>> {
         const params = SentinelParamsMerger.merge([
-            PaginationHttpParams.createPaginationParams(pagination),
-            FilterParams.create(filter),
+            ParamsBuilder.javaPaginationParams(pagination),
+            ParamsBuilder.filterParams(filter),
         ]);
         return this.http
             .get<
@@ -84,8 +81,8 @@ export class UserDefaultApi extends UserApi {
         filters: SentinelFilter[] = [],
     ): Observable<PaginatedResource<User>> {
         const params = SentinelParamsMerger.merge([
-            PaginationHttpParams.createPaginationParams(pagination),
-            FilterParams.create(filters),
+            ParamsBuilder.javaPaginationParams(pagination),
+            ParamsBuilder.filterParams(filters),
         ]);
         return this.http
             .get<
@@ -107,8 +104,8 @@ export class UserDefaultApi extends UserApi {
     ): Observable<PaginatedResource<User>> {
         const idParams = new HttpParams().set('ids', groupIds.toString());
         const params = SentinelParamsMerger.merge([
-            PaginationHttpParams.createPaginationParams(pagination),
-            FilterParams.create(filters),
+            ParamsBuilder.javaPaginationParams(pagination),
+            ParamsBuilder.filterParams(filters),
             idParams,
         ]);
         return this.http
@@ -174,11 +171,10 @@ export class UserDefaultApi extends UserApi {
                 headers,
             })
             .pipe(
-                catchError((err) => JSONErrorConverter.fromBlob(err)),
-                map((resp) => { if(!resp.body) {throw new Error('Response has no body')} return resp}),
+                handleJsonError(),
                 map((resp) => {
-                    FileSaver.fromBlob(
-                        resp.body!,
+                    BlobFileSaver.saveBlob(
+                        resp.body,
                         ResponseHeaderContentDispositionReader.getFilenameFromResponse(resp, 'oidc_user_info.yml'),
                     );
                     return true;

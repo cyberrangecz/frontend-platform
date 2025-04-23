@@ -1,6 +1,6 @@
 export class PortDTO {
-    ip!: string;
-    mac!: string;
-    parent!: string;
-    name!: string;
+    ip: string;
+    mac: string;
+    parent: string;
+    name: string;
 }

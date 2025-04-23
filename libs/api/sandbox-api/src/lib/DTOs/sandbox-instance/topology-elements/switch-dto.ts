@@ -1,4 +1,4 @@
 export class SwitchDTO {
-    name!: string;
-    cidr!: string;
+    name: string;
+    cidr: string;
 }

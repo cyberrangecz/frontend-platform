@@ -4,7 +4,7 @@ import { MicroserviceCreateDTO } from '../DTO/microservice/microservice-create-d
 import { MicroserviceDTO } from '../DTO/microservice/microservice-dto';
 import { MicroserviceRoleDTO } from '../DTO/microservice/microservice-role-dto';
 import { RestResourceDTO } from '../DTO/rest-resource-dto.model';
-import { PaginationMapper } from './pagination-mapper';
+import { PaginationMapper } from '@crczp/api-common';
 
 /**
  * Class mapping internal model to DTOs and other way
@@ -42,7 +42,7 @@ export class MicroserviceMapper {
     ): PaginatedResource<Microservice> {
         const result = new PaginatedResource<Microservice>(
             restResource.content.map((microserviceDTO) => this.mapMicroserviceDTOToMicroservice(microserviceDTO)),
-            PaginationMapper.mapDTOToPagination(restResource.pagination),
+            PaginationMapper.fromJavaDTO(restResource.pagination),
         );
         return result;
     }
