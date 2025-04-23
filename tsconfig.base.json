@@ -15,10 +15,26 @@
         "skipDefaultLibCheck": true,
         "baseUrl": ".",
         "paths": {
+            "@crczp/adaptive-visualization": [
+                "libs/visualization/adaptive/src/index.ts"
+            ],
             "@crczp/api-common": ["libs/api/api-common/src/index.ts"],
+            "@crczp/command-visualization": [
+                "libs/visualization/command/src/index.ts"
+            ],
+            "@crczp/components-common": [
+                "libs/components/components/src/index.ts"
+            ],
             "@crczp/d3-service": ["libs/visualization/d3-service/src/index.ts"],
             "@crczp/sandbox-api": ["libs/api/sandbox-api/src/index.ts"],
             "@crczp/sandbox-model": ["libs/model/sandbox-model/src/index.ts"],
+            "@crczp/theme": ["libs/components/theme/src/index.ts"],
+            "@crczp/topology-graph": [
+                "libs/components/topology-graph/src/index.ts"
+            ],
+            "@crczp/topology-graph-model": [
+                "libs/model/topology-graph-model/src/index.ts"
+            ],
             "@crczp/training-api": ["libs/api/training-api/src/index.ts"],
             "@crczp/training-model": ["libs/model/training-model/src/index.ts"],
             "@crczp/user-and-group-api": [
@@ -26,6 +42,9 @@
             ],
             "@crczp/user-and-group-model": [
                 "libs/model/user-and-group-model/src/index.ts"
+            ],
+            "@crczp/walkthrough-visualization": [
+                "libs/visualization/walkthrough/src/index.ts"
             ]
         }
     },

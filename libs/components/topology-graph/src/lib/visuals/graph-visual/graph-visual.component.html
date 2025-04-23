@@ -1,0 +1,22 @@
+<svg #svg [attr.width]="width" [attr.height]="height">
+    <!-- GRAPH -->
+    <g>
+        <!-- LINKS -->
+        <g [linkVisual]="link" *ngFor="let link of links" />
+        <!-- NODES -->
+        <g
+            *ngFor="let node of nodes"
+            nodeVisual
+            [zoom]="zoom"
+            [node]="node"
+            [graphSize]="{width, height}"
+            [cloudSandboxInstance]="cloudSandboxInstance"
+            [draggableNode]="node"
+            [draggableInGraph]="graph"
+            [isConsoleReady]="isConsoleReady"
+            (polling)="onPollingStateChange($event)"
+            (loadConsoles)="onLoadConsoles($event)"
+            (showContainers)="onShowContainers($event)"
+        />
+    </g>
+</svg>

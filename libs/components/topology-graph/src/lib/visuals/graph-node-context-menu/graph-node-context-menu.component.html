@@ -1,0 +1,40 @@
+<svg #menu [style.z-index]="9999">
+    <g *ngIf="isDisplayed" class="items">
+        <g
+            *ngFor="let item of items; index as i"
+            class="item"
+            (click)="onItemClick($event, item)"
+        >
+            <rect
+                class="item"
+                [attr.width]="MENU_ROW_WIDTH"
+                [attr.height]="MENU_ROW_HEIGHT"
+                [attr.x]="location.left"
+                [attr.y]="location.top + i * MENU_ROW_HEIGHT"
+            />
+            <text
+                class="item"
+                [style.font-size]="15 * zoom + 'px'"
+                [ngClass]="{
+                    disabled:
+                        item.title === 'Open console (deprecated)' &&
+                        !isConsoleReady
+                }"
+                [attr.width]="MENU_ROW_WIDTH"
+                [attr.height]="MENU_ROW_HEIGHT"
+                [attr.x]="location.left + 10"
+                [attr.y]="location.top + i * MENU_ROW_HEIGHT + 15 * zoom"
+            >
+                <a
+                    *ngIf="
+                        item.title === 'Open console (deprecated)' &&
+                        !isConsoleReady
+                    "
+                >
+                    Loading:
+                </a>
+                {{ item.title }}
+            </text>
+        </g>
+    </g>
+</svg>

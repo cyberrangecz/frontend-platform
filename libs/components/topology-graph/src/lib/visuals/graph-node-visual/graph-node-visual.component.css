@@ -1,0 +1,32 @@
+text {
+    font-family: Inter, sans-serif;
+    font-size: 11px;
+    cursor: pointer;
+}
+
+title {
+    display: block;
+}
+
+g.node rect {
+    fill: var(--neutral-100);
+    cursor: pointer;
+    stroke: var(--neutral-40);
+    stroke-width: 1px;
+}
+
+g.node rect.collapsed {
+    fill: none;
+}
+
+g.node.online rect {
+    stroke: green;
+}
+
+g.node.offline rect {
+    stroke: red;
+}
+
+image {
+    cursor: pointer;
+}

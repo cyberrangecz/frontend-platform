@@ -68,7 +68,11 @@
         },
         "@nx/angular:library": {
             "linter": "eslint",
-            "unitTestRunner": "vitest"
+            "unitTestRunner": "vitest",
+            "strict": false
+        },
+        "@nx/angular:component": {
+            "style": "scss"
         }
     },
     "neverConnectToCloud": true,

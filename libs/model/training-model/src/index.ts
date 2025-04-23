@@ -62,6 +62,9 @@ export * from './lib/questions/extended-matching-items';
 export * from './lib/questions/free-form-question';
 export * from './lib/questions/multiple-choice-question';
 export * from './lib/questions/question';
+export * from './lib/questions/question-choice';
+export * from './lib/questions/extended-matching-option';
+export * from './lib/questions/extended-matching-statement';
 
 // USERS
 export * from './lib/user-ref/training-user';

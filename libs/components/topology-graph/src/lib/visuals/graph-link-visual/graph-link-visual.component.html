@@ -1,0 +1,27 @@
+<svg>
+    <g>
+        <!-- LINK -->
+        <line
+            class="link"
+            [attr.x1]="link.source.x"
+            [attr.y1]="link.source.y"
+            [attr.x2]="link.target.x"
+            [attr.y2]="link.target.y"
+        />
+        <!-- animation motion path from source to target. USE THIS as mpath if other animated decorators are added -->
+        <path
+            [id]="'motion-path-' + link.id"
+            [attr.d]="
+                'M' +
+                link.source.x +
+                ' ' +
+                link.source.y +
+                ' L' +
+                link.target.x +
+                ' ' +
+                link.target.y
+            "
+            fill="none"
+        ></path>
+    </g>
+</svg>

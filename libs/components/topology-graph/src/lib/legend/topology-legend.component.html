@@ -1,0 +1,19 @@
+<div
+    [style.width.px]="width"
+    [style.height.px]="height"
+    class="topology-legend"
+>
+    <span class="title"> Node types: </span>
+    <div
+        class="node-group"
+        *ngFor="let a of nodeNames"
+        [style.margin]="iconsMargin"
+    >
+        <img
+            [alt]="a.name"
+            [attr.src]="iconsPath + a.icon + '.svg'"
+            class="node-icon"
+        />
+        <span>{{ a.name }}</span>
+    </div>
+</div>

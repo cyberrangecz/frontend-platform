@@ -10,7 +10,7 @@ export class User {
     picture!: string;
     nameWithAcademicTitles!: string;
     mail!: string;
-    issuer!: string;
+    issuer?: string;
     groupIds: number[] = [];
     roles: UserRole[] = [];
 }

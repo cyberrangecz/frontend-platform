@@ -1,0 +1,92 @@
+<mat-card class="topology-view">
+    <crczp-topology-app-legend
+        class="topology__view-legend"
+        [style.float]="'left'"
+        [legendAttachment]="'vertical'"
+        [showContainers]="showLegendContainers"
+    />
+    <div #topologyContent class="topology-view__topology-content">
+        <div class="controls-anchor">
+            <button
+                #collapseAllButton
+                mat-mini-fab
+                class="control"
+                matTooltip="Collapse all"
+                matTooltipPosition="before"
+                (click)="
+                    graphEventService.collapseAll();
+                    collapseAllButton._elementRef.nativeElement.blur()
+                "
+            >
+                <mat-icon>close_fullscreen</mat-icon>
+            </button>
+            <button
+                #expandAllButton
+                mat-mini-fab
+                class="control"
+                matTooltip="Expand all"
+                matTooltipPosition="before"
+                (click)="
+                    graphEventService.expandAll();
+                    expandAllButton._elementRef.nativeElement.blur()
+                "
+            >
+                <mat-icon>open_in_full</mat-icon>
+            </button>
+            <mat-slider
+                class="control zoom-slider"
+                [min]="0.6"
+                [max]="1.2"
+                [step]="0.1"
+                matTooltip="Zoom"
+                matTooltipPosition="before"
+            >
+                <input
+                    matSliderThumb
+                    value="{{ zoom }}"
+                    (valueChange)="zoom = $event"
+                />
+            </mat-slider>
+        </div>
+        @if (isError) {
+        <div class="error-message">
+            <h3>Could not load topology data.</h3>
+            <div class="try-again">
+                <button mat-button color="primary" (click)="reloadTopology()">
+                    Try again
+                </button>
+            </div>
+        </div>
+        } @else if (isLoading$ | async) {
+        <div class="loading-wrapper">
+            <crczp-logo-spinner />
+            <h3 class="loading-text">Loading topology...</h3>
+        </div>
+        }
+        <!--GRAPH-->
+        <crczp-graph
+            class="topology-content__graph"
+            *ngIf="dataLoaded"
+            [cloudSandboxInstance]="isCloudSandboxInstance()"
+            [isConsoleReady]="isConsoleReady$ | async"
+            [draggedNode]="draggedNode"
+            [height]="getTopologyHeight()"
+            [width]="getTopologyWidth()"
+            [nodes]="nodes"
+            [links]="links"
+            [zoom]="1 / zoom"
+            (polling)="onPollingStateChange($event)"
+            (loadConsoles)="onLoadConsoles($event)"
+            (showContainers)="onShowContainers($event)"
+        >
+        </crczp-graph>
+    </div>
+</mat-card>
+
+<!-- EXAMPLE LEGEND HORIZONTAL BOTTOM -->
+<!--
+<crczp-topology-app-legend [width]="800"
+                           [height]="65"
+                           [legendAttachment]="'horizontal'"
+></crczp-topology-app-legend>
+-->

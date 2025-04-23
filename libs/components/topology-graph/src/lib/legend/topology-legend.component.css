@@ -1,0 +1,39 @@
+.topology-legend {
+    padding: 0.5rem 0.5rem 1rem 0.5rem;
+    display: flex;
+    flex-direction: column;
+    background: var(--neutral-100);
+    box-shadow: 0 10px 10px 0 rgba(0, 0, 0, 0.1);
+    height: 100%;
+    min-width: 2rem;
+}
+
+.topology-legend .title {
+    float: left;
+    cursor: default;
+    margin-top: 10px;
+    text-align: center;
+}
+
+.topology-legend span {
+    font-size: 10px;
+    line-height: normal;
+}
+
+.topology-legend .title span {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.topology-legend .node-group {
+    float: left;
+    display: grid;
+    text-align: center;
+    cursor: default;
+}
+
+.topology-legend .node-icon {
+    margin: auto;
+    width: 25px;
+    height: 25px;
+}

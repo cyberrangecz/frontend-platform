@@ -1,0 +1,36 @@
+{
+    "name": "topology-graph",
+    "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+    "sourceRoot": "libs/components/topology-graph/src",
+    "prefix": "crczp",
+    "projectType": "library",
+    "tags": [],
+    "targets": {
+        "build": {
+            "executor": "@nx/angular:ng-packagr-lite",
+            "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
+            "options": {
+                "project": "libs/components/topology-graph/ng-package.json"
+            },
+            "configurations": {
+                "production": {
+                    "tsConfig": "libs/components/topology-graph/tsconfig.lib.prod.json"
+                },
+                "development": {
+                    "tsConfig": "libs/components/topology-graph/tsconfig.lib.json"
+                }
+            },
+            "defaultConfiguration": "production"
+        },
+        "test": {
+            "executor": "@nx/vite:test",
+            "outputs": ["{options.reportsDirectory}"],
+            "options": {
+                "reportsDirectory": "../../../coverage/libs/components/topology-graph"
+            }
+        },
+        "lint": {
+            "executor": "@nx/eslint:lint"
+        }
+    }
+}
