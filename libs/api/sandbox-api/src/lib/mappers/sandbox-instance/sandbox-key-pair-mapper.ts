@@ -1,5 +1,5 @@
 import { SandboxKeyPair } from '@crczp/sandbox-model';
-import { SandboxKeyPairDTO } from '../../DTOs/sandbox-instance/sandbox-key-pair-dto';
+import { SandboxKeyPairDTO } from '../../dto/sandbox-instance/sandbox-key-pair-dto';
 
 export class SandboxKeyPairMapper {
     static fromDTO(dto: SandboxKeyPairDTO): SandboxKeyPair {

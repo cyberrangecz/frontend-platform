@@ -1,7 +1,7 @@
 /**
  * @dynamic
  */
-import { OwnerSpecifiedDTO } from '../../DTOs/vm-images/owner-specified-dto';
+import { OwnerSpecifiedDTO } from '../../dto/vm-images/owner-specified-dto';
 import { OwnerSpecified } from '@crczp/sandbox-model';
 
 export class OwnerSpecifiedMapper {

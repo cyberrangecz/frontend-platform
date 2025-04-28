@@ -6,7 +6,6 @@ import { SentinelFilter } from '@sentinel/common/filter';
 import { User, UserRole } from '@crczp/user-and-group-model';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { RestResourceDTO } from '../../DTO/rest-resource-dto.model';
 import { RoleDTO } from '../../DTO/role/role-dto';
 import { UserDTO } from '../../DTO/user/user-dto.model';
 import { RoleMapper } from '../../mappers/role-mapper';
@@ -14,7 +13,7 @@ import { UserMapper } from '../../mappers/user.mapper';
 import { UserAndGroupApiConfig } from '../../other/user-and-group-api-config';
 import { UserAndGroupContext } from '../../other/user-and-group.context.service';
 import { RoleApi } from './role-api.service';
-import { ParamsBuilder } from '@crczp/api-common';
+import { JavaPaginatedResource, ParamsBuilder } from '@crczp/api-common';
 
 /**
  * Default implementation of service abstracting http communication with roles endpoint
@@ -44,7 +43,7 @@ export class RoleDefaultApi extends RoleApi {
         ]);
         return this.http
             .get<
-                RestResourceDTO<RoleDTO>
+                JavaPaginatedResource<RoleDTO>
             >(`${this.config.userAndGroupRestBasePath}${this.rolesPathExtension}`, { params })
             .pipe(map((resp) => RoleMapper.mapPaginatedRolesDTOtoRoles(resp)));
     }
@@ -66,7 +65,7 @@ export class RoleDefaultApi extends RoleApi {
         ]);
         return this.http
             .get<
-                RestResourceDTO<RoleDTO>
+                JavaPaginatedResource<RoleDTO>
             >(`${this.config.userAndGroupRestBasePath}${this.rolesPathExtension}/not-in-group/${groupId}`, { params })
             .pipe(map((resp) => RoleMapper.mapPaginatedRolesDTOtoRoles(resp)));
     }
@@ -97,7 +96,7 @@ export class RoleDefaultApi extends RoleApi {
             ParamsBuilder.filterParams(filters),
         ]);
         return this.http
-            .get<RestResourceDTO<UserDTO>>(
+            .get<JavaPaginatedResource<UserDTO>>(
                 `${this.config.userAndGroupRestBasePath}${this.rolesPathExtension}/${id}/users`,
                 {
                     params,
@@ -124,7 +123,7 @@ export class RoleDefaultApi extends RoleApi {
             typeParam,
         ]);
         return this.http
-            .get<RestResourceDTO<UserDTO>>(`${this.config.userAndGroupRestBasePath}${this.rolesPathExtension}/users`, {
+            .get<JavaPaginatedResource<UserDTO>>(`${this.config.userAndGroupRestBasePath}${this.rolesPathExtension}/users`, {
                 params,
             })
             .pipe(map((resp) => UserMapper.mapUserDTOsToUsers(resp)));
@@ -153,7 +152,7 @@ export class RoleDefaultApi extends RoleApi {
         ]);
         return this.http
             .get<
-                RestResourceDTO<UserDTO>
+                JavaPaginatedResource<UserDTO>
             >(`${this.config.userAndGroupRestBasePath}${this.rolesPathExtension}/users-not-with-ids`, { params })
             .pipe(map((resp) => UserMapper.mapUserDTOsToUsers(resp)));
     }

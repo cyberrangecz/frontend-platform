@@ -9,12 +9,12 @@ import {
 } from '@crczp/sandbox-model';
 import { HttpClient } from '@angular/common/http';
 import { SandboxApiConfigService } from '../../../others/sandbox-api-config.service';
-import { RequestDTO } from '../../../DTOs/sandbox-instance/request-dto';
+import { RequestDTO } from '../../../dto/sandbox-instance/request-dto';
 import { map } from 'rxjs/operators';
 import { RequestMapper } from '../../../mappers/sandbox-instance/request-mapper';
-import { TerraformCleanupStageDTO } from '../../../DTOs/sandbox-instance/stages/terraform-cleanup-stage-dto';
+import { TerraformCleanupStageDTO } from '../../../dto/sandbox-instance/stages/terraform-cleanup-stage-dto';
 import { RequestStageMapper } from '../../../mappers/sandbox-instance/request-stage-mapper';
-import { AnsibleCleanupStageDTO } from '../../../DTOs/sandbox-instance/stages/ansible-cleanup-stage-dto';
+import { AnsibleCleanupStageDTO } from '../../../dto/sandbox-instance/stages/ansible-cleanup-stage-dto';
 
 /**
  * Default implementation of service abstracting http communication with cleanup requests endpoints.

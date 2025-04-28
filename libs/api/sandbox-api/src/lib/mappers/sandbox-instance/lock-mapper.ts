@@ -1,5 +1,5 @@
 import { Lock } from '@crczp/sandbox-model';
-import { LockDTO } from '../../DTOs/sandbox-instance/lock-dto';
+import { LockDTO } from '../../dto/sandbox-instance/lock-dto';
 
 /**
  * @dynamic

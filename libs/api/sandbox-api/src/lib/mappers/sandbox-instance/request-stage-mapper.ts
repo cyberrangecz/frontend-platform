@@ -10,14 +10,14 @@ import {
     UserAnsibleAllocationStage,
     UserAnsibleCleanupStage,
 } from '@crczp/sandbox-model';
-import { AnsibleAllocationOutputDTO } from '../../DTOs/sandbox-instance/stages/ansible-allocation-output-dto';
-import { AnsibleAllocationStageDTO } from '../../DTOs/sandbox-instance/stages/ansible-allocation-stage-dto';
-import { AnsibleCleanupStageDTO } from '../../DTOs/sandbox-instance/stages/ansible-cleanup-stage-dto';
-import { TerraformAllocationStageDTO } from '../../DTOs/sandbox-instance/stages/terraform-allocation-stage-dto';
-import { TerraformCleanupStageDTO } from '../../DTOs/sandbox-instance/stages/terraform-cleanup-stage-dto';
-import { TerraformOutputDTO } from '../../DTOs/sandbox-instance/stages/terraform-output-dto';
-import { CloudResourceDTO } from '../../DTOs/sandbox-instance/stages/cloud-resource-dto';
-import { RequestStageDTO } from '../../DTOs/sandbox-instance/stages/request-stage-dto';
+import { AnsibleAllocationOutputDTO } from '../../dto/sandbox-instance/stages/ansible-allocation-output-dto';
+import { AnsibleAllocationStageDTO } from '../../dto/sandbox-instance/stages/ansible-allocation-stage-dto';
+import { AnsibleCleanupStageDTO } from '../../dto/sandbox-instance/stages/ansible-cleanup-stage-dto';
+import { TerraformAllocationStageDTO } from '../../dto/sandbox-instance/stages/terraform-allocation-stage-dto';
+import { TerraformCleanupStageDTO } from '../../dto/sandbox-instance/stages/terraform-cleanup-stage-dto';
+import { TerraformOutputDTO } from '../../dto/sandbox-instance/stages/terraform-output-dto';
+import { CloudResourceDTO } from '../../dto/sandbox-instance/stages/cloud-resource-dto';
+import { RequestStageDTO } from '../../dto/sandbox-instance/stages/request-stage-dto';
 
 /**
  * @dynamic

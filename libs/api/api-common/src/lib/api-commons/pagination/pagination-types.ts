@@ -21,6 +21,11 @@ export type JavaOffsetPaginationDTO = {
     total_elements?: number,
 }
 
+export type JavaPaginatedResource<T> = {
+    content?: T[];
+    pagination?: JavaOffsetPaginationDTO;
+}
+
 export type DjangoOffsetPaginationDTO = {
     page?: number,
     page_size?: number,
@@ -30,7 +35,7 @@ export type DjangoOffsetPaginationDTO = {
 }
 
 export type DjangoResourceDTO<T> = DjangoOffsetPaginationDTO & {
-    results?: T;
+    results?: T[];
 }
 
 

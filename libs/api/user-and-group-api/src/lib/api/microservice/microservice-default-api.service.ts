@@ -8,12 +8,11 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { MicroserviceCreateDTO } from '../../DTO/microservice/microservice-create-dto.model';
 import { MicroserviceDTO } from '../../DTO/microservice/microservice-dto';
-import { RestResourceDTO } from '../../DTO/rest-resource-dto.model';
 import { MicroserviceMapper } from '../../mappers/microservice.mapper';
 import { UserAndGroupApiConfig } from '../../other/user-and-group-api-config';
 import { UserAndGroupContext } from '../../other/user-and-group.context.service';
 import { MicroserviceApi } from './microservice-api.service';
-import { ParamsBuilder } from '@crczp/api-common';
+import { JavaPaginatedResource, ParamsBuilder } from '@crczp/api-common';
 
 /**
  * Implementation of http communication with microservice endpoints.
@@ -59,7 +58,7 @@ export class MicroserviceDefaultApi extends MicroserviceApi {
             ParamsBuilder.filterParams(filter),
         ]);
         return this.http
-            .get<RestResourceDTO<MicroserviceDTO>>(`${this.config.userAndGroupRestBasePath}microservices`, { params })
+            .get<JavaPaginatedResource<MicroserviceDTO>>(`${this.config.userAndGroupRestBasePath}microservices`, { params })
             .pipe(map((resp) => MicroserviceMapper.mapMicroserviceDTOsToMicroservices(resp)));
     }
 }

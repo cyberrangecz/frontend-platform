@@ -14,7 +14,6 @@ import {
     QuestionAnswer,
     TrainingRun
 } from '@crczp/training-model';
-import { TrainingRunRestResource } from '../../dto/training-run/training-run-rest-resource';
 import { map } from 'rxjs/operators';
 import { TrainingRunDTO } from '../../dto/training-run/training-run-dto';
 import { AccessTrainingRunDTO } from '../../dto/training-run/access-training-run-dto';
@@ -27,7 +26,7 @@ import { IsCorrectAnswerDTO } from '../../dto/phase/training-phase/is-correct-an
 import { TaskAnswerMapper } from '../../mappers/training-run/task-answer-mapper';
 import { QuestionAnswerMapper } from '../../mappers/phase/question-answer-mapper';
 import { AnsweredPhaseMapper } from '../../mappers/training-run/training-run-phases/answered-phase-mapper';
-import { PaginationMapper, ParamsBuilder } from '@crczp/api-common';
+import { JavaPaginatedResource, PaginationMapper, ParamsBuilder } from '@crczp/api-common';
 
 @Injectable()
 export class AdaptiveRunDefaultApi extends AdaptiveRunApi {
@@ -52,7 +51,7 @@ export class AdaptiveRunDefaultApi extends AdaptiveRunApi {
             ParamsBuilder.filterParams(filters),
         ]);
         return this.http
-            .get<TrainingRunRestResource>(this.trainingRunsEndpointUri, { params })
+            .get<JavaPaginatedResource<TrainingRunDTO>>(this.trainingRunsEndpointUri, { params })
             .pipe(
                 map(
                     (response) =>
@@ -80,7 +79,7 @@ export class AdaptiveRunDefaultApi extends AdaptiveRunApi {
      */
     getAccessed(pagination: OffsetPaginationEvent): Observable<PaginatedResource<AccessedTrainingRun>> {
         return this.http
-            .get<TrainingRunRestResource>(`${this.trainingRunsEndpointUri}/accessible`, {
+            .get<JavaPaginatedResource<TrainingRunDTO>>(`${this.trainingRunsEndpointUri}/accessible`, {
                 params: ParamsBuilder.javaPaginationParams(pagination),
             })
             .pipe(

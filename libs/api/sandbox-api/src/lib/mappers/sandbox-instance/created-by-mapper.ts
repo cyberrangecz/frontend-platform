@@ -1,5 +1,5 @@
 import { CreatedBy } from '@crczp/sandbox-model';
-import { CreatedByDTO } from '../../DTOs/sandbox-instance/created-by-dto';
+import { CreatedByDTO } from '../../dto/sandbox-instance/created-by-dto';
 
 /**
  * @dynamic

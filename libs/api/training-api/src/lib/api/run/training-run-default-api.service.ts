@@ -20,7 +20,6 @@ import { HintDTO } from '../../dto/level/training/hint-dto';
 import { IsCorrectAnswerDto } from '../../dto/level/training/is-correct-answer-dto';
 import { AccessTrainingRunDTO } from '../../dto/training-run/access-training-run-dto';
 import { TrainingRunDTO } from '../../dto/training-run/training-run-dto';
-import { TrainingRunRestResource } from '../../dto/training-run/training-run-rest-resource';
 import { QuestionMapper } from '../../mappers/level/assessment/question-mapper';
 import { HintMapper } from '../../mappers/level/training/hint-mapper';
 import { LevelMapper } from '../../mappers/level/level-mapper';
@@ -33,7 +32,7 @@ import { TrainingRunApi } from './training-run-api.service';
 import { TrainingRunInfoDTO } from '../../dto/training-run/training-run-info-dto';
 import { TrainingRunInfoMapper } from '../../mappers/training-run/training-run-info-mapper';
 import { AnsweredLevelMapper } from '../../mappers/training-run/training-run-levels/answered-level-mapper';
-import { PaginationMapper, ParamsBuilder } from '@crczp/api-common';
+import { JavaPaginatedResource, PaginationMapper, ParamsBuilder } from '@crczp/api-common';
 
 /**
  * Default implementation of service abstracting http communication with training run endpoints.
@@ -66,7 +65,7 @@ export class TrainingRunDefaultApi extends TrainingRunApi {
             ParamsBuilder.filterParams(filters),
         ]);
         return this.http
-            .get<TrainingRunRestResource>(this.trainingRunsEndpointUri, { params })
+            .get<JavaPaginatedResource<TrainingRunDTO>>(this.trainingRunsEndpointUri, { params })
             .pipe(
                 map(
                     (response) =>
@@ -103,7 +102,7 @@ export class TrainingRunDefaultApi extends TrainingRunApi {
         ]);
 
         return this.http
-            .get<TrainingRunRestResource>(`${this.trainingRunsEndpointUri}/accessible`, { params })
+            .get<JavaPaginatedResource<AccessTrainingRunDTO>>(`${this.trainingRunsEndpointUri}/accessible`, { params })
             .pipe(
                 map(
                     (response) =>

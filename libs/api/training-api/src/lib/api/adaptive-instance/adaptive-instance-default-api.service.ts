@@ -8,13 +8,18 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { TrainingInstanceAssignPoolDTO } from '../../dto/training-instance/training-instance-assign-pool-dto';
 import { TrainingInstanceDTO } from '../../dto/training-instance/training-instance-dto';
-import { TrainingInstanceRestResource } from '../../dto/training-instance/training-instance-rest-resource';
-import { TrainingRunRestResource } from '../../dto/training-run/training-run-rest-resource';
 import { TrainingInstanceMapper } from '../../mappers/training-instance/training-instance-mapper';
 import { TrainingRunMapper } from '../../mappers/training-run/training-run-mapper';
 import { TrainingApiContext } from '../../other/training-api-context';
 import { AdaptiveInstanceApi } from './adaptive-instance-api.service';
-import { BlobFileSaver, handleJsonError, PaginationMapper, ParamsBuilder } from '@crczp/api-common';
+import {
+    BlobFileSaver,
+    handleJsonError,
+    JavaPaginatedResource,
+    PaginationMapper,
+    ParamsBuilder
+} from '@crczp/api-common';
+import { TrainingRunDTO } from '../../dto/training-run/training-run-dto';
 
 /**
  * Default implementation of service abstracting http communication with training instance endpoints.
@@ -52,7 +57,7 @@ export class AdaptiveInstanceDefaultApi extends AdaptiveInstanceApi {
             ParamsBuilder.filterParams(filters),
         ]);
         return this.http
-            .get<TrainingInstanceRestResource>(this.trainingInstancesEndpointUri, { params })
+            .get<JavaPaginatedResource<TrainingInstanceDTO>>(this.trainingInstancesEndpointUri, { params })
             .pipe(
                 map(
                     (response) =>
@@ -98,7 +103,7 @@ export class AdaptiveInstanceDefaultApi extends AdaptiveInstanceApi {
     ): Observable<PaginatedResource<TrainingRun>> {
         const params = ParamsBuilder.javaPaginationParams(pagination);
         return this.http
-            .get<TrainingRunRestResource>(
+            .get<JavaPaginatedResource<TrainingRunDTO>>(
                 `${this.trainingInstancesEndpointUri}/${trainingInstanceId}/${this.trainingRunsUriExtension}`,
                 { params },
             )

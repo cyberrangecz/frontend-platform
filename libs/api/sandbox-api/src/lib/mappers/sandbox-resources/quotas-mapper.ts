@@ -1,5 +1,5 @@
 import { QuotaMapper } from './quota-mapper';
-import { QuotasDTO } from './../../DTOs/sandbox-resources/quotas-dto';
+import { QuotasDTO } from './../../dto/sandbox-resources/quotas-dto';
 import { Quotas } from '@crczp/sandbox-model';
 
 /**

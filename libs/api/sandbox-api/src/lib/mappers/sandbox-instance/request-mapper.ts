@@ -1,5 +1,5 @@
 import { AllocationRequest, CleanupRequest, Request, RequestStageState } from '@crczp/sandbox-model';
-import { RequestDTO } from '../../DTOs/sandbox-instance/request-dto';
+import { RequestDTO } from '../../dto/sandbox-instance/request-dto';
 
 /**
  * @dynamic

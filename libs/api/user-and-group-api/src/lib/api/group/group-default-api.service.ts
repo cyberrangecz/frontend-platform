@@ -7,14 +7,13 @@ import { Group, UserRole } from '@crczp/user-and-group-model';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { GroupDTO } from '../../DTO/group/group-dto.model';
-import { RestResourceDTO } from '../../DTO/rest-resource-dto.model';
 import { RoleDTO } from '../../DTO/role/role-dto';
 import { GroupMapper } from '../../mappers/group.mapper';
 import { RoleMapper } from '../../mappers/role-mapper';
 import { UserAndGroupApiConfig } from '../../other/user-and-group-api-config';
 import { UserAndGroupContext } from '../../other/user-and-group.context.service';
 import { GroupApi } from './group-api.service';
-import { ParamsBuilder } from '@crczp/api-common';
+import { JavaPaginatedResource, ParamsBuilder } from '@crczp/api-common';
 
 /**
  * Default implementation of service abstracting http communication with group endpoints.
@@ -46,7 +45,7 @@ export class GroupDefaultApi extends GroupApi {
         ]);
         return this.http
             .get<
-                RestResourceDTO<GroupDTO>
+                JavaPaginatedResource<GroupDTO>
             >(`${this.config.userAndGroupRestBasePath}${this.groupsPathExtension}`, { params })
             .pipe(map((resp) => GroupMapper.mapPaginatedGroupDTOsToGroups(resp)));
     }
@@ -144,7 +143,7 @@ export class GroupDefaultApi extends GroupApi {
         ]);
         return this.http
             .get<
-                RestResourceDTO<RoleDTO>
+                JavaPaginatedResource<RoleDTO>
             >(`${this.config.userAndGroupRestBasePath}${this.groupsPathExtension}/${groupId}/${this.rolesPathExtension}`, { params })
             .pipe(map((roleDTOs) => RoleMapper.mapPaginatedRolesDTOtoRoles(roleDTOs)));
     }

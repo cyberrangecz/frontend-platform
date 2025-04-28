@@ -15,13 +15,12 @@ import {
 } from '@crczp/sandbox-model';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { DjangoResourceDTO } from '../../DTOs/other/django-resource-dto';
-import { SandboxDefinitionDTO } from '../../DTOs/sandbox-definition/sandbox-definition-dto';
-import { LockDTO } from '../../DTOs/sandbox-instance/lock-dto';
-import { PoolDTO } from '../../DTOs/sandbox-instance/pool-dto';
-import { SandboxAllocationUnitDTO } from '../../DTOs/sandbox-instance/sandbox-allocation-unit-dto';
-import { SandboxInstanceDTO } from '../../DTOs/sandbox-instance/sandbox-instance-dto';
-import { SandboxKeyPairDTO } from '../../DTOs/sandbox-instance/sandbox-key-pair-dto';
+import { SandboxDefinitionDTO } from '../../dto/sandbox-definition/sandbox-definition-dto';
+import { LockDTO } from '../../dto/sandbox-instance/lock-dto';
+import { PoolDTO } from '../../dto/sandbox-instance/pool-dto';
+import { SandboxAllocationUnitDTO } from '../../dto/sandbox-instance/sandbox-allocation-unit-dto';
+import { SandboxInstanceDTO } from '../../dto/sandbox-instance/sandbox-instance-dto';
+import { SandboxKeyPairDTO } from '../../dto/sandbox-instance/sandbox-key-pair-dto';
 import { LockMapper } from '../../mappers/sandbox-instance/lock-mapper';
 import { PoolMapper } from '../../mappers/sandbox-instance/pool-mapper';
 import { SandboxKeyPairMapper } from '../../mappers/sandbox-instance/sandbox-key-pair-mapper';
@@ -30,9 +29,9 @@ import { SandboxDefinitionMapper } from '../../mappers/sandbox-definition/sandbo
 import { SandboxAllocationUnitMapper } from '../../mappers/sandbox-instance/sandbox-allocation-unit-mapper';
 import { SandboxInstanceMapper } from '../../mappers/sandbox-instance/sandbox-instance-mapper';
 import { PoolApi } from './pool.api.service';
-import { RequestDTO } from '../../DTOs/sandbox-instance/request-dto';
+import { RequestDTO } from '../../dto/sandbox-instance/request-dto';
 import { RequestMapper } from '../../mappers/sandbox-instance/request-mapper';
-import { BlobFileSaver, handleJsonError, PaginationMapper, ParamsBuilder } from '@crczp/api-common';
+import { BlobFileSaver, DjangoResourceDTO, handleJsonError, PaginationMapper, ParamsBuilder } from '@crczp/api-common';
 
 /**
  * Default implementation of service abstracting http communication with pools endpoints.

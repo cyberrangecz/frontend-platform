@@ -10,19 +10,18 @@ import {
 } from '@crczp/sandbox-model';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { RequestDTO } from '../../../DTOs/sandbox-instance/request-dto';
+import { RequestDTO } from '../../../dto/sandbox-instance/request-dto';
 import { RequestMapper } from '../../../mappers/sandbox-instance/request-mapper';
 import { SandboxApiConfigService } from '../../../others/sandbox-api-config.service';
 import { AllocationRequestsApi } from './allocation-requests-api.service';
 import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
-import { TerraformAllocationStageDTO } from '../../../DTOs/sandbox-instance/stages/terraform-allocation-stage-dto';
+import { TerraformAllocationStageDTO } from '../../../dto/sandbox-instance/stages/terraform-allocation-stage-dto';
 import { RequestStageMapper } from '../../../mappers/sandbox-instance/request-stage-mapper';
-import { AnsibleAllocationStageDTO } from '../../../DTOs/sandbox-instance/stages/ansible-allocation-stage-dto';
-import { DjangoResourceDTO } from '../../../DTOs/other/django-resource-dto';
-import { AnsibleAllocationOutputDTO } from '../../../DTOs/sandbox-instance/stages/ansible-allocation-output-dto';
-import { TerraformOutputDTO } from '../../../DTOs/sandbox-instance/stages/terraform-output-dto';
-import { CloudResourceDTO } from '../../../DTOs/sandbox-instance/stages/cloud-resource-dto';
-import { PaginationMapper, ParamsBuilder } from '@crczp/api-common';
+import { AnsibleAllocationStageDTO } from '../../../dto/sandbox-instance/stages/ansible-allocation-stage-dto';
+import { AnsibleAllocationOutputDTO } from '../../../dto/sandbox-instance/stages/ansible-allocation-output-dto';
+import { TerraformOutputDTO } from '../../../dto/sandbox-instance/stages/terraform-output-dto';
+import { CloudResourceDTO } from '../../../dto/sandbox-instance/stages/cloud-resource-dto';
+import { DjangoResourceDTO, PaginationMapper, ParamsBuilder } from '@crczp/api-common';
 
 /**
  * Default implementation of service abstracting http communication with allocation requests endpoints.

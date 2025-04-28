@@ -1,5 +1,5 @@
 import { VMInfo, VMStatus } from '@crczp/sandbox-model';
-import { VMInfoDTO } from '../../DTOs/sandbox-instance/vm-info-dto';
+import { VMInfoDTO } from '../../dto/sandbox-instance/vm-info-dto';
 
 export class VMInfoMapper {
     static fromDTO(dto: VMInfoDTO): VMInfo {

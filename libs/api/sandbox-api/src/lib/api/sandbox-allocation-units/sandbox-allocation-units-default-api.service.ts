@@ -4,10 +4,10 @@ import { AllocationRequest, CleanupRequest, SandboxAllocationUnit } from '@crczp
 import { Observable } from 'rxjs';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { SandboxApiConfigService } from '../../others/sandbox-api-config.service';
-import { SandboxAllocationUnitDTO } from '../../DTOs/sandbox-instance/sandbox-allocation-unit-dto';
+import { SandboxAllocationUnitDTO } from '../../dto/sandbox-instance/sandbox-allocation-unit-dto';
 import { map } from 'rxjs/operators';
 import { SandboxAllocationUnitMapper } from '../../mappers/sandbox-instance/sandbox-allocation-unit-mapper';
-import { RequestDTO } from '../../DTOs/sandbox-instance/request-dto';
+import { RequestDTO } from '../../dto/sandbox-instance/request-dto';
 import { RequestMapper } from '../../mappers/sandbox-instance/request-mapper';
 
 /**

@@ -9,8 +9,13 @@ import { TrainingApiContext } from '../../other/training-api-context';
 import { CheatingDetectionApi } from './cheating-detection-api.service';
 import { CheatingDetectionDTO } from '../../dto/cheating-detection/cheating-detection-dto';
 import { CheatingDetectionMapper } from '../../mappers/cheating-detection/cheating-detection-mapper';
-import { CheatingDetectionRestResource } from '../../dto/cheating-detection/cheating-detection-rest-resource';
-import { BlobFileSaver, handleJsonError, PaginationMapper, ParamsBuilder } from '@crczp/api-common';
+import {
+    BlobFileSaver,
+    handleJsonError,
+    JavaPaginatedResource,
+    PaginationMapper,
+    ParamsBuilder
+} from '@crczp/api-common';
 
 /**
  * Default implementation of service abstracting http communication with training event endpoints.
@@ -40,7 +45,7 @@ export class CheatingDetectionDefaultApi extends CheatingDetectionApi {
     ): Observable<PaginatedResource<CheatingDetection>> {
         const params = ParamsBuilder.javaPaginationParams(pagination);
         return this.http
-            .get<CheatingDetectionRestResource>(
+            .get<JavaPaginatedResource<CheatingDetectionDTO>>(
                 `${this.cheatingDetectionsEndpointUri}/${trainingInstanceId}/detections`,
                 {
                     params,

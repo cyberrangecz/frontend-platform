@@ -6,12 +6,11 @@ import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagin
 import { BetaTester, Designer, Organizer, TrainingUser } from '@crczp/training-model';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { UserRestResource } from '../../dto/rest/user-rest-resource-dto';
 import { UserMapper } from '../../mappers/user/user-mapper';
 import { TrainingApiContext } from '../../other/training-api-context';
 import { UserRefDTO } from './../../dto/user/user-ref-dto';
 import { UserApi } from './user-api.service';
-import { PaginationMapper, ParamsBuilder } from '@crczp/api-common';
+import { JavaPaginatedResource, PaginationMapper, ParamsBuilder } from '@crczp/api-common';
 
 /**
  * Default implementation of service abstracting http communication with user related endpoints.
@@ -57,7 +56,7 @@ export class UserDefaultApi extends UserApi {
             ParamsBuilder.filterParams(filters),
         ]);
         return this.http
-            .get<UserRestResource>(
+            .get<JavaPaginatedResource<UserRefDTO>>(
                 `${
                     adaptive ? this.adaptiveInstancesEndpointUri : this.trainingInstancesEndpointUri
                 }/${trainingInstanceId}/organizers-not-in-training-instance`,
@@ -84,7 +83,7 @@ export class UserDefaultApi extends UserApi {
             ParamsBuilder.filterParams(filters),
         ]);
         return this.http
-            .get<UserRestResource>(
+            .get<JavaPaginatedResource<UserRefDTO>>(
                 `${
                     adaptive ? this.adaptiveDefsEndpointUri : this.trainingDefsEndpointUri
                 }/${trainingDefinitionId}/designers-not-in-training-definition`,
@@ -111,7 +110,7 @@ export class UserDefaultApi extends UserApi {
             ParamsBuilder.filterParams(filters),
         ]);
         return this.http
-            .get<UserRestResource>(
+            .get<JavaPaginatedResource<UserRefDTO>>(
                 `${adaptive ? this.adaptiveDefsEndpointUri : this.trainingDefsEndpointUri}/${trainingDefinitionId}/authors`,
                 { params },
             )
@@ -136,7 +135,7 @@ export class UserDefaultApi extends UserApi {
             ParamsBuilder.filterParams(filters),
         ]);
         return this.http
-            .get<UserRestResource>(
+            .get<JavaPaginatedResource<UserRefDTO>>(
                 `${
                     adaptive ? this.adaptiveInstancesEndpointUri : this.trainingInstancesEndpointUri
                 }/${trainingInstanceId}/organizers`,
@@ -145,7 +144,7 @@ export class UserDefaultApi extends UserApi {
             .pipe(map((resp) => this.paginatedUsersFromDTO(resp)));
     }
 
-    private paginatedUsersFromDTO(dto: UserRestResource): PaginatedResource<TrainingUser> {
+    private paginatedUsersFromDTO(dto: JavaPaginatedResource<UserRefDTO>): PaginatedResource<TrainingUser> {
         return new PaginatedResource<TrainingUser>(
             UserMapper.fromDTOs(dto.content),
             PaginationMapper.fromJavaDTO(dto.pagination),
@@ -220,7 +219,7 @@ export class UserDefaultApi extends UserApi {
             ParamsBuilder.filterParams(filters),
         ]);
         return this.http
-            .get<UserRestResource>(
+            .get<JavaPaginatedResource<UserRefDTO>>(
                 `${
                     adaptive ? this.adaptiveInstancesEndpointUri : this.trainingInstancesEndpointUri
                 }/${trainingInstanceId}/beta-testers`,
@@ -247,7 +246,7 @@ export class UserDefaultApi extends UserApi {
             ParamsBuilder.filterParams(filters),
         ]);
         return this.http
-            .get<UserRestResource>(
+            .get<JavaPaginatedResource<UserRefDTO>>(
                 `${adaptive ? this.adaptiveDefsEndpointUri : this.trainingDefsEndpointUri}/${trainingDefinitionId}/designers`,
                 { params },
             )
@@ -272,7 +271,7 @@ export class UserDefaultApi extends UserApi {
             ParamsBuilder.filterParams(filters),
         ]);
         return this.http
-            .get<UserRestResource>(
+            .get<JavaPaginatedResource<UserRefDTO>>(
                 `${adaptive ? this.adaptiveDefsEndpointUri : this.trainingDefsEndpointUri}/${trainingDefinitionId}/organizers`,
                 { params },
             )

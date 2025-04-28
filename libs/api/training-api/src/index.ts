@@ -4,6 +4,8 @@ export * from './lib/dto/training-definition/training-definition-dto';
 export * from './lib/mappers/training-definition/training-definition-mapper';
 export * from './lib/mappers/phase/phase-mapper';
 export * from './lib/dto/phase/abstract-phase-dto';
+export * from './lib/mappers/training-run/training-run-mapper';
+export * from './lib/dto/training-run/training-run-dto';
 
 // API ABSTRACT SERVICES
 export * from './lib/api/definition/training-definition-api.service';

@@ -20,16 +20,19 @@ import { BasicLevelInfoDTO } from '../../dto/level/basic-level-info-dto';
 import { TrainingLevelDto } from '../../dto/level/training/training-level-dto';
 import { InfoLevelDTO } from '../../dto/level/info/info-level-dto';
 import { TrainingDefinitionDTO } from '../../dto/training-definition/training-definition-dto';
-import {
-    TrainingDefinitionInfoRestResource
-} from '../../dto/training-definition/training-definition-info-rest-resource';
-import { TrainingDefinitionRestResource } from '../../dto/training-definition/training-definition-rest-resource';
 import { LevelMapper } from '../../mappers/level/level-mapper';
 import { TrainingDefinitionInfoMapper } from '../../mappers/training-definition/training-definition-info-mapper';
 import { TrainingDefinitionMapper } from '../../mappers/training-definition/training-definition-mapper';
 import { TrainingApiContext } from '../../other/training-api-context';
 import { TrainingDefinitionApi } from './training-definition-api.service';
-import { BlobFileSaver, handleJsonError, PaginationMapper, ParamsBuilder } from '@crczp/api-common';
+import {
+    BlobFileSaver,
+    handleJsonError,
+    JavaPaginatedResource,
+    PaginationMapper,
+    ParamsBuilder
+} from '@crczp/api-common';
+import { TrainingDefinitionInfoDTO } from '../../dto/training-definition/training-definition-info-dto';
 
 /**
  * Service abstracting http communication with training definition endpoints.
@@ -70,7 +73,7 @@ export class TrainingDefinitionDefaultApi extends TrainingDefinitionApi {
             ParamsBuilder.filterParams(filters),
         ]);
         return this.http
-            .get<TrainingDefinitionRestResource>(this.trainingDefsEndpointUri, { params })
+            .get<JavaPaginatedResource<TrainingDefinitionDTO>>(this.trainingDefsEndpointUri, { params })
             .pipe(
                 map(
                     (response) =>
@@ -96,7 +99,7 @@ export class TrainingDefinitionDefaultApi extends TrainingDefinitionApi {
             ParamsBuilder.filterParams(filters),
         ]);
         return this.http
-            .get<TrainingDefinitionInfoRestResource>(`${this.trainingDefsEndpointUri}/for-organizers`, { params })
+            .get<JavaPaginatedResource<TrainingDefinitionInfoDTO>>(`${this.trainingDefsEndpointUri}/for-organizers`, { params })
             .pipe(
                 map(
                     (response) =>
@@ -389,7 +392,7 @@ export class TrainingDefinitionDefaultApi extends TrainingDefinitionApi {
             ParamsBuilder.filterParams(filters),
         ]);
         return this.http
-            .get<TrainingDefinitionRestResource>(
+            .get<JavaPaginatedResource<TrainingDefinitionDTO>>(
                 `${this.trainingDefsEndpointUri}/${this.sandboxDefUriExtension}/${sandboxDefId}`,
                 { params },
             )

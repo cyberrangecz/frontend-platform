@@ -6,7 +6,6 @@ import { SentinelFilter } from '@sentinel/common/filter';
 import { User, UserRole } from '@crczp/user-and-group-model';
 import { fromEvent, mergeMap, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { RestResourceDTO } from '../../DTO/rest-resource-dto.model';
 import { RoleDTO } from '../../DTO/role/role-dto';
 import { UserDTO } from '../../DTO/user/user-dto.model';
 import { RoleMapper } from '../../mappers/role-mapper';
@@ -14,7 +13,7 @@ import { UserMapper } from '../../mappers/user.mapper';
 import { UserAndGroupApiConfig } from '../../other/user-and-group-api-config';
 import { UserAndGroupContext } from '../../other/user-and-group.context.service';
 import { UserApi } from './user-api.service';
-import { BlobFileSaver, handleJsonError, ParamsBuilder } from '@crczp/api-common';
+import { BlobFileSaver, handleJsonError, JavaPaginatedResource, ParamsBuilder } from '@crczp/api-common';
 
 /**
  * Default implementation of abstracting http communication with user endpoints
@@ -44,7 +43,7 @@ export class UserDefaultApi extends UserApi {
         ]);
         return this.http
             .get<
-                RestResourceDTO<UserDTO>
+                JavaPaginatedResource<UserDTO>
             >(`${this.config.userAndGroupRestBasePath}${this.usersPathExtension}`, { params })
             .pipe(map((resp) => UserMapper.mapUserDTOsToUsers(resp)));
     }
@@ -86,7 +85,7 @@ export class UserDefaultApi extends UserApi {
         ]);
         return this.http
             .get<
-                RestResourceDTO<UserDTO>
+                JavaPaginatedResource<UserDTO>
             >(`${this.config.userAndGroupRestBasePath}${this.usersPathExtension}/not-in-group/${groupId}`, { params })
             .pipe(map((resp) => UserMapper.mapUserDTOsToUsers(resp)));
     }
@@ -109,7 +108,7 @@ export class UserDefaultApi extends UserApi {
             idParams,
         ]);
         return this.http
-            .get<RestResourceDTO<UserDTO>>(`${this.config.userAndGroupRestBasePath}${this.usersPathExtension}/groups`, {
+            .get<JavaPaginatedResource<UserDTO>>(`${this.config.userAndGroupRestBasePath}${this.usersPathExtension}/groups`, {
                 params,
             })
             .pipe(map((resp) => UserMapper.mapUserDTOsToUsers(resp)));
@@ -130,7 +129,7 @@ export class UserDefaultApi extends UserApi {
     getUserRoles(userId: number): Observable<PaginatedResource<UserRole>> {
         return this.http
             .get<
-                RestResourceDTO<RoleDTO>
+                JavaPaginatedResource<RoleDTO>
             >(`${this.config.userAndGroupRestBasePath}${this.usersPathExtension}/${userId}`)
             .pipe(map((resp) => RoleMapper.mapPaginatedRolesDTOtoRoles(resp)));
     }
@@ -142,7 +141,7 @@ export class UserDefaultApi extends UserApi {
     getUsersByIds(userIds: number): Observable<PaginatedResource<User>> {
         const idParams = new HttpParams().set('ids', userIds.toString());
         return this.http
-            .get<RestResourceDTO<UserDTO>>(`${this.config.userAndGroupRestBasePath}${this.usersPathExtension}/ids`, {
+            .get<JavaPaginatedResource<UserDTO>>(`${this.config.userAndGroupRestBasePath}${this.usersPathExtension}/ids`, {
                 params: idParams,
             })
             .pipe(map((resp) => UserMapper.mapUserDTOsToUsers(resp)));

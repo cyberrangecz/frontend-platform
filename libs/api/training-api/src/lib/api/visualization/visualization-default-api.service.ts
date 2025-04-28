@@ -6,14 +6,13 @@ import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagin
 import { Trainee, TrainingUser, VisualizationInfo } from '@crczp/training-model';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { UserRestResource } from '../../dto/rest/user-rest-resource-dto';
 import { UserMapper } from '../../mappers/user/user-mapper';
 import { TrainingApiContext } from '../../other/training-api-context';
 import { UserRefDTO } from './../../dto/user/user-ref-dto';
 import { VisualizationInfoDTO } from './../../dto/visualization/visualization-info-dto';
 import { VisualizationInfoMapper } from './../../mappers/visualization/visualization-info-mapper';
 import { VisualizationApi } from './visualization-api.service';
-import { PaginationMapper, ParamsBuilder } from '@crczp/api-common';
+import { JavaPaginatedResource, PaginationMapper, ParamsBuilder } from '@crczp/api-common';
 
 @Injectable()
 export class VisualizationDefaultApi extends VisualizationApi {
@@ -84,7 +83,7 @@ export class VisualizationDefaultApi extends VisualizationApi {
             ParamsBuilder.filterParams(filters),
             idsParam,
         ]);
-        return this.http.get<UserRestResource>(`${this.visualizationsEndpointUri}/users`, { params }).pipe(
+        return this.http.get<JavaPaginatedResource<UserRefDTO>>(`${this.visualizationsEndpointUri}/users`, { params }).pipe(
             map((resp) => {
                 return new PaginatedResource<TrainingUser>(
                     UserMapper.fromDTOs(resp.content),

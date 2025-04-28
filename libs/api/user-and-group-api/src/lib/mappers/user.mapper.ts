@@ -1,10 +1,9 @@
 import { PaginatedResource } from '@sentinel/common/pagination';
 import { User } from '@crczp/user-and-group-model';
-import { RestResourceDTO } from '../DTO/rest-resource-dto.model';
 import { UserDTO } from '../DTO/user/user-dto.model';
 import { UserForGroupsDTO } from '../DTO/user/user-for-groups-dto.model';
 import { RoleMapper } from './role-mapper';
-import { PaginationMapper } from '@crczp/api-common';
+import { JavaPaginatedResource, PaginationMapper } from '@crczp/api-common';
 
 /**
  * Service to map internal model to dtos and other way
@@ -14,7 +13,7 @@ export class UserMapper {
      * Maps user dtos to internal model
      * @param restResource user dtos
      */
-    static mapUserDTOsToUsers(restResource: RestResourceDTO<UserDTO>): PaginatedResource<User> {
+    static mapUserDTOsToUsers(restResource: JavaPaginatedResource<UserDTO>): PaginatedResource<User> {
         const result = new PaginatedResource<User>(
             restResource.content.map((userDTO) => this.mapUserDTOToUser(userDTO)),
             PaginationMapper.fromJavaDTO(restResource.pagination),

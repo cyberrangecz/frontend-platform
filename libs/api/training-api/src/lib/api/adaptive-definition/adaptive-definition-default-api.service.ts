@@ -29,13 +29,15 @@ import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagin
 import { TrainingApiContext } from '../../other/training-api-context';
 import { TrainingDefinitionMapper } from '../../mappers/training-definition/training-definition-mapper';
 import { TrainingDefinitionDTO } from '../../dto/training-definition/training-definition-dto';
-
-import { TrainingDefinitionRestResource } from '../../dto/training-definition/training-definition-rest-resource';
-import {
-    TrainingDefinitionInfoRestResource
-} from '../../dto/training-definition/training-definition-info-rest-resource';
 import { TrainingDefinitionInfoMapper } from '../../mappers/training-definition/training-definition-info-mapper';
-import { BlobFileSaver, handleJsonError, PaginationMapper, ParamsBuilder } from '@crczp/api-common';
+import {
+    BlobFileSaver,
+    handleJsonError,
+    JavaPaginatedResource,
+    PaginationMapper,
+    ParamsBuilder
+} from '@crczp/api-common';
+import { TrainingDefinitionInfoDTO } from '../../dto/training-definition/training-definition-info-dto';
 
 @Injectable()
 export class AdaptiveDefinitionDefaultApiService extends AdaptiveDefinitionApiService {
@@ -133,7 +135,7 @@ export class AdaptiveDefinitionDefaultApiService extends AdaptiveDefinitionApiSe
             ParamsBuilder.filterParams(filters),
         ]);
         return this.http
-            .get<TrainingDefinitionRestResource>(this.adaptiveDefinitionsUri, { params })
+            .get<JavaPaginatedResource<TrainingDefinitionDTO>>(this.adaptiveDefinitionsUri, { params })
             .pipe(
                 map(
                     (response) =>
@@ -154,7 +156,7 @@ export class AdaptiveDefinitionDefaultApiService extends AdaptiveDefinitionApiSe
             ParamsBuilder.filterParams(filters),
         ]);
         return this.http
-            .get<TrainingDefinitionInfoRestResource>(`${this.adaptiveDefinitionsUri}/for-organizers`, { params })
+            .get<JavaPaginatedResource<TrainingDefinitionInfoDTO>>(`${this.adaptiveDefinitionsUri}/for-organizers`, { params })
             .pipe(
                 map(
                     (response) =>

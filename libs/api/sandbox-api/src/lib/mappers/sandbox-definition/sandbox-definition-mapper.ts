@@ -1,5 +1,5 @@
 import { SandboxDefinition } from '@crczp/sandbox-model';
-import { SandboxDefinitionDTO } from '../../DTOs/sandbox-definition/sandbox-definition-dto';
+import { SandboxDefinitionDTO } from '../../dto/sandbox-definition/sandbox-definition-dto';
 import { CreatedByMapper } from '../sandbox-instance/created-by-mapper';
 
 export class SandboxDefinitionMapper {

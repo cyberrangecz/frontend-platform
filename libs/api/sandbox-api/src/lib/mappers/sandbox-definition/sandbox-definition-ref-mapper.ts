@@ -1,5 +1,5 @@
 import { SandboxDefinitionRef } from '@crczp/sandbox-model';
-import { SandboxDefinitionRefDTO } from '../../DTOs/sandbox-definition/sandbox-definition-ref-dto';
+import { SandboxDefinitionRefDTO } from '../../dto/sandbox-definition/sandbox-definition-ref-dto';
 
 export class SandboxDefinitionRefMapper {
     static fromDTO(dto: SandboxDefinitionRefDTO): SandboxDefinitionRefDTO {

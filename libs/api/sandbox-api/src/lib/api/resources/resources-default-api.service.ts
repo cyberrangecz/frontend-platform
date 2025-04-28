@@ -1,4 +1,4 @@
-import { SandboxResourcesDTO } from './../../DTOs/sandbox-resources/sandbox-resources-dto';
+import { SandboxResourcesDTO } from './../../dto/sandbox-resources/sandbox-resources-dto';
 import { Observable } from 'rxjs';
 import { SandboxApiConfigService } from '../../others/sandbox-api-config.service';
 import { Injectable } from '@angular/core';
@@ -7,7 +7,7 @@ import { HttpClient } from '@angular/common/http';
 import { ResourcesMapper } from '../../mappers/sandbox-resources/resources-mapper';
 import { HardwareUsage, Resources } from '@crczp/sandbox-model';
 import { map } from 'rxjs/operators';
-import { HardwareUsageDTO } from '../../DTOs/sandbox-instance/hardware-usage-dto';
+import { HardwareUsageDTO } from '../../dto/sandbox-instance/hardware-usage-dto';
 import { HardwareUsageMapper } from '../../mappers/sandbox-instance/hardware-usage-mapper';
 
 /**

@@ -2,7 +2,7 @@
  * @dynamic
  */
 import { VirtualImage } from '@crczp/sandbox-model';
-import { VirtualImagesDTO } from '../../DTOs/vm-images/virtual-images-dto';
+import { VirtualImagesDTO } from '../../dto/vm-images/virtual-images-dto';
 import { OwnerSpecifiedMapper } from './owner-specified-mapper';
 
 export class VirtualImagesMapper {

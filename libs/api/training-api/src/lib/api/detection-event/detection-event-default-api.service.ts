@@ -21,9 +21,6 @@ import {
     TimeProximityDetectionEvent
 } from '@crczp/training-model';
 import { DetectionEventRestResource } from '../../dto/detection-event/detection-event-rest-resource';
-import {
-    DetectionEventParticipantRestResource
-} from '../../dto/detection-event/detection-event-participant-rest-resource';
 import { DetectionEventParticipantMapper } from '../../mappers/detection-event/detection-event-participant-mapper';
 import {
     AnswerSimilarityDetectionEventDTO
@@ -55,12 +52,11 @@ import {
 import {
     ForbiddenCommandsDetectionEventMapper
 } from '../../mappers/detection-event/forbidden-commands-detection-event-mapper';
-import {
-    DetectedForbiddenCommandRestResource
-} from '../../dto/detection-event/detected-forbidden-command-rest-resource';
 import { DetectedForbiddenCommandMapper } from '../../mappers/detection-event/detected-forbidden-command-mapper';
 import { SentinelFilter } from '@sentinel/common/filter';
-import { PaginationMapper, ParamsBuilder } from '@crczp/api-common';
+import { JavaPaginatedResource, PaginationMapper, ParamsBuilder } from '@crczp/api-common';
+import { DetectedForbiddenCommandDTO } from '../../dto/detection-event/detected-forbidden-command-dto';
+import { DetectionEventParticipantDTO } from '../../dto/detection-event/detection-event-participant-dto';
 
 //
 
@@ -126,7 +122,7 @@ export class DetectionEventDefaultApi extends DetectionEventApi {
             ParamsBuilder.javaPaginationParams(pagination),
         ]);
         return this.http
-            .get<DetectedForbiddenCommandRestResource>(`${this.detectionEventsEndpointUri}/forbidden-commands`, {
+            .get<JavaPaginatedResource<DetectedForbiddenCommandDTO>>(`${this.detectionEventsEndpointUri}/forbidden-commands`, {
                 params,
             })
             .pipe(
@@ -154,7 +150,7 @@ export class DetectionEventDefaultApi extends DetectionEventApi {
             ParamsBuilder.javaPaginationParams(pagination),
         ]);
         return this.http
-            .get<DetectionEventParticipantRestResource>(`${this.detectionEventsEndpointUri}/participants`, {
+            .get<JavaPaginatedResource<DetectionEventParticipantDTO>>(`${this.detectionEventsEndpointUri}/participants`, {
                 params,
             })
             .pipe(
