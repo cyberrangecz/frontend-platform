@@ -4,48 +4,19 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { AggregatedCommandMapper } from './mappers/aggregated-command-mapper';
 import { AggregatedCommandsDTO } from './dto/aggregated-commands-dto';
-import { CommandVisualizationConfig } from './command-visualization-config';
+import { VisualizationApiConfig } from '../config/visualization-api-config';
 import { AggregatedCommands } from '@crczp/visualization-model';
-
-export abstract class CommandCorrectnessApi {
-    /**
-     * Get correct/incorrect commands executed during the given training runs.
-     * Incorrect commands can be filtered by specific mistake types.
-     * @param instanceId id of training instance
-     * @param runIds training run ids
-     * @param correct if correct or incorrect commands are requested
-     * @param mistakeType desired type of mistake
-     */
-    abstract getAggregatedCommandsForOrganizer(
-        instanceId: number,
-        runIds: number[],
-        correct: boolean,
-        mistakeType: string[]
-    ): Observable<AggregatedCommands[]>;
-
-    /**
-     * Get correct/incorrect commands executed during the given training run.
-     * Incorrect commands can be filtered by specific mistake types.
-     * @param runId training run id
-     * @param correct if correct or incorrect commands are requested
-     * @param mistakeType desired type of mistake
-     */
-    abstract getAggregatedCommandsForTrainee(
-        runId: number,
-        correct: boolean,
-        mistakeType: string[]
-    ): Observable<AggregatedCommands[]>;
-}
-
+import { TrainingRun } from '@crczp/training-model';
+import { TrainingRunDTO, TrainingRunMapper } from '@crczp/training-api';
 @Injectable()
-export class CommandCorrectnessDefaultApi {
+export class CommandCorrectnessApi {
     private readonly visualizationsEndpoint: string;
 
     constructor(
         private http: HttpClient,
-        private config: CommandVisualizationConfig
+        private config: VisualizationApiConfig
     ) {
-        this.visualizationsEndpoint = `${this.config.trainingBasePath}visualizations`;
+        this.visualizationsEndpoint = `${this.config.trainingBasePath}/visualizations`;
     }
 
     /**
@@ -88,5 +59,16 @@ export class CommandCorrectnessDefaultApi {
                 params
             })
             .pipe(map((response) => AggregatedCommandMapper.fromDTOs(response)));
+    }
+
+    /**
+     * Get all trainees instances
+     */
+    getTrainingRuns(trainingInstanceId: number): Observable<TrainingRun[]> {
+        return this.http
+            .get<
+                TrainingRunDTO[]
+            >(`${this.visualizationsEndpoint}/training-instances/${trainingInstanceId}/training-runs`)
+            .pipe(map((response) => TrainingRunMapper.fromDTOs(response)));
     }
 }

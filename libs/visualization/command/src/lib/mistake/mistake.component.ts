@@ -1,17 +1,29 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { MistakeCommandService } from './service/mistake-command.service';
+import { MistakeCommandService } from './mistake-command.service';
 import { map, take, tap } from 'rxjs/operators';
+import { SentinelTable, SentinelTableComponent, TableActionEvent } from '@sentinel/components/table';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { CommandTable } from './model/command-table';
-import { mistakeTypes, ResourceSelect } from './model/resource-select';
-import { AggregatedCommands } from './model/aggregated-commands';
-import { SentinelResourceSelectorMapping } from '@sentinel/components/resource-selector';
-import { SentinelTable } from '@sentinel/components/table';
+import {
+    SentinelResourceSelectorComponent,
+    SentinelResourceSelectorMapping
+} from '@sentinel/components/resource-selector';
+import { AggregatedCommands, CommandResourceSelect, mistakeTypes } from '@crczp/visualization-model';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { AsyncPipe } from '@angular/common';
+import { MatButtonModule } from '@angular/material/button';
+import { CommandTable } from './command-table';
 
 @Component({
     selector: 'crczp-mistake',
     templateUrl: './mistake.component.html',
     styleUrls: ['./mistake.component.css'],
+    imports: [
+        SentinelResourceSelectorComponent,
+        MatSlideToggleModule,
+        SentinelTableComponent,
+        AsyncPipe,
+        MatButtonModule
+    ]
 })
 export class MistakeComponent implements OnInit {
     readonly INIT_SORT_NAME = 'lastEdited';
@@ -24,16 +36,20 @@ export class MistakeComponent implements OnInit {
     hasError$: Observable<boolean>;
     isLoading$: Observable<boolean>;
 
-    traineesDropdownList: ResourceSelect[] = [];
+    traineesDropdownList: CommandResourceSelect[] = [];
 
-    private selectedTrainingRunSubject$: BehaviorSubject<ResourceSelect[]> = new BehaviorSubject([]);
-    selectedTrainingRuns$: Observable<ResourceSelect[]> = this.selectedTrainingRunSubject$.asObservable();
+    private selectedTrainingRunSubject$: BehaviorSubject<CommandResourceSelect[]> =
+        new BehaviorSubject([]);
+    selectedTrainingRuns$: Observable<CommandResourceSelect[]> =
+        this.selectedTrainingRunSubject$.asObservable();
 
-    private selectedMistakeTypesSubject$: BehaviorSubject<ResourceSelect[]> = new BehaviorSubject([]);
-    selectedMistakeTypes$: Observable<ResourceSelect[]> = this.selectedMistakeTypesSubject$.asObservable();
+    private selectedMistakeTypesSubject$: BehaviorSubject<CommandResourceSelect[]> =
+        new BehaviorSubject([]);
+    selectedMistakeTypes$: Observable<CommandResourceSelect[]> =
+        this.selectedMistakeTypesSubject$.asObservable();
 
     resourcesMapping: SentinelResourceSelectorMapping;
-    mistakesResources: ResourceSelect[] = [];
+    mistakesResources: CommandResourceSelect[] = [];
     correct = false;
 
     constructor(private commandService: MistakeCommandService) {}
@@ -66,7 +82,7 @@ export class MistakeComponent implements OnInit {
         this.commandService.setSelectedMistakeTypes(event);
     }
 
-    onTraineeSelect(event: ResourceSelect[]): void {
+    onTraineeSelect(event: CommandResourceSelect[]): void {
         if (event.length > 0) {
             this.commandService.setSelectedTrainees(event);
         } else {
@@ -87,7 +103,9 @@ export class MistakeComponent implements OnInit {
             .getAggregatedCommandsForTrainee(
                 this.trainingRunId,
                 this.correct,
-                this.commandService.getSelectedMistakeTypes().map((mistake) => mistake.title),
+                this.commandService
+                    .getSelectedMistakeTypes()
+                    .map((mistake) => mistake.title)
             )
             .pipe(take(1))
             .subscribe();
@@ -97,9 +115,13 @@ export class MistakeComponent implements OnInit {
         this.commandService
             .getAggregatedCommandsForOrganizer(
                 this.trainingInstanceId,
-                this.commandService.getSelectedTrainees().map((trainee) => trainee.id),
+                this.commandService
+                    .getSelectedTrainees()
+                    .map((trainee) => trainee.id),
                 this.correct,
-                this.commandService.getSelectedMistakeTypes().map((mistake) => mistake.title),
+                this.commandService
+                    .getSelectedMistakeTypes()
+                    .map((mistake) => mistake.title)
             )
             .pipe(take(1))
             .subscribe();
@@ -108,9 +130,10 @@ export class MistakeComponent implements OnInit {
     private initTable() {
         this.hasError$ = this.commandService.hasError$;
         this.isLoading$ = this.commandService.isLoading$;
-        this.aggregatedWrongCommands$ = this.commandService.aggregatedCommands$.pipe(
-            map((resource) => new CommandTable(resource)),
-        );
+        this.aggregatedWrongCommands$ =
+            this.commandService.aggregatedCommands$.pipe(
+                map((resource) => new CommandTable(resource))
+            );
     }
 
     private initResources() {
@@ -128,17 +151,17 @@ export class MistakeComponent implements OnInit {
                         this.traineesDropdownList = res.map((trainingRun) => {
                             return {
                                 id: trainingRun.id,
-                                title: trainingRun.participantRef.fullName,
+                                title: trainingRun.player.name,
                                 subtitle: `Training Run ID: ${trainingRun.id}`,
                             };
                         });
                     }),
-                    take(1),
+                    take(1)
                 )
                 .subscribe();
         }
         mistakeTypes.forEach((mistakeType, index) => {
-            const mistake = new ResourceSelect();
+            const mistake = new CommandResourceSelect();
             mistake.id = index;
             mistake.title = mistakeType;
             mistake.subtitle = 'Mistake Type';
