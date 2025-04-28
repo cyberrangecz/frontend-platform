@@ -1,12 +1,12 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { MistakeCommandService } from './service/mistake-command.service';
 import { map, take, tap } from 'rxjs/operators';
+import { SentinelTable, TableActionEvent } from '@sentinel/components/table';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { CommandTable } from './model/command-table';
+import { SentinelResourceSelectorMapping } from '@sentinel/components/resource-selector';
 import { mistakeTypes, ResourceSelect } from './model/resource-select';
 import { AggregatedCommands } from './model/aggregated-commands';
-import { SentinelResourceSelectorMapping } from '@sentinel/components/resource-selector';
-import { SentinelTable } from '@sentinel/components/table';
 
 @Component({
     selector: 'crczp-mistake',
@@ -26,11 +26,15 @@ export class MistakeComponent implements OnInit {
 
     traineesDropdownList: ResourceSelect[] = [];
 
-    private selectedTrainingRunSubject$: BehaviorSubject<ResourceSelect[]> = new BehaviorSubject([]);
-    selectedTrainingRuns$: Observable<ResourceSelect[]> = this.selectedTrainingRunSubject$.asObservable();
+    private selectedTrainingRunSubject$: BehaviorSubject<ResourceSelect[]> =
+        new BehaviorSubject([]);
+    selectedTrainingRuns$: Observable<ResourceSelect[]> =
+        this.selectedTrainingRunSubject$.asObservable();
 
-    private selectedMistakeTypesSubject$: BehaviorSubject<ResourceSelect[]> = new BehaviorSubject([]);
-    selectedMistakeTypes$: Observable<ResourceSelect[]> = this.selectedMistakeTypesSubject$.asObservable();
+    private selectedMistakeTypesSubject$: BehaviorSubject<ResourceSelect[]> =
+        new BehaviorSubject([]);
+    selectedMistakeTypes$: Observable<ResourceSelect[]> =
+        this.selectedMistakeTypesSubject$.asObservable();
 
     resourcesMapping: SentinelResourceSelectorMapping;
     mistakesResources: ResourceSelect[] = [];
@@ -87,7 +91,9 @@ export class MistakeComponent implements OnInit {
             .getAggregatedCommandsForTrainee(
                 this.trainingRunId,
                 this.correct,
-                this.commandService.getSelectedMistakeTypes().map((mistake) => mistake.title),
+                this.commandService
+                    .getSelectedMistakeTypes()
+                    .map((mistake) => mistake.title)
             )
             .pipe(take(1))
             .subscribe();
@@ -97,9 +103,13 @@ export class MistakeComponent implements OnInit {
         this.commandService
             .getAggregatedCommandsForOrganizer(
                 this.trainingInstanceId,
-                this.commandService.getSelectedTrainees().map((trainee) => trainee.id),
+                this.commandService
+                    .getSelectedTrainees()
+                    .map((trainee) => trainee.id),
                 this.correct,
-                this.commandService.getSelectedMistakeTypes().map((mistake) => mistake.title),
+                this.commandService
+                    .getSelectedMistakeTypes()
+                    .map((mistake) => mistake.title)
             )
             .pipe(take(1))
             .subscribe();
@@ -108,9 +118,10 @@ export class MistakeComponent implements OnInit {
     private initTable() {
         this.hasError$ = this.commandService.hasError$;
         this.isLoading$ = this.commandService.isLoading$;
-        this.aggregatedWrongCommands$ = this.commandService.aggregatedCommands$.pipe(
-            map((resource) => new CommandTable(resource)),
-        );
+        this.aggregatedWrongCommands$ =
+            this.commandService.aggregatedCommands$.pipe(
+                map((resource) => new CommandTable(resource))
+            );
     }
 
     private initResources() {
@@ -133,7 +144,7 @@ export class MistakeComponent implements OnInit {
                             };
                         });
                     }),
-                    take(1),
+                    take(1)
                 )
                 .subscribe();
         }

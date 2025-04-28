@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Graph } from '../model/graph';
+import { Graph } from '../../../../../../../model/visualization-model/src/lib/reference-graph/graph';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { GraphMapper } from './mappers/graph-mapper';

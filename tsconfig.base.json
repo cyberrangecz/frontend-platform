@@ -44,7 +44,18 @@
             "@crczp/user-and-group-model": [
                 "libs/model/user-and-group-model/src/index.ts"
             ],
-            "@crczp/walkthrough-api": ["libs/api/walkthrough-api/src/index.ts"],
+            "@crczp/visualization-api": [
+                "libs/api/visualization-api/src/index.ts"
+            ],
+            "@crczp/visualization-api/command-visualization-api": [
+                "libs/api/visualization-api/command-visualization-api/src/index.ts"
+            ],
+            "@crczp/visualization-model": [
+                "libs/model/visualization-model/src/index.ts"
+            ],
+            "@crczp/visualization/api": [
+                "lib/api/walkthrough-api/src/index.ts"
+            ],
             "@crczp/walkthrough-visualization": [
                 "libs/visualization/walkthrough/src/index.ts"
             ]

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Graph } from '../model/graph';
+import { Graph } from '../../../../../../../model/visualization-model/src/lib/reference-graph/graph';
 import { ReferenceGraphApiService } from '../api/reference-graph-api.service';
 
 @Injectable()

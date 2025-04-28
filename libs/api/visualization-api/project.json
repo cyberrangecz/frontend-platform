@@ -1,7 +1,7 @@
 {
-    "name": "walkthrough-api",
+    "name": "visualization-api",
     "$schema": "../../../node_modules/nx/schemas/project-schema.json",
-    "sourceRoot": "libs/api/walkthrough-api/src",
+    "sourceRoot": "libs/api/visualization-api/src",
     "prefix": "lib",
     "projectType": "library",
     "tags": [],
@@ -10,14 +10,14 @@
             "executor": "@nx/angular:ng-packagr-lite",
             "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
             "options": {
-                "project": "libs/api/walkthrough-api/ng-package.json"
+                "project": "libs/api/visualization-api/ng-package.json"
             },
             "configurations": {
                 "production": {
-                    "tsConfig": "libs/api/walkthrough-api/tsconfig.lib.prod.json"
+                    "tsConfig": "libs/api/visualization-api/tsconfig.lib.prod.json"
                 },
                 "development": {
-                    "tsConfig": "libs/api/walkthrough-api/tsconfig.lib.json"
+                    "tsConfig": "libs/api/visualization-api/tsconfig.lib.json"
                 }
             },
             "defaultConfiguration": "production"
@@ -26,7 +26,7 @@
             "executor": "@nx/vite:test",
             "outputs": ["{options.reportsDirectory}"],
             "options": {
-                "reportsDirectory": "../../../coverage/libs/api/walkthrough-api"
+                "reportsDirectory": "../../../coverage/libs/api/visualization-api"
             }
         },
         "lint": {

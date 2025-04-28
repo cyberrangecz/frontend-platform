@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { Graph } from '../model/graph';
+import { Graph } from '../../../../../../../model/visualization-model/src/lib/reference-graph/graph';
 
 export abstract class ReferenceGraphApiService {
     /**

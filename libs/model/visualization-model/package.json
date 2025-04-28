@@ -1,0 +1,17 @@
+{
+    "name": "@crczp/visualization-model",
+    "version": "0.0.1",
+    "private": true,
+    "type": "commonjs",
+    "main": "./index.cjs",
+    "types": "./index.d.ts",
+    "peer-dependencies": {
+        "@crczp/traininig-model": "*"
+    },
+    "exports": {
+        "./command": {
+            "import": "./dist/command/index.js",
+            "types": "./dist/command/index.d.ts"
+        }
+    }
+}

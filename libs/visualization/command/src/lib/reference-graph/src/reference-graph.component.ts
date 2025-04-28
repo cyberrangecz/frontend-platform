@@ -3,7 +3,7 @@ import { Graphviz, graphviz } from 'd3-graphviz';
 import { ReferenceGraphService } from './service/reference-graph.service';
 import { tap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
-import { Graph } from './model/graph';
+import { Graph } from '../../../../../../model/visualization-model/src/lib/reference-graph/graph';
 import { BaseType } from 'd3';
 
 @Component({
