@@ -1,0 +1,43 @@
+<div class="viz-content list">
+    @for (assessment of assessments; track assessment.id) {
+        <div class="list">
+            <h1 class="assessment-title">Assessment {{ $index + 1 }}# - {{ assessment.title }}</h1>
+            @for (question of assessment.questions; track question.id) {
+                <mat-card appearance="outlined">
+                    <mat-card-content>
+                        <mat-card-title>
+                            <p class="question-order">Question {{ question.order + 1 }}
+                                <span class="question-type">{{ question.questionType }}</span>
+                            </p>
+                            <p class="question-text">{{ question.text }}</p>
+                        </mat-card-title>
+                        <mat-card-content>
+                            @switch (question.questionType) {
+                                @case ('FFQ') {
+                                    <crczp-ffq-results [question]="question"
+                                                       [isTest]="assessment.assessmentType === 'TEST'"
+                                    />
+                                }
+                                @case ('MCQ') {
+                                    <crczp-mcq-results [question]="question"
+                                                       [isTest]="assessment.assessmentType === 'TEST'"
+                                    />
+                                }
+                                @case ('EMI') {
+                                    <crczp-emi-results [question]="question"
+                                                       [isTest]="assessment.assessmentType === 'TEST'"
+                                    />
+                                }
+                                @default {
+                                    <mat-card-content>
+                                        <p>Question type not supported</p>
+                                    </mat-card-content>
+                                }
+                            }
+                        </mat-card-content>
+                    </mat-card-content>
+                </mat-card>
+            }
+        </div>
+    }
+</div>

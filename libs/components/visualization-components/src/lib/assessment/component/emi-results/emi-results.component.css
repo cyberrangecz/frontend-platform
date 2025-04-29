@@ -1,0 +1,16 @@
+.list{
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    justify-content: flex-start;
+    align-items: stretch;
+}
+.emi-results {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.row-title {
+    color: var(--primary-30);
+    margin: 0 0 0 1rem !important;
+}

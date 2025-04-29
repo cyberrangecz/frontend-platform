@@ -1,0 +1,38 @@
+.row-active {
+    background: #ffb834;
+}
+
+.correct {
+    color: green;
+}
+
+.incorrect {
+    color: var(--error-40);
+}
+
+td {
+    cursor: pointer;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    overflow: hidden;
+    border: 1px solid var(--neutral-70);
+    border-radius: 1rem;
+}
+
+.filter {
+    width: 100%;
+}
+
+.filter-input {
+    font-size: 1rem;
+}
+
+.table {
+    width: 100%;
+    padding: 1rem;
+}

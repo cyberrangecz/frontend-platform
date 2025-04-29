@@ -7,7 +7,7 @@ import { User, UserRole } from '@crczp/user-and-group-model';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { RoleDTO } from '../../DTO/role/role-dto';
-import { UserDTO } from '../../DTO/user/user-dto.model';
+import { UserAndGroupUserDTO } from '../../DTO/user/user-dto.model';
 import { RoleMapper } from '../../mappers/role-mapper';
 import { UserMapper } from '../../mappers/user.mapper';
 import { UserAndGroupApiConfig } from '../../other/user-and-group-api-config';
@@ -96,7 +96,7 @@ export class RoleDefaultApi extends RoleApi {
             ParamsBuilder.filterParams(filters),
         ]);
         return this.http
-            .get<JavaPaginatedResource<UserDTO>>(
+            .get<JavaPaginatedResource<UserAndGroupUserDTO>>(
                 `${this.config.userAndGroupRestBasePath}${this.rolesPathExtension}/${id}/users`,
                 {
                     params,
@@ -123,7 +123,7 @@ export class RoleDefaultApi extends RoleApi {
             typeParam,
         ]);
         return this.http
-            .get<JavaPaginatedResource<UserDTO>>(`${this.config.userAndGroupRestBasePath}${this.rolesPathExtension}/users`, {
+            .get<JavaPaginatedResource<UserAndGroupUserDTO>>(`${this.config.userAndGroupRestBasePath}${this.rolesPathExtension}/users`, {
                 params,
             })
             .pipe(map((resp) => UserMapper.mapUserDTOsToUsers(resp)));
@@ -152,7 +152,7 @@ export class RoleDefaultApi extends RoleApi {
         ]);
         return this.http
             .get<
-                JavaPaginatedResource<UserDTO>
+                JavaPaginatedResource<UserAndGroupUserDTO>
             >(`${this.config.userAndGroupRestBasePath}${this.rolesPathExtension}/users-not-with-ids`, { params })
             .pipe(map((resp) => UserMapper.mapUserDTOsToUsers(resp)));
     }

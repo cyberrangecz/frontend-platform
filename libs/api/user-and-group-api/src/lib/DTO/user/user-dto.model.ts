@@ -1,6 +1,6 @@
 import { RoleDTO } from '../role/role-dto';
 
-export class UserDTO {
+export class UserAndGroupUserDTO {
     full_name: string;
     given_name: string;
     family_name: string;

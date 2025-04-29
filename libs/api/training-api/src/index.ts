@@ -6,6 +6,8 @@ export * from './lib/mappers/phase/phase-mapper';
 export * from './lib/dto/phase/abstract-phase-dto';
 export * from './lib/mappers/training-run/training-run-mapper';
 export * from './lib/dto/training-run/training-run-dto';
+export * from './lib/dto/user/user-ref-dto';
+export * from './lib/mappers/user/user-mapper';
 
 // API ABSTRACT SERVICES
 export * from './lib/api/definition/training-definition-api.service';

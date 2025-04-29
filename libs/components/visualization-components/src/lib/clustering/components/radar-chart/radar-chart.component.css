@@ -1,0 +1,51 @@
+/* Track */
+::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 5px grey;
+    border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(13, 110, 253, 1) !important;
+}
+
+.vh-75 {
+    height: 75vh;
+}
+
+h2 {
+    margin: 20px;
+    font-size: 23px;
+    font-weight: 400;
+    display: inline;
+}
+
+.clustering-radar-tooltip {
+    position: absolute;
+    text-align: left;
+    display: inline-block;
+    width: auto;
+    padding: 5px 10px;
+    font-size: 10px;
+    opacity: 0.9;
+    background: #5b5c5e;
+    color: #fff;
+    border-radius: 2px;
+    pointer-events: none;
+    font-family: 'Roboto', sans-serif;
+}
+
+#main-radar #show-info {
+    margin-bottom: 10px;
+}
+
+button#show-info {
+    width: 30px;
+    height: 30px;
+}
+
+button#show-info span {
+    font-size: 22px;
+    padding: 0;
+}
+
