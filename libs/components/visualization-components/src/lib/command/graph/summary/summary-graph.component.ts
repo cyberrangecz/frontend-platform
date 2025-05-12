@@ -8,7 +8,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { BaseType } from 'd3';
 import { ReferenceGraphApi, VisualizationApiConfig } from '@crczp/visualization-api';
-import { provideApiConfig } from '@crczp/api-common';
+import { provideComponentProperty } from '@crczp/components-common';
 
 
 /**
@@ -20,16 +20,16 @@ import { provideApiConfig } from '@crczp/api-common';
     templateUrl: './summary-graph.component.html',
     styleUrls: ['./summary-graph.component.css'],
     imports: [CommonModule, MatButtonModule, MatListModule, MatIconModule],
-    providers: [ReferenceGraphApi, SummaryGraphService, provideApiConfig(SummaryGraphComponent, VisualizationApiConfig)]
+    providers: [ReferenceGraphApi, SummaryGraphService, provideComponentProperty(SummaryGraphComponent, VisualizationApiConfig, 'apiConfig')]
 })
 export class SummaryGraphComponent implements OnInit {
-    constructor(private graphService: SummaryGraphService) {}
-
-    @Input({ required: true }) apiConfig: VisualizationApiConfig;
-    @Input() config: VisualizationApiConfig;
+    @Input() apiConfig: VisualizationApiConfig;
     @Input() trainingInstanceId: number;
-    private graphviz: Graphviz<BaseType, any, BaseType, any>;
     error = undefined;
+    private graphviz: Graphviz<BaseType, any, BaseType, any>;
+
+    constructor(private graphService: SummaryGraphService) {
+    }
 
     ngOnInit(): void {
         this.graphService
@@ -41,8 +41,8 @@ export class SummaryGraphComponent implements OnInit {
                         (this.error =
                             err.error.api_sub_error && err.error.status === 'NOT_FOUND'
                                 ? `The summary graph for training instance hasn't been created yet.`
-                                : 'Error occurred please refresh the page.'),
-                ),
+                                : 'Error occurred please refresh the page.')
+                )
             )
             .subscribe();
     }

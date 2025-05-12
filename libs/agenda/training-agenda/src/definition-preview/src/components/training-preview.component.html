@@ -1,0 +1,24 @@
+<ng-container *ngIf="levels?.length > 0; else noLevels">
+    <div class="header">
+        <!-- LEVEL STEPPER -->
+        <div class="training-run-stepper">
+            <h3 class="message">
+                *Use stepper to navigate between levels.
+            </h3>
+            <sentinel-stepper
+                [draggable]="false"
+                [selectable]="true"
+                (indexSelected)="activeStepChanged($event)"
+                [stepperItems]="stepper"
+                [activeIndex]="stepper.activeLevelIndex"
+            >
+            </sentinel-stepper>
+        </div>
+    </div>
+    <!-- CONTENT OF ACTIVE LEVEL -->
+    <crczp-abstract-level [level]="activeLevel"/>
+</ng-container>
+
+<ng-template #noLevels>
+    <h3 class="message">There are no levels in this training definition</h3>
+</ng-template>

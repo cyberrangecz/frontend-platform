@@ -1,0 +1,24 @@
+<div [class]="fullWidthTable ? 'overview-visualization-container full' : 'overview-visualization-container'">
+    <crczp-visualization-overview-line (wideTable)="setTableWidth($event)"
+                            [enableAllPlayers]="enableAllPlayers"
+                            [trainingDefinitionId]="trainingDefinitionId"
+                            [trainingInstanceId]="trainingInstanceId"
+                            [highlightedTrainee]='highlightedTrainee'
+                            [size]="size"
+                            [standalone]='standalone'
+                            [traineeModeInfo]="traineeModeInfo"
+                            (selectedTrainee)='selectPlayer($event)'
+    />
+
+    <div class="second-column">
+        <ng-container *ngIf="enableAllPlayers">
+            <crczp-visualization-overview-table
+                [trainingDefinitionId]="trainingDefinitionId"
+                [trainingInstanceId]="trainingInstanceId"
+                [traineeModeInfo]="traineeModeInfo">
+            </crczp-visualization-overview-table>
+        </ng-container>
+
+        <crczp-visualization-overview-filters/>
+    </div>
+</div>

@@ -1,0 +1,29 @@
+sentinel-table {
+    width: 100%;
+}
+
+mat-card:first-child {
+    margin-bottom: 30px;
+}
+
+mat-card {
+    padding: 16px;
+}
+
+.overview {
+    margin-top: 30px;
+}
+
+.requests {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.request {
+    width: 100%;
+}
+
+.request:first-child {
+    margin-right: 10px;
+}

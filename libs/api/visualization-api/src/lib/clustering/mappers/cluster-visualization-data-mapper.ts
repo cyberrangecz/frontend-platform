@@ -1,9 +1,8 @@
 import { ClusteringVisualizationData } from '@crczp/visualization-model';
-import { ClusterDto } from '../dto/cluster-dto';
-import { VisualizationDataDTO } from '../dto/visualization-data-dto';
+import { ClusterDto, ClusteringVisualizationDataDTO } from '../dtos';
 
 export class ClusterVisualizationDataMapper {
-    static fromDTO(dto: VisualizationDataDTO | any): ClusteringVisualizationData {
+    static fromDTO(dto: ClusteringVisualizationDataDTO | any): ClusteringVisualizationData {
         const result = new ClusteringVisualizationData();
         result.clusterData = [];
         for (const dtoKey in dto) {

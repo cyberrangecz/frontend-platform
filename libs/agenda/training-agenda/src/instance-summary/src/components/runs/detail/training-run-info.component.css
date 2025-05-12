@@ -1,0 +1,7 @@
+.detail-container {
+    padding: 20px;
+}
+
+:host::ng-deep td {
+    border-bottom-width: 1px !important;
+}

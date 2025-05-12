@@ -1,0 +1,6 @@
+<ng-container [ngSwitch]="level.type">
+    <crczp-training-level-detail *ngSwitchCase="levelTypes.Training" [level]="level"/>
+    <crczp-info-level-detail *ngSwitchCase="levelTypes.Info" [level]="level"/>
+    <crczp-access-level-detail *ngSwitchCase="levelTypes.Access" [level]="level"/>
+    <crczp-assessment-level-detail *ngSwitchCase="levelTypes.Assessment" [level]="level"/>
+</ng-container>

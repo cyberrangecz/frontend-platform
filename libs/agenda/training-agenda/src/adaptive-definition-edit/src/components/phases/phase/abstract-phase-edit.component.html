@@ -1,0 +1,23 @@
+<ng-container [ngSwitch]="phase.type">
+    <crczp-info-phase-configuration *ngSwitchCase="phaseTypes.Info"
+                                   [phase]="phase"
+                                   (phaseChange)="onPhaseChange($event)">
+    </crczp-info-phase-configuration>
+    <crczp-training-phase-configuration *ngSwitchCase="phaseTypes.Training"
+                                       [phase]="phase"
+                                       [relatedQuestions]="relatedQuestions"
+                                       [updateMatrixFlag]="updateMatrix$ | async"
+                                       [presentTrainingPhases]="presentTrainingPhases$ | async"
+                                       [mitreTechniquesList]="mitreTechniquesList"
+                                       (phaseChange)="onPhaseChange($event)">
+    </crczp-training-phase-configuration>
+    <crczp-questionnaire-phase-configuration *ngSwitchCase="phaseTypes.Questionnaire"
+                                            [phase]="phase"
+                                            [presentTrainingPhases]="presentTrainingPhases$ | async"
+                                            (phaseChange)="onPhaseChange($event)">
+    </crczp-questionnaire-phase-configuration>
+    <crczp-access-phase-configuration *ngSwitchCase="phaseTypes.Access"
+                                     [phase]="phase"
+                                     (phaseChange)="onPhaseChange($event)">
+    </crczp-access-phase-configuration>
+</ng-container>

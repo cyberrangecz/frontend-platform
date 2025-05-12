@@ -1,0 +1,25 @@
+<div class="container">
+    <div class="content">
+        <div class="left-panel">
+            <div>
+                <h3>Local content:</h3>
+                <sentinel-markdown-view [markdown]="phase?.localContent"/>
+            </div>
+            <div>
+                <h3>Cloud content:</h3>
+                <sentinel-markdown-view [markdown]="phase?.cloudContent"/>
+            </div>
+        </div>
+        <div class="right-panel">
+            <div class="container">
+                <div class="topology-placeholder">
+                    <img
+                        class="topology-placeholder-image"
+                        src="assets/training-agenda/topology-placeholder.png"
+                        alt="Topology placeholder"/>
+                </div>
+                <h3 class="message">*This is just a template topology</h3>
+            </div>
+        </div>
+    </div>
+</div>

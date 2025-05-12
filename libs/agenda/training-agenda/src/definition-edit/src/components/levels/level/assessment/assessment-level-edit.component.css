@@ -1,0 +1,74 @@
+.content {
+    display: flex;
+    flex-direction: column;
+    margin: 20px;
+}
+
+div .panel-wrapper {
+    display: flex;
+    flex-direction: row;
+}
+
+div .left-panel {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 3;
+    margin-right: 30px;
+}
+
+div .right-panel {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    margin-left: 30px;
+}
+
+div .right-panel mat-form-field {
+    margin-bottom: 20px;
+}
+
+sentinel-markdown-editor.mrkdwn-content {
+    margin-bottom: 20px;
+    height: 30vh;
+}
+
+sentinel-markdown-editor.mrkdwn-solution {
+    margin-bottom: 20px;
+    height: 30vh;
+}
+
+.test-toggle-wrapper {
+    width: 180px;
+}
+
+.test-toggle-left-margin {
+    margin-left: 15px;
+}
+
+.test-toggle-right-margin {
+    margin-right: 15px;
+}
+
+
+@media screen and (max-width: 800px) {
+    div .panel-wrapper {
+        flex-direction: column;
+    }
+
+    div .left-panel {
+        margin-right: 0;
+    }
+
+    div .right-panel {
+        margin-left: 0;
+    }
+}
+
+.time-configuration-container {
+    display: flex;
+    column-gap: 50px;
+}
+
+.time-configuration-container mat-form-field {
+    flex-grow: 1;
+}

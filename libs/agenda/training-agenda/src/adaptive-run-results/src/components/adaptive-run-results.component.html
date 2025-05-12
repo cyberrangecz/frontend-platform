@@ -1,0 +1,6 @@
+<mat-card appearance="outlined" *ngIf="trainingRun$ | async">
+    <crczp-adaptive-transition-visualization
+        [trainingRunId]="(trainingRun$ | async).id"
+        [progress]="false"
+    />
+</mat-card>

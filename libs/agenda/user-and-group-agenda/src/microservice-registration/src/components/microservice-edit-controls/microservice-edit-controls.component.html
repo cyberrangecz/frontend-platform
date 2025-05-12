@@ -1,0 +1,14 @@
+<div class="content">
+    <button (click)="onCreate()"
+            [disabled]="!isFormValid"
+            color="primary"
+            mat-raised-button>
+        Register
+    </button>
+</div>
+<div class="error-state">
+    @if (!(hasDefaultRole)) {
+        <mat-error class="error-state">Microservice has to have a default role</mat-error>
+    }
+</div>
+

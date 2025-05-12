@@ -1,0 +1,28 @@
+<div class="levels-detail-header">
+    <h2>Levels</h2>
+    <div class="levels-overview">
+        <div class="level-type" matTooltip="Number of info levels">
+            <mat-icon class="level-icon"> info</mat-icon>
+            <div class="level-count"> {{ getInfoLevels()?.length }}</div>
+        </div>
+        <div class="level-type" matTooltip="Number of access levels">
+            <mat-icon class="level-icon"> settings</mat-icon>
+            <div class="level-count"> {{ getAccessLevels()?.length }}</div>
+        </div>
+        <div class="level-type" matTooltip="Number of training levels">
+            <mat-icon class="level-icon"> videogame_asset</mat-icon>
+            <div class="level-count"> {{ getTrainingLevels()?.length }}</div>
+        </div>
+        <div class="level-type" matTooltip="Number of assessment levels">
+            <mat-icon class="level-icon"> assignment</mat-icon>
+            <div class="level-count"> {{ getAssessmentLevels()?.length }}</div>
+        </div>
+    </div>
+    <sentinel-controls [controls]="controls" (itemClicked)="onControlsAction($event)"/>
+</div>
+<mat-accordion class="example-headers-align" multi>
+    @for(level of levels; track level.id) {
+        <crczp-level-detail [level]="level"/>
+        <mat-divider *ngIf="!$last"/>
+    }
+</mat-accordion>

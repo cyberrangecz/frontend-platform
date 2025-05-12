@@ -4,7 +4,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { EventConnectorComponent } from './event-connector/event-connector.component';
 import { PlayerEventComponent } from './player-event/player-event.component';
 import { AbsolutePositionService } from '../../../service/absolute-position.service';
-import { TrainingEvent, TrainingEventType, WalkthroughUserData } from '@crczp/visualization-model';
+import { CommandEvent, CommandEventsModel, WalkthroughUserData } from '@crczp/visualization-model';
 import { TrainingUser } from '@crczp/training-model';
 
 @Component({
@@ -41,15 +41,15 @@ export class PlayerTrainingComponent {
         this.userSelectedEvent.emit(this.userData.user);
     }
 
-    getEventDifference(event: TrainingEvent): number {
+    getEventDifference(event: CommandEvent): number {
         switch (event.type) {
-            case TrainingEventType.HintTaken:
+            case CommandEventsModel.HintTaken:
                 return 1;
-            case TrainingEventType.WrongAnswerSubmitted:
+            case CommandEventsModel.WrongAnswerSubmitted:
                 return 5;
-            case TrainingEventType.SolutionDisplayed:
+            case CommandEventsModel.SolutionDisplayed:
                 return 20;
-            case TrainingEventType.CorrectAnswerSubmitted:
+            case CommandEventsModel.CorrectAnswerSubmitted:
                 return -10;
         }
         return 0;

@@ -1,0 +1,26 @@
+<h4>
+    <span>{{ question.order + 1 }}. </span>
+    <mat-icon class="question-type" [inline]="true" matTooltip="Free Form Question"> help_outline</mat-icon>
+    <span> {{ question.title }}</span>
+</h4>
+<div *ngIf="isTest">
+    <div class="data-field">
+        <div class="key-field">Points:</div>
+        <div>{{ question.score }}</div>
+    </div>
+    <div class="data-field">
+        <div class="key-field">Penalty:</div>
+        <div>{{ question.penalty }}</div>
+    </div>
+    <div *ngIf="isTest">
+        <div class="data-field">
+            <div class="key-field">Choices</div>
+            <div class="choices">
+                <div *ngFor="let choice of question.choices">
+                    <div>{{ choice.text }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

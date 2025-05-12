@@ -1,0 +1,7 @@
+<div class="container" *ngIf="(trainingInstance$ | async) as trainingInstance">
+    <crczp-statistical-visualization
+        [trainingInstanceId]="trainingInstance.id"
+        [trainingDefinitionId]="trainingInstance?.trainingDefinition?.id"
+        (openDetailView)="redirectToDetailView($event)">
+    </crczp-statistical-visualization>
+</div>

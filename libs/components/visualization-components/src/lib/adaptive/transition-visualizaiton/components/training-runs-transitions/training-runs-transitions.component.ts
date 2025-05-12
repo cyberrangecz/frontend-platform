@@ -8,7 +8,7 @@ import {
     Output,
 } from '@angular/core';
 import * as d3 from 'd3';
-import { TrainingRunData, TrainingRunPathNode } from '@crczp/visualization-model';
+import { AdaptiveRunVisualization, RunVisualizationPathNode } from '@crczp/visualization-model';
 
 @Component({
     // eslint-disable-next-line @angular-eslint/component-selector
@@ -17,13 +17,13 @@ import { TrainingRunData, TrainingRunPathNode } from '@crczp/visualization-model
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PlayersTransitionsComponent {
-    @Input() playersTransitions!: TrainingRunData[];
+    @Input() playersTransitions!: AdaptiveRunVisualization[];
 
     @Input() xScale!: d3.ScalePoint<number>;
     @Input() yScale!: d3.ScalePoint<number>;
     @Input() colorScale!: d3.ScaleOrdinal<string, string>;
 
-    @Output() taskPreviewEvent = new EventEmitter<TrainingRunPathNode>();
+    @Output() taskPreviewEvent = new EventEmitter<RunVisualizationPathNode>();
 
     private g: any;
 
@@ -34,11 +34,11 @@ export class PlayersTransitionsComponent {
         this.g = d3.select(element.nativeElement);
     }
 
-    trackByTrainingRunId(playerData: TrainingRunData) {
+    trackByTrainingRunId(playerData: AdaptiveRunVisualization) {
         return playerData.trainingRunId;
     }
 
-    onTaskPreviewChange(node: TrainingRunPathNode) {
+    onTaskPreviewChange(node: RunVisualizationPathNode) {
         this.taskPreviewEvent.emit(node);
     }
 }

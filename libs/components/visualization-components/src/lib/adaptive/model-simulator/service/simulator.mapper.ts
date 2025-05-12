@@ -1,19 +1,19 @@
-import { AbstractPhaseTypeEnum, Task, TrainingPhase, TrainingUser } from '@crczp/training-model';
+import { AbstractPhaseTypeEnum, AdaptiveTask, TrainingPhase, TrainingUser } from '@crczp/training-model';
 import {
     AccessPhaseTask,
     AccessTransitionPhase,
     InfoPhaseTask,
     InfoTransitionPhase,
-    QuestionnairePhaseTask,
+    QuestionnairePhaseTaskVisuazlization,
     QuestionnaireTransitionPhase,
-    TrainingRunData,
-    TrainingRunPathNode,
+    AdaptiveRunVisualization,
+    RunVisualizationPathNode,
     TransitionPhase
 } from '@crczp/visualization-model';
 
 export class SimulatorMapper {
-    static toCreatePathNode(task: Task, phase: TrainingPhase): TrainingRunPathNode {
-        const pathNode = new TrainingRunPathNode();
+    static toCreatePathNode(task: AdaptiveTask, phase: TrainingPhase): RunVisualizationPathNode {
+        const pathNode = new RunVisualizationPathNode();
         pathNode.phaseId = phase.id;
         pathNode.phaseOrder = phase.order;
         pathNode.taskId = task.id;
@@ -25,8 +25,8 @@ export class SimulatorMapper {
      * Creates default objects for transition visualization
      */
 
-    static createTrainee(): TrainingRunData {
-        const runData = new TrainingRunData();
+    static createTrainee(): AdaptiveRunVisualization {
+        const runData = new AdaptiveRunVisualization();
         runData.trainee = new TrainingUser();
         runData.trainee.id = 1;
         runData.trainee.name = 'Trainee';
@@ -43,8 +43,8 @@ export class SimulatorMapper {
         return infoTask;
     }
 
-    static createQuestionnairePhaseTask(): QuestionnairePhaseTask {
-        const questionnaireTask = new QuestionnairePhaseTask();
+    static createQuestionnairePhaseTask(): QuestionnairePhaseTaskVisuazlization {
+        const questionnaireTask = new QuestionnairePhaseTaskVisuazlization();
         questionnaireTask.order = 0;
         questionnaireTask.id = 0;
         questionnaireTask.questions = [];
@@ -59,7 +59,7 @@ export class SimulatorMapper {
     }
 
     static createNonTrainingPathNode(phase: TransitionPhase) {
-        const pathNode = new TrainingRunPathNode();
+        const pathNode = new RunVisualizationPathNode();
         pathNode.phaseId = phase.id;
         pathNode.phaseOrder = phase.order;
         pathNode.taskId = 0;

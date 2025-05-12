@@ -1,0 +1,29 @@
+.mat-expansion-panel-header-title,
+.mat-expansion-panel-header-description {
+    flex-basis: 0;
+}
+
+.mat-expansion-panel-header-description {
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.panel-description-error mat-icon {
+    margin-right: 5px;
+}
+
+.panel-description-error {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-right: 10px;
+}
+
+mat-card {
+    padding: 16px;
+    margin-bottom: 1%;
+}
+
+::ng-deep .mat-mdc-dialog-container .mdc-dialog__surface {
+    padding: 8px;
+}

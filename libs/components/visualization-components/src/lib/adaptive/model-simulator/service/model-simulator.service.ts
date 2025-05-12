@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { AbstractPhaseTypeEnum, Phase, TrainingPhase, Task } from '@crczp/training-model';
-import { TraineePhasePerformance, TrainingRunData } from '@crczp/visualization-model';
+import { AbstractPhaseTypeEnum, Phase, TrainingPhase, AdaptiveTask } from '@crczp/training-model';
+import { TraineePhasePerformance, AdaptiveRunVisualization } from '@crczp/visualization-model';
 import { SimulatorMapper } from './simulator.mapper';
 
 @Injectable()
@@ -9,7 +9,7 @@ export class ModelSimulatorService {
         phases: Phase[],
         relatedTrainingPhases: TrainingPhase[],
         performanceStatistics: TraineePhasePerformance[],
-    ): TrainingRunData[] {
+    ): AdaptiveRunVisualization[] {
         const runData = SimulatorMapper.createTrainee();
         const maxOrder = phases.length - 1;
 
@@ -62,7 +62,7 @@ export class ModelSimulatorService {
         inspectedPhase: TrainingPhase,
         relatedTrainingPhases: TrainingPhase[],
         performanceStatisticsMatrix: TraineePhasePerformance[],
-    ): Task {
+    ): AdaptiveTask {
         const participantPerformance = this.evaluateParticipantPerformance(
             inspectedPhase,
             relatedTrainingPhases,

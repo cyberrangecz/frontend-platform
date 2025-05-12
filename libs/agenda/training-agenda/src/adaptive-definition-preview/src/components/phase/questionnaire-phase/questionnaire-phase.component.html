@@ -1,0 +1,38 @@
+<div class="container">
+    <div class="content">
+        <div class="questions" *ngFor="let question of phase.questions; index as i">
+            <h2>
+                <sentinel-markdown-view [markdown]="'Question ' + (i+1).toString() + ':'"/>
+                <sentinel-markdown-view [markdown]="question.text"/>
+            </h2>
+
+
+            <ng-container [ngSwitch]="question.questionType">
+                <div class="question" *ngSwitchCase="questionTypes.FFQ">
+                    <mat-form-field appearance="outline">
+                        <mat-label>
+                            Answer
+                        </mat-label>
+                        <input [maxLength]="1023" matInput>
+                    </mat-form-field>
+                </div>
+
+                <div class="mcq-question" *ngSwitchCase="questionTypes.MCQ">
+                    <div *ngFor="let choice of question.choices">
+                        <mat-checkbox/>
+                        <p>{{ choice.text }}</p>
+                    </div>
+                </div>
+
+                <div class="rfq-question" *ngSwitchCase="questionTypes.RFQ">
+                    <div class="rfq-answer" *ngFor="let choice of question.choices">
+                        <mat-checkbox
+                        />
+                        <p>{{ choice.text }}</p>
+                    </div>
+                </div>
+            </ng-container>
+        </div>
+    </div>
+</div>
+

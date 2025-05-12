@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { AssessmentMapper } from './mappers/assessment-mapper';
 import { VisualizationApiConfig } from '../config/visualization-api-config';
-import { AssessmentDTO } from './dto/assessment-dto';
+import { AssessmentDTO } from './dtos';
 import { Assessment } from '@crczp/visualization-model';
 
 /**
@@ -16,7 +16,7 @@ export class AssessmentApi {
 
     constructor(
         private http: HttpClient,
-        private config: VisualizationApiConfig,
+        private config: VisualizationApiConfig
     ) {
         this.visualizationsEndpoint = `${this.config.trainingBasePath}/visualizations`;
     }

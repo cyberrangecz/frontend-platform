@@ -1,5 +1,5 @@
+import { OptionDTO } from '../dtos';
 import { AssessmentOption } from '@crczp/visualization-model';
-import { OptionDTO } from '../dto/option-dto';
 import { UserMapper } from '@crczp/training-api';
 
 export class OptionMapper {

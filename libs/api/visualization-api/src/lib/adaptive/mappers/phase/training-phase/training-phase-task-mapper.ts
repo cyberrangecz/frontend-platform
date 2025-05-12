@@ -1,5 +1,5 @@
-import { TrainingPhaseTask } from '../../../model/phase/training-phase/training-phase-task';
-import { TaskDTO } from '../../../dto/task-dto';
+import { TaskDTO } from '../../../dto/phase/training-phase/task-dto';
+import { TrainingPhaseTask } from '@crczp/visualization-model';
 
 export class TrainingPhaseTaskMapper {
     static fromDTOs(dtos: TaskDTO[]): TrainingPhaseTask[] {

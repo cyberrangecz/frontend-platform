@@ -1,11 +1,11 @@
 import { TaskDTO } from '../../dto/phase/training-phase/task-dto';
-import { AbstractPhaseTypeEnum, Task } from '@crczp/training-model';
+import { AbstractPhaseTypeEnum, AdaptiveTask } from '@crczp/training-model';
 import { TaskUpdateDTO } from '../../dto/phase/training-phase/task-update-dto';
 import { TaskCopyDTO } from '../../dto/phase/training-phase/task-copy-dto';
 
 export class TaskMapper {
-    static fromDTO(dto: TaskDTO): Task {
-        const result = new Task();
+    static fromDTO(dto: TaskDTO): AdaptiveTask {
+        const result = new AdaptiveTask();
         result.id = dto.id;
         result.title = dto.title;
         result.order = dto.order;
@@ -18,11 +18,11 @@ export class TaskMapper {
         return result;
     }
 
-    static toUpdateDTOs(tasks: Task[]): TaskUpdateDTO[] {
+    static toUpdateDTOs(tasks: AdaptiveTask[]): TaskUpdateDTO[] {
         return tasks.map(TaskMapper.toUpdateDTO);
     }
 
-    static toUpdateDTO(task: Task): TaskUpdateDTO {
+    static toUpdateDTO(task: AdaptiveTask): TaskUpdateDTO {
         const result = new TaskUpdateDTO();
         result.id = task.id;
         result.content = task.content;
@@ -34,7 +34,7 @@ export class TaskMapper {
         return result;
     }
 
-    static toCopyDTO(task: Task): TaskCopyDTO {
+    static toCopyDTO(task: AdaptiveTask): TaskCopyDTO {
         const result = new TaskCopyDTO();
         result.content = task.content;
         result.solution = task.solution;

@@ -1,0 +1,15 @@
+<div class="content">
+    <!-- TITLE-->
+    <h2>
+        <sentinel-markdown-view [markdown]="'Question ' + index.toString() + ':'"/>
+        <sentinel-markdown-view [markdown]="question.title"/>
+    </h2>
+    <p class="required-note" *ngIf="question.required">Answer required</p>
+
+    <!-- OPTIONS -->
+    <div class="checkboxes">
+        <mat-checkbox *ngFor="let option of question.choices; index as i">
+            {{ option.text }}
+        </mat-checkbox>
+    </div>
+</div>

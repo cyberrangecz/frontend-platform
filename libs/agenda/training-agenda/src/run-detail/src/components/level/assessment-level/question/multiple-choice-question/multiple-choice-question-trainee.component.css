@@ -1,0 +1,28 @@
+h2 {
+    color: #4355b7;
+    margin: 0;
+}
+
+p.required-note {
+    color: #949494;
+}
+
+.checkboxes {
+    display: flex;
+    flex-direction: column;
+    word-break: break-word;
+}
+
+/* TODO(mdc-migration): The following rule targets internal classes of checkbox that may no longer apply for the MDC version. */
+mat-checkbox {
+    margin: 5px 0;
+}
+
+/* TODO(mdc-migration): The following rule targets internal classes of checkbox that may no longer apply for the MDC version. */
+::ng-deep .mat-checkbox-layout {
+    white-space: normal !important;
+}
+
+sentinel-markdown-view {
+    color: #3f51b5;
+}

@@ -1,0 +1,64 @@
+<mat-card appearance="outlined">
+    <mat-card-header>
+        <div mat-card-avatar>
+            <mat-icon color="primary">policy</mat-icon>
+        </div>
+        <mat-card-title>Role {{ type?.value }}</mat-card-title>
+        <mat-card-subtitle>This role will be available to assign to groups and users</mat-card-subtitle>
+        <span class="spacer"></span>
+        <div class="remove-role">
+            <button (click)="deleteRole()" mat-icon-button matTooltip="Delete role" type="button">
+                <mat-icon>close</mat-icon>
+            </button>
+        </div>
+    </mat-card-header>
+    <mat-card-content>
+        <form [formGroup]="microserviceRoleFormGroup.formGroup">
+            <div class="form-container">
+
+                <!-- DEFAULT checkbox-->
+                <div class="form-line">
+                    <span class="spacer"></span>
+                    <mat-checkbox formControlName="default"
+                                  labelPosition="before"
+                                  matTooltip="When active, role is selected as default">
+                        Default
+                    </mat-checkbox>
+                </div>
+
+                <!-- TYPE field-->
+                <mat-form-field appearance="outline">
+                    <mat-label>Type</mat-label>
+                    <input formControlName="type" matInput placeholder="Type" required>
+                    @if (type.value) {
+                        <button matSuffix mat-icon-button aria-label="Clear"
+                                (click)="type.setValue(''); onClear();">
+                            <mat-icon>close</mat-icon>
+                        </button>
+                    }
+                    <mat-error>Type cannot be empty</mat-error>
+                </mat-form-field>
+
+                <!-- DESCRIPTION field-->
+                <mat-form-field appearance="outline">
+                    <mat-label>Description</mat-label>
+                    <textarea
+                        class="description"
+                        formControlName="description" matInput
+                        maxlength="255"
+                        placeholder="Description">
+                    </textarea>
+                    @if (description.value) {
+                        <button (click)="description.setValue(''); onClear();"
+                                aria-label="Clear"
+                                mat-icon-button
+                                matSuffix>
+                            <mat-icon>close</mat-icon>
+                        </button>
+                    }
+                </mat-form-field>
+            </div>
+        </form>
+    </mat-card-content>
+</mat-card>
+

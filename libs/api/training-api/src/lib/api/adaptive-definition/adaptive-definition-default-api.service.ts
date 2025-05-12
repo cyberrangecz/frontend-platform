@@ -7,7 +7,7 @@ import {
     InfoPhase,
     Phase,
     QuestionnairePhase,
-    Task,
+    AdaptiveTask,
     TrainingDefinition,
     TrainingDefinitionInfo,
     TrainingDefinitionStateEnum,
@@ -310,7 +310,7 @@ export class AdaptiveDefinitionDefaultApiService extends AdaptiveDefinitionApiSe
         );
     }
 
-    createTask(trainingDefinitionId: number, trainingPhaseId: number): Observable<Task> {
+    createTask(trainingDefinitionId: number, trainingPhaseId: number): Observable<AdaptiveTask> {
         return this.http
             .post<TaskDTO>(
                 // eslint-disable-next-line max-len
@@ -318,10 +318,10 @@ export class AdaptiveDefinitionDefaultApiService extends AdaptiveDefinitionApiSe
                 {},
                 { headers: this.createDefaultHeaders() },
             )
-            .pipe(map((resp) => TaskMapper.fromDTO(resp) as Task));
+            .pipe(map((resp) => TaskMapper.fromDTO(resp) as AdaptiveTask));
     }
 
-    cloneTask(trainingDefinitionId: number, trainingPhaseId: number, clonedTask: Task): Observable<Task> {
+    cloneTask(trainingDefinitionId: number, trainingPhaseId: number, clonedTask: AdaptiveTask): Observable<AdaptiveTask> {
         return this.http
             .post<TaskDTO>(
                 // eslint-disable-next-line max-len
@@ -329,7 +329,7 @@ export class AdaptiveDefinitionDefaultApiService extends AdaptiveDefinitionApiSe
                 TaskMapper.toCopyDTO(clonedTask),
                 { headers: this.createDefaultHeaders() },
             )
-            .pipe(map((resp) => TaskMapper.fromDTO(resp) as Task));
+            .pipe(map((resp) => TaskMapper.fromDTO(resp) as AdaptiveTask));
     }
 
     deleteTask(trainingDefinitionId: number, trainingPhaseId: number, taskId: number): Observable<any> {
@@ -349,7 +349,7 @@ export class AdaptiveDefinitionDefaultApiService extends AdaptiveDefinitionApiSe
             .pipe(map((response) => TaskMapper.fromDTO(response)));
     }
 
-    updateTask(trainingDefinitionId: number, trainingPhaseId: number, task: Task): Observable<any> {
+    updateTask(trainingDefinitionId: number, trainingPhaseId: number, task: AdaptiveTask): Observable<any> {
         return this.http.put(
             `${this.adaptiveDefinitionsUri}/${trainingDefinitionId}/${this.phasesUriExtension}/${trainingPhaseId}/tasks/${task.id}`,
             TaskMapper.toUpdateDTO(task),

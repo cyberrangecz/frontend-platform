@@ -1,0 +1,116 @@
+.checkbox-container {
+    float: left;
+    width: 100%;
+}
+
+mat-divider {
+    margin: 10px 0;
+}
+
+.detection-name {
+    width: 15%;
+}
+
+mat-slide-toggle {
+    width: 10%;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+}
+
+.slide-toggle-container {
+    display: flex;
+    margin-bottom: 10px;
+}
+
+.detection-tooltip {
+    width: 75%;
+}
+
+.mat-mdc-form-field {
+    display: grid;
+}
+
+.proximity-wrapper {
+    width: 40%;
+}
+
+.add-forbidden-command {
+    margin-bottom: 10px;
+}
+
+.forbidden-command-type-element1 {
+    display: inline-grid;
+    flex-direction: column;
+    align-items: start;
+    width: 25%;
+    height: 90%;
+}
+
+.forbidden-command-type-element1 mat-error {
+    align-items: end;
+}
+
+.forbidden-command-label-element2 {
+    width: 40%;
+}
+
+.forbidden-command-button-element3 {
+    width: 20%;
+    padding-top: 7px;
+    align-content: start;
+}
+
+.mat-radio-button {
+    padding: 3px;
+}
+
+mat-divider {
+    margin: 10px 0;
+}
+
+.forbidden-commands-wrapper {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 80px;
+}
+
+.type-options {
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+}
+
+.forbidden-commands-panel {
+    width: 90%;
+}
+
+.mat-expansion-panel-header-title,
+.mat-expansion-panel-header-description {
+    flex-basis: 0;
+}
+
+.mat-expansion-panel-header-description {
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.panel-description-error mat-icon {
+    margin-right: 5px;
+}
+
+
+::ng-deep .mat-tooltip {
+    font-size: 14px;
+}
+
+.mat-radio-button {
+    margin: 0 10px;
+}
+
+::ng-deep .mat-mdc-dialog-container .mdc-dialog__surface {
+    padding: 8px;
+}

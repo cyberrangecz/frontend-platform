@@ -1,0 +1,28 @@
+table {
+    margin-bottom: 20px;
+    margin-right: 20px;
+    background-color: transparent;
+    border-spacing: 0;
+    border-collapse: collapse;
+    align-content: center;
+}
+
+.full-table {
+    width: 90%;
+    margin: 0 auto;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.row-stripe {
+    position: absolute;
+    width: 7px;
+    height: 33px;
+    translate: 0 -8px;
+}
+
+th, td {
+    min-width: 70px;
+    text-align: center;
+    vertical-align: middle;
+}

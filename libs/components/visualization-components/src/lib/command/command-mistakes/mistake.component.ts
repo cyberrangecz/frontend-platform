@@ -12,8 +12,8 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { AsyncPipe } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { CommandTable } from './command-table';
-import { provideApiConfig } from '@crczp/api-common';
 import { CommandCorrectnessApi, VisualizationApiConfig } from '@crczp/visualization-api';
+import { provideComponentProperty } from '@crczp/components-common';
 
 @Component({
     selector: 'crczp-mistake',
@@ -27,16 +27,16 @@ import { CommandCorrectnessApi, VisualizationApiConfig } from '@crczp/visualizat
         MatButtonModule
     ],
     providers: [
-        provideApiConfig(MistakeComponent,VisualizationApiConfig),
+        provideComponentProperty(MistakeComponent, VisualizationApiConfig, 'apiConfig'),
         CommandCorrectnessApi,
-        CommandMistakeService,
+        CommandMistakeService
     ]
 })
 export class MistakeComponent implements OnInit {
     readonly INIT_SORT_NAME = 'lastEdited';
     readonly INIT_SORT_DIR = 'desc';
 
-    @Input({required: true}) apiConfig: VisualizationApiConfig;
+    @Input() apiConfig: VisualizationApiConfig;
     @Input() trainingInstanceId: number;
     @Input() trainingRunId: number;
 
@@ -45,22 +45,20 @@ export class MistakeComponent implements OnInit {
     isLoading$: Observable<boolean>;
 
     traineesDropdownList: CommandResourceSelect[] = [];
-
+    resourcesMapping: SentinelResourceSelectorMapping;
+    mistakesResources: CommandResourceSelect[] = [];
+    correct = false;
     private selectedTrainingRunSubject$: BehaviorSubject<CommandResourceSelect[]> =
         new BehaviorSubject([]);
     selectedTrainingRuns$: Observable<CommandResourceSelect[]> =
         this.selectedTrainingRunSubject$.asObservable();
-
     private selectedMistakeTypesSubject$: BehaviorSubject<CommandResourceSelect[]> =
         new BehaviorSubject([]);
     selectedMistakeTypes$: Observable<CommandResourceSelect[]> =
         this.selectedMistakeTypesSubject$.asObservable();
 
-    resourcesMapping: SentinelResourceSelectorMapping;
-    mistakesResources: CommandResourceSelect[] = [];
-    correct = false;
-
-    constructor(private commandService: CommandMistakeService) {}
+    constructor(private commandService: CommandMistakeService) {
+    }
 
     ngOnInit(): void {
         this.selectedTrainingRuns$ = this.commandService.selectedTrainingRuns$;
@@ -148,7 +146,7 @@ export class MistakeComponent implements OnInit {
         this.resourcesMapping = {
             id: 'id',
             title: 'title',
-            subtitle: 'subtitle',
+            subtitle: 'subtitle'
         };
 
         if (!this.trainingRunId) {
@@ -160,7 +158,7 @@ export class MistakeComponent implements OnInit {
                             return {
                                 id: trainingRun.id,
                                 title: trainingRun.player.name,
-                                subtitle: `Training Run ID: ${trainingRun.id}`,
+                                subtitle: `Training Run ID: ${trainingRun.id}`
                             };
                         });
                     }),

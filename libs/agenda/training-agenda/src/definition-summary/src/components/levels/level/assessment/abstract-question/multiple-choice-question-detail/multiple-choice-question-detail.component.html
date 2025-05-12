@@ -1,0 +1,27 @@
+<h4>
+    <span>{{ question.order + 1 }}. </span>
+    <mat-icon class="question-type" [inline]="true" matTooltip="Multiple Choice Question"> check_circle</mat-icon>
+    <span> {{ question.title }}</span>
+</h4>
+<div *ngIf="isTest">
+    <div class="data-field">
+        <div class="key-field">Points:</div>
+        <div>{{ question.score }}</div>
+    </div>
+    <div class="data-field">
+        <div class="key-field">Penalty:</div>
+        <div>{{ question.penalty }}</div>
+    </div>
+</div>
+<div class="data-field">
+    <div class="key-field">Choices:</div>
+    <div class="choices">
+        <div *ngFor="let choice of question.choices">
+            <div>{{ choice.text }}</div>
+            <div class="correct-choice" *ngIf="isTest">
+                <mat-icon [inline]="true" *ngIf="choice.correct">done</mat-icon>
+                <mat-icon [inline]="true" *ngIf="!choice.correct">close</mat-icon>
+            </div>
+        </div>
+    </div>
+</div>

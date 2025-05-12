@@ -1,0 +1,158 @@
+<form [formGroup]="extendedMatchingQuestionFormGroup.formGroup">
+    <div class="content">
+        <div class="form-container">
+            <!-- TITLE field-->
+            <h3>Title</h3>
+            <div class='question-text'>
+                <sentinel-markdown-editor
+                    [sentinel-markdown-file-upload]="false"
+                    (contentChange)="title.setValue($event)"
+                    [content]="title.value"
+                />
+                <mat-error *ngIf="title.hasError('whitespace')">Title cannot be empty</mat-error>
+            </div>
+
+            <!--SCORE field -->
+            <div *ngIf="isTest" class="inline-input">
+                <mat-form-field appearance="outline" hintLabel="Number in range from 0
+          to {{ maxQuestionScore }}">
+                    <mat-label>Points</mat-label>
+                    <input matInput placeholder="Points" type="number"
+                           [max]="maxQuestionScore" min="0" formControlName="score"
+                           [required]="required">
+                    <mat-error *ngIf="score.hasError('required')">Question score cannot be
+                        empty
+                    </mat-error>
+                    <mat-error *ngIf="score.hasError('pattern') || score.hasError('min')
+            || score.hasError('max')">Question score must be a number in range
+                        from 0 to {{ this.maxQuestionScore }}
+                    </mat-error>
+                </mat-form-field>
+
+                <!--PENALTY field -->
+                <mat-form-field appearance="outline" hintLabel="Number in range from 0
+          to {{ maxQuestionPenalty }}">
+                    <mat-label>Penalty points</mat-label>
+                    <input matInput placeholder="Question Penalty points" type="number"
+                           [max]="maxQuestionPenalty" min="0" formControlName="penalty"
+                           [required]="required">
+                    <mat-error *ngIf="penalty.hasError('required')">Question penalty
+                        cannot be empty
+                    </mat-error>
+                    <mat-error *ngIf="penalty.hasError('pattern') ||
+            penalty.hasError('min') || penalty.hasError('max')">Question penalty
+                        must be a number in range from 0 to this.{{ maxQuestionPenalty }}
+                    </mat-error>
+                </mat-form-field>
+            </div>
+        </div>
+
+        <button *ngIf="isTest" [disabled]="!isCheckedAnyOption()"
+                mat-button color="warn" (click)="clearAnswers()" class="clear-answers">Clear
+            Answers
+        </button>
+        <!-- EMI -->
+        <div class="emi-answers">
+            <table>
+                <!-- DELETE OPTION BUTTONS -->
+                <tr class="first-statement">
+                    <td></td>
+                    <td *ngFor="let option of options.controls; index as i;"
+                        class="delete-col-buttons">
+                        <button matSuffix mat-icon-button aria-label="Delete
+              option" color="warn" matTooltip="Delete option"
+                                (click)="deleteOption(i)">
+                            <mat-icon>remove_circle</mat-icon>
+                        </button>
+                    </td>
+                </tr>
+                <!-- OPTION HEADER -->
+                <tr class="inner">
+                    <td></td>
+
+                    <td formArrayName="options" *ngFor="let option of options.controls; index as i;
+            trackBy: trackByFn" class="col-header">
+                        <!-- OPTION NAME -->
+                        <div [formGroupName]="i">
+
+                            <mat-form-field class="option-field" floatLabel="never"
+                                            (keydown.enter)="$event.preventDefault()">
+                                <mat-label>Option {{ i + 1 }}</mat-label>
+                                <input matInput placeholder="Option {{ i + 1 }}"
+                                       [formControl]="option.get('text')" required>
+                                <button *ngIf="option.get('text').value" matSuffix mat-icon-button
+                                        aria-label="Clear" (click)="option.get('text').setValue('')">
+                                    <mat-icon>close</mat-icon>
+                                </button>
+                            </mat-form-field>
+
+                        </div>
+                    </td>
+
+                    <!-- ADD OPTION BUTTON -->
+                    <td class="last-option">
+                        <button *ngIf="!columnLimitReached" matSuffix mat-icon-button aria-label="Add option"
+                                color="primary" matTooltip="Add option"
+                                (click)="addOption()">
+                            <mat-icon>add_circle</mat-icon>
+                        </button>
+                    </td>
+                </tr>
+                <!-- STATEMENTS WITH RADIO BUTTONS -->
+                <tr formArrayName="statements" *ngFor="let statement of statements.controls; index as i;
+          trackBy: trackByFn" class="inner">
+                    <td [formGroupName]="i">
+                        <!-- STATEMENT NAME -->
+                        <mat-form-field class="statement-field" floatLabel="never"
+                                        (keydown.enter)="$event.preventDefault()">
+                            <mat-label>Statement {{ i + 1 }}</mat-label>
+                            <input matInput placeholder="Statement {{ i + 1 }}" [formControl]="statement.get('text')"
+                                   required>
+                            <button *ngIf="statement.get('text').value" matSuffix mat-icon-button
+                                    aria-label="Clear" (click)="statement.get('text').setValue('')">
+                                <mat-icon>close</mat-icon>
+                            </button>
+                        </mat-form-field>
+
+                    </td>
+
+                    <!-- STATEMENT OPTIONS -->
+                    <mat-radio-group>
+                        <td *ngFor="let option of getOptions(); index as j;">
+                            <mat-radio-button [disabled]="!isTest || !required"
+                                              [value]="{ x: i, y: j }"
+                                              [checked]="isOptionChecked(statement, j)"
+                                              (change)="onCorrectOptionChanged(i, j)"/>
+                        </td>
+                    </mat-radio-group>
+
+                    <!-- DELETE STATEMENT BUTTON -->
+                    <td class="last-option">
+                        <button matSuffix mat-icon-button aria-label="Delete statement"
+                                color="warn" matTooltip="Delete statement"
+                                (click)="deleteStatement(i)">
+                            <mat-icon>remove_circle</mat-icon>
+                        </button>
+                    </td>
+                </tr>
+                <!-- ADD STATEMENT BUTTON -->
+                <tr class="last-statement">
+                    <td>
+                        <button matSuffix mat-icon-button aria-label="Add new
+              statement" color="primary" matTooltip="Add new statement"
+                                (click)="addStatement()">
+                            <mat-icon>add_circle</mat-icon>
+                        </button>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <mat-error *ngIf="isTest &&
+      extendedMatchingQuestionFormGroup.formGroup.hasError('noSelectedAnswers')">Test
+            question must have selected correct answers
+        </mat-error>
+        <mat-error *ngIf="options.hasError('whitespace')">Options cannot be empty</mat-error>
+        <mat-error *ngIf="statements.hasError('whitespace')">Statements cannot be empty</mat-error>
+    </div>
+</form>

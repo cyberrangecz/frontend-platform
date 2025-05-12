@@ -1,0 +1,13 @@
+<ng-container *ngIf="trainingRuns.rows.length; else noRuns">
+    <sentinel-table
+        elevation="0"
+        [data]="trainingRuns"
+        [hasError]="hasError"
+        (rowAction)="onTableAction($event)"
+        (tableLoad)="onTableLoadEvent($event)"
+    >
+    </sentinel-table>
+</ng-container>
+<ng-template #noRuns>
+    There are no training runs yet.
+</ng-template>

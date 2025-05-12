@@ -1,0 +1,26 @@
+<div class="hints-row round-scrollbar">
+    <button
+        *ngFor="let hintButton of hintsButtons$ | async; index as i"
+        mat-raised-button
+        color="warn"
+        [disabled]="
+                  ( isSolutionRevealed$ | async ) ||
+                  ( hintButton.disabled$ | async ) ||
+                  ( isLoading$ | async)
+                "
+        (click)="emitHintRevealed(hintButton)"
+        matTooltip="{{ hintButton.hint.title }}"
+        matTooltipPosition="above"
+    >
+        Hint {{ i + 1 }}
+    </button>
+    <button
+        mat-raised-button
+        color="warn"
+        [disabled]="( isSolutionRevealed$ | async ) || ( isLoading$ | async )"
+        (click)="emitSolutionRevealed()"
+        matTooltip="Display solution"
+    >
+        Reveal Solution
+    </button>
+</div>

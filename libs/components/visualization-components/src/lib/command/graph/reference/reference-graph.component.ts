@@ -10,19 +10,19 @@ import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
-import { provideApiConfig } from '@crczp/api-common';
+import { provideComponentProperty } from '@crczp/components-common';
 
 @Component({
     selector: 'crczp-reference-graph',
     templateUrl: './reference-graph.component.html',
     styleUrls: ['./reference-graph.component.css'],
     imports: [
-        CommonModule, MatButtonModule, MatListModule, MatIconModule,
+        CommonModule, MatButtonModule, MatListModule, MatIconModule
     ],
     providers: [
         ReferenceGraphApi,
         ReferenceGraphService,
-        provideApiConfig(ReferenceGraphComponent, VisualizationApiConfig)
+        provideComponentProperty(ReferenceGraphComponent, VisualizationApiConfig, 'apiConfig')
     ]
 })
 export class ReferenceGraphComponent implements OnInit {
@@ -33,7 +33,8 @@ export class ReferenceGraphComponent implements OnInit {
     public hasError = false;
     private graphviz: Graphviz<BaseType, any, BaseType, any>;
 
-    constructor(private graphService: ReferenceGraphService) {}
+    constructor(private graphService: ReferenceGraphService) {
+    }
 
     ngOnInit(): void {
         let referenceGraphResponse: Observable<Graph>;
@@ -50,8 +51,8 @@ export class ReferenceGraphComponent implements OnInit {
                     (graph) => {
                         this.graphviz = graphviz('div.reference-graph').zoom(true).fit(true).renderDot(graph.graph);
                     },
-                    () => (this.hasError = true),
-                ),
+                    () => (this.hasError = true)
+                )
             )
             .subscribe();
     }

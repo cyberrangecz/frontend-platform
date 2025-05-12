@@ -3,14 +3,14 @@ import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagin
 import { Observable } from 'rxjs';
 import {
     AccessPhase,
+    AdaptiveTask,
     InfoPhase,
     Phase,
     QuestionnairePhase,
-    Task,
     TrainingDefinition,
     TrainingDefinitionInfo,
     TrainingDefinitionStateEnum,
-    TrainingPhase,
+    TrainingPhase
 } from '@crczp/training-model';
 
 export abstract class AdaptiveDefinitionApiService {
@@ -74,13 +74,13 @@ export abstract class AdaptiveDefinitionApiService {
         newPosition: number,
     ): Observable<any>;
 
-    abstract createTask(trainingDefinitionId: number, trainingPhaseId: number): Observable<Task>;
+    abstract createTask(trainingDefinitionId: number, trainingPhaseId: number): Observable<AdaptiveTask>;
 
-    abstract cloneTask(trainingDefinitionId: number, trainingPhaseId: number, clonedTask: Task): Observable<Task>;
+    abstract cloneTask(trainingDefinitionId: number, trainingPhaseId: number, clonedTask: AdaptiveTask): Observable<AdaptiveTask>;
 
     abstract deleteTask(trainingDefinitionId: number, trainingPhaseId: number, taskId: number): Observable<any>;
 
     abstract getTask(trainingDefinitionId: number, trainingPhaseId: number, taskId: number): Observable<Phase>;
 
-    abstract updateTask(trainingDefinitionId: number, trainingPhaseId: number, task: Task): Observable<any>;
+    abstract updateTask(trainingDefinitionId: number, trainingPhaseId: number, task: AdaptiveTask): Observable<any>;
 }

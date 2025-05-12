@@ -1,0 +1,36 @@
+{
+    "name": "training-agenda",
+    "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+    "sourceRoot": "libs/agenda/training-agenda/src",
+    "prefix": "lib",
+    "projectType": "library",
+    "tags": [],
+    "targets": {
+        "build": {
+            "executor": "@nx/angular:ng-packagr-lite",
+            "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
+            "options": {
+                "project": "libs/agenda/training-agenda/ng-package.json"
+            },
+            "configurations": {
+                "production": {
+                    "tsConfig": "libs/agenda/training-agenda/tsconfig.lib.prod.json"
+                },
+                "development": {
+                    "tsConfig": "libs/agenda/training-agenda/tsconfig.lib.json"
+                }
+            },
+            "defaultConfiguration": "production"
+        },
+        "test": {
+            "executor": "@nx/vite:test",
+            "outputs": ["{options.reportsDirectory}"],
+            "options": {
+                "reportsDirectory": "../../../coverage/libs/agenda/training-agenda"
+            }
+        },
+        "lint": {
+            "executor": "@nx/eslint:lint"
+        }
+    }
+}

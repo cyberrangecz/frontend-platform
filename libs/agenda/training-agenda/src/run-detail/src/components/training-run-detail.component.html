@@ -1,0 +1,43 @@
+<div class="header">
+    <!-- LEVEL STEPPER -->
+    <div class="training-run-stepper round-scrollbar" *ngIf="isStepperDisplayed && stepper?.items">
+        <sentinel-stepper
+            [draggable]="false"
+            [selectable]="backwardMode"
+            (indexSelected)="activeStepChanged($event)"
+            [stepperItems]="stepper"
+            [activeIndex]="stepper.activeLevelIndex"
+        >
+        </sentinel-stepper>
+    </div>
+</div>
+
+<ng-container *ngIf="activeLevel$ | async as activeLevel">
+    <!-- CONTENT OF ACTIVE LEVEL -->
+    <crczp-abstract-level
+        [hidden]="(backtrackedLevel$ | async) && activeLevel.id !== stepper.items[stepper.activeLevelIndex].id"
+        [level]="activeLevel"
+        [isLast]="isLast"
+        [isLevelAnswered]="isCurrentLevelAnswered$ | async"
+        [isStepperDisplayed]="isStepperDisplayed"
+        [sandboxInstanceId]="sandboxInstanceId"
+        [sandboxDefinitionId]="sandboxDefinitionId"
+        [localEnvironment]="localEnvironment"
+        [isBacktracked]="false"
+        [startTime]="startTime"
+        (next)="next()"
+    />
+    <crczp-abstract-level
+        *ngIf="(backtrackedLevel$ | async) && activeLevel.id !== stepper.items[stepper.activeLevelIndex].id"
+        [level]="backtrackedLevel$ | async"
+        [isLast]="isLast"
+        [isStepperDisplayed]="isStepperDisplayed"
+        [sandboxInstanceId]="sandboxInstanceId"
+        [sandboxDefinitionId]="sandboxDefinitionId"
+        [localEnvironment]="localEnvironment"
+        [isBacktracked]="true"
+        [startTime]="startTime"
+        (next)="this.activeStepChanged(this.stepper.activeLevelIndex + 1)"
+    />
+</ng-container>
+

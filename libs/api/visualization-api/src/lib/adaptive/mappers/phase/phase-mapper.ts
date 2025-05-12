@@ -7,7 +7,7 @@ import { QuestionnairePhaseMapper } from './questionnaire-phase/questionnaire-ph
 import { QuestionnairePhaseDTO } from '../../dto/phase/questionnaire-phase/questionnaire-phase-dto';
 import { AccessPhaseMapper } from './access-phase/access-phase-mapper';
 import { AccessPhaseDTO } from '../../dto/phase/access-phase/access-phase-dto';
-import { TransitionPhase } from '../../model/phase/transition-phase';
+import { TransitionPhase } from '@crczp/visualization-model';
 
 export class PhaseMapper {
     static fromDTO(dto: AbstractPhaseDTO): TransitionPhase {

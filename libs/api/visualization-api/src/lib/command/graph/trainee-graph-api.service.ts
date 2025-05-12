@@ -5,7 +5,7 @@ import { Graph } from '@crczp/visualization-model';
 import { map } from 'rxjs/operators';
 import { TrainingRun } from '@crczp/training-model';
 import { TrainingRunDTO, TrainingRunMapper } from '@crczp/training-api';
-import { GraphMapper } from '../graph/mappers/graph-mapper';
+import { GraphMapper } from './mappers/graph-mapper';
 import { VisualizationApiConfig } from '../../config/visualization-api-config';
 
 @Injectable()

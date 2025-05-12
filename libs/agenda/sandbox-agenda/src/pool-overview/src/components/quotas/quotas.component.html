@@ -1,0 +1,12 @@
+<mat-card appearance="outlined">
+    <h2>{{ resources?.projectName }}</h2>
+    <div class="resources">
+        <ng-container *ngFor="let resource of displayedResources; let  i = index">
+            <crczp-quota-pie-chart
+                *ngIf="(resources?.quotas)[resource]"
+                [quota]="(resources?.quotas)[resource]"
+                [quotaColor]="resourceColors[i]"
+            />
+        </ng-container>
+    </div>
+</mat-card>

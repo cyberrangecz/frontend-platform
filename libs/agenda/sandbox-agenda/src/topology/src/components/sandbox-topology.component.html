@@ -1,0 +1,8 @@
+<div class="center-content">
+    <div class="topology-content highlighted-resizer">
+        <crczp-topology-graph
+            class="topology-graph"
+            [sandboxUuid]="(sandboxInstance$ | async)?.id"
+            [sandboxDefinitionId]="(sandboxDefinition$ | async)?.id" />
+    </div>
+</div>

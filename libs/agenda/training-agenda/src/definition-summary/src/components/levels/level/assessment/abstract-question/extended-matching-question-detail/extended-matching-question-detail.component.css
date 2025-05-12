@@ -1,0 +1,31 @@
+@import "../../../level-summary-common.css";
+
+.question-matrix-header-container {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+}
+
+.inner-td {
+    text-align: center;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+th {
+    padding-right: 10px;
+}
+
+tr {
+    border-bottom: 1px solid #ddd;
+}
+
+tr:last-of-type {
+    border-bottom: 0px;
+}
+
+.question-type {
+    vertical-align: bottom;
+}

@@ -1,0 +1,43 @@
+<div class="level-header">
+    <h1
+        class="level-title"
+    >{{ level?.title }}</h1>
+    <crczp-training-timer
+        matTooltip="Time since the start of the run"
+        matTooltipPosition="above"
+        class="timer" *ngIf="startTime" [startTime]="startTime"/>
+</div>
+<ng-container [ngSwitch]="level?.type">
+    <crczp-assessment-level *ngSwitchCase="levelTypes.Assessment"
+                           [level]="level"
+                           [isLevelAnswered]="isLevelAnswered"
+                           [isBacktracked]="isBacktracked"
+                           [isLast]=isLast
+                           (next)="onNext()"/>
+    <crczp-training-level *ngSwitchCase="levelTypes.Training"
+                         [level]="level"
+                         [isLast]=isLast
+                         [isLevelAnswered]="isLevelAnswered"
+                         [isBacktracked]="isBacktracked"
+                         [isStepperDisplayed]="isStepperDisplayed"
+                         [sandboxInstanceId]="sandboxInstanceId"
+                         [sandboxDefinitionId]="sandboxDefinitionId"
+                         (next)="onNext()"/>
+    <crczp-info-level *ngSwitchCase="levelTypes.Info"
+                     [level]="level"
+                     [isBacktracked]="isBacktracked"
+                     [isLast]="isLast"
+                     (next)="onNext()"/>
+    <crczp-access-level *ngSwitchCase="levelTypes.Access"
+                       [level]="level"
+                       [isBacktracked]="isBacktracked"
+                       [isStepperDisplayed]="isStepperDisplayed"
+                       [sandboxInstanceId]="sandboxInstanceId"
+                       [sandboxDefinitionId]="sandboxDefinitionId"
+                       [localEnvironment]="localEnvironment"
+                       [isLast]="isLast"
+                       [isLevelAnswered]="isLevelAnswered"
+                       (next)="onNext()"/>
+</ng-container>
+
+

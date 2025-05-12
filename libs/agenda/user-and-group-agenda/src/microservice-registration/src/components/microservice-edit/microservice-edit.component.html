@@ -1,0 +1,43 @@
+<mat-card appearance="outlined">
+    <mat-card-header>
+        <div mat-card-avatar>
+            <mat-icon color="primary">account_tree</mat-icon>
+        </div>
+        <mat-card-title>Microservice {{ name?.value }}</mat-card-title>
+        <mat-card-subtitle>This microservice will be registered to User and Group microservice</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+        <form [formGroup]="microserviceFormGroup.formGroup">
+            <div class="form-container">
+                <!-- NAME field-->
+                <mat-form-field appearance="outline">
+                    <mat-label>Name</mat-label>
+                    <input formControlName="name" matInput placeholder="Name" required>
+                    @if (name.value) {
+                        <button (click)="name.setValue('');" aria-label="Clear" mat-icon-button
+                                matSuffix>
+                            <mat-icon>close</mat-icon>
+                        </button>
+                    }
+                    <mat-error>Name cannot be empty</mat-error>
+                </mat-form-field>
+
+                <!-- ENDPOINT field-->
+                <mat-form-field appearance="outline">
+                    <mat-label>Endpoint</mat-label>
+                    <input formControlName="endpoint" matInput placeholder="Example: /your-service/api/v1" required>
+                    @if (endpoint.value) {
+                        <button (click)="endpoint.setValue('');" aria-label="Clear"
+                                mat-icon-button
+                                matSuffix>
+                            <mat-icon>close</mat-icon>
+                        </button>
+                    }
+                    <mat-error>Endpoint cannot be empty</mat-error>
+                </mat-form-field>
+
+                <crczp-microservice-role-list (microserviceRoles)="onRolesChanged($event)" />
+            </div>
+        </form>
+    </mat-card-content>
+</mat-card>

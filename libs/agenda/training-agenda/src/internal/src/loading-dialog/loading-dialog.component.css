@@ -1,0 +1,13 @@
+.mat-typography {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+mat-progress-spinner {
+    margin: 0 auto;
+}
+
+::ng-deep .mat-mdc-dialog-container .mdc-dialog__surface {
+    padding: 8px;
+}

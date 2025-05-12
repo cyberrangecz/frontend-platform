@@ -1,0 +1,32 @@
+<div class="phases-detail-header">
+    <h2>Phases</h2>
+    <div class="phases-overview">
+        <div class="phase-type" matTooltip="Number of info phases">
+            <mat-icon class="phase-icon"> info</mat-icon>
+            <div class="phase-count"> {{ getInfoPhases()?.length }}</div>
+        </div>
+        <div class="phase-type" matTooltip="Number of access phases">
+            <mat-icon class="phase-icon"> settings</mat-icon>
+            <div class="phase-count"> {{ getAccessPhases()?.length }}</div>
+        </div>
+        <div class="phase-type" matTooltip="Number of training phases">
+            <mat-icon class="phase-icon"> videogame_asset</mat-icon>
+            <div class="phase-count"> {{ getTrainingPhases()?.length }}</div>
+        </div>
+        <div class="phase-type" matTooltip="Number of adaptive questionnaires">
+            <mat-icon class="phase-icon"> help_center</mat-icon>
+            <div class="phase-count"> {{ getAdaptiveQuestionnaires()?.length }}</div>
+        </div>
+        <div class="phase-type" matTooltip="Number of general questionnaires">
+            <mat-icon class="phase-icon"> help</mat-icon>
+            <div class="phase-count"> {{ getGeneralQuestionnaires()?.length }}</div>
+        </div>
+    </div>
+    <sentinel-controls [controls]="controls" (itemClicked)="onControlsAction($event)"/>
+</div>
+<mat-accordion class="example-headers-align" multi>
+    <div *ngFor="let phase of phases; last as isLast">
+        <crczp-phase-detail [phase]="phase"/>
+        <mat-divider *ngIf="!isLast"/>
+    </div>
+</mat-accordion>

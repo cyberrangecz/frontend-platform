@@ -1,0 +1,97 @@
+<form [formGroup]="multipleChoicesFormGroup.formGroup">
+    <div class="content">
+        <!-- TITLE field-->
+        <h3>Title</h3>
+        <div class="question-text">
+            <sentinel-markdown-editor
+                [sentinel-markdown-file-upload]="false"
+                (contentChange)="title.setValue($event)"
+                [content]="title.value"
+            />
+            <mat-error *ngIf="title.hasError('whitespace')">Title cannot be empty</mat-error>
+        </div>
+
+        <div *ngIf="isTest" class="inline-input">
+            <!-- SCORE field -->
+            <mat-form-field
+                appearance="outline"
+                hintLabel="Number in range from 0 to
+        {{ maxQuestionScore }}"
+            >
+                <mat-label>Points</mat-label>
+                <input
+                    matInput
+                    placeholder="Points"
+                    type="number"
+                    [max]="maxQuestionScore"
+                    min="0"
+                    formControlName="score"
+                    [required]="required"
+                />
+                <mat-error *ngIf="score.hasError('required')">Question score cannot be empty</mat-error>
+                <mat-error *ngIf="score.hasError('pattern') || score.hasError('min') || score.hasError('max')"
+                >Question score must be a number in range from 0 to {{ this.maxQuestionScore }}
+                </mat-error
+                >
+            </mat-form-field>
+
+            <!-- PENALTY field -->
+            <mat-form-field
+                appearance="outline"
+                hintLabel="Number in range from 0 to
+        {{ maxQuestionPenalty }}"
+            >
+                <mat-label>Penalty points</mat-label>
+                <input
+                    matInput
+                    placeholder="Question Penalty points"
+                    type="number"
+                    [max]="maxQuestionPenalty"
+                    min="0"
+                    formControlName="penalty"
+                    [required]="required"
+                />
+                <mat-error *ngIf="penalty.hasError('required')">Question penalty cannot be empty</mat-error>
+                <mat-error *ngIf="penalty.hasError('pattern') || penalty.hasError('min') || penalty.hasError('max')"
+                >Question penalty must be a number in range from 0 to this.{{ maxQuestionPenalty }}
+                </mat-error
+                >
+            </mat-form-field>
+        </div>
+
+        <div class="answer-controls">
+            <button (click)="addChoice()" mat-button color="primary">Add choice</button>
+            <button *ngIf="isTest" mat-button color="warn" (click)="clearCorrectChoices()" class="clear-answers">
+                Clear answers
+            </button>
+        </div>
+
+        <div formArrayName="choices">
+            <div *ngFor="let choicesGroup of choices.controls; index as i" [formGroupName]="i">
+                <!-- CHOICES field -->
+                <mat-checkbox *ngIf="isTest" class="option-checkbox" matTooltip="Correct" formControlName="correct"/>
+                <mat-form-field appearance="outline">
+                    <mat-label>Option {{ i + 1 }}</mat-label>
+                    <input matInput placeholder="Option Text" formControlName="text" required/>
+                    <mat-error *ngIf="choicesGroup.get('text').hasError('required')">Option text cannot be empty
+                    </mat-error>
+                </mat-form-field>
+                <button
+                    matSuffix
+                    mat-icon-button
+                    aria-label="Delete option"
+                    color="warn"
+                    matTooltip="Delete option"
+                    (click)="deleteChoice(i)"
+                >
+                    <mat-icon>remove_circle</mat-icon>
+                </button>
+            </div>
+            <mat-error *ngIf="choices.hasError('required')">Choices cannot be empty</mat-error>
+            <mat-error *ngIf="multipleChoicesFormGroup.formGroup.hasError('noSelectedAnswers')"
+            >Test question must have selected correct answers
+            </mat-error
+            >
+        </div>
+    </div>
+</form>

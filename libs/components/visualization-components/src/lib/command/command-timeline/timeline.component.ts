@@ -12,7 +12,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MglTimelineModule } from 'angular-mgl-timeline';
 import { DetectedForbiddenCommand, TrainingRun } from '@crczp/training-model';
 import { VisualizationCommand } from '@crczp/visualization-model';
-import { provideApiConfig } from '@crczp/api-common';
+import { provideComponentProperty } from '@crczp/components-common';
 
 @Component({
     selector: 'crczp-timeline',
@@ -27,16 +27,16 @@ import { provideApiConfig } from '@crczp/api-common';
         MglTimelineModule
     ],
     providers: [
-        provideApiConfig(TimelineComponent,VisualizationApiConfig),
+        provideComponentProperty(TimelineComponent, VisualizationApiConfig, 'apiConfig'),
         CommandApi,
         TimelineCommandApi,
-        TimelineCommandService,
+        TimelineCommandService
     ]
 })
 export class TimelineComponent implements OnInit {
     readonly SIZE = 50;
 
-    @Input({required: true}) apiConfig: VisualizationApiConfig;
+    @Input() apiConfig: VisualizationApiConfig;
     @Input() trainingInstanceId: number;
     @Input() trainingRunId: number;
     @Input() detectionEventId: number;
@@ -53,8 +53,9 @@ export class TimelineComponent implements OnInit {
 
     constructor(
         private timelineCommandService: TimelineCommandService,
-        public fb: UntypedFormBuilder,
-    ) {}
+        public fb: UntypedFormBuilder
+    ) {
+    }
 
     ngOnInit(): void {
         const initialPagination = new OffsetPaginationEvent(0, Number.MAX_SAFE_INTEGER, '', 'asc');
@@ -73,7 +74,7 @@ export class TimelineComponent implements OnInit {
                     this.trainingInstanceId,
                     this.isStandalone,
                     this.isAdaptive,
-                    initialPagination,
+                    initialPagination
                 )
                 .pipe(take(1))
                 .subscribe();
@@ -95,7 +96,7 @@ export class TimelineComponent implements OnInit {
             .getCommandsByTrainingRun(
                 this.timelineCommandService.getSelectedTrainee(),
                 this.isStandalone,
-                this.isAdaptive,
+                this.isAdaptive
             )
             .pipe(take(1))
             .subscribe();

@@ -1,0 +1,172 @@
+.dashboard-container {
+    display: flex;
+    flex-direction: column;
+    background-color: #fafafa;
+}
+
+mat-sidenav-content {
+    overflow: initial;
+}
+
+.hurdling-content {
+    margin-bottom: 10px;
+}
+
+.overview-container {
+    display: inherit;
+    width: 100%;
+    justify-content: space-between;
+}
+
+.vis-timeline {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.vis {
+    background: white;
+    border: solid 1px #d0d0d0;
+    margin: 5px 10px;
+}
+
+.vis.left {
+    margin: 5px 0px 5px 10px;
+}
+
+.vis.right {
+    margin: 5px 10px 5px 0px;
+}
+
+.vis.overflow {
+    position: inherit;
+    margin-top: -6px;
+    border-top: 0;
+    padding-bottom: 20px;
+    margin-left: 10px;
+}
+
+.name-header, .graph-name-header {
+    padding: 10px;
+    border-bottom: 1px solid;
+    border-bottom-color: #d0d0d0;
+}
+
+.graph-name-header {
+    display: flex;
+    flex-direction: column;
+}
+
+.graph-name-header h5, .name-header {
+    font-weight: bolder;
+    font-size: 15px !important;
+}
+
+.graph-name-header button {
+    width: fit-content;
+}
+
+.vis.overflow .name-header {
+    margin-top: 15px;
+}
+
+.name-header .trainee-avatar {
+    padding-left: 5px;
+}
+
+:not(.mat-drawer-opened) .mat-drawer.mat-drawer-end {
+    right: 45px;
+}
+
+.mat-drawer-opened .mat-drawer.mat-drawer-end {
+    right: 0px !important;
+}
+
+.mat-drawer-container {
+    background-color: #fff;
+}
+
+.overview-visualization-container {
+    width: 100%;
+}
+
+.vis .container div:first-of-type {
+    margin: auto;
+}
+
+.overview-line {
+    height: auto;
+    transition: visibility 1s;
+    transition: transform 0.3s ease-out;
+    transform: scaleY(1);
+    transform-origin: top;
+    visibility: visible;
+}
+
+.overview-line.hidden {
+    height: 0;
+    transform: scaleY(0);
+    visibility: hidden;
+}
+
+.filter-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.display-selection {
+    padding-top: 5px;
+    width: 150px;
+}
+
+.summary-container {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.summary-content {
+    padding-left: 30px;
+    width: 90%;
+}
+
+.reference-content {
+    display: flex;
+    flex-direction: row;
+}
+
+#reference-graph, .reference-content {
+    padding-top: 10px;
+}
+
+@media only screen and (max-width: 1550px) {
+    .overview-container {
+        display: flex;
+        float: none;
+        flex-direction: column-reverse;
+    }
+
+    .overview-line.hidden {
+        border-bottom: solid 10px #d0d0d0;
+        background-color: pink;
+    }
+
+    div.overview-line {
+        width: 98% !important;
+        margin-top: 0px !important;
+        border-right: solid 1px #d0d0d0;
+    }
+
+    .vis.right {
+        margin: 5px 6px 5px 10px;
+    }
+
+    div.vis.left {
+        width: 96% !important;
+    }
+
+    .hurdling-content {
+        border-bottom: solid 0 #d0d0d0;
+        margin-bottom: 0px;
+        margin-right: 6px;
+    }
+}

@@ -1,0 +1,77 @@
+#filterPlaceholder {
+    box-sizing: border-box;
+    display: inline-block;
+    width: 100%;
+}
+
+#filterPlaceholder mat-grid-list {
+    display: inline-block;
+    width: 100vw;
+}
+
+mat-card {
+    margin-bottom: 2vw;
+}
+
+mat-card-content {
+    display: inline;
+    padding-right: 10px;
+    font-size: calc(8px + 0.5vw);
+}
+
+mat-checkbox ::ng-deep .mat-checkbox-inner-container {
+    width: calc(10px + 0.5vw);
+    height: calc(10px + 0.5vw);
+}
+
+#noDataCard {
+    display: none;
+    text-align: center;
+}
+
+#noDataCard span {
+    color: gainsboro;
+}
+
+#gridGroup1 {
+    width: 12% !important;
+}
+
+#gridGroup2 {
+    width: 84% !important;
+}
+
+#gridGroup3 {
+    display: none !important;
+}
+
+#gridGroup2 ::ng-deep .mat-grid-tile-content {
+    text-align: center;
+}
+
+.boldText {
+    font-weight: 580;
+}
+
+fa {
+    cursor: pointer;
+}
+
+#detailView {
+    cursor: pointer;
+}
+
+@media only screen and (min-width: 500px) {
+    #gridGroup1 {
+        width: 8% !important;
+    }
+
+    #gridGroup2 {
+        width: 72% !important;
+    }
+
+    #gridGroup3 {
+        display: inline-block !important;
+        width: 18% !important;
+    }
+}

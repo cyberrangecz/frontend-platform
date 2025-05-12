@@ -1,0 +1,19 @@
+.state {
+    display: flex;
+    flex-direction: row;
+    margin: 10px;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.state h3 {
+    margin: 0 0 0 5px;
+}
+
+.error {
+    color: #f44336;
+}
+
+.success {
+    color: #6DF000;
+}

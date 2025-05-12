@@ -1,0 +1,12 @@
+.played-switch {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.description {
+    color: dimgray;
+    text-align: center;
+    margin-bottom: 1%;
+}

@@ -1,0 +1,17 @@
+<ng-container [ngSwitch]="level.type">
+    <crczp-training-level-edit *ngSwitchCase="levelTypes.Training"
+                              [level]="level"
+                              [mitreTechniquesList]="mitreTechniquesList"
+                              (levelChange)="onLevelChange($event)"/>
+    <crczp-access-level-configuration *ngSwitchCase="levelTypes.Access"
+                                     [level]="level"
+                                     (levelChange)="onLevelChange($event)">
+    </crczp-access-level-configuration>
+    <crczp-info-level-configuration *ngSwitchCase="levelTypes.Info"
+                                   [level]="level"
+                                   (levelChange)="onLevelChange($event)"/>
+    <crczp-assessment-level-configuration *ngSwitchCase="levelTypes.Assessment"
+                                         [level]="level"
+                                         (levelChange)="onLevelChange($event)">
+    </crczp-assessment-level-configuration>
+</ng-container>

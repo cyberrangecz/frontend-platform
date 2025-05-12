@@ -1,0 +1,43 @@
+<mat-expansion-panel>
+    <mat-expansion-panel-header>
+        <mat-panel-title>
+            Tasks
+        </mat-panel-title>
+        <mat-panel-description>
+            <!--      <span *ngIf="tasks && tasks.length > 0 else noTasksLabel"> This phases contains {{ tasks.length }} task(s)</span>-->
+            <ng-template #noTasksLabel>
+                <span>This phase has no tasks</span>
+            </ng-template>
+            <div class="panel-description-error" *ngIf="tasksHasErrors">
+                <mat-icon color="warn">error_outline</mat-icon>
+                <mat-error>There are errors in some tasks</mat-error>
+            </div>
+        </mat-panel-description>
+    </mat-expansion-panel-header>
+
+    <sentinel-controls [controls]="controls"
+                       (itemClicked)="onControlAction($event)">
+    </sentinel-controls>
+    <mat-divider/>
+
+    <div *ngIf="(stepperTasks | async).length > 0 else noTasks">
+        <crczp-task-stepper [activeStep]="activeStep$ | async"
+                           [tasks]="stepperTasks | async"
+                           (phaseMove)="onTaskMoved($event)"
+                           (activeStepChange)="onActiveTaskChanged($event)">
+
+        </crczp-task-stepper>
+        <mat-divider/>
+        <!--    <ng-template>Task {{ selectedStep + 1 }}</ng-template>-->
+        <div class="step-content">
+            <crczp-task-configuration [task]="(stepperTasks | async)[activeStep$ | async].phase"
+                                     (taskChange)="onTaskChanged($event)">
+            </crczp-task-configuration>
+        </div>
+    </div>
+    <div>
+    </div>
+    <ng-template #noTasks>
+        <h3>There are no Tasks</h3>
+    </ng-template>
+</mat-expansion-panel>

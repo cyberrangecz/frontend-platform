@@ -1,0 +1,22 @@
+#clusteringPlaceholder {
+    box-sizing: border-box;
+    padding: 0.5vw;
+    width: 100%;
+}
+
+mat-card {
+    height: 100%;
+    padding-top: calc(5px + 0.5vw);
+    padding-bottom: calc(5px + 0.5vw);
+}
+
+mat-card-title {
+    padding: calc(5px + 0.2vw);
+    margin-bottom: calc(2px + 0.2vw);
+    font-size: calc(8px + 0.5vw) !important;
+    overflow-y: visible;
+}
+
+mat-card-content {
+    height: 90%;
+}

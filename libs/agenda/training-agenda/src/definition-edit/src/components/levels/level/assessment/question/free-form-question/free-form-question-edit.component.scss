@@ -1,0 +1,92 @@
+.content {
+    display: flex;
+    flex-direction: column;
+}
+
+.warn {
+    color: #f44336;
+}
+
+.inline-input {
+    display: flex;
+    flex-direction: row;
+    align-content: space-between;
+    margin-bottom: 10px;
+}
+
+.inline-input > * {
+    flex-grow: 1;
+    margin-right: 10px;
+}
+
+.form-container {
+    width: 50%;
+}
+
+.right-panel mat-form-field {
+    width: 100%;
+}
+
+.right-panel > * {
+    margin-bottom: 10px;
+}
+
+mat-divider {
+    margin: 0 20px;
+}
+
+/* TODO(mdc-migration): The following rule targets internal classes of checkbox that may no longer apply for the MDC version. */
+mat-checkbox {
+    margin: 0 10px;
+}
+
+@media screen and (max-width: 850px) {
+    .content {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .right-panel {
+        margin-top: 20px;
+        align-items: flex-start;
+        align-content: flex-start;
+    }
+
+    mat-form-field {
+        width: 80%;
+    }
+
+    .form-container {
+        display: flex;
+        flex-direction: column;
+    }
+}
+
+.answer {
+    display: flex;
+}
+
+.answer mat-form-field {
+    width: 100%;
+}
+
+.remove-btn {
+    height: 60px;
+    width: 20px;
+}
+
+mat-divider {
+    padding-bottom: 10px;
+}
+
+h4 {
+    text-align: center;
+    color: rgba(0, 0, 0, 0.26);
+}
+
+.question-text {
+    display: flex;
+    flex-direction: column;
+    width: calc(100% - 10px);
+    margin-bottom: 10px;
+}

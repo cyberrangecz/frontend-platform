@@ -1,0 +1,9 @@
+
+mat-card {
+    padding: 16px;
+    margin-bottom: 1%;
+}
+
+::ng-deep .mat-mdc-dialog-container .mdc-dialog__surface {
+    padding: 8px;
+}

@@ -1,0 +1,28 @@
+<div *ngIf="trainingInstance$ | async as trainingInstance">
+    <mat-card appearance="outlined">
+        <crczp-training-instance-info
+            [accessTokenLink]="trainingInstanceAccessTokenLink"
+            [poolIdLink]="trainingInstancePoolIdLink"
+            [trainingDefinitionLink]="trainingDefinitionLink"
+            [trainingInstance]="trainingInstance"
+            [hasStarted$]="hasStarted$"
+            (showProgress)="onShowProgress()"
+            (showResults)="onShowResults()"
+            (showAggregatedResults)="onShowAggregatedResults()"
+            (exportScore)="onExportScore()"
+            (showCheatingDetection)="onShowCheatingDetection()"
+            (showNotification)="onShowNotification($event)"
+        >
+        </crczp-training-instance-info>
+    </mat-card>
+    <mat-card appearance="outlined">
+        <crczp-training-instance-runs
+            [trainingRuns]="trainingRuns$ | async"
+            [hasError]="trainingRunsHasError$ | async"
+            (tableAction)="onTrainingRunTableAction($event)"
+            (TableLoadEvent)="onTrainingRunTableLoadEvent($event)"
+            (rowExpanded)="onTrainingRunTableRowExpand($event)"
+        >
+        </crczp-training-instance-runs>
+    </mat-card>
+</div>

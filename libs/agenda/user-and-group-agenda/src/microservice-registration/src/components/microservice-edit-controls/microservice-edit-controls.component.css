@@ -1,0 +1,15 @@
+.content {
+    display: flex;
+    justify-content: flex-end;
+    flex-direction: row;
+    margin: 10px 0;
+}
+
+.error-state {
+    display: flex;
+    justify-content: flex-end;
+}
+
+button {
+    margin: 0 5px;
+}

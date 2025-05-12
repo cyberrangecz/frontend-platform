@@ -2,7 +2,7 @@ import { Component, ElementRef, HostListener, Input, OnInit, ViewChild } from '@
 import * as d3 from 'd3';
 import { BehaviorSubject } from 'rxjs';
 import {
-    TrainingRunPathNode,
+    RunVisualizationPathNode,
     TransitionPhase,
     TransitionTask,
     TransitionVisualizationData
@@ -80,7 +80,7 @@ export class AdaptiveTransitionVisualizationWrapperComponent implements OnInit {
         return `translate(${this.margin.left},${this.margin.top})`;
     }
 
-    onTaskPreviewChange(node: TrainingRunPathNode | null) {
+    onTaskPreviewChange(node: RunVisualizationPathNode | null) {
         const taskToPreview = this.data.phases
             .find((phase: TransitionPhase) => phase.order === node?.phaseOrder)
             ?.tasks.find((task: TransitionTask) => task.order === node?.taskOrder);

@@ -52,7 +52,7 @@ export * from './lib/phase/questionnaire-phase/choice';
 export * from './lib/phase/questionnaire-phase/phase-relation';
 export * from './lib/phase/questionnaire-phase/questionnaire-phase';
 export * from './lib/phase/training-phase/decision-matrix-row';
-export * from './lib/phase/training-phase/task';
+export * from './lib/phase/training-phase/adaptive-task';
 export * from './lib/phase/training-phase/training-phase';
 export * from './lib/phase/questionnaire-phase/question-answer';
 export * from './lib/phase/training-phase/phase-answer-check';

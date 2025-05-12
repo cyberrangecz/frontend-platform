@@ -1,0 +1,10 @@
+.clock {
+    margin: 0 1rem 1rem 1rem !important;
+    font-family: "Lekton", monospace;
+    border-bottom: 1px solid var(--neutral-70);
+}
+
+.timer-container {
+    display: flex;
+    justify-content: flex-end;
+}

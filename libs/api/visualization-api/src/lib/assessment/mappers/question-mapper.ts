@@ -1,8 +1,8 @@
 import { AssessmentQuestion } from '@crczp/visualization-model';
-import { AnswerMapper } from './answer-mapper';
 import { EmiAnswerMapper } from './emi-answer-mapper';
-import { EmiAnswerDTO } from '../dto/emi-answer-dto';
-import { QuestionDTO } from '../dto/question-dto';
+import { AnswerMapper } from './answer-mapper';
+import { EmiAnswerDTO, QuestionDTO } from '../dtos';
+
 
 export class QuestionMapper {
     static fromDTOs(dtos: QuestionDTO[]): AssessmentQuestion[] {

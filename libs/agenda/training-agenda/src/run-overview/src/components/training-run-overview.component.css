@@ -1,0 +1,14 @@
+.content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.content > * {
+    margin-bottom: 100px;
+}
+
+.table-container {
+    width: 80%;
+}
+

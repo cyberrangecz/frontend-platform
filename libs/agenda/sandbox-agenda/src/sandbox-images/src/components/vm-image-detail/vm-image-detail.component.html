@@ -1,0 +1,12 @@
+<div class="image-detail-container">
+    <p><b>OS Distro: </b> {{ data.osDistro }}</p>
+    <p><b>OS Type: </b>{{ data.osType }}</p>
+    <p><b>Disk Format: </b>{{ data.diskFormat }}</p>
+    <p><b>Container Format: </b>{{ data.containerFormat }}</p>
+    <p><b>Min Disk: </b>{{ data.minDisk }}</p>
+    <p><b>Min Ram: </b>{{ data.minRam }}</p>
+    <p><b>Visibility: </b>{{ data.visibility }}</p>
+    <p><b>Created At: </b>{{ data.createdAtFormatted }}</p>
+    <p><b>Tags: </b>{{ data.tags.join(', ') }}</p>
+    <p><b>Version: </b>{{ data.ownerSpecified.version }}</p>
+</div>

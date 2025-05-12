@@ -1,0 +1,67 @@
+.wrapper-div {
+    flex-wrap: nowrap;
+    width: 100%;
+}
+
+.date {
+    flex-shrink: 1;
+    width: fit-content;
+    text-wrap: nowrap;
+}
+
+.time {
+    flex-shrink: 1;
+    color: var(--neutral-30);
+    white-space: nowrap;
+}
+
+.slide-down {
+    animation: slide-down 0.5s;
+}
+
+.slide-up {
+    animation: slide-up 0.5s;
+}
+
+.hide {
+    display: none;
+    opacity: 0;
+    animation: fadeIn 0.5s reverse;
+}
+
+.show {
+    display: block;
+    opacity: 1;
+    animation: none;
+}
+
+.fadeIn {
+    animation: fadeIn 0.5s;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slide-down {
+    from {
+        transform: translateY(-50%);
+    }
+    to {
+        transform: translateY(0);
+    }
+}
+
+@keyframes slide-up {
+    from {
+        transform: translateY(50%);
+    }
+    to {
+        transform: translateY(0);
+    }
+}

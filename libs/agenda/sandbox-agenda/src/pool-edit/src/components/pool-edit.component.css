@@ -1,0 +1,66 @@
+h1 {
+    text-align: center;
+}
+
+.card-title {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+.form-content {
+    margin-top: 2rem;
+    display: flex;
+    flex-direction: row;
+    gap: 2rem
+}
+
+.form-column {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    width: 100%;
+}
+
+.form-column * {
+    width: 100%;
+}
+
+.notify-build {
+    margin-top: 0.5rem;
+}
+
+::ng-deep .form-content .mat-grid-tile-content {
+    align-items: normal;
+    justify-content: normal;
+    display: block;
+}
+
+.pool-edit-grid .mat-mdc-form-field {
+    display: block;
+    margin-right: 20px;
+    padding-bottom: 20px;
+}
+
+.description-wrapper {
+    min-height: 154px;
+}
+
+.description {
+    width: 100%;
+    min-height: 100px;
+    max-height: 16rem;
+}
+
+.comment {
+    resize: vertical;
+    min-height: 110px;
+    max-height: 220px;
+}
+
+@media (max-width: 724px) {
+    .form-content {
+        flex-direction: column;
+    }
+}

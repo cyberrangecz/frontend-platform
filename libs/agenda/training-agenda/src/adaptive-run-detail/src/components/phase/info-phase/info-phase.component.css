@@ -1,0 +1,50 @@
+@import "../next-phase-button/next-phase-button.css";
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    align-content: center;
+    margin-bottom: 6rem;
+}
+
+.content {
+    margin-top: 10px;
+    display: flex;
+    width: 60%;
+}
+
+sentinel-markdown-view {
+    background-color: transparent;
+}
+
+markdown {
+    width: 100%;
+    background-color: transparent;
+}
+
+markdown ::ng-deep img {
+    max-width: 100%;
+    display: block;
+    margin: 0 auto;
+}
+
+markdown ::ng-deep pre {
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+}
+
+.next-button {
+    margin-top: 2rem;
+}
+
+@media screen and (max-width: 800px) {
+    .content {
+        width: 90%;
+    }
+
+    markdown > img {
+        max-width: 700px;
+    }
+}
+

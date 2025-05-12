@@ -1,0 +1,7 @@
+.spacer {
+    flex: 1 1 0;
+}
+
+.sandbox-select-container {
+    min-width: 400px;
+}

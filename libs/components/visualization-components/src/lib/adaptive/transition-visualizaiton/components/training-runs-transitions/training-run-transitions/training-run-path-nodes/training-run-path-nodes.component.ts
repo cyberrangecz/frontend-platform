@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import * as d3 from 'd3';
 import { easeQuad } from 'd3';
-import { TrainingRunData, TrainingRunPathNode } from '@crczp/visualization-model';
+import { AdaptiveRunVisualization, RunVisualizationPathNode } from '@crczp/visualization-model';
 
 @Component({
     // eslint-disable-next-line @angular-eslint/component-selector
@@ -19,14 +19,14 @@ import { TrainingRunData, TrainingRunPathNode } from '@crczp/visualization-model
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PlayerPathNodesComponent implements OnChanges {
-    @Input() playerTransitions!: TrainingRunData;
+    @Input() playerTransitions!: AdaptiveRunVisualization;
 
     @Input() xScale!: d3.ScalePoint<number>;
     @Input() yScale!: d3.ScalePoint<number>;
 
     @Input() color!: string;
 
-    @Output() taskPreviewEvent = new EventEmitter<TrainingRunPathNode>();
+    @Output() taskPreviewEvent = new EventEmitter<RunVisualizationPathNode>();
 
     private g: any;
     private duration = 1000;
@@ -44,7 +44,7 @@ export class PlayerPathNodesComponent implements OnChanges {
             .selectAll('circle')
             .data(
                 this.playerTransitions.trainingRunPathNodes,
-                (playerPathNode: TrainingRunPathNode) => playerPathNode.phaseOrder,
+                (playerPathNode: RunVisualizationPathNode) => playerPathNode.phaseOrder,
             )
             .join(
                 (enter: d3.Selection<any, any, any, any>) => this.appendPathNodes(enter),
@@ -87,8 +87,8 @@ export class PlayerPathNodesComponent implements OnChanges {
 
     private setPosition(playerPathNodeSelection: d3.Selection<any, any, any, any>): void {
         playerPathNodeSelection
-            .attr('cx', (playerPathNode: TrainingRunPathNode) => this.xScale(playerPathNode.phaseOrder) as number)
-            .attr('cy', (playerPathNode: TrainingRunPathNode) => this.yScale(playerPathNode.taskOrder) as number);
+            .attr('cx', (playerPathNode: RunVisualizationPathNode) => this.xScale(playerPathNode.phaseOrder) as number)
+            .attr('cy', (playerPathNode: RunVisualizationPathNode) => this.yScale(playerPathNode.taskOrder) as number);
     }
 
     private addHoverAnimation(circles: d3.Selection<d3.BaseType, unknown, any, any>) {
@@ -99,8 +99,8 @@ export class PlayerPathNodesComponent implements OnChanges {
             .on('mouseout', (event: any) => d3.select(event.target).transition().duration(250).attr('r', 6));
     }
 
-    private addClickEvent(circles: d3.Selection<d3.BaseType, TrainingRunPathNode, any, any>) {
-        circles.on('click', (_: any, playerPathNode: TrainingRunPathNode) => {
+    private addClickEvent(circles: d3.Selection<d3.BaseType, RunVisualizationPathNode, any, any>) {
+        circles.on('click', (_: any, playerPathNode: RunVisualizationPathNode) => {
             this.taskPreviewEvent.emit(playerPathNode);
         });
     }

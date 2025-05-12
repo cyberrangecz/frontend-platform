@@ -1,12 +1,12 @@
-import { QuestionnairePhase } from '../../../model/phase/questionnaire-phase/questionnaire-phase';
+
 import { QuestionnairePhaseDTO } from '../../../dto/phase/questionnaire-phase/questionnaire-phase-dto';
-import { AbstractPhaseTypeEnum } from '../../../model/enums/abstract-phase-type.enum';
-import { QuestionnaireTypeEnum } from '../../../model/enums/questionnaire-type.enum';
 import { QuestionnairePhaseTaskMapper } from './questionnaire-phase-task-mapper';
+import { AbstractPhaseTypeEnum, QuestionnaireTypeEnum } from '@crczp/training-model';
+import { QuestionnaireTransitionPhase } from '@crczp/visualization-model';
 
 export class QuestionnairePhaseMapper {
-    static fromDTO(dto: QuestionnairePhaseDTO): QuestionnairePhase {
-        const result = new QuestionnairePhase();
+    static fromDTO(dto: QuestionnairePhaseDTO): QuestionnaireTransitionPhase {
+        const result = new QuestionnaireTransitionPhase();
         result.type = AbstractPhaseTypeEnum.Questionnaire;
         switch (dto.questionnaire_type) {
             case 'ADAPTIVE': {

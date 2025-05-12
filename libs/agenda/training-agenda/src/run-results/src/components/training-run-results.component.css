@@ -1,0 +1,29 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    align-content: center;
+    padding: 50px;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+}
+
+.left-panel {
+    display: flex;
+    flex-direction: column;
+}
+
+.middle-panel {
+    display: flex;
+    flex-direction: column;
+}
+
+.right-panel {
+    display: flex;
+    flex-direction: column;
+}
+
+

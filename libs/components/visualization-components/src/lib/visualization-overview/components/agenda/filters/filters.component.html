@@ -1,0 +1,8 @@
+<ng-container *ngFor="let filter of filtersArray">
+    <mat-checkbox
+        [id]="filter.name"
+        (change)="onFilterChange()"
+        [(ngModel)]="filter.checked">{{ filter.labelName }}
+    </mat-checkbox>
+    <br/>
+</ng-container>

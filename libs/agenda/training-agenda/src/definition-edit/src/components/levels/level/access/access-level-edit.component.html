@@ -1,0 +1,95 @@
+<div class="level">
+    <form [formGroup]="accessLevelConfigFormGroup.formGroup" class="content">
+
+        <!-- TITLE filed -->
+        <mat-form-field appearance="outline"
+                        (keydown.enter)="$event.preventDefault()">
+            <mat-label>Title</mat-label>
+            <input matInput placeholder="Title" formControlName="title" required>
+            <button *ngIf="title" matSuffix mat-icon-button
+                    aria-label="Clear" (click)="title.setValue('');">
+                <mat-icon>close</mat-icon>
+            </button>
+            <mat-error *ngIf="title.hasError('whitespace')">Title cannot be empty</mat-error>
+        </mat-form-field>
+
+        <!-- PASSKEY filed -->
+        <mat-form-field
+            class="passkey-field"
+            appearance="outline"
+            hintLabel="'Max 50 characters'"
+            (keydown.enter)="$event.preventDefault()"
+        >
+            <mat-label>Passkey</mat-label>
+            <input
+                matInput
+                placeholder="Passkey"
+                maxlength="50"
+                formControlName="passkey"
+            />
+            <button
+                *ngIf="passkey"
+                matSuffix
+                mat-icon-button
+                aria-label="Clear"
+                (click)="passkey.setValue(null)"
+            >
+                <mat-icon>close</mat-icon>
+            </button>
+            <mat-hint align="end">{{ passkey.value?.length || 0 }}/50</mat-hint>
+            <mat-error *ngIf="passkey.hasError('whitespace')">
+                'Passkey' cannot be empty
+            </mat-error>
+        </mat-form-field>
+
+
+        <!-- CLOUD CONTENT filed -->
+        <div class="field-heading-container">
+            <h3>Cloud Content</h3>
+            <mat-icon
+                matTooltip="The defined text will be displayed in the training run if an instructor chooses
+         an option for sandboxes in the cloud in the training instance definition."
+            >help
+            </mat-icon>
+        </div>
+        <sentinel-markdown-editor [sentinel-markdown-file-upload]="false"
+                                  (contentChange)="this.cloudContent.setValue($event);"
+                                  [content]="cloudContent.value"/>
+        <mat-error *ngIf="cloudContent.hasError('whitespace')">Cloud Content cannot be empty</mat-error>
+
+        <!-- LOCAL CONTENT filed -->
+        <div class="field-heading-container">
+            <h3>Local Content</h3>
+            <mat-icon
+                matTooltip="The defined text will be displayed in the training run if an instructor
+        chooses an option for local (non-cloud) sandboxes in the training instance definition."
+            >help
+            </mat-icon>
+        </div>
+        <div class="local-content-info">
+            <div class="local-content-info-head">
+                <mat-icon>tips_and_updates</mat-icon>
+                <h4>Use Placeholder Variables</h4>
+            </div>
+            <div class="local-content-info-content">
+                <p> The following variables will be resolved and replaced by actual values as soon as
+                    the trainee will get into the access level during the training run:</p>
+                <ul>
+                    <li>USER_ID</li>
+                    <li>ACCESS_TOKEN</li>
+                    <li>CENTRAL_SYSLOG_IP</li>
+                    <li>BEARER_TOKEN</li>
+                    <li>SANDBOX_DEFINITION_ID</li>
+                </ul>
+                <p>Variables have to be enclosed in special characters
+                    <strong style="background: #d8d8d8">{{ '${ }' }}</strong>, e.g.,
+                    <strong style="background: #d8d8d8">{{ '${USER_ID}' }}</strong>.
+                </p>
+            </div>
+        </div>
+        <sentinel-markdown-editor [sentinel-markdown-file-upload]="false"
+                                  (contentChange)="this.localContent.setValue($event);"
+                                  [content]="localContent.value"/>
+        <mat-error *ngIf="localContent.hasError('whitespace')">Local Content cannot be empty</mat-error>
+    </form>
+</div>

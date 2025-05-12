@@ -1,0 +1,15 @@
+<h4>
+    <span>{{ question.order + 1 }}. </span>
+    <mat-icon class="question-type noselect" [inline]=true matTooltip="Free Form Question"> edit</mat-icon>
+    <span> {{ question.text }}</span>
+</h4>
+<div *ngIf="questionnaireType === QuestionnaireTypeEnum.Adaptive">
+    <div class="data-field">
+        <div class="key-field">Choices</div>
+        <div class="choices">
+            <div *ngFor="let choice of question.choices">
+                <div>{{ choice.text }}</div>
+            </div>
+        </div>
+    </div>
+</div>

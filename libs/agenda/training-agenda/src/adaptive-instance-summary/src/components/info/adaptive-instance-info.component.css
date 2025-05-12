@@ -1,0 +1,68 @@
+.icon-panel-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    margin-top: 2%;
+    margin-bottom: 2%;
+}
+
+.data-field {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-grow: 1;
+    flex-basis: 0;
+    text-align: center;
+}
+
+mat-icon {
+    font-size: 36px;
+    height: 36px;
+    width: 36px;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    border: solid;
+    border-radius: 20%;
+    background-color: lavender;
+    border-width: 10px;
+    border-color: lavender;
+    color: darkslategray;
+}
+
+.icon-label {
+    font-weight: bold;
+    margin-top: 4px;
+    color: darkslategray;
+}
+
+.value-field {
+    font-size: larger;
+}
+
+h2,
+h3 {
+    margin: 0;
+}
+
+.header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.definition-title {
+    font-size: inherit;
+}
+
+.link-button {
+    padding: 0;
+    line-height: normal;
+}
+
+::ng-deep .mdc-button {
+    width: max-content;
+}

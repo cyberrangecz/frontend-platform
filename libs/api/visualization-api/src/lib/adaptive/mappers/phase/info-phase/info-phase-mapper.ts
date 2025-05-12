@@ -1,11 +1,12 @@
-import { InfoPhase } from '../../../model/phase/info-phase/info-phase';
 import { InfoPhaseDTO } from '../../../dto/phase/info-phase/info-phase-dto';
-import { AbstractPhaseTypeEnum } from '../../../model/enums/abstract-phase-type.enum';
+import { AbstractPhaseTypeEnum } from '@crczp/training-model';
 import { InfoPhaseTaskMapper } from './info-phase-task-mapper';
+import { InfoTransitionPhase } from '@crczp/visualization-model';
+
 
 export class InfoPhaseMapper {
-    static fromDTO(dto: InfoPhaseDTO): InfoPhase {
-        const result = new InfoPhase();
+    static fromDTO(dto: InfoPhaseDTO): InfoTransitionPhase {
+        const result = new InfoTransitionPhase();
         result.type = AbstractPhaseTypeEnum.Info;
         result.tasks = [InfoPhaseTaskMapper.fromDTO(dto)];
         return result;

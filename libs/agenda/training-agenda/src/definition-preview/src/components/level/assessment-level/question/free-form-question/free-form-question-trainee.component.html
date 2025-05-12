@@ -1,0 +1,20 @@
+<div class="content">
+    <!--TITLE-->
+    <h2>
+        <sentinel-markdown-view [markdown]="'Question ' + index.toString() + ':'"/>
+        <sentinel-markdown-view [markdown]="question.title"/>
+    </h2>
+    <p class="required-note" *ngIf="question.required">Answer required</p>
+
+    <!-- ANSWER field-->
+    <mat-form-field appearance="outline"
+                    (keydown.enter)="$event.preventDefault()">
+        <mat-label>Answer</mat-label>
+        <input matInput placeholder="Answer"
+               [required]="question.required" [(ngModel)]="answer">
+        <button *ngIf="answer" matSuffix mat-icon-button
+                aria-label="Clear" (click)="answer='';">
+            <mat-icon>close</mat-icon>
+        </button>
+    </mat-form-field>
+</div>

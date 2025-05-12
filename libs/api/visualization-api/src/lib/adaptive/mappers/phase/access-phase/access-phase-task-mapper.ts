@@ -1,5 +1,5 @@
 import { AccessPhaseDTO } from '../../../dto/phase/access-phase/access-phase-dto';
-import { AccessPhaseTask } from '../../../model/phase/access-phase/access-phase-task';
+import { AccessPhaseTask } from '@crczp/visualization-model';
 
 export class AccessPhaseTaskMapper {
     static fromDTO(dto: AccessPhaseDTO): AccessPhaseTask {

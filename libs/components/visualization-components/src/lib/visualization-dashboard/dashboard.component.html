@@ -1,0 +1,98 @@
+<mat-sidenav-container class="dashboard-container">
+    <mat-sidenav-content>
+        <mat-expansion-panel>
+            <!-- FILTERS SELECTION  -->
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <b>Visualization filters</b>
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <div class="filter-content">
+                Manage displayed events:
+                <crczp-visualization-overview-filters
+                    (activeFilters)="filterChange($event)">
+                </crczp-visualization-overview-filters>
+                <div class="display-selection">
+                    <mat-form-field appearance="fill">
+                        <mat-label>Trainee display</mat-label>
+                        <mat-select [(value)]="selectedTraineeView" (selectionChange)="togglePlayerView($event)">
+                            <mat-option [value]="'avatar'">Avatar</mat-option>
+                            <mat-option [value]="'name'">Name</mat-option>
+                            <mat-option [value]="'both'">Avatar + Name</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+        </mat-expansion-panel>
+        <!-- TRAINEE SELECTION  -->
+        <div class="trainee-selection" *ngIf="visualizationData$ | async">
+            <crczp-viz-hurdling-trainee-selection
+                [visualizationData]="visualizationData$ | async"
+                [selectedTraineeView]="selectedTraineeView"
+                (filteredTraineesChange)="traineeFilterChange($event)">
+            </crczp-viz-hurdling-trainee-selection>
+        </div>
+
+        <!-- DASHBOARD CONTENT  -->
+        <div class="dashboard-container">
+            <!-- HURDLING CONTENT  -->
+            <div class="vis hurdling-content" style="display: block; justify-content: center;">
+                <div *ngIf="visualizationData$ | async" class="name-header">Training Overview</div>
+                <crczp-hurdling-visualization
+                    (highlightedTrainee)="highlightTraineeChange($event)"
+                    (outputSelectedTrainees)="selectedTraineesChange($event)"
+                    [setDashboardView]=true
+                    [isStandalone]="true"
+                    [selectedTraineeView]="selectedTraineeView"
+                    [trainingInstanceId]="trainingInstanceId"
+                    [selectedTrainees]="hurdlingTrainees$ | async"
+                />
+            </div>
+            <div class="overview-container">
+                <!-- CLUSTERING CONTENT  -->
+                <div class="vis left">
+                    <div class="name-header">Time-Score Overview</div>
+                    <crczp-visualization-overview-clustering
+                        [size]="clusteringSize"
+                        [trainingInstanceId]="trainingInstanceId"
+                        [trainingDefinitionId]="trainingDefinitionId"
+                        [standalone]="true"
+                        [highlightedTrainee]="highlightedTrainee$ | async"
+                        [filterPlayers]="filteredTrainees$ | async"
+                        (selectedTrainee)="highlightTraineeChange($event)"
+                    />
+                </div>
+                <div *ngIf="(lineTrainees$ | async) as lineTrainees"
+                     class="vis right overflow overview-line {{!((lineTrainees).length > 0) ?  'hidden' : ''}}"
+                     [ngStyle]="{'justify-content': 'center'}">
+                    <div class="overview-visualization-container">
+                        <div class="name-header">Individual Walkthrough for
+                            <div *ngIf="selectedTraineeView === 'avatar' else noAvatar">
+                <span *ngFor="let traineeId of lineTrainees">
+                  <img
+                      class="trainee-avatar"
+                      src="data:image/png;base64,{{getTraineeAvatar(traineeId)}}"
+                      width="18"/>
+                </span>
+                            </div>
+                            <ng-template #noAvatar>selected trainees</ng-template>
+                        </div>
+                        <!-- TIMELINE CONTENT  -->
+                        <div class="vis-timeline">
+                            <crczp-visualization-overview-line
+                                [size]="timelineSize"
+                                [trainingInstanceId]="trainingInstanceId"
+                                [trainingDefinitionId]="trainingDefinitionId"
+                                [standalone]="true"
+                                [activeFilters]="activeFilters$ | async"
+                                [filterPlayers]="lineTrainees"
+                                [highlightedTrainee]="highlightedTrainee$ | async"
+                                (selectedTrainee)="highlightTraineeChange($event)"
+                            />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </mat-sidenav-content>
+</mat-sidenav-container>

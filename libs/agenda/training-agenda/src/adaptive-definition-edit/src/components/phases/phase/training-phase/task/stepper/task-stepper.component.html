@@ -1,0 +1,12 @@
+<div *ngIf="taskStepper.items && taskStepper.items.length > 0 else noTasks" class="task-stepper">
+    <sentinel-stepper [selectable]="true"
+                      [stepperItems]="taskStepper"
+                      [activeIndex]="activeStep"
+                      (indexSelected)="activeStepChanged($event)"
+                      (selectedStepSwapped)="activeStepChanged($event)"
+                      (stepSwapped)="swapPhases($event)">
+    </sentinel-stepper>
+</div>
+<ng-template #noTasks>
+    <h3>Start by clicking on Add button</h3>
+</ng-template>

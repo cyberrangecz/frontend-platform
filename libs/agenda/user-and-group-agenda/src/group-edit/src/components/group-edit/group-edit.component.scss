@@ -1,0 +1,45 @@
+mat-form-field {
+    width: 100%;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+}
+
+.row-panel {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.row-item {
+    flex: 1 1 0;
+}
+
+.row-item:first-child {
+    margin-right: 10px;
+}
+
+.expiration {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+}
+
+.description-form {
+    position: relative;
+}
+
+.description-form__texarea{
+    resize: vertical;
+    min-height: 3rem;
+    max-height: 10rem;
+}
+
+.description-form__clear {
+    position: absolute;
+    right: -0.5rem;
+    top: 0.5rem;
+}

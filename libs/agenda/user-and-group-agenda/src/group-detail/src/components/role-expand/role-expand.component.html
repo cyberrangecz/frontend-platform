@@ -1,0 +1,5 @@
+<p>Description:</p>
+<p *ngIf="data.description; else empty">{{ data.description }}</p>
+<ng-template #empty>
+    No description.
+</ng-template>

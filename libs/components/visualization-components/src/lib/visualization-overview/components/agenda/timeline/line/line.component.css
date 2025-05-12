@@ -1,0 +1,18 @@
+.zoom-buttons {
+    position: absolute;
+    right: 72px;
+    top: 30px;
+}
+
+.zoom-buttons .icon {
+    font-size: 14px;
+    margin: 0 3px -4px;
+    display: inline-block;
+    fill: #817f7f;
+    width: 20px;
+    height: 20px;
+}
+
+.zoom-buttons .icon path {
+    stroke: none;
+}

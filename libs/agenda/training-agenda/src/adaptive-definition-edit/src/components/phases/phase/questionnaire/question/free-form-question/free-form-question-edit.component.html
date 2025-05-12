@@ -1,0 +1,34 @@
+<form [formGroup]="freeFormQuestionFormGroup.questionFormGroup">
+    <div class="question-container">
+        <!-- TITLE field-->
+        <div class='question-text'>
+            <sentinel-markdown-editor
+                [sentinel-markdown-file-upload]="false"
+                (contentChange)="title.setValue($event)"
+                [content]="title.value"
+            />
+            <mat-error *ngIf="title.hasError('whitespace')">Question text cannot be empty</mat-error>
+        </div>
+    </div>
+
+    <div *ngIf="questionnaireType === questionnaireTypes.Adaptive">
+        <!-- CHOICES field -->
+        <h2>Answers:</h2>
+        <div formArrayName="choices">
+            <div *ngFor="let choicesGroup of choices.controls; index as i;" [formGroupName]="i">
+                <mat-form-field appearance="outline">
+                    <mat-label>Answer {{ i + 1 }}</mat-label>
+                    <input matInput placeholder="Answer text" formControlName="text" required/>
+                    <mat-error *ngIf="choicesGroup.get('text').hasError('required')">Answer text cannot be empty
+                    </mat-error>
+                </mat-form-field>
+                <button matSuffix mat-icon-button aria-label="Delete option"
+                        color="warn" matTooltip="Delete option"
+                        (click)="deleteOption(i)">
+                    <mat-icon>remove_circle</mat-icon>
+                </button>
+            </div>
+            <button (click)="addOption()" mat-button color="primary">Add Answer</button>
+        </div>
+    </div>
+</form>

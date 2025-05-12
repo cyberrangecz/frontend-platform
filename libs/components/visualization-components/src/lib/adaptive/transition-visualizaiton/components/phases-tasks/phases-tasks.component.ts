@@ -8,7 +8,7 @@ import {
     Output,
 } from '@angular/core';
 import * as d3 from 'd3';
-import { TrainingRunPathNode, TransitionPhase } from '@crczp/visualization-model';
+import { RunVisualizationPathNode, TransitionPhase } from '@crczp/visualization-model';
 
 @Component({
     // eslint-disable-next-line @angular-eslint/component-selector
@@ -22,7 +22,7 @@ export class PhasesTasksComponent {
     @Input() xScale!: d3.ScalePoint<number>;
     @Input() yScale!: d3.ScalePoint<number>;
 
-    @Output() taskPreviewEvent = new EventEmitter<TrainingRunPathNode>();
+    @Output() taskPreviewEvent = new EventEmitter<RunVisualizationPathNode>();
 
     private g: any;
 
@@ -41,7 +41,7 @@ export class PhasesTasksComponent {
         return phase.id;
     }
 
-    onTaskPreviewChange(node: TrainingRunPathNode) {
+    onTaskPreviewChange(node: RunVisualizationPathNode) {
         this.taskPreviewEvent.emit(node);
     }
 }

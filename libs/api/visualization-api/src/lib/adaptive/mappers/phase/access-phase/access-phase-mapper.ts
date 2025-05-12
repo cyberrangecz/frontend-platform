@@ -1,11 +1,11 @@
-import { AbstractPhaseTypeEnum } from '../../../model/enums/abstract-phase-type.enum';
 import { AccessPhaseTaskMapper } from './access-phase-task-mapper';
 import { AccessPhaseDTO } from '../../../dto/phase/access-phase/access-phase-dto';
-import { AccessPhase } from '../../../model/phase/access-phase/access-phase';
+import { AccessTransitionPhase } from '@crczp/visualization-model';
+import { AbstractPhaseTypeEnum } from '@crczp/training-model';
 
 export class AccessPhaseMapper {
-    static fromDTO(dto: AccessPhaseDTO): AccessPhase {
-        const result = new AccessPhase();
+    static fromDTO(dto: AccessPhaseDTO): AccessTransitionPhase {
+        const result = new AccessTransitionPhase();
         result.type = AbstractPhaseTypeEnum.Access;
         result.tasks = [AccessPhaseTaskMapper.fromDTO(dto)];
         return result;

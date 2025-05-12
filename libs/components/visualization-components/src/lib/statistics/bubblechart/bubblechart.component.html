@@ -1,0 +1,45 @@
+<div id="bubblechartPlaceholder">
+    <mat-card>
+        <!-- Contains the title of the chart,
+        which can be set manually when calling this component -->
+        <mat-card-title [style.display]=" selectedLevel ? 'block' : 'none'">
+            Details of submitted answers <span [innerHTML]=chartTitle></span>
+        </mat-card-title>
+        <mat-divider [style.display]=" selectedLevel ? 'block' : 'none'"/>
+        <!-- Contains the chart -->
+        <mat-card-content>
+            <div class="info-container" *ngIf="!selectedLevel">
+                <h3 style="color: #3d3d3d">Select bar from the <i>Wrong Answers Overview</i> to view details for the
+                    specific level.
+                    The chart will show all the answers submitted by the trainees and how different they were from the
+                    correct answer. </h3>
+            </div>
+            <mat-grid-list cols="13" rowHeight="12.5%">
+                <mat-grid-tile colspan="11" rowspan="7" id="bubblechartSvgPlaceholder">
+                    <!-- Defines the canvas which contains the bubble that represents
+                    the number of correct flags -> anchors this bubble so it can be
+                    easily compared to each wrong flag, even if a scrollbar is added -->
+                    <svg id="correctFlagSvg"></svg>
+                    <!-- Contains the bubbles which represent the wrong flags
+                    If the width of canvas would be too small, a scrollbar is added -->
+                    <div id="scrollableDiv">
+                        <svg id="wrongFlagsSvg"></svg>
+                    </div>
+                </mat-grid-tile>
+                <!-- Contains the legend for the bubble chart -->
+                <mat-grid-tile
+                    colspan="2"
+                    rowspan="8"
+                    id="bubblechartLegendPlaceholder"
+                >
+                    <svg id="bubblechartLegendSvg"></svg>
+                </mat-grid-tile>
+                <!-- Represents the x axis of the chart; a separate canvas is used to
+                anchor the axis, even if a scrollbar is added to 'wrongFlagSvg' -->
+                <mat-grid-tile colspan="11" rowspan="1" id="bubblechartAxisPlaceholder">
+                    <svg id="xAxisSvg"></svg>
+                </mat-grid-tile>
+            </mat-grid-list>
+        </mat-card-content>
+    </mat-card>
+</div>

@@ -1,9 +1,9 @@
 import { UserEventDTO } from '../dto/user-event-dto';
-import { TrainingEvent, TrainingEventType } from '@crczp/visualization-model';
+import { CommandEvent, CommandEventsModel } from '@crczp/visualization-model';
 
 export class UserEventMapper {
-    static fromDTO(dto: UserEventDTO, levelId: number): TrainingEvent {
-        const userEvent = new TrainingEvent();
+    static fromDTO(dto: UserEventDTO, levelId: number): CommandEvent {
+        const userEvent = new CommandEvent();
         userEvent.time = dto.timestamp;
         userEvent.type = UserEventMapper.getType(dto.type);
         userEvent.level = levelId;
@@ -13,34 +13,34 @@ export class UserEventMapper {
         return userEvent;
     }
 
-    static getType(type: string): TrainingEventType {
+    static getType(type: string): CommandEventsModel {
         if (type === 'cz.cyberrange.platform.events.trainings.LevelStarted') {
-            return TrainingEventType.LevelStarted;
+            return CommandEventsModel.LevelStarted;
         } else if (type === 'cz.cyberrange.platform.events.trainings.TrainingRunStarted') {
-            return TrainingEventType.TrainingRunStarted;
+            return CommandEventsModel.TrainingRunStarted;
         } else if (type === 'cz.cyberrange.platform.events.trainings.CorrectAnswerSubmitted') {
-            return TrainingEventType.CorrectAnswerSubmitted;
+            return CommandEventsModel.CorrectAnswerSubmitted;
         } else if (type === 'cz.cyberrange.platform.events.trainings.WrongAnswerSubmitted') {
-            return TrainingEventType.WrongAnswerSubmitted;
+            return CommandEventsModel.WrongAnswerSubmitted;
         } else if (type === 'cz.cyberrange.platform.events.trainings.HintTaken') {
-            return TrainingEventType.HintTaken;
+            return CommandEventsModel.HintTaken;
         } else if (type === 'cz.cyberrange.platform.events.trainings.SolutionDisplayed') {
-            return TrainingEventType.SolutionDisplayed;
+            return CommandEventsModel.SolutionDisplayed;
         } else if (type === 'cz.cyberrange.platform.events.trainings.TrainingRunEnded') {
-            return TrainingEventType.TrainingRunEnded;
+            return CommandEventsModel.TrainingRunEnded;
         }
-        return TrainingEventType.OTHER;
+        return CommandEventsModel.OTHER;
     }
 
-    static getEventShowPoints(type: TrainingEventType): number {
+    static getEventShowPoints(type: CommandEventsModel): number {
         switch (type) {
-            case TrainingEventType.HintTaken:
+            case CommandEventsModel.HintTaken:
                 return 8;
-            case TrainingEventType.WrongAnswerSubmitted:
+            case CommandEventsModel.WrongAnswerSubmitted:
                 return 20;
-            case TrainingEventType.SolutionDisplayed:
+            case CommandEventsModel.SolutionDisplayed:
                 return 80;
-            case TrainingEventType.CorrectAnswerSubmitted:
+            case CommandEventsModel.CorrectAnswerSubmitted:
                 return -40;
         }
         return 0;

@@ -1,0 +1,102 @@
+<form [formGroup]="freeFormQuestionFormGroup.freeFormQuestionFormGroup">
+    <div class="content">
+        <!-- TITLE field-->
+        <h3>Title</h3>
+        <div class='question-text'>
+            <sentinel-markdown-editor
+                class="mrkdwn-content"
+                [sentinel-markdown-file-upload]="false"
+                (contentChange)="title.setValue($event)"
+                [content]="title.value"
+            />
+            <mat-error *ngIf="title.hasError('whitespace')">Title cannot be empty</mat-error>
+        </div>
+
+        <div *ngIf="isTest" class="inline-input">
+            <!-- SCORE field -->
+            <mat-form-field appearance="outline" hintLabel="Number in range from 0 to
+        {{ maxQuestionScore }}">
+                <mat-label>Points</mat-label>
+                <input matInput placeholder="Points" type="number"
+                       [max]="maxQuestionScore" min="0" formControlName="score"
+                       [required]="required">
+                <mat-error *ngIf="score.hasError('required')">Question score cannot be
+                    empty
+                </mat-error>
+                <mat-error *ngIf="score.hasError('pattern') || score.hasError('min') ||
+          score.hasError('max')">Question score must be a number in range from 0
+                    to {{ this.maxQuestionScore }}
+                </mat-error>
+            </mat-form-field>
+
+            <!-- PENALTY field -->
+            <mat-form-field appearance="outline" hintLabel="Number in range from 0 to
+        {{ maxQuestionPenalty }}">
+                <mat-label>Penalty points</mat-label>
+                <input matInput placeholder="Question Penalty points" type="number"
+                       [max]="maxQuestionPenalty" min="0" formControlName="penalty"
+                       [required]="required">
+                <mat-error *ngIf="penalty.hasError('required')">Question penalty cannot
+                    be empty
+                </mat-error>
+                <mat-error *ngIf="penalty.hasError('pattern') || penalty.hasError('min')
+          || penalty.hasError('max')">Question penalty must be a number in range
+                    from 0 to this.{{ maxQuestionPenalty }}
+                </mat-error>
+            </mat-form-field>
+        </div>
+
+        <!-- CORRECT CHOICES field -->
+        <div class="form-container" *ngIf="isTest">
+
+            <!-- ADD button-->
+            <button color="primary" mat-button (click)="addChoice()">Add answer</button>
+            <!-- DELETE button-->
+            <button [disabled]="choices.controls.length < 1" color="warn" mat-button (click)="clearChoices()">Delete
+                all
+            </button>
+
+            <!-- Choice field-->
+            <div formArrayName="choices" class="choices">
+                <div *ngIf="choices.controls && choices.controls.length > 0; else noChoices">
+                    <div class="answer"
+                         *ngFor="let choice of choices.controls; index as i; trackBy: trackByFn"
+                         [formGroupName]="i">
+                        <mat-form-field appearance="outline" (keydown.enter)="$event.preventDefault()">
+                            <mat-label>Answer</mat-label>
+                            <input matInput placeholder="Answer" [formControl]="choice.get('text')"/>
+                            <button
+                                class="free-form-clear-btn"
+                                *ngIf="choice.get('text').value"
+                                matSuffix
+                                mat-icon-button
+                                aria-label="Clear"
+                                (click)="choice.get('text').setValue('')">
+                                <mat-icon>close</mat-icon>
+                            </button>
+                            <mat-error *ngIf="choice.get('text').hasError('whitespace')">Answer cannot be empty
+                            </mat-error>
+                        </mat-form-field>
+
+                        <!-- REMOVE button-->
+                        <button
+                            class="remove-btn"
+                            mat-button color="warn"
+                            (click)="deleteChoice(i)">
+                            <mat-icon>remove_circle</mat-icon>
+                        </button>
+                    </div>
+                </div>
+                <ng-template #noChoices>
+                    <h4>No answers added</h4>
+                </ng-template>
+            </div>
+
+        </div>
+
+        <mat-error *ngIf="isTest &&
+      freeFormQuestionFormGroup.freeFormQuestionFormGroup.hasError('noSelectedChoices')">Test
+            question must have correct answers.
+        </mat-error>
+    </div>
+</form>

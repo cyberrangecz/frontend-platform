@@ -1,7 +1,7 @@
-
-import { OptionMapper } from './option-mapper';
-import { EmiAnswerDTO } from '../dto/emi-answer-dto';
+import { EmiAnswerDTO } from '../dtos';
 import { AssessmentEmiAnswers } from '@crczp/visualization-model';
+import { OptionMapper } from './option-mapper';
+
 
 export class EmiAnswerMapper {
     static fromDTOs(dtos: EmiAnswerDTO[]): AssessmentEmiAnswers[] {

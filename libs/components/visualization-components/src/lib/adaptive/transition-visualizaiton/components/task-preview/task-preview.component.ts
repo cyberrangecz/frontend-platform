@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import {
     AccessPhaseTask,
     InfoPhaseTask,
-    QuestionnairePhaseTask,
+    QuestionnairePhaseTaskVisuazlization,
     TransitionTask,
     TrainingPhaseTask
 } from '@crczp/visualization-model';
@@ -26,7 +26,7 @@ export class TaskPreviewComponent {
                 return AbstractPhaseTypeEnum.Info;
             case task instanceof TrainingPhaseTask:
                 return AbstractPhaseTypeEnum.Training;
-            case task instanceof QuestionnairePhaseTask:
+            case task instanceof QuestionnairePhaseTaskVisuazlization:
                 return AbstractPhaseTypeEnum.Questionnaire;
             case task instanceof AccessPhaseTask:
                 return AbstractPhaseTypeEnum.Access;

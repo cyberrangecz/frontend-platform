@@ -1,0 +1,39 @@
+<mat-card appearance="outlined" class="info-card">
+    <div class="left-panel">
+        <div class="user-base-info">
+            <img class="user-picture" src="{{'data:image/png;base64,'+user.picture}}" [alt]="user.name"/>
+            <div class="user-name">{{ user.name }}</div>
+        </div>
+        <div class="user-description">{{ user.mail }}</div>
+    </div>
+
+    <div class="right-panel">
+        <div class="icon-container">
+            <mat-icon matTooltip="Roles" class="icon">add_moderator</mat-icon>
+            <div class="icon-text">{{ user.roles.length }}</div>
+        </div>
+    </div>
+</mat-card>
+<mat-card appearance="outlined" class="members-card">
+    <div class='detail-action-buttons'>
+        <button mat-button color="primary" (click)="accordion.openAll()">Expand All</button>
+        <button mat-button color="primary" (click)="accordion.closeAll()">Collapse All</button>
+    </div>
+    <mat-accordion class="detail-headers-align" multi>
+        <mat-expansion-panel class="roles mat-elevation-z0" *ngFor="let role of user.roles; first as first">
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <div class="user-detail-title">
+                        <mat-icon mat-list-icon color="primary">policy</mat-icon>
+                        <h4>{{ role.roleType }}</h4>
+                    </div>
+                </mat-panel-title>
+                <mat-panel-description>
+                    <p mat-line matTooltip="Microservice name">{{ role.microserviceName }}</p>
+                </mat-panel-description>
+                <mat-divider *ngIf="!first"/>
+            </mat-expansion-panel-header>
+            <div>{{ role.description }}</div>
+        </mat-expansion-panel>
+    </mat-accordion>
+</mat-card>

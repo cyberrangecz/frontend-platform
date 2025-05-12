@@ -1,0 +1,25 @@
+<ng-container *ngIf="phases?.length > 0; else noLevels">
+    <div class="header">
+        <!-- PHASE STEPPER -->
+        <div class="training-run-stepper">
+            <h3 class="message">
+                *Use stepper to navigate between levels.
+            </h3>
+
+            <sentinel-stepper
+                [draggable]="false"
+                [selectable]="true"
+                (indexSelected)="activeStepChanged($event)"
+                [stepperItems]="stepper"
+                [activeIndex]="stepper.activePhaseIndex"
+            >
+            </sentinel-stepper>
+        </div>
+    </div>
+    <!-- CONTENT OF ACTIVE LEVEL -->
+    <crczp-abstract-phase [phase]="activePhase"/>
+</ng-container>
+
+<ng-template #noLevels>
+    <h3 class="message">There are no phases in this training definition</h3>
+</ng-template>

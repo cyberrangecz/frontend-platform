@@ -1,0 +1,20 @@
+.overview-visualization-container {
+    display: flex;
+    margin-right: 10px;
+}
+
+.overview-visualization-container.full {
+    display: block;
+}
+
+.overview-visualization-container .second-column {
+    display: flex;
+    flex-direction: column;
+    justify-content: center
+}
+
+.overview-visualization-container.full .second-column {
+    display: flex;
+    flex-direction: row;
+    justify-content: center
+}

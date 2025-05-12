@@ -1,0 +1,5 @@
+@import "../../../level-summary-common.css";
+
+.question-type {
+    vertical-align: bottom;
+}

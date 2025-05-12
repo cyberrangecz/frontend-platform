@@ -2,10 +2,10 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { VisualizationDataDTO } from './dto/visualization-data-dto';
 import { VisualizationDataMapper } from './mappers/visualization-data-mapper';
 import { VisualizationApiConfig } from '../config/visualization-api-config';
 import { TransitionVisualizationData } from '@crczp/visualization-model';
+import { AdaptiveVisualizationDataDTO } from './dto/run-visualization-dto';
 
 @Injectable()
 export class AdaptiveTransitionVisualizationApi {
@@ -16,7 +16,7 @@ export class AdaptiveTransitionVisualizationApi {
 
     getDataForTrainingInstance(trainingInstanceId: number): Observable<TransitionVisualizationData> {
         return this.http
-            .get<VisualizationDataDTO>(
+            .get<AdaptiveVisualizationDataDTO>(
                 this.config.adaptiveBasePath +
                     `visualizations/training-instances/${trainingInstanceId}/transitions-graph`,
             )
@@ -25,7 +25,7 @@ export class AdaptiveTransitionVisualizationApi {
 
     getDataForTrainingRun(trainingRunId: number): Observable<TransitionVisualizationData> {
         return this.http
-            .get<VisualizationDataDTO>(
+            .get<AdaptiveVisualizationDataDTO>(
                 this.config.adaptiveBasePath +
                     `visualizations/training-runs/${trainingRunId}/transitions-graph`,
             )

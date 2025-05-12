@@ -1,0 +1,24 @@
+<div *ngIf="trainingInstance$ | async as trainingInstance">
+    <mat-card appearance="outlined">
+        <crczp-training-instance-info
+            [accessTokenLink]="trainingInstanceAccessTokenLink"
+            [poolIdLink]="trainingInstancePoolIdLink"
+            [adaptiveDefinitionLink]="adaptiveDefinitionLink"
+            [trainingInstance]="trainingInstance"
+            [hasStarted$]="hasStarted$"
+            (showProgress)="onShowProgress()"
+            (showNotification)="onShowNotification($event)"
+        >
+        </crczp-training-instance-info>
+    </mat-card>
+
+    <mat-card appearance="outlined">
+        <crczp-adaptive-instance-runs
+            [trainingRuns]="adaptiveRuns$ | async"
+            [hasError]="adaptiveRunsHasError$ | async"
+            (tableAction)="onTrainingRunTableAction($event)"
+            (TableLoadEvent)="onTrainingRunTableLoadEvent($event)"
+        >
+        </crczp-adaptive-instance-runs>
+    </mat-card>
+</div>

@@ -1,0 +1,27 @@
+#combinedDiagramPlaceholder {
+    box-sizing: border-box;
+    display: inline-block;
+    padding: 0.5vw;
+}
+
+mat-card {
+    width: calc(100% - 32px);
+    height: 100%;
+    padding-top: calc(5px + 0.5vw);
+    padding-bottom: calc(5px + 0.5vw);
+}
+
+mat-card-title {
+    padding: calc(5px + 0.2vw);
+    margin-bottom: calc(2px + 0.2vw);
+    font-size: calc(8px + 0.5vw) !important;
+    overflow-y: visible;
+}
+
+mat-card-content {
+    height: 90%;
+}
+
+#combinedDiagramChartSvg {
+    overflow: visible;
+}

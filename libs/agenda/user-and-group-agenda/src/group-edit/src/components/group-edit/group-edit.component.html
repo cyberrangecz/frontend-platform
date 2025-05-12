@@ -1,0 +1,62 @@
+<form [formGroup]="groupEditFormGroup.formGroup">
+    <div class="content">
+        <div class="row-panel">
+            <div class="row-item">
+                <!-- NAME field> -->
+                <mat-form-field appearance="outline" class="name-form">
+                    <mat-label>Name</mat-label>
+                    <input matInput placeholder="Name" formControlName="name" required>
+                    <button *ngIf="name" matSuffix mat-icon-button aria-label="Clear" (click)="name.setValue('')">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                    <mat-error>Name is required</mat-error>
+                </mat-form-field>
+
+            </div>
+
+            <div class="row-item">
+                <!-- EXPIRATION Date field -->
+                <div class="expiration">
+                    <mat-form-field appearance="outline" class="expiration-form">
+                        <mat-label>Expiration Date</mat-label>
+                        <button *ngIf="expirationDate.value"
+                                matSuffix
+                                mat-icon-button
+                                aria-label="Clear"
+                                (click)="expirationDate.setValue(null)">
+                            <mat-icon>close</mat-icon>
+                        </button>
+                        <input matInput [min]="tomorrow" [matDatepicker]="picker" formControlName="expirationDate"
+                               placeholder="Expires on">
+                        <mat-datepicker #picker/>
+                        <mat-datepicker-toggle matSuffix [for]="picker"/>
+                    </mat-form-field>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- DESCRIPTION field -->
+    <mat-form-field appearance="outline" class="description-form">
+        <mat-label>Description</mat-label>
+        <textarea
+            matInput
+            maxlength="255"
+            class="description-form__texarea"
+            placeholder="Description"
+            formControlName="description"
+            required></textarea>
+        <button
+            class="description-form__clear"
+            *ngIf="description"
+            mat-icon-button
+            aria-label="Clear"
+            matTooltip="Clear"
+            matTooltipPosition="right"
+            (click)="description.setValue('')">
+            <mat-icon>close</mat-icon>
+        </button>
+        <mat-error>Description is required</mat-error>
+    </mat-form-field>
+</form>

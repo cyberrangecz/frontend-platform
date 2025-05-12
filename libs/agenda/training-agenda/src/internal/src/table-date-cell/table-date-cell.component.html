@@ -1,0 +1,15 @@
+<div
+    #boundaryDiv
+    (mouseenter)="hover.set(true); initialized.set(true)"
+    (mouseleave)="hover.set(false);"
+    class="wrapper-div {{colWidth() > shrinkThreshold ? 'hflex' : 'vflex'}}">
+    <span
+        class="date {{isLoading || !initialized() || (colWidth() > shrinkThreshold) ? '' :
+            hover() && !(colWidth() > shrinkThreshold) ? 'slide-up' : 'slide-down'}}">
+        {{ displayedDate | date: dateDisplayFormat }}</span>
+    <span class="
+    time
+   {{hover() && !(colWidth() > shrinkThreshold) ? 'slide-down show fadeIn' : 'slide-up hide'}}
+    {{colWidth() > shrinkThreshold ? 'show' : ''}}"
+    >@if(colWidth() > shrinkThreshold ){&nbsp;} {{displayedDate | date: timeDisplayFormat}}</span>
+</div>

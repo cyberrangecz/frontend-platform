@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { QuestionnairePhaseTask } from '@crczp/visualization-model';
+import { QuestionnairePhaseTaskVisuazlization } from '@crczp/visualization-model';
 
 
 @Component({
@@ -9,5 +9,5 @@ import { QuestionnairePhaseTask } from '@crczp/visualization-model';
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class QuestionnaireTaskPreviewComponent {
-    @Input() task?: QuestionnairePhaseTask;
+    @Input() task?: QuestionnairePhaseTaskVisuazlization;
 }

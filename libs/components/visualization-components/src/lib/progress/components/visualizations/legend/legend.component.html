@@ -1,0 +1,73 @@
+<div class="ctf-progress-legend">
+    <div class="ctf-progress-legend-left">
+        <div class="ctf-progress-legend-left-top">
+            <span class="ctf-progress-legend-item">Legend: </span>
+            <span class="ctf-progress-legend-item ctf-progress-legend-limit" *ngIf="selectedViewValue === 'overview'">
+                <svg class="ctf-progress-legend-icon" height="18" width="2" viewBox="0 0 2 18">
+                    <rect y="0" x="0" height="18" width="2"/>
+                </svg>
+                Level time limit
+            </span>
+            <span class="ctf-progress-legend-item ctf-progress-legend-estimate">
+                <svg class="ctf-progress-legend-icon" height="18" width="35" viewBox="0 0 35 18" fill="#8c8b8b">
+                    <defs>
+                        <pattern id="diagonalHatchGray" patternUnits="userSpaceOnUse" width="7" height="4"
+                                 patternTransform="rotate(45)">
+                            <rect width="3" height="4" transform="translate(0,0)" opacity="0.5"/>
+                        </pattern>
+                    </defs>
+                    <rect y="0" x="0" height="18" width="35" fill="url('#diagonalHatchGray')"/>
+                </svg>
+                {{ selectedViewValue === 'progress' ? 'Estimated time to finish level' : 'Unfinished level estimate' }}
+            </span>
+
+            <span class="ctf-progress-legend-item ctf-progress-legend-finished"
+                  *ngIf="selectedViewValue === 'progress'">
+                <svg class="ctf-progress-legend-icon" height="18" width="35" viewBox="0 0 35 18">
+                    <rect y="0" x="0" height="18" width="35" [attr.fill]="levelColors.finished"/>
+                </svg>
+                Finished levels (grayscale)
+            </span>
+
+            <span class="ctf-progress-legend-item ctf-progress-legend-active" *ngIf="selectedViewValue === 'progress'">
+                <svg class="ctf-progress-legend-icon" height="18" width="35" viewBox="0 0 35 18">
+                    <rect y="0" x="0" height="18" width="35" [attr.fill]="levelColors.active"/>
+                </svg>
+                Active levels ({{ activeLevelsDesc[activeLevelColorIndex] }})
+            </span>
+
+            <span class="ctf-progress-legend-item ctf-progress-legend-active">
+                <svg class="ctf-progress-legend-icon" width="35" height="20" viewBox="0 0 15 15"><path
+                        [attr.d]="pathConfig.wrong"/></svg>
+                Wrong answer
+            </span>
+
+            <span class="ctf-progress-legend-item ctf-progress-legend-active">
+                <svg class="ctf-progress-legend-icon" width="35" height="20" viewBox="0 0 15 15"><path
+                        [attr.d]="pathConfig.hint"/></svg>
+                Hint
+            </span>
+
+            <span class="ctf-progress-legend-item ctf-progress-legend-active">
+                <svg class="ctf-progress-legend-icon" width="35" height="20" viewBox="0 0 15 15">
+                    <path [attr.d]="pathConfig.solution"/>
+                </svg>
+                Solution displayed
+            </span>
+
+            <span class="ctf-progress-legend-item">
+                <svg class="ctf-progress-legend-icon" width="80" height="16" viewBox="0 0 16 16"></svg>
+            </span>
+        </div>
+    </div>
+    <div class="ctf-progress-legend-right">
+        <span class="ctf-progress-legend-item ctf-progress-legend-zoom">
+            <svg class="ctf-progress-legend-icon" width="20" height="20" viewBox="0 0 24 24"><path
+                    [attr.d]="pathConfig.zoom"/></svg>
+            Ctrl + Scroll
+        </span>
+        <span>
+            <button class="zoom-reset-button" mat-button (click)="zoomResetChange.emit('')">Reset zoom</button>
+        </span>
+    </div>
+</div>

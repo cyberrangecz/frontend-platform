@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, ElementRef, Input, OnChanges, SimpleChanges } from '@angular/core';
 import * as d3 from 'd3';
-import { TrainingRunData } from '@crczp/visualization-model';
+import { AdaptiveRunVisualization } from '@crczp/visualization-model';
 
 @Component({
     // eslint-disable-next-line @angular-eslint/component-selector
@@ -9,7 +9,7 @@ import { TrainingRunData } from '@crczp/visualization-model';
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PlayerPathComponent implements OnChanges {
-    @Input() playerTransitions!: TrainingRunData;
+    @Input() playerTransitions!: AdaptiveRunVisualization;
 
     @Input() xScale!: d3.ScalePoint<number>;
     @Input() yScale!: d3.ScalePoint<number>;

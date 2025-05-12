@@ -1,10 +1,9 @@
 import { Component, Input, OnChanges } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Assessment } from '@crczp/visualization-model';
-import { AssessmentApi } from '@crczp/visualization-api';
+import { AssessmentApi, VisualizationApiConfig } from '@crczp/visualization-api';
 import { AsyncPipe, CommonModule } from '@angular/common';
 import { AssessmentResultsComponent } from './component/assessment-results.component';
-import { VisualizationApiConfig } from '@crczp/visualization-api';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTableModule } from '@angular/material/table';
 import { MatCardModule } from '@angular/material/card';
@@ -13,8 +12,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { provideApiConfig } from '@crczp/api-common';
 import { HighlightService } from './services/highlight.service';
+import { provideComponentProperty } from '@crczp/components-common';
 
 /**
  * Main component of the assessment visualization
@@ -34,17 +33,17 @@ import { HighlightService } from './services/highlight.service';
         MatIconModule,
         MatFormFieldModule,
         MatInputModule,
-        MatTooltipModule,
+        MatTooltipModule
     ],
     providers: [
         HighlightService,
         AssessmentApi,
-        provideApiConfig(AssessmentResultsVisualizationComponent, VisualizationApiConfig),
+        provideComponentProperty(AssessmentResultsVisualizationComponent, VisualizationApiConfig)
     ]
 })
 export class AssessmentResultsVisualizationComponent implements OnChanges {
 
-    @Input({required: true}) apiConfig: VisualizationApiConfig;
+    @Input({ required: true }) apiConfig: VisualizationApiConfig;
     /**
      * Id of a training instance to be visualized
      */
@@ -53,7 +52,8 @@ export class AssessmentResultsVisualizationComponent implements OnChanges {
 
     assessments$: Observable<Assessment[]>;
 
-    constructor(private assessmentFacade: AssessmentApi) {}
+    constructor(private assessmentFacade: AssessmentApi) {
+    }
 
     ngOnChanges(): void {
         if (this.trainingInstanceId) {

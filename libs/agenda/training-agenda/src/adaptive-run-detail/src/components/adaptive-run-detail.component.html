@@ -1,0 +1,46 @@
+<div class="header">
+    <!-- PHASE STEPPER -->
+    <div class="training-run-stepper round-scrollbar" *ngIf="isStepperDisplayed && stepper?.items">
+        <sentinel-stepper
+            [draggable]="false"
+            [selectable]="backwardMode"
+            (indexSelected)="activeStepChanged($event)"
+            [stepperItems]="stepper"
+            [activeIndex]="stepper.activePhaseIndex"
+        >
+        </sentinel-stepper>
+    </div>
+</div>
+
+<ng-container *ngIf="activePhase$ | async as activePhase">
+    <!-- CONTENT OF ACTIVE PHASE -->
+    <crczp-abstract-phase
+        [hidden]="(backtrackedPhase$ | async) && activePhase.id !== stepper.items[stepper.activePhaseIndex].id"
+        [phase]="activePhase"
+        [isLast]="isLast"
+        [isPhaseAnswered]="isCurrentPhaseAnswered$ | async"
+        [isLoading]="isLoading"
+        [sandboxInstanceId]="sandboxInstanceId"
+        [sandboxDefinitionId]="sandboxDefinitionId"
+        [localEnvironment]="localEnvironment"
+        [isBacktracked]="false"
+        [isStepperDisplayed]="isStepperDisplayed"
+        [startTime]="startTime"
+        (next)="next()"
+    >
+    </crczp-abstract-phase>
+    <crczp-abstract-phase
+        *ngIf="(backtrackedPhase$ | async) && activePhase.id !== stepper.items[stepper.activePhaseIndex].id"
+        [phase]="(backtrackedPhase$ | async)"
+        [isLast]="isLast"
+        [isLoading]="isLoading"
+        [sandboxInstanceId]="sandboxInstanceId"
+        [sandboxDefinitionId]="sandboxDefinitionId"
+        [localEnvironment]="localEnvironment"
+        [isBacktracked]="true"
+        [isStepperDisplayed]="isStepperDisplayed"
+        [startTime]="startTime"
+        (next)="this.activeStepChanged(this.stepper.activePhaseIndex + 1)"
+    >
+    </crczp-abstract-phase>
+</ng-container>

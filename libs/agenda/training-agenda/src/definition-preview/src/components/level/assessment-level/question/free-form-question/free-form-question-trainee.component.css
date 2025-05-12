@@ -1,0 +1,16 @@
+h2 {
+    color: #4355b7;
+    margin: 0;
+}
+
+p.required-note {
+    color: #949494;
+}
+
+mat-form-field {
+    width: 100%;
+}
+
+sentinel-markdown-view {
+    color: #3f51b5;
+}

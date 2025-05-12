@@ -1,0 +1,11 @@
+<ng-container *ngIf="(levels$ | async) as levels else noLevels">
+    <div class="container">
+        <crczp-walkthrough-visualization
+            [levels]="levels"
+            [instanceId]="(trainingInstance$ | async)?.id">
+        </crczp-walkthrough-visualization>
+    </div>
+</ng-container>
+<ng-template #noLevels>
+    <h3 class="message">*No levels for a given training definition of a training instance: {{ trainingInstance$ }}.</h3>
+</ng-template>

@@ -1,0 +1,24 @@
+<ng-container *ngIf="stages$ | async as stages">
+    <ng-container *ngIf="hasError$ | async">
+        <mat-card appearance="outlined" class="error">
+            <span>We had some trouble loading the data.</span>
+            <button mat-icon-button (click)="reloadStages()" color="primary">
+                <mat-icon>refresh</mat-icon>
+            </button>
+        </mat-card>
+    </ng-container>
+    <ng-container *ngIf="stages?.length > 0; else noStages">
+        <ng-container *ngFor="let stage of stages.values(); trackBy: trackByFn; let i = index">
+            <crczp-request-stage
+                *ngIf="(fragment && 'stage-' + i === fragment) || !fragment"
+                id="{{ 'stage-' + i }}"
+                [stage]="stage"
+                (stageDetailPanelChange)="onStageDetailPanelChange($event, stage)"
+            >
+            </crczp-request-stage>
+        </ng-container>
+    </ng-container>
+    <ng-template #noStages>
+        <h2 *ngIf="(isLoading$ | async) === false">Request has no stages</h2>
+    </ng-template>
+</ng-container>

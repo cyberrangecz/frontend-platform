@@ -1,0 +1,15 @@
+<div class="description">
+    The MITRE ATT&CK matrix contains a set of techniques used by adversaries to accomplish a specific objective. Those
+    objectives are categorized as tactics in the ATT&CK Matrix. The objectives are presented linearly from the point of
+    reconnaissance to the final goal of exfiltration or "impact". Within each tactic of the MITRE ATT&CK matrix there
+    are adversary techniques, which describe the actual activity carried out by the adversary. The full ATT&CK
+    Matrix for Enterprise from the MITRE ATT&CK navigator is represented below
+</div>
+<mat-card appearance="outlined" *ngIf="mitreTableHtml$ | async">
+    <div *ngIf="showSwitch" class="played-switch">
+        <div>Played</div>
+        <mat-slide-toggle color="accent" [checked]="!played" (change)="switchToggled()"/>
+        <div>All</div>
+    </div>
+    <div [innerHTML]="mitreTableHtml$ | async | safeHtml"></div>
+</mat-card>

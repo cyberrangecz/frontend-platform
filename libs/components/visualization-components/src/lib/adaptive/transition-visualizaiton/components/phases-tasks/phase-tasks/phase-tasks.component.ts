@@ -11,7 +11,7 @@ import {
 } from '@angular/core';
 import * as d3 from 'd3';
 import { easeQuad } from 'd3';
-import { TrainingRunPathNode, TransitionPhase, TransitionTask } from '@crczp/visualization-model';
+import { RunVisualizationPathNode, TransitionPhase, TransitionTask } from '@crczp/visualization-model';
 
 @Component({
     // eslint-disable-next-line @angular-eslint/component-selector
@@ -25,7 +25,7 @@ export class PhaseTasksComponent implements OnChanges {
     @Input() xScale!: d3.ScalePoint<number>;
     @Input() yScale!: d3.ScalePoint<number>;
 
-    @Output() taskPreviewEvent = new EventEmitter<TrainingRunPathNode>();
+    @Output() taskPreviewEvent = new EventEmitter<RunVisualizationPathNode>();
 
     private g: any;
 
@@ -58,7 +58,7 @@ export class PhaseTasksComponent implements OnChanges {
             .attr('fill', 'lightgrey')
             .style('cursor', 'pointer')
             .on('click', (_: any, task: TransitionTask) => {
-                const thisNode = new TrainingRunPathNode();
+                const thisNode = new RunVisualizationPathNode();
                 thisNode.phaseId = this.phase.id;
                 thisNode.phaseOrder = this.phase.order;
                 thisNode.taskId = task.id;

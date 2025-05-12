@@ -1,0 +1,24 @@
+<div class="overview-visualization-container">
+    <crczp-visualization-overview-final
+        (selectedTrainee)='selectPlayer($event)'
+        [colorScheme]="colorScheme"
+        [dataClusteringFinal]="clusteringTrainingData"
+        [filterPlayers]='filterPlayers'
+        [instanceIds]='instanceIds'
+        [selectedTrainingRunId]='selectedTrainingRunId'
+        [size]="{width: size.width, height: 100}"
+        [standalone]='standalone'
+        [traineeModeInfo]="traineeModeInfo"
+    />
+
+    <crczp-visualization-overview-levels
+        (selectedTrainee)='selectPlayer($event)'
+        [colorScheme]="colorScheme"
+        [filterPlayers]='filterPlayers'
+        [instanceIds]='instanceIds'
+        [levelsData]="clusteringTrainingData"
+        [selectedTrainingRunId]='selectedTrainingRunId'
+        [size]="size"
+        [standalone]='standalone'
+        [traineeModeInfo]="traineeModeInfo" />
+</div>

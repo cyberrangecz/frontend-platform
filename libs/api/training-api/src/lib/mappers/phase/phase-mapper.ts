@@ -5,7 +5,7 @@ import {
     InfoPhase,
     Phase,
     QuestionnairePhase,
-    Task,
+    AdaptiveTask,
     TrainingPhase,
 } from '@crczp/training-model';
 import { TrainingPhaseMapper } from './training-phase-mapper';
@@ -70,7 +70,7 @@ export class PhaseMapper {
                 break;
             }
             case BasicPhaseInfoDTO.PhaseTypeEnum.TASK: {
-                phase = new Task();
+                phase = new AdaptiveTask();
                 phase.type = AbstractPhaseTypeEnum.Task;
                 break;
             }

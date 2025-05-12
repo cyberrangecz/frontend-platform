@@ -1,4 +1,4 @@
-import { SseDTO } from '../dto/sse-dto';
+import { SseDTO } from '../dtos';
 import { SseData } from '@crczp/visualization-model';
 
 

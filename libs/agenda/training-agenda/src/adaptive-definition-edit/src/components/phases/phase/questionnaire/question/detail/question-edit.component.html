@@ -1,0 +1,41 @@
+<mat-card appearance="outlined">
+    <mat-card-header>
+        <mat-card-title>
+            <h3>Question {{ index + 1 }}:</h3>
+            <h3>
+                <sentinel-markdown-view [markdown]="question.text"/>
+            </h3>
+        </mat-card-title>
+        <span class="spacer"></span>
+        <div class="required">
+            <mat-checkbox class="mat-typography"
+                          [checked]="false"
+                          (change)="questionChanged(question)"
+                          [(ngModel)]="question.answerRequired">
+                Required
+            </mat-checkbox>
+        </div>
+    </mat-card-header>
+    <mat-card-content>
+        <ng-container [ngSwitch]="true">
+            <crczp-adaptive-multiple-choice-question-edit *ngSwitchCase="question.questionType === questionTypes.MCQ"
+                                                         (questionChange)="questionChanged($event)"
+                                                         [questionnaireType]="questionnaireType"
+                                                         [question]="question"
+                                                         [required]="question.answerRequired">
+            </crczp-adaptive-multiple-choice-question-edit>
+            <crczp-adaptive-free-form-question-edit *ngSwitchCase="question.questionType === questionTypes.FFQ"
+                                                   (questionChange)="questionChanged($event)"
+                                                   [questionnaireType]="questionnaireType"
+                                                   [question]="question"
+                                                   [required]="question.answerRequired">
+            </crczp-adaptive-free-form-question-edit>
+            <crczp-rating-form-question-edit *ngSwitchCase="question.questionType === questionTypes.RFQ"
+                                            (questionChange)="questionChanged($event)"
+                                            [questionnaireType]="questionnaireType"
+                                            [question]="question"
+                                            [required]="question.answerRequired">
+            </crczp-rating-form-question-edit>
+        </ng-container>
+    </mat-card-content>
+</mat-card>

@@ -1,0 +1,75 @@
+#scatterplotPlaceholder {
+    box-sizing: border-box;
+    display: inline-block;
+    padding: 0.5vw;
+}
+
+::ng-deep #scatterplotLegendSvg .scatterplotLegendText:nth-child(2) tspan.scatterplotLegendSvg {
+    letter-spacing: 3px;
+}
+
+mat-card {
+    width: calc(100% - 32px);
+    height: 100%;
+    padding-top: calc(5px + 0.5vw);
+    padding-bottom: calc(5px + 0.5vw);
+}
+
+mat-card-title {
+    padding: calc(5px + 0.2vw);
+    margin-bottom: calc(2px + 0.2vw);
+    font-size: calc(8px + 0.5vw) !important;
+    overflow-y: visible;
+}
+
+mat-card-content {
+    height: 90%;
+}
+
+mat-radio-group {
+    position: absolute;
+    left: 8px;
+    font-size: calc(8px + 0.4vw);
+}
+
+mat-radio-button {
+    font-size: calc(8px + 0.4vw);
+    padding-right: calc(4px + 0.4vw);
+}
+
+mat-radio-button::ng-deep .mat-radio-container {
+    width: calc(10px + 0.6vw);
+    height: calc(10px + 0.6vw);
+}
+
+mat-radio-button ::ng-deep .mat-radio-outer-circle {
+    width: calc(10px + 0.6vw);
+    height: calc(10px + 0.6vw);
+}
+
+mat-radio-button ::ng-deep .mat-radio-inner-circle {
+    width: calc(10px + 0.6vw);
+    height: calc(10px + 0.6vw);
+}
+
+#radioButtonText {
+    margin-right: 1vw;
+    display: none;
+}
+
+@media only screen and (min-width: 400px) {
+    #radioButtonText {
+        margin-right: 1vw;
+        display: inline;
+    }
+}
+
+#scatterplotChartPlaceholder,
+#scatterplotSvg {
+    overflow: visible;
+}
+
+.domain,
+.domain * {
+    pointer-events: none;
+}

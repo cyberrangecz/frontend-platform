@@ -1,0 +1,34 @@
+<div class="container">
+    <div class="content">
+        <div class="left-panel">
+            <div class="level-content">
+                <sentinel-markdown-view [markdown]="level?.content"/>
+                <div class="hint-content">
+                    <div>
+                        <h2>Level hints:</h2>
+                        <div *ngFor="let hint of level.hints; index as i">
+                            <h3>Hint {{ i + 1 }}</h3>
+                            <sentinel-markdown-view [markdown]="hint.content"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="solution-content">
+                    <h2><span class="solution-color"> Solution: </span></h2>
+                    <sentinel-markdown-view [markdown]="level.solution"/>
+                </div>
+            </div>
+        </div>
+        <div class="right-panel">
+            <div class="container">
+                <div class="topology-placeholder">
+                    <img
+                        class="topology-placeholder-image"
+                        src="assets/training-agenda/topology-placeholder.png"
+                        alt="Topology placeholder"
+                    />
+                </div>
+                <h3 class="message">*This is just a template topology</h3>
+            </div>
+        </div>
+    </div>
+</div>

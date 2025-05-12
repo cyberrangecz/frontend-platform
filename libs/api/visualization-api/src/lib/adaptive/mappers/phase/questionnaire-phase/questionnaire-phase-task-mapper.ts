@@ -1,15 +1,17 @@
-import { AdaptiveQuestion } from '../../../model/phase/questionnaire-phase/adaptive-question';
 import { QuestionnairePhaseDTO } from '../../../dto/phase/questionnaire-phase/questionnaire-phase-dto';
-import { QuestionnairePhaseTask } from '../../../model/phase/questionnaire-phase/questionnaire-phase-task';
 import { QuestionDTO } from '../../../dto/phase/questionnaire-phase/question-dto';
-import { QuestionTypeEnum } from '../../../model/enums/question-type.enum';
 import { ChoiceDTO } from '../../../dto/phase/questionnaire-phase/choice-dto';
-import { Choice } from '../../../model/phase/questionnaire-phase/choice';
-import { QuestionnaireTypeEnum } from '../../../model/enums/questionnaire-type.enum';
+import {
+    AdaptiveQuestionVisualization,
+    ChoiceVisualization,
+    QuestionnairePhaseTaskVisuazlization
+} from '@crczp/visualization-model';
+import { QuestionnaireTypeEnum, QuestionTypeEnum } from '@crczp/training-model';
+
 
 export class QuestionnairePhaseTaskMapper {
-    static fromDTO(dto: QuestionnairePhaseDTO): QuestionnairePhaseTask {
-        const result = new QuestionnairePhaseTask();
+    static fromDTO(dto: QuestionnairePhaseDTO): QuestionnairePhaseTaskVisuazlization {
+        const result = new QuestionnairePhaseTaskVisuazlization();
         result.id = 0;
         result.order = 0;
         switch (dto.questionnaire_type) {
@@ -30,10 +32,10 @@ export class QuestionnairePhaseTaskMapper {
         return result;
     }
 
-    private static mapQuestionsFromDTO(questions: QuestionDTO[]): AdaptiveQuestion[] {
-        const result: AdaptiveQuestion[] = [];
+    private static mapQuestionsFromDTO(questions: QuestionDTO[]): AdaptiveQuestionVisualization[] {
+        const result: AdaptiveQuestionVisualization[] = [];
         questions.forEach((questionDTO) => {
-            const question = new AdaptiveQuestion();
+            const question = new AdaptiveQuestionVisualization();
             question.id = questionDTO.id;
             question.order = questionDTO.order;
             question.text = questionDTO.text;
@@ -57,10 +59,10 @@ export class QuestionnairePhaseTaskMapper {
         return result;
     }
 
-    private static mapChoicesFromDTO(choices: ChoiceDTO[]): Choice[] {
-        const result: Choice[] = [];
+    private static mapChoicesFromDTO(choices: ChoiceDTO[]): ChoiceVisualization[] {
+        const result: ChoiceVisualization[] = [];
         choices.forEach((choiceDto) => {
-            const choice = new Choice();
+            const choice = new ChoiceVisualization();
             choice.id = choiceDto.id;
             choice.order = choiceDto.order;
             choice.text = choiceDto.text;

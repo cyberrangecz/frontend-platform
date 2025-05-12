@@ -1,5 +1,5 @@
 import { TrainingPhaseDTO } from '../../dto/phase/training-phase/training-phase-dto';
-import { AbstractPhaseTypeEnum, DecisionMatrixRow, Task, TrainingPhase } from '@crczp/training-model';
+import { AbstractPhaseTypeEnum, DecisionMatrixRow, AdaptiveTask, TrainingPhase } from '@crczp/training-model';
 import { TrainingPhaseUpdateDTO } from '../../dto/phase/training-phase/training-phase-update-dto';
 import { TaskDTO } from '../../dto/phase/training-phase/task-dto';
 import { TaskMapper } from './task-mapper';
@@ -53,7 +53,7 @@ export class TrainingPhaseMapper {
         return result;
     }
 
-    private static mapTasks(tasksDTO: TaskDTO[]): Task[] {
+    private static mapTasks(tasksDTO: TaskDTO[]): AdaptiveTask[] {
         return tasksDTO.map(TaskMapper.fromDTO);
     }
 

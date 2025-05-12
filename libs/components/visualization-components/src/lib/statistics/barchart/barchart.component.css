@@ -1,0 +1,73 @@
+#barchartPlaceholder {
+    box-sizing: border-box;
+    display: inline-block;
+    padding: 0.5vw;
+}
+
+mat-card {
+    width: calc(100% - 32px);
+    height: 100%;
+    padding-top: calc(5px + 0.5vw);
+    padding-bottom: calc(5px + 0.5vw);
+}
+
+mat-card-title {
+    padding: calc(5px + 0.2vw);
+    margin-bottom: calc(2px + 0.2vw);
+    font-size: calc(8px + 0.5vw) !important;
+    overflow-y: visible;
+}
+
+mat-card-content {
+    height: 90%;
+}
+
+#buttonGroup {
+    position: absolute;
+    left: 8px;
+}
+
+mat-checkbox {
+    font-size: calc(8px + 0.4vw);
+    padding-left: calc(10px + 1vw);
+}
+
+mat-checkbox ::ng-deep .mat-checkbox-inner-container {
+    width: calc(10px + 0.5vw);
+    height: calc(10px + 0.5vw);
+}
+
+mat-radio-button {
+    font-size: calc(8px + 0.4vw);
+    padding-right: calc(4px + 0.4vw);
+}
+
+mat-radio-button::ng-deep .mat-radio-container {
+    width: calc(10px + 0.6vw);
+    height: calc(10px + 0.6vw);
+}
+
+mat-radio-button ::ng-deep .mat-radio-outer-circle {
+    width: calc(10px + 0.6vw);
+    height: calc(10px + 0.6vw);
+}
+
+mat-radio-button ::ng-deep .mat-radio-inner-circle {
+    width: calc(10px + 0.6vw);
+    height: calc(10px + 0.6vw);
+}
+
+svg {
+    overflow: visible;
+}
+
+#scrollableDiv {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: visible;
+}
+
+.verticallyScrollable {
+    overflow-x: hidden;
+    overflow-y: scroll;
+}

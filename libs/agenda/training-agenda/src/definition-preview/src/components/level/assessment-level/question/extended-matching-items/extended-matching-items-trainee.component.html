@@ -1,0 +1,32 @@
+<div class="content">
+    <!--TITLE-->
+    <h2>
+        <sentinel-markdown-view [markdown]="'Question ' + index.toString() + ':'"/>
+        <sentinel-markdown-view [markdown]="question.title"/>
+    </h2>
+    <p class="required-note" *ngIf="question.required">Answer required</p>
+
+    <!--RADIO TABLE-->
+    <table>
+        <!-- TABLE HEADER-->
+        <tr>
+            <th></th>
+            <th *ngFor="let option of question.extendedMatchingOptions">{{ option.text }}</th>
+        </tr>
+
+        <!-- TABLE BODY-->
+        <tr
+            *ngFor="let statement of question.extendedMatchingStatements; index as i"
+            class="inner"
+        >
+            <td>{{ statement.text }}</td>
+            <mat-radio-group>
+                <td *ngFor="let option of question.extendedMatchingOptions; index as j">
+                    <mat-radio-button
+                        [value]="{ x: i, y: j }"
+                    />
+                </td>
+            </mat-radio-group>
+        </tr>
+    </table>
+</div>

@@ -1,0 +1,33 @@
+/* TODO(mdc-migration): The following rule targets internal classes of card that may no longer apply for the MDC version. */
+mat-card {
+    margin: 10px;
+}
+
+.loading {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.error {
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+    justify-content: center;
+    color: red;
+}
+
+mat-expansion-panel {
+    margin: 10px;
+}
+
+/* TODO(mdc-migration): The following rule targets internal classes of card that may no longer apply for the MDC version. */
+mat-card-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center
+}
+
+mat-card-header mat-card-title {
+    margin: 0;
+}

@@ -1,0 +1,94 @@
+mat-card {
+    margin: 10px 0;
+    padding: 16px;
+}
+
+.info-card {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.user-base-info {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: baseline;
+}
+
+.user-picture {
+    width: 25px;
+    height: 25px;
+}
+
+.right-panel {
+    display: flex;
+    flex-direction: row;
+}
+
+.user-name {
+    font-size: x-large;
+    margin-bottom: 4px;
+    margin-left: 10px;
+}
+
+.user-description {
+    color: gray;
+    font-size: smaller;
+}
+
+.user-detail-title {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.user-detail-title h4 {
+    margin: 0;
+    padding-left: 10px;
+}
+
+.roles {
+    width: 100%;
+}
+
+.icon-container {
+    display: flex;
+    flex-direction: column;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.icon {
+    font-size: 40px;
+    width: 40px;
+    height: 40px;
+}
+
+.icon-text {
+    text-align: center;
+}
+
+mat-divider {
+    top: 0;
+}
+
+.detail-action-buttons {
+    display: flex;
+    justify-content: flex-end;
+    padding-bottom: 20px;
+}
+
+.detail-headers-align .mat-expansion-panel-header-title,
+.detail-headers-align .mat-expansion-panel-header-description {
+    flex-basis: 0;
+}
+
+.detail-headers-align .mat-expansion-panel-header-description {
+    justify-content: space-between;
+    align-items: center;
+}
+
+.detail-headers-align .mat-mdc-form-field + .mat-mdc-form-field {
+    margin-left: 8px;
+}
