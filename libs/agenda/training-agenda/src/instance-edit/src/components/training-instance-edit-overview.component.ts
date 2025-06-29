@@ -48,7 +48,7 @@ export class TrainingInstanceEditOverviewComponent implements OnInit {
 
     constructor(
         private activeRoute: ActivatedRoute,
-        private paginationService: DefaultPaginationService,
+        private paginationService: PaginationStorageService,
         private editService: TrainingInstanceEditService,
         private organizersAssignService: SentinelUserAssignService,
     ) {

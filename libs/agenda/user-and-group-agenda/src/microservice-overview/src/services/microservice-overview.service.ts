@@ -7,7 +7,7 @@ import { Microservice } from '@crczp/user-and-group-model';
 import { Observable, of } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { UserAndGroupErrorHandler, UserAndGroupNavigator } from '../../../public';
-import { PageSizeSettingToken } from '@crczp/components-common';
+import { PAGE_SIZE_SETTING_TOKEN } from '@crczp/components-common';
 
 @Injectable()
 export class MicroserviceOverviewService extends SelectablePaginatedService<Microservice> {
@@ -17,7 +17,7 @@ export class MicroserviceOverviewService extends SelectablePaginatedService<Micr
         private navigator: UserAndGroupNavigator,
         private errorHandler: UserAndGroupErrorHandler
     ) {
-        super(inject(PageSizeSettingToken));
+        super(inject(PAGE_SIZE_SETTING_TOKEN));
     }
 
 

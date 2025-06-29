@@ -38,7 +38,7 @@ export class CheatingDetectionOverviewComponent implements OnInit {
     constructor(
         private activeRoute: ActivatedRoute,
         private cheatingDetectionService: CheatingDetectionService,
-        private paginationService: DefaultPaginationService,
+        private paginationService: PaginationStorageService,
         private navigator: TrainingNavigator,
     ) {
     }
@@ -63,7 +63,7 @@ export class CheatingDetectionOverviewComponent implements OnInit {
      * @param loadEvent event emitted by table component to get new data
      */
     onLoadEvent(loadEvent: TableLoadEvent): void {
-        this.paginationService.setPagination(this.paginationId, loadEvent.pagination.size);
+        this.paginationService.savePageSize(loadEvent.pagination.size);
         this.cheatingDetectionService
             .getAll(
                 this.trainingInstanceId,
@@ -102,7 +102,7 @@ export class CheatingDetectionOverviewComponent implements OnInit {
         );
         const initialPagination = new OffsetPaginationEvent(
             0,
-            this.paginationService.getPagination(this.paginationId),
+            this.paginationService.loadPageSize(),
             this.INIT_SORT_NAME,
             this.INIT_SORT_DIR,
         );

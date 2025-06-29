@@ -31,7 +31,7 @@ export class TrainingRunOverviewComponent implements OnInit {
     constructor(
         private trainingRunOverviewService: AccessedTrainingRunService,
         private accessedAdaptiveRunService: AccessedAdaptiveRunService,
-        private paginationService: DefaultPaginationService,
+        private paginationService: PaginationStorageService,
     ) {
         this.controls = AccessedTrainingRunControls.create(trainingRunOverviewService);
     }

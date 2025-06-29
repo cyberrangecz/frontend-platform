@@ -34,7 +34,7 @@ export class TrainingInstanceOverviewComponent {
 
     constructor(
         private service: TrainingInstanceOverviewService,
-        private paginationService: DefaultPaginationService,
+        private paginationService: PaginationStorageService,
         private navigator: TrainingNavigator,
         private notificationService: TrainingNotificationService,
     ) {
@@ -47,7 +47,7 @@ export class TrainingInstanceOverviewComponent {
     }
 
     onInstancesLoadEvent(loadEvent: TableLoadEvent): void {
-        this.paginationService.setPagination(this.paginationId, loadEvent.pagination.size);
+        this.paginationService.savePageSize(loadEvent.pagination.size);
         this.service
             .getAll(
                 new OffsetPaginationEvent(
@@ -70,7 +70,7 @@ export class TrainingInstanceOverviewComponent {
         const initLoadEvent: TableLoadEvent = {
             pagination: new OffsetPaginationEvent(
                 0,
-                this.paginationService.getPagination(this.paginationId),
+                this.paginationService.loadPageSize(),
                 this.INITIAL_SORT_NAME,
                 this.INITIAL_SORT_DIR,
             ),

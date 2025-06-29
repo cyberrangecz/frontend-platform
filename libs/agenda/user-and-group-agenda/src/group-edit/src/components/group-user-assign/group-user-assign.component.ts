@@ -54,7 +54,7 @@ import { AsyncPipe } from '@angular/common';
 export class GroupUserAssignComponent implements OnChanges {
     constructor(
         private userAssignService: UserAssignService,
-        private paginationService: DefaultPaginationService
+        private paginationService: PaginationStorageService
     ) {
         this.userMapping = {
             id: 'id',
@@ -181,7 +181,7 @@ export class GroupUserAssignComponent implements OnChanges {
      * @param loadEvent event to load new data emitted by assigned users table component
      */
     onAssignedLoadEvent(loadEvent: TableLoadEvent): void {
-        this.paginationService.setPagination(this.paginationId, loadEvent.pagination.size);
+        this.paginationService.savePageSize(loadEvent.pagination.size);
         this.userAssignService
             .getAssigned(this.resource.id, loadEvent.pagination as OffsetPaginationEvent, loadEvent.filter)
             .pipe(takeUntilDestroyed(this.destroyRef))
@@ -237,7 +237,7 @@ export class GroupUserAssignComponent implements OnChanges {
         const initialLoadEvent: TableLoadEvent = {
             pagination: new OffsetPaginationEvent(
                 0,
-                this.paginationService.getPagination(this.paginationId),
+                this.paginationService.loadPageSize(),
                 this.MEMBERS_OF_GROUP_INIT_SORT_NAME,
                 this.MEMBERS_OF_GROUP_INIT_SORT_DIR
             )

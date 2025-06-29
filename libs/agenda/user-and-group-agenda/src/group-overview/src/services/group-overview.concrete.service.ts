@@ -14,7 +14,7 @@ import { map, switchMap, tap } from 'rxjs/operators';
 import { UserAndGroupErrorHandler, UserAndGroupNavigator, UserAndGroupNotificationService } from '../../../public';
 import { GroupFilter } from '../../../internal/src';
 import { GroupOverviewService } from './group-overview.service';
-import { PageSizeSettingToken } from '@crczp/components-common';
+import { PAGE_SIZE_SETTING_TOKEN } from '@crczp/components-common';
 
 /**
  * Basic implementation of a layer between a component and an API service.
@@ -31,7 +31,7 @@ export class GroupOverviewConcreteService extends GroupOverviewService {
         private navigator: UserAndGroupNavigator,
         private errorHandler: UserAndGroupErrorHandler
     ) {
-        super(inject(PageSizeSettingToken));
+        super(inject(PAGE_SIZE_SETTING_TOKEN));
     }
 
     private lastPagination: OffsetPaginationEvent;

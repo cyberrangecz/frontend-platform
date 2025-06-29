@@ -55,7 +55,7 @@ export class AdaptiveDefinitionEditOverviewComponent implements OnInit {
 
     constructor(
         private activeRoute: ActivatedRoute,
-        private paginationService: DefaultPaginationService,
+        private paginationService: PaginationStorageService,
         private editService: AdaptiveDefinitionEditService,
         private phaseEditService: PhaseEditService,
         private mitreTechniquesService: MitreTechniquesService,

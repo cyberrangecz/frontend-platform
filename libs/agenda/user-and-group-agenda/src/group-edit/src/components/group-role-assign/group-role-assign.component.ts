@@ -57,7 +57,7 @@ import { RoleAssignService } from '../../services/state/role-assign.service';
 export class GroupRoleAssignComponent implements OnChanges {
     constructor(
         private roleAssignService: RoleAssignService,
-        private paginationService: DefaultPaginationService
+        private paginationService: PaginationStorageService
     ) {
         this.roleMapping = {
             id: 'id',
@@ -138,7 +138,7 @@ export class GroupRoleAssignComponent implements OnChanges {
     }
 
     onAssignedRolesLoad(event: TableLoadEvent): void {
-        this.paginationService.setPagination(this.paginationId, event.pagination.size);
+        this.paginationService.savePageSize(event.pagination.size);
         this.roleAssignService
             .getAssigned(this.resource.id, event.pagination as OffsetPaginationEvent, event.filter)
             .pipe(takeUntilDestroyed(this.destroyRef))
@@ -178,7 +178,7 @@ export class GroupRoleAssignComponent implements OnChanges {
         const initialLoadEvent = {
             pagination: new OffsetPaginationEvent(
                 0,
-                this.paginationService.getPagination(this.paginationId),
+                this.paginationService.loadPageSize(),
                 this.ROLES_OF_GROUP_INIT_SORT_NAME,
                 this.ROLES_OF_GROUP_INIT_SORT_DIR
             )

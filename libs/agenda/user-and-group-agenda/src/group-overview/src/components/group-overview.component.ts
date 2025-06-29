@@ -10,7 +10,7 @@ import { SentinelTable, SentinelTableComponent, TableActionEvent, TableLoadEvent
 import { async, defer, Observable, of } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { GroupTable } from '../model/table/group-table';
-import { DeleteControlItem, DefaultPaginationService, SaveControlItem } from '../../../internal/src';
+import { DeleteControlItem, SaveControlItem } from '../../../internal/src';
 import { GroupOverviewService } from '../services/group-overview.service';
 import { UserAndGroupDefaultNavigator, UserAndGroupNavigator } from '../../../public';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -19,6 +19,7 @@ import { GroupTitleResolver } from '../services/resolvers/group-title-resolver.s
 import { GroupBreadcrumbResolver } from '../services/resolvers/group-breadcrumb-resolver.service';
 import { GroupOverviewConcreteService } from '../services/group-overview.concrete.service';
 import { AsyncPipe } from '@angular/common';
+import {PaginationStorageService, providePaginationStorageService} from "@crczp/components-common";
 
 /**
  * Main smart component of group-overview overview page
@@ -28,7 +29,7 @@ import { AsyncPipe } from '@angular/common';
     templateUrl: './group-overview.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [
-        DefaultPaginationService,
+        providePaginationStorageService(GroupOverviewComponent),
         GroupResolver,
         GroupTitleResolver,
         GroupBreadcrumbResolver,
@@ -44,7 +45,7 @@ import { AsyncPipe } from '@angular/common';
 export class GroupOverviewComponent implements OnInit {
     constructor(
         private groupService: GroupOverviewService,
-        private paginationService: DefaultPaginationService,
+        private paginationService: PaginationStorageService,
         private navigator: UserAndGroupNavigator
     ) {
     }
@@ -68,7 +69,7 @@ export class GroupOverviewComponent implements OnInit {
         const initialLoadEvent: TableLoadEvent = {
             pagination: new OffsetPaginationEvent(
                 0,
-                this.paginationService.getPagination(this.paginationId),
+                this.paginationService.loadPageSize(),
                 this.INIT_SORT_NAME,
                 this.INIT_SORT_DIR
             )
@@ -92,7 +93,7 @@ export class GroupOverviewComponent implements OnInit {
      * @param event event emitted from table component
      */
     onTableLoadEvent(event: TableLoadEvent): void {
-        this.paginationService.setPagination(this.paginationId, event.pagination.size);
+        this.paginationService.savePageSize(event.pagination.size);
         this.groupService.getAll(event.pagination, event.filter).pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
     }
 

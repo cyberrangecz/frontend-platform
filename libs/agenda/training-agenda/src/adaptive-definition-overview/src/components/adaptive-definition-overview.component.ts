@@ -33,7 +33,7 @@ export class AdaptiveDefinitionOverviewComponent implements OnInit {
     destroyRef = inject(DestroyRef);
 
     constructor(
-        private paginationService: DefaultPaginationService,
+        private paginationService: PaginationStorageService,
         private trainingDefinitionService: AdaptiveDefinitionService,
         private trainingNavigator: TrainingNavigator,
     ) {
@@ -50,8 +50,8 @@ export class AdaptiveDefinitionOverviewComponent implements OnInit {
      * @param loadEvent event emitted by table component to get new data
      */
     onLoadEvent(loadEvent: TableLoadEvent): void {
-        this.paginationService.setPagination(this.paginationId, loadEvent.pagination.size);
-        loadEvent.pagination.size = this.paginationService.getPagination(this.paginationId);
+        this.paginationService.savePageSize(loadEvent.pagination.size);
+        loadEvent.pagination.size = this.paginationService.loadPageSize();
         this.trainingDefinitionService
             .getAll(
                 new OffsetPaginationEvent(
@@ -93,7 +93,7 @@ export class AdaptiveDefinitionOverviewComponent implements OnInit {
         );
         const initialPagination = new OffsetPaginationEvent(
             0,
-            this.paginationService.getPagination(this.paginationId),
+            this.paginationService.loadPageSize(),
             this.INIT_SORT_NAME,
             this.INIT_SORT_DIR,
         );

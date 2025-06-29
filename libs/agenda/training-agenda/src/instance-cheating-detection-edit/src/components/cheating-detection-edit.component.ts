@@ -32,7 +32,7 @@ export class CheatingDetectionEditComponent {
 
     constructor(
         private activeRoute: ActivatedRoute,
-        private paginationService: DefaultPaginationService,
+        private paginationService: PaginationStorageService,
         private editService: CheatingDetectionEditService,
     ) {
         this.trainingInstance$ = this.activeRoute.data.pipe(

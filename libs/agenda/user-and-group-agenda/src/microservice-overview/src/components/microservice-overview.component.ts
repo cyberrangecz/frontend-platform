@@ -34,7 +34,7 @@ import { AsyncPipe } from '@angular/common';
 export class MicroserviceOverviewComponent implements OnInit {
     constructor(
         private microserviceService: MicroserviceOverviewService,
-        private paginationService: DefaultPaginationService
+        private paginationService: PaginationStorageService
     ) {
     }
 
@@ -57,7 +57,7 @@ export class MicroserviceOverviewComponent implements OnInit {
         const initialLoadEvent: TableLoadEvent = {
             pagination: new OffsetPaginationEvent(
                 0,
-                this.paginationService.getPagination(this.paginationId),
+                this.paginationService.loadPageSize(),
                 this.INIT_SORT_NAME,
                 this.INIT_SORT_DIR
             )
@@ -81,7 +81,7 @@ export class MicroserviceOverviewComponent implements OnInit {
      * @param event event emitted from table component
      */
     onTableLoadEvent(event: TableLoadEvent): void {
-        this.paginationService.setPagination(this.paginationId, event.pagination.size);
+        this.paginationService.savePageSize(event.pagination.size);
         this.microserviceService
             .getAll(event.pagination as OffsetPaginationEvent, event.filter)
             .pipe(takeUntilDestroyed(this.destroyRef))

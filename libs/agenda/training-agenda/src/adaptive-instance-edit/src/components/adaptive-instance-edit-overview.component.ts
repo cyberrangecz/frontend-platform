@@ -45,7 +45,7 @@ export class AdaptiveInstanceEditOverviewComponent implements OnInit {
 
     constructor(
         private activeRoute: ActivatedRoute,
-        private paginationService: DefaultPaginationService,
+        private paginationService: PaginationStorageService,
         private editService: AdaptiveInstanceEditService,
         private userAssignService: SentinelUserAssignService,
     ) {

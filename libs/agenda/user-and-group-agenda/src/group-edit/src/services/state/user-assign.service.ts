@@ -6,7 +6,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
 import { GroupFilter, UserFilter } from '../../../../internal/src';
 import { UserAndGroupErrorHandler } from '../../../../public';
-import { PageSizeSettingToken } from '@crczp/components-common';
+import { PAGE_SIZE_SETTING_TOKEN } from '@crczp/components-common';
 
 /**
  * Basic implementation of a layer between a component and an API service.
@@ -37,7 +37,7 @@ export class UserAssignService {
     selectedAssignedUsers$: Observable<User[]> = this.selectedAssignedUsersSubject$.asObservable();
     protected selectedGroupsToImportSubject$: BehaviorSubject<Group[]> = new BehaviorSubject([]);
     selectedGroupsToImport$: Observable<Group[]> = this.selectedGroupsToImportSubject$.asObservable();
-    private readonly defaultPaginationSize = inject(PageSizeSettingToken);
+    private readonly defaultPaginationSize = inject(PAGE_SIZE_SETTING_TOKEN);
     private lastAssignedPagination: OffsetPaginationEvent;
     private lastAssignedFilter: string;
 

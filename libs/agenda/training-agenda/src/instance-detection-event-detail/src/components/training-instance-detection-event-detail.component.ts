@@ -66,7 +66,7 @@ export class TrainingInstanceDetectionEventDetailComponent implements OnInit {
         private detectionEventService: DetectionEventService,
         private detectionEventParticipantService: DetectionEventParticipantService,
         private detectionEventForbiddenCommandsService: DetectionEventForbiddenCommandsService,
-        private paginationService: DefaultPaginationService,
+        private paginationService: PaginationStorageService,
         private navigator: TrainingNavigator,
         private activeRoute: ActivatedRoute,
     ) {
@@ -144,7 +144,7 @@ export class TrainingInstanceDetectionEventDetailComponent implements OnInit {
         );
         const initialPagination = new OffsetPaginationEvent(
             0,
-            this.paginationService.getPagination(this.paginationId),
+            this.paginationService.loadPageSize(),
             this.INIT_SORT_NAME,
             this.INIT_SORT_DIR,
         );
@@ -159,7 +159,7 @@ export class TrainingInstanceDetectionEventDetailComponent implements OnInit {
         );
         const initialPagination = new OffsetPaginationEvent(
             0,
-            this.paginationService.getPagination(this.paginationId),
+            this.paginationService.loadPageSize(),
             this.INIT_SORT_NAME,
             this.INIT_SORT_DIR,
         );
@@ -171,7 +171,7 @@ export class TrainingInstanceDetectionEventDetailComponent implements OnInit {
      * @param loadEvent event emitted by table component to get new data
      */
     onLoadEventParticipants(loadEvent: TableLoadEvent): void {
-        this.paginationService.setPagination(this.paginationId, loadEvent.pagination.size);
+        this.paginationService.savePageSize(loadEvent.pagination.size);
         this.detectionEventParticipantService
             .getAll(
                 this.eventId,
@@ -187,7 +187,7 @@ export class TrainingInstanceDetectionEventDetailComponent implements OnInit {
     }
 
     onLoadEventForbiddenCommands(loadEvent: TableLoadEvent): void {
-        this.paginationService.setPagination(this.paginationId, loadEvent.pagination.size);
+        this.paginationService.savePageSize(loadEvent.pagination.size);
         this.detectionEventForbiddenCommandsService
             .getAll(
                 this.eventId,

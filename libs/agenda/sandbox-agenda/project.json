@@ -1,7 +1,7 @@
 {
     "name": "sandbox-agenda",
     "$schema": "../../../node_modules/nx/schemas/project-schema.json",
-    "sourceRoot": "libs/agenda/sandbox-agenda/src/public",
+    "sourceRoot": "libs/agenda/sandbox-agenda",
     "prefix": "lib",
     "projectType": "library",
     "tags": [],

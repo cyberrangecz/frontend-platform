@@ -33,7 +33,7 @@ export class AdaptiveInstanceRunsComponent implements OnInit {
 
     constructor(
         private activeRoute: ActivatedRoute,
-        private paginationService: DefaultPaginationService,
+        private paginationService: PaginationStorageService,
         private adaptiveRunService: AdaptiveRunService,
     ) {
     }

@@ -54,7 +54,7 @@ export class TrainingDefinitionEditOverviewComponent implements OnInit {
 
     constructor(
         private activeRoute: ActivatedRoute,
-        private paginationService: DefaultPaginationService,
+        private paginationService: PaginationStorageService,
         private editService: TrainingDefinitionEditService,
         private levelEditService: LevelEditService,
         private mitreTechniquesService: MitreTechniquesService,

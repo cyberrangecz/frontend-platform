@@ -6,7 +6,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { UserFilter } from '../../../internal/src';
 import { UserAndGroupErrorHandler } from '../../../public';
-import { PageSizeSettingToken } from '@crczp/components-common';
+import { PAGE_SIZE_SETTING_TOKEN } from '@crczp/components-common';
 
 /**
  * Basic implementation of a layer between a component and an API service.
@@ -20,7 +20,7 @@ export class MembersDetailService {
     ) {
     }
 
-    defaultPaginationSize = inject(PageSizeSettingToken);
+    defaultPaginationSize = inject(PAGE_SIZE_SETTING_TOKEN);
     protected hasErrorSubject$: BehaviorSubject<boolean> = new BehaviorSubject(false);
     /**
      * True if error was returned from API, false otherwise

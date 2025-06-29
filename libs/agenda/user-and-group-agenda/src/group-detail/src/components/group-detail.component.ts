@@ -1,22 +1,21 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, Input, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { Group, User, UserRole } from '@crczp/user-and-group-model';
-import { OffsetPaginationEvent } from '@sentinel/common/pagination';
-import { map } from 'rxjs/operators';
-import { Observable } from 'rxjs';
-import { MembersDetailTable } from '../model/members-detail-table';
-import { RolesDetailTable } from '../model/roles-detail-table';
-import { SentinelTable, SentinelTableComponent, TableLoadEvent } from '@sentinel/components/table';
-import { DefaultPaginationService } from '../../../internal/src';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatCardModule } from '@angular/material/card';
-import { MatIconModule } from '@angular/material/icon';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { MembersDetailService } from '../services/members-detail.service';
-import { RolesDetailService } from '../services/roles-detail.service';
-import { CommonModule } from '@angular/common';
-import { GROUP_DATA_ATTRIBUTE_NAME } from '../../../public';
-import { PageSizeSettingToken, provideComponentProperty } from '@crczp/components-common';
+import {ChangeDetectionStrategy, Component, DestroyRef, inject, Input, OnInit} from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
+import {Group, User, UserRole} from '@crczp/user-and-group-model';
+import {OffsetPaginationEvent} from '@sentinel/common/pagination';
+import {map} from 'rxjs/operators';
+import {Observable} from 'rxjs';
+import {MembersDetailTable} from '../model/members-detail-table';
+import {RolesDetailTable} from '../model/roles-detail-table';
+import {SentinelTable, SentinelTableComponent, TableLoadEvent} from '@sentinel/components/table';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import {MatCardModule} from '@angular/material/card';
+import {MatIconModule} from '@angular/material/icon';
+import {MatTooltipModule} from '@angular/material/tooltip';
+import {MembersDetailService} from '../services/members-detail.service';
+import {RolesDetailService} from '../services/roles-detail.service';
+import {CommonModule} from '@angular/common';
+import {GROUP_DATA_ATTRIBUTE_NAME} from '../../../public';
+import {PaginationStorageService, providePaginationStorageService} from '@crczp/components-common';
 
 @Component({
     selector: 'crczp-group-detail',
@@ -28,10 +27,9 @@ import { PageSizeSettingToken, provideComponentProperty } from '@crczp/component
         MatCardModule, MatIconModule, MatTooltipModule
     ],
     providers: [
-        DefaultPaginationService,
+        providePaginationStorageService(GroupDetailComponent),
         MembersDetailService,
         RolesDetailService,
-        provideComponentProperty(GroupDetailComponent, PageSizeSettingToken, 'defaultPaginationSize')
     ]
 })
 export class GroupDetailComponent implements OnInit {
@@ -39,7 +37,7 @@ export class GroupDetailComponent implements OnInit {
         private activeRoute: ActivatedRoute,
         private membersDetailService: MembersDetailService,
         private rolesDetailService: RolesDetailService,
-        private paginationService: DefaultPaginationService
+        private paginationService: PaginationStorageService
     ) {
     }
 
@@ -66,7 +64,7 @@ export class GroupDetailComponent implements OnInit {
      * @param loadEvent load event emitted from roles detail table
      */
     onRolesLoadEvent(loadEvent: TableLoadEvent): void {
-        this.paginationService.setPagination(this.paginationId, loadEvent.pagination.size);
+        this.paginationService.savePageSize(loadEvent.pagination.size);
         this.rolesDetailService
             .getAssigned(this.group.id, loadEvent.pagination as OffsetPaginationEvent, loadEvent.filter)
             .pipe(takeUntilDestroyed(this.destroyRef))
@@ -78,7 +76,7 @@ export class GroupDetailComponent implements OnInit {
      * @param loadEvent load event emitted from mmebers detail table
      */
     onMembersLoadEvent(loadEvent: TableLoadEvent): void {
-        this.paginationService.setPagination(this.paginationId, loadEvent.pagination.size);
+        this.paginationService.savePageSize(loadEvent.pagination.size);
         this.membersDetailService
             .getAssigned(this.group.id, loadEvent.pagination as OffsetPaginationEvent, loadEvent.filter)
             .pipe(takeUntilDestroyed(this.destroyRef))
@@ -97,7 +95,7 @@ export class GroupDetailComponent implements OnInit {
         const initialLoadEvent: TableLoadEvent = {
             pagination: new OffsetPaginationEvent(
                 0,
-                this.paginationService.getPagination(this.paginationId),
+                this.paginationService.loadPageSize(),
                 this.INIT_MEMBERS_SORT_NAME,
                 this.INIT_SORT_DIR
             )
@@ -114,7 +112,7 @@ export class GroupDetailComponent implements OnInit {
         const initialLoadEvent: TableLoadEvent = {
             pagination: new OffsetPaginationEvent(
                 0,
-                this.paginationService.getPagination(this.paginationId),
+                this.paginationService.loadPageSize(),
                 this.INIT_ROLES_SORT_NAME,
                 this.INIT_SORT_DIR
             )

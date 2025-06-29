@@ -43,7 +43,7 @@ export class AdaptiveInstanceSummaryComponent implements OnInit {
         private activeRoute: ActivatedRoute,
         private navigator: TrainingNavigator,
         private adaptiveInstanceSummaryService: AdaptiveInstanceSummaryService,
-        private paginationService: DefaultPaginationService,
+        private paginationService: PaginationStorageService,
         private adaptiveRunService: AdaptiveRunService,
         private notificationService: TrainingNotificationService,
     ) {
@@ -72,7 +72,7 @@ export class AdaptiveInstanceSummaryComponent implements OnInit {
      * @param event reload data event emitted from table
      */
     onTrainingRunTableLoadEvent(event: TableLoadEvent): void {
-        this.paginationService.setPagination(this.paginationId, event.pagination.size);
+        this.paginationService.savePageSize(event.pagination.size);
         this.trainingInstance$
             .pipe(
                 switchMap((ti) =>
@@ -105,7 +105,7 @@ export class AdaptiveInstanceSummaryComponent implements OnInit {
     private initAdaptiveRunsComponent() {
         const initialPagination = new OffsetPaginationEvent(
             0,
-            this.paginationService.getPagination(this.paginationId),
+            this.paginationService.loadPageSize(),
             '',
             'asc',
         );

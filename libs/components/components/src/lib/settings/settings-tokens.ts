@@ -1,8 +1,12 @@
-import { InjectionToken } from '@angular/core';
+import {InjectionToken} from '@angular/core';
+import {Duration} from "moment-mini";
 
-export const PageSizeSettingToken = new InjectionToken<number>('pagination-size-token');
+export const PAGE_SIZE_SETTING_TOKEN = new InjectionToken<number>('pagination-size-token');
 
-export const PollingPeriodShortSetting = new InjectionToken<number>('polling-period-short');
-export const PollingPeriodLongSetting = new InjectionToken<number>('polling-period-long');
+export const PAGINATION_TTL_TOKEN = new InjectionToken<Duration>('pagination-ttl-token');
 
-export const RetryCountSettingToken = new InjectionToken<number>('retry-count-setting-token');
+
+export const POLLING_PERIOD_SHORT_SETTING = new InjectionToken<number>('polling-period-short');
+export const POLLING_PERIOD_LONG_SETTING = new InjectionToken<number>('polling-period-long');
+
+export const RETRY_COUNT_SETTING_TOKEN = new InjectionToken<number>('retry-count-setting-token');

@@ -23,6 +23,36 @@
             "@crczp/sandbox-agenda": [
                 "libs/agenda/sandbox-agenda/src/index.ts"
             ],
+            "@crczp/sandbox-agenda/internal": [
+                "libs/agenda/sandbox-agenda/internal/src/index.ts"
+            ],
+            "@crczp/sandbox-agenda/pool-detail": [
+                "libs/agenda/sandbox-agenda/src/pool-detail/src/index.ts"
+            ],
+            "@crczp/sandbox-agenda/pool-edit": [
+                "libs/agenda/sandbox-agenda/src/pool-edit/src/index.ts"
+            ],
+            "@crczp/sandbox-agenda/pool-overview": [
+                "libs/agenda/sandbox-agenda/src/pool-overview/src/index.ts"
+            ],
+            "@crczp/sandbox-agenda/request-detail": [
+                "libs/agenda/sandbox-agenda/src/request-detail/src/index.ts"
+            ],
+            "@crczp/sandbox-agenda/resolvers": [
+                "libs/agenda/sandbox-agenda/resolvers/src/index.ts"
+            ],
+            "@crczp/sandbox-agenda/sandbox-definition-edit": [
+                "libs/agenda/sandbox-agenda/src/sandbox-definition-edit/src/index.ts"
+            ],
+            "@crczp/sandbox-agenda/sandbox-definition-overview": [
+                "libs/agenda/sandbox-agenda/src/sandbox-definition-overview/src/index.ts"
+            ],
+            "@crczp/sandbox-agenda/sandbox-resources": [
+                "libs/agenda/sandbox-agenda/src/sandbox-resources/src/index.ts"
+            ],
+            "@crczp/sandbox-agenda/topology": [
+                "libs/agenda/sandbox-agenda/src/topology/src/index.ts"
+            ],
             "@crczp/sandbox-api": ["libs/api/sandbox-api/src/index.ts"],
             "@crczp/sandbox-model": ["libs/model/sandbox-model/src/index.ts"],
             "@crczp/theme": ["libs/components/theme/src/index.ts"],

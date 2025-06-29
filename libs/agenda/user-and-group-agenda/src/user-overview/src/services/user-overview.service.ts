@@ -14,7 +14,7 @@ import { SelectablePaginatedService, UserFilter } from '../../../internal/src';
 import { UserAndGroupErrorHandler, UserAndGroupNotificationService } from '../../../public';
 import { UsersUploadDialogComponent } from '../components/upload-dialog/users-upload-dialog.component';
 import { FileUploadProgressService } from './file-upload/file-upload-progress.service';
-import { PageSizeSettingToken } from '@crczp/components-common';
+import { PAGE_SIZE_SETTING_TOKEN } from '@crczp/components-common';
 
 /**
  * Basic implementation of a layer between a component and an API service.
@@ -30,7 +30,7 @@ export class UserOverviewService extends SelectablePaginatedService<User> {
         private fileUploadProgressService: FileUploadProgressService,
         private errorHandler: UserAndGroupErrorHandler
     ) {
-        super(inject(PageSizeSettingToken));
+        super(inject(PAGE_SIZE_SETTING_TOKEN));
     }
 
     private lastPagination: OffsetPaginationEvent;

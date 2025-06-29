@@ -44,7 +44,7 @@ export class TrainingInstanceSummaryComponent implements OnInit {
         private navigator: TrainingNavigator,
         private trainingInstanceSummaryService: TrainingInstanceSummaryService,
         private notificationService: TrainingNotificationService,
-        private paginationService: DefaultPaginationService,
+        private paginationService: PaginationStorageService,
         private trainingRunService: TrainingRunService,
     ) {
     }
@@ -72,7 +72,7 @@ export class TrainingInstanceSummaryComponent implements OnInit {
      * @param event reload data event emitted from table
      */
     onTrainingRunTableLoadEvent(event: TableLoadEvent): void {
-        this.paginationService.setPagination(this.paginationId, event.pagination.size);
+        this.paginationService.savePageSize(event.pagination.size);
         this.trainingInstance$
             .pipe(
                 switchMap((ti) =>
@@ -108,7 +108,7 @@ export class TrainingInstanceSummaryComponent implements OnInit {
     private initTrainingRunsComponent() {
         const initialPagination = new OffsetPaginationEvent(
             0,
-            this.paginationService.getPagination(this.paginationId),
+            this.paginationService.loadPageSize(),
             '',
             'asc',
         );

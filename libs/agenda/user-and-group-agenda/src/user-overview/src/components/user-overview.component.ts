@@ -36,7 +36,7 @@ import { UserOverviewService } from '../services/user-overview.service';
 export class UserOverviewComponent implements OnInit {
     constructor(
         private userService: UserOverviewService,
-        private paginationService: DefaultPaginationService,
+        private paginationService: PaginationStorageService,
         private navigator: UserAndGroupNavigator
     ) {
     }
@@ -59,7 +59,7 @@ export class UserOverviewComponent implements OnInit {
         const initialLoadEvent: TableLoadEvent = {
             pagination: new OffsetPaginationEvent(
                 0,
-                this.paginationService.getPagination(this.paginationId),
+                this.paginationService.loadPageSize(),
                 this.INIT_SORT_NAME,
                 this.INIT_SORT_DIR
             )
@@ -79,7 +79,7 @@ export class UserOverviewComponent implements OnInit {
      * @param event load table vent emitted by table component
      */
     onLoadEvent(event: TableLoadEvent): void {
-        this.paginationService.setPagination(this.paginationId, event.pagination.size);
+        this.paginationService.savePageSize(event.pagination.size);
         this.userService.getAll(event.pagination, event.filter).pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
     }
 

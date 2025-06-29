@@ -35,7 +35,7 @@ export class TrainingInstanceRunsComponent implements OnInit {
 
     constructor(
         private activeRoute: ActivatedRoute,
-        private paginationService: DefaultPaginationService,
+        private paginationService: PaginationStorageService,
         private trainingRunService: TrainingRunService,
     ) {
     }
@@ -59,7 +59,7 @@ export class TrainingInstanceRunsComponent implements OnInit {
     }
 
     onTrainingRunsLoadEvent(loadEvent: TableLoadEvent): void {
-        this.paginationService.setPagination(this.paginationId, loadEvent.pagination.size);
+        this.paginationService.savePageSize(loadEvent.pagination.size);
         this.trainingRunService
             .getAll(this.trainingInstance.id, new OffsetPaginationEvent(0, loadEvent.pagination.size, '', 'asc'))
             .pipe(takeUntilDestroyed(this.destroyRef))
@@ -69,7 +69,7 @@ export class TrainingInstanceRunsComponent implements OnInit {
     private initRunsOverviewComponent() {
         const initialPagination = new OffsetPaginationEvent(
             0,
-            this.paginationService.getPagination(this.paginationId),
+            this.paginationService.loadPageSize(),
             '',
             'asc',
         );
