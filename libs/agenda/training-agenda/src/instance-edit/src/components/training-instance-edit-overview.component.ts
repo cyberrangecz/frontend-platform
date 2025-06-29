@@ -8,13 +8,13 @@ import { filter, map, take } from 'rxjs/operators';
 import { TrainingInstanceEditControls } from '../model/adapter/training-instance-edit-controls';
 import { TRAINING_INSTANCE_DATA_ATTRIBUTE_NAME } from '../../../index';
 import { TrainingInstanceChangeEvent } from '../model/events/training-instance-change-event';
-import { DefaultPaginationService } from '@crczp/training-agenda/internal';
 import { TrainingInstanceEditService } from '../services/state/edit/training-instance-edit.service';
 import { TrainingInstanceEditConcreteService } from '../services/state/edit/training-instance-edit-concrete.service';
 import { OrganizersAssignService } from '../services/state/organizers-assign/organizers-assign.service';
 import { Pool, SandboxDefinition } from '@crczp/sandbox-model';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { SentinelUserAssignService } from '@sentinel/components/user-assign';
+import {PaginationStorageService} from "@crczp/components-common";
 
 /**
  * Main component of training instance edit/create page. Serves mainly as a smart component wrapper

@@ -1,21 +1,21 @@
-import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
-import { PoolApi } from '@crczp/sandbox-api';
-import { AdaptiveInstanceApi } from '@crczp/training-api';
-import { TrainingInstance } from '@crczp/training-model';
-import { EMPTY, Observable, of } from 'rxjs';
-import { catchError, map, switchMap, tap } from 'rxjs/operators';
-import { AdaptiveInstanceFilter } from '../../model/adapters/adaptive-instance-filter';
-import { TrainingErrorHandler, TrainingNavigator, TrainingNotificationService } from '../../../../index';
-import { TrainingAgendaContext } from '@crczp/training-agenda/internal';
-import { AdaptiveInstanceOverviewService } from './adaptive-instance-overview.service';
+import {inject, Injectable} from '@angular/core';
+import {Router} from '@angular/router';
+import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
+import {PoolApi} from '@crczp/sandbox-api';
+import {AdaptiveInstanceApi} from '@crczp/training-api';
+import {TrainingInstance} from '@crczp/training-model';
+import {EMPTY, Observable, of} from 'rxjs';
+import {catchError, map, switchMap, tap} from 'rxjs/operators';
+import {AdaptiveInstanceFilter} from '../../model/adapters/adaptive-instance-filter';
+import {TrainingErrorHandler, TrainingNavigator, TrainingNotificationService} from '../../../../index';
+import {TrainingAgendaContext} from '@crczp/training-agenda/internal';
+import {AdaptiveInstanceOverviewService} from './adaptive-instance-overview.service';
 import {
     SentinelConfirmationDialogComponent,
     SentinelConfirmationDialogConfig,
     SentinelDialogResultEnum,
 } from '@sentinel/components/dialogs';
-import { MatDialog } from '@angular/material/dialog';
+import {MatDialog} from '@angular/material/dialog';
 
 @Injectable()
 export class AdaptiveInstanceOverviewConcreteService extends AdaptiveInstanceOverviewService {
@@ -32,7 +32,7 @@ export class AdaptiveInstanceOverviewConcreteService extends AdaptiveInstanceOve
         private notificationService: TrainingNotificationService,
         private errorHandler: TrainingErrorHandler,
     ) {
-        super(context.config.defaultPaginationSize);
+        super(inject(DEFAULT_PAGE_SIZE_SETTING_TOKEN));
     }
 
     getAll(pagination: OffsetPaginationEvent, filter: string = null): Observable<PaginatedResource<TrainingInstance>> {
@@ -64,7 +64,7 @@ export class AdaptiveInstanceOverviewConcreteService extends AdaptiveInstanceOve
     download(id: number): Observable<any> {
         return this.adaptiveInstanceApi
             .archive(id)
-            .pipe(tap({ error: (err) => this.errorHandler.emit(err, 'Downloading training instance') }));
+            .pipe(tap({error: (err) => this.errorHandler.emit(err, 'Downloading training instance')}));
     }
 
     delete(trainingInstance: TrainingInstance): Observable<PaginatedResource<TrainingInstance>> {

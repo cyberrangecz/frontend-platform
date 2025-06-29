@@ -1,25 +1,25 @@
-import { Injectable } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
+import {inject, Injectable} from '@angular/core';
+import {MatDialog} from '@angular/material/dialog';
+import {Router} from '@angular/router';
 import {
     SentinelConfirmationDialogComponent,
     SentinelConfirmationDialogConfig,
     SentinelDialogResultEnum,
 } from '@sentinel/components/dialogs';
-import { SentinelFilter } from '@sentinel/common/filter';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
-import { TrainingDefinitionApi } from '@crczp/training-api';
-import { TrainingDefinition, TrainingDefinitionStateEnum } from '@crczp/training-model';
-import { EMPTY, from, Observable } from 'rxjs';
-import { map, switchMap, take, tap } from 'rxjs/operators';
-import { CloneDialogComponent } from '../../components/clone-dialog/clone-dialog.component';
+import {SentinelFilter} from '@sentinel/common/filter';
+import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
+import {TrainingDefinitionApi} from '@crczp/training-api';
+import {TrainingDefinition, TrainingDefinitionStateEnum} from '@crczp/training-model';
+import {EMPTY, from, Observable} from 'rxjs';
+import {map, switchMap, take, tap} from 'rxjs/operators';
+import {CloneDialogComponent} from '../../components/clone-dialog/clone-dialog.component';
 import {
     TrainingDefinitionUploadDialogComponent
 } from '../../components/upload-dialog/training-definition-upload-dialog.component';
-import { TrainingErrorHandler, TrainingNavigator, TrainingNotificationService } from '../../../../index';
-import { TrainingAgendaContext } from '@crczp/training-agenda/internal';
-import { FileUploadProgressService } from '../file-upload/file-upload-progress.service';
-import { TrainingDefinitionService } from './training-definition.service';
+import {TrainingErrorHandler, TrainingNavigator, TrainingNotificationService} from '../../../../index';
+import {TrainingAgendaContext} from '@crczp/training-agenda/internal';
+import {FileUploadProgressService} from '../file-upload/file-upload-progress.service';
+import {TrainingDefinitionService} from './training-definition.service';
 
 /**
  * Basic implementation of a layer between a component and an API service.
@@ -27,6 +27,9 @@ import { TrainingDefinitionService } from './training-definition.service';
  */
 @Injectable()
 export class TrainingDefinitionConcreteService extends TrainingDefinitionService {
+    private lastPagination: OffsetPaginationEvent;
+    private lastFilters: string;
+
     constructor(
         private api: TrainingDefinitionApi,
         private dialog: MatDialog,
@@ -37,11 +40,8 @@ export class TrainingDefinitionConcreteService extends TrainingDefinitionService
         private fileUploadProgressService: FileUploadProgressService,
         private errorHandler: TrainingErrorHandler,
     ) {
-        super(context.config.defaultPaginationSize);
+        super(inject(DEFAULT_PAGE_SIZE_SETTING_TOKEN));
     }
-
-    private lastPagination: OffsetPaginationEvent;
-    private lastFilters: string;
 
     /**
      * Gets training definition by @definitionId. Updates related observables or handles an error
@@ -114,7 +114,7 @@ export class TrainingDefinitionConcreteService extends TrainingDefinitionService
     download(trainingDefinition: TrainingDefinition): Observable<any> {
         return this.api
             .download(trainingDefinition.id)
-            .pipe(tap({ error: (err) => this.errorHandler.emit(err, 'Downloading training definition') }));
+            .pipe(tap({error: (err) => this.errorHandler.emit(err, 'Downloading training definition')}));
     }
 
     /**

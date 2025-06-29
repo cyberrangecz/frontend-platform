@@ -1,19 +1,19 @@
-import { Injectable } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
+import {inject, Injectable} from '@angular/core';
+import {MatDialog} from '@angular/material/dialog';
+import {Router} from '@angular/router';
 import {
     SentinelConfirmationDialogComponent,
     SentinelConfirmationDialogConfig,
     SentinelDialogResultEnum,
 } from '@sentinel/components/dialogs';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
-import { CheatingDetectionApi } from '@crczp/training-api';
-import { CheatingDetection } from '@crczp/training-model';
-import { EMPTY, from, Observable } from 'rxjs';
-import { switchMap, tap } from 'rxjs/operators';
-import { TrainingErrorHandler, TrainingNavigator, TrainingNotificationService } from '../../../index';
-import { TrainingAgendaContext } from '@crczp/training-agenda/internal';
-import { CheatingDetectionService } from './cheating-detection.service';
+import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
+import {CheatingDetectionApi} from '@crczp/training-api';
+import {CheatingDetection} from '@crczp/training-model';
+import {EMPTY, from, Observable} from 'rxjs';
+import {switchMap, tap} from 'rxjs/operators';
+import {TrainingErrorHandler, TrainingNavigator, TrainingNotificationService} from '../../../index';
+import {TrainingAgendaContext} from '@crczp/training-agenda/internal';
+import {CheatingDetectionService} from './cheating-detection.service';
 
 /**
  * Basic implementation of a layer between a component and an API services.
@@ -21,6 +21,9 @@ import { CheatingDetectionService } from './cheating-detection.service';
  */
 @Injectable()
 export class CheatingDetectionConcreteService extends CheatingDetectionService {
+    private lastPagination: OffsetPaginationEvent;
+    private lastFilters: string;
+
     constructor(
         private api: CheatingDetectionApi,
         private dialog: MatDialog,
@@ -30,11 +33,8 @@ export class CheatingDetectionConcreteService extends CheatingDetectionService {
         private notificationService: TrainingNotificationService,
         private errorHandler: TrainingErrorHandler,
     ) {
-        super(context.config.defaultPaginationSize);
+        super(inject(DEFAULT_PAGE_SIZE_SETTING_TOKEN));
     }
-
-    private lastPagination: OffsetPaginationEvent;
-    private lastFilters: string;
 
     /**
      * Gets all cheating detections with passed pagination and filter and updates related observables or handles an error
@@ -107,6 +107,25 @@ export class CheatingDetectionConcreteService extends CheatingDetectionService {
         );
     }
 
+    /**
+     * Creates and executed a new cheating detection
+     * @param cheatingDetection the cheating detection
+     */
+    public createAndExecute(cheatingDetection: CheatingDetection): Observable<any> {
+        return this.api.createAndExecute(cheatingDetection).pipe(
+            tap(
+                () => this.notificationService.emit('success', 'Cheating Detection was executed'),
+                (err) => this.errorHandler.emit(err, 'Creating and executing cheating detection'),
+            ),
+        );
+    }
+
+    public download(cheatingDetectionId: number): Observable<any> {
+        return this.api
+            .archive(cheatingDetectionId)
+            .pipe(tap({error: (err) => this.errorHandler.emit(err, 'Downloading cheating detection')}));
+    }
+
     private displayDialogToDelete(cheatingDetectionId: number): Observable<SentinelDialogResultEnum> {
         const dialogRef = this.dialog.open(SentinelConfirmationDialogComponent, {
             data: new SentinelConfirmationDialogConfig(
@@ -132,26 +151,7 @@ export class CheatingDetectionConcreteService extends CheatingDetectionService {
         );
     }
 
-    /**
-     * Creates and executed a new cheating detection
-     * @param cheatingDetection the cheating detection
-     */
-    public createAndExecute(cheatingDetection: CheatingDetection): Observable<any> {
-        return this.api.createAndExecute(cheatingDetection).pipe(
-            tap(
-                () => this.notificationService.emit('success', 'Cheating Detection was executed'),
-                (err) => this.errorHandler.emit(err, 'Creating and executing cheating detection'),
-            ),
-        );
-    }
-
     private onGetAllError() {
         this.hasErrorSubject$.next(true);
-    }
-
-    public download(cheatingDetectionId: number): Observable<any> {
-        return this.api
-            .archive(cheatingDetectionId)
-            .pipe(tap({ error: (err) => this.errorHandler.emit(err, 'Downloading cheating detection') }));
     }
 }

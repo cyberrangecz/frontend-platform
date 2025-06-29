@@ -1,6 +1,0 @@
-<ng-container [ngSwitch]="stageComponentToDisplay">
-    <crczp-ansible-allocation-stage-detail *ngSwitchCase="stageComponents.ANSIBLE_ALLOCATION"
-                                          [stage]="stage"/>
-    <crczp-terraform-allocation-stage-detail *ngSwitchCase="stageComponents.TERRAFORM_ALLOCATION"
-                                            [stage]="stage"/>
-</ng-container>

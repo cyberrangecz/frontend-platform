@@ -1,0 +1,76 @@
+import {inject, Injectable} from '@angular/core';
+import {OffsetPagination, OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
+import {UserApi} from '@crczp/user-and-group-api';
+import {User} from '@crczp/user-and-group-model';
+import {BehaviorSubject, Observable} from 'rxjs';
+import {tap} from 'rxjs/operators';
+import {UserFilter} from '../../../internal/src';
+import {UserAndGroupErrorHandler} from '../../../lib';
+import {DEFAULT_PAGE_SIZE_SETTING_TOKEN} from '@crczp/components-common';
+
+/**
+ * Basic implementation of a layer between a component and an API service.
+ * Can manually get users assigned to resource and users/groups available to assign and perform assignment modifications.
+ */
+@Injectable()
+export class MembersDetailService {
+    defaultPaginationSize = inject(DEFAULT_PAGE_SIZE_SETTING_TOKEN);
+    protected hasErrorSubject$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+    /**
+     * True if error was returned from API, false otherwise
+     */
+    hasError$: Observable<boolean> = this.hasErrorSubject$.asObservable();
+    protected isLoadingAssignedSubject$ = new BehaviorSubject<boolean>(false);
+    /**
+     * True if service is waiting on response from API for request to get assigned users
+     */
+    isLoadingAssigned$: Observable<boolean> = this.isLoadingAssignedSubject$.asObservable();
+    private lastAssignedPagination: OffsetPaginationEvent;
+    private lastAssignedFilter: string;
+    private assignedUsersSubject$: BehaviorSubject<PaginatedResource<User>> = new BehaviorSubject(this.initSubject());
+    /**
+     * Subscribe to receive assigned users
+     */
+    assignedUsers$: Observable<PaginatedResource<User>> = this.assignedUsersSubject$.asObservable();
+
+    constructor(
+        private userApi: UserApi,
+        private errorHandler: UserAndGroupErrorHandler
+    ) {
+    }
+
+    /**
+     * Gets users assigned to a resource with passed pagination and updates related observables or handles an error
+     * @param resourceId id of a resource associated with requested users
+     * @param pagination requested pagination
+     * @param filterValue filter to be applied on users
+     */
+    getAssigned(
+        resourceId: number,
+        pagination: OffsetPaginationEvent,
+        filterValue: string = null
+    ): Observable<PaginatedResource<User>> {
+        const filter = filterValue ? [new UserFilter(filterValue)] : [];
+        this.lastAssignedPagination = pagination;
+        this.lastAssignedFilter = filterValue;
+        this.hasErrorSubject$.next(false);
+        this.isLoadingAssignedSubject$.next(true);
+        return this.userApi.getUsersInGroups([resourceId], pagination, filter).pipe(
+            tap(
+                (paginatedUsers) => {
+                    this.assignedUsersSubject$.next(paginatedUsers);
+                    this.isLoadingAssignedSubject$.next(false);
+                },
+                (err) => {
+                    this.errorHandler.emit(err, 'Fetching users');
+                    this.isLoadingAssignedSubject$.next(false);
+                    this.hasErrorSubject$.next(true);
+                }
+            )
+        );
+    }
+
+    private initSubject() {
+        return new PaginatedResource([], new OffsetPagination(0, 0, this.defaultPaginationSize, 0, 0));
+    }
+}

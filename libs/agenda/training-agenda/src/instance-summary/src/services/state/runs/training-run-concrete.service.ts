@@ -1,12 +1,12 @@
-import { Injectable } from '@angular/core';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
-import { TrainingInstanceApi, TrainingRunApi } from '@crczp/training-api';
-import { TrainingRun, TrainingRunInfo } from '@crczp/training-model';
-import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
-import { TrainingAgendaContext } from '@crczp/training-agenda/internal';
-import { TrainingRunService } from './training-run.service';
-import { TrainingErrorHandler } from '../../../../../index';
+import {inject, Injectable} from '@angular/core';
+import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
+import {TrainingInstanceApi, TrainingRunApi} from '@crczp/training-api';
+import {TrainingRun, TrainingRunInfo} from '@crczp/training-model';
+import {Observable} from 'rxjs';
+import {tap} from 'rxjs/operators';
+import {TrainingAgendaContext} from '@crczp/training-agenda/internal';
+import {TrainingRunService} from './training-run.service';
+import {TrainingErrorHandler} from '../../../../../index';
 
 /**
  * Basic implementation of layer between component and API service.
@@ -22,7 +22,7 @@ export class TrainingRunConcreteService extends TrainingRunService {
         private trainingRunApi: TrainingRunApi,
         private errorHandler: TrainingErrorHandler,
     ) {
-        super(context.config.defaultPaginationSize);
+        super(inject(DEFAULT_PAGE_SIZE_SETTING_TOKEN));
     }
 
     /**
@@ -57,7 +57,7 @@ export class TrainingRunConcreteService extends TrainingRunService {
     exportScore(trainingInstanceId: number): Observable<any> {
         return this.trainingInstanceApi
             .exportScore(trainingInstanceId)
-            .pipe(tap({ error: (err) => this.errorHandler.emit(err, 'Downloading training instance scores') }));
+            .pipe(tap({error: (err) => this.errorHandler.emit(err, 'Downloading training instance scores')}));
     }
 
     private onGetAllError() {

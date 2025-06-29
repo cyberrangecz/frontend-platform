@@ -1,12 +1,13 @@
-import { Injectable } from '@angular/core';
-import { OffsetPagination, OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
-import { UserApi } from '@crczp/training-api';
-import { Organizer } from '@crczp/training-model';
-import { SentinelUserAssignService } from '@sentinel/components/user-assign';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { switchMap, tap } from 'rxjs/operators';
-import { TrainingAgendaContext, UserNameFilters } from '@crczp/training-agenda/internal';
-import { TrainingErrorHandler } from '../../../../../index';
+import {Injectable} from '@angular/core';
+import {OffsetPagination, OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
+import {UserApi} from '@crczp/training-api';
+import {Organizer} from '@crczp/training-model';
+import {SentinelUserAssignService} from '@sentinel/components/user-assign';
+import {BehaviorSubject, Observable} from 'rxjs';
+import {switchMap, tap} from 'rxjs/operators';
+import {TrainingAgendaContext, UserNameFilters} from '@crczp/training-agenda/internal';
+import {TrainingErrorHandler} from '../../../../../index';
+import {DEFAULT_PAGE_SIZE_SETTING_TOKEN} from "@crczp/components-common";
 
 /**
  * Organizer implementation of UserAssignService from user assign library.
@@ -14,6 +15,16 @@ import { TrainingErrorHandler } from '../../../../../index';
  */
 @Injectable()
 export class OrganizersAssignService extends SentinelUserAssignService {
+    private lastAssignedPagination: OffsetPaginationEvent;
+    private lastAssignedFilter: string;
+    private assignedUsersSubject: BehaviorSubject<PaginatedResource<Organizer>> = new BehaviorSubject(
+        this.initSubject(),
+    );
+    /**
+     * Currently assigned users (organizers)
+     */
+    assignedUsers$: Observable<PaginatedResource<Organizer>> = this.assignedUsersSubject.asObservable();
+
     constructor(
         private userApi: UserApi,
         private context: TrainingAgendaContext,
@@ -21,17 +32,6 @@ export class OrganizersAssignService extends SentinelUserAssignService {
     ) {
         super();
     }
-
-    private lastAssignedPagination: OffsetPaginationEvent;
-    private lastAssignedFilter: string;
-    private assignedUsersSubject: BehaviorSubject<PaginatedResource<Organizer>> = new BehaviorSubject(
-        this.initSubject(),
-    );
-
-    /**
-     * Currently assigned users (organizers)
-     */
-    assignedUsers$: Observable<PaginatedResource<Organizer>> = this.assignedUsersSubject.asObservable();
 
     /***
      * Assigns organizer to a resource (creates association)
@@ -93,7 +93,7 @@ export class OrganizersAssignService extends SentinelUserAssignService {
                 true,
                 UserNameFilters.create(filter),
             )
-            .pipe(tap({ error: (err) => this.errorHandler.emit(err, 'Fetching organizers') }));
+            .pipe(tap({error: (err) => this.errorHandler.emit(err, 'Fetching organizers')}));
     }
 
     /**
@@ -127,13 +127,13 @@ export class OrganizersAssignService extends SentinelUserAssignService {
                 removals.map((user) => user.id),
             )
             .pipe(
-                tap({ error: (err) => this.errorHandler.emit(err, 'Updating organizers') }),
+                tap({error: (err) => this.errorHandler.emit(err, 'Updating organizers')}),
                 switchMap(() => this.getAssigned(resourceId, this.lastAssignedPagination, this.lastAssignedFilter)),
             );
     }
 
     private initSubject(): PaginatedResource<Organizer> {
-        return new PaginatedResource([], new OffsetPagination(0, 0, this.context.config.defaultPaginationSize, 0, 0));
+        return new PaginatedResource([], new OffsetPagination(0, 0, this.inject(DEFAULT_PAGE_SIZE_SETTING_TOKEN), 0, 0));
     }
 
     private callApiToAssign(resourceId: number, userIds: number[]): Observable<any> {

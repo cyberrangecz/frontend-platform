@@ -10,14 +10,14 @@ import {
     SimpleChanges
 } from '@angular/core';
 import * as d3 from 'd3';
-import { ParticipantStatistics, TrainingInstanceStatistics } from '@crczp/visualization-model';
-import { AxesCreationService } from '../service/axes-creation-service';
-import { SvgConfigurationService } from '../service/svg-configuration-service';
-import { LegendCreationService } from '../service/legend-creation-service';
-import { TooltipCreationService } from '../service/tooltip-creation-service';
-import { MatCardModule } from '@angular/material/card';
-import { MatGridListModule } from '@angular/material/grid-list';
-import { MatDividerModule } from '@angular/material/divider';
+import {ParticipantStatistics, TrainingInstanceStatistics} from '@crczp/visualization-model';
+import {AxesCreationService} from '../service/axes-creation-service';
+import {SvgConfigurationService} from '../service/svg-configuration-service';
+import {LegendCreationService} from '../service/legend-creation-service';
+import {TooltipCreationService} from '../service/tooltip-creation-service';
+import {MatCardModule} from '@angular/material/card';
+import {MatGridListModule} from '@angular/material/grid-list';
+import {MatDividerModule} from '@angular/material/divider';
 
 @Component({
     selector: 'crczp-combined-diagram',
@@ -107,7 +107,7 @@ export class CombinedDiagramComponent implements OnInit, OnChanges {
      * (Before that moment, the data that should be visualized
      * are not available)
      */
-    // public ngAfterViewInit(): void {
+    // lib ngAfterViewInit(): void {
     //   this.createChart();
     // }
 
@@ -176,7 +176,7 @@ export class CombinedDiagramComponent implements OnInit, OnChanges {
         // Hides the other trainings
         d3.select('#combinedDiagramChartSvg')
             .selectAll('rect')
-            .filter(function() {
+            .filter(function () {
                 return !d3.select(this).classed('combinedDiagramTooltip');
             })
             .style('opacity', 0.2);

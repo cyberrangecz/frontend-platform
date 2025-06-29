@@ -54,8 +54,8 @@ describe('TrainingDefinitionOverviewComponent', () => {
         trainingDefinitionServiceSpy.getAll.and.returnValue(asyncData(createPaginatedMock()));
         fixture.detectChanges();
         expect(component.topControls.length).toEqual(2);
-        component.hasError$.subscribe((val) => expect(val).toBeFalse());
-        component.isLoading$.subscribe((val) => expect(val).toBeFalse());
+        component.hasError$.subscribe((val) => expect(val).toBeFalsy());
+        component.isLoading$.subscribe((val) => expect(val).toBeFalsy());
         component.trainingDefinitions$.subscribe((val) => expect(val).toBeTruthy());
     });
 
@@ -66,7 +66,7 @@ describe('TrainingDefinitionOverviewComponent', () => {
         };
 
         trainingDefinitionServiceSpy.getAll.and.returnValue(asyncData(createPaginatedMock()));
-        paginationServiceSpy.getPagination.and.returnValue(1);
+        paginationServiceSpy.loadPageSize.and.returnValue(1);
         component.onLoadEvent(tableEvent);
         expect(trainingDefinitionServiceSpy.getAll).toHaveBeenCalledTimes(1);
         expect(trainingDefinitionServiceSpy.getAll).toHaveBeenCalledWith(

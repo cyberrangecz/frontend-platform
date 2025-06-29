@@ -1,13 +1,13 @@
-import { Injectable } from '@angular/core';
-import { SentinelFilter } from '@sentinel/common/filter';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
-import { TrainingDefinitionApi } from '@crczp/training-api';
-import { TrainingDefinitionInfo } from '@crczp/training-model';
-import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
-import { TrainingErrorHandler } from '../../../../../index';
-import { TrainingAgendaContext } from '@crczp/training-agenda/internal';
-import { TrainingDefinitionOrganizerSelectService } from './training-definition-organizer-select.service';
+import {inject, Injectable} from '@angular/core';
+import {SentinelFilter} from '@sentinel/common/filter';
+import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
+import {TrainingDefinitionApi} from '@crczp/training-api';
+import {TrainingDefinitionInfo} from '@crczp/training-model';
+import {Observable} from 'rxjs';
+import {tap} from 'rxjs/operators';
+import {TrainingErrorHandler} from '../../../../../index';
+import {TrainingAgendaContext} from '@crczp/training-agenda/internal';
+import {TrainingDefinitionOrganizerSelectService} from './training-definition-organizer-select.service';
 
 /**
  * Layer between component and API service
@@ -19,7 +19,7 @@ export class TrainingDefinitionOrganizerSelectConcreteService extends TrainingDe
         private context: TrainingAgendaContext,
         private errorHandler: TrainingErrorHandler,
     ) {
-        super(context.config.defaultPaginationSize);
+        super(inject(DEFAULT_PAGE_SIZE_SETTING_TOKEN));
     }
 
     /**

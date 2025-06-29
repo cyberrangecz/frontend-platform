@@ -1,20 +1,22 @@
-import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
-import { AdaptiveRunApi, TrainingRunApi } from '@crczp/training-api';
-import { AccessedTrainingRun } from '@crczp/training-model';
-import { from, Observable } from 'rxjs';
-import { concatMap, map, tap } from 'rxjs/operators';
-import { TrainingErrorHandler, TrainingNavigator } from '../../../../../index';
-import { TrainingAgendaContext } from '@crczp/training-agenda/internal';
-import { AccessedTrainingRunService } from './accessed-training-run.service';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
-import { SentinelFilter } from '@sentinel/common/filter';
+import {inject, Injectable} from '@angular/core';
+import {Router} from '@angular/router';
+import {AdaptiveRunApi, TrainingRunApi} from '@crczp/training-api';
+import {AccessedTrainingRun} from '@crczp/training-model';
+import {from, Observable} from 'rxjs';
+import {concatMap, map, tap} from 'rxjs/operators';
+import {TrainingErrorHandler, TrainingNavigator} from '../../../../../index';
+import {TrainingAgendaContext} from '@crczp/training-agenda/internal';
+import {AccessedTrainingRunService} from './accessed-training-run.service';
+import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
+import {SentinelFilter} from '@sentinel/common/filter';
 
 /**
  * Basic implementation of layer between component and API service.
  */
 @Injectable()
 export class AccessedTrainingRunConcreteService extends AccessedTrainingRunService {
+    private lastFilters: string;
+
     constructor(
         private trainingApi: TrainingRunApi,
         private adaptiveApi: AdaptiveRunApi,
@@ -23,10 +25,8 @@ export class AccessedTrainingRunConcreteService extends AccessedTrainingRunServi
         private navigator: TrainingNavigator,
         private errorHandler: TrainingErrorHandler,
     ) {
-        super(context.config.defaultPaginationSize);
+        super(inject(DEFAULT_PAGE_SIZE_SETTING_TOKEN));
     }
-
-    private lastFilters: string;
 
     /**
      * Gets paginated accessed training runs and updates related observables or handles error.

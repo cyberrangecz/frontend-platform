@@ -1,13 +1,13 @@
-import { Injectable } from '@angular/core';
-import { DetectionEventApi } from '@crczp/training-api';
-import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
-import { TrainingAgendaContext } from '@crczp/training-agenda/internal';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
-import { Observable } from 'rxjs';
-import { DetectionEventParticipant } from '@crczp/training-model';
-import { tap } from 'rxjs/operators';
-import { DetectionEventParticipantService } from './detection-event-participant.service';
+import {inject, Injectable} from '@angular/core';
+import {DetectionEventApi} from '@crczp/training-api';
+import {MatDialog} from '@angular/material/dialog';
+import {Router} from '@angular/router';
+import {TrainingAgendaContext} from '@crczp/training-agenda/internal';
+import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
+import {Observable} from 'rxjs';
+import {DetectionEventParticipant} from '@crczp/training-model';
+import {tap} from 'rxjs/operators';
+import {DetectionEventParticipantService} from './detection-event-participant.service';
 
 /**
  * Basic implementation of a layer between a component and an API services.
@@ -21,7 +21,7 @@ export class DetectionEventParticipantConcreteService extends DetectionEventPart
         private router: Router,
         private context: TrainingAgendaContext,
     ) {
-        super(context.config.defaultPaginationSize);
+        super(inject(DEFAULT_PAGE_SIZE_SETTING_TOKEN));
     }
 
     /**

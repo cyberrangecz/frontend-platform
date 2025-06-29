@@ -1,0 +1,27 @@
+<mat-card appearance="outlined">
+    <h3>Sandbox Instances</h3>
+    <sentinel-controls (itemClicked)="onControlsAction($event)" [controls]="controls"/>
+    <sentinel-table (rowAction)="onTableAction($event)"
+                    (tableLoad)="onLoadEvent($event)"
+                    [data]="instances$ | async"
+                    [defaultSortDirection]="DEFAULT_SORT_DIRECTION"
+                    [defaultSortName]="DEFAULT_SORT_COLUMN"
+                    [displayedActionsCount]="4"
+                    [hasError]="instancesTableHasError$ | async"
+                    [titlecasedActions]=false>
+        <ng-container *sentinelRow="'stages'; template: stagesTemplate"/>
+        <ng-container *sentinelRow="'comment'; template: comment"/>
+    </sentinel-table>
+</mat-card>
+
+<ng-template #stagesTemplate let-row>
+    <crczp-stage-overview (stageSelected)="onStageAction($event)"
+                          [stages]="row.element.stages"
+                          [unitId]="row.element.unitId"/>
+</ng-template>
+
+<ng-template #comment let-row>
+    <crczp-editable-comment
+        (commentChanged)="updateInstanceComment(row.element,$event)"
+        [value]="row.element.comment"/>
+</ng-template>

@@ -1,15 +1,15 @@
-import { Injectable } from '@angular/core';
-import { DetectionEventApi } from '@crczp/training-api';
-import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
-import { TrainingAgendaContext } from '@crczp/training-agenda/internal';
-import { TrainingErrorHandler, TrainingNavigator, TrainingNotificationService } from '../../../index';
-import { DetectionEventService } from './detection-event.service';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
-import { from, Observable } from 'rxjs';
-import { AbstractDetectionEvent } from '@crczp/training-model';
-import { tap } from 'rxjs/operators';
-import { DetectionEventFilter } from '../model/detection-event-filter';
+import {inject, Injectable} from '@angular/core';
+import {DetectionEventApi} from '@crczp/training-api';
+import {MatDialog} from '@angular/material/dialog';
+import {Router} from '@angular/router';
+import {TrainingAgendaContext} from '@crczp/training-agenda/internal';
+import {TrainingErrorHandler, TrainingNavigator, TrainingNotificationService} from '../../../index';
+import {DetectionEventService} from './detection-event.service';
+import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
+import {from, Observable} from 'rxjs';
+import {AbstractDetectionEvent} from '@crczp/training-model';
+import {tap} from 'rxjs/operators';
+import {DetectionEventFilter} from '../model/detection-event-filter';
 
 /**
  * Basic implementation of a layer between a component and an API services.
@@ -17,6 +17,8 @@ import { DetectionEventFilter } from '../model/detection-event-filter';
  */
 @Injectable()
 export class DetectionEventConcreteService extends DetectionEventService {
+    private lastPagination: OffsetPaginationEvent;
+
     constructor(
         private api: DetectionEventApi,
         private dialog: MatDialog,
@@ -26,10 +28,8 @@ export class DetectionEventConcreteService extends DetectionEventService {
         private notificationService: TrainingNotificationService,
         private errorHandler: TrainingErrorHandler,
     ) {
-        super(context.config.defaultPaginationSize);
+        super(inject(DEFAULT_PAGE_SIZE_SETTING_TOKEN));
     }
-
-    private lastPagination: OffsetPaginationEvent;
 
     /**
      * Gets all detection events with passed pagination and filter and updates related observables or handles an error

@@ -1,20 +1,21 @@
-import { Injectable } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import {inject, Injectable} from '@angular/core';
+import {MatDialog} from '@angular/material/dialog';
 import {
     SentinelConfirmationDialogComponent,
     SentinelConfirmationDialogConfig,
     SentinelDialogResultEnum,
 } from '@sentinel/components/dialogs';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
-import { SandboxAllocationUnitsApi, SandboxInstanceApi } from '@crczp/sandbox-api';
-import { SandboxInstance } from '@crczp/sandbox-model';
-import { AdaptiveInstanceApi, AdaptiveRunApi } from '@crczp/training-api';
-import { TrainingRun } from '@crczp/training-model';
-import { EMPTY, Observable, of } from 'rxjs';
-import { switchMap, tap } from 'rxjs/operators';
-import { TrainingErrorHandler, TrainingNotificationService } from '../../../../index';
-import { TrainingAgendaContext } from '@crczp/training-agenda/internal';
-import { AdaptiveRunService } from './adaptive-run.service';
+import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
+import {SandboxAllocationUnitsApi, SandboxInstanceApi} from '@crczp/sandbox-api';
+import {SandboxInstance} from '@crczp/sandbox-model';
+import {AdaptiveInstanceApi, AdaptiveRunApi} from '@crczp/training-api';
+import {TrainingRun} from '@crczp/training-model';
+import {EMPTY, Observable, of} from 'rxjs';
+import {switchMap, tap} from 'rxjs/operators';
+import {TrainingErrorHandler, TrainingNotificationService} from '../../../../index';
+import {TrainingAgendaContext} from '@crczp/training-agenda/internal';
+import {AdaptiveRunService} from './adaptive-run.service';
+import {DEFAULT_PAGE_SIZE_SETTING_TOKEN} from "@crczp/components-common";
 
 /**
  * Basic implementation of layer between component and API service.
@@ -34,7 +35,7 @@ export class AdaptiveRunConcreteService extends AdaptiveRunService {
         private notificationService: TrainingNotificationService,
         private errorHandler: TrainingErrorHandler,
     ) {
-        super(context.config.defaultPaginationSize, context.config.pollingPeriod);
+        super(inject(DEFAULT_PAGE_SIZE_SETTING_TOKEN), inject(POLLING_PERIOD_SHORT_SETTING_TOKEN));
     }
 
     /**
@@ -66,6 +67,18 @@ export class AdaptiveRunConcreteService extends AdaptiveRunService {
         );
     }
 
+    protected refreshResource(): Observable<PaginatedResource<TrainingRun>> {
+        this.hasErrorSubject$.next(false);
+        return this.adaptiveInstanceApi
+            .getAssociatedTrainingRuns(this.lastTrainingInstanceId, this.lastPagination)
+            .pipe(tap({error: () => this.onGetAllError()}));
+    }
+
+    protected onManualResourceRefresh(pagination: OffsetPaginationEvent, ...params: any[]): void {
+        super.onManualResourceRefresh(pagination, ...params);
+        this.lastTrainingInstanceId = params[0];
+    }
+
     private displayDeleteSandboxDialog(trainingRun: TrainingRun): Observable<SentinelDialogResultEnum> {
         const dialogRef = this.dialog.open(SentinelConfirmationDialogComponent, {
             data: new SentinelConfirmationDialogConfig(
@@ -76,18 +89,6 @@ export class AdaptiveRunConcreteService extends AdaptiveRunService {
             ),
         });
         return dialogRef.afterClosed();
-    }
-
-    protected refreshResource(): Observable<PaginatedResource<TrainingRun>> {
-        this.hasErrorSubject$.next(false);
-        return this.adaptiveInstanceApi
-            .getAssociatedTrainingRuns(this.lastTrainingInstanceId, this.lastPagination)
-            .pipe(tap({ error: () => this.onGetAllError() }));
-    }
-
-    protected onManualResourceRefresh(pagination: OffsetPaginationEvent, ...params: any[]): void {
-        super.onManualResourceRefresh(pagination, ...params);
-        this.lastTrainingInstanceId = params[0];
     }
 
     private callApiToDeleteSandbox(trainingRun: TrainingRun): Observable<any> {

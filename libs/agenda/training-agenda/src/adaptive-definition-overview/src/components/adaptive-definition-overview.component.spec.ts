@@ -67,7 +67,7 @@ describe('AdaptiveDefinitionOverviewComponent', () => {
         };
 
         adaptiveDefinitionServiceSpy.getAll.and.returnValue(asyncData(createPaginatedMock()));
-        paginationServiceSpy.getPagination.and.returnValue(1);
+        paginationServiceSpy.loadPageSize.and.returnValue(1);
         component.onLoadEvent(tableEvent);
         expect(adaptiveDefinitionServiceSpy.getAll).toHaveBeenCalledTimes(1);
         expect(adaptiveDefinitionServiceSpy.getAll).toHaveBeenCalledWith(

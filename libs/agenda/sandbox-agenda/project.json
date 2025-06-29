@@ -1,8 +1,8 @@
 {
     "name": "sandbox-agenda",
     "$schema": "../../../node_modules/nx/schemas/project-schema.json",
-    "sourceRoot": "libs/agenda/sandbox-agenda",
-    "prefix": "lib",
+    "sourceRoot": "libs/agenda/sandbox-agenda/src",
+    "prefix": "crczp",
     "projectType": "library",
     "tags": [],
     "targets": {

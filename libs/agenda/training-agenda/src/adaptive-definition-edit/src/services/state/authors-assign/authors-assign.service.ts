@@ -1,12 +1,13 @@
-import { Injectable } from '@angular/core';
-import { OffsetPagination, OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
-import { UserApi } from '@crczp/training-api';
-import { Designer } from '@crczp/training-model';
-import { SentinelUserAssignService } from '@sentinel/components/user-assign';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { switchMap, tap } from 'rxjs/operators';
-import { TrainingErrorHandler } from '../../../../../index';
-import { TrainingAgendaContext, UserNameFilters } from '@crczp/training-agenda/internal';
+import {Injectable} from '@angular/core';
+import {OffsetPagination, OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
+import {UserApi} from '@crczp/training-api';
+import {Designer} from '@crczp/training-model';
+import {SentinelUserAssignService} from '@sentinel/components/user-assign';
+import {BehaviorSubject, Observable} from 'rxjs';
+import {switchMap, tap} from 'rxjs/operators';
+import {TrainingErrorHandler} from '../../../../../index';
+import {TrainingAgendaContext, UserNameFilters} from '@crczp/training-agenda/internal';
+import {DEFAULT_PAGE_SIZE_SETTING_TOKEN} from "@crczp/components-common";
 
 /**
  * Designer/Author implementation of UserAssignService from user assign library.
@@ -14,14 +15,6 @@ import { TrainingAgendaContext, UserNameFilters } from '@crczp/training-agenda/i
  */
 @Injectable()
 export class AuthorsAssignService extends SentinelUserAssignService {
-    constructor(
-        private userApi: UserApi,
-        private context: TrainingAgendaContext,
-        private errorHandler: TrainingErrorHandler,
-    ) {
-        super();
-    }
-
     private lastAssignedPagination: OffsetPaginationEvent;
     private lastAssignedFilter: string;
     private assignedUsersSubject: BehaviorSubject<PaginatedResource<Designer>> = new BehaviorSubject(
@@ -31,6 +24,14 @@ export class AuthorsAssignService extends SentinelUserAssignService {
      * Currently assigned users (authors)
      */
     assignedUsers$: Observable<PaginatedResource<Designer>> = this.assignedUsersSubject.asObservable();
+
+    constructor(
+        private userApi: UserApi,
+        private context: TrainingAgendaContext,
+        private errorHandler: TrainingErrorHandler,
+    ) {
+        super();
+    }
 
     /***
      * Assigns designer to a resource (creates association)
@@ -115,7 +116,7 @@ export class AuthorsAssignService extends SentinelUserAssignService {
                 true,
                 UserNameFilters.create(filter),
             )
-            .pipe(tap({ error: (err) => this.errorHandler.emit(err, 'Fetching designers') }));
+            .pipe(tap({error: (err) => this.errorHandler.emit(err, 'Fetching designers')}));
     }
 
     /**
@@ -134,7 +135,7 @@ export class AuthorsAssignService extends SentinelUserAssignService {
                 removals.map((user) => user.id),
             )
             .pipe(
-                tap({ error: (err) => this.errorHandler.emit(err, 'Updating authors') }),
+                tap({error: (err) => this.errorHandler.emit(err, 'Updating authors')}),
                 switchMap(() => this.getAssigned(resourceId, this.lastAssignedPagination, this.lastAssignedFilter)),
             );
     }
@@ -160,6 +161,6 @@ export class AuthorsAssignService extends SentinelUserAssignService {
     }
 
     private initSubject(): PaginatedResource<Designer> {
-        return new PaginatedResource([], new OffsetPagination(0, 0, this.context.config.defaultPaginationSize, 0, 0));
+        return new PaginatedResource([], new OffsetPagination(0, 0, this.inject(DEFAULT_PAGE_SIZE_SETTING_TOKEN), 0, 0));
     }
 }

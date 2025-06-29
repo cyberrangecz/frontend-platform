@@ -1,10 +1,7 @@
 import {afterAll, beforeEach, describe, expect, it} from "vitest";
-import {
-    PaginationRegistryService,
-    PaginationStorageService
-} from "./pagination-storage.service";
+import {PaginationRegistryService, PaginationStorageService} from "./pagination-storage.service";
 import {TestBed} from "@angular/core/testing";
-import {PAGE_SIZE_SETTING_TOKEN} from "@crczp/components-common";
+import {DEFAULT_PAGE_SIZE_SETTING_TOKEN} from "@crczp/components-common";
 import {runInInjectionContext} from "@angular/core";
 import {duration} from "moment-mini";
 
@@ -17,7 +14,7 @@ describe("Pagination should load", () => {
         localStorage.clear();
         TestBed.configureTestingModule({
             providers: [
-                { provide: PAGE_SIZE_SETTING_TOKEN, useValue: 10 }
+                {provide: DEFAULT_PAGE_SIZE_SETTING_TOKEN, useValue: 10}
             ]
         });
 

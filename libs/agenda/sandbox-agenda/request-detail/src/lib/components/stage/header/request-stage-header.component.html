@@ -1,0 +1,26 @@
+<div class="state">
+    @switch (stage?.state) {
+        @case (stageStates.IN_QUEUE) {
+            <mat-icon color="accent">hourglass_empty</mat-icon>
+        }
+        @case (stageStates.FAILED) {
+            <mat-icon color="warn">error_outline</mat-icon>
+        }
+        @case (stageStates.FINISHED) {
+            <mat-icon class="success">done</mat-icon>
+        }
+        @case (stageStates.RUNNING) {
+            <mat-icon color="primary">play_arrow</mat-icon>
+        }
+    }
+    <h3>{{ stage?.state }}</h3>
+</div>
+@if (stage.start) {
+    <p>Started: {{ stage?.start | date:'d MMMM y, H:mm:ss' }}</p>
+}
+@if (stage.start) {
+    <p>Ended: {{ stage?.end | date:'d MMMM y, H:mm:ss' }}</p>
+}
+@if (stage.errorMessage) {
+    <p class="error"> {{ stage.errorMessage }}</p>
+}

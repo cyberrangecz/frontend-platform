@@ -23,35 +23,38 @@
             "@crczp/sandbox-agenda": [
                 "libs/agenda/sandbox-agenda/src/index.ts"
             ],
+            "@crczp/sandbox-agenda/assets": [
+                "libs/agenda/sandbox-agenda/assets/src/index.ts"
+            ],
             "@crczp/sandbox-agenda/internal": [
                 "libs/agenda/sandbox-agenda/internal/src/index.ts"
             ],
             "@crczp/sandbox-agenda/pool-detail": [
-                "libs/agenda/sandbox-agenda/src/pool-detail/src/index.ts"
+                "libs/agenda/sandbox-agenda/pool-detail/src/index.ts"
             ],
             "@crczp/sandbox-agenda/pool-edit": [
-                "libs/agenda/sandbox-agenda/src/pool-edit/src/index.ts"
+                "libs/agenda/sandbox-agenda/pool-edit/src/index.ts"
             ],
             "@crczp/sandbox-agenda/pool-overview": [
-                "libs/agenda/sandbox-agenda/src/pool-overview/src/index.ts"
+                "libs/agenda/sandbox-agenda/pool-overview/src/index.ts"
             ],
             "@crczp/sandbox-agenda/request-detail": [
-                "libs/agenda/sandbox-agenda/src/request-detail/src/index.ts"
+                "libs/agenda/sandbox-agenda/request-detail/src/index.ts"
             ],
             "@crczp/sandbox-agenda/resolvers": [
                 "libs/agenda/sandbox-agenda/resolvers/src/index.ts"
             ],
             "@crczp/sandbox-agenda/sandbox-definition-edit": [
-                "libs/agenda/sandbox-agenda/src/sandbox-definition-edit/src/index.ts"
+                "libs/agenda/sandbox-agenda/sandbox-definition-edit/src/index.ts"
             ],
             "@crczp/sandbox-agenda/sandbox-definition-overview": [
-                "libs/agenda/sandbox-agenda/src/sandbox-definition-overview/src/index.ts"
+                "libs/agenda/sandbox-agenda/sandbox-definition-overview/src/index.ts"
             ],
-            "@crczp/sandbox-agenda/sandbox-resources": [
-                "libs/agenda/sandbox-agenda/src/sandbox-resources/src/index.ts"
+            "@crczp/sandbox-agenda/sandbox-images": [
+                "libs/agenda/sandbox-agenda/sandbox-images/src/index.ts"
             ],
             "@crczp/sandbox-agenda/topology": [
-                "libs/agenda/sandbox-agenda/src/topology/src/index.ts"
+                "libs/agenda/sandbox-agenda/topology/src/index.ts"
             ],
             "@crczp/sandbox-api": ["libs/api/sandbox-api/src/index.ts"],
             "@crczp/sandbox-model": ["libs/model/sandbox-model/src/index.ts"],
@@ -69,6 +72,30 @@
             "@crczp/training-model": ["libs/model/training-model/src/index.ts"],
             "@crczp/user-and-group-agenda": [
                 "libs/agenda/user-and-group-agenda/src/index.ts"
+            ],
+            "@crczp/user-and-group-agenda/group-detail": [
+                "libs/agenda/user-and-group-agenda/group-detail/src/index.ts"
+            ],
+            "@crczp/user-and-group-agenda/group-edit": [
+                "libs/agenda/user-and-group-agenda/group-edit/src/index.ts"
+            ],
+            "@crczp/user-and-group-agenda/group-overview": [
+                "libs/agenda/user-and-group-agenda/group-overview/src/index.ts"
+            ],
+            "@crczp/user-and-group-agenda/internal": [
+                "libs/agenda/user-and-group-agenda/internal/src/index.ts"
+            ],
+            "@crczp/user-and-group-agenda/microservice-overview": [
+                "libs/agenda/user-and-group-agenda/microservice-overview/src/index.ts"
+            ],
+            "@crczp/user-and-group-agenda/microservice-registration": [
+                "libs/agenda/user-and-group-agenda/microservice-registration/src/index.ts"
+            ],
+            "@crczp/user-and-group-agenda/user-detail": [
+                "libs/agenda/user-and-group-agenda/user-detail/src/index.ts"
+            ],
+            "@crczp/user-and-group-agenda/user-overview": [
+                "libs/agenda/user-and-group-agenda/user-overview/src/index.ts"
             ],
             "@crczp/user-and-group-api": [
                 "libs/api/user-and-group-api/src/index.ts"

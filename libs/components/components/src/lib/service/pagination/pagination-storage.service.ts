@@ -1,6 +1,6 @@
 import {inject, Injectable, Provider, Type} from '@angular/core';
 import {Duration} from 'moment-mini';
-import {PAGE_SIZE_SETTING_TOKEN, PAGINATION_TTL_TOKEN} from '../../settings/settings-tokens';
+import {DEFAULT_PAGE_SIZE_SETTING_TOKEN, PAGINATION_TTL_TOKEN} from '../../settings/settings-tokens';
 
 
 export interface PaginationState {
@@ -10,7 +10,7 @@ export interface PaginationState {
 
 type PaginationRegistry = Record<string, PaginationState>;
 
-@Injectable({ providedIn: 'root' })
+@Injectable({providedIn: 'root'})
 export class PaginationRegistryService {
     private readonly storageKey = 'pagination';
     private readonly ttl: Duration = inject(PAGINATION_TTL_TOKEN);
@@ -50,12 +50,14 @@ export function providePaginationStorageService<T>(
         useFactory: () => new PaginationStorageService(
             storageKey instanceof Type ? storageKey.name : storageKey,
             inject(PaginationRegistryService),
-            inject(PAGE_SIZE_SETTING_TOKEN)
+            inject(DEFAULT_PAGE_SIZE_SETTING_TOKEN)
         )
     };
 }
 
 export class PaginationStorageService {
+    public readonly DEFAULT_PAGE_SIZE: number;
+
     constructor(
         private readonly storageKey: string,
         private readonly registryService: PaginationRegistryService,
@@ -63,8 +65,6 @@ export class PaginationStorageService {
     ) {
         this.DEFAULT_PAGE_SIZE = defaultPageSize || 10;
     }
-
-    public readonly DEFAULT_PAGE_SIZE: number;
 
     loadPageSize(): number {
         this.registryService.cleanup();
