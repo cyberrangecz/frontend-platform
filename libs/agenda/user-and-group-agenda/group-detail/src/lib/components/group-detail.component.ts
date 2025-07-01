@@ -1,21 +1,35 @@
-import {ChangeDetectionStrategy, Component, DestroyRef, inject, Input, OnInit} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
-import {Group, User, UserRole} from '@crczp/user-and-group-model';
-import {OffsetPaginationEvent} from '@sentinel/common/pagination';
-import {map} from 'rxjs/operators';
-import {Observable} from 'rxjs';
-import {MembersDetailTable} from '../model/members-detail-table';
-import {RolesDetailTable} from '../model/roles-detail-table';
-import {SentinelTable, SentinelTableComponent, TableLoadEvent} from '@sentinel/components/table';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {MatCardModule} from '@angular/material/card';
-import {MatIconModule} from '@angular/material/icon';
-import {MatTooltipModule} from '@angular/material/tooltip';
-import {MembersDetailService} from '../services/members-detail.service';
-import {RolesDetailService} from '../services/roles-detail.service';
-import {CommonModule} from '@angular/common';
-import {GROUP_DATA_ATTRIBUTE_NAME} from '../../../lib';
-import {PaginationStorageService, providePaginationStorageService} from '@crczp/components-common';
+import {
+    ChangeDetectionStrategy,
+    Component,
+    DestroyRef,
+    inject,
+    Input,
+    OnInit,
+} from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { Group, User, UserRole } from '@crczp/user-and-group-model';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
+import { map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { MembersDetailTable } from '../model/members-detail-table';
+import { RolesDetailTable } from '../model/roles-detail-table';
+import {
+    SentinelTable,
+    SentinelTableComponent,
+    TableLoadEvent,
+} from '@sentinel/components/table';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MembersDetailService } from '../services/members-detail.service';
+import { RolesDetailService } from '../services/roles-detail.service';
+import { CommonModule } from '@angular/common';
+import {
+    PaginationStorageService,
+    providePaginationStorageService,
+} from '@crczp/common';
+import { GROUP_DATA_ATTRIBUTE_NAME } from '@crczp/user-and-group-agenda';
 
 @Component({
     selector: 'crczp-group-detail',
@@ -23,14 +37,17 @@ import {PaginationStorageService, providePaginationStorageService} from '@crczp/
     styleUrls: ['./group-detail.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
-        CommonModule, SentinelTableComponent,
-        MatCardModule, MatIconModule, MatTooltipModule
+        CommonModule,
+        SentinelTableComponent,
+        MatCardModule,
+        MatIconModule,
+        MatTooltipModule,
     ],
     providers: [
         providePaginationStorageService(GroupDetailComponent),
         MembersDetailService,
         RolesDetailService,
-    ]
+    ],
 })
 export class GroupDetailComponent implements OnInit {
     @Input() paginationId = 'crczp-group-detail';
@@ -52,8 +69,7 @@ export class GroupDetailComponent implements OnInit {
         private membersDetailService: MembersDetailService,
         private rolesDetailService: RolesDetailService,
         private paginationService: PaginationStorageService
-    ) {
-    }
+    ) {}
 
     ngOnInit(): void {
         this.initTables();
@@ -66,7 +82,11 @@ export class GroupDetailComponent implements OnInit {
     onRolesLoadEvent(loadEvent: TableLoadEvent): void {
         this.paginationService.savePageSize(loadEvent.pagination.size);
         this.rolesDetailService
-            .getAssigned(this.group.id, loadEvent.pagination as OffsetPaginationEvent, loadEvent.filter)
+            .getAssigned(
+                this.group.id,
+                loadEvent.pagination as OffsetPaginationEvent,
+                loadEvent.filter
+            )
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe();
     }
@@ -78,17 +98,23 @@ export class GroupDetailComponent implements OnInit {
     onMembersLoadEvent(loadEvent: TableLoadEvent): void {
         this.paginationService.savePageSize(loadEvent.pagination.size);
         this.membersDetailService
-            .getAssigned(this.group.id, loadEvent.pagination as OffsetPaginationEvent, loadEvent.filter)
+            .getAssigned(
+                this.group.id,
+                loadEvent.pagination as OffsetPaginationEvent,
+                loadEvent.filter
+            )
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe();
     }
 
     private initTables(): void {
-        this.activeRoute.data.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((data) => {
-            this.group = data[GROUP_DATA_ATTRIBUTE_NAME];
-            this.initMembersTable();
-            this.initRolesTable();
-        });
+        this.activeRoute.data
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe((data) => {
+                this.group = data[GROUP_DATA_ATTRIBUTE_NAME];
+                this.initMembersTable();
+                this.initRolesTable();
+            });
     }
 
     private initMembersTable() {
@@ -98,7 +124,7 @@ export class GroupDetailComponent implements OnInit {
                 this.paginationService.loadPageSize(),
                 this.INIT_MEMBERS_SORT_NAME,
                 this.INIT_SORT_DIR
-            )
+            ),
         };
         this.members$ = this.membersDetailService.assignedUsers$.pipe(
             map((resource) => new MembersDetailTable(resource))
@@ -115,9 +141,11 @@ export class GroupDetailComponent implements OnInit {
                 this.paginationService.loadPageSize(),
                 this.INIT_ROLES_SORT_NAME,
                 this.INIT_SORT_DIR
-            )
+            ),
         };
-        this.roles$ = this.rolesDetailService.assignedRoles$.pipe(map((resource) => new RolesDetailTable(resource)));
+        this.roles$ = this.rolesDetailService.assignedRoles$.pipe(
+            map((resource) => new RolesDetailTable(resource))
+        );
         this.rolesTableHasError$ = this.rolesDetailService.hasError$;
         this.isLoadingRoles$ = this.rolesDetailService.isLoadingAssigned$;
         this.onRolesLoadEvent(initialLoadEvent);

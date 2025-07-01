@@ -1,7 +1,3 @@
-/*
- * Public API Surface of entry point user-and-group-agenda/group-edit
- */
-
 export {GroupEditService} from './lib/services/state/group-edit.service';
 export {GroupEditComponent} from './lib/components/group-edit/group-edit.component';
 export {GroupRoleAssignComponent} from './lib/components/group-role-assign/group-role-assign.component';

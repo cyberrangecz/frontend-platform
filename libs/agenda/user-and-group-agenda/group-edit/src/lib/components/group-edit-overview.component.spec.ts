@@ -22,11 +22,7 @@ import {GroupEditComponent} from './group-edit/group-edit.component';
 import {GroupRoleAssignComponent} from './group-role-assign/group-role-assign.component';
 import {GroupUserAssignComponent} from './group-user-assign/group-user-assign.component';
 import {GroupApi} from 'libs/api/user-and-group-api/src';
-import {
-    UserAndGroupErrorHandler,
-    UserAndGroupNavigator,
-    UserAndGroupNotificationService
-} from '../../../src';
+import {UserAndGroupErrorHandler, UserAndGroupNavigator, UserAndGroupNotificationService} from '../../../src';
 
 describe('GroupEditOverviewComponent', () => {
     let component: GroupEditOverviewComponent;

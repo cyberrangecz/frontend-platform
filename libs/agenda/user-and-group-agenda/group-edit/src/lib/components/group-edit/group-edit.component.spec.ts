@@ -1,11 +1,11 @@
-import { SimpleChange, SimpleChanges } from '@angular/core';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { By } from '@angular/platform-browser';
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { Group } from 'libs/model/user-and-group-model/src';
-import { GroupChangedEvent } from '../../model/group-changed-event';
-import { GroupEditMaterialModule } from '../group-edit-material.module';
-import { GroupEditComponent } from './group-edit.component';
+import {SimpleChange, SimpleChanges} from '@angular/core';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
+import {By} from '@angular/platform-browser';
+import {NoopAnimationsModule} from '@angular/platform-browser/animations';
+import {Group} from 'libs/model/user-and-group-model/src';
+import {GroupChangedEvent} from '../../model/group-changed-event';
+import {GroupEditMaterialModule} from '../group-edit-material.module';
+import {GroupEditComponent} from './group-edit.component';
 
 describe('GroupEditComponent', () => {
     let component: GroupEditComponent;
@@ -60,7 +60,7 @@ describe('GroupEditComponent', () => {
 
     function createSimpleChanges(newValue: Group): SimpleChanges {
         const change = new SimpleChange(undefined, newValue, true);
-        return { group: change } as SimpleChanges;
+        return {group: change} as SimpleChanges;
     }
 
     function createGroup(): Group {

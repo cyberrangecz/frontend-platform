@@ -9,17 +9,17 @@ import {
     Output,
     SimpleChanges,
 } from '@angular/core';
-import { MicroserviceRole } from '@crczp/user-and-group-model';
-import { MicroserviceRoleItem } from '../../../model/microservice-role-item';
-import { MicroserviceRoleForm } from './microservice-role-form';
-import { AbstractControl, ReactiveFormsModule } from '@angular/forms';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatCard, MatCardContent, MatCardHeader } from '@angular/material/card';
-import { MatIcon } from '@angular/material/icon';
-import { MatIconButton } from '@angular/material/button';
-import { MatTooltip } from '@angular/material/tooltip';
-import { MatCheckbox } from '@angular/material/checkbox';
-import { MatFormField, MatInput } from '@angular/material/input';
+import {MicroserviceRole} from '@crczp/user-and-group-model';
+import {MicroserviceRoleItem} from '../../../model/microservice-role-item';
+import {MicroserviceRoleForm} from './microservice-role-form';
+import {AbstractControl, ReactiveFormsModule} from '@angular/forms';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import {MatCard, MatCardContent, MatCardHeader, MatCardSubtitle, MatCardTitle} from '@angular/material/card';
+import {MatIcon} from '@angular/material/icon';
+import {MatIconButton} from '@angular/material/button';
+import {MatTooltip} from '@angular/material/tooltip';
+import {MatCheckbox} from '@angular/material/checkbox';
+import {MatError, MatFormField, MatInput, MatLabel} from '@angular/material/input';
 
 /**
  * Component of individual microservice-registration role
@@ -39,7 +39,11 @@ import { MatFormField, MatInput } from '@angular/material/input';
         MatCheckbox,
         ReactiveFormsModule,
         MatFormField,
-        MatInput
+        MatInput,
+        MatLabel,
+        MatError,
+        MatCardTitle,
+        MatCardSubtitle
     ]
 })
 export class MicroserviceRoleComponent implements OnChanges {

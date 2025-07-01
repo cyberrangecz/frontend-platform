@@ -1,11 +1,11 @@
 import {Injectable} from '@angular/core';
-import {GroupApi, RoleApi} from '@crczp/user-and-group-api';
+import {GroupApi} from '@crczp/user-and-group-api';
 import {UserRole} from '@crczp/user-and-group-model';
 import {SentinelFilter} from '@sentinel/common/filter';
 import {OffsetPagination, OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
 import {BehaviorSubject, Observable} from 'rxjs';
-import {UserAndGroupErrorHandler} from '../../../lib';
 import {tap} from 'rxjs/operators';
+import {UserAndGroupErrorHandler} from "@crczp/user-and-group-agenda";
 
 /**
  * Basic implementation of a layer between a component and an API service.
@@ -33,7 +33,6 @@ export class RolesDetailService {
 
     constructor(
         private api: GroupApi,
-        private roleApi: RoleApi,
         private errorHandler: UserAndGroupErrorHandler
     ) {
     }

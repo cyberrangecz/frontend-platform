@@ -2,9 +2,9 @@ import {Injectable} from '@angular/core';
 import {ActivatedRouteSnapshot, Router, RouterStateSnapshot} from '@angular/router';
 import {User} from '@crczp/user-and-group-model';
 import {UserApi} from '@crczp/user-and-group-api';
-import {USER_SELECTOR, UserAndGroupErrorHandler, UserAndGroupNavigator} from '../../../../lib';
 import {EMPTY, Observable, of} from 'rxjs';
 import {catchError, mergeMap, take} from 'rxjs/operators';
+import {USER_SELECTOR, UserAndGroupErrorHandler, UserAndGroupNavigator} from "@crczp/user-and-group-agenda";
 
 /**
  * Example resolver for user and user-overview state component

@@ -1,7 +1,7 @@
-import { SentinelControlItem } from '@sentinel/components/controls';
-import { Observable } from 'rxjs';
+import {SentinelControlItemSignal} from '@sentinel/components/controls';
+import {Observable} from 'rxjs';
 
-export class RegisterControlItem extends SentinelControlItem {
+export class RegisterControlItem extends SentinelControlItemSignal {
     static readonly ID = 'register  ';
 
     constructor(label: string, disabled$: Observable<boolean>, result$: Observable<any>) {

@@ -1,12 +1,16 @@
-import {inject, Injectable} from '@angular/core';
-import {OffsetPagination, OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
-import {UserApi} from '@crczp/user-and-group-api';
-import {User} from '@crczp/user-and-group-model';
-import {BehaviorSubject, Observable} from 'rxjs';
-import {tap} from 'rxjs/operators';
-import {UserFilter} from '../../../internal/src';
-import {UserAndGroupErrorHandler} from '../../../lib';
-import {DEFAULT_PAGE_SIZE_SETTING_TOKEN} from '@crczp/components-common';
+import { Injectable } from '@angular/core';
+import {
+    OffsetPagination,
+    OffsetPaginationEvent,
+    PaginatedResource,
+} from '@sentinel/common/pagination';
+import { UserApi } from '@crczp/user-and-group-api';
+import { User } from '@crczp/user-and-group-model';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
+import { Settings } from '@crczp/common';
+import { UserAndGroupErrorHandler } from '@crczp/user-and-group-agenda';
+import { UserFilter } from '@crczp/user-and-group-agenda/internal';
 
 /**
  * Basic implementation of a layer between a component and an API service.
@@ -14,8 +18,9 @@ import {DEFAULT_PAGE_SIZE_SETTING_TOKEN} from '@crczp/components-common';
  */
 @Injectable()
 export class MembersDetailService {
-    defaultPaginationSize = inject(DEFAULT_PAGE_SIZE_SETTING_TOKEN);
-    protected hasErrorSubject$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+    protected hasErrorSubject$: BehaviorSubject<boolean> = new BehaviorSubject(
+        false
+    );
     /**
      * True if error was returned from API, false otherwise
      */
@@ -24,19 +29,24 @@ export class MembersDetailService {
     /**
      * True if service is waiting on response from API for request to get assigned users
      */
-    isLoadingAssigned$: Observable<boolean> = this.isLoadingAssignedSubject$.asObservable();
-    private lastAssignedPagination: OffsetPaginationEvent;
-    private lastAssignedFilter: string;
-    private assignedUsersSubject$: BehaviorSubject<PaginatedResource<User>> = new BehaviorSubject(this.initSubject());
+    isLoadingAssigned$: Observable<boolean> =
+        this.isLoadingAssignedSubject$.asObservable();
+    private assignedUsersSubject$: BehaviorSubject<PaginatedResource<User>> =
+        new BehaviorSubject(this.initSubject());
     /**
      * Subscribe to receive assigned users
      */
-    assignedUsers$: Observable<PaginatedResource<User>> = this.assignedUsersSubject$.asObservable();
+    assignedUsers$: Observable<PaginatedResource<User>> =
+        this.assignedUsersSubject$.asObservable();
+
+    private readonly defaultPaginationSize: number;
 
     constructor(
         private userApi: UserApi,
-        private errorHandler: UserAndGroupErrorHandler
+        private errorHandler: UserAndGroupErrorHandler,
+        settings: Settings
     ) {
+        this.defaultPaginationSize = settings.DEFAULT_PAGE_SIZE;
     }
 
     /**
@@ -51,26 +61,29 @@ export class MembersDetailService {
         filterValue: string = null
     ): Observable<PaginatedResource<User>> {
         const filter = filterValue ? [new UserFilter(filterValue)] : [];
-        this.lastAssignedPagination = pagination;
-        this.lastAssignedFilter = filterValue;
         this.hasErrorSubject$.next(false);
         this.isLoadingAssignedSubject$.next(true);
-        return this.userApi.getUsersInGroups([resourceId], pagination, filter).pipe(
-            tap(
-                (paginatedUsers) => {
-                    this.assignedUsersSubject$.next(paginatedUsers);
-                    this.isLoadingAssignedSubject$.next(false);
-                },
-                (err) => {
-                    this.errorHandler.emit(err, 'Fetching users');
-                    this.isLoadingAssignedSubject$.next(false);
-                    this.hasErrorSubject$.next(true);
-                }
-            )
-        );
+        return this.userApi
+            .getUsersInGroups([resourceId], pagination, filter)
+            .pipe(
+                tap(
+                    (paginatedUsers) => {
+                        this.assignedUsersSubject$.next(paginatedUsers);
+                        this.isLoadingAssignedSubject$.next(false);
+                    },
+                    (err) => {
+                        this.errorHandler.emit(err, 'Fetching users');
+                        this.isLoadingAssignedSubject$.next(false);
+                        this.hasErrorSubject$.next(true);
+                    }
+                )
+            );
     }
 
     private initSubject() {
-        return new PaginatedResource([], new OffsetPagination(0, 0, this.defaultPaginationSize, 0, 0));
+        return new PaginatedResource(
+            [],
+            new OffsetPagination(0, 0, this.defaultPaginationSize, 0, 0)
+        );
     }
 }

@@ -1,24 +1,27 @@
-import {inject, Injectable} from '@angular/core';
-import {MatDialog} from '@angular/material/dialog';
-import {Router} from '@angular/router';
+import { inject, Injectable } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import {
     SentinelConfirmationDialogComponent,
     SentinelConfirmationDialogConfig,
-    SentinelDialogResultEnum
+    SentinelDialogResultEnum,
 } from '@sentinel/components/dialogs';
-import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
-import {GroupApi} from '@crczp/user-and-group-api';
-import {Group} from '@crczp/user-and-group-model';
-import {EMPTY, Observable, of} from 'rxjs';
-import {map, switchMap, tap} from 'rxjs/operators';
+import {
+    OffsetPaginationEvent,
+    PaginatedResource,
+} from '@sentinel/common/pagination';
+import { GroupApi } from '@crczp/user-and-group-api';
+import { Group } from '@crczp/user-and-group-model';
+import { EMPTY, Observable, of } from 'rxjs';
+import { map, switchMap, tap } from 'rxjs/operators';
 import {
     UserAndGroupErrorHandler,
     UserAndGroupNavigator,
-    UserAndGroupNotificationService
+    UserAndGroupNotificationService,
 } from '@crczp/user-and-group-agenda';
-import {GroupFilter} from '@crczp/user-and-group-agenda/internal';
-import {GroupOverviewService} from './group-overview.service';
-import {DEFAULT_PAGE_SIZE_SETTING_TOKEN} from '@crczp/components-common';
+import { GroupFilter } from '@crczp/user-and-group-agenda/internal';
+import { GroupOverviewService } from './group-overview.service';
+import { Settings } from '@crczp/common';
 
 /**
  * Basic implementation of a layer between a component and an API service.
@@ -38,7 +41,7 @@ export class GroupOverviewConcreteService extends GroupOverviewService {
         private navigator: UserAndGroupNavigator,
         private errorHandler: UserAndGroupErrorHandler
     ) {
-        super(inject(DEFAULT_PAGE_SIZE_SETTING_TOKEN));
+        super(inject(Settings.DEFAULT_PAGE_SIZE));
     }
 
     /**
@@ -46,7 +49,10 @@ export class GroupOverviewConcreteService extends GroupOverviewService {
      * @param pagination requested pagination
      * @param filter filter to be applied on groups
      */
-    getAll(pagination: OffsetPaginationEvent, filter: string = null): Observable<PaginatedResource<Group>> {
+    getAll(
+        pagination: OffsetPaginationEvent,
+        filter: string = null
+    ): Observable<PaginatedResource<Group>> {
         this.lastPagination = pagination;
         this.lastFilter = filter;
         this.clearSelection();
@@ -71,14 +77,18 @@ export class GroupOverviewConcreteService extends GroupOverviewService {
      */
     delete(group: Group): Observable<any> {
         return this.displayConfirmationDialog([group]).pipe(
-            switchMap((result) => (result ? this.callApiToDelete([group]) : EMPTY))
+            switchMap((result) =>
+                result ? this.callApiToDelete([group]) : EMPTY
+            )
         );
     }
 
     deleteSelected(): Observable<any> {
         const groups = this.selectedSubject$.getValue();
         return this.displayConfirmationDialog(groups).pipe(
-            switchMap((result) => (result ? this.callApiToDelete(groups) : EMPTY))
+            switchMap((result) =>
+                result ? this.callApiToDelete(groups) : EMPTY
+            )
         );
     }
 
@@ -98,12 +108,26 @@ export class GroupOverviewConcreteService extends GroupOverviewService {
         const message = multipleGroups
             ? `Do you want to remove ${groups.length} selected groups?`
             : `Do you want to remove selected group?`;
-        const dialogData = new SentinelConfirmationDialogConfig(title, message, 'Cancel', 'Delete');
-        const dialogRef = this.dialog.open(SentinelConfirmationDialogComponent, {data: dialogData});
-        return dialogRef.afterClosed().pipe(map((result) => result === SentinelDialogResultEnum.CONFIRMED));
+        const dialogData = new SentinelConfirmationDialogConfig(
+            title,
+            message,
+            'Cancel',
+            'Delete'
+        );
+        const dialogRef = this.dialog.open(
+            SentinelConfirmationDialogComponent,
+            { data: dialogData }
+        );
+        return dialogRef
+            .afterClosed()
+            .pipe(
+                map((result) => result === SentinelDialogResultEnum.CONFIRMED)
+            );
     }
 
-    private callApiToDelete(groups: Group[]): Observable<PaginatedResource<Group>> {
+    private callApiToDelete(
+        groups: Group[]
+    ): Observable<PaginatedResource<Group>> {
         const ids = groups.map((group) => group.id);
         return this.api.deleteMultiple(ids).pipe(
             tap(

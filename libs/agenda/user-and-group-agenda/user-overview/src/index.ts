@@ -1,13 +1,7 @@
-/*
- * Public API Surface of entry point user-and-group-agenda/user-overview
- */
-
-export {UserComponentsModule} from './components/user-components.module';
-export {UserOverviewComponent} from '../../src/user-overview/src/components/user-overview.component';
-export {UserOverviewService} from './services/overview/user-overview.service';
-export {UserMaterialModule} from './components/user-material.module';
-export {UserResolverService} from '../../src/user-overview/src/services/resolvers/user-resolver.service';
-export {UserTitleResolverService} from '../../src/user-overview/src/services/resolvers/user-title-resolver.service';
+export {UserOverviewComponent} from './lib/components/user-overview.component';
+export {UserOverviewService} from './lib/services/user-overview.service';
+export {UserResolverService} from './lib/services/resolvers/user-resolver.service';
+export {UserTitleResolverService} from './lib/services/resolvers/user-title-resolver.service';
 export {
     UserBreadcrumbResolverService
-} from '../../src/user-overview/src/services/resolvers/user-breadcrumb-resolver.service';
+} from './lib/services/resolvers/user-breadcrumb-resolver.service';

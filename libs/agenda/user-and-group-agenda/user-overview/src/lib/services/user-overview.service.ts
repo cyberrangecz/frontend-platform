@@ -1,20 +1,29 @@
-import {inject, Injectable} from '@angular/core';
-import {MatDialog} from '@angular/material/dialog';
+import { inject, Injectable } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import {
     SentinelConfirmationDialogComponent,
     SentinelConfirmationDialogConfig,
-    SentinelDialogResultEnum
+    SentinelDialogResultEnum,
 } from '@sentinel/components/dialogs';
-import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
-import {UserApi} from '@crczp/user-and-group-api';
-import {User} from '@crczp/user-and-group-model';
-import {EMPTY, Observable} from 'rxjs';
-import {map, switchMap, take, tap} from 'rxjs/operators';
-import {SelectablePaginatedService, UserFilter} from '@crczp/user-and-group-agenda/internal';
-import {UserAndGroupErrorHandler, UserAndGroupNotificationService} from '../../../lib';
-import {UsersUploadDialogComponent} from '../components/upload-dialog/users-upload-dialog.component';
-import {FileUploadProgressService} from './file-upload/file-upload-progress.service';
-import {DEFAULT_PAGE_SIZE_SETTING_TOKEN} from '@crczp/components-common';
+import {
+    OffsetPaginationEvent,
+    PaginatedResource,
+} from '@sentinel/common/pagination';
+import { UserApi } from '@crczp/user-and-group-api';
+import { User } from '@crczp/user-and-group-model';
+import { EMPTY, Observable } from 'rxjs';
+import { map, switchMap, take, tap } from 'rxjs/operators';
+import {
+    SelectablePaginatedService,
+    UserFilter,
+} from '@crczp/user-and-group-agenda/internal';
+import { UsersUploadDialogComponent } from '../components/upload-dialog/users-upload-dialog.component';
+import { FileUploadProgressService } from './file-upload/file-upload-progress.service';
+import {
+    UserAndGroupErrorHandler,
+    UserAndGroupNotificationService,
+} from '@crczp/user-and-group-agenda';
+import { Settings } from '@crczp/common';
 
 /**
  * Basic implementation of a layer between a component and an API service.
@@ -33,7 +42,7 @@ export class UserOverviewService extends SelectablePaginatedService<User> {
         private fileUploadProgressService: FileUploadProgressService,
         private errorHandler: UserAndGroupErrorHandler
     ) {
-        super(inject(DEFAULT_PAGE_SIZE_SETTING_TOKEN));
+        super(inject(Settings.DEFAULT_PAGE_SIZE));
     }
 
     /**
@@ -41,7 +50,10 @@ export class UserOverviewService extends SelectablePaginatedService<User> {
      * @param pagination requested pagination
      * @param filterValue filter to be applied on resources
      */
-    getAll(pagination?: OffsetPaginationEvent, filterValue: string = null): Observable<PaginatedResource<User>> {
+    getAll(
+        pagination?: OffsetPaginationEvent,
+        filterValue: string = null
+    ): Observable<PaginatedResource<User>> {
         this.lastPagination = pagination;
         this.lastFilter = filterValue;
         const filters = filterValue ? [new UserFilter(filterValue)] : [];
@@ -70,7 +82,10 @@ export class UserOverviewService extends SelectablePaginatedService<User> {
             tap(
                 (_) => _,
                 (err) => {
-                    this.errorHandler.emit(err, `Fetching user with id: ${userId}`);
+                    this.errorHandler.emit(
+                        err,
+                        `Fetching user with id: ${userId}`
+                    );
                     this.hasErrorSubject$.next(true);
                 }
             )
@@ -83,14 +98,18 @@ export class UserOverviewService extends SelectablePaginatedService<User> {
      */
     delete(user: User): Observable<any> {
         return this.displayConfirmationDialog([user]).pipe(
-            switchMap((result) => (result ? this.callApiToDelete([user]) : EMPTY))
+            switchMap((result) =>
+                result ? this.callApiToDelete([user]) : EMPTY
+            )
         );
     }
 
     deleteSelected(): Observable<any> {
         const users = this.selectedSubject$.getValue();
         return this.displayConfirmationDialog(users).pipe(
-            switchMap((result) => (result ? this.callApiToDelete(users) : EMPTY))
+            switchMap((result) =>
+                result ? this.callApiToDelete(users) : EMPTY
+            )
         );
     }
 
@@ -100,7 +119,15 @@ export class UserOverviewService extends SelectablePaginatedService<User> {
     getLocalOIDCUsers(): Observable<any> {
         return this.api
             .getLocalOIDCUsers()
-            .pipe(tap({error: (err) => this.errorHandler.emit(err, 'Downloading OIDC users info')}));
+            .pipe(
+                tap({
+                    error: (err) =>
+                        this.errorHandler.emit(
+                            err,
+                            'Downloading OIDC users info'
+                        ),
+                })
+            );
     }
 
     /**
@@ -133,10 +160,22 @@ export class UserOverviewService extends SelectablePaginatedService<User> {
         const content = multipleUsers
             ? `Do you want to delete ${users.length} selected users?`
             : `Do you want to delete selected user?`;
-        const dialogData = new SentinelConfirmationDialogConfig(title, content, 'Cancel', 'Delete');
+        const dialogData = new SentinelConfirmationDialogConfig(
+            title,
+            content,
+            'Cancel',
+            'Delete'
+        );
 
-        const dialogRef = this.dialog.open(SentinelConfirmationDialogComponent, {data: dialogData});
-        return dialogRef.afterClosed().pipe(map((result) => result === SentinelDialogResultEnum.CONFIRMED));
+        const dialogRef = this.dialog.open(
+            SentinelConfirmationDialogComponent,
+            { data: dialogData }
+        );
+        return dialogRef
+            .afterClosed()
+            .pipe(
+                map((result) => result === SentinelDialogResultEnum.CONFIRMED)
+            );
     }
 
     private callApiToDelete(users: User[]): Observable<any> {
@@ -145,7 +184,10 @@ export class UserOverviewService extends SelectablePaginatedService<User> {
             tap(
                 () => {
                     this.clearSelection();
-                    this.alertService.emit('success', 'Selected users were deleted');
+                    this.alertService.emit(
+                        'success',
+                        'Selected users were deleted'
+                    );
                 },
                 (err) => {
                     this.errorHandler.emit(err, 'Deleting user');

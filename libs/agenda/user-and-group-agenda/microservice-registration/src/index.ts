@@ -1,9 +1,3 @@
-/*
- * Public API Surface of entry point user-and-group-agenda/microservice-registration
- */
-
-export {MicroserviceEditComponentsModule} from './components/microservice-edit-components.module';
-export {MicroserviceEditMaterialModule} from './components/microservice-edit-material.module';
 export {MicroserviceEditComponent} from './lib/components/microservice-edit/microservice-edit.component';
 export {
     MicroserviceEditControlsComponent

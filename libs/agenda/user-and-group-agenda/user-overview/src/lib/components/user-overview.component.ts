@@ -1,20 +1,42 @@
-import {ChangeDetectionStrategy, Component, DestroyRef, inject, Input, OnInit} from '@angular/core';
-import {OffsetPaginationEvent} from '@sentinel/common/pagination';
-import {SentinelControlItem} from '@sentinel/components/controls';
-import {User} from '@crczp/user-and-group-model';
-import {SentinelTable, TableActionEvent, TableLoadEvent} from '@sentinel/components/table';
-import {defer, Observable, of} from 'rxjs';
-import {map, take} from 'rxjs/operators';
-import {UserTable} from '../model/user-table';
-import {DefaultPaginationService, DeleteControlItem} from '@crczp/user-and-group-agenda/internal';
-import {UserAndGroupDefaultNavigator, UserAndGroupNavigator} from '../../../lib';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {UserResolverService} from '../services/resolvers/user-resolver.service';
-import {UserTitleResolverService} from '../services/resolvers/user-title-resolver.service';
-import {UserBreadcrumbResolverService} from '../services/resolvers/user-breadcrumb-resolver.service';
-import {FileUploadProgressService} from '../services/file-upload/file-upload-progress.service';
-import {UserOverviewService} from '../services/user-overview.service';
-import {PaginationStorageService} from "@crczp/components-common";
+import {
+    ChangeDetectionStrategy,
+    Component,
+    DestroyRef,
+    inject,
+    Input,
+    OnInit,
+} from '@angular/core';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
+import {
+    SentinelControlItemSignal,
+    SentinelControlsComponent,
+} from '@sentinel/components/controls';
+import { User } from '@crczp/user-and-group-model';
+import {
+    SentinelTable,
+    SentinelTableComponent,
+    TableActionEvent,
+    TableLoadEvent,
+} from '@sentinel/components/table';
+import { async, defer, Observable, of } from 'rxjs';
+import { map, take } from 'rxjs/operators';
+import { UserTable } from '../model/user-table';
+import { DeleteControlItem } from '@crczp/user-and-group-agenda/internal';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { UserResolverService } from '../services/resolvers/user-resolver.service';
+import { UserTitleResolverService } from '../services/resolvers/user-title-resolver.service';
+import { UserBreadcrumbResolverService } from '../services/resolvers/user-breadcrumb-resolver.service';
+import { FileUploadProgressService } from '../services/file-upload/file-upload-progress.service';
+import { UserOverviewService } from '../services/user-overview.service';
+import {
+    PaginationStorageService,
+    providePaginationStorageService,
+} from '@crczp/common';
+import {
+    UserAndGroupDefaultNavigator,
+    UserAndGroupNavigator,
+} from '@crczp/user-and-group-agenda';
+import { AsyncPipe } from '@angular/common';
 
 /**
  * Main smart component of user overview page
@@ -24,15 +46,19 @@ import {PaginationStorageService} from "@crczp/components-common";
     templateUrl: './user-overview.component.html',
     styleUrls: ['./user-overview.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [AsyncPipe, SentinelTableComponent, SentinelControlsComponent],
     providers: [
         UserResolverService,
         UserTitleResolverService,
         UserBreadcrumbResolverService,
-        DefaultPaginationService,
+        providePaginationStorageService(UserOverviewComponent),
         FileUploadProgressService,
         UserOverviewService,
-        {provide: UserAndGroupNavigator, useClass: UserAndGroupDefaultNavigator}
-    ]
+        {
+            provide: UserAndGroupNavigator,
+            useClass: UserAndGroupDefaultNavigator,
+        },
+    ],
 })
 export class UserOverviewComponent implements OnInit {
     @Input() paginationId = 'crczp-user-overview';
@@ -47,14 +73,14 @@ export class UserOverviewComponent implements OnInit {
      * True, if data requested for table has error, false otherwise
      */
     usersHasError$: Observable<boolean>;
-    controls: SentinelControlItem[];
+    controls: SentinelControlItemSignal[];
+    protected readonly async = async;
 
     constructor(
         private userService: UserOverviewService,
         private paginationService: PaginationStorageService,
         private navigator: UserAndGroupNavigator
-    ) {
-    }
+    ) {}
 
     ngOnInit(): void {
         const initialLoadEvent: TableLoadEvent = {
@@ -63,10 +89,13 @@ export class UserOverviewComponent implements OnInit {
                 this.paginationService.loadPageSize(),
                 this.INIT_SORT_NAME,
                 this.INIT_SORT_DIR
-            )
+            ),
         };
         this.users$ = this.userService.resource$.pipe(
-            map((groups) => new UserTable(groups, this.userService, this.navigator))
+            map(
+                (groups) =>
+                    new UserTable(groups, this.userService, this.navigator)
+            )
         );
         this.usersHasError$ = this.userService.hasError$;
         this.onLoadEvent(initialLoadEvent);
@@ -81,7 +110,10 @@ export class UserOverviewComponent implements OnInit {
      */
     onLoadEvent(event: TableLoadEvent): void {
         this.paginationService.savePageSize(event.pagination.size);
-        this.userService.getAll(event.pagination, event.filter).pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
+        this.userService
+            .getAll(event.pagination as OffsetPaginationEvent, event.filter)
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe();
     }
 
     /**
@@ -92,7 +124,7 @@ export class UserOverviewComponent implements OnInit {
         event.action.result$.pipe(take(1)).subscribe();
     }
 
-    onControlsAction(controlItem: SentinelControlItem): void {
+    onControlsAction(controlItem: SentinelControlItemSignal): void {
         controlItem.result$.pipe(take(1)).subscribe();
     }
 
@@ -110,20 +142,20 @@ export class UserOverviewComponent implements OnInit {
                 selectedUsersLength,
                 defer(() => this.userService.deleteSelected())
             ),
-            new SentinelControlItem(
+            new SentinelControlItemSignal(
                 'download_oidc_users',
                 'Get Users Credentials',
                 'primary',
                 of(false),
                 defer(() => this.userService.getLocalOIDCUsers())
             ),
-            new SentinelControlItem(
+            new SentinelControlItemSignal(
                 'import_users',
                 'Import Users',
                 'primary',
                 of(false),
                 defer(() => this.userService.importUsers())
-            )
+            ),
         ];
     }
 }

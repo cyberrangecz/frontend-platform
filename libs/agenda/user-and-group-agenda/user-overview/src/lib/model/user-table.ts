@@ -2,9 +2,9 @@ import {PaginatedResource} from '@sentinel/common/pagination';
 import {User} from '@crczp/user-and-group-model';
 import {Column, Row, SentinelTable} from '@sentinel/components/table';
 import {defer, of} from 'rxjs';
-import {UserOverviewService} from '../services/overview/user-overview.service';
 import {UserDeleteAction} from '@crczp/user-and-group-agenda/internal';
-import {UserAndGroupNavigator} from '../../../src';
+import {UserAndGroupNavigator} from "@crczp/user-and-group-agenda";
+import {UserOverviewService} from "../services/user-overview.service";
 
 /**
  * Class creating data source for user table

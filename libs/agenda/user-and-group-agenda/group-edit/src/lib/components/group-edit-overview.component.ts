@@ -1,6 +1,10 @@
 import {ChangeDetectionStrategy, Component, DestroyRef, EventEmitter, inject, Output} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {SentinelControlItem, SentinelControlItemSignal, SentinelControlsComponent} from '@sentinel/components/controls';
+import {
+    SentinelControlItemSignal,
+    SentinelControlItemSignal,
+    SentinelControlsComponent
+} from '@sentinel/components/controls';
 import {Group} from '@crczp/user-and-group-model';
 import {async, defer, Observable, of} from 'rxjs';
 import {take, tap} from 'rxjs/operators';
@@ -14,7 +18,12 @@ import {GroupChangedEvent} from '../model/group-changed-event';
 import {GroupEditService} from '../services/state/group-edit.service';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {GroupEditCanDeactivate} from '../services/can-deactivate/group-edit-can-deactivate.service';
-import {MatExpansionPanel, MatExpansionPanelDescription, MatExpansionPanelTitle} from '@angular/material/expansion';
+import {
+    MatExpansionPanel,
+    MatExpansionPanelDescription,
+    MatExpansionPanelHeader,
+    MatExpansionPanelTitle
+} from '@angular/material/expansion';
 import {GroupEditComponent} from './group-edit/group-edit.component';
 import {MatDivider} from '@angular/material/divider';
 import {AsyncPipe, NgIf} from '@angular/common';
@@ -41,6 +50,7 @@ import {GroupRoleAssignComponent} from './group-role-assign/group-role-assign.co
         MatIcon,
         NgIf,
         SentinelControlsComponent,
+        MatExpansionPanelHeader,
     ],
     providers: [
         GroupEditCanDeactivate,
@@ -55,7 +65,7 @@ export class GroupEditOverviewComponent {
     canDeactivateGroupEdit = true;
     canDeactivateMembers = true;
     canDeactivateRoles = true;
-    controls: SentinelControlItem[];
+    controls: SentinelControlItemSignal[];
     destroyRef = inject(DestroyRef);
     protected readonly of = of;
     protected readonly async = async;

@@ -10,17 +10,17 @@ import {
     Output,
     SimpleChanges
 } from '@angular/core';
-import { Group } from '@crczp/user-and-group-model';
-import { GroupChangedEvent } from '../../model/group-changed-event';
-import { GroupEditFormGroup } from './group-edit-form-group';
-import { AbstractControl, ReactiveFormsModule } from '@angular/forms';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatDatepicker, MatDatepickerInput, MatDatepickerToggle } from '@angular/material/datepicker';
-import { MatFormField, MatInput } from '@angular/material/input';
-import { MatIconButton } from '@angular/material/button';
-import { MatIcon } from '@angular/material/icon';
-import { MatTooltip } from '@angular/material/tooltip';
-import { NgIf } from '@angular/common';
+import {Group} from '@crczp/user-and-group-model';
+import {GroupChangedEvent} from '../../model/group-changed-event';
+import {GroupEditFormGroup} from './group-edit-form-group';
+import {AbstractControl, ReactiveFormsModule} from '@angular/forms';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import {MatDatepicker, MatDatepickerInput, MatDatepickerToggle} from '@angular/material/datepicker';
+import {MatError, MatFormField, MatInput, MatLabel} from '@angular/material/input';
+import {MatIconButton} from '@angular/material/button';
+import {MatIcon} from '@angular/material/icon';
+import {MatTooltip} from '@angular/material/tooltip';
+import {NgIf} from '@angular/common';
 
 /**
  * Component for editing basic group-overview attributes
@@ -40,7 +40,9 @@ import { NgIf } from '@angular/common';
         MatIconButton,
         ReactiveFormsModule,
         MatTooltip,
-        NgIf
+        NgIf,
+        MatError,
+        MatLabel
     ]
 })
 export class GroupEditComponent implements OnInit, OnChanges {

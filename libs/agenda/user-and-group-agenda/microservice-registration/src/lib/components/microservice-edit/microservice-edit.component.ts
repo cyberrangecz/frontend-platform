@@ -9,16 +9,16 @@ import {
     Output,
     SimpleChanges,
 } from '@angular/core';
-import { AbstractControl, ReactiveFormsModule, UntypedFormArray, UntypedFormControl } from '@angular/forms';
-import { Microservice } from '@crczp/user-and-group-model';
-import { MicroserviceRolesState } from '../../model/microservice-roles-state';
-import { MicroserviceEditFormGroup } from './microservice-edit-form-group';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatCard, MatCardContent, MatCardHeader } from '@angular/material/card';
-import { MatFormField, MatInput } from '@angular/material/input';
-import { MatIcon } from '@angular/material/icon';
-import { MatIconButton } from '@angular/material/button';
-import { MicroserviceRoleListComponent } from '../microservice-role-list/microservice-role-list.component';
+import {AbstractControl, ReactiveFormsModule, UntypedFormArray, UntypedFormControl} from '@angular/forms';
+import {Microservice} from '@crczp/user-and-group-model';
+import {MicroserviceRolesState} from '../../model/microservice-roles-state';
+import {MicroserviceEditFormGroup} from './microservice-edit-form-group';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import {MatCard, MatCardContent, MatCardHeader, MatCardSubtitle, MatCardTitle} from '@angular/material/card';
+import {MatError, MatFormField, MatInput, MatLabel} from '@angular/material/input';
+import {MatIcon} from '@angular/material/icon';
+import {MatIconButton} from '@angular/material/button';
+import {MicroserviceRoleListComponent} from '../microservice-role-list/microservice-role-list.component';
 
 /**
  * Component for editing main info about microservice-registration and its roles
@@ -37,7 +37,11 @@ import { MicroserviceRoleListComponent } from '../microservice-role-list/microse
         MatCardContent,
         MicroserviceRoleListComponent,
         ReactiveFormsModule,
-        MatIconButton
+        MatIconButton,
+        MatLabel,
+        MatCardTitle,
+        MatCardSubtitle,
+        MatError
     ]
 })
 export class MicroserviceEditComponent implements OnChanges {

@@ -1,10 +1,10 @@
 import {Injectable} from '@angular/core';
 import {ActivatedRouteSnapshot, RouterStateSnapshot} from '@angular/router';
 import {Observable, of} from 'rxjs';
-import {USER_DETAIL_PATH, USER_SELECTOR} from '../../../../lib';
 import {catchError, map, take} from 'rxjs/operators';
 import {UserResolverService} from './user-resolver.service';
 import {User} from '@crczp/user-and-group-model';
+import {USER_DETAIL_PATH, USER_SELECTOR} from "@crczp/user-and-group-agenda";
 
 @Injectable()
 export class UserTitleResolverService {

@@ -1,10 +1,10 @@
 import {Injectable} from '@angular/core';
 import {ActivatedRouteSnapshot, RouterStateSnapshot} from '@angular/router';
 import {EMPTY, Observable, of} from 'rxjs';
-import {USER_DETAIL_PATH, USER_SELECTOR} from '../../../../lib';
 import {User} from '@crczp/user-and-group-model';
 import {catchError, map} from 'rxjs/operators';
 import {UserResolverService} from './user-resolver.service';
+import {USER_DETAIL_PATH, USER_SELECTOR} from "@crczp/user-and-group-agenda";
 
 @Injectable()
 export class UserBreadcrumbResolverService {

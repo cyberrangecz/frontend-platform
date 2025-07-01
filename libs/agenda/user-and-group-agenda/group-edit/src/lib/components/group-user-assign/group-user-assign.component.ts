@@ -7,29 +7,47 @@ import {
     Input,
     OnChanges,
     Output,
-    SimpleChanges
+    SimpleChanges,
 } from '@angular/core';
-import {OffsetPaginationEvent} from '@sentinel/common/pagination';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import {
-    SentinelControlItem,
     SentinelControlItemSignal,
-    SentinelControlsComponent
+    SentinelControlItemSignal,
+    SentinelControlsComponent,
 } from '@sentinel/components/controls';
-import {Group, User} from '@crczp/user-and-group-model';
-import {SentinelTable, SentinelTableComponent, TableActionEvent, TableLoadEvent} from '@sentinel/components/table';
+import { Group, User } from '@crczp/user-and-group-model';
+import {
+    SentinelTable,
+    SentinelTableComponent,
+    TableActionEvent,
+    TableLoadEvent,
+} from '@sentinel/components/table';
 import {
     SentinelResourceSelectorComponent,
-    SentinelResourceSelectorMapping
+    SentinelResourceSelectorMapping,
 } from '@sentinel/components/resource-selector';
-import {combineLatest, defer, Observable} from 'rxjs';
-import {map, take} from 'rxjs/operators';
-import {GroupMemberTable} from '../../model/table/group-member-table';
-import {DeleteControlItem, DefaultPaginationService, SaveControlItem} from '@crczp/user-and-group-agenda/internal';
-import {UserAssignService} from '../../services/state/user-assign.service';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {MatCard, MatCardContent, MatCardHeader} from '@angular/material/card';
-import {MatIcon} from '@angular/material/icon';
-import {AsyncPipe} from '@angular/common';
+import { combineLatest, defer, Observable } from 'rxjs';
+import { map, take } from 'rxjs/operators';
+import { GroupMemberTable } from '../../model/table/group-member-table';
+import {
+    DeleteControlItem,
+    SaveControlItem,
+} from '@crczp/user-and-group-agenda/internal';
+import { UserAssignService } from '../../services/state/user-assign.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {
+    MatCard,
+    MatCardContent,
+    MatCardHeader,
+    MatCardSubtitle,
+    MatCardTitle,
+} from '@angular/material/card';
+import { MatIcon } from '@angular/material/icon';
+import { AsyncPipe } from '@angular/common';
+import {
+    PaginationStorageService,
+    providePaginationStorageService,
+} from '@crczp/common';
 
 /**
  * Component for user assignment to groups
@@ -47,27 +65,16 @@ import {AsyncPipe} from '@angular/common';
         MatIcon,
         SentinelControlsComponent,
         SentinelResourceSelectorComponent,
-        SentinelTableComponent
+        SentinelTableComponent,
+        MatCardTitle,
+        MatCardSubtitle,
     ],
-    providers: [{provide: UserAssignService, useClass: UserAssignService}]
+    providers: [
+        providePaginationStorageService(GroupUserAssignComponent),
+        { provide: UserAssignService, useClass: UserAssignService },
+    ],
 })
 export class GroupUserAssignComponent implements OnChanges {
-    constructor(
-        private userAssignService: UserAssignService,
-        private paginationService: PaginationStorageService
-    ) {
-        this.userMapping = {
-            id: 'id',
-            title: 'name',
-            subtitle: 'login',
-            icon: 'picture'
-        };
-        this.groupMapping = {
-            id: 'id',
-            title: 'name'
-        };
-    }
-
     readonly MEMBERS_OF_GROUP_INIT_SORT_NAME = 'familyName';
     readonly MEMBERS_OF_GROUP_INIT_SORT_DIR = 'asc';
     /**
@@ -112,12 +119,32 @@ export class GroupUserAssignComponent implements OnChanges {
     isLoadingAssignedUsers$: Observable<boolean>;
     selectedUsersToAssign$: Observable<User[]>;
     selectedGroupsToImport$: Observable<Group[]>;
-    assignUsersControls: SentinelControlItem[];
-    assignedUsersControls: SentinelControlItem[];
+    assignUsersControls: SentinelControlItemSignal[];
+    assignedUsersControls: SentinelControlItemSignal[];
     destroyRef = inject(DestroyRef);
 
+    constructor(
+        private userAssignService: UserAssignService,
+        private paginationService: PaginationStorageService
+    ) {
+        this.userMapping = {
+            id: 'id',
+            title: 'name',
+            subtitle: 'login',
+            icon: 'picture',
+        };
+        this.groupMapping = {
+            id: 'id',
+            title: 'name',
+        };
+    }
+
     ngOnChanges(changes: SimpleChanges): void {
-        if ('resource' in changes && this.resource && this.resource.id !== undefined) {
+        if (
+            'resource' in changes &&
+            this.resource &&
+            this.resource.id !== undefined
+        ) {
             this.init();
         }
     }
@@ -165,7 +192,9 @@ export class GroupUserAssignComponent implements OnChanges {
      * @param filterValue search value
      */
     searchGroups(filterValue: string): void {
-        this.groups$ = this.userAssignService.getGroupsToImport(filterValue).pipe(map((resource) => resource.elements));
+        this.groups$ = this.userAssignService
+            .getGroupsToImport(filterValue)
+            .pipe(map((resource) => resource.elements));
     }
 
     /**
@@ -183,14 +212,20 @@ export class GroupUserAssignComponent implements OnChanges {
     onAssignedLoadEvent(loadEvent: TableLoadEvent): void {
         this.paginationService.savePageSize(loadEvent.pagination.size);
         this.userAssignService
-            .getAssigned(this.resource.id, loadEvent.pagination as OffsetPaginationEvent, loadEvent.filter)
+            .getAssigned(
+                this.resource.id,
+                loadEvent.pagination as OffsetPaginationEvent,
+                loadEvent.filter
+            )
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe();
     }
 
     private init() {
-        this.selectedUsersToAssign$ = this.userAssignService.selectedUsersToAssign$;
-        this.selectedGroupsToImport$ = this.userAssignService.selectedGroupsToImport$;
+        this.selectedUsersToAssign$ =
+            this.userAssignService.selectedUsersToAssign$;
+        this.selectedGroupsToImport$ =
+            this.userAssignService.selectedGroupsToImport$;
         this.initTable();
         this.initAssignUsersControls();
         this.initAssignedUsersControls();
@@ -198,10 +233,15 @@ export class GroupUserAssignComponent implements OnChanges {
     }
 
     private initUnsavedChangesEmitter() {
-        combineLatest([this.userAssignService.selectedGroupsToImport$, this.userAssignService.selectedUsersToAssign$])
+        combineLatest([
+            this.userAssignService.selectedGroupsToImport$,
+            this.userAssignService.selectedUsersToAssign$,
+        ])
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe((selections) =>
-                this.hasUnsavedChanges.emit(selections.some((selection) => selection.length > 0))
+                this.hasUnsavedChanges.emit(
+                    selections.some((selection) => selection.length > 0)
+                )
             );
     }
 
@@ -212,8 +252,12 @@ export class GroupUserAssignComponent implements OnChanges {
                 this.assignedUsersControls = [
                     new DeleteControlItem(
                         selection.length,
-                        defer(() => this.userAssignService.unassignSelected(this.resource.id))
-                    )
+                        defer(() =>
+                            this.userAssignService.unassignSelected(
+                                this.resource.id
+                            )
+                        )
+                    ),
                 ];
             });
     }
@@ -221,15 +265,22 @@ export class GroupUserAssignComponent implements OnChanges {
     private initAssignUsersControls() {
         const disabled$ = combineLatest([
             this.userAssignService.selectedUsersToAssign$,
-            this.userAssignService.selectedGroupsToImport$
-        ]).pipe(map((selections) => selections[0].length <= 0 && selections[1].length <= 0));
+            this.userAssignService.selectedGroupsToImport$,
+        ]).pipe(
+            map(
+                (selections) =>
+                    selections[0].length <= 0 && selections[1].length <= 0
+            )
+        );
 
         this.assignUsersControls = [
             new SaveControlItem(
                 'Add',
                 disabled$,
-                defer(() => this.userAssignService.assignSelected(this.resource.id))
-            )
+                defer(() =>
+                    this.userAssignService.assignSelected(this.resource.id)
+                )
+            ),
         ];
     }
 
@@ -240,13 +291,21 @@ export class GroupUserAssignComponent implements OnChanges {
                 this.paginationService.loadPageSize(),
                 this.MEMBERS_OF_GROUP_INIT_SORT_NAME,
                 this.MEMBERS_OF_GROUP_INIT_SORT_DIR
-            )
+            ),
         };
         this.assignedUsers$ = this.userAssignService.assignedUsers$.pipe(
-            map((paginatedUsers) => new GroupMemberTable(paginatedUsers, this.resource.id, this.userAssignService))
+            map(
+                (paginatedUsers) =>
+                    new GroupMemberTable(
+                        paginatedUsers,
+                        this.resource.id,
+                        this.userAssignService
+                    )
+            )
         );
         this.assignedUsersHasError$ = this.userAssignService.hasError$;
-        this.isLoadingAssignedUsers$ = this.userAssignService.isLoadingAssigned$;
+        this.isLoadingAssignedUsers$ =
+            this.userAssignService.isLoadingAssigned$;
         this.onAssignedLoadEvent(initialLoadEvent);
     }
 }

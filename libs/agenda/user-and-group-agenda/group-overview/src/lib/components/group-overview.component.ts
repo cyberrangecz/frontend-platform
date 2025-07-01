@@ -1,21 +1,46 @@
-import {ChangeDetectionStrategy, Component, DestroyRef, inject, Input, OnInit} from '@angular/core';
-import {OffsetPaginationEvent} from '@sentinel/common/pagination';
-import {SentinelControlItem, SentinelControlItemSignal, SentinelControlsComponent} from '@sentinel/components/controls';
-import {Group} from '@crczp/user-and-group-model';
-import {SentinelTable, SentinelTableComponent, TableActionEvent, TableLoadEvent} from '@sentinel/components/table';
-import {async, defer, Observable, of} from 'rxjs';
-import {map, take} from 'rxjs/operators';
-import {GroupTable} from '../model/table/group-table';
-import {DeleteControlItem, SaveControlItem} from '@crczp/user-and-group-agenda/internal';
-import {GroupOverviewService} from '../services/group-overview.service';
-import {UserAndGroupDefaultNavigator, UserAndGroupNavigator} from '@crczp/user-and-group-agenda';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {GroupResolver} from '../services/resolvers/group-resolver.service';
-import {GroupTitleResolver} from '../services/resolvers/group-title-resolver.service';
-import {GroupBreadcrumbResolver} from '../services/resolvers/group-breadcrumb-resolver.service';
-import {GroupOverviewConcreteService} from '../services/group-overview.concrete.service';
-import {AsyncPipe} from '@angular/common';
-import {PaginationStorageService, providePaginationStorageService} from "@crczp/components-common";
+import {
+    ChangeDetectionStrategy,
+    Component,
+    DestroyRef,
+    inject,
+    Input,
+    OnInit,
+} from '@angular/core';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
+import {
+    SentinelControlItemSignal,
+    SentinelControlItemSignal,
+    SentinelControlsComponent,
+} from '@sentinel/components/controls';
+import { Group } from '@crczp/user-and-group-model';
+import {
+    SentinelTable,
+    SentinelTableComponent,
+    TableActionEvent,
+    TableLoadEvent,
+} from '@sentinel/components/table';
+import { async, defer, Observable, of } from 'rxjs';
+import { map, take } from 'rxjs/operators';
+import { GroupTable } from '../model/table/group-table';
+import {
+    DeleteControlItem,
+    SaveControlItem,
+} from '@crczp/user-and-group-agenda/internal';
+import { GroupOverviewService } from '../services/group-overview.service';
+import {
+    UserAndGroupDefaultNavigator,
+    UserAndGroupNavigator,
+} from '@crczp/user-and-group-agenda';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { GroupResolver } from '../services/resolvers/group-resolver.service';
+import { GroupTitleResolver } from '../services/resolvers/group-title-resolver.service';
+import { GroupBreadcrumbResolver } from '../services/resolvers/group-breadcrumb-resolver.service';
+import { GroupOverviewConcreteService } from '../services/group-overview.concrete.service';
+import { AsyncPipe } from '@angular/common';
+import {
+    PaginationStorageService,
+    providePaginationStorageService,
+} from '@crczp/common';
 
 /**
  * Main smart component of group-overview overview page
@@ -29,14 +54,16 @@ import {PaginationStorageService, providePaginationStorageService} from "@crczp/
         GroupResolver,
         GroupTitleResolver,
         GroupBreadcrumbResolver,
-        {provide: GroupOverviewService, useClass: GroupOverviewConcreteService},
-        {provide: UserAndGroupNavigator, useClass: UserAndGroupDefaultNavigator}
+        {
+            provide: GroupOverviewService,
+            useClass: GroupOverviewConcreteService,
+        },
+        {
+            provide: UserAndGroupNavigator,
+            useClass: UserAndGroupDefaultNavigator,
+        },
     ],
-    imports: [
-        SentinelTableComponent,
-        SentinelControlsComponent,
-        AsyncPipe
-    ]
+    imports: [SentinelTableComponent, SentinelControlsComponent, AsyncPipe],
 })
 export class GroupOverviewComponent implements OnInit {
     @Input() paginationId = 'crczp-group-overview';
@@ -50,7 +77,7 @@ export class GroupOverviewComponent implements OnInit {
      * True if error was thrown while getting data for groups table, false otherwise
      */
     groupsHasError$: Observable<boolean>;
-    controls: SentinelControlItem[];
+    controls: SentinelControlItemSignal[];
     destroyRef = inject(DestroyRef);
     protected readonly async = async;
 
@@ -58,8 +85,7 @@ export class GroupOverviewComponent implements OnInit {
         private groupService: GroupOverviewService,
         private paginationService: PaginationStorageService,
         private navigator: UserAndGroupNavigator
-    ) {
-    }
+    ) {}
 
     ngOnInit(): void {
         const initialLoadEvent: TableLoadEvent = {
@@ -68,10 +94,13 @@ export class GroupOverviewComponent implements OnInit {
                 this.paginationService.loadPageSize(),
                 this.INIT_SORT_NAME,
                 this.INIT_SORT_DIR
-            )
+            ),
         };
         this.groups$ = this.groupService.resource$.pipe(
-            map((groups) => new GroupTable(groups, this.groupService, this.navigator))
+            map(
+                (groups) =>
+                    new GroupTable(groups, this.groupService, this.navigator)
+            )
         );
         this.groupsHasError$ = this.groupService.hasError$;
         this.groupService.selected$
@@ -90,7 +119,10 @@ export class GroupOverviewComponent implements OnInit {
      */
     onTableLoadEvent(event: TableLoadEvent): void {
         this.paginationService.savePageSize(event.pagination.size);
-        this.groupService.getAll(event.pagination, event.filter).pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
+        this.groupService
+            .getAll(event.pagination, event.filter)
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe();
     }
 
     /**
@@ -119,7 +151,7 @@ export class GroupOverviewComponent implements OnInit {
                 'Create',
                 of(false),
                 defer(() => this.groupService.create())
-            )
+            ),
         ];
     }
 }
