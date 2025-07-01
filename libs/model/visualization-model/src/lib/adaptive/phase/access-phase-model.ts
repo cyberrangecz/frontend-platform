@@ -1,4 +1,4 @@
-import { TransitionPhase, TransitionTask } from './transition-phase-model';
+import {TransitionPhase, TransitionTask} from './transition-phase-model';
 
 export class AccessPhaseTask extends TransitionTask {
 
@@ -7,5 +7,5 @@ export class AccessPhaseTask extends TransitionTask {
 }
 
 export class AccessTransitionPhase extends TransitionPhase {
-    override tasks!: AccessPhaseTask[];
+    declare tasks: AccessPhaseTask[];
 }

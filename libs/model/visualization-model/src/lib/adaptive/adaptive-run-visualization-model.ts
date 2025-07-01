@@ -1,5 +1,5 @@
-import { Trainee } from '@crczp/training-model';
-import { TransitionPhase } from './phase/transition-phase-model';
+import {TrainingUser} from '@crczp/training-model';
+import {TransitionPhase} from './phase/transition-phase-model';
 
 export class RunVisualizationPathNode {
     phaseId!: number;
@@ -11,7 +11,7 @@ export class RunVisualizationPathNode {
 
 export class AdaptiveRunVisualization {
     trainingRunId!: number;
-    trainee!: Trainee;
+    trainee!: TrainingUser;
     trainingRunPathNodes!: RunVisualizationPathNode[];
     localEnvironment!: boolean;
 }

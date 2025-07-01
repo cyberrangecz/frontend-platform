@@ -68,7 +68,6 @@ export * from './lib/questions/extended-matching-statement';
 
 // USERS
 export * from './lib/user-ref/training-user';
-export * from './lib/user-ref/trainee';
 export * from './lib/user-ref/organizer';
 export * from './lib/user-ref/designer';
 export * from './lib/user-ref/beta-tester';
