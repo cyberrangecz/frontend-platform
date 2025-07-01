@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import {Injectable} from '@angular/core';
+import {Observable} from 'rxjs';
 
 @Injectable({
     providedIn: 'root',
@@ -20,5 +20,5 @@ export abstract class DividerPositionSynchronizerService {
     /**
      * Get the current divider position
      */
-    public abstract getDividerPosition(): number;
+    public abstract getDividerPosition(): number | undefined ;
 }

@@ -1,0 +1,40 @@
+{
+    "name": "common",
+    "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+    "sourceRoot": "libs/components/common/src",
+    "prefix": "lib",
+    "projectType": "library",
+    "tags": [],
+    "targets": {
+        "build": {
+            "executor": "@nx/angular:ng-packagr-lite",
+            "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
+            "options": {
+                "project": "libs/components/common/ng-package.json"
+            },
+            "stylePreprocessorOptions": {
+                "includePaths": ["dist/libs/components/theme/theme"]
+            },
+            "styles": ["dist/libs/components/theme/theme/aplly-all.scss"],
+            "configurations": {
+                "production": {
+                    "tsConfig": "libs/components/common/tsconfig.lib.prod.json"
+                },
+                "development": {
+                    "tsConfig": "libs/components/common/tsconfig.lib.json"
+                }
+            },
+            "defaultConfiguration": "production"
+        },
+        "test": {
+            "executor": "@nx/vite:test",
+            "outputs": ["{options.reportsDirectory}"],
+            "options": {
+                "reportsDirectory": "../../../coverage/libs/components/common"
+            }
+        },
+        "lint": {
+            "executor": "@nx/eslint:lint"
+        }
+    }
+}

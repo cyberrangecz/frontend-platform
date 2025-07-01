@@ -1,9 +1,9 @@
-import { DestroyRef, inject, Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, startWith } from 'rxjs';
-import { DividerPositionSynchronizerService } from './divider-position-synchronizer.service';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { filter } from 'rxjs/operators';
-import { unique } from '../../../../logic/unique';
+import {DestroyRef, inject, Injectable} from '@angular/core';
+import {BehaviorSubject, Observable, startWith} from 'rxjs';
+import {DividerPositionSynchronizerService} from './divider-position-synchronizer.service';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import {filter} from 'rxjs/operators';
+import {unique} from '../../../utils/rxjs/unique';
 
 @Injectable({
     providedIn: 'root',
@@ -46,7 +46,7 @@ export class PersistentDividerPositionSynchronizerService extends DividerPositio
         return this.splitViewDimensionsSubject.pipe(
             takeUntilDestroyed(this.destroyRef),
             startWith(this.splitViewDimensionsSubject.value),
-            filter((ratio) => !!ratio),
+            filter((ratio) => ratio != undefined),
             unique((a, b) => a === b),
         );
     }

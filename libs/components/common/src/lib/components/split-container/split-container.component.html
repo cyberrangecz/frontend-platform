@@ -1,0 +1,13 @@
+<div class="divider-container">
+    <div #left class="panel-wrapper" [style.min-width]="leftPanelMinWidth">
+        <ng-container [ngTemplateOutlet]="leftPanelContent" />
+    </div>
+    <mat-divider
+        vertical
+        class="vertical-drag-handle"
+        (mousedown)="mouseDown($event)"
+    />
+    <div #right class="panel-wrapper" [style.min-width]="rightPanelMinWidth">
+        <ng-container [ngTemplateOutlet]="rightPanelContent" />
+    </div>
+</div>

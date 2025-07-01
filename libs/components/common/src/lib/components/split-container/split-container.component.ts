@@ -11,12 +11,16 @@ import {
     TemplateRef,
     ViewChild,
 } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { map } from 'rxjs/operators';
-import { thresholdBuffer } from '../../../../../logic/tresholdBufferPipe';
-import { sum } from 'd3';
-import { DividerPositionSynchronizerService } from '../../../../../services/training-run/level/synchronization/divider-position/divider-position-synchronizer.service';
+import {BehaviorSubject, Observable} from 'rxjs';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import {map} from 'rxjs/operators';
+import {sum} from 'd3';
+import {
+    DividerPositionSynchronizerService
+} from '../../service/synchronization/divider-position/divider-position-synchronizer.service';
+import {NgTemplateOutlet} from "@angular/common";
+import {MatDivider} from "@angular/material/divider";
+import {thresholdBuffer} from "../../utils/rxjs/tresholdBufferPipe";
 
 class DefaultDividerPositionSynchronizerService extends DividerPositionSynchronizerService {
     private splitViewDimensionsSubject: BehaviorSubject<number>;
@@ -43,10 +47,14 @@ class DefaultDividerPositionSynchronizerService extends DividerPositionSynchroni
     selector: 'crczp-split-container',
     templateUrl: './split-container.component.html',
     styleUrl: './split-container.component.css',
+    imports: [
+        NgTemplateOutlet,
+        MatDivider
+    ]
 })
 export class SplitContainerComponent implements AfterViewInit {
-    @Input() leftPanelContent: TemplateRef<any>;
-    @Input() rightPanelContent: TemplateRef<any>;
+    @Input({required: true}) leftPanelContent!: TemplateRef<any>;
+    @Input({required: true}) rightPanelContent!: TemplateRef<any>;
 
     @Input() leftPanelMinWidth: string = '10%';
     @Input() rightPanelMinWidth: string = '10%';
@@ -56,7 +64,7 @@ export class SplitContainerComponent implements AfterViewInit {
      */
     @Input() dividerUpdateThreshold = 20;
 
-    @Input() disableAtWindowWidth: number;
+    @Input() disableAtWindowWidth: number | undefined;
     @Input() defaultRatio = 0.5;
 
     /**
@@ -69,34 +77,59 @@ export class SplitContainerComponent implements AfterViewInit {
     @Output() leftPanelWidth = new EventEmitter<number>();
     @Output() rightPanelWidth = new EventEmitter<number>();
 
-    @ViewChild('left') leftPanel: ElementRef<HTMLDivElement>;
-    @ViewChild('right') rightPanel: ElementRef<HTMLDivElement>;
+    @ViewChild('left') leftPanel!: ElementRef<HTMLDivElement>;
+    @ViewChild('right') rightPanel!: ElementRef<HTMLDivElement>;
 
-    private dragBehaviourSubject: BehaviorSubject<number> = new BehaviorSubject(0);
+    private dragBehaviourSubject: BehaviorSubject<number> = new BehaviorSubject(
+        0
+    );
 
     private readonly destroyRef = inject(DestroyRef);
 
     ngAfterViewInit(): void {
-        this.setPanelRatio(this.dividerPositionSynchronizer.getDividerPosition() || this.defaultRatio);
+        this.setPanelRatio(
+            this.dividerPositionSynchronizer.getDividerPosition() ||
+            this.defaultRatio
+        );
         this.setupDividerPositionListener();
         this.setupDragListener();
     }
 
     @HostListener('window:resize', ['$event'])
     onResize(event: any): void {
-        if (event.target.innerWidth < this.disableAtWindowWidth) {
+        if (this.disableAtWindowWidth && event.target.innerWidth < this.disableAtWindowWidth) {
             this.unsetPanelWidths();
         } else {
-            this.setPanelRatio(this.dividerPositionSynchronizer.getDividerPosition() || this.defaultRatio);
+            this.setPanelRatio(
+                this.dividerPositionSynchronizer.getDividerPosition() ||
+                this.defaultRatio
+            );
         }
         this.leftPanelWidth.emit(this.leftPanel.nativeElement.offsetWidth);
         this.rightPanelWidth.emit(this.rightPanel.nativeElement.offsetWidth);
     }
 
+    mouseDown(event: MouseEvent): void {
+        const mouseUp = () => {
+            document.removeEventListener('mousemove', mouseMove);
+            document.removeEventListener('mouseup', mouseUp);
+        };
+
+        const mouseMove = (event: MouseEvent) => {
+            this.dragBehaviourSubject.next(event.movementX);
+        };
+
+        document.addEventListener('mouseup', mouseUp);
+        document.addEventListener('mousemove', mouseMove);
+        event.preventDefault();
+        event.stopPropagation();
+    }
+
     private calculateRatio(sliderDelta: number): number {
         return (
             (this.leftPanel.nativeElement.offsetWidth + sliderDelta) /
-            (this.rightPanel.nativeElement.offsetWidth + this.leftPanel.nativeElement.offsetWidth)
+            (this.rightPanel.nativeElement.offsetWidth +
+                this.leftPanel.nativeElement.offsetWidth)
         );
     }
 
@@ -116,35 +149,28 @@ export class SplitContainerComponent implements AfterViewInit {
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe((ratio: number) => {
                 this.setPanelRatio(ratio);
-                this.leftPanelWidth.emit(this.leftPanel.nativeElement.offsetWidth);
-                this.rightPanelWidth.emit(this.rightPanel.nativeElement.offsetWidth);
+                this.leftPanelWidth.emit(
+                    this.leftPanel.nativeElement.offsetWidth
+                );
+                this.rightPanelWidth.emit(
+                    this.rightPanel.nativeElement.offsetWidth
+                );
             });
     }
 
     private setupDragListener(): void {
         this.dragBehaviourSubject
             .pipe(
-                thresholdBuffer((values) => Math.abs(sum(values)) > this.dividerUpdateThreshold),
-                map((bufferedValues) => sum(bufferedValues)),
+                thresholdBuffer(
+                    (values) =>
+                        Math.abs(sum(values)) > this.dividerUpdateThreshold
+                ),
+                map((bufferedValues) => sum(bufferedValues))
             )
             .subscribe((movement) => {
-                this.dividerPositionSynchronizer.emitDividerChange(this.calculateRatio(movement));
+                this.dividerPositionSynchronizer.emitDividerChange(
+                    this.calculateRatio(movement)
+                );
             });
-    }
-
-    mouseDown(event: MouseEvent): void {
-        const mouseUp = () => {
-            document.removeEventListener('mousemove', mouseMove);
-            document.removeEventListener('mouseup', mouseUp);
-        };
-
-        const mouseMove = (event: MouseEvent) => {
-            this.dragBehaviourSubject.next(event.movementX);
-        };
-
-        document.addEventListener('mouseup', mouseUp);
-        document.addEventListener('mousemove', mouseMove);
-        event.preventDefault();
-        event.stopPropagation();
     }
 }
