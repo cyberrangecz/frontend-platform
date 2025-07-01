@@ -1,26 +1,26 @@
-import { AbstractPhaseDTO } from '../../dto/phase/abstract-phase-dto';
+import {AbstractPhaseDTO} from '../../dto/phase/abstract-phase-dto';
 import {
     AbstractPhaseTypeEnum,
     AccessPhase,
+    AdaptiveTask,
     InfoPhase,
     Phase,
     QuestionnairePhase,
-    AdaptiveTask,
     TrainingPhase,
 } from '@crczp/training-model';
-import { TrainingPhaseMapper } from './training-phase-mapper';
-import { TrainingPhaseDTO } from '../../dto/phase/training-phase/training-phase-dto';
-import { InfoPhaseMapper } from './info-phase-mapper';
-import { InfoPhaseDTO } from '../../dto/phase/info-phase/info-phase-dto';
-import { QuestionnairePhaseMapper } from './questionnaire-phase-mapper';
-import { QuestionnairePhaseDTO } from '../../dto/phase/questionnaire-phase/questionnaire-phase-dto';
-import { BasicPhaseInfoDTO } from '../../dto/phase/basic-phase-info-dto';
-import { TrainingPhaseUpdateDTO } from '../../dto/phase/training-phase/training-phase-update-dto';
-import { InfoPhaseUpdateDTO } from '../../dto/phase/info-phase/info-phase-update-dto';
-import { QuestionnairePhaseUpdateDTO } from '../../dto/phase/questionnaire-phase/questionnaire-phase-update-dto';
-import { AccessPhaseUpdateDTO } from '../../dto/phase/access-phase/access-phase-update-dto';
-import { AccessPhaseMapper } from './access-phase-mapper';
-import { AccessPhaseDTO } from '../../dto/phase/access-phase/access-phase-dto';
+import {TrainingPhaseMapper} from './training-phase-mapper';
+import {TrainingPhaseDTO} from '../../dto/phase/training-phase/training-phase-dto';
+import {InfoPhaseMapper} from './info-phase-mapper';
+import {InfoPhaseDTO} from '../../dto/phase/info-phase/info-phase-dto';
+import {QuestionnairePhaseMapper} from './questionnaire-phase-mapper';
+import {QuestionnairePhaseDTO} from '../../dto/phase/questionnaire-phase/questionnaire-phase-dto';
+import {BasicPhaseInfoDTO} from '../../dto/phase/basic-phase-info-dto';
+import {TrainingPhaseUpdateDTO} from '../../dto/phase/training-phase/training-phase-update-dto';
+import {InfoPhaseUpdateDTO} from '../../dto/phase/info-phase/info-phase-update-dto';
+import {QuestionnairePhaseUpdateDTO} from '../../dto/phase/questionnaire-phase/questionnaire-phase-update-dto';
+import {AccessPhaseUpdateDTO} from '../../dto/phase/access-phase/access-phase-update-dto';
+import {AccessPhaseMapper} from './access-phase-mapper';
+import {AccessPhaseDTO} from '../../dto/phase/access-phase/access-phase-dto';
 
 /**
  * @dynamic

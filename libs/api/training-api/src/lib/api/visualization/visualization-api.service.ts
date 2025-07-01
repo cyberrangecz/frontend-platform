@@ -1,7 +1,7 @@
-import { SentinelFilter } from '@sentinel/common/filter';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
-import { Trainee, TrainingUser, VisualizationInfo } from '@crczp/training-model';
-import { Observable } from 'rxjs';
+import {SentinelFilter} from '@sentinel/common/filter';
+import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
+import {TrainingUser, VisualizationInfo} from '@crczp/training-model';
+import {Observable} from 'rxjs';
 
 /**
  * Service abstracting http communication with visualization related endpoints.
@@ -17,7 +17,7 @@ export abstract class VisualizationApi {
      * Sends http request to retrieve participants for training instance
      * @param trainingInstanceId id of a training instance associated with retrieved participants
      */
-    abstract getParticipants(trainingInstanceId: number): Observable<Trainee[]>;
+    abstract getParticipants(trainingInstanceId: number): Observable<TrainingUser[]>;
 
     /**
      * Sends http request to retrieve visualization info for training run

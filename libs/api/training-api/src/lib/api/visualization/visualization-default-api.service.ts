@@ -1,18 +1,18 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { SentinelParamsMerger } from '@sentinel/common';
-import { SentinelFilter } from '@sentinel/common/filter';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
-import { Trainee, TrainingUser, VisualizationInfo } from '@crczp/training-model';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { UserMapper } from '../../mappers/user/user-mapper';
-import { TrainingApiContext } from '../../other/training-api-context';
-import { UserRefDTO } from './../../dto/user/user-ref-dto';
-import { VisualizationInfoDTO } from './../../dto/visualization/visualization-info-dto';
-import { VisualizationInfoMapper } from './../../mappers/visualization/visualization-info-mapper';
-import { VisualizationApi } from './visualization-api.service';
-import { JavaPaginatedResource, PaginationMapper, ParamsBuilder } from '@crczp/api-common';
+import {HttpClient, HttpParams} from '@angular/common/http';
+import {Injectable} from '@angular/core';
+import {SentinelParamsMerger} from '@sentinel/common';
+import {SentinelFilter} from '@sentinel/common/filter';
+import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
+import {TrainingUser, VisualizationInfo} from '@crczp/training-model';
+import {Observable} from 'rxjs';
+import {map} from 'rxjs/operators';
+import {UserMapper} from '../../mappers/user/user-mapper';
+import {TrainingApiContext} from '../../other/training-api-context';
+import {UserRefDTO} from './../../dto/user/user-ref-dto';
+import {VisualizationInfoDTO} from './../../dto/visualization/visualization-info-dto';
+import {VisualizationInfoMapper} from './../../mappers/visualization/visualization-info-mapper';
+import {VisualizationApi} from './visualization-api.service';
+import {JavaPaginatedResource, PaginationMapper, ParamsBuilder} from '@crczp/api-common';
 
 @Injectable()
 export class VisualizationDefaultApi extends VisualizationApi {
@@ -46,7 +46,7 @@ export class VisualizationDefaultApi extends VisualizationApi {
      * Sends http request to retrieve participants for training instance
      * @param trainingInstanceId id of a training instance associated with retrieved participants
      */
-    getParticipants(trainingInstanceId: number): Observable<Trainee[]> {
+    getParticipants(trainingInstanceId: number): Observable<TrainingUser[]> {
         return this.http
             .get<
                 UserRefDTO[]
@@ -83,7 +83,7 @@ export class VisualizationDefaultApi extends VisualizationApi {
             ParamsBuilder.filterParams(filters),
             idsParam,
         ]);
-        return this.http.get<JavaPaginatedResource<UserRefDTO>>(`${this.visualizationsEndpointUri}/users`, { params }).pipe(
+        return this.http.get<JavaPaginatedResource<UserRefDTO>>(`${this.visualizationsEndpointUri}/users`, {params}).pipe(
             map((resp) => {
                 return new PaginatedResource<TrainingUser>(
                     UserMapper.fromDTOs(resp.content),

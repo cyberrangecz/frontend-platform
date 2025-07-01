@@ -1,12 +1,12 @@
-import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { CommandLineEntryDTO, ProgressVisualizationDataDTO } from './dtos';
-import { VisualizationApiConfig } from '../config/visualization-api-config';
-import { ProgressVisualizationDataMapper } from './mappers/progress-visualization-data-mapper';
-import { ProgressCommandLineMapper } from './mappers/progress-command-line-mapper';
-import { CommandLineEntry, ProgressVisualizationData } from '@crczp/visualization-model';
+import {HttpClient} from '@angular/common/http';
+import {Injectable} from '@angular/core';
+import {Observable} from 'rxjs';
+import {map} from 'rxjs/operators';
+import {CommandLineEntryDTO, ProgressVisualizationDataDTO} from './dtos';
+import {VisualizationApiConfig} from '../config/visualization-api-config';
+import {ProgressVisualizationDataMapper} from './mappers/progress-visualization-data-mapper';
+import {ProgressCommandLineMapper} from './mappers/progress-command-line-mapper';
+import {CommandLineEntry, ProgressVisualizationData} from '@crczp/visualization-model';
 
 /**
  * Default implementation of service abstracting http communication with visualization data endpoints.
@@ -34,7 +34,7 @@ export class ProgressVisualizationApi {
     /**
      * Sends http request to retrieve commandline data for training run
      */
-    getTrainingRunData(trainingInstanceId: number, trainingRunId: number): Observable<CommandLineEntry[]> {
+    getAdaptiveRunVisualization(trainingInstanceId: number, trainingRunId: number): Observable<CommandLineEntry[]> {
         return this.http
             .get<CommandLineEntryDTO[]>(
                 this.config.trainingBasePath +
