@@ -1,12 +1,12 @@
-import { AbstractPhaseTypeEnum, AdaptiveTask, TrainingPhase, TrainingUser } from '@crczp/training-model';
+import {AbstractPhaseTypeEnum, AdaptiveTask, TrainingPhase, TrainingUser} from '@crczp/training-model';
 import {
     AccessPhaseTask,
     AccessTransitionPhase,
+    AdaptiveRunVisualization,
     InfoPhaseTask,
     InfoTransitionPhase,
     QuestionnairePhaseTaskVisuazlization,
     QuestionnaireTransitionPhase,
-    AdaptiveRunVisualization,
     RunVisualizationPathNode,
     TransitionPhase
 } from '@crczp/visualization-model';
@@ -29,7 +29,7 @@ export class SimulatorMapper {
         const runData = new AdaptiveRunVisualization();
         runData.trainee = new TrainingUser();
         runData.trainee.id = 1;
-        runData.trainee.name = 'Trainee';
+        runData.trainee.name = 'TrainingUser';
         runData.trainingRunId = 1;
         runData.trainingRunPathNodes = [];
         return runData;

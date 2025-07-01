@@ -1,15 +1,14 @@
-import { Injectable } from '@angular/core';
-import { Observable, Subject } from 'rxjs';
-import { tap } from 'rxjs/operators';
-import { ProgressVisualizationApi } from '@crczp/visualization-api';
-import { CommandLineEntry, ProgressVisualizationData } from '@crczp/visualization-model';
+import {Injectable} from '@angular/core';
+import {Observable, Subject} from 'rxjs';
+import {tap} from 'rxjs/operators';
+import {ProgressVisualizationApi} from '@crczp/visualization-api';
+import {CommandLineEntry, ProgressVisualizationData} from '@crczp/visualization-model';
 
 @Injectable()
 export class ProgressVisualizationsDataService {
     private visualizationDataSubject$ = new Subject<ProgressVisualizationData>();
-    private commandLineDataSubject$ = new Subject<CommandLineEntry[]>();
-
     public visualizationData$ = this.visualizationDataSubject$.asObservable();
+    private commandLineDataSubject$ = new Subject<CommandLineEntry[]>();
     public commandLineData$ = this.commandLineDataSubject$.asObservable();
 
     constructor(private visualizationApi: ProgressVisualizationApi) {
@@ -29,7 +28,7 @@ export class ProgressVisualizationsDataService {
     }
 
     getCommandLineData(trainingInstanceId: number, trainingRunId: number): Observable<CommandLineEntry[]> {
-        return this.visualizationApi.getTrainingRunData(trainingInstanceId, trainingRunId).pipe(
+        return this.visualizationApi.getAdaptiveRunVisualization(trainingInstanceId, trainingRunId).pipe(
             tap(
                 (commandLineData) => {
                     this.commandLineDataSubject$.next(commandLineData);

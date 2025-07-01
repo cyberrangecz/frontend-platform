@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component, ElementRef, Input, OnChanges, SimpleChanges } from '@angular/core';
+import {ChangeDetectionStrategy, Component, ElementRef, Input, OnChanges, SimpleChanges} from '@angular/core';
 import * as d3 from 'd3';
-import { TransitionPhase } from '@crczp/visualization-model';
+import {TransitionPhase} from '@crczp/visualization-model';
 
 @Component({
     // eslint-disable-next-line @angular-eslint/component-selector
@@ -25,7 +25,7 @@ export class YAxisLeftComponent implements OnChanges {
     }
 
     private drawYAxis() {
-        const axisGenerator = d3.axisLeft(this.yScale).tickFormat((taskId) => `Task ${taskId + 1}`);
+        const axisGenerator = d3.axisLeft(this.yScale).tickFormat((taskId) => `AdaptiveRunVisualization ${taskId + 1}`);
         // add y axis
         this.g.attr('id', 'y-axis').attr('class', 'axis').call(axisGenerator);
     }

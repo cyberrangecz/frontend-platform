@@ -3,7 +3,6 @@ import { Link, Node } from '@crczp/topology-graph-model';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { BehaviorSubject, Observable, of, zip } from 'rxjs';
 import { map, switchMap, tap } from 'rxjs/operators';
-import { ConfigService } from './config.service';
 import { TopologyMapper } from './topology-mapper.service';
 import { TopologyDTO } from '../model/DTO/topology-dto.model';
 import { TopologyLoadingService } from './topology-loading.service';
@@ -17,6 +16,7 @@ import { HostDTO } from '../model/DTO/host-dto.model';
 import { ManDTO } from '../model/DTO/man-dto.model';
 import { ConsoleUrlMapper } from '../mappers/console-url-mapper';
 import { ConsoleUrl } from '../model/others/console-url';
+import { Settings } from '@crczp/common';
 
 /**
  * Service for getting JSON data about topology of network and parsing them to model suitable for visualization
@@ -38,20 +38,20 @@ export class TopologyApi {
         private topologySerializer: TopologyMapper,
         private loadingService: TopologyLoadingService,
         private errorService: TopologyErrorService,
-        private configService: ConfigService
+        private settings: Settings
     ) {}
 
     getTopologyBySandboxInstanceId(
         sandboxUuid: string
     ): Observable<{ nodes: Node[]; links: Link[] }> {
-        const url = `${this.configService.config.topologyRestUrl}sandboxes/${sandboxUuid}/topology`;
+        const url = `${this.settings.SANDBOX_BASE_PATH}sandboxes/${sandboxUuid}/topology`;
         return this.getTopology(url);
     }
 
     getTopologyBySandboxDefinitionId(
         sandboxDefinitionsId: number
     ): Observable<{ nodes: Node[]; links: Link[] }> {
-        const url = `${this.configService.config.topologyRestUrl}definitions/${sandboxDefinitionsId}/topology`;
+        const url = `${this.settings.SANDBOX_BASE_PATH}definitions/${sandboxDefinitionsId}/topology`;
         return this.getTopology(url);
     }
 
@@ -88,7 +88,7 @@ export class TopologyApi {
     getVMConsoleUrl(sandboxUuid: string, vmName: string): Observable<string> {
         return this.http
             .get<ConsoleDTO>(
-                `${this.configService.config.topologyRestUrl}sandboxes/${sandboxUuid}/vms/${vmName}/console`
+                `${this.settings.SANDBOX_BASE_PATH}sandboxes/${sandboxUuid}/vms/${vmName}/console`
             )
             .pipe(
                 map((resp) => resp.url),
@@ -111,7 +111,7 @@ export class TopologyApi {
     getVMConsolesUrl(sandboxUuid: string): Observable<ConsoleUrl[]> {
         return this.http
             .get(
-                `${this.configService.config.topologyRestUrl}sandboxes/${sandboxUuid}/consoles`
+                `${this.settings.SANDBOX_BASE_PATH}sandboxes/${sandboxUuid}/consoles`
             )
             .pipe(
                 map((resp) => ConsoleUrlMapper.fromJSON(resp)),
@@ -171,18 +171,43 @@ export class TopologyApi {
         );
     }
 
+    /**
+     * Sends http request to perform an action on a virtual machine
+     * @param sandboxUuid id of sandbox in which the vm exists
+     * @param vmName name of the vm on which to perform the action
+     * @param action action to be performed
+     */
+    performVMAction(
+        sandboxUuid: string,
+        vmName: string,
+        action: string
+    ): Observable<any> {
+        return this.http
+            .patch(
+                `${this.settings.SANDBOX_BASE_PATH}sandboxes/${sandboxUuid}/vms/${vmName}`,
+                {
+                    action: action,
+                }
+            )
+            .pipe(
+                tap({
+                    error: (err) => {
+                        const errorMessage = new TopologyError(
+                            err,
+                            'Performing VM action: ' + action
+                        );
+                        this.errorService.emitError(errorMessage);
+                    },
+                })
+            );
+    }
+
     private getGuacamoleToken() {
         const body = new URLSearchParams();
-        body.set(
-            'username',
-            this.configService.config.guacamoleConfig.username
-        );
-        body.set(
-            'password',
-            this.configService.config.guacamoleConfig.password
-        );
+        body.set('username', this.settings.GUACAMOLE_CONFIG.USERNAME);
+        body.set('password', this.settings.GUACAMOLE_CONFIG.PASSWORD);
         return this.http.post<GuacamoleTokenDTO>(
-            `${this.configService.config.guacamoleConfig.url}api/tokens`,
+            `${this.settings.SANDBOX_BASE_PATH}api/tokens`,
             body.toString(),
             {
                 headers: new HttpHeaders({
@@ -198,7 +223,7 @@ export class TopologyApi {
     ): Observable<HostDTO> {
         return this.http
             .get<HostDTO>(
-                `${this.configService.config.topologyRestUrl}sandboxes/${sandboxUuid}/vms/${vmName}`
+                `${this.settings.SANDBOX_BASE_PATH}sandboxes/${sandboxUuid}/vms/${vmName}`
             )
             .pipe(
                 tap({
@@ -216,7 +241,7 @@ export class TopologyApi {
     private getManIp(sandboxUuid: string): Observable<ManDTO> {
         return this.http
             .get<ManDTO>(
-                `${this.configService.config.topologyRestUrl}sandboxes/${sandboxUuid}/man-out-port-ip`
+                `${this.settings.SANDBOX_BASE_PATH}sandboxes/${sandboxUuid}/man-out-port-ip`
             )
             .pipe(
                 tap({
@@ -278,7 +303,7 @@ export class TopologyApi {
                 // eslint-disable-next-line max-len
                 return this.http
                     .post<GuacamoleIdentifierDTO>(
-                        `${this.configService.config.guacamoleConfig.url}api/session/ext/quickconnect/create`,
+                        `${this.settings.SANDBOX_BASE_PATH}api/session/ext/quickconnect/create`,
                         urlSearchParams.toString(),
                         {
                             headers: new HttpHeaders({
@@ -300,36 +325,5 @@ export class TopologyApi {
                 },
             })
         );
-    }
-
-    /**
-     * Sends http request to perform an action on a virtual machine
-     * @param sandboxUuid id of sandbox in which the vm exists
-     * @param vmName name of the vm on which to perform the action
-     * @param action action to be performed
-     */
-    performVMAction(
-        sandboxUuid: string,
-        vmName: string,
-        action: string
-    ): Observable<any> {
-        return this.http
-            .patch(
-                `${this.configService.config.topologyRestUrl}sandboxes/${sandboxUuid}/vms/${vmName}`,
-                {
-                    action: action,
-                }
-            )
-            .pipe(
-                tap({
-                    error: (err) => {
-                        const errorMessage = new TopologyError(
-                            err,
-                            'Performing VM action: ' + action
-                        );
-                        this.errorService.emitError(errorMessage);
-                    },
-                })
-            );
     }
 }

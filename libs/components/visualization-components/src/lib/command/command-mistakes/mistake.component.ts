@@ -1,19 +1,30 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { CommandMistakeService } from './command-mistake.service';
 import { map, take, tap } from 'rxjs/operators';
-import { SentinelTable, SentinelTableComponent, TableActionEvent } from '@sentinel/components/table';
+import {
+    SentinelTable,
+    SentinelTableComponent,
+    TableActionEvent,
+} from '@sentinel/components/table';
 import { BehaviorSubject, Observable } from 'rxjs';
 import {
     SentinelResourceSelectorComponent,
-    SentinelResourceSelectorMapping
+    SentinelResourceSelectorMapping,
 } from '@sentinel/components/resource-selector';
-import { AggregatedCommands, CommandResourceSelect, mistakeTypes } from '@crczp/visualization-model';
+import {
+    AggregatedCommands,
+    CommandResourceSelect,
+    mistakeTypes,
+} from '@crczp/visualization-model';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { AsyncPipe } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { CommandTable } from './command-table';
-import { CommandCorrectnessApi, VisualizationApiConfig } from '@crczp/visualization-api';
-import { provideComponentProperty } from '@crczp/components-common';
+import {
+    CommandCorrectnessApi,
+    VisualizationApiConfig,
+} from '@crczp/visualization-api';
+import { provideComponentProperty } from '@crczp/common';
 
 @Component({
     selector: 'crczp-mistake',
@@ -24,13 +35,17 @@ import { provideComponentProperty } from '@crczp/components-common';
         MatSlideToggleModule,
         SentinelTableComponent,
         AsyncPipe,
-        MatButtonModule
+        MatButtonModule,
     ],
     providers: [
-        provideComponentProperty(MistakeComponent, VisualizationApiConfig, 'apiConfig'),
+        provideComponentProperty(
+            MistakeComponent,
+            VisualizationApiConfig,
+            'apiConfig'
+        ),
         CommandCorrectnessApi,
-        CommandMistakeService
-    ]
+        CommandMistakeService,
+    ],
 })
 export class MistakeComponent implements OnInit {
     readonly INIT_SORT_NAME = 'lastEdited';
@@ -48,17 +63,18 @@ export class MistakeComponent implements OnInit {
     resourcesMapping: SentinelResourceSelectorMapping;
     mistakesResources: CommandResourceSelect[] = [];
     correct = false;
-    private selectedTrainingRunSubject$: BehaviorSubject<CommandResourceSelect[]> =
-        new BehaviorSubject([]);
+    private selectedTrainingRunSubject$: BehaviorSubject<
+        CommandResourceSelect[]
+    > = new BehaviorSubject([]);
     selectedTrainingRuns$: Observable<CommandResourceSelect[]> =
         this.selectedTrainingRunSubject$.asObservable();
-    private selectedMistakeTypesSubject$: BehaviorSubject<CommandResourceSelect[]> =
-        new BehaviorSubject([]);
+    private selectedMistakeTypesSubject$: BehaviorSubject<
+        CommandResourceSelect[]
+    > = new BehaviorSubject([]);
     selectedMistakeTypes$: Observable<CommandResourceSelect[]> =
         this.selectedMistakeTypesSubject$.asObservable();
 
-    constructor(private commandService: CommandMistakeService) {
-    }
+    constructor(private commandService: CommandMistakeService) {}
 
     ngOnInit(): void {
         this.selectedTrainingRuns$ = this.commandService.selectedTrainingRuns$;
@@ -146,7 +162,7 @@ export class MistakeComponent implements OnInit {
         this.resourcesMapping = {
             id: 'id',
             title: 'title',
-            subtitle: 'subtitle'
+            subtitle: 'subtitle',
         };
 
         if (!this.trainingRunId) {
@@ -158,7 +174,7 @@ export class MistakeComponent implements OnInit {
                             return {
                                 id: trainingRun.id,
                                 title: trainingRun.player.name,
-                                subtitle: `Training Run ID: ${trainingRun.id}`
+                                subtitle: `Training Run ID: ${trainingRun.id}`,
                             };
                         });
                     }),

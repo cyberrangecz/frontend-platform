@@ -9,11 +9,10 @@ import {
     OnInit,
     Output,
     SimpleChanges,
-    ViewChild
+    ViewChild,
 } from '@angular/core';
 import { Link, Node } from '@crczp/topology-graph-model';
 import { TopologyApi } from '../services/topology-api.service';
-import { ConfigService } from '../services/config.service';
 import { DraggedNodeService } from '../services/dragged-node.service';
 import { BehaviorSubject, EMPTY, Observable, takeWhile } from 'rxjs';
 import { SandboxService } from '../services/sandbox.service';
@@ -22,6 +21,7 @@ import { GraphEventService } from '../services/graph-event.service';
 import { catchError, map, take } from 'rxjs/operators';
 import { ResourcePollingService } from '../services/resource-polling.service';
 import { ConsoleUrl } from '../model/others/console-url';
+import { Settings } from '@crczp/common';
 
 /**
  * Main component of the graph-visual topology application.
@@ -34,23 +34,16 @@ import { ConsoleUrl } from '../model/others/console-url';
     selector: 'crczp-topology-graph',
     standalone: false,
     templateUrl: './topology-graph.component.html',
-    styleUrl: './topology-graph.component.css'
+    styleUrl: './topology-graph.component.css',
 })
 export class TopologyGraphComponent
-    implements OnInit, OnChanges, OnDestroy, AfterViewInit {
+    implements OnInit, OnChanges, OnDestroy, AfterViewInit
+{
     @Input() sandboxUuid: string;
     @Input() sandboxDefinitionId: number;
     @Output() topologyLoadEmitter: EventEmitter<boolean> = new EventEmitter();
 
     @ViewChild('topologyContent') topologyContent: ElementRef<HTMLDivElement>;
-
-    protected readonly Math = Math;
-
-    private pollingSubject$: BehaviorSubject<boolean> = new BehaviorSubject(
-        true
-    );
-    polling$: Observable<boolean> = this.pollingSubject$.asObservable();
-
     nodes: Node[];
     links: Link[];
     draggedNode: Node;
@@ -58,26 +51,27 @@ export class TopologyGraphComponent
     consoles$: Observable<ConsoleUrl[]>;
     isConsoleReady$: Observable<boolean>;
     dataLoaded: boolean;
-
     showLegendContainers = false;
     isError = false;
-
     zoom = 1;
-
+    protected readonly Math = Math;
+    private pollingSubject$: BehaviorSubject<boolean> = new BehaviorSubject(
+        true
+    );
+    polling$: Observable<boolean> = this.pollingSubject$.asObservable();
     private _nodeDraggedSubscription;
     private _nodeDragEndedSubscription;
 
     constructor(
-        private configService: ConfigService,
         private loadingService: TopologyLoadingService,
         private topologyLoaderService: TopologyApi,
         protected graphEventService: GraphEventService,
         private sandboxService: SandboxService,
         private topologyApiService: TopologyApi,
         private draggedNodeService: DraggedNodeService,
-        private resourcePollingService: ResourcePollingService
-    ) {
-    }
+        private resourcePollingService: ResourcePollingService,
+        private settings: Settings
+    ) {}
 
     /**
      * Loads first topology and decorators and subscribes for periodical refresh of decorators and decorator reload requests.
@@ -137,8 +131,8 @@ export class TopologyGraphComponent
         this.resourcePollingService
             .startPolling(
                 observable$,
-                this.configService.config.pollingPeriod,
-                this.configService.config.retryAttempts,
+                this.settings.POLLING_PERIOD_SHORT,
+                this.settings.RETRY_COUNT,
                 true
             )
             .pipe(
@@ -186,21 +180,6 @@ export class TopologyGraphComponent
         );
     }
 
-    private subscribeDragNodeEvents() {
-        this._nodeDraggedSubscription =
-            this.draggedNodeService.onNodeDragStarted.subscribe((node) => {
-                this.draggedNode = node;
-            });
-        this._nodeDragEndedSubscription =
-            this.draggedNodeService.onNodeDragEnded.subscribe((node) => {
-                this.draggedNode = null;
-            });
-    }
-
-    private subscribeLoading() {
-        this.isLoading$ = this.loadingService.isLoading$;
-    }
-
     isCloudSandboxInstance(): boolean {
         return this.sandboxUuid !== undefined && this.sandboxUuid !== null;
     }
@@ -223,5 +202,20 @@ export class TopologyGraphComponent
 
     getTopologyWidth(): number {
         return this.topologyContent.nativeElement.offsetWidth - 32;
+    }
+
+    private subscribeDragNodeEvents() {
+        this._nodeDraggedSubscription =
+            this.draggedNodeService.onNodeDragStarted.subscribe((node) => {
+                this.draggedNode = node;
+            });
+        this._nodeDragEndedSubscription =
+            this.draggedNodeService.onNodeDragEnded.subscribe((node) => {
+                this.draggedNode = null;
+            });
+    }
+
+    private subscribeLoading() {
+        this.isLoading$ = this.loadingService.isLoading$;
     }
 }

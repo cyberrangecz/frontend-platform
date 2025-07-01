@@ -1,4 +1,11 @@
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import {
+    Component,
+    EventEmitter,
+    Input,
+    OnChanges,
+    Output,
+    SimpleChanges,
+} from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
@@ -8,7 +15,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatInputModule } from '@angular/material/input';
-import { DateUtils } from '@crczp/components-common';
+import { DateUtils } from '@crczp/common';
 import { MatButtonModule } from '@angular/material/button';
 
 @Component({
@@ -25,8 +32,8 @@ import { MatButtonModule } from '@angular/material/button';
         MatExpansionModule,
         MatTooltipModule,
         MatInputModule,
-        MatButtonModule
-    ]
+        MatButtonModule,
+    ],
 })
 export class SettingsComponent implements OnChanges {
     @Input() maximumTime = 100;
@@ -39,7 +46,7 @@ export class SettingsComponent implements OnChanges {
         min: 0,
         max: 100,
         minRestriction: 0,
-        maxRestriction: 0
+        maxRestriction: 0,
     };
     public panelOpenState = false;
     public restrictToCustomTimelines = false;
@@ -69,7 +76,7 @@ export class SettingsComponent implements OnChanges {
         let value: number = event;
         const restriction: { type: string; value: number } = {
             type: type,
-            value: 0
+            value: 0,
         };
 
         if (typeof event == 'object') {
@@ -80,7 +87,9 @@ export class SettingsComponent implements OnChanges {
                 restriction.value = Number.parseInt(value.toFixed());
                 break;
             case 'max':
-                restriction.value = Number.parseInt((this.customRestrictedXScale.max - value).toFixed());
+                restriction.value = Number.parseInt(
+                    (this.customRestrictedXScale.max - value).toFixed()
+                );
                 break;
         }
         this.customRestrictedXScale[type + 'Restriction'] = restriction.value;

@@ -13,8 +13,8 @@ import { Clipboard } from '@angular/cdk/clipboard';
 import { HostNode, RouterNode } from '@crczp/topology-graph-model';
 import { take } from 'rxjs/operators';
 import { NodeActionEnum } from '../../model/enums/node-context-menu-items-enum';
-import { ConfigService } from '../../services/config.service';
 import { Dimensions } from '../../model/others/dimensions';
+import { Settings } from '@crczp/common';
 
 /**
  * Visual component for displaying context meu of node after right click
@@ -23,7 +23,7 @@ import { Dimensions } from '../../model/others/dimensions';
     selector: '[context]',
     templateUrl: './graph-node-context-menu.component.html',
     styleUrls: ['./graph-node-context-menu.component.css'],
-    standalone: false
+    standalone: false,
 })
 export class NodeContextMenuComponent implements OnInit, OnChanges {
     MENU_ROW_HEIGHT = 20;
@@ -40,14 +40,25 @@ export class NodeContextMenuComponent implements OnInit, OnChanges {
     isDisplayed = false;
     items;
     consoleButtonDisplayed = false;
-
+    protected readonly take = take;
     private menuLocation: { left: number; top: number } = { left: 0, top: 0 };
 
     constructor(
         private contextMenuService: ContextMenuService,
-        private configService: ConfigService,
+        private settings: Settings,
         private clipboard: Clipboard
     ) {}
+
+    /**
+     * Location parameters of mouse right click
+     * @returns {{left: number; top: number}} object describing click location
+     */
+    get location() {
+        return {
+            left: this.menuLocation.left,
+            top: this.menuLocation.top,
+        };
+    }
 
     ngOnInit() {
         this.contextMenuService.show.subscribe((e) =>
@@ -119,24 +130,13 @@ export class NodeContextMenuComponent implements OnInit, OnChanges {
                         [result.payload, 'c', 'quickconnect'].join('\0')
                     );
                     window.open(
-                        `${this.configService.config.guacamoleConfig.url}#/client/${clientIdentifier}`,
+                        `${this.settings.GUACAMOLE_CONFIG.GUACAMOLE_BASE_PATH}#/client/${clientIdentifier}`,
                         '_blank'
                     );
                 } else if (result.type === NodeActionEnum.OpenConsoleUrl) {
                     window.open(result.payload, '_blank');
                 }
             });
-    }
-
-    /**
-     * Location parameters of mouse right click
-     * @returns {{left: number; top: number}} object describing click location
-     */
-    get location() {
-        return {
-            left: this.menuLocation.left,
-            top: this.menuLocation.top,
-        };
     }
 
     /**
@@ -166,6 +166,4 @@ export class NodeContextMenuComponent implements OnInit, OnChanges {
             this.isDisplayed = false;
         }
     }
-
-    protected readonly take = take;
 }

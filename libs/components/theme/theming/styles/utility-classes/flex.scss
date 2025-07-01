@@ -16,6 +16,10 @@
     align-items: center;
 }
 
+.flex-nowrap {
+    flex-wrap: nowrap;
+}
+
 $justify-content: (
     fs: flex-start,
     fe: flex-end,

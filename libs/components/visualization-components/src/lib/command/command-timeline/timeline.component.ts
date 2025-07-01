@@ -4,7 +4,11 @@ import { TimelineCommandService } from './timeline-command.service';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { OffsetPaginationEvent } from '@sentinel/common/pagination';
-import { CommandApi, TimelineCommandApi, VisualizationApiConfig } from '@crczp/visualization-api';
+import {
+    CommandApi,
+    TimelineCommandApi,
+    VisualizationApiConfig,
+} from '@crczp/visualization-api';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -12,7 +16,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MglTimelineModule } from 'angular-mgl-timeline';
 import { DetectedForbiddenCommand, TrainingRun } from '@crczp/training-model';
 import { VisualizationCommand } from '@crczp/visualization-model';
-import { provideComponentProperty } from '@crczp/components-common';
+import { provideComponentProperty } from '@crczp/common';
 
 @Component({
     selector: 'crczp-timeline',
@@ -24,14 +28,18 @@ import { provideComponentProperty } from '@crczp/components-common';
         MatButtonModule,
         MatFormFieldModule,
         MatSelectModule,
-        MglTimelineModule
+        MglTimelineModule,
     ],
     providers: [
-        provideComponentProperty(TimelineComponent, VisualizationApiConfig, 'apiConfig'),
+        provideComponentProperty(
+            TimelineComponent,
+            VisualizationApiConfig,
+            'apiConfig'
+        ),
         CommandApi,
         TimelineCommandApi,
-        TimelineCommandService
-    ]
+        TimelineCommandService,
+    ],
 })
 export class TimelineComponent implements OnInit {
     readonly SIZE = 50;
@@ -48,24 +56,36 @@ export class TimelineComponent implements OnInit {
     trainingRuns$: Observable<TrainingRun[]>;
     forbiddenCommands$: Observable<DetectedForbiddenCommand[]>;
 
-    private selectedTrainingRunSubject$: BehaviorSubject<number> = new BehaviorSubject(null);
-    selectedTrainingRun$: Observable<number> = this.selectedTrainingRunSubject$.asObservable();
+    private selectedTrainingRunSubject$: BehaviorSubject<number> =
+        new BehaviorSubject(null);
+    selectedTrainingRun$: Observable<number> =
+        this.selectedTrainingRunSubject$.asObservable();
 
     constructor(
         private timelineCommandService: TimelineCommandService,
         public fb: UntypedFormBuilder
-    ) {
-    }
+    ) {}
 
     ngOnInit(): void {
-        const initialPagination = new OffsetPaginationEvent(0, Number.MAX_SAFE_INTEGER, '', 'asc');
+        const initialPagination = new OffsetPaginationEvent(
+            0,
+            Number.MAX_SAFE_INTEGER,
+            '',
+            'asc'
+        );
         this.commands$ = this.timelineCommandService.commands$;
         this.trainingRuns$ = this.timelineCommandService.trainingRuns$;
-        this.selectedTrainingRun$ = this.timelineCommandService.selectedTrainingRun$;
-        this.forbiddenCommands$ = this.timelineCommandService.forbiddenCommands$;
+        this.selectedTrainingRun$ =
+            this.timelineCommandService.selectedTrainingRun$;
+        this.forbiddenCommands$ =
+            this.timelineCommandService.forbiddenCommands$;
         if (this.trainingRunId) {
             this.timelineCommandService
-                .getCommandsByTrainingRun(this.trainingRunId, this.isStandalone, this.isAdaptive)
+                .getCommandsByTrainingRun(
+                    this.trainingRunId,
+                    this.isStandalone,
+                    this.isAdaptive
+                )
                 .pipe(take(1))
                 .subscribe();
         } else {
