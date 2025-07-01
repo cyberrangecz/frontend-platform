@@ -1,0 +1,64 @@
+<div class="container">
+    <div class="level-content {{isStepperDisplayed ?
+      'content-height-with-stepper' :
+      'content-height-without-stepper'}}">
+        @if (window.innerWidth > 1400) {
+            <crczp-split-container
+                class="split-container"
+                [leftPanelContent]="leftPanelContent"
+                [rightPanelContent]="rightPanelContent"
+                [leftPanelMinWidth]="'20%'"
+                [rightPanelMinWidth]="'20%'"
+                [defaultRatio]="0.6"
+                [dividerPositionSynchronizer]="dividerPositionSynchronizer"
+            />
+        } @else {
+            <ng-container [ngTemplateOutlet]="leftPanelContent"/>
+            <ng-container [ngTemplateOutlet]="rightPanelContent"/>
+        }
+    </div>
+    @if ((isLoading | async) === false) {
+        @if ((isCorrectAnswerSubmitted$ | async) || isBacktracked) {
+            <button
+                class="next-button"
+                mat-raised-button
+                (click)="next.emit()">
+                {{ isLast && !isBacktracked ? "Finish" : "Next" }}
+            </button>
+        } @else {
+            <crczp-floating-answer-form
+                (answerSubmit)="answerSubmitted.emit($event)"
+                [buttonLabel]="isLast ? 'Finish' : 'Submit'"
+            >
+                @if (hints) {
+                    <ng-container [ngTemplateOutlet]="hints"/>
+                }
+            </crczp-floating-answer-form>
+        }
+    }
+</div>
+
+<ng-template #leftPanelContent>
+    <div class="left-panel round-scrollbar">
+        <sentinel-markdown-view [markdown]="levelContent"/>
+        @if (displayedHintsContent$ | async) {
+            <sentinel-markdown-view [markdown]="displayedHintsContent$ | async"/>
+        }
+        @if (displayedSolutionContent$ | async) {
+            <h2><span class="solution-color"> Solution: </span></h2>
+            <sentinel-markdown-view [markdown]="displayedSolutionContent$ | async"/>
+        }
+    </div>
+</ng-template>
+
+<ng-template #rightPanelContent>
+    <div class="right-panel">
+        <crczp-topology-wrapper
+            (getAccessFile)="getAccessFile.emit($event)"
+            [loading]="isLoading"
+            [sandboxDefinitionId]="sandboxDefinitionId"
+            [sandboxInstanceId]="sandboxInstanceId"
+            class="topology-wrapper"
+        />
+    </div>
+</ng-template>

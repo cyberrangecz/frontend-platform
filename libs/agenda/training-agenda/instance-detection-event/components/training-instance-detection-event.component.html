@@ -1,0 +1,12 @@
+<div>
+    <sentinel-table
+        (rowAction)="onTableAction($event)"
+        (tableLoad)="onLoadEvent($event)"
+        [data]="detectionEvents$ | async"
+        [defaultSortDirection]="INIT_SORT_DIR"
+        [defaultSortName]="INIT_SORT_NAME"
+        [displayedActionsCount]="1"
+        [hasError]="hasError$ | async"
+        [isLoading]="isLoading$ | async"
+    />
+</div>

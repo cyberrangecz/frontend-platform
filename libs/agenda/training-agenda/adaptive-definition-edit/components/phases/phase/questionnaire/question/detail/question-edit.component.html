@@ -1,0 +1,49 @@
+<mat-card appearance="outlined">
+    <mat-card-header>
+        <mat-card-title>
+            <h3>Question {{ index + 1 }}:</h3>
+            <h3>
+                <sentinel-markdown-view [markdown]="question.text"/>
+            </h3>
+        </mat-card-title>
+        <span class="spacer"></span>
+        <div class="required">
+            <mat-checkbox (change)="questionChanged(question)"
+                          [(ngModel)]="question.answerRequired"
+                          [checked]="false"
+                          class="mat-typography">
+                Required
+            </mat-checkbox>
+        </div>
+    </mat-card-header>
+    <mat-card-content>
+        <ng-container *ngIf="question">
+            @switch (question.questionType) {
+                @case (questionTypes.MCQ) {
+                    <crczp-adaptive-multiple-choice-question-edit
+                        (questionChange)="questionChanged($event)"
+                        [questionnaireType]="questionnaireType"
+                        [question]="question"
+                        [required]="question.answerRequired">
+                    </crczp-adaptive-multiple-choice-question-edit>
+                }
+                @case (questionTypes.FFQ) {
+                    <crczp-adaptive-free-form-question-edit
+                        (questionChange)="questionChanged($event)"
+                        [questionnaireType]="questionnaireType"
+                        [question]="question"
+                        [required]="question.answerRequired">
+                    </crczp-adaptive-free-form-question-edit>
+                }
+                @case (questionTypes.RFQ) {
+                    <crczp-rating-form-question-edit
+                        (questionChange)="questionChanged($event)"
+                        [questionnaireType]="questionnaireType"
+                        [question]="question"
+                        [required]="question.answerRequired">
+                    </crczp-rating-form-question-edit>
+                }
+            }
+        </ng-container>
+    </mat-card-content>
+</mat-card>

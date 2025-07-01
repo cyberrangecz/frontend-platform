@@ -1,0 +1,251 @@
+<div class="content">
+    <form [formGroup]="trainingInstanceFormGroup.formGroup">
+        <!--TITLE field-->
+        <mat-form-field (keydown.enter)="$event.preventDefault()" appearance="outline">
+            <mat-label>Title</mat-label>
+            <input formControlName="title" matInput placeholder="Title" required/>
+            <button (click)="title.setValue('')" *ngIf="title.value" aria-label="Clear" mat-icon-button matSuffix>
+                <mat-icon>close</mat-icon>
+            </button>
+            <mat-error *ngIf="title.hasError('whitespace')">This field is required</mat-error>
+        </mat-form-field>
+
+        <div class="panel-wrapper">
+            <div class="half-panel">
+                <!-- START TIME field -->
+                <!--         TODO datepicker       <mat-form-field-->
+                <!--                    class="multi-line-hint"-->
+                <!--                    hintLabel="When trainees can access training runs - Defaults to current time"-->
+                <!--                    [owlDateTimeTrigger]="startTimePicker"-->
+                <!--                    appearance="outline"-->
+                <!--                >-->
+                <!--                    <mat-label>Start Time</mat-label>-->
+                <!--                    <div class="input-wrapper">-->
+                <!--                        <input-->
+                <!--                            matInput-->
+                <!--                            placeholder="Start Time"-->
+                <!--                            [min]="now"-->
+                <!--                            [max]="endTime.value"-->
+                <!--                            formControlName="startTime"-->
+                <!--                            [owlDateTime]="startTimePicker"-->
+                <!--                        />-->
+                <!--                        <owl-date-time #startTimePicker [startAt]="startTime.value"/>-->
+                <!--                    </div>-->
+                <!--                    <mat-error *ngIf="trainingInstanceFormGroup.formGroup.hasError('startTimeAfterEndTime')">-->
+                <!--                        Start time must be before end time-->
+                <!--                    </mat-error>-->
+                <!--                    <mat-error *ngIf="startTime.hasError('dateInPast')">Start time cannot be in the past</mat-error>-->
+                <!--                    <mat-error *ngIf="startTime.hasError('required')">This field is required</mat-error>-->
+                <!--                </mat-form-field>-->
+
+                <!--                &lt;!&ndash; END TIME field &ndash;&gt;-->
+                <!--                <mat-form-field-->
+                <!--                    class="multi-line-hint"-->
+                <!--                    hintLabel="Trainees cannot access training runs after end time-->
+                <!--          expires"-->
+                <!--                    [owlDateTimeTrigger]="endTimePicker"-->
+                <!--                    appearance="outline"-->
+                <!--                >-->
+                <!--                    <mat-label>End Time</mat-label>-->
+                <!--                    <div class="input-wrapper">-->
+                <!--                        <input-->
+                <!--                            matInput-->
+                <!--                            placeholder="End Time"-->
+                <!--                            required-->
+                <!--                            [min]="startTime.value"-->
+                <!--                            formControlName="endTime"-->
+                <!--                            [owlDateTime]="endTimePicker"-->
+                <!--                        />-->
+                <!--                        <owl-date-time #endTimePicker-->
+                <!--                                       [startAt]="endTime.value ? endTime.value : startTime.value"/>-->
+                <!--                    </div>-->
+                <!--                    <mat-error *ngIf="trainingInstanceFormGroup.formGroup.hasError('startTimeAfterEndTime')">-->
+                <!--                        Start time must be before end time-->
+                <!--                    </mat-error>-->
+                <!--                    <mat-error *ngIf="endTime.hasError('dateInPast')">End time cannot be in the past</mat-error>-->
+                <!--                    <mat-error *ngIf="endTime.hasError('required')">This field is required</mat-error>-->
+                <!--                </mat-form-field>-->
+                <div class="slide-toggle-container">
+                    <div class="slide-toggle-container slide-toggle-container--vertical">
+                        <mat-slide-toggle
+                            [matTooltip]="
+          showStepperBar
+            ? 'Show Stepper bar to allow trainees to see their progress through levels during training run.'
+            : 'Hide Stepper bar to disallow trainees to see their progress through levels during training run.'
+        "
+                            formControlName="showStepperBar"
+                            matTooltipPosition="after"
+                        >
+                            Show Stepper Bar
+                        </mat-slide-toggle>
+                        <mat-slide-toggle
+                            [checked]="showStepperBar && backwardMode"
+                            [matTooltip]="
+            backwardMode
+              ? 'Enable Backward Mode to allow trainees move to previous accessed levels during training run.'
+              : 'Disable Backward Mode to disallow trainees move to previous accessed levels during training run.'
+          "
+                            formControlName="backwardMode"
+                            matTooltipPosition="after"
+                        >
+                            Backward Mode
+                        </mat-slide-toggle>
+                    </div>
+                    @if (localEnvironmentAllowed) {
+                        <mat-slide-toggle
+                            [matTooltip]="
+                                (localEnvironment.valueChanges | async)
+                                ? 'Enable Local Environment to disable the pool selection.'
+                                : 'Disable Local Environment to enable the pool selection.'"
+                            formControlName="localEnvironment">
+                            Local Environment
+                        </mat-slide-toggle>
+                    }
+                </div>
+            </div>
+
+            <div class="half-panel">
+                <!-- ACCESS TOKEN filed -->
+                <mat-form-field
+                    (keydown.enter)="$event.preventDefault()"
+                    appearance="outline"
+                    class="multi-line-hint"
+                >
+                    <mat-label>Access Token Prefix</mat-label>
+                    <input formControlName="accessTokenPrefix" matInput placeholder="Access Token" required/>
+                    <button
+                        (click)="accessTokenPrefix.setValue('')"
+                        *ngIf="accessTokenPrefix.value"
+                        [disabled]="hasStarted"
+                        aria-label="Clear"
+                        mat-icon-button
+                        matSuffix
+                    >
+                        <mat-icon>close</mat-icon>
+                    </button>
+                    <mat-hint *ngIf="!editMode">Generated PIN code will be added to your token</mat-hint>
+                    <mat-hint *ngIf="editMode">Whenever you change the access token a new PIN will be generated
+                    </mat-hint>
+                    <mat-error *ngIf="accessTokenPrefix.hasError('whitespace')">This field is required</mat-error>
+                </mat-form-field>
+
+                <!-- TRAINING DEFINITION field-->
+                <sentinel-resource-selector
+                    #trainingDefinitionSelect
+                    (click)="trainingDefinition.markAsTouched(); revalidate();"
+                    (fetch)="onTrainingDefinitionFilter($event)"
+                    (singleSelectionChange)="trainingDefinition.setValue($event)"
+                    [appearance]="'outline'"
+                    [disabled]="editMode"
+                    [formGroupName]="'trainingDefinition'"
+                    [multiSelection]="false"
+                    [required]="true"
+                    [resources]="trainingDefinitions$ | async"
+                    [singleSelected]="getSelectedTrainingDefinition()"
+                    class="{{isTrainingDefinitionError() ?
+                      'resource-select--error' :
+                      trainingDefinition.value ? '' : 'training-definition-select--margin '}}"
+                    label="Training Definition"
+                    noResultsLabel="No Training Definitions"
+                    searchPlaceholder="Search Training Definitions">
+                    <ng-container [sentinelSelectorSelectedElement]="selectedTrainingDefinition"/>
+                    <ng-container [sentinelSelectorElement]="trainingDefinitionListElement"/>
+                </sentinel-resource-selector>
+                @if (isTrainingDefinitionError()) {
+                    <span class="resource-select__bottom_text resource-select__bottom_text--error">
+            This field is required
+          </span>
+                } @else if (trainingDefinition.value) {
+                    <a class="resource-select__bottom_text subtext-link"
+                       mat-button
+                       [routerLink]="getTrainingDefinitionUrl(trainingDefinition.value.id)"
+                    >
+                        View selected training definition
+                    </a>
+                }
+                <ng-template #selectedTrainingDefinition let-selectedResource>
+                    {{ selectedResource.title }}
+                </ng-template>
+
+                <ng-template #trainingDefinitionListElement let-resource>
+                    <mat-icon
+                        [matTooltip]="resource.state === 'Released' ? 'Released' : 'Unreleased'"
+                    >
+                        {{ resource.state === 'Released' ? 'lock' : 'lock_open' }}
+                    </mat-icon>
+                    {{ resource.title }}
+                </ng-template>
+
+                <!-- EDIT SANDBOX DEFINITIONS -->
+                @if (localEnvironment.value) {
+                    <sentinel-resource-selector
+                        #sandboxDefinitionSelect
+                        class="{{isSandboxDefinitionIdError() ? 'resource-select--error' : ''}}"
+                        [disabled]="editMode"
+                        [appearance]="'outline'"
+                        label="Sandbox Definition"
+                        searchPlaceholder="Search Sandbox Definitions"
+                        noResultsLabel="No Sandbox Definitions found"
+                        [multiSelection]="false"
+                        [required]="true"
+                        [resources]="sandboxDefinitions$ | async"
+                        [singleSelected]="getSelectedSandboxDefinition()"
+                        (fetch)="onSandboxDefinitionFilter($event)"
+                        (singleSelectionChange)="setSelectedSandboxDefinition($event)"
+                        (click)="sandboxDefinitionId.markAsTouched(); revalidate();"
+                        formGroupName="sandboxDefinitionId"
+                    >
+                        <ng-container [sentinelSelectorSelectedElement]="sandboxDefinitionTemplate"/>
+                        <ng-container [sentinelSelectorElement]="sandboxDefinitionTemplate"/>
+                    </sentinel-resource-selector>
+                } @else {
+                    <sentinel-resource-selector
+                        #poolSelect
+                        class="{{isPoolIdError() ? 'resource-select--error' : ''}}"
+                        [disabled]="editMode"
+                        [appearance]="'outline'"
+                        label="Pool"
+                        searchPlaceholder="Search Pools"
+                        noResultsLabel="No Pools found"
+                        [multiSelection]="false"
+                        [required]="true"
+                        [singleSelected]="getSelectedPool()"
+                        [resources]="pools$ | async"
+                        (fetch)="onPoolFilter($event)"
+                        (singleSelectionChange)="setSelectedPool($event)"
+                        (click)="poolId.markAsTouched(); revalidate();"
+                        formGroupName="poolId"
+                    >
+                        <ng-container [sentinelSelectorSelectedElement]="poolTemplate"/>
+                        <ng-container [sentinelSelectorElement]="poolTemplate"/>
+                    </sentinel-resource-selector>
+                }
+                @if (isSandboxDefinitionIdError() || isPoolIdError()) {
+                    <span class="resource-select__bottom_text resource-select__bottom_text--error">
+            This field is required
+          </span>
+                } @else if (!this.localEnvironment.value) {
+                    @if (poolId.value) {
+                        <a class="resource-select__bottom_text subtext-link"
+                           mat-button
+                           [routerLink]="getPoolUrl(poolId.value)"
+                        >
+                            View selected pool
+                        </a>
+                    } @else {
+                        <span class="resource-select__bottom_text">
+              Only unlocked pools are available
+            </span>
+                    }
+                }
+                <ng-template #sandboxDefinitionTemplate let-resource>
+                    {{ sandboxDefinitionToDisplayString(resource) }}
+                </ng-template>
+
+                <ng-template #poolTemplate let-resource>
+                    {{ poolToDisplayString(resource) }}
+                </ng-template>
+            </div>
+        </div>
+    </form>
+</div>

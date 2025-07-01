@@ -1,0 +1,39 @@
+<div class="mat-elevation-z4">
+    <nav [mat-stretch-tabs]="'always'" mat-tab-nav-bar>
+        <a
+            #scoreDevelopment="routerLinkActive"
+            [active]="scoreDevelopment.isActive"
+            [routerLink]="['score-development']"
+            mat-tab-link
+            routerLinkActive
+        >
+            <mat-icon class="tab-icon">score</mat-icon>
+            Score Development
+        </a>
+        <ng-container *ngIf="hasReferenceSolution$ | async">
+            <a
+                #commandAnalysis="routerLinkActive"
+                [active]="commandAnalysis.isActive"
+                [routerLink]="['command-analysis']"
+                mat-tab-link
+                routerLinkActive
+            >
+                <mat-icon class="tab-icon">keyboard</mat-icon>
+                Command Analysis
+            </a>
+            <a
+                #commandTimeline="routerLinkActive"
+                [active]="commandTimeline.isActive"
+                [routerLink]="['command-timeline']"
+                mat-tab-link
+                routerLinkActive
+            >
+                <mat-icon class="tab-icon">timeline</mat-icon>
+                Command Timeline
+            </a>
+        </ng-container>
+    </nav>
+    <div>
+        <router-outlet/>
+    </div>
+</div>
