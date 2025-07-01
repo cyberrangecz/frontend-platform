@@ -1,7 +1,3 @@
-/*
- * Public API Surface of entry point sandbox-agenda/resolvers
- */
-
 export * from './lib/sandbox-definition-breadcrumb-resolver.service';
 export * from './lib/sandbox-definition-resolver.service';
 export * from './lib/sandbox-instance-breadcrumb-resolver.service';

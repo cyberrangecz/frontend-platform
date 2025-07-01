@@ -1,17 +1,18 @@
-import { TestBed, waitForAsync } from '@angular/core/testing';
-import { RouterTestingModule } from '@angular/router/testing';
-import { asyncData } from '@sentinel/common/testing';
-import { throwError } from 'rxjs';
-import { SandboxErrorHandler, SandboxNavigator, SandboxNotificationService } from '@crczp/sandbox-agenda';
-import { SandboxDefinitionApi } from '@crczp/sandbox-api';
-import { SandboxDefinition } from '@crczp/sandbox-model';
-import { SandboxDefinitionEditConcreteService } from './sandbox-definition-edit-concrete.service';
+import {TestBed, waitForAsync} from '@angular/core/testing';
+import {RouterTestingModule} from '@angular/router/testing';
+import {asyncData} from '@sentinel/common/testing';
+import {throwError} from 'rxjs';
+import {SandboxErrorHandler, SandboxNavigator, SandboxNotificationService} from '@crczp/sandbox-agenda';
+import {SandboxDefinitionApi} from '@crczp/sandbox-api';
+import {SandboxDefinition} from '@crczp/sandbox-model';
+import {SandboxDefinitionEditConcreteService} from './sandbox-definition-edit-concrete.service';
 import {
     createDefinitionApiSpy,
     createErrorHandlerSpy,
     createNavigatorSpy,
     createNotificationSpy,
 } from '../../../internal/src/testing/testing-commons.spec';
+import {fail} from "node:assert";
 
 describe('SandboxDefinitionEditConcreteService', () => {
     let sandboxDefinitionApiSpy: jasmine.SpyObj<SandboxDefinitionApi>;
@@ -30,10 +31,10 @@ describe('SandboxDefinitionEditConcreteService', () => {
             imports: [RouterTestingModule],
             providers: [
                 SandboxDefinitionEditConcreteService,
-                { provide: SandboxDefinitionApi, useValue: sandboxDefinitionApiSpy },
-                { provide: SandboxNavigator, useValue: navigatorSpy },
-                { provide: SandboxNotificationService, useValue: notificationSpy },
-                { provide: SandboxErrorHandler, useValue: errorHandlerSpy },
+                {provide: SandboxDefinitionApi, useValue: sandboxDefinitionApiSpy},
+                {provide: SandboxNavigator, useValue: navigatorSpy},
+                {provide: SandboxNotificationService, useValue: notificationSpy},
+                {provide: SandboxErrorHandler, useValue: errorHandlerSpy},
             ],
         });
         service = TestBed.inject(SandboxDefinitionEditConcreteService);

@@ -1,7 +1,3 @@
-/*
- * Public API Surface of entry point sandbox-agenda/pool-detail
- */
-
 export * from './lib/components/pool-detail.component';
 export * from './lib/components/stage-overview/stage-overview.component';
 

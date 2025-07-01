@@ -1,21 +1,24 @@
-import {SandboxErrorHandler} from '@crczp/sandbox-agenda';
-import {VMImagesApi} from '@crczp/sandbox-api';
-import {tap} from 'rxjs/operators';
-import {Observable} from 'rxjs';
-import {inject, Injectable} from '@angular/core';
-import {VirtualImage} from '@crczp/sandbox-model';
-import {SentinelFilter} from '@sentinel/common/filter';
-import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
-import {VMImagesService} from './vm-images.service';
-import {DEFAULT_PAGE_SIZE_SETTING_TOKEN} from "@crczp/components-common";
+import { SandboxErrorHandler } from '@crczp/sandbox-agenda';
+import { VMImagesApi } from '@crczp/sandbox-api';
+import { tap } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { inject, Injectable } from '@angular/core';
+import { VirtualImage } from '@crczp/sandbox-model';
+import { SentinelFilter } from '@sentinel/common/filter';
+import {
+    OffsetPaginationEvent,
+    PaginatedResource,
+} from '@sentinel/common/pagination';
+import { VMImagesService } from './vm-images.service';
+import { Settings } from '@crczp/common';
 
 @Injectable()
 export class VMImagesConcreteService extends VMImagesService {
     constructor(
         private vmImagesApi: VMImagesApi,
-        private errorHandler: SandboxErrorHandler,
+        private errorHandler: SandboxErrorHandler
     ) {
-        super(inject(DEFAULT_PAGE_SIZE_SETTING_TOKEN));
+        super(inject(Settings.DEFAULT_PAGE_SIZE));
     }
 
     /**
@@ -32,22 +35,30 @@ export class VMImagesConcreteService extends VMImagesService {
         onlyCrczpImages?: boolean,
         onlyGuiAccess?: boolean,
         cached?: boolean,
-        filter?: string,
+        filter?: string
     ): Observable<PaginatedResource<VirtualImage>> {
         this.isLoadingSubject$.next(true);
         const filters = filter ? [new SentinelFilter('name', filter)] : [];
-        return this.vmImagesApi.getAvailableImages(pagination, onlyCrczpImages, onlyGuiAccess, cached, filters).pipe(
-            tap(
-                (resource) => {
-                    this.resourceSubject$.next(resource);
-                    this.isLoadingSubject$.next(false);
-                },
-                (err) => {
-                    this.errorHandler.emit(err, 'Fetching images');
-                    this.hasErrorSubject$.next(true);
-                    this.isLoadingSubject$.next(false);
-                },
-            ),
-        );
+        return this.vmImagesApi
+            .getAvailableImages(
+                pagination,
+                onlyCrczpImages,
+                onlyGuiAccess,
+                cached,
+                filters
+            )
+            .pipe(
+                tap(
+                    (resource) => {
+                        this.resourceSubject$.next(resource);
+                        this.isLoadingSubject$.next(false);
+                    },
+                    (err) => {
+                        this.errorHandler.emit(err, 'Fetching images');
+                        this.hasErrorSubject$.next(true);
+                        this.isLoadingSubject$.next(false);
+                    }
+                )
+            );
     }
 }

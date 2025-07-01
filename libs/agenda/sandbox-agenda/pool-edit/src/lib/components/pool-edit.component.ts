@@ -1,16 +1,16 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit } from '@angular/core';
-import {SentinelControlItem, SentinelControlsComponent} from '@sentinel/components/controls';
+import {ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit} from '@angular/core';
+import {SentinelControlItemSignal, SentinelControlsComponent} from '@sentinel/components/controls';
 import {async, BehaviorSubject, combineLatest, defer, Observable, switchMap, tap} from 'rxjs';
-import { map, take } from 'rxjs/operators';
-import { PoolEditService } from '../services/pool-edit.service';
-import { PoolFormGroup } from './pool-form-group';
+import {map, take} from 'rxjs/operators';
+import {PoolEditService} from '../services/pool-edit.service';
+import {PoolFormGroup} from './pool-form-group';
 import {AbstractControl, ReactiveFormsModule} from '@angular/forms';
-import { Pool, SandboxDefinition } from '@crczp/sandbox-model';
-import { ActivatedRoute } from '@angular/router';
-import { PoolChangedEvent } from '../model/pool-changed-event';
-import { SandboxDefinitionOverviewService } from '@crczp/sandbox-agenda/internal';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { OffsetPaginationEvent } from '@sentinel/common/pagination';
+import {Pool, SandboxDefinition} from '@crczp/sandbox-model';
+import {ActivatedRoute} from '@angular/router';
+import {PoolChangedEvent} from '../model/pool-changed-event';
+import {SandboxDefinitionOverviewService} from '@crczp/sandbox-agenda/internal';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import {OffsetPaginationEvent} from '@sentinel/common/pagination';
 import {PoolEditConcreteService} from "../services/pool-edit-concrete.service";
 import {MatCard, MatCardContent, MatCardHeader, MatCardTitle} from "@angular/material/card";
 import {MatDivider} from "@angular/material/divider";
@@ -61,7 +61,7 @@ export class PoolEditComponent implements OnInit {
     poolFormGroup: PoolFormGroup;
     editMode = false;
     canDeactivatePoolEdit = true;
-    controls: SentinelControlItem[];
+    controls: SentinelControlItemSignal[];
 
     destroyRef = inject(DestroyRef);
 
@@ -89,7 +89,7 @@ export class PoolEditComponent implements OnInit {
             )
             .subscribe(() => this.onChanged());
 
-       this.filteredSandboxDefinitions$ = combineLatest([
+        this.filteredSandboxDefinitions$ = combineLatest([
             this.sandboxDefinitionService.resource$,
             this.currentSandboxDefinitionFilter$,
         ]).pipe(
@@ -120,13 +120,13 @@ export class PoolEditComponent implements OnInit {
         return this.poolFormGroup.formGroup.get('comment');
     }
 
-    onControlsAction(control: SentinelControlItem): void {
+    onControlsAction(control: SentinelControlItemSignal): void {
         control.result$.pipe(take(1)).subscribe();
     }
 
     initControls(isEditMode: boolean): void {
         this.controls = [
-            new SentinelControlItem(
+            new SentinelControlItemSignal(
                 isEditMode ? 'save' : 'create',
                 isEditMode ? 'Save' : 'Create',
                 'primary',

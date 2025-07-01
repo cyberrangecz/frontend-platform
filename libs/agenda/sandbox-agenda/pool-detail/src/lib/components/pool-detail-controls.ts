@@ -1,12 +1,12 @@
 import {
-    SentinelControlItem,
+    SentinelControlItemSignal,
     SentinelControlMenuItem,
     SentinelExpandableControlItem,
 } from '@sentinel/components/controls';
-import { Pool } from '@crczp/sandbox-model';
-import { defer, of } from 'rxjs';
-import { AbstractSandbox } from '../model/abstract-sandbox';
-import { SandboxInstanceService } from '../services/state/sandbox-instance/sandbox-instance.service';
+import {Pool} from '@crczp/sandbox-model';
+import {defer, of} from 'rxjs';
+import {AbstractSandbox} from '../model/abstract-sandbox';
+import {SandboxInstanceService} from '../services/state/sandbox-instance/sandbox-instance.service';
 
 /**
  * @dynamic
@@ -23,9 +23,9 @@ export class PoolDetailControls {
         pool: Pool,
         sandboxes: AbstractSandbox[],
         sandboxInstanceService: SandboxInstanceService,
-    ): SentinelControlItem[] {
+    ): SentinelControlItemSignal[] {
         return [
-            new SentinelControlItem(
+            new SentinelControlItemSignal(
                 this.ALLOCATE_SOME_ACTION_ID,
                 'Allocate sandbox' + (pool.maxSize - sandboxes.length == 1 ? '' : 'es'),
                 'primary',

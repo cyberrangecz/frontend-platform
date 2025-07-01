@@ -1,11 +1,11 @@
-import { TestBed, waitForAsync } from '@angular/core/testing';
-import { RouterTestingModule } from '@angular/router/testing';
-import { MatDialog } from '@angular/material/dialog';
-import { asyncData } from '@sentinel/common/testing';
-import { SandboxErrorHandler, SandboxNavigator, SandboxNotificationService } from '@crczp/sandbox-agenda';
-import { PoolApi } from 'libs/api/sandbox-api/src';
-import { CreatedBy, Pool, SandboxDefinition } from 'libs/model/sandbox-model/src';
-import { PoolEditConcreteService } from './pool-edit-concrete.service';
+import {TestBed, waitForAsync} from '@angular/core/testing';
+import {RouterTestingModule} from '@angular/router/testing';
+import {MatDialog} from '@angular/material/dialog';
+import {asyncData} from '@sentinel/common/testing';
+import {SandboxErrorHandler, SandboxNavigator, SandboxNotificationService} from '@crczp/sandbox-agenda';
+import {PoolApi} from 'libs/api/sandbox-api/src';
+import {CreatedBy, Pool, SandboxDefinition} from 'libs/model/sandbox-model/src';
+import {PoolEditConcreteService} from './pool-edit-concrete.service';
 import {
     createErrorHandlerSpy,
     createMatDialogSpy,
@@ -13,6 +13,7 @@ import {
     createNotificationSpy,
     createPoolApiSpy,
 } from '../../../../internal/src/lib/testing/testing-commons.spec';
+import {fail} from "node:assert";
 
 describe('PoolEditConcreteService', () => {
     let dialogSpy: jasmine.SpyObj<MatDialog>;
@@ -33,11 +34,11 @@ describe('PoolEditConcreteService', () => {
             imports: [RouterTestingModule],
             providers: [
                 PoolEditConcreteService,
-                { provide: MatDialog, useValue: dialogSpy },
-                { provide: SandboxNavigator, useValue: navigatorSpy },
-                { provide: SandboxNotificationService, useValue: notificationSpy },
-                { provide: SandboxErrorHandler, useValue: errorHandlerSpy },
-                { provide: PoolApi, useValue: poolApiSpy },
+                {provide: MatDialog, useValue: dialogSpy},
+                {provide: SandboxNavigator, useValue: navigatorSpy},
+                {provide: SandboxNotificationService, useValue: notificationSpy},
+                {provide: SandboxErrorHandler, useValue: errorHandlerSpy},
+                {provide: PoolApi, useValue: poolApiSpy},
             ],
         });
         service = TestBed.inject(PoolEditConcreteService);

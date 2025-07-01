@@ -1,36 +1,63 @@
-import {AfterViewInit, ChangeDetectionStrategy, Component, DestroyRef, inject, Input, OnInit} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
-import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
-import {SentinelControlItem, SentinelControlItemSignal, SentinelControlsComponent} from '@sentinel/components/controls';
-import {Pool, RequestStageState, SandboxAllocationUnit} from '@crczp/sandbox-model';
-import {SentinelTableComponent, TableActionEvent, TableLoadEvent} from '@sentinel/components/table';
-import {async, Observable, Subscription} from 'rxjs';
-import {map, take} from 'rxjs/operators';
-import {POOL_DATA_ATTRIBUTE_NAME, SandboxNavigator} from '@crczp/sandbox-agenda';
-import {EditableCommentComponent, ResourcePollingService} from '@crczp/sandbox-agenda/internal';
-import {AllocationRequestsService} from '../services/state/request/allocation/requests/allocation-requests.service';
-import {CleanupRequestsService} from '../services/state/request/cleanup/cleanup-requests.service';
-import {SandboxInstanceService} from '../services/state/sandbox-instance/sandbox-instance.service';
-import {PoolDetailControls} from './pool-detail-controls';
 import {
-    AllocationRequestsConcreteService
-} from '../services/state/request/allocation/requests/allocation-requests-concrete.service';
-import {CleanupRequestsConcreteService} from '../services/state/request/cleanup/cleanup-requests-concrete.service';
-import {SandboxInstanceConcreteService} from '../services/state/sandbox-instance/sandbox-instance-concrete.service';
-import {PoolDetailTable} from '../model/pool-detail-table';
-import {AbstractSandbox} from '../model/abstract-sandbox';
-import {SelectedStage} from '../model/selected-stage';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+    AfterViewInit,
+    ChangeDetectionStrategy,
+    Component,
+    DestroyRef,
+    inject,
+    Input,
+    OnInit,
+} from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import {
+    OffsetPaginationEvent,
+    PaginatedResource,
+} from '@sentinel/common/pagination';
+import {
+    SentinelControlItemSignal,
+    SentinelControlItemSignal,
+    SentinelControlsComponent,
+} from '@sentinel/components/controls';
+import {
+    Pool,
+    RequestStageState,
+    SandboxAllocationUnit,
+} from '@crczp/sandbox-model';
+import {
+    SentinelTableComponent,
+    TableActionEvent,
+    TableLoadEvent,
+} from '@sentinel/components/table';
+import { async, Observable, Subscription } from 'rxjs';
+import { map, take } from 'rxjs/operators';
+import {
+    POOL_DATA_ATTRIBUTE_NAME,
+    SandboxNavigator,
+} from '@crczp/sandbox-agenda';
+import {
+    EditableCommentComponent,
+    ResourcePollingService,
+} from '@crczp/sandbox-agenda/internal';
+import { AllocationRequestsService } from '../services/state/request/allocation/requests/allocation-requests.service';
+import { CleanupRequestsService } from '../services/state/request/cleanup/cleanup-requests.service';
+import { SandboxInstanceService } from '../services/state/sandbox-instance/sandbox-instance.service';
+import { PoolDetailControls } from './pool-detail-controls';
+import { AllocationRequestsConcreteService } from '../services/state/request/allocation/requests/allocation-requests-concrete.service';
+import { CleanupRequestsConcreteService } from '../services/state/request/cleanup/cleanup-requests-concrete.service';
+import { SandboxInstanceConcreteService } from '../services/state/sandbox-instance/sandbox-instance-concrete.service';
+import { PoolDetailTable } from '../model/pool-detail-table';
+import { AbstractSandbox } from '../model/abstract-sandbox';
+import { SelectedStage } from '../model/selected-stage';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
     RequestBreadcrumbResolver,
     RequestResolver,
     SandboxInstanceBreadcrumbResolver,
-    SandboxInstanceResolver
-} from "@crczp/sandbox-agenda/resolvers";
-import {PaginationStorageService} from "@crczp/components-common";
-import {MatCard} from "@angular/material/card";
-import {StageOverviewComponent} from "./stage-overview/stage-overview.component";
-import {AsyncPipe} from "@angular/common";
+    SandboxInstanceResolver,
+} from '@crczp/sandbox-agenda/resolvers';
+import { PaginationStorageService } from '@crczp/common';
+import { MatCard } from '@angular/material/card';
+import { StageOverviewComponent } from './stage-overview/stage-overview.component';
+import { AsyncPipe } from '@angular/common';
 
 /**
  * Smart component of pool detail page
@@ -42,10 +69,22 @@ import {AsyncPipe} from "@angular/common";
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [
         ResourcePollingService,
-        {provide: AllocationRequestsService, useClass: AllocationRequestsConcreteService},
-        {provide: CleanupRequestsService, useClass: CleanupRequestsConcreteService},
-        {provide: SandboxInstanceService, useClass: SandboxInstanceConcreteService},
-        RequestResolver, RequestBreadcrumbResolver, SandboxInstanceResolver, SandboxInstanceBreadcrumbResolver
+        {
+            provide: AllocationRequestsService,
+            useClass: AllocationRequestsConcreteService,
+        },
+        {
+            provide: CleanupRequestsService,
+            useClass: CleanupRequestsConcreteService,
+        },
+        {
+            provide: SandboxInstanceService,
+            useClass: SandboxInstanceConcreteService,
+        },
+        RequestResolver,
+        RequestBreadcrumbResolver,
+        SandboxInstanceResolver,
+        SandboxInstanceBreadcrumbResolver,
     ],
     imports: [
         SentinelControlsComponent,
@@ -53,8 +92,8 @@ import {AsyncPipe} from "@angular/common";
         SentinelTableComponent,
         StageOverviewComponent,
         EditableCommentComponent,
-        AsyncPipe
-    ]
+        AsyncPipe,
+    ],
 })
 export class PoolDetailComponent implements OnInit, AfterViewInit {
     @Input() paginationId = 'crczp-pool-detail';
@@ -62,7 +101,7 @@ export class PoolDetailComponent implements OnInit, AfterViewInit {
     pool: Pool;
     instances$: Observable<PoolDetailTable>;
     instancesTableHasError$: Observable<boolean>;
-    controls: SentinelControlItem[];
+    controls: SentinelControlItemSignal[];
     commentTrim = 15;
     destroyRef = inject(DestroyRef);
     readonly DEFAULT_SORT_COLUMN = 'id';
@@ -74,9 +113,8 @@ export class PoolDetailComponent implements OnInit, AfterViewInit {
         private sandboxInstanceService: SandboxInstanceService,
         private paginationService: PaginationStorageService,
         private navigator: SandboxNavigator,
-        private activeRoute: ActivatedRoute,
-    ) {
-    }
+        private activeRoute: ActivatedRoute
+    ) {}
 
     ngOnInit(): void {
         this.initTables();
@@ -116,10 +154,17 @@ export class PoolDetailComponent implements OnInit, AfterViewInit {
 
     onStageAction(selectedStage: SelectedStage): void {
         if (selectedStage.state === RequestStageState.RETRY) {
-            this.sandboxInstanceService.retryAllocate(selectedStage.unitId).pipe(take(1)).subscribe();
+            this.sandboxInstanceService
+                .retryAllocate(selectedStage.unitId)
+                .pipe(take(1))
+                .subscribe();
         }
         this.sandboxInstanceService
-            .navigateToStage(this.pool.id, selectedStage.unitId, selectedStage.order)
+            .navigateToStage(
+                this.pool.id,
+                selectedStage.unitId,
+                selectedStage.order
+            )
             .pipe(take(1))
             .subscribe();
     }
@@ -137,29 +182,40 @@ export class PoolDetailComponent implements OnInit, AfterViewInit {
     updateInstanceComment(row: SandboxAllocationUnit, comment: string) {
         row.comment = comment;
         row.id = row['unitId'];
-        this.sandboxInstanceService.updateComment(row).pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
+        this.sandboxInstanceService
+            .updateComment(row)
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe();
     }
 
     private initTables() {
         const initialLoadEvent: TableLoadEvent = {
             pagination: new OffsetPaginationEvent(
                 0,
-                this.paginationService.loadPageSize())
+                this.paginationService.loadPageSize()
+            ),
         };
-        this.activeRoute.data.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((data) => {
-            this.pool = data[POOL_DATA_ATTRIBUTE_NAME];
-            this.onLoadEvent(initialLoadEvent);
-        });
+        this.activeRoute.data
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe((data) => {
+                this.pool = data[POOL_DATA_ATTRIBUTE_NAME];
+                this.onLoadEvent(initialLoadEvent);
+            });
 
         this.instances$ = this.sandboxInstanceService.allocationUnits$.pipe(
             map((resource) => {
-                const data = resource.elements.map((allocationUnit) => new AbstractSandbox(allocationUnit));
-                return new PoolDetailTable(
-                    new PaginatedResource<AbstractSandbox>(data, resource.pagination),
-                    this.sandboxInstanceService,
-                    this.navigator,
+                const data = resource.elements.map(
+                    (allocationUnit) => new AbstractSandbox(allocationUnit)
                 );
-            }),
+                return new PoolDetailTable(
+                    new PaginatedResource<AbstractSandbox>(
+                        data,
+                        resource.pagination
+                    ),
+                    this.sandboxInstanceService,
+                    this.navigator
+                );
+            })
         );
     }
 
@@ -168,11 +224,15 @@ export class PoolDetailComponent implements OnInit, AfterViewInit {
             map((resource) => {
                 this.controls = PoolDetailControls.create(
                     this.pool,
-                    resource.elements.map((allocationUnit) => new AbstractSandbox(allocationUnit)),
-                    this.sandboxInstanceService,
+                    resource.elements.map(
+                        (allocationUnit) => new AbstractSandbox(allocationUnit)
+                    ),
+                    this.sandboxInstanceService
                 );
-                return resource.elements.map((allocationUnit) => new AbstractSandbox(allocationUnit));
-            }),
+                return resource.elements.map(
+                    (allocationUnit) => new AbstractSandbox(allocationUnit)
+                );
+            })
         );
         sandboxes$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
     }

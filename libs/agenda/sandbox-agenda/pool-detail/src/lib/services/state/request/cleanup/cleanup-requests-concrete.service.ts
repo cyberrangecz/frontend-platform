@@ -1,19 +1,29 @@
-import {HttpErrorResponse} from '@angular/common/http';
-import {inject, Injectable} from '@angular/core';
-import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
-import {CleanupRequestsApi, PoolApi, SandboxAllocationUnitsApi} from '@crczp/sandbox-api';
-import {CleanupRequest, Request} from '@crczp/sandbox-model';
-import {EMPTY, Observable} from 'rxjs';
-import {switchMap, tap} from 'rxjs/operators';
-import {SandboxErrorHandler, SandboxNotificationService} from '@crczp/sandbox-agenda';
-import {RequestsService} from '../requests.service';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import {
+    OffsetPaginationEvent,
+    PaginatedResource,
+} from '@sentinel/common/pagination';
+import {
+    CleanupRequestsApi,
+    PoolApi,
+    SandboxAllocationUnitsApi,
+} from '@crczp/sandbox-api';
+import { CleanupRequest, Request } from '@crczp/sandbox-model';
+import { EMPTY, Observable } from 'rxjs';
+import { switchMap, tap } from 'rxjs/operators';
+import {
+    SandboxErrorHandler,
+    SandboxNotificationService,
+} from '@crczp/sandbox-agenda';
+import { RequestsService } from '../requests.service';
 import {
     SentinelConfirmationDialogComponent,
     SentinelConfirmationDialogConfig,
     SentinelDialogResultEnum,
 } from '@sentinel/components/dialogs';
-import {MatDialog} from '@angular/material/dialog';
-import {DEFAULT_PAGE_SIZE_SETTING_TOKEN, POLLING_PERIOD_SHORT_SETTING_TOKEN} from "@crczp/components-common";
+import { MatDialog } from '@angular/material/dialog';
+import { Settings } from '@crczp/common';
 
 /**
  * Basic implementation of a layer between a component and an API service.
@@ -21,7 +31,6 @@ import {DEFAULT_PAGE_SIZE_SETTING_TOKEN, POLLING_PERIOD_SHORT_SETTING_TOKEN} fro
  */
 @Injectable()
 export class CleanupRequestsConcreteService extends RequestsService {
-
     private lastPoolId: number;
 
     constructor(
@@ -31,8 +40,9 @@ export class CleanupRequestsConcreteService extends RequestsService {
         private dialog: MatDialog,
         private notificationService: SandboxNotificationService,
         private errorHandler: SandboxErrorHandler,
+        settings: Settings
     ) {
-        super(inject(DEFAULT_PAGE_SIZE_SETTING_TOKEN), inject(POLLING_PERIOD_SHORT_SETTING_TOKEN));
+        super(settings.DEFAULT_PAGE_SIZE, settings.POLLING_PERIOD_SHORT);
     }
 
     /**
@@ -40,21 +50,33 @@ export class CleanupRequestsConcreteService extends RequestsService {
      * @param poolId id of a pool associated with cleanup requests
      * @param pagination requested pagination
      */
-    getAll(poolId: number, pagination: OffsetPaginationEvent): Observable<PaginatedResource<Request>> {
+    getAll(
+        poolId: number,
+        pagination: OffsetPaginationEvent
+    ): Observable<PaginatedResource<Request>> {
         this.onManualResourceRefresh(pagination, poolId);
         return this.poolApi.getCleanupRequests(poolId, pagination).pipe(
             tap(
-                (paginatedRequests) => this.resourceSubject$.next(paginatedRequests),
-                (err) => this.onGetAllError(err),
-            ),
+                (paginatedRequests) =>
+                    this.resourceSubject$.next(paginatedRequests),
+                (err) => this.onGetAllError(err)
+            )
         );
     }
 
     cancel(request: CleanupRequest): Observable<any> {
-        return this.displayConfirmationDialog(request, 'Cancel', 'Cancel cleanup request', 'No', 'Yes').pipe(
+        return this.displayConfirmationDialog(
+            request,
+            'Cancel',
+            'Cancel cleanup request',
+            'No',
+            'Yes'
+        ).pipe(
             switchMap((result) =>
-                result === SentinelDialogResultEnum.CONFIRMED ? this.callApiToCancel(request) : EMPTY,
-            ),
+                result === SentinelDialogResultEnum.CONFIRMED
+                    ? this.callApiToCancel(request)
+                    : EMPTY
+            )
         );
     }
 
@@ -63,14 +85,25 @@ export class CleanupRequestsConcreteService extends RequestsService {
      * @param request a cleanup request to be deleted
      */
     delete(request: CleanupRequest): Observable<any> {
-        return this.displayConfirmationDialog(request, 'Delete', 'delete cleanup', 'Cancel', 'Delete').pipe(
+        return this.displayConfirmationDialog(
+            request,
+            'Delete',
+            'delete cleanup',
+            'Cancel',
+            'Delete'
+        ).pipe(
             switchMap((result) =>
-                result === SentinelDialogResultEnum.CONFIRMED ? this.callApiToDelete(request) : EMPTY,
-            ),
+                result === SentinelDialogResultEnum.CONFIRMED
+                    ? this.callApiToDelete(request)
+                    : EMPTY
+            )
         );
     }
 
-    protected onManualResourceRefresh(pagination: OffsetPaginationEvent, ...params: any[]): void {
+    protected onManualResourceRefresh(
+        pagination: OffsetPaginationEvent,
+        ...params: any[]
+    ): void {
         super.onManualResourceRefresh(pagination, ...params);
         this.lastPoolId = params[0];
     }
@@ -82,7 +115,7 @@ export class CleanupRequestsConcreteService extends RequestsService {
         this.hasErrorSubject$.next(false);
         return this.poolApi
             .getCleanupRequests(this.lastPoolId, this.lastPagination)
-            .pipe(tap({error: (err) => this.onGetAllError(err)}));
+            .pipe(tap({ error: (err) => this.onGetAllError(err) }));
     }
 
     private onGetAllError(err: HttpErrorResponse) {
@@ -95,36 +128,51 @@ export class CleanupRequestsConcreteService extends RequestsService {
         title: string,
         action: string,
         cancelLabel: string,
-        confirmLabel: string,
+        confirmLabel: string
     ): Observable<SentinelDialogResultEnum> {
-        const dialogRef = this.dialog.open(SentinelConfirmationDialogComponent, {
-            data: new SentinelConfirmationDialogConfig(
-                `${title} cleanup request`,
-                `Do you want to ${action.toLowerCase()} "${request.id}"?`,
-                cancelLabel,
-                confirmLabel,
-            ),
-        });
+        const dialogRef = this.dialog.open(
+            SentinelConfirmationDialogComponent,
+            {
+                data: new SentinelConfirmationDialogConfig(
+                    `${title} cleanup request`,
+                    `Do you want to ${action.toLowerCase()} "${request.id}"?`,
+                    cancelLabel,
+                    confirmLabel
+                ),
+            }
+        );
         return dialogRef.afterClosed();
     }
 
     private callApiToDelete(request: Request): Observable<any> {
         return this.sauApi.deleteCleanupRequest(request.allocationUnitId).pipe(
             tap(
-                () => this.notificationService.emit('success', `Delete cleanup request`),
-                (err) => this.errorHandler.emit(err, 'Deleting cleanup request'),
+                () =>
+                    this.notificationService.emit(
+                        'success',
+                        `Delete cleanup request`
+                    ),
+                (err) => this.errorHandler.emit(err, 'Deleting cleanup request')
             ),
-            switchMap(() => this.getAll(this.lastPoolId, this.lastPagination)),
+            switchMap(() => this.getAll(this.lastPoolId, this.lastPagination))
         );
     }
 
     private callApiToCancel(request: Request): Observable<any> {
         return this.cleanupRequestsApi.cancel(request.id).pipe(
             tap(
-                () => this.notificationService.emit('success', `Cleanup request ${request.id} cancelled`),
-                (err) => this.errorHandler.emit(err, 'Cancelling cleanup request ' + request.id),
+                () =>
+                    this.notificationService.emit(
+                        'success',
+                        `Cleanup request ${request.id} cancelled`
+                    ),
+                (err) =>
+                    this.errorHandler.emit(
+                        err,
+                        'Cancelling cleanup request ' + request.id
+                    )
             ),
-            switchMap(() => this.getAll(this.lastPoolId, this.lastPagination)),
+            switchMap(() => this.getAll(this.lastPoolId, this.lastPagination))
         );
     }
 }

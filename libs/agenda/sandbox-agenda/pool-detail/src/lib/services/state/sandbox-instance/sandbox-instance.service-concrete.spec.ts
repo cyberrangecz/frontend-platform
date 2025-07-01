@@ -1,13 +1,13 @@
-import { TestBed, waitForAsync } from '@angular/core/testing';
-import { RouterTestingModule } from '@angular/router/testing';
-import { MatDialog } from '@angular/material/dialog';
-import { asyncData } from '@sentinel/common/testing';
-import { OffsetPagination, OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
-import { throwError } from 'rxjs';
-import { skip } from 'rxjs/operators';
-import { SandboxErrorHandler, SandboxNavigator, SandboxNotificationService } from '@crczp/sandbox-agenda';
-import { PoolApi, SandboxAllocationUnitsApi, SandboxInstanceApi } from 'libs/api/sandbox-api/src';
-import { SandboxInstanceConcreteService } from './sandbox-instance-concrete.service';
+import {TestBed, waitForAsync} from '@angular/core/testing';
+import {RouterTestingModule} from '@angular/router/testing';
+import {MatDialog} from '@angular/material/dialog';
+import {asyncData} from '@sentinel/common/testing';
+import {OffsetPagination, OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
+import {throwError} from 'rxjs';
+import {skip} from 'rxjs/operators';
+import {SandboxErrorHandler, SandboxNavigator, SandboxNotificationService} from '@crczp/sandbox-agenda';
+import {PoolApi, SandboxAllocationUnitsApi, SandboxInstanceApi} from 'libs/api/sandbox-api/src';
+import {SandboxInstanceConcreteService} from './sandbox-instance-concrete.service';
 import {
     createContextSpy,
     createErrorHandlerSpy,
@@ -19,8 +19,9 @@ import {
     createSauApiSpy,
     createSiApiSpy,
 } from '../../../../../../internal/src/lib/testing/testing-commons.spec';
-import { SandboxAgendaContext } from '../../../../../../internal/src/lib/services/sandox-agenda-context.service';
-import { SandboxAllocationUnitsService } from '../sandbox-allocation-unit/sandbox-allocation-units.service';
+import {SandboxAgendaContext} from '../../../../../../internal/src/lib/services/sandox-agenda-context.service';
+import {SandboxAllocationUnitsService} from '../sandbox-allocation-unit/sandbox-allocation-units.service';
+import {fail} from "node:assert";
 
 describe('SandboxInstanceConcreteService', () => {
     let sandboxInstanceApiSpy: jasmine.SpyObj<SandboxInstanceApi>;
@@ -49,15 +50,15 @@ describe('SandboxInstanceConcreteService', () => {
             imports: [RouterTestingModule],
             providers: [
                 SandboxInstanceConcreteService,
-                { provide: SandboxInstanceApi, useValue: sandboxInstanceApiSpy },
-                { provide: SandboxAllocationUnitsService, useValue: sandboxAllocationUnitsServiceSpy },
-                { provide: PoolApi, useValue: poolApiSpy },
-                { provide: SandboxAllocationUnitsApi, useValue: sauApiSpy },
-                { provide: MatDialog, useValue: dialogSpy },
-                { provide: SandboxNavigator, useValue: navigatorSpy },
-                { provide: SandboxAgendaContext, useValue: contextSpy },
-                { provide: SandboxNotificationService, useValue: notificationSpy },
-                { provide: SandboxErrorHandler, useValue: errorHandlerSpy },
+                {provide: SandboxInstanceApi, useValue: sandboxInstanceApiSpy},
+                {provide: SandboxAllocationUnitsService, useValue: sandboxAllocationUnitsServiceSpy},
+                {provide: PoolApi, useValue: poolApiSpy},
+                {provide: SandboxAllocationUnitsApi, useValue: sauApiSpy},
+                {provide: MatDialog, useValue: dialogSpy},
+                {provide: SandboxNavigator, useValue: navigatorSpy},
+                {provide: SandboxAgendaContext, useValue: contextSpy},
+                {provide: SandboxNotificationService, useValue: notificationSpy},
+                {provide: SandboxErrorHandler, useValue: errorHandlerSpy},
             ],
         });
         service = TestBed.inject(SandboxInstanceConcreteService);

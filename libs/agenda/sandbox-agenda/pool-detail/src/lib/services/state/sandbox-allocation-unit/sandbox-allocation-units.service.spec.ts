@@ -1,6 +1,6 @@
-import { TestBed } from '@angular/core/testing';
-import { SandboxErrorHandler, SandboxNotificationService } from '@crczp/sandbox-agenda';
-import { AllocationRequestsApi, PoolApi, SandboxAllocationUnitsApi } from 'libs/api/sandbox-api/src';
+import {TestBed} from '@angular/core/testing';
+import {SandboxErrorHandler, SandboxNotificationService} from '@crczp/sandbox-agenda';
+import {AllocationRequestsApi, PoolApi, SandboxAllocationUnitsApi} from 'libs/api/sandbox-api/src';
 import {
     createAllocationRequestApiSpy,
     createContextSpy,
@@ -12,14 +12,15 @@ import {
     createResourcePollingServiceSpy,
     createSauApiSpy,
 } from '../../../../../../internal/src/lib/testing/testing-commons.spec';
-import { MatDialog } from '@angular/material/dialog';
-import { asyncData } from '@sentinel/common/testing';
-import { OffsetPagination, PaginatedResource } from '@sentinel/common/pagination';
-import { skip, take } from 'rxjs/operators';
-import { SandboxAllocationUnitsConcreteService } from './sandbox-allocation-units-concrete.service';
-import { SandboxAgendaContext } from '../../../../../../internal/src/lib/services/sandox-agenda-context.service';
-import { EMPTY, throwError } from 'rxjs';
-import { ResourcePollingService } from '../../../../../../internal/src/lib/services/resource-polling.service';
+import {MatDialog} from '@angular/material/dialog';
+import {asyncData} from '@sentinel/common/testing';
+import {OffsetPagination, PaginatedResource} from '@sentinel/common/pagination';
+import {skip, take} from 'rxjs/operators';
+import {SandboxAllocationUnitsConcreteService} from './sandbox-allocation-units-concrete.service';
+import {SandboxAgendaContext} from '../../../../../../internal/src/lib/services/sandox-agenda-context.service';
+import {EMPTY, throwError} from 'rxjs';
+import {ResourcePollingService} from '../../../../../../internal/src/lib/services/resource-polling.service';
+import {fail} from "node:assert";
 
 describe('SandboxAllocationUnitsService', () => {
     let errorHandlerSpy: jasmine.SpyObj<SandboxErrorHandler>;
@@ -45,14 +46,14 @@ describe('SandboxAllocationUnitsService', () => {
         TestBed.configureTestingModule({
             providers: [
                 SandboxAllocationUnitsConcreteService,
-                { provide: AllocationRequestsApi, useValue: allocationRequestsApiSpy },
-                { provide: ResourcePollingService, useValue: resourcePollingServiceSpy },
-                { provide: PoolApi, useValue: poolApiSpy },
-                { provide: MatDialog, useValue: dialogSpy },
-                { provide: SandboxAllocationUnitsApi, useValue: sauApiSpy },
-                { provide: SandboxAgendaContext, useValue: contextSpy },
-                { provide: SandboxNotificationService, useValue: notificationSpy },
-                { provide: SandboxErrorHandler, useValue: errorHandlerSpy },
+                {provide: AllocationRequestsApi, useValue: allocationRequestsApiSpy},
+                {provide: ResourcePollingService, useValue: resourcePollingServiceSpy},
+                {provide: PoolApi, useValue: poolApiSpy},
+                {provide: MatDialog, useValue: dialogSpy},
+                {provide: SandboxAllocationUnitsApi, useValue: sauApiSpy},
+                {provide: SandboxAgendaContext, useValue: contextSpy},
+                {provide: SandboxNotificationService, useValue: notificationSpy},
+                {provide: SandboxErrorHandler, useValue: errorHandlerSpy},
             ],
         });
         service = TestBed.inject(SandboxAllocationUnitsConcreteService);
@@ -97,8 +98,8 @@ describe('SandboxAllocationUnitsService', () => {
 
     it('should call error handler on err from polling service', (done) => {
         const pagination = createPagination();
-        poolApiSpy.getPoolsSandboxAllocationUnits.and.returnValue(throwError({ status: 404 }));
-        resourcePollingServiceSpy.startPolling.and.returnValues(throwError({ status: 404 }));
+        poolApiSpy.getPoolsSandboxAllocationUnits.and.returnValue(throwError({status: 404}));
+        resourcePollingServiceSpy.startPolling.and.returnValues(throwError({status: 404}));
 
         service
             .getAll(0, pagination)
@@ -114,7 +115,7 @@ describe('SandboxAllocationUnitsService', () => {
 
     it('should not call error handler on first error occurrence', (done) => {
         const pagination = createPagination();
-        poolApiSpy.getPoolsSandboxAllocationUnits.and.returnValue(throwError({ status: 404 }));
+        poolApiSpy.getPoolsSandboxAllocationUnits.and.returnValue(throwError({status: 404}));
         resourcePollingServiceSpy.startPolling.and.returnValues(asyncData(EMPTY));
 
         service

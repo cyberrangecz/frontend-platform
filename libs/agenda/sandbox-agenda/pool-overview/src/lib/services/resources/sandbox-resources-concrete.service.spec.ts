@@ -1,12 +1,16 @@
-import { TestBed, waitForAsync } from '@angular/core/testing';
-import { asyncData } from '@sentinel/common/testing';
-import { take } from 'rxjs/operators';
-import { throwError } from 'rxjs';
-import { SandboxErrorHandler } from '@crczp/sandbox-agenda';
-import { ResourcesApi } from '@crczp/sandbox-api';
-import { Resources } from '@crczp/sandbox-model';
-import { SandboxResourcesConcreteService } from './sandbox-resources-concrete.service';
-import { createErrorHandlerSpy, createResourcesApiSpy } from '../../../../../../internal/src/lib/testing/testing-commons.spec';
+import {TestBed, waitForAsync} from '@angular/core/testing';
+import {asyncData} from '@sentinel/common/testing';
+import {take} from 'rxjs/operators';
+import {throwError} from 'rxjs';
+import {SandboxErrorHandler} from '@crczp/sandbox-agenda';
+import {ResourcesApi} from '@crczp/sandbox-api';
+import {Resources} from '@crczp/sandbox-model';
+import {SandboxResourcesConcreteService} from './sandbox-resources-concrete.service';
+import {
+    createErrorHandlerSpy,
+    createResourcesApiSpy
+} from '../../../../../../internal/src/lib/testing/testing-commons.spec';
+import {fail} from "node:assert";
 
 describe('SandboxResourcesConcreteService', () => {
     let errorHandlerSpy: jasmine.SpyObj<SandboxErrorHandler>;
@@ -20,8 +24,8 @@ describe('SandboxResourcesConcreteService', () => {
         TestBed.configureTestingModule({
             providers: [
                 SandboxResourcesConcreteService,
-                { provide: SandboxErrorHandler, useValue: errorHandlerSpy },
-                { provide: ResourcesApi, useValue: resourcesApiSpy },
+                {provide: SandboxErrorHandler, useValue: errorHandlerSpy},
+                {provide: ResourcesApi, useValue: resourcesApiSpy},
             ],
         });
         service = TestBed.inject(SandboxResourcesConcreteService);

@@ -1,5 +1,9 @@
 import {ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit} from '@angular/core';
-import {SentinelControlItem, SentinelControlItemSignal, SentinelControlsComponent} from '@sentinel/components/controls';
+import {
+    SentinelControlItemSignal,
+    SentinelControlItemSignal,
+    SentinelControlsComponent
+} from '@sentinel/components/controls';
 import {defer} from 'rxjs';
 import {SandboxDefinitionEditService} from '../services/sandbox-definition-edit.service';
 import {SandboxDefinitionFormGroup} from './sandbox-definition-edit-form-group';
@@ -41,7 +45,7 @@ import {NgIf} from "@angular/common";
 })
 export class SandboxDefinitionEditComponent implements OnInit {
     sandboxDefinitionFormGroup: SandboxDefinitionFormGroup;
-    controls: SentinelControlItem[];
+    controls: SentinelControlItemSignal[];
     destroyRef = inject(DestroyRef);
 
     constructor(private sandboxDefinitionService: SandboxDefinitionEditService) {
@@ -75,7 +79,7 @@ export class SandboxDefinitionEditComponent implements OnInit {
 
     private initControls() {
         this.controls = [
-            new SentinelControlItem(
+            new SentinelControlItemSignal(
                 'create',
                 'Create',
                 'primary',
