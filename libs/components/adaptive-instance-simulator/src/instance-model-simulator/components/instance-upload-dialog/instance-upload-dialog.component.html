@@ -1,0 +1,67 @@
+<h1 class="mat-h1 title" mat-dialog-title>Upload Training Instance Data</h1>
+<div class="content" mat-dialog-content>
+    <!-- UPLOAD PROGRESS -->
+    <mat-progress-bar
+        *ngIf="uploadInProgress$ | async"
+        color="accent"
+        mode="indeterminate">
+    </mat-progress-bar>
+    <!-- FILE DROP ZONE -->
+    <div
+        *ngIf="(uploadInProgress$ | async) === false"
+        [(file)]="selectedFile"
+        [fileDropDisabled]="false"
+        class="drop"
+        ngfDrop>
+        <!-- SELECTED FILE -->
+        <div class="file">
+            <div>
+                <p>
+                    <br *ngIf="!selectedFile"/>
+                    {{ selectedFile ? (selectedFile.name) : " " }}
+                </p>
+            </div>
+            <span
+                *ngIf="selectedFile && (uploadInProgress$ | async) === false"
+                class="spacer"></span>
+
+            <!-- CLEAR FILES BUTTON -->
+            <button
+                (click)="clearFile()"
+                *ngIf="selectedFile && (uploadInProgress$ | async) === false"
+                class="clear-button"
+                color="warn"
+                mat-icon-button
+                matTooltip="Remove selected file">
+                <mat-icon>delete</mat-icon>
+            </button>
+        </div>
+        <div class="drag-text">Drag files here or</div>
+        <!-- FILE PICKER -->
+        <div class="choose-button">
+            <span class="spacer"></span>
+            <!--   TODO file upload         <button-->
+            <!--                [(file)]="selectedFile"-->
+            <!--                [disabled]="uploadInProgress$ | async"-->
+            <!--                [selectable]="(uploadInProgress$ | async) === false"-->
+            <!--                color="accent"-->
+            <!--                mat-button-->
+            <!--                ngf>-->
+            <!--                Choose File-->
+            <!--            </button>-->
+        </div>
+    </div>
+</div>
+
+<!-- DIALOG ACTIONS -->
+<div class="actions" mat-dialog-actions>
+    <button (click)="cancel()" class="action-buttons" color="warn" mat-button>Cancel</button>
+    <button (click)="upload()"
+            [disabled]="!selectedFile || (uploadInProgress$ | async)"
+            class="action-buttons"
+            color="primary"
+            mat-button
+    >
+        Upload
+    </button>
+</div>

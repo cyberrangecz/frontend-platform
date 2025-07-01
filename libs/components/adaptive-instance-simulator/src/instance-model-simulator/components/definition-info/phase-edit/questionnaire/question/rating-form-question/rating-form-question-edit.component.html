@@ -1,0 +1,37 @@
+<div>
+    <div class="question-container">
+        <!-- TITLE field-->
+        <div class='question-text'>
+            <sentinel-markdown-editor
+                [content]="question.text"
+                [sentinel-markdown-file-upload]="false"
+            />
+        </div>
+    </div>
+    <h2>Rating Levels:</h2>
+    <div class="rating-form-choices">
+        <div *ngFor="let choice of question.choices; index as i;" class="rating-level">
+            <mat-checkbox *ngIf="questionnaireType === questionnaireTypes.Adaptive"
+                          [checked]="choice.correct"
+                          [disabled]="true"
+                          class="option-checkbox"
+                          matTooltip="Correct"/>
+            <mat-form-field appearance="outline" class="rating-level-node">
+                <mat-label>Level {{ i + 1 }}</mat-label>
+                <input [disabled]="true" [value]="choice.text" matInput placeholder="Level Text"/>
+            </mat-form-field>
+        </div>
+    </div>
+</div>
+<div class="rating-level-field">
+    <div class="question-fields">
+        <mat-form-field appearance="outline">
+            <mat-label>Rating Level</mat-label>
+            <mat-select [(ngModel)]="selectedRatingLevel" [disabled]="true">
+                <mat-option *ngFor="let number of ratingLevelOptions" [disabled]="true" [value]="number">
+                    {{ number }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+</div>

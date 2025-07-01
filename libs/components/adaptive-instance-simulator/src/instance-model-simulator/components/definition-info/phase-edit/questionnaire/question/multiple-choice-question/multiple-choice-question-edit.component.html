@@ -1,0 +1,26 @@
+<div>
+    <div class="question-container">
+        <!-- TITLE field-->
+        <div class='question-text'>
+            <sentinel-markdown-editor
+                [content]="question.text"
+                [sentinel-markdown-file-upload]="false"
+            />
+        </div>
+    </div>
+    <h2>Options:</h2>
+    <div>
+        <div *ngFor="let choice of question.choices; index as i">
+            <!-- CHOICES field -->
+            <mat-checkbox *ngIf="questionnaireType === questionnaireTypes.Adaptive"
+                          [checked]="choice.correct"
+                          [disabled]="true"
+                          class="option-checkbox"
+                          matTooltip="Correct"/>
+            <mat-form-field appearance="outline">
+                <mat-label>Option {{ i + 1 }}</mat-label>
+                <input [disabled]="true" [value]="choice.text" matInput placeholder="Option Text"/>
+            </mat-form-field>
+        </div>
+    </div>
+</div>
