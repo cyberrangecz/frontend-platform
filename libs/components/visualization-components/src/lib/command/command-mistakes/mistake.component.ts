@@ -1,30 +1,19 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { CommandMistakeService } from './command-mistake.service';
-import { map, take, tap } from 'rxjs/operators';
-import {
-    SentinelTable,
-    SentinelTableComponent,
-    TableActionEvent,
-} from '@sentinel/components/table';
-import { BehaviorSubject, Observable } from 'rxjs';
+import {Component, Input, OnInit} from '@angular/core';
+import {CommandMistakeService} from './command-mistake.service';
+import {map, take, tap} from 'rxjs/operators';
+import {SentinelTable, SentinelTableComponent, TableActionEvent,} from '@sentinel/components/table';
+import {BehaviorSubject, Observable} from 'rxjs';
 import {
     SentinelResourceSelectorComponent,
     SentinelResourceSelectorMapping,
 } from '@sentinel/components/resource-selector';
-import {
-    AggregatedCommands,
-    CommandResourceSelect,
-    mistakeTypes,
-} from '@crczp/visualization-model';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { AsyncPipe } from '@angular/common';
-import { MatButtonModule } from '@angular/material/button';
-import { CommandTable } from './command-table';
-import {
-    CommandCorrectnessApi,
-    VisualizationApiConfig,
-} from '@crczp/visualization-api';
-import { provideComponentProperty } from '@crczp/common';
+import {AggregatedCommands, CommandResourceSelect, mistakeTypes,} from '@crczp/visualization-model';
+import {MatSlideToggleModule} from '@angular/material/slide-toggle';
+import {AsyncPipe} from '@angular/common';
+import {MatButtonModule} from '@angular/material/button';
+import {CommandTable} from './command-table';
+import {CommandCorrectnessApi, VisualizationApiConfig,} from '@crczp/visualization-api';
+import {provideComponentProperty} from '@crczp/common';
 
 @Component({
     selector: 'crczp-mistake',

@@ -1,7 +1,7 @@
-import { PaginatedResource } from '@sentinel/common/pagination';
-import { UserRole } from '@crczp/user-and-group-model';
-import { Column, ExpandableSentinelTable, Row, RowExpand } from '@sentinel/components/table';
-import { RoleExpandComponent } from '../components/role-expand/role-expand.component';
+import {PaginatedResource} from '@sentinel/common/pagination';
+import {UserRole} from '@crczp/user-and-group-model';
+import {Column, ExpandableSentinelTable, Row, RowExpand} from '@sentinel/components/table';
+import {RoleExpandComponent} from '../components/role-expand/role-expand.component';
 
 /**
  * @dynamic

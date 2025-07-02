@@ -1,10 +1,10 @@
-import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
-import { TraineeGraphApiService } from '@crczp/visualization-api';
-import { TrainingRun } from '@crczp/training-model';
-import { Graph } from '@crczp/visualization-model';
+import {HttpClient} from '@angular/common/http';
+import {Injectable} from '@angular/core';
+import {BehaviorSubject, Observable} from 'rxjs';
+import {tap} from 'rxjs/operators';
+import {TraineeGraphApiService} from '@crczp/visualization-api';
+import {TrainingRun} from '@crczp/training-model';
+import {Graph} from '@crczp/visualization-model';
 
 @Injectable()
 export class TraineeGraphService {

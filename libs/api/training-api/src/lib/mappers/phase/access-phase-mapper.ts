@@ -1,6 +1,6 @@
-import { AbstractPhaseTypeEnum, AccessPhase } from '@crczp/training-model';
-import { AccessPhaseDTO } from '../../dto/phase/access-phase/access-phase-dto';
-import { AccessPhaseUpdateDTO } from '../../dto/phase/access-phase/access-phase-update-dto';
+import {AbstractPhaseTypeEnum, AccessPhase} from '@crczp/training-model';
+import {AccessPhaseDTO} from '../../dto/phase/access-phase/access-phase-dto';
+import {AccessPhaseUpdateDTO} from '../../dto/phase/access-phase/access-phase-update-dto';
 
 export class AccessPhaseMapper {
     static fromDTO(dto: AccessPhaseDTO): AccessPhase {

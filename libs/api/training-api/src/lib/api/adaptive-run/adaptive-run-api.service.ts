@@ -1,6 +1,6 @@
-import { SentinelFilter } from '@sentinel/common/filter';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
-import { Observable } from 'rxjs';
+import {SentinelFilter} from '@sentinel/common/filter';
+import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
+import {Observable} from 'rxjs';
 import {
     AccessedTrainingRun,
     AccessTrainingRunInfo,

@@ -1,9 +1,11 @@
-import { ExtendedMatchingItems } from '@crczp/training-model';
-import { ExtendedMatchingOptionDTO } from '../../../../dto/level/assessment/extended-matching-option-dto';
-import { ExtendedMatchingStatement } from '@crczp/training-model';
-import { ExtendedMatchingOption } from '@crczp/training-model';
-import { AnsweredExtendedMatchingItemsDTO } from '../../../../dto/training-run/training-run-levels/answered-extended-matching-items-dto';
-import { AnsweredExtendedMatchingStatementDTO } from './../../../../dto/training-run/training-run-levels/answered-extended-matching-statement-dto';
+import {ExtendedMatchingItems, ExtendedMatchingOption, ExtendedMatchingStatement} from '@crczp/training-model';
+import {ExtendedMatchingOptionDTO} from '../../../../dto/level/assessment/extended-matching-option-dto';
+import {
+    AnsweredExtendedMatchingItemsDTO
+} from '../../../../dto/training-run/training-run-levels/answered-extended-matching-items-dto';
+import {
+    AnsweredExtendedMatchingStatementDTO
+} from './../../../../dto/training-run/training-run-levels/answered-extended-matching-statement-dto';
 
 export class AnsweredExtendedMatchingItemsMapper {
     static fromDTO(dto: AnsweredExtendedMatchingItemsDTO): ExtendedMatchingItems {

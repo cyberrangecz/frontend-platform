@@ -1,6 +1,6 @@
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
-import { CheatingDetectionStateEnum } from '@crczp/training-model';
-import { SelectedStage } from '../../model/selected-stage';
+import {Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
+import {CheatingDetectionStateEnum} from '@crczp/training-model';
+import {SelectedStage} from '../../model/selected-stage';
 
 @Component({
     selector: 'crczp-stage-overview',

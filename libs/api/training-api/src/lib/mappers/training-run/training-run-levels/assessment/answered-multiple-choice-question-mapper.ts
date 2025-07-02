@@ -1,5 +1,7 @@
-import { MultipleChoiceQuestion } from '@crczp/training-model';
-import { AnsweredMultipleChoiceQuestionDTOClass } from '../../../../dto/training-run/training-run-levels/answered-multiple-choice-question-dto';
+import {MultipleChoiceQuestion} from '@crczp/training-model';
+import {
+    AnsweredMultipleChoiceQuestionDTOClass
+} from '../../../../dto/training-run/training-run-levels/answered-multiple-choice-question-dto';
 
 export class AnsweredMultipleChoiceQuestionMapper {
     static fromDTO(dto: AnsweredMultipleChoiceQuestionDTOClass): MultipleChoiceQuestion {

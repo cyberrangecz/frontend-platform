@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {
     POOL_ALLOCATION_REQUEST_PATH,
     POOL_ALLOCATION_UNITS_PATH,
@@ -12,7 +12,7 @@ import {
     SANDBOX_POOL_PATH,
     SANDBOX_TOPOLOGY_PATH,
 } from './default-paths';
-import { SandboxNavigator } from './sandbox-navigator.service';
+import {SandboxNavigator} from './sandbox-navigator.service';
 
 @Injectable()
 export class SandboxDefaultNavigator extends SandboxNavigator {

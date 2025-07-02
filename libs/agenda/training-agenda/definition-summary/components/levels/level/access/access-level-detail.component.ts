@@ -1,6 +1,6 @@
-import { animate, state, style, transition, trigger } from '@angular/animations';
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { AccessLevel } from '@crczp/training-model';
+import {animate, state, style, transition, trigger} from '@angular/animations';
+import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
+import {AccessLevel} from '@crczp/training-model';
 
 @Component({
     selector: 'crczp-access-level-detail',

@@ -1,8 +1,8 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { TimelineDataDTO } from '../dto/timeline/timeline-data-dto';
-import { ConfigService } from '../../../config/config.service';
+import {Injectable} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+import {Observable} from 'rxjs';
+import {TimelineDataDTO} from '../dto/timeline/timeline-data-dto';
+import {ConfigService} from '../../../config/config.service';
 
 @Injectable()
 export class TimelineApiService {

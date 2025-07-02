@@ -1,5 +1,5 @@
-import { TrainingDefinitionDTO } from '@crczp/training-api';
-import { SankeyDataDTO } from '../sankey/dto/sankey-data-dto';
+import {TrainingDefinitionDTO} from '@crczp/training-api';
+import {SankeyDataDTO} from '../sankey/dto/sankey-data-dto';
 
 export class InstanceModelSimulatorDTO {
     training_definition: TrainingDefinitionDTO;

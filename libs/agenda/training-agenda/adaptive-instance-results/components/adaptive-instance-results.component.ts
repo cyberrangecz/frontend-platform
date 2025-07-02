@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import {ChangeDetectionStrategy, Component} from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
 
 /**
  * Component displaying adaptive instance results visualizations

@@ -1,5 +1,5 @@
-import { AbstractPhaseDTO } from './phase/abstract-phase-dto';
-import { TrainingRunDataDTO } from './training-run-data-dto';
+import {AbstractPhaseDTO} from './phase/abstract-phase-dto';
+import {TrainingRunDataDTO} from './training-run-data-dto';
 
 export interface VisualizationDataDTO {
     phases: AbstractPhaseDTO[];

@@ -1,7 +1,7 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { MatTableDataSource } from '@angular/material/table';
-import { EMITableAdapter } from '../../../table-adapter/emi-table-adapter';
-import { AssessmentParticipant } from '@crczp/visualization-model';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {MatTableDataSource} from '@angular/material/table';
+import {EMITableAdapter} from '../../../table-adapter/emi-table-adapter';
+import {AssessmentParticipant} from '@crczp/visualization-model';
 
 /**
  * Component displaying table of extended matching items result

@@ -1,4 +1,4 @@
-import { ApiReadMapping, ApiWriteMapping, CamelToSnakeCase, SnakeToCamelCase } from "./mapper-types";
+import {ApiReadMapping, ApiWriteMapping, CamelToSnakeCase, SnakeToCamelCase} from "./mapper-types";
 
 
 export class MapperBuilder {

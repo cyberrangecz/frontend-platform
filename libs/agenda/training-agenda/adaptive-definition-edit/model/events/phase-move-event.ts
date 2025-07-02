@@ -1,4 +1,4 @@
-import { StepperStateChange } from '@sentinel/components/stepper';
+import {StepperStateChange} from '@sentinel/components/stepper';
 
 /**
  * Event representing change of position of a phases in phases stepper

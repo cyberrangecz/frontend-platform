@@ -1,10 +1,12 @@
-import { PaginatedResource } from '@sentinel/common/pagination';
-import { SandboxDefinition } from '@crczp/sandbox-model';
-import { Column, DeleteAction, ExpandableSentinelTable, Row, RowAction, RowExpand } from '@sentinel/components/table';
-import { defer, of } from 'rxjs';
-import { SandboxDefinitionDetailComponent } from '../components/sandbox-definition-detail/sandbox-definition-detail.component';
-import { SandboxDefinitionOverviewService } from '@crczp/sandbox-agenda/internal';
-import { SandboxDefinitionRowAdapter } from './sandbox-definition-row-adapter';
+import {PaginatedResource} from '@sentinel/common/pagination';
+import {SandboxDefinition} from '@crczp/sandbox-model';
+import {Column, DeleteAction, ExpandableSentinelTable, Row, RowAction, RowExpand} from '@sentinel/components/table';
+import {defer, of} from 'rxjs';
+import {
+    SandboxDefinitionDetailComponent
+} from '../components/sandbox-definition-detail/sandbox-definition-detail.component';
+import {SandboxDefinitionOverviewService} from '@crczp/sandbox-agenda/internal';
+import {SandboxDefinitionRowAdapter} from './sandbox-definition-row-adapter';
 
 /**
  * Helper class transforming paginated resource to class for common table component

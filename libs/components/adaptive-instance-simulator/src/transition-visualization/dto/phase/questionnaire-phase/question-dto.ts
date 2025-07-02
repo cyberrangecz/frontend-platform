@@ -1,4 +1,4 @@
-import { ChoiceDTO } from './choice-dto';
+import {ChoiceDTO} from './choice-dto';
 
 export interface QuestionDTO {
     id: number;

@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { Graph } from '@crczp/visualization-model';
-import { ReferenceGraphApi } from '@crczp/visualization-api';
+import {Injectable} from '@angular/core';
+import {Observable} from 'rxjs';
+import {Graph} from '@crczp/visualization-model';
+import {ReferenceGraphApi} from '@crczp/visualization-api';
 
 @Injectable()
 export class ReferenceGraphService {

@@ -1,4 +1,4 @@
-import { TransitionPhase, TransitionTask } from './transition-phase-model';
+import {TransitionPhase, TransitionTask} from './transition-phase-model';
 
 export class InfoPhaseTask extends TransitionTask {
     content?: string;

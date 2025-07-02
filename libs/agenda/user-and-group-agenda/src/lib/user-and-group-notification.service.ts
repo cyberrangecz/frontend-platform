@@ -1,7 +1,7 @@
 /**
  * Service emitting notification from user and group-overview library
  */
-import { Observable } from 'rxjs';
+import {Observable} from 'rxjs';
 
 export abstract class UserAndGroupNotificationService {
     /**

@@ -1,5 +1,5 @@
-import { GraphDTO } from '../dto/graph-dto';
-import { Graph } from '@crczp/visualization-model';
+import {GraphDTO} from '../dto/graph-dto';
+import {Graph} from '@crczp/visualization-model';
 
 export class GraphMapper {
     static fromDTO(dto: GraphDTO): Graph {

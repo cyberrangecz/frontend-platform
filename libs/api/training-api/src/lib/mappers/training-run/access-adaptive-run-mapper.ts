@@ -1,7 +1,7 @@
-import { AccessTrainingRunInfo, TrainingPhase } from '@crczp/training-model';
-import { AccessTrainingRunDTO } from '../../dto/training-run/access-training-run-dto';
-import { PhaseMapper } from '../phase/phase-mapper';
-import { AbstractPhaseDTO } from '../../dto/phase/abstract-phase-dto';
+import {AccessTrainingRunInfo, TrainingPhase} from '@crczp/training-model';
+import {AccessTrainingRunDTO} from '../../dto/training-run/access-training-run-dto';
+import {PhaseMapper} from '../phase/phase-mapper';
+import {AbstractPhaseDTO} from '../../dto/phase/abstract-phase-dto';
 import PhaseTypeEnum = AbstractPhaseDTO.PhaseTypeEnum;
 
 export class AccessAdaptiveRunMapper {

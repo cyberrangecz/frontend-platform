@@ -1,23 +1,14 @@
-import { inject, Injectable } from '@angular/core';
-import { DetectionEventApi } from '@crczp/training-api';
-import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
-import { TrainingAgendaContext } from '@crczp/training-agenda/internal';
-import {
-    TrainingErrorHandler,
-    TrainingNavigator,
-    TrainingNotificationService,
-} from '@crczp/training-agenda';
-import { DetectionEventService } from './detection-event.service';
-import {
-    OffsetPaginationEvent,
-    PaginatedResource,
-} from '@sentinel/common/pagination';
-import { from, Observable } from 'rxjs';
-import { AbstractDetectionEvent } from '@crczp/training-model';
-import { tap } from 'rxjs/operators';
-import { DetectionEventFilter } from '../model/detection-event-filter';
-import { Settings } from '@crczp/common';
+import {Injectable} from '@angular/core';
+import {DetectionEventApi} from '@crczp/training-api';
+import {Router} from '@angular/router';
+import {TrainingNavigator,} from '@crczp/training-agenda';
+import {DetectionEventService} from './detection-event.service';
+import {OffsetPaginationEvent, PaginatedResource,} from '@sentinel/common/pagination';
+import {from, Observable} from 'rxjs';
+import {AbstractDetectionEvent} from '@crczp/training-model';
+import {tap} from 'rxjs/operators';
+import {DetectionEventFilter} from '../model/detection-event-filter';
+import {Settings} from '@crczp/common';
 
 /**
  * Basic implementation of a layer between a component and an API services.
@@ -25,18 +16,14 @@ import { Settings } from '@crczp/common';
  */
 @Injectable()
 export class DetectionEventConcreteService extends DetectionEventService {
-    private lastPagination: OffsetPaginationEvent;
 
     constructor(
         private api: DetectionEventApi,
-        private dialog: MatDialog,
         private router: Router,
-        private context: TrainingAgendaContext,
         private navigator: TrainingNavigator,
-        private notificationService: TrainingNotificationService,
-        private errorHandler: TrainingErrorHandler
+        settings: Settings
     ) {
-        super(inject(Settings.DEFAULT_PAGE_SIZE));
+        super(settings.DEFAULT_PAGE_SIZE);
     }
 
     /**

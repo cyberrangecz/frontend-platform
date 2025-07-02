@@ -1,14 +1,14 @@
-import { Injectable } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { UrlTree } from '@angular/router';
+import {Injectable} from '@angular/core';
+import {MatDialog} from '@angular/material/dialog';
+import {UrlTree} from '@angular/router';
 import {
     SentinelConfirmationDialogComponent,
     SentinelConfirmationDialogConfig,
     SentinelDialogResultEnum,
 } from '@sentinel/components/dialogs';
-import { Observable, of } from 'rxjs';
-import { map, take } from 'rxjs/operators';
-import { MicroserviceEditOverviewComponent } from '../components/microservice-edit-overview.component';
+import {Observable, of} from 'rxjs';
+import {map, take} from 'rxjs/operators';
+import {MicroserviceEditOverviewComponent} from '../components/microservice-edit-overview.component';
 
 /**
  * CanDeactivate service for microservice-registration state component.

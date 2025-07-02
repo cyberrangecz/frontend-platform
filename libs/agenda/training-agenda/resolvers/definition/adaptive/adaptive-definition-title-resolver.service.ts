@@ -1,14 +1,14 @@
-import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
-import { TrainingDefinition } from '@crczp/training-model';
-import { Observable, of } from 'rxjs';
-import { catchError, mergeMap, take } from 'rxjs/operators';
+import {Injectable} from '@angular/core';
+import {ActivatedRouteSnapshot, RouterStateSnapshot} from '@angular/router';
+import {TrainingDefinition} from '@crczp/training-model';
+import {Observable, of} from 'rxjs';
+import {catchError, mergeMap, take} from 'rxjs/operators';
 import {
     ADAPTIVE_DEFINITION_PATH,
     ADAPTIVE_DEFINITION_SELECTOR,
     TRAINING_DEFINITION_NEW_PATH,
 } from '@crczp/training-agenda';
-import { AdaptiveDefinitionResolver } from './adaptive-definition-resolver.service';
+import {AdaptiveDefinitionResolver} from './adaptive-definition-resolver.service';
 
 @Injectable()
 export class AdaptiveDefinitionTitleResolver {

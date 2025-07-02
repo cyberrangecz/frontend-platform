@@ -1,7 +1,7 @@
-import { BasicLevelInfoDTO, LevelDTO } from '../../dto/clustering/level-dto';
-import { Level } from '../../../model/clustering/level';
-import { LevelTypeEnum } from '../../../model/clustering/enums/level-type.enum';
-import { PlayerLevelDataMapper } from './player-level-data-mapper';
+import {BasicLevelInfoDTO, LevelDTO} from '../../dto/clustering/level-dto';
+import {Level} from '../../../model/clustering/level';
+import {LevelTypeEnum} from '../../../model/clustering/enums/level-type.enum';
+import {PlayerLevelDataMapper} from './player-level-data-mapper';
 
 /**
  * @dynamic

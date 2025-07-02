@@ -3,10 +3,10 @@
  * Can have two types - cloud if sub network is hidden or switch if sub network is revealed.
  */
 
-import { NodePhysicalRoleEnum } from '../enums/node-physical-role-enum';
-import { HostNode } from './host-node';
-import { INode } from './inode';
-import { Node } from './node';
+import {NodePhysicalRoleEnum} from '../enums/node-physical-role-enum';
+import {HostNode} from './host-node';
+import {INode} from './inode';
+import {Node} from './node';
 
 export class SwitchNode extends Node {
     /**

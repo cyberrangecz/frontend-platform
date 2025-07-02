@@ -1,5 +1,5 @@
-import { map, mergeMap, takeUntil } from 'rxjs/operators';
-import { Directive, ElementRef, EventEmitter, HostListener, OnInit, Output } from '@angular/core';
+import {map, mergeMap, takeUntil} from 'rxjs/operators';
+import {Directive, ElementRef, EventEmitter, HostListener, OnInit, Output} from '@angular/core';
 
 @Directive({ selector: '[mouseMove]' })
 export class MouseMoveDirective implements OnInit {

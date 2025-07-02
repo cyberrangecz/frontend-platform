@@ -1,8 +1,8 @@
 /**
  * Service emitting errors from user and group-overview library
  */
-import { HttpErrorResponse } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import {HttpErrorResponse} from '@angular/common/http';
+import {Observable} from 'rxjs';
 
 export abstract class UserAndGroupErrorHandler {
     /**

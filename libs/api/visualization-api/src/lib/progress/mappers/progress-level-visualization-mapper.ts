@@ -1,7 +1,7 @@
-import { ProgressEventMapper } from './progress-event-mapper';
-import { ScoreMapper } from './score-mapper';
-import { ProgressLevelVisualizationData } from '@crczp/visualization-model';
-import { ProgressLevelVisualizationDTO } from '../dtos';
+import {ProgressEventMapper} from './progress-event-mapper';
+import {ScoreMapper} from './score-mapper';
+import {ProgressLevelVisualizationData} from '@crczp/visualization-model';
+import {ProgressLevelVisualizationDTO} from '../dtos';
 
 export class ProgressLevelVisualizationMapper {
     static fromDTOs(dtos: ProgressLevelVisualizationDTO[]): ProgressLevelVisualizationData[] {

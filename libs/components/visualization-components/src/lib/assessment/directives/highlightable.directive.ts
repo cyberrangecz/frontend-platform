@@ -1,6 +1,6 @@
-import { Directive, OnDestroy } from '@angular/core';
-import { HighlightService } from '../services/highlight.service';
-import { AssessmentEmiAnswers, AssessmentParticipant, AssessmentQuestion } from '@crczp/visualization-model';
+import {Directive, OnDestroy} from '@angular/core';
+import {HighlightService} from '../services/highlight.service';
+import {AssessmentEmiAnswers, AssessmentParticipant, AssessmentQuestion} from '@crczp/visualization-model';
 
 /**
  * Class representing behaviour of highlightable components

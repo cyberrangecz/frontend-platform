@@ -1,9 +1,9 @@
-import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { TrainingDefinition } from '@crczp/training-model';
-import { CloneDialogFormGroup } from './clone-dialog-form-group';
-import { AbstractControl } from '@angular/forms';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {ChangeDetectionStrategy, Component, Inject} from '@angular/core';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
+import {TrainingDefinition} from '@crczp/training-model';
+import {CloneDialogFormGroup} from './clone-dialog-form-group';
+import {AbstractControl} from '@angular/forms';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 
 /**
  * Displays dialog with a form to select name of cloned training definition

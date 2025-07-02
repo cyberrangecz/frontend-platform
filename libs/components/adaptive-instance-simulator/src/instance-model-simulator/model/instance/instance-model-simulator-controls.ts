@@ -1,9 +1,9 @@
 /**disableGenerate$
  * @dynamic
  */
-import { SentinelControlItem } from '@sentinel/components/controls';
-import { defer, Observable, of } from 'rxjs';
-import { InstanceSimulatorService } from '../../service/instance/instance-simulator.service';
+import {SentinelControlItem} from '@sentinel/components/controls';
+import {defer, Observable, of} from 'rxjs';
+import {InstanceSimulatorService} from '../../service/instance/instance-simulator.service';
 
 export class InstanceModelSimulatorControls {
     static readonly UPLOAD_ACTION_ID = 'upload';

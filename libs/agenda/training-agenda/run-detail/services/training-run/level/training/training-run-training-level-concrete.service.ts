@@ -1,15 +1,15 @@
-import { Injectable } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { SentinelDialogResultEnum } from '@sentinel/components/dialogs';
-import { TrainingRunApi } from '@crczp/training-api';
-import { Hint, TrainingLevel } from '@crczp/training-model';
-import { EMPTY, Observable } from 'rxjs';
-import { switchMap, tap } from 'rxjs/operators';
-import { TrainingErrorHandler } from '@crczp/training-agenda';
-import { TrainingRunTrainingLevelService } from './training-run-training-level.service';
-import { RunningTrainingRunService } from '../../running/running-training-run.service';
-import { SandboxInstanceApi } from '@crczp/sandbox-api';
-import { SentinelNotificationService } from '@sentinel/layout/notification';
+import {Injectable} from '@angular/core';
+import {MatDialog} from '@angular/material/dialog';
+import {SentinelDialogResultEnum} from '@sentinel/components/dialogs';
+import {TrainingRunApi} from '@crczp/training-api';
+import {Hint, TrainingLevel} from '@crczp/training-model';
+import {EMPTY, Observable} from 'rxjs';
+import {switchMap, tap} from 'rxjs/operators';
+import {TrainingErrorHandler} from '@crczp/training-agenda';
+import {TrainingRunTrainingLevelService} from './training-run-training-level.service';
+import {RunningTrainingRunService} from '../../running/running-training-run.service';
+import {SandboxInstanceApi} from '@crczp/sandbox-api';
+import {SentinelNotificationService} from '@sentinel/layout/notification';
 
 @Injectable()
 /**

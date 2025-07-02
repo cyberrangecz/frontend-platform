@@ -1,11 +1,11 @@
-import { DatePipe } from '@angular/common';
-import { PaginatedResource } from '@sentinel/common/pagination';
-import { Column, Row, RowAction, SentinelTable } from '@sentinel/components/table';
-import { AbstractDetectionEvent, AbstractDetectionEventTypeEnum } from '@crczp/training-model';
-import { DetectionEventRowAdapter } from './detection-event-row-adapter';
-import { TrainingNavigator } from '@crczp/training-agenda';
-import { defer, of } from 'rxjs';
-import { DetectionEventService } from '../services/detection-event.service';
+import {DatePipe} from '@angular/common';
+import {PaginatedResource} from '@sentinel/common/pagination';
+import {Column, Row, RowAction, SentinelTable} from '@sentinel/components/table';
+import {AbstractDetectionEvent, AbstractDetectionEventTypeEnum} from '@crczp/training-model';
+import {DetectionEventRowAdapter} from './detection-event-row-adapter';
+import {TrainingNavigator} from '@crczp/training-agenda';
+import {defer, of} from 'rxjs';
+import {DetectionEventService} from '../services/detection-event.service';
 
 /**
  * Helper class transforming paginated resource to class for common table component

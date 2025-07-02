@@ -1,12 +1,12 @@
-import { AbstractLevelTypeEnum, TrainingLevel } from '@crczp/training-model';
-import { TrainingLevelDto } from '../../../dto/level/training/training-level-dto';
+import {AbstractLevelTypeEnum, TrainingLevel} from '@crczp/training-model';
+import {TrainingLevelDto} from '../../../dto/level/training/training-level-dto';
 import {
     TrainingLevelUpdateDto,
     TrainingLevelUpdateDTOClass,
 } from '../../../dto/level/training/training-level-update-dto';
-import { MitreTechniqueMapper } from '../../mitre-techniques/mitre-technique-mapper';
-import { HintMapper } from './hint-mapper';
-import { ReferenceSolutionNodeMapper } from './reference-solution-node-mapper';
+import {MitreTechniqueMapper} from '../../mitre-techniques/mitre-technique-mapper';
+import {HintMapper} from './hint-mapper';
+import {ReferenceSolutionNodeMapper} from './reference-solution-node-mapper';
 
 export class TrainingLevelMapper {
     static fromDTO(dto: TrainingLevelDto): TrainingLevel {

@@ -1,7 +1,7 @@
 /**
  * Parent class of all detection events
  */
-import { AbstractDetectionEventTypeEnum } from '../../enums/abstract-detection-event-type.enum';
+import {AbstractDetectionEventTypeEnum} from '../../enums/abstract-detection-event-type.enum';
 
 export class AbstractDetectionEvent {
     id!: number;

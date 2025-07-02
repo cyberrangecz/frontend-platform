@@ -1,14 +1,14 @@
-import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
-import { TrainingInstance } from '@crczp/training-model';
-import { EMPTY, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import {Injectable} from '@angular/core';
+import {ActivatedRouteSnapshot, RouterStateSnapshot} from '@angular/router';
+import {TrainingInstance} from '@crczp/training-model';
+import {EMPTY, Observable} from 'rxjs';
+import {map} from 'rxjs/operators';
 import {
     ADAPTIVE_INSTANCE_SELECTOR,
     TRAINING_INSTANCE_EDIT_PATH,
     TRAINING_INSTANCE_NEW_PATH,
 } from '@crczp/training-agenda';
-import { AdaptiveInstanceResolver } from './adaptive-instance-resolver.service';
+import {AdaptiveInstanceResolver} from './adaptive-instance-resolver.service';
 
 /**
  * Router breadcrumb title provider

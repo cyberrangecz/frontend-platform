@@ -1,12 +1,12 @@
-import { ExtendedMatchingItems, FreeFormQuestion, MultipleChoiceQuestion, Question } from '@crczp/training-model';
-import { AbstractQuestionCreateDTO } from '../../../dto/level/assessment/abstact-question-dto';
-import { AbstractAssessmentAnswerDTO } from '../../../dto/level/assessment/abstract-assessment-answer-dto';
-import { ExtendedMatchingItemsMapper } from './extended-matching-items-mapper';
-import { FreeFormQuestionMapper } from './free-form-question-mapper';
-import { MultipleChoiceQuestionMapper } from './multiple-choice-question-mapper';
-import { FreeFormQuestionCreateDTO } from '../../../dto/level/assessment/free-form-question-dto';
-import { MultipleChoiceQuestionCreateDTO } from '../../../dto/level/assessment/multiple-choice-question-create-dto';
-import { ExtendedMatchingItemsDTO } from '../../../dto/level/assessment/extended-matching-items-dto';
+import {ExtendedMatchingItems, FreeFormQuestion, MultipleChoiceQuestion, Question} from '@crczp/training-model';
+import {AbstractQuestionCreateDTO} from '../../../dto/level/assessment/abstact-question-dto';
+import {AbstractAssessmentAnswerDTO} from '../../../dto/level/assessment/abstract-assessment-answer-dto';
+import {ExtendedMatchingItemsMapper} from './extended-matching-items-mapper';
+import {FreeFormQuestionMapper} from './free-form-question-mapper';
+import {MultipleChoiceQuestionMapper} from './multiple-choice-question-mapper';
+import {FreeFormQuestionCreateDTO} from '../../../dto/level/assessment/free-form-question-dto';
+import {MultipleChoiceQuestionCreateDTO} from '../../../dto/level/assessment/multiple-choice-question-create-dto';
+import {ExtendedMatchingItemsDTO} from '../../../dto/level/assessment/extended-matching-items-dto';
 
 /**
  * @dynamic

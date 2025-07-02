@@ -1,6 +1,6 @@
-import { Component, Input, OnChanges, OnInit } from '@angular/core';
-import { ICONS_PATH } from '../icons-path';
-import { CommonModule } from '@angular/common';
+import {Component, Input, OnChanges, OnInit} from '@angular/core';
+import {ICONS_PATH} from '../icons-path';
+import {CommonModule} from '@angular/common';
 
 @Component({
     selector: 'crczp-topology-app-legend',

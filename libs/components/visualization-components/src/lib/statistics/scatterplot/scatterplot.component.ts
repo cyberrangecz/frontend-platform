@@ -16,15 +16,15 @@ import {
     ParticipantStatistics,
     TrainingInstanceStatistics
 } from '@crczp/visualization-model';
-import { AxesCreationService } from '../service/axes-creation-service';
-import { TooltipCreationService } from '../service/tooltip-creation-service';
-import { SvgConfigurationService } from '../service/svg-configuration-service';
-import { LegendCreationService } from '../service/legend-creation-service';
-import { MatCardModule } from '@angular/material/card';
-import { MatGridListModule } from '@angular/material/grid-list';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatButtonModule } from '@angular/material/button';
-import { MatRadioModule } from '@angular/material/radio';
+import {AxesCreationService} from '../service/axes-creation-service';
+import {TooltipCreationService} from '../service/tooltip-creation-service';
+import {SvgConfigurationService} from '../service/svg-configuration-service';
+import {LegendCreationService} from '../service/legend-creation-service';
+import {MatCardModule} from '@angular/material/card';
+import {MatGridListModule} from '@angular/material/grid-list';
+import {MatDividerModule} from '@angular/material/divider';
+import {MatButtonModule} from '@angular/material/button';
+import {MatRadioModule} from '@angular/material/radio';
 
 @Component({
     selector: 'crczp-scatterplot',

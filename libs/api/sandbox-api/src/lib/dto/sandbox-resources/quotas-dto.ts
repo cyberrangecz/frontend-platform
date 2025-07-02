@@ -1,4 +1,4 @@
-import { QuotaDTO } from './quota-dto';
+import {QuotaDTO} from './quota-dto';
 
 export class QuotasDTO {
     vcpu: QuotaDTO;

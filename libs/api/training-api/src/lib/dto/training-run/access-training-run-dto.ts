@@ -1,8 +1,8 @@
-import { AbstractLevelDTO } from '../level/abstract-level-dto';
-import { BasicLevelInfoDTO } from '../level/basic-level-info-dto';
-import { HintDTO } from '../level/training/hint-dto';
-import { AbstractPhaseDTO } from '../phase/abstract-phase-dto';
-import { BasicPhaseInfoDTO } from '../phase/basic-phase-info-dto';
+import {AbstractLevelDTO} from '../level/abstract-level-dto';
+import {BasicLevelInfoDTO} from '../level/basic-level-info-dto';
+import {HintDTO} from '../level/training/hint-dto';
+import {AbstractPhaseDTO} from '../phase/abstract-phase-dto';
+import {BasicPhaseInfoDTO} from '../phase/basic-phase-info-dto';
 
 /**
  * .

@@ -1,12 +1,12 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { catchError, delay, EMPTY, exhaustMap, Observable, of, repeat, timer } from 'rxjs';
-import { takeWhile, tap } from 'rxjs/operators';
-import { TrainingAnalysisEventService } from './training-analysis/training-analysis-event-service';
-import { PROGRESS_CONFIG } from '../../progress-config';
-import { TraineeViewEnum, ViewEnum } from '../types';
-import { ProgressEventType, ProgressTraineeInfo, ProgressVisualizationData } from '@crczp/visualization-model';
-import { ProgressVisualizationDataDTO, ProgressVisualizationDataMapper } from '@crczp/visualization-api';
-import { ProgressVisualizationsDataService } from '../../services/progress-visualizations-data.service';
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import {async, catchError, delay, EMPTY, exhaustMap, Observable, of, repeat, timer} from 'rxjs';
+import {takeWhile, tap} from 'rxjs/operators';
+import {TrainingAnalysisEventService} from './training-analysis/training-analysis-event-service';
+import {PROGRESS_CONFIG} from '../../progress-config';
+import {TraineeViewEnum, ViewEnum} from '../types';
+import {ProgressEventType, ProgressTraineeInfo, ProgressVisualizationData} from '@crczp/visualization-model';
+import {ProgressVisualizationDataDTO, ProgressVisualizationDataMapper} from '@crczp/visualization-api';
+import {ProgressVisualizationsDataService} from '../../services/progress-visualizations-data.service';
 
 @Component({
     selector: 'crczp-hurdling-visualization',
@@ -182,4 +182,6 @@ export class ProgressVisualizationsComponent implements OnInit, OnDestroy {
     private loadData() {
         return this.visualizationDataService.getData(this.trainingInstanceId).pipe(takeWhile(() => this.isAlive));
     }
+
+    protected readonly async = async;
 }

@@ -1,16 +1,16 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { SentinelParamsMerger } from '@sentinel/common';
-import { SentinelFilter } from '@sentinel/common/filter';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
-import { BetaTester, Designer, Organizer, TrainingUser } from '@crczp/training-model';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { UserMapper } from '../../mappers/user/user-mapper';
-import { TrainingApiContext } from '../../other/training-api-context';
-import { UserRefDTO } from './../../dto/user/user-ref-dto';
-import { UserApi } from './user-api.service';
-import { JavaPaginatedResource, PaginationMapper, ParamsBuilder } from '@crczp/api-common';
+import {HttpClient, HttpParams} from '@angular/common/http';
+import {Injectable} from '@angular/core';
+import {SentinelParamsMerger} from '@sentinel/common';
+import {SentinelFilter} from '@sentinel/common/filter';
+import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
+import {BetaTester, Designer, Organizer, TrainingUser} from '@crczp/training-model';
+import {Observable} from 'rxjs';
+import {map} from 'rxjs/operators';
+import {UserMapper} from '../../mappers/user/user-mapper';
+import {TrainingApiContext} from '../../other/training-api-context';
+import {UserRefDTO} from './../../dto/user/user-ref-dto';
+import {UserApi} from './user-api.service';
+import {JavaPaginatedResource, PaginationMapper, ParamsBuilder} from '@crczp/api-common';
 
 /**
  * Default implementation of service abstracting http communication with user related endpoints.

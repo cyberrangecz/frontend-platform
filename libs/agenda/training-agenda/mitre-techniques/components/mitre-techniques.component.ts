@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { Observable, take } from 'rxjs';
-import { MitreTechniquesOverviewService } from '../services/mitre-techniques.service';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
+import {async, Observable, take} from 'rxjs';
+import {MitreTechniquesOverviewService} from '../services/mitre-techniques.service';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 
 /**
  * Smart component of mitre techniques
@@ -41,4 +41,6 @@ export class MitreTechniquesComponent implements OnInit {
     loadData(): void {
         this.mitreTechniquesOverviewService.getMitreTechniques(this.played).pipe(take(1)).subscribe();
     }
+
+    protected readonly async = async;
 }

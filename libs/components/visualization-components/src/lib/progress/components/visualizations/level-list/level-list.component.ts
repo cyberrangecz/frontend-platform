@@ -1,7 +1,7 @@
-import { Component, EventEmitter, Input, Output, ViewEncapsulation } from '@angular/core';
-import { ProgressLevelInfo, ProgressTraineeInfo, ProgressVisualizationData } from '@crczp/visualization-model';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { CommonModule } from '@angular/common';
+import {Component, EventEmitter, Input, Output, ViewEncapsulation} from '@angular/core';
+import {ProgressLevelInfo, ProgressTraineeInfo, ProgressVisualizationData} from '@crczp/visualization-model';
+import {MatTooltipModule} from '@angular/material/tooltip';
+import {CommonModule} from '@angular/common';
 
 @Component({
     selector: 'crczp-viz-hurdling-level-list',

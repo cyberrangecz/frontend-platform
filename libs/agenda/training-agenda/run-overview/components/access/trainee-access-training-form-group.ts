@@ -1,5 +1,5 @@
-import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
-import { SentinelValidators } from '@sentinel/common';
+import {UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
+import {SentinelValidators} from '@sentinel/common';
 
 /**
  * Form control class for access training run form

@@ -1,5 +1,5 @@
-import { TransitionPhase, TransitionTask } from './transition-phase-model';
-import { QuestionnaireTypeEnum, QuestionTypeEnum } from '@crczp/training-model';
+import {TransitionPhase, TransitionTask} from './transition-phase-model';
+import {QuestionnaireTypeEnum, QuestionTypeEnum} from '@crczp/training-model';
 
 export class AdaptiveQuestionVisualization {
     id!: number;

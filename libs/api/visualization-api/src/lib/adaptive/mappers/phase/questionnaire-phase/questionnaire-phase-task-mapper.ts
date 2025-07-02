@@ -1,12 +1,12 @@
-import { QuestionnairePhaseDTO } from '../../../dto/phase/questionnaire-phase/questionnaire-phase-dto';
-import { QuestionDTO } from '../../../dto/phase/questionnaire-phase/question-dto';
-import { ChoiceDTO } from '../../../dto/phase/questionnaire-phase/choice-dto';
+import {QuestionnairePhaseDTO} from '../../../dto/phase/questionnaire-phase/questionnaire-phase-dto';
+import {QuestionDTO} from '../../../dto/phase/questionnaire-phase/question-dto';
+import {ChoiceDTO} from '../../../dto/phase/questionnaire-phase/choice-dto';
 import {
     AdaptiveQuestionVisualization,
     ChoiceVisualization,
     QuestionnairePhaseTaskVisuazlization
 } from '@crczp/visualization-model';
-import { QuestionnaireTypeEnum, QuestionTypeEnum } from '@crczp/training-model';
+import {QuestionnaireTypeEnum, QuestionTypeEnum} from '@crczp/training-model';
 
 
 export class QuestionnairePhaseTaskMapper {

@@ -1,4 +1,4 @@
-import { DetectedForbiddenCommand } from '@crczp/training-model';
+import {DetectedForbiddenCommand} from '@crczp/training-model';
 
 /**
  * Class representing row of cheating detection table

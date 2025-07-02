@@ -1,26 +1,19 @@
-import { inject, Injectable } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
+import {Injectable} from '@angular/core';
+import {MatDialog} from '@angular/material/dialog';
+import {Router} from '@angular/router';
 import {
     SentinelConfirmationDialogComponent,
     SentinelConfirmationDialogConfig,
     SentinelDialogResultEnum,
 } from '@sentinel/components/dialogs';
-import {
-    OffsetPaginationEvent,
-    PaginatedResource,
-} from '@sentinel/common/pagination';
-import { PoolApi } from '@crczp/sandbox-api';
-import { Pool } from '@crczp/sandbox-model';
-import { EMPTY, from, Observable } from 'rxjs';
-import { catchError, switchMap, tap } from 'rxjs/operators';
-import {
-    SandboxErrorHandler,
-    SandboxNavigator,
-    SandboxNotificationService,
-} from '@crczp/sandbox-agenda';
-import { PoolOverviewService } from './pool-overview.service';
-import { Settings } from '@crczp/common';
+import {OffsetPaginationEvent, PaginatedResource,} from '@sentinel/common/pagination';
+import {PoolApi} from '@crczp/sandbox-api';
+import {Pool} from '@crczp/sandbox-model';
+import {EMPTY, from, Observable} from 'rxjs';
+import {catchError, switchMap, tap} from 'rxjs/operators';
+import {SandboxErrorHandler, SandboxNavigator, SandboxNotificationService,} from '@crczp/sandbox-agenda';
+import {PoolOverviewService} from './pool-overview.service';
+import {Settings} from '@crczp/common';
 
 /**
  * Basic implementation of a layer between a component and an API service.
@@ -36,9 +29,10 @@ export class PoolOverviewConcreteService extends PoolOverviewService {
         private router: Router,
         private navigator: SandboxNavigator,
         private notificationService: SandboxNotificationService,
-        private errorHandler: SandboxErrorHandler
+        private errorHandler: SandboxErrorHandler,
+        settings: Settings
     ) {
-        super(inject(Settings.DEFAULT_PAGE_SIZE));
+        super(settings.DEFAULT_PAGE_SIZE);
     }
 
     /**

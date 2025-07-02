@@ -1,8 +1,8 @@
-import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, Resolve, Router, RouterStateSnapshot } from '@angular/router';
-import { Request } from '@crczp/sandbox-model';
-import { EMPTY, Observable, of } from 'rxjs';
-import { catchError, mergeMap, take } from 'rxjs/operators';
+import {Injectable} from '@angular/core';
+import {ActivatedRouteSnapshot, Resolve, Router, RouterStateSnapshot} from '@angular/router';
+import {Request} from '@crczp/sandbox-model';
+import {EMPTY, Observable, of} from 'rxjs';
+import {catchError, mergeMap, take} from 'rxjs/operators';
 import {
     POOL_ALLOCATION_REQUEST_PATH,
     POOL_REQUEST_ID_SELECTOR,
@@ -10,7 +10,7 @@ import {
     SandboxErrorHandler,
     SandboxNavigator,
 } from '@crczp/sandbox-agenda';
-import { AllocationRequestsApi, CleanupRequestsApi } from '@crczp/sandbox-api';
+import {AllocationRequestsApi, CleanupRequestsApi} from '@crczp/sandbox-api';
 
 /**
  * Router data provider

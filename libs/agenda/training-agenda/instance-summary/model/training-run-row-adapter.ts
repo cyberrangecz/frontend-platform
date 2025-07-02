@@ -1,4 +1,4 @@
-import { TrainingDefinition, TrainingRun } from '@crczp/training-model';
+import {TrainingDefinition, TrainingRun} from '@crczp/training-model';
 
 /**
  * Class representing row of training run table

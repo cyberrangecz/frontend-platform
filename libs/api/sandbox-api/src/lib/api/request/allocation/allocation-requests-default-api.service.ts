@@ -1,5 +1,5 @@
-import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+import {Injectable} from '@angular/core';
 import {
     AllocationRequest,
     CloudResource,
@@ -8,20 +8,20 @@ import {
     TerraformOutput,
     UserAnsibleAllocationStage
 } from '@crczp/sandbox-model';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { RequestDTO } from '../../../dto/sandbox-instance/request-dto';
-import { RequestMapper } from '../../../mappers/sandbox-instance/request-mapper';
-import { SandboxApiConfigService } from '../../../others/sandbox-api-config.service';
-import { AllocationRequestsApi } from './allocation-requests-api.service';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
-import { TerraformAllocationStageDTO } from '../../../dto/sandbox-instance/stages/terraform-allocation-stage-dto';
-import { RequestStageMapper } from '../../../mappers/sandbox-instance/request-stage-mapper';
-import { AnsibleAllocationStageDTO } from '../../../dto/sandbox-instance/stages/ansible-allocation-stage-dto';
-import { AnsibleAllocationOutputDTO } from '../../../dto/sandbox-instance/stages/ansible-allocation-output-dto';
-import { TerraformOutputDTO } from '../../../dto/sandbox-instance/stages/terraform-output-dto';
-import { CloudResourceDTO } from '../../../dto/sandbox-instance/stages/cloud-resource-dto';
-import { DjangoResourceDTO, PaginationMapper, ParamsBuilder } from '@crczp/api-common';
+import {Observable} from 'rxjs';
+import {map} from 'rxjs/operators';
+import {RequestDTO} from '../../../dto/sandbox-instance/request-dto';
+import {RequestMapper} from '../../../mappers/sandbox-instance/request-mapper';
+import {SandboxApiConfigService} from '../../../others/sandbox-api-config.service';
+import {AllocationRequestsApi} from './allocation-requests-api.service';
+import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
+import {TerraformAllocationStageDTO} from '../../../dto/sandbox-instance/stages/terraform-allocation-stage-dto';
+import {RequestStageMapper} from '../../../mappers/sandbox-instance/request-stage-mapper';
+import {AnsibleAllocationStageDTO} from '../../../dto/sandbox-instance/stages/ansible-allocation-stage-dto';
+import {AnsibleAllocationOutputDTO} from '../../../dto/sandbox-instance/stages/ansible-allocation-output-dto';
+import {TerraformOutputDTO} from '../../../dto/sandbox-instance/stages/terraform-output-dto';
+import {CloudResourceDTO} from '../../../dto/sandbox-instance/stages/cloud-resource-dto';
+import {DjangoResourceDTO, PaginationMapper, ParamsBuilder} from '@crczp/api-common';
 
 /**
  * Default implementation of service abstracting http communication with allocation requests endpoints.

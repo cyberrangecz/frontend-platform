@@ -1,5 +1,5 @@
-import { SandboxInstance } from '@crczp/sandbox-model';
-import { SandboxInstanceDTO } from '../../dto/sandbox-instance/sandbox-instance-dto';
+import {SandboxInstance} from '@crczp/sandbox-model';
+import {SandboxInstanceDTO} from '../../dto/sandbox-instance/sandbox-instance-dto';
 
 /**
  * @dynamic

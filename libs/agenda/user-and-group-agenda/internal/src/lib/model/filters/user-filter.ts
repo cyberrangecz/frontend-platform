@@ -1,4 +1,4 @@
-import { SentinelFilter } from '@sentinel/common/filter';
+import {SentinelFilter} from '@sentinel/common/filter';
 
 /**
  * User specific filter. Filters by family name

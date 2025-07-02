@@ -1,6 +1,6 @@
-import { OperatorFunction } from 'rxjs';
-import { operate } from 'rxjs/internal/util/lift';
-import { createOperatorSubscriber } from 'rxjs/internal/operators/OperatorSubscriber';
+import {OperatorFunction} from 'rxjs';
+import {operate} from 'rxjs/internal/util/lift';
+import {createOperatorSubscriber} from 'rxjs/internal/operators/OperatorSubscriber';
 
 export function unique<T>(comparator: (a: T, b: T) => boolean): OperatorFunction<T, T> {
     return operate((source, subscriber) => {

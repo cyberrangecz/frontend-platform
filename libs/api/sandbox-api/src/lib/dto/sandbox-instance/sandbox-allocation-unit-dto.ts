@@ -1,5 +1,5 @@
-import { CreatedByDTO } from './created-by-dto';
-import { RequestDTO } from './request-dto';
+import {CreatedByDTO} from './created-by-dto';
+import {RequestDTO} from './request-dto';
 
 export class SandboxAllocationUnitDTO {
     id: number;

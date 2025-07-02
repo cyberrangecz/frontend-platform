@@ -1,5 +1,5 @@
-import { Observable } from 'rxjs';
-import { Resources } from '@crczp/sandbox-model';
+import {Observable} from 'rxjs';
+import {Resources} from '@crczp/sandbox-model';
 
 /**
  * A layer between a component and an API service. Implement a concrete service by extending this class.

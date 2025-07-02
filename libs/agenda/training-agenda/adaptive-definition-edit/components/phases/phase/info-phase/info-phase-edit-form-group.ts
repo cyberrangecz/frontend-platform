@@ -1,5 +1,5 @@
-import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
-import { InfoPhase } from '@crczp/training-model';
+import {UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
+import {InfoPhase} from '@crczp/training-model';
 
 /**
  * Form control class for info-phase-training-phase phases edit component

@@ -1,7 +1,7 @@
-import { MitreTechniqueDTO } from '../../mitre-techniques/mitre-technique-dto';
-import { AbstractLevelDTO } from '../abstract-level-dto';
-import { HintDTO } from './hint-dto';
-import { ReferenceSolutionNodeDTO } from './reference-solution-node-dto';
+import {MitreTechniqueDTO} from '../../mitre-techniques/mitre-technique-dto';
+import {AbstractLevelDTO} from '../abstract-level-dto';
+import {HintDTO} from './hint-dto';
+import {ReferenceSolutionNodeDTO} from './reference-solution-node-dto';
 
 export interface TrainingLevelUpdateDto {
     id: number;

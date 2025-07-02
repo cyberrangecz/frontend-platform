@@ -1,3 +1,3 @@
-import { RequestStageDTO } from './request-stage-dto';
+import {RequestStageDTO} from './request-stage-dto';
 
 export class TerraformCleanupStageDTO extends RequestStageDTO {}

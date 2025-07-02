@@ -1,7 +1,7 @@
-import { TaskDTO } from '../../dto/phase/training-phase/task-dto';
-import { AbstractPhaseTypeEnum, AdaptiveTask } from '@crczp/training-model';
-import { TaskUpdateDTO } from '../../dto/phase/training-phase/task-update-dto';
-import { TaskCopyDTO } from '../../dto/phase/training-phase/task-copy-dto';
+import {TaskDTO} from '../../dto/phase/training-phase/task-dto';
+import {AbstractPhaseTypeEnum, AdaptiveTask} from '@crczp/training-model';
+import {TaskUpdateDTO} from '../../dto/phase/training-phase/task-update-dto';
+import {TaskCopyDTO} from '../../dto/phase/training-phase/task-copy-dto';
 
 export class TaskMapper {
     static fromDTO(dto: TaskDTO): AdaptiveTask {

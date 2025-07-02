@@ -1,6 +1,6 @@
-import { AbstractLevelDTO } from '../level/abstract-level-dto';
-import { UserRefDTO } from '../user/user-ref-dto';
-import { AbstractPhaseDTO } from '../phase/abstract-phase-dto';
+import {AbstractLevelDTO} from '../level/abstract-level-dto';
+import {UserRefDTO} from '../user/user-ref-dto';
+import {AbstractPhaseDTO} from '../phase/abstract-phase-dto';
 
 /**
  * .

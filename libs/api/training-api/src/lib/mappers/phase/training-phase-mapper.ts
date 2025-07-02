@@ -1,10 +1,10 @@
-import { TrainingPhaseDTO } from '../../dto/phase/training-phase/training-phase-dto';
-import { AbstractPhaseTypeEnum, DecisionMatrixRow, AdaptiveTask, TrainingPhase } from '@crczp/training-model';
-import { TrainingPhaseUpdateDTO } from '../../dto/phase/training-phase/training-phase-update-dto';
-import { TaskDTO } from '../../dto/phase/training-phase/task-dto';
-import { TaskMapper } from './task-mapper';
-import { DecisionMatrixRowDTO } from '../../dto/phase/training-phase/decision-matrix-row-dto';
-import { MitreTechniqueMapper } from '../mitre-techniques/mitre-technique-mapper';
+import {TrainingPhaseDTO} from '../../dto/phase/training-phase/training-phase-dto';
+import {AbstractPhaseTypeEnum, AdaptiveTask, DecisionMatrixRow, TrainingPhase} from '@crczp/training-model';
+import {TrainingPhaseUpdateDTO} from '../../dto/phase/training-phase/training-phase-update-dto';
+import {TaskDTO} from '../../dto/phase/training-phase/task-dto';
+import {TaskMapper} from './task-mapper';
+import {DecisionMatrixRowDTO} from '../../dto/phase/training-phase/decision-matrix-row-dto';
+import {MitreTechniqueMapper} from '../mitre-techniques/mitre-technique-mapper';
 
 export class TrainingPhaseMapper {
     static fromDTO(dto: TrainingPhaseDTO): TrainingPhase {

@@ -1,25 +1,25 @@
-import { CommonModule } from '@angular/common';
-import { ModuleWithProviders, NgModule } from '@angular/core';
-import { HurdlingVisualizationConfig, TrainingsHurdlingVisualizationsModule } from '@crczp/hurdling-visualization';
-import { TrainingsVisualizationsOverviewLibModule, VisualizationOverviewConfig } from '@crczp/overview-visualization';
-import { TrainingAgendaConfig } from '@crczp/training-agenda';
-import { TrainingInstanceResultsMaterialModule } from './training-instance-results-material.module';
-import { TrainingInstanceResultsComponent } from './training-instance-results.component';
-import { DashboardModule } from '@crczp/visualization-dashboard/dashboard';
-import { TimelineModule } from '@crczp/command-visualizations/timeline';
-import { MistakeModule } from '@crczp/command-visualizations/mistake';
-import { TrainingInstanceResultsRoutingModule } from './training-instance-results-routing.module';
-import { DashboardWrapperComponent } from './dashboard-wrapper/dashboard-wrapper.component';
-import { CommandTimelineWrapperComponent } from './command-timeline-wrapper/command-timeline-wrapper.component';
-import { AssessmentWrapperComponent } from './assessment-wrapper/assessment-wrapper.component';
-import { CommandAnalysisWrapperComponent } from './command-analysis-wrapper/command-analysis-wrapper.component';
+import {CommonModule} from '@angular/common';
+import {ModuleWithProviders, NgModule} from '@angular/core';
+import {HurdlingVisualizationConfig, TrainingsHurdlingVisualizationsModule} from '@crczp/hurdling-visualization';
+import {TrainingsVisualizationsOverviewLibModule, VisualizationOverviewConfig} from '@crczp/overview-visualization';
+import {TrainingAgendaConfig} from '@crczp/training-agenda';
+import {TrainingInstanceResultsMaterialModule} from './training-instance-results-material.module';
+import {TrainingInstanceResultsComponent} from './training-instance-results.component';
+import {DashboardModule} from '@crczp/visualization-dashboard/dashboard';
+import {TimelineModule} from '@crczp/command-visualizations/timeline';
+import {MistakeModule} from '@crczp/command-visualizations/mistake';
+import {TrainingInstanceResultsRoutingModule} from './training-instance-results-routing.module';
+import {DashboardWrapperComponent} from './dashboard-wrapper/dashboard-wrapper.component';
+import {CommandTimelineWrapperComponent} from './command-timeline-wrapper/command-timeline-wrapper.component';
+import {AssessmentWrapperComponent} from './assessment-wrapper/assessment-wrapper.component';
+import {CommandAnalysisWrapperComponent} from './command-analysis-wrapper/command-analysis-wrapper.component';
 import {
     AggregatedDashboardWrapperComponent
 } from './aggregated-dashboard-wrapper/aggregated-dashboard-wrapper.component';
-import { StatisticalVisualizationModule } from '@crczp/statistical-visualizations/statistical-viz';
-import { WalkthroughWrapperComponent } from './walkthrough-wrapper/walkthrough-wrapper.component';
-import { WalkthroughVisualizationModule } from '@crczp/walkthrough-visualization';
-import { WalkthroughService } from './walkthrough-wrapper/services/walkthrough.service';
+import {StatisticalVisualizationModule} from '@crczp/statistical-visualizations/statistical-viz';
+import {WalkthroughWrapperComponent} from './walkthrough-wrapper/walkthrough-wrapper.component';
+import {WalkthroughVisualizationModule} from '@crczp/walkthrough-visualization';
+import {WalkthroughService} from './walkthrough-wrapper/services/walkthrough.service';
 import {
     AssessmentsResultsVisualizationModule,
     AssessmentVisualizationConfig,

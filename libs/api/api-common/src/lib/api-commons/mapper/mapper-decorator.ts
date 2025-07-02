@@ -1,6 +1,6 @@
-import { ApiReadMapping, ApiWriteMapping } from './mapper-types';
-import { MapperBuilder } from './mapper-builder';
-import { InjectionToken, ModuleWithProviders, NgModule, Type } from '@angular/core';
+import {ApiReadMapping, ApiWriteMapping} from './mapper-types';
+import {MapperBuilder} from './mapper-builder';
+import {InjectionToken, ModuleWithProviders, NgModule, Type} from '@angular/core';
 
 @NgModule()
 export class MappersModule {

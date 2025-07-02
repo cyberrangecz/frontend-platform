@@ -1,8 +1,8 @@
-import { Injectable } from '@angular/core';
-import { from, Observable } from 'rxjs';
-import { TrainingNavigator } from '@crczp/training-agenda';
-import { MitreTechniquesOverviewService } from './mitre-techniques.service';
-import { Router } from '@angular/router';
+import {Injectable} from '@angular/core';
+import {from, Observable} from 'rxjs';
+import {TrainingNavigator} from '@crczp/training-agenda';
+import {MitreTechniquesOverviewService} from './mitre-techniques.service';
+import {Router} from '@angular/router';
 
 @Injectable()
 export class MitreTechniquesOverviewConcreteService extends MitreTechniquesOverviewService {

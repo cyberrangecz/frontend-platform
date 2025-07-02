@@ -1,7 +1,7 @@
-import { formatDate } from '@angular/common';
-import { TrainingDefinitionStateEnum } from '../enums/training-definition-state.enum';
-import { Level } from '../level/level';
-import { Phase } from '../phase/phase';
+import {formatDate} from '@angular/common';
+import {TrainingDefinitionStateEnum} from '../enums/training-definition-state.enum';
+import {Level} from '../level/level';
+import {Phase} from '../phase/phase';
 
 /**
  * Class representing training definition in a system.

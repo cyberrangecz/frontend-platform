@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {
     HostNode,
     Link,
@@ -10,13 +10,13 @@ import {
     SpecialNode,
     SwitchNode,
 } from '@crczp/topology-graph-model';
-import { TopologyDTO } from '../model/DTO/topology-dto.model';
-import { PortDTO } from '../model/DTO/port-dto.model';
-import { RouterDTO } from '../model/DTO/router-dto.model';
-import { SwitchDTO } from '../model/DTO/switch-dto.model';
-import { HostDTO } from '../model/DTO/host-dto.model';
-import { LinkDTO } from '../model/DTO/link-dto.model';
-import { SpecialNodeDTO } from '../model/DTO/special-node-dto.model';
+import {TopologyDTO} from '../model/DTO/topology-dto.model';
+import {PortDTO} from '../model/DTO/port-dto.model';
+import {RouterDTO} from '../model/DTO/router-dto.model';
+import {SwitchDTO} from '../model/DTO/switch-dto.model';
+import {HostDTO} from '../model/DTO/host-dto.model';
+import {LinkDTO} from '../model/DTO/link-dto.model';
+import {SpecialNodeDTO} from '../model/DTO/special-node-dto.model';
 
 /**
  * Maps DTOs to internal model

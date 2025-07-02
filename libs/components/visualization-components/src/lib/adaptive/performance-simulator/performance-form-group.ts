@@ -1,6 +1,6 @@
-import { UntypedFormArray, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
-import { DecisionMatrixRow, TrainingPhase } from '@crczp/training-model';
-import { TraineePhasePerformance } from '@crczp/visualization-model';
+import {UntypedFormArray, UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
+import {DecisionMatrixRow, TrainingPhase} from '@crczp/training-model';
+import {TraineePhasePerformance} from '@crczp/visualization-model';
 
 export class PerformanceFormGroup {
     formGroup: UntypedFormGroup;

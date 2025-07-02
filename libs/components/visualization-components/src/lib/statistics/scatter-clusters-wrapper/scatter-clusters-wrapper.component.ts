@@ -8,17 +8,17 @@ import {
     SimpleChanges
 } from '@angular/core';
 import * as d3 from 'd3';
-import { TrainingInstanceStatistics } from '@crczp/visualization-model';
-import { MatCardModule } from '@angular/material/card';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatGridListModule } from '@angular/material/grid-list';
-import { MatInputModule } from '@angular/material/input';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatButtonModule } from '@angular/material/button';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatRadioModule } from '@angular/material/radio';
-import { ClusteringVisualizationsComponent } from '../../clustering/clustering-visualizations.component';
-import { MatIconModule } from '@angular/material/icon';
+import {TrainingInstanceStatistics} from '@crczp/visualization-model';
+import {MatCardModule} from '@angular/material/card';
+import {MatDividerModule} from '@angular/material/divider';
+import {MatGridListModule} from '@angular/material/grid-list';
+import {MatInputModule} from '@angular/material/input';
+import {MatTooltipModule} from '@angular/material/tooltip';
+import {MatButtonModule} from '@angular/material/button';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatRadioModule} from '@angular/material/radio';
+import {ClusteringVisualizationsComponent} from '../../clustering/clustering-visualizations.component';
+import {MatIconModule} from '@angular/material/icon';
 
 @Component({
     selector: 'crczp-scatter-clusters-wrapper',

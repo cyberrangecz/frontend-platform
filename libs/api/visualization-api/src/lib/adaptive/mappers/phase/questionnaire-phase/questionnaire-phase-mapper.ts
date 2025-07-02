@@ -1,8 +1,7 @@
-
-import { QuestionnairePhaseDTO } from '../../../dto/phase/questionnaire-phase/questionnaire-phase-dto';
-import { QuestionnairePhaseTaskMapper } from './questionnaire-phase-task-mapper';
-import { AbstractPhaseTypeEnum, QuestionnaireTypeEnum } from '@crczp/training-model';
-import { QuestionnaireTransitionPhase } from '@crczp/visualization-model';
+import {QuestionnairePhaseDTO} from '../../../dto/phase/questionnaire-phase/questionnaire-phase-dto';
+import {QuestionnairePhaseTaskMapper} from './questionnaire-phase-task-mapper';
+import {AbstractPhaseTypeEnum, QuestionnaireTypeEnum} from '@crczp/training-model';
+import {QuestionnaireTransitionPhase} from '@crczp/visualization-model';
 
 export class QuestionnairePhaseMapper {
     static fromDTO(dto: QuestionnairePhaseDTO): QuestionnaireTransitionPhase {

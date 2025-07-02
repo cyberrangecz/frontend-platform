@@ -1,5 +1,7 @@
-import { AbstractDetectionEventTypeEnum, TimeProximityDetectionEvent } from '@crczp/training-model';
-import { TimeProximityDetectionEventDTO } from '../../dto/detection-event/time-proximity/time_proximity-detection-event-dto';
+import {AbstractDetectionEventTypeEnum, TimeProximityDetectionEvent} from '@crczp/training-model';
+import {
+    TimeProximityDetectionEventDTO
+} from '../../dto/detection-event/time-proximity/time_proximity-detection-event-dto';
 
 export class TimeProximityDetectionEventMapper {
     static fromDTO(dto: TimeProximityDetectionEventDTO): TimeProximityDetectionEvent {

@@ -1,4 +1,4 @@
-import { DisplayView, ViewEnum } from './components/types';
+import {DisplayView, ViewEnum} from './components/types';
 
 
 export class ProgressConfig {

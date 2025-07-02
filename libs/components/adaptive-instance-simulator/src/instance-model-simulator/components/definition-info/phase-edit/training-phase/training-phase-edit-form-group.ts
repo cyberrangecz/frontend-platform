@@ -1,5 +1,5 @@
-import { UntypedFormArray, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
-import { DecisionMatrixRow, TrainingPhase } from '@crczp/training-model';
+import {UntypedFormArray, UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
+import {DecisionMatrixRow, TrainingPhase} from '@crczp/training-model';
 
 export class TrainingPhaseEditFormGroup {
     formGroup: UntypedFormGroup;
@@ -30,19 +30,19 @@ export class TrainingPhaseEditFormGroup {
                 Validators.required,
                 Validators.min(0),
             ]),
-            completedInTime: new UntypedFormControl({ value: row.completedInTime, disabled: isDisabled }, [
+            completedInTime: new UntypedFormControl({value: row.completedInTime, disabled: isDisabled}, [
                 Validators.required,
                 Validators.min(0),
             ]),
-            keywordUsed: new UntypedFormControl({ value: row.keywordUsed, disabled: isDisabled }, [
+            keywordUsed: new UntypedFormControl({value: row.keywordUsed, disabled: isDisabled}, [
                 Validators.required,
                 Validators.min(0),
             ]),
-            solutionDisplayed: new UntypedFormControl({ value: row.solutionDisplayed, disabled: isDisabled }, [
+            solutionDisplayed: new UntypedFormControl({value: row.solutionDisplayed, disabled: isDisabled}, [
                 Validators.required,
                 Validators.min(0),
             ]),
-            wrongAnswers: new UntypedFormControl({ value: row.wrongAnswers, disabled: isDisabled }, [
+            wrongAnswers: new UntypedFormControl({value: row.wrongAnswers, disabled: isDisabled}, [
                 Validators.required,
                 Validators.min(0),
             ]),

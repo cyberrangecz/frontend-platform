@@ -1,7 +1,6 @@
-
-import { UserDataMapper } from './user-data-mapper';
-import { LevelEventsDTO } from '../dto/level-events-dto';
-import { WalkthroughVisualizationData } from '@crczp/visualization-model';
+import {UserDataMapper} from './user-data-mapper';
+import {LevelEventsDTO} from '../dto/level-events-dto';
+import {WalkthroughVisualizationData} from '@crczp/visualization-model';
 
 export class VisualizationDataMapper {
     static fromDTO(dto: LevelEventsDTO): WalkthroughVisualizationData {

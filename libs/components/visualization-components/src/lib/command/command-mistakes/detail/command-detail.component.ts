@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, Component, HostBinding, Input } from '@angular/core';
-import { MatListModule } from '@angular/material/list';
-import { MatCardModule } from '@angular/material/card';
-import { CommonModule } from '@angular/common';
-import { AggregatedCommands } from '@crczp/visualization-model';
+import {ChangeDetectionStrategy, Component, HostBinding, Input} from '@angular/core';
+import {MatListModule} from '@angular/material/list';
+import {MatCardModule} from '@angular/material/card';
+import {CommonModule} from '@angular/common';
+import {AggregatedCommands} from '@crczp/visualization-model';
 
 @Component({
     selector: 'crczp-command-visualizations-command-detail',

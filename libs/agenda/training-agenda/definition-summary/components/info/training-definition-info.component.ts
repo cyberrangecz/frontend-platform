@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { TrainingDefinition } from '@crczp/training-model';
+import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
+import {TrainingDefinition} from '@crczp/training-model';
 
 @Component({
     selector: 'crczp-training-definition-info',

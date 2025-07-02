@@ -1,5 +1,5 @@
-import { FinalComponent } from '../final/final.component';
-import { PlayerData } from '../../../model/clustering/player-data';
+import {FinalComponent} from '../final/final.component';
+import {PlayerData} from '../../../model/clustering/player-data';
 
 export interface ClusteringFinalEventService {
     clusteringFinalComponent: FinalComponent;

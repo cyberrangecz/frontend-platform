@@ -1,5 +1,5 @@
-import { CheatingDetection } from '@crczp/training-model';
-import { Observable } from 'rxjs';
+import {CheatingDetection} from '@crczp/training-model';
+import {Observable} from 'rxjs';
 
 /**
  * A layer between a component and an API services. Implement a concrete services by extending this class.

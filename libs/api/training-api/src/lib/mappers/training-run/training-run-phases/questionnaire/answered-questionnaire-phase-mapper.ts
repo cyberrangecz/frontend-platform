@@ -6,9 +6,11 @@ import {
     QuestionnaireTypeEnum,
     QuestionTypeEnum,
 } from '@crczp/training-model';
-import { AnsweredQuestionDTO } from './../../../../dto/training-run/adaptive-run-phases/answered-question-dto';
-import { AnsweredQuestionnairePhaseDTO } from '../../../../../../src/lib/dto/training-run/adaptive-run-phases/answered-questionnaire-phase-dto';
-import { ChoiceDTO } from './../../../../dto/phase/questionnaire-phase/choice-dto';
+import {AnsweredQuestionDTO} from './../../../../dto/training-run/adaptive-run-phases/answered-question-dto';
+import {
+    AnsweredQuestionnairePhaseDTO
+} from '../../../../../../src/lib/dto/training-run/adaptive-run-phases/answered-questionnaire-phase-dto';
+import {ChoiceDTO} from './../../../../dto/phase/questionnaire-phase/choice-dto';
 
 export class AnsweredQuestionnairePhaseMapper {
     static fromDTO(dto: AnsweredQuestionnairePhaseDTO): QuestionnairePhase {

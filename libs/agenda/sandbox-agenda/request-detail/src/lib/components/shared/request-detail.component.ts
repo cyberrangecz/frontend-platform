@@ -1,13 +1,13 @@
-import { ActivatedRoute } from '@angular/router';
-import { Request, RequestStage } from '@crczp/sandbox-model';
-import { exhaustMap, Observable } from 'rxjs';
-import { map, switchMap, tap } from 'rxjs/operators';
-import { POOL_REQUEST_DATA_ATTRIBUTE_NAME } from '@crczp/sandbox-agenda';
-import { RequestStagesService } from '../../services/state/request-stages.service';
-import { StageAdapter } from '../../model/adapters/stage-adapter';
-import { StagesDetailPollRegistry } from '../../services/state/detail/stages-detail-poll-registry.service';
-import { DestroyRef, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {ActivatedRoute} from '@angular/router';
+import {Request, RequestStage} from '@crczp/sandbox-model';
+import {exhaustMap, Observable} from 'rxjs';
+import {map, switchMap, tap} from 'rxjs/operators';
+import {POOL_REQUEST_DATA_ATTRIBUTE_NAME} from '@crczp/sandbox-agenda';
+import {RequestStagesService} from '../../services/state/request-stages.service';
+import {StageAdapter} from '../../model/adapters/stage-adapter';
+import {StagesDetailPollRegistry} from '../../services/state/detail/stages-detail-poll-registry.service';
+import {DestroyRef, inject} from '@angular/core';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 
 /**
  * Smart component for pool request detail page

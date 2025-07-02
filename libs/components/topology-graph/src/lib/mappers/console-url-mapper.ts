@@ -1,4 +1,4 @@
-import { ConsoleUrl } from '../model/others/console-url';
+import {ConsoleUrl} from '../model/others/console-url';
 
 /**
  * @dynamic

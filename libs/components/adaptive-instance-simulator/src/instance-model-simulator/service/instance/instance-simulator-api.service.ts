@@ -1,20 +1,21 @@
-import { Injectable } from '@angular/core';
-import { map, Observable } from 'rxjs';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { InstanceSimulatorMapper } from '../mapper/instance-simulator-mapper';
-import { InstanceModelSimulator } from '../../model/instance/instance-model-simulator';
-import { InstanceModelSimulatorDTO } from '../../model/instance/instance-model-simulator-dto';
-import { InstanceModelUpdateMapper } from '../mapper/instance-model-update-mapper';
-import { SankeyData } from '../../model/sankey/sankey-data';
-import { SankeyDataDTO } from '../../model/sankey/dto/sankey-data-dto';
-import { SankeyDataMapper } from '../../model/sankey/mapper/sankey-data-mapper';
-import { Settings } from '@crczp/common';
+import {Injectable} from '@angular/core';
+import {map, Observable} from 'rxjs';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {InstanceSimulatorMapper} from '../mapper/instance-simulator-mapper';
+import {InstanceModelSimulator} from '../../model/instance/instance-model-simulator';
+import {InstanceModelSimulatorDTO} from '../../model/instance/instance-model-simulator-dto';
+import {InstanceModelUpdateMapper} from '../mapper/instance-model-update-mapper';
+import {SankeyData} from '../../model/sankey/sankey-data';
+import {SankeyDataDTO} from '../../model/sankey/dto/sankey-data-dto';
+import {SankeyDataMapper} from '../../model/sankey/mapper/sankey-data-mapper';
+import {Settings} from '@crczp/common';
 
 @Injectable()
 export class InstanceSimulatorApiService {
     private readonly FILE_NAME = 'instance-data.zip';
 
-    constructor(private http: HttpClient, private settings: Settings) {}
+    constructor(private http: HttpClient, private settings: Settings) {
+    }
 
     /**
      * Sends https request to upload exported training instance data from already finished training instance.

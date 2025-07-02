@@ -1,4 +1,4 @@
-import { AdaptiveQuestion } from '@crczp/training-model';
+import {AdaptiveQuestion} from '@crczp/training-model';
 
 /**
  * Event representing change of edited question

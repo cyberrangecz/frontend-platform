@@ -1,5 +1,5 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { PoolRowAdapter } from '../../model/pool-row-adapter';
+import {Component, Input, OnInit} from '@angular/core';
+import {PoolRowAdapter} from '../../model/pool-row-adapter';
 
 @Component({
     selector: 'crczp-pool-expand-detail',

@@ -1,4 +1,4 @@
-import { PlanData } from './plan-config';
+import {PlanData} from './plan-config';
 
 export class Padding {
     top: number;

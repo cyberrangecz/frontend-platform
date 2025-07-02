@@ -1,5 +1,5 @@
-import { UserRefDTO } from '@crczp/training-api';
-import { AbstractPhaseDTO } from './phase/abstract-phase-dto';
+import {UserRefDTO} from '@crczp/training-api';
+import {AbstractPhaseDTO} from './phase/abstract-phase-dto';
 
 export interface TrainingRunDataDTO {
     training_run_id: number;

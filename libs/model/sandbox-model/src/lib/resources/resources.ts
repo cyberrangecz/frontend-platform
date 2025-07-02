@@ -1,4 +1,4 @@
-import { Quotas } from './quotas';
+import {Quotas} from './quotas';
 
 export class Resources {
     projectName!: string;

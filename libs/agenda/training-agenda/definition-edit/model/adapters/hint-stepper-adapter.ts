@@ -1,5 +1,5 @@
-import { Hint } from '@crczp/training-model';
-import { StepItem, StepStateEnum } from '@sentinel/components/stepper';
+import {Hint} from '@crczp/training-model';
+import {StepItem, StepStateEnum} from '@sentinel/components/stepper';
 
 export class HintStepperAdapter implements StepItem {
     private _hint: Hint;

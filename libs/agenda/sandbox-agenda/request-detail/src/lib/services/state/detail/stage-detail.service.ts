@@ -1,9 +1,9 @@
-import { merge, Observable } from 'rxjs';
-import { OffsetPaginatedElementsPollingService } from '@sentinel/common';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
-import { RequestStage } from '@crczp/sandbox-model';
-import { filter, map, shareReplay, switchMap, tap } from 'rxjs/operators';
-import { StagesDetailPollRegistry } from './stages-detail-poll-registry.service';
+import {merge, Observable} from 'rxjs';
+import {OffsetPaginatedElementsPollingService} from '@sentinel/common';
+import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
+import {RequestStage} from '@crczp/sandbox-model';
+import {filter, map, shareReplay, switchMap, tap} from 'rxjs/operators';
+import {StagesDetailPollRegistry} from './stages-detail-poll-registry.service';
 
 export abstract class StageDetailService extends OffsetPaginatedElementsPollingService<string> {
     private lastStage: RequestStage;

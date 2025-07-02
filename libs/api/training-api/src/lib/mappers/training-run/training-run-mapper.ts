@@ -1,7 +1,7 @@
-import { TrainingRun, TrainingRunStateEnum } from '@crczp/training-model';
-import { TrainingRunDTO } from '../../dto/training-run/training-run-dto';
-import { LevelMapper } from '../level/level-mapper';
-import { UserMapper } from '../user/user-mapper';
+import {TrainingRun, TrainingRunStateEnum} from '@crczp/training-model';
+import {TrainingRunDTO} from '../../dto/training-run/training-run-dto';
+import {LevelMapper} from '../level/level-mapper';
+import {UserMapper} from '../user/user-mapper';
 
 /**
  * @dynamic

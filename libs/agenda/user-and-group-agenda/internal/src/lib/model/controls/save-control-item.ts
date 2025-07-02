@@ -1,7 +1,7 @@
-import {SentinelControlItemSignal} from '@sentinel/components/controls';
 import {Observable} from 'rxjs';
+import {SentinelControlItem} from "@sentinel/components/controls";
 
-export class SaveControlItem extends SentinelControlItemSignal {
+export class SaveControlItem extends SentinelControlItem {
     static readonly ID = 'save';
 
     constructor(

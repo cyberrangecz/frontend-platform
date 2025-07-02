@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { QuestionnairePhaseTaskVisuazlization } from '@crczp/visualization-model';
+import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
+import {QuestionnairePhaseTaskVisuazlization} from '@crczp/visualization-model';
 
 
 @Component({

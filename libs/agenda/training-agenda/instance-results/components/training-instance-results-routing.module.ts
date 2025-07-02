@@ -1,5 +1,5 @@
-import { RouterModule, Routes } from '@angular/router';
-import { NgModule } from '@angular/core';
+import {RouterModule, Routes} from '@angular/router';
+import {NgModule} from '@angular/core';
 import {
     TRAINING_RUN_RESULTS_ASSESSMENT_PATH,
     TRAINING_RUN_RESULTS_COMMAND_ANALYSIS_PATH,
@@ -7,12 +7,12 @@ import {
     TRAINING_RUN_RESULTS_DASHBOARD_PATH,
     TRAINING_RUN_RESULTS_WALKTHROUGH_PATH,
 } from '@crczp/training-agenda';
-import { AssessmentWrapperComponent } from './assessment-wrapper/assessment-wrapper.component';
-import { DashboardWrapperComponent } from './dashboard-wrapper/dashboard-wrapper.component';
-import { TrainingInstanceResultsComponent } from './training-instance-results.component';
-import { CommandTimelineWrapperComponent } from './command-timeline-wrapper/command-timeline-wrapper.component';
-import { CommandAnalysisWrapperComponent } from './command-analysis-wrapper/command-analysis-wrapper.component';
-import { WalkthroughWrapperComponent } from './walkthrough-wrapper/walkthrough-wrapper.component';
+import {AssessmentWrapperComponent} from './assessment-wrapper/assessment-wrapper.component';
+import {DashboardWrapperComponent} from './dashboard-wrapper/dashboard-wrapper.component';
+import {TrainingInstanceResultsComponent} from './training-instance-results.component';
+import {CommandTimelineWrapperComponent} from './command-timeline-wrapper/command-timeline-wrapper.component';
+import {CommandAnalysisWrapperComponent} from './command-analysis-wrapper/command-analysis-wrapper.component';
+import {WalkthroughWrapperComponent} from './walkthrough-wrapper/walkthrough-wrapper.component';
 
 const routes: Routes = [
     {

@@ -1,11 +1,11 @@
-import { AdaptiveQuestion } from '../../../model/phase/questionnaire-phase/adaptive-question';
-import { QuestionnairePhaseDTO } from '../../../dto/phase/questionnaire-phase/questionnaire-phase-dto';
-import { QuestionnairePhaseTask } from '../../../model/phase/questionnaire-phase/questionnaire-phase-task';
-import { QuestionDTO } from '../../../dto/phase/questionnaire-phase/question-dto';
-import { QuestionTypeEnum } from '../../../model/enums/question-type.enum';
-import { ChoiceDTO } from '../../../dto/phase/questionnaire-phase/choice-dto';
-import { Choice } from '../../../model/phase/questionnaire-phase/choice';
-import { QuestionnaireTypeEnum } from '../../../model/enums/questionnaire-type.enum';
+import {AdaptiveQuestion} from '../../../model/phase/questionnaire-phase/adaptive-question';
+import {QuestionnairePhaseDTO} from '../../../dto/phase/questionnaire-phase/questionnaire-phase-dto';
+import {QuestionnairePhaseTask} from '../../../model/phase/questionnaire-phase/questionnaire-phase-task';
+import {QuestionDTO} from '../../../dto/phase/questionnaire-phase/question-dto';
+import {QuestionTypeEnum} from '../../../model/enums/question-type.enum';
+import {ChoiceDTO} from '../../../dto/phase/questionnaire-phase/choice-dto';
+import {Choice} from '../../../model/phase/questionnaire-phase/choice';
+import {QuestionnaireTypeEnum} from '../../../model/enums/questionnaire-type.enum';
 
 export class QuestionnairePhaseTaskMapper {
     static fromDTO(dto: QuestionnairePhaseDTO): QuestionnairePhaseTask {

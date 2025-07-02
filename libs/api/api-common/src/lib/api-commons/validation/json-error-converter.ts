@@ -1,5 +1,5 @@
-import { HttpErrorResponse } from '@angular/common/http';
-import { catchError, from, map, OperatorFunction, throwError } from 'rxjs';
+import {HttpErrorResponse} from '@angular/common/http';
+import {catchError, from, map, OperatorFunction, throwError} from 'rxjs';
 
 /**
  * Util class to parse blob HttpErrorResponse to json (workaround for https://github.com/angular/angular/issues/19888)

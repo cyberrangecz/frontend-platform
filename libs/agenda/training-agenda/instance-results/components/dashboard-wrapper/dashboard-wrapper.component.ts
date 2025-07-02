@@ -1,7 +1,8 @@
-import { Component, DestroyRef, inject, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { TrainingInstance } from '@crczp/training-model';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {Component, DestroyRef, inject, OnInit} from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
+import {TrainingInstance} from '@crczp/training-model';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import {async} from "rxjs";
 
 @Component({
     selector: 'crczp-dashboard-wrapper',
@@ -19,4 +20,6 @@ export class DashboardWrapperComponent implements OnInit {
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe((data) => (this.trainingInstance = data.trainingInstance));
     }
+
+    protected readonly async = async;
 }

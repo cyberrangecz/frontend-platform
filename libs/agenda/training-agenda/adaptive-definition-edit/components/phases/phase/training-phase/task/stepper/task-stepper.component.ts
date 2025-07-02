@@ -7,10 +7,10 @@ import {
     Output,
     SimpleChanges,
 } from '@angular/core';
-import { SentinelStepper, StepperStateChange, StepStateEnum } from '@sentinel/components/stepper';
-import { MatDialog } from '@angular/material/dialog';
-import { PhaseMoveEvent } from '../../../../../../model/events/phase-move-event';
-import { PhaseStepperAdapter } from '@crczp/training-agenda/internal';
+import {SentinelStepper, StepperStateChange, StepStateEnum} from '@sentinel/components/stepper';
+import {MatDialog} from '@angular/material/dialog';
+import {PhaseMoveEvent} from '../../../../../../model/events/phase-move-event';
+import {PhaseStepperAdapter} from '@crczp/training-agenda/internal';
 
 @Component({
     selector: 'crczp-task-stepper',

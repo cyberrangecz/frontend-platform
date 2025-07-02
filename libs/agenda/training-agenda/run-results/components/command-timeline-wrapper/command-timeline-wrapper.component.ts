@@ -1,7 +1,7 @@
-import { Component, DestroyRef, inject, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { TrainingRun } from '@crczp/training-model';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {Component, DestroyRef, inject, OnInit} from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
+import {TrainingRun} from '@crczp/training-model';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 
 @Component({
     selector: 'crczp-command-timeline-wrapper',

@@ -1,7 +1,7 @@
-import { SimulationLinkDatum } from 'd3';
-import { LinkTypeEnum } from '../enums/link-type-enum';
-import { NodePort } from '../node-port/node-port';
-import { Node } from '../node/node';
+import {SimulationLinkDatum} from 'd3';
+import {LinkTypeEnum} from '../enums/link-type-enum';
+import {NodePort} from '../node-port/node-port';
+import {Node} from '../node/node';
 
 /**
  * Class representing link between two nodes (connected to two ports) in a network topology

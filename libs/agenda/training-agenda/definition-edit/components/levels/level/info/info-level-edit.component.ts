@@ -9,10 +9,10 @@ import {
     Output,
     SimpleChanges,
 } from '@angular/core';
-import { InfoLevel } from '@crczp/training-model';
-import { InfoLevelEditFormGroup } from './info-level-edit-form-group';
-import { AbstractControl } from '@angular/forms';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {InfoLevel} from '@crczp/training-model';
+import {InfoLevelEditFormGroup} from './info-level-edit-form-group';
+import {AbstractControl} from '@angular/forms';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 
 /**
  * Component for editing of new or existing info level

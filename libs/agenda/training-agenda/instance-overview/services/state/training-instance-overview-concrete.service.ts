@@ -1,29 +1,21 @@
-import { inject, Injectable } from '@angular/core';
-import { Router } from '@angular/router';
-import {
-    OffsetPaginationEvent,
-    PaginatedResource,
-} from '@sentinel/common/pagination';
-import { PoolApi } from '@crczp/sandbox-api';
-import { TrainingInstanceApi } from '@crczp/training-api';
-import { TrainingInstance } from '@crczp/training-model';
-import { EMPTY, Observable, of } from 'rxjs';
-import { catchError, map, switchMap, tap } from 'rxjs/operators';
-import { TrainingInstanceFilter } from '../../model/adapters/training-instance-filter';
-import {
-    TrainingErrorHandler,
-    TrainingNavigator,
-    TrainingNotificationService,
-} from '@crczp/training-agenda';
-import { TrainingAgendaContext } from '@crczp/training-agenda/internal';
-import { TrainingInstanceOverviewService } from './training-instance-overview.service';
+import {Injectable} from '@angular/core';
+import {Router} from '@angular/router';
+import {OffsetPaginationEvent, PaginatedResource,} from '@sentinel/common/pagination';
+import {PoolApi} from '@crczp/sandbox-api';
+import {TrainingInstanceApi} from '@crczp/training-api';
+import {TrainingInstance} from '@crczp/training-model';
+import {EMPTY, Observable, of} from 'rxjs';
+import {catchError, map, switchMap, tap} from 'rxjs/operators';
+import {TrainingInstanceFilter} from '../../model/adapters/training-instance-filter';
+import {TrainingErrorHandler, TrainingNavigator, TrainingNotificationService,} from '@crczp/training-agenda';
+import {TrainingInstanceOverviewService} from './training-instance-overview.service';
 import {
     SentinelConfirmationDialogComponent,
     SentinelConfirmationDialogConfig,
     SentinelDialogResultEnum,
 } from '@sentinel/components/dialogs';
-import { MatDialog } from '@angular/material/dialog';
-import { Settings } from '@crczp/common';
+import {MatDialog} from '@angular/material/dialog';
+import {Settings} from '@crczp/common';
 
 @Injectable()
 export class TrainingInstanceOverviewConcreteService extends TrainingInstanceOverviewService {
@@ -36,11 +28,11 @@ export class TrainingInstanceOverviewConcreteService extends TrainingInstanceOve
         private poolApi: PoolApi,
         private router: Router,
         private navigator: TrainingNavigator,
-        private context: TrainingAgendaContext,
         private notificationService: TrainingNotificationService,
-        private errorHandler: TrainingErrorHandler
+        private errorHandler: TrainingErrorHandler,
+        settings: Settings
     ) {
-        super(inject(Settings.DEFAULT_PAGE_SIZE));
+        super(settings.DEFAULT_PAGE_SIZE);
     }
 
     getAll(

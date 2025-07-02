@@ -1,11 +1,11 @@
-import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { VisualizationDataMapper } from './mappers/visualization-data-mapper';
-import { VisualizationApiConfig } from '../config/visualization-api-config';
-import { TransitionVisualizationData } from '@crczp/visualization-model';
-import { AdaptiveVisualizationDataDTO } from './dto/run-visualization-dto';
+import {HttpClient} from '@angular/common/http';
+import {Injectable} from '@angular/core';
+import {Observable} from 'rxjs';
+import {map} from 'rxjs/operators';
+import {VisualizationDataMapper} from './mappers/visualization-data-mapper';
+import {VisualizationApiConfig} from '../config/visualization-api-config';
+import {TransitionVisualizationData} from '@crczp/visualization-model';
+import {AdaptiveVisualizationDataDTO} from './dto/run-visualization-dto';
 
 @Injectable()
 export class AdaptiveTransitionVisualizationApi {

@@ -1,4 +1,4 @@
-import { TrainingDefinition } from '@crczp/training-model';
+import {TrainingDefinition} from '@crczp/training-model';
 
 /**
  * Event representing training definition change (edit)

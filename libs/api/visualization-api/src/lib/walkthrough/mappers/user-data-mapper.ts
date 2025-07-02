@@ -1,7 +1,7 @@
-import { UserDataDTO } from '../dto/user-data-dto';
-import { UserEventMapper } from './user-event-mapper';
-import { CommandEvent, CommandEventsModel, WalkthroughUserData } from '@crczp/visualization-model';
-import { UserMapper } from '@crczp/training-api';
+import {UserDataDTO} from '../dto/user-data-dto';
+import {UserEventMapper} from './user-event-mapper';
+import {CommandEvent, CommandEventsModel, WalkthroughUserData} from '@crczp/visualization-model';
+import {UserMapper} from '@crczp/training-api';
 
 export class UserDataMapper {
     static fromDTO(dto: UserDataDTO, levelId: number): WalkthroughUserData {

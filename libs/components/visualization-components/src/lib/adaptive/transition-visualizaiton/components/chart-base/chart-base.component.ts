@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component, ElementRef, Input } from '@angular/core';
+import {ChangeDetectionStrategy, Component, ElementRef, Input} from '@angular/core';
 import * as d3 from 'd3';
-import { TransitionPhase } from '@crczp/visualization-model';
+import {TransitionPhase} from '@crczp/visualization-model';
 
 @Component({
     // eslint-disable-next-line @angular-eslint/component-selector

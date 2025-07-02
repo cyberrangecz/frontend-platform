@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
-import { PlanDataEntry, ProgressLevelInfo } from '@crczp/visualization-model';
+import {Injectable} from '@angular/core';
+import {PlanDataEntry, ProgressLevelInfo} from '@crczp/visualization-model';
 
 export type SortOrder = 'asc' | 'desc';
 

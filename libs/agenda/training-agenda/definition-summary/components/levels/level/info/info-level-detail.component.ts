@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { InfoLevel } from '@crczp/training-model';
+import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
+import {InfoLevel} from '@crczp/training-model';
 
 @Component({
     selector: 'crczp-info-level-detail',

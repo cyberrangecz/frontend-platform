@@ -13,7 +13,7 @@ import {
     NoCommandsDetectionEvent,
     TimeProximityDetectionEvent,
 } from '@crczp/training-model';
-import {Observable} from 'rxjs';
+import {async, Observable} from 'rxjs';
 import {SentinelTable, TableActionEvent, TableLoadEvent} from '@sentinel/components/table';
 import {map, take} from 'rxjs/operators';
 import {DetectionEventParticipantTable} from '../model/detection-event-participant-table';
@@ -199,4 +199,6 @@ export class TrainingInstanceDetectionEventDetailComponent implements OnInit {
         );
         this.onLoadEventForbiddenCommands({pagination: initialPagination});
     }
+
+    protected readonly async = async;
 }

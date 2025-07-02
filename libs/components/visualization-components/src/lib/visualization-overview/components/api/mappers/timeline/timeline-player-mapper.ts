@@ -1,6 +1,6 @@
-import { TimelinePlayerDataDTO } from '../../dto/timeline/timeline-player-data-dto';
-import { TimelinePlayer } from '../../../model/timeline/timeline-player';
-import { TimelineLevelMapper } from './timeline-level-mapper';
+import {TimelinePlayerDataDTO} from '../../dto/timeline/timeline-player-data-dto';
+import {TimelinePlayer} from '../../../model/timeline/timeline-player';
+import {TimelineLevelMapper} from './timeline-level-mapper';
 
 /**
  * @dynamic

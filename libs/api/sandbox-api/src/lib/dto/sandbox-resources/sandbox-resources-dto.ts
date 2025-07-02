@@ -1,4 +1,4 @@
-import { QuotasDTO } from './quotas-dto';
+import {QuotasDTO} from './quotas-dto';
 
 export class SandboxResourcesDTO {
     project_name: string;

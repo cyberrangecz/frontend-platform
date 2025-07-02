@@ -1,7 +1,7 @@
-import { NgModule } from '@angular/core';
-import { MatIconModule } from '@angular/material/icon';
-import { MatRippleModule } from '@angular/material/core';
-import { MatTooltipModule } from '@angular/material/tooltip';
+import {NgModule} from '@angular/core';
+import {MatIconModule} from '@angular/material/icon';
+import {MatRippleModule} from '@angular/material/core';
+import {MatTooltipModule} from '@angular/material/tooltip';
 
 /**
  * Material components imports for cheating detection overview

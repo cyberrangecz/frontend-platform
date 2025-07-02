@@ -1,14 +1,14 @@
-import { Injectable } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import {Injectable} from '@angular/core';
+import {MatDialog} from '@angular/material/dialog';
 
 import {
     SentinelConfirmationDialogComponent,
     SentinelConfirmationDialogConfig,
     SentinelDialogResultEnum,
 } from '@sentinel/components/dialogs';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { AdaptiveDefinitionEditOverviewComponent } from '../../components/adaptive-definition-edit-overview.component';
+import {Observable} from 'rxjs';
+import {map} from 'rxjs/operators';
+import {AdaptiveDefinitionEditOverviewComponent} from '../../components/adaptive-definition-edit-overview.component';
 
 @Injectable()
 /**

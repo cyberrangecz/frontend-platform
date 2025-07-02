@@ -1,6 +1,6 @@
-import { UntypedFormArray, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
-import { CheatingDetection, CheatingDetectionStateEnum } from '@crczp/training-model';
-import { SentinelValidators } from '@sentinel/common';
+import {UntypedFormArray, UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
+import {CheatingDetection, CheatingDetectionStateEnum} from '@crczp/training-model';
+import {SentinelValidators} from '@sentinel/common';
 
 /**
  * Form control class of cheating detection edit form

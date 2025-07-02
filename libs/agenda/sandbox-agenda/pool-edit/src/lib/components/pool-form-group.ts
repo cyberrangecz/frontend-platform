@@ -1,5 +1,5 @@
-import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
-import { Pool, SandboxDefinition } from '@crczp/sandbox-model';
+import {UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
+import {Pool, SandboxDefinition} from '@crczp/sandbox-model';
 
 export class PoolFormGroup {
     formGroup: UntypedFormGroup;

@@ -1,5 +1,5 @@
-import { McqQuestionDTO } from '../../dto/timeline/mcq-question-dto';
-import { McqQuestion } from '../../../model/timeline/mcq-question';
+import {McqQuestionDTO} from '../../dto/timeline/mcq-question-dto';
+import {McqQuestion} from '../../../model/timeline/mcq-question';
 
 export class McqQuestionMapper {
     static fromDTO(dto: McqQuestionDTO): McqQuestion {

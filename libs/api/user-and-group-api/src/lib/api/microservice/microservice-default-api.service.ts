@@ -1,18 +1,18 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { SentinelParamsMerger } from '@sentinel/common';
-import { SentinelFilter } from '@sentinel/common/filter';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
-import { Microservice } from '@crczp/user-and-group-model';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { MicroserviceCreateDTO } from '../../DTO/microservice/microservice-create-dto.model';
-import { MicroserviceDTO } from '../../DTO/microservice/microservice-dto';
-import { MicroserviceMapper } from '../../mappers/microservice.mapper';
-import { UserAndGroupApiConfig } from '../../other/user-and-group-api-config';
-import { UserAndGroupContext } from '../../other/user-and-group.context.service';
-import { MicroserviceApi } from './microservice-api.service';
-import { JavaPaginatedResource, ParamsBuilder } from '@crczp/api-common';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {Injectable} from '@angular/core';
+import {SentinelParamsMerger} from '@sentinel/common';
+import {SentinelFilter} from '@sentinel/common/filter';
+import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
+import {Microservice} from '@crczp/user-and-group-model';
+import {Observable} from 'rxjs';
+import {map} from 'rxjs/operators';
+import {MicroserviceCreateDTO} from '../../DTO/microservice/microservice-create-dto.model';
+import {MicroserviceDTO} from '../../DTO/microservice/microservice-dto';
+import {MicroserviceMapper} from '../../mappers/microservice.mapper';
+import {UserAndGroupApiConfig} from '../../other/user-and-group-api-config';
+import {UserAndGroupContext} from '../../other/user-and-group.context.service';
+import {MicroserviceApi} from './microservice-api.service';
+import {JavaPaginatedResource, ParamsBuilder} from '@crczp/api-common';
 
 /**
  * Implementation of http communication with microservice endpoints.

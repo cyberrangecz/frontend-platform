@@ -1,4 +1,4 @@
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
+import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
 import {
     AllocationRequest,
     CloudResource,
@@ -7,7 +7,7 @@ import {
     TerraformOutput,
     UserAnsibleAllocationStage,
 } from '@crczp/sandbox-model';
-import { Observable } from 'rxjs';
+import {Observable} from 'rxjs';
 
 /**
  * Service abstracting http communication with allocation requests endpoints.

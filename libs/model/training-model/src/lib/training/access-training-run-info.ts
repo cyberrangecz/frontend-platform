@@ -1,5 +1,5 @@
-import { Level } from '../level/level';
-import { Phase } from '../phase/phase';
+import {Level} from '../level/level';
+import {Phase} from '../phase/phase';
 
 /**
  * Class containing info about accessed training run

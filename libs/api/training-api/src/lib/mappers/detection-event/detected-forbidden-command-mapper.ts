@@ -1,5 +1,5 @@
-import { DetectedForbiddenCommandDTO } from '../../dto/detection-event/detected-forbidden-command-dto';
-import { DetectedForbiddenCommand, DetectedForbiddenCommandTypeEnum } from '@crczp/training-model';
+import {DetectedForbiddenCommandDTO} from '../../dto/detection-event/detected-forbidden-command-dto';
+import {DetectedForbiddenCommand, DetectedForbiddenCommandTypeEnum} from '@crczp/training-model';
 
 export class DetectedForbiddenCommandMapper {
     static fromDTO(dto: DetectedForbiddenCommandDTO): DetectedForbiddenCommand {

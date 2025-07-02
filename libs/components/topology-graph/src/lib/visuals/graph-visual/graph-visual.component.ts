@@ -11,20 +11,14 @@ import {
     SimpleChanges,
     ViewChild,
 } from '@angular/core';
-import { ForceDirectedGraph } from '../../model/graph/force-directed-graph';
-import { D3Service } from '../../services/d3.service';
-import {
-    Link,
-    Node,
-    NodePhysicalRoleEnum,
-    RouterNode,
-    SwitchNode,
-} from '@crczp/topology-graph-model';
-import { GraphEventService } from '../../services/graph-event.service';
-import { GraphEventTypeEnum } from '../../model/enums/graph-event-type-enum';
-import { Subscription } from 'rxjs';
-import { GraphEvent } from '../../model/events/graph-event';
-import { GraphLockService } from '../../services/graph-lock.service';
+import {ForceDirectedGraph} from '../../model/graph/force-directed-graph';
+import {D3Service} from '../../services/d3.service';
+import {Link, Node, NodePhysicalRoleEnum, RouterNode, SwitchNode,} from '@crczp/topology-graph-model';
+import {GraphEventService} from '../../services/graph-event.service';
+import {GraphEventTypeEnum} from '../../model/enums/graph-event-type-enum';
+import {Subscription} from 'rxjs';
+import {GraphEvent} from '../../model/events/graph-event';
+import {GraphLockService} from '../../services/graph-lock.service';
 
 /**
  * Visual component used to display graph-visual. Size of window is set and nodes and links are bound to the model

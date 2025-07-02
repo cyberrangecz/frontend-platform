@@ -1,5 +1,5 @@
-import { TestBed } from '@angular/core/testing';
-import { FileUploadProgressService } from './file-upload-progress.service';
+import {TestBed} from '@angular/core/testing';
+import {FileUploadProgressService} from './file-upload-progress.service';
 
 describe('FileUploadProgressService', () => {
     let service: FileUploadProgressService;

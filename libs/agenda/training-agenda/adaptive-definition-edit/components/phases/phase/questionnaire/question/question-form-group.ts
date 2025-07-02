@@ -6,8 +6,8 @@ import {
     ValidatorFn,
     Validators,
 } from '@angular/forms';
-import { AdaptiveQuestion, QuestionnaireTypeEnum } from '@crczp/training-model';
-import { SentinelValidators } from '@sentinel/common';
+import {AdaptiveQuestion, QuestionnaireTypeEnum} from '@crczp/training-model';
+import {SentinelValidators} from '@sentinel/common';
 
 export class QuestionFormGroup {
     questionFormGroup: UntypedFormGroup;

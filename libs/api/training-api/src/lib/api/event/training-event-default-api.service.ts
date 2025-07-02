@@ -1,8 +1,8 @@
-import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { TrainingApiContext } from '../../other/training-api-context';
-import { TrainingEventApi } from './training-event-api.service';
+import {HttpClient} from '@angular/common/http';
+import {Injectable} from '@angular/core';
+import {Observable} from 'rxjs';
+import {TrainingApiContext} from '../../other/training-api-context';
+import {TrainingEventApi} from './training-event-api.service';
 
 /**
  * Default implementation of service abstracting http communication with training event endpoints.

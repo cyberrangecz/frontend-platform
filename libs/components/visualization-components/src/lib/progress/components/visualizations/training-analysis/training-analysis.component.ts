@@ -8,8 +8,8 @@ import {
     Output,
     ViewEncapsulation,
 } from '@angular/core';
-import { PROGRESS_CONFIG } from '../../../progress-config';
-import { DisplayView, TraineeViewEnum, ViewEnum } from '../../types';
+import {PROGRESS_CONFIG} from '../../../progress-config';
+import {DisplayView, TraineeViewEnum, ViewEnum} from '../../types';
 import {
     HintTakenEvent,
     PlanDataEntry,
@@ -25,24 +25,24 @@ import {
     TrainingRunEndedEvent,
     WrongAnswerEvent,
 } from '@crczp/visualization-model';
-import { TrainingAnalysisEventService } from './training-analysis-event-service';
-import { BaseConfig, Padding } from '../../../base-config';
-import { D3, D3Service } from '../../../../common/d3-service/d3-service';
-import { Axis, ScaleBand, ScaleLinear } from 'd3';
-import { Subscription } from 'rxjs';
-import { PlanConfig, PlanData } from '../../../plan-config';
-import { FilteringService } from '../../../services/filtering.service';
-import { ConfigService } from '../../../services/config.service';
-import { SortingService } from '../../../services/sorting.service';
-import { AbstractLevelTypeEnum } from '@crczp/training-model';
-import { DateUtils } from '@crczp/common';
-import { TraineeDetailComponent } from '../trainee-detail/trainee-detail.component';
-import { ColumnHeaderComponent } from '../column-header/column-header.component';
-import { CommonModule } from '@angular/common';
-import { MouseWheelDirective } from '../../../directives/mousewheel.directive';
-import { MouseMoveDirective } from '../../../directives/mousemove.directive';
-import { LegendComponent } from '../legend/legend.component';
-import { FormsModule } from '@angular/forms';
+import {TrainingAnalysisEventService} from './training-analysis-event-service';
+import {BaseConfig, Padding} from '../../../base-config';
+import {D3, D3Service} from '../../../../common/d3-service/d3-service';
+import {Axis, ScaleBand, ScaleLinear} from 'd3';
+import {Subscription} from 'rxjs';
+import {PlanConfig, PlanData} from '../../../plan-config';
+import {FilteringService} from '../../../services/filtering.service';
+import {ConfigService} from '../../../services/config.service';
+import {SortingService} from '../../../services/sorting.service';
+import {AbstractLevelTypeEnum} from '@crczp/training-model';
+import {DateUtils} from '@crczp/common';
+import {TraineeDetailComponent} from '../trainee-detail/trainee-detail.component';
+import {ColumnHeaderComponent} from '../column-header/column-header.component';
+import {CommonModule} from '@angular/common';
+import {MouseWheelDirective} from '../../../directives/mousewheel.directive';
+import {MouseMoveDirective} from '../../../directives/mousemove.directive';
+import {LegendComponent} from '../legend/legend.component';
+import {FormsModule} from '@angular/forms';
 
 @Component({
     selector: 'crczp-viz-hurdling',

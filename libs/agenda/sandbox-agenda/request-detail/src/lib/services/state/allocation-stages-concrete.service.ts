@@ -1,14 +1,14 @@
-import { HttpErrorResponse } from '@angular/common/http';
-import { inject, Injectable } from '@angular/core';
-import { Request } from '@crczp/sandbox-model';
-import { Observable, zip } from 'rxjs';
-import { SandboxErrorHandler } from '@crczp/sandbox-agenda';
-import { RequestStagesService } from './request-stages.service';
-import { AllocationRequestsApi } from '@crczp/sandbox-api';
-import { map } from 'rxjs/operators';
-import { StageAdapterMapper } from '../../model/adapters/stage-adapter-mapper';
-import { StageAdapter } from '../../model/adapters/stage-adapter';
-import { POLLING_PERIOD_SHORT_SETTING_TOKEN } from '@crczp/common';
+import {HttpErrorResponse} from '@angular/common/http';
+import {Injectable} from '@angular/core';
+import {Request} from '@crczp/sandbox-model';
+import {Observable, zip} from 'rxjs';
+import {SandboxErrorHandler} from '@crczp/sandbox-agenda';
+import {RequestStagesService} from './request-stages.service';
+import {AllocationRequestsApi} from '@crczp/sandbox-api';
+import {map} from 'rxjs/operators';
+import {StageAdapterMapper} from '../../model/adapters/stage-adapter-mapper';
+import {StageAdapter} from '../../model/adapters/stage-adapter';
+import {Settings} from "@crczp/common";
 
 /**
  * Basic implementation of a layer between a component and an API service.
@@ -18,9 +18,10 @@ import { POLLING_PERIOD_SHORT_SETTING_TOKEN } from '@crczp/common';
 export class AllocationStagesConcreteService extends RequestStagesService {
     constructor(
         private api: AllocationRequestsApi,
-        private errorHandler: SandboxErrorHandler
+        private errorHandler: SandboxErrorHandler,
+        settings: Settings
     ) {
-        super(inject(POLLING_PERIOD_SHORT_SETTING_TOKEN));
+        super(settings.POLLING_PERIOD_SHORT);
     }
 
     protected callApiToGetStages(request: Request): Observable<StageAdapter[]> {

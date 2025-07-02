@@ -1,12 +1,12 @@
-import { BehaviorSubject, Observable } from 'rxjs';
-import { RunningAdaptiveRunService } from '../running/running-adaptive-run.service';
+import {BehaviorSubject, Observable} from 'rxjs';
+import {RunningAdaptiveRunService} from '../running/running-adaptive-run.service';
 import {
     SentinelNotification,
     SentinelNotificationResult,
     SentinelNotificationService,
     SentinelNotificationTypeEnum,
 } from '@sentinel/layout/notification';
-import { map } from 'rxjs/operators';
+import {map} from 'rxjs/operators';
 
 export abstract class AdaptiveRunAccessPhaseService {
     protected constructor(

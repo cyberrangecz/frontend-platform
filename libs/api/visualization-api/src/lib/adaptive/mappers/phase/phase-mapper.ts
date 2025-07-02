@@ -1,13 +1,13 @@
-import { AbstractPhaseDTO } from '../../dto/phase/abstract-phase-dto';
-import { TrainingPhaseMapper } from './training-phase/training-phase-mapper';
-import { TrainingPhaseDTO } from '../../dto/phase/training-phase/training-phase-dto';
-import { InfoPhaseMapper } from './info-phase/info-phase-mapper';
-import { InfoPhaseDTO } from '../../dto/phase/info-phase/info-phase-dto';
-import { QuestionnairePhaseMapper } from './questionnaire-phase/questionnaire-phase-mapper';
-import { QuestionnairePhaseDTO } from '../../dto/phase/questionnaire-phase/questionnaire-phase-dto';
-import { AccessPhaseMapper } from './access-phase/access-phase-mapper';
-import { AccessPhaseDTO } from '../../dto/phase/access-phase/access-phase-dto';
-import { TransitionPhase } from '@crczp/visualization-model';
+import {AbstractPhaseDTO} from '../../dto/phase/abstract-phase-dto';
+import {TrainingPhaseMapper} from './training-phase/training-phase-mapper';
+import {TrainingPhaseDTO} from '../../dto/phase/training-phase/training-phase-dto';
+import {InfoPhaseMapper} from './info-phase/info-phase-mapper';
+import {InfoPhaseDTO} from '../../dto/phase/info-phase/info-phase-dto';
+import {QuestionnairePhaseMapper} from './questionnaire-phase/questionnaire-phase-mapper';
+import {QuestionnairePhaseDTO} from '../../dto/phase/questionnaire-phase/questionnaire-phase-dto';
+import {AccessPhaseMapper} from './access-phase/access-phase-mapper';
+import {AccessPhaseDTO} from '../../dto/phase/access-phase/access-phase-dto';
+import {TransitionPhase} from '@crczp/visualization-model';
 
 export class PhaseMapper {
     static fromDTO(dto: AbstractPhaseDTO): TransitionPhase {

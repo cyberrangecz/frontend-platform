@@ -1,5 +1,5 @@
-import { DetectedForbiddenCommandDTO } from '../dto/detected-forbidden-command-dto';
-import { DetectedForbiddenCommand, DetectedForbiddenCommandTypeEnum } from '@crczp/training-model';
+import {DetectedForbiddenCommandDTO} from '../dto/detected-forbidden-command-dto';
+import {DetectedForbiddenCommand, DetectedForbiddenCommandTypeEnum} from '@crczp/training-model';
 
 /**
  * @dynamic

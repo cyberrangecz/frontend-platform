@@ -1,18 +1,18 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { Graphviz, graphviz } from 'd3-graphviz';
-import { TraineeGraphService } from './trainee-graph.service';
-import { UntypedFormBuilder } from '@angular/forms';
-import { take, takeWhile, tap } from 'rxjs/operators';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { CommonModule } from '@angular/common';
-import { MatSelectModule } from '@angular/material/select';
-import { MatButtonModule } from '@angular/material/button';
-import { MatListModule } from '@angular/material/list';
-import { MatIconModule } from '@angular/material/icon';
-import { BaseType } from 'd3';
-import { Graph } from '@crczp/visualization-model';
-import { TrainingRun } from '@crczp/training-model';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {Graphviz, graphviz} from 'd3-graphviz';
+import {TraineeGraphService} from './trainee-graph.service';
+import {UntypedFormBuilder} from '@angular/forms';
+import {take, takeWhile, tap} from 'rxjs/operators';
+import {BehaviorSubject, Observable} from 'rxjs';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {CommonModule} from '@angular/common';
+import {MatSelectModule} from '@angular/material/select';
+import {MatButtonModule} from '@angular/material/button';
+import {MatListModule} from '@angular/material/list';
+import {MatIconModule} from '@angular/material/icon';
+import {BaseType} from 'd3';
+import {Graph} from '@crczp/visualization-model';
+import {TrainingRun} from '@crczp/training-model';
 
 @Component({
     selector: 'crczp-trainee-graph',

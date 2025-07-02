@@ -1,5 +1,5 @@
-import { AbstractQuestionCreateDTO, AbstractQuestionDTO } from './abstact-question-dto';
-import { QuestionChoiceDTO } from './question-choice-dto';
+import {AbstractQuestionCreateDTO, AbstractQuestionDTO} from './abstact-question-dto';
+import {QuestionChoiceDTO} from './question-choice-dto';
 
 export interface MultipleChoiceQuestionCreateDTO extends AbstractQuestionCreateDTO {
     choices: QuestionChoiceDTO[];

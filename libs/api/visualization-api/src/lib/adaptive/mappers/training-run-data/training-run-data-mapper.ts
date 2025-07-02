@@ -1,8 +1,7 @@
-
-import { TraineeMapper } from './trainee/trainee-mapper';
-import { TrainingRunPathMapper } from './training-run-path-mapper';
-import { TrainingRunDataDTO } from '../../dto/run-visualization-dto';
-import { AdaptiveRunVisualization } from '@crczp/visualization-model';
+import {TraineeMapper} from './trainee/trainee-mapper';
+import {TrainingRunPathMapper} from './training-run-path-mapper';
+import {TrainingRunDataDTO} from '../../dto/run-visualization-dto';
+import {AdaptiveRunVisualization} from '@crczp/visualization-model';
 
 /**
  * @dynamic

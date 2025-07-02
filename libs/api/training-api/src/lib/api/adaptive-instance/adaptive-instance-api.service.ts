@@ -1,7 +1,7 @@
-import { SentinelFilter } from '@sentinel/common/filter';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
-import { TrainingInstance, TrainingRun } from '@crczp/training-model';
-import { Observable } from 'rxjs';
+import {SentinelFilter} from '@sentinel/common/filter';
+import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
+import {TrainingInstance, TrainingRun} from '@crczp/training-model';
+import {Observable} from 'rxjs';
 
 export abstract class AdaptiveInstanceApi {
     /**

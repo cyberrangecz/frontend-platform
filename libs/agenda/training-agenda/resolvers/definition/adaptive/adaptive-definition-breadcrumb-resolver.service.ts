@@ -1,15 +1,15 @@
-import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
-import { TrainingDefinition } from '@crczp/training-model';
-import { EMPTY, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import {Injectable} from '@angular/core';
+import {ActivatedRouteSnapshot, RouterStateSnapshot} from '@angular/router';
+import {TrainingDefinition} from '@crczp/training-model';
+import {EMPTY, Observable} from 'rxjs';
+import {map} from 'rxjs/operators';
 import {
     ADAPTIVE_DEFINITION_SELECTOR,
     SIMULATOR_PATH,
     TRAINING_DEFINITION_EDIT_PATH,
     TRAINING_DEFINITION_NEW_PATH,
 } from '@crczp/training-agenda';
-import { AdaptiveDefinitionResolver } from './adaptive-definition-resolver.service';
+import {AdaptiveDefinitionResolver} from './adaptive-definition-resolver.service';
 
 /**
  * Router breadcrumb title provider

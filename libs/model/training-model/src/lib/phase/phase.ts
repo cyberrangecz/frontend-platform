@@ -1,4 +1,4 @@
-import { AbstractPhaseTypeEnum } from '../enums/abstract-phase-type.enum';
+import {AbstractPhaseTypeEnum} from '../enums/abstract-phase-type.enum';
 
 export abstract class Phase {
     id!: number;

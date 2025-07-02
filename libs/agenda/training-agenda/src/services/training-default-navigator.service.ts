@@ -1,6 +1,6 @@
-import { TrainingNavigator } from './training-navigator.service';
+import {TrainingNavigator} from './training-navigator.service';
 
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {
     ACCESS_TOKEN_PATH,
     ADAPTIVE_DEFINITION_DETAIL_PATH,

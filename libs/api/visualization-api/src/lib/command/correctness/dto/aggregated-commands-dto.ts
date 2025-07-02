@@ -1,4 +1,4 @@
-import { CommandPerOptionsDTO } from './command-per-options-dto';
+import {CommandPerOptionsDTO} from './command-per-options-dto';
 
 export class AggregatedCommandsDTO {
     cmd: string;

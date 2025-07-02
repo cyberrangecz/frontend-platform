@@ -1,9 +1,9 @@
-import { SvgConfig } from '../../../../shared/interfaces/configurations/svg-config';
-import { SvgMarginConfig } from '../../../../shared/interfaces/configurations/svg-margin-config';
-import { BarConfig } from '../../../../shared/interfaces/configurations/bar-config';
-import { AxesConfig } from '../../../../shared/interfaces/configurations/axes-config';
-import { CrosshairConfig } from '../../../../shared/interfaces/configurations/crosshair-config';
-import { LevelLabelsConfig } from '../interfaces/level-labels-config';
+import {SvgConfig} from '../../../../shared/interfaces/configurations/svg-config';
+import {SvgMarginConfig} from '../../../../shared/interfaces/configurations/svg-margin-config';
+import {BarConfig} from '../../../../shared/interfaces/configurations/bar-config';
+import {AxesConfig} from '../../../../shared/interfaces/configurations/axes-config';
+import {CrosshairConfig} from '../../../../shared/interfaces/configurations/crosshair-config';
+import {LevelLabelsConfig} from '../interfaces/level-labels-config';
 
 export const colorScheme: string[] = ['#307bc1', '#41ae43', '#ff9d3c', '#fc5248', '#f2d64f', '#8035c6'];
 

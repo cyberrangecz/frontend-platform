@@ -1,4 +1,4 @@
-import { MicroserviceRole } from '@crczp/user-and-group-model';
+import {MicroserviceRole} from '@crczp/user-and-group-model';
 
 /**
  * State of edited microservice-registration roles

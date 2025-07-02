@@ -1,4 +1,4 @@
-import { BehaviorSubject, Observable } from 'rxjs';
+import {BehaviorSubject, Observable} from 'rxjs';
 
 export abstract class MitreTechniquesOverviewService {
     protected hasErrorSubject$: BehaviorSubject<boolean> = new BehaviorSubject(false);

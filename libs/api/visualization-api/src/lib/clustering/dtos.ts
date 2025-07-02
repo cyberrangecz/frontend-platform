@@ -1,4 +1,4 @@
-import { ClusteredUser, EuclideanDoublePoint, UserClustering } from '@crczp/visualization-model';
+import {ClusteredUser, EuclideanDoublePoint, UserClustering} from '@crczp/visualization-model';
 
 export class ClusterDto {
     points: ClusteredUser[];

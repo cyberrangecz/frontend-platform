@@ -1,22 +1,20 @@
-import { StageDetailService } from './stage-detail.service';
-import { RequestStage, RequestStageType } from '@crczp/sandbox-model';
-import {
-    OffsetPaginationEvent,
-    PaginatedResource,
-} from '@sentinel/common/pagination';
-import { Observable } from 'rxjs';
-import { AllocationRequestsApi } from '@crczp/sandbox-api';
-import { inject, Injectable } from '@angular/core';
-import { StagesDetailPollRegistry } from './stages-detail-poll-registry.service';
-import { POLLING_PERIOD_SHORT_SETTING_TOKEN } from '@crczp/common';
+import {StageDetailService} from './stage-detail.service';
+import {RequestStage, RequestStageType} from '@crczp/sandbox-model';
+import {OffsetPaginationEvent, PaginatedResource,} from '@sentinel/common/pagination';
+import {Observable} from 'rxjs';
+import {AllocationRequestsApi} from '@crczp/sandbox-api';
+import {Injectable} from '@angular/core';
+import {StagesDetailPollRegistry} from './stages-detail-poll-registry.service';
+import {Settings} from '@crczp/common';
 
 @Injectable()
 export class AnsibleOutputsService extends StageDetailService {
     constructor(
         private api: AllocationRequestsApi,
-        protected pollRegistry: StagesDetailPollRegistry
+        protected pollRegistry: StagesDetailPollRegistry,
+        settings: Settings
     ) {
-        super(pollRegistry, 500, inject(POLLING_PERIOD_SHORT_SETTING_TOKEN));
+        super(pollRegistry, 500, settings.POLLING_PERIOD_SHORT);
     }
 
     protected callApiToGetStageDetail(

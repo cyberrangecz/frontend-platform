@@ -1,8 +1,8 @@
-import { SankeyLink } from '../sankey-link';
-import { SankeyNodeDTO } from '../dto/sankey-node-dto';
-import { SankeyNode } from '../sankey-node';
-import { SankeyDataDTO } from '../dto/sankey-data-dto';
-import { SankeyData } from '../sankey-data';
+import {SankeyLink} from '../sankey-link';
+import {SankeyNodeDTO} from '../dto/sankey-node-dto';
+import {SankeyNode} from '../sankey-node';
+import {SankeyDataDTO} from '../dto/sankey-data-dto';
+import {SankeyData} from '../sankey-data';
 
 export class SankeyDataMapper {
     static fromDTOs(dto: SankeyDataDTO): SankeyData {

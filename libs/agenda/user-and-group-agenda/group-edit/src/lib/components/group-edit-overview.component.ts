@@ -1,10 +1,6 @@
 import {ChangeDetectionStrategy, Component, DestroyRef, EventEmitter, inject, Output} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {
-    SentinelControlItemSignal,
-    SentinelControlItemSignal,
-    SentinelControlsComponent
-} from '@sentinel/components/controls';
+import {SentinelControlItem, SentinelControlItemSignal, SentinelControlsComponent} from '@sentinel/components/controls';
 import {Group} from '@crczp/user-and-group-model';
 import {async, defer, Observable, of} from 'rxjs';
 import {take, tap} from 'rxjs/operators';
@@ -65,7 +61,7 @@ export class GroupEditOverviewComponent {
     canDeactivateGroupEdit = true;
     canDeactivateMembers = true;
     canDeactivateRoles = true;
-    controls: SentinelControlItemSignal[];
+    controls: SentinelControlItem[];
     destroyRef = inject(DestroyRef);
     protected readonly of = of;
     protected readonly async = async;

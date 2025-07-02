@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, Component, ElementRef, Input } from '@angular/core';
+import {ChangeDetectionStrategy, Component, ElementRef, Input} from '@angular/core';
 import * as d3 from 'd3';
-import { WalkthroughUserData } from '@crczp/visualization-model';
-import { AbsolutePositionService } from '../../service/absolute-position.service';
-import { TrainingUser } from '@crczp/training-model';
+import {WalkthroughUserData} from '@crczp/visualization-model';
+import {AbsolutePositionService} from '../../service/absolute-position.service';
+import {TrainingUser} from '@crczp/training-model';
 
 @Component({
     // eslint-disable-next-line @angular-eslint/component-selector

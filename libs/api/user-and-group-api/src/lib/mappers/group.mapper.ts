@@ -1,12 +1,12 @@
-import { PaginatedResource } from '@sentinel/common/pagination';
-import { Group } from '@crczp/user-and-group-model';
-import { GroupDTO } from '../DTO/group/group-dto.model';
-import { CreateGroupDTO } from '../DTO/group/new-group-dto.model';
-import { UpdateGroupDTO } from '../DTO/group/update-group-dto.model';
-import { AddUsersToGroupDTO } from '../DTO/user/add-user-to-group-dto.model';
-import { RoleMapper } from './role-mapper';
-import { UserMapper } from './user.mapper';
-import { JavaPaginatedResource, PaginationMapper } from '@crczp/api-common';
+import {PaginatedResource} from '@sentinel/common/pagination';
+import {Group} from '@crczp/user-and-group-model';
+import {GroupDTO} from '../DTO/group/group-dto.model';
+import {CreateGroupDTO} from '../DTO/group/new-group-dto.model';
+import {UpdateGroupDTO} from '../DTO/group/update-group-dto.model';
+import {AddUsersToGroupDTO} from '../DTO/user/add-user-to-group-dto.model';
+import {RoleMapper} from './role-mapper';
+import {UserMapper} from './user.mapper';
+import {JavaPaginatedResource, PaginationMapper} from '@crczp/api-common';
 
 /**
  * Maps internal model to group DTOs and other way

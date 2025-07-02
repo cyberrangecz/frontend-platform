@@ -1,4 +1,4 @@
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
+import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
 import {
     AbstractDetectionEvent,
     AnswerSimilarityDetectionEvent,
@@ -10,8 +10,8 @@ import {
     NoCommandsDetectionEvent,
     TimeProximityDetectionEvent,
 } from '@crczp/training-model';
-import { Observable } from 'rxjs';
-import { SentinelFilter } from '@sentinel/common/filter';
+import {Observable} from 'rxjs';
+import {SentinelFilter} from '@sentinel/common/filter';
 
 export abstract class DetectionEventApi {
     /**

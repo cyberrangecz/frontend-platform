@@ -1,5 +1,5 @@
-import { AbstractPhaseDTO } from '../../phase/abstract-phase-dto';
-import { AnsweredQuestionDTO } from './answered-question-dto';
+import {AbstractPhaseDTO} from '../../phase/abstract-phase-dto';
+import {AnsweredQuestionDTO} from './answered-question-dto';
 
 export interface AnsweredQuestionnairePhaseDTO extends AbstractPhaseDTO {
     questions: AnsweredQuestionDTO[];

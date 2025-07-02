@@ -1,7 +1,7 @@
-import { BehaviorSubject, Observable } from 'rxjs';
-import { skipWhile } from 'rxjs/operators';
-import { AccessTrainingRunInfo, Phase, QuestionAnswer } from '@crczp/training-model';
-import { ConsoleUrl } from '@crczp/topology-graph';
+import {BehaviorSubject, Observable} from 'rxjs';
+import {skipWhile} from 'rxjs/operators';
+import {AccessTrainingRunInfo, Phase, QuestionAnswer} from '@crczp/training-model';
+import {ConsoleUrl} from '@crczp/topology-graph';
 
 export abstract class RunningAdaptiveRunService {
     sandboxInstanceId: string;

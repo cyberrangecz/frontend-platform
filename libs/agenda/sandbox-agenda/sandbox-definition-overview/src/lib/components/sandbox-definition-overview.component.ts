@@ -1,36 +1,25 @@
-import { Component, DestroyRef, inject, Input, OnInit } from '@angular/core';
-import { OffsetPaginationEvent } from '@sentinel/common/pagination';
+import {Component, DestroyRef, inject, Input, OnInit} from '@angular/core';
+import {OffsetPaginationEvent} from '@sentinel/common/pagination';
 import {
-    SentinelControlItemSignal,
+    SentinelControlItem,
     SentinelControlItemSignal,
     SentinelControlsComponent,
 } from '@sentinel/components/controls';
-import { SandboxDefinition } from '@crczp/sandbox-model';
-import {
-    SentinelTable,
-    SentinelTableComponent,
-    TableActionEvent,
-    TableLoadEvent,
-} from '@sentinel/components/table';
-import { Observable } from 'rxjs';
-import { map, take } from 'rxjs/operators';
-import { SandboxDefinitionTable } from '../model/sandbox-definition-table';
+import {SandboxDefinition} from '@crczp/sandbox-model';
+import {SentinelTable, SentinelTableComponent, TableActionEvent, TableLoadEvent,} from '@sentinel/components/table';
+import {Observable} from 'rxjs';
+import {map, take} from 'rxjs/operators';
+import {SandboxDefinitionTable} from '../model/sandbox-definition-table';
 import {
     SandboxDefinitionOverviewConcreteService,
     SandboxDefinitionOverviewService,
 } from '@crczp/sandbox-agenda/internal';
-import { SandboxDefinitionOverviewControls } from './sandbox-definition-overview-controls';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import {
-    SandboxDefinitionBreadcrumbResolver,
-    SandboxDefinitionResolver,
-} from '@crczp/sandbox-agenda/resolvers';
-import {
-    SandboxDefaultNavigator,
-    SandboxNavigator,
-} from '@crczp/sandbox-agenda';
-import { AsyncPipe } from '@angular/common';
-import { PaginationStorageService } from '@crczp/common';
+import {SandboxDefinitionOverviewControls} from './sandbox-definition-overview-controls';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import {SandboxDefinitionBreadcrumbResolver, SandboxDefinitionResolver,} from '@crczp/sandbox-agenda/resolvers';
+import {SandboxDefaultNavigator, SandboxNavigator,} from '@crczp/sandbox-agenda';
+import {AsyncPipe} from '@angular/common';
+import {PaginationStorageService} from '@crczp/common';
 
 @Component({
     selector: 'crczp-sandbox-definition-overview',
@@ -44,7 +33,7 @@ import { PaginationStorageService } from '@crczp/common';
             provide: SandboxDefinitionOverviewService,
             useClass: SandboxDefinitionOverviewConcreteService,
         },
-        { provide: SandboxNavigator, useClass: SandboxDefaultNavigator },
+        {provide: SandboxNavigator, useClass: SandboxDefaultNavigator},
     ],
 })
 
@@ -54,7 +43,7 @@ import { PaginationStorageService } from '@crczp/common';
  */
 export class SandboxDefinitionOverviewComponent implements OnInit {
     @Input() paginationId = 'crczp-sandbox-definition-overview';
-    controls: SentinelControlItemSignal[];
+    controls: SentinelControlItem[];
     sandboxDefinitions$: Observable<SentinelTable<SandboxDefinition>>;
     hasError$: Observable<boolean>;
     destroyRef = inject(DestroyRef);
@@ -64,7 +53,8 @@ export class SandboxDefinitionOverviewComponent implements OnInit {
     constructor(
         private sandboxDefinitionService: SandboxDefinitionOverviewService,
         private paginationService: PaginationStorageService
-    ) {}
+    ) {
+    }
 
     ngOnInit(): void {
         this.controls = SandboxDefinitionOverviewControls.create(

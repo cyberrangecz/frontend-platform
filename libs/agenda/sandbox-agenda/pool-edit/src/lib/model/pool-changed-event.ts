@@ -1,4 +1,4 @@
-import { Pool } from '@crczp/sandbox-model';
+import {Pool} from '@crczp/sandbox-model';
 
 /**
  * Event emitted when edited group-overview is changed

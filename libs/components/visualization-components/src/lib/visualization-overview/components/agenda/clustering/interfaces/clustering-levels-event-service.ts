@@ -1,6 +1,6 @@
-import { LevelsComponent } from '../levels/levels.component';
-import { PlayerData } from '../../../model/clustering/player-data';
-import { PlayerLevelData } from '../../../model/clustering/player-level-data';
+import {LevelsComponent} from '../levels/levels.component';
+import {PlayerData} from '../../../model/clustering/player-data';
+import {PlayerLevelData} from '../../../model/clustering/player-level-data';
 
 export interface ClusteringLevelsEventService {
     clusteringLevelsComponent: LevelsComponent;

@@ -1,10 +1,10 @@
-import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, Resolve, Router } from '@angular/router';
-import { SandboxDefinitionApi } from '@crczp/sandbox-api';
-import { SandboxDefinition } from '@crczp/sandbox-model';
-import { EMPTY, Observable, of } from 'rxjs';
-import { catchError, mergeMap, take } from 'rxjs/operators';
-import { SANDBOX_DEFINITION_ID_SELECTOR, SandboxErrorHandler, SandboxNavigator } from '@crczp/sandbox-agenda';
+import {Injectable} from '@angular/core';
+import {ActivatedRouteSnapshot, Resolve, Router} from '@angular/router';
+import {SandboxDefinitionApi} from '@crczp/sandbox-api';
+import {SandboxDefinition} from '@crczp/sandbox-model';
+import {EMPTY, Observable, of} from 'rxjs';
+import {catchError, mergeMap, take} from 'rxjs/operators';
+import {SANDBOX_DEFINITION_ID_SELECTOR, SandboxErrorHandler, SandboxNavigator} from '@crczp/sandbox-agenda';
 
 /**
  * Router data provider

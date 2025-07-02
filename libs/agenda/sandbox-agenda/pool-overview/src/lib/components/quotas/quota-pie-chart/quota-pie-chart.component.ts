@@ -1,7 +1,7 @@
-import { ChartData } from '../../../model/chart-data';
-import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Input, ViewChild } from '@angular/core';
+import {ChartData} from '../../../model/chart-data';
+import {AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Input, ViewChild} from '@angular/core';
 import * as d3 from 'd3';
-import { Quota } from '@crczp/sandbox-model';
+import {Quota} from '@crczp/sandbox-model';
 
 @Component({
     selector: 'crczp-quota-pie-chart',

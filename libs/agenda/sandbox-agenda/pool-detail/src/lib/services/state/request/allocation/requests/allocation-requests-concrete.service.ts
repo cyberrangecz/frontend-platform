@@ -1,29 +1,19 @@
-import { HttpErrorResponse } from '@angular/common/http';
-import { inject, Injectable } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import {HttpErrorResponse} from '@angular/common/http';
+import {Injectable} from '@angular/core';
+import {MatDialog} from '@angular/material/dialog';
 import {
     SentinelConfirmationDialogComponent,
     SentinelConfirmationDialogConfig,
     SentinelDialogResultEnum,
 } from '@sentinel/components/dialogs';
-import {
-    OffsetPaginationEvent,
-    PaginatedResource,
-} from '@sentinel/common/pagination';
-import {
-    AllocationRequestsApi,
-    PoolApi,
-    SandboxAllocationUnitsApi,
-} from '@crczp/sandbox-api';
-import { Request } from '@crczp/sandbox-model';
-import { EMPTY, Observable } from 'rxjs';
-import { switchMap, tap } from 'rxjs/operators';
-import {
-    SandboxErrorHandler,
-    SandboxNotificationService,
-} from '@crczp/sandbox-agenda';
-import { AllocationRequestsService } from './allocation-requests.service';
-import { POLLING_PERIOD_SHORT_SETTING_TOKEN, Settings } from '@crczp/common';
+import {OffsetPaginationEvent, PaginatedResource,} from '@sentinel/common/pagination';
+import {AllocationRequestsApi, PoolApi, SandboxAllocationUnitsApi,} from '@crczp/sandbox-api';
+import {Request} from '@crczp/sandbox-model';
+import {EMPTY, Observable} from 'rxjs';
+import {switchMap, tap} from 'rxjs/operators';
+import {SandboxErrorHandler, SandboxNotificationService,} from '@crczp/sandbox-agenda';
+import {AllocationRequestsService} from './allocation-requests.service';
+import {Settings} from '@crczp/common';
 
 /**
  * Basic implementation of a layer between a component and an API service.
@@ -39,11 +29,12 @@ export class AllocationRequestsConcreteService extends AllocationRequestsService
         private sauApi: SandboxAllocationUnitsApi,
         private dialog: MatDialog,
         private notificationService: SandboxNotificationService,
-        private errorHandler: SandboxErrorHandler
+        private errorHandler: SandboxErrorHandler,
+        settings: Settings
     ) {
         super(
-            inject(Settings.DEFAULT_PAGE_SIZE),
-            inject(POLLING_PERIOD_SHORT_SETTING_TOKEN)
+            settings.DEFAULT_PAGE_SIZE,
+            settings.POLLING_PERIOD_SHORT
         );
     }
 
@@ -119,7 +110,7 @@ export class AllocationRequestsConcreteService extends AllocationRequestsService
         this.hasErrorSubject$.next(false);
         return this.poolApi
             .getAllocationRequests(this.lastPoolId, this.lastPagination)
-            .pipe(tap({ error: (err) => this.onGetAllError(err) }));
+            .pipe(tap({error: (err) => this.onGetAllError(err)}));
     }
 
     private displayConfirmationDialog(

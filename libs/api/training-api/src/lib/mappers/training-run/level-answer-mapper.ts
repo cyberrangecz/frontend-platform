@@ -1,5 +1,5 @@
-import { LevelAnswerCheck } from '@crczp/training-model';
-import { IsCorrectAnswerDto } from '../../dto/level/training/is-correct-answer-dto';
+import {LevelAnswerCheck} from '@crczp/training-model';
+import {IsCorrectAnswerDto} from '../../dto/level/training/is-correct-answer-dto';
 
 export class LevelAnswerMapper {
     static fromDTO(dto: IsCorrectAnswerDto): LevelAnswerCheck {

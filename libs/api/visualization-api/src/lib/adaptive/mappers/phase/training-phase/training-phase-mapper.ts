@@ -1,7 +1,7 @@
-import { TrainingPhaseDTO } from '../../../dto/phase/training-phase/training-phase-dto';
-import { TrainingPhaseTaskMapper } from './training-phase-task-mapper';
-import { TrainingTransitionPhase } from '@crczp/visualization-model';
-import { AbstractPhaseTypeEnum } from '@crczp/training-model';
+import {TrainingPhaseDTO} from '../../../dto/phase/training-phase/training-phase-dto';
+import {TrainingPhaseTaskMapper} from './training-phase-task-mapper';
+import {TrainingTransitionPhase} from '@crczp/visualization-model';
+import {AbstractPhaseTypeEnum} from '@crczp/training-model';
 
 export class TrainingPhaseMapper {
     static fromDTO(dto: TrainingPhaseDTO): TrainingTransitionPhase {

@@ -7,9 +7,9 @@ import {
     Output,
     SimpleChanges,
 } from '@angular/core';
-import { SentinelStepper, StepStateEnum } from '@sentinel/components/stepper';
-import { MatDialog } from '@angular/material/dialog';
-import { PhaseStepperAdapter } from '../../../../../../model/adapters/phase-stepper-adapter';
+import {SentinelStepper, StepStateEnum} from '@sentinel/components/stepper';
+import {MatDialog} from '@angular/material/dialog';
+import {PhaseStepperAdapter} from '../../../../../../model/adapters/phase-stepper-adapter';
 
 @Component({
     selector: 'crczp-task-stepper',
@@ -22,10 +22,11 @@ export class TaskStepperComponent implements OnChanges {
     @Input() activeStep: number;
     @Output() activeStepChange: EventEmitter<number> = new EventEmitter();
 
-    taskStepper: SentinelStepper<PhaseStepperAdapter> = { items: [] };
+    taskStepper: SentinelStepper<PhaseStepperAdapter> = {items: []};
     private previousActiveStep = -1;
 
-    constructor(public dialog: MatDialog) {}
+    constructor(public dialog: MatDialog) {
+    }
 
     ngOnChanges(changes: SimpleChanges): void {
         if ('tasks' in changes) {

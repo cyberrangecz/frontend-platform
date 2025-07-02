@@ -1,7 +1,7 @@
-import { Timeline } from '../../../model/timeline/timeline';
-import { TimelineData } from '../../../model/timeline/timeline-data';
-import { TimelinePlayerMapper } from './timeline-player-mapper';
-import { TimelineDataDTO } from '../../dto/timeline/timeline-data-dto';
+import {Timeline} from '../../../model/timeline/timeline';
+import {TimelineData} from '../../../model/timeline/timeline-data';
+import {TimelinePlayerMapper} from './timeline-player-mapper';
+import {TimelineDataDTO} from '../../dto/timeline/timeline-data-dto';
 
 export class TimelineMapper {
     static fromDTO(dto: TimelineDataDTO): Timeline {

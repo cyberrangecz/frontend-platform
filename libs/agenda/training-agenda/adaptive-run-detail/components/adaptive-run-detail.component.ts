@@ -1,13 +1,13 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit } from '@angular/core';
-import { Phase } from '@crczp/training-model';
-import { Observable } from 'rxjs';
-import { take, tap } from 'rxjs/operators';
-import { AdaptiveRunStepper } from '../model/adaptive-run-stepper';
-import { SentinelUser } from '@sentinel/layout';
-import { SentinelAuthService } from '@sentinel/auth';
-import { PhaseStepperAdapter } from '@crczp/training-agenda/internal';
-import { RunningAdaptiveRunService } from '../services/adaptive-run/running/running-adaptive-run.service';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {AfterViewInit, ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit} from '@angular/core';
+import {Phase} from '@crczp/training-model';
+import {async, Observable} from 'rxjs';
+import {take, tap} from 'rxjs/operators';
+import {AdaptiveRunStepper} from '../model/adaptive-run-stepper';
+import {SentinelUser} from '@sentinel/layout';
+import {SentinelAuthService} from '@sentinel/auth';
+import {PhaseStepperAdapter} from '@crczp/training-agenda/internal';
+import {RunningAdaptiveRunService} from '../services/adaptive-run/running/running-adaptive-run.service';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 
 @Component({
     selector: 'crczp-adaptive-training-run-detail',
@@ -102,4 +102,6 @@ export class AdaptiveRunDetailComponent implements OnInit, AfterViewInit {
             .pipe(take(1))
             .subscribe(() => (this.isLoading = false));
     }
+
+    protected readonly async = async;
 }

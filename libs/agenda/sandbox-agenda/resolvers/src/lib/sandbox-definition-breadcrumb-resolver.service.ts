@@ -1,10 +1,10 @@
-import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, Resolve, RouterStateSnapshot } from '@angular/router';
-import { SandboxDefinition } from '@crczp/sandbox-model';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { SANDBOX_TOPOLOGY_PATH } from '@crczp/sandbox-agenda';
-import { SandboxDefinitionResolver } from './sandbox-definition-resolver.service';
+import {Injectable} from '@angular/core';
+import {ActivatedRouteSnapshot, Resolve, RouterStateSnapshot} from '@angular/router';
+import {SandboxDefinition} from '@crczp/sandbox-model';
+import {Observable} from 'rxjs';
+import {map} from 'rxjs/operators';
+import {SANDBOX_TOPOLOGY_PATH} from '@crczp/sandbox-agenda';
+import {SandboxDefinitionResolver} from './sandbox-definition-resolver.service';
 
 /**
  * Router breadcrumb title provider

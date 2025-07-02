@@ -1,14 +1,14 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { SentinelParamsMerger } from '@sentinel/common';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { TrainingApiContext } from '../../other/training-api-context';
+import {HttpClient, HttpParams} from '@angular/common/http';
+import {Injectable} from '@angular/core';
+import {SentinelParamsMerger} from '@sentinel/common';
+import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
+import {Observable} from 'rxjs';
+import {map} from 'rxjs/operators';
+import {TrainingApiContext} from '../../other/training-api-context';
 //import { PaginationParams } from '../../http/params/pagination-params';
-import { DetectionEventApi } from './detection-event-api.service';
-import { DetectionEventMapper } from '../../mappers/detection-event/detection-event-mapper';
-import { DetectionEventDTO } from '../../dto/detection-event/detection-event-dto';
+import {DetectionEventApi} from './detection-event-api.service';
+import {DetectionEventMapper} from '../../mappers/detection-event/detection-event-mapper';
+import {DetectionEventDTO} from '../../dto/detection-event/detection-event-dto';
 import {
     AbstractDetectionEvent,
     AnswerSimilarityDetectionEvent,
@@ -20,8 +20,8 @@ import {
     NoCommandsDetectionEvent,
     TimeProximityDetectionEvent
 } from '@crczp/training-model';
-import { DetectionEventRestResource } from '../../dto/detection-event/detection-event-rest-resource';
-import { DetectionEventParticipantMapper } from '../../mappers/detection-event/detection-event-participant-mapper';
+import {DetectionEventRestResource} from '../../dto/detection-event/detection-event-rest-resource';
+import {DetectionEventParticipantMapper} from '../../mappers/detection-event/detection-event-participant-mapper';
 import {
     AnswerSimilarityDetectionEventDTO
 } from '../../dto/detection-event/answer-similarity/answer-similarity-detection-event-dto';
@@ -34,8 +34,8 @@ import {
 import {
     LocationSimilarityDetectionEventMapper
 } from '../../mappers/detection-event/location-similarity-detection-event-mapper';
-import { NoCommandsDetectionEventDTO } from '../../dto/detection-event/no-commands/no-commands-detection-event-dto';
-import { NoCommandsDetectionEventMapper } from '../../mappers/detection-event/no-commands-detection-event-mapper';
+import {NoCommandsDetectionEventDTO} from '../../dto/detection-event/no-commands/no-commands-detection-event-dto';
+import {NoCommandsDetectionEventMapper} from '../../mappers/detection-event/no-commands-detection-event-mapper';
 import {
     MinimalSolveTimeDetectionEventMapper
 } from '../../mappers/detection-event/minimal-solve-time-detection-event-mapper';
@@ -45,18 +45,18 @@ import {
 import {
     TimeProximityDetectionEventDTO
 } from '../../dto/detection-event/time-proximity/time_proximity-detection-event-dto';
-import { TimeProximityDetectionEventMapper } from '../../mappers/detection-event/time-proximity-detection-event-mapper';
+import {TimeProximityDetectionEventMapper} from '../../mappers/detection-event/time-proximity-detection-event-mapper';
 import {
     ForbiddenCommandsDetectionEventDTO
 } from '../../dto/detection-event/forbidden-commands/forbidden-commands-detection-event-dto';
 import {
     ForbiddenCommandsDetectionEventMapper
 } from '../../mappers/detection-event/forbidden-commands-detection-event-mapper';
-import { DetectedForbiddenCommandMapper } from '../../mappers/detection-event/detected-forbidden-command-mapper';
-import { SentinelFilter } from '@sentinel/common/filter';
-import { JavaPaginatedResource, PaginationMapper, ParamsBuilder } from '@crczp/api-common';
-import { DetectedForbiddenCommandDTO } from '../../dto/detection-event/detected-forbidden-command-dto';
-import { DetectionEventParticipantDTO } from '../../dto/detection-event/detection-event-participant-dto';
+import {DetectedForbiddenCommandMapper} from '../../mappers/detection-event/detected-forbidden-command-mapper';
+import {SentinelFilter} from '@sentinel/common/filter';
+import {JavaPaginatedResource, PaginationMapper, ParamsBuilder} from '@crczp/api-common';
+import {DetectedForbiddenCommandDTO} from '../../dto/detection-event/detected-forbidden-command-dto';
+import {DetectionEventParticipantDTO} from '../../dto/detection-event/detection-event-participant-dto';
 
 //
 

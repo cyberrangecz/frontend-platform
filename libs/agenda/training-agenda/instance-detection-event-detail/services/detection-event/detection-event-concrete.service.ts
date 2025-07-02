@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
-import { DetectionEventApi } from '@crczp/training-api';
-import { DetectionEventService } from './detection-event.service';
-import { Observable } from 'rxjs';
+import {Injectable} from '@angular/core';
+import {DetectionEventApi} from '@crczp/training-api';
+import {DetectionEventService} from './detection-event.service';
+import {Observable} from 'rxjs';
 import {
     AbstractDetectionEvent,
     AnswerSimilarityDetectionEvent,

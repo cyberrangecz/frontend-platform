@@ -1,7 +1,7 @@
-import { LevelAnswersMapper } from './level-answers-mapper';
-import { TrainingInstanceStatistics } from '@crczp/visualization-model';
-import { ParticipantsMapper } from './participants-mapper';
-import { TrainingInstanceStatisticsDTO } from '../dtos';
+import {LevelAnswersMapper} from './level-answers-mapper';
+import {TrainingInstanceStatistics} from '@crczp/visualization-model';
+import {ParticipantsMapper} from './participants-mapper';
+import {TrainingInstanceStatisticsDTO} from '../dtos';
 
 export class TrainingInstanceMapper {
     static fromDTOs(dtos: TrainingInstanceStatisticsDTO[]): TrainingInstanceStatistics[] {

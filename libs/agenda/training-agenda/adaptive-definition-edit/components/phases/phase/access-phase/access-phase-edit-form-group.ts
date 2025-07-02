@@ -1,6 +1,6 @@
-import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
-import { AccessPhase } from '@crczp/training-model';
-import { SentinelValidators } from '@sentinel/common';
+import {UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
+import {AccessPhase} from '@crczp/training-model';
+import {SentinelValidators} from '@sentinel/common';
 
 /**
  * Form control class for access-phase phases edit component

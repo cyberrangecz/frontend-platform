@@ -1,11 +1,11 @@
-import { Injectable } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import {Injectable} from '@angular/core';
+import {MatDialog} from '@angular/material/dialog';
 import {
     SentinelConfirmationDialogComponent,
     SentinelConfirmationDialogConfig,
     SentinelDialogResultEnum,
 } from '@sentinel/components/dialogs';
-import { TrainingDefinitionApi } from '@crczp/training-api';
+import {TrainingDefinitionApi} from '@crczp/training-api';
 import {
     AbstractLevelTypeEnum,
     AccessLevel,
@@ -14,10 +14,10 @@ import {
     Level,
     TrainingLevel,
 } from '@crczp/training-model';
-import { EMPTY, Observable } from 'rxjs';
-import { switchMap, tap } from 'rxjs/operators';
-import { TrainingErrorHandler, TrainingNotificationService } from '@crczp/training-agenda';
-import { LevelEditService } from './level-edit.service';
+import {EMPTY, Observable} from 'rxjs';
+import {switchMap, tap} from 'rxjs/operators';
+import {TrainingErrorHandler, TrainingNotificationService} from '@crczp/training-agenda';
+import {LevelEditService} from './level-edit.service';
 
 /**
  * Service handling editing of training definition's levels and related operations.

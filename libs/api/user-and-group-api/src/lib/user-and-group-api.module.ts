@@ -1,15 +1,15 @@
-import { CommonModule } from '@angular/common';
-import { ModuleWithProviders, NgModule, Optional, SkipSelf } from '@angular/core';
-import { GroupApi } from './api/group/group-api.service';
-import { GroupDefaultApi } from './api/group/group-default-api.service';
-import { MicroserviceApi } from './api/microservice/microservice-api.service';
-import { MicroserviceDefaultApi } from './api/microservice/microservice-default-api.service';
-import { RoleApi } from './api/role/role-api.service';
-import { RoleDefaultApi } from './api/role/role-default-api.service';
-import { UserApi } from './api/user/user-api.service';
-import { UserDefaultApi } from './api/user/user-default-api.service';
-import { UserAndGroupApiConfig } from './other/user-and-group-api-config';
-import { UserAndGroupContext } from './other/user-and-group.context.service';
+import {CommonModule} from '@angular/common';
+import {ModuleWithProviders, NgModule, Optional, SkipSelf} from '@angular/core';
+import {GroupApi} from './api/group/group-api.service';
+import {GroupDefaultApi} from './api/group/group-default-api.service';
+import {MicroserviceApi} from './api/microservice/microservice-api.service';
+import {MicroserviceDefaultApi} from './api/microservice/microservice-default-api.service';
+import {RoleApi} from './api/role/role-api.service';
+import {RoleDefaultApi} from './api/role/role-default-api.service';
+import {UserApi} from './api/user/user-api.service';
+import {UserDefaultApi} from './api/user/user-default-api.service';
+import {UserAndGroupApiConfig} from './other/user-and-group-api-config';
+import {UserAndGroupContext} from './other/user-and-group.context.service';
 
 @NgModule({
     imports: [CommonModule],

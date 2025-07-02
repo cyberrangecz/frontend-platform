@@ -1,7 +1,7 @@
-import { TrainingDefinition } from '@crczp/training-model';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { filter } from 'rxjs/operators';
-import { TrainingDefinitionChangeEvent } from '../../../model/events/training-definition-change-event';
+import {TrainingDefinition} from '@crczp/training-model';
+import {BehaviorSubject, Observable} from 'rxjs';
+import {filter} from 'rxjs/operators';
+import {TrainingDefinitionChangeEvent} from '../../../model/events/training-definition-change-event';
 
 export abstract class TrainingDefinitionEditService {
     protected trainingDefinitionSubject$: BehaviorSubject<TrainingDefinition> = new BehaviorSubject<TrainingDefinition>(

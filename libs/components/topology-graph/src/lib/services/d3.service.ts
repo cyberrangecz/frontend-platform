@@ -1,16 +1,10 @@
-import { Injectable } from '@angular/core';
-import { ForceDirectedGraph } from '../model/graph/force-directed-graph';
-import {
-    Link,
-    Node,
-    NodePhysicalRoleEnum,
-    RouterNode,
-    SwitchNode,
-} from '@crczp/topology-graph-model';
+import {Injectable} from '@angular/core';
+import {ForceDirectedGraph} from '../model/graph/force-directed-graph';
+import {Link, Node, NodePhysicalRoleEnum, RouterNode, SwitchNode,} from '@crczp/topology-graph-model';
 import * as d3 from 'd3';
-import { GraphLockService } from './graph-lock.service';
-import { Observable, Subject } from 'rxjs';
-import { DraggedNodeService } from './dragged-node.service';
+import {GraphLockService} from './graph-lock.service';
+import {Observable, Subject} from 'rxjs';
+import {DraggedNodeService} from './dragged-node.service';
 
 /**
  * Service used for interaction between D3 library events and visual components through directives.

@@ -1,5 +1,5 @@
-import { DetectionEventParticipant } from '@crczp/training-model';
-import { DetectionEventParticipantDTO } from '../../dto/detection-event/detection-event-participant-dto';
+import {DetectionEventParticipant} from '@crczp/training-model';
+import {DetectionEventParticipantDTO} from '../../dto/detection-event/detection-event-participant-dto';
 
 export class DetectionEventParticipantMapper {
     static fromDTO(dto: DetectionEventParticipantDTO): DetectionEventParticipant {

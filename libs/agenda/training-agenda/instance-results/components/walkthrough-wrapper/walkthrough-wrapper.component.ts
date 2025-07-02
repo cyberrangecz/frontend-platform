@@ -1,10 +1,10 @@
-import { Component, DestroyRef, inject, OnInit } from '@angular/core';
-import { Level, TrainingInstance } from '@crczp/training-model';
-import { ActivatedRoute } from '@angular/router';
-import { exhaustMap, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { WalkthroughService } from './services/walkthrough.service';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {Component, DestroyRef, inject, OnInit} from '@angular/core';
+import {Level, TrainingInstance} from '@crczp/training-model';
+import {ActivatedRoute} from '@angular/router';
+import {async, exhaustMap, Observable} from 'rxjs';
+import {map} from 'rxjs/operators';
+import {WalkthroughService} from './services/walkthrough.service';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 
 @Component({
     selector: 'crczp-walkthrough-wrapper',
@@ -31,4 +31,6 @@ export class WalkthroughWrapperComponent implements OnInit {
             map((trainingDefinition) => trainingDefinition.levels),
         ) as Observable<Level[]>;
     }
+
+    protected readonly async = async;
 }

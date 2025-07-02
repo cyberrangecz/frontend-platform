@@ -1,10 +1,10 @@
-import { Pool } from '@crczp/sandbox-model';
-import { PoolCreateDTO } from '../../dto/sandbox-instance/pool-create-dto';
-import { PoolDTO } from '../../dto/sandbox-instance/pool-dto';
-import { CreatedByMapper } from './created-by-mapper';
-import { HardwareUsageMapper } from './hardware-usage-mapper';
-import { SandboxDefinitionMapper } from '../sandbox-definition/sandbox-definition-mapper';
-import { PoolUpdateDTO } from '../../dto/sandbox-instance/pool-update-dto';
+import {Pool} from '@crczp/sandbox-model';
+import {PoolCreateDTO} from '../../dto/sandbox-instance/pool-create-dto';
+import {PoolDTO} from '../../dto/sandbox-instance/pool-dto';
+import {CreatedByMapper} from './created-by-mapper';
+import {HardwareUsageMapper} from './hardware-usage-mapper';
+import {SandboxDefinitionMapper} from '../sandbox-definition/sandbox-definition-mapper';
+import {PoolUpdateDTO} from '../../dto/sandbox-instance/pool-update-dto';
 
 /**
  * @dynamic

@@ -1,8 +1,8 @@
-import { BehaviorSubject, Observable } from 'rxjs';
-import { RequestStagesService } from '../request-stages.service';
-import { map, switchMap } from 'rxjs/operators';
-import { RequestStage } from '@crczp/sandbox-model';
-import { Injectable } from '@angular/core';
+import {BehaviorSubject, Observable} from 'rxjs';
+import {RequestStagesService} from '../request-stages.service';
+import {map, switchMap} from 'rxjs/operators';
+import {RequestStage} from '@crczp/sandbox-model';
+import {Injectable} from '@angular/core';
 
 @Injectable()
 export class StagesDetailPollRegistry {

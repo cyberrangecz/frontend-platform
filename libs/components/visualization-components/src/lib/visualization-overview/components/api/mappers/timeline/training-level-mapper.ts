@@ -1,5 +1,5 @@
-import { TrainingLevelDto } from '../../dto/timeline/training-level-dto';
-import { TrainingLevel } from '../../../model/timeline/training-level';
+import {TrainingLevelDto} from '../../dto/timeline/training-level-dto';
+import {TrainingLevel} from '../../../model/timeline/training-level';
 
 export class TrainingLevelMapper {
     static fromDTO(dto: TrainingLevelDto): TrainingLevel {

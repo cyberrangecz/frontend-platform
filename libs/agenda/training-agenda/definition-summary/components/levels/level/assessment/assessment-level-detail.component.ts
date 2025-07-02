@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { AssessmentLevel, AssessmentTypeEnum } from '@crczp/training-model';
+import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
+import {AssessmentLevel, AssessmentTypeEnum} from '@crczp/training-model';
 
 @Component({
     selector: 'crczp-assessment-level-detail',

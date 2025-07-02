@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
-import { TrainingApiConfig } from './training-api-config';
+import {Injectable} from '@angular/core';
+import {TrainingApiConfig} from './training-api-config';
 
 @Injectable()
 export class TrainingApiContext {

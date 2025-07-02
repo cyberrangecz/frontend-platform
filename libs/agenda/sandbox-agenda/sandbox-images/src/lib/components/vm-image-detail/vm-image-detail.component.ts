@@ -1,5 +1,5 @@
-import { VMImagesRowAdapter } from '../../models/vm-images-row-adapter';
-import { Component, HostBinding, Input } from '@angular/core';
+import {VMImagesRowAdapter} from '../../models/vm-images-row-adapter';
+import {Component, HostBinding, Input} from '@angular/core';
 
 /**
  * Example of expanded row component

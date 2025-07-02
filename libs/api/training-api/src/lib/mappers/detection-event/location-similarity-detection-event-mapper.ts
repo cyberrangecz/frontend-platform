@@ -1,5 +1,7 @@
-import { AbstractDetectionEventTypeEnum, LocationSimilarityDetectionEvent } from '@crczp/training-model';
-import { LocationSimilarityDetectionEventDTO } from '../../dto/detection-event/location-similarity/location_similarity-detection-event-dto';
+import {AbstractDetectionEventTypeEnum, LocationSimilarityDetectionEvent} from '@crczp/training-model';
+import {
+    LocationSimilarityDetectionEventDTO
+} from '../../dto/detection-event/location-similarity/location_similarity-detection-event-dto';
 
 export class LocationSimilarityDetectionEventMapper {
     static fromDTO(dto: LocationSimilarityDetectionEventDTO): LocationSimilarityDetectionEvent {

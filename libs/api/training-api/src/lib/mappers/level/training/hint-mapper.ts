@@ -1,5 +1,5 @@
-import { Hint } from '@crczp/training-model';
-import { HintDTO, HintDTOClass } from '../../../dto/level/training/hint-dto';
+import {Hint} from '@crczp/training-model';
+import {HintDTO, HintDTOClass} from '../../../dto/level/training/hint-dto';
 
 /**
  * @dynamic

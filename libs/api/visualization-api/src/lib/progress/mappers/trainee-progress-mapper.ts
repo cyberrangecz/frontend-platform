@@ -1,6 +1,6 @@
-import { ProgressLevelVisualizationMapper } from './progress-level-visualization-mapper';
-import { TraineeProgressDTO } from '../dtos';
-import { TraineeProgressData } from '@crczp/visualization-model';
+import {ProgressLevelVisualizationMapper} from './progress-level-visualization-mapper';
+import {TraineeProgressDTO} from '../dtos';
+import {TraineeProgressData} from '@crczp/visualization-model';
 
 export class TraineeProgressMapper {
     static fromDTOs(dtos: TraineeProgressDTO[]): TraineeProgressData[] {

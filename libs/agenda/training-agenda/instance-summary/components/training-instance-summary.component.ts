@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, Component, DestroyRef, inject, Input, OnInit} f
 import {ActivatedRoute} from '@angular/router';
 import {OffsetPaginationEvent} from '@sentinel/common/pagination';
 import {TrainingInstance, TrainingRun} from '@crczp/training-model';
-import {Observable} from 'rxjs';
+import {async, Observable} from 'rxjs';
 import {map, switchMap, take, tap} from 'rxjs/operators';
 import {
     TRAINING_INSTANCE_DATA_ATTRIBUTE_NAME,
@@ -153,4 +153,6 @@ export class TrainingInstanceSummaryComponent implements OnInit {
         );
         this.trainingRunsHasError$ = this.trainingRunService.hasError$;
     }
+
+    protected readonly async = async;
 }

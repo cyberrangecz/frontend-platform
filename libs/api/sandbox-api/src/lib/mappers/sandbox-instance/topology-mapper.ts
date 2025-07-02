@@ -6,12 +6,12 @@ import {
     TopologyRouter,
     TopologySwitch,
 } from '@crczp/sandbox-model';
-import { TopologyDTO } from '../../dto/sandbox-instance/topology-dto';
-import { HostDTO } from '../../dto/sandbox-instance/topology-elements/host-dto';
-import { LinkDTO } from '../../dto/sandbox-instance/topology-elements/link-dto';
-import { PortDTO } from '../../dto/sandbox-instance/topology-elements/port-dto';
-import { RouterDTO } from '../../dto/sandbox-instance/topology-elements/router-dto';
-import { SwitchDTO } from '../../dto/sandbox-instance/topology-elements/switch-dto';
+import {TopologyDTO} from '../../dto/sandbox-instance/topology-dto';
+import {HostDTO} from '../../dto/sandbox-instance/topology-elements/host-dto';
+import {LinkDTO} from '../../dto/sandbox-instance/topology-elements/link-dto';
+import {PortDTO} from '../../dto/sandbox-instance/topology-elements/port-dto';
+import {RouterDTO} from '../../dto/sandbox-instance/topology-elements/router-dto';
+import {SwitchDTO} from '../../dto/sandbox-instance/topology-elements/switch-dto';
 
 /**
  * @dynamic

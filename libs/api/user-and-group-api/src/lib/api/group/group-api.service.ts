@@ -1,7 +1,7 @@
-import { SentinelFilter } from '@sentinel/common/filter';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
-import { Group, UserRole } from '@crczp/user-and-group-model';
-import { Observable } from 'rxjs';
+import {SentinelFilter} from '@sentinel/common/filter';
+import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
+import {Group, UserRole} from '@crczp/user-and-group-model';
+import {Observable} from 'rxjs';
 
 export abstract class GroupApi {
     /**

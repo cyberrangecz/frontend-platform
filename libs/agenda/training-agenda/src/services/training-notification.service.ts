@@ -1,7 +1,7 @@
 /**
  * Displays notifications from training agenda services and components. Should be overridden by client
  */
-import { Observable } from 'rxjs';
+import {Observable} from 'rxjs';
 
 export abstract class TrainingNotificationService {
     /**

@@ -7,6 +7,7 @@ import {RequestStageComponent} from "./stage/request-stage.component";
 import {MatIcon} from "@angular/material/icon";
 import {MatCard} from "@angular/material/card";
 import {MatIconButton} from "@angular/material/button";
+import {async} from "rxjs";
 
 @Component({
     selector: 'crczp-cleanup-request-detail',
@@ -28,4 +29,6 @@ export class CleanupRequestDetailComponent extends RequestDetailComponent {
     ) {
         super(activeRoute, requestStagesService);
     }
+
+    protected readonly async = async;
 }

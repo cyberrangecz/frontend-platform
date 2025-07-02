@@ -1,5 +1,5 @@
-import { AssessmentLevel } from '../../../model/timeline/assessment-level';
-import { AssessmentLevelDTO } from '../../dto/timeline/assessment-level-dto';
+import {AssessmentLevel} from '../../../model/timeline/assessment-level';
+import {AssessmentLevelDTO} from '../../dto/timeline/assessment-level-dto';
 
 export class AssessmentLevelMapper {
     static fromDTO(dto: AssessmentLevelDTO): AssessmentLevel {

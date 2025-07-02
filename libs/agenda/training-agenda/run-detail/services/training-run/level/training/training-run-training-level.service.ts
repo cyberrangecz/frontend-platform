@@ -1,20 +1,20 @@
-import { MatDialog } from '@angular/material/dialog';
+import {MatDialog} from '@angular/material/dialog';
 import {
     SentinelConfirmationDialogComponent,
     SentinelConfirmationDialogConfig,
     SentinelDialogResultEnum,
 } from '@sentinel/components/dialogs';
-import { Hint, LevelAnswerCheck, PhaseAnswerCheck, TrainingLevel } from '@crczp/training-model';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { RunningTrainingRunService } from '../../running/running-training-run.service';
-import { HintButton } from '@crczp/training-agenda/internal';
+import {Hint, LevelAnswerCheck, PhaseAnswerCheck, TrainingLevel} from '@crczp/training-model';
+import {BehaviorSubject, Observable} from 'rxjs';
+import {RunningTrainingRunService} from '../../running/running-training-run.service';
+import {HintButton} from '@crczp/training-agenda/internal';
 import {
     SentinelNotification,
     SentinelNotificationResult,
     SentinelNotificationService,
     SentinelNotificationTypeEnum,
 } from '@sentinel/layout/notification';
-import { map } from 'rxjs/operators';
+import {map} from 'rxjs/operators';
 
 export abstract class TrainingRunTrainingLevelService {
     protected constructor(

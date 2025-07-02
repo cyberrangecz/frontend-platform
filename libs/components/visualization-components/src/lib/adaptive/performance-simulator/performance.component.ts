@@ -9,11 +9,11 @@ import {
     Output,
     SimpleChanges,
 } from '@angular/core';
-import { UntypedFormArray } from '@angular/forms';
-import { DecisionMatrixRow, TrainingPhase } from '@crczp/training-model';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { TraineePhasePerformance } from '@crczp/visualization-model';
-import { PerformanceFormGroup } from './performance-form-group';
+import {UntypedFormArray} from '@angular/forms';
+import {DecisionMatrixRow, TrainingPhase} from '@crczp/training-model';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import {TraineePhasePerformance} from '@crczp/visualization-model';
+import {PerformanceFormGroup} from './performance-form-group';
 
 @Component({
     selector: 'crczp-performance-simulator',

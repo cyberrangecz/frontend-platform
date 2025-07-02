@@ -1,7 +1,7 @@
-import { MitreTechnique } from '../mitre-techniques/mitre-technique';
-import { Hint } from './hint';
-import { Level } from './level';
-import { ReferenceSolutionNode } from './reference-solution-node';
+import {MitreTechnique} from '../mitre-techniques/mitre-technique';
+import {Hint} from './hint';
+import {Level} from './level';
+import {ReferenceSolutionNode} from './reference-solution-node';
 
 /**
  * Class representing level in a training of type Training

@@ -1,35 +1,35 @@
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { fromEvent, Observable } from 'rxjs';
-import { AdaptiveDefinitionApiService } from './adaptive-definition-api.service';
+import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
+import {Injectable} from '@angular/core';
+import {fromEvent, Observable} from 'rxjs';
+import {AdaptiveDefinitionApiService} from './adaptive-definition-api.service';
 import {
     AccessPhase,
+    AdaptiveTask,
     InfoPhase,
     Phase,
     QuestionnairePhase,
-    AdaptiveTask,
     TrainingDefinition,
     TrainingDefinitionInfo,
     TrainingDefinitionStateEnum,
     TrainingPhase
 } from '@crczp/training-model';
-import { InfoPhaseDTO } from '../../dto/phase/info-phase/info-phase-dto';
-import { PhaseMapper } from '../../mappers/phase/phase-mapper';
-import { map, mergeMap } from 'rxjs/operators';
-import { TrainingPhaseDTO } from '../../dto/phase/training-phase/training-phase-dto';
-import { QuestionnairePhaseDTO } from '../../dto/phase/questionnaire-phase/questionnaire-phase-dto';
-import { TrainingPhaseMapper } from '../../mappers/phase/training-phase-mapper';
-import { QuestionnairePhaseMapper } from '../../mappers/phase/questionnaire-phase-mapper';
-import { InfoPhaseMapper } from '../../mappers/phase/info-phase-mapper';
-import { TaskDTO } from '../../dto/phase/training-phase/task-dto';
-import { TaskMapper } from '../../mappers/phase/task-mapper';
-import { ResponseHeaderContentDispositionReader, SentinelParamsMerger } from '@sentinel/common';
-import { SentinelFilter } from '@sentinel/common/filter';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
-import { TrainingApiContext } from '../../other/training-api-context';
-import { TrainingDefinitionMapper } from '../../mappers/training-definition/training-definition-mapper';
-import { TrainingDefinitionDTO } from '../../dto/training-definition/training-definition-dto';
-import { TrainingDefinitionInfoMapper } from '../../mappers/training-definition/training-definition-info-mapper';
+import {InfoPhaseDTO} from '../../dto/phase/info-phase/info-phase-dto';
+import {PhaseMapper} from '../../mappers/phase/phase-mapper';
+import {map, mergeMap} from 'rxjs/operators';
+import {TrainingPhaseDTO} from '../../dto/phase/training-phase/training-phase-dto';
+import {QuestionnairePhaseDTO} from '../../dto/phase/questionnaire-phase/questionnaire-phase-dto';
+import {TrainingPhaseMapper} from '../../mappers/phase/training-phase-mapper';
+import {QuestionnairePhaseMapper} from '../../mappers/phase/questionnaire-phase-mapper';
+import {InfoPhaseMapper} from '../../mappers/phase/info-phase-mapper';
+import {TaskDTO} from '../../dto/phase/training-phase/task-dto';
+import {TaskMapper} from '../../mappers/phase/task-mapper';
+import {ResponseHeaderContentDispositionReader, SentinelParamsMerger} from '@sentinel/common';
+import {SentinelFilter} from '@sentinel/common/filter';
+import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
+import {TrainingApiContext} from '../../other/training-api-context';
+import {TrainingDefinitionMapper} from '../../mappers/training-definition/training-definition-mapper';
+import {TrainingDefinitionDTO} from '../../dto/training-definition/training-definition-dto';
+import {TrainingDefinitionInfoMapper} from '../../mappers/training-definition/training-definition-info-mapper';
 import {
     BlobFileSaver,
     handleJsonError,
@@ -37,7 +37,7 @@ import {
     PaginationMapper,
     ParamsBuilder
 } from '@crczp/api-common';
-import { TrainingDefinitionInfoDTO } from '../../dto/training-definition/training-definition-info-dto';
+import {TrainingDefinitionInfoDTO} from '../../dto/training-definition/training-definition-info-dto';
 
 @Injectable()
 export class AdaptiveDefinitionDefaultApiService extends AdaptiveDefinitionApiService {

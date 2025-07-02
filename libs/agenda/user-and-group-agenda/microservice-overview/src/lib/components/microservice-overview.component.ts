@@ -1,39 +1,21 @@
-import { RegisterControlItem } from '@crczp/user-and-group-agenda/internal';
-import { MicroserviceTable } from '../model/table/microservice-table';
-import { MicroserviceOverviewService } from '../services/microservice-overview.service';
-import { Microservice } from '@crczp/user-and-group-model';
-import { OffsetPaginationEvent } from '@sentinel/common/pagination';
+import {RegisterControlItem} from '@crczp/user-and-group-agenda/internal';
+import {MicroserviceTable} from '../model/table/microservice-table';
+import {MicroserviceOverviewService} from '../services/microservice-overview.service';
+import {Microservice} from '@crczp/user-and-group-model';
+import {OffsetPaginationEvent} from '@sentinel/common/pagination';
+import {ChangeDetectionStrategy, Component, DestroyRef, inject, Input, OnInit,} from '@angular/core';
+import {async, defer, Observable, of} from 'rxjs';
+import {SentinelTable, SentinelTableComponent, TableActionEvent, TableLoadEvent,} from '@sentinel/components/table';
 import {
-    ChangeDetectionStrategy,
-    Component,
-    DestroyRef,
-    inject,
-    Input,
-    OnInit,
-} from '@angular/core';
-import { async, defer, Observable, of } from 'rxjs';
-import {
-    SentinelTable,
-    SentinelTableComponent,
-    TableActionEvent,
-    TableLoadEvent,
-} from '@sentinel/components/table';
-import {
-    SentinelControlItemSignal,
+    SentinelControlItem,
     SentinelControlItemSignal,
     SentinelControlsComponent,
 } from '@sentinel/components/controls';
-import { map, take } from 'rxjs/operators';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import {
-    UserAndGroupDefaultNavigator,
-    UserAndGroupNavigator,
-} from '@crczp/user-and-group-agenda';
-import { AsyncPipe } from '@angular/common';
-import {
-    PaginationStorageService,
-    providePaginationStorageService,
-} from '@crczp/common';
+import {map, take} from 'rxjs/operators';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import {UserAndGroupDefaultNavigator, UserAndGroupNavigator,} from '@crczp/user-and-group-agenda';
+import {AsyncPipe} from '@angular/common';
+import {PaginationStorageService, providePaginationStorageService,} from '@crczp/common';
 
 @Component({
     selector: 'crczp-microservice-overview',
@@ -64,14 +46,15 @@ export class MicroserviceOverviewComponent implements OnInit {
      * True if error was thrown while getting data for microservies table, false otherwise
      */
     microservicesHasError$: Observable<boolean>;
-    controls: SentinelControlItemSignal[];
+    controls: SentinelControlItem[];
     destroyRef = inject(DestroyRef);
     protected readonly async = async;
 
     constructor(
         private microserviceService: MicroserviceOverviewService,
         private paginationService: PaginationStorageService
-    ) {}
+    ) {
+    }
 
     ngOnInit(): void {
         const initialLoadEvent: TableLoadEvent = {

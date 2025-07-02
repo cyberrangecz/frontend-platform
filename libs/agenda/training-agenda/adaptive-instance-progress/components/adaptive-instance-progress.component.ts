@@ -1,10 +1,10 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, HostListener, inject, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { TrainingInstance } from '@crczp/training-model';
-import { Observable } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
-import { TRAINING_INSTANCE_DATA_ATTRIBUTE_NAME } from '@crczp/training-agenda';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {ChangeDetectionStrategy, Component, DestroyRef, HostListener, inject, OnInit} from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
+import {TrainingInstance} from '@crczp/training-model';
+import {async, Observable} from 'rxjs';
+import {map, tap} from 'rxjs/operators';
+import {TRAINING_INSTANCE_DATA_ATTRIBUTE_NAME} from '@crczp/training-agenda';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 
 /**
  * Component displaying adaptive instance progress visualizations
@@ -41,4 +41,6 @@ export class AdaptiveInstanceProgressComponent implements OnInit {
         const height = windowHeight / 2;
         this.vizSize = { width, height };
     }
+
+    protected readonly async = async;
 }

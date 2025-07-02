@@ -1,4 +1,4 @@
-import { TimelineEvent } from './timeline-event';
+import {TimelineEvent} from './timeline-event';
 
 export abstract class TimelineLevel {
     id: number;

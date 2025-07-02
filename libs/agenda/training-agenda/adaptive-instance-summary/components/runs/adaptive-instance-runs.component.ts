@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
-import { TrainingRun } from '@crczp/training-model';
-import { SentinelTable, TableActionEvent, TableLoadEvent } from '@sentinel/components/table';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@angular/core';
+import {TrainingRun} from '@crczp/training-model';
+import {SentinelTable, TableActionEvent, TableLoadEvent} from '@sentinel/components/table';
 
 @Component({
     selector: 'crczp-adaptive-instance-runs',

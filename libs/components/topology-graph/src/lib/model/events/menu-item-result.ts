@@ -1,4 +1,4 @@
-import { NodeActionEnum } from '../enums/node-context-menu-items-enum';
+import {NodeActionEnum} from '../enums/node-context-menu-items-enum';
 
 export class MenuItemResult {
     type: NodeActionEnum;

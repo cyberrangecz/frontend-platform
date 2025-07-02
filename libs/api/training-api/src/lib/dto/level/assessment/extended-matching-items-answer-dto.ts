@@ -1,4 +1,4 @@
-import { AbstractAssessmentAnswerDTO } from './abstract-assessment-answer-dto';
+import {AbstractAssessmentAnswerDTO} from './abstract-assessment-answer-dto';
 
 export class ExtendedMatchingItemsAnswerDTO implements AbstractAssessmentAnswerDTO {
     question_id: number;

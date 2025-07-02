@@ -1,6 +1,6 @@
-import { Assessment } from '@crczp/visualization-model';
-import { QuestionMapper } from './question-mapper';
-import { AssessmentDTO } from '../dtos';
+import {Assessment} from '@crczp/visualization-model';
+import {QuestionMapper} from './question-mapper';
+import {AssessmentDTO} from '../dtos';
 
 export class AssessmentMapper {
     static fromDTOs(dtos: AssessmentDTO[]): Assessment[] {

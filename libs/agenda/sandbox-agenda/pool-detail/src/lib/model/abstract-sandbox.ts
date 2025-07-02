@@ -1,5 +1,5 @@
-import { AllocationRequest, CleanupRequest, RequestStageState, SandboxAllocationUnit } from '@crczp/sandbox-model';
-import { AbstractSandboxState } from './enums/abstract-sandox-state.enum';
+import {AllocationRequest, CleanupRequest, RequestStageState, SandboxAllocationUnit} from '@crczp/sandbox-model';
+import {AbstractSandboxState} from './enums/abstract-sandox-state.enum';
 
 export class AbstractSandbox {
     id: number;

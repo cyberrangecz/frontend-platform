@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit} from '@angular/core';
-import {SentinelControlItemSignal, SentinelControlsComponent} from '@sentinel/components/controls';
+import {SentinelControlItem, SentinelControlItemSignal, SentinelControlsComponent} from '@sentinel/components/controls';
 import {async, BehaviorSubject, combineLatest, defer, Observable, switchMap, tap} from 'rxjs';
 import {map, take} from 'rxjs/operators';
 import {PoolEditService} from '../services/pool-edit.service';
@@ -15,7 +15,8 @@ import {PoolEditConcreteService} from "../services/pool-edit-concrete.service";
 import {MatCard, MatCardContent, MatCardHeader, MatCardTitle} from "@angular/material/card";
 import {MatDivider} from "@angular/material/divider";
 import {
-    SentinelResourceSelectorComponent, SentinelSelectorElementDirective,
+    SentinelResourceSelectorComponent,
+    SentinelSelectorElementDirective,
     SentinelSelectorSelectedElementDirective
 } from "@sentinel/components/resource-selector";
 import {AsyncPipe, NgIf} from "@angular/common";
@@ -61,12 +62,13 @@ export class PoolEditComponent implements OnInit {
     poolFormGroup: PoolFormGroup;
     editMode = false;
     canDeactivatePoolEdit = true;
-    controls: SentinelControlItemSignal[];
+    controls: SentinelControlItem[];
 
     destroyRef = inject(DestroyRef);
 
     currentSandboxDefinitionFilter$: BehaviorSubject<string> = new BehaviorSubject('');
     filteredSandboxDefinitions$: Observable<SandboxDefinition[]>;
+    protected readonly async = async;
 
     constructor(
         private activeRoute: ActivatedRoute,
@@ -101,13 +103,6 @@ export class PoolEditComponent implements OnInit {
         );
     }
 
-    ngOnInit(): void {
-        this.sandboxDefinitionService
-            .getAll(new OffsetPaginationEvent(0, Number.MAX_SAFE_INTEGER, '', 'asc'))
-            .pipe(takeUntilDestroyed(this.destroyRef))
-            .subscribe();
-    }
-
     get sandboxDefinition(): AbstractControl {
         return this.poolFormGroup.formGroup.get('sandboxDefinition');
     }
@@ -120,13 +115,20 @@ export class PoolEditComponent implements OnInit {
         return this.poolFormGroup.formGroup.get('comment');
     }
 
+    ngOnInit(): void {
+        this.sandboxDefinitionService
+            .getAll(new OffsetPaginationEvent(0, Number.MAX_SAFE_INTEGER, '', 'asc'))
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe();
+    }
+
     onControlsAction(control: SentinelControlItemSignal): void {
         control.result$.pipe(take(1)).subscribe();
     }
 
     initControls(isEditMode: boolean): void {
         this.controls = [
-            new SentinelControlItemSignal(
+            new SentinelControlItem(
                 isEditMode ? 'save' : 'create',
                 isEditMode ? 'Save' : 'Create',
                 'primary',
@@ -150,16 +152,14 @@ export class PoolEditComponent implements OnInit {
         return sandboxDefinition.title + ' [' + sandboxDefinition.rev + ']';
     }
 
+    onSandboxDefinitionFilter($event: string) {
+        this.currentSandboxDefinitionFilter$.next($event);
+    }
+
     private onChanged() {
         this.poolFormGroup.setValuesToPool(this.pool);
         this.canDeactivatePoolEdit = false;
         const change: PoolChangedEvent = new PoolChangedEvent(this.pool, this.poolFormGroup.formGroup.valid);
         this.poolEditService.change(change);
     }
-
-    onSandboxDefinitionFilter($event: string) {
-        this.currentSandboxDefinitionFilter$.next($event);
-    }
-
-    protected readonly async = async;
 }

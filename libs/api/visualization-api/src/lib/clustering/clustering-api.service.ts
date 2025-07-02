@@ -1,13 +1,13 @@
-import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { ClusteringVisualizationData } from '@crczp/visualization-model';
-import { ClusteringVisualizationDataDTO, SseDTO } from './dtos';
-import { VisualizationApiConfig } from '../config/visualization-api-config';
-import { RadarChartDataMapper } from './mappers/radar-chart-data-mapper';
-import { ClusterVisualizationDataMapper } from './mappers/cluster-visualization-data-mapper';
-import { SseDataMapper } from './mappers/sse-data-mapper';
+import {HttpClient} from '@angular/common/http';
+import {Injectable} from '@angular/core';
+import {Observable} from 'rxjs';
+import {map} from 'rxjs/operators';
+import {ClusteringVisualizationData} from '@crczp/visualization-model';
+import {ClusteringVisualizationDataDTO, SseDTO} from './dtos';
+import {VisualizationApiConfig} from '../config/visualization-api-config';
+import {RadarChartDataMapper} from './mappers/radar-chart-data-mapper';
+import {ClusterVisualizationDataMapper} from './mappers/cluster-visualization-data-mapper';
+import {SseDataMapper} from './mappers/sse-data-mapper';
 
 /**
  * Default implementation of service abstracting http communication with visualization data endpoints.

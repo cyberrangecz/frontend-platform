@@ -1,4 +1,4 @@
-import { CreatedByDTO } from '../sandbox-instance/created-by-dto';
+import {CreatedByDTO} from '../sandbox-instance/created-by-dto';
 
 export class SandboxDefinitionDTO {
     id: number;

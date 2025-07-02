@@ -1,19 +1,19 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { async, BehaviorSubject, Observable, take } from 'rxjs';
-import { IStatisticsFilter, TrainingInstanceStatistics } from '@crczp/visualization-model';
-import { map } from 'rxjs/operators';
-import { InstanceStatisticsApiService } from '@crczp/visualization-api';
-import { MatSidenavModule } from '@angular/material/sidenav';
-import { BubblechartComponent } from '../bubblechart/bubblechart.component';
-import { ClusteringWrapperComponent } from '../clustering-wrapper/clustering-wrapper.component';
-import { ScatterClustersWrapperComponent } from '../scatter-clusters-wrapper/scatter-clusters-wrapper.component';
-import { RadarChartWrapperComponent } from '../radar-chart-wrapper/radar-chart-wrapper.component';
-import { BarchartComponent } from '../barchart/barchart.component';
-import { ScatterplotComponent } from '../scatterplot/scatterplot.component';
-import { CombinedDiagramComponent } from '../combined-diagram/combined-diagram.component';
-import { FilterComponent } from '../filters/filter.component';
-import { MatExpansionModule } from '@angular/material/expansion';
-import { AsyncPipe, CommonModule } from '@angular/common';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {async, BehaviorSubject, Observable, take} from 'rxjs';
+import {IStatisticsFilter, TrainingInstanceStatistics} from '@crczp/visualization-model';
+import {map} from 'rxjs/operators';
+import {InstanceStatisticsApiService} from '@crczp/visualization-api';
+import {MatSidenavModule} from '@angular/material/sidenav';
+import {BubblechartComponent} from '../bubblechart/bubblechart.component';
+import {ClusteringWrapperComponent} from '../clustering-wrapper/clustering-wrapper.component';
+import {ScatterClustersWrapperComponent} from '../scatter-clusters-wrapper/scatter-clusters-wrapper.component';
+import {RadarChartWrapperComponent} from '../radar-chart-wrapper/radar-chart-wrapper.component';
+import {BarchartComponent} from '../barchart/barchart.component';
+import {ScatterplotComponent} from '../scatterplot/scatterplot.component';
+import {CombinedDiagramComponent} from '../combined-diagram/combined-diagram.component';
+import {FilterComponent} from '../filters/filter.component';
+import {MatExpansionModule} from '@angular/material/expansion';
+import {AsyncPipe, CommonModule} from '@angular/common';
 
 @Component({
     selector: 'crczp-statistical-visualization',

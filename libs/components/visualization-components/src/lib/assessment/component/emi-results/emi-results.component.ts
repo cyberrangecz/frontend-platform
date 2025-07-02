@@ -1,11 +1,11 @@
-import { Component, Input, OnInit } from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 
-import { EMITableAdapter } from '../../table-adapter/emi-table-adapter';
-import { HighlightService } from '../../services/highlight.service';
-import { HighlightableDirective } from '../../directives/highlightable.directive';
-import { AssessmentEmiAnswers, AssessmentParticipant, AssessmentQuestion } from '@crczp/visualization-model';
-import { CommonModule } from '@angular/common';
-import { EmiTableComponent } from './emi-table/emi-table.component';
+import {EMITableAdapter} from '../../table-adapter/emi-table-adapter';
+import {HighlightService} from '../../services/highlight.service';
+import {HighlightableDirective} from '../../directives/highlightable.directive';
+import {AssessmentEmiAnswers, AssessmentParticipant, AssessmentQuestion} from '@crczp/visualization-model';
+import {CommonModule} from '@angular/common';
+import {EmiTableComponent} from './emi-table/emi-table.component';
 
 /**
  * Component displaying result of a extended matching items

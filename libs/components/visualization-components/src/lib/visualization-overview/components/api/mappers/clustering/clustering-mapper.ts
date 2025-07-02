@@ -1,8 +1,8 @@
-import { ClusteringVisualizationResourceDTO } from '../../dto/clustering/clustering-visualization-resource-dto';
-import { ClusteringTrainingData } from '../../../model/clustering/clustering-training-data';
-import { LevelMapper } from './level-mapper';
-import { FinalResults } from '../../../model/clustering/final-results';
-import { PlayerDataMapper } from './player-data-mapper';
+import {ClusteringVisualizationResourceDTO} from '../../dto/clustering/clustering-visualization-resource-dto';
+import {ClusteringTrainingData} from '../../../model/clustering/clustering-training-data';
+import {LevelMapper} from './level-mapper';
+import {FinalResults} from '../../../model/clustering/final-results';
+import {PlayerDataMapper} from './player-data-mapper';
 
 export class ClusteringMapper {
     static fromDTO(dto: ClusteringVisualizationResourceDTO): ClusteringTrainingData {

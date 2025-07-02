@@ -1,6 +1,6 @@
-import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
-import { SentinelValidators } from '@sentinel/common';
-import { AssessmentLevel, AssessmentTypeEnum } from '@crczp/training-model';
+import {UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
+import {SentinelValidators} from '@sentinel/common';
+import {AssessmentLevel, AssessmentTypeEnum} from '@crczp/training-model';
 
 /**
  * Form control class for assessment level edit component

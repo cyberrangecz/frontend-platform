@@ -1,4 +1,4 @@
-import { LevelTableData } from './level-table-data';
+import {LevelTableData} from './level-table-data';
 
 export class PlayerTableData {
     id: number;

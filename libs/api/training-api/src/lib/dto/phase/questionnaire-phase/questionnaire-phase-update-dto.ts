@@ -1,6 +1,6 @@
-import { QuestionDTO } from './question-dto';
-import { PhaseRelationDTO } from './phase-relation-dto';
-import { AbstractPhaseDTO } from '../abstract-phase-dto';
+import {QuestionDTO} from './question-dto';
+import {PhaseRelationDTO} from './phase-relation-dto';
+import {AbstractPhaseDTO} from '../abstract-phase-dto';
 
 export class QuestionnairePhaseUpdateDTO {
     id: number;

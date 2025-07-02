@@ -1,6 +1,6 @@
-import { AbstractLevelTypeEnum, AccessLevel } from '@crczp/training-model';
-import { AccessLevelDTO } from '../../../dto/level/access/access-level-dto';
-import { AccessLevelUpdateDTO, AccessLevelUpdateDTOClass } from '../../../dto/level/access/access-level-update-dto';
+import {AbstractLevelTypeEnum, AccessLevel} from '@crczp/training-model';
+import {AccessLevelDTO} from '../../../dto/level/access/access-level-dto';
+import {AccessLevelUpdateDTO, AccessLevelUpdateDTOClass} from '../../../dto/level/access/access-level-update-dto';
 
 export class AccessLevelMapper {
     static fromDTO(dto: AccessLevelDTO): AccessLevel {

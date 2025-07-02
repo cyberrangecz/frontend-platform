@@ -1,7 +1,7 @@
-import { ProgressHintMapper } from './progress-hint-mapper';
-import { ProgressLeveInfoDTO } from '../dtos';
-import { AbstractLevelTypeEnum } from '@crczp/training-model';
-import { ProgressLevelInfo } from '@crczp/visualization-model';
+import {ProgressHintMapper} from './progress-hint-mapper';
+import {ProgressLeveInfoDTO} from '../dtos';
+import {AbstractLevelTypeEnum} from '@crczp/training-model';
+import {ProgressLevelInfo} from '@crczp/visualization-model';
 
 export class ProgressLevelInfoMapper {
     static fromDTOs(dtos: ProgressLeveInfoDTO[]): ProgressLevelInfo[] {

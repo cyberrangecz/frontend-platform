@@ -1,7 +1,7 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core';
-import { v4 as uuid } from 'uuid';
-import { D3, D3Service } from '../../../common/d3-service/d3-service';
-import { ClusteringConfig, VIS_CONFIG } from '../../clustering-config';
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output} from '@angular/core';
+import {v4 as uuid} from 'uuid';
+import {D3, D3Service} from '../../../common/d3-service/d3-service';
+import {ClusteringConfig, VIS_CONFIG} from '../../clustering-config';
 
 @Component({
     selector: 'crczp-viz-clustering-line-chart',

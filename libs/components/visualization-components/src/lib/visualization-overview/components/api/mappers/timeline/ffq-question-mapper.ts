@@ -1,5 +1,5 @@
-import { FfqQuestionDTO } from '../../dto/timeline/ffq-question-dto';
-import { FfqQuestion } from '../../../model/timeline/ffq-question';
+import {FfqQuestionDTO} from '../../dto/timeline/ffq-question-dto';
+import {FfqQuestion} from '../../../model/timeline/ffq-question';
 
 export class FfqQuestionMapper {
     static fromDTO(dto: FfqQuestionDTO): FfqQuestion {

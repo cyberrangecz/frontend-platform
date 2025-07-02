@@ -1,10 +1,10 @@
-import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
-import { TrainingInstance } from '@crczp/training-model';
-import { Observable, of } from 'rxjs';
-import { catchError, mergeMap, take } from 'rxjs/operators';
-import { ADAPTIVE_INSTANCE_PATH, ADAPTIVE_INSTANCE_SELECTOR, TRAINING_INSTANCE_NEW_PATH } from '@crczp/training-agenda';
-import { AdaptiveInstanceResolver } from './adaptive-instance-resolver.service';
+import {Injectable} from '@angular/core';
+import {ActivatedRouteSnapshot, RouterStateSnapshot} from '@angular/router';
+import {TrainingInstance} from '@crczp/training-model';
+import {Observable, of} from 'rxjs';
+import {catchError, mergeMap, take} from 'rxjs/operators';
+import {ADAPTIVE_INSTANCE_PATH, ADAPTIVE_INSTANCE_SELECTOR, TRAINING_INSTANCE_NEW_PATH} from '@crczp/training-agenda';
+import {AdaptiveInstanceResolver} from './adaptive-instance-resolver.service';
 
 @Injectable()
 export class AdaptiveInstanceTitleResolver {

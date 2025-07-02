@@ -1,5 +1,5 @@
-import { StepStateEnum } from '@sentinel/components/stepper';
-import { AdaptiveQuestion, QuestionTypeEnum } from '@crczp/training-model';
+import {StepStateEnum} from '@sentinel/components/stepper';
+import {AdaptiveQuestion, QuestionTypeEnum} from '@crczp/training-model';
 
 export class AdaptiveQuestionStepperAdapter {
     private _question: AdaptiveQuestion;

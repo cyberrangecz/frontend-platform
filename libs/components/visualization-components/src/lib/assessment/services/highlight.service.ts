@@ -1,6 +1,6 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
-import { AssessmentParticipant } from '@crczp/visualization-model';
+import {Injectable} from '@angular/core';
+import {BehaviorSubject} from 'rxjs';
+import {AssessmentParticipant} from '@crczp/visualization-model';
 
 /**
  * Service holding state of highlighted participants

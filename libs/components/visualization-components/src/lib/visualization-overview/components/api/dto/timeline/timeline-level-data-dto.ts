@@ -1,5 +1,5 @@
-import { TimelineQuestionDTO } from './timeline-question-dto';
-import { TimelineEventDTO } from './timeline-event-dto';
+import {TimelineQuestionDTO} from './timeline-question-dto';
+import {TimelineEventDTO} from './timeline-event-dto';
 
 export interface TimelineLevelDataDTO {
     id: number;

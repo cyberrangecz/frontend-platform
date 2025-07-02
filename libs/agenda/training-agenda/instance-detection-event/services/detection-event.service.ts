@@ -1,7 +1,7 @@
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
-import { OffsetPaginatedElementsService } from '@sentinel/common';
-import { AbstractDetectionEvent } from '@crczp/training-model';
-import { Observable } from 'rxjs';
+import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
+import {OffsetPaginatedElementsService} from '@sentinel/common';
+import {AbstractDetectionEvent} from '@crczp/training-model';
+import {Observable} from 'rxjs';
 
 /**
  * A layer between a component and an API services. Implement a concrete services by extending this class.

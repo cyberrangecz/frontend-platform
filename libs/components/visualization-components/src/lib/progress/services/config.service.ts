@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
-import { ProgressConfig } from '../progress-config';
+import {Injectable} from '@angular/core';
+import {ProgressConfig} from '../progress-config';
 
 @Injectable()
 export class ConfigService {

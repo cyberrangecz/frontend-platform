@@ -1,6 +1,6 @@
-import { NodePhysicalRoleEnum } from '../enums/node-physical-role-enum';
-import { NodePort } from '../node-port/node-port';
-import { INode } from './inode';
+import {NodePhysicalRoleEnum} from '../enums/node-physical-role-enum';
+import {NodePort} from '../node-port/node-port';
+import {INode} from './inode';
 
 /**
  * Abstract node used in graph-visual. Has attributes used for D3 simulation and SVG drawing (x,y, etc.)

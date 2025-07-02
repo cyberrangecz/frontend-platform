@@ -1,5 +1,5 @@
-import { AssessmentAnswer, AssessmentQuestion } from '@crczp/visualization-model';
-import { FFQTableRow } from './ffq-table-row';
+import {AssessmentAnswer, AssessmentQuestion} from '@crczp/visualization-model';
+import {FFQTableRow} from './ffq-table-row';
 
 export class FFQTableAdapter {
     rows: FFQTableAdapter[];

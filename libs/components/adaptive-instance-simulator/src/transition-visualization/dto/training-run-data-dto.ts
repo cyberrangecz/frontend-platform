@@ -1,5 +1,5 @@
-import { TraineeDTO } from './trainee-dto';
-import { TrainingRunPathNodeDTO } from './training-run-path-node-dto';
+import {TraineeDTO} from './trainee-dto';
+import {TrainingRunPathNodeDTO} from './training-run-path-node-dto';
 
 export interface TrainingRunDataDTO {
     training_run_id: number;

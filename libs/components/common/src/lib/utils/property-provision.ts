@@ -1,4 +1,4 @@
-import { inject, InjectionToken, Provider, Type } from '@angular/core';
+import {inject, InjectionToken, Provider, Type} from '@angular/core';
 
 export function provideComponentProperty<
     ConfigType,

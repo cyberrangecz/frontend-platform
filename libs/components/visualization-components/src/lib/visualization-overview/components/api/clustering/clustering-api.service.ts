@@ -1,8 +1,8 @@
-import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
-import { ConfigService } from '../../../config/config.service';
-import { ClusteringVisualizationResourceDTO } from '../dto/clustering/clustering-visualization-resource-dto';
+import {Injectable} from '@angular/core';
+import {Observable} from 'rxjs';
+import {HttpClient} from '@angular/common/http';
+import {ConfigService} from '../../../config/config.service';
+import {ClusteringVisualizationResourceDTO} from '../dto/clustering/clustering-visualization-resource-dto';
 
 @Injectable()
 export class ClusteringApiService {

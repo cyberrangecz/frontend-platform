@@ -1,7 +1,7 @@
-import { Observable } from 'rxjs';
-import { VirtualImage } from '@crczp/sandbox-model';
-import { SentinelFilter } from '@sentinel/common/filter';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
+import {Observable} from 'rxjs';
+import {VirtualImage} from '@crczp/sandbox-model';
+import {SentinelFilter} from '@sentinel/common/filter';
+import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
 
 /**
  * Service abstracting http communication with vm images endpoints.

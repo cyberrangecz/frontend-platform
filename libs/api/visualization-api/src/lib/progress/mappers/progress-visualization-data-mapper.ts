@@ -1,8 +1,8 @@
-import { ProgressLevelInfoMapper } from './progress-level-info-mapper';
-import { TraineeProgressMapper } from './trainee-progress-mapper';
-import { ProgressVisualizationData } from '@crczp/visualization-model';
-import { ProgressVisualizationDataDTO } from '../dtos';
-import { ProgressTraineeInfoMapper } from './progress-trainee-info-mapper';
+import {ProgressLevelInfoMapper} from './progress-level-info-mapper';
+import {TraineeProgressMapper} from './trainee-progress-mapper';
+import {ProgressVisualizationData} from '@crczp/visualization-model';
+import {ProgressVisualizationDataDTO} from '../dtos';
+import {ProgressTraineeInfoMapper} from './progress-trainee-info-mapper';
 
 
 export class ProgressVisualizationDataMapper {

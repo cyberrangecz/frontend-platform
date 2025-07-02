@@ -1,9 +1,9 @@
-import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, Router, RouterStateSnapshot } from '@angular/router';
-import { TrainingInstanceApi } from '@crczp/training-api';
-import { TrainingInstance } from '@crczp/training-model';
-import { EMPTY, Observable, of } from 'rxjs';
-import { catchError, mergeMap, take } from 'rxjs/operators';
+import {Injectable} from '@angular/core';
+import {ActivatedRouteSnapshot, Router, RouterStateSnapshot} from '@angular/router';
+import {TrainingInstanceApi} from '@crczp/training-api';
+import {TrainingInstance} from '@crczp/training-model';
+import {EMPTY, Observable, of} from 'rxjs';
+import {catchError, mergeMap, take} from 'rxjs/operators';
 import {
     TRAINING_INSTANCE_NEW_PATH,
     TRAINING_INSTANCE_PATH,

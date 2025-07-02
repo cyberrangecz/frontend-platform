@@ -1,22 +1,22 @@
-import { Injectable } from '@angular/core';
-import { Link, Node } from '@crczp/topology-graph-model';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { BehaviorSubject, Observable, of, zip } from 'rxjs';
-import { map, switchMap, tap } from 'rxjs/operators';
-import { TopologyMapper } from './topology-mapper.service';
-import { TopologyDTO } from '../model/DTO/topology-dto.model';
-import { TopologyLoadingService } from './topology-loading.service';
-import { TopologyErrorService } from './topology-error.service';
-import { ConsoleDTO } from '../model/DTO/console-dto.model';
-import { TopologyError } from '../model/others/topology-error.model';
-import { GuacamoleTokenDTO } from '../model/DTO/guacamole-token-dto.model';
-import { GuacamoleIdentifierDTO } from '../model/DTO/guacamole-identifier-dto.model';
-import { UserInterface } from '../model/enums/user-interface-enum';
-import { HostDTO } from '../model/DTO/host-dto.model';
-import { ManDTO } from '../model/DTO/man-dto.model';
-import { ConsoleUrlMapper } from '../mappers/console-url-mapper';
-import { ConsoleUrl } from '../model/others/console-url';
-import { Settings } from '@crczp/common';
+import {Injectable} from '@angular/core';
+import {Link, Node} from '@crczp/topology-graph-model';
+import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
+import {BehaviorSubject, Observable, of, zip} from 'rxjs';
+import {map, switchMap, tap} from 'rxjs/operators';
+import {TopologyMapper} from './topology-mapper.service';
+import {TopologyDTO} from '../model/DTO/topology-dto.model';
+import {TopologyLoadingService} from './topology-loading.service';
+import {TopologyErrorService} from './topology-error.service';
+import {ConsoleDTO} from '../model/DTO/console-dto.model';
+import {TopologyError} from '../model/others/topology-error.model';
+import {GuacamoleTokenDTO} from '../model/DTO/guacamole-token-dto.model';
+import {GuacamoleIdentifierDTO} from '../model/DTO/guacamole-identifier-dto.model';
+import {UserInterface} from '../model/enums/user-interface-enum';
+import {HostDTO} from '../model/DTO/host-dto.model';
+import {ManDTO} from '../model/DTO/man-dto.model';
+import {ConsoleUrlMapper} from '../mappers/console-url-mapper';
+import {ConsoleUrl} from '../model/others/console-url';
+import {Settings} from '@crczp/common';
 
 /**
  * Service for getting JSON data about topology of network and parsing them to model suitable for visualization

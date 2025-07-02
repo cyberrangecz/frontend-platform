@@ -1,4 +1,4 @@
-import { Observable } from 'rxjs';
+import {Observable} from 'rxjs';
 
 /**
  * Service abstracting http communication with training events related endpoints.

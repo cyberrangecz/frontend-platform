@@ -1,5 +1,5 @@
-import { InfoPhaseTask } from '../../../model/phase/info-phase/info-phase-task';
-import { InfoPhaseDTO } from '../../../dto/phase/info-phase/info-phase-dto';
+import {InfoPhaseTask} from '../../../model/phase/info-phase/info-phase-task';
+import {InfoPhaseDTO} from '../../../dto/phase/info-phase/info-phase-dto';
 
 export class InfoPhaseTaskMapper {
     static fromDTO(dto: InfoPhaseDTO): InfoPhaseTask {

@@ -1,13 +1,13 @@
-import { NgModule } from '@angular/core';
-import { NodeContextMenuComponent } from './graph-node-context-menu/graph-node-context-menu.component';
-import { GraphVisualComponent } from './graph-visual/graph-visual.component';
-import { GraphLinkVisualComponent } from './graph-link-visual/graph-link-visual.component';
-import { GraphNodeVisualComponent } from './graph-node-visual/graph-node-visual.component';
-import { CommonModule } from '@angular/common';
-import { LabelShortenerPipe } from '../pipes/label-shortener.pipe';
-import { MatCard } from '@angular/material/card';
-import { ContextMenuDirective } from '../directives/context-menu.directive';
-import { DraggableDirective } from '../directives/draggable.directive';
+import {NgModule} from '@angular/core';
+import {NodeContextMenuComponent} from './graph-node-context-menu/graph-node-context-menu.component';
+import {GraphVisualComponent} from './graph-visual/graph-visual.component';
+import {GraphLinkVisualComponent} from './graph-link-visual/graph-link-visual.component';
+import {GraphNodeVisualComponent} from './graph-node-visual/graph-node-visual.component';
+import {CommonModule} from '@angular/common';
+import {LabelShortenerPipe} from '../pipes/label-shortener.pipe';
+import {MatCard} from '@angular/material/card';
+import {ContextMenuDirective} from '../directives/context-menu.directive';
+import {DraggableDirective} from '../directives/draggable.directive';
 
 /**
  * Main module of visual (svg and d3) components

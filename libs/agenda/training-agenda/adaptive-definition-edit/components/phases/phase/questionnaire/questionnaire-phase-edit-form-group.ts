@@ -1,5 +1,5 @@
-import { UntypedFormArray, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
-import { AdaptiveQuestion, PhaseRelation, QuestionnairePhase } from '@crczp/training-model';
+import {UntypedFormArray, UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
+import {AdaptiveQuestion, PhaseRelation, QuestionnairePhase} from '@crczp/training-model';
 
 /**
  * @dynamic

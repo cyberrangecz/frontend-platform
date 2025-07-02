@@ -3,7 +3,7 @@ import {ActivatedRoute} from '@angular/router';
 import {OffsetPaginationEvent} from '@sentinel/common/pagination';
 import {TrainingInstance, TrainingRun} from '@crczp/training-model';
 import {SentinelTable, TableActionEvent, TableLoadEvent} from '@sentinel/components/table';
-import {Observable} from 'rxjs';
+import {async, Observable} from 'rxjs';
 import {map, switchMap, take, tap} from 'rxjs/operators';
 import {TrainingRunTable} from '../model/training-run-table';
 import {TRAINING_INSTANCE_DATA_ATTRIBUTE_NAME} from '@crczp/training-agenda';
@@ -88,4 +88,6 @@ export class TrainingInstanceRunsComponent implements OnInit {
         this.trainingRunsHasError$ = this.trainingRunService.hasError$;
         this.loadingTrainingRuns$ = this.trainingRunService.isLoading$;
     }
+
+    protected readonly async = async;
 }

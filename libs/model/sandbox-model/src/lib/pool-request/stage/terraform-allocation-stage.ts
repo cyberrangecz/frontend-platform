@@ -1,5 +1,5 @@
-import { RequestStageType } from '../../enums/request-stage-type.enum';
-import { AllocationRequestStage } from './allocation-request-stage';
+import {RequestStageType} from '../../enums/request-stage-type.enum';
+import {AllocationRequestStage} from './allocation-request-stage';
 
 /**
  * Class representing terraform stage

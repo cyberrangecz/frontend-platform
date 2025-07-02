@@ -1,34 +1,27 @@
-import { HttpErrorResponse } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
+import {HttpErrorResponse} from '@angular/common/http';
+import {Injectable} from '@angular/core';
+import {MatDialog} from '@angular/material/dialog';
+import {Router} from '@angular/router';
 import {
     SentinelConfirmationDialogComponent,
     SentinelConfirmationDialogConfig,
     SentinelDialogResultEnum,
 } from '@sentinel/components/dialogs';
+import {OffsetPaginationEvent, PaginatedResource,} from '@sentinel/common/pagination';
+import {PoolApi, SandboxAllocationUnitsApi, SandboxInstanceApi,} from '@crczp/sandbox-api';
+import {SandboxAllocationUnit, SandboxInstance} from '@crczp/sandbox-model';
+import {EMPTY, from, Observable, of} from 'rxjs';
+import {catchError, switchMap, tap} from 'rxjs/operators';
+import {SandboxErrorHandler, SandboxNavigator, SandboxNotificationService,} from '@crczp/sandbox-agenda';
+import {SandboxInstanceService} from './sandbox-instance.service';
+import {SandboxAllocationUnitsService} from '../sandbox-allocation-unit/sandbox-allocation-units.service';
 import {
-    OffsetPaginationEvent,
-    PaginatedResource,
-} from '@sentinel/common/pagination';
+    AllocateVariableSandboxesDialogComponent
+} from '../../../components/allocate-variable-sandboxes/allocate-variable-sandboxes-dialog.component';
 import {
-    PoolApi,
-    SandboxAllocationUnitsApi,
-    SandboxInstanceApi,
-} from '@crczp/sandbox-api';
-import { SandboxAllocationUnit, SandboxInstance } from '@crczp/sandbox-model';
-import { EMPTY, from, Observable, of } from 'rxjs';
-import { catchError, switchMap, tap } from 'rxjs/operators';
-import {
-    SandboxErrorHandler,
-    SandboxNavigator,
-    SandboxNotificationService,
-} from '@crczp/sandbox-agenda';
-import { SandboxInstanceService } from './sandbox-instance.service';
-import { SandboxAllocationUnitsService } from '../sandbox-allocation-unit/sandbox-allocation-units.service';
-import { AllocateVariableSandboxesDialogComponent } from '../../../components/allocate-variable-sandboxes/allocate-variable-sandboxes-dialog.component';
-import { AllocateVariableSandboxesDialogResult } from '../../../components/allocate-variable-sandboxes/allocateVariableSandboxesDialogResult';
-import { Settings } from '@crczp/common';
+    AllocateVariableSandboxesDialogResult
+} from '../../../components/allocate-variable-sandboxes/allocateVariableSandboxesDialogResult';
+import {Settings} from '@crczp/common';
 
 /**
  * Basic implementation of a layer between a component and an API service.

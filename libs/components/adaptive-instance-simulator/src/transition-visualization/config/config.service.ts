@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
-import { AdaptiveTransitionVisualizationConfig } from './adaptive-transition-visualization-config';
+import {Injectable} from '@angular/core';
+import {AdaptiveTransitionVisualizationConfig} from './adaptive-transition-visualization-config';
 
 @Injectable()
 export class ConfigService {

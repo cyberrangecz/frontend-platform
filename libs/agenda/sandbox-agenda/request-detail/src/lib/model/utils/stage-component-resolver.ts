@@ -1,5 +1,5 @@
-import { RequestStageType } from '@crczp/sandbox-model';
-import { StageDetailComponentEnum } from './stage-detail-component-enum';
+import {RequestStageType} from '@crczp/sandbox-model';
+import {StageDetailComponentEnum} from './stage-detail-component-enum';
 
 export class StageComponentResolver {
     static resolve(stageType: RequestStageType): StageDetailComponentEnum {

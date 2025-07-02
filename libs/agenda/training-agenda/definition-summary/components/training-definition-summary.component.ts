@@ -1,9 +1,9 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { TRAINING_DEFINITION_DATA_ATTRIBUTE_NAME } from '@crczp/training-agenda';
-import { TrainingDefinition } from '@crczp/training-model';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
+import {TRAINING_DEFINITION_DATA_ATTRIBUTE_NAME} from '@crczp/training-agenda';
+import {TrainingDefinition} from '@crczp/training-model';
+import {async, Observable} from 'rxjs';
+import {map} from 'rxjs/operators';
 
 @Component({
     selector: 'crczp-training-definition-summary',
@@ -22,4 +22,6 @@ export class TrainingDefinitionSummaryComponent implements OnInit {
             map((data) => data[TRAINING_DEFINITION_DATA_ATTRIBUTE_NAME]),
         );
     }
+
+    protected readonly async = async;
 }

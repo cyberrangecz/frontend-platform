@@ -1,10 +1,10 @@
-import { SandboxErrorHandler } from '@crczp/sandbox-agenda';
-import { tap } from 'rxjs/operators';
-import { ResourcesApi } from '@crczp/sandbox-api';
-import { Observable, ReplaySubject } from 'rxjs';
-import { Injectable } from '@angular/core';
-import { Resources } from '@crczp/sandbox-model';
-import { SandboxResourcesService } from './sandbox-resources.service';
+import {SandboxErrorHandler} from '@crczp/sandbox-agenda';
+import {tap} from 'rxjs/operators';
+import {ResourcesApi} from '@crczp/sandbox-api';
+import {Observable, ReplaySubject} from 'rxjs';
+import {Injectable} from '@angular/core';
+import {Resources} from '@crczp/sandbox-model';
+import {SandboxResourcesService} from './sandbox-resources.service';
 
 @Injectable()
 export class SandboxResourcesConcreteService extends SandboxResourcesService {

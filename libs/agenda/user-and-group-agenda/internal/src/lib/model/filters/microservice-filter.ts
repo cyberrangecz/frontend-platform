@@ -1,4 +1,4 @@
-import { SentinelFilter } from '@sentinel/common/filter';
+import {SentinelFilter} from '@sentinel/common/filter';
 
 /**
  * Microservice specific filter. Filters by name

@@ -1,8 +1,8 @@
-import { Component, Input, OnChanges, OnInit, Output } from '@angular/core';
-import { Clusterables } from '@crczp/visualization-model';
-import { D3, D3Service } from '../../../common/d3-service/d3-service';
-import { VisualizationsDataService } from '../../services/visualizations-data.service';
-import { ClusteringConfig, VIS_CONFIG } from '../../clustering-config';
+import {Component, Input, OnChanges, OnInit, Output} from '@angular/core';
+import {Clusterables} from '@crczp/visualization-model';
+import {D3, D3Service} from '../../../common/d3-service/d3-service';
+import {VisualizationsDataService} from '../../services/visualizations-data.service';
+import {ClusteringConfig, VIS_CONFIG} from '../../clustering-config';
 
 @Component({
     selector: 'crczp-viz-clustering-scatter-plot',

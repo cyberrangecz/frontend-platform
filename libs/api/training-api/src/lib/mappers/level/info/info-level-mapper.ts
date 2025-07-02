@@ -1,6 +1,6 @@
-import { AbstractLevelTypeEnum, InfoLevel } from '@crczp/training-model';
-import { InfoLevelDTO } from '../../../dto/level/info/info-level-dto';
-import { InfoLevelUpdateDTO, InfoLevelUpdateDTOClass } from '../../../dto/level/info/info-level-update-dto';
+import {AbstractLevelTypeEnum, InfoLevel} from '@crczp/training-model';
+import {InfoLevelDTO} from '../../../dto/level/info/info-level-dto';
+import {InfoLevelUpdateDTO, InfoLevelUpdateDTOClass} from '../../../dto/level/info/info-level-update-dto';
 
 export class InfoLevelMapper {
     static fromDTO(dto: InfoLevelDTO): InfoLevel {

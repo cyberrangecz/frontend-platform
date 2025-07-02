@@ -1,5 +1,5 @@
-import { OffsetPaginatedElementsService } from '@sentinel/common';
-import { BehaviorSubject, Observable } from 'rxjs';
+import {OffsetPaginatedElementsService} from '@sentinel/common';
+import {BehaviorSubject, Observable} from 'rxjs';
 
 export abstract class SelectablePaginatedService<T> extends OffsetPaginatedElementsService<T> {
     protected constructor(pageSize: number) {

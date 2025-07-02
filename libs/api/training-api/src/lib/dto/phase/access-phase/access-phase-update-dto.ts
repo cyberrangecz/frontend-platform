@@ -1,4 +1,4 @@
-import { AbstractPhaseDTO } from '../abstract-phase-dto';
+import {AbstractPhaseDTO} from '../abstract-phase-dto';
 
 export class AccessPhaseUpdateDTO {
     id: number;

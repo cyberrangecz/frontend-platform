@@ -1,5 +1,5 @@
-import { CommandLineEntryDTO } from '../dtos';
-import { CommandLineEntry } from '@crczp/visualization-model';
+import {CommandLineEntryDTO} from '../dtos';
+import {CommandLineEntry} from '@crczp/visualization-model';
 
 export class ProgressCommandLineMapper {
     static fromDTOs(dtos: CommandLineEntryDTO[]): CommandLineEntry[] {

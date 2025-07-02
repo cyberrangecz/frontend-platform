@@ -1,8 +1,8 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, merge, Observable, Subject, timer } from 'rxjs';
-import { HttpErrorResponse } from '@angular/common/http';
-import { retryWhen, shareReplay, switchMap, tap } from 'rxjs/operators';
-import { TransitionVisualizationData } from '@crczp/visualization-model';
+import {Injectable} from '@angular/core';
+import {BehaviorSubject, merge, Observable, Subject, timer} from 'rxjs';
+import {HttpErrorResponse} from '@angular/common/http';
+import {retryWhen, shareReplay, switchMap, tap} from 'rxjs/operators';
+import {TransitionVisualizationData} from '@crczp/visualization-model';
 import {
     AdaptiveTransitionVisualizationApi
 } from '../../../../../../../api/visualization-api/src/lib/adaptive/adaptive-transition-visualization-api.service';

@@ -1,5 +1,5 @@
-import { Question } from '@crczp/training-model';
-import { Observable } from 'rxjs';
+import {Question} from '@crczp/training-model';
+import {Observable} from 'rxjs';
 
 export abstract class TrainingRunAssessmentLevelService {
     /**

@@ -1,4 +1,4 @@
-import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
+import {UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 
 export class CommentFormGroup {
     formGroup: UntypedFormGroup;

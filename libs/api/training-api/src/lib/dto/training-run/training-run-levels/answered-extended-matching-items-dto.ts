@@ -1,6 +1,6 @@
-import { AbstractQuestionCreateDTO, AbstractQuestionDTO } from '../../level/assessment/abstact-question-dto';
-import { ExtendedMatchingOptionDTO } from '../../level/assessment/extended-matching-option-dto';
-import { AnsweredExtendedMatchingStatementDTO } from './answered-extended-matching-statement-dto';
+import {AbstractQuestionCreateDTO, AbstractQuestionDTO} from '../../level/assessment/abstact-question-dto';
+import {ExtendedMatchingOptionDTO} from '../../level/assessment/extended-matching-option-dto';
+import {AnsweredExtendedMatchingStatementDTO} from './answered-extended-matching-statement-dto';
 
 export class AnsweredExtendedMatchingItemsDTO implements AbstractQuestionCreateDTO {
     answer_required: boolean;

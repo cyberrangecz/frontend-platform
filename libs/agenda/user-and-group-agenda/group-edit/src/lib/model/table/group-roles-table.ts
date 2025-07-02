@@ -1,9 +1,9 @@
-import { PaginatedResource } from '@sentinel/common/pagination';
-import { UserRole } from '@crczp/user-and-group-model';
-import { Column, Row, SentinelTable } from '@sentinel/components/table';
-import { defer, of } from 'rxjs';
-import { RoleDeleteAction } from './role-delete-action';
-import { RoleAssignService } from '../../services/state/role-assign.service';
+import {PaginatedResource} from '@sentinel/common/pagination';
+import {UserRole} from '@crczp/user-and-group-model';
+import {Column, Row, SentinelTable} from '@sentinel/components/table';
+import {defer, of} from 'rxjs';
+import {RoleDeleteAction} from './role-delete-action';
+import {RoleAssignService} from '../../services/state/role-assign.service';
 
 /**
  * Class creating data source for role table

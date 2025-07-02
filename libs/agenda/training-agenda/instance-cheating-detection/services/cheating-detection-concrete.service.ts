@@ -1,27 +1,20 @@
-import { inject, Injectable } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
+import {Injectable} from '@angular/core';
+import {MatDialog} from '@angular/material/dialog';
+import {Router} from '@angular/router';
 import {
     SentinelConfirmationDialogComponent,
     SentinelConfirmationDialogConfig,
     SentinelDialogResultEnum,
 } from '@sentinel/components/dialogs';
-import {
-    OffsetPaginationEvent,
-    PaginatedResource,
-} from '@sentinel/common/pagination';
-import { CheatingDetectionApi } from '@crczp/training-api';
-import { CheatingDetection } from '@crczp/training-model';
-import { EMPTY, from, Observable } from 'rxjs';
-import { switchMap, tap } from 'rxjs/operators';
-import {
-    TrainingErrorHandler,
-    TrainingNavigator,
-    TrainingNotificationService,
-} from '@crczp/training-agenda';
-import { TrainingAgendaContext } from '@crczp/training-agenda/internal';
-import { CheatingDetectionService } from './cheating-detection.service';
-import { Settings } from '@crczp/common';
+import {OffsetPaginationEvent, PaginatedResource,} from '@sentinel/common/pagination';
+import {CheatingDetectionApi} from '@crczp/training-api';
+import {CheatingDetection} from '@crczp/training-model';
+import {EMPTY, from, Observable} from 'rxjs';
+import {switchMap, tap} from 'rxjs/operators';
+import {TrainingErrorHandler, TrainingNavigator, TrainingNotificationService,} from '@crczp/training-agenda';
+import {TrainingAgendaContext} from '@crczp/training-agenda/internal';
+import {CheatingDetectionService} from './cheating-detection.service';
+import {Settings} from '@crczp/common';
 
 /**
  * Basic implementation of a layer between a component and an API services.
@@ -39,9 +32,10 @@ export class CheatingDetectionConcreteService extends CheatingDetectionService {
         private context: TrainingAgendaContext,
         private navigator: TrainingNavigator,
         private notificationService: TrainingNotificationService,
-        private errorHandler: TrainingErrorHandler
+        private errorHandler: TrainingErrorHandler,
+        settings: Settings
     ) {
-        super(inject(Settings.DEFAULT_PAGE_SIZE));
+        super(settings.DEFAULT_PAGE_SIZE);
     }
 
     /**
@@ -109,9 +103,9 @@ export class CheatingDetectionConcreteService extends CheatingDetectionService {
             switchMap((result) =>
                 result === SentinelDialogResultEnum.CONFIRMED
                     ? this.callApiToDelete(
-                          cheatingDetectionId,
-                          trainingInstanceId
-                      )
+                        cheatingDetectionId,
+                        trainingInstanceId
+                    )
                     : EMPTY
             )
         );

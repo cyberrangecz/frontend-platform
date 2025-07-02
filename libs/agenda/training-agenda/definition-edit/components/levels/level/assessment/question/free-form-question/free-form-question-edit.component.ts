@@ -9,11 +9,11 @@ import {
     Output,
     SimpleChanges,
 } from '@angular/core';
-import { AbstractControl, UntypedFormArray, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
-import { SentinelValidators } from '@sentinel/common';
-import { FreeFormQuestion, Question } from '@crczp/training-model';
-import { FreeFormQuestionFormGroup } from './free-form-question-form-group';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {AbstractControl, UntypedFormArray, UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
+import {SentinelValidators} from '@sentinel/common';
+import {FreeFormQuestion, Question} from '@crczp/training-model';
+import {FreeFormQuestionFormGroup} from './free-form-question-form-group';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 
 @Component({
     selector: 'crczp-free-form-question-edit',

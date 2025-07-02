@@ -1,29 +1,19 @@
-import { HttpErrorResponse } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import {
-    OffsetPaginationEvent,
-    PaginatedResource,
-} from '@sentinel/common/pagination';
-import {
-    CleanupRequestsApi,
-    PoolApi,
-    SandboxAllocationUnitsApi,
-} from '@crczp/sandbox-api';
-import { CleanupRequest, Request } from '@crczp/sandbox-model';
-import { EMPTY, Observable } from 'rxjs';
-import { switchMap, tap } from 'rxjs/operators';
-import {
-    SandboxErrorHandler,
-    SandboxNotificationService,
-} from '@crczp/sandbox-agenda';
-import { RequestsService } from '../requests.service';
+import {HttpErrorResponse} from '@angular/common/http';
+import {Injectable} from '@angular/core';
+import {OffsetPaginationEvent, PaginatedResource,} from '@sentinel/common/pagination';
+import {CleanupRequestsApi, PoolApi, SandboxAllocationUnitsApi,} from '@crczp/sandbox-api';
+import {CleanupRequest, Request} from '@crczp/sandbox-model';
+import {EMPTY, Observable} from 'rxjs';
+import {switchMap, tap} from 'rxjs/operators';
+import {SandboxErrorHandler, SandboxNotificationService,} from '@crczp/sandbox-agenda';
+import {RequestsService} from '../requests.service';
 import {
     SentinelConfirmationDialogComponent,
     SentinelConfirmationDialogConfig,
     SentinelDialogResultEnum,
 } from '@sentinel/components/dialogs';
-import { MatDialog } from '@angular/material/dialog';
-import { Settings } from '@crczp/common';
+import {MatDialog} from '@angular/material/dialog';
+import {Settings} from '@crczp/common';
 
 /**
  * Basic implementation of a layer between a component and an API service.

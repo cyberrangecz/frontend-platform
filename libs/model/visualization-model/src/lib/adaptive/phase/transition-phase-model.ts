@@ -1,4 +1,4 @@
-import { AbstractPhaseTypeEnum } from '@crczp/training-model';
+import {AbstractPhaseTypeEnum} from '@crczp/training-model';
 
 export class TransitionTask {
     id!: number;

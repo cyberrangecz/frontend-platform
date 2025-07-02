@@ -1,5 +1,5 @@
-import { Column, Row, SentinelTable } from '@sentinel/components/table';
-import { TrainingRunInfo } from '@crczp/training-model';
+import {Column, Row, SentinelTable} from '@sentinel/components/table';
+import {TrainingRunInfo} from '@crczp/training-model';
 
 /**
  * @dynamic

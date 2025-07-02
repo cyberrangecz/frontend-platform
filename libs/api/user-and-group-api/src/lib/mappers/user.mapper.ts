@@ -1,9 +1,9 @@
-import { PaginatedResource } from '@sentinel/common/pagination';
-import { User } from '@crczp/user-and-group-model';
-import { UserAndGroupUserDTO } from '../DTO/user/user-dto.model';
-import { UserForGroupsDTO } from '../DTO/user/user-for-groups-dto.model';
-import { RoleMapper } from './role-mapper';
-import { JavaPaginatedResource, PaginationMapper } from '@crczp/api-common';
+import {PaginatedResource} from '@sentinel/common/pagination';
+import {User} from '@crczp/user-and-group-model';
+import {UserAndGroupUserDTO} from '../DTO/user/user-dto.model';
+import {UserForGroupsDTO} from '../DTO/user/user-for-groups-dto.model';
+import {RoleMapper} from './role-mapper';
+import {JavaPaginatedResource, PaginationMapper} from '@crczp/api-common';
 
 /**
  * Service to map internal model to dtos and other way

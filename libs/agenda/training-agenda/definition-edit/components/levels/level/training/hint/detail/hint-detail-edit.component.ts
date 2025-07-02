@@ -9,10 +9,10 @@ import {
     Output,
     SimpleChanges,
 } from '@angular/core';
-import { AbstractControl, Validators } from '@angular/forms';
-import { Hint } from '@crczp/training-model';
-import { HintEditFormGroup } from './hint-edit-form-group';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {AbstractControl, Validators} from '@angular/forms';
+import {Hint} from '@crczp/training-model';
+import {HintEditFormGroup} from './hint-edit-form-group';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 
 @Component({
     selector: 'crczp-hint-edit',

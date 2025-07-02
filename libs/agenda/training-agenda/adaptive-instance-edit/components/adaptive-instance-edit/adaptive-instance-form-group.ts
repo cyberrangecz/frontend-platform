@@ -1,6 +1,6 @@
-import { UntypedFormControl, UntypedFormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
-import { SentinelValidators } from '@sentinel/common';
-import { TrainingInstance } from '@crczp/training-model';
+import {UntypedFormControl, UntypedFormGroup, ValidationErrors, ValidatorFn, Validators} from '@angular/forms';
+import {SentinelValidators} from '@sentinel/common';
+import {TrainingInstance} from '@crczp/training-model';
 
 /**
  * Training instance edit form group control

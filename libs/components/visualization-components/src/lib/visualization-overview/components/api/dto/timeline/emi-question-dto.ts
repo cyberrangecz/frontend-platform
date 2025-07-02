@@ -1,5 +1,5 @@
-import { TimelineQuestionDTO } from './timeline-question-dto';
-import { AnswerPositionDTO } from './answer-position-dto';
+import {TimelineQuestionDTO} from './timeline-question-dto';
+import {AnswerPositionDTO} from './answer-position-dto';
 
 export class EmiQuestionDTO extends TimelineQuestionDTO {
     row: string[];

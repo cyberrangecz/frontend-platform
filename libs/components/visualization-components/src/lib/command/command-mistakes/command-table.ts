@@ -1,6 +1,6 @@
-import { Column, ExpandableSentinelTable, Row, RowExpand } from '@sentinel/components/table';
-import { CommandDetailComponent } from './detail/command-detail.component';
-import { AggregatedCommands } from '@crczp/visualization-model';
+import {Column, ExpandableSentinelTable, Row, RowExpand} from '@sentinel/components/table';
+import {CommandDetailComponent} from './detail/command-detail.component';
+import {AggregatedCommands} from '@crczp/visualization-model';
 
 
 export class CommandTable extends ExpandableSentinelTable<AggregatedCommands, CommandDetailComponent, null> {

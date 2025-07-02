@@ -1,4 +1,4 @@
-import { RoleDTO } from '../role/role-dto';
+import {RoleDTO} from '../role/role-dto';
 
 export class UserAndGroupUserDTO {
     full_name: string;

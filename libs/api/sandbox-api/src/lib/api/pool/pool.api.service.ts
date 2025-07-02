@@ -1,4 +1,4 @@
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
+import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
 import {
     AllocationRequest,
     CleanupRequest,
@@ -9,7 +9,7 @@ import {
     SandboxInstance,
     SandboxKeyPair,
 } from '@crczp/sandbox-model';
-import { Observable } from 'rxjs';
+import {Observable} from 'rxjs';
 
 /**
  * Service abstracting http communication with pools endpoints.

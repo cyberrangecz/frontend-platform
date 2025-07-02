@@ -1,5 +1,7 @@
-import { AbstractDetectionEventTypeEnum, MinimalSolveTimeDetectionEvent } from '@crczp/training-model';
-import { MinimalSolveTimeDetectionEventDTO } from '../../dto/detection-event/minimal-solve-time/minimal-solve-time-detection-event-dto';
+import {AbstractDetectionEventTypeEnum, MinimalSolveTimeDetectionEvent} from '@crczp/training-model';
+import {
+    MinimalSolveTimeDetectionEventDTO
+} from '../../dto/detection-event/minimal-solve-time/minimal-solve-time-detection-event-dto';
 
 export class MinimalSolveTimeDetectionEventMapper {
     static fromDTO(dto: MinimalSolveTimeDetectionEventDTO): MinimalSolveTimeDetectionEvent {

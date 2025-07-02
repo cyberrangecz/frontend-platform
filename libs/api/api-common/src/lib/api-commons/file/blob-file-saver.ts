@@ -1,4 +1,4 @@
-import { saveAs } from 'file-saver';
+import {saveAs} from 'file-saver';
 
 export class BlobFileSaver {
     static saveBlob(blobParts: Blob, filename: string): void {

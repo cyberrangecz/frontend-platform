@@ -1,9 +1,9 @@
-import { TrainingDefinitionInfo, TrainingInstance } from '@crczp/training-model';
-import { BehaviorSubject, Observable, timer } from 'rxjs';
-import { filter, map, switchMap } from 'rxjs/operators';
-import { TrainingInstanceChangeEvent } from '../../../model/events/training-instance-change-event';
-import { Pool, SandboxDefinition } from '@crczp/sandbox-model';
-import { OffsetPagination, OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
+import {TrainingDefinitionInfo, TrainingInstance} from '@crczp/training-model';
+import {BehaviorSubject, Observable, timer} from 'rxjs';
+import {filter, map, switchMap} from 'rxjs/operators';
+import {TrainingInstanceChangeEvent} from '../../../model/events/training-instance-change-event';
+import {Pool, SandboxDefinition} from '@crczp/sandbox-model';
+import {OffsetPagination, OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
 
 /**
  * Layer between component and API service. Implement concrete service by extending this class.

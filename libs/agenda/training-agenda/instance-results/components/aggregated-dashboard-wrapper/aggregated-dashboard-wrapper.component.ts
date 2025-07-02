@@ -1,10 +1,10 @@
-import { Component, DestroyRef, inject, OnInit } from '@angular/core';
-import { TrainingInstance } from '@crczp/training-model';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Observable } from 'rxjs';
-import { TrainingNavigator } from '@crczp/training-agenda';
-import { map } from 'rxjs/operators';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {Component, DestroyRef, inject, OnInit} from '@angular/core';
+import {TrainingInstance} from '@crczp/training-model';
+import {ActivatedRoute, Router} from '@angular/router';
+import {async, Observable} from 'rxjs';
+import {TrainingNavigator} from '@crczp/training-agenda';
+import {map} from 'rxjs/operators';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 
 @Component({
     selector: 'crczp-aggregated-dashboard-wrapper',
@@ -32,4 +32,6 @@ export class AggregatedDashboardWrapperComponent implements OnInit {
     redirectToDetailView(instanceId: number): void {
         this.router.navigate([this.navigator.toTrainingInstanceResults(instanceId)]);
     }
+
+    protected readonly async = async;
 }

@@ -1,9 +1,9 @@
-import { TrainingDefinition, TrainingDefinitionStateEnum } from '@crczp/training-model';
-import { TrainingDefinitionCreateDTO } from '../../dto/training-definition/training-definition-create-dto';
-import { TrainingDefinitionDTO } from '../../dto/training-definition/training-definition-dto';
-import { TrainingDefinitionUpdateDTO } from '../../dto/training-definition/training-definition-update-dto';
-import { LevelMapper } from '../level/level-mapper';
-import { PhaseMapper } from '../phase/phase-mapper';
+import {TrainingDefinition, TrainingDefinitionStateEnum} from '@crczp/training-model';
+import {TrainingDefinitionCreateDTO} from '../../dto/training-definition/training-definition-create-dto';
+import {TrainingDefinitionDTO} from '../../dto/training-definition/training-definition-dto';
+import {TrainingDefinitionUpdateDTO} from '../../dto/training-definition/training-definition-update-dto';
+import {LevelMapper} from '../level/level-mapper';
+import {PhaseMapper} from '../phase/phase-mapper';
 
 /**
  * @dynamic

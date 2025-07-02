@@ -1,4 +1,4 @@
-import { AbstractLevelDTO } from '../abstract-level-dto';
+import {AbstractLevelDTO} from '../abstract-level-dto';
 
 export interface AccessLevelDTO extends AbstractLevelDTO {
     passkey: string;

@@ -1,22 +1,19 @@
-import { Component, Input, OnChanges } from '@angular/core';
-import { Observable } from 'rxjs';
-import { Assessment } from '@crczp/visualization-model';
-import {
-    AssessmentApi,
-    VisualizationApiConfig,
-} from '@crczp/visualization-api';
-import { AsyncPipe, CommonModule } from '@angular/common';
-import { AssessmentResultsComponent } from './component/assessment-results.component';
-import { MatButtonModule } from '@angular/material/button';
-import { MatTableModule } from '@angular/material/table';
-import { MatCardModule } from '@angular/material/card';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatIconModule } from '@angular/material/icon';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { HighlightService } from './services/highlight.service';
-import { provideComponentProperty } from '@crczp/common';
+import {Component, Input, OnChanges} from '@angular/core';
+import {Observable} from 'rxjs';
+import {Assessment} from '@crczp/visualization-model';
+import {AssessmentApi, VisualizationApiConfig,} from '@crczp/visualization-api';
+import {AsyncPipe, CommonModule} from '@angular/common';
+import {AssessmentResultsComponent} from './component/assessment-results.component';
+import {MatButtonModule} from '@angular/material/button';
+import {MatTableModule} from '@angular/material/table';
+import {MatCardModule} from '@angular/material/card';
+import {MatDividerModule} from '@angular/material/divider';
+import {MatIconModule} from '@angular/material/icon';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatInputModule} from '@angular/material/input';
+import {MatTooltipModule} from '@angular/material/tooltip';
+import {HighlightService} from './services/highlight.service';
+import {provideComponentProperty} from '@crczp/common';
 
 /**
  * Main component of the assessment visualization

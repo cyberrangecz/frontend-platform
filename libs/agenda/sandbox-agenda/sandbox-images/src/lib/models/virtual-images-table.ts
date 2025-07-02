@@ -1,9 +1,9 @@
-import { VMImagesRowAdapter } from './vm-images-row-adapter';
-import { Column, ExpandableSentinelTable, Row, RowExpand } from '@sentinel/components/table';
-import { PaginatedResource } from '@sentinel/common/pagination';
-import { VirtualImage } from '@crczp/sandbox-model';
-import { VMImageDetailComponent } from '../components/vm-image-detail/vm-image-detail.component';
-import { formatDate } from '@angular/common';
+import {VMImagesRowAdapter} from './vm-images-row-adapter';
+import {Column, ExpandableSentinelTable, Row, RowExpand} from '@sentinel/components/table';
+import {PaginatedResource} from '@sentinel/common/pagination';
+import {VirtualImage} from '@crczp/sandbox-model';
+import {VMImageDetailComponent} from '../components/vm-image-detail/vm-image-detail.component';
+import {formatDate} from '@angular/common';
 
 export class VirtualImagesTable extends ExpandableSentinelTable<VMImagesRowAdapter, VMImageDetailComponent, null> {
     constructor(resource: PaginatedResource<VirtualImage>) {

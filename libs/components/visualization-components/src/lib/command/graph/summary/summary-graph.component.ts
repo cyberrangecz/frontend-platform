@@ -1,17 +1,14 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { Graphviz, graphviz } from 'd3-graphviz';
-import { SummaryGraphService } from './summary-graph.service';
-import { tap } from 'rxjs/operators';
-import { CommonModule } from '@angular/common';
-import { MatButtonModule } from '@angular/material/button';
-import { MatListModule } from '@angular/material/list';
-import { MatIconModule } from '@angular/material/icon';
-import { BaseType } from 'd3';
-import {
-    ReferenceGraphApi,
-    VisualizationApiConfig,
-} from '@crczp/visualization-api';
-import { provideComponentProperty } from '@crczp/common';
+import {Component, Input, OnInit} from '@angular/core';
+import {Graphviz, graphviz} from 'd3-graphviz';
+import {SummaryGraphService} from './summary-graph.service';
+import {tap} from 'rxjs/operators';
+import {CommonModule} from '@angular/common';
+import {MatButtonModule} from '@angular/material/button';
+import {MatListModule} from '@angular/material/list';
+import {MatIconModule} from '@angular/material/icon';
+import {BaseType} from 'd3';
+import {ReferenceGraphApi, VisualizationApiConfig,} from '@crczp/visualization-api';
+import {provideComponentProperty} from '@crczp/common';
 
 /**
  * Summary graph shows results of all trainees in training.

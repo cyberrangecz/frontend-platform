@@ -1,9 +1,9 @@
-import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, Resolve, Router } from '@angular/router';
-import { SandboxInstanceApi } from '@crczp/sandbox-api';
-import { SandboxInstance } from '@crczp/sandbox-model';
-import { EMPTY, Observable, of } from 'rxjs';
-import { catchError, mergeMap, take } from 'rxjs/operators';
+import {Injectable} from '@angular/core';
+import {ActivatedRouteSnapshot, Resolve, Router} from '@angular/router';
+import {SandboxInstanceApi} from '@crczp/sandbox-api';
+import {SandboxInstance} from '@crczp/sandbox-model';
+import {EMPTY, Observable, of} from 'rxjs';
+import {catchError, mergeMap, take} from 'rxjs/operators';
 import {
     SANDBOX_INSTANCE_ID_SELECTOR,
     SANDBOX_POOL_ID_SELECTOR,

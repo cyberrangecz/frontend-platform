@@ -1,7 +1,7 @@
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { ResponseHeaderContentDispositionReader } from '@sentinel/common';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
+import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
+import {Injectable} from '@angular/core';
+import {ResponseHeaderContentDispositionReader} from '@sentinel/common';
+import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
 import {
     AllocationRequest,
     CleanupRequest,
@@ -13,25 +13,25 @@ import {
     SandboxInstance,
     SandboxKeyPair
 } from '@crczp/sandbox-model';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { SandboxDefinitionDTO } from '../../dto/sandbox-definition/sandbox-definition-dto';
-import { LockDTO } from '../../dto/sandbox-instance/lock-dto';
-import { PoolDTO } from '../../dto/sandbox-instance/pool-dto';
-import { SandboxAllocationUnitDTO } from '../../dto/sandbox-instance/sandbox-allocation-unit-dto';
-import { SandboxInstanceDTO } from '../../dto/sandbox-instance/sandbox-instance-dto';
-import { SandboxKeyPairDTO } from '../../dto/sandbox-instance/sandbox-key-pair-dto';
-import { LockMapper } from '../../mappers/sandbox-instance/lock-mapper';
-import { PoolMapper } from '../../mappers/sandbox-instance/pool-mapper';
-import { SandboxKeyPairMapper } from '../../mappers/sandbox-instance/sandbox-key-pair-mapper';
-import { SandboxApiConfigService } from '../../others/sandbox-api-config.service';
-import { SandboxDefinitionMapper } from '../../mappers/sandbox-definition/sandbox-definition-mapper';
-import { SandboxAllocationUnitMapper } from '../../mappers/sandbox-instance/sandbox-allocation-unit-mapper';
-import { SandboxInstanceMapper } from '../../mappers/sandbox-instance/sandbox-instance-mapper';
-import { PoolApi } from './pool.api.service';
-import { RequestDTO } from '../../dto/sandbox-instance/request-dto';
-import { RequestMapper } from '../../mappers/sandbox-instance/request-mapper';
-import { BlobFileSaver, DjangoResourceDTO, handleJsonError, PaginationMapper, ParamsBuilder } from '@crczp/api-common';
+import {Observable} from 'rxjs';
+import {map} from 'rxjs/operators';
+import {SandboxDefinitionDTO} from '../../dto/sandbox-definition/sandbox-definition-dto';
+import {LockDTO} from '../../dto/sandbox-instance/lock-dto';
+import {PoolDTO} from '../../dto/sandbox-instance/pool-dto';
+import {SandboxAllocationUnitDTO} from '../../dto/sandbox-instance/sandbox-allocation-unit-dto';
+import {SandboxInstanceDTO} from '../../dto/sandbox-instance/sandbox-instance-dto';
+import {SandboxKeyPairDTO} from '../../dto/sandbox-instance/sandbox-key-pair-dto';
+import {LockMapper} from '../../mappers/sandbox-instance/lock-mapper';
+import {PoolMapper} from '../../mappers/sandbox-instance/pool-mapper';
+import {SandboxKeyPairMapper} from '../../mappers/sandbox-instance/sandbox-key-pair-mapper';
+import {SandboxApiConfigService} from '../../others/sandbox-api-config.service';
+import {SandboxDefinitionMapper} from '../../mappers/sandbox-definition/sandbox-definition-mapper';
+import {SandboxAllocationUnitMapper} from '../../mappers/sandbox-instance/sandbox-allocation-unit-mapper';
+import {SandboxInstanceMapper} from '../../mappers/sandbox-instance/sandbox-instance-mapper';
+import {PoolApi} from './pool.api.service';
+import {RequestDTO} from '../../dto/sandbox-instance/request-dto';
+import {RequestMapper} from '../../mappers/sandbox-instance/request-mapper';
+import {BlobFileSaver, DjangoResourceDTO, handleJsonError, PaginationMapper, ParamsBuilder} from '@crczp/api-common';
 
 /**
  * Default implementation of service abstracting http communication with pools endpoints.

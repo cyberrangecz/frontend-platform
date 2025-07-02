@@ -17,7 +17,8 @@ import {map, tap} from 'rxjs/operators';
 import {
     AdaptiveQuestion,
     MitreTechnique,
-    Phase, PhaseRelation,
+    Phase,
+    PhaseRelation,
     QuestionnairePhase,
     QuestionnaireTypeEnum,
     TrainingDefinition,

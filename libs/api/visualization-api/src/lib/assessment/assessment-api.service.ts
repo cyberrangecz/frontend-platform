@@ -1,11 +1,11 @@
-import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { AssessmentMapper } from './mappers/assessment-mapper';
-import { VisualizationApiConfig } from '../config/visualization-api-config';
-import { AssessmentDTO } from './dtos';
-import { Assessment } from '@crczp/visualization-model';
+import {HttpClient} from '@angular/common/http';
+import {Injectable} from '@angular/core';
+import {Observable} from 'rxjs';
+import {map} from 'rxjs/operators';
+import {AssessmentMapper} from './mappers/assessment-mapper';
+import {VisualizationApiConfig} from '../config/visualization-api-config';
+import {AssessmentDTO} from './dtos';
+import {Assessment} from '@crczp/visualization-model';
 
 /**
  * Service abstracting http communication with endpoint

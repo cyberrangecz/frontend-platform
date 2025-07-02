@@ -1,6 +1,6 @@
-import { Column, Row, SentinelTable } from '@sentinel/components/table';
-import { PaginatedResource } from '@sentinel/common/pagination';
-import { Microservice } from '@crczp/user-and-group-model';
+import {Column, Row, SentinelTable} from '@sentinel/components/table';
+import {PaginatedResource} from '@sentinel/common/pagination';
+import {Microservice} from '@crczp/user-and-group-model';
 
 /**
  * @dynamic

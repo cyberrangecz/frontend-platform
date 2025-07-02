@@ -1,10 +1,10 @@
-import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
-import { TrainingInstance } from '@crczp/training-model';
-import { from, Observable, timer } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { TrainingNavigator } from '@crczp/training-agenda';
-import { AdaptiveInstanceSummaryService } from './adaptive-instance-summary.service';
+import {Injectable} from '@angular/core';
+import {Router} from '@angular/router';
+import {TrainingInstance} from '@crczp/training-model';
+import {from, Observable, timer} from 'rxjs';
+import {map} from 'rxjs/operators';
+import {TrainingNavigator} from '@crczp/training-agenda';
+import {AdaptiveInstanceSummaryService} from './adaptive-instance-summary.service';
 
 @Injectable()
 export class AdaptiveInstanceSummaryConcreteService extends AdaptiveInstanceSummaryService {

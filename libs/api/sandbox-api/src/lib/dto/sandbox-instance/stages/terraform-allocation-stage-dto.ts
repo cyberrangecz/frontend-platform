@@ -1,4 +1,4 @@
-import { RequestStageDTO } from './request-stage-dto';
+import {RequestStageDTO} from './request-stage-dto';
 
 export class TerraformAllocationStageDTO extends RequestStageDTO {
     status: string;

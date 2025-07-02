@@ -1,4 +1,4 @@
-import { UserRole } from '../role/user-role';
+import {UserRole} from '../role/user-role';
 
 export class User {
     id!: number;

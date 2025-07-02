@@ -1,11 +1,11 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { timer } from 'rxjs';
-import { takeWhile } from 'rxjs/operators';
-import { PROGRESS_CONFIG } from '../../../progress-config';
-import { D3, D3Service } from '../../../../common/d3-service/d3-service';
-import { ViewEnum } from '../../types';
-import { CommonModule } from '@angular/common';
-import { MatButtonModule } from '@angular/material/button';
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import {timer} from 'rxjs';
+import {takeWhile} from 'rxjs/operators';
+import {PROGRESS_CONFIG} from '../../../progress-config';
+import {D3, D3Service} from '../../../../common/d3-service/d3-service';
+import {ViewEnum} from '../../types';
+import {CommonModule} from '@angular/common';
+import {MatButtonModule} from '@angular/material/button';
 
 @Component({
     selector: 'crczp-viz-hurdling-legend',

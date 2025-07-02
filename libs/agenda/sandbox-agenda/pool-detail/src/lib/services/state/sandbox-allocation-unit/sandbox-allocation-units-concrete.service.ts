@@ -1,36 +1,26 @@
-import { inject, Injectable } from '@angular/core';
-import { SandboxAllocationUnitsService } from './sandbox-allocation-units.service';
-import { BehaviorSubject, combineLatestWith, EMPTY, Observable } from 'rxjs';
-import {
-    OffsetPagination,
-    OffsetPaginationEvent,
-    PaginatedResource,
-} from '@sentinel/common/pagination';
-import { PoolApi, SandboxAllocationUnitsApi } from '@crczp/sandbox-api';
-import { SandboxAllocationUnit } from '@crczp/sandbox-model';
-import {
-    SandboxErrorHandler,
-    SandboxNotificationService,
-} from '@crczp/sandbox-agenda';
-import { ResourcePollingService } from '@crczp/sandbox-agenda/internal';
-import { map, switchMap, tap } from 'rxjs/operators';
-import { HttpErrorResponse } from '@angular/common/http';
+import {Injectable} from '@angular/core';
+import {SandboxAllocationUnitsService} from './sandbox-allocation-units.service';
+import {BehaviorSubject, combineLatestWith, EMPTY, Observable} from 'rxjs';
+import {OffsetPagination, OffsetPaginationEvent, PaginatedResource,} from '@sentinel/common/pagination';
+import {PoolApi, SandboxAllocationUnitsApi} from '@crczp/sandbox-api';
+import {SandboxAllocationUnit} from '@crczp/sandbox-model';
+import {SandboxErrorHandler, SandboxNotificationService,} from '@crczp/sandbox-agenda';
+import {ResourcePollingService} from '@crczp/sandbox-agenda/internal';
+import {map, switchMap, tap} from 'rxjs/operators';
+import {HttpErrorResponse} from '@angular/common/http';
 import {
     SentinelConfirmationDialogComponent,
     SentinelConfirmationDialogConfig,
     SentinelDialogResultEnum,
 } from '@sentinel/components/dialogs';
-import { MatDialog } from '@angular/material/dialog';
-import {
-    POLLING_PERIOD_SHORT_SETTING_TOKEN,
-    RETRY_COUNT_SETTING_TOKEN,
-} from '@crczp/common';
+import {MatDialog} from '@angular/material/dialog';
+import {Settings} from "@crczp/common";
 
 @Injectable()
 export class SandboxAllocationUnitsConcreteService extends SandboxAllocationUnitsService {
     private lastPoolId: number;
-    private poolPeriod: number = inject(POLLING_PERIOD_SHORT_SETTING_TOKEN);
-    private retryAttempts: number = inject(RETRY_COUNT_SETTING_TOKEN);
+    private poolPollingPeriod: number;
+    private retryAttempts: number;
 
     constructor(
         private poolApi: PoolApi,
@@ -38,11 +28,14 @@ export class SandboxAllocationUnitsConcreteService extends SandboxAllocationUnit
         private resourcePollingService: ResourcePollingService,
         private dialog: MatDialog,
         private notificationService: SandboxNotificationService,
-        private errorHandler: SandboxErrorHandler
+        private errorHandler: SandboxErrorHandler,
+        settings: Settings
     ) {
         super();
         this.unitsSubject$ = new BehaviorSubject(this.initSubject(10));
         this.units$ = this.unitsSubject$.asObservable();
+        this.poolPollingPeriod = settings.POLLING_PERIOD_SHORT;
+        this.retryAttempts = settings.RETRY_COUNT;
     }
 
     /**
@@ -78,7 +71,7 @@ export class SandboxAllocationUnitsConcreteService extends SandboxAllocationUnit
                 )
             );
         return this.resourcePollingService
-            .startPolling(observable$, this.poolPeriod, this.retryAttempts)
+            .startPolling(observable$, this.poolPollingPeriod, this.retryAttempts)
             .pipe(
                 tap(
                     (_) => _,

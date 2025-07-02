@@ -1,9 +1,9 @@
-import { ExtendedMatchingItems, ExtendedMatchingOption, ExtendedMatchingStatement } from '@crczp/training-model';
-import { AbstractQuestionDTO } from '../../../dto/level/assessment/abstact-question-dto';
-import { ExtendedMatchingItemsAnswerDTO } from '../../../dto/level/assessment/extended-matching-items-answer-dto';
-import { ExtendedMatchingItemsDTO } from '../../../dto/level/assessment/extended-matching-items-dto';
-import { ExtendedMatchingStatementDTO } from '../../../dto/level/assessment/extended-matching-statement-dto';
-import { ExtendedMatchingOptionDTO } from '../../../dto/level/assessment/extended-matching-option-dto';
+import {ExtendedMatchingItems, ExtendedMatchingOption, ExtendedMatchingStatement} from '@crczp/training-model';
+import {AbstractQuestionDTO} from '../../../dto/level/assessment/abstact-question-dto';
+import {ExtendedMatchingItemsAnswerDTO} from '../../../dto/level/assessment/extended-matching-items-answer-dto';
+import {ExtendedMatchingItemsDTO} from '../../../dto/level/assessment/extended-matching-items-dto';
+import {ExtendedMatchingStatementDTO} from '../../../dto/level/assessment/extended-matching-statement-dto';
+import {ExtendedMatchingOptionDTO} from '../../../dto/level/assessment/extended-matching-option-dto';
 
 export class ExtendedMatchingItemsMapper {
     static fromDTO(dto: ExtendedMatchingItemsDTO): ExtendedMatchingItems {

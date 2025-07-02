@@ -1,7 +1,7 @@
-import { AfterViewInit, Component, ElementRef, Input, ViewChild } from '@angular/core';
+import {AfterViewInit, Component, ElementRef, Input, ViewChild} from '@angular/core';
 import * as d3 from 'd3';
-import { BarData } from '../../../model/bar-data';
-import { Quota } from '@crczp/sandbox-model';
+import {BarData} from '../../../model/bar-data';
+import {Quota} from '@crczp/sandbox-model';
 
 @Component({
     selector: 'crczp-resource-bar',

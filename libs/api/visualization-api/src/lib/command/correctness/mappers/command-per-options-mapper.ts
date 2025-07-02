@@ -1,5 +1,5 @@
-import { CommandPerOptionsDTO } from '../dto/command-per-options-dto';
-import { CommandPerOptions } from '@crczp/visualization-model';
+import {CommandPerOptionsDTO} from '../dto/command-per-options-dto';
+import {CommandPerOptions} from '@crczp/visualization-model';
 
 /**
  * @dynamic

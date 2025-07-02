@@ -1,4 +1,4 @@
-import { Phase } from '../phase';
+import {Phase} from '../phase';
 
 export class AccessPhase extends Phase {
     passkey!: string;

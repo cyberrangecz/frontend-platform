@@ -1,5 +1,5 @@
 import {
-    SentinelControlItemSignal,
+    SentinelControlItem,
     SentinelControlMenuItem,
     SentinelExpandableControlItem,
 } from '@sentinel/components/controls';
@@ -23,9 +23,9 @@ export class PoolDetailControls {
         pool: Pool,
         sandboxes: AbstractSandbox[],
         sandboxInstanceService: SandboxInstanceService,
-    ): SentinelControlItemSignal[] {
+    ): SentinelControlItem[] {
         return [
-            new SentinelControlItemSignal(
+            new SentinelControlItem(
                 this.ALLOCATE_SOME_ACTION_ID,
                 'Allocate sandbox' + (pool.maxSize - sandboxes.length == 1 ? '' : 'es'),
                 'primary',

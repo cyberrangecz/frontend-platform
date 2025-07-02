@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
-import { VisualizationOverviewConfig } from './trainings-visualizations-overview-lib';
+import {Injectable} from '@angular/core';
+import {VisualizationOverviewConfig} from './trainings-visualizations-overview-lib';
 
 @Injectable()
 export class ConfigService {

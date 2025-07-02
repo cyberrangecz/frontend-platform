@@ -1,5 +1,5 @@
-import { UserEventDTO } from '../dto/user-event-dto';
-import { CommandEvent, CommandEventsModel } from '@crczp/visualization-model';
+import {UserEventDTO} from '../dto/user-event-dto';
+import {CommandEvent, CommandEventsModel} from '@crczp/visualization-model';
 
 export class UserEventMapper {
     static fromDTO(dto: UserEventDTO, levelId: number): CommandEvent {

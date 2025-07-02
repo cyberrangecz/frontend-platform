@@ -1,19 +1,16 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { Graphviz, graphviz } from 'd3-graphviz';
-import { ReferenceGraphService } from './reference-graph.service';
-import { tap } from 'rxjs/operators';
-import { Observable } from 'rxjs';
-import { Graph } from '@crczp/visualization-model';
-import { BaseType } from 'd3';
-import {
-    ReferenceGraphApi,
-    VisualizationApiConfig,
-} from '@crczp/visualization-api';
-import { CommonModule } from '@angular/common';
-import { MatButtonModule } from '@angular/material/button';
-import { MatListModule } from '@angular/material/list';
-import { MatIconModule } from '@angular/material/icon';
-import { provideComponentProperty } from '@crczp/common';
+import {Component, Input, OnInit} from '@angular/core';
+import {Graphviz, graphviz} from 'd3-graphviz';
+import {ReferenceGraphService} from './reference-graph.service';
+import {tap} from 'rxjs/operators';
+import {Observable} from 'rxjs';
+import {Graph} from '@crczp/visualization-model';
+import {BaseType} from 'd3';
+import {ReferenceGraphApi, VisualizationApiConfig,} from '@crczp/visualization-api';
+import {CommonModule} from '@angular/common';
+import {MatButtonModule} from '@angular/material/button';
+import {MatListModule} from '@angular/material/list';
+import {MatIconModule} from '@angular/material/icon';
+import {provideComponentProperty} from '@crczp/common';
 
 @Component({
     selector: 'crczp-reference-graph',

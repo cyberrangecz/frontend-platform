@@ -1,7 +1,7 @@
-import { Component, Input } from '@angular/core';
-import { QuestionTypeEnum } from '../../../../model/enums/question-type.enum';
-import { QuestionnaireTypeEnum } from '../../../../model/enums/questionnaire-type.enum';
-import { AdaptiveQuestion } from '../../../../model/phase/questionnaire-phase/adaptive-question';
+import {Component, Input} from '@angular/core';
+import {QuestionTypeEnum} from '../../../../model/enums/question-type.enum';
+import {QuestionnaireTypeEnum} from '../../../../model/enums/questionnaire-type.enum';
+import {AdaptiveQuestion} from '../../../../model/phase/questionnaire-phase/adaptive-question';
 
 @Component({
     selector: 'crczp-question-detail',

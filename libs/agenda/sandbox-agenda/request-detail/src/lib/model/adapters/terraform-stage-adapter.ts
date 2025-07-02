@@ -1,5 +1,5 @@
-import { StageAdapter } from './stage-adapter';
-import { TerraformAllocationStage } from '@crczp/sandbox-model';
+import {StageAdapter} from './stage-adapter';
+import {TerraformAllocationStage} from '@crczp/sandbox-model';
 
 export class TerraformStageAdapter extends TerraformAllocationStage implements StageAdapter {
     detailDisabled: boolean;

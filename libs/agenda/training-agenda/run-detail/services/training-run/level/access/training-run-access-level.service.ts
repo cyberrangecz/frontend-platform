@@ -1,12 +1,12 @@
-import { BehaviorSubject, Observable } from 'rxjs';
-import { RunningTrainingRunService } from '../../running/running-training-run.service';
+import {BehaviorSubject, Observable} from 'rxjs';
+import {RunningTrainingRunService} from '../../running/running-training-run.service';
 import {
     SentinelNotification,
     SentinelNotificationResult,
     SentinelNotificationService,
     SentinelNotificationTypeEnum,
 } from '@sentinel/layout/notification';
-import { map } from 'rxjs/operators';
+import {map} from 'rxjs/operators';
 
 export abstract class TrainingRunAccessLevelService {
     protected constructor(

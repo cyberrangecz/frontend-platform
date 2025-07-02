@@ -1,8 +1,8 @@
-import { Injectable } from '@angular/core';
-import { TrainingRun } from '@crczp/training-model';
-import { OffsetPaginatedElementsPollingService } from '@sentinel/common';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
-import { Observable } from 'rxjs';
+import {Injectable} from '@angular/core';
+import {TrainingRun} from '@crczp/training-model';
+import {OffsetPaginatedElementsPollingService} from '@sentinel/common';
+import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
+import {Observable} from 'rxjs';
 
 /**
  * Layer between component and API service. Implement concrete service by extending this class.

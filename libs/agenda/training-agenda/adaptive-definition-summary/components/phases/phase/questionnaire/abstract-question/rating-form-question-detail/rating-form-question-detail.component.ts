@@ -1,5 +1,5 @@
-import { Component, Input } from '@angular/core';
-import { AdaptiveQuestion, QuestionnaireTypeEnum } from '@crczp/training-model';
+import {Component, Input} from '@angular/core';
+import {AdaptiveQuestion, QuestionnaireTypeEnum} from '@crczp/training-model';
 
 @Component({
     selector: 'crczp-rating-form-question-detail',

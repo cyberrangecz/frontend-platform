@@ -1,16 +1,12 @@
-import { inject, Injectable } from '@angular/core';
-import {
-    OffsetPagination,
-    OffsetPaginationEvent,
-    PaginatedResource,
-} from '@sentinel/common/pagination';
-import { GroupApi, UserApi } from '@crczp/user-and-group-api';
-import { Group, User } from '@crczp/user-and-group-model';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { switchMap, tap } from 'rxjs/operators';
-import { GroupFilter, UserFilter } from '@crczp/user-and-group-agenda/internal';
-import { UserAndGroupErrorHandler } from '@crczp/user-and-group-agenda';
-import { Settings } from '@crczp/common';
+import {Injectable} from '@angular/core';
+import {OffsetPagination, OffsetPaginationEvent, PaginatedResource,} from '@sentinel/common/pagination';
+import {GroupApi, UserApi} from '@crczp/user-and-group-api';
+import {Group, User} from '@crczp/user-and-group-model';
+import {BehaviorSubject, Observable} from 'rxjs';
+import {switchMap, tap} from 'rxjs/operators';
+import {GroupFilter, UserFilter} from '@crczp/user-and-group-agenda/internal';
+import {UserAndGroupErrorHandler} from '@crczp/user-and-group-agenda';
+import {Settings} from '@crczp/common';
 
 /**
  * Basic implementation of a layer between a component and an API service.
@@ -43,22 +39,23 @@ export class UserAssignService {
         new BehaviorSubject([]);
     selectedGroupsToImport$: Observable<Group[]> =
         this.selectedGroupsToImportSubject$.asObservable();
-    private readonly defaultPaginationSize = inject(Settings.DEFAULT_PAGE_SIZE);
-    private lastAssignedPagination: OffsetPaginationEvent;
-    private lastAssignedFilter: string;
     private assignedUsersSubject$: BehaviorSubject<PaginatedResource<User>> =
         new BehaviorSubject(this.initSubject());
-    /**
-     * Subscribe to receive assigned users
-     */
     assignedUsers$: Observable<PaginatedResource<User>> =
         this.assignedUsersSubject$.asObservable();
+    
+    private readonly defaultPaginationSize: number;
+    private lastAssignedPagination: OffsetPaginationEvent;
+    private lastAssignedFilter: string;
 
     constructor(
         private api: GroupApi,
         private userApi: UserApi,
-        private errorHandler: UserAndGroupErrorHandler
-    ) {}
+        private errorHandler: UserAndGroupErrorHandler,
+        settings: Settings
+    ) {
+        this.defaultPaginationSize = settings.DEFAULT_PAGE_SIZE;
+    }
 
     setSelectedUsersToAssign(users: User[]): void {
         this.selectedUsersToAssignSubject$.next(users);

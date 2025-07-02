@@ -1,7 +1,7 @@
 /**
  * Class representing training instance of a definition.
  */
-import { TrainingDefinition } from './training-definition';
+import {TrainingDefinition} from './training-definition';
 
 export class TrainingInstance {
     id!: number;

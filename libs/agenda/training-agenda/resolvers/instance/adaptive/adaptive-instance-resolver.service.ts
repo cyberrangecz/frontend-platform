@@ -1,8 +1,8 @@
-import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, Router, RouterStateSnapshot } from '@angular/router';
-import { TrainingInstance } from '@crczp/training-model';
-import { EMPTY, Observable, of } from 'rxjs';
-import { catchError, mergeMap, take } from 'rxjs/operators';
+import {Injectable} from '@angular/core';
+import {ActivatedRouteSnapshot, Router, RouterStateSnapshot} from '@angular/router';
+import {TrainingInstance} from '@crczp/training-model';
+import {EMPTY, Observable, of} from 'rxjs';
+import {catchError, mergeMap, take} from 'rxjs/operators';
 import {
     ADAPTIVE_INSTANCE_PATH,
     ADAPTIVE_INSTANCE_SELECTOR,
@@ -10,7 +10,7 @@ import {
     TrainingErrorHandler,
     TrainingNavigator,
 } from '@crczp/training-agenda';
-import { AdaptiveInstanceApi } from '@crczp/training-api';
+import {AdaptiveInstanceApi} from '@crczp/training-api';
 
 /**
  * Router data provider

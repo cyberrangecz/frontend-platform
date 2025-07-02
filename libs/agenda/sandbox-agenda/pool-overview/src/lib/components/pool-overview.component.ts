@@ -1,59 +1,41 @@
+import {ChangeDetectionStrategy, Component, DestroyRef, inject, Input, OnInit,} from '@angular/core';
+import {OffsetPaginationEvent} from '@sentinel/common/pagination';
 import {
-    ChangeDetectionStrategy,
-    Component,
-    DestroyRef,
-    inject,
-    Input,
-    OnInit,
-} from '@angular/core';
-import { OffsetPaginationEvent } from '@sentinel/common/pagination';
-import {
+    SentinelControlItem,
     SentinelControlItemSignal,
     SentinelControlsComponent,
 } from '@sentinel/components/controls';
-import { Pool, Resources } from '@crczp/sandbox-model';
-import {
-    SentinelTable,
-    SentinelTableComponent,
-    TableActionEvent,
-    TableLoadEvent,
-} from '@sentinel/components/table';
-import { async, defer, Observable, of } from 'rxjs';
-import { map, take } from 'rxjs/operators';
-import { PoolTable } from '../model/pool-table';
-import {
-    SandboxDefaultNavigator,
-    SandboxNavigator,
-} from '@crczp/sandbox-agenda';
+import {Pool, Resources} from '@crczp/sandbox-model';
+import {SentinelTable, SentinelTableComponent, TableActionEvent, TableLoadEvent,} from '@sentinel/components/table';
+import {async, defer, Observable, of} from 'rxjs';
+import {map, take} from 'rxjs/operators';
+import {PoolTable} from '../model/pool-table';
+import {SandboxDefaultNavigator, SandboxNavigator,} from '@crczp/sandbox-agenda';
 
-import { AbstractPoolService } from '../services/abstract-pool/abstract-sandbox/abstract-pool.service';
+import {AbstractPoolService} from '../services/abstract-pool/abstract-sandbox/abstract-pool.service';
 import {
     SandboxAllocationUnitsConcreteService,
     SandboxAllocationUnitsService,
     SandboxInstanceConcreteService,
     SandboxInstanceService,
 } from '@crczp/sandbox-agenda/pool-detail';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { SandboxResourcesService } from '../services/resources/sandbox-resources.service';
-import {
-    PoolBreadcrumbResolver,
-    PoolCommentResolver,
-    PoolResolver,
-} from '@crczp/sandbox-agenda/resolvers';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import {SandboxResourcesService} from '../services/resources/sandbox-resources.service';
+import {PoolBreadcrumbResolver, PoolCommentResolver, PoolResolver,} from '@crczp/sandbox-agenda/resolvers';
 import {
     EditableCommentComponent,
     ResourcePollingService,
     SandboxDefinitionOverviewConcreteService,
     SandboxDefinitionOverviewService,
 } from '@crczp/sandbox-agenda/internal';
-import { PoolOverviewService } from '../services/state/pool-overview/pool-overview.service';
-import { PoolOverviewConcreteService } from '../services/state/pool-overview/pool-overview-concrete.service';
-import { AbstractPoolConcreteService } from '../services/abstract-pool/abstract-sandbox/abstract-pool-concrete.service';
-import { SandboxResourcesConcreteService } from '../services/resources/sandbox-resources-concrete.service';
-import { PaginationStorageService } from '@crczp/common';
-import { TableStateCellComponent } from './table-state-cell/table-state-cell.component';
-import { QuotasComponent } from './quotas/quotas.component';
-import { AsyncPipe } from '@angular/common';
+import {PoolOverviewService} from '../services/state/pool-overview/pool-overview.service';
+import {PoolOverviewConcreteService} from '../services/state/pool-overview/pool-overview-concrete.service';
+import {AbstractPoolConcreteService} from '../services/abstract-pool/abstract-sandbox/abstract-pool-concrete.service';
+import {SandboxResourcesConcreteService} from '../services/resources/sandbox-resources-concrete.service';
+import {PaginationStorageService} from '@crczp/common';
+import {TableStateCellComponent} from './table-state-cell/table-state-cell.component';
+import {QuotasComponent} from './quotas/quotas.component';
+import {AsyncPipe} from '@angular/common';
 
 /**
  * Smart component of sandbox pool overview page
@@ -76,8 +58,8 @@ import { AsyncPipe } from '@angular/common';
         PoolBreadcrumbResolver,
         PoolCommentResolver,
         ResourcePollingService,
-        { provide: SandboxNavigator, useClass: SandboxDefaultNavigator },
-        { provide: PoolOverviewService, useClass: PoolOverviewConcreteService },
+        {provide: SandboxNavigator, useClass: SandboxDefaultNavigator},
+        {provide: PoolOverviewService, useClass: PoolOverviewConcreteService},
         {
             provide: SandboxInstanceService,
             useClass: SandboxInstanceConcreteService,
@@ -86,7 +68,7 @@ import { AsyncPipe } from '@angular/common';
             provide: SandboxAllocationUnitsService,
             useClass: SandboxAllocationUnitsConcreteService,
         },
-        { provide: AbstractPoolService, useClass: AbstractPoolConcreteService },
+        {provide: AbstractPoolService, useClass: AbstractPoolConcreteService},
         {
             provide: SandboxDefinitionOverviewService,
             useClass: SandboxDefinitionOverviewConcreteService,
@@ -102,7 +84,7 @@ export class PoolOverviewComponent implements OnInit {
     pools$: Observable<SentinelTable<Pool>>;
     hasError$: Observable<boolean>;
     resources$: Observable<Resources>;
-    controls: SentinelControlItemSignal[] = [];
+    controls: SentinelControlItem[] = [];
     destroyRef = inject(DestroyRef);
 
     readonly DEFAULT_SORT_COLUMN = 'id';
@@ -191,7 +173,7 @@ export class PoolOverviewComponent implements OnInit {
 
     private initControls() {
         this.controls = [
-            new SentinelControlItemSignal(
+            new SentinelControlItem(
                 'create',
                 'Create',
                 'primary',

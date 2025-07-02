@@ -1,7 +1,7 @@
-import { Phase } from '../phase';
-import { DecisionMatrixRow } from './decision-matrix-row';
-import { MitreTechnique } from '../../mitre-techniques/mitre-technique';
-import { AdaptiveTask } from './adaptive-task';
+import {Phase} from '../phase';
+import {DecisionMatrixRow} from './decision-matrix-row';
+import {MitreTechnique} from '../../mitre-techniques/mitre-technique';
+import {AdaptiveTask} from './adaptive-task';
 
 export class TrainingPhase extends Phase {
     allowedWrongAnswers!: number;

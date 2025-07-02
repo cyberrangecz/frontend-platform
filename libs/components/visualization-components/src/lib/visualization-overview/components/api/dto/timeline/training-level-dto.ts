@@ -1,5 +1,5 @@
-import { TimelineEventDTO } from './timeline-event-dto';
-import { TimelineLevelDataDTO } from './timeline-level-data-dto';
+import {TimelineEventDTO} from './timeline-event-dto';
+import {TimelineLevelDataDTO} from './timeline-level-data-dto';
 
 export interface TrainingLevelDto extends TimelineLevelDataDTO {
     score: number;

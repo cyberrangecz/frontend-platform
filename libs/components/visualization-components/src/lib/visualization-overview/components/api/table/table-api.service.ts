@@ -1,8 +1,8 @@
-import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
-import { ConfigService } from '../../../config/config.service';
-import { PlayerTableDataDTO } from '../dto/table/player-table-data-dto';
+import {Injectable} from '@angular/core';
+import {Observable} from 'rxjs';
+import {HttpClient} from '@angular/common/http';
+import {ConfigService} from '../../../config/config.service';
+import {PlayerTableDataDTO} from '../dto/table/player-table-data-dto';
 
 @Injectable()
 export class TableApiService {

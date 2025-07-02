@@ -8,7 +8,7 @@ import {
     Output,
 } from '@angular/core';
 import * as d3 from 'd3';
-import { AdaptiveRunVisualization, RunVisualizationPathNode } from '@crczp/visualization-model';
+import {AdaptiveRunVisualization, RunVisualizationPathNode} from '@crczp/visualization-model';
 
 @Component({
     // eslint-disable-next-line @angular-eslint/component-selector

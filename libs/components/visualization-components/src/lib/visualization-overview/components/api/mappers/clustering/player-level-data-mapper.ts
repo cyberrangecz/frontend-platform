@@ -1,5 +1,5 @@
-import { PlayerLevelDataDTO } from '../../dto/clustering/player-level-data-dto';
-import { PlayerLevelData } from '../../../model/clustering/player-level-data';
+import {PlayerLevelDataDTO} from '../../dto/clustering/player-level-data-dto';
+import {PlayerLevelData} from '../../../model/clustering/player-level-data';
 
 /**
  * @dynamic

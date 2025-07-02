@@ -1,4 +1,4 @@
-import { SentinelFilter } from '@sentinel/common/filter';
+import {SentinelFilter} from '@sentinel/common/filter';
 
 /**
  * Creates filters from user name filter value

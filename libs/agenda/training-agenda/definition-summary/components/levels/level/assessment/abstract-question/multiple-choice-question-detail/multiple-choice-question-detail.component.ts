@@ -1,5 +1,5 @@
-import { Component, Input } from '@angular/core';
-import { MultipleChoiceQuestion } from '@crczp/training-model';
+import {Component, Input} from '@angular/core';
+import {MultipleChoiceQuestion} from '@crczp/training-model';
 
 @Component({
     selector: 'crczp-multiple-choice-question-detail',

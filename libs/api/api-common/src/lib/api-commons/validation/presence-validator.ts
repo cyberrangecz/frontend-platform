@@ -1,4 +1,4 @@
-import { JavaOffsetPaginationDTO } from '../pagination/pagination-types';
+import {JavaOffsetPaginationDTO} from '../pagination/pagination-types';
 
 
 type WithPresentFields<T, K extends keyof T> = {

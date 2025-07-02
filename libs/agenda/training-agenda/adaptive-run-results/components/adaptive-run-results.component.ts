@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {Observable} from 'rxjs';
+import {async, Observable} from 'rxjs';
 import {map, take} from 'rxjs/operators';
 import {ADAPTIVE_RUN_DATA_ATTRIBUTE_NAME} from '@crczp/training-agenda';
 import {SentinelControlItem, SentinelControlItemSignal} from '@sentinel/components/controls';
@@ -40,4 +40,6 @@ export class AdaptiveRunResultsComponent implements OnInit {
         this.controls = TrainingRunResultsControls.createControls(this.service);
         this.trainingRun$ = this.activatedRoute.data.pipe(map((data) => data[ADAPTIVE_RUN_DATA_ATTRIBUTE_NAME]));
     }
+
+    protected readonly async = async;
 }

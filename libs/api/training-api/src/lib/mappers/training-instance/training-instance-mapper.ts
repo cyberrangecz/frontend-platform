@@ -1,8 +1,8 @@
-import { TrainingInstance } from '@crczp/training-model';
-import { TrainingInstanceCreateDTO } from '../../dto/training-instance/training-instance-create-dto';
-import { TrainingInstanceDTO } from '../../dto/training-instance/training-instance-dto';
-import { TrainingInstanceUpdateDTO } from '../../dto/training-instance/training-instance-update-dto';
-import { TrainingDefinitionMapper } from '../training-definition/training-definition-mapper';
+import {TrainingInstance} from '@crczp/training-model';
+import {TrainingInstanceCreateDTO} from '../../dto/training-instance/training-instance-create-dto';
+import {TrainingInstanceDTO} from '../../dto/training-instance/training-instance-dto';
+import {TrainingInstanceUpdateDTO} from '../../dto/training-instance/training-instance-update-dto';
+import {TrainingDefinitionMapper} from '../training-definition/training-definition-mapper';
 
 /**
  * @dynamic

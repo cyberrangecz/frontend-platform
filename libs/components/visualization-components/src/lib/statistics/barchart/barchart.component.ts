@@ -17,15 +17,15 @@ import {
     ParticipantStatistics,
     TrainingInstanceStatistics
 } from '@crczp/visualization-model';
-import { AxesCreationService } from '../service/axes-creation-service';
-import { TooltipCreationService } from '../service/tooltip-creation-service';
-import { SvgConfigurationService } from '../service/svg-configuration-service';
-import { LegendCreationService } from '../service/legend-creation-service';
-import { MatCardModule } from '@angular/material/card';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatGridListModule } from '@angular/material/grid-list';
-import { MatRadioModule } from '@angular/material/radio';
-import { MatCheckboxModule } from '@angular/material/checkbox';
+import {AxesCreationService} from '../service/axes-creation-service';
+import {TooltipCreationService} from '../service/tooltip-creation-service';
+import {SvgConfigurationService} from '../service/svg-configuration-service';
+import {LegendCreationService} from '../service/legend-creation-service';
+import {MatCardModule} from '@angular/material/card';
+import {MatDividerModule} from '@angular/material/divider';
+import {MatGridListModule} from '@angular/material/grid-list';
+import {MatRadioModule} from '@angular/material/radio';
+import {MatCheckboxModule} from '@angular/material/checkbox';
 
 
 @Component({

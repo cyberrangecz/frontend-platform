@@ -10,12 +10,12 @@ import {
     SimpleChanges
 } from '@angular/core';
 import * as d3 from 'd3';
-import { IStatisticsFilter, TrainingInstanceStatistics } from '@crczp/visualization-model';
-import { MatCardModule } from '@angular/material/card';
-import { MatGridListModule } from '@angular/material/grid-list';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatIconModule } from '@angular/material/icon';
-import { CommonModule } from '@angular/common';
+import {IStatisticsFilter, TrainingInstanceStatistics} from '@crczp/visualization-model';
+import {MatCardModule} from '@angular/material/card';
+import {MatGridListModule} from '@angular/material/grid-list';
+import {MatCheckboxModule} from '@angular/material/checkbox';
+import {MatIconModule} from '@angular/material/icon';
+import {CommonModule} from '@angular/common';
 
 @Component({
     selector: 'crczp-filter',

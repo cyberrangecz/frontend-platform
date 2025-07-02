@@ -1,7 +1,7 @@
-import { PaginatedResource } from '@sentinel/common/pagination';
-import { UserRole } from '@crczp/user-and-group-model';
-import { RoleDTO } from '../DTO/role/role-dto';
-import { JavaPaginatedResource, PaginationMapper } from '@crczp/api-common';
+import {PaginatedResource} from '@sentinel/common/pagination';
+import {UserRole} from '@crczp/user-and-group-model';
+import {RoleDTO} from '../DTO/role/role-dto';
+import {JavaPaginatedResource, PaginationMapper} from '@crczp/api-common';
 
 /**
  * @dynamic

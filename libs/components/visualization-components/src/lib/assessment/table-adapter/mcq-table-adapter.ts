@@ -1,5 +1,5 @@
-import { MCQTableRow } from './mcq-table-row';
-import { AssessmentAnswer, AssessmentQuestion } from '@crczp/visualization-model';
+import {MCQTableRow} from './mcq-table-row';
+import {AssessmentAnswer, AssessmentQuestion} from '@crczp/visualization-model';
 
 /**
  * Adapter class for multiple choice question table

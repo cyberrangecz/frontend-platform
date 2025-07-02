@@ -1,8 +1,8 @@
-import { Component, DestroyRef, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { TopologyErrorService } from '@crczp/topology-graph';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { TrainingErrorHandler } from '@crczp/training-agenda';
+import {Component, DestroyRef, EventEmitter, inject, Input, OnInit, Output} from '@angular/core';
+import {async, Observable, of} from 'rxjs';
+import {TopologyErrorService} from '@crczp/topology-graph';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import {TrainingErrorHandler} from '@crczp/training-agenda';
 
 @Component({
     selector: 'crczp-topology-wrapper',
@@ -33,4 +33,6 @@ export class TopologyWrapperComponent implements OnInit {
             error: (err) => this.errorHandler.emit(err, 'There is a problem with topology error handler.'),
         });
     }
+
+    protected readonly async = async;
 }

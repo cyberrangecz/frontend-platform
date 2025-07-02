@@ -8,9 +8,9 @@ import {
     Output,
     SimpleChanges,
 } from '@angular/core';
-import { take } from 'rxjs/operators';
-import { AdaptiveQuestion, Choice, QuestionAnswer, QuestionnairePhase, QuestionTypeEnum } from '@crczp/training-model';
-import { RunningAdaptiveRunService } from '../../../services/adaptive-run/running/running-adaptive-run.service';
+import {take} from 'rxjs/operators';
+import {AdaptiveQuestion, Choice, QuestionAnswer, QuestionnairePhase, QuestionTypeEnum} from '@crczp/training-model';
+import {RunningAdaptiveRunService} from '../../../services/adaptive-run/running/running-adaptive-run.service';
 
 @Component({
     selector: 'crczp-questionnaire-phase',

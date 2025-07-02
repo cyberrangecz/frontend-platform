@@ -1,6 +1,6 @@
-import { Injectable } from '@angular/core';
-import { FILTERS_ARRAY, FILTERS_OBJECT } from './filters/filters';
-import { EMPTY, Subject } from 'rxjs';
+import {Injectable} from '@angular/core';
+import {FILTERS_ARRAY, FILTERS_OBJECT} from './filters/filters';
+import {EMPTY, Subject} from 'rxjs';
 
 @Injectable({
     providedIn: 'root',

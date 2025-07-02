@@ -1,4 +1,4 @@
-import { ForbiddenCommandDTO } from '../detection-event/forbidden-command-dto';
+import {ForbiddenCommandDTO} from '../detection-event/forbidden-command-dto';
 
 /**
  * Cheating Detection DTO.

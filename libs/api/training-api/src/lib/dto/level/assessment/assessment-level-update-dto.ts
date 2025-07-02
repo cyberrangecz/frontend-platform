@@ -1,8 +1,8 @@
 /**
  * Assessment Level to update.
  */
-import { AbstractQuestionCreateDTO } from './abstact-question-dto';
-import { AbstractLevelDTO } from '../abstract-level-dto';
+import {AbstractQuestionCreateDTO} from './abstact-question-dto';
+import {AbstractLevelDTO} from '../abstract-level-dto';
 
 export interface AssessmentLevelUpdateDTO {
     id?: number;

@@ -1,4 +1,4 @@
-import { RequestStageState } from '@crczp/sandbox-model';
+import {RequestStageState} from '@crczp/sandbox-model';
 
 /**
  * @dynamic

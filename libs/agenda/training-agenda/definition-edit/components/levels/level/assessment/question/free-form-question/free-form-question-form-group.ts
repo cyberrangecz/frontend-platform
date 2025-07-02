@@ -6,8 +6,8 @@ import {
     ValidatorFn,
     Validators,
 } from '@angular/forms';
-import { SentinelValidators } from '@sentinel/common';
-import { FreeFormQuestion, Question } from '@crczp/training-model';
+import {SentinelValidators} from '@sentinel/common';
+import {FreeFormQuestion, Question} from '@crczp/training-model';
 
 /**
  * Form control for free form question component

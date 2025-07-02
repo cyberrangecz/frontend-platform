@@ -1,12 +1,12 @@
-import { CommonModule } from '@angular/common';
-import { ModuleWithProviders, NgModule } from '@angular/core';
-import { RouterModule } from '@angular/router';
-import { TrainingAgendaConfig } from '@crczp/training-agenda';
-import { MitreTechniquesOverviewConcreteService } from '../services/mitre-techniques-concrete.service';
-import { MitreTechniquesOverviewService } from '../services/mitre-techniques.service';
-import { MitreTechniquesMaterialModule } from './mitre-techniques-material.module';
-import { MitreTechniquesComponent } from './mitre-techniques.component';
-import { SafeHtmlPipe } from './safe-html.pipe';
+import {CommonModule} from '@angular/common';
+import {ModuleWithProviders, NgModule} from '@angular/core';
+import {RouterModule} from '@angular/router';
+import {TrainingAgendaConfig} from '@crczp/training-agenda';
+import {MitreTechniquesOverviewConcreteService} from '../services/mitre-techniques-concrete.service';
+import {MitreTechniquesOverviewService} from '../services/mitre-techniques.service';
+import {MitreTechniquesMaterialModule} from './mitre-techniques-material.module';
+import {MitreTechniquesComponent} from './mitre-techniques.component';
+import {SafeHtmlPipe} from './safe-html.pipe';
 
 /**
  * Components and providers for mitre techniques.

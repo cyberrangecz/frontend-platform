@@ -1,4 +1,4 @@
-import { PlayerLevelDataDTO } from './player-level-data-dto';
+import {PlayerLevelDataDTO} from './player-level-data-dto';
 
 export class LevelDTO {
     id: number;

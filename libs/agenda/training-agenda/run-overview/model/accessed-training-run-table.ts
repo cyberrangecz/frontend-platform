@@ -1,9 +1,9 @@
-import { PaginatedResource } from '@sentinel/common/pagination';
-import { AccessedTrainingRun, TraineeAccessTrainingRunActionEnum, TrainingRunTypeEnum } from '@crczp/training-model';
-import { Column, Row, RowAction, SentinelTable } from '@sentinel/components/table';
-import { defer, EMPTY, of } from 'rxjs';
-import { AccessedTrainingRunService } from '../services/state/training/accessed-training-run.service';
-import { AccessedTrainingRunRowAdapter } from './accessed-training-run-row-adapter';
+import {PaginatedResource} from '@sentinel/common/pagination';
+import {AccessedTrainingRun, TraineeAccessTrainingRunActionEnum, TrainingRunTypeEnum} from '@crczp/training-model';
+import {Column, Row, RowAction, SentinelTable} from '@sentinel/components/table';
+import {defer, EMPTY, of} from 'rxjs';
+import {AccessedTrainingRunService} from '../services/state/training/accessed-training-run.service';
+import {AccessedTrainingRunRowAdapter} from './accessed-training-run-row-adapter';
 
 /**
  * Helper class transforming paginated resource to class for common table component

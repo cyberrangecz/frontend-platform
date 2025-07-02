@@ -1,7 +1,7 @@
-import { OffsetPaginatedElementsService } from '@sentinel/common';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
-import { TrainingInstance } from '@crczp/training-model';
-import { Observable } from 'rxjs';
+import {OffsetPaginatedElementsService} from '@sentinel/common';
+import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
+import {TrainingInstance} from '@crczp/training-model';
+import {Observable} from 'rxjs';
 
 export abstract class AdaptiveInstanceOverviewService extends OffsetPaginatedElementsService<TrainingInstance> {
     abstract getAll(pagination: OffsetPaginationEvent, filter: string): Observable<PaginatedResource<TrainingInstance>>;

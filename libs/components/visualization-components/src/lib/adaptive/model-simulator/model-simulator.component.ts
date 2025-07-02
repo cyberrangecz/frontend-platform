@@ -1,8 +1,7 @@
-import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
-import { AbstractPhaseTypeEnum, Phase, TrainingPhase } from '@crczp/training-model';
-import { TraineePhasePerformance, TransitionVisualizationData } from '@crczp/visualization-model';
-import { ModelSimulatorService } from './service/model-simulator.service';
-import { TransitionPhase } from '@crczp/visualization-model';
+import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
+import {AbstractPhaseTypeEnum, Phase, TrainingPhase} from '@crczp/training-model';
+import {TraineePhasePerformance, TransitionPhase, TransitionVisualizationData} from '@crczp/visualization-model';
+import {ModelSimulatorService} from './service/model-simulator.service';
 
 @Component({
     selector: 'crczp-adaptive-instance-simulator',

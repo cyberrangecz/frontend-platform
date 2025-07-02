@@ -1,5 +1,5 @@
-import { AbstractLevelTypeEnum } from '@crczp/training-model';
-import { AbstractLevelDTO } from '../level/abstract-level-dto';
+import {AbstractLevelTypeEnum} from '@crczp/training-model';
+import {AbstractLevelDTO} from '../level/abstract-level-dto';
 
 export class VisualizationInfoDTO {
     estimated_duration: number;

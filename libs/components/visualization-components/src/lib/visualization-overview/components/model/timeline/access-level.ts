@@ -1,4 +1,4 @@
-import { TimelineLevel } from './timeline-level';
+import {TimelineLevel} from './timeline-level';
 
 export class AccessLevel extends TimelineLevel {
     constructor() {

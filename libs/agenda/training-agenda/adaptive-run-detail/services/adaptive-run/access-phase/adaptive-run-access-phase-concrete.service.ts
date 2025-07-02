@@ -1,12 +1,12 @@
-import { Injectable } from '@angular/core';
-import { AdaptiveRunAccessPhaseService } from './adaptive-run-access-phase.service';
-import { AdaptiveRunApi } from '@crczp/training-api';
-import { SandboxInstanceApi } from '@crczp/sandbox-api';
-import { TrainingErrorHandler } from '@crczp/training-agenda';
-import { Observable } from 'rxjs';
-import { switchMap, tap } from 'rxjs/operators';
-import { RunningAdaptiveRunService } from '../running/running-adaptive-run.service';
-import { SentinelNotificationService } from '@sentinel/layout/notification';
+import {Injectable} from '@angular/core';
+import {AdaptiveRunAccessPhaseService} from './adaptive-run-access-phase.service';
+import {AdaptiveRunApi} from '@crczp/training-api';
+import {SandboxInstanceApi} from '@crczp/sandbox-api';
+import {TrainingErrorHandler} from '@crczp/training-agenda';
+import {Observable} from 'rxjs';
+import {switchMap, tap} from 'rxjs/operators';
+import {RunningAdaptiveRunService} from '../running/running-adaptive-run.service';
+import {SentinelNotificationService} from '@sentinel/layout/notification';
 
 @Injectable()
 export class AdaptiveRunAccessPhaseConcreteService extends AdaptiveRunAccessPhaseService {

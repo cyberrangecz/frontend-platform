@@ -1,8 +1,6 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Subject } from 'rxjs';
-import {
-    PlayerTableData
-} from '../components/model/table/player-table-data';
+import {Injectable} from '@angular/core';
+import {BehaviorSubject, Subject} from 'rxjs';
+import {PlayerTableData} from '../components/model/table/player-table-data';
 
 /**
  * Communication service between table and other components

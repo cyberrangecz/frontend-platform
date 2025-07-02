@@ -1,7 +1,7 @@
-import { OffsetPaginatedElementsService } from '@sentinel/common';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
-import { TrainingDefinitionInfo } from '@crczp/training-model';
-import { Observable } from 'rxjs';
+import {OffsetPaginatedElementsService} from '@sentinel/common';
+import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
+import {TrainingDefinitionInfo} from '@crczp/training-model';
+import {Observable} from 'rxjs';
 
 export abstract class TrainingDefinitionOrganizerSelectService extends OffsetPaginatedElementsService<TrainingDefinitionInfo> {
     /**

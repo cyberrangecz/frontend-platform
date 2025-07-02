@@ -1,42 +1,25 @@
+import {ChangeDetectionStrategy, Component, DestroyRef, inject, Input, OnInit,} from '@angular/core';
+import {OffsetPaginationEvent} from '@sentinel/common/pagination';
 import {
-    ChangeDetectionStrategy,
-    Component,
-    DestroyRef,
-    inject,
-    Input,
-    OnInit,
-} from '@angular/core';
-import { OffsetPaginationEvent } from '@sentinel/common/pagination';
-import {
+    SentinelControlItem,
     SentinelControlItemSignal,
     SentinelControlsComponent,
 } from '@sentinel/components/controls';
-import { User } from '@crczp/user-and-group-model';
-import {
-    SentinelTable,
-    SentinelTableComponent,
-    TableActionEvent,
-    TableLoadEvent,
-} from '@sentinel/components/table';
-import { async, defer, Observable, of } from 'rxjs';
-import { map, take } from 'rxjs/operators';
-import { UserTable } from '../model/user-table';
-import { DeleteControlItem } from '@crczp/user-and-group-agenda/internal';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { UserResolverService } from '../services/resolvers/user-resolver.service';
-import { UserTitleResolverService } from '../services/resolvers/user-title-resolver.service';
-import { UserBreadcrumbResolverService } from '../services/resolvers/user-breadcrumb-resolver.service';
-import { FileUploadProgressService } from '../services/file-upload/file-upload-progress.service';
-import { UserOverviewService } from '../services/user-overview.service';
-import {
-    PaginationStorageService,
-    providePaginationStorageService,
-} from '@crczp/common';
-import {
-    UserAndGroupDefaultNavigator,
-    UserAndGroupNavigator,
-} from '@crczp/user-and-group-agenda';
-import { AsyncPipe } from '@angular/common';
+import {User} from '@crczp/user-and-group-model';
+import {SentinelTable, SentinelTableComponent, TableActionEvent, TableLoadEvent,} from '@sentinel/components/table';
+import {async, defer, Observable, of} from 'rxjs';
+import {map, take} from 'rxjs/operators';
+import {UserTable} from '../model/user-table';
+import {DeleteControlItem} from '@crczp/user-and-group-agenda/internal';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import {UserResolverService} from '../services/resolvers/user-resolver.service';
+import {UserTitleResolverService} from '../services/resolvers/user-title-resolver.service';
+import {UserBreadcrumbResolverService} from '../services/resolvers/user-breadcrumb-resolver.service';
+import {FileUploadProgressService} from '../services/file-upload/file-upload-progress.service';
+import {UserOverviewService} from '../services/user-overview.service';
+import {PaginationStorageService, providePaginationStorageService,} from '@crczp/common';
+import {UserAndGroupDefaultNavigator, UserAndGroupNavigator,} from '@crczp/user-and-group-agenda';
+import {AsyncPipe} from '@angular/common';
 
 /**
  * Main smart component of user overview page
@@ -73,14 +56,15 @@ export class UserOverviewComponent implements OnInit {
      * True, if data requested for table has error, false otherwise
      */
     usersHasError$: Observable<boolean>;
-    controls: SentinelControlItemSignal[];
+    controls: SentinelControlItem[];
     protected readonly async = async;
 
     constructor(
         private userService: UserOverviewService,
         private paginationService: PaginationStorageService,
         private navigator: UserAndGroupNavigator
-    ) {}
+    ) {
+    }
 
     ngOnInit(): void {
         const initialLoadEvent: TableLoadEvent = {
@@ -142,14 +126,14 @@ export class UserOverviewComponent implements OnInit {
                 selectedUsersLength,
                 defer(() => this.userService.deleteSelected())
             ),
-            new SentinelControlItemSignal(
+            new SentinelControlItem(
                 'download_oidc_users',
                 'Get Users Credentials',
                 'primary',
                 of(false),
                 defer(() => this.userService.getLocalOIDCUsers())
             ),
-            new SentinelControlItemSignal(
+            new SentinelControlItem(
                 'import_users',
                 'Import Users',
                 'primary',

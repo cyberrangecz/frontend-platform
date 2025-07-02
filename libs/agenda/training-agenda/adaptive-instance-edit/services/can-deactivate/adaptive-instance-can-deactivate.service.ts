@@ -1,14 +1,14 @@
-import { Injectable } from '@angular/core';
-import { UrlTree } from '@angular/router';
-import { MatDialog } from '@angular/material/dialog';
-import { Observable } from 'rxjs';
+import {Injectable} from '@angular/core';
+import {UrlTree} from '@angular/router';
+import {MatDialog} from '@angular/material/dialog';
+import {Observable} from 'rxjs';
 import {
     SentinelConfirmationDialogComponent,
     SentinelConfirmationDialogConfig,
     SentinelDialogResultEnum,
 } from '@sentinel/components/dialogs';
-import { map } from 'rxjs/operators';
-import { AdaptiveInstanceEditOverviewComponent } from '../../components/adaptive-instance-edit-overview.component';
+import {map} from 'rxjs/operators';
+import {AdaptiveInstanceEditOverviewComponent} from '../../components/adaptive-instance-edit-overview.component';
 
 /**
  * Route guard determining if navigation outside of training instance edit page should proceed

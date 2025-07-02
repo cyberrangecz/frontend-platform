@@ -1,7 +1,7 @@
-import { LevelTableDataDTO } from '../../dto/table/level-table-data-dto';
-import { LevelTableData } from '../../../model/table/level-table-data';
-import { BasicLevelInfoDTO } from '../../dto/clustering/level-dto';
-import { LevelTypeEnum } from '../../../model/clustering/enums/level-type.enum';
+import {LevelTableDataDTO} from '../../dto/table/level-table-data-dto';
+import {LevelTableData} from '../../../model/table/level-table-data';
+import {BasicLevelInfoDTO} from '../../dto/clustering/level-dto';
+import {LevelTypeEnum} from '../../../model/clustering/enums/level-type.enum';
 
 /**
  * @dynamic

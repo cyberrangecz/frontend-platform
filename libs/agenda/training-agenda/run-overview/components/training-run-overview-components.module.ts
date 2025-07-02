@@ -1,11 +1,11 @@
-import { CommonModule } from '@angular/common';
-import { ModuleWithProviders, NgModule } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatCardModule } from '@angular/material/card';
-import { SentinelPipesModule } from '@sentinel/common/pipes';
-import { SentinelTableModule } from '@sentinel/components/table';
-import { TrainingAgendaConfig, TrainingDefaultNavigator, TrainingNavigator } from '@crczp/training-agenda';
-import { LoadingDialogModule, DefaultPaginationService, TrainingAgendaContext } from '@crczp/training-agenda/internal';
+import {CommonModule} from '@angular/common';
+import {ModuleWithProviders, NgModule} from '@angular/core';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {MatCardModule} from '@angular/material/card';
+import {SentinelPipesModule} from '@sentinel/common/pipes';
+import {SentinelTableModule} from '@sentinel/components/table';
+import {TrainingAgendaConfig, TrainingDefaultNavigator, TrainingNavigator} from '@crczp/training-agenda';
+import {DefaultPaginationService, LoadingDialogModule, TrainingAgendaContext} from '@crczp/training-agenda/internal';
 import {
     RunningAdaptiveRunConcreteService,
     RunningAdaptiveRunService,
@@ -16,18 +16,18 @@ import {
     AdaptiveRunResultsResolver,
     TrainingRunResultsResolver,
 } from '@crczp/training-agenda/resolvers';
-import { AccessedTrainingRunConcreteService } from '../services/state/training/accessed-training-run-concrete.service';
-import { AccessedTrainingRunService } from '../services/state/training/accessed-training-run.service';
-import { AccessTrainingRunComponent } from './access/access-training-run.component';
-import { TrainingRunOverviewMaterialModule } from './training-run-overview-material.module';
-import { TrainingRunOverviewComponent } from './training-run-overview.component';
-import { AccessedAdaptiveRunService } from '../services/state/adaptive/accessed-adaptive-run.service';
-import { AccessedAdaptiveRunConcreteService } from '../services/state/adaptive/accessed-adaptive-run-concrete.service';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { MatDialogModule } from '@angular/material/dialog';
-import { TopologyApiModule } from '@crczp/topology-graph';
-import { SentinelControlsComponent } from '@sentinel/components/controls';
-import { RunningTrainingRunConcreteService, RunningTrainingRunService } from '@crczp/training-agenda/run-detail';
+import {AccessedTrainingRunConcreteService} from '../services/state/training/accessed-training-run-concrete.service';
+import {AccessedTrainingRunService} from '../services/state/training/accessed-training-run.service';
+import {AccessTrainingRunComponent} from './access/access-training-run.component';
+import {TrainingRunOverviewMaterialModule} from './training-run-overview-material.module';
+import {TrainingRunOverviewComponent} from './training-run-overview.component';
+import {AccessedAdaptiveRunService} from '../services/state/adaptive/accessed-adaptive-run.service';
+import {AccessedAdaptiveRunConcreteService} from '../services/state/adaptive/accessed-adaptive-run-concrete.service';
+import {MatProgressBarModule} from '@angular/material/progress-bar';
+import {MatDialogModule} from '@angular/material/dialog';
+import {TopologyApiModule} from '@crczp/topology-graph';
+import {SentinelControlsComponent} from '@sentinel/components/controls';
+import {RunningTrainingRunConcreteService, RunningTrainingRunService} from '@crczp/training-agenda/run-detail';
 
 /**
  * Main module for trainee agenda. Contains components and top level routing

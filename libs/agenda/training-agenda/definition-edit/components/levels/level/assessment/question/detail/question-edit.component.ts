@@ -7,8 +7,8 @@ import {
     Output,
     SimpleChanges,
 } from '@angular/core';
-import { ExtendedMatchingItems, FreeFormQuestion, MultipleChoiceQuestion, Question } from '@crczp/training-model';
-import { QuestionChangeEvent } from '../../../../../../model/events/question-change-event';
+import {ExtendedMatchingItems, FreeFormQuestion, MultipleChoiceQuestion, Question} from '@crczp/training-model';
+import {QuestionChangeEvent} from '../../../../../../model/events/question-change-event';
 
 /**
  * Wrapper component of a specific question type edit component. Resolves type of the question and creates sub component accordingly

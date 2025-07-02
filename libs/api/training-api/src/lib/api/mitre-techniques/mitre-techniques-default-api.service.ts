@@ -1,11 +1,11 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { MitreTechnique } from '@crczp/training-model';
-import { map, Observable } from 'rxjs';
-import { MitreTechniquesListDTO } from '../../dto/mitre-techniques/mitre-techniques-list-dto';
-import { MitreTechniquesListMapper } from '../../mappers/mitre-techniques/mitre-techniques-list-mapper';
-import { TrainingApiContext } from '../../other/training-api-context';
-import { MitreTechniquesApi } from './mitre-techniques-api.service';
+import {HttpClient, HttpParams} from '@angular/common/http';
+import {Injectable} from '@angular/core';
+import {MitreTechnique} from '@crczp/training-model';
+import {map, Observable} from 'rxjs';
+import {MitreTechniquesListDTO} from '../../dto/mitre-techniques/mitre-techniques-list-dto';
+import {MitreTechniquesListMapper} from '../../mappers/mitre-techniques/mitre-techniques-list-mapper';
+import {TrainingApiContext} from '../../other/training-api-context';
+import {MitreTechniquesApi} from './mitre-techniques-api.service';
 
 /**
  * Service abstracting http communication with training definition endpoints.

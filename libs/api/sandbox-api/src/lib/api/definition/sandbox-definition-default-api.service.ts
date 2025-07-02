@@ -1,16 +1,16 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
-import { SandboxDefinition, SandboxDefinitionRef } from '@crczp/sandbox-model';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { SandboxDefinitionDTO } from '../../dto/sandbox-definition/sandbox-definition-dto';
-import { SandboxDefinitionRefDTO } from '../../dto/sandbox-definition/sandbox-definition-ref-dto';
-import { SandboxDefinitionMapper } from '../../mappers/sandbox-definition/sandbox-definition-mapper';
-import { SandboxDefinitionRefMapper } from '../../mappers/sandbox-definition/sandbox-definition-ref-mapper';
-import { SandboxApiConfigService } from '../../others/sandbox-api-config.service';
-import { SandboxDefinitionApi } from './sandbox-definition-api.service';
-import { DjangoResourceDTO, PaginationMapper, ParamsBuilder } from '@crczp/api-common';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {Injectable} from '@angular/core';
+import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
+import {SandboxDefinition, SandboxDefinitionRef} from '@crczp/sandbox-model';
+import {Observable} from 'rxjs';
+import {map} from 'rxjs/operators';
+import {SandboxDefinitionDTO} from '../../dto/sandbox-definition/sandbox-definition-dto';
+import {SandboxDefinitionRefDTO} from '../../dto/sandbox-definition/sandbox-definition-ref-dto';
+import {SandboxDefinitionMapper} from '../../mappers/sandbox-definition/sandbox-definition-mapper';
+import {SandboxDefinitionRefMapper} from '../../mappers/sandbox-definition/sandbox-definition-ref-mapper';
+import {SandboxApiConfigService} from '../../others/sandbox-api-config.service';
+import {SandboxDefinitionApi} from './sandbox-definition-api.service';
+import {DjangoResourceDTO, PaginationMapper, ParamsBuilder} from '@crczp/api-common';
 
 /**
  * Service abstracting http communication with sandbox definition endpoints.

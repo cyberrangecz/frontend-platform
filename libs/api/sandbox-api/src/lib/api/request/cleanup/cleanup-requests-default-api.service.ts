@@ -1,20 +1,20 @@
-import { CleanupRequestsApi } from './cleanup-requests.api.service';
-import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import {CleanupRequestsApi} from './cleanup-requests.api.service';
+import {Injectable} from '@angular/core';
+import {Observable} from 'rxjs';
 import {
     CleanupRequest,
     NetworkingAnsibleCleanupStage,
     TerraformCleanupStage,
     UserAnsibleCleanupStage,
 } from '@crczp/sandbox-model';
-import { HttpClient } from '@angular/common/http';
-import { SandboxApiConfigService } from '../../../others/sandbox-api-config.service';
-import { RequestDTO } from '../../../dto/sandbox-instance/request-dto';
-import { map } from 'rxjs/operators';
-import { RequestMapper } from '../../../mappers/sandbox-instance/request-mapper';
-import { TerraformCleanupStageDTO } from '../../../dto/sandbox-instance/stages/terraform-cleanup-stage-dto';
-import { RequestStageMapper } from '../../../mappers/sandbox-instance/request-stage-mapper';
-import { AnsibleCleanupStageDTO } from '../../../dto/sandbox-instance/stages/ansible-cleanup-stage-dto';
+import {HttpClient} from '@angular/common/http';
+import {SandboxApiConfigService} from '../../../others/sandbox-api-config.service';
+import {RequestDTO} from '../../../dto/sandbox-instance/request-dto';
+import {map} from 'rxjs/operators';
+import {RequestMapper} from '../../../mappers/sandbox-instance/request-mapper';
+import {TerraformCleanupStageDTO} from '../../../dto/sandbox-instance/stages/terraform-cleanup-stage-dto';
+import {RequestStageMapper} from '../../../mappers/sandbox-instance/request-stage-mapper';
+import {AnsibleCleanupStageDTO} from '../../../dto/sandbox-instance/stages/ansible-cleanup-stage-dto';
 
 /**
  * Default implementation of service abstracting http communication with cleanup requests endpoints.

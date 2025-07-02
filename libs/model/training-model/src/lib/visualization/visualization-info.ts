@@ -1,5 +1,5 @@
-import { AbstractLevelTypeEnum } from '../enums/abstract-level-type.enum';
-import { Level } from '../level/level';
+import {AbstractLevelTypeEnum} from '../enums/abstract-level-type.enum';
+import {Level} from '../level/level';
 
 export class VisualizationInfo {
     estimatedDuration!: number;

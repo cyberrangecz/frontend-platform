@@ -1,6 +1,6 @@
-import { CheatingDetection, CheatingDetectionStateEnum } from '@crczp/training-model';
-import { CheatingDetectionDTO, CheatingDetectionDTOClass } from '../../dto/cheating-detection/cheating-detection-dto';
-import { ForbiddenCommandMapper } from '../detection-event/forbidden-command-mapper';
+import {CheatingDetection, CheatingDetectionStateEnum} from '@crczp/training-model';
+import {CheatingDetectionDTO, CheatingDetectionDTOClass} from '../../dto/cheating-detection/cheating-detection-dto';
+import {ForbiddenCommandMapper} from '../detection-event/forbidden-command-mapper';
 
 export class CheatingDetectionMapper {
     static fromDTO(dto: CheatingDetectionDTO): CheatingDetection {

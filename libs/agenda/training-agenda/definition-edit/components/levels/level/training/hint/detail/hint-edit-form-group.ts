@@ -1,6 +1,6 @@
-import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
-import { SentinelValidators } from '@sentinel/common';
-import { Hint } from '@crczp/training-model';
+import {UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
+import {SentinelValidators} from '@sentinel/common';
+import {Hint} from '@crczp/training-model';
 
 /**
  * Form control for hint edit component

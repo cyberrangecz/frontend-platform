@@ -1,9 +1,5 @@
-import {
-    TimelineEvent
-} from '../../components/model/timeline/timeline-event';
-import {
-    BasicLevelInfo
-} from '../../components/model/timeline/timeline-level';
+import {TimelineEvent} from '../../components/model/timeline/timeline-event';
+import {BasicLevelInfo} from '../../components/model/timeline/timeline-level';
 
 const filterFunction = function(event: TimelineEvent) {
     return event.levelType === BasicLevelInfo.TimelineLevelTypeEnum.INFO;

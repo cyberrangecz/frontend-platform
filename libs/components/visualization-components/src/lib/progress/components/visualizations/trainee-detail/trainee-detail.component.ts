@@ -1,5 +1,5 @@
-import { AfterViewInit, Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
-import { take } from 'rxjs/operators';
+import {AfterViewInit, Component, EventEmitter, Input, OnChanges, Output} from '@angular/core';
+import {take} from 'rxjs/operators';
 import {
     CommandLineEntry,
     HintTakenEvent,
@@ -13,13 +13,13 @@ import {
     WrongAnswerData,
     WrongAnswerEvent
 } from '@crczp/visualization-model';
-import { D3, D3Service } from '../../../../common/d3-service/d3-service';
-import { PROGRESS_CONFIG } from '../../../progress-config';
-import { AbstractLevelTypeEnum } from '@crczp/training-model';
-import { MatDivider } from '@angular/material/divider';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { CommonModule } from '@angular/common';
-import { ProgressVisualizationsDataService } from '../../../services/progress-visualizations-data.service';
+import {D3, D3Service} from '../../../../common/d3-service/d3-service';
+import {PROGRESS_CONFIG} from '../../../progress-config';
+import {AbstractLevelTypeEnum} from '@crczp/training-model';
+import {MatDivider} from '@angular/material/divider';
+import {MatTooltipModule} from '@angular/material/tooltip';
+import {CommonModule} from '@angular/common';
+import {ProgressVisualizationsDataService} from '../../../services/progress-visualizations-data.service';
 
 @Component({
     selector: 'crczp-trainee-detail',

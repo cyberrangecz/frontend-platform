@@ -1,4 +1,4 @@
-import { UserForGroupsDTO } from '../user/user-for-groups-dto.model';
+import {UserForGroupsDTO} from '../user/user-for-groups-dto.model';
 
 export class CreateGroupDTO {
     description: string;

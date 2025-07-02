@@ -1,4 +1,4 @@
-import { TimelineQuestion } from './timeline-question';
+import {TimelineQuestion} from './timeline-question';
 
 export class McqQuestion extends TimelineQuestion {
     options: string[];

@@ -1,5 +1,5 @@
-import { PaginatedResource } from '@sentinel/common';
-import { StageDetailType } from './stage-detail-type';
+import {PaginatedResource} from '@sentinel/common';
+import {StageDetailType} from './stage-detail-type';
 
 export class StageDetail {
     resourceName: string;

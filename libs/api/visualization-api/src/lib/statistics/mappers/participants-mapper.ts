@@ -1,6 +1,6 @@
-import { LevelsMapper } from './levels-mapper';
-import { ParticipantStatistics } from '@crczp/visualization-model';
-import { ParticipantStatisticsDTO } from '../dtos';
+import {LevelsMapper} from './levels-mapper';
+import {ParticipantStatistics} from '@crczp/visualization-model';
+import {ParticipantStatisticsDTO} from '../dtos';
 
 export class ParticipantsMapper {
     static fromDTOs(dtos: ParticipantStatisticsDTO[], instanceId: number): ParticipantStatistics[] {

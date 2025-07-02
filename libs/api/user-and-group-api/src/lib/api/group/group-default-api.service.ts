@@ -1,19 +1,19 @@
-import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { SentinelParamsMerger } from '@sentinel/common';
-import { SentinelFilter } from '@sentinel/common/filter';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
-import { Group, UserRole } from '@crczp/user-and-group-model';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { GroupDTO } from '../../DTO/group/group-dto.model';
-import { RoleDTO } from '../../DTO/role/role-dto';
-import { GroupMapper } from '../../mappers/group.mapper';
-import { RoleMapper } from '../../mappers/role-mapper';
-import { UserAndGroupApiConfig } from '../../other/user-and-group-api-config';
-import { UserAndGroupContext } from '../../other/user-and-group.context.service';
-import { GroupApi } from './group-api.service';
-import { JavaPaginatedResource, ParamsBuilder } from '@crczp/api-common';
+import {HttpClient} from '@angular/common/http';
+import {Injectable} from '@angular/core';
+import {SentinelParamsMerger} from '@sentinel/common';
+import {SentinelFilter} from '@sentinel/common/filter';
+import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
+import {Group, UserRole} from '@crczp/user-and-group-model';
+import {Observable} from 'rxjs';
+import {map} from 'rxjs/operators';
+import {GroupDTO} from '../../DTO/group/group-dto.model';
+import {RoleDTO} from '../../DTO/role/role-dto';
+import {GroupMapper} from '../../mappers/group.mapper';
+import {RoleMapper} from '../../mappers/role-mapper';
+import {UserAndGroupApiConfig} from '../../other/user-and-group-api-config';
+import {UserAndGroupContext} from '../../other/user-and-group.context.service';
+import {GroupApi} from './group-api.service';
+import {JavaPaginatedResource, ParamsBuilder} from '@crczp/api-common';
 
 /**
  * Default implementation of service abstracting http communication with group endpoints.

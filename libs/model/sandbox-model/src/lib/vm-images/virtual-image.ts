@@ -1,4 +1,4 @@
-import { OwnerSpecified } from './owner-specified';
+import {OwnerSpecified} from './owner-specified';
 
 export class VirtualImage {
     osDistro!: string;

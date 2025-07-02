@@ -1,22 +1,18 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { FormsModule, UntypedFormBuilder } from '@angular/forms';
-import { TimelineCommandService } from './timeline-command.service';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { take } from 'rxjs/operators';
-import { OffsetPaginationEvent } from '@sentinel/common/pagination';
-import {
-    CommandApi,
-    TimelineCommandApi,
-    VisualizationApiConfig,
-} from '@crczp/visualization-api';
-import { CommonModule } from '@angular/common';
-import { MatButtonModule } from '@angular/material/button';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatSelectModule } from '@angular/material/select';
-import { MglTimelineModule } from 'angular-mgl-timeline';
-import { DetectedForbiddenCommand, TrainingRun } from '@crczp/training-model';
-import { VisualizationCommand } from '@crczp/visualization-model';
-import { provideComponentProperty } from '@crczp/common';
+import {Component, Input, OnInit} from '@angular/core';
+import {FormsModule, UntypedFormBuilder} from '@angular/forms';
+import {TimelineCommandService} from './timeline-command.service';
+import {BehaviorSubject, Observable} from 'rxjs';
+import {take} from 'rxjs/operators';
+import {OffsetPaginationEvent} from '@sentinel/common/pagination';
+import {CommandApi, TimelineCommandApi, VisualizationApiConfig,} from '@crczp/visualization-api';
+import {CommonModule} from '@angular/common';
+import {MatButtonModule} from '@angular/material/button';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatSelectModule} from '@angular/material/select';
+import {MglTimelineModule} from 'angular-mgl-timeline';
+import {DetectedForbiddenCommand, TrainingRun} from '@crczp/training-model';
+import {VisualizationCommand} from '@crczp/visualization-model';
+import {provideComponentProperty} from '@crczp/common';
 
 @Component({
     selector: 'crczp-timeline',

@@ -1,11 +1,11 @@
-import { CommonModule } from '@angular/common';
-import { ModuleWithProviders, NgModule } from '@angular/core';
-import { TrainingInstanceDetectionEventComponent } from './training-instance-detection-event.component';
-import { SentinelTableModule } from '@sentinel/components/table';
-import { TrainingAgendaConfig, TrainingDefaultNavigator, TrainingNavigator } from '@crczp/training-agenda';
-import { DefaultPaginationService, TrainingAgendaContext } from '@crczp/training-agenda/internal';
-import { DetectionEventService } from '../services/detection-event.service';
-import { DetectionEventConcreteService } from '../services/detection-event-concrete.service';
+import {CommonModule} from '@angular/common';
+import {ModuleWithProviders, NgModule} from '@angular/core';
+import {TrainingInstanceDetectionEventComponent} from './training-instance-detection-event.component';
+import {SentinelTableModule} from '@sentinel/components/table';
+import {TrainingAgendaConfig, TrainingDefaultNavigator, TrainingNavigator} from '@crczp/training-agenda';
+import {DefaultPaginationService, TrainingAgendaContext} from '@crczp/training-agenda/internal';
+import {DetectionEventService} from '../services/detection-event.service';
+import {DetectionEventConcreteService} from '../services/detection-event-concrete.service';
 
 @NgModule({
     imports: [CommonModule, SentinelTableModule],

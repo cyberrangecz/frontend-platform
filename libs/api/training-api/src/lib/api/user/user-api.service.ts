@@ -1,7 +1,7 @@
-import { SentinelFilter } from '@sentinel/common/filter';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
-import { BetaTester, Designer, Organizer, TrainingUser } from '@crczp/training-model';
-import { Observable } from 'rxjs';
+import {SentinelFilter} from '@sentinel/common/filter';
+import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
+import {BetaTester, Designer, Organizer, TrainingUser} from '@crczp/training-model';
+import {Observable} from 'rxjs';
 
 /**
  * Service abstracting http communication with user related endpoints.

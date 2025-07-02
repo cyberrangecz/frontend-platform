@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
-import { WalkthroughUserData, WalkthroughVisualizationData } from '@crczp/visualization-model';
+import {Injectable} from '@angular/core';
+import {WalkthroughUserData, WalkthroughVisualizationData} from '@crczp/visualization-model';
 
 @Injectable()
 export class AbsolutePositionService {

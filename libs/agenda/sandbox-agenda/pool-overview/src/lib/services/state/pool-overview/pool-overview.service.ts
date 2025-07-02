@@ -1,7 +1,7 @@
-import { OffsetPaginatedElementsService } from '@sentinel/common';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
-import { Pool } from '@crczp/sandbox-model';
-import { Observable } from 'rxjs';
+import {OffsetPaginatedElementsService} from '@sentinel/common';
+import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
+import {Pool} from '@crczp/sandbox-model';
+import {Observable} from 'rxjs';
 
 /**
  * A layer between a component and an API service. Implement a concrete service by extending this class.

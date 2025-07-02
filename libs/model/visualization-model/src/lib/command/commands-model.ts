@@ -1,4 +1,4 @@
-import { TrainingUser } from '@crczp/training-model';
+import {TrainingUser} from '@crczp/training-model';
 
 export class Graph {
     graph: string;

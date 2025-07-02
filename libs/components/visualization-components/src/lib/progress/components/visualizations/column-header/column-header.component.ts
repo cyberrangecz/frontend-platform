@@ -1,6 +1,6 @@
-import { Component, EventEmitter, Input, Output, ViewEncapsulation } from '@angular/core';
-import { PROGRESS_CONFIG } from '../../../progress-config';
-import { CommonModule } from '@angular/common';
+import {Component, EventEmitter, Input, Output, ViewEncapsulation} from '@angular/core';
+import {PROGRESS_CONFIG} from '../../../progress-config';
+import {CommonModule} from '@angular/common';
 
 @Component({
     selector: 'crczp-viz-hurdling-column-header',

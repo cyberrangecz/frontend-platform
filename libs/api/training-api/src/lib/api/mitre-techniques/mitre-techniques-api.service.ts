@@ -1,5 +1,5 @@
-import { MitreTechnique } from '@crczp/training-model';
-import { Observable } from 'rxjs';
+import {MitreTechnique} from '@crczp/training-model';
+import {Observable} from 'rxjs';
 
 export abstract class MitreTechniquesApi {
     /**

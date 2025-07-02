@@ -1,21 +1,20 @@
-import { CommonModule } from '@angular/common';
-import { ModuleWithProviders, NgModule } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { SentinelControlsComponent } from '@sentinel/components/controls';
-import { SentinelTableModule } from '@sentinel/components/table';
-import { TrainingAgendaConfig, TrainingDefaultNavigator, TrainingNavigator } from '@crczp/training-agenda';
-import { DefaultPaginationService, TrainingAgendaContext } from '@crczp/training-agenda/internal';
+import {CommonModule} from '@angular/common';
+import {ModuleWithProviders, NgModule} from '@angular/core';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {SentinelControlsComponent} from '@sentinel/components/controls';
+import {SentinelTableModule} from '@sentinel/components/table';
+import {TrainingAgendaConfig, TrainingDefaultNavigator, TrainingNavigator} from '@crczp/training-agenda';
+import {DefaultPaginationService, TableDateCellComponent, TrainingAgendaContext} from '@crczp/training-agenda/internal';
 import {
     AdaptiveInstanceBreadcrumbResolver,
     AdaptiveInstanceResolver,
     AdaptiveInstanceTitleResolver,
 } from '@crczp/training-agenda/resolvers';
-import { AdaptiveInstanceOverviewComponent } from './adaptive-instance-overview.component';
-import { AdaptiveInstanceOverviewService } from '../services/state/adaptive-instance-overview.service';
-import { AdaptiveInstanceOverviewConcreteService } from '../services/state/adaptive-instance-overview-concrete.service';
-import { AdaptiveInstanceOverviewMaterialModule } from './adaptive-instance-overview-material.module';
-import { InstanceCountdownComponent } from './instance-countdown/instance-countdown.component';
-import { TableDateCellComponent } from '@crczp/training-agenda/internal';
+import {AdaptiveInstanceOverviewComponent} from './adaptive-instance-overview.component';
+import {AdaptiveInstanceOverviewService} from '../services/state/adaptive-instance-overview.service';
+import {AdaptiveInstanceOverviewConcreteService} from '../services/state/adaptive-instance-overview-concrete.service';
+import {AdaptiveInstanceOverviewMaterialModule} from './adaptive-instance-overview-material.module';
+import {InstanceCountdownComponent} from './instance-countdown/instance-countdown.component';
 
 /**
  * Main module of training instance agenda. Contains components and providers for displaying table of training instance

@@ -1,7 +1,7 @@
-import { MatDialog } from '@angular/material/dialog';
-import { RunningAdaptiveRunService } from '../running/running-adaptive-run.service';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { LevelAnswerCheck, PhaseAnswerCheck, TrainingPhase } from '@crczp/training-model';
+import {MatDialog} from '@angular/material/dialog';
+import {RunningAdaptiveRunService} from '../running/running-adaptive-run.service';
+import {BehaviorSubject, Observable} from 'rxjs';
+import {LevelAnswerCheck, PhaseAnswerCheck, TrainingPhase} from '@crczp/training-model';
 import {
     SentinelConfirmationDialogComponent,
     SentinelConfirmationDialogConfig,
@@ -13,7 +13,7 @@ import {
     SentinelNotificationService,
     SentinelNotificationTypeEnum,
 } from '@sentinel/layout/notification';
-import { map } from 'rxjs/operators';
+import {map} from 'rxjs/operators';
 
 export abstract class AdaptiveRunTrainingPhaseService {
     protected constructor(

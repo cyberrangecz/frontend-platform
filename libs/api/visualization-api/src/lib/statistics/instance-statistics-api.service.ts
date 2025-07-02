@@ -1,11 +1,11 @@
-import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
-import { TrainingInstanceStatisticsDTO } from './dtos';
-import { map } from 'rxjs/operators';
-import { TrainingInstanceMapper } from './mappers/training-instance-mapper';
-import { TrainingInstanceStatistics } from '@crczp/visualization-model';
-import { VisualizationApiConfig } from '../config/visualization-api-config';
+import {Injectable} from '@angular/core';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {BehaviorSubject, Observable, tap} from 'rxjs';
+import {TrainingInstanceStatisticsDTO} from './dtos';
+import {map} from 'rxjs/operators';
+import {TrainingInstanceMapper} from './mappers/training-instance-mapper';
+import {TrainingInstanceStatistics} from '@crczp/visualization-model';
+import {VisualizationApiConfig} from '../config/visualization-api-config';
 
 
 @Injectable()

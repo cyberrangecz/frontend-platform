@@ -1,5 +1,5 @@
-import { AccessedTrainingRun, TraineeAccessTrainingRunActionEnum, TrainingRunTypeEnum } from '@crczp/training-model';
-import { AccessedTrainingRunDTO } from '../../dto/training-run/accessed-training-run-dto';
+import {AccessedTrainingRun, TraineeAccessTrainingRunActionEnum, TrainingRunTypeEnum} from '@crczp/training-model';
+import {AccessedTrainingRunDTO} from '../../dto/training-run/accessed-training-run-dto';
 import PossibleActionEnum = AccessedTrainingRunDTO.PossibleActionEnum;
 
 /**

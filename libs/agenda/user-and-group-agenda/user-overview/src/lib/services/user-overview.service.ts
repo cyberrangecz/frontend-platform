@@ -1,29 +1,20 @@
-import { inject, Injectable } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import {Injectable} from '@angular/core';
+import {MatDialog} from '@angular/material/dialog';
 import {
     SentinelConfirmationDialogComponent,
     SentinelConfirmationDialogConfig,
     SentinelDialogResultEnum,
 } from '@sentinel/components/dialogs';
-import {
-    OffsetPaginationEvent,
-    PaginatedResource,
-} from '@sentinel/common/pagination';
-import { UserApi } from '@crczp/user-and-group-api';
-import { User } from '@crczp/user-and-group-model';
-import { EMPTY, Observable } from 'rxjs';
-import { map, switchMap, take, tap } from 'rxjs/operators';
-import {
-    SelectablePaginatedService,
-    UserFilter,
-} from '@crczp/user-and-group-agenda/internal';
-import { UsersUploadDialogComponent } from '../components/upload-dialog/users-upload-dialog.component';
-import { FileUploadProgressService } from './file-upload/file-upload-progress.service';
-import {
-    UserAndGroupErrorHandler,
-    UserAndGroupNotificationService,
-} from '@crczp/user-and-group-agenda';
-import { Settings } from '@crczp/common';
+import {OffsetPaginationEvent, PaginatedResource,} from '@sentinel/common/pagination';
+import {UserApi} from '@crczp/user-and-group-api';
+import {User} from '@crczp/user-and-group-model';
+import {EMPTY, Observable} from 'rxjs';
+import {map, switchMap, take, tap} from 'rxjs/operators';
+import {SelectablePaginatedService, UserFilter,} from '@crczp/user-and-group-agenda/internal';
+import {UsersUploadDialogComponent} from '../components/upload-dialog/users-upload-dialog.component';
+import {FileUploadProgressService} from './file-upload/file-upload-progress.service';
+import {UserAndGroupErrorHandler, UserAndGroupNotificationService,} from '@crczp/user-and-group-agenda';
+import {Settings} from '@crczp/common';
 
 /**
  * Basic implementation of a layer between a component and an API service.
@@ -40,9 +31,10 @@ export class UserOverviewService extends SelectablePaginatedService<User> {
         private dialog: MatDialog,
         private alertService: UserAndGroupNotificationService,
         private fileUploadProgressService: FileUploadProgressService,
-        private errorHandler: UserAndGroupErrorHandler
+        private errorHandler: UserAndGroupErrorHandler,
+        settings: Settings
     ) {
-        super(inject(Settings.DEFAULT_PAGE_SIZE));
+        super(settings.DEFAULT_PAGE_SIZE);
     }
 
     /**
@@ -169,7 +161,7 @@ export class UserOverviewService extends SelectablePaginatedService<User> {
 
         const dialogRef = this.dialog.open(
             SentinelConfirmationDialogComponent,
-            { data: dialogData }
+            {data: dialogData}
         );
         return dialogRef
             .afterClosed()

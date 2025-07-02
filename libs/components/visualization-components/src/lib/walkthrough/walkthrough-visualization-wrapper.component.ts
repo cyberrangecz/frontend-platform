@@ -1,8 +1,8 @@
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
-import { AbsolutePositionService } from './service/absolute-position.service';
-import { ChartBaseComponent } from './chart-base/chart-base.component';
-import { CommonModule } from '@angular/common';
-import { WalkthroughVisualizationData } from '@crczp/visualization-model';
+import {Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
+import {AbsolutePositionService} from './service/absolute-position.service';
+import {ChartBaseComponent} from './chart-base/chart-base.component';
+import {CommonModule} from '@angular/common';
+import {WalkthroughVisualizationData} from '@crczp/visualization-model';
 
 @Component({
     selector: 'crczp-walkthrough-visualization-wrapper',

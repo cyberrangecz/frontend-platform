@@ -6,20 +6,20 @@ import {
     Level,
     TrainingLevel,
 } from '@crczp/training-model';
-import { AbstractLevelDTO } from '../../dto/level/abstract-level-dto';
-import { AssessmentLevelDTO } from '../../dto/level/assessment/assessment-level-dto';
-import { BasicLevelInfoDTO } from '../../dto/level/basic-level-info-dto';
-import { TrainingLevelDto } from '../../dto/level/training/training-level-dto';
-import { InfoLevelDTO } from '../../dto/level/info/info-level-dto';
-import { AssessmentLevelMapper } from './assessment/assessment-level-mapper';
-import { TrainingLevelMapper } from './training/training-level-mapper';
-import { InfoLevelMapper } from './info/info-level-mapper';
-import { TrainingLevelUpdateDTOClass } from '../../dto/level/training/training-level-update-dto';
-import { InfoLevelUpdateDTOClass } from '../../dto/level/info/info-level-update-dto';
-import { AssessmentLevelUpdateDTOClass } from '../../dto/level/assessment/assessment-level-update-dto';
-import { AccessLevelMapper } from './access/access-level-mapper';
-import { AccessLevelUpdateDTOClass } from '../../dto/level/access/access-level-update-dto';
-import { AccessLevelDTO } from '../../dto/level/access/access-level-dto';
+import {AbstractLevelDTO} from '../../dto/level/abstract-level-dto';
+import {AssessmentLevelDTO} from '../../dto/level/assessment/assessment-level-dto';
+import {BasicLevelInfoDTO} from '../../dto/level/basic-level-info-dto';
+import {TrainingLevelDto} from '../../dto/level/training/training-level-dto';
+import {InfoLevelDTO} from '../../dto/level/info/info-level-dto';
+import {AssessmentLevelMapper} from './assessment/assessment-level-mapper';
+import {TrainingLevelMapper} from './training/training-level-mapper';
+import {InfoLevelMapper} from './info/info-level-mapper';
+import {TrainingLevelUpdateDTOClass} from '../../dto/level/training/training-level-update-dto';
+import {InfoLevelUpdateDTOClass} from '../../dto/level/info/info-level-update-dto';
+import {AssessmentLevelUpdateDTOClass} from '../../dto/level/assessment/assessment-level-update-dto';
+import {AccessLevelMapper} from './access/access-level-mapper';
+import {AccessLevelUpdateDTOClass} from '../../dto/level/access/access-level-update-dto';
+import {AccessLevelDTO} from '../../dto/level/access/access-level-dto';
 
 /**
  * @dynamic

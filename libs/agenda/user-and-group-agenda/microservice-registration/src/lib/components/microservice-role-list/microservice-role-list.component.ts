@@ -1,9 +1,9 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Output } from '@angular/core';
-import { MicroserviceRole } from '@crczp/user-and-group-model';
-import { MicroserviceRoleItem } from '../../model/microservice-role-item';
-import { MicroserviceRolesState } from '../../model/microservice-roles-state';
-import { MicroserviceRoleComponent } from './microservice-role/microservice-role.component';
-import { MatButton } from '@angular/material/button';
+import {ChangeDetectionStrategy, Component, EventEmitter, Output} from '@angular/core';
+import {MicroserviceRole} from '@crczp/user-and-group-model';
+import {MicroserviceRoleItem} from '../../model/microservice-role-item';
+import {MicroserviceRolesState} from '../../model/microservice-roles-state';
+import {MicroserviceRoleComponent} from './microservice-role/microservice-role.component';
+import {MatButton} from '@angular/material/button';
 
 /**
  * Class containing list of microservice-registration roles

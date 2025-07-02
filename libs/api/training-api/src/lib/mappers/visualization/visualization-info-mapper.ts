@@ -1,6 +1,6 @@
-import { AbstractLevelTypeEnum, VisualizationInfo } from '@crczp/training-model';
-import { VisualizationInfoDTO } from './../../dto/visualization/visualization-info-dto';
-import { LevelMapper } from './../level/level-mapper';
+import {AbstractLevelTypeEnum, VisualizationInfo} from '@crczp/training-model';
+import {VisualizationInfoDTO} from './../../dto/visualization/visualization-info-dto';
+import {LevelMapper} from './../level/level-mapper';
 
 export class VisualizationInfoMapper {
     static fromDTO(dto: VisualizationInfoDTO): VisualizationInfo {

@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import * as d3 from 'd3';
-import { AbsolutePositionService } from '../../../../service/absolute-position.service';
+import {AbsolutePositionService} from '../../../../service/absolute-position.service';
 
 export type TooltipEvent = {
     visible: boolean;

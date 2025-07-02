@@ -6,17 +6,17 @@ import {
     Level,
     TrainingLevel,
 } from '@crczp/training-model';
-import { AbstractLevelDTO } from '../../dto/level/abstract-level-dto';
-import { AssessmentLevelDTO } from '../../dto/level/assessment/assessment-level-dto';
-import { BasicLevelInfoDTO } from '../../dto/level/basic-level-info-dto';
-import { TrainingLevelDto } from '../../dto/level/training/training-level-dto';
-import { InfoLevelDTO } from '../../dto/level/info/info-level-dto';
-import { AccessLevelDTO } from '../../dto/level/access/access-level-dto';
-import { TrainingLevelMapper } from '../level/training/training-level-mapper';
-import { InfoLevelMapper } from '../level/info/info-level-mapper';
-import { AccessLevelMapper } from '../level/access/access-level-mapper';
-import { AnsweredLevelMapper } from './training-run-levels/answered-level-mapper';
-import { AnsweredAssessmentLevelMapper } from './training-run-levels/assessment/answered-assessment-level-mapper';
+import {AbstractLevelDTO} from '../../dto/level/abstract-level-dto';
+import {AssessmentLevelDTO} from '../../dto/level/assessment/assessment-level-dto';
+import {BasicLevelInfoDTO} from '../../dto/level/basic-level-info-dto';
+import {TrainingLevelDto} from '../../dto/level/training/training-level-dto';
+import {InfoLevelDTO} from '../../dto/level/info/info-level-dto';
+import {AccessLevelDTO} from '../../dto/level/access/access-level-dto';
+import {TrainingLevelMapper} from '../level/training/training-level-mapper';
+import {InfoLevelMapper} from '../level/info/info-level-mapper';
+import {AccessLevelMapper} from '../level/access/access-level-mapper';
+import {AnsweredLevelMapper} from './training-run-levels/answered-level-mapper';
+import {AnsweredAssessmentLevelMapper} from './training-run-levels/assessment/answered-assessment-level-mapper';
 
 /**
  * @dynamic

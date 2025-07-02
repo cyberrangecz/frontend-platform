@@ -1,19 +1,19 @@
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { ResponseHeaderContentDispositionReader, SentinelParamsMerger } from '@sentinel/common';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
-import { SentinelFilter } from '@sentinel/common/filter';
-import { User, UserRole } from '@crczp/user-and-group-model';
-import { fromEvent, mergeMap, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { RoleDTO } from '../../DTO/role/role-dto';
-import { UserAndGroupUserDTO } from '../../DTO/user/user-dto.model';
-import { RoleMapper } from '../../mappers/role-mapper';
-import { UserMapper } from '../../mappers/user.mapper';
-import { UserAndGroupApiConfig } from '../../other/user-and-group-api-config';
-import { UserAndGroupContext } from '../../other/user-and-group.context.service';
-import { UserApi } from './user-api.service';
-import { BlobFileSaver, handleJsonError, JavaPaginatedResource, ParamsBuilder } from '@crczp/api-common';
+import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
+import {Injectable} from '@angular/core';
+import {ResponseHeaderContentDispositionReader, SentinelParamsMerger} from '@sentinel/common';
+import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
+import {SentinelFilter} from '@sentinel/common/filter';
+import {User, UserRole} from '@crczp/user-and-group-model';
+import {fromEvent, mergeMap, Observable} from 'rxjs';
+import {map} from 'rxjs/operators';
+import {RoleDTO} from '../../DTO/role/role-dto';
+import {UserAndGroupUserDTO} from '../../DTO/user/user-dto.model';
+import {RoleMapper} from '../../mappers/role-mapper';
+import {UserMapper} from '../../mappers/user.mapper';
+import {UserAndGroupApiConfig} from '../../other/user-and-group-api-config';
+import {UserAndGroupContext} from '../../other/user-and-group.context.service';
+import {UserApi} from './user-api.service';
+import {BlobFileSaver, handleJsonError, JavaPaginatedResource, ParamsBuilder} from '@crczp/api-common';
 
 /**
  * Default implementation of abstracting http communication with user endpoints

@@ -1,34 +1,26 @@
-import { inject, Injectable } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
+import {Injectable} from '@angular/core';
+import {MatDialog} from '@angular/material/dialog';
+import {Router} from '@angular/router';
 import {
     SentinelConfirmationDialogComponent,
     SentinelConfirmationDialogConfig,
     SentinelDialogResultEnum,
 } from '@sentinel/components/dialogs';
-import { SentinelFilter } from '@sentinel/common/filter';
+import {SentinelFilter} from '@sentinel/common/filter';
+import {OffsetPaginationEvent, PaginatedResource,} from '@sentinel/common/pagination';
+import {TrainingDefinitionApi} from '@crczp/training-api';
+import {TrainingDefinition, TrainingDefinitionStateEnum,} from '@crczp/training-model';
+import {EMPTY, from, Observable} from 'rxjs';
+import {map, switchMap, take, tap} from 'rxjs/operators';
+import {CloneDialogComponent} from '../../components/clone-dialog/clone-dialog.component';
 import {
-    OffsetPaginationEvent,
-    PaginatedResource,
-} from '@sentinel/common/pagination';
-import { TrainingDefinitionApi } from '@crczp/training-api';
-import {
-    TrainingDefinition,
-    TrainingDefinitionStateEnum,
-} from '@crczp/training-model';
-import { EMPTY, from, Observable } from 'rxjs';
-import { map, switchMap, take, tap } from 'rxjs/operators';
-import { CloneDialogComponent } from '../../components/clone-dialog/clone-dialog.component';
-import { TrainingDefinitionUploadDialogComponent } from '../../components/upload-dialog/training-definition-upload-dialog.component';
-import {
-    TrainingErrorHandler,
-    TrainingNavigator,
-    TrainingNotificationService,
-} from '@crczp/training-agenda';
-import { TrainingAgendaContext } from '@crczp/training-agenda/internal';
-import { FileUploadProgressService } from '../file-upload/file-upload-progress.service';
-import { TrainingDefinitionService } from './training-definition.service';
-import { Settings } from '@crczp/common';
+    TrainingDefinitionUploadDialogComponent
+} from '../../components/upload-dialog/training-definition-upload-dialog.component';
+import {TrainingErrorHandler, TrainingNavigator, TrainingNotificationService,} from '@crczp/training-agenda';
+import {TrainingAgendaContext} from '@crczp/training-agenda/internal';
+import {FileUploadProgressService} from '../file-upload/file-upload-progress.service';
+import {TrainingDefinitionService} from './training-definition.service';
+import {Settings} from '@crczp/common';
 
 /**
  * Basic implementation of a layer between a component and an API service.
@@ -47,9 +39,10 @@ export class TrainingDefinitionConcreteService extends TrainingDefinitionService
         private navigator: TrainingNavigator,
         private notificationService: TrainingNotificationService,
         private fileUploadProgressService: FileUploadProgressService,
-        private errorHandler: TrainingErrorHandler
+        private errorHandler: TrainingErrorHandler,
+        settings: Settings
     ) {
-        super(inject(Settings.DEFAULT_PAGE_SIZE));
+        super(settings.DEFAULT_PAGE_SIZE);
     }
 
     /**

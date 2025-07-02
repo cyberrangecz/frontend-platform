@@ -1,5 +1,5 @@
-import { QuestionTypeEnum } from '../../enums/question-type.enum';
-import { Choice } from './choice';
+import {QuestionTypeEnum} from '../../enums/question-type.enum';
+import {Choice} from './choice';
 
 export class AdaptiveQuestion {
     id!: number;

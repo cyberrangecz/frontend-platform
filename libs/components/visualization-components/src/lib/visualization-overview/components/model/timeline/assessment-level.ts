@@ -1,5 +1,5 @@
-import { TimelineQuestion } from './timeline-question';
-import { BasicAssessmentInfo, TimelineLevel } from './timeline-level';
+import {TimelineQuestion} from './timeline-question';
+import {BasicAssessmentInfo, TimelineLevel} from './timeline-level';
 
 export class AssessmentLevel extends TimelineLevel {
     assessmentType: BasicAssessmentInfo.AssessmentTypeEnum;

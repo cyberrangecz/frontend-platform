@@ -1,9 +1,9 @@
-import { SvgConfig } from '../../../../shared/interfaces/configurations/svg-config';
-import { SvgMarginConfig } from '../../../../shared/interfaces/configurations/svg-margin-config';
-import { BarConfig } from '../../../../shared/interfaces/configurations/bar-config';
-import { PlayerPointConfig } from '../../../../shared/interfaces/configurations/player-point-config';
-import { AxesConfig } from '../../../../shared/interfaces/configurations/axes-config';
-import { CrosshairConfig } from '../../../../shared/interfaces/configurations/crosshair-config';
+import {SvgConfig} from '../../../../shared/interfaces/configurations/svg-config';
+import {SvgMarginConfig} from '../../../../shared/interfaces/configurations/svg-margin-config';
+import {BarConfig} from '../../../../shared/interfaces/configurations/bar-config';
+import {PlayerPointConfig} from '../../../../shared/interfaces/configurations/player-point-config';
+import {AxesConfig} from '../../../../shared/interfaces/configurations/axes-config';
+import {CrosshairConfig} from '../../../../shared/interfaces/configurations/crosshair-config';
 
 export const SVG_CONFIG: SvgConfig = {
     width: 1200,

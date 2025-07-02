@@ -1,5 +1,5 @@
-import { AbstractLevelTypeEnum, Level } from '@crczp/training-model';
-import { StepItem, StepStateEnum } from '@sentinel/components/stepper';
+import {AbstractLevelTypeEnum, Level} from '@crczp/training-model';
+import {StepItem, StepStateEnum} from '@sentinel/components/stepper';
 
 export class LevelStepperAdapter implements StepItem {
     id: number;

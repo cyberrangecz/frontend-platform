@@ -1,5 +1,5 @@
-import { Connectable } from './connectable';
-import { Node } from './node';
+import {Connectable} from './connectable';
+import {Node} from './node';
 
 /**
  * Node of type router

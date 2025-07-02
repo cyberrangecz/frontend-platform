@@ -1,20 +1,11 @@
-import {
-    Component,
-    EventEmitter,
-    HostListener,
-    Input,
-    OnChanges,
-    OnInit,
-    Output,
-    SimpleChanges,
-} from '@angular/core';
-import { ContextMenuService } from '../../services/context-menu.service';
-import { Clipboard } from '@angular/cdk/clipboard';
-import { HostNode, RouterNode } from '@crczp/topology-graph-model';
-import { take } from 'rxjs/operators';
-import { NodeActionEnum } from '../../model/enums/node-context-menu-items-enum';
-import { Dimensions } from '../../model/others/dimensions';
-import { Settings } from '@crczp/common';
+import {Component, EventEmitter, HostListener, Input, OnChanges, OnInit, Output, SimpleChanges,} from '@angular/core';
+import {ContextMenuService} from '../../services/context-menu.service';
+import {Clipboard} from '@angular/cdk/clipboard';
+import {HostNode, RouterNode} from '@crczp/topology-graph-model';
+import {take} from 'rxjs/operators';
+import {NodeActionEnum} from '../../model/enums/node-context-menu-items-enum';
+import {Dimensions} from '../../model/others/dimensions';
+import {Settings} from '@crczp/common';
 
 /**
  * Visual component for displaying context meu of node after right click

@@ -1,9 +1,9 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { ADAPTIVE_DEFINITION_DATA_ATTRIBUTE_NAME } from '@crczp/training-agenda';
-import { TrainingDefinition } from '@crczp/training-model';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
+import {ADAPTIVE_DEFINITION_DATA_ATTRIBUTE_NAME} from '@crczp/training-agenda';
+import {TrainingDefinition} from '@crczp/training-model';
+import {async, Observable} from 'rxjs';
+import {map} from 'rxjs/operators';
 
 @Component({
     selector: 'crczp-adaptive-definition-summary',
@@ -23,4 +23,6 @@ export class AdaptiveDefinitionSummaryComponent implements OnInit {
             map((data) => data[ADAPTIVE_DEFINITION_DATA_ATTRIBUTE_NAME]),
         );
     }
+
+    protected readonly async = async;
 }

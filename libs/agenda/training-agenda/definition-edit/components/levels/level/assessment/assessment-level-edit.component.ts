@@ -9,10 +9,10 @@ import {
     Output,
     SimpleChanges,
 } from '@angular/core';
-import { AssessmentLevel, Question } from '@crczp/training-model';
-import { AssessmentLevelEditFormGroup } from './assessment-level-edit-form-group';
-import { AbstractControl } from '@angular/forms';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {AssessmentLevel, Question} from '@crczp/training-model';
+import {AssessmentLevelEditFormGroup} from './assessment-level-edit-form-group';
+import {AbstractControl} from '@angular/forms';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 
 /**
  * Component for editing new or existing assessment level

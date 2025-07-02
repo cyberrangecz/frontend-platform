@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
-import { SandboxConfig } from './sandbox-config';
+import {Injectable} from '@angular/core';
+import {SandboxConfig} from './sandbox-config';
 
 @Injectable()
 export class SandboxApiConfigService {

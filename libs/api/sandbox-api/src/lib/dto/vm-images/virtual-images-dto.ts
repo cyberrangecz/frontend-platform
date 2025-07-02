@@ -1,4 +1,4 @@
-import { OwnerSpecifiedDTO } from './owner-specified-dto';
+import {OwnerSpecifiedDTO} from './owner-specified-dto';
 
 export class VirtualImagesDTO {
     os_distro: string;

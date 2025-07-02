@@ -1,5 +1,5 @@
-import { Observable } from 'rxjs';
-import { HardwareUsage, Resources } from '@crczp/sandbox-model';
+import {Observable} from 'rxjs';
+import {HardwareUsage, Resources} from '@crczp/sandbox-model';
 
 /**
  * Service abstracting http communication with resources endpoints.

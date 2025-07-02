@@ -1,11 +1,11 @@
-import { Component, ElementRef, EventEmitter, HostListener, Input, OnChanges, OnInit, Output } from '@angular/core';
-import { CommentFormGroup } from './comment-form-group';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { ReactiveFormsModule } from '@angular/forms';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatInputModule } from '@angular/material/input';
-import { MatFabButton } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
+import {Component, ElementRef, EventEmitter, HostListener, Input, OnChanges, OnInit, Output} from '@angular/core';
+import {CommentFormGroup} from './comment-form-group';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {ReactiveFormsModule} from '@angular/forms';
+import {MatTooltipModule} from '@angular/material/tooltip';
+import {MatInputModule} from '@angular/material/input';
+import {MatFabButton} from '@angular/material/button';
+import {MatIconModule} from '@angular/material/icon';
 
 @Component({
     selector: 'crczp-editable-comment',

@@ -1,4 +1,4 @@
-import { AssessmentParticipant } from '@crczp/visualization-model';
+import {AssessmentParticipant} from '@crczp/visualization-model';
 
 export class FFQTableRow {
     answer: string;

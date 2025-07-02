@@ -1,6 +1,6 @@
-import { AbstractLevelTypeEnum } from '@crczp/training-model';
-import { TrainingDataEntry } from './entry-model';
-import { ProgressEvent } from '../event/progress/progress-events-model';
+import {AbstractLevelTypeEnum} from '@crczp/training-model';
+import {TrainingDataEntry} from './entry-model';
+import {ProgressEvent} from '../event/progress/progress-events-model';
 
 export class ProgressVisualizationData {
     startTime: number;

@@ -1,4 +1,4 @@
-import { AbstractLevelDTO } from '../abstract-level-dto';
+import {AbstractLevelDTO} from '../abstract-level-dto';
 
 /**
  * Info Level to update.

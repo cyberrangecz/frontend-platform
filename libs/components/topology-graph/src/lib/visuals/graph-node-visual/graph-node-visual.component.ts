@@ -1,21 +1,8 @@
-import {
-    Component,
-    EventEmitter,
-    Input,
-    OnDestroy,
-    OnInit,
-    Output,
-} from '@angular/core';
-import {
-    HostNode,
-    Node,
-    NodePhysicalRoleEnum,
-    RouterNode,
-    SwitchNode,
-} from '@crczp/topology-graph-model';
-import { GraphEventService } from '../../services/graph-event.service';
-import { ICONS_PATH } from '../../icons-path';
-import { Dimensions } from '../../model/others/dimensions';
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output,} from '@angular/core';
+import {HostNode, Node, NodePhysicalRoleEnum, RouterNode, SwitchNode,} from '@crczp/topology-graph-model';
+import {GraphEventService} from '../../services/graph-event.service';
+import {ICONS_PATH} from '../../icons-path';
+import {Dimensions} from '../../model/others/dimensions';
 
 /**
  * Visual component used for displaying nodes of the graph-visual and its decorators. Binds to node model.

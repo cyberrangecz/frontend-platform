@@ -1,6 +1,6 @@
-import { TimelineEventDTO } from '../../dto/timeline/timeline-event-dto';
-import { BasicEventInfo, TimelineEvent } from '../../../model/timeline/timeline-event';
-import { BasicLevelInfoDTO } from '../../dto/timeline/timeline-level-data-dto';
+import {TimelineEventDTO} from '../../dto/timeline/timeline-event-dto';
+import {BasicEventInfo, TimelineEvent} from '../../../model/timeline/timeline-event';
+import {BasicLevelInfoDTO} from '../../dto/timeline/timeline-level-data-dto';
 import TimelineEventTypeEnum = BasicEventInfo.TimelineEventTypeEnum;
 
 /**

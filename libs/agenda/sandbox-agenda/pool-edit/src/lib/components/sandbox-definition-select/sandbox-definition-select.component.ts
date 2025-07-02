@@ -1,13 +1,4 @@
-import {
-    ChangeDetectionStrategy,
-    Component,
-    DestroyRef,
-    inject,
-    Inject,
-    Input,
-    OnInit,
-    Optional,
-} from '@angular/core';
+import {ChangeDetectionStrategy, Component, DestroyRef, inject, Inject, Input, OnInit, Optional,} from '@angular/core';
 import {
     MAT_DIALOG_DATA,
     MatDialogActions,
@@ -15,26 +6,20 @@ import {
     MatDialogRef,
     MatDialogTitle,
 } from '@angular/material/dialog';
-import {
-    OffsetPaginationEvent,
-    PaginatedResource,
-} from '@sentinel/common/pagination';
-import { SandboxDefinition } from '@crczp/sandbox-model';
-import { async, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import {OffsetPaginationEvent, PaginatedResource,} from '@sentinel/common/pagination';
+import {SandboxDefinition} from '@crczp/sandbox-model';
+import {async, Observable} from 'rxjs';
+import {map} from 'rxjs/operators';
 import {
     SandboxDefinitionOverviewConcreteService,
     SandboxDefinitionOverviewService,
 } from '@crczp/sandbox-agenda/internal';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import {
-    SentinelListComponent,
-    SentinelListElementDirective,
-} from '@sentinel/components/list';
-import { MatButton } from '@angular/material/button';
-import { AsyncPipe } from '@angular/common';
-import { MatDivider } from '@angular/material/divider';
-import { PaginationStorageService } from '@crczp/common';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import {SentinelListComponent, SentinelListElementDirective,} from '@sentinel/components/list';
+import {MatButton} from '@angular/material/button';
+import {AsyncPipe} from '@angular/common';
+import {MatDivider} from '@angular/material/divider';
+import {PaginationStorageService} from '@crczp/common';
 
 @Component({
     selector: 'crczp-sandbox-definition-select',

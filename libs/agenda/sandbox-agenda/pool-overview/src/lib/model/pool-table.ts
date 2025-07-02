@@ -1,5 +1,5 @@
-import { PaginatedResource } from '@sentinel/common/pagination';
-import { Pool, Resources } from '@crczp/sandbox-model';
+import {PaginatedResource} from '@sentinel/common/pagination';
+import {Pool, Resources} from '@crczp/sandbox-model';
 import {
     Column,
     DeleteAction,
@@ -9,12 +9,12 @@ import {
     RowAction,
     RowExpand,
 } from '@sentinel/components/table';
-import { defer, Observable, of } from 'rxjs';
-import { SandboxNavigator } from '@crczp/sandbox-agenda';
-import { PoolRowAdapter } from './pool-row-adapter';
-import { AbstractPoolService } from '../services/abstract-pool/abstract-sandbox/abstract-pool.service';
-import { SandboxInstanceService } from '@crczp/sandbox-agenda/pool-detail';
-import { PoolExpandDetailComponent } from '../components/pool-expand-detail/pool-expand-detail.component';
+import {defer, Observable, of} from 'rxjs';
+import {SandboxNavigator} from '@crczp/sandbox-agenda';
+import {PoolRowAdapter} from './pool-row-adapter';
+import {AbstractPoolService} from '../services/abstract-pool/abstract-sandbox/abstract-pool.service';
+import {SandboxInstanceService} from '@crczp/sandbox-agenda/pool-detail';
+import {PoolExpandDetailComponent} from '../components/pool-expand-detail/pool-expand-detail.component';
 
 /**
  * Helper class transforming paginated resource to class for common table component

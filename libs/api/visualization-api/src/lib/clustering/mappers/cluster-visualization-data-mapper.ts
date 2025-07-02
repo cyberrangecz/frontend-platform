@@ -1,5 +1,5 @@
-import { ClusteringVisualizationData } from '@crczp/visualization-model';
-import { ClusterDto, ClusteringVisualizationDataDTO } from '../dtos';
+import {ClusteringVisualizationData} from '@crczp/visualization-model';
+import {ClusterDto, ClusteringVisualizationDataDTO} from '../dtos';
 
 export class ClusterVisualizationDataMapper {
     static fromDTO(dto: ClusteringVisualizationDataDTO | any): ClusteringVisualizationData {

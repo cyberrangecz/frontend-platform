@@ -1,13 +1,13 @@
-import { CleanupRequest, SandboxInstance } from '@crczp/sandbox-model';
-import { SandboxNavigator } from '@crczp/sandbox-agenda';
-import { Column, DeleteAction, Row, RowAction, SentinelTable } from '@sentinel/components/table';
-import { PaginatedResource } from '@sentinel/common/pagination';
-import { defer, of } from 'rxjs';
-import { PoolDetailRowAdapter } from './pool-detail-row-adapter';
-import { CleanupRequestsService } from '../services/state/request/cleanup/cleanup-requests.service';
-import { AbstractSandbox } from './abstract-sandbox';
-import { SandboxInstanceService } from '../services/state/sandbox-instance/sandbox-instance.service';
-import { DatePipe } from '@angular/common';
+import {CleanupRequest, SandboxInstance} from '@crczp/sandbox-model';
+import {SandboxNavigator} from '@crczp/sandbox-agenda';
+import {Column, DeleteAction, Row, RowAction, SentinelTable} from '@sentinel/components/table';
+import {PaginatedResource} from '@sentinel/common/pagination';
+import {defer, of} from 'rxjs';
+import {PoolDetailRowAdapter} from './pool-detail-row-adapter';
+import {CleanupRequestsService} from '../services/state/request/cleanup/cleanup-requests.service';
+import {AbstractSandbox} from './abstract-sandbox';
+import {SandboxInstanceService} from '../services/state/sandbox-instance/sandbox-instance.service';
+import {DatePipe} from '@angular/common';
 
 /**
  * @dynamic

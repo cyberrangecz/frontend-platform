@@ -1,8 +1,8 @@
-import { Component, Input, OnChanges, OnInit } from '@angular/core';
-import { ProgressVisualizationData, TraineeProgressData, TrainingRunStartedEvent } from '@crczp/visualization-model';
-import { MatProgressBar } from '@angular/material/progress-bar';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { CommonModule } from '@angular/common';
+import {Component, Input, OnChanges, OnInit} from '@angular/core';
+import {ProgressVisualizationData, TraineeProgressData, TrainingRunStartedEvent} from '@crczp/visualization-model';
+import {MatProgressBar} from '@angular/material/progress-bar';
+import {MatTooltipModule} from '@angular/material/tooltip';
+import {CommonModule} from '@angular/common';
 
 @Component({
     selector: 'crczp-viz-hurdling-overview-progress-bar',

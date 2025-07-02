@@ -1,5 +1,5 @@
-import { Component, Input } from '@angular/core';
-import { ExtendedMatchingItems } from '@crczp/training-model';
+import {Component, Input} from '@angular/core';
+import {ExtendedMatchingItems} from '@crczp/training-model';
 
 @Component({
     selector: 'crczp-extended-matching-question-detail',

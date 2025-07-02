@@ -1,5 +1,5 @@
-import { MitreTechnique } from '@crczp/training-model';
-import { MitreTechniqueDTO } from '../../dto/mitre-techniques/mitre-technique-dto';
+import {MitreTechnique} from '@crczp/training-model';
+import {MitreTechniqueDTO} from '../../dto/mitre-techniques/mitre-technique-dto';
 
 /**
  * @dynamic

@@ -1,5 +1,5 @@
-import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
-import { Group } from '@crczp/user-and-group-model';
+import {UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
+import {Group} from '@crczp/user-and-group-model';
 
 /**
  * Form control class for state group-overview componnet

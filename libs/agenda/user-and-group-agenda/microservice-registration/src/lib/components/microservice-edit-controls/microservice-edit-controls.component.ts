@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
-import { MatError } from '@angular/material/input';
-import { MatButton } from '@angular/material/button';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@angular/core';
+import {MatError} from '@angular/material/input';
+import {MatButton} from '@angular/material/button';
 
 /**
  * Microservice state controls for microservice-registration state component

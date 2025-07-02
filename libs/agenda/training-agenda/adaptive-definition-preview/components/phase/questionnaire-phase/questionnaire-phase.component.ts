@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { QuestionAnswer, QuestionnairePhase, QuestionTypeEnum } from '@crczp/training-model';
+import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
+import {QuestionAnswer, QuestionnairePhase, QuestionTypeEnum} from '@crczp/training-model';
 
 @Component({
     selector: 'crczp-questionnaire-phase',

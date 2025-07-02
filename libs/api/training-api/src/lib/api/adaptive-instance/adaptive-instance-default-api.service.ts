@@ -1,17 +1,17 @@
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { ResponseHeaderContentDispositionReader, SentinelParamsMerger } from '@sentinel/common';
-import { SentinelFilter } from '@sentinel/common/filter';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
-import { TrainingInstance, TrainingRun } from '@crczp/training-model';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { TrainingInstanceAssignPoolDTO } from '../../dto/training-instance/training-instance-assign-pool-dto';
-import { TrainingInstanceDTO } from '../../dto/training-instance/training-instance-dto';
-import { TrainingInstanceMapper } from '../../mappers/training-instance/training-instance-mapper';
-import { TrainingRunMapper } from '../../mappers/training-run/training-run-mapper';
-import { TrainingApiContext } from '../../other/training-api-context';
-import { AdaptiveInstanceApi } from './adaptive-instance-api.service';
+import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
+import {Injectable} from '@angular/core';
+import {ResponseHeaderContentDispositionReader, SentinelParamsMerger} from '@sentinel/common';
+import {SentinelFilter} from '@sentinel/common/filter';
+import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
+import {TrainingInstance, TrainingRun} from '@crczp/training-model';
+import {Observable} from 'rxjs';
+import {map} from 'rxjs/operators';
+import {TrainingInstanceAssignPoolDTO} from '../../dto/training-instance/training-instance-assign-pool-dto';
+import {TrainingInstanceDTO} from '../../dto/training-instance/training-instance-dto';
+import {TrainingInstanceMapper} from '../../mappers/training-instance/training-instance-mapper';
+import {TrainingRunMapper} from '../../mappers/training-run/training-run-mapper';
+import {TrainingApiContext} from '../../other/training-api-context';
+import {AdaptiveInstanceApi} from './adaptive-instance-api.service';
 import {
     BlobFileSaver,
     handleJsonError,
@@ -19,7 +19,7 @@ import {
     PaginationMapper,
     ParamsBuilder
 } from '@crczp/api-common';
-import { TrainingRunDTO } from '../../dto/training-run/training-run-dto';
+import {TrainingRunDTO} from '../../dto/training-run/training-run-dto';
 
 /**
  * Default implementation of service abstracting http communication with training instance endpoints.

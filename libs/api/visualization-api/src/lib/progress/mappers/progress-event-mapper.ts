@@ -1,4 +1,4 @@
-import { ProgressEventDTO } from '../dtos';
+import {ProgressEventDTO} from '../dtos';
 import {
     HintTakenEvent,
     ProgressEvent,

@@ -1,5 +1,5 @@
-import { SandboxDefinition } from '@crczp/sandbox-model';
-import { Observable } from 'rxjs';
+import {SandboxDefinition} from '@crczp/sandbox-model';
+import {Observable} from 'rxjs';
 
 export abstract class SandboxDefinitionEditService {
     abstract isLoading$: Observable<boolean>;

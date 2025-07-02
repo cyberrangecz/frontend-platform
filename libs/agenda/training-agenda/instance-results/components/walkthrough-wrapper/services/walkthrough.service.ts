@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { TrainingDefinition } from '@crczp/training-model';
-import { TrainingDefinitionApi } from '@crczp/training-api';
+import {Injectable} from '@angular/core';
+import {Observable} from 'rxjs';
+import {TrainingDefinition} from '@crczp/training-model';
+import {TrainingDefinitionApi} from '@crczp/training-api';
 
 @Injectable()
 export class WalkthroughService {

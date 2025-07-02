@@ -1,4 +1,4 @@
-import { Pipe, PipeTransform } from '@angular/core';
+import {Pipe, PipeTransform} from '@angular/core';
 
 @Pipe({ name: 'labelShortener', standalone: false })
 export class LabelShortenerPipe implements PipeTransform {

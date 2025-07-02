@@ -1,6 +1,6 @@
-import { Component, ElementRef, HostListener, Input, OnInit, ViewChild } from '@angular/core';
+import {Component, ElementRef, HostListener, Input, OnInit, ViewChild} from '@angular/core';
 import * as d3 from 'd3';
-import { BehaviorSubject } from 'rxjs';
+import {async, BehaviorSubject} from 'rxjs';
 import {
     RunVisualizationPathNode,
     TransitionPhase,
@@ -129,4 +129,5 @@ export class AdaptiveTransitionVisualizationWrapperComponent implements OnInit {
         '#ffc0cb',
         '#696969',
     ];
+    protected readonly async = async;
 }

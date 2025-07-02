@@ -1,9 +1,9 @@
 /**
  * Class representing sandbox pool
  */
-import { CreatedBy } from './created-by';
-import { HardwareUsage } from './hardware-usage';
-import { SandboxDefinition } from '../definition/sandbox-definition';
+import {CreatedBy} from './created-by';
+import {HardwareUsage} from './hardware-usage';
+import {SandboxDefinition} from '../definition/sandbox-definition';
 
 export class Pool {
     private _lockId!: number;

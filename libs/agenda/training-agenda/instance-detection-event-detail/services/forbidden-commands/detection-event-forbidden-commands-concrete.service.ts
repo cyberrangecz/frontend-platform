@@ -1,17 +1,11 @@
-import { inject, Injectable } from '@angular/core';
-import { DetectionEventApi } from '@crczp/training-api';
-import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
-import { TrainingAgendaContext } from '@crczp/training-agenda/internal';
-import {
-    OffsetPaginationEvent,
-    PaginatedResource,
-} from '@sentinel/common/pagination';
-import { Observable } from 'rxjs';
-import { DetectedForbiddenCommand } from '@crczp/training-model';
-import { tap } from 'rxjs/operators';
-import { DetectionEventForbiddenCommandsService } from './detection-event-forbidden-commands.service';
-import { Settings } from '@crczp/common';
+import {Injectable} from '@angular/core';
+import {DetectionEventApi} from '@crczp/training-api';
+import {OffsetPaginationEvent, PaginatedResource,} from '@sentinel/common/pagination';
+import {Observable} from 'rxjs';
+import {DetectedForbiddenCommand} from '@crczp/training-model';
+import {tap} from 'rxjs/operators';
+import {DetectionEventForbiddenCommandsService} from './detection-event-forbidden-commands.service';
+import {Settings} from '@crczp/common';
 
 /**
  * Basic implementation of a layer between a component and an API services.
@@ -20,12 +14,10 @@ import { Settings } from '@crczp/common';
 @Injectable()
 export class DetectionEventForbiddenCommandsConcreteService extends DetectionEventForbiddenCommandsService {
     constructor(
-        private api: DetectionEventApi,
-        private dialog: MatDialog,
-        private router: Router,
-        private context: TrainingAgendaContext
+        private api: DetectionEventApi,,
+        settings: Settings
     ) {
-        super(inject(Settings.DEFAULT_PAGE_SIZE));
+        super(settings.DEFAULT_PAGE_SIZE);
     }
 
     /**

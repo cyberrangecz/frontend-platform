@@ -1,5 +1,5 @@
-import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
-import { MicroserviceRole } from '@crczp/user-and-group-model';
+import {UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
+import {MicroserviceRole} from '@crczp/user-and-group-model';
 
 /**
  * Form control of microservice-registration state form

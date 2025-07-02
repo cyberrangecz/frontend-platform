@@ -1,4 +1,4 @@
-import { TimelineLevelDataDTO } from './timeline-level-data-dto';
+import {TimelineLevelDataDTO} from './timeline-level-data-dto';
 
 export class TimelinePlayerDataDTO {
     id: number;

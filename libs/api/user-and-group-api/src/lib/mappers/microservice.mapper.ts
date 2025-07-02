@@ -1,9 +1,9 @@
-import { PaginatedResource } from '@sentinel/common/pagination';
-import { Microservice, MicroserviceRole } from '@crczp/user-and-group-model';
-import { MicroserviceCreateDTO } from '../DTO/microservice/microservice-create-dto.model';
-import { MicroserviceDTO } from '../DTO/microservice/microservice-dto';
-import { MicroserviceRoleDTO } from '../DTO/microservice/microservice-role-dto';
-import { JavaPaginatedResource, PaginationMapper } from '@crczp/api-common';
+import {PaginatedResource} from '@sentinel/common/pagination';
+import {Microservice, MicroserviceRole} from '@crczp/user-and-group-model';
+import {MicroserviceCreateDTO} from '../DTO/microservice/microservice-create-dto.model';
+import {MicroserviceDTO} from '../DTO/microservice/microservice-dto';
+import {MicroserviceRoleDTO} from '../DTO/microservice/microservice-role-dto';
+import {JavaPaginatedResource, PaginationMapper} from '@crczp/api-common';
 
 /**
  * Class mapping internal model to DTOs and other way

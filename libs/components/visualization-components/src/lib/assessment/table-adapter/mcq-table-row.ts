@@ -1,4 +1,4 @@
-import { AssessmentParticipant } from '@crczp/visualization-model';
+import {AssessmentParticipant} from '@crczp/visualization-model';
 
 /**
  * Table row in multiple choice question table

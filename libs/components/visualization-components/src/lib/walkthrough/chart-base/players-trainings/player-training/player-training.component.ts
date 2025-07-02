@@ -1,11 +1,11 @@
-import { ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, Output } from '@angular/core';
+import {ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, Output} from '@angular/core';
 import * as d3 from 'd3';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { EventConnectorComponent } from './event-connector/event-connector.component';
-import { PlayerEventComponent } from './player-event/player-event.component';
-import { AbsolutePositionService } from '../../../service/absolute-position.service';
-import { CommandEvent, CommandEventsModel, WalkthroughUserData } from '@crczp/visualization-model';
-import { TrainingUser } from '@crczp/training-model';
+import {MatTooltipModule} from '@angular/material/tooltip';
+import {EventConnectorComponent} from './event-connector/event-connector.component';
+import {PlayerEventComponent} from './player-event/player-event.component';
+import {AbsolutePositionService} from '../../../service/absolute-position.service';
+import {CommandEvent, CommandEventsModel, WalkthroughUserData} from '@crczp/visualization-model';
+import {TrainingUser} from '@crczp/training-model';
 
 @Component({
     // eslint-disable-next-line @angular-eslint/component-selector

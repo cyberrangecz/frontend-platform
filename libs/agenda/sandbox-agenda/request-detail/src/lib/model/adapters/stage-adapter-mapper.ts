@@ -1,12 +1,12 @@
-import { AllocationRequestStage, RequestStage } from '@crczp/sandbox-model';
+import {AllocationRequestStage, RequestStage} from '@crczp/sandbox-model';
 import {
     ANSIBLE_NETWORKING_TYPES,
     ANSIBLE_STAGE_TYPES,
     ANSIBLE_USER_TYPES,
     TERRAFORM_STAGE_TYPES,
 } from '../utils/stage-types';
-import { ANSIBLE_LOGO_SRC, TERRAFORM_LOGO_SRC } from '../utils/stage-logos';
-import { StageAdapter } from './stage-adapter';
+import {ANSIBLE_LOGO_SRC, TERRAFORM_LOGO_SRC} from '../utils/stage-logos';
+import {StageAdapter} from './stage-adapter';
 
 export class StageAdapterMapper {
     static fromStage(stage: RequestStage): StageAdapter {

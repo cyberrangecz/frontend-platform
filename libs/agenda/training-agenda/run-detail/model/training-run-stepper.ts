@@ -1,5 +1,5 @@
-import { SentinelStepper, StepStateEnum } from '@sentinel/components/stepper';
-import { LevelStepperAdapter } from '@crczp/training-agenda/internal';
+import {SentinelStepper, StepStateEnum} from '@sentinel/components/stepper';
+import {LevelStepperAdapter} from '@crczp/training-agenda/internal';
 
 /**
  * Training run levels adapter to stepper component

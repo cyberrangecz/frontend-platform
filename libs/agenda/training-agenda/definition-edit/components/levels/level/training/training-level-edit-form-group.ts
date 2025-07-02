@@ -1,6 +1,6 @@
-import { UntypedFormControl, UntypedFormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
-import { SentinelValidators } from '@sentinel/common';
-import { ReferenceSolutionNode, TrainingLevel } from '@crczp/training-model';
+import {UntypedFormControl, UntypedFormGroup, ValidationErrors, ValidatorFn, Validators} from '@angular/forms';
+import {SentinelValidators} from '@sentinel/common';
+import {ReferenceSolutionNode, TrainingLevel} from '@crczp/training-model';
 
 export const MAX_SCORE = 100;
 export const INCORRECT_ANSWER_LIMIT = 100;

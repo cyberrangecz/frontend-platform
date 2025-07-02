@@ -1,5 +1,5 @@
-import { TrainingRunInfoDTO } from '../../dto/training-run/training-run-info-dto';
-import { TrainingRunInfo } from '@crczp/training-model';
+import {TrainingRunInfoDTO} from '../../dto/training-run/training-run-info-dto';
+import {TrainingRunInfo} from '@crczp/training-model';
 
 /**
  * @dynamic

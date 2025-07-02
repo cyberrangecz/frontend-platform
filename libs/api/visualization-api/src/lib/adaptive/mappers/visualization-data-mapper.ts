@@ -1,8 +1,7 @@
-
-import { PhaseMapper } from './phase/phase-mapper';
-import { TrainingRunDataMapper } from './training-run-data/training-run-data-mapper';
-import { TransitionVisualizationData } from '@crczp/visualization-model';
-import { AdaptiveVisualizationDataDTO } from '../dto/run-visualization-dto';
+import {PhaseMapper} from './phase/phase-mapper';
+import {TrainingRunDataMapper} from './training-run-data/training-run-data-mapper';
+import {TransitionVisualizationData} from '@crczp/visualization-model';
+import {AdaptiveVisualizationDataDTO} from '../dto/run-visualization-dto';
 
 export class VisualizationDataMapper {
     static fromDTO(dto: AdaptiveVisualizationDataDTO): TransitionVisualizationData {

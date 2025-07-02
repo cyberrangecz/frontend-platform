@@ -2,7 +2,7 @@
  * Class representing sandbox definition in a system
  */
 
-import { CreatedBy } from '../pool/created-by';
+import {CreatedBy} from '../pool/created-by';
 
 export class SandboxDefinition {
     id!: number;

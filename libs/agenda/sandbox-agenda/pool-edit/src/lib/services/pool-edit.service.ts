@@ -1,6 +1,6 @@
-import { Pool, SandboxDefinition } from '@crczp/sandbox-model';
-import { Observable } from 'rxjs';
-import { PoolChangedEvent } from '../model/pool-changed-event';
+import {Pool, SandboxDefinition} from '@crczp/sandbox-model';
+import {Observable} from 'rxjs';
+import {PoolChangedEvent} from '../model/pool-changed-event';
 
 export abstract class PoolEditService {
     /**

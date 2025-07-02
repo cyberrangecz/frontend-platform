@@ -1,5 +1,5 @@
-import { HardwareUsage } from '@crczp/sandbox-model';
-import { HardwareUsageDTO } from '../../dto/sandbox-instance/hardware-usage-dto';
+import {HardwareUsage} from '@crczp/sandbox-model';
+import {HardwareUsageDTO} from '../../dto/sandbox-instance/hardware-usage-dto';
 
 /**
  * @dynamic

@@ -1,5 +1,5 @@
-import { UntypedFormControl, UntypedFormGroup } from '@angular/forms';
-import { SentinelValidators } from '@sentinel/common';
+import {UntypedFormControl, UntypedFormGroup} from '@angular/forms';
+import {SentinelValidators} from '@sentinel/common';
 
 /**
  * Form group controls for form in clone dialog component

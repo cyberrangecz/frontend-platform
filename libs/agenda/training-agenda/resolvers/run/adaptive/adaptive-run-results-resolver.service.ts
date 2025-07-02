@@ -1,10 +1,10 @@
-import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, Router } from '@angular/router';
-import { AdaptiveRunApi } from '@crczp/training-api';
-import { TrainingRun } from '@crczp/training-model';
-import { EMPTY, Observable, of } from 'rxjs';
-import { catchError, mergeMap, take } from 'rxjs/operators';
-import { ADAPTIVE_RUN_SELECTOR, TrainingErrorHandler, TrainingNavigator } from '@crczp/training-agenda';
+import {Injectable} from '@angular/core';
+import {ActivatedRouteSnapshot, Router} from '@angular/router';
+import {AdaptiveRunApi} from '@crczp/training-api';
+import {TrainingRun} from '@crczp/training-model';
+import {EMPTY, Observable, of} from 'rxjs';
+import {catchError, mergeMap, take} from 'rxjs/operators';
+import {ADAPTIVE_RUN_SELECTOR, TrainingErrorHandler, TrainingNavigator} from '@crczp/training-agenda';
 
 @Injectable()
 export class AdaptiveRunResultsResolver {

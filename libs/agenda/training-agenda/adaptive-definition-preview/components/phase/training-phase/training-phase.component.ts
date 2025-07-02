@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { TrainingPhase } from '@crczp/training-model';
+import {ChangeDetectionStrategy, Component, Input, OnChanges, SimpleChanges} from '@angular/core';
+import {TrainingPhase} from '@crczp/training-model';
 
 @Component({
     selector: 'crczp-training-phase',

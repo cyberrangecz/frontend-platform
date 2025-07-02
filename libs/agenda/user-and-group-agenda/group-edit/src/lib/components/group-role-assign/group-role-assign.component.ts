@@ -9,48 +9,28 @@ import {
     Output,
     SimpleChanges,
 } from '@angular/core';
+import {OffsetPaginationEvent, PaginatedResource,} from '@sentinel/common/pagination';
 import {
-    OffsetPaginationEvent,
-    PaginatedResource,
-} from '@sentinel/common/pagination';
-import {
-    SentinelControlItemSignal,
+    SentinelControlItem,
     SentinelControlItemSignal,
     SentinelControlsComponent,
 } from '@sentinel/components/controls';
-import { Group, UserRole } from '@crczp/user-and-group-model';
-import {
-    SentinelTable,
-    SentinelTableComponent,
-    TableActionEvent,
-    TableLoadEvent,
-} from '@sentinel/components/table';
+import {Group, UserRole} from '@crczp/user-and-group-model';
+import {SentinelTable, SentinelTableComponent, TableActionEvent, TableLoadEvent,} from '@sentinel/components/table';
 import {
     SentinelResourceSelectorComponent,
     SentinelResourceSelectorMapping,
 } from '@sentinel/components/resource-selector';
-import { async, defer, Observable } from 'rxjs';
-import { map, take } from 'rxjs/operators';
-import { GroupRolesTable } from '../../model/table/group-roles-table';
-import {
-    DeleteControlItem,
-    SaveControlItem,
-} from '@crczp/user-and-group-agenda/internal';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import {
-    MatCard,
-    MatCardContent,
-    MatCardHeader,
-    MatCardSubtitle,
-    MatCardTitle,
-} from '@angular/material/card';
-import { MatIcon } from '@angular/material/icon';
-import { AsyncPipe } from '@angular/common';
-import { RoleAssignService } from '../../services/state/role-assign.service';
-import {
-    PaginationStorageService,
-    providePaginationStorageService,
-} from '@crczp/common';
+import {async, defer, Observable} from 'rxjs';
+import {map, take} from 'rxjs/operators';
+import {GroupRolesTable} from '../../model/table/group-roles-table';
+import {DeleteControlItem, SaveControlItem,} from '@crczp/user-and-group-agenda/internal';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import {MatCard, MatCardContent, MatCardHeader, MatCardSubtitle, MatCardTitle,} from '@angular/material/card';
+import {MatIcon} from '@angular/material/icon';
+import {AsyncPipe} from '@angular/common';
+import {RoleAssignService} from '../../services/state/role-assign.service';
+import {PaginationStorageService, providePaginationStorageService,} from '@crczp/common';
 
 /**
  * Component for role assignment to edited group-overview
@@ -75,7 +55,7 @@ import {
     ],
     providers: [
         providePaginationStorageService(GroupRoleAssignComponent),
-        { provide: RoleAssignService, useClass: RoleAssignService },
+        {provide: RoleAssignService, useClass: RoleAssignService},
     ],
 })
 export class GroupRoleAssignComponent implements OnChanges {
@@ -117,8 +97,8 @@ export class GroupRoleAssignComponent implements OnChanges {
      * Selected roles available to assign to edited group-overview
      */
     selectedRolesToAssign$: Observable<UserRole[]>;
-    rolesToAssignControls: SentinelControlItemSignal[];
-    assignedRolesControls: SentinelControlItemSignal[];
+    rolesToAssignControls: SentinelControlItem[];
+    assignedRolesControls: SentinelControlItem[];
     destroyRef = inject(DestroyRef);
     protected readonly async = async;
 

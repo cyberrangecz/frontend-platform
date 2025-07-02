@@ -1,11 +1,11 @@
-import { BasicQuestionInfoDTO, TimelineQuestionDTO } from '../../dto/timeline/timeline-question-dto';
-import { TimelineQuestion } from '../../../model/timeline/timeline-question';
-import { FfqQuestionMapper } from './ffq-question-mapper';
-import { FfqQuestionDTO } from '../../dto/timeline/ffq-question-dto';
-import { McqQuestionDTO } from '../../dto/timeline/mcq-question-dto';
-import { McqQuestionMapper } from './mcq-question-mapper';
-import { EmiQuestionDTO } from '../../dto/timeline/emi-question-dto';
-import { EmiQuestionMapper } from './emi-question-mapper';
+import {BasicQuestionInfoDTO, TimelineQuestionDTO} from '../../dto/timeline/timeline-question-dto';
+import {TimelineQuestion} from '../../../model/timeline/timeline-question';
+import {FfqQuestionMapper} from './ffq-question-mapper';
+import {FfqQuestionDTO} from '../../dto/timeline/ffq-question-dto';
+import {McqQuestionDTO} from '../../dto/timeline/mcq-question-dto';
+import {McqQuestionMapper} from './mcq-question-mapper';
+import {EmiQuestionDTO} from '../../dto/timeline/emi-question-dto';
+import {EmiQuestionMapper} from './emi-question-mapper';
 
 /**
  * @dynamic

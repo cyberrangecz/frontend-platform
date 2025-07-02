@@ -1,11 +1,11 @@
-import { Injectable } from '@angular/core';
-import { AdaptiveRunApi } from './adaptive-run-api.service';
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { TrainingApiContext } from '../../other/training-api-context';
-import { SentinelParamsMerger } from '@sentinel/common';
-import { SentinelFilter } from '@sentinel/common/filter';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
-import { Observable } from 'rxjs';
+import {Injectable} from '@angular/core';
+import {AdaptiveRunApi} from './adaptive-run-api.service';
+import {HttpClient, HttpParams} from '@angular/common/http';
+import {TrainingApiContext} from '../../other/training-api-context';
+import {SentinelParamsMerger} from '@sentinel/common';
+import {SentinelFilter} from '@sentinel/common/filter';
+import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
+import {Observable} from 'rxjs';
 import {
     AccessedTrainingRun,
     AccessTrainingRunInfo,
@@ -14,19 +14,19 @@ import {
     QuestionAnswer,
     TrainingRun
 } from '@crczp/training-model';
-import { map } from 'rxjs/operators';
-import { TrainingRunDTO } from '../../dto/training-run/training-run-dto';
-import { AccessTrainingRunDTO } from '../../dto/training-run/access-training-run-dto';
-import { AdaptiveRunMapper } from '../../mappers/training-run/adaptive-run-mapper';
-import { AccessedAdaptiveRunMapper } from '../../mappers/training-run/accessed-adaptive-run-mapper';
-import { AccessAdaptiveRunMapper } from '../../mappers/training-run/access-adaptive-run-mapper';
-import { AbstractPhaseDTO } from '../../dto/phase/abstract-phase-dto';
-import { PhaseMapper } from '../../mappers/phase/phase-mapper';
-import { IsCorrectAnswerDTO } from '../../dto/phase/training-phase/is-correct-answer-dto';
-import { TaskAnswerMapper } from '../../mappers/training-run/task-answer-mapper';
-import { QuestionAnswerMapper } from '../../mappers/phase/question-answer-mapper';
-import { AnsweredPhaseMapper } from '../../mappers/training-run/training-run-phases/answered-phase-mapper';
-import { JavaPaginatedResource, PaginationMapper, ParamsBuilder } from '@crczp/api-common';
+import {map} from 'rxjs/operators';
+import {TrainingRunDTO} from '../../dto/training-run/training-run-dto';
+import {AccessTrainingRunDTO} from '../../dto/training-run/access-training-run-dto';
+import {AdaptiveRunMapper} from '../../mappers/training-run/adaptive-run-mapper';
+import {AccessedAdaptiveRunMapper} from '../../mappers/training-run/accessed-adaptive-run-mapper';
+import {AccessAdaptiveRunMapper} from '../../mappers/training-run/access-adaptive-run-mapper';
+import {AbstractPhaseDTO} from '../../dto/phase/abstract-phase-dto';
+import {PhaseMapper} from '../../mappers/phase/phase-mapper';
+import {IsCorrectAnswerDTO} from '../../dto/phase/training-phase/is-correct-answer-dto';
+import {TaskAnswerMapper} from '../../mappers/training-run/task-answer-mapper';
+import {QuestionAnswerMapper} from '../../mappers/phase/question-answer-mapper';
+import {AnsweredPhaseMapper} from '../../mappers/training-run/training-run-phases/answered-phase-mapper';
+import {JavaPaginatedResource, PaginationMapper, ParamsBuilder} from '@crczp/api-common';
 
 @Injectable()
 export class AdaptiveRunDefaultApi extends AdaptiveRunApi {

@@ -1,5 +1,5 @@
-import { LevelTypeEnum } from './enums/level-type.enum';
-import { PlayerLevelData } from './player-level-data';
+import {LevelTypeEnum} from './enums/level-type.enum';
+import {PlayerLevelData} from './player-level-data';
 
 export class Level {
     id: number;

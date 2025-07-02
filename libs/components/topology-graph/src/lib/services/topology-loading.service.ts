@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
-import { Observable, ReplaySubject, Subject } from 'rxjs';
+import {Injectable} from '@angular/core';
+import {Observable, ReplaySubject, Subject} from 'rxjs';
 
 /**
  * Global loading service. Emits events from library through observable. Client app should subscribe to isLoading$ observable and

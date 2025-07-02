@@ -1,16 +1,12 @@
-import { Injectable } from '@angular/core';
-import {
-    OffsetPagination,
-    OffsetPaginationEvent,
-    PaginatedResource,
-} from '@sentinel/common/pagination';
-import { UserApi } from '@crczp/user-and-group-api';
-import { User } from '@crczp/user-and-group-model';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
-import { Settings } from '@crczp/common';
-import { UserAndGroupErrorHandler } from '@crczp/user-and-group-agenda';
-import { UserFilter } from '@crczp/user-and-group-agenda/internal';
+import {Injectable} from '@angular/core';
+import {OffsetPagination, OffsetPaginationEvent, PaginatedResource,} from '@sentinel/common/pagination';
+import {UserApi} from '@crczp/user-and-group-api';
+import {User} from '@crczp/user-and-group-model';
+import {BehaviorSubject, Observable} from 'rxjs';
+import {tap} from 'rxjs/operators';
+import {Settings} from '@crczp/common';
+import {UserAndGroupErrorHandler} from '@crczp/user-and-group-agenda';
+import {UserFilter} from '@crczp/user-and-group-agenda/internal';
 
 /**
  * Basic implementation of a layer between a component and an API service.

@@ -1,6 +1,6 @@
-import { Hint } from '@crczp/training-model';
-import { ProgressHintDTO } from '../dtos';
-import { ProgressHint } from '@crczp/visualization-model';
+import {Hint} from '@crczp/training-model';
+import {ProgressHintDTO} from '../dtos';
+import {ProgressHint} from '@crczp/visualization-model';
 
 
 export class ProgressHintMapper {

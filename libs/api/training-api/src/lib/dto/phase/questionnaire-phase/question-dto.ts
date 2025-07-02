@@ -1,4 +1,4 @@
-import { ChoiceDTO } from './choice-dto';
+import {ChoiceDTO} from './choice-dto';
 
 export class QuestionDTO {
     id: number;

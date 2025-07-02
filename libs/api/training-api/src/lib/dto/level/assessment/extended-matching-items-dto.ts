@@ -1,6 +1,6 @@
-import { AbstractQuestionCreateDTO, AbstractQuestionDTO } from './abstact-question-dto';
-import { ExtendedMatchingStatementDTO } from './extended-matching-statement-dto';
-import { ExtendedMatchingOptionDTO } from './extended-matching-option-dto';
+import {AbstractQuestionCreateDTO, AbstractQuestionDTO} from './abstact-question-dto';
+import {ExtendedMatchingStatementDTO} from './extended-matching-statement-dto';
+import {ExtendedMatchingOptionDTO} from './extended-matching-option-dto';
 
 export class ExtendedMatchingItemsDTO implements AbstractQuestionCreateDTO {
     answer_required: boolean;

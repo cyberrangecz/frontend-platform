@@ -1,6 +1,6 @@
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
-import { CheatingDetection } from '@crczp/training-model';
-import { Observable } from 'rxjs';
+import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
+import {CheatingDetection} from '@crczp/training-model';
+import {Observable} from 'rxjs';
 
 export abstract class CheatingDetectionApi {
     /**

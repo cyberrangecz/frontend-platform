@@ -1,5 +1,7 @@
-import { AbstractDetectionEventTypeEnum, AnswerSimilarityDetectionEvent } from '@crczp/training-model';
-import { AnswerSimilarityDetectionEventDTO } from '../../dto/detection-event/answer-similarity/answer-similarity-detection-event-dto';
+import {AbstractDetectionEventTypeEnum, AnswerSimilarityDetectionEvent} from '@crczp/training-model';
+import {
+    AnswerSimilarityDetectionEventDTO
+} from '../../dto/detection-event/answer-similarity/answer-similarity-detection-event-dto';
 
 export class AnswerSimilarityDetectionEventMapper {
     static fromDTO(dto: AnswerSimilarityDetectionEventDTO): AnswerSimilarityDetectionEvent {

@@ -1,8 +1,8 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
-import { Level } from '@crczp/training-model';
-import { WalkthroughVisualizationApi } from '@crczp/visualization-api';
-import { WalkthroughVisualizationData } from '@crczp/visualization-model';
+import {Injectable} from '@angular/core';
+import {BehaviorSubject, Observable, tap} from 'rxjs';
+import {Level} from '@crczp/training-model';
+import {WalkthroughVisualizationApi} from '@crczp/visualization-api';
+import {WalkthroughVisualizationData} from '@crczp/visualization-model';
 
 @Injectable()
 export class WalkthroughVisualizationService {

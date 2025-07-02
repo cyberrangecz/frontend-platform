@@ -1,4 +1,4 @@
-import { PlayerTableDataDTO } from './player-table-data-dto';
+import {PlayerTableDataDTO} from './player-table-data-dto';
 
 export interface TableDTO {
     players: PlayerTableDataDTO[];

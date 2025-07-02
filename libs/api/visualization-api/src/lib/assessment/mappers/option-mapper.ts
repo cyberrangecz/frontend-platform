@@ -1,6 +1,6 @@
-import { OptionDTO } from '../dtos';
-import { AssessmentOption } from '@crczp/visualization-model';
-import { UserMapper } from '@crczp/training-api';
+import {OptionDTO} from '../dtos';
+import {AssessmentOption} from '@crczp/visualization-model';
+import {UserMapper} from '@crczp/training-api';
 
 export class OptionMapper {
     static fromDTOs(dtos: OptionDTO[]): AssessmentOption[] {

@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
-import { AbstractLevelTypeEnum, Level } from '@crczp/training-model';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@angular/core';
+import {AbstractLevelTypeEnum, Level} from '@crczp/training-model';
 
 /**
  * Component to display one level in a training run. Serves mainly as a wrapper which determines the type of the training

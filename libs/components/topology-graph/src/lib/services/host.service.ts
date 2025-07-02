@@ -1,11 +1,11 @@
-import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { SandboxService } from './sandbox.service';
-import { concatMap, map } from 'rxjs/operators';
-import { TopologyApi } from './topology-api.service';
-import { NodeActionEnum } from '../model/enums/node-context-menu-items-enum';
-import { UserInterface } from '../model/enums/user-interface-enum';
-import { HostNode, RouterNode } from '@crczp/topology-graph-model';
+import {Injectable} from '@angular/core';
+import {Observable} from 'rxjs';
+import {SandboxService} from './sandbox.service';
+import {concatMap, map} from 'rxjs/operators';
+import {TopologyApi} from './topology-api.service';
+import {NodeActionEnum} from '../model/enums/node-context-menu-items-enum';
+import {UserInterface} from '../model/enums/user-interface-enum';
+import {HostNode, RouterNode} from '@crczp/topology-graph-model';
 
 /**
  * Layer between components and API. Handles actions on host nodes

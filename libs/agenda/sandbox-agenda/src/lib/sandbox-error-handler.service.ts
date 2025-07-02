@@ -1,5 +1,5 @@
-import { HttpErrorResponse } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import {HttpErrorResponse} from '@angular/common/http';
+import {Observable} from 'rxjs';
 
 /**
  * Handles errors emitted from sandbox agenda services and components. Should be overridden by client

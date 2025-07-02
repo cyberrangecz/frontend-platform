@@ -1,12 +1,12 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { Graph } from '@crczp/visualization-model';
-import { map } from 'rxjs/operators';
-import { TrainingRun } from '@crczp/training-model';
-import { TrainingRunDTO, TrainingRunMapper } from '@crczp/training-api';
-import { GraphMapper } from './mappers/graph-mapper';
-import { VisualizationApiConfig } from '../../config/visualization-api-config';
+import {Injectable} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+import {Observable} from 'rxjs';
+import {Graph} from '@crczp/visualization-model';
+import {map} from 'rxjs/operators';
+import {TrainingRun} from '@crczp/training-model';
+import {TrainingRunDTO, TrainingRunMapper} from '@crczp/training-api';
+import {GraphMapper} from './mappers/graph-mapper';
+import {VisualizationApiConfig} from '../../config/visualization-api-config';
 
 @Injectable()
 export class TraineeGraphApiService {

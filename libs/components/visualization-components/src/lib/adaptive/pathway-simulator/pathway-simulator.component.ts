@@ -1,5 +1,5 @@
-import { Component, Input } from '@angular/core';
-import { TransitionVisualizationData } from '@crczp/visualization-model';
+import {Component, Input} from '@angular/core';
+import {TransitionVisualizationData} from '@crczp/visualization-model';
 
 @Component({
     selector: 'crczp-pathway-simulator',

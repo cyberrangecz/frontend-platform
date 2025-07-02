@@ -1,5 +1,5 @@
-import { LevelStatistics } from '@crczp/visualization-model';
-import { LevelStatisticsDto } from '../dtos';
+import {LevelStatistics} from '@crczp/visualization-model';
+import {LevelStatisticsDto} from '../dtos';
 
 
 export class LevelsMapper {

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {
     ProgressLevelInfo,
     ProgressLevelVisualizationData,
@@ -6,13 +6,13 @@ import {
     ProgressVisualizationData,
     TraineeSelectData
 } from '@crczp/visualization-model';
-import { TraineeViewEnum } from '../../types';
-import { D3Service } from '../../../../common/d3-service/d3-service';
-import { PROGRESS_CONFIG } from '../../../progress-config';
-import { MatGridListModule } from '@angular/material/grid-list';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { CommonModule } from '@angular/common';
-import { MatButtonModule } from '@angular/material/button';
+import {TraineeViewEnum} from '../../types';
+import {D3Service} from '../../../../common/d3-service/d3-service';
+import {PROGRESS_CONFIG} from '../../../progress-config';
+import {MatGridListModule} from '@angular/material/grid-list';
+import {MatTooltipModule} from '@angular/material/tooltip';
+import {CommonModule} from '@angular/common';
+import {MatButtonModule} from '@angular/material/button';
 
 @Component({
     selector: 'crczp-viz-hurdling-trainee-selection',

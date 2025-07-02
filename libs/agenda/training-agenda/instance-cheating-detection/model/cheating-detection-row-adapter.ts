@@ -1,4 +1,4 @@
-import { CheatingDetection } from '@crczp/training-model';
+import {CheatingDetection} from '@crczp/training-model';
 
 /**
  * Class representing row of cheating detection table

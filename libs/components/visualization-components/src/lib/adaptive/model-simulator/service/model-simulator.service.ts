@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
-import { AbstractPhaseTypeEnum, Phase, TrainingPhase, AdaptiveTask } from '@crczp/training-model';
-import { TraineePhasePerformance, AdaptiveRunVisualization } from '@crczp/visualization-model';
-import { SimulatorMapper } from './simulator.mapper';
+import {Injectable} from '@angular/core';
+import {AbstractPhaseTypeEnum, AdaptiveTask, Phase, TrainingPhase} from '@crczp/training-model';
+import {AdaptiveRunVisualization, TraineePhasePerformance} from '@crczp/visualization-model';
+import {SimulatorMapper} from './simulator.mapper';
 
 @Injectable()
 export class ModelSimulatorService {

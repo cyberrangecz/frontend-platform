@@ -11,7 +11,7 @@ import {
     SimpleChanges,
 } from '@angular/core';
 import {Level, MitreTechnique, TrainingDefinition} from '@crczp/training-model';
-import {Observable} from 'rxjs';
+import {async, Observable} from 'rxjs';
 import {map, tap} from 'rxjs/operators';
 import {LevelOverviewControls} from '../../../model/adapters/level-overview-controls';
 import {LevelStepperAdapter} from '@crczp/training-agenda/internal';
@@ -107,4 +107,6 @@ export class LevelOverviewComponent implements OnInit, OnChanges {
         const deleteDisabled$ = this.levelService.levels$.pipe(map((levels) => levels.length <= 0));
         this.controls = LevelOverviewControls.create(this.levelService, this.editMode, deleteDisabled$);
     }
+
+    protected readonly async = async;
 }

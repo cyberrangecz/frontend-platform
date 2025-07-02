@@ -1,11 +1,11 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { MCQTableAdapter } from '../../table-adapter/mcq-table-adapter';
-import { HighlightService } from '../../services/highlight.service';
-import { HighlightableDirective } from '../../directives/highlightable.directive';
-import { AssessmentQuestion } from '@crczp/visualization-model';
-import { CommonModule } from '@angular/common';
-import { MatTooltipModule } from '@angular/material/tooltip';
+import {Component, Input, OnInit} from '@angular/core';
+import {MatTableDataSource, MatTableModule} from '@angular/material/table';
+import {MCQTableAdapter} from '../../table-adapter/mcq-table-adapter';
+import {HighlightService} from '../../services/highlight.service';
+import {HighlightableDirective} from '../../directives/highlightable.directive';
+import {AssessmentQuestion} from '@crczp/visualization-model';
+import {CommonModule} from '@angular/common';
+import {MatTooltipModule} from '@angular/material/tooltip';
 
 /**
  * Component displaying result of a multiple choice question

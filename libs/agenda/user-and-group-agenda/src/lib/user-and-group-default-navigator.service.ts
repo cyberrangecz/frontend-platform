@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {
     GROUP_DETAIL_PATH,
     GROUP_EDIT_PATH,
@@ -9,7 +9,7 @@ import {
     USER_DETAIL_PATH,
     USER_PATH,
 } from './default-paths';
-import { UserAndGroupNavigator } from './user-and-group-navigator.service';
+import {UserAndGroupNavigator} from './user-and-group-navigator.service';
 
 /**
  *

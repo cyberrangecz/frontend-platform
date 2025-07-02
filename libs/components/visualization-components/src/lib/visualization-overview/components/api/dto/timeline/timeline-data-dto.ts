@@ -1,4 +1,4 @@
-import { TimelinePlayerDataDTO } from './timeline-player-data-dto';
+import {TimelinePlayerDataDTO} from './timeline-player-data-dto';
 
 export class TimelineDataDTO {
     estimated_time: number;

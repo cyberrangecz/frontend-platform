@@ -1,8 +1,8 @@
-import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
-import { TrainingInstance } from '@crczp/training-model';
-import { Observable, of } from 'rxjs';
-import { catchError, mergeMap, take } from 'rxjs/operators';
+import {Injectable} from '@angular/core';
+import {ActivatedRouteSnapshot, RouterStateSnapshot} from '@angular/router';
+import {TrainingInstance} from '@crczp/training-model';
+import {Observable, of} from 'rxjs';
+import {catchError, mergeMap, take} from 'rxjs/operators';
 import {
     ACCESS_TOKEN_PATH,
     CHEATING_DETECTION_PATH,
@@ -11,7 +11,7 @@ import {
     RUNS_PATH,
     SUMMARY_PATH,
 } from '@crczp/training-agenda';
-import { TrainingInstanceResolver } from './training-instance-resolver.service';
+import {TrainingInstanceResolver} from './training-instance-resolver.service';
 
 @Injectable()
 export class TrainingInstanceDetailTitleResolver {

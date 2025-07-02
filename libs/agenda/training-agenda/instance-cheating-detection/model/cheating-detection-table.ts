@@ -1,11 +1,11 @@
-import { DatePipe } from '@angular/common';
-import { PaginatedResource } from '@sentinel/common/pagination';
-import { Column, DeleteAction, Row, RowAction, SentinelTable } from '@sentinel/components/table';
-import { CheatingDetection, CheatingDetectionStateEnum } from '@crczp/training-model';
-import { CheatingDetectionRowAdapter } from './cheating-detection-row-adapter';
-import { TrainingNavigator } from '@crczp/training-agenda';
-import { CheatingDetectionService } from '../services/cheating-detection.service';
-import { defer, of } from 'rxjs';
+import {DatePipe} from '@angular/common';
+import {PaginatedResource} from '@sentinel/common/pagination';
+import {Column, DeleteAction, Row, RowAction, SentinelTable} from '@sentinel/components/table';
+import {CheatingDetection, CheatingDetectionStateEnum} from '@crczp/training-model';
+import {CheatingDetectionRowAdapter} from './cheating-detection-row-adapter';
+import {TrainingNavigator} from '@crczp/training-agenda';
+import {CheatingDetectionService} from '../services/cheating-detection.service';
+import {defer, of} from 'rxjs';
 
 /**
  * Helper class transforming paginated resource to class for common table component

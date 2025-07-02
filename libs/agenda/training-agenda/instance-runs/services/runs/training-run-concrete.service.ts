@@ -1,29 +1,20 @@
-import { Injectable } from '@angular/core';
-import {
-    OffsetPaginationEvent,
-    PaginatedResource,
-} from '@sentinel/common/pagination';
-import { TrainingInstanceApi, TrainingRunApi } from '@crczp/training-api';
-import { TrainingRun } from '@crczp/training-model';
-import { EMPTY, Observable, of } from 'rxjs';
-import { switchMap, tap } from 'rxjs/operators';
-import {
-    TrainingErrorHandler,
-    TrainingNotificationService,
-} from '@crczp/training-agenda';
-import { TrainingRunService } from './training-run.service';
-import {
-    SandboxAllocationUnitsApi,
-    SandboxInstanceApi,
-} from '@crczp/sandbox-api';
-import { MatDialog } from '@angular/material/dialog';
+import {Injectable} from '@angular/core';
+import {OffsetPaginationEvent, PaginatedResource,} from '@sentinel/common/pagination';
+import {TrainingInstanceApi, TrainingRunApi} from '@crczp/training-api';
+import {TrainingRun} from '@crczp/training-model';
+import {EMPTY, Observable, of} from 'rxjs';
+import {switchMap, tap} from 'rxjs/operators';
+import {TrainingErrorHandler, TrainingNotificationService,} from '@crczp/training-agenda';
+import {TrainingRunService} from './training-run.service';
+import {SandboxAllocationUnitsApi, SandboxInstanceApi,} from '@crczp/sandbox-api';
+import {MatDialog} from '@angular/material/dialog';
 import {
     SentinelConfirmationDialogComponent,
     SentinelConfirmationDialogConfig,
     SentinelDialogResultEnum,
 } from '@sentinel/components/dialogs';
-import { SandboxInstance } from '@crczp/sandbox-model';
-import { Settings } from '@crczp/common';
+import {SandboxInstance} from '@crczp/sandbox-model';
+import {Settings} from '@crczp/common';
 
 /**
  * Basic implementation of layer between component and API service.

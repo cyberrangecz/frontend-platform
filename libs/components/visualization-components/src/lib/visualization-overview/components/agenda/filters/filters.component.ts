@@ -1,5 +1,5 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { FiltersService } from '../../../services/filters.service';
+import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {FiltersService} from '../../../services/filters.service';
 
 @Component({
     selector: 'crczp-visualization-overview-filters',

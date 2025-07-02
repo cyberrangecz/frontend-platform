@@ -1,14 +1,14 @@
-import { SandboxAllocationUnitsApi } from './sandbox-allocation-units-api.service';
-import { Injectable } from '@angular/core';
-import { AllocationRequest, CleanupRequest, SandboxAllocationUnit } from '@crczp/sandbox-model';
-import { Observable } from 'rxjs';
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { SandboxApiConfigService } from '../../others/sandbox-api-config.service';
-import { SandboxAllocationUnitDTO } from '../../dto/sandbox-instance/sandbox-allocation-unit-dto';
-import { map } from 'rxjs/operators';
-import { SandboxAllocationUnitMapper } from '../../mappers/sandbox-instance/sandbox-allocation-unit-mapper';
-import { RequestDTO } from '../../dto/sandbox-instance/request-dto';
-import { RequestMapper } from '../../mappers/sandbox-instance/request-mapper';
+import {SandboxAllocationUnitsApi} from './sandbox-allocation-units-api.service';
+import {Injectable} from '@angular/core';
+import {AllocationRequest, CleanupRequest, SandboxAllocationUnit} from '@crczp/sandbox-model';
+import {Observable} from 'rxjs';
+import {HttpClient, HttpParams} from '@angular/common/http';
+import {SandboxApiConfigService} from '../../others/sandbox-api-config.service';
+import {SandboxAllocationUnitDTO} from '../../dto/sandbox-instance/sandbox-allocation-unit-dto';
+import {map} from 'rxjs/operators';
+import {SandboxAllocationUnitMapper} from '../../mappers/sandbox-instance/sandbox-allocation-unit-mapper';
+import {RequestDTO} from '../../dto/sandbox-instance/request-dto';
+import {RequestMapper} from '../../mappers/sandbox-instance/request-mapper';
 
 /**
  * Default implementation of service abstracting http communication with sandbox allocation units endpoints.

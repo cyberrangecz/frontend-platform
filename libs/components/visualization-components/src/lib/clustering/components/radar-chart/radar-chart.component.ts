@@ -1,8 +1,8 @@
-import { Component, Input, OnChanges, OnInit, ViewEncapsulation } from '@angular/core';
-import { D3, D3Service } from '../../../common/d3-service/d3-service';
-import { ClusteringConfig, VIS_CONFIG } from '../../clustering-config';
-import { ClusteringVisualizationData, EuclideanDoublePoint } from '@crczp/visualization-model';
-import { ClusteringRenderBaseConfig } from '../../clustering-render-base-config';
+import {Component, Input, OnChanges, OnInit, ViewEncapsulation} from '@angular/core';
+import {D3, D3Service} from '../../../common/d3-service/d3-service';
+import {ClusteringConfig, VIS_CONFIG} from '../../clustering-config';
+import {ClusteringVisualizationData, EuclideanDoublePoint} from '@crczp/visualization-model';
+import {ClusteringRenderBaseConfig} from '../../clustering-render-base-config';
 
 @Component({
     selector: 'crczp-viz-clustering-radar-chart',

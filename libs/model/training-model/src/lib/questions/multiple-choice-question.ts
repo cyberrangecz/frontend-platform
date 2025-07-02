@@ -1,5 +1,5 @@
-import { Question } from './question';
-import { QuestionChoice } from './question-choice';
+import {Question} from './question';
+import {QuestionChoice} from './question-choice';
 
 /**
  * One of types of questions in questionnaire. Traditional multiple-choice

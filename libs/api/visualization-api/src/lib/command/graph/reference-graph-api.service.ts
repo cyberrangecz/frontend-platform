@@ -1,10 +1,10 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { GraphMapper } from './mappers/graph-mapper';
-import { VisualizationApiConfig } from '../../config/visualization-api-config';
-import { Graph } from '@crczp/visualization-model';
+import {Injectable} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+import {Observable} from 'rxjs';
+import {map} from 'rxjs/operators';
+import {GraphMapper} from './mappers/graph-mapper';
+import {VisualizationApiConfig} from '../../config/visualization-api-config';
+import {Graph} from '@crczp/visualization-model';
 
 @Injectable()
 export class ReferenceGraphApi {

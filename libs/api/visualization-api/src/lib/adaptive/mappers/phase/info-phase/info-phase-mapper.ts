@@ -1,7 +1,7 @@
-import { InfoPhaseDTO } from '../../../dto/phase/info-phase/info-phase-dto';
-import { AbstractPhaseTypeEnum } from '@crczp/training-model';
-import { InfoPhaseTaskMapper } from './info-phase-task-mapper';
-import { InfoTransitionPhase } from '@crczp/visualization-model';
+import {InfoPhaseDTO} from '../../../dto/phase/info-phase/info-phase-dto';
+import {AbstractPhaseTypeEnum} from '@crczp/training-model';
+import {InfoPhaseTaskMapper} from './info-phase-task-mapper';
+import {InfoTransitionPhase} from '@crczp/visualization-model';
 
 
 export class InfoPhaseMapper {

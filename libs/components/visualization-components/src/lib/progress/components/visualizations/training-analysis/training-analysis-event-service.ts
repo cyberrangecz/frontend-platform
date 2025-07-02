@@ -1,4 +1,4 @@
-import { TrainingAnalysisComponent } from './training-analysis.component';
+import {TrainingAnalysisComponent} from './training-analysis.component';
 
 export interface TrainingAnalysisEventService {
     trainingAnalysisComponent: TrainingAnalysisComponent;

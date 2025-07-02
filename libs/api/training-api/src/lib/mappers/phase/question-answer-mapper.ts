@@ -1,5 +1,5 @@
-import { QuestionAnswer } from '@crczp/training-model';
-import { QuestionAnswerDTO } from '../../dto/phase/questionnaire-phase/question-answer-dto';
+import {QuestionAnswer} from '@crczp/training-model';
+import {QuestionAnswerDTO} from '../../dto/phase/questionnaire-phase/question-answer-dto';
 
 /**
  * @dynamic

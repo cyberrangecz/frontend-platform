@@ -1,6 +1,6 @@
-import { AbstractQuestionCreateDTO, AbstractQuestionDTO } from './abstact-question-dto';
-import { QuestionChoice } from '@crczp/training-model';
-import { QuestionChoiceDTO } from './question-choice-dto';
+import {AbstractQuestionCreateDTO, AbstractQuestionDTO} from './abstact-question-dto';
+import {QuestionChoice} from '@crczp/training-model';
+import {QuestionChoiceDTO} from './question-choice-dto';
 
 export interface FreeFormQuestionCreateDTO extends AbstractQuestionCreateDTO {
     choices: QuestionChoice[];

@@ -1,11 +1,11 @@
-import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { OffsetPaginationEvent } from '@sentinel/common/pagination';
-import { switchMap } from 'rxjs/operators';
-import { Pool } from '@crczp/sandbox-model';
-import { PoolOverviewService } from '../../state/pool-overview/pool-overview.service';
-import { AbstractPoolService } from './abstract-pool.service';
-import { SandboxInstanceService } from '@crczp/sandbox-agenda/pool-detail';
+import {Injectable} from '@angular/core';
+import {Observable} from 'rxjs';
+import {OffsetPaginationEvent} from '@sentinel/common/pagination';
+import {switchMap} from 'rxjs/operators';
+import {Pool} from '@crczp/sandbox-model';
+import {PoolOverviewService} from '../../state/pool-overview/pool-overview.service';
+import {AbstractPoolService} from './abstract-pool.service';
+import {SandboxInstanceService} from '@crczp/sandbox-agenda/pool-detail';
 
 @Injectable()
 export class AbstractPoolConcreteService extends AbstractPoolService {

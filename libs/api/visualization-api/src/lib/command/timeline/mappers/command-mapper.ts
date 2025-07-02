@@ -1,5 +1,5 @@
-import { CommandDTO } from '../dto/command-dto';
-import { VisualizationCommand } from '@crczp/visualization-model';
+import {CommandDTO} from '../dto/command-dto';
+import {VisualizationCommand} from '@crczp/visualization-model';
 
 /**
  * @dynamic

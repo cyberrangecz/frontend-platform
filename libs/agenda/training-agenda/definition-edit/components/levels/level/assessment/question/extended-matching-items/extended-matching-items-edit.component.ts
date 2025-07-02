@@ -9,11 +9,11 @@ import {
     Output,
     SimpleChanges,
 } from '@angular/core';
-import { AbstractControl, UntypedFormArray, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
-import { SentinelValidators } from '@sentinel/common';
-import { ExtendedMatchingItems, Question } from '@crczp/training-model';
-import { ExtendedMatchingItemsFormGroup } from './extended-matching-items-form-group';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {AbstractControl, UntypedFormArray, UntypedFormControl, UntypedFormGroup} from '@angular/forms';
+import {SentinelValidators} from '@sentinel/common';
+import {ExtendedMatchingItems, Question} from '@crczp/training-model';
+import {ExtendedMatchingItemsFormGroup} from './extended-matching-items-form-group';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 
 /**
  * Component for editing a question of type Extended Matching Items

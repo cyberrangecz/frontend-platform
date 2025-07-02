@@ -1,14 +1,14 @@
-import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
-import { TrainingDefinition } from '@crczp/training-model';
-import { EMPTY, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import {Injectable} from '@angular/core';
+import {ActivatedRouteSnapshot, RouterStateSnapshot} from '@angular/router';
+import {TrainingDefinition} from '@crczp/training-model';
+import {EMPTY, Observable} from 'rxjs';
+import {map} from 'rxjs/operators';
 import {
     TRAINING_DEFINITION_EDIT_PATH,
     TRAINING_DEFINITION_NEW_PATH,
     TRAINING_DEFINITION_SELECTOR,
 } from '@crczp/training-agenda';
-import { TrainingDefinitionResolver } from './training-definition-resolver.service';
+import {TrainingDefinitionResolver} from './training-definition-resolver.service';
 
 /**
  * Router breadcrumb title provider

@@ -1,5 +1,5 @@
-import { TrainingUser } from '@crczp/training-model';
-import { CommandEvent } from '../event/command/command-events-model';
+import {TrainingUser} from '@crczp/training-model';
+import {CommandEvent} from '../event/command/command-events-model';
 
 export class WalkthroughUserData {
     user!: TrainingUser;

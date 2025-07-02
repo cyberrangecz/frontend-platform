@@ -1,14 +1,14 @@
-import { Injectable } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { UrlTree } from '@angular/router';
+import {Injectable} from '@angular/core';
+import {MatDialog} from '@angular/material/dialog';
+import {UrlTree} from '@angular/router';
 import {
     SentinelConfirmationDialogComponent,
     SentinelConfirmationDialogConfig,
     SentinelDialogResultEnum,
 } from '@sentinel/components/dialogs';
-import { Observable } from 'rxjs';
-import { map, take } from 'rxjs/operators';
-import { GroupEditOverviewComponent } from '../../components/group-edit-overview.component';
+import {Observable} from 'rxjs';
+import {map, take} from 'rxjs/operators';
+import {GroupEditOverviewComponent} from '../../components/group-edit-overview.component';
 
 /**
  * CanDeactivate service for group-overview state component.

@@ -1,5 +1,5 @@
-import { AdaptiveTrainingRunPathNodeDTO } from '../../dto/run-visualization-dto';
-import { RunVisualizationPathNode } from '@crczp/visualization-model';
+import {AdaptiveTrainingRunPathNodeDTO} from '../../dto/run-visualization-dto';
+import {RunVisualizationPathNode} from '@crczp/visualization-model';
 
 
 export class TrainingRunPathMapper {

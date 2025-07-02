@@ -9,10 +9,10 @@ import {
     Output,
     SimpleChanges,
 } from '@angular/core';
-import { AccessLevel } from '@crczp/training-model';
-import { AccessLevelEditFormGroup } from './access-level-edit-form-group';
-import { AbstractControl } from '@angular/forms';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {AccessLevel} from '@crczp/training-model';
+import {AccessLevelEditFormGroup} from './access-level-edit-form-group';
+import {AbstractControl} from '@angular/forms';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 
 /**
  * Component for editing of new or existing info level

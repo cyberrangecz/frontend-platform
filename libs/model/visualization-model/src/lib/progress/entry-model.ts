@@ -1,4 +1,4 @@
-import { ProgressEvent } from '../event/progress/progress-events-model';
+import {ProgressEvent} from '../event/progress/progress-events-model';
 
 export class CommandLineEntry {
     timestamp: number;

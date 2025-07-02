@@ -1,6 +1,6 @@
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
-import { Lock, SandboxInstance, SandboxKeyPair, Topology, VMConsole, VMInfo, VMStatus } from '@crczp/sandbox-model';
-import { Observable } from 'rxjs';
+import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
+import {Lock, SandboxInstance, SandboxKeyPair, Topology, VMConsole, VMInfo, VMStatus} from '@crczp/sandbox-model';
+import {Observable} from 'rxjs';
 
 /**
  * Service abstracting http communication with sandbox instances endpoints.

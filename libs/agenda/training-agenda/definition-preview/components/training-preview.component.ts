@@ -1,10 +1,10 @@
-import { Component, OnInit } from '@angular/core';
-import { Level } from '@crczp/training-model';
-import { LevelStepperAdapter } from '@crczp/training-agenda/internal';
-import { ActivatedRoute } from '@angular/router';
-import { TrainingPreviewStepper } from '../model/training-preview-stepper';
-import { TRAINING_DEFINITION_DATA_ATTRIBUTE_NAME } from '@crczp/training-agenda';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {Component, OnInit} from '@angular/core';
+import {Level} from '@crczp/training-model';
+import {LevelStepperAdapter} from '@crczp/training-agenda/internal';
+import {ActivatedRoute} from '@angular/router';
+import {TrainingPreviewStepper} from '../model/training-preview-stepper';
+import {TRAINING_DEFINITION_DATA_ATTRIBUTE_NAME} from '@crczp/training-agenda';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 
 /**
  * Main component of training run preview.

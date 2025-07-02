@@ -1,4 +1,4 @@
-import { PlayerDataDTO } from './player-data-dto';
+import {PlayerDataDTO} from './player-data-dto';
 
 export class FinalResultsDTO {
     estimated_time: number;

@@ -1,6 +1,6 @@
-import { animate, state, style, transition, trigger } from '@angular/animations';
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { InfoPhase } from '@crczp/training-model';
+import {animate, state, style, transition, trigger} from '@angular/animations';
+import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
+import {InfoPhase} from '@crczp/training-model';
 
 @Component({
     selector: 'crczp-info-phase-detail',

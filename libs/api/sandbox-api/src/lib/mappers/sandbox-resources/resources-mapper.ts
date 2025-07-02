@@ -1,6 +1,6 @@
-import { QuotasMapper } from './quotas-mapper';
-import { SandboxResourcesDTO } from '../../dto/sandbox-resources/sandbox-resources-dto';
-import { Resources } from '@crczp/sandbox-model';
+import {QuotasMapper} from './quotas-mapper';
+import {SandboxResourcesDTO} from '../../dto/sandbox-resources/sandbox-resources-dto';
+import {Resources} from '@crczp/sandbox-model';
 
 /**
  * @dynamic

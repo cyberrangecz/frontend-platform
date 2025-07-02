@@ -1,5 +1,5 @@
-import { AbstractPhaseDTO } from '../abstract-phase-dto';
-import { TaskDTO } from './task-dto';
+import {AbstractPhaseDTO} from '../abstract-phase-dto';
+import {TaskDTO} from './task-dto';
 
 export interface TrainingPhaseDTO extends AbstractPhaseDTO {
     allowed_wrong_answers: number;

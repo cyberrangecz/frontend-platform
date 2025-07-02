@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, Component, ElementRef, Input } from '@angular/core';
+import {ChangeDetectionStrategy, Component, ElementRef, Input} from '@angular/core';
 import * as d3 from 'd3';
-import { PlayersTrainingsComponent } from './players-trainings/players-trainings.component';
-import { ChartAxesComponent } from './chart-axes/chart-axes.component';
-import { WalkthroughUserData } from '@crczp/visualization-model';
+import {PlayersTrainingsComponent} from './players-trainings/players-trainings.component';
+import {ChartAxesComponent} from './chart-axes/chart-axes.component';
+import {WalkthroughUserData} from '@crczp/visualization-model';
 
 @Component({
     // eslint-disable-next-line @angular-eslint/component-selector

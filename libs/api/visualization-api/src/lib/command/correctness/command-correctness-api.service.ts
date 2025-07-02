@@ -1,13 +1,14 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { AggregatedCommandMapper } from './mappers/aggregated-command-mapper';
-import { AggregatedCommandsDTO } from './dto/aggregated-commands-dto';
-import { VisualizationApiConfig } from '../../config/visualization-api-config';
-import { AggregatedCommands } from '@crczp/visualization-model';
-import { TrainingRun } from '@crczp/training-model';
-import { TrainingRunDTO, TrainingRunMapper } from '@crczp/training-api';
+import {Injectable} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+import {Observable} from 'rxjs';
+import {map} from 'rxjs/operators';
+import {AggregatedCommandMapper} from './mappers/aggregated-command-mapper';
+import {AggregatedCommandsDTO} from './dto/aggregated-commands-dto';
+import {VisualizationApiConfig} from '../../config/visualization-api-config';
+import {AggregatedCommands} from '@crczp/visualization-model';
+import {TrainingRun} from '@crczp/training-model';
+import {TrainingRunDTO, TrainingRunMapper} from '@crczp/training-api';
+
 @Injectable()
 export class CommandCorrectnessApi {
     private readonly visualizationsEndpoint: string;

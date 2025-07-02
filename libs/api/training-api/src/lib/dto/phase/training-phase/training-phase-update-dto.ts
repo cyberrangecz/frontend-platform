@@ -1,7 +1,7 @@
-import { DecisionMatrixRowDTO } from './decision-matrix-row-dto';
-import { AbstractPhaseDTO } from '../abstract-phase-dto';
-import { TaskUpdateDTO } from './task-update-dto';
-import { MitreTechniqueDTO } from '../../mitre-techniques/mitre-technique-dto';
+import {DecisionMatrixRowDTO} from './decision-matrix-row-dto';
+import {AbstractPhaseDTO} from '../abstract-phase-dto';
+import {TaskUpdateDTO} from './task-update-dto';
+import {MitreTechniqueDTO} from '../../mitre-techniques/mitre-technique-dto';
 
 export class TrainingPhaseUpdateDTO {
     id: number;

@@ -1,8 +1,8 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { SentinelParamsMerger } from '@sentinel/common';
-import { SentinelFilter } from '@sentinel/common/filter';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
+import {HttpClient, HttpParams} from '@angular/common/http';
+import {Injectable} from '@angular/core';
+import {SentinelParamsMerger} from '@sentinel/common';
+import {SentinelFilter} from '@sentinel/common/filter';
+import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
 import {
     AccessedTrainingRun,
     AccessTrainingRunInfo,
@@ -13,26 +13,26 @@ import {
     TrainingRun,
     TrainingRunInfo
 } from '@crczp/training-model';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { AbstractLevelDTO } from '../../dto/level/abstract-level-dto';
-import { HintDTO } from '../../dto/level/training/hint-dto';
-import { IsCorrectAnswerDto } from '../../dto/level/training/is-correct-answer-dto';
-import { AccessTrainingRunDTO } from '../../dto/training-run/access-training-run-dto';
-import { TrainingRunDTO } from '../../dto/training-run/training-run-dto';
-import { QuestionMapper } from '../../mappers/level/assessment/question-mapper';
-import { HintMapper } from '../../mappers/level/training/hint-mapper';
-import { LevelMapper } from '../../mappers/level/level-mapper';
-import { AccessTrainingRunMapper } from '../../mappers/training-run/access-training-run-mapper';
-import { AccessedTrainingRunMapper } from '../../mappers/training-run/accessed-training-run-mapper';
-import { LevelAnswerMapper } from '../../mappers/training-run/level-answer-mapper';
-import { TrainingRunMapper } from '../../mappers/training-run/training-run-mapper';
-import { TrainingApiContext } from '../../other/training-api-context';
-import { TrainingRunApi } from './training-run-api.service';
-import { TrainingRunInfoDTO } from '../../dto/training-run/training-run-info-dto';
-import { TrainingRunInfoMapper } from '../../mappers/training-run/training-run-info-mapper';
-import { AnsweredLevelMapper } from '../../mappers/training-run/training-run-levels/answered-level-mapper';
-import { JavaPaginatedResource, PaginationMapper, ParamsBuilder } from '@crczp/api-common';
+import {Observable} from 'rxjs';
+import {map} from 'rxjs/operators';
+import {AbstractLevelDTO} from '../../dto/level/abstract-level-dto';
+import {HintDTO} from '../../dto/level/training/hint-dto';
+import {IsCorrectAnswerDto} from '../../dto/level/training/is-correct-answer-dto';
+import {AccessTrainingRunDTO} from '../../dto/training-run/access-training-run-dto';
+import {TrainingRunDTO} from '../../dto/training-run/training-run-dto';
+import {QuestionMapper} from '../../mappers/level/assessment/question-mapper';
+import {HintMapper} from '../../mappers/level/training/hint-mapper';
+import {LevelMapper} from '../../mappers/level/level-mapper';
+import {AccessTrainingRunMapper} from '../../mappers/training-run/access-training-run-mapper';
+import {AccessedTrainingRunMapper} from '../../mappers/training-run/accessed-training-run-mapper';
+import {LevelAnswerMapper} from '../../mappers/training-run/level-answer-mapper';
+import {TrainingRunMapper} from '../../mappers/training-run/training-run-mapper';
+import {TrainingApiContext} from '../../other/training-api-context';
+import {TrainingRunApi} from './training-run-api.service';
+import {TrainingRunInfoDTO} from '../../dto/training-run/training-run-info-dto';
+import {TrainingRunInfoMapper} from '../../mappers/training-run/training-run-info-mapper';
+import {AnsweredLevelMapper} from '../../mappers/training-run/training-run-levels/answered-level-mapper';
+import {JavaPaginatedResource, PaginationMapper, ParamsBuilder} from '@crczp/api-common';
 
 /**
  * Default implementation of service abstracting http communication with training run endpoints.

@@ -1,4 +1,4 @@
-import { SentinelAuthConfig } from '@sentinel/auth';
+import {SentinelAuthConfig} from '@sentinel/auth';
 
 export class Settings {
     /**

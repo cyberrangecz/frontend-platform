@@ -1,6 +1,6 @@
-import { AbstractLevelTypeEnum, AssessmentLevel, AssessmentTypeEnum } from '@crczp/training-model';
-import { AssessmentLevelDTO } from './../../../../dto/level/assessment/assessment-level-dto';
-import { AnsweredAssessmentQuestionMapper } from './answered-assessment-question-mapper';
+import {AbstractLevelTypeEnum, AssessmentLevel, AssessmentTypeEnum} from '@crczp/training-model';
+import {AssessmentLevelDTO} from './../../../../dto/level/assessment/assessment-level-dto';
+import {AnsweredAssessmentQuestionMapper} from './answered-assessment-question-mapper';
 
 export class AnsweredAssessmentLevelMapper {
     static fromDTO(dto: AssessmentLevelDTO): AssessmentLevel {

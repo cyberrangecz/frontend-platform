@@ -1,8 +1,8 @@
-import { PaginatedResource } from '@sentinel/common/pagination';
-import { Column, Row, SentinelTable } from '@sentinel/components/table';
-import { DetectedForbiddenCommand, DetectedForbiddenCommandTypeEnum } from '@crczp/training-model';
-import { DatePipe } from '@angular/common';
-import { DetectionEventForbiddenCommandsRowAdapter } from './detection-event-forbidden-commands-row-adapter';
+import {PaginatedResource} from '@sentinel/common/pagination';
+import {Column, Row, SentinelTable} from '@sentinel/components/table';
+import {DetectedForbiddenCommand, DetectedForbiddenCommandTypeEnum} from '@crczp/training-model';
+import {DatePipe} from '@angular/common';
+import {DetectionEventForbiddenCommandsRowAdapter} from './detection-event-forbidden-commands-row-adapter';
 
 /**
  * @dynamic

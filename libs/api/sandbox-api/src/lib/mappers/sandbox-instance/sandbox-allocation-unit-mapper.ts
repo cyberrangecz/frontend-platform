@@ -1,7 +1,7 @@
-import { SandboxAllocationUnit } from '@crczp/sandbox-model';
-import { SandboxAllocationUnitDTO } from '../../dto/sandbox-instance/sandbox-allocation-unit-dto';
-import { CreatedByMapper } from './created-by-mapper';
-import { RequestMapper } from './request-mapper';
+import {SandboxAllocationUnit} from '@crczp/sandbox-model';
+import {SandboxAllocationUnitDTO} from '../../dto/sandbox-instance/sandbox-allocation-unit-dto';
+import {CreatedByMapper} from './created-by-mapper';
+import {RequestMapper} from './request-mapper';
 
 /**
  * @dynamic

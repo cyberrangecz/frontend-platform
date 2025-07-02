@@ -1,5 +1,5 @@
-import { QuotaDTO } from './../../dto/sandbox-resources/quota-dto';
-import { Quota } from '@crczp/sandbox-model';
+import {QuotaDTO} from './../../dto/sandbox-resources/quota-dto';
+import {Quota} from '@crczp/sandbox-model';
 
 /**
  * @dynamic

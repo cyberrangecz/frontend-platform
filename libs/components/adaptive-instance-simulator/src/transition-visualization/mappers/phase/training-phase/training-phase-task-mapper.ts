@@ -1,5 +1,5 @@
-import { TrainingPhaseTask } from '../../../model/phase/training-phase/training-phase-task';
-import { TaskDTO } from '../../../dto/task-dto';
+import {TrainingPhaseTask} from '../../../model/phase/training-phase/training-phase-task';
+import {TaskDTO} from '../../../dto/task-dto';
 
 export class TrainingPhaseTaskMapper {
     static fromDTOs(dtos: TaskDTO[]): TrainingPhaseTask[] {

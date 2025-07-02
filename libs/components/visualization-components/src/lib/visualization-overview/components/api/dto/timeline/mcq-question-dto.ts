@@ -1,4 +1,4 @@
-import { TimelineQuestionDTO } from './timeline-question-dto';
+import {TimelineQuestionDTO} from './timeline-question-dto';
 
 export class McqQuestionDTO extends TimelineQuestionDTO {
     options: string[];

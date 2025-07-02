@@ -1,4 +1,4 @@
-import { TimelinePlayer } from './timeline-player';
+import {TimelinePlayer} from './timeline-player';
 
 export class TimelineData {
     estimatedTime: number;

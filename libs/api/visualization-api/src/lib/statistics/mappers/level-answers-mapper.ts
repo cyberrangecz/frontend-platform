@@ -1,5 +1,5 @@
-import { LevelAnswersStatistics } from '@crczp/visualization-model';
-import { LevelAnswersStatisticsDTO } from '../dtos';
+import {LevelAnswersStatistics} from '@crczp/visualization-model';
+import {LevelAnswersStatisticsDTO} from '../dtos';
 
 export class LevelAnswersMapper {
     static fromDTOs(dtos: LevelAnswersStatisticsDTO[]): LevelAnswersStatistics[] {

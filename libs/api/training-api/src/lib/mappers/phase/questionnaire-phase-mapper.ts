@@ -1,4 +1,4 @@
-import { QuestionnairePhaseDTO } from '../../dto/phase/questionnaire-phase/questionnaire-phase-dto';
+import {QuestionnairePhaseDTO} from '../../dto/phase/questionnaire-phase/questionnaire-phase-dto';
 import {
     AbstractPhaseTypeEnum,
     AdaptiveQuestion,
@@ -8,10 +8,10 @@ import {
     QuestionnaireTypeEnum,
     QuestionTypeEnum,
 } from '@crczp/training-model';
-import { PhaseRelationDTO } from '../../dto/phase/questionnaire-phase/phase-relation-dto';
-import { QuestionDTO } from '../../dto/phase/questionnaire-phase/question-dto';
-import { ChoiceDTO } from '../../dto/phase/questionnaire-phase/choice-dto';
-import { QuestionnairePhaseUpdateDTO } from '../../dto/phase/questionnaire-phase/questionnaire-phase-update-dto';
+import {PhaseRelationDTO} from '../../dto/phase/questionnaire-phase/phase-relation-dto';
+import {QuestionDTO} from '../../dto/phase/questionnaire-phase/question-dto';
+import {ChoiceDTO} from '../../dto/phase/questionnaire-phase/choice-dto';
+import {QuestionnairePhaseUpdateDTO} from '../../dto/phase/questionnaire-phase/questionnaire-phase-update-dto';
 
 export class QuestionnairePhaseMapper {
     static fromDTO(dto: QuestionnairePhaseDTO): QuestionnairePhase {

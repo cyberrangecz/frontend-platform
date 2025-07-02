@@ -1,19 +1,15 @@
-import { HttpErrorResponse } from '@angular/common/http';
-import { inject, Injectable } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { CleanupRequestsApi } from '@crczp/sandbox-api';
-import { Request, RequestStage } from '@crczp/sandbox-model';
-import { Observable, zip } from 'rxjs';
-import { map, take, tap } from 'rxjs/operators';
-import {
-    SandboxErrorHandler,
-    SandboxNavigator,
-    SandboxNotificationService,
-} from '@crczp/sandbox-agenda';
-import { RequestStagesService } from './request-stages.service';
-import { StageAdapter } from '../../model/adapters/stage-adapter';
-import { StageAdapterMapper } from '../../model/adapters/stage-adapter-mapper';
-import { POLLING_PERIOD_SHORT_SETTING_TOKEN } from '@crczp/common';
+import {HttpErrorResponse} from '@angular/common/http';
+import {Injectable} from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
+import {CleanupRequestsApi} from '@crczp/sandbox-api';
+import {Request, RequestStage} from '@crczp/sandbox-model';
+import {Observable, zip} from 'rxjs';
+import {map, take, tap} from 'rxjs/operators';
+import {SandboxErrorHandler, SandboxNavigator, SandboxNotificationService,} from '@crczp/sandbox-agenda';
+import {RequestStagesService} from './request-stages.service';
+import {StageAdapter} from '../../model/adapters/stage-adapter';
+import {StageAdapterMapper} from '../../model/adapters/stage-adapter-mapper';
+import {Settings} from "@crczp/common";
 
 @Injectable()
 export class CleanupStagesConcreteService extends RequestStagesService {
@@ -23,10 +19,12 @@ export class CleanupStagesConcreteService extends RequestStagesService {
         private route: ActivatedRoute,
         private navigator: SandboxNavigator,
         private notificationService: SandboxNotificationService,
-        private errorHandler: SandboxErrorHandler
+        private errorHandler: SandboxErrorHandler,
+        settings: Settings
     ) {
-        super(inject(POLLING_PERIOD_SHORT_SETTING_TOKEN));
+        super(settings.POLLING_PERIOD_SHORT)
     }
+
 
     protected refreshStages(): Observable<StageAdapter[]> {
         return super

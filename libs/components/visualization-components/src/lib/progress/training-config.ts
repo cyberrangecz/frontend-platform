@@ -1,4 +1,4 @@
-import { TrainingData } from '@crczp/visualization-model';
+import {TrainingData} from '@crczp/visualization-model';
 
 export class TrainingConfig {
     data: TrainingData;

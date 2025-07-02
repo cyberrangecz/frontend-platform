@@ -1,7 +1,6 @@
-
-import { AggregatedCommandsDTO } from '../dto/aggregated-commands-dto';
-import { CommandPerOptionsMapper } from './command-per-options-mapper';
-import { AggregatedCommands } from '@crczp/visualization-model';
+import {AggregatedCommandsDTO} from '../dto/aggregated-commands-dto';
+import {CommandPerOptionsMapper} from './command-per-options-mapper';
+import {AggregatedCommands} from '@crczp/visualization-model';
 
 /**
  * @dynamic

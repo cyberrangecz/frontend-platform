@@ -1,35 +1,26 @@
-import {
-    ChangeDetectorRef,
-    Component,
-    HostListener,
-    Input,
-    OnInit,
-} from '@angular/core';
-import { take } from 'rxjs/operators';
+import {ChangeDetectorRef, Component, HostListener, Input, OnInit,} from '@angular/core';
+import {take} from 'rxjs/operators';
 
-import { async, BehaviorSubject, Observable } from 'rxjs';
-import { MatSelectChange, MatSelectModule } from '@angular/material/select';
-import { MatSidenavModule } from '@angular/material/sidenav';
-import { MatExpansionModule } from '@angular/material/expansion';
-import { TraineeSelectionComponent } from '../progress/components/visualizations/trainee-selection/trainee-selection.component';
-import { TrainingsVisualizationsOverviewLibModule } from '../visualization-overview/trainings-visualizations-overview-lib.module';
-import { ProgressVisualizationsComponent } from '../progress/components/visualizations/progress-visualizations.component';
-import { CommonModule } from '@angular/common';
-import { MatOptionModule } from '@angular/material/core';
+import {async, BehaviorSubject, Observable} from 'rxjs';
+import {MatSelectChange, MatSelectModule} from '@angular/material/select';
+import {MatSidenavModule} from '@angular/material/sidenav';
+import {MatExpansionModule} from '@angular/material/expansion';
 import {
-    CommandApi,
-    TimelineCommandApi,
-    VisualizationApiConfig,
-} from '@crczp/visualization-api';
-import { TimelineCommandService } from '../command/command-timeline/timeline-command.service';
-import { D3, D3Service } from '../common/d3-service/d3-service';
-import { TraineeViewEnum } from '../progress/components/types';
+    TraineeSelectionComponent
+} from '../progress/components/visualizations/trainee-selection/trainee-selection.component';
 import {
-    ProgressTraineeInfo,
-    ProgressVisualizationData,
-} from '@crczp/visualization-model';
-import { ProgressVisualizationsDataService } from '../progress/services/progress-visualizations-data.service';
-import { provideComponentProperty } from '@crczp/common';
+    TrainingsVisualizationsOverviewLibModule
+} from '../visualization-overview/trainings-visualizations-overview-lib.module';
+import {ProgressVisualizationsComponent} from '../progress/components/visualizations/progress-visualizations.component';
+import {CommonModule} from '@angular/common';
+import {MatOptionModule} from '@angular/material/core';
+import {CommandApi, TimelineCommandApi, VisualizationApiConfig,} from '@crczp/visualization-api';
+import {TimelineCommandService} from '../command/command-timeline/timeline-command.service';
+import {D3, D3Service} from '../common/d3-service/d3-service';
+import {TraineeViewEnum} from '../progress/components/types';
+import {ProgressTraineeInfo, ProgressVisualizationData,} from '@crczp/visualization-model';
+import {ProgressVisualizationsDataService} from '../progress/services/progress-visualizations-data.service';
+import {provideComponentProperty} from '@crczp/common';
 
 @Component({
     selector: 'crczp-dashboard',
@@ -65,12 +56,12 @@ export class DashboardComponent implements OnInit {
     innerWidth = document.documentElement.clientWidth - 200;
     clusteringSize =
         innerWidth > 1550
-            ? { width: innerWidth * 0.36, height: 400 }
-            : { width: innerWidth * 0.7, height: 400 };
+            ? {width: innerWidth * 0.36, height: 400}
+            : {width: innerWidth * 0.7, height: 400};
     timelineSize =
         innerWidth > 1550
-            ? { width: innerWidth * 0.33, height: 400 }
-            : { width: innerWidth * 0.7, height: 400 };
+            ? {width: innerWidth * 0.33, height: 400}
+            : {width: innerWidth * 0.7, height: 400};
     selectedTraineeView: TraineeViewEnum = TraineeViewEnum.Avatar;
     visualizationData$: Observable<ProgressVisualizationData>;
     protected readonly async = async;

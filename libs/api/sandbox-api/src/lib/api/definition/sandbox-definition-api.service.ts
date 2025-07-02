@@ -1,6 +1,6 @@
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
-import { SandboxDefinition, SandboxDefinitionRef } from '@crczp/sandbox-model';
-import { Observable } from 'rxjs';
+import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
+import {SandboxDefinition, SandboxDefinitionRef} from '@crczp/sandbox-model';
+import {Observable} from 'rxjs';
 
 /**
  * Service abstracting http communication with sandbox definition endpoints.

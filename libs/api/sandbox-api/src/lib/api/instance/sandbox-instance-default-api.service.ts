@@ -1,24 +1,24 @@
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { ResponseHeaderContentDispositionReader } from '@sentinel/common';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
-import { Lock, SandboxInstance, SandboxKeyPair, Topology, VMConsole, VMInfo, VMStatus } from '@crczp/sandbox-model';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { LockDTO } from '../../dto/sandbox-instance/lock-dto';
-import { SandboxInstanceDTO } from '../../dto/sandbox-instance/sandbox-instance-dto';
-import { SandboxKeyPairDTO } from '../../dto/sandbox-instance/sandbox-key-pair-dto';
-import { TopologyDTO } from '../../dto/sandbox-instance/topology-dto';
-import { VMInfoDTO } from '../../dto/sandbox-instance/vm-info-dto';
-import { SandboxInstanceMapper } from '../../mappers/sandbox-instance/sandbox-instance-mapper';
-import { TopologyMapper } from '../../mappers/sandbox-instance/topology-mapper';
-import { SandboxApiConfigService } from '../../others/sandbox-api-config.service';
-import { LockMapper } from '../../mappers/sandbox-instance/lock-mapper';
-import { SandboxKeyPairMapper } from '../../mappers/sandbox-instance/sandbox-key-pair-mapper';
-import { VMConsoleMapper } from '../../mappers/sandbox-instance/vm-console-mapper';
-import { VMInfoMapper } from '../../mappers/sandbox-instance/vm-info-mapper';
-import { SandboxInstanceApi } from './sandbox-instance-api.service';
-import { BlobFileSaver, DjangoResourceDTO, handleJsonError, PaginationMapper, ParamsBuilder } from '@crczp/api-common';
+import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
+import {Injectable} from '@angular/core';
+import {ResponseHeaderContentDispositionReader} from '@sentinel/common';
+import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
+import {Lock, SandboxInstance, SandboxKeyPair, Topology, VMConsole, VMInfo, VMStatus} from '@crczp/sandbox-model';
+import {Observable} from 'rxjs';
+import {map} from 'rxjs/operators';
+import {LockDTO} from '../../dto/sandbox-instance/lock-dto';
+import {SandboxInstanceDTO} from '../../dto/sandbox-instance/sandbox-instance-dto';
+import {SandboxKeyPairDTO} from '../../dto/sandbox-instance/sandbox-key-pair-dto';
+import {TopologyDTO} from '../../dto/sandbox-instance/topology-dto';
+import {VMInfoDTO} from '../../dto/sandbox-instance/vm-info-dto';
+import {SandboxInstanceMapper} from '../../mappers/sandbox-instance/sandbox-instance-mapper';
+import {TopologyMapper} from '../../mappers/sandbox-instance/topology-mapper';
+import {SandboxApiConfigService} from '../../others/sandbox-api-config.service';
+import {LockMapper} from '../../mappers/sandbox-instance/lock-mapper';
+import {SandboxKeyPairMapper} from '../../mappers/sandbox-instance/sandbox-key-pair-mapper';
+import {VMConsoleMapper} from '../../mappers/sandbox-instance/vm-console-mapper';
+import {VMInfoMapper} from '../../mappers/sandbox-instance/vm-info-mapper';
+import {SandboxInstanceApi} from './sandbox-instance-api.service';
+import {BlobFileSaver, DjangoResourceDTO, handleJsonError, PaginationMapper, ParamsBuilder} from '@crczp/api-common';
 
 /**
  * Default implementation of service abstracting http communication with sandbox instances endpoints.

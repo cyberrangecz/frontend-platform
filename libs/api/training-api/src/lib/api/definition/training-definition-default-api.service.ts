@@ -1,8 +1,8 @@
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { ResponseHeaderContentDispositionReader, SentinelParamsMerger } from '@sentinel/common';
-import { SentinelFilter } from '@sentinel/common/filter';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
+import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
+import {Injectable} from '@angular/core';
+import {ResponseHeaderContentDispositionReader, SentinelParamsMerger} from '@sentinel/common';
+import {SentinelFilter} from '@sentinel/common/filter';
+import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
 import {
     AccessLevel,
     AssessmentLevel,
@@ -13,18 +13,18 @@ import {
     TrainingDefinitionStateEnum,
     TrainingLevel
 } from '@crczp/training-model';
-import { fromEvent, Observable } from 'rxjs';
-import { map, mergeMap } from 'rxjs/operators';
-import { AssessmentLevelDTO } from '../../dto/level/assessment/assessment-level-dto';
-import { BasicLevelInfoDTO } from '../../dto/level/basic-level-info-dto';
-import { TrainingLevelDto } from '../../dto/level/training/training-level-dto';
-import { InfoLevelDTO } from '../../dto/level/info/info-level-dto';
-import { TrainingDefinitionDTO } from '../../dto/training-definition/training-definition-dto';
-import { LevelMapper } from '../../mappers/level/level-mapper';
-import { TrainingDefinitionInfoMapper } from '../../mappers/training-definition/training-definition-info-mapper';
-import { TrainingDefinitionMapper } from '../../mappers/training-definition/training-definition-mapper';
-import { TrainingApiContext } from '../../other/training-api-context';
-import { TrainingDefinitionApi } from './training-definition-api.service';
+import {fromEvent, Observable} from 'rxjs';
+import {map, mergeMap} from 'rxjs/operators';
+import {AssessmentLevelDTO} from '../../dto/level/assessment/assessment-level-dto';
+import {BasicLevelInfoDTO} from '../../dto/level/basic-level-info-dto';
+import {TrainingLevelDto} from '../../dto/level/training/training-level-dto';
+import {InfoLevelDTO} from '../../dto/level/info/info-level-dto';
+import {TrainingDefinitionDTO} from '../../dto/training-definition/training-definition-dto';
+import {LevelMapper} from '../../mappers/level/level-mapper';
+import {TrainingDefinitionInfoMapper} from '../../mappers/training-definition/training-definition-info-mapper';
+import {TrainingDefinitionMapper} from '../../mappers/training-definition/training-definition-mapper';
+import {TrainingApiContext} from '../../other/training-api-context';
+import {TrainingDefinitionApi} from './training-definition-api.service';
 import {
     BlobFileSaver,
     handleJsonError,
@@ -32,7 +32,7 @@ import {
     PaginationMapper,
     ParamsBuilder
 } from '@crczp/api-common';
-import { TrainingDefinitionInfoDTO } from '../../dto/training-definition/training-definition-info-dto';
+import {TrainingDefinitionInfoDTO} from '../../dto/training-definition/training-definition-info-dto';
 
 /**
  * Service abstracting http communication with training definition endpoints.

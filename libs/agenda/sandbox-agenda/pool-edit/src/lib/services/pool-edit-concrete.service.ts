@@ -1,14 +1,16 @@
-import { Injectable } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
-import { PoolApi } from '@crczp/sandbox-api';
-import { Pool, SandboxDefinition } from '@crczp/sandbox-model';
-import { BehaviorSubject, combineLatest, defer, finalize, from, Observable, ReplaySubject } from 'rxjs';
-import { map, switchMap, tap } from 'rxjs/operators';
-import { SandboxDefinitionSelectComponent } from '../components/sandbox-definition-select/sandbox-definition-select.component';
-import { SandboxErrorHandler, SandboxNavigator, SandboxNotificationService } from '@crczp/sandbox-agenda';
-import { PoolEditService } from './pool-edit.service';
-import { PoolChangedEvent } from '../model/pool-changed-event';
+import {Injectable} from '@angular/core';
+import {MatDialog} from '@angular/material/dialog';
+import {Router} from '@angular/router';
+import {PoolApi} from '@crczp/sandbox-api';
+import {Pool, SandboxDefinition} from '@crczp/sandbox-model';
+import {BehaviorSubject, combineLatest, defer, finalize, from, Observable, ReplaySubject} from 'rxjs';
+import {map, switchMap, tap} from 'rxjs/operators';
+import {
+    SandboxDefinitionSelectComponent
+} from '../components/sandbox-definition-select/sandbox-definition-select.component';
+import {SandboxErrorHandler, SandboxNavigator, SandboxNotificationService} from '@crczp/sandbox-agenda';
+import {PoolEditService} from './pool-edit.service';
+import {PoolChangedEvent} from '../model/pool-changed-event';
 
 @Injectable()
 export class PoolEditConcreteService extends PoolEditService {

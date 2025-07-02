@@ -8,10 +8,14 @@ import {
     SimpleChanges,
     ViewChild,
 } from '@angular/core';
-import { ExtendedMatchingItems, FreeFormQuestion, MultipleChoiceQuestion, Question } from '@crczp/training-model';
-import { ExtendedMatchingItemsTraineeComponent } from './extended-matching-items/extended-matching-items-trainee.component';
-import { FreeFormQuestionTraineeComponent } from './free-form-question/free-form-question-trainee.component';
-import { MultipleChoiceQuestionTraineeComponent } from './multiple-choice-question/multiple-choice-question-trainee.component';
+import {ExtendedMatchingItems, FreeFormQuestion, MultipleChoiceQuestion, Question} from '@crczp/training-model';
+import {
+    ExtendedMatchingItemsTraineeComponent
+} from './extended-matching-items/extended-matching-items-trainee.component';
+import {FreeFormQuestionTraineeComponent} from './free-form-question/free-form-question-trainee.component';
+import {
+    MultipleChoiceQuestionTraineeComponent
+} from './multiple-choice-question/multiple-choice-question-trainee.component';
 
 @Component({
     selector: 'crczp-trainee-question',

@@ -1,6 +1,6 @@
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { SandboxAllocationUnit } from '@crczp/sandbox-model';
+import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
+import {BehaviorSubject, Observable} from 'rxjs';
+import {SandboxAllocationUnit} from '@crczp/sandbox-model';
 
 export abstract class SandboxAllocationUnitsService {
     /**

@@ -1,4 +1,4 @@
-import { VMStatus } from '../enums/vm-status.enum';
+import {VMStatus} from '../enums/vm-status.enum';
 
 export class VMInfo {
     name!: string;

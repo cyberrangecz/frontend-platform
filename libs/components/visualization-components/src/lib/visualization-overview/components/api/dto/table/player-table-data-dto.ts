@@ -1,4 +1,4 @@
-import { LevelTableDataDTO } from './level-table-data-dto';
+import {LevelTableDataDTO} from './level-table-data-dto';
 
 export class PlayerTableDataDTO {
     id: number;

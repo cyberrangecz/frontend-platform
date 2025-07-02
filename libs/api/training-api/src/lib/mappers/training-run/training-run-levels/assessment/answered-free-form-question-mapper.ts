@@ -1,5 +1,7 @@
-import { FreeFormQuestion } from '@crczp/training-model';
-import { AnsweredFreeFormQuestionDTOClass } from '../../../../dto/training-run/training-run-levels/answered-free-form-question-dto';
+import {FreeFormQuestion} from '@crczp/training-model';
+import {
+    AnsweredFreeFormQuestionDTOClass
+} from '../../../../dto/training-run/training-run-levels/answered-free-form-question-dto';
 
 export class AnsweredFreeFormQuestionMapper {
     static fromDTO(dto: AnsweredFreeFormQuestionDTOClass): FreeFormQuestion {

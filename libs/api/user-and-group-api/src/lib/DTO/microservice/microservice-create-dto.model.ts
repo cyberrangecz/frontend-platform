@@ -1,4 +1,4 @@
-import { MicroserviceRoleDTO } from './microservice-role-dto';
+import {MicroserviceRoleDTO} from './microservice-role-dto';
 
 export class MicroserviceCreateDTO {
     name: string;

@@ -1,6 +1,6 @@
-import { UntypedFormControl, UntypedFormGroup } from '@angular/forms';
-import { SentinelValidators } from '@sentinel/common';
-import { InfoLevel } from '@crczp/training-model';
+import {UntypedFormControl, UntypedFormGroup} from '@angular/forms';
+import {SentinelValidators} from '@sentinel/common';
+import {InfoLevel} from '@crczp/training-model';
 
 /**
  * Form control class for info level edit component

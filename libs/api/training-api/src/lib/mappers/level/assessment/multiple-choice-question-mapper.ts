@@ -1,10 +1,10 @@
-import { MultipleChoiceQuestion } from '@crczp/training-model';
-import { AbstractQuestionDTO } from '../../../dto/level/assessment/abstact-question-dto';
+import {MultipleChoiceQuestion} from '@crczp/training-model';
+import {AbstractQuestionDTO} from '../../../dto/level/assessment/abstact-question-dto';
 import {
     MultipleChoiceQuestionCreateDTO,
     MultipleChoiceQuestionCreateDTOClass,
 } from '../../../dto/level/assessment/multiple-choice-question-create-dto';
-import { QuestionAnswerDTO } from '../../../dto/level/assessment/question-answer-dto';
+import {QuestionAnswerDTO} from '../../../dto/level/assessment/question-answer-dto';
 
 export class MultipleChoiceQuestionMapper {
     static fromDTO(dto: MultipleChoiceQuestionCreateDTOClass): MultipleChoiceQuestion {

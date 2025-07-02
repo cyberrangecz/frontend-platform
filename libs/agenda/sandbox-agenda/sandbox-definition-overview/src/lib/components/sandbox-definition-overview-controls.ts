@@ -1,6 +1,6 @@
-import {SentinelControlItemSignal} from '@sentinel/components/controls';
 import {defer, of} from 'rxjs';
 import {SandboxDefinitionOverviewService} from '@crczp/sandbox-agenda/internal';
+import {SentinelControlItem} from "@sentinel/components/controls";
 
 /**
  * @dynamic
@@ -12,9 +12,9 @@ export class SandboxDefinitionOverviewControls {
      *
      * @param service
      */
-    static create(service: SandboxDefinitionOverviewService): SentinelControlItemSignal[] {
+    static create(service: SandboxDefinitionOverviewService): SentinelControlItem[] {
         return [
-            new SentinelControlItemSignal(
+            new SentinelControlItem(
                 this.CREATE_ACTION_ID,
                 'Create',
                 'primary',

@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { QuestionnairePhaseTask } from '../../../model/phase/questionnaire-phase/questionnaire-phase-task';
+import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
+import {QuestionnairePhaseTask} from '../../../model/phase/questionnaire-phase/questionnaire-phase-task';
 
 @Component({
     // eslint-disable-next-line @angular-eslint/component-selector

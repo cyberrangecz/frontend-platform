@@ -1,12 +1,12 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { HighlightService } from '../../services/highlight.service';
-import { HighlightableDirective } from '../../directives/highlightable.directive';
-import { AssessmentQuestion } from '@crczp/visualization-model';
-import { FFQTableAdapter } from '../../table-adapter/ffq-table-adapter';
-import { CommonModule } from '@angular/common';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatInputModule } from '@angular/material/input';
+import {Component, Input, OnInit} from '@angular/core';
+import {MatTableDataSource, MatTableModule} from '@angular/material/table';
+import {HighlightService} from '../../services/highlight.service';
+import {HighlightableDirective} from '../../directives/highlightable.directive';
+import {AssessmentQuestion} from '@crczp/visualization-model';
+import {FFQTableAdapter} from '../../table-adapter/ffq-table-adapter';
+import {CommonModule} from '@angular/common';
+import {MatTooltipModule} from '@angular/material/tooltip';
+import {MatInputModule} from '@angular/material/input';
 
 /**
  * Component displaying result of a free form question

@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import {Injectable} from '@angular/core';
+import {Observable} from 'rxjs';
 import {
     Clusterables,
     ClusteredUser,
@@ -7,7 +7,7 @@ import {
     TimeAfterHint,
     WrongFlags
 } from '@crczp/visualization-model';
-import { ClusteringApi } from '@crczp/visualization-api';
+import {ClusteringApi} from '@crczp/visualization-api';
 
 @Injectable()
 export class VisualizationsDataService {

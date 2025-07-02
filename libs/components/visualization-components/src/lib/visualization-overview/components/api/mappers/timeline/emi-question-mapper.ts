@@ -1,5 +1,5 @@
-import { EmiQuestionDTO } from '../../dto/timeline/emi-question-dto';
-import { EmiQuestion } from '../../../model/timeline/emi-question';
+import {EmiQuestionDTO} from '../../dto/timeline/emi-question-dto';
+import {EmiQuestion} from '../../../model/timeline/emi-question';
 
 export class EmiQuestionMapper {
     static fromDTO(dto: EmiQuestionDTO): EmiQuestion {

@@ -1,6 +1,6 @@
-import { NgModule } from '@angular/core';
-import { MatCardModule } from '@angular/material/card';
-import { MatIconModule } from '@angular/material/icon';
+import {NgModule} from '@angular/core';
+import {MatCardModule} from '@angular/material/card';
+import {MatIconModule} from '@angular/material/icon';
 
 /**
  * Material components for training instance cheating detection edit module

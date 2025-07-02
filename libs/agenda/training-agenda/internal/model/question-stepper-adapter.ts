@@ -1,5 +1,5 @@
-import { ExtendedMatchingItems, FreeFormQuestion, MultipleChoiceQuestion, Question } from '@crczp/training-model';
-import { StepItem, StepStateEnum } from '@sentinel/components/stepper';
+import {ExtendedMatchingItems, FreeFormQuestion, MultipleChoiceQuestion, Question} from '@crczp/training-model';
+import {StepItem, StepStateEnum} from '@sentinel/components/stepper';
 
 export class QuestionStepperAdapter implements StepItem {
     private _question: Question;

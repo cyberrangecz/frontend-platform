@@ -1,10 +1,10 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { Phase } from '@crczp/training-model';
-import { ADAPTIVE_DEFINITION_DATA_ATTRIBUTE_NAME } from '@crczp/training-agenda';
-import { PhaseStepperAdapter } from '@crczp/training-agenda/internal';
-import { AdaptivePreviewStepper } from '../model/adaptive-preview-stepper';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {Component, OnInit} from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
+import {Phase} from '@crczp/training-model';
+import {ADAPTIVE_DEFINITION_DATA_ATTRIBUTE_NAME} from '@crczp/training-agenda';
+import {PhaseStepperAdapter} from '@crczp/training-agenda/internal';
+import {AdaptivePreviewStepper} from '../model/adaptive-preview-stepper';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 
 @Component({
     selector: 'crczp-designer-preview',

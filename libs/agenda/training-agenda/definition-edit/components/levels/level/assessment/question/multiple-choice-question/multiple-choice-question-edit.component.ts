@@ -9,11 +9,11 @@ import {
     Output,
     SimpleChanges,
 } from '@angular/core';
-import { AbstractControl, UntypedFormArray, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
-import { SentinelValidators } from '@sentinel/common';
-import { MultipleChoiceQuestion, Question } from '@crczp/training-model';
-import { MultipleChoiceFormGroup } from './multiple-choice-question-edit-form-group';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {AbstractControl, UntypedFormArray, UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
+import {SentinelValidators} from '@sentinel/common';
+import {MultipleChoiceQuestion, Question} from '@crczp/training-model';
+import {MultipleChoiceFormGroup} from './multiple-choice-question-edit-form-group';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 
 /**
  * Component for editing a question of type Multiple Choice Question

@@ -1,8 +1,8 @@
-import { PaginatedResource } from '@sentinel/common/pagination';
-import { Column, Row, SentinelTable } from '@sentinel/components/table';
-import { DetectionEventParticipant } from '@crczp/training-model';
-import { DetectionEventParticipantRowAdapter } from './detection-event-participant-row-adapter';
-import { DatePipe } from '@angular/common';
+import {PaginatedResource} from '@sentinel/common/pagination';
+import {Column, Row, SentinelTable} from '@sentinel/components/table';
+import {DetectionEventParticipant} from '@crczp/training-model';
+import {DetectionEventParticipantRowAdapter} from './detection-event-participant-row-adapter';
+import {DatePipe} from '@angular/common';
 
 /**
  * @dynamic

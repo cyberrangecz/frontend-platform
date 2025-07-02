@@ -1,20 +1,13 @@
-import { inject, Injectable } from '@angular/core';
-import { Router } from '@angular/router';
-import {
-    OffsetPaginationEvent,
-    PaginatedResource,
-} from '@sentinel/common/pagination';
-import { AdaptiveRunApi } from '@crczp/training-api';
-import { AccessedTrainingRun } from '@crczp/training-model';
-import { from, Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
-import {
-    TrainingErrorHandler,
-    TrainingNavigator,
-} from '@crczp/training-agenda';
-import { TrainingAgendaContext } from '@crczp/training-agenda/internal';
-import { AccessedAdaptiveRunService } from './accessed-adaptive-run.service';
-import { Settings } from '@crczp/common';
+import {Injectable} from '@angular/core';
+import {Router} from '@angular/router';
+import {OffsetPaginationEvent, PaginatedResource,} from '@sentinel/common/pagination';
+import {AdaptiveRunApi} from '@crczp/training-api';
+import {AccessedTrainingRun} from '@crczp/training-model';
+import {from, Observable} from 'rxjs';
+import {tap} from 'rxjs/operators';
+import {TrainingErrorHandler, TrainingNavigator,} from '@crczp/training-agenda';
+import {AccessedAdaptiveRunService} from './accessed-adaptive-run.service';
+import {Settings} from '@crczp/common';
 
 /**
  * Basic implementation of layer between component and API service.
@@ -24,11 +17,11 @@ export class AccessedAdaptiveRunConcreteService extends AccessedAdaptiveRunServi
     constructor(
         private api: AdaptiveRunApi,
         private router: Router,
-        private context: TrainingAgendaContext,
         private navigator: TrainingNavigator,
-        private errorHandler: TrainingErrorHandler
+        private errorHandler: TrainingErrorHandler,
+        settings: Settings
     ) {
-        super(inject(Settings.DEFAULT_PAGE_SIZE));
+        super(settings.DEFAULT_PAGE_SIZE);
     }
 
     /**

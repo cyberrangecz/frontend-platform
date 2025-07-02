@@ -1,11 +1,11 @@
-import { Component, DestroyRef, inject, Input, OnInit } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { TransitionVisualizationData } from '@crczp/visualization-model';
+import {Component, DestroyRef, inject, Input, OnInit} from '@angular/core';
+import {async, Observable, of} from 'rxjs';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import {TransitionVisualizationData} from '@crczp/visualization-model';
 import {
     AdaptiveTransitionVisualizationPollingService
 } from './services/adaptive-transition-visualization-polling.service';
-import { AdaptiveTransitionVisualizationService } from './services/adaptive-transition-visualization.service';
+import {AdaptiveTransitionVisualizationService} from './services/adaptive-transition-visualization.service';
 
 
 @Component({
@@ -75,4 +75,6 @@ export class AdaptiveTransitionVisualizationComponent implements OnInit {
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe();
     }
+
+    protected readonly async = async;
 }

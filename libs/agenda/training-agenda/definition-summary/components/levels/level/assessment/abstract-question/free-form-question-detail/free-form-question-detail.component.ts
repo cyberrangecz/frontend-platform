@@ -1,5 +1,5 @@
-import { Component, Input } from '@angular/core';
-import { FreeFormQuestion } from '@crczp/training-model';
+import {Component, Input} from '@angular/core';
+import {FreeFormQuestion} from '@crczp/training-model';
 
 @Component({
     selector: 'crczp-free-form-question-detail',

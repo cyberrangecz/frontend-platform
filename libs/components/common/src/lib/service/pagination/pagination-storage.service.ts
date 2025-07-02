@@ -1,6 +1,6 @@
-import { inject, Injectable, Provider, Type } from '@angular/core';
-import { duration, Duration } from 'moment-mini';
-import { Settings } from '../../settings/settings-injector';
+import {inject, Injectable, Provider, Type} from '@angular/core';
+import {duration, Duration} from 'moment-mini';
+import {Settings} from '../../settings/settings-injector';
 
 export interface PaginationState {
     pageSize: number;

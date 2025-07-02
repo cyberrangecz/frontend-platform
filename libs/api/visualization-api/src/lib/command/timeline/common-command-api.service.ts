@@ -1,16 +1,16 @@
-import { Observable } from 'rxjs';
-import { CommandDTO } from './dto/command-dto';
-import { map } from 'rxjs/operators';
-import { CommandMapper } from './mappers/command-mapper';
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { OffsetPaginationEvent } from '@sentinel/common/pagination';
-import { DetectedForbiddenCommandMapper } from './mappers/detected-forbidden-command-mapper';
-import { DetectedForbiddenCommandDTO } from './dto/detected-forbidden-command-dto';
-import { VisualizationApiConfig } from '../../config/visualization-api-config';
-import { DetectedForbiddenCommand, TrainingRun } from '@crczp/training-model';
-import { TrainingRunDTO, TrainingRunMapper } from '@crczp/training-api';
-import { VisualizationCommand } from '@crczp/visualization-model';
-import { JavaPaginatedResource, ParamsBuilder } from '@crczp/api-common';
+import {Observable} from 'rxjs';
+import {CommandDTO} from './dto/command-dto';
+import {map} from 'rxjs/operators';
+import {CommandMapper} from './mappers/command-mapper';
+import {HttpClient, HttpParams} from '@angular/common/http';
+import {OffsetPaginationEvent} from '@sentinel/common/pagination';
+import {DetectedForbiddenCommandMapper} from './mappers/detected-forbidden-command-mapper';
+import {DetectedForbiddenCommandDTO} from './dto/detected-forbidden-command-dto';
+import {VisualizationApiConfig} from '../../config/visualization-api-config';
+import {DetectedForbiddenCommand, TrainingRun} from '@crczp/training-model';
+import {TrainingRunDTO, TrainingRunMapper} from '@crczp/training-api';
+import {VisualizationCommand} from '@crczp/visualization-model';
+import {JavaPaginatedResource, ParamsBuilder} from '@crczp/api-common';
 
 export enum CommandApiEndpoint {
     TIMELINE = '',

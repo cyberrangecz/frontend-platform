@@ -6,5 +6,4 @@ export * from './lib/sandbox-error-handler.service';
 export * from './lib/sandbox-navigator.service';
 export * from './lib/sandbox-default-navigator.service';
 export * from './lib/default-paths';
-export * from './lib/sandbox-agenda-config';
 export * from './lib/activated-route-data-attributes';

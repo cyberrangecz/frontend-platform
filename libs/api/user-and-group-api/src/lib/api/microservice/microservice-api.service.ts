@@ -1,8 +1,8 @@
-import { SentinelFilter } from '@sentinel/common/filter';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
-import { Microservice } from '@crczp/user-and-group-model';
-import { Observable } from 'rxjs';
-import { MicroserviceCreateDTO } from '../../DTO/microservice/microservice-create-dto.model';
+import {SentinelFilter} from '@sentinel/common/filter';
+import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
+import {Microservice} from '@crczp/user-and-group-model';
+import {Observable} from 'rxjs';
+import {MicroserviceCreateDTO} from '../../DTO/microservice/microservice-create-dto.model';
 
 /**
  * Service abstracting http communication with microservice endpoints.

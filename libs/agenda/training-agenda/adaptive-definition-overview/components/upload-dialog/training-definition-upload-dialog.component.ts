@@ -1,7 +1,7 @@
-import { Component, EventEmitter } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
-import { Observable } from 'rxjs';
-import { AdaptiveFileUploadProgressService } from '../../services/file-upload/adaptive-file-upload-progress.service';
+import {Component, EventEmitter} from '@angular/core';
+import {MatDialogRef} from '@angular/material/dialog';
+import {async, Observable} from 'rxjs';
+import {AdaptiveFileUploadProgressService} from '../../services/file-upload/adaptive-file-upload-progress.service';
 
 /**
  * Component of training definition upload dialog window
@@ -43,4 +43,6 @@ export class TrainingDefinitionUploadDialogComponent {
     clearFile(): void {
         this.selectedFile = null;
     }
+
+    protected readonly async = async;
 }

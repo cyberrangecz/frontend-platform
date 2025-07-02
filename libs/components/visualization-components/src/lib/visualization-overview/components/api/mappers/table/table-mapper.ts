@@ -1,6 +1,6 @@
-import { TableData } from '../../../model/table/table-data';
-import { PlayerTableDataMapper } from './player-table-data-mapper';
-import { PlayerTableDataDTO } from '../../dto/table/player-table-data-dto';
+import {TableData} from '../../../model/table/table-data';
+import {PlayerTableDataMapper} from './player-table-data-mapper';
+import {PlayerTableDataDTO} from '../../dto/table/player-table-data-dto';
 
 /**
  * @dynamic

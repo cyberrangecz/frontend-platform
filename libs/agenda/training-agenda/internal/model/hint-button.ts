@@ -1,8 +1,8 @@
 /**
  * Class representing hint button in a training level.
  */
-import { Hint } from '@crczp/training-model';
-import { BehaviorSubject, Observable } from 'rxjs';
+import {Hint} from '@crczp/training-model';
+import {BehaviorSubject, Observable} from 'rxjs';
 
 export class HintButton {
     private disabledSubject$: BehaviorSubject<boolean> = new BehaviorSubject(false);

@@ -1,6 +1,6 @@
-import { TestBed } from '@angular/core/testing';
-import { SandboxService } from './sandbox.service';
-import { skip, take } from 'rxjs/operators';
+import {TestBed} from '@angular/core/testing';
+import {SandboxService} from './sandbox.service';
+import {skip, take} from 'rxjs/operators';
 
 describe('SandboxService', () => {
     let service: SandboxService;

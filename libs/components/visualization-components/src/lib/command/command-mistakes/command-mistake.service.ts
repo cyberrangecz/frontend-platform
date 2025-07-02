@@ -1,9 +1,9 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
-import { AggregatedCommands, CommandResourceSelect } from '@crczp/visualization-model';
-import { CommandCorrectnessApi } from '@crczp/visualization-api';
-import { TrainingRun } from '@crczp/training-model';
+import {Injectable} from '@angular/core';
+import {BehaviorSubject, Observable} from 'rxjs';
+import {tap} from 'rxjs/operators';
+import {AggregatedCommands, CommandResourceSelect} from '@crczp/visualization-model';
+import {CommandCorrectnessApi} from '@crczp/visualization-api';
+import {TrainingRun} from '@crczp/training-model';
 
 @Injectable()
 export class CommandMistakeService {

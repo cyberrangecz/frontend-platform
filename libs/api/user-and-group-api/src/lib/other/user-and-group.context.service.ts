@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
-import { UserAndGroupApiConfig } from './user-and-group-api-config';
+import {Injectable} from '@angular/core';
+import {UserAndGroupApiConfig} from './user-and-group-api-config';
 
 @Injectable()
 export class UserAndGroupContext {

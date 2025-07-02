@@ -1,5 +1,5 @@
-import { AbstractLevelDTO } from '../level/abstract-level-dto';
-import { AbstractPhaseDTO } from '../phase/abstract-phase-dto';
+import {AbstractLevelDTO} from '../level/abstract-level-dto';
+import {AbstractPhaseDTO} from '../phase/abstract-phase-dto';
 
 /**
  * Training Definition DTO.

@@ -1,6 +1,6 @@
-import { SentinelFilter } from '@sentinel/common/filter';
-import { HttpParams } from '@angular/common/http';
-import { OffsetPaginationEvent } from '@sentinel/common/pagination';
+import {SentinelFilter} from '@sentinel/common/filter';
+import {HttpParams} from '@angular/common/http';
+import {OffsetPaginationEvent} from '@sentinel/common/pagination';
 
 export class ParamsBuilder {
     /**

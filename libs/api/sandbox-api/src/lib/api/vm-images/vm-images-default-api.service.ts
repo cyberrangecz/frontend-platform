@@ -1,16 +1,16 @@
-import { VirtualImagesMapper } from '../../mappers/vm-images/virtual-images-mapper';
-import { VirtualImagesDTO } from '../../dto/vm-images/virtual-images-dto';
-import { Observable } from 'rxjs';
-import { SandboxApiConfigService } from '../../others/sandbox-api-config.service';
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { VirtualImage } from '@crczp/sandbox-model';
-import { SentinelParamsMerger } from '@sentinel/common';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
-import { SentinelFilter } from '@sentinel/common/filter';
-import { VMImagesApi } from './vm-images-api.service';
-import { map } from 'rxjs/operators';
-import { DjangoResourceDTO, PaginationMapper, ParamsBuilder } from '@crczp/api-common';
+import {VirtualImagesMapper} from '../../mappers/vm-images/virtual-images-mapper';
+import {VirtualImagesDTO} from '../../dto/vm-images/virtual-images-dto';
+import {Observable} from 'rxjs';
+import {SandboxApiConfigService} from '../../others/sandbox-api-config.service';
+import {Injectable} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+import {VirtualImage} from '@crczp/sandbox-model';
+import {SentinelParamsMerger} from '@sentinel/common';
+import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
+import {SentinelFilter} from '@sentinel/common/filter';
+import {VMImagesApi} from './vm-images-api.service';
+import {map} from 'rxjs/operators';
+import {DjangoResourceDTO, PaginationMapper, ParamsBuilder} from '@crczp/api-common';
 
 /**
  * Default implementation of service abstracting http communication with vm images endpoints.

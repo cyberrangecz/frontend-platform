@@ -1,5 +1,5 @@
-import { ClusteringVisualizationData, EuclideanDoublePoint } from '@crczp/visualization-model';
-import { ClusteringVisualizationDataDTO } from '../dtos';
+import {ClusteringVisualizationData, EuclideanDoublePoint} from '@crczp/visualization-model';
+import {ClusteringVisualizationDataDTO} from '../dtos';
 
 export class RadarChartDataMapper {
     static fromDTO(dto: ClusteringVisualizationDataDTO | any): ClusteringVisualizationData {

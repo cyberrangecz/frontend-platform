@@ -1,6 +1,6 @@
-import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { ReferenceGraphApi } from '@crczp/visualization-api';
+import {Injectable} from '@angular/core';
+import {Observable} from 'rxjs';
+import {ReferenceGraphApi} from '@crczp/visualization-api';
 
 export class Graph {
     constructor(public graph: string) {}

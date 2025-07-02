@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {
     AXES_CONFIG,
     BARS_CONFIG,
@@ -9,16 +9,16 @@ import {
     SVG_MARGIN_CONFIG
 } from './config';
 
-import { SvgConfig } from '../../../../shared/interfaces/configurations/svg-config';
-import { TraineeModeInfo } from '../../../../shared/interfaces/trainee-mode-info';
-import { take } from 'rxjs/operators';
-import { ClusteringTrainingData } from '../../../model/clustering/clustering-training-data';
-import { LevelTypeEnum } from '../../../model/clustering/enums/level-type.enum';
-import { Level } from '../../../model/clustering/level';
-import { ClusteringService } from '../shared/service/clustering.service';
-import { PlayerLevelData } from '../../../model/clustering/player-level-data';
-import { D3, D3Service } from '../../../../../common/d3-service/d3-service';
-import { ContainerElement, ScaleBand, ScaleLinear } from 'd3';
+import {SvgConfig} from '../../../../shared/interfaces/configurations/svg-config';
+import {TraineeModeInfo} from '../../../../shared/interfaces/trainee-mode-info';
+import {take} from 'rxjs/operators';
+import {ClusteringTrainingData} from '../../../model/clustering/clustering-training-data';
+import {LevelTypeEnum} from '../../../model/clustering/enums/level-type.enum';
+import {Level} from '../../../model/clustering/level';
+import {ClusteringService} from '../shared/service/clustering.service';
+import {PlayerLevelData} from '../../../model/clustering/player-level-data';
+import {D3, D3Service} from '../../../../../common/d3-service/d3-service';
+import {ContainerElement, ScaleBand, ScaleLinear} from 'd3';
 
 @Component({
     selector: 'crczp-visualization-overview-levels',
@@ -30,7 +30,7 @@ export class LevelsComponent implements OnInit, OnChanges {
     /**
      * Training data
      */
-    @Input() levelsData: ClusteringTrainingData = { finalResults: null, levels: null };
+    @Input() levelsData: ClusteringTrainingData = {finalResults: null, levels: null};
     /**
      * Player to highlight
      */
@@ -471,7 +471,7 @@ export class LevelsComponent implements OnInit, OnChanges {
             ])
             .domain([0, trainingLevels[i].maxAchievableScore]);
 
-        const playersGroup = this.svg.append('g').attr('class', 'score-level-players').datum({ number: levelNumber });
+        const playersGroup = this.svg.append('g').attr('class', 'score-level-players').datum({number: levelNumber});
         if (this.standalone) {
             players = players.filter((player) => this.filterPlayers.indexOf(player.trainingRunId) !== -1);
         }

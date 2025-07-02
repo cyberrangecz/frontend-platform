@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { AccessPhaseTask } from '../../../model/phase/access-phase/access-phase-task';
+import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
+import {AccessPhaseTask} from '../../../model/phase/access-phase/access-phase-task';
 
 @Component({
     // eslint-disable-next-line @angular-eslint/component-selector

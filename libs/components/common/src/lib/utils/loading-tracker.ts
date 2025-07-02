@@ -1,5 +1,5 @@
-import { BehaviorSubject, defer, finalize, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import {BehaviorSubject, defer, finalize, Observable} from 'rxjs';
+import {map} from 'rxjs/operators';
 
 export class LoadingTracker {
     private requestCountSubject$ = new BehaviorSubject<number>(0);

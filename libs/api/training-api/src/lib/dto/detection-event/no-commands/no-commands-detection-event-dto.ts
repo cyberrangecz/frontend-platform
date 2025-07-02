@@ -1,3 +1,3 @@
-import { DetectionEventDTO } from '../detection-event-dto';
+import {DetectionEventDTO} from '../detection-event-dto';
 
 export type NoCommandsDetectionEventDTO = DetectionEventDTO;

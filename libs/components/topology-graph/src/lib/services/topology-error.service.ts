@@ -1,6 +1,6 @@
-import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
-import { TopologyError } from '../model/others/topology-error.model';
+import {Injectable} from '@angular/core';
+import {Subject} from 'rxjs';
+import {TopologyError} from '../model/others/topology-error.model';
 
 /**
  * Global error handling service. Emits error from library through observable. Client app should subscribe to error$ observable and

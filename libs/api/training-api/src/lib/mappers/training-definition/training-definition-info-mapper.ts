@@ -1,6 +1,6 @@
-import { TrainingDefinitionInfo } from '@crczp/training-model';
-import { TrainingDefinitionInfoDTO } from '../../dto/training-definition/training-definition-info-dto';
-import { TrainingDefinitionMapper } from './training-definition-mapper';
+import {TrainingDefinitionInfo} from '@crczp/training-model';
+import {TrainingDefinitionInfoDTO} from '../../dto/training-definition/training-definition-info-dto';
+import {TrainingDefinitionMapper} from './training-definition-mapper';
 
 /**
  * @dynamic

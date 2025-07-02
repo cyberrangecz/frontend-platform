@@ -1,7 +1,7 @@
-import { PhaseMapper } from '@crczp/training-api';
-import { Phase } from '@crczp/training-model';
-import { InstanceModelSimulator } from '../../model/instance/instance-model-simulator';
-import { InstanceModelUpdateDTO } from '../../model/instance/instance-model-update-dto';
+import {PhaseMapper} from '@crczp/training-api';
+import {Phase} from '@crczp/training-model';
+import {InstanceModelSimulator} from '../../model/instance/instance-model-simulator';
+import {InstanceModelUpdateDTO} from '../../model/instance/instance-model-update-dto';
 
 export class InstanceModelUpdateMapper {
     static toUpdateDTO(data: InstanceModelSimulator): InstanceModelUpdateDTO {

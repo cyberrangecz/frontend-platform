@@ -1,15 +1,15 @@
-import { AfterContentChecked, ApplicationRef, Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import {AfterContentChecked, ApplicationRef, Component, Input, OnChanges, SimpleChanges} from '@angular/core';
 import * as d3 from 'd3';
-import { TrainingInstanceStatistics } from '@crczp/visualization-model';
-import { MatCardModule } from '@angular/material/card';
-import { ClusteringVisualizationsComponent } from '../../clustering/clustering-visualizations.component';
-import { MatGridListModule } from '@angular/material/grid-list';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatIconModule } from '@angular/material/icon';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatButtonModule } from '@angular/material/button';
-import { MatInputModule } from '@angular/material/input';
+import {TrainingInstanceStatistics} from '@crczp/visualization-model';
+import {MatCardModule} from '@angular/material/card';
+import {ClusteringVisualizationsComponent} from '../../clustering/clustering-visualizations.component';
+import {MatGridListModule} from '@angular/material/grid-list';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatDividerModule} from '@angular/material/divider';
+import {MatIconModule} from '@angular/material/icon';
+import {MatTooltipModule} from '@angular/material/tooltip';
+import {MatButtonModule} from '@angular/material/button';
+import {MatInputModule} from '@angular/material/input';
 
 @Component({
     selector: 'crczp-radar-chart-wrapper',

@@ -1,5 +1,5 @@
-import { EMITableRow } from './emi-table-row';
-import { AssessmentEmiAnswers } from '@crczp/visualization-model';
+import {EMITableRow} from './emi-table-row';
+import {AssessmentEmiAnswers} from '@crczp/visualization-model';
 
 /**
  * Adapter class for extended matching items table

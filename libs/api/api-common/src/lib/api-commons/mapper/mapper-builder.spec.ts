@@ -1,5 +1,5 @@
-import { MapperBuilder } from "./mapper-builder";
-import { describe, expect, test } from "vitest";
+import {MapperBuilder} from "./mapper-builder";
+import {describe, expect, test} from "vitest";
 
 describe("Testing of properties mapping", () => {
 

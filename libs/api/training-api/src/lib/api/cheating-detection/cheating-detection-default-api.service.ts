@@ -1,14 +1,14 @@
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { ResponseHeaderContentDispositionReader } from '@sentinel/common';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
-import { CheatingDetection } from '@crczp/training-model';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { TrainingApiContext } from '../../other/training-api-context';
-import { CheatingDetectionApi } from './cheating-detection-api.service';
-import { CheatingDetectionDTO } from '../../dto/cheating-detection/cheating-detection-dto';
-import { CheatingDetectionMapper } from '../../mappers/cheating-detection/cheating-detection-mapper';
+import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
+import {Injectable} from '@angular/core';
+import {ResponseHeaderContentDispositionReader} from '@sentinel/common';
+import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
+import {CheatingDetection} from '@crczp/training-model';
+import {Observable} from 'rxjs';
+import {map} from 'rxjs/operators';
+import {TrainingApiContext} from '../../other/training-api-context';
+import {CheatingDetectionApi} from './cheating-detection-api.service';
+import {CheatingDetectionDTO} from '../../dto/cheating-detection/cheating-detection-dto';
+import {CheatingDetectionMapper} from '../../mappers/cheating-detection/cheating-detection-mapper';
 import {
     BlobFileSaver,
     handleJsonError,

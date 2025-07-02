@@ -1,7 +1,7 @@
-import { Component, EventEmitter } from '@angular/core';
-import { MatDialogRef, MatDialogTitle } from '@angular/material/dialog';
-import { async, Observable } from 'rxjs';
-import { FileUploadProgressService } from '../../services/file-upload/file-upload-progress.service';
+import {Component, EventEmitter} from '@angular/core';
+import {MatDialogRef, MatDialogTitle} from '@angular/material/dialog';
+import {async, Observable} from 'rxjs';
+import {FileUploadProgressService} from '../../services/file-upload/file-upload-progress.service';
 
 /**
  * Component of users upload dialog window

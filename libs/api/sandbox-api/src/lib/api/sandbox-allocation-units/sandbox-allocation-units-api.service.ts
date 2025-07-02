@@ -1,5 +1,5 @@
-import { Observable } from 'rxjs';
-import { AllocationRequest, CleanupRequest, SandboxAllocationUnit } from '@crczp/sandbox-model';
+import {Observable} from 'rxjs';
+import {AllocationRequest, CleanupRequest, SandboxAllocationUnit} from '@crczp/sandbox-model';
 
 /**
  * Service abstracting http communication with sandbox allocation units endpoints.

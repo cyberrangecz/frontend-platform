@@ -9,45 +9,28 @@ import {
     Output,
     SimpleChanges,
 } from '@angular/core';
-import { OffsetPaginationEvent } from '@sentinel/common/pagination';
+import {OffsetPaginationEvent} from '@sentinel/common/pagination';
 import {
-    SentinelControlItemSignal,
+    SentinelControlItem,
     SentinelControlItemSignal,
     SentinelControlsComponent,
 } from '@sentinel/components/controls';
-import { Group, User } from '@crczp/user-and-group-model';
-import {
-    SentinelTable,
-    SentinelTableComponent,
-    TableActionEvent,
-    TableLoadEvent,
-} from '@sentinel/components/table';
+import {Group, User} from '@crczp/user-and-group-model';
+import {SentinelTable, SentinelTableComponent, TableActionEvent, TableLoadEvent,} from '@sentinel/components/table';
 import {
     SentinelResourceSelectorComponent,
     SentinelResourceSelectorMapping,
 } from '@sentinel/components/resource-selector';
-import { combineLatest, defer, Observable } from 'rxjs';
-import { map, take } from 'rxjs/operators';
-import { GroupMemberTable } from '../../model/table/group-member-table';
-import {
-    DeleteControlItem,
-    SaveControlItem,
-} from '@crczp/user-and-group-agenda/internal';
-import { UserAssignService } from '../../services/state/user-assign.service';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import {
-    MatCard,
-    MatCardContent,
-    MatCardHeader,
-    MatCardSubtitle,
-    MatCardTitle,
-} from '@angular/material/card';
-import { MatIcon } from '@angular/material/icon';
-import { AsyncPipe } from '@angular/common';
-import {
-    PaginationStorageService,
-    providePaginationStorageService,
-} from '@crczp/common';
+import {combineLatest, defer, Observable} from 'rxjs';
+import {map, take} from 'rxjs/operators';
+import {GroupMemberTable} from '../../model/table/group-member-table';
+import {DeleteControlItem, SaveControlItem,} from '@crczp/user-and-group-agenda/internal';
+import {UserAssignService} from '../../services/state/user-assign.service';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import {MatCard, MatCardContent, MatCardHeader, MatCardSubtitle, MatCardTitle,} from '@angular/material/card';
+import {MatIcon} from '@angular/material/icon';
+import {AsyncPipe} from '@angular/common';
+import {PaginationStorageService, providePaginationStorageService,} from '@crczp/common';
 
 /**
  * Component for user assignment to groups
@@ -71,7 +54,7 @@ import {
     ],
     providers: [
         providePaginationStorageService(GroupUserAssignComponent),
-        { provide: UserAssignService, useClass: UserAssignService },
+        {provide: UserAssignService, useClass: UserAssignService},
     ],
 })
 export class GroupUserAssignComponent implements OnChanges {
@@ -119,8 +102,8 @@ export class GroupUserAssignComponent implements OnChanges {
     isLoadingAssignedUsers$: Observable<boolean>;
     selectedUsersToAssign$: Observable<User[]>;
     selectedGroupsToImport$: Observable<Group[]>;
-    assignUsersControls: SentinelControlItemSignal[];
-    assignedUsersControls: SentinelControlItemSignal[];
+    assignUsersControls: SentinelControlItem[];
+    assignedUsersControls: SentinelControlItem[];
     destroyRef = inject(DestroyRef);
 
     constructor(

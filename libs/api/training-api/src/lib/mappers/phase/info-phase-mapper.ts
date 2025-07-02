@@ -1,6 +1,6 @@
-import { InfoPhaseDTO } from '../../dto/phase/info-phase/info-phase-dto';
-import { AbstractPhaseTypeEnum, InfoPhase } from '@crczp/training-model';
-import { InfoPhaseUpdateDTO } from '../../dto/phase/info-phase/info-phase-update-dto';
+import {InfoPhaseDTO} from '../../dto/phase/info-phase/info-phase-dto';
+import {AbstractPhaseTypeEnum, InfoPhase} from '@crczp/training-model';
+import {InfoPhaseUpdateDTO} from '../../dto/phase/info-phase/info-phase-update-dto';
 
 export class InfoPhaseMapper {
     static fromDTO(dto: InfoPhaseDTO): InfoPhase {

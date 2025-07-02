@@ -1,10 +1,10 @@
-import { ChangeDetectionStrategy, Component, ElementRef, Input } from '@angular/core';
+import {ChangeDetectionStrategy, Component, ElementRef, Input} from '@angular/core';
 import * as d3 from 'd3';
-import { AbsolutePositionService } from '../../service/absolute-position.service';
-import { SuccessAxisComponent } from './success-axis/success-axis.component';
-import { YAxisComponent } from './y-axis/y-axis.component';
-import { CommonModule } from '@angular/common';
-import { WalkthroughUserData } from '@crczp/visualization-model';
+import {AbsolutePositionService} from '../../service/absolute-position.service';
+import {SuccessAxisComponent} from './success-axis/success-axis.component';
+import {YAxisComponent} from './y-axis/y-axis.component';
+import {CommonModule} from '@angular/common';
+import {WalkthroughUserData} from '@crczp/visualization-model';
 
 @Component({
     // eslint-disable-next-line @angular-eslint/component-selector

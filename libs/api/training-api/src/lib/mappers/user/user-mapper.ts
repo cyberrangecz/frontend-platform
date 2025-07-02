@@ -1,5 +1,5 @@
-import { TrainingUser } from '@crczp/training-model';
-import { UserRefDTO } from '../../dto/user/user-ref-dto';
+import {TrainingUser} from '@crczp/training-model';
+import {UserRefDTO} from '../../dto/user/user-ref-dto';
 
 /**
  * @dynamic

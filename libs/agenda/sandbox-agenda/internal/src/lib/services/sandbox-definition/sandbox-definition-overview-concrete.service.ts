@@ -1,26 +1,19 @@
-import { inject, Injectable } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
+import {Injectable} from '@angular/core';
+import {MatDialog} from '@angular/material/dialog';
+import {Router} from '@angular/router';
 import {
     SentinelConfirmationDialogComponent,
     SentinelConfirmationDialogConfig,
     SentinelDialogResultEnum,
 } from '@sentinel/components/dialogs';
-import {
-    OffsetPaginationEvent,
-    PaginatedResource,
-} from '@sentinel/common/pagination';
-import { SandboxDefinitionApi } from '@crczp/sandbox-api';
-import { SandboxDefinition } from '@crczp/sandbox-model';
-import { EMPTY, from, Observable, of } from 'rxjs';
-import { switchMap, tap } from 'rxjs/operators';
-import {
-    SandboxErrorHandler,
-    SandboxNavigator,
-    SandboxNotificationService,
-} from '@crczp/sandbox-agenda';
-import { SandboxDefinitionOverviewService } from './sandbox-definition-overview.service';
-import { Settings } from '@crczp/common';
+import {OffsetPaginationEvent, PaginatedResource,} from '@sentinel/common/pagination';
+import {SandboxDefinitionApi} from '@crczp/sandbox-api';
+import {SandboxDefinition} from '@crczp/sandbox-model';
+import {EMPTY, from, Observable, of} from 'rxjs';
+import {switchMap, tap} from 'rxjs/operators';
+import {SandboxErrorHandler, SandboxNavigator, SandboxNotificationService,} from '@crczp/sandbox-agenda';
+import {SandboxDefinitionOverviewService} from './sandbox-definition-overview.service';
+import {Settings} from '@crczp/common';
 
 /**
  * Basic implementation of a layer between a component and an API service.
@@ -36,9 +29,10 @@ export class SandboxDefinitionOverviewConcreteService extends SandboxDefinitionO
         private dialog: MatDialog,
         private alertService: SandboxNotificationService,
         private errorHandler: SandboxErrorHandler,
-        private navigator: SandboxNavigator
+        private navigator: SandboxNavigator,
+        settings: Settings
     ) {
-        super(inject(Settings.DEFAULT_PAGE_SIZE));
+        super(settings.DEFAULT_PAGE_SIZE);
     }
 
     /**

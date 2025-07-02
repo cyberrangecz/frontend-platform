@@ -1,8 +1,8 @@
 /**
  * Internal model a group
  */
-import { UserRole } from '../role/user-role';
-import { User } from '../user/user';
+import {UserRole} from '../role/user-role';
+import {User} from '../user/user';
 
 export class Group {
     id!: number;

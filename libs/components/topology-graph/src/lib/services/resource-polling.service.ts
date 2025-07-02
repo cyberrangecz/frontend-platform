@@ -1,14 +1,6 @@
-import { Injectable } from '@angular/core';
-import {
-    delayWhen,
-    EMPTY,
-    exhaustMap,
-    Observable,
-    of,
-    repeat,
-    timer,
-} from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
+import {Injectable} from '@angular/core';
+import {delayWhen, EMPTY, exhaustMap, Observable, of, repeat, timer,} from 'rxjs';
+import {catchError, tap} from 'rxjs/operators';
 
 @Injectable()
 export class ResourcePollingService {

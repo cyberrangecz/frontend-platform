@@ -8,14 +8,7 @@ import {
     SimpleChanges,
     ViewEncapsulation,
 } from '@angular/core';
-import {
-    Axis,
-    NumberValue,
-    ScaleBand,
-    ScaleTime,
-    ZoomBehavior,
-    ZoomTransform,
-} from 'd3';
+import {Axis, NumberValue, ScaleBand, ScaleTime, ZoomBehavior, ZoomTransform,} from 'd3';
 
 import {
     HintTakenEvent,
@@ -26,19 +19,19 @@ import {
     TraineeProgressData,
     WrongAnswerEvent,
 } from '@crczp/visualization-model';
-import { TraineeViewEnum, ViewEnum } from '../../types';
-import { D3, D3Service } from '../../../../common/d3-service/d3-service';
-import { PROGRESS_CONFIG } from '../../../progress-config';
-import { DateUtils } from '@crczp/common';
-import { Level } from '@crczp/training-model';
-import { TraineeSelectionComponent } from '../trainee-selection/trainee-selection.component';
-import { OverviewProgressBarComponent } from '../overview-progress-bar/overview-progress-bar.component';
-import { LevelListComponent } from '../level-list/level-list.component';
-import { TraineeDetailComponent } from '../trainee-detail/trainee-detail.component';
-import { ColumnHeaderComponent } from '../column-header/column-header.component';
-import { LegendComponent } from '../legend/legend.component';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { CommonModule } from '@angular/common';
+import {TraineeViewEnum, ViewEnum} from '../../types';
+import {D3, D3Service} from '../../../../common/d3-service/d3-service';
+import {PROGRESS_CONFIG} from '../../../progress-config';
+import {DateUtils} from '@crczp/common';
+import {Level} from '@crczp/training-model';
+import {TraineeSelectionComponent} from '../trainee-selection/trainee-selection.component';
+import {OverviewProgressBarComponent} from '../overview-progress-bar/overview-progress-bar.component';
+import {LevelListComponent} from '../level-list/level-list.component';
+import {TraineeDetailComponent} from '../trainee-detail/trainee-detail.component';
+import {ColumnHeaderComponent} from '../column-header/column-header.component';
+import {LegendComponent} from '../legend/legend.component';
+import {MatTooltipModule} from '@angular/material/tooltip';
+import {CommonModule} from '@angular/common';
 
 @Component({
     selector: 'crczp-viz-progress',

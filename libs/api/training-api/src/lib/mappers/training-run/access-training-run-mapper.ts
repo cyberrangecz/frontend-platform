@@ -1,7 +1,7 @@
-import { AccessTrainingRunInfo, TrainingLevel } from '@crczp/training-model';
-import { AbstractLevelDTO } from '../../dto/level/abstract-level-dto';
-import { AccessTrainingRunDTO } from '../../dto/training-run/access-training-run-dto';
-import { LevelMapper } from '../level/level-mapper';
+import {AccessTrainingRunInfo, TrainingLevel} from '@crczp/training-model';
+import {AbstractLevelDTO} from '../../dto/level/abstract-level-dto';
+import {AccessTrainingRunDTO} from '../../dto/training-run/access-training-run-dto';
+import {LevelMapper} from '../level/level-mapper';
 import LevelTypeEnum = AbstractLevelDTO.LevelTypeEnum;
 
 export class AccessTrainingRunMapper {

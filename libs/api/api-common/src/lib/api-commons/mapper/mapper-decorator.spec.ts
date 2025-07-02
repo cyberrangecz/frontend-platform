@@ -1,6 +1,6 @@
-import { ApiReadMapper, MappersModule } from './mapper-decorator';
-import { beforeEach, describe, expect } from 'vitest';
-import { TestBed } from '@angular/core/testing';
+import {ApiReadMapper, MappersModule} from './mapper-decorator';
+import {beforeEach, describe, expect} from 'vitest';
+import {TestBed} from '@angular/core/testing';
 
 
 describe("Testing of properties mapping", () => {

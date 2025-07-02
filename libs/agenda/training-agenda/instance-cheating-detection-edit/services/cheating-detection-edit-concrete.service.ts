@@ -1,12 +1,12 @@
-import { Injectable } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
-import { CheatingDetectionApi } from '@crczp/training-api';
-import { CheatingDetection } from '@crczp/training-model';
-import { Observable } from 'rxjs';
-import { switchMap, tap } from 'rxjs/operators';
-import { TrainingErrorHandler, TrainingNavigator, TrainingNotificationService } from '@crczp/training-agenda';
-import { CheatingDetectionEditService } from './cheating-detection-edit.service';
+import {Injectable} from '@angular/core';
+import {MatDialog} from '@angular/material/dialog';
+import {Router} from '@angular/router';
+import {CheatingDetectionApi} from '@crczp/training-api';
+import {CheatingDetection} from '@crczp/training-model';
+import {Observable} from 'rxjs';
+import {switchMap, tap} from 'rxjs/operators';
+import {TrainingErrorHandler, TrainingNavigator, TrainingNotificationService} from '@crczp/training-agenda';
+import {CheatingDetectionEditService} from './cheating-detection-edit.service';
 
 @Injectable()
 export class CheatingDetectionEditConcreteService extends CheatingDetectionEditService {

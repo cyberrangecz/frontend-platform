@@ -1,4 +1,4 @@
-import { BasicLevelInfo } from './timeline-level';
+import {BasicLevelInfo} from './timeline-level';
 
 export class TimelineEvent {
     text: string;

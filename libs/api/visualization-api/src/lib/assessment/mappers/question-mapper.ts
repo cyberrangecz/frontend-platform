@@ -1,7 +1,7 @@
-import { AssessmentQuestion } from '@crczp/visualization-model';
-import { EmiAnswerMapper } from './emi-answer-mapper';
-import { AnswerMapper } from './answer-mapper';
-import { EmiAnswerDTO, QuestionDTO } from '../dtos';
+import {AssessmentQuestion} from '@crczp/visualization-model';
+import {EmiAnswerMapper} from './emi-answer-mapper';
+import {AnswerMapper} from './answer-mapper';
+import {EmiAnswerDTO, QuestionDTO} from '../dtos';
 
 
 export class QuestionMapper {

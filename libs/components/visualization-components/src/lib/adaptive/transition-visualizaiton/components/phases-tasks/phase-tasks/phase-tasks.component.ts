@@ -10,8 +10,8 @@ import {
     SimpleChanges
 } from '@angular/core';
 import * as d3 from 'd3';
-import { easeQuad } from 'd3';
-import { RunVisualizationPathNode, TransitionPhase, TransitionTask } from '@crczp/visualization-model';
+import {easeQuad} from 'd3';
+import {RunVisualizationPathNode, TransitionPhase, TransitionTask} from '@crczp/visualization-model';
 
 @Component({
     // eslint-disable-next-line @angular-eslint/component-selector

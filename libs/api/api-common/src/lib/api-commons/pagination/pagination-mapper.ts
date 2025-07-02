@@ -1,5 +1,5 @@
-import { OffsetPagination } from '@sentinel/common/pagination';
-import { DjangoOffsetPaginationDTO, JavaOffsetPaginationDTO } from './pagination-types';
+import {OffsetPagination} from '@sentinel/common/pagination';
+import {DjangoOffsetPaginationDTO, JavaOffsetPaginationDTO} from './pagination-types';
 
 export class PaginationMapper {
 

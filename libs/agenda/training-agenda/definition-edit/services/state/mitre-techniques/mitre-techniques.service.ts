@@ -3,8 +3,8 @@
  * Serves as a layer between component and API service
  * Subscribe to levels$, activeStep$ and activeLevelCanBeSaved$ to receive latest data updates.
  */
-import { BehaviorSubject, Observable } from 'rxjs';
-import { MitreTechnique } from '@crczp/training-model';
+import {BehaviorSubject, Observable} from 'rxjs';
+import {MitreTechnique} from '@crczp/training-model';
 
 export abstract class MitreTechniquesService {
     protected mitreTechniquesSubject$: BehaviorSubject<MitreTechnique[]> = new BehaviorSubject([]);

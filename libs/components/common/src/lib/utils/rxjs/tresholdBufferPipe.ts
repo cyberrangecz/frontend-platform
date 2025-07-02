@@ -1,9 +1,9 @@
 /*
  * Saves values in a buffer until a condition is met.
  * */
-import { OperatorFunction } from 'rxjs';
-import { operate } from 'rxjs/internal/util/lift';
-import { createOperatorSubscriber } from 'rxjs/internal/operators/OperatorSubscriber';
+import {OperatorFunction} from 'rxjs';
+import {operate} from 'rxjs/internal/util/lift';
+import {createOperatorSubscriber} from 'rxjs/internal/operators/OperatorSubscriber';
 
 export function thresholdBuffer<T>(valuesOverThreshold: (values: T[]) => boolean): OperatorFunction<T, T[]> {
     return operate((source, subscriber) => {

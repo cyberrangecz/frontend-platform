@@ -1,12 +1,12 @@
-import { Component, DestroyRef, HostListener, inject, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { TrainingRun } from '@crczp/training-model';
-import { map, Observable } from 'rxjs';
-import { VisualizationInfo } from '@crczp/training-agenda/internal';
-import { TraineeModeInfo } from '@crczp/overview-visualization';
-import { TRAINING_RUN_DATA_ATTRIBUTE_NAME } from '@crczp/training-agenda';
-import { TrainingDefinitionApi } from '@crczp/training-api';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {Component, DestroyRef, HostListener, inject, OnInit} from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
+import {TrainingRun} from '@crczp/training-model';
+import {async, map, Observable} from 'rxjs';
+import {VisualizationInfo} from '@crczp/training-agenda/internal';
+import {TraineeModeInfo} from '@crczp/overview-visualization';
+import {TRAINING_RUN_DATA_ATTRIBUTE_NAME} from '@crczp/training-agenda';
+import {TrainingDefinitionApi} from '@crczp/training-api';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 
 @Component({
     selector: 'crczp-score-development-wrapper',
@@ -68,4 +68,6 @@ export class ScoreDevelopmentWrapperComponent implements OnInit {
         const height = windowHeight / divideBy;
         this.vizSize = { width, height };
     }
+
+    protected readonly async = async;
 }

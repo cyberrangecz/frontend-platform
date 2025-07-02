@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component, ElementRef, Input, OnInit } from '@angular/core';
+import {ChangeDetectionStrategy, Component, ElementRef, Input, OnInit} from '@angular/core';
 import * as d3 from 'd3';
-import { AbsolutePositionService } from '../../../service/absolute-position.service';
+import {AbsolutePositionService} from '../../../service/absolute-position.service';
 
 @Component({
     // eslint-disable-next-line @angular-eslint/component-selector

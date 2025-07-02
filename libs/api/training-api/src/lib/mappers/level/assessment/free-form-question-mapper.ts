@@ -1,10 +1,10 @@
-import { AbstractQuestionDTO } from '../../../dto/level/assessment/abstact-question-dto';
+import {AbstractQuestionDTO} from '../../../dto/level/assessment/abstact-question-dto';
 import {
     FreeFormQuestionCreateDTO,
     FreeFormQuestionDTOClass,
 } from '../../../dto/level/assessment/free-form-question-dto';
-import { QuestionAnswerDTO } from '../../../dto/level/assessment/question-answer-dto';
-import { FreeFormQuestion } from '@crczp/training-model';
+import {QuestionAnswerDTO} from '../../../dto/level/assessment/question-answer-dto';
+import {FreeFormQuestion} from '@crczp/training-model';
 
 export class FreeFormQuestionMapper {
     static fromDTO(dto: FreeFormQuestionDTOClass): FreeFormQuestion {

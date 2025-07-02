@@ -1,7 +1,7 @@
-import {SentinelControlItemSignal} from '@sentinel/components/controls';
 import {Observable, of} from 'rxjs';
+import {SentinelControlItem} from "@sentinel/components/controls";
 
-export class DeleteControlItem extends SentinelControlItemSignal {
+export class DeleteControlItem extends SentinelControlItem {
     static readonly ID = 'delete';
 
     constructor(count: number, result$: Observable<any>) {

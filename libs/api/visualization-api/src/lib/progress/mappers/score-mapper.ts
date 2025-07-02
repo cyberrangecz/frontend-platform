@@ -1,5 +1,5 @@
-import { ProgressEventDTO } from '../dtos';
-import { ProgressEventType } from '@crczp/visualization-model';
+import {ProgressEventDTO} from '../dtos';
+import {ProgressEventType} from '@crczp/visualization-model';
 
 export class ScoreMapper {
     static fromDTOs(dtos: ProgressEventDTO[]): number {

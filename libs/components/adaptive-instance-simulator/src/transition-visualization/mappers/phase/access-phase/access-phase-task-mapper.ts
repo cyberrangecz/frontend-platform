@@ -1,5 +1,5 @@
-import { AccessPhaseDTO } from '../../../dto/phase/access-phase/access-phase-dto';
-import { AccessPhaseTask } from '../../../model/phase/access-phase/access-phase-task';
+import {AccessPhaseDTO} from '../../../dto/phase/access-phase/access-phase-dto';
+import {AccessPhaseTask} from '../../../model/phase/access-phase/access-phase-task';
 
 export class AccessPhaseTaskMapper {
     static fromDTO(dto: AccessPhaseDTO): AccessPhaseTask {

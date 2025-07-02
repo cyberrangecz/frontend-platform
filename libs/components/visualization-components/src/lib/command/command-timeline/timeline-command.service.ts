@@ -1,10 +1,10 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
-import { DetectedForbiddenCommand, TrainingRun } from '@crczp/training-model';
-import { OffsetPaginationEvent } from '@sentinel/common/pagination';
-import { VisualizationCommand } from '@crczp/visualization-model';
-import { CommandApi, TimelineCommandApi } from '@crczp/visualization-api';
+import {Injectable} from '@angular/core';
+import {BehaviorSubject, Observable} from 'rxjs';
+import {tap} from 'rxjs/operators';
+import {DetectedForbiddenCommand, TrainingRun} from '@crczp/training-model';
+import {OffsetPaginationEvent} from '@sentinel/common/pagination';
+import {VisualizationCommand} from '@crczp/visualization-model';
+import {CommandApi, TimelineCommandApi} from '@crczp/visualization-api';
 
 @Injectable()
 export class TimelineCommandService {

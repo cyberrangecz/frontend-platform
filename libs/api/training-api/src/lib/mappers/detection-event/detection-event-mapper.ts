@@ -1,17 +1,27 @@
-import { AbstractDetectionEvent } from '@crczp/training-model';
-import { DetectionEventDTO } from '../../dto/detection-event/detection-event-dto';
-import { AnswerSimilarityDetectionEventDTO } from '../../dto/detection-event/answer-similarity/answer-similarity-detection-event-dto';
-import { LocationSimilarityDetectionEventDTO } from '../../dto/detection-event/location-similarity/location_similarity-detection-event-dto';
-import { TimeProximityDetectionEventDTO } from '../../dto/detection-event/time-proximity/time_proximity-detection-event-dto';
-import { MinimalSolveTimeDetectionEventDTO } from '../../dto/detection-event/minimal-solve-time/minimal-solve-time-detection-event-dto';
-import { ForbiddenCommandsDetectionEventDTO } from '../../dto/detection-event/forbidden-commands/forbidden-commands-detection-event-dto';
-import { AnswerSimilarityDetectionEventMapper } from './answer-similarity-detection-event-mapper';
-import { LocationSimilarityDetectionEventMapper } from './location-similarity-detection-event-mapper';
-import { TimeProximityDetectionEventMapper } from './time-proximity-detection-event-mapper';
-import { MinimalSolveTimeDetectionEventMapper } from './minimal-solve-time-detection-event-mapper';
-import { NoCommandsDetectionEventMapper } from './no-commands-detection-event-mapper';
-import { ForbiddenCommandsDetectionEventMapper } from './forbidden-commands-detection-event-mapper';
-import { NoCommandsDetectionEventDTO } from '../../dto/detection-event/no-commands/no-commands-detection-event-dto';
+import {AbstractDetectionEvent} from '@crczp/training-model';
+import {DetectionEventDTO} from '../../dto/detection-event/detection-event-dto';
+import {
+    AnswerSimilarityDetectionEventDTO
+} from '../../dto/detection-event/answer-similarity/answer-similarity-detection-event-dto';
+import {
+    LocationSimilarityDetectionEventDTO
+} from '../../dto/detection-event/location-similarity/location_similarity-detection-event-dto';
+import {
+    TimeProximityDetectionEventDTO
+} from '../../dto/detection-event/time-proximity/time_proximity-detection-event-dto';
+import {
+    MinimalSolveTimeDetectionEventDTO
+} from '../../dto/detection-event/minimal-solve-time/minimal-solve-time-detection-event-dto';
+import {
+    ForbiddenCommandsDetectionEventDTO
+} from '../../dto/detection-event/forbidden-commands/forbidden-commands-detection-event-dto';
+import {AnswerSimilarityDetectionEventMapper} from './answer-similarity-detection-event-mapper';
+import {LocationSimilarityDetectionEventMapper} from './location-similarity-detection-event-mapper';
+import {TimeProximityDetectionEventMapper} from './time-proximity-detection-event-mapper';
+import {MinimalSolveTimeDetectionEventMapper} from './minimal-solve-time-detection-event-mapper';
+import {NoCommandsDetectionEventMapper} from './no-commands-detection-event-mapper';
+import {ForbiddenCommandsDetectionEventMapper} from './forbidden-commands-detection-event-mapper';
+import {NoCommandsDetectionEventDTO} from '../../dto/detection-event/no-commands/no-commands-detection-event-dto';
 
 export class DetectionEventMapper {
     static fromDTO(dto: DetectionEventDTO): AbstractDetectionEvent {

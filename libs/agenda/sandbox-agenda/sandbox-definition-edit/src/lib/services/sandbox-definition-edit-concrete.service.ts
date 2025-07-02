@@ -1,11 +1,11 @@
-import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
-import { SandboxDefinitionApi } from '@crczp/sandbox-api';
-import { SandboxDefinition } from '@crczp/sandbox-model';
-import { BehaviorSubject, defer, finalize, Observable } from 'rxjs';
-import { map, switchMap, tap } from 'rxjs/operators';
-import { SandboxErrorHandler, SandboxNavigator, SandboxNotificationService } from '@crczp/sandbox-agenda';
-import { SandboxDefinitionEditService } from './sandbox-definition-edit.service';
+import {Injectable} from '@angular/core';
+import {Router} from '@angular/router';
+import {SandboxDefinitionApi} from '@crczp/sandbox-api';
+import {SandboxDefinition} from '@crczp/sandbox-model';
+import {BehaviorSubject, defer, finalize, Observable} from 'rxjs';
+import {map, switchMap, tap} from 'rxjs/operators';
+import {SandboxErrorHandler, SandboxNavigator, SandboxNotificationService} from '@crczp/sandbox-agenda';
+import {SandboxDefinitionEditService} from './sandbox-definition-edit.service';
 
 @Injectable()
 export class SandboxDefinitionEditConcreteService extends SandboxDefinitionEditService {

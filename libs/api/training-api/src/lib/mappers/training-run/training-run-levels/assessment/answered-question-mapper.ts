@@ -1,7 +1,7 @@
-import { Question } from '@crczp/training-model';
-import { AnsweredExtendedMatchingItemsMapper } from './answered-extended-matching-items-mapper';
-import { AnsweredFreeFormQuestionMapper } from './answered-free-form-question-mapper';
-import { AnsweredMultipleChoiceQuestionMapper } from './answered-multiple-choice-question-mapper';
+import {Question} from '@crczp/training-model';
+import {AnsweredExtendedMatchingItemsMapper} from './answered-extended-matching-items-mapper';
+import {AnsweredFreeFormQuestionMapper} from './answered-free-form-question-mapper';
+import {AnsweredMultipleChoiceQuestionMapper} from './answered-multiple-choice-question-mapper';
 
 /**
  * @dynamic

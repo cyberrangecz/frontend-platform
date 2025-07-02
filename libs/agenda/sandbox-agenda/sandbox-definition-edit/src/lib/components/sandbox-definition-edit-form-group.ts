@@ -1,5 +1,5 @@
-import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
-import { SandboxDefinition } from '@crczp/sandbox-model';
+import {UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
+import {SandboxDefinition} from '@crczp/sandbox-model';
 
 /**
  * Sandbox Definition create form

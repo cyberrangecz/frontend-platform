@@ -11,17 +11,17 @@ import {
     SimpleChanges,
     ViewChild,
 } from '@angular/core';
-import { Link, Node } from '@crczp/topology-graph-model';
-import { TopologyApi } from '../services/topology-api.service';
-import { DraggedNodeService } from '../services/dragged-node.service';
-import { BehaviorSubject, EMPTY, Observable, takeWhile } from 'rxjs';
-import { SandboxService } from '../services/sandbox.service';
-import { TopologyLoadingService } from '../services/topology-loading.service';
-import { GraphEventService } from '../services/graph-event.service';
-import { catchError, map, take } from 'rxjs/operators';
-import { ResourcePollingService } from '../services/resource-polling.service';
-import { ConsoleUrl } from '../model/others/console-url';
-import { Settings } from '@crczp/common';
+import {Link, Node} from '@crczp/topology-graph-model';
+import {TopologyApi} from '../services/topology-api.service';
+import {DraggedNodeService} from '../services/dragged-node.service';
+import {BehaviorSubject, EMPTY, Observable, takeWhile} from 'rxjs';
+import {SandboxService} from '../services/sandbox.service';
+import {TopologyLoadingService} from '../services/topology-loading.service';
+import {GraphEventService} from '../services/graph-event.service';
+import {catchError, map, take} from 'rxjs/operators';
+import {ResourcePollingService} from '../services/resource-polling.service';
+import {ConsoleUrl} from '../model/others/console-url';
+import {Settings} from '@crczp/common';
 
 /**
  * Main component of the graph-visual topology application.

@@ -1,5 +1,5 @@
-import { SentinelStepper, StepStateEnum } from '@sentinel/components/stepper';
-import { PhaseStepperAdapter } from '@crczp/training-agenda/internal';
+import {SentinelStepper, StepStateEnum} from '@sentinel/components/stepper';
+import {PhaseStepperAdapter} from '@crczp/training-agenda/internal';
 
 /**
  * Adaptive preview phases adapter to stepper component

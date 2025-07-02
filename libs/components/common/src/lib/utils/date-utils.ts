@@ -1,4 +1,4 @@
-import { duration } from 'moment-mini';
+import {duration} from 'moment-mini';
 
 export class DateUtils {
     /**

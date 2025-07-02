@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
-import { AbstractLevelTypeEnum, Level, MitreTechnique } from '@crczp/training-model';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@angular/core';
+import {AbstractLevelTypeEnum, Level, MitreTechnique} from '@crczp/training-model';
 
 /**
  * Main component of level edit. Resolves which component should be display based on level type

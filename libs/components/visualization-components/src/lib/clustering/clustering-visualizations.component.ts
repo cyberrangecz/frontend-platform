@@ -1,12 +1,12 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core';
-import { Observable } from 'rxjs';
-import { Components } from './components/components-enum';
-import { Clusterables, ClusteringVisualizationData } from '@crczp/visualization-model';
-import { VisualizationsDataService } from './services/visualizations-data.service';
-import { ScatterPlotComponent } from './components/scatter-plot/scatter-plot.component';
-import { LineChartComponent } from './components/line-chart/line-chart.component';
-import { RadarChartComponent } from './components/radar-chart/radar-chart.component';
-import { CommonModule } from '@angular/common';
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output} from '@angular/core';
+import {Observable} from 'rxjs';
+import {Components} from './components/components-enum';
+import {Clusterables, ClusteringVisualizationData} from '@crczp/visualization-model';
+import {VisualizationsDataService} from './services/visualizations-data.service';
+import {ScatterPlotComponent} from './components/scatter-plot/scatter-plot.component';
+import {LineChartComponent} from './components/line-chart/line-chart.component';
+import {RadarChartComponent} from './components/radar-chart/radar-chart.component';
+import {CommonModule} from '@angular/common';
 
 @Component({
     selector: 'crczp-clustering-visualization',

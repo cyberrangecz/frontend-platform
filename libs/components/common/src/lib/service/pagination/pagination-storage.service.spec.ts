@@ -1,11 +1,8 @@
-import { afterAll, beforeEach, describe, expect, it } from 'vitest';
-import {
-    PaginationRegistryService,
-    PaginationStorageService,
-} from './pagination-storage.service';
-import { TestBed } from '@angular/core/testing';
-import { runInInjectionContext } from '@angular/core';
-import { Settings } from '../../settings/settings-injector';
+import {afterAll, beforeEach, describe, expect, it} from 'vitest';
+import {PaginationRegistryService, PaginationStorageService,} from './pagination-storage.service';
+import {TestBed} from '@angular/core/testing';
+import {runInInjectionContext} from '@angular/core';
+import {Settings} from '../../settings/settings-injector';
 
 describe('Pagination should load', () => {
     let createComponent: () => PaginationStorageService;

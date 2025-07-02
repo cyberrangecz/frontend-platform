@@ -1,6 +1,6 @@
-import { AssessmentAnswer } from '@crczp/visualization-model';
-import { UserMapper } from '@crczp/training-api';
-import { AnswerDTO } from '../dtos';
+import {AssessmentAnswer} from '@crczp/visualization-model';
+import {UserMapper} from '@crczp/training-api';
+import {AnswerDTO} from '../dtos';
 
 export class AnswerMapper {
     static fromDTOs(dtos: AnswerDTO[]): AssessmentAnswer[] {

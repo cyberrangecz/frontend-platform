@@ -1,4 +1,4 @@
-import { Group } from '@crczp/user-and-group-model';
+import {Group} from '@crczp/user-and-group-model';
 
 /**
  * Event emitted when edited group-overview is changed

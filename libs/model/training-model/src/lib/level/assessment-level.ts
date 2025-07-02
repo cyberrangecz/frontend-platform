@@ -1,6 +1,6 @@
-import { AssessmentTypeEnum } from '../enums/assessment-type.enum';
-import { Question } from '../questions/question';
-import { Level } from './level';
+import {AssessmentTypeEnum} from '../enums/assessment-type.enum';
+import {Question} from '../questions/question';
+import {Level} from './level';
 
 /**
  * Class representing level in a training of type Assessment

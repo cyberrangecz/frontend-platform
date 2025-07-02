@@ -1,5 +1,5 @@
-import { SseDTO } from '../dtos';
-import { SseData } from '@crczp/visualization-model';
+import {SseDTO} from '../dtos';
+import {SseData} from '@crczp/visualization-model';
 
 
 export class SseDataMapper {

@@ -1,6 +1,6 @@
-import { UserRefDTO } from '@crczp/training-api';
-import { TraineeProgressDTO } from '../dtos';
-import { ProgressTraineeInfo } from '@crczp/visualization-model';
+import {UserRefDTO} from '@crczp/training-api';
+import {TraineeProgressDTO} from '../dtos';
+import {ProgressTraineeInfo} from '@crczp/visualization-model';
 
 export class ProgressTraineeInfoMapper {
     static fromDTOs(dtos: UserRefDTO[], progressTraineesDTOs: TraineeProgressDTO[]): ProgressTraineeInfo[] {

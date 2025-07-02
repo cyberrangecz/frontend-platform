@@ -1,5 +1,5 @@
-import { ReferenceSolutionNode } from '@crczp/training-model';
-import { ReferenceSolutionNodeDTO } from '../../../dto/level/training/reference-solution-node-dto';
+import {ReferenceSolutionNode} from '@crczp/training-model';
+import {ReferenceSolutionNodeDTO} from '../../../dto/level/training/reference-solution-node-dto';
 
 export class ReferenceSolutionNodeMapper {
     static toDTO(referenceSolution: ReferenceSolutionNode): ReferenceSolutionNodeDTO {

@@ -1,8 +1,8 @@
-import { Request, RequestStage } from '@crczp/sandbox-model';
-import { BehaviorSubject, merge, Observable, Subject, timer } from 'rxjs';
-import { retryWhen, shareReplay, switchMap, takeWhile, tap } from 'rxjs/operators';
-import { HttpErrorResponse } from '@angular/common/http';
-import { StageAdapter } from '../../model/adapters/stage-adapter';
+import {Request, RequestStage} from '@crczp/sandbox-model';
+import {BehaviorSubject, merge, Observable, Subject, timer} from 'rxjs';
+import {retryWhen, shareReplay, switchMap, takeWhile, tap} from 'rxjs/operators';
+import {HttpErrorResponse} from '@angular/common/http';
+import {StageAdapter} from '../../model/adapters/stage-adapter';
 
 /**
  * A layer between a component and an API service. Implement a concrete service by extending this class.
