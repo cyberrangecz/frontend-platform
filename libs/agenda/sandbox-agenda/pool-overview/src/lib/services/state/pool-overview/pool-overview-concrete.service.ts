@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import {Router} from '@angular/router';
 import {
@@ -21,17 +21,18 @@ import {Settings} from '@crczp/common';
  */
 @Injectable()
 export class PoolOverviewConcreteService extends PoolOverviewService {
+    private poolApi = inject(PoolApi);
+    private dialog = inject(MatDialog);
+    private router = inject(Router);
+    private navigator = inject(SandboxNavigator);
+    private notificationService = inject(SandboxNotificationService);
+    private errorHandler = inject(SandboxErrorHandler);
+
     private lastPagination: OffsetPaginationEvent;
 
-    constructor(
-        private poolApi: PoolApi,
-        private dialog: MatDialog,
-        private router: Router,
-        private navigator: SandboxNavigator,
-        private notificationService: SandboxNotificationService,
-        private errorHandler: SandboxErrorHandler,
-        settings: Settings
-    ) {
+    constructor() {
+        const settings = inject(Settings);
+
         super(settings.DEFAULT_PAGE_SIZE);
     }
 

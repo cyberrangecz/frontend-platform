@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import {SentinelDialogResultEnum} from '@sentinel/components/dialogs';
 import {TrainingRunApi} from '@crczp/training-api';
@@ -16,15 +16,19 @@ import {SentinelNotificationService} from '@sentinel/layout/notification';
  * Handles events and actions specific for training level in training run
  */
 export class TrainingRunTrainingLevelConcreteService extends TrainingRunTrainingLevelService {
-    constructor(
-        private api: TrainingRunApi,
-        private sandboxApi: SandboxInstanceApi,
-        private errorHandler: TrainingErrorHandler,
-        notificationService: SentinelNotificationService,
-        dialog: MatDialog,
-        protected runningTrainingRunService: RunningTrainingRunService,
-    ) {
+    private api = inject(TrainingRunApi);
+    private sandboxApi = inject(SandboxInstanceApi);
+    private errorHandler = inject(TrainingErrorHandler);
+    protected runningTrainingRunService: RunningTrainingRunService;
+
+    constructor() {
+        const notificationService = inject(SentinelNotificationService);
+        const dialog = inject(MatDialog);
+        const runningTrainingRunService = inject(RunningTrainingRunService);
+
         super(dialog, notificationService, runningTrainingRunService);
+    
+        this.runningTrainingRunService = runningTrainingRunService;
     }
 
     /**

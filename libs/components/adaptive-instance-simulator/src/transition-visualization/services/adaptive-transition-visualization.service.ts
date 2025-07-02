@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {TransitionGraphVisualizationData} from '../model/transition-graph-visualization-data';
 import {HttpErrorResponse} from '@angular/common/http';
@@ -9,6 +9,8 @@ import {AdaptiveTransitionVisualizationApi} from '../api/adaptive-transition-vis
     providedIn: 'root',
 })
 export class AdaptiveTransitionVisualizationService {
+    private visualizationApi = inject(AdaptiveTransitionVisualizationApi);
+
     visualizationData$!: Observable<TransitionGraphVisualizationData>;
     /**
      * True if server returned error response on the latest request, false otherwise
@@ -33,7 +35,7 @@ export class AdaptiveTransitionVisualizationService {
     private visualizationDataSubject$: BehaviorSubject<TransitionGraphVisualizationData> =
         new BehaviorSubject<TransitionGraphVisualizationData>(null as unknown as TransitionGraphVisualizationData);
 
-    constructor(private visualizationApi: AdaptiveTransitionVisualizationApi) {
+    constructor() {
         this.visualizationData$ = this.visualizationDataSubject$.asObservable();
     }
 

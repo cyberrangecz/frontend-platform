@@ -1,5 +1,5 @@
 import {STEPPER_GLOBAL_OPTIONS} from '@angular/cdk/stepper';
-import {ChangeDetectionStrategy, Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnChanges, OnInit, SimpleChanges, inject } from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import {SentinelControlItem} from '@sentinel/components/controls';
 import {MatDivider} from "@angular/material/divider";
@@ -41,14 +41,13 @@ import {Phase} from "@crczp/training-model";
     ]
 })
 export class TasksOverviewComponent implements OnInit, OnChanges {
+    dialog = inject(MatDialog);
+
     @Input() tasks: Phase[];
 
     stepperTasks: PhaseStepperAdapter[];
     controls: SentinelControlItem[];
     activeStep: number;
-
-    constructor(public dialog: MatDialog) {
-    }
 
     ngOnInit(): void {
         this.update();

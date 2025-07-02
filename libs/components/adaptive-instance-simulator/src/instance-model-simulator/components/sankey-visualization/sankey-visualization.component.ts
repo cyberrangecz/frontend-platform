@@ -1,4 +1,4 @@
-import {Component, Input, OnChanges, OnInit} from '@angular/core';
+import { Component, Input, OnChanges, OnInit, inject } from '@angular/core';
 import * as d3 from 'd3';
 import * as d3Sankey from 'd3-sankey';
 import {take} from 'rxjs/operators';
@@ -11,6 +11,8 @@ import {SankeyDataService} from '../../service/sankey-data.service';
     styleUrls: ['./sankey-visualization.component.css'],
 })
 export class SankeyVisualizationComponent implements OnInit, OnChanges {
+    private sankeyDataService = inject(SankeyDataService);
+
     /**
      * Flag to use local mock
      */
@@ -38,9 +40,6 @@ export class SankeyVisualizationComponent implements OnInit, OnChanges {
     private links: d3.Selection<d3.BaseType, unknown, SVGGElement, unknown>;
     private nodes: d3.Selection<null, undefined, SVGGElement, unknown>;
     private color = d3.scaleOrdinal(d3.schemeCategory10);
-
-    constructor(private sankeyDataService: SankeyDataService) {
-    }
 
     ngOnInit(): void {
         if (this.graphData) {

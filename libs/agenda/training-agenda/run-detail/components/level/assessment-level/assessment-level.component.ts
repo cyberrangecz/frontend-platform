@@ -1,15 +1,4 @@
-import {
-    ChangeDetectionStrategy,
-    Component,
-    EventEmitter,
-    Input,
-    OnChanges,
-    OnInit,
-    Output,
-    QueryList,
-    SimpleChanges,
-    ViewChildren,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, OnInit, Output, QueryList, SimpleChanges, ViewChildren, inject } from '@angular/core';
 import {AssessmentLevel, AssessmentTypeEnum, Question} from '@crczp/training-model';
 import {take} from 'rxjs/operators';
 import {TraineeQuestionComponent} from './question/trainee-question.component';
@@ -45,6 +34,8 @@ import {MatButton} from "@angular/material/button";
  * answering the questions.
  */
 export class AssessmentLevelComponent implements OnInit, OnChanges {
+    private assessmentService = inject(TrainingRunAssessmentLevelService);
+
     @Input() level: AssessmentLevel;
     @Input() isLast: boolean;
     @Input() isLevelAnswered: boolean;
@@ -53,9 +44,6 @@ export class AssessmentLevelComponent implements OnInit, OnChanges {
     @ViewChildren(TraineeQuestionComponent) questionComponents: QueryList<TraineeQuestionComponent>;
 
     canSubmit: boolean;
-
-    constructor(private assessmentService: TrainingRunAssessmentLevelService) {
-    }
 
     ngOnInit(): void {
         this.initCanSubmit();

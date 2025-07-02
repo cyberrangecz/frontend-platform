@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {OffsetPaginationEvent, PaginatedResource,} from '@sentinel/common/pagination';
 import {TrainingInstanceApi, TrainingRunApi} from '@crczp/training-api';
 import {TrainingRun, TrainingRunInfo} from '@crczp/training-model';
@@ -14,13 +14,14 @@ import {Settings} from '@crczp/common';
  */
 @Injectable()
 export class TrainingRunConcreteService extends TrainingRunService {
+    private trainingInstanceApi = inject(TrainingInstanceApi);
+    private trainingRunApi = inject(TrainingRunApi);
+    private errorHandler = inject(TrainingErrorHandler);
 
-    constructor(
-        private trainingInstanceApi: TrainingInstanceApi,
-        private trainingRunApi: TrainingRunApi,
-        private errorHandler: TrainingErrorHandler,
-        settings: Settings
-    ) {
+
+    constructor() {
+        const settings = inject(Settings);
+
         super(settings.DEFAULT_PAGE_SIZE);
     }
 

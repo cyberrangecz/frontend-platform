@@ -58,6 +58,10 @@ import {MatCheckbox} from "@angular/material/checkbox";
     ]
 })
 export class PoolEditComponent implements OnInit {
+    private activeRoute = inject(ActivatedRoute);
+    private poolEditService = inject(PoolEditService);
+    private sandboxDefinitionService = inject(SandboxDefinitionOverviewService);
+
     pool: Pool;
     poolFormGroup: PoolFormGroup;
     editMode = false;
@@ -70,11 +74,7 @@ export class PoolEditComponent implements OnInit {
     filteredSandboxDefinitions$: Observable<SandboxDefinition[]>;
     protected readonly async = async;
 
-    constructor(
-        private activeRoute: ActivatedRoute,
-        private poolEditService: PoolEditService,
-        private sandboxDefinitionService: SandboxDefinitionOverviewService,
-    ) {
+    constructor() {
         this.activeRoute.data
             .pipe(
                 tap((data) => {

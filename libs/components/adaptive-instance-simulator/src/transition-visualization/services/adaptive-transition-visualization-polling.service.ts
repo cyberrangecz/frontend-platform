@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {BehaviorSubject, merge, Observable, Subject, timer} from 'rxjs';
 import {TransitionGraphVisualizationData} from '../model/transition-graph-visualization-data';
 import {HttpErrorResponse} from '@angular/common/http';
@@ -9,6 +9,8 @@ import {AdaptiveTransitionVisualizationApi} from '../api/adaptive-transition-vis
     providedIn: 'root',
 })
 export class AdaptiveTransitionVisualizationPollingService {
+    private visualizationApi = inject(AdaptiveTransitionVisualizationApi);
+
     visualizationData$!: Observable<TransitionGraphVisualizationData>;
     private lastTrainingInstanceId!: number;
     /**
@@ -39,7 +41,7 @@ export class AdaptiveTransitionVisualizationPollingService {
         new BehaviorSubject<TransitionGraphVisualizationData>(null as unknown as TransitionGraphVisualizationData);
     private pollPeriod: number;
 
-    constructor(private visualizationApi: AdaptiveTransitionVisualizationApi) {
+    constructor() {
         this.pollPeriod = 2000;
         this.visualizationData$ = merge(this.createPoll(), this.visualizationDataSubject$.asObservable());
     }

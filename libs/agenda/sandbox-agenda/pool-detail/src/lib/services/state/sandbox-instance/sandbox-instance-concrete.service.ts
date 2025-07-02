@@ -1,5 +1,5 @@
 import {HttpErrorResponse} from '@angular/common/http';
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import {Router} from '@angular/router';
 import {
@@ -29,21 +29,24 @@ import {Settings} from '@crczp/common';
  */
 @Injectable()
 export class SandboxInstanceConcreteService extends SandboxInstanceService {
+    private sandboxApi = inject(SandboxInstanceApi);
+    private poolApi = inject(PoolApi);
+    private sandboxAllocationUnitsApi = inject(SandboxAllocationUnitsApi);
+    private allocationUnitsService = inject(SandboxAllocationUnitsService);
+    private router = inject(Router);
+    private dialog = inject(MatDialog);
+    private navigator = inject(SandboxNavigator);
+    private notificationService = inject(SandboxNotificationService);
+    private errorHandler = inject(SandboxErrorHandler);
+
     private lastPoolId: number;
 
-    constructor(
-        private sandboxApi: SandboxInstanceApi,
-        private poolApi: PoolApi,
-        private sandboxAllocationUnitsApi: SandboxAllocationUnitsApi,
-        private allocationUnitsService: SandboxAllocationUnitsService,
-        private router: Router,
-        private dialog: MatDialog,
-        private navigator: SandboxNavigator,
-        private notificationService: SandboxNotificationService,
-        private errorHandler: SandboxErrorHandler,
-        settings: Settings
-    ) {
+    constructor() {
+        const settings = inject(Settings);
+
         super(settings.DEFAULT_PAGE_SIZE, settings.POLLING_PERIOD_SHORT);
+        const allocationUnitsService = this.allocationUnitsService;
+
         this.allocationUnits$ = allocationUnitsService.units$;
     }
 

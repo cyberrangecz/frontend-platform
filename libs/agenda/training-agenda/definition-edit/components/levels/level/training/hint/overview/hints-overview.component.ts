@@ -40,6 +40,8 @@ import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
     ],
 })
 export class HintsOverviewComponent implements OnInit, OnChanges {
+    dialog = inject(MatDialog);
+
     @Input() hints: Hint[];
     @Input() levelId: any;
     @Input() levelMaxScore: number;
@@ -53,9 +55,6 @@ export class HintsOverviewComponent implements OnInit, OnChanges {
     stepperHints: SentinelStepper<HintStepperAdapter> = {items: []};
     controls: SentinelControlItemSignal[];
     destroyRef = inject(DestroyRef);
-
-    constructor(public dialog: MatDialog) {
-    }
 
     ngOnInit(): void {
         this.selectedStep = 0;

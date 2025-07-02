@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {ActivatedRouteSnapshot, Router} from '@angular/router';
 import {AdaptiveRunApi} from '@crczp/training-api';
 import {AccessTrainingRunInfo} from '@crczp/training-model';
@@ -14,14 +14,12 @@ import {RunningAdaptiveRunService} from '@crczp/training-agenda/adaptive-run-det
 
 @Injectable()
 export class AccessAdaptiveRunResolver {
-    constructor(
-        private api: AdaptiveRunApi,
-        private runningAdaptiveRunService: RunningAdaptiveRunService,
-        private errorHandler: TrainingErrorHandler,
-        private navigator: TrainingNavigator,
-        private router: Router,
-    ) {
-    }
+    private api = inject(AdaptiveRunApi);
+    private runningAdaptiveRunService = inject(RunningAdaptiveRunService);
+    private errorHandler = inject(TrainingErrorHandler);
+    private navigator = inject(TrainingNavigator);
+    private router = inject(Router);
+
 
     /**
      * Retrieves a specific resource based on id provided in url. Navigates to a resource overview if no resource with such id exists.

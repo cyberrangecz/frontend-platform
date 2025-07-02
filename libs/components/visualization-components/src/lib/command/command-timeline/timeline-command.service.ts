@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {tap} from 'rxjs/operators';
 import {DetectedForbiddenCommand, TrainingRun} from '@crczp/training-model';
@@ -8,10 +8,9 @@ import {CommandApi, TimelineCommandApi} from '@crczp/visualization-api';
 
 @Injectable()
 export class TimelineCommandService {
-    constructor(
-        private timelineCommandApiService: TimelineCommandApi,
-        private commandApiConcreteService: CommandApi,
-    ) {}
+    private timelineCommandApiService = inject(TimelineCommandApi);
+    private commandApiConcreteService = inject(CommandApi);
+
 
     private commandsSubject$: BehaviorSubject<VisualizationCommand[]> = new BehaviorSubject([]);
     commands$: Observable<VisualizationCommand[]> = this.commandsSubject$.asObservable();

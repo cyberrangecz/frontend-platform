@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {ActivatedRouteSnapshot, RouterStateSnapshot} from '@angular/router';
 import {Observable, of} from 'rxjs';
 import {catchError, map, take} from 'rxjs/operators';
@@ -8,8 +8,8 @@ import {USER_DETAIL_PATH, USER_SELECTOR} from "@crczp/user-and-group-agenda";
 
 @Injectable()
 export class UserTitleResolverService {
-    constructor(private userResolver: UserResolverService) {
-    }
+    private userResolver = inject(UserResolverService);
+
 
     /**
      * Retrieves a specific resource title based on id provided in url

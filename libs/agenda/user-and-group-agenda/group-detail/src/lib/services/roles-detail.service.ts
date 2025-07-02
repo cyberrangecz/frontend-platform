@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {GroupApi} from '@crczp/user-and-group-api';
 import {UserRole} from '@crczp/user-and-group-model';
 import {SentinelFilter} from '@sentinel/common/filter';
@@ -13,6 +13,9 @@ import {UserAndGroupErrorHandler} from "@crczp/user-and-group-agenda";
  */
 @Injectable()
 export class RolesDetailService {
+    private api = inject(GroupApi);
+    private errorHandler = inject(UserAndGroupErrorHandler);
+
     /**
      * List of roles already assigned to the resource
      */
@@ -30,12 +33,6 @@ export class RolesDetailService {
     private assignedRolesSubject$: BehaviorSubject<PaginatedResource<UserRole>> = new BehaviorSubject(
         this.initSubject()
     );
-
-    constructor(
-        private api: GroupApi,
-        private errorHandler: UserAndGroupErrorHandler
-    ) {
-    }
 
     /**
      * Gets roles assigned to a resource, updates related observables or handles error

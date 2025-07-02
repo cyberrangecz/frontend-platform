@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, DestroyRef, inject, Inject, OnInit} from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit } from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {TrainingDefinition} from '@crczp/training-model';
 import {CloneDialogFormGroup} from './clone-dialog-form-group';
@@ -15,14 +15,12 @@ import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CloneDialogComponent implements OnInit {
+    dialogRef = inject<MatDialogRef<CloneDialogComponent>>(MatDialogRef);
+    data = inject<TrainingDefinition>(MAT_DIALOG_DATA);
+
     cloneDialogFormGroup: CloneDialogFormGroup;
     valid = true;
     destroyRef = inject(DestroyRef);
-
-    constructor(
-        public dialogRef: MatDialogRef<CloneDialogComponent>,
-        @Inject(MAT_DIALOG_DATA) public data: TrainingDefinition,
-    ) {}
 
     get clonedDefinitionTitle(): AbstractControl {
         return this.cloneDialogFormGroup.formGroup.get('clonedDefinitionTitle');

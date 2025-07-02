@@ -1,5 +1,5 @@
 import {CommonModule} from '@angular/common';
-import {ModuleWithProviders, NgModule, Optional, SkipSelf} from '@angular/core';
+import { ModuleWithProviders, NgModule, inject } from '@angular/core';
 import {GroupApi} from './api/group/group-api.service';
 import {GroupDefaultApi} from './api/group/group-default-api.service';
 import {MicroserviceApi} from './api/microservice/microservice-api.service';
@@ -22,7 +22,9 @@ import {UserAndGroupContext} from './other/user-and-group.context.service';
     ],
 })
 export class UserAndGroupApiModule {
-    constructor(@Optional() @SkipSelf() parentModule: UserAndGroupApiModule) {
+    constructor() {
+        const parentModule = inject(UserAndGroupApiModule, { optional: true, skipSelf: true });
+
         if (parentModule) {
             throw new Error('UserAndGroupApiModule is already loaded. Import it only once in single module hierarchy.');
         }

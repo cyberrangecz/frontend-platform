@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {DetectionEventApi} from '@crczp/training-api';
 import {OffsetPaginationEvent, PaginatedResource,} from '@sentinel/common/pagination';
 import {Observable} from 'rxjs';
@@ -13,10 +13,11 @@ import {Settings} from '@crczp/common';
  */
 @Injectable()
 export class DetectionEventForbiddenCommandsConcreteService extends DetectionEventForbiddenCommandsService {
-    constructor(
-        private api: DetectionEventApi,,
-        settings: Settings
-    ) {
+    private api = inject(DetectionEventApi);
+
+    constructor() {
+        const settings = inject(Settings);
+
         super(settings.DEFAULT_PAGE_SIZE);
     }
 

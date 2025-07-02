@@ -1,5 +1,5 @@
 import {RequestDetailComponent} from './shared/request-detail.component';
-import {ChangeDetectionStrategy, Component} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import {RequestStagesService} from '../services/state/request-stages.service';
 import {CleanupStagesConcreteService} from '../services/state/cleanup-stages-concrete.service';
 import {ActivatedRoute} from '@angular/router';
@@ -23,11 +23,17 @@ import {async} from "rxjs";
     ]
 })
 export class CleanupRequestDetailComponent extends RequestDetailComponent {
-    constructor(
-        protected activeRoute: ActivatedRoute,
-        protected requestStagesService: RequestStagesService,
-    ) {
+    protected activeRoute: ActivatedRoute;
+    protected requestStagesService: RequestStagesService;
+
+    constructor() {
+        const activeRoute = inject(ActivatedRoute);
+        const requestStagesService = inject(RequestStagesService);
+
         super(activeRoute, requestStagesService);
+    
+        this.activeRoute = activeRoute;
+        this.requestStagesService = requestStagesService;
     }
 
     protected readonly async = async;

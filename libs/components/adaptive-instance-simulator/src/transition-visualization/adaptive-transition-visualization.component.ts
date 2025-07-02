@@ -29,6 +29,9 @@ import {AsyncPipe} from "@angular/common";
     ]
 })
 export class AdaptiveTransitionVisualizationComponent implements OnInit {
+    private visualizationPollingService = inject(AdaptiveTransitionVisualizationPollingService);
+    private visualizationService = inject(AdaptiveTransitionVisualizationService);
+
     @Input() trainingInstanceId!: number;
     @Input() trainingRunId!: number;
     @Input() progress!: boolean;
@@ -40,12 +43,6 @@ export class AdaptiveTransitionVisualizationComponent implements OnInit {
 
     destroyRef = inject(DestroyRef);
     protected readonly async = async;
-
-    constructor(
-        private visualizationPollingService: AdaptiveTransitionVisualizationPollingService,
-        private visualizationService: AdaptiveTransitionVisualizationService,
-    ) {
-    }
 
     ngOnInit() {
         this.init();

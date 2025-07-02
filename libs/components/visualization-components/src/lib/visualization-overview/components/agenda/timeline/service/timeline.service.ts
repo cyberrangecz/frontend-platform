@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {TraineeModeInfo} from '../../../../shared/interfaces/trainee-mode-info';
 import {Observable, throwError} from 'rxjs';
 import {catchError, map} from 'rxjs/operators';
@@ -8,8 +8,8 @@ import {TimelineMapper} from '../../../api/mappers/timeline/timeline-mapper';
 
 @Injectable()
 export class TimelineService {
-    constructor(private timelineApiService: TimelineApiService) {
-    }
+    private timelineApiService = inject(TimelineApiService);
+
 
     getAllData(traineeModeInfo: TraineeModeInfo): Observable<Timeline> {
         const service = TraineeModeInfo.isTrainee(traineeModeInfo)

@@ -16,12 +16,11 @@ import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AdaptiveInstanceProgressComponent implements OnInit {
+    private activeRoute = inject(ActivatedRoute);
+
     trainingInstance$: Observable<TrainingInstance>;
     vizSize: { width: number; height: number };
     destroyRef = inject(DestroyRef);
-
-    constructor(private activeRoute: ActivatedRoute) {
-    }
 
     @HostListener('window:resize', ['$event'])
     onResize(event: any): void {

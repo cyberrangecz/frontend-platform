@@ -1,5 +1,5 @@
 import {HttpClient} from '@angular/common/http';
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {tap} from 'rxjs/operators';
 import {TraineeGraphApiService} from '@crczp/visualization-api';
@@ -8,10 +8,9 @@ import {Graph} from '@crczp/visualization-model';
 
 @Injectable()
 export class TraineeGraphService {
-    constructor(
-        private http: HttpClient,
-        private traineeGraphApiService: TraineeGraphApiService,
-    ) {}
+    private http = inject(HttpClient);
+    private traineeGraphApiService = inject(TraineeGraphApiService);
+
 
     private trainingRunsSubject$: BehaviorSubject<TrainingRun[]> = new BehaviorSubject([]);
     trainingRuns$: Observable<TrainingRun[]> = this.trainingRunsSubject$.asObservable();

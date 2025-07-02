@@ -12,14 +12,12 @@ import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
     styleUrls: ['./walkthrough-wrapper.component.css'],
 })
 export class WalkthroughWrapperComponent implements OnInit {
+    private activeRoute = inject(ActivatedRoute);
+    private walkthroughService = inject(WalkthroughService);
+
     trainingInstance$: Observable<TrainingInstance>;
     levels$: Observable<Level[]>;
     destroyRef = inject(DestroyRef);
-
-    constructor(
-        private activeRoute: ActivatedRoute,
-        private walkthroughService: WalkthroughService,
-    ) {}
 
     ngOnInit(): void {
         this.trainingInstance$ = this.activeRoute.parent.data.pipe(

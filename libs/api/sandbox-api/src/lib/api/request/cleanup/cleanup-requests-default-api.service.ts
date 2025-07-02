@@ -1,5 +1,5 @@
 import {CleanupRequestsApi} from './cleanup-requests.api.service';
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {Observable} from 'rxjs';
 import {
     CleanupRequest,
@@ -21,15 +21,15 @@ import {AnsibleCleanupStageDTO} from '../../../dto/sandbox-instance/stages/ansib
  */
 @Injectable()
 export class CleanupRequestsDefaultApi extends CleanupRequestsApi {
+    private http = inject(HttpClient);
+    private context = inject(SandboxApiConfigService);
+
     private readonly cleanupRequestUriExtension = 'cleanup-requests';
     private readonly stagesUriExtension = 'stages';
 
     private readonly requestsEndpointUri: string;
 
-    constructor(
-        private http: HttpClient,
-        private context: SandboxApiConfigService,
-    ) {
+    constructor() {
         super();
         if (this.context.config === undefined || this.context.config === null) {
             throw new Error(

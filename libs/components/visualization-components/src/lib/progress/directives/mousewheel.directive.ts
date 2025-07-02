@@ -1,7 +1,9 @@
-import {Directive, ElementRef, EventEmitter, HostListener, Output} from '@angular/core';
+import { Directive, ElementRef, EventEmitter, HostListener, Output, inject } from '@angular/core';
 
 @Directive({ selector: '[mouseWheel]' })
 export class MouseWheelDirective {
+    element = inject(ElementRef);
+
     @Output() mouseWheelUp = new EventEmitter();
     @Output() mouseWheelDown = new EventEmitter();
 
@@ -16,8 +18,6 @@ export class MouseWheelDirective {
     @HostListener('onmousewheel', ['$event']) onMouseWheelIE(event: any) {
         this.mouseWheelFunc(event);
     }
-
-    constructor(public element: ElementRef) {}
 
     mouseWheelFunc(event: any) {
         const mouseEvent = window.event || event;

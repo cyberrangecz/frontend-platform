@@ -50,6 +50,11 @@ import {MatProgressSpinner} from "@angular/material/progress-spinner";
     ]
 })
 export class TrainingInstanceOverviewComponent {
+    private service = inject(TrainingInstanceOverviewService);
+    private paginationService = inject(PaginationStorageService);
+    private navigator = inject(TrainingNavigator);
+    private notificationService = inject(TrainingNotificationService);
+
     @Input() paginationId = 'training-instance-overview';
     readonly INITIAL_SORT_NAME = 'startTime';
     readonly INITIAL_SORT_DIR = 'desc';
@@ -61,12 +66,7 @@ export class TrainingInstanceOverviewComponent {
     controls: SentinelControlItem[];
     protected readonly async = async;
 
-    constructor(
-        private service: TrainingInstanceOverviewService,
-        private paginationService: PaginationStorageService,
-        private navigator: TrainingNavigator,
-        private notificationService: TrainingNotificationService,
-    ) {
+    constructor() {
         this.controls = TrainingInstanceOverviewControls.create(this.service);
         this.initTable();
     }

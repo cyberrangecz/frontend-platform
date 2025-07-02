@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {Router} from '@angular/router';
 import {TrainingDefinitionApi} from '@crczp/training-api';
 import {TrainingDefinition} from '@crczp/training-model';
@@ -17,22 +17,18 @@ import {LoadingTracker} from "@crczp/common";
  */
 @Injectable()
 export class TrainingDefinitionEditConcreteService extends TrainingDefinitionEditService {
+    private router = inject(Router);
+    private api = inject(TrainingDefinitionApi);
+    private errorHandler = inject(TrainingErrorHandler);
+    private navigator = inject(TrainingNavigator);
+    private notificationService = inject(TrainingNotificationService);
+    private levelEditService = inject(LevelEditService);
+
     private editedSnapshot: TrainingDefinition;
     private loadingTracker = new LoadingTracker();
     public saveDisabled$ = combineLatest(this.loadingTracker.isLoading$, this.saveDisabledSubject$).pipe(
         map(([loading, invalid]) => loading || invalid),
     );
-
-    constructor(
-        private router: Router,
-        private api: TrainingDefinitionApi,
-        private errorHandler: TrainingErrorHandler,
-        private navigator: TrainingNavigator,
-        private notificationService: TrainingNotificationService,
-        private levelEditService: LevelEditService,
-    ) {
-        super();
-    }
 
     /**
      * Sets training definition as currently edited

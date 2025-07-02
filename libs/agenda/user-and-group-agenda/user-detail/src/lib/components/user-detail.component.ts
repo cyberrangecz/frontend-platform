@@ -34,12 +34,11 @@ import {MatDivider} from '@angular/material/divider';
     styleUrls: ['./user-detail.component.css']
 })
 export class UserDetailComponent implements OnInit {
+    private activeRoute = inject(ActivatedRoute);
+
     @ViewChild(MatAccordion) accordion: MatAccordion;
     user: User;
     destroyRef = inject(DestroyRef);
-
-    constructor(private activeRoute: ActivatedRoute) {
-    }
 
     ngOnInit(): void {
         this.initTable();

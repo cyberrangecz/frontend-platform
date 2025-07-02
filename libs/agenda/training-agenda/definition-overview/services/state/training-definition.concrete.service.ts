@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import {Router} from '@angular/router';
 import {
@@ -28,20 +28,21 @@ import {Settings} from '@crczp/common';
  */
 @Injectable()
 export class TrainingDefinitionConcreteService extends TrainingDefinitionService {
+    private api = inject(TrainingDefinitionApi);
+    private dialog = inject(MatDialog);
+    private router = inject(Router);
+    private context = inject(TrainingAgendaContext);
+    private navigator = inject(TrainingNavigator);
+    private notificationService = inject(TrainingNotificationService);
+    private fileUploadProgressService = inject(FileUploadProgressService);
+    private errorHandler = inject(TrainingErrorHandler);
+
     private lastPagination: OffsetPaginationEvent;
     private lastFilters: string;
 
-    constructor(
-        private api: TrainingDefinitionApi,
-        private dialog: MatDialog,
-        private router: Router,
-        private context: TrainingAgendaContext,
-        private navigator: TrainingNavigator,
-        private notificationService: TrainingNotificationService,
-        private fileUploadProgressService: FileUploadProgressService,
-        private errorHandler: TrainingErrorHandler,
-        settings: Settings
-    ) {
+    constructor() {
+        const settings = inject(Settings);
+
         super(settings.DEFAULT_PAGE_SIZE);
     }
 

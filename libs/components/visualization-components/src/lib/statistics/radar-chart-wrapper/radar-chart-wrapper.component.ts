@@ -1,4 +1,4 @@
-import {AfterContentChecked, ApplicationRef, Component, Input, OnChanges, SimpleChanges} from '@angular/core';
+import { AfterContentChecked, ApplicationRef, Component, Input, OnChanges, SimpleChanges, inject } from '@angular/core';
 import * as d3 from 'd3';
 import {TrainingInstanceStatistics} from '@crczp/visualization-model';
 import {MatCardModule} from '@angular/material/card';
@@ -41,7 +41,9 @@ export class RadarChartWrapperComponent implements OnChanges, AfterContentChecke
         'The chart displays overview of trainee groups and their playing behavior. ' +
         'The small radar charts represent the groups of trainees whose playing styles were similar.';
 
-    constructor(appRef: ApplicationRef) {
+    constructor() {
+        const appRef = inject(ApplicationRef);
+
         this.appRef = appRef;
     }
 

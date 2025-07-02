@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnChanges, OnInit, Output} from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, inject } from '@angular/core';
 import {v4 as uuid} from 'uuid';
 import {D3, D3Service} from '../../../common/d3-service/d3-service';
 import {ClusteringConfig, VIS_CONFIG} from '../../clustering-config';
@@ -9,6 +9,8 @@ import {ClusteringConfig, VIS_CONFIG} from '../../clustering-config';
     styleUrls: ['./line-chart.component.css'],
 })
 export class LineChartComponent implements OnChanges, OnInit {
+    private config = inject(ClusteringConfig);
+
     @Input() visualizationData: number[] = [];
     @Input() elbowNumClusters: number;
     @Input() includeInButtonToggle = false;
@@ -31,10 +33,9 @@ export class LineChartComponent implements OnChanges, OnInit {
     private xAxis: any;
     private yAxis: any;
 
-    constructor(
-        d3Service: D3Service,
-        private config: ClusteringConfig,
-    ) {
+    constructor() {
+        const d3Service = inject(D3Service);
+
         this.d3 = d3Service.getD3();
     }
 

@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {OffsetPagination, OffsetPaginationEvent, PaginatedResource,} from '@sentinel/common/pagination';
 import {UserApi} from '@crczp/training-api';
 import {Designer} from '@crczp/training-model';
@@ -15,6 +15,10 @@ import {Settings} from '@crczp/common';
  */
 @Injectable()
 export class AuthorsAssignService extends SentinelUserAssignService {
+    private userApi = inject(UserApi);
+    private errorHandler = inject(TrainingErrorHandler);
+    private settings = inject(Settings);
+
     private lastAssignedPagination: OffsetPaginationEvent;
     private lastAssignedFilter: string;
     private assignedUsersSubject: BehaviorSubject<PaginatedResource<Designer>> =
@@ -24,14 +28,6 @@ export class AuthorsAssignService extends SentinelUserAssignService {
      */
     assignedUsers$: Observable<PaginatedResource<Designer>> =
         this.assignedUsersSubject.asObservable();
-
-    constructor(
-        private userApi: UserApi,
-        private errorHandler: TrainingErrorHandler,
-        private settings: Settings
-    ) {
-        super();
-    }
 
     /***
      * Assigns designer to a resource (creates association)

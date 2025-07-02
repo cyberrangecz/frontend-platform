@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {BehaviorSubject, Observable, tap} from 'rxjs';
 import {TrainingInstanceStatisticsDTO} from './dtos';
@@ -10,14 +10,15 @@ import {VisualizationApiConfig} from '../config/visualization-api-config';
 
 @Injectable()
 export class InstanceStatisticsApiService {
+    private http = inject(HttpClient);
+
     protected trainingInstancesSubject$: BehaviorSubject<TrainingInstanceStatistics[]> = new BehaviorSubject([]);
     trainingInstance$: Observable<TrainingInstanceStatistics[]> = this.trainingInstancesSubject$.asObservable();
     private trainingInstancesEndpoint: string;
 
-    constructor(
-        private http: HttpClient,
-        config: VisualizationApiConfig
-    ) {
+    constructor() {
+        const config = inject(VisualizationApiConfig);
+
         this.trainingInstancesEndpoint = config.trainingBasePath + '/training-instances';
         if (config.trainingBasePath === undefined || config.trainingBasePath === null) {
             throw new Error(

@@ -1,14 +1,4 @@
-import {
-    ChangeDetectionStrategy,
-    Component,
-    EventEmitter,
-    HostListener,
-    Input,
-    OnChanges,
-    OnInit,
-    Output,
-    SimpleChanges
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, HostListener, Input, OnChanges, OnInit, Output, SimpleChanges, inject } from '@angular/core';
 import * as d3 from 'd3';
 import {
     IStatisticsFilter,
@@ -42,6 +32,11 @@ import {MatCheckboxModule} from '@angular/material/checkbox';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BarchartComponent implements OnInit, OnChanges {
+    private axesCreationService = inject(AxesCreationService);
+    private tooltipCreationService = inject(TooltipCreationService);
+    private svgConfigurationService = inject(SvgConfigurationService);
+    private legendCreationService = inject(LegendCreationService);
+
     @Input() trainingInstanceStatistics: TrainingInstanceStatistics[];
 
     @Input() highlightedInstances: number[];
@@ -87,14 +82,6 @@ export class BarchartComponent implements OnInit, OnChanges {
     private barTextColor = '#00000';
     private participantsLineColor = '#595959';
     private tooltipColors: string[] = ['#000000', '#ffffff'];
-
-    constructor(
-        private axesCreationService: AxesCreationService,
-        private tooltipCreationService: TooltipCreationService,
-        private svgConfigurationService: SvgConfigurationService,
-        private legendCreationService: LegendCreationService
-    ) {
-    }
 
     @HostListener('window:resize') onResizeEvent() {
         this.onResize();

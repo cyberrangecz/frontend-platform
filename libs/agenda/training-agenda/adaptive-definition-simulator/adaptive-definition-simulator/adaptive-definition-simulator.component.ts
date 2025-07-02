@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import { Component, inject } from '@angular/core';
 import {TrainingErrorHandler, TrainingNotificationService} from '@crczp/training-agenda';
 import {
     InstanceModelSimulatorComponent,
@@ -15,11 +15,9 @@ import {
     ]
 })
 export class AdaptiveDefinitionSimulatorComponent {
-    constructor(
-        private errorHandler: TrainingErrorHandler,
-        private notificationService: TrainingNotificationService,
-    ) {
-    }
+    private errorHandler = inject(TrainingErrorHandler);
+    private notificationService = inject(TrainingNotificationService);
+
 
     handleState(event: SimulatorState) {
         if (event && event.state === SimulatorStateEventTypeEnum.ERROR_EVENT) {

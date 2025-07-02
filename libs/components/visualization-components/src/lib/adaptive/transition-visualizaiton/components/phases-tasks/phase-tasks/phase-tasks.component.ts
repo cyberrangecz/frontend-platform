@@ -1,14 +1,4 @@
-import {
-    ChangeDetectionStrategy,
-    ChangeDetectorRef,
-    Component,
-    ElementRef,
-    EventEmitter,
-    Input,
-    OnChanges,
-    Output,
-    SimpleChanges
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnChanges, Output, SimpleChanges, inject } from '@angular/core';
 import * as d3 from 'd3';
 import {easeQuad} from 'd3';
 import {RunVisualizationPathNode, TransitionPhase, TransitionTask} from '@crczp/visualization-model';
@@ -20,6 +10,8 @@ import {RunVisualizationPathNode, TransitionPhase, TransitionTask} from '@crczp/
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PhaseTasksComponent implements OnChanges {
+    private ref = inject(ChangeDetectorRef);
+
     @Input() phase!: TransitionPhase;
 
     @Input() xScale!: d3.ScalePoint<number>;
@@ -29,10 +21,9 @@ export class PhaseTasksComponent implements OnChanges {
 
     private g: any;
 
-    constructor(
-        element: ElementRef,
-        private ref: ChangeDetectorRef,
-    ) {
+    constructor() {
+        const element = inject(ElementRef);
+
         this.g = d3.select(element.nativeElement);
     }
 

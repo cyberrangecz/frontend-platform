@@ -38,6 +38,8 @@ import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class QuestionsOverviewComponent implements OnInit, OnChanges {
+    dialog = inject(MatDialog);
+
     @Input() questions: Question[];
     @Input() isTest: boolean;
     @Input() disabled: boolean;
@@ -50,9 +52,6 @@ export class QuestionsOverviewComponent implements OnInit, OnChanges {
     controls: SentinelControlItemSignal[];
     questionChanged: boolean;
     destroyRef = inject(DestroyRef);
-
-    constructor(public dialog: MatDialog) {
-    }
 
     ngOnInit(): void {
         this.selectedStep = 0;

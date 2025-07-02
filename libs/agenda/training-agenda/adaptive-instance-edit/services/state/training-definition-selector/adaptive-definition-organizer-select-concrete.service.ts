@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {SentinelFilter} from '@sentinel/common/filter';
 import {OffsetPaginationEvent, PaginatedResource,} from '@sentinel/common/pagination';
 import {AdaptiveDefinitionApiService} from '@crczp/training-api';
@@ -14,11 +14,12 @@ import {Settings} from '@crczp/common';
  */
 @Injectable()
 export class AdaptiveDefinitionOrganizerSelectConcreteService extends TrainingDefinitionOrganizerSelectService {
-    constructor(
-        private api: AdaptiveDefinitionApiService,
-        private errorHandler: TrainingErrorHandler,
-        settings: Settings
-    ) {
+    private api = inject(AdaptiveDefinitionApiService);
+    private errorHandler = inject(TrainingErrorHandler);
+
+    constructor() {
+        const settings = inject(Settings);
+
         super(settings.DEFAULT_PAGE_SIZE);
     }
 

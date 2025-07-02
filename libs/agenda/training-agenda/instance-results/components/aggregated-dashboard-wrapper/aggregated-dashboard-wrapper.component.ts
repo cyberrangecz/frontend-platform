@@ -12,15 +12,12 @@ import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
     styleUrls: ['./aggregated-dashboard-wrapper.component.css'],
 })
 export class AggregatedDashboardWrapperComponent implements OnInit {
+    private activeRoute = inject(ActivatedRoute);
+    private router = inject(Router);
+    private navigator = inject(TrainingNavigator);
+
     trainingInstance$: Observable<TrainingInstance>;
     destroyRef = inject(DestroyRef);
-
-    constructor(
-        private activeRoute: ActivatedRoute,
-        private router: Router,
-        private navigator: TrainingNavigator,
-    ) {
-    }
 
     ngOnInit(): void {
         this.trainingInstance$ = this.activeRoute.parent.data.pipe(

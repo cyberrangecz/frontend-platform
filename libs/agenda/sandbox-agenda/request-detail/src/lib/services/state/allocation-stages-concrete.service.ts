@@ -1,5 +1,5 @@
 import {HttpErrorResponse} from '@angular/common/http';
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {Request} from '@crczp/sandbox-model';
 import {Observable, zip} from 'rxjs';
 import {SandboxErrorHandler} from '@crczp/sandbox-agenda';
@@ -16,11 +16,12 @@ import {Settings} from "@crczp/common";
  */
 @Injectable()
 export class AllocationStagesConcreteService extends RequestStagesService {
-    constructor(
-        private api: AllocationRequestsApi,
-        private errorHandler: SandboxErrorHandler,
-        settings: Settings
-    ) {
+    private api = inject(AllocationRequestsApi);
+    private errorHandler = inject(SandboxErrorHandler);
+
+    constructor() {
+        const settings = inject(Settings);
+
         super(settings.POLLING_PERIOD_SHORT);
     }
 

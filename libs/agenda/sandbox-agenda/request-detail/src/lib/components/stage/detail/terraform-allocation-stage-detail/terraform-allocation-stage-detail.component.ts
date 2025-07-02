@@ -21,6 +21,8 @@ import {AsyncPipe} from "@angular/common";
     ]
 })
 export class TerraformAllocationStageDetailComponent implements OnChanges {
+    private outputsService = inject(TerraformOutputsService);
+
     readonly PAGE_SIZE = Number.MAX_SAFE_INTEGER;
 
     @Input() stage: TerraformStageAdapter;
@@ -30,9 +32,6 @@ export class TerraformAllocationStageDetailComponent implements OnChanges {
     hasError$: Observable<boolean>;
     destroyRef = inject(DestroyRef);
     protected readonly async = async;
-
-    constructor(private outputsService: TerraformOutputsService) {
-    }
 
     ngOnChanges(changes: SimpleChanges): void {
         if (this.stage && 'stage' in changes && changes['stage'].isFirstChange()) {

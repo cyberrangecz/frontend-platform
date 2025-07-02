@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {AdaptiveTransitionVisualizationConfig} from './adaptive-transition-visualization-config';
 
 @Injectable()
@@ -9,7 +9,9 @@ export class ConfigService {
         return this._config;
     }
 
-    constructor(config: AdaptiveTransitionVisualizationConfig) {
+    constructor() {
+        const config = inject(AdaptiveTransitionVisualizationConfig);
+
         this._config = config;
     }
 }

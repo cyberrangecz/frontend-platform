@@ -1,4 +1,4 @@
-import {NgModule, Optional, SkipSelf} from '@angular/core';
+import { NgModule, inject } from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {TopologyGraphComponent} from './topology-graph.component';
 import {TopologyApi} from '../services/topology-api.service';
@@ -47,7 +47,9 @@ import {GraphVisualComponentsModule} from "../visuals/graph-visual-components.mo
     exports: [TopologyGraphComponent],
 })
 export class TopologyGraphModule {
-    constructor(@Optional() @SkipSelf() parentModule: TopologyGraphModule) {
+    constructor() {
+        const parentModule = inject(TopologyGraphModule, { optional: true, skipSelf: true });
+
         if (parentModule) {
             throw new Error(
                 'TopologyGraphModule is already loaded. Import it in the main module only'

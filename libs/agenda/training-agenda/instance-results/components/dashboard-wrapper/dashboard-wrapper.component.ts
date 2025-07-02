@@ -10,10 +10,10 @@ import {async} from "rxjs";
     styleUrls: ['./dashboard-wrapper.component.css'],
 })
 export class DashboardWrapperComponent implements OnInit {
+    private activeRoute = inject(ActivatedRoute);
+
     trainingInstance: TrainingInstance;
     destroyRef = inject(DestroyRef);
-
-    constructor(private activeRoute: ActivatedRoute) {}
 
     ngOnInit(): void {
         this.activeRoute.parent.data

@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {TrainingRunApi} from '@crczp/training-api';
 import {Observable} from 'rxjs';
 import {switchMap, tap} from 'rxjs/operators';
@@ -13,14 +13,20 @@ import {SentinelNotificationService} from '@sentinel/layout/notification';
  * Handles events and actions specific for training level in training run
  */
 export class TrainingRunAccessLevelConcreteService extends TrainingRunAccessLevelService {
-    constructor(
-        private api: TrainingRunApi,
-        private sandboxApi: SandboxInstanceApi,
-        private errorHandler: TrainingErrorHandler,
-        protected notificationService: SentinelNotificationService,
-        protected runningTrainingRunService: RunningTrainingRunService,
-    ) {
+    private api = inject(TrainingRunApi);
+    private sandboxApi = inject(SandboxInstanceApi);
+    private errorHandler = inject(TrainingErrorHandler);
+    protected notificationService: SentinelNotificationService;
+    protected runningTrainingRunService: RunningTrainingRunService;
+
+    constructor() {
+        const notificationService = inject(SentinelNotificationService);
+        const runningTrainingRunService = inject(RunningTrainingRunService);
+
         super(notificationService, runningTrainingRunService);
+    
+        this.notificationService = notificationService;
+        this.runningTrainingRunService = runningTrainingRunService;
     }
 
     /**

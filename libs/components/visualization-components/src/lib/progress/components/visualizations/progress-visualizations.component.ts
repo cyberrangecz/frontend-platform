@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, inject } from '@angular/core';
 import {async, catchError, delay, EMPTY, exhaustMap, Observable, of, repeat, timer} from 'rxjs';
 import {takeWhile, tap} from 'rxjs/operators';
 import {TrainingAnalysisEventService} from './training-analysis/training-analysis-event-service';
@@ -14,6 +14,8 @@ import {ProgressVisualizationsDataService} from '../../services/progress-visuali
     styleUrls: ['./progress-visualizations.component.css']
 })
 export class ProgressVisualizationsComponent implements OnInit, OnDestroy {
+    private visualizationDataService = inject(ProgressVisualizationsDataService);
+
     @Input() trainingDefinitionId: number;
     @Input() trainingInstanceId: number;
     @Input() JSONData: ProgressVisualizationDataDTO;
@@ -39,11 +41,6 @@ export class ProgressVisualizationsComponent implements OnInit, OnDestroy {
     public maxTime: number;
     public stepSize: number;
     private isAlive = true;
-
-    constructor(
-        private visualizationDataService: ProgressVisualizationsDataService
-    ) {
-    }
 
     ngOnInit() {
         if (this.JSONData) {

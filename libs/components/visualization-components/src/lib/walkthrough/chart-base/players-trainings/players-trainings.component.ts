@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, ElementRef, Input} from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, Input, inject } from '@angular/core';
 import * as d3 from 'd3';
 import {WalkthroughUserData} from '@crczp/visualization-model';
 import {AbsolutePositionService} from '../../service/absolute-position.service';
@@ -11,6 +11,8 @@ import {TrainingUser} from '@crczp/training-model';
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PlayersTrainingsComponent {
+    absolutePositionService = inject(AbsolutePositionService);
+
     @Input() usersData!: WalkthroughUserData[];
     @Input() margin!: any;
 
@@ -18,10 +20,9 @@ export class PlayersTrainingsComponent {
     private selectedUser!: TrainingUser;
     tooltip!: any;
 
-    constructor(
-        element: ElementRef,
-        public absolutePositionService: AbsolutePositionService,
-    ) {
+    constructor() {
+        const element = inject(ElementRef);
+
         this.g = d3.select(element.nativeElement);
     }
 

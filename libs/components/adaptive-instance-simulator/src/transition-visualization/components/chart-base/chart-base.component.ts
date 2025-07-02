@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, ElementRef, Input} from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, Input, inject } from '@angular/core';
 import * as d3 from 'd3';
 import {AdaptiveVisualizationPhase} from '../../model/phase/adaptive-visualization-phase';
 import {ChartAxesComponent} from "./chart-axes/chart-axes.component";
@@ -29,7 +29,9 @@ export class ChartBaseComponent {
 
     private g: any;
 
-    constructor(element: ElementRef) {
+    constructor() {
+        const element = inject(ElementRef);
+
         this.g = d3.select(element.nativeElement);
     }
 }

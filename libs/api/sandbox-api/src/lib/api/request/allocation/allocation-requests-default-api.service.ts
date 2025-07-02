@@ -1,5 +1,5 @@
 import {HttpClient} from '@angular/common/http';
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {
     AllocationRequest,
     CloudResource,
@@ -28,15 +28,15 @@ import {DjangoResourceDTO, PaginationMapper, ParamsBuilder} from '@crczp/api-com
  */
 @Injectable()
 export class AllocationRequestsDefaultApi extends AllocationRequestsApi {
+    private http = inject(HttpClient);
+    private context = inject(SandboxApiConfigService);
+
     private readonly allocationRequestUriExtension = 'allocation-requests';
     private readonly stagesUriExtension = 'stages';
 
     private readonly requestsEndpointUri: string;
 
-    constructor(
-        private http: HttpClient,
-        private context: SandboxApiConfigService,
-    ) {
+    constructor() {
         super();
         if (this.context.config === undefined || this.context.config === null) {
             throw new Error(

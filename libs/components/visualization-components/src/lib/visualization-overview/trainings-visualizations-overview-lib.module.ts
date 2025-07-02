@@ -1,4 +1,4 @@
-import {ModuleWithProviders, NgModule, Optional, SkipSelf} from '@angular/core';
+import { ModuleWithProviders, NgModule, inject } from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {MatTableModule} from '@angular/material/table';
@@ -57,7 +57,9 @@ import {D3Service} from '../common/d3-service/d3-service';
     ]
 })
 export class TrainingsVisualizationsOverviewLibModule {
-    constructor(@Optional() @SkipSelf() parentModule: TrainingsVisualizationsOverviewLibModule) {
+    constructor() {
+        const parentModule = inject(TrainingsVisualizationsOverviewLibModule, { optional: true, skipSelf: true });
+
         if (parentModule) {
             throw new Error(
                 'TrainingsVisualizationsOverviewLibModule is already loaded. Import it in the main module only'

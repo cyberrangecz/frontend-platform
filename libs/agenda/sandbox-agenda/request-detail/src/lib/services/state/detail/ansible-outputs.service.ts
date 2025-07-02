@@ -3,18 +3,22 @@ import {RequestStage, RequestStageType} from '@crczp/sandbox-model';
 import {OffsetPaginationEvent, PaginatedResource,} from '@sentinel/common/pagination';
 import {Observable} from 'rxjs';
 import {AllocationRequestsApi} from '@crczp/sandbox-api';
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {StagesDetailPollRegistry} from './stages-detail-poll-registry.service';
 import {Settings} from '@crczp/common';
 
 @Injectable()
 export class AnsibleOutputsService extends StageDetailService {
-    constructor(
-        private api: AllocationRequestsApi,
-        protected pollRegistry: StagesDetailPollRegistry,
-        settings: Settings
-    ) {
+    private api = inject(AllocationRequestsApi);
+    protected pollRegistry: StagesDetailPollRegistry;
+
+    constructor() {
+        const pollRegistry = inject(StagesDetailPollRegistry);
+        const settings = inject(Settings);
+
         super(pollRegistry, 500, settings.POLLING_PERIOD_SHORT);
+    
+        this.pollRegistry = pollRegistry;
     }
 
     protected callApiToGetStageDetail(

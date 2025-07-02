@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {UrlTree} from '@angular/router';
 import {MatDialog} from '@angular/material/dialog';
 import {Observable} from 'rxjs';
@@ -15,7 +15,8 @@ import {AdaptiveInstanceEditOverviewComponent} from '../../components/adaptive-i
  */
 @Injectable()
 export class AdaptiveInstanceCanDeactivate {
-    constructor(private dialog: MatDialog) {}
+    private dialog = inject(MatDialog);
+
 
     canDeactivate(
         component: AdaptiveInstanceEditOverviewComponent,

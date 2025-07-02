@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {ActivatedRouteSnapshot, Resolve, Router} from '@angular/router';
 import {SandboxDefinitionApi} from '@crczp/sandbox-api';
 import {SandboxDefinition} from '@crczp/sandbox-model';
@@ -11,12 +11,11 @@ import {SANDBOX_DEFINITION_ID_SELECTOR, SandboxErrorHandler, SandboxNavigator} f
  */
 @Injectable()
 export class SandboxDefinitionResolver implements Resolve<SandboxDefinition> {
-    constructor(
-        private api: SandboxDefinitionApi,
-        private errorHandler: SandboxErrorHandler,
-        private navigator: SandboxNavigator,
-        private router: Router,
-    ) {}
+    private api = inject(SandboxDefinitionApi);
+    private errorHandler = inject(SandboxErrorHandler);
+    private navigator = inject(SandboxNavigator);
+    private router = inject(Router);
+
 
     /**
      * Retrieves a specific resource based on id provided in url. Navigates to a resource overview if no resource with such id exists.

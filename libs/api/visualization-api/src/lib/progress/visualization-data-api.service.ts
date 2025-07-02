@@ -1,5 +1,5 @@
 import {HttpClient} from '@angular/common/http';
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {CommandLineEntryDTO, ProgressVisualizationDataDTO} from './dtos';
@@ -13,11 +13,9 @@ import {CommandLineEntry, ProgressVisualizationData} from '@crczp/visualization-
  */
 @Injectable()
 export class ProgressVisualizationApi {
-    constructor(
-        private http: HttpClient,
-        private config: VisualizationApiConfig
-    ) {
-    }
+    private http = inject(HttpClient);
+    private config = inject(VisualizationApiConfig);
+
 
     /**
      * Sends http request to retrieve all data for visualizations

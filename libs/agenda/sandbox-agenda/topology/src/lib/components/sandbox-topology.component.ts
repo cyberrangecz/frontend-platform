@@ -26,19 +26,16 @@ import {AsyncPipe} from "@angular/common";
     ]
 })
 export class SandboxTopologyComponent implements OnInit {
+    private activeRoute = inject(ActivatedRoute);
+    private topologyErrorService = inject(TopologyErrorService);
+    private errorHandler = inject(SandboxErrorHandler);
+
     sandboxInstance$: Observable<SandboxInstance>;
     sandboxDefinition$: Observable<SandboxDefinition>;
     topologyWidth: number;
     topologyHeight: number;
     sandboxId: number;
     destroyRef = inject(DestroyRef);
-
-    constructor(
-        private activeRoute: ActivatedRoute,
-        private topologyErrorService: TopologyErrorService,
-        private errorHandler: SandboxErrorHandler,
-    ) {
-    }
 
     ngOnInit(): void {
         this.sandboxInstance$ = this.activeRoute.data.pipe(

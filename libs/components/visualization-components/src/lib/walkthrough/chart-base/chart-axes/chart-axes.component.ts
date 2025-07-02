@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, ElementRef, Input} from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, Input, inject } from '@angular/core';
 import * as d3 from 'd3';
 import {AbsolutePositionService} from '../../service/absolute-position.service';
 import {SuccessAxisComponent} from './success-axis/success-axis.component';
@@ -14,14 +14,15 @@ import {WalkthroughUserData} from '@crczp/visualization-model';
     imports: [SuccessAxisComponent, YAxisComponent, CommonModule]
 })
 export class ChartAxesComponent {
+    absolutePositionService = inject(AbsolutePositionService);
+
     @Input() usersData!: WalkthroughUserData[];
 
     private g: any;
 
-    constructor(
-        element: ElementRef,
-        public absolutePositionService: AbsolutePositionService,
-    ) {
+    constructor() {
+        const element = inject(ElementRef);
+
         this.g = d3.select(element.nativeElement);
     }
 

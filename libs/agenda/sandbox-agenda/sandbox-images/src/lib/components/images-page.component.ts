@@ -26,6 +26,9 @@ import {AsyncPipe} from '@angular/common';
     ],
 })
 export class ImagesPageComponent implements OnInit {
+    private vmImagesService = inject(VMImagesService);
+    private paginationService = inject(PaginationStorageService);
+
     @Input() paginationId = 'crczp-resources-page';
 
     images$: Observable<SentinelTable<VirtualImage>>;
@@ -40,10 +43,9 @@ export class ImagesPageComponent implements OnInit {
     protected readonly async = async;
     private lastFilter: string;
 
-    constructor(
-        private vmImagesService: VMImagesService,
-        private paginationService: PaginationStorageService
-    ) {
+    constructor() {
+        const vmImagesService = this.vmImagesService;
+
         this.isLoadingImages$ = vmImagesService.isLoading$;
     }
 

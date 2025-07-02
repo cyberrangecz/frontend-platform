@@ -73,6 +73,11 @@ import {AsyncPipe} from '@angular/common';
     ],
 })
 export class PoolDetailComponent implements OnInit, AfterViewInit {
+    private sandboxInstanceService = inject(SandboxInstanceService);
+    private paginationService = inject(PaginationStorageService);
+    private navigator = inject(SandboxNavigator);
+    private activeRoute = inject(ActivatedRoute);
+
     @Input() paginationId = 'crczp-pool-detail';
 
     pool: Pool;
@@ -85,14 +90,6 @@ export class PoolDetailComponent implements OnInit, AfterViewInit {
     readonly DEFAULT_SORT_DIRECTION = 'asc';
     protected readonly async = async;
     private subscription: Subscription;
-
-    constructor(
-        private sandboxInstanceService: SandboxInstanceService,
-        private paginationService: PaginationStorageService,
-        private navigator: SandboxNavigator,
-        private activeRoute: ActivatedRoute
-    ) {
-    }
 
     ngOnInit(): void {
         this.initTables();

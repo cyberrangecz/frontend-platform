@@ -1,14 +1,4 @@
-import {
-    ChangeDetectionStrategy,
-    Component,
-    EventEmitter,
-    HostListener,
-    Input,
-    OnChanges,
-    OnInit,
-    Output,
-    SimpleChanges
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, HostListener, Input, OnChanges, OnInit, Output, SimpleChanges, inject } from '@angular/core';
 import * as d3 from 'd3';
 import * as levenshtein from 'fast-levenshtein';
 import {LevelAnswersStatistics, ParticipantStatistics, TrainingInstanceStatistics} from '@crczp/visualization-model';
@@ -34,6 +24,11 @@ import {CommonModule} from '@angular/common';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BubblechartComponent implements OnInit, OnChanges {
+    private axesCreationService = inject(AxesCreationService);
+    private tooltipCreationService = inject(TooltipCreationService);
+    private svgConfigurationService = inject(SvgConfigurationService);
+    private legendCreationService = inject(LegendCreationService);
+
     @Input() selectedLevel: number;
     @Input() trainingInstanceStatistics: TrainingInstanceStatistics[];
 
@@ -61,14 +56,6 @@ export class BubblechartComponent implements OnInit, OnChanges {
     private componentHeight: string[] = ['28vw', '50vw'];
     private circleColors: string[] = ['#46d246', '#999999', '#00000'];
     private tooltipColors: string[] = ['#000000', '#ffffff'];
-
-    constructor(
-        private axesCreationService: AxesCreationService,
-        private tooltipCreationService: TooltipCreationService,
-        private svgConfigurationService: SvgConfigurationService,
-        private legendCreationService: LegendCreationService
-    ) {
-    }
 
     @HostListener('window:resize') onResizeEvent() {
         this.onResize();

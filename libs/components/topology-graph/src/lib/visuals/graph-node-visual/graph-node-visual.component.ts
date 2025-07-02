@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnDestroy, OnInit, Output,} from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, inject } from '@angular/core';
 import {HostNode, Node, NodePhysicalRoleEnum, RouterNode, SwitchNode,} from '@crczp/topology-graph-model';
 import {GraphEventService} from '../../services/graph-event.service';
 import {ICONS_PATH} from '../../icons-path';
@@ -14,6 +14,8 @@ import {Dimensions} from '../../model/others/dimensions';
     standalone: false
 })
 export class GraphNodeVisualComponent implements OnDestroy, OnInit {
+    private graphEventService = inject(GraphEventService);
+
     private readonly DEFAULT_NODE_WIDTH = 92;
     private readonly DEFAULT_NODE_HEIGHT = 70;
 
@@ -35,8 +37,6 @@ export class GraphNodeVisualComponent implements OnDestroy, OnInit {
     hasContainers = false;
 
     private _decoratorEventSubscription;
-
-    constructor(private graphEventService: GraphEventService) {}
 
     /**
      * Sets width and height of node based on amount of node's attributes to be shown and calculates text labels and its position

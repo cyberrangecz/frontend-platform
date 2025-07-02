@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {SentinelFilter} from '@sentinel/common/filter';
 import {OffsetPagination, OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
 import {GroupApi, RoleApi} from '@crczp/user-and-group-api';
@@ -14,6 +14,10 @@ import {UserAndGroupErrorHandler} from '@crczp/user-and-group-agenda';
  */
 @Injectable()
 export class RoleAssignService {
+    private api = inject(GroupApi);
+    private roleApi = inject(RoleApi);
+    private errorHandler = inject(UserAndGroupErrorHandler);
+
     protected hasErrorSubject$: BehaviorSubject<boolean> = new BehaviorSubject(false);
     /**
      * True if error was returned from API, false otherwise
@@ -37,13 +41,6 @@ export class RoleAssignService {
     assignedRoles$: Observable<PaginatedResource<UserRole>> = this.assignedRolesSubject$.asObservable();
     private lastPagination: OffsetPaginationEvent;
     private lastFilter: string;
-
-    constructor(
-        private api: GroupApi,
-        private roleApi: RoleApi,
-        private errorHandler: UserAndGroupErrorHandler
-    ) {
-    }
 
     setSelectedRolesToAssign(roles: UserRole[]): void {
         this.selectedRolesToAssignSubject$.next(roles);

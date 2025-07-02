@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 
 /**
@@ -11,5 +11,5 @@ import {ActivatedRoute} from '@angular/router';
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AdaptiveInstanceResultsComponent {
-    constructor(private activeRoute: ActivatedRoute) {}
+    private activeRoute = inject(ActivatedRoute);
 }

@@ -1,5 +1,5 @@
 import {HttpClient, HttpHeaders} from '@angular/common/http';
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
 import {SandboxDefinition, SandboxDefinitionRef} from '@crczp/sandbox-model';
 import {Observable} from 'rxjs';
@@ -17,12 +17,12 @@ import {DjangoResourceDTO, PaginationMapper, ParamsBuilder} from '@crczp/api-com
  */
 @Injectable()
 export class SandboxDefinitionDefaultApi extends SandboxDefinitionApi {
+    private http = inject(HttpClient);
+    private context = inject(SandboxApiConfigService);
+
     private readonly sandboxDefsEndpoint: string;
 
-    constructor(
-        private http: HttpClient,
-        private context: SandboxApiConfigService,
-    ) {
+    constructor() {
         super();
         if (this.context.config === undefined || this.context.config === null) {
             throw new Error(

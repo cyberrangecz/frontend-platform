@@ -1,4 +1,4 @@
-import {Component, EventEmitter} from '@angular/core';
+import { Component, EventEmitter, inject } from '@angular/core';
 import {MatDialogRef, MatDialogTitle} from '@angular/material/dialog';
 import {async, Observable} from 'rxjs';
 import {FileUploadProgressService} from '../../services/file-upload/file-upload-progress.service';
@@ -16,10 +16,10 @@ import {FileUploadProgressService} from '../../services/file-upload/file-upload-
     ]
 })
 export class UsersUploadDialogComponent {
-    constructor(
-        public dialogRef: MatDialogRef<UsersUploadDialogComponent>,
-        private uploadProgressService: FileUploadProgressService,
-    ) {
+    dialogRef = inject<MatDialogRef<UsersUploadDialogComponent>>(MatDialogRef);
+    private uploadProgressService = inject(FileUploadProgressService);
+
+    constructor() {
         this.uploadInProgress$ = this.uploadProgressService.isInProgress$;
     }
 

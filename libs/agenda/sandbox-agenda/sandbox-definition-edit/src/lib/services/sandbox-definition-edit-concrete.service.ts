@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {Router} from '@angular/router';
 import {SandboxDefinitionApi} from '@crczp/sandbox-api';
 import {SandboxDefinition} from '@crczp/sandbox-model';
@@ -9,15 +9,12 @@ import {SandboxDefinitionEditService} from './sandbox-definition-edit.service';
 
 @Injectable()
 export class SandboxDefinitionEditConcreteService extends SandboxDefinitionEditService {
-    constructor(
-        private api: SandboxDefinitionApi,
-        private router: Router,
-        private navigator: SandboxNavigator,
-        private alertService: SandboxNotificationService,
-        private errorHandler: SandboxErrorHandler,
-    ) {
-        super();
-    }
+    private api = inject(SandboxDefinitionApi);
+    private router = inject(Router);
+    private navigator = inject(SandboxNavigator);
+    private alertService = inject(SandboxNotificationService);
+    private errorHandler = inject(SandboxErrorHandler);
+
 
     private requestsCountSubject$ = new BehaviorSubject<number>(0);
 

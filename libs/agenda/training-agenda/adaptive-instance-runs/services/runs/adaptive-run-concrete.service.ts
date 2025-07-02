@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import {
     SentinelConfirmationDialogComponent,
@@ -22,18 +22,19 @@ import {Settings} from '@crczp/common';
  */
 @Injectable()
 export class AdaptiveRunConcreteService extends AdaptiveRunService {
+    private adaptiveInstanceApi = inject(AdaptiveInstanceApi);
+    private adaptiveRunApi = inject(AdaptiveRunApi);
+    private sandboxApi = inject(SandboxInstanceApi);
+    private sauApi = inject(SandboxAllocationUnitsApi);
+    private dialog = inject(MatDialog);
+    private notificationService = inject(TrainingNotificationService);
+    private errorHandler = inject(TrainingErrorHandler);
+
     private lastTrainingInstanceId: number;
 
-    constructor(
-        private adaptiveInstanceApi: AdaptiveInstanceApi,
-        private adaptiveRunApi: AdaptiveRunApi,
-        private sandboxApi: SandboxInstanceApi,
-        private sauApi: SandboxAllocationUnitsApi,
-        private dialog: MatDialog,
-        private notificationService: TrainingNotificationService,
-        private errorHandler: TrainingErrorHandler,
-        settings: Settings
-    ) {
+    constructor() {
+        const settings = inject(Settings);
+
         super(settings.DEFAULT_PAGE_SIZE, settings.POLLING_PERIOD_SHORT);
     }
 

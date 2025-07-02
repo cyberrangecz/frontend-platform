@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import {UrlTree} from '@angular/router';
 import {
@@ -15,7 +15,8 @@ import {TrainingInstanceEditOverviewComponent} from '../../components/training-i
  */
 @Injectable()
 export class TrainingInstanceCanDeactivate {
-    constructor(private dialog: MatDialog) {}
+    private dialog = inject(MatDialog);
+
 
     canDeactivate(
         component: TrainingInstanceEditOverviewComponent,

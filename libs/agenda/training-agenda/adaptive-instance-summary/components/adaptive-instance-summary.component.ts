@@ -26,6 +26,13 @@ import {PaginationStorageService} from "@crczp/common";
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AdaptiveInstanceSummaryComponent implements OnInit {
+    private activeRoute = inject(ActivatedRoute);
+    private navigator = inject(TrainingNavigator);
+    private adaptiveInstanceSummaryService = inject(AdaptiveInstanceSummaryService);
+    private paginationService = inject(PaginationStorageService);
+    private adaptiveRunService = inject(AdaptiveRunService);
+    private notificationService = inject(TrainingNotificationService);
+
     @Input() paginationId = 'adaptive-instance-summary';
 
     trainingInstance$: Observable<TrainingInstance>;
@@ -38,16 +45,6 @@ export class AdaptiveInstanceSummaryComponent implements OnInit {
     adaptiveDefinitionLink: string;
     hasPool: boolean;
     destroyRef = inject(DestroyRef);
-
-    constructor(
-        private activeRoute: ActivatedRoute,
-        private navigator: TrainingNavigator,
-        private adaptiveInstanceSummaryService: AdaptiveInstanceSummaryService,
-        private paginationService: PaginationStorageService,
-        private adaptiveRunService: AdaptiveRunService,
-        private notificationService: TrainingNotificationService,
-    ) {
-    }
 
     ngOnInit(): void {
         this.trainingInstance$ = this.activeRoute.data.pipe(

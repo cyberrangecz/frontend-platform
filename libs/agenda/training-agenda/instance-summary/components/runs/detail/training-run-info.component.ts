@@ -1,4 +1,4 @@
-import {Component, HostBinding, Input, OnInit} from '@angular/core';
+import { Component, HostBinding, Input, OnInit, inject } from '@angular/core';
 import {TrainingRun, TrainingRunInfo} from '@crczp/training-model';
 import {TrainingRunConcreteService} from '../../../services/state/runs/training-run-concrete.service';
 import {TrainingRunService} from '../../../services/state/runs/training-run.service';
@@ -16,13 +16,12 @@ import {take} from 'rxjs/operators';
     ]
 })
 export class TrainingRunInfoComponent implements OnInit {
+    private trainingRunService = inject(TrainingRunService);
+
     @HostBinding('style.width') width = '100%';
     @Input() data: TrainingRun;
     info: SentinelTable<TrainingRunInfo>;
     hasError = false;
-
-    constructor(private trainingRunService: TrainingRunService) {
-    }
 
     ngOnInit(): void {
         this.trainingRunService.getInfo(this.data.id).subscribe(

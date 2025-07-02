@@ -25,14 +25,11 @@ import {MatIcon} from "@angular/material/icon";
     ]
 })
 export class TrainingInstanceResultsComponent implements OnInit {
+    private activeRoute = inject(ActivatedRoute);
+    private trainingDefinitionApi = inject(TrainingDefinitionApi);
+
     hasReferenceSolution$: Observable<boolean>;
     destroyRef = inject(DestroyRef);
-
-    constructor(
-        private activeRoute: ActivatedRoute,
-        private trainingDefinitionApi: TrainingDefinitionApi,
-    ) {
-    }
 
     ngOnInit(): void {
         this.activeRoute.data

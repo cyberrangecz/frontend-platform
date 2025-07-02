@@ -9,10 +9,10 @@ import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
     styleUrls: ['./assessment-wrapper.component.css'],
 })
 export class AssessmentWrapperComponent implements OnInit {
+    private activeRoute = inject(ActivatedRoute);
+
     trainingInstance: TrainingInstance;
     destroyRef = inject(DestroyRef);
-
-    constructor(private activeRoute: ActivatedRoute) {}
 
     ngOnInit(): void {
         this.activeRoute.parent.data

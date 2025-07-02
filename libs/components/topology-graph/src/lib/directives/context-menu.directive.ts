@@ -1,4 +1,4 @@
-import {Directive, HostListener, Input} from '@angular/core';
+import { Directive, HostListener, Input, inject } from '@angular/core';
 import {ContextMenuService} from '../services/context-menu.service';
 import {Node} from '@crczp/topology-graph-model';
 
@@ -9,10 +9,10 @@ import {Node} from '@crczp/topology-graph-model';
     selector: '[contextMenu]',
 })
 export class ContextMenuDirective {
+    private contextMenuService = inject(ContextMenuService);
+
     @Input('contextMenu') node: Node;
     @Input('contextMenuZoom') zoom: number;
-
-    constructor(private contextMenuService: ContextMenuService) {}
 
     /**
      * Reacts on right click - shows context menu and closes other if it was already open

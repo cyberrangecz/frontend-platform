@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {TrainingApiConfig} from './training-api-config';
 
 @Injectable()
@@ -9,7 +9,9 @@ export class TrainingApiContext {
         return this._config;
     }
 
-    constructor(config: TrainingApiConfig) {
+    constructor() {
+        const config = inject(TrainingApiConfig);
+
         this._config = config;
     }
 }

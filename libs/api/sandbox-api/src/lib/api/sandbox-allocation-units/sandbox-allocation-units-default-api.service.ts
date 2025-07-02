@@ -1,5 +1,5 @@
 import {SandboxAllocationUnitsApi} from './sandbox-allocation-units-api.service';
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {AllocationRequest, CleanupRequest, SandboxAllocationUnit} from '@crczp/sandbox-model';
 import {Observable} from 'rxjs';
 import {HttpClient, HttpParams} from '@angular/common/http';
@@ -15,16 +15,16 @@ import {RequestMapper} from '../../mappers/sandbox-instance/request-mapper';
  */
 @Injectable()
 export class SandboxAllocationUnitsDefaultApi extends SandboxAllocationUnitsApi {
+    private http = inject(HttpClient);
+    private context = inject(SandboxApiConfigService);
+
     private readonly sandboxAllocationUnitsUriExtension = 'sandbox-allocation-units';
     private readonly allocationRequestUriExtension = 'allocation-request';
     private readonly cleanupRequestUriExtension = 'cleanup-request';
 
     private sauEndpointUri: string;
 
-    constructor(
-        private http: HttpClient,
-        private context: SandboxApiConfigService
-    ) {
+    constructor() {
         super();
         if (this.context.config === undefined || this.context.config === null) {
             throw new Error(

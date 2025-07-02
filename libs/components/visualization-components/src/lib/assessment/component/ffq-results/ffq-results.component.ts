@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import {MatTableDataSource, MatTableModule} from '@angular/material/table';
 import {HighlightService} from '../../services/highlight.service';
 import {HighlightableDirective} from '../../directives/highlightable.directive';
@@ -32,7 +32,9 @@ export class FFQResultsComponent extends HighlightableDirective implements OnIni
     displayedColumns = ['name', 'answer'];
     dataSource;
 
-    constructor(highlightService: HighlightService) {
+    constructor() {
+        const highlightService = inject(HighlightService);
+
         super(highlightService);
     }
 

@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {Observable, Subject} from 'rxjs';
 import {tap} from 'rxjs/operators';
 import {ProgressVisualizationApi} from '@crczp/visualization-api';
@@ -6,13 +6,12 @@ import {CommandLineEntry, ProgressVisualizationData} from '@crczp/visualization-
 
 @Injectable()
 export class ProgressVisualizationsDataService {
+    private visualizationApi = inject(ProgressVisualizationApi);
+
     private visualizationDataSubject$ = new Subject<ProgressVisualizationData>();
     public visualizationData$ = this.visualizationDataSubject$.asObservable();
     private commandLineDataSubject$ = new Subject<CommandLineEntry[]>();
     public commandLineData$ = this.commandLineDataSubject$.asObservable();
-
-    constructor(private visualizationApi: ProgressVisualizationApi) {
-    }
 
     getData(trainingInstanceId: number): Observable<ProgressVisualizationData> {
         return this.visualizationApi.getVisualizationData(trainingInstanceId).pipe(

@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {ForceDirectedGraph} from '../model/graph/force-directed-graph';
 import {Link, Node, NodePhysicalRoleEnum, RouterNode, SwitchNode,} from '@crczp/topology-graph-model';
 import * as d3 from 'd3';
@@ -11,15 +11,13 @@ import {DraggedNodeService} from './dragged-node.service';
  */
 @Injectable()
 export class D3Service {
+    private draggedNodeService = inject(DraggedNodeService);
+    private graphLockService = inject(GraphLockService);
+
     private _resizeEventSubject: Subject<{ x: number; y: number }> =
         new Subject<{ x: number; y: number }>();
     resizeEvent: Observable<{ x: number; y: number }> =
         this._resizeEventSubject.asObservable();
-
-    constructor(
-        private draggedNodeService: DraggedNodeService,
-        private graphLockService: GraphLockService
-    ) {}
 
     /**
      * Applies dragging from D3 library on selected node.

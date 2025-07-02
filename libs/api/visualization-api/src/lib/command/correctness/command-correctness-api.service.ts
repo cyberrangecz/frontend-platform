@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
@@ -11,12 +11,12 @@ import {TrainingRunDTO, TrainingRunMapper} from '@crczp/training-api';
 
 @Injectable()
 export class CommandCorrectnessApi {
+    private http = inject(HttpClient);
+    private config = inject(VisualizationApiConfig);
+
     private readonly visualizationsEndpoint: string;
 
-    constructor(
-        private http: HttpClient,
-        private config: VisualizationApiConfig
-    ) {
+    constructor() {
         this.visualizationsEndpoint = `${this.config.trainingBasePath}/visualizations`;
     }
 

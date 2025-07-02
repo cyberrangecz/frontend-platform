@@ -29,16 +29,13 @@ import {MatIcon} from "@angular/material/icon";
  * Component displaying visualization of training run results
  */
 export class TrainingRunResultsComponent implements OnInit {
+    private activatedRoute = inject(ActivatedRoute);
+    private trainingDefinitionApi = inject(TrainingDefinitionApi);
+    private service = inject(MitreTechniquesOverviewService);
+
     hasReferenceSolution$: Observable<boolean>;
     destroyRef = inject(DestroyRef);
     protected readonly async = async;
-
-    constructor(
-        private activatedRoute: ActivatedRoute,
-        private trainingDefinitionApi: TrainingDefinitionApi,
-        private service: MitreTechniquesOverviewService,
-    ) {
-    }
 
     ngOnInit(): void {
         this.loadVisualizationInfo();

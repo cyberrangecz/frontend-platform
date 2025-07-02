@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, Inject} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {TrainingDefinition} from '@crczp/training-model';
 import {CloneDialogFormGroup} from './clone-dialog-form-group';
@@ -15,13 +15,13 @@ import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CloneDialogComponent {
+    dialogRef = inject<MatDialogRef<CloneDialogComponent>>(MatDialogRef);
+    data = inject<TrainingDefinition>(MAT_DIALOG_DATA);
+
     cloneDialogFormGroup: CloneDialogFormGroup;
     valid = true;
 
-    constructor(
-        public dialogRef: MatDialogRef<CloneDialogComponent>,
-        @Inject(MAT_DIALOG_DATA) public data: TrainingDefinition,
-    ) {
+    constructor() {
         this.cloneDialogFormGroup = new CloneDialogFormGroup();
         this.clonedDefinitionTitle.setValue('Clone of ' + this.data.title);
         this.cloneDialogFormGroup.formGroup.valueChanges

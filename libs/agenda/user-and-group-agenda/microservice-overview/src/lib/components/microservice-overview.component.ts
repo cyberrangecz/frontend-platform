@@ -35,6 +35,9 @@ import {PaginationStorageService, providePaginationStorageService,} from '@crczp
     ],
 })
 export class MicroserviceOverviewComponent implements OnInit {
+    private microserviceService = inject(MicroserviceOverviewService);
+    private paginationService = inject(PaginationStorageService);
+
     @Input() paginationId = 'crczp-microservice-overview';
     readonly INIT_SORT_NAME = 'name';
     readonly INIT_SORT_DIR = 'asc';
@@ -49,12 +52,6 @@ export class MicroserviceOverviewComponent implements OnInit {
     controls: SentinelControlItem[];
     destroyRef = inject(DestroyRef);
     protected readonly async = async;
-
-    constructor(
-        private microserviceService: MicroserviceOverviewService,
-        private paginationService: PaginationStorageService
-    ) {
-    }
 
     ngOnInit(): void {
         const initialLoadEvent: TableLoadEvent = {

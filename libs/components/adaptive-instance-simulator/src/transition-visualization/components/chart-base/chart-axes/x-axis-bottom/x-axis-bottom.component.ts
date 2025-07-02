@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, ElementRef, Input, OnChanges, SimpleChanges} from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, Input, OnChanges, SimpleChanges, inject } from '@angular/core';
 import * as d3 from 'd3';
 import {AdaptiveVisualizationPhase} from '../../../../model/phase/adaptive-visualization-phase';
 
@@ -17,7 +17,9 @@ export class XAxisBottomComponent implements OnChanges {
 
     private g: any;
 
-    constructor(element: ElementRef) {
+    constructor() {
+        const element = inject(ElementRef);
+
         this.g = d3.select(element.nativeElement);
     }
 

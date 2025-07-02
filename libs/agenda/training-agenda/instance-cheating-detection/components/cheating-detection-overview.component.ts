@@ -37,6 +37,11 @@ import {StageOverviewComponent} from "./stage-overview/stage-overview.component"
     ]
 })
 export class CheatingDetectionOverviewComponent implements OnInit {
+    private activeRoute = inject(ActivatedRoute);
+    private cheatingDetectionService = inject(CheatingDetectionService);
+    private paginationService = inject(PaginationStorageService);
+    private navigator = inject(TrainingNavigator);
+
     @Input() paginationId = 'cheating-detection-overview';
     @Output() showCheatingDetectionCreate: EventEmitter<boolean> = new EventEmitter();
     readonly INIT_SORT_NAME = 'lastEdited';
@@ -50,14 +55,6 @@ export class CheatingDetectionOverviewComponent implements OnInit {
     trainingInstanceId: number;
     destroyRef = inject(DestroyRef);
     protected readonly async = async;
-
-    constructor(
-        private activeRoute: ActivatedRoute,
-        private cheatingDetectionService: CheatingDetectionService,
-        private paginationService: PaginationStorageService,
-        private navigator: TrainingNavigator,
-    ) {
-    }
 
     ngOnInit(): void {
         this.trainingInstance$ = this.activeRoute.data.pipe(

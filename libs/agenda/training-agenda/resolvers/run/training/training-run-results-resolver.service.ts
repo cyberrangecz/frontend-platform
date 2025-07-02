@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {ActivatedRouteSnapshot, Router} from '@angular/router';
 import {TrainingRunApi} from '@crczp/training-api';
 import {TrainingRun} from '@crczp/training-model';
@@ -8,13 +8,11 @@ import {TRAINING_RUN_SELECTOR, TrainingErrorHandler, TrainingNavigator} from '@c
 
 @Injectable()
 export class TrainingRunResultsResolver {
-    constructor(
-        private api: TrainingRunApi,
-        private errorHandler: TrainingErrorHandler,
-        private navigator: TrainingNavigator,
-        private router: Router,
-    ) {
-    }
+    private api = inject(TrainingRunApi);
+    private errorHandler = inject(TrainingErrorHandler);
+    private navigator = inject(TrainingNavigator);
+    private router = inject(Router);
+
 
     resolve(route: ActivatedRouteSnapshot): Observable<TrainingRun> | Promise<TrainingRun> | TrainingRun {
         if (route.paramMap.has(TRAINING_RUN_SELECTOR)) {

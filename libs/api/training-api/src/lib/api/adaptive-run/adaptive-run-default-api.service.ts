@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {AdaptiveRunApi} from './adaptive-run-api.service';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {TrainingApiContext} from '../../other/training-api-context';
@@ -30,14 +30,14 @@ import {JavaPaginatedResource, PaginationMapper, ParamsBuilder} from '@crczp/api
 
 @Injectable()
 export class AdaptiveRunDefaultApi extends AdaptiveRunApi {
+    private http = inject(HttpClient);
+    private context = inject(TrainingApiContext);
+
     readonly trainingRunsUriExtension = 'training-runs';
 
     readonly trainingRunsEndpointUri: string;
 
-    constructor(
-        private http: HttpClient,
-        private context: TrainingApiContext,
-    ) {
+    constructor() {
         super();
         this.trainingRunsEndpointUri = this.context.config.adaptiveBasePath + this.trainingRunsUriExtension;
     }

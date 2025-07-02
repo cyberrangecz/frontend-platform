@@ -1,4 +1,4 @@
-import {Component, EventEmitter} from '@angular/core';
+import { Component, EventEmitter, inject } from '@angular/core';
 import {MatDialogActions, MatDialogRef} from '@angular/material/dialog';
 import {async, Observable} from 'rxjs';
 import {FileUploadProgressService} from '../../service/instance/file-upload-progress.service';
@@ -22,15 +22,15 @@ import {MatButton} from "@angular/material/button";
     ]
 })
 export class InstanceUploadDialogComponent {
+    dialogRef = inject<MatDialogRef<InstanceUploadDialogComponent>>(MatDialogRef);
+    private uploadProgressService = inject(FileUploadProgressService);
+
     selectedFile: File;
     uploadInProgress$: Observable<boolean>;
     onUpload$ = new EventEmitter<File>();
     protected readonly async = async;
 
-    constructor(
-        public dialogRef: MatDialogRef<InstanceUploadDialogComponent>,
-        private uploadProgressService: FileUploadProgressService,
-    ) {
+    constructor() {
         this.uploadInProgress$ = this.uploadProgressService.isInProgress$;
     }
 

@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import {MatTableDataSource, MatTableModule} from '@angular/material/table';
 import {MCQTableAdapter} from '../../table-adapter/mcq-table-adapter';
 import {HighlightService} from '../../services/highlight.service';
@@ -30,7 +30,9 @@ export class MCQResultsComponent extends HighlightableDirective implements OnIni
     displayedColumns = ['option', 'sum', 'percentage', 'answers'];
     dataSource;
 
-    constructor(highlightService: HighlightService) {
+    constructor() {
+        const highlightService = inject(HighlightService);
+
         super(highlightService);
     }
 

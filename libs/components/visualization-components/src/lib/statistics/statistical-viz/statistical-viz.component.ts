@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, inject } from '@angular/core';
 import {async, BehaviorSubject, Observable, take} from 'rxjs';
 import {IStatisticsFilter, TrainingInstanceStatistics} from '@crczp/visualization-model';
 import {map} from 'rxjs/operators';
@@ -35,6 +35,8 @@ import {AsyncPipe, CommonModule} from '@angular/common';
     styleUrls: ['./statistical-viz.component.css']
 })
 export class StatisticalVizComponent implements OnInit {
+    private instanceStatisticsService = inject(InstanceStatisticsApiService);
+
     // Determines what visualizations are displayed in the grid in which order.
     // The order is important because the order of the visualizations is determined by the order of the names in the object.
     @Input() visualizationGrid: string[];
@@ -57,9 +59,6 @@ export class StatisticalVizComponent implements OnInit {
 
     filters: IStatisticsFilter[] = [];
     protected readonly async = async;
-
-    constructor(private instanceStatisticsService: InstanceStatisticsApiService) {
-    }
 
     ngOnInit() {
         this.loadData();

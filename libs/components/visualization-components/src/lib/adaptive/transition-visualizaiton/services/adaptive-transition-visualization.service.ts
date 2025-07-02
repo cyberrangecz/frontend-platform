@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {HttpErrorResponse} from '@angular/common/http';
 import {tap} from 'rxjs/operators';
@@ -11,6 +11,8 @@ import {
     providedIn: 'root',
 })
 export class AdaptiveTransitionVisualizationService {
+    private visualizationApi = inject(AdaptiveTransitionVisualizationApi);
+
     /**
      * True if server returned error response on the latest request, false otherwise
      * Change internally in extending service. Client should subscribe to the observable
@@ -40,7 +42,7 @@ export class AdaptiveTransitionVisualizationService {
 
     visualizationData$!: Observable<TransitionVisualizationData>;
 
-    constructor(private visualizationApi: AdaptiveTransitionVisualizationApi) {
+    constructor() {
         this.visualizationData$ = this.visualizationDataSubject$.asObservable();
     }
 

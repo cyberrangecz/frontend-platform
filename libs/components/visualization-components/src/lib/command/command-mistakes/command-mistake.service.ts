@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {tap} from 'rxjs/operators';
 import {AggregatedCommands, CommandResourceSelect} from '@crczp/visualization-model';
@@ -7,7 +7,8 @@ import {TrainingRun} from '@crczp/training-model';
 
 @Injectable()
 export class CommandMistakeService {
-    constructor(private mistakeCommandApiService: CommandCorrectnessApi) {}
+    private mistakeCommandApiService = inject(CommandCorrectnessApi);
+
 
     private aggregatedCommandsSubject$: BehaviorSubject<AggregatedCommands[]> = new BehaviorSubject([]);
     aggregatedCommands$: Observable<AggregatedCommands[]> = this.aggregatedCommandsSubject$.asObservable();

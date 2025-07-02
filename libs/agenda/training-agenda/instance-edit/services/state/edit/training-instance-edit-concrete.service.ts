@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {Router} from '@angular/router';
 import {PoolApi, SandboxDefinitionApi} from '@crczp/sandbox-api';
 import {TrainingDefinitionApi, TrainingInstanceApi} from '@crczp/training-api';
@@ -18,26 +18,22 @@ import {LoadingTracker, Settings} from "@crczp/common";
  */
 @Injectable()
 export class TrainingInstanceEditConcreteService extends TrainingInstanceEditService {
+    private trainingInstanceApi = inject(TrainingInstanceApi);
+    private trainingDefinitionApi = inject(TrainingDefinitionApi);
+    private poolApi = inject(PoolApi);
+    private sandboxDefinitionApi = inject(SandboxDefinitionApi);
+    private router = inject(Router);
+    private navigator = inject(TrainingNavigator);
+    private errorHandler = inject(TrainingErrorHandler);
+    private notificationService = inject(TrainingNotificationService);
+    private settings = inject(Settings);
+
     private editedSnapshot: TrainingInstance;
     private lastPagination: OffsetPaginationEvent;
     private loadingTracker = new LoadingTracker();
     public saveDisabled$ = combineLatest(this.loadingTracker.isLoading$, this.saveDisabledSubject$.asObservable()).pipe(
         map(([loading, invalid]) => loading || invalid),
     );
-
-    constructor(
-        private trainingInstanceApi: TrainingInstanceApi,
-        private trainingDefinitionApi: TrainingDefinitionApi,
-        private poolApi: PoolApi,
-        private sandboxDefinitionApi: SandboxDefinitionApi,
-        private router: Router,
-        private navigator: TrainingNavigator,
-        private errorHandler: TrainingErrorHandler,
-        private notificationService: TrainingNotificationService,
-        private settings: Settings,
-    ) {
-        super();
-    }
 
     /**
      * Updated saveDisabled$ and saved snapshot of edited training instance

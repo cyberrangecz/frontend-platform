@@ -36,6 +36,10 @@ import {AsyncPipe} from "@angular/common";
     ]
 })
 export class TrainingDefinitionOverviewComponent implements OnInit {
+    private trainingDefinitionService = inject(TrainingDefinitionService);
+    private paginationService = inject(PaginationStorageService);
+    private navigator = inject(TrainingNavigator);
+
     @Input() paginationId = 'training-definition-overview';
 
     readonly INIT_SORT_NAME = 'lastEdited';
@@ -48,13 +52,6 @@ export class TrainingDefinitionOverviewComponent implements OnInit {
     bottomControls: SentinelControlItem[] = [];
     destroyRef = inject(DestroyRef);
     protected readonly async = async;
-
-    constructor(
-        private trainingDefinitionService: TrainingDefinitionService,
-        private paginationService: PaginationStorageService,
-        private navigator: TrainingNavigator,
-    ) {
-    }
 
     ngOnInit(): void {
         this.topControls = TrainingDefinitionOverviewControls.createTopControls(this.trainingDefinitionService);

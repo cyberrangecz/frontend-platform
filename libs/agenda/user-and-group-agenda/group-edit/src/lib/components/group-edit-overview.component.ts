@@ -55,6 +55,9 @@ import {GroupRoleAssignComponent} from './group-role-assign/group-role-assign.co
     ]
 })
 export class GroupEditOverviewComponent {
+    private activeRoute = inject(ActivatedRoute);
+    private editService = inject(GroupEditService);
+
     @Output() canDeactivateEvent: EventEmitter<boolean> = new EventEmitter();
     group$: Observable<Group>;
     editMode$: Observable<boolean>;
@@ -66,10 +69,7 @@ export class GroupEditOverviewComponent {
     protected readonly of = of;
     protected readonly async = async;
 
-    constructor(
-        private activeRoute: ActivatedRoute,
-        private editService: GroupEditService
-    ) {
+    constructor() {
         this.group$ = this.editService.group$;
         this.editMode$ = this.editService.editMode$.pipe(tap((editMode) => this.initControls(editMode)));
         this.activeRoute.data

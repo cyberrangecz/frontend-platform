@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {ActivatedRouteSnapshot, RouterStateSnapshot} from '@angular/router';
 import {TrainingInstance} from '@crczp/training-model';
 import {Observable, of} from 'rxjs';
@@ -8,8 +8,8 @@ import {AdaptiveInstanceResolver} from './adaptive-instance-resolver.service';
 
 @Injectable()
 export class AdaptiveInstanceDetailTitleResolver {
-    constructor(private adaptiveInstanceResolver: AdaptiveInstanceResolver) {
-    }
+    private adaptiveInstanceResolver = inject(AdaptiveInstanceResolver);
+
 
     /**
      * Retrieves a specific resource title based on id provided in url

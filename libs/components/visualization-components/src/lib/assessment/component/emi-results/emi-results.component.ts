@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 
 import {EMITableAdapter} from '../../table-adapter/emi-table-adapter';
 import {HighlightService} from '../../services/highlight.service';
@@ -24,7 +24,9 @@ export class EMIResultsComponent extends HighlightableDirective implements OnIni
     @Input() isTest: boolean;
     tableAdapters: EMITableAdapter[] = [];
 
-    constructor(highlightService: HighlightService) {
+    constructor() {
+        const highlightService = inject(HighlightService);
+
         super(highlightService);
     }
 

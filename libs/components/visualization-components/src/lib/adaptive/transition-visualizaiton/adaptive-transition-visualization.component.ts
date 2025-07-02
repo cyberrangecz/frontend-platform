@@ -14,6 +14,9 @@ import {AdaptiveTransitionVisualizationService} from './services/adaptive-transi
     styleUrls: ['adaptive-transition-visualization.component.scss'],
 })
 export class AdaptiveTransitionVisualizationComponent implements OnInit {
+    private visualizationPollingService = inject(AdaptiveTransitionVisualizationPollingService);
+    private visualizationService = inject(AdaptiveTransitionVisualizationService);
+
     @Input() trainingInstanceId!: number;
     @Input() trainingRunId!: number;
     @Input() progress!: boolean;
@@ -24,11 +27,6 @@ export class AdaptiveTransitionVisualizationComponent implements OnInit {
     isLoading$!: Observable<boolean>;
 
     destroyRef = inject(DestroyRef);
-
-    constructor(
-        private visualizationPollingService: AdaptiveTransitionVisualizationPollingService,
-        private visualizationService: AdaptiveTransitionVisualizationService,
-    ) {}
 
     ngOnInit() {
         this.init();

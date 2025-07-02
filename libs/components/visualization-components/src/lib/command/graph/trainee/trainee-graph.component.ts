@@ -1,4 +1,4 @@
-import {Component, Input, OnDestroy, OnInit} from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, inject } from '@angular/core';
 import {Graphviz, graphviz} from 'd3-graphviz';
 import {TraineeGraphService} from './trainee-graph.service';
 import {UntypedFormBuilder} from '@angular/forms';
@@ -28,6 +28,9 @@ import {TrainingRun} from '@crczp/training-model';
     ]
 })
 export class TraineeGraphComponent implements OnInit, OnDestroy {
+    private graphService = inject(TraineeGraphService);
+    fb = inject(UntypedFormBuilder);
+
     @Input() trainingInstanceId: number;
     @Input() trainingRunId: number;
 
@@ -40,11 +43,6 @@ export class TraineeGraphComponent implements OnInit, OnDestroy {
 
     traineeGraph$: Observable<Graph>;
     trainingRuns$: Observable<TrainingRun[]>;
-
-    constructor(
-        private graphService: TraineeGraphService,
-        public fb: UntypedFormBuilder,
-    ) {}
 
     ngOnInit(): void {
         this.selectedTrainingRun$ = this.graphService.selectedTrainingRun$;

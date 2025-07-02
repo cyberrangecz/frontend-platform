@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild} from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild, inject } from '@angular/core';
 import {FinalComponent} from './final/final.component';
 import {LevelsComponent} from './levels/levels.component';
 import {ConfigService} from '../../../config/config.service';
@@ -12,6 +12,8 @@ import {ClusteringTrainingData} from '../../model/clustering/clustering-training
     standalone: false
 })
 export class ClusteringComponent implements OnInit, OnChanges {
+    private configService = inject(ConfigService);
+
     @ViewChild(FinalComponent, {static: true}) finalComponent;
     @ViewChild(LevelsComponent, {static: true}) levelsComponent;
 
@@ -62,9 +64,6 @@ export class ClusteringComponent implements OnInit, OnChanges {
      * If provided is used for aggregated view across data from several instances.
      */
     @Input() instanceIds: number[];
-
-    constructor(private configService: ConfigService) {
-    }
 
     ngOnInit(): void {
         if (this.traineeModeInfo && this.standalone) {

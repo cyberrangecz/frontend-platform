@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {ActivatedRouteSnapshot, Resolve, Router, RouterStateSnapshot} from '@angular/router';
 import {Request} from '@crczp/sandbox-model';
 import {EMPTY, Observable, of} from 'rxjs';
@@ -17,13 +17,12 @@ import {AllocationRequestsApi, CleanupRequestsApi} from '@crczp/sandbox-api';
  */
 @Injectable()
 export class RequestResolver implements Resolve<Request> {
-    constructor(
-        private allocationRequestApi: AllocationRequestsApi,
-        private cleanupRequestApi: CleanupRequestsApi,
-        private errorHandler: SandboxErrorHandler,
-        private navigator: SandboxNavigator,
-        private router: Router,
-    ) {}
+    private allocationRequestApi = inject(AllocationRequestsApi);
+    private cleanupRequestApi = inject(CleanupRequestsApi);
+    private errorHandler = inject(SandboxErrorHandler);
+    private navigator = inject(SandboxNavigator);
+    private router = inject(Router);
+
 
     /**
      * Retrieves a specific resource based on id provided in url. Navigates to a resource overview if no resource with such id exists.

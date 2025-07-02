@@ -45,6 +45,10 @@ import {PaginationStorageService, providePaginationStorageService,} from '@crczp
     imports: [SentinelTableComponent, SentinelControlsComponent, AsyncPipe],
 })
 export class GroupOverviewComponent implements OnInit {
+    private groupService = inject(GroupOverviewService);
+    private paginationService = inject(PaginationStorageService);
+    private navigator = inject(UserAndGroupNavigator);
+
     @Input() paginationId = 'crczp-group-overview';
     readonly INIT_SORT_NAME = 'name';
     readonly INIT_SORT_DIR = 'asc';
@@ -59,13 +63,6 @@ export class GroupOverviewComponent implements OnInit {
     controls: SentinelControlItem[];
     destroyRef = inject(DestroyRef);
     protected readonly async = async;
-
-    constructor(
-        private groupService: GroupOverviewService,
-        private paginationService: PaginationStorageService,
-        private navigator: UserAndGroupNavigator
-    ) {
-    }
 
     ngOnInit(): void {
         const initialLoadEvent: TableLoadEvent = {

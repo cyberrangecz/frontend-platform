@@ -30,6 +30,8 @@ import {SentinelControlItem, SentinelControlItemSignal} from "@sentinel/componen
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LevelOverviewComponent implements OnInit, OnChanges {
+    private levelService = inject(LevelEditService);
+
     @Output() unsavedLevels: EventEmitter<Level[]> = new EventEmitter();
     @Output() levelsCount: EventEmitter<number> = new EventEmitter();
     @Input() trainingDefinition: TrainingDefinition;
@@ -41,11 +43,6 @@ export class LevelOverviewComponent implements OnInit, OnChanges {
     controls: SentinelControlItem[];
     levelMovingInProgress: boolean;
     destroyRef = inject(DestroyRef);
-
-    constructor(
-        private levelService: LevelEditService,
-    ) {
-    }
 
     ngOnInit(): void {
         this.activeStep$ = this.levelService.activeStep$;

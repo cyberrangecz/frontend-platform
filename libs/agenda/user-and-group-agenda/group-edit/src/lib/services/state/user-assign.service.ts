@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {OffsetPagination, OffsetPaginationEvent, PaginatedResource,} from '@sentinel/common/pagination';
 import {GroupApi, UserApi} from '@crczp/user-and-group-api';
 import {Group, User} from '@crczp/user-and-group-model';
@@ -14,6 +14,10 @@ import {Settings} from '@crczp/common';
  */
 @Injectable()
 export class UserAssignService {
+    private api = inject(GroupApi);
+    private userApi = inject(UserApi);
+    private errorHandler = inject(UserAndGroupErrorHandler);
+
     protected hasErrorSubject$: BehaviorSubject<boolean> = new BehaviorSubject(
         false
     );
@@ -48,12 +52,9 @@ export class UserAssignService {
     private lastAssignedPagination: OffsetPaginationEvent;
     private lastAssignedFilter: string;
 
-    constructor(
-        private api: GroupApi,
-        private userApi: UserApi,
-        private errorHandler: UserAndGroupErrorHandler,
-        settings: Settings
-    ) {
+    constructor() {
+        const settings = inject(Settings);
+
         this.defaultPaginationSize = settings.DEFAULT_PAGE_SIZE;
     }
 

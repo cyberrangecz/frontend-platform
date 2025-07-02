@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, DestroyRef, inject, Inject, OnInit, Optional} from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit } from '@angular/core';
 import {
     MAT_DIALOG_DATA,
     MatDialogActions,
@@ -37,13 +37,15 @@ import {MatError, MatFormField, MatInput} from "@angular/material/input";
     ]
 })
 export class AllocateVariableSandboxesDialogComponent implements OnInit {
+    data = inject(MAT_DIALOG_DATA, { optional: true });
+    dialogRef = inject<MatDialogRef<AllocateVariableSandboxesDialogComponent>>(MatDialogRef);
+
     sandboxAllocationFormGroup: SandboxAllocationFormGroup;
     destroyRef = inject(DestroyRef);
 
-    constructor(
-        @Optional() @Inject(MAT_DIALOG_DATA) public data: number,
-        public dialogRef: MatDialogRef<AllocateVariableSandboxesDialogComponent>,
-    ) {
+    constructor() {
+        const data = this.data;
+
         this.sandboxAllocationFormGroup = new SandboxAllocationFormGroup(this.data);
         this.allocationSize.setValue(data);
     }

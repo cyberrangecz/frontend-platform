@@ -1,12 +1,4 @@
-import {
-    AfterContentChecked,
-    ApplicationRef,
-    ChangeDetectorRef,
-    Component,
-    Input,
-    OnChanges,
-    SimpleChanges
-} from '@angular/core';
+import { AfterContentChecked, ApplicationRef, ChangeDetectorRef, Component, Input, OnChanges, SimpleChanges, inject } from '@angular/core';
 import * as d3 from 'd3';
 import {TrainingInstanceStatistics} from '@crczp/visualization-model';
 import {MatCardModule} from '@angular/material/card';
@@ -51,7 +43,9 @@ export class ScatterClustersWrapperComponent implements OnChanges, AfterContentC
     public readonly info =
         'The chart shows a relation between two distinct groups of actions or behavior, helps to identify connections between them.';
 
-    constructor(appRef: ApplicationRef, changeDetectorRef: ChangeDetectorRef) {
+    constructor() {
+        const appRef = inject(ApplicationRef);
+
         this.appRef = appRef;
     }
 

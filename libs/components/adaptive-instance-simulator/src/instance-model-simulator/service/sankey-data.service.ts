@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {catchError, map, Observable, throwError} from 'rxjs';
 import {SankeyDataMapper} from '../model/sankey/mapper/sankey-data-mapper';
@@ -11,8 +11,9 @@ import {Settings} from '@crczp/common';
  * Fetches the data from the REST API.
  */
 export class SankeyDataService {
-    constructor(private http: HttpClient, private settings: Settings) {
-    }
+    private http = inject(HttpClient);
+    private settings = inject(Settings);
+
 
     public getAllData(instanceId: number): Observable<SankeyData> {
         return this.http

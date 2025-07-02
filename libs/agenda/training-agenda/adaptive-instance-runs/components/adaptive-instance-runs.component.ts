@@ -31,6 +31,10 @@ import {AsyncPipe, NgIf} from "@angular/common";
     ]
 })
 export class AdaptiveInstanceRunsComponent implements OnInit {
+    private activeRoute = inject(ActivatedRoute);
+    private paginationService = inject(PaginationStorageService);
+    private adaptiveRunService = inject(AdaptiveRunService);
+
     trainingInstance$: Observable<TrainingInstance>;
     trainingRuns$: Observable<SentinelTable<TrainingRun>>;
     trainingRunsHasError$: Observable<boolean>;
@@ -39,13 +43,6 @@ export class AdaptiveInstanceRunsComponent implements OnInit {
     destroyRef = inject(DestroyRef);
     protected readonly async = async;
     private trainingInstance: TrainingInstance;
-
-    constructor(
-        private activeRoute: ActivatedRoute,
-        private paginationService: PaginationStorageService,
-        private adaptiveRunService: AdaptiveRunService,
-    ) {
-    }
 
     ngOnInit(): void {
         this.trainingInstance$ = this.activeRoute.data.pipe(

@@ -16,6 +16,8 @@ import {DividerPositionSynchronizerService, SplitContainerComponent} from "@crcz
     ]
 })
 export class GenericSandboxLevelComponent {
+    protected dividerPositionSynchronizer = inject(DividerPositionSynchronizerService);
+
     @Input({required: true}) levelContent: string;
 
     @Input() isLast: boolean;
@@ -39,7 +41,4 @@ export class GenericSandboxLevelComponent {
     destroyRef = inject(DestroyRef);
     protected readonly window = window;
     protected readonly async = async;
-
-    constructor(protected dividerPositionSynchronizer: DividerPositionSynchronizerService) {
-    }
 }

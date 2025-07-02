@@ -1,5 +1,5 @@
 import {CommonModule} from '@angular/common';
-import {ModuleWithProviders, NgModule, Optional, SkipSelf} from '@angular/core';
+import { ModuleWithProviders, NgModule, inject } from '@angular/core';
 import {TrainingDefinitionApi} from './api/definition/training-definition-api.service';
 import {TrainingDefinitionDefaultApi} from './api/definition/training-definition-default-api.service';
 import {TrainingEventApi} from './api/event/training-event-api.service';
@@ -46,7 +46,9 @@ import {DetectionEventApi} from './api/detection-event/detection-event-api.servi
     ],
 })
 export class TrainingApiModule {
-    constructor(@Optional() @SkipSelf() parentModule: TrainingApiModule) {
+    constructor() {
+        const parentModule = inject(TrainingApiModule, { optional: true, skipSelf: true });
+
         if (parentModule) {
             throw new Error('TrainingApiModule is already loaded. Import it only once in single module hierarchy.');
         }

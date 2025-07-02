@@ -1,5 +1,5 @@
 import {HttpErrorResponse} from '@angular/common/http';
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {OffsetPaginationEvent, PaginatedResource,} from '@sentinel/common/pagination';
 import {CleanupRequestsApi, PoolApi, SandboxAllocationUnitsApi,} from '@crczp/sandbox-api';
 import {CleanupRequest, Request} from '@crczp/sandbox-model';
@@ -21,17 +21,18 @@ import {Settings} from '@crczp/common';
  */
 @Injectable()
 export class CleanupRequestsConcreteService extends RequestsService {
+    private poolApi = inject(PoolApi);
+    private sauApi = inject(SandboxAllocationUnitsApi);
+    private cleanupRequestsApi = inject(CleanupRequestsApi);
+    private dialog = inject(MatDialog);
+    private notificationService = inject(SandboxNotificationService);
+    private errorHandler = inject(SandboxErrorHandler);
+
     private lastPoolId: number;
 
-    constructor(
-        private poolApi: PoolApi,
-        private sauApi: SandboxAllocationUnitsApi,
-        private cleanupRequestsApi: CleanupRequestsApi,
-        private dialog: MatDialog,
-        private notificationService: SandboxNotificationService,
-        private errorHandler: SandboxErrorHandler,
-        settings: Settings
-    ) {
+    constructor() {
+        const settings = inject(Settings);
+
         super(settings.DEFAULT_PAGE_SIZE, settings.POLLING_PERIOD_SHORT);
     }
 

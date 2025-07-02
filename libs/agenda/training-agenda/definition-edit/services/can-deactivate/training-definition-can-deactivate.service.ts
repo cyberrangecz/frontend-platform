@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 
 import {
@@ -15,7 +15,8 @@ import {TrainingDefinitionEditOverviewComponent} from '../../components/training
  * Route guard determining if navigation outside of training definition edit page should proceed
  */
 export class TrainingDefinitionCanDeactivate {
-    constructor(private dialog: MatDialog) {}
+    private dialog = inject(MatDialog);
+
 
     canDeactivate(
         component: TrainingDefinitionEditOverviewComponent,

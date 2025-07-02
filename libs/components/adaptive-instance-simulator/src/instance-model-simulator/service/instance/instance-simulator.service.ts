@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
 import {BehaviorSubject, Observable, of, switchMap, take, tap} from 'rxjs';
 import {MatDialog} from '@angular/material/dialog';
@@ -14,6 +14,10 @@ import {SimulatorState, SimulatorStateEventTypeEnum} from "../../model/instance/
 
 @Injectable()
 export class InstanceSimulatorService {
+    private dialog = inject(MatDialog);
+    private fileUploadProgressService = inject(FileUploadProgressService);
+    private api = inject(InstanceSimulatorApiService);
+
     private readonly EXPORT_FILE_NAME = 'adaptive-training-definition.json';
 
     private uploadedInstanceDataSubject$: BehaviorSubject<InstanceModelSimulator> = new BehaviorSubject(null);
@@ -24,13 +28,6 @@ export class InstanceSimulatorService {
 
     private stateSubject$: BehaviorSubject<SimulatorState> = new BehaviorSubject(null);
     state$: Observable<SimulatorState> = this.stateSubject$.asObservable();
-
-    constructor(
-        private dialog: MatDialog,
-        private fileUploadProgressService: FileUploadProgressService,
-        private api: InstanceSimulatorApiService,
-    ) {
-    }
 
     /**
      * Handles upload dialog for upload of exported training instance

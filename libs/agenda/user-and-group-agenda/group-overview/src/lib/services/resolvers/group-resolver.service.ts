@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {ActivatedRouteSnapshot, Router, RouterStateSnapshot} from '@angular/router';
 import {GroupApi} from '@crczp/user-and-group-api';
 import {Group} from '@crczp/user-and-group-model';
@@ -17,13 +17,11 @@ import {
  */
 @Injectable()
 export class GroupResolver {
-    constructor(
-        private router: Router,
-        private api: GroupApi,
-        private errorHandler: UserAndGroupErrorHandler,
-        private navigator: UserAndGroupNavigator
-    ) {
-    }
+    private router = inject(Router);
+    private api = inject(GroupApi);
+    private errorHandler = inject(UserAndGroupErrorHandler);
+    private navigator = inject(UserAndGroupNavigator);
+
 
     resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<Group> | Promise<Group> | Group {
         if (state.url.endsWith(`${GROUP_PATH}/${GROUP_NEW_PATH}`)) {

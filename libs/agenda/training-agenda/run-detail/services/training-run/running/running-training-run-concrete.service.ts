@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {Router} from '@angular/router';
 import {TrainingRunApi} from '@crczp/training-api';
 import {AccessTrainingRunInfo, Level} from '@crczp/training-model';
@@ -16,21 +16,17 @@ import {LoadingDialogComponent, LoadingDialogConfig} from "@crczp/common";
  */
 @Injectable()
 export class RunningTrainingRunConcreteService extends RunningTrainingRunService {
+    private api = inject(TrainingRunApi);
+    private topologyService = inject(TopologyApi);
+    private errorHandler = inject(TrainingErrorHandler);
+    private navigator = inject(TrainingNavigator);
+    private router = inject(Router);
+    private dialog = inject(MatDialog);
+
     private activeLevels: Level[] = [];
     private startTime: Date;
     private isStepperDisplayed: boolean;
     private backwardMode: boolean;
-
-    constructor(
-        private api: TrainingRunApi,
-        private topologyService: TopologyApi,
-        private errorHandler: TrainingErrorHandler,
-        private navigator: TrainingNavigator,
-        private router: Router,
-        private dialog: MatDialog,
-    ) {
-        super();
-    }
 
     /**
      * Initializes the service from training run access info

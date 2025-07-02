@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {Router} from '@angular/router';
 import {TrainingInstance} from '@crczp/training-model';
 import {from, Observable, timer} from 'rxjs';
@@ -8,12 +8,9 @@ import {TrainingInstanceSummaryService} from './training-instance-summary.servic
 
 @Injectable()
 export class TrainingInstanceSummaryConcreteService extends TrainingInstanceSummaryService {
-    constructor(
-        private router: Router,
-        private navigator: TrainingNavigator,
-    ) {
-        super();
-    }
+    private router = inject(Router);
+    private navigator = inject(TrainingNavigator);
+
 
     init(ti: TrainingInstance): void {
         this.trainingInstance = ti;

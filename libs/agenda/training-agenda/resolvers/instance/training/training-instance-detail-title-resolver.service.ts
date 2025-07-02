@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {ActivatedRouteSnapshot, RouterStateSnapshot} from '@angular/router';
 import {TrainingInstance} from '@crczp/training-model';
 import {Observable, of} from 'rxjs';
@@ -15,8 +15,8 @@ import {TrainingInstanceResolver} from './training-instance-resolver.service';
 
 @Injectable()
 export class TrainingInstanceDetailTitleResolver {
-    constructor(private trainingInstanceResolver: TrainingInstanceResolver) {
-    }
+    private trainingInstanceResolver = inject(TrainingInstanceResolver);
+
 
     /**
      * Retrieves a specific resource title based on id provided in url

@@ -1,13 +1,4 @@
-import {
-    ChangeDetectionStrategy,
-    Component,
-    EventEmitter,
-    Input,
-    OnChanges,
-    OnInit,
-    Output,
-    SimpleChanges,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, inject } from '@angular/core';
 import {take} from 'rxjs/operators';
 import {AdaptiveQuestion, Choice, QuestionAnswer, QuestionnairePhase, QuestionTypeEnum} from '@crczp/training-model';
 import {RunningAdaptiveRunService} from '../../../services/adaptive-run/running/running-adaptive-run.service';
@@ -19,6 +10,8 @@ import {RunningAdaptiveRunService} from '../../../services/adaptive-run/running/
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class QuestionnairePhaseComponent implements OnChanges, OnInit {
+    private runningAdaptiveRunService = inject(RunningAdaptiveRunService);
+
     @Input() phase: QuestionnairePhase;
     @Input() isLast: boolean;
     @Input() isPhaseAnswered: boolean;
@@ -48,9 +41,6 @@ export class QuestionnairePhaseComponent implements OnChanges, OnInit {
             answers.answers = question.userAnswers ? question.userAnswers : [];
             this.questionAnswers.push(answers);
         });
-    }
-
-    constructor(private runningAdaptiveRunService: RunningAdaptiveRunService) {
     }
 
     onNext(): void {

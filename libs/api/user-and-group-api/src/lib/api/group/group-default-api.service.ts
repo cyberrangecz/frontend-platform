@@ -1,5 +1,5 @@
 import {HttpClient} from '@angular/common/http';
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {SentinelParamsMerger} from '@sentinel/common';
 import {SentinelFilter} from '@sentinel/common/filter';
 import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
@@ -20,15 +20,15 @@ import {JavaPaginatedResource, ParamsBuilder} from '@crczp/api-common';
  */
 @Injectable()
 export class GroupDefaultApi extends GroupApi {
+    private http = inject(HttpClient);
+    private context = inject(UserAndGroupContext);
+
     private readonly config: UserAndGroupApiConfig;
     private readonly groupsPathExtension = 'groups';
     private readonly usersPathExtension = 'users';
     private readonly rolesPathExtension = 'roles';
 
-    constructor(
-        private http: HttpClient,
-        private context: UserAndGroupContext,
-    ) {
+    constructor() {
         super();
         this.config = this.context.config;
     }

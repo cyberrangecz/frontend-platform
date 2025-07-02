@@ -1,4 +1,4 @@
-import {Component, Input, OnChanges, OnInit, Output} from '@angular/core';
+import { Component, Input, OnChanges, OnInit, Output, inject } from '@angular/core';
 import {Clusterables} from '@crczp/visualization-model';
 import {D3, D3Service} from '../../../common/d3-service/d3-service';
 import {VisualizationsDataService} from '../../services/visualizations-data.service';
@@ -10,6 +10,9 @@ import {ClusteringConfig, VIS_CONFIG} from '../../clustering-config';
     styleUrls: ['./scatter-plot.component.css'],
 })
 export class ScatterPlotComponent implements OnChanges, OnInit {
+    private visualizationDataService = inject(VisualizationsDataService);
+    private config = inject(ClusteringConfig);
+
     @Input() visualizationData: { clusterData: any[] };
     @Input() numOfClusters: number;
     @Input() isStandalone: boolean;
@@ -40,11 +43,9 @@ export class ScatterPlotComponent implements OnChanges, OnInit {
     public chartClass: string;
     public showInfo: boolean;
 
-    constructor(
-        d3Service: D3Service,
-        private visualizationDataService: VisualizationsDataService,
-        private config: ClusteringConfig
-    ) {
+    constructor() {
+        const d3Service = inject(D3Service);
+
         this.d3 = d3Service.getD3();
     }
 

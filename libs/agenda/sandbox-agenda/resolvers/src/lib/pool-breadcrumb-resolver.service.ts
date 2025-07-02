@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {ActivatedRouteSnapshot, Resolve, RouterStateSnapshot} from '@angular/router';
 import {Pool} from '@crczp/sandbox-model';
 import {Observable} from 'rxjs';
@@ -11,7 +11,8 @@ import {PoolResolver} from './pool-resolver.service';
  */
 @Injectable()
 export class PoolBreadcrumbResolver implements Resolve<string> {
-    constructor(private poolResolver: PoolResolver) {}
+    private poolResolver = inject(PoolResolver);
+
 
     /**
      * Retrieves a breadcrumb title based on provided url

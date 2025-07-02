@@ -36,6 +36,8 @@ import {GenericSandboxLevelComponent} from "@crczp/training-agenda/run-detail";
  * Component to display training run's level of type ACCESS. Only displays markdown and allows user to continue immediately.
  */
 export class AccessPhaseComponent implements OnChanges {
+    protected accessPhaseService = inject(AdaptiveRunAccessPhaseService);
+
     @Input({required: true}) phase: AccessPhase;
     @Input() isLast: boolean;
     @Input() isPhaseAnswered: boolean;
@@ -52,9 +54,6 @@ export class AccessPhaseComponent implements OnChanges {
     isLoading$: Observable<boolean>;
     destroyRef = inject(DestroyRef);
     protected readonly of = of;
-
-    constructor(protected accessPhaseService: AdaptiveRunAccessPhaseService) {
-    }
 
     ngOnChanges(changes: SimpleChanges): void {
         if ('phase' in changes) {

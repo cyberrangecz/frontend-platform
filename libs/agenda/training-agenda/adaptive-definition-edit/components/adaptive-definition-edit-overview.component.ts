@@ -78,6 +78,13 @@ import {
     ],
 })
 export class AdaptiveDefinitionEditOverviewComponent implements OnInit {
+    private activeRoute = inject(ActivatedRoute);
+    private paginationService = inject(PaginationStorageService);
+    private editService = inject(AdaptiveDefinitionEditService);
+    private phaseEditService = inject(PhaseEditService);
+    private mitreTechniquesService = inject(MitreTechniquesService);
+    private authorsAssignService = inject(SentinelUserAssignService);
+
     trainingDefinition$: Observable<TrainingDefinition>;
     editMode$: Observable<boolean>;
     tdTitle$: Observable<string>;
@@ -95,14 +102,7 @@ export class AdaptiveDefinitionEditOverviewComponent implements OnInit {
     destroyRef = inject(DestroyRef);
     protected readonly async = async;
 
-    constructor(
-        private activeRoute: ActivatedRoute,
-        private paginationService: PaginationStorageService,
-        private editService: AdaptiveDefinitionEditService,
-        private phaseEditService: PhaseEditService,
-        private mitreTechniquesService: MitreTechniquesService,
-        private authorsAssignService: SentinelUserAssignService
-    ) {
+    constructor() {
         this.defaultPaginationSize = this.paginationService.DEFAULT_PAGE_SIZE;
         this.trainingDefinition$ = this.editService.trainingDefinition$;
         this.tdTitle$ = this.editService.trainingDefinition$.pipe(

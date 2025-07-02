@@ -42,6 +42,9 @@ import {PaginationStorageService} from '@crczp/common';
  * table with all sandbox definitions and possible actions on sandbox definition.
  */
 export class SandboxDefinitionOverviewComponent implements OnInit {
+    private sandboxDefinitionService = inject(SandboxDefinitionOverviewService);
+    private paginationService = inject(PaginationStorageService);
+
     @Input() paginationId = 'crczp-sandbox-definition-overview';
     controls: SentinelControlItem[];
     sandboxDefinitions$: Observable<SentinelTable<SandboxDefinition>>;
@@ -49,12 +52,6 @@ export class SandboxDefinitionOverviewComponent implements OnInit {
     destroyRef = inject(DestroyRef);
 
     private lastLoadEvent: TableLoadEvent;
-
-    constructor(
-        private sandboxDefinitionService: SandboxDefinitionOverviewService,
-        private paginationService: PaginationStorageService
-    ) {
-    }
 
     ngOnInit(): void {
         this.controls = SandboxDefinitionOverviewControls.create(

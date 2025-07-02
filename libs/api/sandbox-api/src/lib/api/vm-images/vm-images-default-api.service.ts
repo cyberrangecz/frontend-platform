@@ -2,7 +2,7 @@ import {VirtualImagesMapper} from '../../mappers/vm-images/virtual-images-mapper
 import {VirtualImagesDTO} from '../../dto/vm-images/virtual-images-dto';
 import {Observable} from 'rxjs';
 import {SandboxApiConfigService} from '../../others/sandbox-api-config.service';
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {VirtualImage} from '@crczp/sandbox-model';
 import {SentinelParamsMerger} from '@sentinel/common';
@@ -17,13 +17,13 @@ import {DjangoResourceDTO, PaginationMapper, ParamsBuilder} from '@crczp/api-com
  */
 @Injectable()
 export class VMImagesDefaultApi extends VMImagesApi {
+    private http = inject(HttpClient);
+    private context = inject(SandboxApiConfigService);
+
     private readonly virtualImagesUriExtension = 'images';
     private readonly virtualImagesEndpointUri: string;
 
-    constructor(
-        private http: HttpClient,
-        private context: SandboxApiConfigService
-    ) {
+    constructor() {
         super();
         if (this.context.config === undefined || this.context.config === null) {
             throw new Error(

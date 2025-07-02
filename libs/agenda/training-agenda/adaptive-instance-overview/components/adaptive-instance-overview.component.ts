@@ -44,6 +44,11 @@ import {MatProgressSpinner} from "@angular/material/progress-spinner";
     ]
 })
 export class AdaptiveInstanceOverviewComponent implements OnInit {
+    private service = inject(AdaptiveInstanceOverviewService);
+    private paginationService = inject(PaginationStorageService);
+    private navigator = inject(TrainingNavigator);
+    private notificationService = inject(TrainingNotificationService);
+
     @Input() paginationId = 'adaptive-instance-overview';
     readonly INITIAL_SORT_NAME = 'startTime';
     readonly INITIAL_SORT_DIR = 'desc';
@@ -53,14 +58,6 @@ export class AdaptiveInstanceOverviewComponent implements OnInit {
 
     controls: SentinelControlItem[];
     destroyRef = inject(DestroyRef);
-
-    constructor(
-        private service: AdaptiveInstanceOverviewService,
-        private paginationService: PaginationStorageService,
-        private navigator: TrainingNavigator,
-        private notificationService: TrainingNotificationService,
-    ) {
-    }
 
     ngOnInit(): void {
         this.controls = AdaptiveInstanceOverviewControls.create(this.service);

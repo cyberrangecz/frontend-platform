@@ -59,6 +59,9 @@ import {PaginationStorageService, providePaginationStorageService,} from '@crczp
     ],
 })
 export class GroupRoleAssignComponent implements OnChanges {
+    private roleAssignService = inject(RoleAssignService);
+    private paginationService = inject(PaginationStorageService);
+
     readonly ROLES_OF_GROUP_INIT_SORT_NAME = 'roleType';
     readonly ROLES_OF_GROUP_INIT_SORT_DIR = 'asc';
     /**
@@ -102,10 +105,7 @@ export class GroupRoleAssignComponent implements OnChanges {
     destroyRef = inject(DestroyRef);
     protected readonly async = async;
 
-    constructor(
-        private roleAssignService: RoleAssignService,
-        private paginationService: PaginationStorageService
-    ) {
+    constructor() {
         this.roleMapping = {
             id: 'id',
             title: 'roleType',

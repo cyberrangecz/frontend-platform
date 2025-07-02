@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, Output} from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, Output, inject } from '@angular/core';
 import * as d3 from 'd3';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import {EventConnectorComponent} from './event-connector/event-connector.component';
@@ -15,6 +15,8 @@ import {TrainingUser} from '@crczp/training-model';
     imports: [MatTooltipModule, EventConnectorComponent,PlayerEventComponent]
 })
 export class PlayerTrainingComponent {
+    private absolutePositionService = inject(AbsolutePositionService);
+
     @Input() userData!: WalkthroughUserData;
     @Input() isUserSelected!: boolean;
     @Input() userIndex!: number;
@@ -26,10 +28,9 @@ export class PlayerTrainingComponent {
 
     private g: any;
 
-    constructor(
-        element: ElementRef,
-        private absolutePositionService: AbsolutePositionService,
-    ) {
+    constructor() {
+        const element = inject(ElementRef);
+
         this.g = d3.select(element.nativeElement);
     }
 

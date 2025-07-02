@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, inject } from '@angular/core';
 import {
     ProgressLevelInfo,
     ProgressLevelVisualizationData,
@@ -44,7 +44,9 @@ export class TraineeSelectionComponent implements OnInit, OnChanges {
     private highlightedTrainee: ProgressTraineeInfo;
     private traineeSelectData: TraineeSelectData[] = [];
 
-    constructor(d3: D3Service) {
+    constructor() {
+        const d3 = inject(D3Service);
+
         this.d3 = d3.getD3();
     }
 

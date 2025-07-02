@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {TraineeModeInfo} from '../../../../../shared/interfaces/trainee-mode-info';
 import {Observable, throwError} from 'rxjs';
 import {catchError, map} from 'rxjs/operators';
@@ -8,8 +8,8 @@ import {ClusteringTrainingData} from '../../../../model/clustering/clustering-tr
 
 @Injectable()
 export class ClusteringService {
-    constructor(private clusteringFinalApiService: ClusteringApiService) {
-    }
+    private clusteringFinalApiService = inject(ClusteringApiService);
+
 
     /**
      * Gets data for clustering and final visualization.

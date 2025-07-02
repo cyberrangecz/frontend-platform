@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import {CommandMistakeService} from './command-mistake.service';
 import {map, take, tap} from 'rxjs/operators';
 import {SentinelTable, SentinelTableComponent, TableActionEvent,} from '@sentinel/components/table';
@@ -37,6 +37,8 @@ import {provideComponentProperty} from '@crczp/common';
     ],
 })
 export class MistakeComponent implements OnInit {
+    private commandService = inject(CommandMistakeService);
+
     readonly INIT_SORT_NAME = 'lastEdited';
     readonly INIT_SORT_DIR = 'desc';
 
@@ -62,8 +64,6 @@ export class MistakeComponent implements OnInit {
     > = new BehaviorSubject([]);
     selectedMistakeTypes$: Observable<CommandResourceSelect[]> =
         this.selectedMistakeTypesSubject$.asObservable();
-
-    constructor(private commandService: CommandMistakeService) {}
 
     ngOnInit(): void {
         this.selectedTrainingRuns$ = this.commandService.selectedTrainingRuns$;

@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {Router} from '@angular/router';
 import {OffsetPaginationEvent, PaginatedResource,} from '@sentinel/common/pagination';
 import {PoolApi} from '@crczp/sandbox-api';
@@ -19,19 +19,20 @@ import {Settings} from '@crczp/common';
 
 @Injectable()
 export class TrainingInstanceOverviewConcreteService extends TrainingInstanceOverviewService {
+    private trainingInstanceApi = inject(TrainingInstanceApi);
+    private dialog = inject(MatDialog);
+    private poolApi = inject(PoolApi);
+    private router = inject(Router);
+    private navigator = inject(TrainingNavigator);
+    private notificationService = inject(TrainingNotificationService);
+    private errorHandler = inject(TrainingErrorHandler);
+
     private lastPagination: OffsetPaginationEvent;
     private lastFilter: string;
 
-    constructor(
-        private trainingInstanceApi: TrainingInstanceApi,
-        private dialog: MatDialog,
-        private poolApi: PoolApi,
-        private router: Router,
-        private navigator: TrainingNavigator,
-        private notificationService: TrainingNotificationService,
-        private errorHandler: TrainingErrorHandler,
-        settings: Settings
-    ) {
+    constructor() {
+        const settings = inject(Settings);
+
         super(settings.DEFAULT_PAGE_SIZE);
     }
 

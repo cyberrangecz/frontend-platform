@@ -1,4 +1,4 @@
-import {Component, EventEmitter, OnDestroy, OnInit, Output} from '@angular/core';
+import { Component, EventEmitter, OnDestroy, OnInit, Output, inject } from '@angular/core';
 import {SentinelControlItem, SentinelControlItemSignal, SentinelControlsComponent} from '@sentinel/components/controls';
 import {InstanceSimulatorService} from './service/instance/instance-simulator.service';
 import {InstanceModelSimulatorControls} from './model/instance/instance-model-simulator-controls';
@@ -31,6 +31,8 @@ import {SankeyDataService} from "./service/sankey-data.service";
     ],
 })
 export class InstanceModelSimulatorComponent implements OnInit, OnDestroy {
+    private instanceSimulatorService = inject(InstanceSimulatorService);
+
     @Output() state: EventEmitter<SimulatorState> = new EventEmitter();
     definitionControls: SentinelControlItem[] = [];
     generateControls: SentinelControlItem[] = [];
@@ -45,9 +47,6 @@ export class InstanceModelSimulatorComponent implements OnInit, OnDestroy {
     state$: Observable<SimulatorState> = this.stateSubject$.asObservable();
 
     private stateSubscription$: Subscription;
-
-    constructor(private instanceSimulatorService: InstanceSimulatorService) {
-    }
 
     ngOnInit(): void {
         this.definitionControls = InstanceModelSimulatorControls.createDefinition(this.instanceSimulatorService);

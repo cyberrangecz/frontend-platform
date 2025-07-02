@@ -36,6 +36,11 @@ import {GROUP_DATA_ATTRIBUTE_NAME} from '@crczp/user-and-group-agenda';
     ],
 })
 export class GroupDetailComponent implements OnInit {
+    private activeRoute = inject(ActivatedRoute);
+    private membersDetailService = inject(MembersDetailService);
+    private rolesDetailService = inject(RolesDetailService);
+    private paginationService = inject(PaginationStorageService);
+
     @Input() paginationId = 'crczp-group-detail';
     @Input() defaultPaginationSize = 10;
     readonly INIT_MEMBERS_SORT_NAME = 'familyName';
@@ -49,13 +54,6 @@ export class GroupDetailComponent implements OnInit {
     membersTableHasError$: Observable<boolean>;
     isLoadingMembers$: Observable<boolean>;
     destroyRef = inject(DestroyRef);
-
-    constructor(
-        private activeRoute: ActivatedRoute,
-        private membersDetailService: MembersDetailService,
-        private rolesDetailService: RolesDetailService,
-        private paginationService: PaginationStorageService
-    ) {}
 
     ngOnInit(): void {
         this.initTables();

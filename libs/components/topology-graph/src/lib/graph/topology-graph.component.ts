@@ -1,16 +1,4 @@
-import {
-    AfterViewInit,
-    Component,
-    ElementRef,
-    EventEmitter,
-    Input,
-    OnChanges,
-    OnDestroy,
-    OnInit,
-    Output,
-    SimpleChanges,
-    ViewChild,
-} from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, ViewChild, inject } from '@angular/core';
 import {Link, Node} from '@crczp/topology-graph-model';
 import {TopologyApi} from '../services/topology-api.service';
 import {DraggedNodeService} from '../services/dragged-node.service';
@@ -39,6 +27,15 @@ import {Settings} from '@crczp/common';
 export class TopologyGraphComponent
     implements OnInit, OnChanges, OnDestroy, AfterViewInit
 {
+    private loadingService = inject(TopologyLoadingService);
+    private topologyLoaderService = inject(TopologyApi);
+    protected graphEventService = inject(GraphEventService);
+    private sandboxService = inject(SandboxService);
+    private topologyApiService = inject(TopologyApi);
+    private draggedNodeService = inject(DraggedNodeService);
+    private resourcePollingService = inject(ResourcePollingService);
+    private settings = inject(Settings);
+
     @Input() sandboxUuid: string;
     @Input() sandboxDefinitionId: number;
     @Output() topologyLoadEmitter: EventEmitter<boolean> = new EventEmitter();
@@ -61,17 +58,6 @@ export class TopologyGraphComponent
     polling$: Observable<boolean> = this.pollingSubject$.asObservable();
     private _nodeDraggedSubscription;
     private _nodeDragEndedSubscription;
-
-    constructor(
-        private loadingService: TopologyLoadingService,
-        private topologyLoaderService: TopologyApi,
-        protected graphEventService: GraphEventService,
-        private sandboxService: SandboxService,
-        private topologyApiService: TopologyApi,
-        private draggedNodeService: DraggedNodeService,
-        private resourcePollingService: ResourcePollingService,
-        private settings: Settings
-    ) {}
 
     /**
      * Loads first topology and decorators and subscribes for periodical refresh of decorators and decorator reload requests.

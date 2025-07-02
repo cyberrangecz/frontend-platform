@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {UserAndGroupApiConfig} from './user-and-group-api-config';
 
 @Injectable()
@@ -9,7 +9,9 @@ export class UserAndGroupContext {
         return this._config;
     }
 
-    constructor(config: UserAndGroupApiConfig) {
+    constructor() {
+        const config = inject(UserAndGroupApiConfig);
+
         this._config = config;
     }
 }

@@ -63,6 +63,10 @@ import {Settings} from "@crczp/common";
     ]
 })
 export class TrainingInstanceEditOverviewComponent implements OnInit {
+    private activeRoute = inject(ActivatedRoute);
+    private editService = inject(TrainingInstanceEditService);
+    private organizersAssignService = inject(SentinelUserAssignService);
+
     readonly PAGE_SIZE: number = 999;
 
     trainingInstance$: Observable<TrainingInstance>;
@@ -80,12 +84,9 @@ export class TrainingInstanceEditOverviewComponent implements OnInit {
     destroyRef = inject(DestroyRef);
     protected readonly async = async;
 
-    constructor(
-        private activeRoute: ActivatedRoute,
-        private editService: TrainingInstanceEditService,
-        private organizersAssignService: SentinelUserAssignService,
-        settings: Settings
-    ) {
+    constructor() {
+        const settings = inject(Settings);
+
         this.defaultPaginationSize = settings.DEFAULT_PAGE_SIZE;
         this.trainingInstance$ = this.editService.trainingInstance$;
         this.hasStarted$ = this.editService.hasStarted$;

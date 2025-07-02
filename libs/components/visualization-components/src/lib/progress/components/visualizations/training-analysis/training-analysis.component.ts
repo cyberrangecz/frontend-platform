@@ -1,13 +1,4 @@
-import {
-    AfterViewInit,
-    Component,
-    EventEmitter,
-    Input,
-    OnChanges,
-    OnDestroy,
-    Output,
-    ViewEncapsulation,
-} from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnChanges, OnDestroy, Output, ViewEncapsulation, inject } from '@angular/core';
 import {PROGRESS_CONFIG} from '../../../progress-config';
 import {DisplayView, TraineeViewEnum, ViewEnum} from '../../types';
 import {
@@ -62,6 +53,10 @@ import {FormsModule} from '@angular/forms';
 export class TrainingAnalysisComponent
     implements OnChanges, OnDestroy, AfterViewInit
 {
+    private sortingService = inject(SortingService);
+    private filteringService = inject(FilteringService);
+    private configService = inject(ConfigService);
+
     @Input() visualizationData: ProgressVisualizationData;
 
     @Input() view = PROGRESS_CONFIG.defaultView;
@@ -156,12 +151,9 @@ export class TrainingAnalysisComponent
     private trainingData: TrainingData;
     private planData: PlanData;
 
-    constructor(
-        d3Service: D3Service,
-        private sortingService: SortingService,
-        private filteringService: FilteringService,
-        private configService: ConfigService
-    ) {
+    constructor() {
+        const d3Service = inject(D3Service);
+
         this.d3 = d3Service.getD3();
     }
 

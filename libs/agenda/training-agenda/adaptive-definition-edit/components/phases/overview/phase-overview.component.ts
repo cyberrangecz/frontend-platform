@@ -51,6 +51,9 @@ import {AsyncPipe} from "@angular/common";
     ]
 })
 export class PhaseOverviewComponent implements OnInit, OnChanges {
+    private dialog = inject(MatDialog);
+    private phaseService = inject(PhaseEditService);
+
     @Output() unsavedPhases: EventEmitter<Phase[]> = new EventEmitter();
     @Output() phasesCount: EventEmitter<number> = new EventEmitter();
     @Input() trainingDefinition: TrainingDefinition;
@@ -67,12 +70,6 @@ export class PhaseOverviewComponent implements OnInit, OnChanges {
     questions: Map<number, AdaptiveQuestion> = new Map<number, AdaptiveQuestion>();
     destroyRef = inject(DestroyRef);
     protected readonly async = async;
-
-    constructor(
-        private dialog: MatDialog,
-        private phaseService: PhaseEditService,
-    ) {
-    }
 
     ngOnInit(): void {
         this.activeStep$ = this.phaseService.activeStep$;

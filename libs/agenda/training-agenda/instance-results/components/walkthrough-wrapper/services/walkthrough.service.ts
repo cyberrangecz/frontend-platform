@@ -1,11 +1,12 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {Observable} from 'rxjs';
 import {TrainingDefinition} from '@crczp/training-model';
 import {TrainingDefinitionApi} from '@crczp/training-api';
 
 @Injectable()
 export class WalkthroughService {
-    constructor(private api: TrainingDefinitionApi) {}
+    private api = inject(TrainingDefinitionApi);
+
 
     /**
      * Gets training definition by @definitionId. Updates related observables or handles an error

@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, inject } from '@angular/core';
 import {AXES_CONFIG, BAR_CONFIG, CROSSHAIR_CONFIG, PLAYER_POINT_CONFIG, SVG_CONFIG, SVG_MARGIN_CONFIG} from './config';
 import {SvgConfig} from '../../../../shared/interfaces/configurations/svg-config';
 import {TraineeModeInfo} from '../../../../shared/interfaces/trainee-mode-info';
@@ -17,6 +17,8 @@ import {PlayerData} from '../../../model/clustering/player-data';
     standalone: false
 })
 export class FinalComponent implements OnInit, OnChanges {
+    private dataService = inject(ClusteringService);
+
     /**
      * Training data
      */
@@ -68,10 +70,9 @@ export class FinalComponent implements OnInit, OnChanges {
     private playerClicked = false; // If no player is selected, hover out of player will cancel the highlight
     private traineesTrainingRunId: number;
 
-    constructor(
-        d3: D3Service,
-        private dataService: ClusteringService
-    ) {
+    constructor() {
+        const d3 = inject(D3Service);
+
         this.d3 = d3.getD3();
     }
 

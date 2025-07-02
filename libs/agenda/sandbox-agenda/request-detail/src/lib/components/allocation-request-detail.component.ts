@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, QueryList, ViewChildren} from '@angular/core';
+import { ChangeDetectionStrategy, Component, QueryList, ViewChildren, inject } from '@angular/core';
 import {RequestStagesService} from '../services/state/request-stages.service';
 import {RequestDetailComponent} from './shared/request-detail.component';
 import {AllocationStagesConcreteService} from '../services/state/allocation-stages-concrete.service';
@@ -23,13 +23,21 @@ import {MatIconButton} from "@angular/material/button";
     ]
 })
 export class AllocationRequestDetailComponent extends RequestDetailComponent {
+    protected activeRoute: ActivatedRoute;
+    protected requestStagesService: RequestStagesService;
+    protected stageDetailRegistry: StagesDetailPollRegistry;
+
     @ViewChildren(RequestStageComponent) requestStages: QueryList<RequestStageComponent>;
 
-    constructor(
-        protected activeRoute: ActivatedRoute,
-        protected requestStagesService: RequestStagesService,
-        protected stageDetailRegistry: StagesDetailPollRegistry,
-    ) {
+    constructor() {
+        const activeRoute = inject(ActivatedRoute);
+        const requestStagesService = inject(RequestStagesService);
+        const stageDetailRegistry = inject(StagesDetailPollRegistry);
+
         super(activeRoute, requestStagesService, stageDetailRegistry);
+    
+        this.activeRoute = activeRoute;
+        this.requestStagesService = requestStagesService;
+        this.stageDetailRegistry = stageDetailRegistry;
     }
 }

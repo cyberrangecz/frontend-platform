@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {Observable, Subject} from 'rxjs';
 import {NodeActionEnum} from '../model/enums/node-context-menu-items-enum';
 import {HostNode, RouterNode} from '@crczp/topology-graph-model';
@@ -11,9 +11,11 @@ import {map} from 'rxjs/operators';
  */
 @Injectable()
 export class ContextMenuService {
+    private hostService = inject(HostService);
+
     private readonly _items;
 
-    constructor(private hostService: HostService) {
+    constructor() {
         this._items = [
             {
                 id: 1,

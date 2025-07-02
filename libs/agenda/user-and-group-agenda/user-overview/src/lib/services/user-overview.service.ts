@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import {
     SentinelConfirmationDialogComponent,
@@ -23,17 +23,18 @@ import {Settings} from '@crczp/common';
 
 @Injectable()
 export class UserOverviewService extends SelectablePaginatedService<User> {
+    private api = inject(UserApi);
+    private dialog = inject(MatDialog);
+    private alertService = inject(UserAndGroupNotificationService);
+    private fileUploadProgressService = inject(FileUploadProgressService);
+    private errorHandler = inject(UserAndGroupErrorHandler);
+
     private lastPagination: OffsetPaginationEvent;
     private lastFilter: string;
 
-    constructor(
-        private api: UserApi,
-        private dialog: MatDialog,
-        private alertService: UserAndGroupNotificationService,
-        private fileUploadProgressService: FileUploadProgressService,
-        private errorHandler: UserAndGroupErrorHandler,
-        settings: Settings
-    ) {
+    constructor() {
+        const settings = inject(Settings);
+
         super(settings.DEFAULT_PAGE_SIZE);
     }
 

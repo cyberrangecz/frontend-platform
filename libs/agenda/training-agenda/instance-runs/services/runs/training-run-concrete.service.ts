@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {OffsetPaginationEvent, PaginatedResource,} from '@sentinel/common/pagination';
 import {TrainingInstanceApi, TrainingRunApi} from '@crczp/training-api';
 import {TrainingRun} from '@crczp/training-model';
@@ -22,18 +22,19 @@ import {Settings} from '@crczp/common';
  */
 @Injectable()
 export class TrainingRunConcreteService extends TrainingRunService {
+    private trainingInstanceApi = inject(TrainingInstanceApi);
+    private trainingRunApi = inject(TrainingRunApi);
+    private sauApi = inject(SandboxAllocationUnitsApi);
+    private sandboxApi = inject(SandboxInstanceApi);
+    private dialog = inject(MatDialog);
+    private notificationService = inject(TrainingNotificationService);
+    private errorHandler = inject(TrainingErrorHandler);
+
     private lastTrainingInstanceId: number;
 
-    constructor(
-        private trainingInstanceApi: TrainingInstanceApi,
-        private trainingRunApi: TrainingRunApi,
-        private sauApi: SandboxAllocationUnitsApi,
-        private sandboxApi: SandboxInstanceApi,
-        private dialog: MatDialog,
-        private notificationService: TrainingNotificationService,
-        private errorHandler: TrainingErrorHandler,
-        settings: Settings
-    ) {
+    constructor() {
+        const settings = inject(Settings);
+
         super(settings.DEFAULT_PAGE_SIZE, settings.POLLING_PERIOD_SHORT);
     }
 

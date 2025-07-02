@@ -1,5 +1,5 @@
 import {HttpClient} from '@angular/common/http';
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {Observable} from 'rxjs';
 import {TrainingApiContext} from '../../other/training-api-context';
 import {TrainingEventApi} from './training-event-api.service';
@@ -10,6 +10,9 @@ import {TrainingEventApi} from './training-event-api.service';
 
 @Injectable()
 export class TrainingEventDefaultApi extends TrainingEventApi {
+    private http = inject(HttpClient);
+    private context = inject(TrainingApiContext);
+
     readonly trainingDefinitionUriExtension = 'training-definitions';
     readonly trainingInstanceUrlExtension = 'training-instances';
     readonly trainingRunUrlExtension = 'training-runs';
@@ -17,10 +20,7 @@ export class TrainingEventDefaultApi extends TrainingEventApi {
 
     readonly trainingEventEndpointUri: string;
 
-    constructor(
-        private http: HttpClient,
-        private context: TrainingApiContext,
-    ) {
+    constructor() {
         super();
         this.trainingEventEndpointUri = this.context.config.trainingBasePath + this.trainingEventUriExtension;
     }

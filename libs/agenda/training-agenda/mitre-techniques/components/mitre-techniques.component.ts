@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {async, Observable, take} from 'rxjs';
 import {MitreTechniquesOverviewService} from '../services/mitre-techniques.service';
@@ -14,14 +14,14 @@ import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MitreTechniquesComponent implements OnInit {
+    private mitreTechniquesOverviewService = inject(MitreTechniquesOverviewService);
+    private activeRoute = inject(ActivatedRoute);
+
     mitreTableHtml$: Observable<string>;
     showSwitch: boolean;
     played: boolean;
 
-    constructor(
-        private mitreTechniquesOverviewService: MitreTechniquesOverviewService,
-        private activeRoute: ActivatedRoute,
-    ) {
+    constructor() {
         this.activeRoute.data.pipe(takeUntilDestroyed()).subscribe((data) => {
             this.showSwitch = data.showSwitch;
             this.played = data.showSwitch;

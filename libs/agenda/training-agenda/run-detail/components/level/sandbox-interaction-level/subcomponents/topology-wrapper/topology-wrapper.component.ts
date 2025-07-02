@@ -10,18 +10,15 @@ import {TrainingErrorHandler} from '@crczp/training-agenda';
     styleUrl: './topology-wrapper.component.css',
 })
 export class TopologyWrapperComponent implements OnInit {
+    private topologyErrorService = inject(TopologyErrorService);
+    private errorHandler = inject(TrainingErrorHandler);
+
     @Input() loading: Observable<boolean> = of(false);
     @Input() sandboxInstanceId!: string;
     @Input() sandboxDefinitionId!: number;
     @Output() getAccessFile = new EventEmitter<void>();
 
     destroyRef = inject(DestroyRef);
-
-    constructor(
-        private topologyErrorService: TopologyErrorService,
-        private errorHandler: TrainingErrorHandler,
-    ) {
-    }
 
     ngOnInit(): void {
         this.subscribeToTopologyErrorHandler();

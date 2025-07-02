@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {ActivatedRouteSnapshot, Router, RouterStateSnapshot} from '@angular/router';
 import {User} from '@crczp/user-and-group-model';
 import {UserApi} from '@crczp/user-and-group-api';
@@ -11,13 +11,11 @@ import {USER_SELECTOR, UserAndGroupErrorHandler, UserAndGroupNavigator} from "@c
  */
 @Injectable()
 export class UserResolverService {
-    constructor(
-        private router: Router,
-        private api: UserApi,
-        private errorHandler: UserAndGroupErrorHandler,
-        private navigator: UserAndGroupNavigator
-    ) {
-    }
+    private router = inject(Router);
+    private api = inject(UserApi);
+    private errorHandler = inject(UserAndGroupErrorHandler);
+    private navigator = inject(UserAndGroupNavigator);
+
 
     resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<User> | Promise<User> | User {
         if (route.paramMap.has(USER_SELECTOR)) {

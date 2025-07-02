@@ -1,14 +1,4 @@
-import {
-    ChangeDetectionStrategy,
-    Component,
-    EventEmitter,
-    HostListener,
-    Input,
-    OnChanges,
-    OnInit,
-    Output,
-    SimpleChanges
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, HostListener, Input, OnChanges, OnInit, Output, SimpleChanges, inject } from '@angular/core';
 import * as d3 from 'd3';
 import {ParticipantStatistics, TrainingInstanceStatistics} from '@crczp/visualization-model';
 import {AxesCreationService} from '../service/axes-creation-service';
@@ -31,6 +21,11 @@ import {MatDividerModule} from '@angular/material/divider';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CombinedDiagramComponent implements OnInit, OnChanges {
+    private axesCreationService = inject(AxesCreationService);
+    private svgConfigurationService = inject(SvgConfigurationService);
+    private legendCreationService = inject(LegendCreationService);
+    private tooltipCreationService = inject(TooltipCreationService);
+
     @Input() trainingInstanceStatistics: TrainingInstanceStatistics[] = [];
     @Input() highlightedInstances: number[];
     @Output() highlightInstance: EventEmitter<number[]> = new EventEmitter();
@@ -56,14 +51,6 @@ export class CombinedDiagramComponent implements OnInit, OnChanges {
     private xScale: d3.ScaleBand<string>;
     private leftYScale: d3.ScaleLinear<number, number>;
     private rightYScale: d3.ScaleLinear<number, number>;
-
-    constructor(
-        private axesCreationService: AxesCreationService,
-        private svgConfigurationService: SvgConfigurationService,
-        private legendCreationService: LegendCreationService,
-        private tooltipCreationService: TooltipCreationService
-    ) {
-    }
 
     @HostListener('window:resize') onResizeEvent() {
         this.onResize();

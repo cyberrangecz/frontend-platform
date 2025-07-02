@@ -1,4 +1,4 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, inject } from '@angular/core';
 import {FiltersService} from '../../../services/filters.service';
 
 @Component({
@@ -8,11 +8,10 @@ import {FiltersService} from '../../../services/filters.service';
     standalone: false
 })
 export class FiltersComponent implements OnInit {
+    private filtersService = inject(FiltersService);
+
     @Output() activeFilters: EventEmitter<any> = new EventEmitter();
     filtersArray: any;
-
-    constructor(private filtersService: FiltersService) {
-    }
 
     ngOnInit(): void {
         this.filtersArray = this.filtersService.getFiltersArray();

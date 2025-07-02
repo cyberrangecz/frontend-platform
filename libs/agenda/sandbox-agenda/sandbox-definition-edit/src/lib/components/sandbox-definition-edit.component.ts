@@ -40,12 +40,11 @@ import {NgIf} from "@angular/common";
     ]
 })
 export class SandboxDefinitionEditComponent implements OnInit {
+    private sandboxDefinitionService = inject(SandboxDefinitionEditService);
+
     sandboxDefinitionFormGroup: SandboxDefinitionFormGroup;
     controls: SentinelControlItem[];
     destroyRef = inject(DestroyRef);
-
-    constructor(private sandboxDefinitionService: SandboxDefinitionEditService) {
-    }
 
     get gitUrl(): AbstractControl {
         return this.sandboxDefinitionFormGroup.formGroup.get('gitUrl');

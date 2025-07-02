@@ -1,5 +1,5 @@
 import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {ResponseHeaderContentDispositionReader, SentinelParamsMerger} from '@sentinel/common';
 import {SentinelFilter} from '@sentinel/common/filter';
 import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
@@ -39,6 +39,9 @@ import {TrainingDefinitionInfoDTO} from '../../dto/training-definition/training-
  */
 @Injectable()
 export class TrainingDefinitionDefaultApi extends TrainingDefinitionApi {
+    private http = inject(HttpClient);
+    private context = inject(TrainingApiContext);
+
     readonly trainingDefinitionUriExtension = 'training-definitions';
     readonly exportsUriExtension = 'exports';
     readonly importsUriExtension = 'imports';
@@ -49,10 +52,7 @@ export class TrainingDefinitionDefaultApi extends TrainingDefinitionApi {
     readonly trainingExportEndpointUri: string;
     readonly trainingImportEndpointUri: string;
 
-    constructor(
-        private http: HttpClient,
-        private context: TrainingApiContext,
-    ) {
+    constructor() {
         super();
         this.trainingDefsEndpointUri = this.context.config.trainingBasePath + this.trainingDefinitionUriExtension;
         this.trainingExportEndpointUri = this.context.config.trainingBasePath + this.exportsUriExtension;

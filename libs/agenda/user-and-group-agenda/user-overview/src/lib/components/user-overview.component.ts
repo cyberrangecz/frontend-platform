@@ -44,6 +44,10 @@ import {AsyncPipe} from '@angular/common';
     ],
 })
 export class UserOverviewComponent implements OnInit {
+    private userService = inject(UserOverviewService);
+    private paginationService = inject(PaginationStorageService);
+    private navigator = inject(UserAndGroupNavigator);
+
     @Input() paginationId = 'crczp-user-overview';
     readonly INIT_SORT_NAME = 'familyName';
     readonly INIT_SORT_DIR = 'asc';
@@ -58,13 +62,6 @@ export class UserOverviewComponent implements OnInit {
     usersHasError$: Observable<boolean>;
     controls: SentinelControlItem[];
     protected readonly async = async;
-
-    constructor(
-        private userService: UserOverviewService,
-        private paginationService: PaginationStorageService,
-        private navigator: UserAndGroupNavigator
-    ) {
-    }
 
     ngOnInit(): void {
         const initialLoadEvent: TableLoadEvent = {

@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {Phase} from '@crczp/training-model';
 import {ADAPTIVE_DEFINITION_DATA_ATTRIBUTE_NAME} from '@crczp/training-agenda';
@@ -12,12 +12,14 @@ import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
     styleUrls: ['./adaptive-preview.component.css'],
 })
 export class AdaptivePreviewComponent implements OnInit {
+    private activeRoute = inject(ActivatedRoute);
+
     activePhase: Phase;
     phases: Phase[];
     stepper: AdaptivePreviewStepper;
     isStepperDisplayed: boolean;
 
-    constructor(private activeRoute: ActivatedRoute) {
+    constructor() {
         this.activeRoute.data.pipe(takeUntilDestroyed()).subscribe((data) => {
             this.phases = data[ADAPTIVE_DEFINITION_DATA_ATTRIBUTE_NAME].levels;
         });

@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {ActivatedRouteSnapshot, RouterStateSnapshot} from '@angular/router';
 import {TrainingDefinition} from '@crczp/training-model';
 import {Observable, of} from 'rxjs';
@@ -12,8 +12,8 @@ import {AdaptiveDefinitionResolver} from './adaptive-definition-resolver.service
 
 @Injectable()
 export class AdaptiveDefinitionTitleResolver {
-    constructor(private adaptiveDefinitionResolver: AdaptiveDefinitionResolver) {
-    }
+    private adaptiveDefinitionResolver = inject(AdaptiveDefinitionResolver);
+
 
     /**
      * Retrieves a specific resource title based on id provided in url

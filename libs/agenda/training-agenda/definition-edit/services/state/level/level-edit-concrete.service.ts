@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import {
     SentinelConfirmationDialogComponent,
@@ -26,14 +26,11 @@ import {LevelEditService} from './level-edit.service';
  */
 @Injectable()
 export class LevelEditConcreteService extends LevelEditService {
-    constructor(
-        private api: TrainingDefinitionApi,
-        private dialog: MatDialog,
-        private errorHandler: TrainingErrorHandler,
-        private notificationService: TrainingNotificationService,
-    ) {
-        super();
-    }
+    private api = inject(TrainingDefinitionApi);
+    private dialog = inject(MatDialog);
+    private errorHandler = inject(TrainingErrorHandler);
+    private notificationService = inject(TrainingNotificationService);
+
 
     /**
      * Initiates service with levels and related training definition id

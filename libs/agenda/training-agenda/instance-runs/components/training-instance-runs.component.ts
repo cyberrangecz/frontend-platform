@@ -21,6 +21,10 @@ import {PaginationStorageService} from "@crczp/common";
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TrainingInstanceRunsComponent implements OnInit {
+    private activeRoute = inject(ActivatedRoute);
+    private paginationService = inject(PaginationStorageService);
+    private trainingRunService = inject(TrainingRunService);
+
     @Input() paginationId = 'training-instance-runs';
     trainingInstance$: Observable<TrainingInstance>;
     trainingRuns$: Observable<SentinelTable<TrainingRun>>;
@@ -29,13 +33,6 @@ export class TrainingInstanceRunsComponent implements OnInit {
     destroyRef = inject(DestroyRef);
 
     private trainingInstance: TrainingInstance;
-
-    constructor(
-        private activeRoute: ActivatedRoute,
-        private paginationService: PaginationStorageService,
-        private trainingRunService: TrainingRunService,
-    ) {
-    }
 
     ngOnInit(): void {
         this.trainingInstance$ = this.activeRoute.data.pipe(

@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import {Router} from '@angular/router';
 import {
@@ -27,18 +27,19 @@ import {Settings} from '@crczp/common';
 
 @Injectable()
 export class GroupOverviewConcreteService extends GroupOverviewService {
+    private api = inject(GroupApi);
+    private alertService = inject(UserAndGroupNotificationService);
+    private dialog = inject(MatDialog);
+    private router = inject(Router);
+    private navigator = inject(UserAndGroupNavigator);
+    private errorHandler = inject(UserAndGroupErrorHandler);
+
     private lastPagination: OffsetPaginationEvent;
     private lastFilter: string;
 
-    constructor(
-        private api: GroupApi,
-        private alertService: UserAndGroupNotificationService,
-        private dialog: MatDialog,
-        private router: Router,
-        private navigator: UserAndGroupNavigator,
-        private errorHandler: UserAndGroupErrorHandler,
-        settings: Settings
-    ) {
+    constructor() {
+        const settings = inject(Settings);
+
         super(settings.DEFAULT_PAGE_SIZE);
     }
 

@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {Router} from '@angular/router';
 import {PoolApi, SandboxDefinitionApi} from '@crczp/sandbox-api';
 import {AdaptiveDefinitionApiService, AdaptiveInstanceApi} from '@crczp/training-api';
@@ -18,6 +18,16 @@ import {LoadingTracker, Settings} from "@crczp/common";
  */
 @Injectable()
 export class AdaptiveInstanceEditConcreteService extends AdaptiveInstanceEditService {
+    private trainingInstanceApi = inject(AdaptiveInstanceApi);
+    private trainingDefinitionApi = inject(AdaptiveDefinitionApiService);
+    private poolApi = inject(PoolApi);
+    private sandboxDefinitionApi = inject(SandboxDefinitionApi);
+    private router = inject(Router);
+    private navigator = inject(TrainingNavigator);
+    private errorHandler = inject(TrainingErrorHandler);
+    private notificationService = inject(TrainingNotificationService);
+    private settings = inject(Settings);
+
     private editedSnapshot: TrainingInstance;
     private lastPagination: OffsetPaginationEvent;
     private loadingTracker = new LoadingTracker();
@@ -25,20 +35,6 @@ export class AdaptiveInstanceEditConcreteService extends AdaptiveInstanceEditSer
         this.loadingTracker.isLoading$,
         this.saveDisabledSubject$.asObservable(),
     ).pipe(map(([loading, invalid]) => loading || invalid));
-
-    constructor(
-        private trainingInstanceApi: AdaptiveInstanceApi,
-        private trainingDefinitionApi: AdaptiveDefinitionApiService,
-        private poolApi: PoolApi,
-        private sandboxDefinitionApi: SandboxDefinitionApi,
-        private router: Router,
-        private navigator: TrainingNavigator,
-        private errorHandler: TrainingErrorHandler,
-        private notificationService: TrainingNotificationService,
-        private settings: Settings,
-    ) {
-        super();
-    }
 
     /**
      * Updated saveDisabled$ and saved snapshot of edited training instance

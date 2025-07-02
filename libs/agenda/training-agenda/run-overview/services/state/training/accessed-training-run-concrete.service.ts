@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {Router} from '@angular/router';
 import {AdaptiveRunApi, TrainingRunApi} from '@crczp/training-api';
 import {AccessedTrainingRun} from '@crczp/training-model';
@@ -15,15 +15,16 @@ import {Settings} from '@crczp/common';
  */
 @Injectable()
 export class AccessedTrainingRunConcreteService extends AccessedTrainingRunService {
+    private trainingApi = inject(TrainingRunApi);
+    private adaptiveApi = inject(AdaptiveRunApi);
+    private router = inject(Router);
+    private navigator = inject(TrainingNavigator);
+    private errorHandler = inject(TrainingErrorHandler);
 
-    constructor(
-        private trainingApi: TrainingRunApi,
-        private adaptiveApi: AdaptiveRunApi,
-        private router: Router,
-        private navigator: TrainingNavigator,
-        private errorHandler: TrainingErrorHandler,
-        settings: Settings
-    ) {
+
+    constructor() {
+        const settings = inject(Settings);
+
         super(settings.DEFAULT_PAGE_SIZE);
     }
 

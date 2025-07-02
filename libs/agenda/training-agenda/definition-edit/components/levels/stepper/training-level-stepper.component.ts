@@ -1,12 +1,4 @@
-import {
-    ChangeDetectionStrategy,
-    Component,
-    EventEmitter,
-    Input,
-    OnChanges,
-    Output,
-    SimpleChanges,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, inject } from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import {SentinelStepper, StepperStateChange, StepStateEnum} from '@sentinel/components/stepper';
 import {LevelStepperAdapter} from '@crczp/training-agenda/internal';
@@ -22,6 +14,8 @@ import {LevelMoveEvent} from '../../../model/events/level-move-event';
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TrainingLevelStepperComponent implements OnChanges {
+    dialog = inject(MatDialog);
+
     @Input() levels: LevelStepperAdapter[];
     @Input() movingInProgress: boolean;
     @Input() activeStep: number;
@@ -32,8 +26,6 @@ export class TrainingLevelStepperComponent implements OnChanges {
     levelStepper: SentinelStepper<LevelStepperAdapter> = { items: [] };
 
     private previousActiveStep = -1;
-
-    constructor(public dialog: MatDialog) {}
 
     ngOnChanges(changes: SimpleChanges): void {
         if ('levels' in changes) {

@@ -2,7 +2,7 @@ import {SandboxErrorHandler} from '@crczp/sandbox-agenda';
 import {VMImagesApi} from '@crczp/sandbox-api';
 import {tap} from 'rxjs/operators';
 import {Observable} from 'rxjs';
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {VirtualImage} from '@crczp/sandbox-model';
 import {SentinelFilter} from '@sentinel/common/filter';
 import {OffsetPaginationEvent, PaginatedResource,} from '@sentinel/common/pagination';
@@ -11,11 +11,12 @@ import {Settings} from '@crczp/common';
 
 @Injectable()
 export class VMImagesConcreteService extends VMImagesService {
-    constructor(
-        private vmImagesApi: VMImagesApi,
-        private errorHandler: SandboxErrorHandler,
-        settings: Settings
-    ) {
+    private vmImagesApi = inject(VMImagesApi);
+    private errorHandler = inject(SandboxErrorHandler);
+
+    constructor() {
+        const settings = inject(Settings);
+
         super(settings.DEFAULT_PAGE_SIZE);
     }
 

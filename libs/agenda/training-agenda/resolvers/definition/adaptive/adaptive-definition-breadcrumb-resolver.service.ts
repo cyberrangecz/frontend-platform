@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {ActivatedRouteSnapshot, RouterStateSnapshot} from '@angular/router';
 import {TrainingDefinition} from '@crczp/training-model';
 import {EMPTY, Observable} from 'rxjs';
@@ -16,8 +16,8 @@ import {AdaptiveDefinitionResolver} from './adaptive-definition-resolver.service
  */
 @Injectable()
 export class AdaptiveDefinitionBreadcrumbResolver {
-    constructor(private adaptiveDefinitionResolver: AdaptiveDefinitionResolver) {
-    }
+    private adaptiveDefinitionResolver = inject(AdaptiveDefinitionResolver);
+
 
     /**
      * Retrieves a breadcrumb title based on provided url

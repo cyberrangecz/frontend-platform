@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, inject } from '@angular/core';
 import {timer} from 'rxjs';
 import {takeWhile} from 'rxjs/operators';
 import {PROGRESS_CONFIG} from '../../../progress-config';
@@ -35,9 +35,9 @@ export class LegendComponent implements OnInit, OnDestroy {
     private isAlive = true;
     private readonly d3: D3;
 
-    constructor(
-        d3Service: D3Service
-    ) {
+    constructor() {
+        const d3Service = inject(D3Service);
+
         this.d3 = d3Service.getD3();
         this.pathConfig = {
             ...PROGRESS_CONFIG.shapes,

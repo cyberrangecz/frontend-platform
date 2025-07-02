@@ -1,14 +1,4 @@
-import {
-    ChangeDetectionStrategy,
-    Component,
-    EventEmitter,
-    Input,
-    OnChanges,
-    OnDestroy,
-    OnInit,
-    Output,
-    SimpleChanges
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, inject } from '@angular/core';
 import {ConfigService} from '../../../../config/config.service';
 import {AXES_CONFIG, colorScheme, CONTEXT_CONFIG, SVG_MARGIN_CONFIG} from './config';
 import {SvgConfig} from '../../../../shared/interfaces/configurations/svg-config';
@@ -39,6 +29,11 @@ import TimelineLevelTypeEnum = BasicLevelInfo.TimelineLevelTypeEnum;
     standalone: false
 })
 export class LineComponent implements OnDestroy, OnChanges, OnInit {
+    private tableService = inject(TableService);
+    private filtersService = inject(FiltersService);
+    private timelineService = inject(TimelineService);
+    private configService = inject(ConfigService);
+
     /**
      * Defines if all players should be displayed
      */
@@ -125,13 +120,9 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
 
     private traineesTrainingRun: number;
 
-    constructor(
-        d3service: D3Service,
-        private tableService: TableService,
-        private filtersService: FiltersService,
-        private timelineService: TimelineService,
-        private configService: ConfigService
-    ) {
+    constructor() {
+        const d3service = inject(D3Service);
+
         this.d3 = d3service.getD3();
         this.tableRowClicked = this.tableService.tableRowClicked$.subscribe((player: TimelinePlayer) => {
             this.onRowClicked(player.trainingRunId);

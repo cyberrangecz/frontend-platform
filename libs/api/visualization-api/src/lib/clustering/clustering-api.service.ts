@@ -1,5 +1,5 @@
 import {HttpClient} from '@angular/common/http';
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {ClusteringVisualizationData} from '@crczp/visualization-model';
@@ -14,12 +14,9 @@ import {SseDataMapper} from './mappers/sse-data-mapper';
  */
 @Injectable()
 export class ClusteringApi {
+    private http = inject(HttpClient);
+    private config = inject(VisualizationApiConfig);
 
-    constructor(
-        private http: HttpClient,
-        private config: VisualizationApiConfig
-    ) {
-    }
 
     /**
      * Sends http request to retrieve all data for visualizations

@@ -52,17 +52,14 @@ import {AdaptiveTask} from "@crczp/training-model";
     ]
 })
 export class TasksOverviewComponent implements OnInit {
+    dialog = inject(MatDialog);
+    private phaseService = inject(PhaseEditService);
+
     stepperTasks: Observable<PhaseStepperAdapter[]>;
     controls: SentinelControlItem[];
     activeStep$: Observable<number>;
     tasksHasErrors: boolean;
     destroyRef = inject(DestroyRef);
-
-    constructor(
-        public dialog: MatDialog,
-        private phaseService: PhaseEditService,
-    ) {
-    }
 
     ngOnInit(): void {
         this.activeStep$ = this.phaseService.activeTaskStep$;

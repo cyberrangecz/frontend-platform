@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {ProgressConfig} from '../progress-config';
 
 @Injectable()
@@ -54,7 +54,9 @@ export class ConfigService {
         return this._config;
     }
 
-    constructor(config: ProgressConfig) {
+    constructor() {
+        const config = inject(ProgressConfig);
+
         this._config = config;
     }
 }

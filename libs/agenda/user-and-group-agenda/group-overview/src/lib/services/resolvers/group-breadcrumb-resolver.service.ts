@@ -1,7 +1,7 @@
 /**
  * Router breadcrumb title provider
  */
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {ActivatedRouteSnapshot, RouterStateSnapshot} from '@angular/router';
 import {Group} from '@crczp/user-and-group-model';
 import {EMPTY, Observable, of} from 'rxjs';
@@ -11,10 +11,9 @@ import {GroupResolver} from './group-resolver.service';
 
 @Injectable()
 export class GroupBreadcrumbResolver {
-    readonly CREATE_GROUP_BREADCRUMB = 'Create';
+    private groupResolver = inject(GroupResolver);
 
-    constructor(private groupResolver: GroupResolver) {
-    }
+    readonly CREATE_GROUP_BREADCRUMB = 'Create';
 
     /**
      * Retrieves a breadcrumb title based on provided url

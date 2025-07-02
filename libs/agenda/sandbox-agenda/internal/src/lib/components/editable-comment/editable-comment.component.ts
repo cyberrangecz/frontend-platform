@@ -1,4 +1,4 @@
-import {Component, ElementRef, EventEmitter, HostListener, Input, OnChanges, OnInit, Output} from '@angular/core';
+import { Component, ElementRef, EventEmitter, HostListener, Input, OnChanges, OnInit, Output, inject } from '@angular/core';
 import {CommentFormGroup} from './comment-form-group';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {ReactiveFormsModule} from '@angular/forms';
@@ -15,14 +15,14 @@ import {MatIconModule} from '@angular/material/icon';
     styleUrls: ['./editable-comment.component.css'],
 })
 export class EditableCommentComponent implements OnInit, OnChanges {
+    private elementRef = inject(ElementRef);
+
     @Input() value: string;
     @Input() resetOnFocusOut = true;
     @Output() commentChanged: EventEmitter<string> = new EventEmitter<string>();
     commentFormGroup: CommentFormGroup;
     editOpacity = 0;
     editionEnabled = false;
-
-    constructor(private elementRef: ElementRef) {}
 
     @HostListener('focusout', ['$event'])
     onFocusOut(event: FocusEvent) {

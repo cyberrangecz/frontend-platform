@@ -1,4 +1,4 @@
-import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
+import { Component, Input, OnChanges, OnInit, SimpleChanges, inject } from '@angular/core';
 import {AbstractPhaseTypeEnum, Phase, TrainingPhase} from '@crczp/training-model';
 import {TraineePhasePerformance, TransitionPhase, TransitionVisualizationData} from '@crczp/visualization-model';
 import {ModelSimulatorService} from './service/model-simulator.service';
@@ -9,14 +9,14 @@ import {ModelSimulatorService} from './service/model-simulator.service';
     styleUrls: ['./model-simulator.component.css'],
 })
 export class ModelSimulatorComponent implements OnInit, OnChanges {
+    private modelSimulatorService = inject(ModelSimulatorService);
+
     @Input() phases: Phase[];
 
     inspectedPhase: TrainingPhase;
     relatedTrainingPhases: TrainingPhase[];
     traineesSimulatedPath: TransitionVisualizationData;
     traineePerformance: TraineePhasePerformance[];
-
-    constructor(private modelSimulatorService: ModelSimulatorService) {}
 
     ngOnInit(): void {
         this.relatedTrainingPhases = this.phases.filter(

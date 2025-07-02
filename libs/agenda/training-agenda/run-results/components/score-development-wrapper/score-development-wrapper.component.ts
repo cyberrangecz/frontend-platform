@@ -14,6 +14,9 @@ import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
     styleUrls: ['./score-development-wrapper.component.css'],
 })
 export class ScoreDevelopmentWrapperComponent implements OnInit {
+    private activatedRoute = inject(ActivatedRoute);
+    private trainingDefinitionApi = inject(TrainingDefinitionApi);
+
     visualizationInfo$: Observable<VisualizationInfo>;
     traineeModeInfo$: Observable<TraineeModeInfo>;
     vizSize: { width: number; height: number };
@@ -22,12 +25,6 @@ export class ScoreDevelopmentWrapperComponent implements OnInit {
     @HostListener('window:resize', ['$event'])
     onResize(event: any): void {
         this.setVisualizationSize(event.target.innerWidth, event.target.innerHeight);
-    }
-
-    constructor(
-        private activatedRoute: ActivatedRoute,
-        private trainingDefinitionApi: TrainingDefinitionApi,
-    ) {
     }
 
     ngOnInit(): void {

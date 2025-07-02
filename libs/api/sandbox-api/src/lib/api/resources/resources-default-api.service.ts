@@ -1,7 +1,7 @@
 import {SandboxResourcesDTO} from './../../dto/sandbox-resources/sandbox-resources-dto';
 import {Observable} from 'rxjs';
 import {SandboxApiConfigService} from '../../others/sandbox-api-config.service';
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {ResourcesApi} from './resources-api.service';
 import {HttpClient} from '@angular/common/http';
 import {ResourcesMapper} from '../../mappers/sandbox-resources/resources-mapper';
@@ -15,15 +15,15 @@ import {HardwareUsageMapper} from '../../mappers/sandbox-instance/hardware-usage
  */
 @Injectable()
 export class ResourceDefaultApi extends ResourcesApi {
+    private http = inject(HttpClient);
+    private context = inject(SandboxApiConfigService);
+
     private readonly resourcesUriExtension = 'info';
     private readonly limitsUriExtension = 'limits';
     private readonly resourcesEndpointUri: string;
     private readonly limitsEndpointUri: string;
 
-    constructor(
-        private http: HttpClient,
-        private context: SandboxApiConfigService,
-    ) {
+    constructor() {
         super();
         if (this.context.config === undefined || this.context.config === null) {
             throw new Error(

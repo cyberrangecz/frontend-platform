@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import {Graphviz, graphviz} from 'd3-graphviz';
 import {ReferenceGraphService} from './reference-graph.service';
 import {tap} from 'rxjs/operators';
@@ -28,14 +28,14 @@ import {provideComponentProperty} from '@crczp/common';
     ],
 })
 export class ReferenceGraphComponent implements OnInit {
+    private graphService = inject(ReferenceGraphService);
+
     @Input() apiConfig: VisualizationApiConfig;
     @Input() trainingDefinitionId: number;
     @Input() trainingInstanceId: number;
     @Input() trainingRunId: number;
     public hasError = false;
     private graphviz: Graphviz<BaseType, any, BaseType, any>;
-
-    constructor(private graphService: ReferenceGraphService) {}
 
     ngOnInit(): void {
         let referenceGraphResponse: Observable<Graph>;

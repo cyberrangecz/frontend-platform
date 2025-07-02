@@ -1,13 +1,4 @@
-import {
-    ChangeDetectionStrategy,
-    Component,
-    ElementRef,
-    EventEmitter,
-    Input,
-    OnChanges,
-    Output,
-    SimpleChanges,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, OnChanges, Output, SimpleChanges, inject } from '@angular/core';
 import * as d3 from 'd3';
 import {easeQuad} from 'd3';
 import {RunVisualizationPathNode} from '../../../../model/training-run-path-node';
@@ -32,7 +23,9 @@ export class PlayerPathNodesComponent implements OnChanges {
     private g: any;
     private duration = 1000;
 
-    constructor(element: ElementRef) {
+    constructor() {
+        const element = inject(ElementRef);
+
         this.g = d3.select(element.nativeElement);
     }
 

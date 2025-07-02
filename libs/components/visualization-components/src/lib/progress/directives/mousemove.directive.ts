@@ -1,8 +1,10 @@
 import {map, mergeMap, takeUntil} from 'rxjs/operators';
-import {Directive, ElementRef, EventEmitter, HostListener, OnInit, Output} from '@angular/core';
+import { Directive, ElementRef, EventEmitter, HostListener, OnInit, Output, inject } from '@angular/core';
 
 @Directive({ selector: '[mouseMove]' })
 export class MouseMoveDirective implements OnInit {
+    element = inject(ElementRef);
+
     drag;
     @Output() mouseUp = new EventEmitter();
     @Output() mouseDown = new EventEmitter();
@@ -30,7 +32,7 @@ export class MouseMoveDirective implements OnInit {
         this.mouseMove.emit(event);
     }
 
-    constructor(public element: ElementRef) {
+    constructor() {
         this.element.nativeElement.style.position = 'relative';
         this.element.nativeElement.style.cursor = 'pointer';
 

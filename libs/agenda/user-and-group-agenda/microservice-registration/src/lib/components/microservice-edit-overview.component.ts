@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import {Router} from '@angular/router';
 import {MicroserviceApi} from '@crczp/user-and-group-api';
 import {Microservice} from '@crczp/user-and-group-model';
@@ -30,6 +30,12 @@ import {MicroserviceEditComponent} from './microservice-edit/microservice-edit.c
     ]
 })
 export class MicroserviceEditOverviewComponent implements OnInit {
+    private api = inject(MicroserviceApi);
+    private navigator = inject(UserAndGroupNavigator);
+    private router = inject(Router);
+    private notificationService = inject(UserAndGroupNotificationService);
+    private errorHandler = inject(UserAndGroupErrorHandler);
+
     /**
      * Edited/created microservice-registration
      */
@@ -46,15 +52,6 @@ export class MicroserviceEditOverviewComponent implements OnInit {
      * True if form data are saved, false otherwise
      */
     canDeactivateForm = true;
-
-    constructor(
-        private api: MicroserviceApi,
-        private navigator: UserAndGroupNavigator,
-        private router: Router,
-        private notificationService: UserAndGroupNotificationService,
-        private errorHandler: UserAndGroupErrorHandler
-    ) {
-    }
 
     ngOnInit(): void {
         this.initMicroservice();

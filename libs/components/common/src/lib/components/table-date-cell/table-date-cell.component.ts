@@ -1,15 +1,4 @@
-import {
-    AfterViewInit,
-    Component,
-    ElementRef,
-    HostListener,
-    Input,
-    OnChanges,
-    OnDestroy,
-    OnInit,
-    signal,
-    ViewChild,
-} from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, Input, OnChanges, OnDestroy, OnInit, signal, ViewChild, inject } from '@angular/core';
 import {DatePipe} from '@angular/common';
 import {TableDateCellSyncService} from './table-date-cell-sync.service';
 
@@ -21,6 +10,8 @@ import {TableDateCellSyncService} from './table-date-cell-sync.service';
     styleUrl: './table-date-cell.component.css',
 })
 export class TableDateCellComponent implements OnInit, AfterViewInit, OnChanges, OnDestroy {
+    private sync = inject(TableDateCellSyncService);
+
     @Input({required: true}) displayedDate!: Date;
     @Input() dateDisplayFormat: string = 'd MMM, yyyy';
     @Input() timeDisplayFormat: string = 'HH:mm';
@@ -36,9 +27,6 @@ export class TableDateCellComponent implements OnInit, AfterViewInit, OnChanges,
     @ViewChild('boundaryDiv') boundaryDiv: ElementRef<HTMLDivElement> | undefined;
 
     private widthUpdate: ((state: number) => void) | undefined;
-
-    constructor(private sync: TableDateCellSyncService) {
-    }
 
     ngOnInit(): void {
         this.widthUpdate = this.sync.register(this.colWidth);

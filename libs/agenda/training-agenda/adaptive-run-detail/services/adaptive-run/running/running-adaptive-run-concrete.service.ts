@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {RunningAdaptiveRunService} from './running-adaptive-run.service';
 import {EMPTY, Observable} from 'rxjs';
 import {AbstractPhaseTypeEnum, AccessTrainingRunInfo, Phase, QuestionAnswer} from '@crczp/training-model';
@@ -12,21 +12,17 @@ import {LoadingDialogComponent, LoadingDialogConfig} from "@crczp/common";
 
 @Injectable()
 export class RunningAdaptiveRunConcreteService extends RunningAdaptiveRunService {
+    private api = inject(AdaptiveRunApi);
+    private topologyService = inject(TopologyApi);
+    private errorHandler = inject(TrainingErrorHandler);
+    private navigator = inject(TrainingNavigator);
+    private router = inject(Router);
+    private dialog = inject(MatDialog);
+
     private activePhases: Phase[] = [];
     private startTime: Date;
     private isStepperDisplayed: boolean;
     private backwardMode: boolean;
-
-    constructor(
-        private api: AdaptiveRunApi,
-        private topologyService: TopologyApi,
-        private errorHandler: TrainingErrorHandler,
-        private navigator: TrainingNavigator,
-        private router: Router,
-        private dialog: MatDialog,
-    ) {
-        super();
-    }
 
     init(accessAdaptiveRunInfo: AccessTrainingRunInfo): void {
         this.trainingRunId = accessAdaptiveRunInfo.trainingRunId;

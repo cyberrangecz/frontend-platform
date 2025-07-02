@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import {UrlTree} from '@angular/router';
 import {
@@ -16,7 +16,8 @@ import {GroupEditOverviewComponent} from '../../components/group-edit-overview.c
  */
 @Injectable()
 export class GroupEditCanDeactivate {
-    constructor(private dialog: MatDialog) {}
+    private dialog = inject(MatDialog);
+
 
     canDeactivate(
         component: GroupEditOverviewComponent,

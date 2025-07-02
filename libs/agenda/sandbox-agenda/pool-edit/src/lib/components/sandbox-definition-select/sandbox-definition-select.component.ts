@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, DestroyRef, inject, Inject, Input, OnInit, Optional,} from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, Input, OnInit } from '@angular/core';
 import {
     MAT_DIALOG_DATA,
     MatDialogActions,
@@ -44,6 +44,11 @@ import {PaginationStorageService} from '@crczp/common';
     ],
 })
 export class SandboxDefinitionSelectComponent implements OnInit {
+    preselected = inject<SandboxDefinition>(MAT_DIALOG_DATA, { optional: true });
+    dialogRef = inject<MatDialogRef<SandboxDefinitionSelectComponent>>(MatDialogRef);
+    private paginationService = inject(PaginationStorageService);
+    private definitionService = inject(SandboxDefinitionOverviewService);
+
     @Input() paginationId = 'crczp-sandbox-definition-select';
     readonly PAGE_SIZE: number;
 
@@ -54,14 +59,9 @@ export class SandboxDefinitionSelectComponent implements OnInit {
     selected: SandboxDefinition[];
     destroyRef = inject(DestroyRef);
 
-    constructor(
-        @Optional()
-        @Inject(MAT_DIALOG_DATA)
-        public preselected: SandboxDefinition,
-        public dialogRef: MatDialogRef<SandboxDefinitionSelectComponent>,
-        private paginationService: PaginationStorageService,
-        private definitionService: SandboxDefinitionOverviewService
-    ) {
+    constructor() {
+        const preselected = this.preselected;
+
         this.selected = [preselected];
         this.PAGE_SIZE = this.paginationService.loadPageSize();
     }

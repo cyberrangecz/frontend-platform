@@ -25,6 +25,11 @@ import {AsyncPipe} from "@angular/common";
     ]
 })
 export class TrainingInstanceDetectionEventComponent implements OnInit {
+    private detectionEventService = inject(DetectionEventService);
+    private paginationService = inject(PaginationStorageService);
+    private activeRoute = inject(ActivatedRoute);
+    private navigator = inject(TrainingNavigator);
+
     @Input() paginationId = 'training-instance-detection-event';
     readonly INIT_SORT_NAME = 'levelId';
     readonly INIT_SORT_DIR = 'asc';
@@ -36,14 +41,6 @@ export class TrainingInstanceDetectionEventComponent implements OnInit {
     trainingInstanceId: number;
     destroyRef = inject(DestroyRef);
     protected readonly async = async;
-
-    constructor(
-        private detectionEventService: DetectionEventService,
-        private paginationService: PaginationStorageService,
-        private activeRoute: ActivatedRoute,
-        private navigator: TrainingNavigator,
-    ) {
-    }
 
     ngOnInit(): void {
         this.activeRoute.data.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((data) => {

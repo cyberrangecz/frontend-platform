@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {AdaptiveRunTrainingPhaseService} from './adaptive-run-training-phase.service';
 import {AdaptiveRunApi} from '@crczp/training-api';
 import {SandboxInstanceApi} from '@crczp/sandbox-api';
@@ -12,14 +12,15 @@ import {SentinelNotificationService} from '@sentinel/layout/notification';
 
 @Injectable()
 export class AdaptiveRunTrainingPhaseConcreteService extends AdaptiveRunTrainingPhaseService {
-    constructor(
-        private api: AdaptiveRunApi,
-        private sandboxApi: SandboxInstanceApi,
-        private errorHandler: TrainingErrorHandler,
-        notificationService: SentinelNotificationService,
-        dialog: MatDialog,
-        runningAdaptiveRunService: RunningAdaptiveRunService,
-    ) {
+    private api = inject(AdaptiveRunApi);
+    private sandboxApi = inject(SandboxInstanceApi);
+    private errorHandler = inject(TrainingErrorHandler);
+
+    constructor() {
+        const notificationService = inject(SentinelNotificationService);
+        const dialog = inject(MatDialog);
+        const runningAdaptiveRunService = inject(RunningAdaptiveRunService);
+
         super(dialog, notificationService, runningAdaptiveRunService);
     }
 

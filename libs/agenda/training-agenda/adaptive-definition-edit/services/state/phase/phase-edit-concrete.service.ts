@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import {
     SentinelConfirmationDialogComponent,
@@ -23,16 +23,12 @@ import {TrainingErrorHandler, TrainingNotificationService} from '@crczp/training
 
 @Injectable()
 export class PhaseEditConcreteService extends PhaseEditService {
-    private unsavedTasks: number[] = [];
+    private api = inject(AdaptiveDefinitionApiService);
+    private dialog = inject(MatDialog);
+    private errorHandler = inject(TrainingErrorHandler);
+    private notificationService = inject(TrainingNotificationService);
 
-    constructor(
-        private api: AdaptiveDefinitionApiService,
-        private dialog: MatDialog,
-        private errorHandler: TrainingErrorHandler,
-        private notificationService: TrainingNotificationService,
-    ) {
-        super();
-    }
+    private unsavedTasks: number[] = [];
 
     set(trainingDefinitionId: number, phases: Phase[]): void {
         this.trainingDefinitionId = trainingDefinitionId;

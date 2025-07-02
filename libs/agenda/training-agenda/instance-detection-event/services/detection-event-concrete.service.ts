@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {DetectionEventApi} from '@crczp/training-api';
 import {Router} from '@angular/router';
 import {TrainingNavigator,} from '@crczp/training-agenda';
@@ -16,13 +16,14 @@ import {Settings} from '@crczp/common';
  */
 @Injectable()
 export class DetectionEventConcreteService extends DetectionEventService {
+    private api = inject(DetectionEventApi);
+    private router = inject(Router);
+    private navigator = inject(TrainingNavigator);
 
-    constructor(
-        private api: DetectionEventApi,
-        private router: Router,
-        private navigator: TrainingNavigator,
-        settings: Settings
-    ) {
+
+    constructor() {
+        const settings = inject(Settings);
+
         super(settings.DEFAULT_PAGE_SIZE);
     }
 

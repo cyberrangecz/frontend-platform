@@ -20,6 +20,9 @@ import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
  * Optionally displays stepper with progress of the training and timer counting time from the start of a training.
  */
 export class AdaptiveRunDetailComponent implements OnInit, AfterViewInit {
+    private trainingRunService = inject(RunningAdaptiveRunService);
+    private auth = inject(SentinelAuthService);
+
     user$: Observable<SentinelUser>;
     activePhase$: Observable<Phase>;
     isCurrentPhaseAnswered$: Observable<boolean>;
@@ -37,11 +40,6 @@ export class AdaptiveRunDetailComponent implements OnInit, AfterViewInit {
     localEnvironment: boolean;
     backwardMode: boolean;
     destroyRef = inject(DestroyRef);
-
-    constructor(
-        private trainingRunService: RunningAdaptiveRunService,
-        private auth: SentinelAuthService,
-    ) {}
 
     ngOnInit(): void {
         this.init();

@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, EventEmitter, Input, OnChanges, Output} from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnChanges, Output, inject } from '@angular/core';
 import {take} from 'rxjs/operators';
 import {
     CommandLineEntry,
@@ -32,6 +32,8 @@ import {ProgressVisualizationsDataService} from '../../../services/progress-visu
     ]
 })
 export class TraineeDetailComponent implements OnChanges, AfterViewInit {
+    private visualizationDataService = inject(ProgressVisualizationsDataService);
+
     @Input() trainee: ProgressTraineeInfo;
     @Input() visualizationData: ProgressVisualizationData;
     @Input() trainingInstanceId: number;
@@ -40,10 +42,9 @@ export class TraineeDetailComponent implements OnChanges, AfterViewInit {
 
     private readonly d3: D3;
 
-    constructor(
-        d3Service: D3Service,
-        private visualizationDataService: ProgressVisualizationsDataService
-    ) {
+    constructor() {
+        const d3Service = inject(D3Service);
+
         this.d3 = d3Service.getD3();
     }
 

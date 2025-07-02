@@ -1,12 +1,4 @@
-import {
-    ChangeDetectionStrategy,
-    Component,
-    EventEmitter,
-    Input,
-    OnChanges,
-    Output,
-    SimpleChanges,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, inject } from '@angular/core';
 import {SentinelStepper, StepperStateChange, StepStateEnum} from '@sentinel/components/stepper';
 import {MatDialog} from '@angular/material/dialog';
 import {PhaseMoveEvent} from '../../../../../../model/events/phase-move-event';
@@ -19,6 +11,8 @@ import {PhaseStepperAdapter} from '@crczp/training-agenda/internal';
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TaskStepperComponent implements OnChanges {
+    dialog = inject(MatDialog);
+
     @Input() tasks: PhaseStepperAdapter[];
     @Input() activeStep: number;
     @Output() activeStepChange: EventEmitter<number> = new EventEmitter();
@@ -26,8 +20,6 @@ export class TaskStepperComponent implements OnChanges {
 
     taskStepper: SentinelStepper<PhaseStepperAdapter> = { items: [] };
     private previousActiveStep = -1;
-
-    constructor(public dialog: MatDialog) {}
 
     ngOnChanges(changes: SimpleChanges): void {
         if ('tasks' in changes) {

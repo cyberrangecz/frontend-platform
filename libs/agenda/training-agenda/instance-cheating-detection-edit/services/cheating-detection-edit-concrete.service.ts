@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import {Router} from '@angular/router';
 import {CheatingDetectionApi} from '@crczp/training-api';
@@ -10,16 +10,13 @@ import {CheatingDetectionEditService} from './cheating-detection-edit.service';
 
 @Injectable()
 export class CheatingDetectionEditConcreteService extends CheatingDetectionEditService {
-    constructor(
-        private router: Router,
-        private dialog: MatDialog,
-        private navigator: TrainingNavigator,
-        private notificationService: TrainingNotificationService,
-        private errorHandler: TrainingErrorHandler,
-        private api: CheatingDetectionApi,
-    ) {
-        super();
-    }
+    private router = inject(Router);
+    private dialog = inject(MatDialog);
+    private navigator = inject(TrainingNavigator);
+    private notificationService = inject(TrainingNotificationService);
+    private errorHandler = inject(TrainingErrorHandler);
+    private api = inject(CheatingDetectionApi);
+
 
     /**
      * Makes an API call to create a cheating detection object in the database.

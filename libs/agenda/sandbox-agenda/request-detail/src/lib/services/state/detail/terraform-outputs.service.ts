@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {StageDetailService} from './stage-detail.service';
 import {AllocationRequestsApi} from '@crczp/sandbox-api';
 import {RequestStage} from '@crczp/sandbox-model';
@@ -10,16 +10,20 @@ import {Settings} from "@crczp/common";
 
 @Injectable()
 export class TerraformOutputsService extends StageDetailService {
-    constructor(
-        private api: AllocationRequestsApi,
-        protected pollRegistry: StagesDetailPollRegistry,
-        settings: Settings
-    ) {
+    private api = inject(AllocationRequestsApi);
+    protected pollRegistry: StagesDetailPollRegistry;
+
+    constructor() {
+        const pollRegistry = inject(StagesDetailPollRegistry);
+        const settings = inject(Settings);
+
         super(
             pollRegistry,
             Number.MAX_SAFE_INTEGER,
             settings.POLLING_PERIOD_SHORT
         );
+    
+        this.pollRegistry = pollRegistry;
     }
 
     protected callApiToGetStageDetail(

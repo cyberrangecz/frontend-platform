@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {SandboxConfig} from './sandbox-config';
 
 @Injectable()
@@ -9,7 +9,9 @@ export class SandboxApiConfigService {
         return this._config;
     }
 
-    constructor(config: SandboxConfig) {
+    constructor() {
+        const config = inject(SandboxConfig);
+
         this._config = config;
     }
 }

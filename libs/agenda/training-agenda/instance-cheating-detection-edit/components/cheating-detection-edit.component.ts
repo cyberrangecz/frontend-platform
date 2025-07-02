@@ -58,6 +58,9 @@ import {MatIcon} from "@angular/material/icon";
     ]
 })
 export class CheatingDetectionEditComponent {
+    private activeRoute = inject(ActivatedRoute);
+    private editService = inject(CheatingDetectionEditService);
+
     trainingInstance$: Observable<TrainingInstance>;
     cheatingDetectionEditFormGroup: CheatingDetectionEditFormGroup;
     cheatingDetection: CheatingDetection;
@@ -67,10 +70,7 @@ export class CheatingDetectionEditComponent {
     isAPG = false;
     destroyRef = inject(DestroyRef);
 
-    constructor(
-        private activeRoute: ActivatedRoute,
-        private editService: CheatingDetectionEditService,
-    ) {
+    constructor() {
         this.trainingInstance$ = this.activeRoute.data.pipe(
             takeUntilDestroyed(this.destroyRef),
             map((data) => data[TRAINING_INSTANCE_DATA_ATTRIBUTE_NAME]),

@@ -80,6 +80,12 @@ import {AsyncPipe} from '@angular/common';
     ],
 })
 export class PoolOverviewComponent implements OnInit {
+    private sandboxResourcesService = inject(SandboxResourcesService);
+    private abstractPoolService = inject(AbstractPoolService);
+    private sandboxInstanceService = inject(SandboxInstanceService);
+    private navigator = inject(SandboxNavigator);
+    private paginationService = inject(PaginationStorageService);
+
     @Input() paginationId = 'crczp-sandbox-pool-overview';
     pools$: Observable<SentinelTable<Pool>>;
     hasError$: Observable<boolean>;
@@ -91,13 +97,7 @@ export class PoolOverviewComponent implements OnInit {
     readonly DEFAULT_SORT_DIRECTION = 'asc';
     protected readonly async = async;
 
-    constructor(
-        private sandboxResourcesService: SandboxResourcesService,
-        private abstractPoolService: AbstractPoolService,
-        private sandboxInstanceService: SandboxInstanceService,
-        private navigator: SandboxNavigator,
-        private paginationService: PaginationStorageService
-    ) {
+    constructor() {
         this.resources$ = this.sandboxResourcesService.resources$;
     }
 

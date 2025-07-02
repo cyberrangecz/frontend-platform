@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, HostListener, Input, OnInit,} from '@angular/core';
+import { ChangeDetectorRef, Component, HostListener, Input, OnInit, inject } from '@angular/core';
 import {take} from 'rxjs/operators';
 
 import {async, BehaviorSubject, Observable} from 'rxjs';
@@ -48,6 +48,9 @@ import {provideComponentProperty} from '@crczp/common';
     styleUrls: ['./dashboard.component.css'],
 })
 export class DashboardComponent implements OnInit {
+    private visualizationDataService = inject(ProgressVisualizationsDataService);
+    private ref = inject(ChangeDetectorRef);
+
     @Input() apiConfig: VisualizationApiConfig;
     @Input() trainingInstanceId: number;
     @Input() trainingDefinitionId: number;
@@ -92,11 +95,9 @@ export class DashboardComponent implements OnInit {
         this.activeFiltersSubject$.asObservable();
     private d3: D3;
 
-    constructor(
-        private visualizationDataService: ProgressVisualizationsDataService,
-        private ref: ChangeDetectorRef,
-        d3service: D3Service
-    ) {
+    constructor() {
+        const d3service = inject(D3Service);
+
         this.d3 = d3service.getD3();
     }
 

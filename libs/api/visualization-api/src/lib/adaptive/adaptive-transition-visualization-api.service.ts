@@ -1,5 +1,5 @@
 import {HttpClient} from '@angular/common/http';
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {VisualizationDataMapper} from './mappers/visualization-data-mapper';
@@ -9,10 +9,9 @@ import {AdaptiveVisualizationDataDTO} from './dto/run-visualization-dto';
 
 @Injectable()
 export class AdaptiveTransitionVisualizationApi {
-    constructor(
-        private http: HttpClient,
-        private config: VisualizationApiConfig
-    ) {}
+    private http = inject(HttpClient);
+    private config = inject(VisualizationApiConfig);
+
 
     getDataForTrainingInstance(trainingInstanceId: number): Observable<TransitionVisualizationData> {
         return this.http

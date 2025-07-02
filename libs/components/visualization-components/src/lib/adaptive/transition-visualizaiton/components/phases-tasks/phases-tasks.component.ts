@@ -1,12 +1,4 @@
-import {
-    ChangeDetectionStrategy,
-    ChangeDetectorRef,
-    Component,
-    ElementRef,
-    EventEmitter,
-    Input,
-    Output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, Output, inject } from '@angular/core';
 import * as d3 from 'd3';
 import {RunVisualizationPathNode, TransitionPhase} from '@crczp/visualization-model';
 
@@ -17,6 +9,8 @@ import {RunVisualizationPathNode, TransitionPhase} from '@crczp/visualization-mo
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PhasesTasksComponent {
+    private ref = inject(ChangeDetectorRef);
+
     @Input() phases!: TransitionPhase[];
 
     @Input() xScale!: d3.ScalePoint<number>;
@@ -26,10 +20,9 @@ export class PhasesTasksComponent {
 
     private g: any;
 
-    constructor(
-        element: ElementRef,
-        private ref: ChangeDetectorRef,
-    ) {
+    constructor() {
+        const element = inject(ElementRef);
+
         this.g = d3.select(element.nativeElement);
     }
 

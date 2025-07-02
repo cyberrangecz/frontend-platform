@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {Observable} from 'rxjs';
 import {SandboxService} from './sandbox.service';
 import {concatMap, map} from 'rxjs/operators';
@@ -12,10 +12,9 @@ import {HostNode, RouterNode} from '@crczp/topology-graph-model';
  */
 @Injectable()
 export class HostService {
-    constructor(
-        private topologyFacade: TopologyApi,
-        private sandboxService: SandboxService
-    ) {}
+    private topologyFacade = inject(TopologyApi);
+    private sandboxService = inject(SandboxService);
+
 
     /**
      * Resolves type of action and calls api service to handle the action

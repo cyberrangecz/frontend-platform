@@ -1,5 +1,5 @@
 import {HttpErrorResponse} from '@angular/common/http';
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import {
     SentinelConfirmationDialogComponent,
@@ -21,17 +21,18 @@ import {Settings} from '@crczp/common';
  */
 @Injectable()
 export class AllocationRequestsConcreteService extends AllocationRequestsService {
+    private poolApi = inject(PoolApi);
+    private allocationRequestsApi = inject(AllocationRequestsApi);
+    private sauApi = inject(SandboxAllocationUnitsApi);
+    private dialog = inject(MatDialog);
+    private notificationService = inject(SandboxNotificationService);
+    private errorHandler = inject(SandboxErrorHandler);
+
     private lastPoolId: number;
 
-    constructor(
-        private poolApi: PoolApi,
-        private allocationRequestsApi: AllocationRequestsApi,
-        private sauApi: SandboxAllocationUnitsApi,
-        private dialog: MatDialog,
-        private notificationService: SandboxNotificationService,
-        private errorHandler: SandboxErrorHandler,
-        settings: Settings
-    ) {
+    constructor() {
+        const settings = inject(Settings);
+
         super(
             settings.DEFAULT_PAGE_SIZE,
             settings.POLLING_PERIOD_SHORT

@@ -2,16 +2,20 @@ import {BehaviorSubject, Observable} from 'rxjs';
 import {RequestStagesService} from '../request-stages.service';
 import {map, switchMap} from 'rxjs/operators';
 import {RequestStage} from '@crczp/sandbox-model';
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
 @Injectable()
 export class StagesDetailPollRegistry {
+    private stagesService = inject(RequestStagesService);
+
     private displayedDetailIdsSubject$: BehaviorSubject<number[]> = new BehaviorSubject<number[]>([]);
     private displayedDetailIds$: Observable<number[]> = this.displayedDetailIdsSubject$.asObservable();
 
     polledStageIds$: Observable<number[]>;
 
-    constructor(private stagesService: RequestStagesService) {
+    constructor() {
+        const stagesService = this.stagesService;
+
         this.polledStageIds$ = stagesService.stages$.pipe(
             map((stages) => this.getIdsOfActiveStages(stages)),
             switchMap((stages) => this.filterStagesWithDisplayedDetail(stages)),

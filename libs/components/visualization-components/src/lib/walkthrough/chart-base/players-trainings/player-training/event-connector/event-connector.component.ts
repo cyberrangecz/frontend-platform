@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, OnInit, Output, inject } from '@angular/core';
 import * as d3 from 'd3';
 import {AbsolutePositionService} from '../../../../service/absolute-position.service';
 
@@ -16,6 +16,8 @@ export type TooltipEvent = {
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EventConnectorComponent implements OnInit {
+    private absolutePositionService = inject(AbsolutePositionService);
+
     @Input() maxYPosition!: number;
     private _isSelected!: boolean;
     @Input() set isSelected(value: boolean) {
@@ -34,10 +36,9 @@ export class EventConnectorComponent implements OnInit {
     private path: any;
     public isTextVisible = false;
 
-    constructor(
-        element: ElementRef,
-        private absolutePositionService: AbsolutePositionService,
-    ) {
+    constructor() {
+        const element = inject(ElementRef);
+
         this.g = d3.select(element.nativeElement);
     }
 

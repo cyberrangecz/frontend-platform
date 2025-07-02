@@ -1,13 +1,4 @@
-import {
-    AfterViewInit,
-    Component,
-    EventEmitter,
-    Input,
-    OnChanges,
-    Output,
-    SimpleChanges,
-    ViewEncapsulation,
-} from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewEncapsulation, inject } from '@angular/core';
 import {Axis, NumberValue, ScaleBand, ScaleTime, ZoomBehavior, ZoomTransform,} from 'd3';
 
 import {
@@ -118,7 +109,9 @@ export class ProgressComponent implements OnChanges, AfterViewInit {
     // percentage of height of chart
     private gutter = 0.1;
 
-    constructor(d3Service: D3Service) {
+    constructor() {
+        const d3Service = inject(D3Service);
+
         this.d3 = d3Service.getD3();
         this.zoomTransform = this.d3.zoomIdentity;
         this.svg = this.d3.select('body');

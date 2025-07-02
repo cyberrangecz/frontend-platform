@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {ActivatedRouteSnapshot, RouterStateSnapshot} from '@angular/router';
 import {Group} from '@crczp/user-and-group-model';
 import {Observable, of} from 'rxjs';
@@ -14,10 +14,9 @@ import {
 
 @Injectable()
 export class GroupTitleResolver {
-    readonly CREATE_GROUP_TITLE = 'Create Group';
+    private groupResolver = inject(GroupResolver);
 
-    constructor(private groupResolver: GroupResolver) {
-    }
+    readonly CREATE_GROUP_TITLE = 'Create Group';
 
     /**
      * Retrieves a specific resource title based on id provided in url

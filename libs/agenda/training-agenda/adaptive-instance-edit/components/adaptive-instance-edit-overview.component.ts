@@ -54,6 +54,11 @@ import {AsyncPipe, NgIf} from "@angular/common";
     ]
 })
 export class AdaptiveInstanceEditOverviewComponent implements OnInit {
+    private activeRoute = inject(ActivatedRoute);
+    private paginationService = inject(PaginationStorageService);
+    private editService = inject(AdaptiveInstanceEditService);
+    private userAssignService = inject(SentinelUserAssignService);
+
     readonly PAGE_SIZE: number = 999;
 
     trainingInstance$: Observable<TrainingInstance>;
@@ -71,12 +76,7 @@ export class AdaptiveInstanceEditOverviewComponent implements OnInit {
     destroyRef = inject(DestroyRef);
     protected readonly async = async;
 
-    constructor(
-        private activeRoute: ActivatedRoute,
-        private paginationService: PaginationStorageService,
-        private editService: AdaptiveInstanceEditService,
-        private userAssignService: SentinelUserAssignService,
-    ) {
+    constructor() {
         this.defaultPaginationSize = this.paginationService.DEFAULT_PAGE_SIZE;
         this.trainingInstance$ = this.editService.trainingInstance$;
         this.hasStarted$ = this.editService.hasStarted$;

@@ -1,5 +1,5 @@
 import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {ResponseHeaderContentDispositionReader} from '@sentinel/common';
 import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
 import {
@@ -38,6 +38,9 @@ import {BlobFileSaver, DjangoResourceDTO, handleJsonError, PaginationMapper, Par
  */
 @Injectable()
 export class PoolDefaultApi extends PoolApi {
+    private http = inject(HttpClient);
+    private context = inject(SandboxApiConfigService);
+
     private readonly poolsUriExtension = 'pools';
     private readonly sandboxAllocationUnitsUriExtension = 'sandbox-allocation-units';
     private readonly locksUriExtension = 'locks';
@@ -47,10 +50,7 @@ export class PoolDefaultApi extends PoolApi {
 
     private readonly poolsEndpointUri:string;
 
-    constructor(
-        private http: HttpClient,
-        private context: SandboxApiConfigService,
-    ) {
+    constructor() {
         super();
         if (this.context.config === undefined || this.context.config === null) {
             throw new Error(

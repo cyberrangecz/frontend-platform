@@ -1,4 +1,4 @@
-import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
+import { Component, Input, OnChanges, OnInit, SimpleChanges, inject } from '@angular/core';
 import {SentinelStepper, SentinelStepperComponent} from '@sentinel/components/stepper';
 import {SentinelControlItem} from '@sentinel/components/controls';
 
@@ -33,6 +33,8 @@ import {NgIf} from "@angular/common";
     ]
 })
 export class QuestionsOverviewComponent implements OnInit, OnChanges {
+    dialog = inject(MatDialog);
+
     @Input() questions: AdaptiveQuestion[];
     @Input() questionnaireOrder: number;
     @Input() questionnaireType: QuestionnaireTypeEnum;
@@ -40,9 +42,6 @@ export class QuestionsOverviewComponent implements OnInit, OnChanges {
     stepperQuestions: SentinelStepper<AdaptiveQuestionStepperAdapter> = {items: []};
     controls: SentinelControlItem[];
     selectedStep: number;
-
-    constructor(public dialog: MatDialog) {
-    }
 
     ngOnInit(): void {
         this.selectedStep = 0;

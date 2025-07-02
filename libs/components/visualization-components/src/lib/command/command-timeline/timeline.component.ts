@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import {FormsModule, UntypedFormBuilder} from '@angular/forms';
 import {TimelineCommandService} from './timeline-command.service';
 import {BehaviorSubject, Observable} from 'rxjs';
@@ -38,6 +38,9 @@ import {provideComponentProperty} from '@crczp/common';
     ],
 })
 export class TimelineComponent implements OnInit {
+    private timelineCommandService = inject(TimelineCommandService);
+    fb = inject(UntypedFormBuilder);
+
     readonly SIZE = 50;
 
     @Input() apiConfig: VisualizationApiConfig;
@@ -56,11 +59,6 @@ export class TimelineComponent implements OnInit {
         new BehaviorSubject(null);
     selectedTrainingRun$: Observable<number> =
         this.selectedTrainingRunSubject$.asObservable();
-
-    constructor(
-        private timelineCommandService: TimelineCommandService,
-        public fb: UntypedFormBuilder
-    ) {}
 
     ngOnInit(): void {
         const initialPagination = new OffsetPaginationEvent(

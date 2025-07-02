@@ -1,5 +1,5 @@
 import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {fromEvent, Observable} from 'rxjs';
 import {AdaptiveDefinitionApiService} from './adaptive-definition-api.service';
 import {
@@ -41,6 +41,9 @@ import {TrainingDefinitionInfoDTO} from '../../dto/training-definition/training-
 
 @Injectable()
 export class AdaptiveDefinitionDefaultApiService extends AdaptiveDefinitionApiService {
+    private http = inject(HttpClient);
+    private context = inject(TrainingApiContext);
+
     readonly trainingDefinitionUriExtension = 'training-definitions';
     readonly phasesUriExtension = 'phases';
     readonly tasksUriExtension = 'tasks';
@@ -51,10 +54,7 @@ export class AdaptiveDefinitionDefaultApiService extends AdaptiveDefinitionApiSe
     readonly trainingExportEndpointUri: string;
     readonly trainingImportEndpointUri: string;
 
-    constructor(
-        private http: HttpClient,
-        private context: TrainingApiContext,
-    ) {
+    constructor() {
         super();
         this.adaptiveDefinitionsUri = this.context.config.adaptiveBasePath + this.trainingDefinitionUriExtension;
         this.trainingExportEndpointUri = this.context.config.adaptiveBasePath + this.exportsUriExtension;

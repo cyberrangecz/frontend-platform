@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {DetectionEventApi} from '@crczp/training-api';
 import {DetectionEventService} from './detection-event.service';
 import {Observable} from 'rxjs';
@@ -18,9 +18,8 @@ import {
  */
 @Injectable()
 export class DetectionEventConcreteService extends DetectionEventService {
-    constructor(private api: DetectionEventApi) {
-        super();
-    }
+    private api = inject(DetectionEventApi);
+
 
     /**
      * Gets all detection events with passed pagination and filter and updates related observables or handles an error

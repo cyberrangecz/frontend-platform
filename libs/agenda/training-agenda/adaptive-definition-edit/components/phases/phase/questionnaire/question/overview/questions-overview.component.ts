@@ -61,6 +61,8 @@ import {QuestionEditComponent} from "../detail/question-edit.component";
     ]
 })
 export class QuestionsOverviewComponent implements OnInit, OnChanges {
+    dialog = inject(MatDialog);
+
     @Input() questions: AdaptiveQuestion[];
     @Input() questionnaireOrder: number;
     @Input() questionnaireType: QuestionTypeEnum;
@@ -72,9 +74,6 @@ export class QuestionsOverviewComponent implements OnInit, OnChanges {
     questionsHasError: boolean;
     selectedStep: number;
     destroyRef = inject(DestroyRef);
-
-    constructor(public dialog: MatDialog) {
-    }
 
     ngOnInit(): void {
         this.selectedStep = 0;

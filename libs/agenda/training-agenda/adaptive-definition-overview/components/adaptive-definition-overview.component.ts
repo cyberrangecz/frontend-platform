@@ -36,6 +36,10 @@ import {AsyncPipe} from "@angular/common";
     ]
 })
 export class AdaptiveDefinitionOverviewComponent implements OnInit {
+    private paginationService = inject(PaginationStorageService);
+    private trainingDefinitionService = inject(AdaptiveDefinitionService);
+    private trainingNavigator = inject(TrainingNavigator);
+
     @Input() paginationId = 'adaptive-definition-overview';
     readonly INIT_SORT_NAME = 'lastEdited';
     readonly INIT_SORT_DIR = 'desc';
@@ -46,13 +50,6 @@ export class AdaptiveDefinitionOverviewComponent implements OnInit {
     topControls: SentinelControlItem[] = [];
     bottomControls: SentinelControlItem[] = [];
     destroyRef = inject(DestroyRef);
-
-    constructor(
-        private paginationService: PaginationStorageService,
-        private trainingDefinitionService: AdaptiveDefinitionService,
-        private trainingNavigator: TrainingNavigator,
-    ) {
-    }
 
     ngOnInit(): void {
         this.topControls = TrainingDefinitionOverviewControls.createTopControls(this.trainingDefinitionService);

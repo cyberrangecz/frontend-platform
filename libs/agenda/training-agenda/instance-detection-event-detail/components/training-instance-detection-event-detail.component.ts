@@ -36,6 +36,12 @@ import {PaginationStorageService} from "@crczp/common";
     styleUrls: ['./training-instance-detection-event-detail.component.css'],
 })
 export class TrainingInstanceDetectionEventDetailComponent implements OnInit {
+    private detectionEventService = inject(DetectionEventService);
+    private detectionEventParticipantService = inject(DetectionEventParticipantService);
+    private detectionEventForbiddenCommandsService = inject(DetectionEventForbiddenCommandsService);
+    private paginationService = inject(PaginationStorageService);
+    private activeRoute = inject(ActivatedRoute);
+
     @Input() event: AbstractDetectionEvent;
     @Input() paginationId = 'crczp-training-instance-detection-event-detail';
     readonly INIT_SORT_NAME = 'lastEdited';
@@ -60,15 +66,6 @@ export class TrainingInstanceDetectionEventDetailComponent implements OnInit {
     eventType: AbstractDetectionEventTypeEnum;
     eventTypeFormatted: string;
     destroyRef = inject(DestroyRef);
-
-    constructor(
-        private detectionEventService: DetectionEventService,
-        private detectionEventParticipantService: DetectionEventParticipantService,
-        private detectionEventForbiddenCommandsService: DetectionEventForbiddenCommandsService,
-        private paginationService: PaginationStorageService,
-        private activeRoute: ActivatedRoute,
-    ) {
-    }
 
     ngOnInit(): void {
         this.eventId = Number(this.activeRoute.snapshot.paramMap.get('eventId'));

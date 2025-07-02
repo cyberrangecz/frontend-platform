@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Input} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Input, inject } from '@angular/core';
 import * as d3 from 'd3';
 import {YAxisGridLinesComponent} from "./y-axis-grid-lines/y-axis-grid-lines.component";
 import {XAxisGridLinesComponent} from "./x-axis-grid-lines/x-axis-grid-lines.component";
@@ -14,6 +14,8 @@ import {XAxisGridLinesComponent} from "./x-axis-grid-lines/x-axis-grid-lines.com
     ]
 })
 export class ChartGridLinesComponent {
+    private ref = inject(ChangeDetectorRef);
+
     @Input() xScale!: d3.ScalePoint<number>;
     @Input() yScale!: d3.ScalePoint<number>;
 
@@ -22,10 +24,9 @@ export class ChartGridLinesComponent {
 
     private g: any;
 
-    constructor(
-        element: ElementRef,
-        private ref: ChangeDetectorRef,
-    ) {
+    constructor() {
+        const element = inject(ElementRef);
+
         this.g = d3.select(element.nativeElement);
     }
 }

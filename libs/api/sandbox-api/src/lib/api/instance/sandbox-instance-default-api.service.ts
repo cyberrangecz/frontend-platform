@@ -1,5 +1,5 @@
 import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {ResponseHeaderContentDispositionReader} from '@sentinel/common';
 import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
 import {Lock, SandboxInstance, SandboxKeyPair, Topology, VMConsole, VMInfo, VMStatus} from '@crczp/sandbox-model';
@@ -25,6 +25,9 @@ import {BlobFileSaver, DjangoResourceDTO, handleJsonError, PaginationMapper, Par
  */
 @Injectable()
 export class SandboxInstanceDefaultApi extends SandboxInstanceApi {
+    private http = inject(HttpClient);
+    private context = inject(SandboxApiConfigService);
+
     private readonly sandboxAllocationUnitsExtension = 'sandbox-allocation-units';
     private readonly sandboxInstancesUriExtension = 'sandboxes';
     private readonly poolsUriExtension = 'pools';
@@ -35,10 +38,7 @@ export class SandboxInstanceDefaultApi extends SandboxInstanceApi {
     private readonly sandboxEndpointUri: string;
     private readonly unitsEndpointUri: string;
 
-    constructor(
-        private http: HttpClient,
-        private context: SandboxApiConfigService,
-    ) {
+    constructor() {
         super();
         if (this.context.config === undefined || this.context.config === null) {
             throw new Error(

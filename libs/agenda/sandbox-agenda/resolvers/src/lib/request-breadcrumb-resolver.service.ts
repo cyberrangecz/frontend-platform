@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {ActivatedRouteSnapshot, Resolve, RouterStateSnapshot} from '@angular/router';
 import {Request} from '@crczp/sandbox-model';
 import {Observable} from 'rxjs';
@@ -11,7 +11,8 @@ import {RequestResolver} from './request-resolver.service';
  */
 @Injectable()
 export class RequestBreadcrumbResolver implements Resolve<string> {
-    constructor(private poolRequestResolver: RequestResolver) {}
+    private poolRequestResolver = inject(RequestResolver);
+
 
     /**
      * Retrieves a breadcrumb title based on provided url

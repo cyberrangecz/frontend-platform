@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnChanges, OnInit, Output, ViewChild} from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, ViewChild, inject } from '@angular/core';
 import {LineComponent} from './line/line.component';
 import {ConfigService} from '../../../config/config.service';
 import {TraineeModeInfo} from '../../../shared/interfaces/trainee-mode-info';
@@ -10,6 +10,8 @@ import {TraineeModeInfo} from '../../../shared/interfaces/trainee-mode-info';
     standalone: false
 })
 export class TimelineComponent implements OnChanges, OnInit {
+    private configService = inject(ConfigService);
+
     /**
      * Defines if all players should be displayed
      */
@@ -44,9 +46,6 @@ export class TimelineComponent implements OnChanges, OnInit {
     @Output() selectedTrainee: EventEmitter<number> = new EventEmitter();
 
     @ViewChild(LineComponent, {static: true}) lineComponent: LineComponent;
-
-    constructor(private configService: ConfigService) {
-    }
 
     ngOnInit(): void {
         if (this.traineeModeInfo) {

@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import {Router} from '@angular/router';
 import {
@@ -21,17 +21,18 @@ import {Settings} from '@crczp/common';
  */
 @Injectable()
 export class SandboxDefinitionOverviewConcreteService extends SandboxDefinitionOverviewService {
+    private api = inject(SandboxDefinitionApi);
+    private router = inject(Router);
+    private dialog = inject(MatDialog);
+    private alertService = inject(SandboxNotificationService);
+    private errorHandler = inject(SandboxErrorHandler);
+    private navigator = inject(SandboxNavigator);
+
     private lastPagination: OffsetPaginationEvent;
 
-    constructor(
-        private api: SandboxDefinitionApi,
-        private router: Router,
-        private dialog: MatDialog,
-        private alertService: SandboxNotificationService,
-        private errorHandler: SandboxErrorHandler,
-        private navigator: SandboxNavigator,
-        settings: Settings
-    ) {
+    constructor() {
+        const settings = inject(Settings);
+
         super(settings.DEFAULT_PAGE_SIZE);
     }
 

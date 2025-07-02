@@ -16,11 +16,10 @@ import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TrainingInstanceProgressComponent implements OnInit {
+    private activeRoute = inject(ActivatedRoute);
+
     @Input() trainingInstance$: Observable<TrainingInstance>;
     destroyRef = inject(DestroyRef);
-
-    constructor(private activeRoute: ActivatedRoute) {
-    }
 
     ngOnInit(): void {
         this.trainingInstance$ = this.activeRoute.data.pipe(

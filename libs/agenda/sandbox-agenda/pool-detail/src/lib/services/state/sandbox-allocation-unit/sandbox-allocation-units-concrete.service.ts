@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {SandboxAllocationUnitsService} from './sandbox-allocation-units.service';
 import {BehaviorSubject, combineLatestWith, EMPTY, Observable} from 'rxjs';
 import {OffsetPagination, OffsetPaginationEvent, PaginatedResource,} from '@sentinel/common/pagination';
@@ -18,19 +18,20 @@ import {Settings} from "@crczp/common";
 
 @Injectable()
 export class SandboxAllocationUnitsConcreteService extends SandboxAllocationUnitsService {
+    private poolApi = inject(PoolApi);
+    private sauApi = inject(SandboxAllocationUnitsApi);
+    private resourcePollingService = inject(ResourcePollingService);
+    private dialog = inject(MatDialog);
+    private notificationService = inject(SandboxNotificationService);
+    private errorHandler = inject(SandboxErrorHandler);
+
     private lastPoolId: number;
     private poolPollingPeriod: number;
     private retryAttempts: number;
 
-    constructor(
-        private poolApi: PoolApi,
-        private sauApi: SandboxAllocationUnitsApi,
-        private resourcePollingService: ResourcePollingService,
-        private dialog: MatDialog,
-        private notificationService: SandboxNotificationService,
-        private errorHandler: SandboxErrorHandler,
-        settings: Settings
-    ) {
+    constructor() {
+        const settings = inject(Settings);
+
         super();
         this.unitsSubject$ = new BehaviorSubject(this.initSubject(10));
         this.units$ = this.unitsSubject$.asObservable();

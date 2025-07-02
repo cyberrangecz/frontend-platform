@@ -1,5 +1,5 @@
 import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {ResponseHeaderContentDispositionReader} from '@sentinel/common';
 import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
 import {CheatingDetection} from '@crczp/training-model';
@@ -22,14 +22,14 @@ import {
  */
 @Injectable()
 export class CheatingDetectionDefaultApi extends CheatingDetectionApi {
+    private http = inject(HttpClient);
+    private context = inject(TrainingApiContext);
+
     readonly cheatingDetectionsUriExtension = 'cheating-detections';
 
     readonly cheatingDetectionsEndpointUri: string;
 
-    constructor(
-        private http: HttpClient,
-        private context: TrainingApiContext,
-    ) {
+    constructor() {
         super();
         this.cheatingDetectionsEndpointUri = this.context.config.trainingBasePath + this.cheatingDetectionsUriExtension;
     }

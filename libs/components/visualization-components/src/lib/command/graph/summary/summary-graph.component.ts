@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import {Graphviz, graphviz} from 'd3-graphviz';
 import {SummaryGraphService} from './summary-graph.service';
 import {tap} from 'rxjs/operators';
@@ -30,12 +30,12 @@ import {provideComponentProperty} from '@crczp/common';
     ],
 })
 export class SummaryGraphComponent implements OnInit {
+    private graphService = inject(SummaryGraphService);
+
     @Input() apiConfig: VisualizationApiConfig;
     @Input() trainingInstanceId: number;
     error = undefined;
     private graphviz: Graphviz<BaseType, any, BaseType, any>;
-
-    constructor(private graphService: SummaryGraphService) {}
 
     ngOnInit(): void {
         this.graphService

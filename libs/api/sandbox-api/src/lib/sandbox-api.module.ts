@@ -1,7 +1,7 @@
 import {VMImagesDefaultApi} from './api/vm-images/vm-images-default-api.service';
 import {ResourceDefaultApi} from './api/resources/resources-default-api.service';
 import {CommonModule} from '@angular/common';
-import {ModuleWithProviders, NgModule, Optional, SkipSelf} from '@angular/core';
+import { ModuleWithProviders, NgModule, inject } from '@angular/core';
 import {SandboxDefinitionApi} from './api/definition/sandbox-definition-api.service';
 import {SandboxDefinitionDefaultApi} from './api/definition/sandbox-definition-default-api.service';
 import {SandboxInstanceApi} from './api/instance/sandbox-instance-api.service';
@@ -37,7 +37,9 @@ import {VMImagesApi} from './api/vm-images/vm-images-api.service';
     ],
 })
 export class SandboxApiModule {
-    constructor(@Optional() @SkipSelf() parentModule: SandboxApiModule) {
+    constructor() {
+        const parentModule = inject(SandboxApiModule, { optional: true, skipSelf: true });
+
         if (parentModule) {
             throw new Error('SandboxApiModule is already loaded. Import it only once in single module hierarchy.');
         }

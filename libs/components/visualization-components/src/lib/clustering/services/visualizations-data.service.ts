@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {Observable} from 'rxjs';
 import {
     Clusterables,
@@ -11,6 +11,8 @@ import {ClusteringApi} from '@crczp/visualization-api';
 
 @Injectable()
 export class VisualizationsDataService {
+    private clusteringApi = inject(ClusteringApi);
+
     protected _selectedFeature: Clusterables;
 
     set selectedFeature(value: Clusterables) {
@@ -19,9 +21,6 @@ export class VisualizationsDataService {
 
     get selectedFeature(): Clusterables {
         return this._selectedFeature;
-    }
-
-    constructor(private clusteringApi: ClusteringApi) {
     }
 
     getData(

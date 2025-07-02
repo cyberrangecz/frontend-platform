@@ -1,16 +1,4 @@
-import {
-    ChangeDetectorRef,
-    Component,
-    ElementRef,
-    EventEmitter,
-    Input,
-    OnChanges,
-    OnDestroy,
-    OnInit,
-    Output,
-    SimpleChanges,
-    ViewChild,
-} from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, ViewChild, inject } from '@angular/core';
 import {ForceDirectedGraph} from '../../model/graph/force-directed-graph';
 import {D3Service} from '../../services/d3.service';
 import {Link, Node, NodePhysicalRoleEnum, RouterNode, SwitchNode,} from '@crczp/topology-graph-model';
@@ -30,6 +18,11 @@ import {GraphLockService} from '../../services/graph-lock.service';
     standalone: false
 })
 export class GraphVisualComponent implements OnInit, OnChanges, OnDestroy {
+    private d3Service = inject(D3Service);
+    private graphEventService = inject(GraphEventService);
+    private graphLockService = inject(GraphLockService);
+    private ref = inject(ChangeDetectorRef);
+
     @Input() nodes: Node[];
     @Input() links: Link[];
     @Input() width: number;
@@ -57,13 +50,6 @@ export class GraphVisualComponent implements OnInit, OnChanges, OnDestroy {
     private _graphEventSubscription: Subscription;
     private _graphLockSubscription: Subscription;
     private _d3ResizeSubscription: Subscription;
-
-    constructor(
-        private d3Service: D3Service,
-        private graphEventService: GraphEventService,
-        private graphLockService: GraphLockService,
-        private ref: ChangeDetectorRef
-    ) {}
 
     ngOnChanges(changes: SimpleChanges): void {
         if ('width' in changes || 'height' in changes || 'zoom' in changes) {

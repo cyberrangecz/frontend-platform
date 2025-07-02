@@ -1,4 +1,4 @@
-import {Component, Input, OnChanges} from '@angular/core';
+import { Component, Input, OnChanges, inject } from '@angular/core';
 import {Observable} from 'rxjs';
 import {Assessment} from '@crczp/visualization-model';
 import {AssessmentApi, VisualizationApiConfig,} from '@crczp/visualization-api';
@@ -46,6 +46,8 @@ import {provideComponentProperty} from '@crczp/common';
     ],
 })
 export class AssessmentResultsVisualizationComponent implements OnChanges {
+    private assessmentFacade = inject(AssessmentApi);
+
     @Input({ required: true }) apiConfig: VisualizationApiConfig;
     /**
      * Id of a training instance to be visualized
@@ -54,8 +56,6 @@ export class AssessmentResultsVisualizationComponent implements OnChanges {
     @Input() visualizationConfig: VisualizationApiConfig;
 
     assessments$: Observable<Assessment[]>;
-
-    constructor(private assessmentFacade: AssessmentApi) {}
 
     ngOnChanges(): void {
         if (this.trainingInstanceId) {

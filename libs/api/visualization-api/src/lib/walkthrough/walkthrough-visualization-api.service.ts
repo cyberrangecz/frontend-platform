@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {VisualizationDataMapper} from './mappers/visualization-data-mapper';
@@ -9,14 +9,14 @@ import {VisualizationApiConfig} from '../config/visualization-api-config';
 
 @Injectable()
 export class WalkthroughVisualizationApi {
+    private http = inject(HttpClient);
+    private config = inject(VisualizationApiConfig);
+
     private readonly visualizationUriExtension = 'visualizations/training-instances';
 
     private readonly visualizationEndpointUri: string;
 
-    constructor(
-        private http: HttpClient,
-        private config: VisualizationApiConfig,
-    ) {
+    constructor() {
         this.visualizationEndpointUri = this.config.trainingBasePath + this.visualizationUriExtension;
     }
 

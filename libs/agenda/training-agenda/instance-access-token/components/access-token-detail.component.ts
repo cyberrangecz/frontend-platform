@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {TrainingInstance} from '@crczp/training-model';
 import {async, Observable} from 'rxjs';
@@ -21,10 +21,12 @@ import {AsyncPipe, TitleCasePipe} from "@angular/common";
     ]
 })
 export class AccessTokenDetailComponent {
+    private activeRoute = inject(ActivatedRoute);
+
     trainingInstance$: Observable<TrainingInstance>;
     protected readonly async = async;
 
-    constructor(private activeRoute: ActivatedRoute) {
+    constructor() {
         this.trainingInstance$ = this.activeRoute.data.pipe(
             takeUntilDestroyed(),
             map((data) => data[TRAINING_INSTANCE_DATA_ATTRIBUTE_NAME]),

@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {Link, Node} from '@crczp/topology-graph-model';
 import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 import {BehaviorSubject, Observable, of, zip} from 'rxjs';
@@ -27,19 +27,17 @@ import {Settings} from '@crczp/common';
 
 @Injectable()
 export class TopologyApi {
+    private http = inject(HttpClient);
+    private topologySerializer = inject(TopologyMapper);
+    private loadingService = inject(TopologyLoadingService);
+    private errorService = inject(TopologyErrorService);
+    private settings = inject(Settings);
+
     private readonly GUAC_AUTH = 'GUAC_AUTH';
 
     private consolesSubject$: BehaviorSubject<ConsoleUrl[]> =
         new BehaviorSubject([]);
     consoles$: Observable<ConsoleUrl[]> = this.consolesSubject$.asObservable();
-
-    constructor(
-        private http: HttpClient,
-        private topologySerializer: TopologyMapper,
-        private loadingService: TopologyLoadingService,
-        private errorService: TopologyErrorService,
-        private settings: Settings
-    ) {}
 
     getTopologyBySandboxInstanceId(
         sandboxUuid: string

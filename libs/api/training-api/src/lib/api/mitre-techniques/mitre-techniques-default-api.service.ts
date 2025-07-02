@@ -1,5 +1,5 @@
 import {HttpClient, HttpParams} from '@angular/common/http';
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {MitreTechnique} from '@crczp/training-model';
 import {map, Observable} from 'rxjs';
 import {MitreTechniquesListDTO} from '../../dto/mitre-techniques/mitre-techniques-list-dto';
@@ -12,16 +12,16 @@ import {MitreTechniquesApi} from './mitre-techniques-api.service';
  */
 @Injectable()
 export class MitreTechniquesDefaultApi extends MitreTechniquesApi {
+    private http = inject(HttpClient);
+    private context = inject(TrainingApiContext);
+
     readonly mitreTechniquesUriExtension = 'mitre-matrix-visualisation';
     readonly mitreTechniquesListUriExtension = 'mitre-technqiue-index';
 
     readonly mitreTechniquesEndpointUri: string;
     readonly mitreTechniquesListEndpointUri: string;
 
-    constructor(
-        private http: HttpClient,
-        private context: TrainingApiContext,
-    ) {
+    constructor() {
         super();
         this.mitreTechniquesEndpointUri = this.context.config.mitreTechniqueBasePath + this.mitreTechniquesUriExtension;
         this.mitreTechniquesListEndpointUri =

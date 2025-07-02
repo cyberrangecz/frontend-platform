@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {ActivatedRouteSnapshot, Resolve, RouterStateSnapshot} from '@angular/router';
 import {SandboxDefinition} from '@crczp/sandbox-model';
 import {Observable} from 'rxjs';
@@ -11,7 +11,8 @@ import {SandboxDefinitionResolver} from './sandbox-definition-resolver.service';
  */
 @Injectable()
 export class SandboxDefinitionBreadcrumbResolver implements Resolve<string> {
-    constructor(private sandboxDefinitionResolver: SandboxDefinitionResolver) {}
+    private sandboxDefinitionResolver = inject(SandboxDefinitionResolver);
+
 
     /**
      * Retrieves a breadcrumb title based on provided url

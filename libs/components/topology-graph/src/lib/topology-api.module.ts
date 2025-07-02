@@ -1,4 +1,4 @@
-import {NgModule, Optional, SkipSelf,} from '@angular/core';
+import { NgModule, inject } from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {TopologyApi} from './services/topology-api.service';
 import {TopologyMapper} from './services/topology-mapper.service';
@@ -15,7 +15,9 @@ import {TopologyErrorService} from './services/topology-error.service';
     ],
 })
 export class TopologyApiModule {
-    constructor(@Optional() @SkipSelf() parentModule: TopologyApiModule) {
+    constructor() {
+        const parentModule = inject(TopologyApiModule, { optional: true, skipSelf: true });
+
         if (parentModule) {
             throw new Error(
                 'TopologyApiModule is already loaded. Import it only once in single module hierarchy.'

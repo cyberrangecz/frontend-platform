@@ -1,4 +1,4 @@
-import {Component, Input, OnChanges, OnInit, ViewEncapsulation} from '@angular/core';
+import { Component, Input, OnChanges, OnInit, ViewEncapsulation, inject } from '@angular/core';
 import {D3, D3Service} from '../../../common/d3-service/d3-service';
 import {ClusteringConfig, VIS_CONFIG} from '../../clustering-config';
 import {ClusteringVisualizationData, EuclideanDoublePoint} from '@crczp/visualization-model';
@@ -11,6 +11,8 @@ import {ClusteringRenderBaseConfig} from '../../clustering-render-base-config';
     encapsulation: ViewEncapsulation.None
 })
 export class RadarChartComponent implements OnChanges, OnInit {
+    private config = inject(ClusteringConfig);
+
     @Input() visualizationData: ClusteringVisualizationData;
     @Input() isStandalone: boolean;
     @Input() numOfClusters: number;
@@ -34,10 +36,10 @@ export class RadarChartComponent implements OnChanges, OnInit {
     private tooltip: any;
     private globalMin: number = Number.MAX_VALUE;
 
-    constructor(
-        d3Service: D3Service,
-        private config: ClusteringConfig
-    ) {
+    constructor() {
+        const d3Service = inject(D3Service);
+        const config = this.config;
+
         this.d3 = d3Service.getD3();
         this.radialScale = this.d3.scaleLinear()
             .domain(config.radialScaleDomain || VIS_CONFIG.radialScaleDomain)

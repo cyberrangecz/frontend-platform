@@ -1,4 +1,4 @@
-import {Component, Input, OnChanges, OnDestroy, OnInit} from '@angular/core';
+import { Component, Input, OnChanges, OnDestroy, OnInit, inject } from '@angular/core';
 import {Subscription} from 'rxjs';
 import {ConfigService} from '../../../config/config.service';
 import {TraineeModeInfo} from '../../../shared/interfaces/trainee-mode-info';
@@ -17,6 +17,11 @@ import {FiltersService} from '../../../services/filters.service';
     standalone: false
 })
 export class TableComponent implements OnInit, OnChanges, OnDestroy {
+    private tableService = inject(TableService);
+    private filtersService = inject(FiltersService);
+    private dataService = inject(TableDataService);
+    private configService = inject(ConfigService);
+
     /**
      * Training data
      */
@@ -52,12 +57,7 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
     public traineesTrainingRun: number;
     private playerColorScaleSource: Subscription;
 
-    constructor(
-        private tableService: TableService,
-        private filtersService: FiltersService,
-        private dataService: TableDataService,
-        private configService: ConfigService
-    ) {
+    constructor() {
         this.playerColorScaleSource = this.tableService.playerColorScale$.subscribe((scale) => {
             setTimeout(() => (this.playerColorScale = scale), 0);
         });

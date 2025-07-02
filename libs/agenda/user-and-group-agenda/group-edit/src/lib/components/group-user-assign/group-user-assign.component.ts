@@ -58,6 +58,9 @@ import {PaginationStorageService, providePaginationStorageService,} from '@crczp
     ],
 })
 export class GroupUserAssignComponent implements OnChanges {
+    private userAssignService = inject(UserAssignService);
+    private paginationService = inject(PaginationStorageService);
+
     readonly MEMBERS_OF_GROUP_INIT_SORT_NAME = 'familyName';
     readonly MEMBERS_OF_GROUP_INIT_SORT_DIR = 'asc';
     /**
@@ -106,10 +109,7 @@ export class GroupUserAssignComponent implements OnChanges {
     assignedUsersControls: SentinelControlItem[];
     destroyRef = inject(DestroyRef);
 
-    constructor(
-        private userAssignService: UserAssignService,
-        private paginationService: PaginationStorageService
-    ) {
+    constructor() {
         this.userMapping = {
             id: 'id',
             title: 'name',

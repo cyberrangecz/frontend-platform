@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {BehaviorSubject, merge, Observable, Subject, timer} from 'rxjs';
 import {HttpErrorResponse} from '@angular/common/http';
 import {retryWhen, shareReplay, switchMap, tap} from 'rxjs/operators';
@@ -11,6 +11,8 @@ import {
     providedIn: 'root',
 })
 export class AdaptiveTransitionVisualizationPollingService {
+    private visualizationApi = inject(AdaptiveTransitionVisualizationApi);
+
     private lastTrainingInstanceId!: number;
 
     /**
@@ -49,7 +51,7 @@ export class AdaptiveTransitionVisualizationPollingService {
 
     private pollPeriod: number;
 
-    constructor(private visualizationApi: AdaptiveTransitionVisualizationApi) {
+    constructor() {
         this.pollPeriod = 2000;
         this.visualizationData$ = merge(this.createPoll(), this.visualizationDataSubject$.asObservable());
     }

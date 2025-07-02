@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {Observable} from 'rxjs';
 import {OffsetPaginationEvent} from '@sentinel/common/pagination';
 import {switchMap} from 'rxjs/operators';
@@ -9,13 +9,15 @@ import {SandboxInstanceService} from '@crczp/sandbox-agenda/pool-detail';
 
 @Injectable()
 export class AbstractPoolConcreteService extends AbstractPoolService {
+    private poolOverviewService = inject(PoolOverviewService);
+    private sandboxInstanceService = inject(SandboxInstanceService);
+
     private lastPagination: OffsetPaginationEvent;
 
-    constructor(
-        private poolOverviewService: PoolOverviewService,
-        private sandboxInstanceService: SandboxInstanceService,
-    ) {
+    constructor() {
         super();
+        const poolOverviewService = this.poolOverviewService;
+
         this.pools$ = poolOverviewService.resource$;
         this.poolsHasError$ = poolOverviewService.hasError$;
     }

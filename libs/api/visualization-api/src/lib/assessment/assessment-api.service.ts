@@ -1,5 +1,5 @@
 import {HttpClient} from '@angular/common/http';
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {AssessmentMapper} from './mappers/assessment-mapper';
@@ -12,12 +12,12 @@ import {Assessment} from '@crczp/visualization-model';
  */
 @Injectable()
 export class AssessmentApi {
+    private http = inject(HttpClient);
+    private config = inject(VisualizationApiConfig);
+
     private readonly visualizationsEndpoint: string;
 
-    constructor(
-        private http: HttpClient,
-        private config: VisualizationApiConfig
-    ) {
+    constructor() {
         this.visualizationsEndpoint = `${this.config.trainingBasePath}/visualizations`;
     }
 

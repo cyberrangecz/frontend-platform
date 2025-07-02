@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {ActivatedRouteSnapshot, RouterStateSnapshot} from '@angular/router';
 import {EMPTY, Observable, of} from 'rxjs';
 import {User} from '@crczp/user-and-group-model';
@@ -8,8 +8,8 @@ import {USER_DETAIL_PATH, USER_SELECTOR} from "@crczp/user-and-group-agenda";
 
 @Injectable()
 export class UserBreadcrumbResolverService {
-    constructor(private userResolver: UserResolverService) {
-    }
+    private userResolver = inject(UserResolverService);
+
 
     /**
      * Retrieves a breadcrumb title based on provided url

@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, ElementRef, Input, OnInit} from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, Input, OnInit, inject } from '@angular/core';
 import * as d3 from 'd3';
 import {AbsolutePositionService} from '../../../../service/absolute-position.service';
 
@@ -9,6 +9,8 @@ import {AbsolutePositionService} from '../../../../service/absolute-position.ser
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PlayerEventComponent implements OnInit {
+    absolutePositionService = inject(AbsolutePositionService);
+
     @Input() xPosition!: number;
     @Input() yPosition!: number;
 
@@ -27,10 +29,9 @@ export class PlayerEventComponent implements OnInit {
     private circle: any;
     private text: any;
 
-    constructor(
-        element: ElementRef,
-        public absolutePositionService: AbsolutePositionService,
-    ) {
+    constructor() {
+        const element = inject(ElementRef);
+
         this.g = d3.select(element.nativeElement);
     }
 

@@ -1,11 +1,12 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {Observable} from 'rxjs';
 import {Graph} from '@crczp/visualization-model';
 import {ReferenceGraphApi} from '@crczp/visualization-api';
 
 @Injectable()
 export class ReferenceGraphService {
-    constructor(private referenceGraphApiService: ReferenceGraphApi) {}
+    private referenceGraphApiService = inject(ReferenceGraphApi);
+
 
     /**
      * Retrieves reference graph for organizer

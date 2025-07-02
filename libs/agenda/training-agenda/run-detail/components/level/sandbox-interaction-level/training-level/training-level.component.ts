@@ -42,6 +42,8 @@ import {
  * before he can continue to the next level. User can optionally take hints.
  */
 export class TrainingLevelComponent implements OnChanges {
+    protected trainingLevelService = inject(TrainingRunTrainingLevelService);
+
     @Input({required: true}) level: TrainingLevel;
     @Input() isLast: boolean;
     @Input() isLevelAnswered: boolean;
@@ -61,9 +63,6 @@ export class TrainingLevelComponent implements OnChanges {
     displayedSolutionContent$: Observable<string>;
     destroyRef = inject(DestroyRef);
     protected readonly of = of;
-
-    constructor(protected trainingLevelService: TrainingRunTrainingLevelService) {
-    }
 
     ngOnChanges(changes: SimpleChanges): void {
         if ('level' in changes) {

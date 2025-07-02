@@ -29,6 +29,9 @@ import {AsyncPipe, NgIf} from "@angular/common";
  * Optionally displays stepper with progress of the training and timer counting time from the start of a training.
  */
 export class TrainingRunDetailComponent implements OnInit, AfterViewInit {
+    private trainingRunService = inject(RunningTrainingRunService);
+    private auth = inject(SentinelAuthService);
+
     user$: Observable<SentinelUser>;
     activeLevel$: Observable<Level>;
     backtrackedLevel$: Observable<Level>;
@@ -45,12 +48,6 @@ export class TrainingRunDetailComponent implements OnInit, AfterViewInit {
     backwardMode: boolean;
     destroyRef = inject(DestroyRef);
     protected readonly async = async;
-
-    constructor(
-        private trainingRunService: RunningTrainingRunService,
-        private auth: SentinelAuthService,
-    ) {
-    }
 
     ngOnInit(): void {
         this.init();

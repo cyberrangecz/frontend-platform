@@ -1,4 +1,4 @@
-import {Component, EventEmitter, HostListener, Input, OnChanges, OnInit, Output, SimpleChanges,} from '@angular/core';
+import { Component, EventEmitter, HostListener, Input, OnChanges, OnInit, Output, SimpleChanges, inject } from '@angular/core';
 import {ContextMenuService} from '../../services/context-menu.service';
 import {Clipboard} from '@angular/cdk/clipboard';
 import {HostNode, RouterNode} from '@crczp/topology-graph-model';
@@ -17,6 +17,10 @@ import {Settings} from '@crczp/common';
     standalone: false,
 })
 export class NodeContextMenuComponent implements OnInit, OnChanges {
+    private contextMenuService = inject(ContextMenuService);
+    private settings = inject(Settings);
+    private clipboard = inject(Clipboard);
+
     MENU_ROW_HEIGHT = 20;
     MENU_ROW_WIDTH = 240;
 
@@ -33,12 +37,6 @@ export class NodeContextMenuComponent implements OnInit, OnChanges {
     consoleButtonDisplayed = false;
     protected readonly take = take;
     private menuLocation: { left: number; top: number } = { left: 0, top: 0 };
-
-    constructor(
-        private contextMenuService: ContextMenuService,
-        private settings: Settings,
-        private clipboard: Clipboard
-    ) {}
 
     /**
      * Location parameters of mouse right click

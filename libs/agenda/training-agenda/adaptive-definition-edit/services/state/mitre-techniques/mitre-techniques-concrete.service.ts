@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {Observable} from 'rxjs';
 import {tap} from 'rxjs/operators';
 import {MitreTechniquesApi} from '@crczp/training-api';
@@ -8,12 +8,9 @@ import {MitreTechniquesService} from './mitre-techniques.service';
 
 @Injectable()
 export class MitreTechniquesConcreteService extends MitreTechniquesService {
-    constructor(
-        private api: MitreTechniquesApi,
-        private errorHandler: TrainingErrorHandler,
-    ) {
-        super();
-    }
+    private api = inject(MitreTechniquesApi);
+    private errorHandler = inject(TrainingErrorHandler);
+
 
     getAll(): Observable<MitreTechnique[]> {
         return this.api.getMitreTechniquesList().pipe(

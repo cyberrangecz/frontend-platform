@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {ActivatedRouteSnapshot, Resolve, Router, RouterStateSnapshot} from '@angular/router';
 import {PoolApi} from '@crczp/sandbox-api';
 import {Pool} from '@crczp/sandbox-model';
@@ -17,12 +17,11 @@ import {
  */
 @Injectable()
 export class PoolResolver implements Resolve<Pool> {
-    constructor(
-        private api: PoolApi,
-        private errorHandler: SandboxErrorHandler,
-        private navigator: SandboxNavigator,
-        private router: Router,
-    ) {}
+    private api = inject(PoolApi);
+    private errorHandler = inject(SandboxErrorHandler);
+    private navigator = inject(SandboxNavigator);
+    private router = inject(Router);
+
 
     private poolSubject$: BehaviorSubject<Pool> = new BehaviorSubject(null);
     pool$: Observable<Pool> = this.poolSubject$.asObservable();

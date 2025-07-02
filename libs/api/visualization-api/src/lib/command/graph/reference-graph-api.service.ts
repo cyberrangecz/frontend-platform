@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
@@ -8,12 +8,12 @@ import {Graph} from '@crczp/visualization-model';
 
 @Injectable()
 export class ReferenceGraphApi {
+    private http = inject(HttpClient);
+    private config = inject(VisualizationApiConfig);
+
     private readonly graphEndpoint: string;
 
-    constructor(
-        private http: HttpClient,
-        private config: VisualizationApiConfig,
-    ) {
+    constructor() {
         this.graphEndpoint = `${this.config.trainingBasePath}/visualizations/graphs`;
     }
 

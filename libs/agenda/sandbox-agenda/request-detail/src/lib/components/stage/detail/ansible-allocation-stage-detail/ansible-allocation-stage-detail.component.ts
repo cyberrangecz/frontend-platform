@@ -20,6 +20,8 @@ import {AsyncPipe} from "@angular/common";
     ]
 })
 export class AnsibleAllocationStageDetailComponent implements OnChanges {
+    private outputsService = inject(AnsibleOutputsService);
+
     readonly PAGE_SIZE = Number.MAX_SAFE_INTEGER;
 
     @Input() stage: AnsibleStageAdapter;
@@ -30,9 +32,6 @@ export class AnsibleAllocationStageDetailComponent implements OnChanges {
     hasOutputs$: Observable<boolean>;
     destroyRef = inject(DestroyRef);
     protected readonly async = async;
-
-    constructor(private outputsService: AnsibleOutputsService) {
-    }
 
     ngOnChanges(changes: SimpleChanges): void {
         if (this.stage && 'stage' in changes && changes['stage'].isFirstChange()) {

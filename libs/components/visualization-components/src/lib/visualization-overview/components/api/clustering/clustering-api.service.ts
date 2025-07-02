@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {Observable} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 import {ConfigService} from '../../../config/config.service';
@@ -6,14 +6,14 @@ import {ClusteringVisualizationResourceDTO} from '../dto/clustering/clustering-v
 
 @Injectable()
 export class ClusteringApiService {
+    private http = inject(HttpClient);
+    private configService = inject(ConfigService);
+
     private readonly trainingVisualizationEndpoint: string;
 
     private readonly anonymizedTrainingVisualizationEndpoint: string;
 
-    constructor(
-        private http: HttpClient,
-        private configService: ConfigService
-    ) {
+    constructor() {
         this.trainingVisualizationEndpoint =
             this.configService.config.trainingServiceUrl + 'visualizations/training-instances';
 

@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {VisualizationOverviewConfig} from './trainings-visualizations-overview-lib';
 
 @Injectable()
@@ -36,7 +36,9 @@ export class ConfigService {
         return this._config;
     }
 
-    constructor(config: VisualizationOverviewConfig) {
+    constructor() {
+        const config = inject(VisualizationOverviewConfig);
+
         this._config = config;
     }
 }

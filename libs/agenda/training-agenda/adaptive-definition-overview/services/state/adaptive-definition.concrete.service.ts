@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import {Router} from '@angular/router';
 import {
@@ -27,19 +27,20 @@ import {Settings} from '@crczp/common';
  */
 @Injectable()
 export class AdaptiveDefinitionConcreteService extends AdaptiveDefinitionService {
+    private api = inject(AdaptiveDefinitionApiService);
+    private dialog = inject(MatDialog);
+    private router = inject(Router);
+    private navigator = inject(TrainingNavigator);
+    private notificationService = inject(TrainingNotificationService);
+    private fileUploadProgressService = inject(AdaptiveFileUploadProgressService);
+    private errorHandler = inject(TrainingErrorHandler);
+
     private lastPagination: OffsetPaginationEvent;
     private lastFilters: string;
 
-    constructor(
-        private api: AdaptiveDefinitionApiService,
-        private dialog: MatDialog,
-        private router: Router,
-        private navigator: TrainingNavigator,
-        private notificationService: TrainingNotificationService,
-        private fileUploadProgressService: AdaptiveFileUploadProgressService,
-        private errorHandler: TrainingErrorHandler,
-        settings: Settings
-    ) {
+    constructor() {
+        const settings = inject(Settings);
+
         super(settings.DEFAULT_PAGE_SIZE);
     }
 

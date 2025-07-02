@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {TrainingRunApi} from '@crczp/training-api';
 import {Question} from '@crczp/training-model';
 import {Observable} from 'rxjs';
@@ -12,13 +12,10 @@ import {TrainingRunAssessmentLevelService} from './training-run-assessment-level
  */
 @Injectable()
 export class TrainingRunAssessmentLevelConcreteService extends TrainingRunAssessmentLevelService {
-    constructor(
-        private api: TrainingRunApi,
-        private errorHandler: TrainingErrorHandler,
-        private runningTrainingRunService: RunningTrainingRunService,
-    ) {
-        super();
-    }
+    private api = inject(TrainingRunApi);
+    private errorHandler = inject(TrainingErrorHandler);
+    private runningTrainingRunService = inject(RunningTrainingRunService);
+
 
     /**
      * Submit answers entered by trainee

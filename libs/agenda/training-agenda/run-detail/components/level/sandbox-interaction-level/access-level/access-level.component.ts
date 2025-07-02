@@ -36,6 +36,8 @@ import {GenericSandboxLevelComponent} from "../generic-sandbox-level/generic-san
  * Component to display training run's level of type ACCESS. Only displays markdown and allows user to continue immediately.
  */
 export class AccessLevelComponent implements OnChanges {
+    protected accessLevelService = inject(TrainingRunAccessLevelService);
+
     @Input({required: true}) level: AccessLevel;
     @Input() isLast: boolean;
     @Input() isLevelAnswered: boolean;
@@ -52,9 +54,6 @@ export class AccessLevelComponent implements OnChanges {
     isLoading$: Observable<boolean>;
     destroyRef = inject(DestroyRef);
     protected readonly of = of;
-
-    constructor(protected accessLevelService: TrainingRunAccessLevelService) {
-    }
 
     ngOnChanges(changes: SimpleChanges): void {
         if ('level' in changes) {

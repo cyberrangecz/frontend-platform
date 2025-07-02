@@ -30,6 +30,10 @@ import {AccessTrainingRunComponent} from "./access/access-training-run.component
     ]
 })
 export class TrainingRunOverviewComponent implements OnInit {
+    private trainingRunOverviewService = inject(AccessedTrainingRunService);
+    private accessedAdaptiveRunService = inject(AccessedAdaptiveRunService);
+    private settings = inject(Settings);
+
     trainingRuns$: Observable<SentinelTable<AccessedTrainingRun>>;
     hasError$: Observable<boolean>;
     isLoading = false;
@@ -37,11 +41,9 @@ export class TrainingRunOverviewComponent implements OnInit {
     destroyRef = inject(DestroyRef);
     protected readonly async = async;
 
-    constructor(
-        private trainingRunOverviewService: AccessedTrainingRunService,
-        private accessedAdaptiveRunService: AccessedAdaptiveRunService,
-        private settings: Settings,
-    ) {
+    constructor() {
+        const trainingRunOverviewService = this.trainingRunOverviewService;
+
         this.controls = AccessedTrainingRunControls.create(trainingRunOverviewService);
     }
 

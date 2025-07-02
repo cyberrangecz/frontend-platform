@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, ElementRef, Input, OnInit} from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, Input, OnInit, inject } from '@angular/core';
 import * as d3 from 'd3';
 import {AbsolutePositionService} from '../../../service/absolute-position.service';
 import {WalkthroughUserData} from '@crczp/visualization-model';
@@ -10,14 +10,15 @@ import {WalkthroughUserData} from '@crczp/visualization-model';
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SuccessAxisComponent implements OnInit {
+    private absolutePositionService = inject(AbsolutePositionService);
+
     private g: any;
 
     @Input() userData!: WalkthroughUserData[];
 
-    constructor(
-        element: ElementRef,
-        private absolutePositionService: AbsolutePositionService,
-    ) {
+    constructor() {
+        const element = inject(ElementRef);
+
         this.g = d3.select(element.nativeElement);
     }
 

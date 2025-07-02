@@ -64,6 +64,13 @@ import {AsyncPipe, NgIf} from "@angular/common";
     ]
 })
 export class TrainingDefinitionEditOverviewComponent implements OnInit {
+    private activeRoute = inject(ActivatedRoute);
+    private paginationService = inject(PaginationStorageService);
+    private editService = inject(TrainingDefinitionEditService);
+    private levelEditService = inject(LevelEditService);
+    private mitreTechniquesService = inject(MitreTechniquesService);
+    private authorsAssignService = inject(SentinelUserAssignService);
+
     trainingDefinition$: Observable<TrainingDefinition>;
     editMode$: Observable<boolean>;
     tdTitle$: Observable<string>;
@@ -80,14 +87,9 @@ export class TrainingDefinitionEditOverviewComponent implements OnInit {
     destroyRef = inject(DestroyRef);
     protected readonly async = async;
 
-    constructor(
-        private activeRoute: ActivatedRoute,
-        private paginationService: PaginationStorageService,
-        private editService: TrainingDefinitionEditService,
-        private levelEditService: LevelEditService,
-        private mitreTechniquesService: MitreTechniquesService,
-        private authorsAssignService: SentinelUserAssignService,
-    ) {
+    constructor() {
+        const levelEditService = this.levelEditService;
+
         this.defaultPaginationSize = this.paginationService.DEFAULT_PAGE_SIZE;
         this.trainingDefinition$ = this.editService.trainingDefinition$;
         this.tdTitle$ = this.editService.trainingDefinition$.pipe(map((td) => td.title));

@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import {Router} from '@angular/router';
 import {PoolApi} from '@crczp/sandbox-api';
@@ -14,16 +14,13 @@ import {PoolChangedEvent} from '../model/pool-changed-event';
 
 @Injectable()
 export class PoolEditConcreteService extends PoolEditService {
-    constructor(
-        private router: Router,
-        private dialog: MatDialog,
-        private navigator: SandboxNavigator,
-        private notificationService: SandboxNotificationService,
-        private errorHandler: SandboxErrorHandler,
-        private api: PoolApi,
-    ) {
-        super();
-    }
+    private router = inject(Router);
+    private dialog = inject(MatDialog);
+    private navigator = inject(SandboxNavigator);
+    private notificationService = inject(SandboxNotificationService);
+    private errorHandler = inject(SandboxErrorHandler);
+    private api = inject(PoolApi);
+
 
     private editModeSubject$: BehaviorSubject<boolean> = new BehaviorSubject(false);
     private requestsCountSubject$: BehaviorSubject<number> = new BehaviorSubject(0);

@@ -1,5 +1,5 @@
 import {HttpClient, HttpParams} from '@angular/common/http';
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {SentinelParamsMerger} from '@sentinel/common';
 import {SentinelFilter} from '@sentinel/common/filter';
 import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
@@ -16,16 +16,16 @@ import {JavaPaginatedResource, PaginationMapper, ParamsBuilder} from '@crczp/api
 
 @Injectable()
 export class VisualizationDefaultApi extends VisualizationApi {
+    private http = inject(HttpClient);
+    private context = inject(TrainingApiContext);
+
     readonly visualizationsUriExtension = 'visualizations';
     readonly trainingInstanceUrlExtension = 'training-instances';
     readonly trainingRunUrlExtension = 'training-runs';
 
     readonly visualizationsEndpointUri: string;
 
-    constructor(
-        private http: HttpClient,
-        private context: TrainingApiContext,
-    ) {
+    constructor() {
         super();
         this.visualizationsEndpointUri = this.context.config.trainingBasePath + this.visualizationsUriExtension;
     }

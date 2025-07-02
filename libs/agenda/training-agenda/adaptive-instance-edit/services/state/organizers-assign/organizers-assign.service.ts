@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {OffsetPagination, OffsetPaginationEvent, PaginatedResource,} from '@sentinel/common/pagination';
 import {UserApi} from '@crczp/training-api';
 import {Organizer} from '@crczp/training-model';
@@ -15,6 +15,10 @@ import {Settings} from "@crczp/common";
  */
 @Injectable()
 export class OrganizersAssignService extends SentinelUserAssignService {
+    private userApi = inject(UserApi);
+    private errorHandler = inject(TrainingErrorHandler);
+    private settings = inject(Settings);
+
     private lastAssignedPagination: OffsetPaginationEvent;
     private lastAssignedFilter: string;
     private assignedUsersSubject: BehaviorSubject<
@@ -25,14 +29,6 @@ export class OrganizersAssignService extends SentinelUserAssignService {
      */
     assignedUsers$: Observable<PaginatedResource<Organizer>> =
         this.assignedUsersSubject.asObservable();
-
-    constructor(
-        private userApi: UserApi,
-        private errorHandler: TrainingErrorHandler,
-        private settings: Settings
-    ) {
-        super();
-    }
 
     /***
      * Assigns organizer to a resource (creates association)

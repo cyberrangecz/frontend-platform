@@ -1,5 +1,5 @@
 import {HttpClient, HttpParams} from '@angular/common/http';
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {SentinelParamsMerger} from '@sentinel/common';
 import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
 import {Observable} from 'rxjs';
@@ -62,14 +62,14 @@ import {DetectionEventParticipantDTO} from '../../dto/detection-event/detection-
 
 @Injectable()
 export class DetectionEventDefaultApi extends DetectionEventApi {
+    private http = inject(HttpClient);
+    private context = inject(TrainingApiContext);
+
     readonly detectionEventsUriExtension = 'cheating-detections';
 
     readonly detectionEventsEndpointUri: string;
 
-    constructor(
-        private http: HttpClient,
-        private context: TrainingApiContext,
-    ) {
+    constructor() {
         super();
         this.detectionEventsEndpointUri = this.context.config.trainingBasePath + this.detectionEventsUriExtension;
     }

@@ -1,14 +1,4 @@
-import {
-    ChangeDetectionStrategy,
-    Component,
-    EventEmitter,
-    HostListener,
-    Input,
-    OnChanges,
-    OnInit,
-    Output,
-    SimpleChanges
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, HostListener, Input, OnChanges, OnInit, Output, SimpleChanges, inject } from '@angular/core';
 import * as d3 from 'd3';
 import {
     IStatisticsFilter,
@@ -40,6 +30,11 @@ import {MatRadioModule} from '@angular/material/radio';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ScatterplotComponent implements OnInit, OnChanges {
+    private axesCreationService = inject(AxesCreationService);
+    private tooltipCreationService = inject(TooltipCreationService);
+    private svgConfigurationService = inject(SvgConfigurationService);
+    private legendCreationService = inject(LegendCreationService);
+
     @Input() trainingInstanceStatistics: TrainingInstanceStatistics[];
 
     @Input() highlightedParticipants: number[];
@@ -79,14 +74,6 @@ export class ScatterplotComponent implements OnInit, OnChanges {
     private componentHeight: string[] = ['28vw', '50vw'];
     private circleColors: string[] = ['#46d246', '#adebad', '#d9d9d9', '#999999'];
     private tooltipColors: string[] = ['#000000', '#ffffff'];
-
-    constructor(
-        private axesCreationService: AxesCreationService,
-        private tooltipCreationService: TooltipCreationService,
-        private svgConfigurationService: SvgConfigurationService,
-        private legendCreationService: LegendCreationService
-    ) {
-    }
 
     @HostListener('window:resize') onResizeEvent() {
         this.onResize();

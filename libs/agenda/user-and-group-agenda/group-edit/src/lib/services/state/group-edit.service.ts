@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {Router} from '@angular/router';
 import {GroupApi} from '@crczp/user-and-group-api';
 import {Group} from '@crczp/user-and-group-model';
@@ -20,6 +20,12 @@ import {GroupChangedEvent} from '../../model/group-changed-event';
 
 @Injectable()
 export class GroupEditService {
+    private api = inject(GroupApi);
+    private notificationService = inject(UserAndGroupNotificationService);
+    private router = inject(Router);
+    private navigator = inject(UserAndGroupNavigator);
+    private errorHandler = inject(UserAndGroupErrorHandler);
+
     private editModeSubject$: BehaviorSubject<boolean> = new BehaviorSubject(false);
     /**
      * True if existing group-overview is edited, false if new one is created
@@ -36,15 +42,6 @@ export class GroupEditService {
      */
     saveDisabled$: Observable<boolean> = this.saveDisabledSubject$.asObservable();
     private editedGroup: Group;
-
-    constructor(
-        private api: GroupApi,
-        private notificationService: UserAndGroupNotificationService,
-        private router: Router,
-        private navigator: UserAndGroupNavigator,
-        private errorHandler: UserAndGroupErrorHandler
-    ) {
-    }
 
     /**
      * Sets group-overview to state

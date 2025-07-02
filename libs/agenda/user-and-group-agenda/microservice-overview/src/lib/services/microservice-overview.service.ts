@@ -1,5 +1,5 @@
 import {MicroserviceFilter, SelectablePaginatedService,} from '@crczp/user-and-group-agenda/internal';
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {OffsetPaginationEvent, PaginatedResource,} from '@sentinel/common/pagination';
 import {MicroserviceApi} from '@crczp/user-and-group-api';
 import {Router} from '@angular/router';
@@ -11,13 +11,14 @@ import {Settings} from '@crczp/common';
 
 @Injectable()
 export class MicroserviceOverviewService extends SelectablePaginatedService<Microservice> {
-    constructor(
-        private api: MicroserviceApi,
-        private router: Router,
-        private navigator: UserAndGroupNavigator,
-        private errorHandler: UserAndGroupErrorHandler,
-        settings: Settings
-    ) {
+    private api = inject(MicroserviceApi);
+    private router = inject(Router);
+    private navigator = inject(UserAndGroupNavigator);
+    private errorHandler = inject(UserAndGroupErrorHandler);
+
+    constructor() {
+        const settings = inject(Settings);
+
         super(settings.DEFAULT_PAGE_SIZE);
     }
 

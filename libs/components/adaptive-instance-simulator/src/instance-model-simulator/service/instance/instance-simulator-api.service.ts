@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {map, Observable} from 'rxjs';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {InstanceSimulatorMapper} from '../mapper/instance-simulator-mapper';
@@ -12,10 +12,10 @@ import {Settings} from '@crczp/common';
 
 @Injectable()
 export class InstanceSimulatorApiService {
-    private readonly FILE_NAME = 'instance-data.zip';
+    private http = inject(HttpClient);
+    private settings = inject(Settings);
 
-    constructor(private http: HttpClient, private settings: Settings) {
-    }
+    private readonly FILE_NAME = 'instance-data.zip';
 
     /**
      * Sends https request to upload exported training instance data from already finished training instance.

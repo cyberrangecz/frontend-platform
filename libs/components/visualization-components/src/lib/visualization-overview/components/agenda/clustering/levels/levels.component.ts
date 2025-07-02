@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, inject } from '@angular/core';
 import {
     AXES_CONFIG,
     BARS_CONFIG,
@@ -27,6 +27,8 @@ import {ContainerElement, ScaleBand, ScaleLinear} from 'd3';
     standalone: false
 })
 export class LevelsComponent implements OnInit, OnChanges {
+    private dataService = inject(ClusteringService);
+
     /**
      * Training data
      */
@@ -78,10 +80,9 @@ export class LevelsComponent implements OnInit, OnChanges {
     private playerClicked = false; // If no player is selected, hover out of player will cancel the highlight
     private traineesTrainingRunId: number;
 
-    constructor(
-        d3: D3Service,
-        private dataService: ClusteringService
-    ) {
+    constructor() {
+        const d3 = inject(D3Service);
+
         this.d3 = d3.getD3();
     }
 

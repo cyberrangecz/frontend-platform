@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnChanges, OnInit, Output} from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, inject } from '@angular/core';
 import {Observable} from 'rxjs';
 import {Components} from './components/components-enum';
 import {Clusterables, ClusteringVisualizationData} from '@crczp/visualization-model';
@@ -20,6 +20,8 @@ import {CommonModule} from '@angular/common';
     ]
 })
 export class ClusteringVisualizationsComponent implements OnInit, OnChanges {
+    private visualizationDataService = inject(VisualizationsDataService);
+
     @Input() level: number;
     @Input() trainingDefinitionId: number;
     @Input() trainingInstanceIds: number[];
@@ -37,8 +39,6 @@ export class ClusteringVisualizationsComponent implements OnInit, OnChanges {
     lineData$: Observable<ClusteringVisualizationData>;
     visualizationData$: Observable<ClusteringVisualizationData>;
     radarChartData$: Observable<ClusteringVisualizationData>;
-
-    constructor(private visualizationDataService: VisualizationsDataService) {}
 
     ngOnInit() {
         this.loadData();

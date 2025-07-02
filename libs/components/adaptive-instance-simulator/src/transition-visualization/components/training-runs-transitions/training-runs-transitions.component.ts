@@ -1,12 +1,4 @@
-import {
-    ChangeDetectionStrategy,
-    ChangeDetectorRef,
-    Component,
-    ElementRef,
-    EventEmitter,
-    Input,
-    Output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, Output, inject } from '@angular/core';
 import * as d3 from 'd3';
 import {AdaptiveRunVisualization, RunVisualizationPathNode} from "@crczp/visualization-model";
 
@@ -17,6 +9,8 @@ import {AdaptiveRunVisualization, RunVisualizationPathNode} from "@crczp/visuali
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PlayersTransitionsComponent {
+    private ref = inject(ChangeDetectorRef);
+
     @Input() playersTransitions!: AdaptiveRunVisualization[];
 
     @Input() xScale!: d3.ScalePoint<number>;
@@ -27,10 +21,9 @@ export class PlayersTransitionsComponent {
 
     private g: any;
 
-    constructor(
-        element: ElementRef,
-        private ref: ChangeDetectorRef,
-    ) {
+    constructor() {
+        const element = inject(ElementRef);
+
         this.g = d3.select(element.nativeElement);
     }
 

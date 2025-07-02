@@ -1,5 +1,5 @@
 import {HttpErrorResponse} from '@angular/common/http';
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {CleanupRequestsApi} from '@crczp/sandbox-api';
 import {Request, RequestStage} from '@crczp/sandbox-model';
@@ -13,15 +13,16 @@ import {Settings} from "@crczp/common";
 
 @Injectable()
 export class CleanupStagesConcreteService extends RequestStagesService {
-    constructor(
-        private api: CleanupRequestsApi,
-        private router: Router,
-        private route: ActivatedRoute,
-        private navigator: SandboxNavigator,
-        private notificationService: SandboxNotificationService,
-        private errorHandler: SandboxErrorHandler,
-        settings: Settings
-    ) {
+    private api = inject(CleanupRequestsApi);
+    private router = inject(Router);
+    private route = inject(ActivatedRoute);
+    private navigator = inject(SandboxNavigator);
+    private notificationService = inject(SandboxNotificationService);
+    private errorHandler = inject(SandboxErrorHandler);
+
+    constructor() {
+        const settings = inject(Settings);
+
         super(settings.POLLING_PERIOD_SHORT)
     }
 

@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {ActivatedRouteSnapshot, Router, RouterStateSnapshot} from '@angular/router';
 import {TrainingInstance} from '@crczp/training-model';
 import {EMPTY, Observable, of} from 'rxjs';
@@ -17,13 +17,11 @@ import {AdaptiveInstanceApi} from '@crczp/training-api';
  */
 @Injectable()
 export class AdaptiveInstanceResolver {
-    constructor(
-        private api: AdaptiveInstanceApi,
-        private errorHandler: TrainingErrorHandler,
-        private navigator: TrainingNavigator,
-        private router: Router,
-    ) {
-    }
+    private api = inject(AdaptiveInstanceApi);
+    private errorHandler = inject(TrainingErrorHandler);
+    private navigator = inject(TrainingNavigator);
+    private router = inject(Router);
+
 
     /**
      * Retrieves a specific resource based on id provided in url. Navigates to a resource overview if no resource with such id exists.

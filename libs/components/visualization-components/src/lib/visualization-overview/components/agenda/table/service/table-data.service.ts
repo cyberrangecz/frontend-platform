@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {TableApiService} from '../../../api/table/table-api.service';
 import {TraineeModeInfo} from '../../../../shared/interfaces/trainee-mode-info';
 import {Observable, throwError} from 'rxjs';
@@ -8,8 +8,8 @@ import {TableMapper} from '../../../api/mappers/table/table-mapper';
 
 @Injectable()
 export class TableDataService {
-    constructor(private tableApiService: TableApiService) {
-    }
+    private tableApiService = inject(TableApiService);
+
 
     getAllData(traineeModeInfo: TraineeModeInfo): Observable<TableData> {
         const service = TraineeModeInfo.isTrainee(traineeModeInfo)

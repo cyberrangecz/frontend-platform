@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {async, Observable} from 'rxjs';
 import {map, take} from 'rxjs/operators';
@@ -17,16 +17,13 @@ import {MitreTechniquesOverviewService} from '../service/mitre-techniques.servic
  * Component displaying visualization of adaptive run results
  */
 export class AdaptiveRunResultsComponent implements OnInit {
+    private activatedRoute = inject(ActivatedRoute);
+    private service = inject(MitreTechniquesOverviewService);
+
     vizSize: { width: number; height: number };
 
     trainingRun$: Observable<any>;
     controls: SentinelControlItem[] = [];
-
-    constructor(
-        private activatedRoute: ActivatedRoute,
-        private service: MitreTechniquesOverviewService,
-    ) {
-    }
 
     /**
      * Resolves controls action and calls appropriate handler

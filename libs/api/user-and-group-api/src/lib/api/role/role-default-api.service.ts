@@ -1,5 +1,5 @@
 import {HttpClient, HttpParams} from '@angular/common/http';
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {SentinelParamsMerger} from '@sentinel/common';
 import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
 import {SentinelFilter} from '@sentinel/common/filter';
@@ -20,13 +20,13 @@ import {JavaPaginatedResource, ParamsBuilder} from '@crczp/api-common';
  */
 @Injectable()
 export class RoleDefaultApi extends RoleApi {
+    private http = inject(HttpClient);
+    private context = inject(UserAndGroupContext);
+
     private readonly config: UserAndGroupApiConfig;
     private readonly rolesPathExtension = 'roles';
 
-    constructor(
-        private http: HttpClient,
-        private context: UserAndGroupContext,
-    ) {
+    constructor() {
         super();
         this.config = this.context.config;
     }
