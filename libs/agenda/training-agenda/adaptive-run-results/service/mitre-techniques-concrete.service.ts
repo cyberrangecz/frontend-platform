@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import {inject, Injectable} from '@angular/core';
 import {from, Observable} from 'rxjs';
 import {TrainingNavigator} from '@crczp/training-agenda';
 import {MitreTechniquesOverviewService} from './mitre-techniques.service';

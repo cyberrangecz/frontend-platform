@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import {inject, Injectable} from '@angular/core';
 import {SentinelFilter} from '@sentinel/common/filter';
 import {OffsetPaginationEvent, PaginatedResource,} from '@sentinel/common/pagination';
 import {AdaptiveDefinitionApiService} from '@crczp/training-api';
@@ -7,7 +7,7 @@ import {Observable} from 'rxjs';
 import {tap} from 'rxjs/operators';
 import {TrainingErrorHandler} from '@crczp/training-agenda';
 import {TrainingDefinitionOrganizerSelectService} from './training-definition-organizer-select.service';
-import {Settings} from '@crczp/common';
+import {PortalConfig} from '@crczp/common';
 
 /**
  * Layer between component and API service
@@ -18,9 +18,7 @@ export class AdaptiveDefinitionOrganizerSelectConcreteService extends TrainingDe
     private errorHandler = inject(TrainingErrorHandler);
 
     constructor() {
-        const settings = inject(Settings);
-
-        super(settings.DEFAULT_PAGE_SIZE);
+        super(inject(PortalConfig).defaultPageSize);
     }
 
     /**

@@ -1,5 +1,18 @@
-import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, ViewChild, inject } from '@angular/core';
-import {Link, Node} from '@crczp/topology-graph-model';
+import {
+    AfterViewInit,
+    Component,
+    ElementRef,
+    EventEmitter,
+    inject,
+    Input,
+    OnChanges,
+    OnDestroy,
+    OnInit,
+    Output,
+    SimpleChanges,
+    ViewChild
+} from '@angular/core';
+import {HostNode, Link, Node, RouterNode} from '@crczp/topology-graph-model';
 import {TopologyApi} from '../services/topology-api.service';
 import {DraggedNodeService} from '../services/dragged-node.service';
 import {BehaviorSubject, EMPTY, Observable, takeWhile} from 'rxjs';
@@ -9,7 +22,7 @@ import {GraphEventService} from '../services/graph-event.service';
 import {catchError, map, take} from 'rxjs/operators';
 import {ResourcePollingService} from '../services/resource-polling.service';
 import {ConsoleUrl} from '../model/others/console-url';
-import {Settings} from '@crczp/common';
+import {PortalConfig} from '@crczp/common';
 
 /**
  * Main component of the graph-visual topology application.
@@ -25,23 +38,12 @@ import {Settings} from '@crczp/common';
     styleUrl: './topology-graph.component.css',
 })
 export class TopologyGraphComponent
-    implements OnInit, OnChanges, OnDestroy, AfterViewInit
-{
-    private loadingService = inject(TopologyLoadingService);
-    private topologyLoaderService = inject(TopologyApi);
-    protected graphEventService = inject(GraphEventService);
-    private sandboxService = inject(SandboxService);
-    private topologyApiService = inject(TopologyApi);
-    private draggedNodeService = inject(DraggedNodeService);
-    private resourcePollingService = inject(ResourcePollingService);
-    private settings = inject(Settings);
-
+    implements OnInit, OnChanges, OnDestroy, AfterViewInit {
     @Input() sandboxUuid: string;
     @Input() sandboxDefinitionId: number;
     @Output() topologyLoadEmitter: EventEmitter<boolean> = new EventEmitter();
-
     @ViewChild('topologyContent') topologyContent: ElementRef<HTMLDivElement>;
-    nodes: Node[];
+    nodes: (HostNode | RouterNode)[];
     links: Link[];
     draggedNode: Node;
     isLoading$: Observable<boolean>;
@@ -51,7 +53,15 @@ export class TopologyGraphComponent
     showLegendContainers = false;
     isError = false;
     zoom = 1;
+    protected graphEventService = inject(GraphEventService);
     protected readonly Math = Math;
+    private loadingService = inject(TopologyLoadingService);
+    private topologyLoaderService = inject(TopologyApi);
+    private sandboxService = inject(SandboxService);
+    private topologyApiService = inject(TopologyApi);
+    private draggedNodeService = inject(DraggedNodeService);
+    private resourcePollingService = inject(ResourcePollingService);
+    private settings = inject(PortalConfig);
     private pollingSubject$: BehaviorSubject<boolean> = new BehaviorSubject(
         true
     );
@@ -117,8 +127,8 @@ export class TopologyGraphComponent
         this.resourcePollingService
             .startPolling(
                 observable$,
-                this.settings.POLLING_PERIOD_SHORT,
-                this.settings.RETRY_COUNT,
+                this.settings.polling.pollingPeriodShort,
+                this.settings.polling.retryCount,
                 true
             )
             .pipe(

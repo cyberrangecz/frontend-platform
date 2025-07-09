@@ -2,7 +2,7 @@
     <mat-expansion-panel-header>
         <mat-panel-title>
             <h3>
-                <mat-icon class="level-type" [inline]="true" matTooltip="Assessment Level"> assignment</mat-icon>
+                <mat-icon [inline]="true" class="level-type" matTooltip="Assessment Level"> assignment</mat-icon>
                 <span> {{ level.order + 1 }}.</span>
                 <span> {{ level.title }}</span>
             </h3>
@@ -24,16 +24,20 @@
         <div class="key-field">Instructions:</div>
         <div>{{ level.instructions }}</div>
     </div>
-    <div *ngIf="isTest()" class="data-field">
-        <div class="key-field">Max Score:</div>
-        <div>{{ level.maxScore }}</div>
-    </div>
+    @if (isTest()) {
+        <div class="data-field">
+            <div class="key-field">Max Score:</div>
+            <div>{{ level.maxScore }}</div>
+        </div>
+    }
     <div class="data-field">
         <div class="key-field">Questions:</div>
         <div class="questions-container">
-            <div *ngFor="let question of level.questions">
-                <crczp-question-detail [question]="question" [isTest]="isTest()"/>
-            </div>
+            @for (question of level.questions; track question) {
+                <div>
+                    <crczp-question-detail [question]="question" [isTest]="isTest()"/>
+                </div>
+            }
         </div>
     </div>
 </mat-expansion-panel>

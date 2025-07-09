@@ -31,7 +31,7 @@ import {
     MatExpansionPanelHeader,
     MatExpansionPanelTitle
 } from "@angular/material/expansion";
-import {NgForOf, NgIf} from "@angular/common";
+
 import {MatMenu, MatMenuItem, MatMenuTrigger} from "@angular/material/menu";
 import {MatTooltip} from "@angular/material/tooltip";
 import {MatButton, MatIconButton} from "@angular/material/button";
@@ -52,7 +52,6 @@ import {MatButton, MatIconButton} from "@angular/material/button";
         MatExpansionPanelHeader,
         MatExpansionPanelTitle,
         MatExpansionPanelContent,
-        NgForOf,
         MatTooltip,
         MatButton,
         MatMenuItem,
@@ -61,8 +60,7 @@ import {MatButton, MatIconButton} from "@angular/material/button";
         MatLabel,
         MatIconButton,
         MatSuffix,
-        MatInput,
-        NgIf
+        MatInput
     ]
 })
 export class QuestionnairePhaseEditComponent implements OnChanges {
@@ -172,7 +170,7 @@ export class QuestionnairePhaseEditComponent implements OnChanges {
         this.updateForm();
     }
 
-    onRelationCreated(phase: TrainingPhase): void {
+    onRelationCreated(phase: Phase): void {
         const newRelation = new PhaseRelation();
         newRelation.questionIds = [];
         newRelation.successRate = 0;

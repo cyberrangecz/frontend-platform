@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit} from '@angular/core';
 import {ActivatedRoute, RouterLink, RouterLinkActive, RouterOutlet} from '@angular/router';
-import {async, Observable} from 'rxjs';
+import {Observable} from 'rxjs';
 import {take} from 'rxjs/operators';
 import {TRAINING_RUN_DATA_ATTRIBUTE_NAME} from '@crczp/training-agenda';
 import {TrainingDefinitionApi} from '@crczp/training-api';
@@ -9,6 +9,10 @@ import {MitreTechniquesOverviewService} from '../service/mitre-techniques.servic
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {MatTabLink, MatTabNav} from "@angular/material/tabs";
 import {MatIcon} from "@angular/material/icon";
+import {TrainingRunResultsRoutingModule} from "./training-run-results-routing.module";
+import {MitreTechniquesOverviewConcreteService} from "../service/mitre-techniques-concrete.service";
+import {AsyncPipe} from "@angular/common";
+
 
 @Component({
     selector: 'crczp-training-run-results',
@@ -22,20 +26,21 @@ import {MatIcon} from "@angular/material/icon";
         MatTabNav,
         MatIcon,
         MatIcon,
-        RouterOutlet
-    ]
+        RouterOutlet,
+        TrainingRunResultsRoutingModule,
+        AsyncPipe
+    ],
+    providers: [{provide: MitreTechniquesOverviewService, useClass: MitreTechniquesOverviewConcreteService}],
 })
 /**
  * Component displaying visualization of training run results
  */
 export class TrainingRunResultsComponent implements OnInit {
+    hasReferenceSolution$: Observable<boolean>;
+    destroyRef = inject(DestroyRef);
     private activatedRoute = inject(ActivatedRoute);
     private trainingDefinitionApi = inject(TrainingDefinitionApi);
     private service = inject(MitreTechniquesOverviewService);
-
-    hasReferenceSolution$: Observable<boolean>;
-    destroyRef = inject(DestroyRef);
-    protected readonly async = async;
 
     ngOnInit(): void {
         this.loadVisualizationInfo();

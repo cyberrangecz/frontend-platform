@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import {inject, Injectable} from '@angular/core';
 import {TrainingRunApi} from '@crczp/training-api';
 import {Observable} from 'rxjs';
 import {switchMap, tap} from 'rxjs/operators';
@@ -16,17 +16,12 @@ export class TrainingRunAccessLevelConcreteService extends TrainingRunAccessLeve
     private api = inject(TrainingRunApi);
     private sandboxApi = inject(SandboxInstanceApi);
     private errorHandler = inject(TrainingErrorHandler);
-    protected notificationService: SentinelNotificationService;
-    protected runningTrainingRunService: RunningTrainingRunService;
 
     constructor() {
         const notificationService = inject(SentinelNotificationService);
         const runningTrainingRunService = inject(RunningTrainingRunService);
 
         super(notificationService, runningTrainingRunService);
-    
-        this.notificationService = notificationService;
-        this.runningTrainingRunService = runningTrainingRunService;
     }
 
     /**

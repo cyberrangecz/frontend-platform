@@ -1,5 +1,5 @@
-import {SentinelControlItemSignal} from '@sentinel/components/controls';
 import {defer, of} from 'rxjs';
+import {SentinelControlItem} from "@sentinel/components/controls";
 
 /**
  * @dynamic
@@ -11,16 +11,16 @@ export class PhaseDetailExpandControls {
     static readonly EXPAND_LABEL = 'Expand All';
     static readonly COLLAPSE_LABEL = 'Collapse All';
 
-    static create(): SentinelControlItemSignal[] {
+    static create(): SentinelControlItem[] {
         return [
-            new SentinelControlItemSignal(
+            new SentinelControlItem(
                 this.EXPAND_ACTION_ID,
                 this.EXPAND_LABEL,
                 'primary',
                 of(false),
                 defer(() => of(this.EXPAND_ACTION_ID)),
             ),
-            new SentinelControlItemSignal(
+            new SentinelControlItem(
                 this.EXPAND_ACTION_ID,
                 this.COLLAPSE_LABEL,
                 'primary',

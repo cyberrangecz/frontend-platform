@@ -1,0 +1,42 @@
+<div class="container">
+  <div class="levels-row">
+    @for (level of visualizationData.levels; track level) {
+      <div
+        [ngClass]="{ faded: isFinished(level.id)}"
+        class="level"
+        [matTooltip]="getLevelTooltip(level)"
+        [matTooltipClass]="'line-broken-tooltip'">
+        <div>
+          {{ level.title }}
+        </div>
+        @if (isFinished(level.id)) {
+          <div>
+            {{ visualizationData.traineeProgress.length }} / {{ visualizationData.traineeProgress.length }}
+          </div>
+        }
+        @if (!isFinished(level.id)) {
+          <div
+            (click)="getTraineesForLevel(level.id).length !== 0 ? filterTrainees(getTraineesForLevel(level.id), level) : ''"
+                 [ngClass]="{
+				 	clickable: getTraineesForLevel(level.id).length !== 0,
+				  	faded: getTraineesForLevel(level.id).length === 0
+				 }">
+            {{ getTraineesForLevel(level.id).length }} playing
+          </div>
+        }
+      </div>
+    }
+
+    <div class="level" matTooltip="Training finished">
+      <div>Training finished</div>
+      <div (click)="getFinishedTrainees().length !== 0 ? filterTrainees(getFinishedTrainees(), null) : ''"
+                 [ngClass]="{
+					clickable: getFinishedTrainees().length !== 0,
+					faded: getFinishedTrainees().length === 0
+				}">
+        {{ getFinishedTrainees().length }}
+        {{ getFinishedTrainees().length !== 1 ? "trainees" : "trainee" }}
+      </div>
+    </div>
+  </div>
+</div>

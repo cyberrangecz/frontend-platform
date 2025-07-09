@@ -1,0 +1,28 @@
+@if (portalAgendaContainer.displayed) {
+    <div class="portal-row">
+        <div class="portal-items-container">
+            @for (agendaPortalLink of portalAgendaContainer.agendas; track agendaPortalLink) {
+                <div>
+                    <crczp-portal-agenda-link
+                        [portalAgendaLink]="agendaPortalLink"
+                        [elevation]="elevation"
+                        (navigate)="navigate($event)"
+                        (elevate)="elevate($event)"/>
+                </div>
+            }
+        </div>
+        <div class="portal-description-container">
+            <h2>{{ portalAgendaContainer.label }}</h2>
+            @for (agenda of portalAgendaContainer.agendas; track agenda) {
+                <div>
+                    <crczp-portal-agenda-description
+                        [label]="agenda.label"
+                        [description]="agenda.description"
+                        [disabled]="agenda.disabled"
+                        [elevation]="elevation"
+                        (elevate)="elevate($event)"/>
+                </div>
+            }
+        </div>
+    </div>
+}

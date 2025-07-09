@@ -1,48 +1,52 @@
 <mat-expansion-panel>
-    <mat-expansion-panel-header>
-        <mat-panel-title>
-            Hints
-        </mat-panel-title>
-        <mat-panel-description>
-            <span *ngIf="hints && hints.length > 0 else noHintsLabel"> This level contains {{ hints.length }}
-                hint(s)</span>
-            <ng-template #noHintsLabel>
-                <span>This level has no hints</span>
-            </ng-template>
-            <div class="panel-description-error" *ngIf="hintsHasErrors">
-                <mat-icon color="warn">error_outline</mat-icon>
-                <mat-error>There are errors in some hints</mat-error>
-            </div>
-        </mat-panel-description>
-    </mat-expansion-panel-header>
-
-    <sentinel-controls [controls]="controls"
-                       (itemClicked)="onControlAction($event)">
-    </sentinel-controls>
-    <mat-divider/>
-
-    <!--     HINT stepper-->
-    <div *ngIf="stepperHints.items && stepperHints.items.length > 0 else noHints" class="hint-stepper">
-        <sentinel-stepper [selectable]="true"
-                          [stepperItems]="stepperHints"
-                          [activeIndex]="selectedStep"
-                          (stepSwapped)="onOrderUpdate()"
-                          (indexSelected)="onActiveHintChanged($event)"
-                          (selectedStepSwapped)="onActiveHintChanged($event)">
-        </sentinel-stepper>
-        <div>
-            <mat-divider/>
-            <ng-template>Hint {{ selectedStep + 1 }}</ng-template>
-            <div class="step-content">
-                <crczp-hint-edit [hint]="stepperHints.items[selectedStep].hint"
-                                (hintChange)="onHintsChanged($event)"
-                                [levelMaxScore]="levelMaxScore"
-                                [hintsPenaltySum]="penaltySum"
-                                [order]="selectedStep"/>
-            </div>
+  <mat-expansion-panel-header>
+    <mat-panel-title>
+      Hints
+    </mat-panel-title>
+    <mat-panel-description>
+      @if (hints && hints.length > 0) {
+        <span> This level contains {{ hints.length }}
+        hint(s)</span>
+      } @else {
+        <span>This level has no hints</span>
+      }
+      @if (hintsHasErrors) {
+        <div class="panel-description-error">
+          <mat-icon color="warn">error_outline</mat-icon>
+          <mat-error>There are errors in some hints</mat-error>
         </div>
+      }
+    </mat-panel-description>
+  </mat-expansion-panel-header>
+
+  <sentinel-controls [controls]="controls"
+    (itemClicked)="onControlAction($event)">
+  </sentinel-controls>
+  <mat-divider/>
+
+  <!--     HINT stepper-->
+  @if (stepperHints.items && stepperHints.items.length > 0) {
+    <div class="hint-stepper">
+      <sentinel-stepper [selectable]="true"
+        [stepperItems]="stepperHints"
+        [activeIndex]="selectedStep"
+        (stepSwapped)="onOrderUpdate()"
+        (indexSelected)="onActiveHintChanged($event)"
+        (selectedStepSwapped)="onActiveHintChanged($event)">
+      </sentinel-stepper>
+      <div>
+        <mat-divider/>
+        <ng-template>Hint {{ selectedStep + 1 }}</ng-template>
+        <div class="step-content">
+          <crczp-hint-edit [hint]="stepperHints.items[selectedStep].hint"
+            (hintChange)="onHintsChanged($event)"
+            [levelMaxScore]="levelMaxScore"
+            [hintsPenaltySum]="penaltySum"
+            [order]="selectedStep"/>
+        </div>
+      </div>
     </div>
-    <ng-template #noHints>
-        <h3>Start by clicking on Add button</h3>
-    </ng-template>
+  } @else {
+    <h3>Start by clicking on Add button</h3>
+  }
 </mat-expansion-panel>

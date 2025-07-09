@@ -1,5 +1,9 @@
-<crczp-trainee-free-form-question *ngIf="isFfq" [question]="question" [index]="index"/>
-<crczp-trainee-multiple-choice-question *ngIf="isMcq" [question]="question" [index]="index">
-</crczp-trainee-multiple-choice-question>
-<crczp-trainee-extended-matching-items *ngIf="isEmi" [question]="question" [index]="index">
-</crczp-trainee-extended-matching-items>
+@if (isFfq) {
+    <crczp-trainee-free-form-question [question]="$any(question)" [index]="index"/>
+}
+@if (isMcq) {
+    <crczp-trainee-multiple-choice-question [question]="$any(question)" [index]="index"/>
+}
+@if (isEmi) {
+    <crczp-trainee-extended-matching-items [question]="$any(question)" [index]="index"/>
+}

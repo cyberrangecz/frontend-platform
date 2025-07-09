@@ -18,14 +18,14 @@ import {TrainingInstanceFormGroup} from './training-instance-form-group';
 import {AbstractControl, ReactiveFormsModule} from '@angular/forms';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {Pool, SandboxDefinition} from '@crczp/sandbox-model';
-import {async, BehaviorSubject, combineLatestWith, Observable} from 'rxjs';
+import {BehaviorSubject, combineLatestWith, Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {TrainingNavigator} from '@crczp/training-agenda';
 import {MatError, MatFormField, MatHint, MatInput, MatLabel} from "@angular/material/input";
 import {MatIcon} from "@angular/material/icon";
 import {MatSlideToggle} from "@angular/material/slide-toggle";
 import {MatTooltip} from "@angular/material/tooltip";
-import {AsyncPipe, NgIf} from "@angular/common";
+import {AsyncPipe} from "@angular/common";
 import {
     SentinelResourceSelectorComponent,
     SentinelSelectorElementDirective,
@@ -56,7 +56,6 @@ import {RouterLink} from "@angular/router";
         MatIconButton,
         MatInput,
         MatHint,
-        NgIf,
         SentinelResourceSelectorComponent,
         RouterLink,
         SentinelSelectorSelectedElementDirective,
@@ -80,7 +79,6 @@ export class TrainingInstanceEditComponent implements OnChanges, AfterViewInit {
     @ViewChild('poolSelect', {static: false, read: ElementRef}) poolSelect: ElementRef;
     now: Date;
     trainingInstanceFormGroup: TrainingInstanceFormGroup;
-    protected readonly async = async;
     private trainingDefinitionsSubject = new BehaviorSubject<TrainingDefinitionInfo[]>([]);
     private poolSubject = new BehaviorSubject<Pool[]>([]);
     private sandboxDefinitionSubject = new BehaviorSubject<SandboxDefinition[]>([]);

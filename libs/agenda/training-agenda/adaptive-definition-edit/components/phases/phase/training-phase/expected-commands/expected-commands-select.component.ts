@@ -7,7 +7,7 @@ import {
     MatExpansionPanelHeader,
     MatExpansionPanelTitle
 } from "@angular/material/expansion";
-import {NgForOf, NgIf} from "@angular/common";
+
 import {MatIcon} from "@angular/material/icon";
 import {MatFormField, MatLabel} from "@angular/material/input";
 
@@ -16,19 +16,17 @@ import {MatFormField, MatLabel} from "@angular/material/input";
     templateUrl: './expected-commands-select.component.html',
     styleUrls: ['./expected-commands-select.component.css'],
     imports: [
-        MatExpansionPanel,
-        MatExpansionPanelHeader,
-        MatExpansionPanelTitle,
-        MatExpansionPanelDescription,
-        NgIf,
-        MatFormField,
-        MatLabel,
-        MatChipGrid,
-        MatChipRow,
-        MatIcon,
-        MatChipInput,
-        NgForOf
-    ]
+    MatExpansionPanel,
+    MatExpansionPanelHeader,
+    MatExpansionPanelTitle,
+    MatExpansionPanelDescription,
+    MatFormField,
+    MatLabel,
+    MatChipGrid,
+    MatChipRow,
+    MatIcon,
+    MatChipInput
+]
 })
 export class ExpectedCommandsSelectComponent {
     @Input() expectedCommands: string[];

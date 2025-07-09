@@ -21,7 +21,7 @@ import {MatError, MatFormField, MatInput, MatLabel} from "@angular/material/inpu
 import {MatIcon} from "@angular/material/icon";
 import {MatIconButton} from "@angular/material/button";
 import {MatTooltip} from "@angular/material/tooltip";
-import {NgForOf, NgIf} from "@angular/common";
+
 
 @Component({
     selector: 'crczp-training-phase-configuration',
@@ -29,21 +29,19 @@ import {NgForOf, NgIf} from "@angular/common";
     styleUrls: ['./training-phase-edit.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
-        ExpectedCommandsSelectComponent,
-        MitreTechniqueSelectComponent,
-        RelatedQuestionsComponent,
-        TasksOverviewComponent,
-        MatError,
-        ReactiveFormsModule,
-        MatFormField,
-        MatLabel,
-        MatInput,
-        MatIconButton,
-        MatIcon,
-        MatTooltip,
-        NgIf,
-        NgForOf,
-    ]
+    ExpectedCommandsSelectComponent,
+    MitreTechniqueSelectComponent,
+    RelatedQuestionsComponent,
+    TasksOverviewComponent,
+    MatError,
+    ReactiveFormsModule,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    MatIconButton,
+    MatIcon,
+    MatTooltip
+]
 })
 export class TrainingPhaseEditComponent implements OnChanges {
     @Input() phase: TrainingPhase;

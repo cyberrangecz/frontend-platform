@@ -1,84 +1,100 @@
 <mat-expansion-panel [expanded]="true">
-    <mat-expansion-panel-header>
-        <mat-panel-title>
-            <span *ngIf="editMode$ | async; else newTrainingTitle">Adaptive Training Definition</span>
-            <ng-template #newTrainingTitle>Create Adaptive Training Definition</ng-template>
-        </mat-panel-title>
-        <mat-panel-description>
-            <span class="spacer"></span>
-            <div *ngIf="!canDeactivateTDEdit || unsavedPhases.length !== 0" class="panel-description-error">
-                <mat-icon color="warn">warning</mat-icon>
-                <mat-error>Changes are not saved</mat-error>
-            </div>
-            <mat-icon>edit</mat-icon>
-        </mat-panel-description>
-    </mat-expansion-panel-header>
-    <ng-template matExpansionPanelContent>
-        <sentinel-controls (itemClicked)="onControlsAction($event)" [controls]="controls"/>
-        <mat-divider/>
-        <!-- EDIT ADAPTIVE TRAINING DEFINITION -->
-        <crczp-adaptive-definition-edit
-            (edited)="onTrainingDefinitionChanged($event)"
-            [trainingDefinition]="trainingDefinition$ | async"
-        />
-
-        <mat-divider/>
-        <!-- EDIT PHASES -->
-        <div>
-            <div class="phases-header">
-                <h3>Phases</h3>
-                <span *ngIf="phasesCount >= 0" class="phases-info"
-                >Training definition contains {{ phasesCount }} phase(s)</span
-                >
-                <mat-icon>games</mat-icon>
-            </div>
-            <crczp-phase-overview
-                (phasesCount)="onPhasesCountChanged($event)"
-                (unsavedPhases)="onUnsavedPhasesChanged($event)"
-                [mitreTechniquesList]="mitreTechniques$ | async"
-                [trainingDefinition]="trainingDefinition$ | async"
-            >
-            </crczp-phase-overview>
+  <mat-expansion-panel-header>
+    <mat-panel-title>
+      @if (editMode$ | async) {
+        <span>Adaptive Training Definition</span>
+      } @else {
+        Create Adaptive Training Definition
+      }
+    </mat-panel-title>
+    <mat-panel-description>
+      <span class="spacer"></span>
+      @if (!canDeactivateTDEdit || unsavedPhases.length !== 0) {
+        <div class="panel-description-error">
+          <mat-icon color="warn">warning</mat-icon>
+          <mat-error>Changes are not saved</mat-error>
         </div>
+      }
+      <mat-icon>edit</mat-icon>
+    </mat-panel-description>
+  </mat-expansion-panel-header>
+  <ng-template matExpansionPanelContent>
+    <sentinel-controls (itemClicked)="onControlsAction($event)" [controls]="controls"/>
+    <mat-divider/>
+    <!-- EDIT ADAPTIVE TRAINING DEFINITION -->
+    <crczp-adaptive-definition-edit
+      (edited)="onTrainingDefinitionChanged($event)"
+      [trainingDefinition]="trainingDefinition$ | async"
+      />
 
-        <mat-divider/>
-        <!-- MODEL SIMULATOR -->
-        <div *ngIf="(trainingPhasesCount$ | async) as trainingPhasesCount">
-            <div class="phases-header">
-                <h3>Single trainee performance simulation</h3>
-                <span *ngIf="trainingPhasesCount >= 0" class="phases-info"
+    <mat-divider/>
+    <!-- EDIT PHASES -->
+    <div>
+      <div class="phases-header">
+        <h3>Phases</h3>
+        @if (phasesCount >= 0) {
+          <span class="phases-info"
+            >Training definition contains {{ phasesCount }} phase(s)</span
+            >
+          }
+          <mat-icon>games</mat-icon>
+        </div>
+        <crczp-phase-overview
+          (phasesCount)="onPhasesCountChanged($event)"
+          (unsavedPhases)="onUnsavedPhasesChanged($event)"
+          [mitreTechniquesList]="mitreTechniques$ | async"
+          [trainingDefinition]="trainingDefinition$ | async"
+          >
+        </crczp-phase-overview>
+      </div>
+
+      <mat-divider/>
+      <!-- MODEL SIMULATOR -->
+      @if ((trainingPhasesCount$ | async); as trainingPhasesCount) {
+        <div>
+          <div class="phases-header">
+            <h3>Single trainee performance simulation</h3>
+            @if (trainingPhasesCount >= 0) {
+              <span class="phases-info"
                 >Training definition contains {{ trainingPhasesCount }} training phase(s)</span
                 >
-                <mat-icon>timeline</mat-icon>
+              }
+              <mat-icon>timeline</mat-icon>
             </div>
             <crczp-model-simulator [phases]="phases$ | async"/>
-        </div>
-    </ng-template>
-</mat-expansion-panel>
+          </div>
+        }
+      </ng-template>
+    </mat-expansion-panel>
 
-<!-- EDIT AUTHORS -->
-<mat-expansion-panel *ngIf="editMode$ | async" [expanded]="editMode$ | async">
-    <mat-expansion-panel-header>
-        <mat-panel-title>Designers</mat-panel-title>
-        <mat-panel-description>
+    <!-- EDIT AUTHORS -->
+    @if (editMode$ | async) {
+      <mat-expansion-panel [expanded]="editMode$ | async">
+        <mat-expansion-panel-header>
+          <mat-panel-title>Designers</mat-panel-title>
+          <mat-panel-description>
             <span class="spacer"></span>
-            <div *ngIf="!canDeactivateAuthors" class="panel-description-error">
+            @if (!canDeactivateAuthors) {
+              <div class="panel-description-error">
                 <mat-icon color="warn">warning</mat-icon>
                 <mat-error>Designers are not saved</mat-error>
-            </div>
+              </div>
+            }
             <mat-icon>person</mat-icon>
-        </mat-panel-description>
-    </mat-expansion-panel-header>
-    <ng-template matExpansionPanelContent>
-        <sentinel-user-assign
-            (hasUnsavedChanges)="onAuthorsChanged($event)"
-            *ngIf="editMode$ | async"
-            [defaultPaginationSize]="defaultPaginationSize"
-            [resource]="trainingDefinition$ | async"
-            assigneesTitle="Designers"
-            resourceMatIcon="list_alt"
-            toAssignTitle="Designers"
-        >
-        </sentinel-user-assign>
-    </ng-template>
-</mat-expansion-panel>
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <ng-template matExpansionPanelContent>
+          @if (editMode$ | async) {
+            <sentinel-user-assign
+              (hasUnsavedChanges)="onAuthorsChanged($event)"
+              [defaultPaginationSize]="defaultPaginationSize"
+              [resource]="trainingDefinition$ | async"
+              assigneesTitle="Designers"
+              resourceMatIcon="list_alt"
+              toAssignTitle="Designers"
+              >
+            </sentinel-user-assign>
+          }
+        </ng-template>
+      </mat-expansion-panel>
+    }

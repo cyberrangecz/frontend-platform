@@ -1,28 +1,29 @@
-<div *ngIf="trainingDefinition.id; else trainingDefinitionNotCreated">
+@if (trainingDefinition.id) {
+  <div>
     <sentinel-controls [controls]="controls" (itemClicked)="onControlAction($event)"/>
     <mat-divider/>
-    <div *ngIf="(stepperLevels | async).length > 0; else noLevels">
+    @if ((stepperLevels | async).length > 0) {
+      <div>
         <crczp-levels-stepper
-            [activeStep]="activeStep$ | async"
-            [levels]="stepperLevels | async"
-            [movingInProgress]="levelMovingInProgress"
-            (levelMove)="onLevelMoved($event)"
-            (activeStepChange)="onActiveLevelChange($event)"
-        >
+          [activeStep]="activeStep$ | async"
+          [levels]="stepperLevels | async"
+          [movingInProgress]="levelMovingInProgress"
+          (levelMove)="onLevelMoved($event)"
+          (activeStepChange)="onActiveLevelChange($event)"
+          >
         </crczp-levels-stepper>
         <mat-divider/>
         <crczp-level-edit
-            [level]="(stepperLevels | async)[activeStep$ | async].level"
-            [mitreTechniquesList]="mitreTechniquesList"
-            (levelChange)="onActiveLevelChanged($event)"
-        />
-    </div>
+          [level]="(stepperLevels | async)[activeStep$ | async].level"
+          [mitreTechniquesList]="mitreTechniquesList"
+          (levelChange)="onActiveLevelChanged($event)"
+          />
+      </div>
+    } @else {
+      <h3>Start by clicking on Add button</h3>
+    }
+  </div>
+} @else {
+  <h3>To add levels, fill in and save the basic information about the training definition.</h3>
+}
 
-    <ng-template #noLevels>
-        <h3>Start by clicking on Add button</h3>
-    </ng-template>
-</div>
-
-<ng-template #trainingDefinitionNotCreated>
-    <h3>To add levels, fill in and save the basic information about the training definition.</h3>
-</ng-template>

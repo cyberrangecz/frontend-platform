@@ -1,8 +1,8 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
-import {async, Observable} from 'rxjs';
+import {Observable} from 'rxjs';
 import {HintButton} from '@crczp/training-agenda/internal';
 import {Hint} from '@crczp/training-model';
-import {AsyncPipe, NgForOf} from "@angular/common";
+import {AsyncPipe} from "@angular/common";
 import {MatTooltip} from "@angular/material/tooltip";
 import {MatButton} from "@angular/material/button";
 
@@ -13,8 +13,7 @@ import {MatButton} from "@angular/material/button";
     imports: [
         AsyncPipe,
         MatTooltip,
-        MatButton,
-        NgForOf,
+        MatButton
     ]
 })
 export class AnswerFormHintsComponent {
@@ -24,7 +23,6 @@ export class AnswerFormHintsComponent {
 
     @Output() hintRevealed: EventEmitter<Hint> = new EventEmitter();
     @Output() solutionRevealed: EventEmitter<void> = new EventEmitter();
-    protected readonly async = async;
 
     /**
      * Calls service to reveal hint

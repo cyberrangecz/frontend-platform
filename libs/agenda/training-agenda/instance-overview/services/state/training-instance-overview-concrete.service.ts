@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import {inject, Injectable} from '@angular/core';
 import {Router} from '@angular/router';
 import {OffsetPaginationEvent, PaginatedResource,} from '@sentinel/common/pagination';
 import {PoolApi} from '@crczp/sandbox-api';
@@ -15,7 +15,7 @@ import {
     SentinelDialogResultEnum,
 } from '@sentinel/components/dialogs';
 import {MatDialog} from '@angular/material/dialog';
-import {Settings} from '@crczp/common';
+import {PortalConfig} from '@crczp/common';
 
 @Injectable()
 export class TrainingInstanceOverviewConcreteService extends TrainingInstanceOverviewService {
@@ -31,9 +31,7 @@ export class TrainingInstanceOverviewConcreteService extends TrainingInstanceOve
     private lastFilter: string;
 
     constructor() {
-        const settings = inject(Settings);
-
-        super(settings.DEFAULT_PAGE_SIZE);
+        super(inject(PortalConfig).defaultPageSize);
     }
 
     getAll(

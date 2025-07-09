@@ -6,7 +6,7 @@ import {
     SentinelControlsComponent,
 } from '@sentinel/components/controls';
 import {MitreTechnique, Phase, TrainingDefinition,} from '@crczp/training-model';
-import {async, combineLatest, Observable, switchMap} from 'rxjs';
+import {combineLatest, Observable, switchMap} from 'rxjs';
 import {filter, map, tap} from 'rxjs/operators';
 import {TrainingDefinitionEditControls} from '../model/adapters/training-definition-edit-controls';
 import {TrainingDefinitionChangeEvent} from '../model/events/training-definition-change-event';
@@ -21,7 +21,7 @@ import {MitreTechniquesConcreteService} from '../services/state/mitre-techniques
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {OffsetPaginationEvent} from '@sentinel/common/pagination';
 import {SentinelUserAssignComponent, SentinelUserAssignService,} from '@sentinel/components/user-assign';
-import {PaginationStorageService} from '@crczp/common';
+import {PaginationStorageService, PortalConfig, providePaginationStorageService} from '@crczp/common';
 import {
     MatExpansionPanel,
     MatExpansionPanelContent,
@@ -30,7 +30,7 @@ import {
     MatExpansionPanelTitle,
 } from '@angular/material/expansion';
 import {MatDivider} from '@angular/material/divider';
-import {AsyncPipe, NgIf} from '@angular/common';
+import {AsyncPipe} from '@angular/common';
 import {ModelSimulatorComponentWrapper} from './model-simulator/model-simulator-component-wrapper.component';
 import {MatError} from '@angular/material/input';
 import {MatIcon} from '@angular/material/icon';
@@ -38,6 +38,12 @@ import {PhaseOverviewComponent} from './phases/overview/phase-overview.component
 import {
     AdaptiveTrainingDefinitionEditComponent
 } from './adaptive-definition/adaptive-training-definition-edit.component';
+import {AdaptiveDefinitionCanDeactivate} from "../services/can-deactivate/adaptive-definition-can-deactivate.service";
+import {
+    AdaptiveDefinitionBreadcrumbResolver,
+    AdaptiveDefinitionResolver,
+    AdaptiveDefinitionTitleResolver
+} from "@crczp/training-agenda/resolvers";
 
 /**
  * Main smart component of training definition edit/new page.
@@ -48,6 +54,10 @@ import {
     styleUrls: ['./adaptive-definition-edit-overview.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [
+        AdaptiveDefinitionCanDeactivate,
+        AdaptiveDefinitionResolver,
+        AdaptiveDefinitionTitleResolver,
+        AdaptiveDefinitionBreadcrumbResolver,
         {
             provide: AdaptiveDefinitionEditService,
             useClass: AdaptiveDefinitionEditConcreteService,
@@ -58,6 +68,7 @@ import {
             provide: MitreTechniquesService,
             useClass: MitreTechniquesConcreteService,
         },
+        providePaginationStorageService(AdaptiveDefinitionEditOverviewComponent)
     ],
     imports: [
         MatError,
@@ -71,20 +82,12 @@ import {
         MatExpansionPanelHeader,
         MatExpansionPanelDescription,
         MatExpansionPanelTitle,
-        NgIf,
         PhaseOverviewComponent,
         AdaptiveTrainingDefinitionEditComponent,
-        SentinelControlsComponent,
+        SentinelControlsComponent
     ],
 })
 export class AdaptiveDefinitionEditOverviewComponent implements OnInit {
-    private activeRoute = inject(ActivatedRoute);
-    private paginationService = inject(PaginationStorageService);
-    private editService = inject(AdaptiveDefinitionEditService);
-    private phaseEditService = inject(PhaseEditService);
-    private mitreTechniquesService = inject(MitreTechniquesService);
-    private authorsAssignService = inject(SentinelUserAssignService);
-
     trainingDefinition$: Observable<TrainingDefinition>;
     editMode$: Observable<boolean>;
     tdTitle$: Observable<string>;
@@ -96,14 +99,18 @@ export class AdaptiveDefinitionEditOverviewComponent implements OnInit {
     unsavedPhases: Phase[] = [];
     canDeactivateAuthors = true;
     canDeactivateTDEdit = true;
-    defaultPaginationSize: number;
     controls: SentinelControlItem[];
     mitreTechniques$: Observable<MitreTechnique[]>;
     destroyRef = inject(DestroyRef);
-    protected readonly async = async;
+    defaultPaginationSize: number = inject(PortalConfig).defaultPageSize;
+    private activeRoute = inject(ActivatedRoute);
+    private paginationService = inject(PaginationStorageService);
+    private editService = inject(AdaptiveDefinitionEditService);
+    private phaseEditService = inject(PhaseEditService);
+    private mitreTechniquesService = inject(MitreTechniquesService);
+    private authorsAssignService = inject(SentinelUserAssignService);
 
     constructor() {
-        this.defaultPaginationSize = this.paginationService.DEFAULT_PAGE_SIZE;
         this.trainingDefinition$ = this.editService.trainingDefinition$;
         this.tdTitle$ = this.editService.trainingDefinition$.pipe(
             map((td) => td.title)

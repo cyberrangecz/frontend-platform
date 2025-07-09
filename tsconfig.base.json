@@ -1,80 +1,58 @@
 {
     "compileOnSave": false,
     "compilerOptions": {
-        "rootDir": ".",
-        "sourceMap": true,
+        "baseUrl": ".",
         "declaration": false,
-        "moduleResolution": "node",
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
         "importHelpers": true,
-        "target": "es2015",
+        "lib": ["es2020", "dom"],
         "module": "esnext",
-        "lib": [
-            "es2020",
-            "dom"
-        ],
-        "skipLibCheck": true,
-        "skipDefaultLibCheck": true,
-        "baseUrl": ".",
+        "moduleResolution": "node",
         "paths": {
             "@crczp/adaptive-instance-simulator": [
                 "libs/components/adaptive-instance-simulator/src/index.ts"
             ],
-            "@crczp/api-common": [
-                "libs/api/api-common/src/index.ts"
-            ],
-            "@crczp/assets-bundler": [
-                "assets-bundler/src/index.ts"
-            ],
-            "@crczp/common": [
-                "libs/components/common/src/index.ts"
-            ],
+            "@crczp/api-common": ["libs/api/api-common/src/index.ts"],
+            "@crczp/common": ["libs/common/src/index.ts"],
             "@crczp/sandbox-agenda": [
                 "libs/agenda/sandbox-agenda/src/index.ts"
             ],
             "@crczp/sandbox-agenda/assets": [
-                "libs/agenda/sandbox-agenda/assets/src/index.ts"
+                "libs/agenda/sandbox-agenda/assets/index.ts"
             ],
             "@crczp/sandbox-agenda/internal": [
-                "libs/agenda/sandbox-agenda/internal/src/index.ts"
+                "libs/agenda/sandbox-agenda/internal/index.ts"
             ],
             "@crczp/sandbox-agenda/pool-detail": [
-                "libs/agenda/sandbox-agenda/pool-detail/src/index.ts"
+                "libs/agenda/sandbox-agenda/pool-detail/index.ts"
             ],
             "@crczp/sandbox-agenda/pool-edit": [
-                "libs/agenda/sandbox-agenda/pool-edit/src/index.ts"
+                "libs/agenda/sandbox-agenda/pool-edit/index.ts"
             ],
             "@crczp/sandbox-agenda/pool-overview": [
-                "libs/agenda/sandbox-agenda/pool-overview/src/index.ts"
+                "libs/agenda/sandbox-agenda/pool-overview/index.ts"
             ],
             "@crczp/sandbox-agenda/request-detail": [
-                "libs/agenda/sandbox-agenda/request-detail/src/index.ts"
+                "libs/agenda/sandbox-agenda/request-detail/index.ts"
             ],
             "@crczp/sandbox-agenda/resolvers": [
-                "libs/agenda/sandbox-agenda/resolvers/src/index.ts"
+                "libs/agenda/sandbox-agenda/resolvers/index.ts"
             ],
             "@crczp/sandbox-agenda/sandbox-definition-edit": [
-                "libs/agenda/sandbox-agenda/sandbox-definition-edit/src/index.ts"
+                "libs/agenda/sandbox-agenda/sandbox-definition-edit/index.ts"
             ],
             "@crczp/sandbox-agenda/sandbox-definition-overview": [
-                "libs/agenda/sandbox-agenda/sandbox-definition-overview/src/index.ts"
+                "libs/agenda/sandbox-agenda/sandbox-definition-overview/index.ts"
             ],
             "@crczp/sandbox-agenda/sandbox-images": [
-                "libs/agenda/sandbox-agenda/sandbox-images/src/index.ts"
+                "libs/agenda/sandbox-agenda/sandbox-images/index.ts"
             ],
             "@crczp/sandbox-agenda/topology": [
-                "libs/agenda/sandbox-agenda/topology/src/index.ts"
+                "libs/agenda/sandbox-agenda/topology/index.ts"
             ],
-            "@crczp/sandbox-api": [
-                "libs/api/sandbox-api/src/index.ts"
-            ],
-            "@crczp/sandbox-model": [
-                "libs/model/sandbox-model/src/index.ts"
-            ],
-            "@crczp/theme": [
-                "libs/components/theme/src/index.ts"
-            ],
+            "@crczp/sandbox-api": ["libs/api/sandbox-api/src/index.ts"],
+            "@crczp/sandbox-model": ["libs/model/sandbox-model/src/index.ts"],
             "@crczp/topology-graph": [
                 "libs/components/topology-graph/src/index.ts"
             ],
@@ -195,38 +173,34 @@
             "@crczp/training-agenda/run-results": [
                 "libs/agenda/training-agenda/run-results/index.ts"
             ],
-            "@crczp/training-api": [
-                "libs/api/training-api/src/index.ts"
-            ],
-            "@crczp/training-model": [
-                "libs/model/training-model/src/index.ts"
-            ],
+            "@crczp/training-api": ["libs/api/training-api/src/index.ts"],
+            "@crczp/training-model": ["libs/model/training-model/src/index.ts"],
             "@crczp/user-and-group-agenda": [
                 "libs/agenda/user-and-group-agenda/src/index.ts"
             ],
             "@crczp/user-and-group-agenda/group-detail": [
-                "libs/agenda/user-and-group-agenda/group-detail/src/index.ts"
+                "libs/agenda/user-and-group-agenda/group-detail/index.ts"
             ],
             "@crczp/user-and-group-agenda/group-edit": [
-                "libs/agenda/user-and-group-agenda/group-edit/src/index.ts"
+                "libs/agenda/user-and-group-agenda/group-edit/index.ts"
             ],
             "@crczp/user-and-group-agenda/group-overview": [
-                "libs/agenda/user-and-group-agenda/group-overview/src/index.ts"
+                "libs/agenda/user-and-group-agenda/group-overview/index.ts"
             ],
             "@crczp/user-and-group-agenda/internal": [
-                "libs/agenda/user-and-group-agenda/internal/src/index.ts"
+                "libs/agenda/user-and-group-agenda/internal/index.ts"
             ],
             "@crczp/user-and-group-agenda/microservice-overview": [
-                "libs/agenda/user-and-group-agenda/microservice-overview/src/index.ts"
+                "libs/agenda/user-and-group-agenda/microservice-overview/index.ts"
             ],
             "@crczp/user-and-group-agenda/microservice-registration": [
-                "libs/agenda/user-and-group-agenda/microservice-registration/src/index.ts"
+                "libs/agenda/user-and-group-agenda/microservice-registration/index.ts"
             ],
             "@crczp/user-and-group-agenda/user-detail": [
-                "libs/agenda/user-and-group-agenda/user-detail/src/index.ts"
+                "libs/agenda/user-and-group-agenda/user-detail/index.ts"
             ],
             "@crczp/user-and-group-agenda/user-overview": [
-                "libs/agenda/user-and-group-agenda/user-overview/src/index.ts"
+                "libs/agenda/user-and-group-agenda/user-overview/index.ts"
             ],
             "@crczp/user-and-group-api": [
                 "libs/api/user-and-group-api/src/index.ts"
@@ -246,13 +220,13 @@
             "@crczp/visualization-model": [
                 "libs/model/visualization-model/src/index.ts"
             ],
-            "@crczp/visualization/api": [
-                "lib/api/walkthrough-api/src/index.ts"
-            ]
-        }
+            "@crczp/visualization/api": ["lib/api/walkthrough-api/src/index.ts"]
+        },
+        "rootDir": ".",
+        "skipDefaultLibCheck": true,
+        "skipLibCheck": true,
+        "sourceMap": true,
+        "target": "es2015"
     },
-    "exclude": [
-        "node_modules",
-        "tmp"
-    ]
+    "exclude": ["node_modules", "tmp"]
 }

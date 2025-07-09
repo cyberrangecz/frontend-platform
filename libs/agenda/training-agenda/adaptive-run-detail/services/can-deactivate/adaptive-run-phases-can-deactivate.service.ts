@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import {inject, Injectable} from '@angular/core';
 
 import {Observable} from 'rxjs';
 import {RunningAdaptiveRunService} from '../adaptive-run/running/running-adaptive-run.service';

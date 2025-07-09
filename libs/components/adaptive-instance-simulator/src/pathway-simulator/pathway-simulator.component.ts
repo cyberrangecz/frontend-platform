@@ -2,7 +2,7 @@ import {Component, Input} from '@angular/core';
 import {
     AdaptiveTransitionVisualizationComponent
 } from "../transition-visualization/adaptive-transition-visualization.component";
-import {NgIf} from "@angular/common";
+
 import {TransitionGraphVisualizationData} from "../transition-visualization/model/transition-graph-visualization-data";
 
 @Component({
@@ -10,9 +10,8 @@ import {TransitionGraphVisualizationData} from "../transition-visualization/mode
     templateUrl: './pathway-simulator.component.html',
     styleUrls: ['./pathway-simulator.component.css'],
     imports: [
-        AdaptiveTransitionVisualizationComponent,
-        NgIf
-    ]
+    AdaptiveTransitionVisualizationComponent
+]
 })
 export class PathwaySimulatorComponent {
     @Input() transitionData: TransitionGraphVisualizationData;

@@ -11,14 +11,18 @@ import {
     SimpleChanges,
 } from '@angular/core';
 import {Level, MitreTechnique, TrainingDefinition} from '@crczp/training-model';
-import {async, Observable} from 'rxjs';
+import {Observable} from 'rxjs';
 import {map, tap} from 'rxjs/operators';
 import {LevelOverviewControls} from '../../../model/adapters/level-overview-controls';
 import {LevelStepperAdapter} from '@crczp/training-agenda/internal';
 import {LevelMoveEvent} from '../../../model/events/level-move-event';
 import {LevelEditService} from '../../../services/state/level/level-edit.service';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {SentinelControlItem, SentinelControlItemSignal} from "@sentinel/components/controls";
+import {SentinelControlItem, SentinelControlItemSignal, SentinelControlsComponent} from "@sentinel/components/controls";
+import {AsyncPipe} from "@angular/common";
+import {MatDivider} from "@angular/material/divider";
+import {TrainingLevelStepperComponent} from "../stepper/training-level-stepper.component";
+import {AbstractLevelEditComponent} from "../level/abstract-level-edit.component";
 
 /**
  * Smart component for level stepper and level edit components
@@ -28,21 +32,26 @@ import {SentinelControlItem, SentinelControlItemSignal} from "@sentinel/componen
     templateUrl: './level-overview.component.html',
     styleUrls: ['./level-overview.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        AsyncPipe,
+        SentinelControlsComponent,
+        MatDivider,
+        TrainingLevelStepperComponent,
+        AbstractLevelEditComponent
+    ]
 })
 export class LevelOverviewComponent implements OnInit, OnChanges {
-    private levelService = inject(LevelEditService);
-
     @Output() unsavedLevels: EventEmitter<Level[]> = new EventEmitter();
     @Output() levelsCount: EventEmitter<number> = new EventEmitter();
     @Input() trainingDefinition: TrainingDefinition;
     @Input() editMode: boolean;
     @Input() mitreTechniquesList: MitreTechnique[];
-
     activeStep$: Observable<number>;
     stepperLevels: Observable<LevelStepperAdapter[]>;
     controls: SentinelControlItem[];
     levelMovingInProgress: boolean;
     destroyRef = inject(DestroyRef);
+    private levelService = inject(LevelEditService);
 
     ngOnInit(): void {
         this.activeStep$ = this.levelService.activeStep$;
@@ -104,6 +113,4 @@ export class LevelOverviewComponent implements OnInit, OnChanges {
         const deleteDisabled$ = this.levelService.levels$.pipe(map((levels) => levels.length <= 0));
         this.controls = LevelOverviewControls.create(this.levelService, this.editMode, deleteDisabled$);
     }
-
-    protected readonly async = async;
 }

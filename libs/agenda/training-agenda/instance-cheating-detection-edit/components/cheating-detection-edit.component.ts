@@ -12,7 +12,7 @@ import {CheatingDetectionEditFormGroup} from './cheating-detection-edit-form-gro
 import {CheatingDetectionEditService} from '../services/cheating-detection-edit.service';
 import {ActivatedRoute} from '@angular/router';
 import {CheatingDetection, TrainingInstance} from '@crczp/training-model';
-import {SentinelControlItem, SentinelControlsComponent} from '@sentinel/components/controls';
+import {SentinelControlItem, SentinelControlItemSignal, SentinelControlsComponent} from '@sentinel/components/controls';
 import {map, take} from 'rxjs/operators';
 import {defer, Observable, of} from 'rxjs';
 import {TRAINING_INSTANCE_DATA_ATTRIBUTE_NAME} from '@crczp/training-agenda';
@@ -22,10 +22,11 @@ import {MatSlideToggle} from "@angular/material/slide-toggle";
 import {MatDivider} from "@angular/material/divider";
 import {MatError, MatFormField, MatInput, MatLabel, MatSuffix} from "@angular/material/input";
 import {MatTooltip} from "@angular/material/tooltip";
-import {NgForOf, NgIf} from "@angular/common";
+
 import {MatRadioButton, MatRadioGroup} from "@angular/material/radio";
 import {MatButton, MatIconButton} from "@angular/material/button";
 import {MatIcon} from "@angular/material/icon";
+import {CheatingDetectionEditConcreteService} from "../services/cheating-detection-edit-concrete.service";
 
 /**
  * Main component of training instance cheating detection edit.
@@ -46,21 +47,17 @@ import {MatIcon} from "@angular/material/icon";
         MatLabel,
         MatInput,
         MatTooltip,
-        NgForOf,
         MatRadioGroup,
         MatRadioButton,
         MatButton,
         MatError,
-        NgIf,
         MatIconButton,
         MatSuffix,
         MatIcon
-    ]
+    ],
+    providers: [{provide: CheatingDetectionEditService, useClass: CheatingDetectionEditConcreteService}],
 })
 export class CheatingDetectionEditComponent {
-    private activeRoute = inject(ActivatedRoute);
-    private editService = inject(CheatingDetectionEditService);
-
     trainingInstance$: Observable<TrainingInstance>;
     cheatingDetectionEditFormGroup: CheatingDetectionEditFormGroup;
     cheatingDetection: CheatingDetection;
@@ -69,6 +66,8 @@ export class CheatingDetectionEditComponent {
     maximumProximityThreshold = 86400;
     isAPG = false;
     destroyRef = inject(DestroyRef);
+    private activeRoute = inject(ActivatedRoute);
+    private editService = inject(CheatingDetectionEditService);
 
     constructor() {
         this.trainingInstance$ = this.activeRoute.data.pipe(
@@ -101,7 +100,7 @@ export class CheatingDetectionEditComponent {
         return this.cheatingDetectionEditFormGroup.formGroup.get('timeProximityDetection');
     }
 
-    onControlsAction(control: SentinelControlItem): void {
+    onControlsAction(control: SentinelControlItemSignal): void {
         control.result$.pipe(take(1)).subscribe();
     }
 

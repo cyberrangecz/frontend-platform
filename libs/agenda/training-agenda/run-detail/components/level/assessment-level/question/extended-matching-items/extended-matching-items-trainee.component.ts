@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@angular/core';
 import {ExtendedMatchingItems, Question} from '@crczp/training-model';
 import {SentinelMarkdownViewComponent} from "@sentinel/components/markdown-view";
-import {NgClass, NgForOf, NgIf} from "@angular/common";
+import {NgClass} from "@angular/common";
 import {MatRadioButton, MatRadioGroup} from "@angular/material/radio";
 
 @Component({
@@ -10,13 +10,11 @@ import {MatRadioButton, MatRadioGroup} from "@angular/material/radio";
     styleUrls: ['./extended-matching-items-trainee.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
-        SentinelMarkdownViewComponent,
-        NgForOf,
-        NgClass,
-        MatRadioGroup,
-        MatRadioButton,
-        NgIf
-    ]
+    SentinelMarkdownViewComponent,
+    NgClass,
+    MatRadioGroup,
+    MatRadioButton
+]
 })
 /**
  * Component displaying EMI type of question in the assessment level of a trainees training run.

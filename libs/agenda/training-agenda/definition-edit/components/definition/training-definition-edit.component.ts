@@ -14,7 +14,7 @@ import {MatError, MatFormField, MatInput, MatLabel, MatSuffix} from "@angular/ma
 import {MatCheckbox} from "@angular/material/checkbox";
 import {MatIconButton} from "@angular/material/button";
 import {MatTooltip} from "@angular/material/tooltip";
-import {NgIf} from "@angular/common";
+
 import {SentinelFreeFormComponent} from "@sentinel/components/free-form";
 import {MatIcon} from "@angular/material/icon";
 
@@ -26,19 +26,18 @@ import {MatIcon} from "@angular/material/icon";
     templateUrl: './training-definition-edit.component.html',
     styleUrls: ['./training-definition-edit.component.css'],
     imports: [
-        ReactiveFormsModule,
-        MatFormField,
-        MatLabel,
-        MatInput,
-        MatSuffix,
-        MatIconButton,
-        MatError,
-        MatCheckbox,
-        MatTooltip,
-        MatIcon,
-        NgIf,
-        SentinelFreeFormComponent
-    ]
+    ReactiveFormsModule,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    MatSuffix,
+    MatIconButton,
+    MatError,
+    MatCheckbox,
+    MatTooltip,
+    MatIcon,
+    SentinelFreeFormComponent
+]
 })
 export class TrainingDefinitionEditComponent implements OnChanges {
     @Input() trainingDefinition: TrainingDefinition;

@@ -1,34 +1,42 @@
 <form [formGroup]="multipleChoicesFormGroup.questionFormGroup">
-    <div class="question-container">
-        <!-- TITLE field-->
-        <div class='question-text'>
-            <sentinel-markdown-editor
-                [sentinel-markdown-file-upload]="false"
-                (contentChange)="title.setValue($event)"
-                [content]="title.value"
-            />
-            <mat-error *ngIf="title.hasError('whitespace')">Question text cannot be empty</mat-error>
-        </div>
+  <div class="question-container">
+    <!-- TITLE field-->
+    <div class='question-text'>
+      <sentinel-markdown-editor
+        [sentinel-markdown-file-upload]="false"
+        (contentChange)="title.setValue($event)"
+        [content]="title.value"
+        />
+      @if (title.hasError('whitespace')) {
+        <mat-error>Question text cannot be empty</mat-error>
+      }
     </div>
-    <h2>Options:</h2>
-    <div formArrayName="choices">
-        <div *ngFor="let choicesGroup of choices.controls; index as i;" [formGroupName]="i">
-            <!-- CHOICES field -->
-            <mat-checkbox *ngIf="questionnaireType === questionnaireTypes.Adaptive"
-                          class="option-checkbox"
-                          matTooltip="Correct"
-                          formControlName="correct"/>
-            <mat-form-field appearance="outline">
-                <mat-label>Option {{ i + 1 }}</mat-label>
-                <input matInput placeholder="Option Text" formControlName="text" required/>
-                <mat-error *ngIf="choicesGroup.get('text').hasError('required')">Option text cannot be empty</mat-error>
-            </mat-form-field>
-            <button matSuffix mat-icon-button aria-label="Delete option"
-                    color="warn" matTooltip="Delete option"
-                    (click)="deleteOption(i)">
-                <mat-icon>remove_circle</mat-icon>
-            </button>
-        </div>
-    </div>
-    <button (click)="addOption()" mat-button color="primary">Add option</button>
+  </div>
+  <h2>Options:</h2>
+  <div formArrayName="choices">
+    @for (choicesGroup of choices.controls; track choicesGroup; let i = $index) {
+      <div [formGroupName]="i">
+        <!-- CHOICES field -->
+        @if (questionnaireType === questionnaireTypes.Adaptive) {
+          <mat-checkbox
+            class="option-checkbox"
+            matTooltip="Correct"
+            formControlName="correct"/>
+        }
+        <mat-form-field appearance="outline">
+          <mat-label>Option {{ i + 1 }}</mat-label>
+          <input matInput placeholder="Option Text" formControlName="text" required/>
+          @if (choicesGroup.get('text').hasError('required')) {
+            <mat-error>Option text cannot be empty</mat-error>
+          }
+        </mat-form-field>
+        <button matSuffix mat-icon-button aria-label="Delete option"
+          color="warn" matTooltip="Delete option"
+          (click)="deleteOption(i)">
+          <mat-icon>remove_circle</mat-icon>
+        </button>
+      </div>
+    }
+  </div>
+  <button (click)="addOption()" mat-button color="primary">Add option</button>
 </form>

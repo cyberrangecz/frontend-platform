@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import {inject, Injectable} from '@angular/core';
 import {Link, Node} from '@crczp/topology-graph-model';
 import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 import {BehaviorSubject, Observable, of, zip} from 'rxjs';
@@ -16,7 +16,7 @@ import {HostDTO} from '../model/DTO/host-dto.model';
 import {ManDTO} from '../model/DTO/man-dto.model';
 import {ConsoleUrlMapper} from '../mappers/console-url-mapper';
 import {ConsoleUrl} from '../model/others/console-url';
-import {Settings} from '@crczp/common';
+import {PortalConfig} from '@crczp/common';
 
 /**
  * Service for getting JSON data about topology of network and parsing them to model suitable for visualization
@@ -27,11 +27,11 @@ import {Settings} from '@crczp/common';
 
 @Injectable()
 export class TopologyApi {
-    private http = inject(HttpClient);
+    private readonly http = inject(HttpClient);
     private topologySerializer = inject(TopologyMapper);
     private loadingService = inject(TopologyLoadingService);
     private errorService = inject(TopologyErrorService);
-    private settings = inject(Settings);
+    private settings = inject(PortalConfig);
 
     private readonly GUAC_AUTH = 'GUAC_AUTH';
 
@@ -42,14 +42,14 @@ export class TopologyApi {
     getTopologyBySandboxInstanceId(
         sandboxUuid: string
     ): Observable<{ nodes: Node[]; links: Link[] }> {
-        const url = `${this.settings.SANDBOX_BASE_PATH}sandboxes/${sandboxUuid}/topology`;
+        const url = `${this.settings.basePaths.sandbox}sandboxes/${sandboxUuid}/topology`;
         return this.getTopology(url);
     }
 
     getTopologyBySandboxDefinitionId(
         sandboxDefinitionsId: number
     ): Observable<{ nodes: Node[]; links: Link[] }> {
-        const url = `${this.settings.SANDBOX_BASE_PATH}definitions/${sandboxDefinitionsId}/topology`;
+        const url = `${this.settings.basePaths.sandbox}definitions/${sandboxDefinitionsId}/topology`;
         return this.getTopology(url);
     }
 
@@ -86,7 +86,7 @@ export class TopologyApi {
     getVMConsoleUrl(sandboxUuid: string, vmName: string): Observable<string> {
         return this.http
             .get<ConsoleDTO>(
-                `${this.settings.SANDBOX_BASE_PATH}sandboxes/${sandboxUuid}/vms/${vmName}/console`
+                `${this.settings.basePaths.sandbox}sandboxes/${sandboxUuid}/vms/${vmName}/console`
             )
             .pipe(
                 map((resp) => resp.url),
@@ -109,7 +109,7 @@ export class TopologyApi {
     getVMConsolesUrl(sandboxUuid: string): Observable<ConsoleUrl[]> {
         return this.http
             .get(
-                `${this.settings.SANDBOX_BASE_PATH}sandboxes/${sandboxUuid}/consoles`
+                `${this.settings.basePaths.sandbox}sandboxes/${sandboxUuid}/consoles`
             )
             .pipe(
                 map((resp) => ConsoleUrlMapper.fromJSON(resp)),
@@ -182,7 +182,7 @@ export class TopologyApi {
     ): Observable<any> {
         return this.http
             .patch(
-                `${this.settings.SANDBOX_BASE_PATH}sandboxes/${sandboxUuid}/vms/${vmName}`,
+                `${this.settings.basePaths.sandbox}sandboxes/${sandboxUuid}/vms/${vmName}`,
                 {
                     action: action,
                 }
@@ -202,10 +202,10 @@ export class TopologyApi {
 
     private getGuacamoleToken() {
         const body = new URLSearchParams();
-        body.set('username', this.settings.GUACAMOLE_CONFIG.USERNAME);
-        body.set('password', this.settings.GUACAMOLE_CONFIG.PASSWORD);
+        body.set('username', this.settings.guacamoleCredentials.username);
+        body.set('password', this.settings.guacamoleCredentials.password);
         return this.http.post<GuacamoleTokenDTO>(
-            `${this.settings.SANDBOX_BASE_PATH}api/tokens`,
+            `${this.settings.basePaths.sandbox}api/tokens`,
             body.toString(),
             {
                 headers: new HttpHeaders({
@@ -221,7 +221,7 @@ export class TopologyApi {
     ): Observable<HostDTO> {
         return this.http
             .get<HostDTO>(
-                `${this.settings.SANDBOX_BASE_PATH}sandboxes/${sandboxUuid}/vms/${vmName}`
+                `${this.settings.basePaths.sandbox}sandboxes/${sandboxUuid}/vms/${vmName}`
             )
             .pipe(
                 tap({
@@ -239,7 +239,7 @@ export class TopologyApi {
     private getManIp(sandboxUuid: string): Observable<ManDTO> {
         return this.http
             .get<ManDTO>(
-                `${this.settings.SANDBOX_BASE_PATH}sandboxes/${sandboxUuid}/man-out-port-ip`
+                `${this.settings.basePaths.sandbox}sandboxes/${sandboxUuid}/man-out-port-ip`
             )
             .pipe(
                 tap({
@@ -301,7 +301,7 @@ export class TopologyApi {
                 // eslint-disable-next-line max-len
                 return this.http
                     .post<GuacamoleIdentifierDTO>(
-                        `${this.settings.SANDBOX_BASE_PATH}api/session/ext/quickconnect/create`,
+                        `${this.settings.basePaths.sandbox}api/session/ext/quickconnect/create`,
                         urlSearchParams.toString(),
                         {
                             headers: new HttpHeaders({

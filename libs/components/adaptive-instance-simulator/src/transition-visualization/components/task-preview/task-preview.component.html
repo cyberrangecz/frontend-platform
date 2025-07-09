@@ -6,7 +6,7 @@
         <crczp-training-task-preview [task]="task"/>
     }
     @case (AbstractTaskTypeEnum.Questionnaire) {
-        <crczp-questionnaire-task-preview [task]="task"/>
+        <crczp-questionnaire-task-preview [task]="$any(task)"/>
     }
     @case (AbstractTaskTypeEnum.Access) {
         <crczp-access-task-preview [task]="task" [localEnvironment]="localEnvironment"/>

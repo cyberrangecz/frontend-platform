@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import {inject, Injectable} from '@angular/core';
 import {map, Observable} from 'rxjs';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {InstanceSimulatorMapper} from '../mapper/instance-simulator-mapper';
@@ -8,12 +8,12 @@ import {InstanceModelUpdateMapper} from '../mapper/instance-model-update-mapper'
 import {SankeyData} from '../../model/sankey/sankey-data';
 import {SankeyDataDTO} from '../../model/sankey/dto/sankey-data-dto';
 import {SankeyDataMapper} from '../../model/sankey/mapper/sankey-data-mapper';
-import {Settings} from '@crczp/common';
+import {PortalConfig} from '@crczp/common';
 
 @Injectable()
 export class InstanceSimulatorApiService {
-    private http = inject(HttpClient);
-    private settings = inject(Settings);
+    private readonly http = inject(HttpClient);
+    private settings = inject(PortalConfig);
 
     private readonly FILE_NAME = 'instance-data.zip';
 
@@ -30,7 +30,7 @@ export class InstanceSimulatorApiService {
         zipFile.append(this.FILE_NAME, file);
         return this.http
             .post<InstanceModelSimulatorDTO>(
-                `${this.settings.ADAPTIVE_TRAINING_BASE_PATH}/visualizations/training-instances/simulator`,
+                `${this.settings.basePaths.adaptiveTraining}/visualizations/training-instances/simulator`,
                 file,
                 {
                     headers: headers,
@@ -49,7 +49,7 @@ export class InstanceSimulatorApiService {
     ): Observable<SankeyData> {
         return this.http
             .post<SankeyDataDTO>(
-                `${this.settings.ADAPTIVE_TRAINING_BASE_PATH}/visualizations/training-instances/generate`,
+                `${this.settings.basePaths.adaptiveTraining}/visualizations/training-instances/generate`,
                 InstanceModelUpdateMapper.toUpdateDTO(instanceModelSimulator)
             )
             .pipe(map((resp) => SankeyDataMapper.fromDTOs(resp)));

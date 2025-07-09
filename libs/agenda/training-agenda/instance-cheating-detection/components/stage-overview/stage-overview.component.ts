@@ -1,11 +1,21 @@
 import {Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
 import {CheatingDetectionStateEnum} from '@crczp/training-model';
 import {SelectedStage} from '../../model/selected-stage';
+import {MatIcon} from "@angular/material/icon";
+import {MatTooltip} from "@angular/material/tooltip";
+import {MatRipple} from "@angular/material/core";
+import {NgClass} from "@angular/common";
 
 @Component({
     selector: 'crczp-stage-overview',
     templateUrl: './stage-overview.component.html',
     styleUrls: ['./stage-overview.component.scss'],
+    imports: [
+        MatIcon,
+        MatTooltip,
+        MatRipple,
+        NgClass
+    ]
 })
 export class StageOverviewComponent implements OnChanges {
     @Input() stages;

@@ -1,68 +1,70 @@
 <mat-expansion-panel class="mat-elevation-z0 panel-align">
-    <mat-expansion-panel-header>
-        <mat-panel-title>
-            <h3>
-                <mat-icon class="level-type" [inline]="true" matTooltip="Training Phase"> videogame_asset</mat-icon>
-                <span> {{ phase.order + 1 }}.</span>
-                <span> {{ phase.title }}</span>
-            </h3>
-        </mat-panel-title>
-    </mat-expansion-panel-header>
+  <mat-expansion-panel-header>
+    <mat-panel-title>
+      <h3>
+        <mat-icon class="level-type" [inline]="true" matTooltip="Training Phase"> videogame_asset</mat-icon>
+        <span> {{ phase.order + 1 }}.</span>
+        <span> {{ phase.title }}</span>
+      </h3>
+    </mat-panel-title>
+  </mat-expansion-panel-header>
 
-    <div class="data-field">
-        <div class="key-field">Estimated Duration:</div>
-        <div>{{ phase.estimatedDuration }}</div>
+  <div class="data-field">
+    <div class="key-field">Estimated Duration:</div>
+    <div>{{ phase.estimatedDuration }}</div>
+  </div>
+  <div class="data-field">
+    <div class="key-field">Allowed Wrong Answers:</div>
+    <div>
+      {{ phase.allowedWrongAnswers }}
     </div>
-    <div class="data-field">
-        <div class="key-field">Allowed Wrong Answers:</div>
-        <div>
-            {{ phase.allowedWrongAnswers }}
-        </div>
+  </div>
+  <div class="data-field">
+    <div class="key-field">Allowed Commands:</div>
+    <div>
+      {{ phase.allowedCommands }}
     </div>
-    <div class="data-field">
-        <div class="key-field">Allowed Commands:</div>
-        <div>
-            {{ phase.allowedCommands }}
-        </div>
+  </div>
+  <div class="data-field">
+    <div class="key-field">MITRE ATT&CK Techniques:</div>
+    <div>
+      {{ getMitreTechniques() }}
     </div>
-    <div class="data-field">
-        <div class="key-field">MITRE ATT&CK Techniques:</div>
-        <div>
-            {{ getMitreTechniques() }}
-        </div>
-    </div>
-    <div class="data-field">
-        <div class="key-field">Tasks:</div>
-        <div class="tasks-container">
-            <div *ngFor="let task of phase.tasks" class="task-container">
-                <div class="data-field">
-                    <h4>{{ task.order + 1 }}. {{ task?.title }}</h4>
-                </div>
-                <div>
-                    <div class="data-field">
-                        <div class="key-field">Answer:</div>
-                        <div>{{ task?.answer }}</div>
-                    </div>
-                    <div class="data-field  markdown-data">
-                        <div class="key-field">Content:</div>
-                        <sentinel-markdown-view [markdown]="task?.content" />
-                    </div>
-                    <div class="data-field  markdown-data">
-                        <div class="key-field">Solution:</div>
-                        <sentinel-markdown-view [markdown]="task?.solution" />
-                    </div>
-                    <div class="data-field">
-                        <div class="key-field">Modify Sandbox:</div>
-                        <div>{{ task?.modifySandbox }}</div>
-                    </div>
-                    <div class="data-field">
-                        <div class="key-field">Incorrect Answer Limit:</div>
-                        <div>{{ task?.incorrectAnswerLimit }}</div>
-                    </div>
-                </div>
+  </div>
+  <div class="data-field">
+    <div class="key-field">Tasks:</div>
+    <div class="tasks-container">
+      @for (task of phase.tasks; track task) {
+        <div class="task-container">
+          <div class="data-field">
+            <h4>{{ task.order + 1 }}. {{ task?.title }}</h4>
+          </div>
+          <div>
+            <div class="data-field">
+              <div class="key-field">Answer:</div>
+              <div>{{ task?.answer }}</div>
             </div>
+            <div class="data-field  markdown-data">
+              <div class="key-field">Content:</div>
+              <sentinel-markdown-view [markdown]="task?.content" />
+            </div>
+            <div class="data-field  markdown-data">
+              <div class="key-field">Solution:</div>
+              <sentinel-markdown-view [markdown]="task?.solution" />
+            </div>
+            <div class="data-field">
+              <div class="key-field">Modify Sandbox:</div>
+              <div>{{ task?.modifySandbox }}</div>
+            </div>
+            <div class="data-field">
+              <div class="key-field">Incorrect Answer Limit:</div>
+              <div>{{ task?.incorrectAnswerLimit }}</div>
+            </div>
+          </div>
         </div>
+      }
     </div>
+  </div>
 
 
 </mat-expansion-panel>

@@ -1,0 +1,117 @@
+<h1>Trainee Graph</h1>
+<div class="content-container">
+    <div class="left-panel">
+        @if (!trainingRunId) {
+            <div class="select-container">
+                <div class="select-trainee">
+                    <mat-form-field appearance="fill">
+                        <mat-label>Choose trainee</mat-label>
+                        <mat-select
+                            [value]="selectedTrainingRun$ | async"
+                            (selectionChange)="onChange($event)"
+                            (opened)="onTraineesSelectionOpened()"
+                        >
+                            <mat-option>--</mat-option>
+                            @for (trainingRun of trainingRuns$ | async; track trainingRun) {
+                                <mat-option [value]="trainingRun.id">
+                                    <div class="resource-info">
+                                        <span class="resource-title">{{ trainingRun.player.name }}</span>
+                                        <span class="resource-subtitle"> (Training Run ID: {{ trainingRun.id }})</span>
+                                    </div>
+                                </mat-option>
+                            }
+                        </mat-select>
+                    </mat-form-field>
+                    <button
+                        mat-raised-button
+                        color="primary"
+                        [disabled]="(selectedTrainingRun$ | async) === null"
+                        (click)="onSubmit()"
+                    >
+                        Show Trainee Graph
+                    </button>
+                </div>
+            </div>
+        }
+
+        <div class="legend">
+            <table>
+                <tr>
+                    <td>
+                        <svg height="50" width="100">
+                            <rect class="start-node" height="50" width="50" x="25" y="20"/>
+                        </svg>
+                    </td>
+                    <td>
+                        <span>Start node of every level</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <svg height="40" width="75">
+                            <ellipse class="mandatory-node" cx="35" cy="20" rx="30" ry="15"/>
+                        </svg>
+                    </td>
+
+                    <td>
+                        <span>Mandatory node</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <svg height="40" width="75">
+                            <ellipse class="error-node" cx="35" cy="20" rx="30" ry="15"/>
+                        </svg>
+                    </td>
+                    <td>
+                        <span>Error node</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <svg height="40" width="75">
+                            <ellipse class="command-node" cx="35" cy="20" rx="30" ry="15"/>
+                        </svg>
+                    </td>
+                    <td>
+                        <span>Command leads to mandatory node but prerequisites are missing</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <svg height="40" width="75">
+                            <ellipse class="unfulfilled-node" cx="35" cy="20" rx="30" ry="15"/>
+                        </svg>
+                    </td>
+                    <td>
+                        <span>Generated mandatory node which was not fulfilled but level was ended other way</span>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="right-panel">
+        <div class="info-container">
+            <mat-list>
+                <mat-list-item>
+                    <mat-icon color="primary" matListIcon>zoom_in</mat-icon>
+                    <span matLine
+                    >Scroll for zoom
+            <span (click)="onResetZoom()" style="cursor: pointer"><b>(reset)</b></span></span
+                    >
+                </mat-list-item>
+                <mat-list-item>
+                    <mat-icon color="primary" matListIcon>mouse</mat-icon>
+                    <span matLine>Use mouse to move the graph</span>
+                </mat-list-item>
+            </mat-list>
+        </div>
+
+        <div class="trainee-graph">
+            @if (hasError) {
+                <h2>Error occurred please refresh the page.</h2>
+            }
+        </div>
+    </div>
+</div>

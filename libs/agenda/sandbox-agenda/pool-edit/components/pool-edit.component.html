@@ -1,0 +1,87 @@
+<mat-card appearance="outlined">
+  <mat-card-header class="card-title">
+    <mat-card-title>
+      @if (editMode) {
+        Edit Sandbox Pool
+      }
+      @if (!editMode) {
+        Create Sandbox Pool
+      }
+    </mat-card-title>
+
+    <sentinel-controls [controls]="controls" (itemClicked)="onControlsAction($event)"/>
+  </mat-card-header>
+
+  <mat-card-content>
+    <mat-divider/>
+    <form [formGroup]="poolFormGroup.formGroup">
+      <div class="form-content">
+        <div class="form-column">
+          <!-- POOL SIZE field -->
+          <mat-form-field appearance="outline"
+            [hintLabel]="editMode ? '' : 'Pool of sandboxes that can be allocated'"
+            class="multi-line-hint">
+            <mat-label>Sandbox Pool Size</mat-label>
+            <input matInput placeholder="Sandbox pool size" type="number"
+              min="1" formControlName="poolSize" required>
+            @if (poolSize.hasError('min')) {
+              <mat-error>
+                Pool size must be number larger than {{ getMinimumPoolSize() }}
+                {{ editMode ? '(amount of currently allocated sandboxes)' : '' }}
+              </mat-error>
+            }
+            @if (poolSize.hasError('required')) {
+              <mat-error>This field is required</mat-error>
+            }
+          </mat-form-field>
+
+
+          <!-- SANDBOX DEFINITION field-->
+          <sentinel-resource-selector
+            class="sandbox-definition-selector"
+            [appearance]="'outline'"
+            label="Sandbox Definition"
+            searchPlaceholder="Search Sandbox Definitions"
+            noResultsLabel="No Sandbox Definitions"
+            [disabled]="editMode"
+            [multiSelection]="false"
+            [required]="true"
+            [resources]="filteredSandboxDefinitions$ | async"
+            (fetch)="onSandboxDefinitionFilter($event)"
+            [singleSelected]="sandboxDefinition.value"
+            (singleSelectionChange)="sandboxDefinition.setValue($event);this.poolFormGroup.formGroup.markAsDirty();"
+            [formGroupName]="'trainingDefinition'">
+            <ng-container [sentinelSelectorSelectedElement]="sandboxDefinitionTemplate"/>
+            <ng-container [sentinelSelectorElement]="sandboxDefinitionTemplate"/>
+          </sentinel-resource-selector>
+
+          <!-- POOL NOTIFICATION field -->
+          <mat-checkbox
+            formControlName="notifyBuild"
+            matTooltip="Sends e-mails to the user who triggers the allocation"
+            class="notify-build">
+            Send e-mail notifications upon build progression
+          </mat-checkbox>
+        </div>
+
+        <div class="form-column">
+          <!-- COMMENT field -->
+          <mat-form-field appearance="outline" hintLabel="A description/info regarding your pool">
+            <mat-label>Comment</mat-label>
+            <textarea matInput
+              placeholder="Pool comment"
+              type="text" maxlength="256"
+              formControlName="comment"
+              class="comment">
+            </textarea>
+          </mat-form-field>
+        </div>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>
+
+<ng-template #sandboxDefinitionTemplate let-resource>
+  {{ sandboxDefinitionToDisplayString(resource) }}
+</ng-template>
+

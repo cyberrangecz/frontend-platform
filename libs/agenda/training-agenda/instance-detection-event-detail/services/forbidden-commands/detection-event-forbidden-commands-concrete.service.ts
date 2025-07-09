@@ -1,11 +1,11 @@
-import { Injectable, inject } from '@angular/core';
+import {inject, Injectable} from '@angular/core';
 import {DetectionEventApi} from '@crczp/training-api';
 import {OffsetPaginationEvent, PaginatedResource,} from '@sentinel/common/pagination';
 import {Observable} from 'rxjs';
 import {DetectedForbiddenCommand} from '@crczp/training-model';
 import {tap} from 'rxjs/operators';
 import {DetectionEventForbiddenCommandsService} from './detection-event-forbidden-commands.service';
-import {Settings} from '@crczp/common';
+import {PortalConfig} from '@crczp/common';
 
 /**
  * Basic implementation of a layer between a component and an API services.
@@ -16,9 +16,7 @@ export class DetectionEventForbiddenCommandsConcreteService extends DetectionEve
     private api = inject(DetectionEventApi);
 
     constructor() {
-        const settings = inject(Settings);
-
-        super(settings.DEFAULT_PAGE_SIZE);
+        super(inject(PortalConfig).defaultPageSize);
     }
 
     /**

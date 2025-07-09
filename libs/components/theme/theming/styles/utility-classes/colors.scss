@@ -1,6 +1,6 @@
-@import '../../definitions/variables.scss';
+@use '../../definitions/variables' as vars;
 
-@each $shade in $shades {
+@each $shade in vars.$shades {
     .bg-#{$shade} {
         background-color: var(--primary-#{$shade});
     }
@@ -17,7 +17,7 @@
         color: var(--primary-#{$shade}) !important;
     }
 
-    @each $prefix in $prefixes {
+    @each $prefix in vars.$prefixes {
         .bg-#{$prefix}-#{$shade} {
             background-color: var(--#{$prefix}-#{$shade});
         }

@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import {inject, Injectable} from '@angular/core';
 import {RunningAdaptiveRunService} from './running-adaptive-run.service';
 import {EMPTY, Observable} from 'rxjs';
 import {AbstractPhaseTypeEnum, AccessTrainingRunInfo, Phase, QuestionAnswer} from '@crczp/training-model';

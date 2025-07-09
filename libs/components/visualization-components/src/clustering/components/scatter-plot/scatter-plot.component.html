@@ -1,0 +1,27 @@
+<div [className]="'scatterDiv ' + chartClass">
+  @if (isStandalone) {
+    <div>
+      <!-- inputs for testing purposes -->
+      <h2>Scatterplot for identifiing connections</h2>
+      <button
+        mat-mini-fab
+        color="primary"
+        id="show-info"
+        aria-label="help"
+        [attr.style]="showInfo ? 'opacity: 0.5' : 'opacity: 1'"
+        (click)="toggleInfo()">
+        <span>?</span>
+      </button>
+      @if (showInfo) {
+        <mat-card>
+          <mat-card-content>
+            <h3>Basic information</h3>
+            <p>{{ info }}</p>
+            <h3>The elbow function:</h3>
+            <p>Using the elbow as a cutoff point is used to determine the optimal number of clusters.</p>
+          </mat-card-content>
+        </mat-card>
+      }
+    </div>
+  }
+</div>

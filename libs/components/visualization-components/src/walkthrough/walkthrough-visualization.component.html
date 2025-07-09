@@ -1,0 +1,7 @@
+<svg #chart class="svg">
+  <g class="content" [attr.transform]="getMarginTransform()">
+    @if (data) {
+      <g chart-base [usersData]="data.usersData" [svgHeight]="innerHeight()" [svgWidth]="innerWidth()" />
+    }
+  </g>
+</svg>

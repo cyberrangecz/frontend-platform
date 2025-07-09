@@ -12,7 +12,7 @@ import {
 } from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import {SentinelControlItem, SentinelControlItemSignal, SentinelControlsComponent} from '@sentinel/components/controls';
-import {async, Observable} from 'rxjs';
+import {Observable} from 'rxjs';
 import {map, tap} from 'rxjs/operators';
 import {
     AdaptiveQuestion,
@@ -51,14 +51,10 @@ import {AsyncPipe} from "@angular/common";
     ]
 })
 export class PhaseOverviewComponent implements OnInit, OnChanges {
-    private dialog = inject(MatDialog);
-    private phaseService = inject(PhaseEditService);
-
     @Output() unsavedPhases: EventEmitter<Phase[]> = new EventEmitter();
     @Output() phasesCount: EventEmitter<number> = new EventEmitter();
     @Input() trainingDefinition: TrainingDefinition;
     @Input() mitreTechniquesList: MitreTechnique[];
-
     activeStep$: Observable<number>;
     stepperPhases$: Observable<PhaseStepperAdapter[]>;
     controls: (SentinelControlItem)[];
@@ -69,7 +65,8 @@ export class PhaseOverviewComponent implements OnInit, OnChanges {
     phaseRelations: PhaseRelation[] = [];
     questions: Map<number, AdaptiveQuestion> = new Map<number, AdaptiveQuestion>();
     destroyRef = inject(DestroyRef);
-    protected readonly async = async;
+    private dialog = inject(MatDialog);
+    private phaseService = inject(PhaseEditService);
 
     ngOnInit(): void {
         this.activeStep$ = this.phaseService.activeStep$;

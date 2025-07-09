@@ -26,7 +26,7 @@ import {SentinelMarkdownEditorComponent} from "@sentinel/components/markdown-edi
 import {MatIcon} from "@angular/material/icon";
 import {MatButton, MatIconButton} from "@angular/material/button";
 import {MatTooltip} from "@angular/material/tooltip";
-import {NgForOf, NgIf} from "@angular/common";
+
 
 @Component({
     selector: 'crczp-adaptive-free-form-question-edit',
@@ -44,9 +44,7 @@ import {NgForOf, NgIf} from "@angular/common";
         MatIconButton,
         MatSuffix,
         MatTooltip,
-        MatButton,
-        NgForOf,
-        NgIf
+        MatButton
     ]
 })
 /**

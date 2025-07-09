@@ -1,6 +1,20 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, inject } from '@angular/core';
+import {
+    ChangeDetectionStrategy,
+    Component,
+    EventEmitter,
+    inject,
+    Input,
+    OnChanges,
+    Output,
+    SimpleChanges
+} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
-import {SentinelStepper, StepperStateChange, StepStateEnum} from '@sentinel/components/stepper';
+import {
+    SentinelStepper,
+    SentinelStepperComponent,
+    StepperStateChange,
+    StepStateEnum
+} from '@sentinel/components/stepper';
 import {LevelStepperAdapter} from '@crczp/training-agenda/internal';
 import {LevelMoveEvent} from '../../../model/events/level-move-event';
 
@@ -12,6 +26,9 @@ import {LevelMoveEvent} from '../../../model/events/level-move-event';
     templateUrl: './training-level-stepper.component.html',
     styleUrls: ['./training-level-stepper.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        SentinelStepperComponent
+    ]
 })
 export class TrainingLevelStepperComponent implements OnChanges {
     dialog = inject(MatDialog);
@@ -23,7 +40,7 @@ export class TrainingLevelStepperComponent implements OnChanges {
     @Output() levelMove: EventEmitter<LevelMoveEvent> = new EventEmitter();
     @Output() initialLevels: EventEmitter<LevelStepperAdapter[]> = new EventEmitter();
 
-    levelStepper: SentinelStepper<LevelStepperAdapter> = { items: [] };
+    levelStepper: SentinelStepper<LevelStepperAdapter> = {items: []};
 
     private previousActiveStep = -1;
 

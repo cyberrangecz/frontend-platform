@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import {inject, Injectable} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import {
     SentinelConfirmationDialogComponent,
@@ -14,7 +14,7 @@ import {EMPTY, Observable, of} from 'rxjs';
 import {switchMap, tap} from 'rxjs/operators';
 import {TrainingErrorHandler, TrainingNotificationService,} from '@crczp/training-agenda';
 import {AdaptiveRunService} from './adaptive-run.service';
-import {Settings} from '@crczp/common';
+import {PortalConfig} from '@crczp/common';
 
 /**
  * Basic implementation of layer between component and API service.
@@ -33,9 +33,9 @@ export class AdaptiveRunConcreteService extends AdaptiveRunService {
     private lastTrainingInstanceId: number;
 
     constructor() {
-        const settings = inject(Settings);
+        const settings = inject(PortalConfig);
 
-        super(settings.DEFAULT_PAGE_SIZE, settings.POLLING_PERIOD_SHORT);
+        super(settings.defaultPageSize, settings.polling.pollingPeriodShort);
     }
 
     /**
@@ -88,7 +88,7 @@ export class AdaptiveRunConcreteService extends AdaptiveRunService {
                 this.lastTrainingInstanceId,
                 this.lastPagination
             )
-            .pipe(tap({ error: () => this.onGetAllError() }));
+            .pipe(tap({error: () => this.onGetAllError()}));
     }
 
     protected onManualResourceRefresh(

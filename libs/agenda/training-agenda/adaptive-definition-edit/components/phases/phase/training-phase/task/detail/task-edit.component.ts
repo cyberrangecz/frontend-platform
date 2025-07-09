@@ -17,7 +17,7 @@ import {MatError, MatFormField, MatHint, MatInput, MatLabel, MatSuffix} from "@a
 import {MatIcon} from "@angular/material/icon";
 import {MatIconButton} from "@angular/material/button";
 import {SentinelMarkdownEditorComponent} from "@sentinel/components/markdown-editor";
-import {NgIf} from "@angular/common";
+
 import {AdaptiveTask} from "@crczp/training-model";
 
 @Component({
@@ -26,19 +26,18 @@ import {AdaptiveTask} from "@crczp/training-model";
     styleUrls: ['./task-edit.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
-        MatSlideToggle,
-        MatError,
-        MatHint,
-        MatIcon,
-        MatIconButton,
-        MatSuffix,
-        ReactiveFormsModule,
-        MatInput,
-        MatFormField,
-        SentinelMarkdownEditorComponent,
-        NgIf,
-        MatLabel
-    ]
+    MatSlideToggle,
+    MatError,
+    MatHint,
+    MatIcon,
+    MatIconButton,
+    MatSuffix,
+    ReactiveFormsModule,
+    MatInput,
+    MatFormField,
+    SentinelMarkdownEditorComponent,
+    MatLabel
+]
 })
 export class TaskEditComponent implements OnChanges {
     @Input() task: AdaptiveTask;

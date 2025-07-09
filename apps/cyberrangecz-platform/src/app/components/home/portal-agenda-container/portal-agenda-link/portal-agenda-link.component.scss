@@ -1,0 +1,52 @@
+.simple-button {
+    height: 85px;
+    border-radius: 12px;
+    width: 120px;
+}
+
+.simple-button:hover {
+    box-shadow: 0 0 11px var(--primary-20);
+}
+
+mat-icon {
+    font-size: 35px !important;
+}
+
+.mat-icon {
+    height: 35px;
+    width: 35px;
+    margin: 0;
+    padding: 0;
+}
+
+/* TODO(mdc-migration): The following rule targets internal classes of button that may no longer apply for the MDC version. */
+.mat-button-wrapper {
+    width: 50px;
+}
+
+.portal-item-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.portal-item-container h3 {
+    display: flex;
+    justify-content: center;
+    padding-top: 10px;
+}
+
+.button-elevation {
+    box-shadow: 0 0 11px midnightblue;
+}
+
+.expanded-menu-item {
+    min-width: 100px;
+
+}
+
+.agenda-link-label {
+    text-align: center;
+}
+

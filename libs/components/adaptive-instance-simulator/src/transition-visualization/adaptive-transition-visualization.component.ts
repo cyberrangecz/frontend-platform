@@ -1,12 +1,11 @@
 import {Component, DestroyRef, inject, Input, OnInit} from '@angular/core';
-import {async, Observable, of} from 'rxjs';
+import {Observable, of} from 'rxjs';
 import {TransitionGraphVisualizationData} from './model/transition-graph-visualization-data';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {
     AdaptiveTransitionVisualizationPollingService
 } from './services/adaptive-transition-visualization-polling.service';
 import {AdaptiveTransitionVisualizationService} from './services/adaptive-transition-visualization.service';
-import {ConfigService} from "./config/config.service";
 import {AdaptiveTransitionVisualizationApi} from "./api/adaptive-transition-visualization-api.service";
 import {
     AdaptiveTransitionVisualizationWrapperComponent
@@ -18,7 +17,6 @@ import {AsyncPipe} from "@angular/common";
     templateUrl: 'adaptive-transition-visualization.component.html',
     styleUrls: ['adaptive-transition-visualization.component.scss'],
     providers: [
-        ConfigService,
         AdaptiveTransitionVisualizationPollingService,
         AdaptiveTransitionVisualizationService,
         AdaptiveTransitionVisualizationApi,
@@ -29,20 +27,16 @@ import {AsyncPipe} from "@angular/common";
     ]
 })
 export class AdaptiveTransitionVisualizationComponent implements OnInit {
-    private visualizationPollingService = inject(AdaptiveTransitionVisualizationPollingService);
-    private visualizationService = inject(AdaptiveTransitionVisualizationService);
-
     @Input() trainingInstanceId!: number;
     @Input() trainingRunId!: number;
     @Input() progress!: boolean;
     @Input() transitionData?: TransitionGraphVisualizationData;
-
     data$!: Observable<TransitionGraphVisualizationData>;
     hasError$!: Observable<boolean>;
     isLoading$!: Observable<boolean>;
-
     destroyRef = inject(DestroyRef);
-    protected readonly async = async;
+    private visualizationPollingService = inject(AdaptiveTransitionVisualizationPollingService);
+    private visualizationService = inject(AdaptiveTransitionVisualizationService);
 
     ngOnInit() {
         this.init();

@@ -1,0 +1,7 @@
+<h1 class="mat-h1" mat-dialog-title>
+    {{ data && (data.title | titleCaseExcept) }}
+</h1>
+<div class="mat-typography" mat-dialog-content>
+    <p>{{ data?.message }}</p>
+    <crczp-logo-spinner />
+</div>

@@ -1,17 +1,24 @@
-<ng-container [ngSwitch]="level.type">
-    <crczp-training-level-edit *ngSwitchCase="levelTypes.Training"
-                              [level]="level"
-                              [mitreTechniquesList]="mitreTechniquesList"
-                              (levelChange)="onLevelChange($event)"/>
-    <crczp-access-level-configuration *ngSwitchCase="levelTypes.Access"
-                                     [level]="level"
-                                     (levelChange)="onLevelChange($event)">
-    </crczp-access-level-configuration>
-    <crczp-info-level-configuration *ngSwitchCase="levelTypes.Info"
-                                   [level]="level"
-                                   (levelChange)="onLevelChange($event)"/>
-    <crczp-assessment-level-configuration *ngSwitchCase="levelTypes.Assessment"
-                                         [level]="level"
-                                         (levelChange)="onLevelChange($event)">
-    </crczp-assessment-level-configuration>
-</ng-container>
+@switch (level.type) {
+    @case (levelTypes.Training) {
+        <crczp-training-level-edit
+            [level]="$any(level)"
+            [mitreTechniquesList]="mitreTechniquesList"
+            (levelChange)="onLevelChange($event)"/>
+    }
+    @case (levelTypes.Access) {
+        <crczp-access-level-configuration
+            [level]="$any(level)"
+            (levelChange)="onLevelChange($event)">
+        </crczp-access-level-configuration>
+    }
+    @case (levelTypes.Info) {
+        <crczp-info-level-configuration
+            [level]="$any(level)"
+            (levelChange)="onLevelChange($event)"/>
+    }
+    @case (levelTypes.Assessment) {
+        <crczp-assessment-level-configuration
+            [level]="$any(level)"
+            (levelChange)="onLevelChange($event)"/>
+    }
+}

@@ -1,55 +1,65 @@
 <mat-expansion-panel [expanded]="true">
-    <mat-expansion-panel-header>
-        <mat-panel-title>
-            <span *ngIf="(editMode$ | async) else newTrainingTitle">Edit Adaptive Training Instance</span>
-            <ng-template #newTrainingTitle>Create Adaptive Training Instance</ng-template>
-        </mat-panel-title>
-        <mat-panel-description>
-            <span class="spacer"></span>
-            <div *ngIf="!canDeactivateTIEdit" class="panel-description-error">
-                <mat-icon color="warn">warning</mat-icon>
-                <mat-error>Changes are not saved</mat-error>
-            </div>
-            <mat-icon>edit</mat-icon>
-        </mat-panel-description>
-    </mat-expansion-panel-header>
-    <ng-template matExpansionPanelContent>
-        <sentinel-controls (itemClicked)="onControlsAction($event)" [controls]="controls">
-        </sentinel-controls>
-        <mat-divider/>
-        <crczp-adaptive-instance-edit
-            (edited)="onTrainingInstanceChanged($event)"
-            [editMode]="editMode$ | async"
-            [hasStarted]="hasStarted$ | async"
-            [localEnvironmentAllowed]="isLocalEnvironmentAllowed()"
-            [pools]="pools$ | async"
-            [sandboxDefinitions]="sandboxDefinitions$ | async"
-            [trainingDefinitions]="trainingDefinitions$ | async"
-            [trainingInstance]="trainingInstance$ | async">
-        </crczp-adaptive-instance-edit>
-    </ng-template>
+  <mat-expansion-panel-header>
+    <mat-panel-title>
+      @if ((editMode$ | async)) {
+        <span>Edit Adaptive Training Instance</span>
+      } @else {
+        Create Adaptive Training Instance
+      }
+    </mat-panel-title>
+    <mat-panel-description>
+      <span class="spacer"></span>
+      @if (!canDeactivateTIEdit) {
+        <div class="panel-description-error">
+          <mat-icon color="warn">warning</mat-icon>
+          <mat-error>Changes are not saved</mat-error>
+        </div>
+      }
+      <mat-icon>edit</mat-icon>
+    </mat-panel-description>
+  </mat-expansion-panel-header>
+  <ng-template matExpansionPanelContent>
+    <sentinel-controls (itemClicked)="onControlsAction($event)" [controls]="controls">
+    </sentinel-controls>
+    <mat-divider/>
+    <crczp-adaptive-instance-edit
+      (edited)="onTrainingInstanceChanged($event)"
+      [editMode]="editMode$ | async"
+      [hasStarted]="hasStarted$ | async"
+      [localEnvironmentAllowed]="isLocalEnvironmentAllowed()"
+      [pools]="pools$ | async"
+      [sandboxDefinitions]="sandboxDefinitions$ | async"
+      [trainingDefinitions]="trainingDefinitions$ | async"
+      [trainingInstance]="trainingInstance$ | async">
+    </crczp-adaptive-instance-edit>
+  </ng-template>
 </mat-expansion-panel>
 
-<mat-expansion-panel *ngIf="(editMode$ | async)" [expanded]="editMode$ | async">
+@if ((editMode$ | async)) {
+  <mat-expansion-panel [expanded]="editMode$ | async">
     <mat-expansion-panel-header>
-        <mat-panel-title>Organizers</mat-panel-title>
-        <mat-panel-description>
-            <span class="spacer"></span>
-            <div *ngIf="!canDeactivateOrganizers" class="panel-description-error">
-                <mat-icon color="warn">warning</mat-icon>
-                <mat-error>Organizers are not saved</mat-error>
-            </div>
-            <mat-icon>person</mat-icon>
-        </mat-panel-description>
+      <mat-panel-title>Organizers</mat-panel-title>
+      <mat-panel-description>
+        <span class="spacer"></span>
+        @if (!canDeactivateOrganizers) {
+          <div class="panel-description-error">
+            <mat-icon color="warn">warning</mat-icon>
+            <mat-error>Organizers are not saved</mat-error>
+          </div>
+        }
+        <mat-icon>person</mat-icon>
+      </mat-panel-description>
     </mat-expansion-panel-header>
     <ng-template matExpansionPanelContent>
+      @if (editMode$ | async) {
         <sentinel-user-assign (hasUnsavedChanges)="onOrganizersChanged($event)"
-                              *ngIf="editMode$ | async"
-                              [defaultPaginationSize]="defaultPaginationSize"
-                              [resource]="trainingInstance$ | async"
-                              assigneesTitle="Organizers"
-                              resourceMatIcon="event_available"
-                              toAssignTitle="Organizers">
+          [defaultPaginationSize]="defaultPaginationSize"
+          [resource]="trainingInstance$ | async"
+          assigneesTitle="Organizers"
+          resourceMatIcon="event_available"
+          toAssignTitle="Organizers">
         </sentinel-user-assign>
+      }
     </ng-template>
-</mat-expansion-panel>
+  </mat-expansion-panel>
+}

@@ -8,10 +8,12 @@
             <ng-template #noTasksLabel>
                 <span>This phase has no tasks</span>
             </ng-template>
-            <div *ngIf="tasksHasErrors" class="panel-description-error">
-                <mat-icon color="warn">error_outline</mat-icon>
-                <mat-error>There are errors in some tasks</mat-error>
-            </div>
+            @if (tasksHasErrors) {
+                <div class="panel-description-error">
+                    <mat-icon color="warn">error_outline</mat-icon>
+                    <mat-error>There are errors in some tasks</mat-error>
+                </div>
+            }
         </mat-panel-description>
     </mat-expansion-panel-header>
 
@@ -20,24 +22,24 @@
     </sentinel-controls>
     <mat-divider/>
 
-    <div *ngIf="(stepperTasks | async).length > 0 else noTasks">
-        <crczp-task-stepper (activeStepChange)="onActiveTaskChanged($event)"
-                            (phaseMove)="onTaskMoved($event)"
-                            [activeStep]="activeStep$ | async"
-                            [tasks]="stepperTasks | async">
-
-        </crczp-task-stepper>
-        <mat-divider/>
-        <!--    <ng-template>AdaptiveRunVisualization {{ selectedStep + 1 }}</ng-template>-->
-        <div class="step-content">
-            <crczp-task-configuration (taskChange)="onTaskChanged($event)"
-                                      [task]="(stepperTasks | async)[activeStep$ | async].phase">
-            </crczp-task-configuration>
+    @if ((stepperTasks | async).length > 0) {
+        <div>
+            <crczp-task-stepper (activeStepChange)="onActiveTaskChanged($event)"
+                                (phaseMove)="onTaskMoved($event)"
+                                [activeStep]="activeStep$ | async"
+                                [tasks]="stepperTasks | async">
+            </crczp-task-stepper>
+            <mat-divider/>
+            <!--    <ng-template>AdaptiveRunVisualization {{ selectedStep + 1 }}</ng-template>-->
+            <div class="step-content">
+                <crczp-task-configuration (taskChange)="onTaskChanged($event)"
+                                          [task]="$any((stepperTasks | async)[activeStep$ | async].phase)">
+                </crczp-task-configuration>
+            </div>
         </div>
-    </div>
+    } @else {
+        <h3>There are no Tasks</h3>
+    }
     <div>
     </div>
-    <ng-template #noTasks>
-        <h3>There are no Tasks</h3>
-    </ng-template>
 </mat-expansion-panel>

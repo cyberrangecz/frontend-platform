@@ -12,10 +12,16 @@ import {
 } from '@angular/core';
 import {TrainingDefinition, TrainingInstance} from '@crczp/training-model';
 import {Observable} from 'rxjs';
-import {SentinelControlItemSignal} from '@sentinel/components/controls';
+import {SentinelControlItem, SentinelControlItemSignal, SentinelControlsComponent} from '@sentinel/components/controls';
 import {map} from 'rxjs/operators';
 import {TrainingInstanceInfoControls} from '../../model/training-instance-info-controls';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import {DatePipe} from "@angular/common";
+import {RouterLink} from "@angular/router";
+import {MatButton} from "@angular/material/button";
+import {MatIcon} from "@angular/material/icon";
+import {MatTooltip} from "@angular/material/tooltip";
+import {CdkCopyToClipboard} from "@angular/cdk/clipboard";
 
 /**
  * Component for displaying basic info about selected training instance.
@@ -25,6 +31,15 @@ import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
     templateUrl: './training-instance-info.component.html',
     styleUrls: ['./training-instance-info.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        DatePipe,
+        RouterLink,
+        SentinelControlsComponent,
+        MatIcon,
+        MatButton,
+        MatTooltip,
+        CdkCopyToClipboard
+    ]
 })
 export class TrainingInstanceInfoComponent implements OnInit, OnChanges {
     @Input() trainingInstance: TrainingInstance;
@@ -41,7 +56,7 @@ export class TrainingInstanceInfoComponent implements OnInit, OnChanges {
     @Output() showNotification: EventEmitter<string[]> = new EventEmitter();
 
     trainingDefinition: TrainingDefinition;
-    infoControls: SentinelControlItemSignal[];
+    infoControls: SentinelControlItem[];
     destroyRef = inject(DestroyRef);
 
     ngOnInit(): void {
@@ -58,6 +73,10 @@ export class TrainingInstanceInfoComponent implements OnInit, OnChanges {
         control.result$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
     }
 
+    onCopyToken(): void {
+        this.showNotification.emit(['success', 'Access token has been copied']);
+    }
+
     private initInfoComponent() {
         const disabled$ = this.hasStarted$.pipe(map((hasStated) => !hasStated));
         this.infoControls = TrainingInstanceInfoControls.create(
@@ -68,9 +87,5 @@ export class TrainingInstanceInfoComponent implements OnInit, OnChanges {
             this.exportScore,
             disabled$,
         );
-    }
-
-    onCopyToken(): void {
-        this.showNotification.emit(['success', 'Access token has been copied']);
     }
 }

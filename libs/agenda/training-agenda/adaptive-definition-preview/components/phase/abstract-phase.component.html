@@ -1,7 +1,15 @@
 <h1>{{ phase?.title }}</h1>
-<ng-container [ngSwitch]="phase?.type">
-    <crczp-questionnaire-phase *ngSwitchCase="phaseTypes.Questionnaire" [phase]="phase"/>
-    <crczp-training-phase *ngSwitchCase="phaseTypes.Training" [phase]="phase"/>
-    <crczp-info-phase *ngSwitchCase="phaseTypes.Info" [phase]="phase"/>
-    <crczp-access-phase *ngSwitchCase="phaseTypes.Access" [phase]="phase"/>
-</ng-container>
+@switch (phase?.type) {
+    @case (phaseTypes.Questionnaire) {
+        <crczp-questionnaire-phase [phase]="$any(phase)"/>
+    }
+    @case (phaseTypes.Training) {
+        <crczp-training-phase [phase]="$any(phase)"/>
+    }
+    @case (phaseTypes.Info) {
+        <crczp-info-phase [phase]="$any(phase)"/>
+    }
+    @case (phaseTypes.Access) {
+        <crczp-access-phase [phase]="$any(phase)"/>
+    }
+}

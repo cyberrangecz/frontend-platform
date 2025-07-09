@@ -38,8 +38,6 @@ import {AnswerFormHintsComponent, GenericSandboxLevelComponent} from "@crczp/tra
  * before he can continue to the next level. User can optionally take hints.
  */
 export class TrainingPhaseComponent implements OnChanges {
-    protected trainingPhaseService = inject(AdaptiveRunTrainingPhaseService);
-
     @Input({required: true}) phase: TrainingPhase;
     @Input() isLast: boolean;
     @Input() isPhaseAnswered: boolean;
@@ -48,14 +46,13 @@ export class TrainingPhaseComponent implements OnChanges {
     @Input() sandboxInstanceId: string;
     @Input() sandboxDefinitionId: number;
     @Output() next: EventEmitter<void> = new EventEmitter();
-
     @ViewChild('rightPanel') rightPanel: ElementRef<HTMLDivElement>;
-
     isCorrectAnswerSubmitted$: Observable<boolean>;
     isSolutionRevealed$: Observable<boolean>;
     isLoading$: Observable<boolean>;
     displayedSolutionContent$: Observable<string>;
     destroyRef = inject(DestroyRef);
+    protected trainingPhaseService = inject(AdaptiveRunTrainingPhaseService);
     protected readonly of = of;
 
     ngOnChanges(changes: SimpleChanges): void {

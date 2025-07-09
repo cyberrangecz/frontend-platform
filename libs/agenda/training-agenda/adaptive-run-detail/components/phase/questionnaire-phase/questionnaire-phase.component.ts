@@ -1,27 +1,48 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, inject } from '@angular/core';
+import {
+    ChangeDetectionStrategy,
+    Component,
+    EventEmitter,
+    inject,
+    Input,
+    OnChanges,
+    OnInit,
+    Output,
+    SimpleChanges
+} from '@angular/core';
 import {take} from 'rxjs/operators';
 import {AdaptiveQuestion, Choice, QuestionAnswer, QuestionnairePhase, QuestionTypeEnum} from '@crczp/training-model';
 import {RunningAdaptiveRunService} from '../../../services/adaptive-run/running/running-adaptive-run.service';
+import {MatError, MatFormField, MatInput, MatLabel} from "@angular/material/input";
+import {MatCheckbox} from "@angular/material/checkbox";
+import {FormsModule} from "@angular/forms";
+import {MatButton} from "@angular/material/button";
 
 @Component({
     selector: 'crczp-questionnaire-phase',
     templateUrl: './questionnaire-phase.component.html',
     styleUrls: ['./questionnaire-phase.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        MatFormField,
+        MatLabel,
+        MatError,
+        MatCheckbox,
+        FormsModule,
+        MatButton,
+        MatInput
+    ]
 })
 export class QuestionnairePhaseComponent implements OnChanges, OnInit {
-    private runningAdaptiveRunService = inject(RunningAdaptiveRunService);
-
     @Input() phase: QuestionnairePhase;
     @Input() isLast: boolean;
     @Input() isPhaseAnswered: boolean;
     @Input() isBacktracked: boolean;
     @Output() next: EventEmitter<void> = new EventEmitter();
-
     isLoading = false;
     questionAnswers: QuestionAnswer[] = [];
     questionTypes = QuestionTypeEnum;
     canSubmit = false;
+    private runningAdaptiveRunService = inject(RunningAdaptiveRunService);
 
     ngOnChanges(changes: SimpleChanges): void {
         if ('phase' in changes) {
@@ -31,16 +52,6 @@ export class QuestionnairePhaseComponent implements OnChanges, OnInit {
 
     ngOnInit(): void {
         this.initEmptyAnswers();
-    }
-
-    private initEmptyAnswers() {
-        this.questionAnswers = [];
-        this.phase.questions.forEach((question) => {
-            const answers = new QuestionAnswer();
-            answers.questionId = question.id;
-            answers.answers = question.userAnswers ? question.userAnswers : [];
-            this.questionAnswers.push(answers);
-        });
     }
 
     onNext(): void {
@@ -89,5 +100,15 @@ export class QuestionnairePhaseComponent implements OnChanges, OnInit {
     checkedAsAnswered(question: AdaptiveQuestion, choice: Choice): boolean {
         this.checkIfCanBeSubmitted();
         return question.userAnswers?.some((answer: string) => answer === choice.text);
+    }
+
+    private initEmptyAnswers() {
+        this.questionAnswers = [];
+        this.phase.questions.forEach((question) => {
+            const answers = new QuestionAnswer();
+            answers.questionId = question.id;
+            answers.answers = question.userAnswers ? question.userAnswers : [];
+            this.questionAnswers.push(answers);
+        });
     }
 }

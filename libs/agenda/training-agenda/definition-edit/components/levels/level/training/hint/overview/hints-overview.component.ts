@@ -17,12 +17,22 @@ import {
     SentinelConfirmationDialogConfig,
     SentinelDialogResultEnum,
 } from '@sentinel/components/dialogs';
-import {SentinelControlItemSignal} from '@sentinel/components/controls';
+import {SentinelControlItem, SentinelControlItemSignal, SentinelControlsComponent} from '@sentinel/components/controls';
 import {Hint} from '@crczp/training-model';
-import {SentinelStepper, StepStateEnum} from '@sentinel/components/stepper';
+import {SentinelStepper, SentinelStepperComponent, StepStateEnum} from '@sentinel/components/stepper';
 import {BehaviorSubject, defer, EMPTY, Observable, of} from 'rxjs';
 import {HintStepperAdapter} from '../../../../../../model/adapters/hint-stepper-adapter';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import {MatDivider} from "@angular/material/divider";
+import {HintDetailEditComponent} from "../detail/hint-detail-edit.component";
+import {
+    MatExpansionPanel,
+    MatExpansionPanelDescription,
+    MatExpansionPanelHeader,
+    MatExpansionPanelTitle
+} from "@angular/material/expansion";
+import {MatIcon} from "@angular/material/icon";
+import {MatError} from "@angular/material/input";
 
 /**
  * Main hint edit component. Contains stepper to navigate through existing hints and controls to create new hints
@@ -38,6 +48,18 @@ import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
             useValue: {showError: true},
         },
     ],
+    imports: [
+        SentinelStepperComponent,
+        MatDivider,
+        HintDetailEditComponent,
+        SentinelControlsComponent,
+        MatIcon,
+        MatError,
+        MatExpansionPanelDescription,
+        MatExpansionPanelHeader,
+        MatExpansionPanel,
+        MatExpansionPanelTitle
+    ]
 })
 export class HintsOverviewComponent implements OnInit, OnChanges {
     dialog = inject(MatDialog);
@@ -46,15 +68,13 @@ export class HintsOverviewComponent implements OnInit, OnChanges {
     @Input() levelId: any;
     @Input() levelMaxScore: number;
     @Output() hintsChange: EventEmitter<Hint[]> = new EventEmitter();
-
-    private deleteDisabledSubject$: BehaviorSubject<boolean> = new BehaviorSubject(false);
-
     hintsHasErrors: boolean;
     penaltySum: number;
     selectedStep: number;
     stepperHints: SentinelStepper<HintStepperAdapter> = {items: []};
-    controls: SentinelControlItemSignal[];
+    controls: SentinelControlItem[];
     destroyRef = inject(DestroyRef);
+    private deleteDisabledSubject$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
     ngOnInit(): void {
         this.selectedStep = 0;
@@ -209,14 +229,14 @@ export class HintsOverviewComponent implements OnInit, OnChanges {
 
     private initControls() {
         this.controls = [
-            new SentinelControlItemSignal(
+            new SentinelControlItem(
                 'add',
                 'Add',
                 'primary',
                 of(false),
                 defer(() => this.addHint()),
             ),
-            new SentinelControlItemSignal(
+            new SentinelControlItem(
                 'delete',
                 'Delete',
                 'warn',

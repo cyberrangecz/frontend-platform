@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import {inject, Injectable} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import {Router} from '@angular/router';
 import {
@@ -17,10 +17,9 @@ import {
     TrainingDefinitionUploadDialogComponent
 } from '../../components/upload-dialog/training-definition-upload-dialog.component';
 import {TrainingErrorHandler, TrainingNavigator, TrainingNotificationService,} from '@crczp/training-agenda';
-import {TrainingAgendaContext} from '@crczp/training-agenda/internal';
 import {FileUploadProgressService} from '../file-upload/file-upload-progress.service';
 import {TrainingDefinitionService} from './training-definition.service';
-import {Settings} from '@crczp/common';
+import {PortalConfig} from '@crczp/common';
 
 /**
  * Basic implementation of a layer between a component and an API service.
@@ -31,7 +30,6 @@ export class TrainingDefinitionConcreteService extends TrainingDefinitionService
     private api = inject(TrainingDefinitionApi);
     private dialog = inject(MatDialog);
     private router = inject(Router);
-    private context = inject(TrainingAgendaContext);
     private navigator = inject(TrainingNavigator);
     private notificationService = inject(TrainingNotificationService);
     private fileUploadProgressService = inject(FileUploadProgressService);
@@ -41,9 +39,7 @@ export class TrainingDefinitionConcreteService extends TrainingDefinitionService
     private lastFilters: string;
 
     constructor() {
-        const settings = inject(Settings);
-
-        super(settings.DEFAULT_PAGE_SIZE);
+        super(inject(PortalConfig).defaultPageSize);
     }
 
     /**

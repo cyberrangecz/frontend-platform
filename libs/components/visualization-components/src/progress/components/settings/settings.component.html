@@ -1,0 +1,83 @@
+<mat-accordion>
+    <mat-expansion-panel (closed)="panelOpenState =false" (opened)="panelOpenState=true">
+        <mat-expansion-panel-header class="nav-header">
+            <mat-panel-title>
+                <button
+                    class="sidenav-button"
+                    mat-icon-button
+                    type="button">
+                    @if (!panelOpenState) {
+                        <mat-icon>menu</mat-icon>
+                    }
+                    @if (panelOpenState) {
+                        <mat-icon>expand_less</mat-icon>
+                    }
+                </button>
+                PortalConfig
+            </mat-panel-title>
+        </mat-expansion-panel-header>
+        <div class="expansion-content">
+            <mat-slide-toggle
+                (change)="restrictTrainees()"
+                [checked]="restrictToVisibleTrainees"
+                [disabled]="restrictToCustomTimelines"
+                matTooltip="In selected runs, this ensures that only the relevant trainee timeline portion is displayed.">
+                Automatically restrict timeline (crop the area with selected runs only)
+            </mat-slide-toggle>
+            <hr [style.margin]="'25px 0px'">
+            <mat-slide-toggle
+                (change)="restrictCustom()"
+                [checked]="restrictToCustomTimelines"
+                [disabled]="restrictToVisibleTrainees"
+                matTooltip="In selected runs, this ensures that only the relevant trainee timeline portion is displayed.">
+                Manually restrict timeline
+            </mat-slide-toggle>
+            <br/><br/>
+            @if (restrictToCustomTimelines) {
+                <div>
+                    <p>Restrict the lower and upped bounds (absolute time in milliseconds) which the timeline shows.</p>
+                    <mat-form-field [style.width]="'190px'">
+                        <mat-label>
+                            {{ 'Start in ms (' + formatTime(customRestrictedXScale.min + customRestrictedXScale.minRestriction) + ')' }}
+                        </mat-label>
+                        <input matInput
+                               [min]="0"
+                               (change)="updateVisibleTimeline($event, 'min')"
+                               [max]="customRestrictedXScale.max"
+                               type="number"
+                               placeholder="Starting timestamp"
+                               [value]="(customRestrictedXScale.min + customRestrictedXScale.minRestriction).toString()"/>
+                    </mat-form-field>
+                    <mat-slider [min]="0"
+                                [max]="customRestrictedXScale.max"
+                                [disabled]="!restrictToCustomTimelines"
+                                [showTickMarks]="true"
+                                [step]="timelineStepSize"
+                                [discrete]="true"
+                                [displayWith]="formatTime"
+                                [style.width]="'calc(100% - 480px)'"
+                                [style.margin]="'10px 50px'">
+                        <input [value]="customRestrictedXScale.min + customRestrictedXScale.minRestriction"
+                               matSliderStartThumb
+                               (valueChange)="updateVisibleTimeline($event, 'min')">
+                        <input [value]="customRestrictedXScale.max - customRestrictedXScale.maxRestriction"
+                               matSliderEndThumb
+                               (valueChange)="updateVisibleTimeline($event, 'max')">
+                    </mat-slider>
+                    <mat-form-field [style.width]="'190px'">
+                        <mat-label>
+                            {{ 'End in ms (' + formatTime(customRestrictedXScale.max - customRestrictedXScale.maxRestriction) + ')' }}
+                        </mat-label>
+                        <input matInput
+                               [min]="0"
+                               [max]="customRestrictedXScale.max"
+                               (change)="updateVisibleTimeline($event, 'max')"
+                               type="number"
+                               placeholder="Ending timestamp"
+                               [value]="(customRestrictedXScale.max - customRestrictedXScale.maxRestriction).toString()"/>
+                    </mat-form-field>
+                </div>
+            }
+        </div>
+    </mat-expansion-panel>
+</mat-accordion>

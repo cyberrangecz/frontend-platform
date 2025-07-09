@@ -1,5 +1,5 @@
 import {STEPPER_GLOBAL_OPTIONS} from '@angular/cdk/stepper';
-import { ChangeDetectionStrategy, Component, Input, OnChanges, OnInit, SimpleChanges, inject } from '@angular/core';
+import {ChangeDetectionStrategy, Component, inject, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import {SentinelControlItem} from '@sentinel/components/controls';
 import {MatDivider} from "@angular/material/divider";
@@ -11,9 +11,9 @@ import {
 } from "@angular/material/expansion";
 import {TaskStepperComponent} from "../stepper/task-stepper.component";
 import {TaskEditComponent} from "../detail/task-edit.component";
-import {NgIf} from "@angular/common";
+
 import {PhaseStepperAdapter} from "../../../../../../model/adapters/phase-stepper-adapter";
-import {Phase} from "@crczp/training-model";
+import {AdaptiveTask} from "@crczp/training-model";
 
 /**
  * Main hint edit component. Contains stepper to navigate through existing hints and controls to create new hints
@@ -36,14 +36,13 @@ import {Phase} from "@crczp/training-model";
         MatExpansionPanelHeader,
         MatExpansionPanel,
         TaskStepperComponent,
-        TaskEditComponent,
-        NgIf
+        TaskEditComponent
     ]
 })
 export class TasksOverviewComponent implements OnInit, OnChanges {
     dialog = inject(MatDialog);
 
-    @Input() tasks: Phase[];
+    @Input() tasks: AdaptiveTask[];
 
     stepperTasks: PhaseStepperAdapter[];
     controls: SentinelControlItem[];

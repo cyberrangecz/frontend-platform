@@ -22,11 +22,15 @@
             <div class="phase-count"> {{ getGeneralQuestionnaires()?.length }}</div>
         </div>
     </div>
-    <sentinel-controls [controls]="controls" (itemClicked)="onControlsAction($event)"/>
+    <sentinel-controls (itemClicked)="onControlsAction($event)" [controls]="controls"/>
 </div>
-<mat-accordion class="example-headers-align" multi>
-    <div *ngFor="let phase of phases; last as isLast">
-        <crczp-phase-detail [phase]="phase"/>
-        <mat-divider *ngIf="!isLast"/>
-    </div>
+<mat-accordion class="example-headers-align" multi="true">
+    @for (phase of phases; track phase; let isLast = $last) {
+        <div>
+            <crczp-phase-detail [phase]="phase"/>
+            @if (!isLast) {
+                <mat-divider/>
+            }
+        </div>
+    }
 </mat-accordion>

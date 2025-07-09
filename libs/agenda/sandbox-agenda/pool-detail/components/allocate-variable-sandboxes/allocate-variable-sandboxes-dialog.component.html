@@ -1,0 +1,54 @@
+<div class="mat-typography content">
+  <h1 mat-dialog-title>Allocate sandboxes</h1>
+
+  <div mat-dialog-content class="dialog-content">
+    <form [formGroup]="sandboxAllocationFormGroup.formGroup">
+      <div class="allocate-container">
+        <h3>Selected number of sandboxes to allocate:</h3>
+        <mat-form-field class="input-form-field" appearance="outline" (keydown.enter)="$event.preventDefault()">
+          <input
+            matInput
+            class="no-spin-buttons"
+            formControlName="allocationSize"
+            placeholder="Number"
+            type="number"
+            min="1"
+            max="{{data}}"
+            (input)="onChange($event)"
+            />
+          @if (allocationSize.hasError) {
+            <mat-error>
+              Invalid allocation size.
+            </mat-error>
+          }
+        </mat-form-field>
+      </div>
+    </form>
+
+    <div class="slider-container">
+      <mat-slider class="slider"
+        min="1"
+        max="{{data}}"
+        step="1" #ngSlider>
+        <input
+          matSliderThumb
+          value="{{allocationSize.value}}"
+          (input)="getSliderValue({source: ngSliderThumb, parent: ngSlider, value: ngSliderThumb.value})"
+          #ngSliderThumb="matSliderThumb"/>
+      </mat-slider>
+      <div class="icon-container">
+        <mat-icon (click)="changeAllocationValue(1)">add_circle</mat-icon>
+        <mat-icon (click)="changeAllocationValue(-1)">remove_circle</mat-icon>
+      </div>
+    </div>
+
+  </div>
+
+  <div mat-dialog-actions>
+    <button mat-button color="warn" (click)="cancel()">Cancel</button>
+    <span class="spacer"></span>
+    <button mat-button color="primary" (click)="confirm()" [disabled]="!sandboxAllocationFormGroup.formGroup.valid">
+      Allocate
+    </button>
+  </div>
+</div>

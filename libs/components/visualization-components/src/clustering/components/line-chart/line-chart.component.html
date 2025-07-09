@@ -1,0 +1,22 @@
+<div [className]="'main-clustering-line-div ' + id">
+  @if (includeInButtonToggle) {
+    <button mat-stroked-button
+      (click)="toggleChartVisibility()"> {{ buttonKeyword }} helper elbow function
+    </button>
+  }
+
+  <div [attr.style]="'display: ' + (showChart ? 'inline-block' : 'none')">
+    <div id="chartDiv"></div>
+    <div id="helpDiv">
+      <b>How to use this chart?</b>
+      <p>
+        The elbow method is used in determining the number of clusters in a data set.
+        Use the "elbow" as a cutoff point to find a point where diminishing returns
+        are no longer worth the additional cost. Choose a number of clusters so that
+        adding another cluster doesn't give much better modeling of the data.
+      </p>
+    </div>
+  </div>
+</div>
+
+

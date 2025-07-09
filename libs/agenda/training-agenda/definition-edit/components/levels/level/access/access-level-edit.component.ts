@@ -11,8 +11,13 @@ import {
 } from '@angular/core';
 import {AccessLevel} from '@crczp/training-model';
 import {AccessLevelEditFormGroup} from './access-level-edit-form-group';
-import {AbstractControl} from '@angular/forms';
+import {AbstractControl, ReactiveFormsModule} from '@angular/forms';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import {SentinelMarkdownEditorComponent} from "@sentinel/components/markdown-editor";
+import {MatError, MatFormField, MatHint, MatInput, MatLabel} from "@angular/material/input";
+import {MatIcon} from "@angular/material/icon";
+import {MatTooltip} from "@angular/material/tooltip";
+import {MatIconButton} from "@angular/material/button";
 
 /**
  * Component for editing of new or existing info level
@@ -22,6 +27,18 @@ import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
     templateUrl: './access-level-edit.component.html',
     styleUrls: ['./access-level-edit.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        SentinelMarkdownEditorComponent,
+        MatError,
+        MatIcon,
+        MatTooltip,
+        MatFormField,
+        ReactiveFormsModule,
+        MatLabel,
+        MatInput,
+        MatIconButton,
+        MatHint
+    ]
 })
 export class AccessLevelEditComponent implements OnChanges {
     @Input() level: AccessLevel;

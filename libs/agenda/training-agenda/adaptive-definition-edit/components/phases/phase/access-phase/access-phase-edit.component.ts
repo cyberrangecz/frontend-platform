@@ -18,7 +18,7 @@ import {MatError, MatFormField, MatHint, MatInput, MatLabel, MatSuffix} from "@a
 import {MatIconButton} from "@angular/material/button";
 import {MatIcon} from "@angular/material/icon";
 import {MatTooltip} from "@angular/material/tooltip";
-import {NgIf} from "@angular/common";
+
 
 /**
  * Component for editing of new or existing info-phase-training-phase phases
@@ -39,8 +39,7 @@ import {NgIf} from "@angular/common";
         MatFormField,
         MatLabel,
         ReactiveFormsModule,
-        MatTooltip,
-        NgIf
+        MatTooltip
     ]
 })
 export class AccessPhaseEditComponent implements OnChanges {

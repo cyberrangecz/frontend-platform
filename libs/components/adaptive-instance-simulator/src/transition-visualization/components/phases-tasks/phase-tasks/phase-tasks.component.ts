@@ -1,9 +1,20 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnChanges, Output, SimpleChanges, inject } from '@angular/core';
+import {
+    ChangeDetectionStrategy,
+    ChangeDetectorRef,
+    Component,
+    ElementRef,
+    EventEmitter,
+    inject,
+    Input,
+    OnChanges,
+    Output,
+    SimpleChanges
+} from '@angular/core';
 import * as d3 from 'd3';
 import {easeQuad} from 'd3';
-import {AdaptiveVisualizationTask} from '../../../model/phase/adaptiveVisualizationTask';
-import {AdaptiveVisualizationPhase} from '../../../model/phase/adaptive-visualization-phase';
-import {RunVisualizationPathNode} from '../../../model/training-run-path-node';
+import {RunVisualizationPathNode} from "@crczp/visualization-model";
+import {AdaptiveVisualizationTask} from "../../../model/phase/adaptiveVisualizationTask";
+import {AdaptiveVisualizationPhase} from "../../../model/phase/adaptive-visualization-phase";
 
 @Component({
     // eslint-disable-next-line @angular-eslint/component-selector
@@ -12,15 +23,11 @@ import {RunVisualizationPathNode} from '../../../model/training-run-path-node';
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PhaseTasksComponent implements OnChanges {
-    private ref = inject(ChangeDetectorRef);
-
     @Input() phase!: AdaptiveVisualizationPhase;
-
     @Input() xScale!: d3.ScalePoint<number>;
     @Input() yScale!: d3.ScalePoint<number>;
-
     @Output() taskPreviewEvent = new EventEmitter<RunVisualizationPathNode>();
-
+    private ref = inject(ChangeDetectorRef);
     private g: any;
 
     constructor() {

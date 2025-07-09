@@ -1,0 +1,8 @@
+@for (filter of filtersArray; track filter) {
+  <mat-checkbox
+    [id]="filter.name"
+    (change)="onFilterChange()"
+    [(ngModel)]="filter.checked">{{ filter.labelName }}
+  </mat-checkbox>
+  <br/>
+}

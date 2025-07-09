@@ -1,0 +1,36 @@
+<mat-expansion-panel>
+  <mat-expansion-panel-header>
+    <mat-panel-title>Questions</mat-panel-title>
+    <mat-panel-description>
+      @if (questions && questions.length > 0) {
+        <span>
+          This phase contains {{ questions?.length }} question(s)
+        </span>
+      } @else {
+        <span>This phase contains no questions.</span>
+      }
+    </mat-panel-description>
+  </mat-expansion-panel-header>
+
+  <ng-template matExpansionPanelContent>
+    <div>
+      @if (questions && questions.length > 0) {
+        <div>
+          <mat-divider/>
+          <sentinel-stepper (indexSelected)="onActiveQuestionChanged($event)"
+            [activeIndex]="selectedStep"
+            [selectable]="true"
+            [stepperItems]="stepperQuestions">
+          </sentinel-stepper>
+          <mat-divider id="stepper-divider"/>
+          <crczp-adaptive-question-edit [index]="selectedStep"
+            [question]="stepperQuestions.items[selectedStep].question"
+            [questionnaireType]="questionnaireType">
+          </crczp-adaptive-question-edit>
+        </div>
+      } @else {
+        <h3>Start by clicking on Add Question button</h3>
+      }
+    </div>
+  </ng-template>
+</mat-expansion-panel>

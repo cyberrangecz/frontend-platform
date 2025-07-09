@@ -1,8 +1,7 @@
-export * from './lib/user-and-group-api.module';
-export * from './lib/other/user-and-group-api-config';
+export * from './user-and-group-api.module';
 
 // API ABSTRACT SERVICES
-export * from './lib/api/microservice/microservice-api.service';
-export * from './lib/api/group/group-api.service';
-export * from './lib/api/user/user-api.service';
-export * from './lib/api/role/role-api.service';
+export * from './api/microservice/microservice-api.service';
+export * from './api/group/group-api.service';
+export * from './api/user/user-api.service';
+export * from './api/role/role-api.service';

@@ -1,25 +1,24 @@
 import {HttpClient} from '@angular/common/http';
-import { Injectable, inject } from '@angular/core';
+import {inject, Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {VisualizationDataDTO} from '../dto/visualization-data-dto';
-import {ConfigService} from '../config/config.service';
 import {VisualizationDataMapper} from '../mappers/visualization-data-mapper';
 import {TransitionGraphVisualizationData} from '../model/transition-graph-visualization-data';
+import {PortalConfig} from "@crczp/common";
 
 @Injectable({
     providedIn: 'root',
 })
 export class AdaptiveTransitionVisualizationApi {
-    private http = inject(HttpClient);
-    private configService = inject(ConfigService);
+    private readonly http = inject(HttpClient);
 
+    private readonly apiUrl = inject(PortalConfig).basePaths.linearTraining;
 
     getDataForTrainingInstance(trainingInstanceId: number): Observable<TransitionGraphVisualizationData> {
         return this.http
             .get<VisualizationDataDTO>(
-                this.configService.config.trainingServiceUrl +
-                `visualizations/training-instances/${trainingInstanceId}/transitions-graph`,
+                `${this.apiUrl}/visualizations/training-instances/${trainingInstanceId}/transitions-graph`,
             )
             .pipe(map((response) => VisualizationDataMapper.fromDTO(response)));
     }
@@ -27,8 +26,7 @@ export class AdaptiveTransitionVisualizationApi {
     getDataForTrainingRun(trainingRunId: number): Observable<TransitionGraphVisualizationData> {
         return this.http
             .get<VisualizationDataDTO>(
-                this.configService.config.trainingServiceUrl +
-                `visualizations/training-runs/${trainingRunId}/transitions-graph`,
+                `${this.apiUrl}/visualizations/training-runs/${trainingRunId}/transitions-graph`,
             )
             .pipe(map((response) => VisualizationDataMapper.fromDTO(response)));
     }

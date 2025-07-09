@@ -1,13 +1,15 @@
 <div class="container">
-    <div class="content">
-        <sentinel-markdown-view [markdown]="level.instructions"/>
-        <!-- QUESTIONS -->
-        <div class="questions">
-            <div *ngFor="let question of level.questions; index as i" class="question">
-                <mat-divider/>
-                <crczp-trainee-question [question]="question" [index]="i + 1">
-                </crczp-trainee-question>
-            </div>
+  <div class="content">
+    <sentinel-markdown-view [markdown]="level.instructions"/>
+    <!-- QUESTIONS -->
+    <div class="questions">
+      @for (question of level.questions; track question; let i = $index) {
+        <div class="question">
+          <mat-divider/>
+          <crczp-trainee-question [question]="question" [index]="i + 1">
+          </crczp-trainee-question>
         </div>
+      }
     </div>
+  </div>
 </div>

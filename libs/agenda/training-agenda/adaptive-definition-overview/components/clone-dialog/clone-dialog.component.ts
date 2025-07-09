@@ -1,9 +1,20 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit } from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
+import {ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit} from '@angular/core';
+import {
+    MAT_DIALOG_DATA,
+    MatDialogActions,
+    MatDialogContent,
+    MatDialogRef,
+    MatDialogTitle
+} from '@angular/material/dialog';
 import {TrainingDefinition} from '@crczp/training-model';
 import {CloneDialogFormGroup} from './clone-dialog-form-group';
-import {AbstractControl} from '@angular/forms';
+import {AbstractControl, ReactiveFormsModule} from '@angular/forms';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import {SentinelShortStringPipe} from "@sentinel/common/pipes";
+import { TitleCasePipe } from "@angular/common";
+import {MatError, MatFormField, MatInput, MatLabel} from "@angular/material/input";
+import {MatButton, MatIconButton} from "@angular/material/button";
+import {MatIcon} from "@angular/material/icon";
 
 /**
  * Displays dialog with a form to select name of cloned training definition
@@ -13,6 +24,21 @@ import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
     templateUrl: './clone-dialog.component.html',
     styleUrls: ['./clone-dialog.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+    SentinelShortStringPipe,
+    TitleCasePipe,
+    ReactiveFormsModule,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    MatIcon,
+    MatIconButton,
+    MatDialogContent,
+    MatDialogTitle,
+    MatButton,
+    MatDialogActions,
+    MatError
+]
 })
 export class CloneDialogComponent implements OnInit {
     dialogRef = inject<MatDialogRef<CloneDialogComponent>>(MatDialogRef);

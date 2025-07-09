@@ -1,5 +1,9 @@
-<crczp-free-form-question-detail *ngIf="isFfq" [question]="question" [isTest]="isTest"/>
-<crczp-multiple-choice-question-detail *ngIf="isMcq" [question]="question" [isTest]="isTest">
-</crczp-multiple-choice-question-detail>
-<crczp-extended-matching-question-detail *ngIf="isEmi" [question]="question" [isTest]="isTest">
-</crczp-extended-matching-question-detail>
+@if (isFfq) {
+    <crczp-free-form-question-detail [question]="$any(question)" [isTest]="isTest"/>
+}
+@if (isMcq) {
+    <crczp-multiple-choice-question-detail [question]="$any(question)" [isTest]="isTest"/>
+}
+@if (isEmi) {
+    <crczp-extended-matching-question-detail [question]="$any(question)" [isTest]="isTest"/>
+}

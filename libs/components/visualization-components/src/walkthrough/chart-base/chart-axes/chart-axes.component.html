@@ -1,0 +1,7 @@
+@for (item of [].constructor(getAxesCount() - 1); track item; let myIndex = $index) {
+  <svg:g
+    y-axis
+    [xRelative]="absolutePositionService.getRelativeXPositionOfEvent(myIndex, this.getAxesCount())"
+    ></svg:g>
+  }
+  <svg:g success-axis [userData]="usersData"></svg:g>

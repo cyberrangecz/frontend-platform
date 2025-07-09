@@ -3,14 +3,14 @@
         <h2>{{ trainingInstance?.title }}</h2>
         <h3>
             of Training Definition:
-            <button class="link-button definition-title" mat-button color="primary"
-                    [routerLink]="trainingDefinitionLink">
+            <button [routerLink]="trainingDefinitionLink" class="link-button definition-title" color="primary"
+                    mat-button>
                 {{ trainingDefinition?.title }}
             </button>
         </h3>
         <p>{{ trainingDefinition.description }}</p>
     </div>
-    <sentinel-controls [controls]="infoControls" (itemClicked)="onInfoControlAction($event)"/>
+    <sentinel-controls (itemClicked)="onInfoControlAction($event)" [controls]="infoControls"/>
 </div>
 
 <div class="icon-panel-container">
@@ -20,36 +20,36 @@
         <div class="value-field">{{ trainingInstance.startTime | date }}</div>
     </div>
     <div class="data-field">
-        <mat-icon lass="material-icons-round"> hourglass_bottom</mat-icon>
+        <mat-icon class="material-icons-round"> hourglass_bottom</mat-icon>
         <div class="icon-label">End Time</div>
         <div class="value-field">{{ trainingInstance.endTime | date }}</div>
     </div>
     <div class="data-field">
         <mat-icon class="material-icons-round"> view_comfy</mat-icon>
         <div class="icon-label">Assigned Pool</div>
-        <button
-            mat-button
-            color="primary"
-            class="value-field link-button"
-            *ngIf="trainingInstance.hasPool(); else noPool"
-            [routerLink]="poolIdLink"
-        >
-            Pool {{ trainingInstance.poolId }}
-        </button>
-
-        <ng-template #noPool>
+        @if (trainingInstance.hasPool()) {
+            <button
+                mat-button
+                color="primary"
+                class="value-field link-button"
+                [routerLink]="poolIdLink"
+            >
+                Pool {{ trainingInstance.poolId }}
+            </button>
+        } @else {
             <span class="value-field">No assigned pool</span>
-        </ng-template>
+        }
+
     </div>
     <div class="data-field">
         <mat-icon class="material-icons-outlined">pin</mat-icon>
         <div class="icon-label">Access Token</div>
         <button
-            mat-button
-            color="primary"
-            class="value-field link-button"
-            [cdkCopyToClipboard]="trainingInstance.accessToken"
             (click)="onCopyToken()"
+            [cdkCopyToClipboard]="trainingInstance.accessToken"
+            class="value-field link-button"
+            color="primary"
+            mat-button
             matTooltip="Click to copy access token"
         >
             {{ trainingInstance.accessToken }}

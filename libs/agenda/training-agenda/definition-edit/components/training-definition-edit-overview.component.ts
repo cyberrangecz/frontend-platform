@@ -1,8 +1,8 @@
 import {ChangeDetectionStrategy, Component, DestroyRef, HostListener, inject, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {SentinelControlItem, SentinelControlsComponent} from '@sentinel/components/controls';
+import {SentinelControlItem, SentinelControlItemSignal, SentinelControlsComponent} from '@sentinel/components/controls';
 import {Level, MitreTechnique, TrainingDefinition} from '@crczp/training-model';
-import {async, combineLatest, Observable, switchMap} from 'rxjs';
+import {combineLatest, Observable, switchMap} from 'rxjs';
 import {filter, map, tap} from 'rxjs/operators';
 import {TrainingDefinitionEditControls} from '../model/adapters/training-definition-edit-controls';
 import {TRAINING_DEFINITION_DATA_ATTRIBUTE_NAME} from '@crczp/training-agenda';
@@ -17,7 +17,6 @@ import {MitreTechniquesService} from '../services/state/mitre-techniques/mitre-t
 import {MitreTechniquesConcreteService} from '../services/state/mitre-techniques/mitre-techniques-concrete.service';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {OffsetPaginationEvent} from '@sentinel/common/pagination';
-import {PaginationStorageService} from "@crczp/common";
 import {
     MatExpansionPanel,
     MatExpansionPanelContent,
@@ -30,7 +29,13 @@ import {MatError} from "@angular/material/input";
 import {MatDivider} from "@angular/material/divider";
 import {TrainingDefinitionEditComponent} from "./definition/training-definition-edit.component";
 import {LevelOverviewComponent} from "./levels/overview/level-overview.component";
-import {AsyncPipe, NgIf} from "@angular/common";
+import {AsyncPipe} from "@angular/common";
+import {TrainingDefinitionCanDeactivate} from "../services/can-deactivate/training-definition-can-deactivate.service";
+import {
+    TrainingDefinitionBreadcrumbResolver,
+    TrainingDefinitionResolver,
+    TrainingDefinitionTitleResolver
+} from "@crczp/training-agenda/resolvers";
 
 /**
  * Main smart component of training definition edit/new page.
@@ -41,6 +46,10 @@ import {AsyncPipe, NgIf} from "@angular/common";
     styleUrls: ['./training-definition-edit-overview.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [
+        TrainingDefinitionCanDeactivate,
+        TrainingDefinitionResolver,
+        TrainingDefinitionTitleResolver,
+        TrainingDefinitionBreadcrumbResolver,
         {provide: SentinelUserAssignService, useClass: AuthorsAssignService},
         {provide: LevelEditService, useClass: LevelEditConcreteService},
         {provide: TrainingDefinitionEditService, useClass: TrainingDefinitionEditConcreteService},
@@ -58,19 +67,11 @@ import {AsyncPipe, NgIf} from "@angular/common";
         TrainingDefinitionEditComponent,
         LevelOverviewComponent,
         MatExpansionPanelContent,
-        NgIf,
         AsyncPipe,
         SentinelUserAssignComponent
     ]
 })
 export class TrainingDefinitionEditOverviewComponent implements OnInit {
-    private activeRoute = inject(ActivatedRoute);
-    private paginationService = inject(PaginationStorageService);
-    private editService = inject(TrainingDefinitionEditService);
-    private levelEditService = inject(LevelEditService);
-    private mitreTechniquesService = inject(MitreTechniquesService);
-    private authorsAssignService = inject(SentinelUserAssignService);
-
     trainingDefinition$: Observable<TrainingDefinition>;
     editMode$: Observable<boolean>;
     tdTitle$: Observable<string>;
@@ -85,12 +86,15 @@ export class TrainingDefinitionEditOverviewComponent implements OnInit {
     controls: SentinelControlItem[];
     mitreTechniques$: Observable<MitreTechnique[]>;
     destroyRef = inject(DestroyRef);
-    protected readonly async = async;
+    private activeRoute = inject(ActivatedRoute);
+    private editService = inject(TrainingDefinitionEditService);
+    private levelEditService = inject(LevelEditService);
+    private mitreTechniquesService = inject(MitreTechniquesService);
+    private authorsAssignService = inject(SentinelUserAssignService);
 
     constructor() {
         const levelEditService = this.levelEditService;
 
-        this.defaultPaginationSize = this.paginationService.DEFAULT_PAGE_SIZE;
         this.trainingDefinition$ = this.editService.trainingDefinition$;
         this.tdTitle$ = this.editService.trainingDefinition$.pipe(map((td) => td.title));
         this.saveDisabled$ = this.editService.saveDisabled$;
@@ -158,7 +162,7 @@ export class TrainingDefinitionEditOverviewComponent implements OnInit {
         this.canDeactivateTDEdit = false;
     }
 
-    onControlsAction(control: SentinelControlItem): void {
+    onControlsAction(control: SentinelControlItemSignal): void {
         control.result$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => (this.canDeactivateTDEdit = true));
     }
 

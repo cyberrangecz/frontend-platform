@@ -1,6 +1,6 @@
 import {Component, DestroyRef, inject, Input, OnInit} from '@angular/core';
 import {OffsetPaginationEvent} from '@sentinel/common/pagination';
-import {DatePipe} from '@angular/common';
+import {AsyncPipe, DatePipe} from '@angular/common';
 import {
     AbstractDetectionEvent,
     AbstractDetectionEventTypeEnum,
@@ -13,8 +13,8 @@ import {
     NoCommandsDetectionEvent,
     TimeProximityDetectionEvent,
 } from '@crczp/training-model';
-import {async, Observable} from 'rxjs';
-import {SentinelTable, TableActionEvent, TableLoadEvent} from '@sentinel/components/table';
+import {Observable} from 'rxjs';
+import {SentinelTable, SentinelTableComponent, TableActionEvent, TableLoadEvent} from '@sentinel/components/table';
 import {map, take} from 'rxjs/operators';
 import {DetectionEventParticipantTable} from '../model/detection-event-participant-table';
 import {DetectionEventParticipantService} from '../services/participant/detection-event-participant.service';
@@ -25,7 +25,20 @@ import {
 } from '../services/forbidden-commands/detection-event-forbidden-commands.service';
 import {DetectionEventForbiddenCommandsTable} from '../model/detection-event-forbidden-commands-table';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {PaginationStorageService} from "@crczp/common";
+import {PaginationStorageService, providePaginationStorageService} from "@crczp/common";
+import {TrainingDefaultNavigator, TrainingNavigator} from "@crczp/training-agenda";
+import {DetectionEventConcreteService} from "../services/detection-event/detection-event-concrete.service";
+import {
+    DetectionEventParticipantConcreteService
+} from "../services/participant/detection-event-participant-concrete.service";
+import {
+    DetectionEventForbiddenCommandsConcreteService
+} from "../services/forbidden-commands/detection-event-forbidden-commands-concrete.service";
+import {MatCard} from "@angular/material/card";
+import {MatIcon} from "@angular/material/icon";
+import {MatDivider} from "@angular/material/divider";
+import {MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle} from "@angular/material/expansion";
+import {CommandTimelineComponent} from "@crczp/visualization-components";
 
 /**
  * Main component of training instance detection event detail.
@@ -34,19 +47,31 @@ import {PaginationStorageService} from "@crczp/common";
     selector: 'crczp-training-instance-detection-event-detail',
     templateUrl: './training-instance-detection-event-detail.component.html',
     styleUrls: ['./training-instance-detection-event-detail.component.css'],
+    providers: [
+        providePaginationStorageService(TrainingInstanceDetectionEventDetailComponent),
+        {provide: TrainingNavigator, useClass: TrainingDefaultNavigator},
+        {provide: DetectionEventService, useClass: DetectionEventConcreteService},
+        {provide: DetectionEventParticipantService, useClass: DetectionEventParticipantConcreteService},
+        {provide: DetectionEventForbiddenCommandsService, useClass: DetectionEventForbiddenCommandsConcreteService},
+    ],
+    imports: [
+        MatCard,
+        MatIcon,
+        AsyncPipe,
+        MatDivider,
+        SentinelTableComponent,
+        MatExpansionPanel,
+        MatExpansionPanelHeader,
+        MatExpansionPanelTitle,
+        CommandTimelineComponent,
+        DatePipe
+    ]
 })
 export class TrainingInstanceDetectionEventDetailComponent implements OnInit {
-    private detectionEventService = inject(DetectionEventService);
-    private detectionEventParticipantService = inject(DetectionEventParticipantService);
-    private detectionEventForbiddenCommandsService = inject(DetectionEventForbiddenCommandsService);
-    private paginationService = inject(PaginationStorageService);
-    private activeRoute = inject(ActivatedRoute);
-
     @Input() event: AbstractDetectionEvent;
     @Input() paginationId = 'crczp-training-instance-detection-event-detail';
     readonly INIT_SORT_NAME = 'lastEdited';
     readonly INIT_SORT_DIR = 'asc';
-
     participantTableHasError$: Observable<boolean>;
     participantTableIsLoading$: Observable<boolean>;
     forbiddenCommandsTableHasError$: Observable<boolean>;
@@ -60,12 +85,16 @@ export class TrainingInstanceDetectionEventDetailComponent implements OnInit {
     minimalSolveTimeEvent$: Observable<MinimalSolveTimeDetectionEvent>;
     noCommandsEvent$: Observable<NoCommandsDetectionEvent>;
     forbiddenCommandsEvent$: Observable<ForbiddenCommandsDetectionEvent>;
-
     eventId: number;
     detectionRunAt: Date;
     eventType: AbstractDetectionEventTypeEnum;
     eventTypeFormatted: string;
     destroyRef = inject(DestroyRef);
+    private detectionEventService = inject(DetectionEventService);
+    private detectionEventParticipantService = inject(DetectionEventParticipantService);
+    private detectionEventForbiddenCommandsService = inject(DetectionEventForbiddenCommandsService);
+    private paginationService = inject(PaginationStorageService);
+    private activeRoute = inject(ActivatedRoute);
 
     ngOnInit(): void {
         this.eventId = Number(this.activeRoute.snapshot.paramMap.get('eventId'));
@@ -196,6 +225,4 @@ export class TrainingInstanceDetectionEventDetailComponent implements OnInit {
         );
         this.onLoadEventForbiddenCommands({pagination: initialPagination});
     }
-
-    protected readonly async = async;
 }

@@ -1,45 +1,53 @@
 <div class="hint">
-    <form [formGroup]="hintConfigurationFormGroup.formGroup">
-        <div class="header">
-            <h3>Hint {{ order + 1 }}</h3>
+  <form [formGroup]="hintConfigurationFormGroup.formGroup">
+    <div class="header">
+      <h3>Hint {{ order + 1 }}</h3>
 
-            <!-- TITLE filed -->
-            <div class="title">
-                <mat-form-field appearance="outline"
-                                (keydown.enter)="$event.preventDefault()">
-                    <mat-label>Title</mat-label>
-                    <input matInput placeholder="Title" formControlName="title" required>
-                    <button *ngIf="title.value" matSuffix mat-icon-button
-                            aria-label="Clear" (click)="title.setValue('')">
-                        <mat-icon>close</mat-icon>
-                    </button>
-                    <mat-error *ngIf="title.hasError('whitespace')">Title cannot be empty</mat-error>
-                </mat-form-field>
-            </div>
+      <!-- TITLE filed -->
+      <div class="title">
+        <mat-form-field appearance="outline"
+          (keydown.enter)="$event.preventDefault()">
+          <mat-label>Title</mat-label>
+          <input matInput placeholder="Title" formControlName="title" required>
+          @if (title.value) {
+            <button matSuffix mat-icon-button
+              aria-label="Clear" (click)="title.setValue('')">
+              <mat-icon>close</mat-icon>
+            </button>
+          }
+          @if (title.hasError('whitespace')) {
+            <mat-error>Title cannot be empty</mat-error>
+          }
+        </mat-form-field>
+      </div>
 
-            <!-- HINT PENALTY field -->
-            <div class="penalty">
+      <!-- HINT PENALTY field -->
+      <div class="penalty">
                 <mat-form-field appearance="outline" hintLabel="Number in range from 0
           to {{ maxHintPenalty }}">
-                    <mat-label>Hint Penalty</mat-label>
-                    <input matInput placeholder="Hint Penalty" type="number"
-                           [max]="maxHintPenalty" min="0" formControlName="hintPenalty"
-                           required>
-                    <mat-error *ngIf="hintPenalty.hasError('required') ||
-            hintPenalty.hasError('min') || hintPenalty.hasError('max')">Hint
-                        penalty must be a number in range from 0 to {{ maxHintPenalty }}
-                    </mat-error>
-                </mat-form-field>
-            </div>
+          <mat-label>Hint Penalty</mat-label>
+          <input matInput placeholder="Hint Penalty" type="number"
+            [max]="maxHintPenalty" min="0" formControlName="hintPenalty"
+            required>
+          @if (hintPenalty.hasError('required') ||
+            hintPenalty.hasError('min') || hintPenalty.hasError('max')) {
+            <mat-error>Hint
+              penalty must be a number in range from 0 to {{ maxHintPenalty }}
+            </mat-error>
+          }
+        </mat-form-field>
+      </div>
 
-        </div>
-        <div class="content">
-            <!--CONTENT field -->
-            <h3>Content</h3>
-            <sentinel-markdown-editor (contentChange)="content.setValue($event)"
-                                      class="mrkdwn-content" [sentinel-markdown-file-upload]="false"
-                                      [content]="content.value"/>
-            <mat-error *ngIf="content.hasError('whitespace')">Content cannot be empty</mat-error>
-        </div>
-    </form>
+    </div>
+    <div class="content">
+      <!--CONTENT field -->
+      <h3>Content</h3>
+      <sentinel-markdown-editor (contentChange)="content.setValue($event)"
+        class="mrkdwn-content" [sentinel-markdown-file-upload]="false"
+        [content]="content.value"/>
+      @if (content.hasError('whitespace')) {
+        <mat-error>Content cannot be empty</mat-error>
+      }
+    </div>
+  </form>
 </div>

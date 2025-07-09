@@ -9,11 +9,24 @@ import {
     Output,
     SimpleChanges,
 } from '@angular/core';
-import {AbstractControl, UntypedFormArray, UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
+import {
+    AbstractControl,
+    ReactiveFormsModule,
+    UntypedFormArray,
+    UntypedFormControl,
+    UntypedFormGroup,
+    Validators
+} from '@angular/forms';
 import {SentinelValidators} from '@sentinel/common';
 import {MultipleChoiceQuestion, Question} from '@crczp/training-model';
 import {MultipleChoiceFormGroup} from './multiple-choice-question-edit-form-group';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import {MatButton, MatIconButton} from "@angular/material/button";
+import {MatError, MatFormField, MatInput, MatLabel, MatSuffix} from "@angular/material/input";
+import {MatIcon} from "@angular/material/icon";
+import {MatTooltip} from "@angular/material/tooltip";
+import {MatCheckbox} from "@angular/material/checkbox";
+import {SentinelMarkdownEditorComponent} from "@sentinel/components/markdown-editor";
 
 /**
  * Component for editing a question of type Multiple Choice Question
@@ -23,6 +36,20 @@ import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
     templateUrl: './multiple-choice-question-edit.component.html',
     styleUrls: ['./multiple-choice-question-edit.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        MatError,
+        MatIcon,
+        MatTooltip,
+        MatIconButton,
+        MatSuffix,
+        MatInput,
+        MatLabel,
+        MatFormField,
+        MatCheckbox,
+        ReactiveFormsModule,
+        SentinelMarkdownEditorComponent,
+        MatButton
+    ]
 })
 export class MultipleChoiceQuestionEditComponent implements OnChanges {
     @Input() question: MultipleChoiceQuestion;

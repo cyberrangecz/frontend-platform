@@ -2,7 +2,7 @@ import {Component, Input, OnChanges, SimpleChanges} from '@angular/core';
 import {AdaptiveQuestion, QuestionnaireTypeEnum} from '@crczp/training-model';
 import {SentinelMarkdownEditorComponent} from "@sentinel/components/markdown-editor";
 import {MatCheckbox} from "@angular/material/checkbox";
-import {NgForOf} from "@angular/common";
+
 import {MatFormField, MatInput, MatLabel} from "@angular/material/input";
 import {MatOption, MatSelect} from '@angular/material/select';
 import {MatTooltip} from "@angular/material/tooltip";
@@ -13,17 +13,16 @@ import {FormsModule} from "@angular/forms";
     templateUrl: './rating-form-question-edit.component.html',
     styleUrls: ['./rating-form-question-edit.component.css'],
     imports: [
-        SentinelMarkdownEditorComponent,
-        MatCheckbox,
-        MatFormField,
-        MatLabel,
-        MatOption,
-        NgForOf,
-        MatTooltip,
-        MatInput,
-        MatSelect,
-        FormsModule
-    ]
+    SentinelMarkdownEditorComponent,
+    MatCheckbox,
+    MatFormField,
+    MatLabel,
+    MatOption,
+    MatTooltip,
+    MatInput,
+    MatSelect,
+    FormsModule
+]
 })
 /**
  * Component for editing a question of type Rating Form

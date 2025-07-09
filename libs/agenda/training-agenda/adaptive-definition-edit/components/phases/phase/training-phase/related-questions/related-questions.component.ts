@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
 import {AdaptiveQuestion, QuestionTypeEnum} from '@crczp/training-model';
 import {MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle} from "@angular/material/expansion";
-import {NgForOf, NgIf} from "@angular/common";
+
 import {MatIcon} from "@angular/material/icon";
 
 /**
@@ -13,14 +13,12 @@ import {MatIcon} from "@angular/material/icon";
     styleUrls: ['./related-questions.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
-        MatExpansionPanel,
-        MatExpansionPanelHeader,
-        MatExpansionPanelTitle,
-        NgIf,
-        NgForOf,
-        MatIcon,
-        MatIcon
-    ]
+    MatExpansionPanel,
+    MatExpansionPanelHeader,
+    MatExpansionPanelTitle,
+    MatIcon,
+    MatIcon
+]
 })
 export class RelatedQuestionsComponent {
     @Input() relatedQuestions: AdaptiveQuestion[];

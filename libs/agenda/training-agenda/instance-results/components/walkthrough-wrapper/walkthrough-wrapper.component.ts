@@ -1,23 +1,28 @@
 import {Component, DestroyRef, inject, OnInit} from '@angular/core';
 import {Level, TrainingInstance} from '@crczp/training-model';
 import {ActivatedRoute} from '@angular/router';
-import {async, exhaustMap, Observable} from 'rxjs';
+import {exhaustMap, Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {WalkthroughService} from './services/walkthrough.service';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import {AsyncPipe} from "@angular/common";
+import {WalkthroughVisualizationWrapperComponent} from "@crczp/visualization-components";
 
 @Component({
     selector: 'crczp-walkthrough-wrapper',
     templateUrl: './walkthrough-wrapper.component.html',
     styleUrls: ['./walkthrough-wrapper.component.css'],
+    imports: [
+        AsyncPipe,
+        WalkthroughVisualizationWrapperComponent
+    ]
 })
 export class WalkthroughWrapperComponent implements OnInit {
-    private activeRoute = inject(ActivatedRoute);
-    private walkthroughService = inject(WalkthroughService);
-
     trainingInstance$: Observable<TrainingInstance>;
     levels$: Observable<Level[]>;
     destroyRef = inject(DestroyRef);
+    private activeRoute = inject(ActivatedRoute);
+    private walkthroughService = inject(WalkthroughService);
 
     ngOnInit(): void {
         this.trainingInstance$ = this.activeRoute.parent.data.pipe(
@@ -29,6 +34,4 @@ export class WalkthroughWrapperComponent implements OnInit {
             map((trainingDefinition) => trainingDefinition.levels),
         ) as Observable<Level[]>;
     }
-
-    protected readonly async = async;
 }

@@ -1,12 +1,15 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@angular/core';
 import {TrainingRun} from '@crczp/training-model';
-import {SentinelTable, TableActionEvent, TableLoadEvent} from '@sentinel/components/table';
+import {SentinelTable, SentinelTableComponent, TableActionEvent, TableLoadEvent} from '@sentinel/components/table';
 
 @Component({
     selector: 'crczp-training-instance-runs',
     templateUrl: './training-instance-runs.component.html',
     styleUrls: ['./training-instance-runs.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        SentinelTableComponent
+    ]
 })
 export class TrainingInstanceRunsComponent {
     @Input() trainingRuns: SentinelTable<TrainingRun>;
@@ -24,8 +27,8 @@ export class TrainingInstanceRunsComponent {
         this.tableAction.emit(event);
     }
 
-    onTableRowExpand(event: TableActionEvent<TrainingRun>): void {
-        this.rowExpanded.emit(event.element.id);
+    onTableRowExpand(event: TrainingRun): void {
+        this.rowExpanded.emit(event.id);
     }
 
     /**

@@ -1,18 +1,24 @@
-<crczp-trainee-free-form-question *ngIf="isFfq"
-                                 [question]="question"
-                                 [index]="index"
-                                 [isBacktracked]="isBacktracked"
-                                 (contentChanged)="onContentChanged($event)">
-</crczp-trainee-free-form-question>
-<crczp-trainee-multiple-choice-question *ngIf="isMcq"
-                                       [question]="question"
-                                       [index]="index"
-                                       [isBacktracked]="isBacktracked"
-                                       (contentChanged)="onContentChanged($event)">
-</crczp-trainee-multiple-choice-question>
-<crczp-trainee-extended-matching-items *ngIf="isEmi"
-                                      [question]="question"
-                                      [index]="index"
-                                      [isBacktracked]="isBacktracked"
-                                      (contentChanged)="onContentChanged($event)">
-</crczp-trainee-extended-matching-items>
+@if (isFfq) {
+    <crczp-trainee-free-form-question
+        [question]="$any(question)"
+        [index]="index"
+        [isBacktracked]="isBacktracked"
+        (contentChanged)="onContentChanged($event)">
+    </crczp-trainee-free-form-question>
+}
+@if (isMcq) {
+    <crczp-trainee-multiple-choice-question
+        [question]="$any(question)"
+        [index]="index"
+        [isBacktracked]="isBacktracked"
+        (contentChanged)="onContentChanged($event)">
+    </crczp-trainee-multiple-choice-question>
+}
+@if (isEmi) {
+    <crczp-trainee-extended-matching-items
+        [question]="$any(question)"
+        [index]="index"
+        [isBacktracked]="isBacktracked"
+        (contentChanged)="onContentChanged($event)">
+    </crczp-trainee-extended-matching-items>
+}

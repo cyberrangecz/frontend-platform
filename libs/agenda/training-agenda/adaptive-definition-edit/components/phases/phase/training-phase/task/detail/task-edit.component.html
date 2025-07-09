@@ -1,109 +1,117 @@
 <div class="content">
-    <form [formGroup]="taskConfigFormGroup.formGroup">
-        <div class="panel-wrapper">
-            <div class="left-panel">
+  <form [formGroup]="taskConfigFormGroup.formGroup">
+    <div class="panel-wrapper">
+      <div class="left-panel">
 
 
-                <!--CONTENT field -->
-                <h3>Content</h3>
-                <sentinel-markdown-editor
-                    class="mrkdwn-content"
-                    [sentinel-markdown-file-upload]="false"
-                    (contentChange)="content.setValue($event)"
-                    [content]="content.value"
-                />
-                <mat-error *ngIf="content.hasError('required')">Content cannot be empty</mat-error>
-                <!--SOLUTION field -->
-                <h3>Solution</h3>
-                <sentinel-markdown-editor
-                    class="mrkdwn-solution"
-                    [sentinel-markdown-file-upload]="false"
-                    (contentChange)="solution.setValue($event)"
-                    [content]="solution.value"
-                />
-                <mat-error *ngIf="solution.hasError('required')">Solution cannot be empty</mat-error>
-            </div>
+        <!--CONTENT field -->
+        <h3>Content</h3>
+        <sentinel-markdown-editor
+          class="mrkdwn-content"
+          [sentinel-markdown-file-upload]="false"
+          (contentChange)="content.setValue($event)"
+          [content]="content.value"
+          />
+        @if (content.hasError('required')) {
+          <mat-error>Content cannot be empty</mat-error>
+        }
+        <!--SOLUTION field -->
+        <h3>Solution</h3>
+        <sentinel-markdown-editor
+          class="mrkdwn-solution"
+          [sentinel-markdown-file-upload]="false"
+          (contentChange)="solution.setValue($event)"
+          [content]="solution.value"
+          />
+        @if (solution.hasError('required')) {
+          <mat-error>Solution cannot be empty</mat-error>
+        }
+      </div>
 
-            <div class="right-panel">
-                <!-- TITLE filed -->
-                <mat-form-field
-                    appearance="outline"
-                    (keydown.enter)="$event.preventDefault()"
-                >
-                    <mat-label>Title</mat-label>
-                    <input
-                        matInput
-                        placeholder="Title"
-                        formControlName="title"
-                        required
-                    />
-                    <button
-                        *ngIf="title.value"
-                        matSuffix
-                        mat-icon-button
-                        aria-label="Clear"
-                        (click)="title.setValue('')"
-                    >
-                        <mat-icon>close</mat-icon>
-                    </button>
-                    <mat-error *ngIf="title.hasError('required')">Title cannot be empty</mat-error>
-                </mat-form-field>
+      <div class="right-panel">
+        <!-- TITLE filed -->
+        <mat-form-field
+          appearance="outline"
+          (keydown.enter)="$event.preventDefault()"
+          >
+          <mat-label>Title</mat-label>
+          <input
+            matInput
+            placeholder="Title"
+            formControlName="title"
+            required
+            />
+          @if (title.value) {
+            <button
+              matSuffix
+              mat-icon-button
+              aria-label="Clear"
+              (click)="title.setValue('')"
+              >
+              <mat-icon>close</mat-icon>
+            </button>
+          }
+          @if (title.hasError('required')) {
+            <mat-error>Title cannot be empty</mat-error>
+          }
+        </mat-form-field>
 
-                <!-- INCORRECT ANSWER LIMIT field -->
-                <mat-form-field
-                    appearance="outline"
+        <!-- INCORRECT ANSWER LIMIT field -->
+        <mat-form-field
+          appearance="outline"
                     hintLabel="1 to 100. If the limit
           will be overreached, solution will be displayed automatically."
+          >
+          <mat-label>Incorrect Answer Limit</mat-label>
+          <input
+            matInput
+            placeholder="Incorrect Answer Limit"
+            type="number"
+            min="1"
+            max="100"
+            formControlName="incorrectAnswerLimit"
+            required
+            />
+          <mat-error
+            >Incorrect answer limit must be in range of 1 to 100
+            </mat-error
+            >
+          </mat-form-field>
+
+          <!-- ANSWER field -->
+          <mat-form-field
+            appearance="outline"
+            hintLabel="Max 50 characters"
+            (keydown.enter)="$event.preventDefault()"
+            >
+            <mat-label>Correct Answer</mat-label>
+            <input
+              matInput
+              placeholder="Correct Answer"
+              maxlength="50"
+              formControlName="answer"
+              required
+              />
+            @if (answer) {
+              <button
+                matSuffix
+                mat-icon-button
+                aria-label="Clear"
+                (click)="answer.setValue('')"
                 >
-                    <mat-label>Incorrect Answer Limit</mat-label>
-                    <input
-                        matInput
-                        placeholder="Incorrect Answer Limit"
-                        type="number"
-                        min="1"
-                        max="100"
-                        formControlName="incorrectAnswerLimit"
-                        required
-                    />
-                    <mat-error
-                    >Incorrect answer limit must be in range of 1 to 100
-                    </mat-error
-                    >
-                </mat-form-field>
+                <mat-icon>close</mat-icon>
+              </button>
+            }
+            <mat-hint align="end">{{ answer.value?.length || 0 }}/50</mat-hint>
+            <mat-error>Correct Answer cannot be empty or larger than 50 characters</mat-error>
+          </mat-form-field>
 
-                <!-- ANSWER field -->
-                <mat-form-field
-                    appearance="outline"
-                    hintLabel="Max 50 characters"
-                    (keydown.enter)="$event.preventDefault()"
-                >
-                    <mat-label>Correct Answer</mat-label>
-                    <input
-                        matInput
-                        placeholder="Correct Answer"
-                        maxlength="50"
-                        formControlName="answer"
-                        required
-                    />
-                    <button
-                        *ngIf="answer"
-                        matSuffix
-                        mat-icon-button
-                        aria-label="Clear"
-                        (click)="answer.setValue('')"
-                    >
-                        <mat-icon>close</mat-icon>
-                    </button>
-                    <mat-hint align="end">{{ answer.value?.length || 0 }}/50</mat-hint>
-                    <mat-error>Correct Answer cannot be empty or larger than 50 characters</mat-error>
-                </mat-form-field>
+          <div class="modify-sandbox">
+            <span>Modify sandbox: </span>
+            <mat-slide-toggle formControlName="modifySandbox"/>
+          </div>
 
-                <div class="modify-sandbox">
-                    <span>Modify sandbox: </span>
-                    <mat-slide-toggle formControlName="modifySandbox"/>
-                </div>
-
-            </div>
         </div>
+      </div>
     </form>
-</div>
+  </div>

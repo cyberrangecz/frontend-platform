@@ -22,6 +22,11 @@ import {
     templateUrl: './trainee-question.component.html',
     styleUrls: ['./trainee-question.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        MultipleChoiceQuestionTraineeComponent,
+        FreeFormQuestionTraineeComponent,
+        ExtendedMatchingItemsTraineeComponent
+    ]
 })
 /**
  * Wrapper component for displaying questions in training run's assessment level. It selects the correct component to

@@ -3,11 +3,15 @@ import {TrainingInstance} from '@crczp/training-model';
 import {timer} from 'rxjs';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {DateUtils} from "@crczp/common";
+import {MatIcon} from "@angular/material/icon";
 
 @Component({
     selector: 'crczp-instance-countdown',
     templateUrl: './instance-countdown.component.html',
     styleUrl: './instance-countdown.component.css',
+    imports: [
+        MatIcon
+    ]
 })
 export class InstanceCountdownComponent implements OnInit {
     static readonly EXPIRED_TEXT = 'expired';

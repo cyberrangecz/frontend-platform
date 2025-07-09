@@ -16,23 +16,21 @@ import {
 import {map} from 'rxjs/operators';
 
 export abstract class AdaptiveRunTrainingPhaseService {
+    isSolutionRevealed$: Observable<boolean>;
+    displayedSolutionContent$: Observable<string>;
+    isCorrectAnswerSubmitted$: Observable<boolean>;
+    isLoading$: Observable<boolean>;
+    protected isSolutionRevealedSubject$: BehaviorSubject<boolean>;
+    protected displayedSolutionContentSubject$: BehaviorSubject<string>;
+    protected isCorrectAnswerSubmittedSubject$: BehaviorSubject<boolean>;
+    protected isLoadingSubject$: BehaviorSubject<boolean>;
+
     protected constructor(
         protected dialog: MatDialog,
         protected notificationService: SentinelNotificationService,
         protected runningAdaptiveRunService: RunningAdaptiveRunService,
-    ) {}
-
-    protected isSolutionRevealedSubject$: BehaviorSubject<boolean>;
-    isSolutionRevealed$: Observable<boolean>;
-
-    protected displayedSolutionContentSubject$: BehaviorSubject<string>;
-    displayedSolutionContent$: Observable<string>;
-
-    protected isCorrectAnswerSubmittedSubject$: BehaviorSubject<boolean>;
-    isCorrectAnswerSubmitted$: Observable<boolean>;
-
-    protected isLoadingSubject$: BehaviorSubject<boolean>;
-    isLoading$: Observable<boolean>;
+    ) {
+    }
 
     abstract submitAnswer(Answer: string): Observable<any>;
 

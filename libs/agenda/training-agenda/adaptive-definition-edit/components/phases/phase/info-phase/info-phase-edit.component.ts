@@ -14,7 +14,7 @@ import {AbstractControl, ReactiveFormsModule} from '@angular/forms';
 import {InfoPhase} from '@crczp/training-model';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {SentinelMarkdownEditorComponent} from "@sentinel/components/markdown-editor";
-import {NgIf} from "@angular/common";
+
 import {MatError, MatFormField, MatInput, MatLabel} from "@angular/material/input";
 import {MatIconButton} from "@angular/material/button";
 import {MatIcon} from "@angular/material/icon";
@@ -33,7 +33,6 @@ import {MatIcon} from "@angular/material/icon";
         MatLabel,
         SentinelMarkdownEditorComponent,
         MatError,
-        NgIf,
         MatIconButton,
         MatIcon,
         MatInput

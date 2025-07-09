@@ -1,22 +1,28 @@
 <div class="level">
     <form [formGroup]="infoLevelConfigFormGroup.formGroup" class="content">
         <!-- TITLE filed -->
-        <mat-form-field appearance="outline"
-                        (keydown.enter)="$event.preventDefault()">
+        <mat-form-field (keydown.enter)="$event.preventDefault()"
+                        appearance="outline">
             <mat-label>Title</mat-label>
-            <input matInput placeholder="Title" formControlName="title" required>
-            <button *ngIf="title" matSuffix mat-icon-button
-                    aria-label="Clear" (click)="title.setValue('');">
-                <mat-icon>close</mat-icon>
-            </button>
-            <mat-error *ngIf="title.hasError('whitespace')">Title cannot be empty</mat-error>
+            <input formControlName="title" matInput placeholder="Title" required>
+            @if (title) {
+                <button matSuffix mat-icon-button
+                        aria-label="Clear" (click)="title.setValue('');">
+                    <mat-icon>close</mat-icon>
+                </button>
+            }
+            @if (title.hasError('whitespace')) {
+                <mat-error>Title cannot be empty</mat-error>
+            }
         </mat-form-field>
 
         <!-- CONTENT filed -->
         <h3>Content</h3>
-        <sentinel-markdown-editor [sentinel-markdown-file-upload]="false"
-                                  (contentChange)="this.content.setValue($event);"
-                                  [content]="content.value"/>
-        <mat-error *ngIf="content.hasError('whitespace')">Content cannot be empty</mat-error>
+        <sentinel-markdown-editor (contentChange)="this.content.setValue($event);"
+                                  [content]="content.value"
+                                  [sentinel-markdown-file-upload]="false"/>
+        @if (content.hasError('whitespace')) {
+            <mat-error>Content cannot be empty</mat-error>
+        }
     </form>
 </div>

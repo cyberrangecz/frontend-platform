@@ -1,7 +1,20 @@
-import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, ViewChild, inject } from '@angular/core';
+import {
+    ChangeDetectorRef,
+    Component,
+    ElementRef,
+    EventEmitter,
+    inject,
+    Input,
+    OnChanges,
+    OnDestroy,
+    OnInit,
+    Output,
+    SimpleChanges,
+    ViewChild
+} from '@angular/core';
 import {ForceDirectedGraph} from '../../model/graph/force-directed-graph';
 import {D3Service} from '../../services/d3.service';
-import {Link, Node, NodePhysicalRoleEnum, RouterNode, SwitchNode,} from '@crczp/topology-graph-model';
+import {HostNode, Link, Node, NodePhysicalRoleEnum, RouterNode, SwitchNode,} from '@crczp/topology-graph-model';
 import {GraphEventService} from '../../services/graph-event.service';
 import {GraphEventTypeEnum} from '../../model/enums/graph-event-type-enum';
 import {Subscription} from 'rxjs';
@@ -18,12 +31,7 @@ import {GraphLockService} from '../../services/graph-lock.service';
     standalone: false
 })
 export class GraphVisualComponent implements OnInit, OnChanges, OnDestroy {
-    private d3Service = inject(D3Service);
-    private graphEventService = inject(GraphEventService);
-    private graphLockService = inject(GraphLockService);
-    private ref = inject(ChangeDetectorRef);
-
-    @Input() nodes: Node[];
+    @Input() nodes: (HostNode | RouterNode)[];
     @Input() links: Link[];
     @Input() width: number;
     @Input() height: number;
@@ -34,38 +42,21 @@ export class GraphVisualComponent implements OnInit, OnChanges, OnDestroy {
     @Output() polling: EventEmitter<boolean> = new EventEmitter();
     @Output() loadConsoles: EventEmitter<string> = new EventEmitter();
     @Output() showContainers: EventEmitter<boolean> = new EventEmitter();
-
     @ViewChild('svg') graphSvg: ElementRef<SVGElement>;
-
     graph: ForceDirectedGraph;
-
     /**
      * true if in locked canvas mode (fixed size) , false otherwise
      */
     lockedCanvas: boolean;
-
     defaultWidth: number;
     defaultHeight: number;
-
+    private d3Service = inject(D3Service);
+    private graphEventService = inject(GraphEventService);
+    private graphLockService = inject(GraphLockService);
+    private ref = inject(ChangeDetectorRef);
     private _graphEventSubscription: Subscription;
     private _graphLockSubscription: Subscription;
     private _d3ResizeSubscription: Subscription;
-
-    ngOnChanges(changes: SimpleChanges): void {
-        if ('width' in changes || 'height' in changes || 'zoom' in changes) {
-            this.defaultWidth = this.width;
-            this.defaultHeight = this.height;
-            if (this.graphSvg) {
-                this.graphSvg.nativeElement.setAttribute(
-                    'viewBox',
-                    `0 0 ${this.width * this.zoom} ${this.height * this.zoom}`
-                );
-            }
-            if (this.graph) {
-                this.graph.onResize(this.options);
-            }
-        }
-    }
 
     /**
      * Size of window of displayed SVG
@@ -82,6 +73,22 @@ export class GraphVisualComponent implements OnInit, OnChanges, OnDestroy {
                 width: this.width * this.zoom,
                 height: this.height * this.zoom,
             };
+        }
+    }
+
+    ngOnChanges(changes: SimpleChanges): void {
+        if ('width' in changes || 'height' in changes || 'zoom' in changes) {
+            this.defaultWidth = this.width;
+            this.defaultHeight = this.height;
+            if (this.graphSvg) {
+                this.graphSvg.nativeElement.setAttribute(
+                    'viewBox',
+                    `0 0 ${this.width * this.zoom} ${this.height * this.zoom}`
+                );
+            }
+            if (this.graph) {
+                this.graph.onResize(this.options);
+            }
         }
     }
 
@@ -121,6 +128,21 @@ export class GraphVisualComponent implements OnInit, OnChanges, OnDestroy {
 
     onShowContainers(event: boolean): void {
         this.showContainers.emit(event);
+    }
+
+    /**
+     * Unsubscribe observables on end of component
+     */
+    ngOnDestroy(): void {
+        if (this._graphEventSubscription) {
+            this._graphEventSubscription.unsubscribe();
+        }
+        if (this._graphLockSubscription) {
+            this._graphLockSubscription.unsubscribe();
+        }
+        if (this._d3ResizeSubscription) {
+            this._d3ResizeSubscription.unsubscribe();
+        }
     }
 
     /**
@@ -281,20 +303,5 @@ export class GraphVisualComponent implements OnInit, OnChanges, OnDestroy {
                 }
             }
         );
-    }
-
-    /**
-     * Unsubscribe observables on end of component
-     */
-    ngOnDestroy(): void {
-        if (this._graphEventSubscription) {
-            this._graphEventSubscription.unsubscribe();
-        }
-        if (this._graphLockSubscription) {
-            this._graphLockSubscription.unsubscribe();
-        }
-        if (this._d3ResizeSubscription) {
-            this._d3ResizeSubscription.unsubscribe();
-        }
     }
 }

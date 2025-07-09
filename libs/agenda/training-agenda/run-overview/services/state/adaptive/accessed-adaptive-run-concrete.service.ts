@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import {inject, Injectable} from '@angular/core';
 import {Router} from '@angular/router';
 import {OffsetPaginationEvent, PaginatedResource,} from '@sentinel/common/pagination';
 import {AdaptiveRunApi} from '@crczp/training-api';
@@ -7,7 +7,7 @@ import {from, Observable} from 'rxjs';
 import {tap} from 'rxjs/operators';
 import {TrainingErrorHandler, TrainingNavigator,} from '@crczp/training-agenda';
 import {AccessedAdaptiveRunService} from './accessed-adaptive-run.service';
-import {Settings} from '@crczp/common';
+import {PortalConfig} from '@crczp/common';
 
 /**
  * Basic implementation of layer between component and API service.
@@ -20,9 +20,7 @@ export class AccessedAdaptiveRunConcreteService extends AccessedAdaptiveRunServi
     private errorHandler = inject(TrainingErrorHandler);
 
     constructor() {
-        const settings = inject(Settings);
-
-        super(settings.DEFAULT_PAGE_SIZE);
+        super(inject(PortalConfig).defaultPageSize);
     }
 
     /**

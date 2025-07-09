@@ -1,101 +1,108 @@
 <svg>
-    <!-- NODE WRAPPER -->
-    <g
-        class="node"
-        [contextMenu]="node"
-        [contextMenuZoom]="zoom"
-        (dblclick)="onDoubleClick()"
-        [attr.transform]="'translate(' + node.x + ',' + node.y + ')'"
+  <!-- NODE WRAPPER -->
+  <g
+    class="node"
+    [contextMenu]="node"
+    [contextMenuZoom]="zoom"
+    (dblclick)="onDoubleClick()"
+    [attr.transform]="'translate(' + node.x + ',' + node.y + ')'"
     >
-        <title>
-            {{ node }}
-        </title>
+    <title>
+      {{ node }}
+    </title>
 
-        <!-- NODE -->
-        <rect
-            [attr.x]="width / -2"
-            [attr.y]="height / -2"
-            rx="16"
-            ry="16"
-            [attr.width]="width"
-            [attr.height]="height"
+    <!-- NODE -->
+    <rect
+      [attr.x]="width / -2"
+      [attr.y]="height / -2"
+      rx="16"
+      ry="16"
+      [attr.width]="width"
+      [attr.height]="height"
+      />
+
+    <!-- COLLAPSED SUBNET NODE BORDER -->
+    @if (isSubnetHidden()) {
+      <rect
+        class="collapsed"
+        [attr.x]="width / -2 - 3"
+        [attr.y]="height / -2 - 3"
+        rx="19"
+        ry="19"
+        [attr.width]="width + 6"
+        [attr.height]="height + 6"
         />
+    }
 
-        <!-- COLLAPSED SUBNET NODE BORDER -->
-        <rect
-            *ngIf="isSubnetHidden()"
-            class="collapsed"
-            [attr.x]="width / -2 - 3"
-            [attr.y]="height / -2 - 3"
-            rx="19"
-            ry="19"
-            [attr.width]="width + 6"
-            [attr.height]="height + 6"
+    <!-- PHYSICAL ROLE IMAGE -->
+    @if (node.name !== 'internet') {
+      <image
+        ngClass="{{ node.physicalRole }}"
+        [attr.xlink:href]="iconsPath + node.physicalRole + '.svg'"
+        [attr.x]="width / -4 + 6"
+        [attr.y]="height / -2 + 5"
+        [attr.width]="32"
+        [attr.height]="32"
         />
+    }
 
-        <!-- PHYSICAL ROLE IMAGE -->
-        <image
-            *ngIf="node.name !== 'internet'"
-            ngClass="{{ node.physicalRole }}"
-            [attr.xlink:href]="iconsPath + node.physicalRole + '.svg'"
-            [attr.x]="width / -4 + 6"
-            [attr.y]="height / -2 + 5"
-            [attr.width]="32"
-            [attr.height]="32"
-        />
-
-        <!-- NUMBER OF HOSTS IN COLLAPSED SUBNET -->
-        <text
-            *ngIf="isSubnetHidden() && subnetSize > 0"
-            [attr.x]="-2"
-            [attr.y]="height / -9"
-            [attr.style]="'text-anchor: middle'"
+    <!-- NUMBER OF HOSTS IN COLLAPSED SUBNET -->
+    @if (isSubnetHidden() && subnetSize > 0) {
+      <text
+        [attr.x]="-2"
+        [attr.y]="height / -9"
+        [attr.style]="'text-anchor: middle'"
         >
-            {{ subnetSize }}
-        </text>
+        {{ subnetSize }}
+      </text>
+    }
 
-        <!-- internet -->
-        <image
-            *ngIf="node.name === 'internet'"
-            ngClass="{{ node.physicalRole }}"
-            [attr.xlink:href]="iconsPath + 'internet.svg'"
-            [attr.x]="width / -4.5 + 5"
-            [attr.y]="height / -2.5 + 5"
-            [attr.width]="30"
-            [attr.height]="30"
+    <!-- internet -->
+    @if (node.name === 'internet') {
+      <image
+        ngClass="{{ node.physicalRole }}"
+        [attr.xlink:href]="iconsPath + 'internet.svg'"
+        [attr.x]="width / -4.5 + 5"
+        [attr.y]="height / -2.5 + 5"
+        [attr.width]="30"
+        [attr.height]="30"
         />
+    }
 
-        <!-- Docker container -->
-        <image
-            *ngIf="hasContainers"
-            class="container"
-            [attr.xlink:href]="iconsPath + 'docker.svg'"
-            [attr.x]="4"
-            [attr.style]="'filter: drop-shadow(0px 0px 1px white);'"
-            [attr.y]="-height / 4"
-            [attr.width]="20"
-            [attr.height]="20"
+    <!-- Docker container -->
+    @if (hasContainers) {
+      <image
+        class="container"
+        [attr.xlink:href]="iconsPath + 'docker.svg'"
+        [attr.x]="4"
+        [attr.style]="'filter: drop-shadow(0px 0px 1px white);'"
+        [attr.y]="-height / 4"
+        [attr.width]="20"
+        [attr.height]="20"
         />
-        <!-- TEXT LABELS - NAME, IPs etc. -->
-        <text
-            *ngFor="let label of labels"
-            [attr.x]="label.x"
-            [attr.y]="label.y"
-            [attr.style]="'text-anchor: middle'"
+    }
+    <!-- TEXT LABELS - NAME, IPs etc. -->
+    @for (label of labels; track label) {
+      <text
+        [attr.x]="label.x"
+        [attr.y]="label.y"
+        [attr.style]="'text-anchor: middle'"
         >
-            {{ label.text | labelShortener }}
-        </text>
-    </g>
+        {{ label.text | labelShortener }}
+      </text>
+    }
+  </g>
 
+  @if (hasContextMenu) {
     <g
-        *ngIf="hasContextMenu"
-        context
-        [node]="node"
-        [cloudSandboxInstance]="cloudSandboxInstance"
-        [graphSize]="graphSize"
-        [zoom]="zoom"
-        [isConsoleReady]="isConsoleReady"
-        (polling)="onPollingStateChange($event)"
-        (loadConsoles)="onLoadConsoles($event)"
-    />
+      context
+      [node]="node"
+      [cloudSandboxInstance]="cloudSandboxInstance"
+      [graphSize]="graphSize"
+      [zoom]="zoom"
+      [isConsoleReady]="isConsoleReady"
+      (polling)="onPollingStateChange($event)"
+      (loadConsoles)="onLoadConsoles($event)"
+      />
+  }
 </svg>

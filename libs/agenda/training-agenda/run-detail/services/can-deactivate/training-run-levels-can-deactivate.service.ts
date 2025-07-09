@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import {inject, Injectable} from '@angular/core';
 
 import {Observable} from 'rxjs';
 import {RunningTrainingRunService} from '../training-run/running/running-training-run.service';

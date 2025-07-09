@@ -18,7 +18,7 @@ import {MatIcon} from "@angular/material/icon";
 import {MatError} from "@angular/material/input";
 import {TaskStepperComponent} from "../stepper/task-stepper.component";
 import {MatDivider} from "@angular/material/divider";
-import {AsyncPipe, NgIf} from "@angular/common";
+import { AsyncPipe } from "@angular/common";
 import {TaskEditComponent} from "../detail/task-edit.component";
 import {AdaptiveTask} from "@crczp/training-model";
 
@@ -37,19 +37,18 @@ import {AdaptiveTask} from "@crczp/training-model";
         },
     ],
     imports: [
-        SentinelControlsComponent,
-        MatIcon,
-        MatError,
-        MatExpansionPanelDescription,
-        MatExpansionPanelHeader,
-        MatExpansionPanelTitle,
-        MatExpansionPanel,
-        TaskStepperComponent,
-        MatDivider,
-        AsyncPipe,
-        TaskEditComponent,
-        NgIf
-    ]
+    SentinelControlsComponent,
+    MatIcon,
+    MatError,
+    MatExpansionPanelDescription,
+    MatExpansionPanelHeader,
+    MatExpansionPanelTitle,
+    MatExpansionPanel,
+    TaskStepperComponent,
+    MatDivider,
+    AsyncPipe,
+    TaskEditComponent
+]
 })
 export class TasksOverviewComponent implements OnInit {
     dialog = inject(MatDialog);

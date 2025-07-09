@@ -1,6 +1,15 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@angular/core';
 import {TrainingRun} from '@crczp/training-model';
-import {SentinelTable, TableActionEvent, TableLoadEvent} from '@sentinel/components/table';
+import {
+    SentinelRowDirective,
+    SentinelTable,
+    SentinelTableComponent,
+    TableActionEvent,
+    TableLoadEvent
+} from '@sentinel/components/table';
+import {MatRipple} from "@angular/material/core";
+import {MatIcon} from "@angular/material/icon";
+import {MatTooltip} from "@angular/material/tooltip";
 
 /**
  * Component displaying training runs and its state in real time.
@@ -10,6 +19,13 @@ import {SentinelTable, TableActionEvent, TableLoadEvent} from '@sentinel/compone
     templateUrl: './training-run-overview.component.html',
     styleUrls: ['./training-run-overview.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        SentinelTableComponent,
+        MatRipple,
+        MatIcon,
+        SentinelRowDirective,
+        MatTooltip
+    ]
 })
 export class TrainingRunOverviewComponent {
     @Input() trainingRuns: SentinelTable<TrainingRun>;

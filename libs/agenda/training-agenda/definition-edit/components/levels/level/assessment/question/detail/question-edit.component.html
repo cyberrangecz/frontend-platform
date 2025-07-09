@@ -8,39 +8,45 @@
         </mat-card-title>
         <span class="spacer"></span>
         <div class="required">
-            <mat-checkbox class="mat-typography"
-                          [disabled]="isTest"
+            <mat-checkbox (change)="questionChanged(question)"
+                          [(ngModel)]="question.required"
                           [checked]="isTest"
-                          (change)="questionChanged(question)"
-                          [(ngModel)]="question.required">
+                          [disabled]="isTest"
+                          class="mat-typography">
                 Required
             </mat-checkbox>
         </div>
     </mat-card-header>
     <mat-card-content>
-        <ng-container [ngSwitch]="true">
-            <crczp-multiple-choice-question-edit *ngSwitchCase="isMcq"
-                                                (questionChange)="questionChanged($event)"
-                                                [question]="question"
-                                                [required]="question.required"
-                                                [isTest]="isTest">
-            </crczp-multiple-choice-question-edit>
-            <crczp-free-form-question-edit *ngSwitchCase="isFfq"
-                                          (questionChange)="questionChanged($event)"
-                                          [question]="question"
-                                          [required]="question.required"
-                                          [isTest]="isTest">
-            </crczp-free-form-question-edit>
-            <crczp-extended-matching-items *ngSwitchCase="isEmi"
-                                          (questionChange)="questionChanged($event)"
-                                          [question]="question"
-                                          [required]="question.required"
-                                          [isTest]="isTest">
-            </crczp-extended-matching-items>
-        </ng-container>
+        @switch (true) {
+            @case (isMcq) {
+                <crczp-multiple-choice-question-edit
+                    (questionChange)="questionChanged($event)"
+                    [question]="$any(question)"
+                    [required]="question.required"
+                    [isTest]="isTest">
+                </crczp-multiple-choice-question-edit>
+            }
+            @case (isFfq) {
+                <crczp-free-form-question-edit
+                    (questionChange)="questionChanged($event)"
+                    [question]="$any(question)"
+                    [required]="question.required"
+                    [isTest]="isTest">
+                </crczp-free-form-question-edit>
+            }
+            @case (isEmi) {
+                <crczp-extended-matching-items
+                    (questionChange)="questionChanged($event)"
+                    [question]="$any(question)"
+                    [required]="question.required"
+                    [isTest]="isTest">
+                </crczp-extended-matching-items>
+            }
+        }
     </mat-card-content>
     <mat-card-actions align="end">
-        <button mat-flat-button color="warn" (click)="onDelete(index)">Delete</button>
+        <button (click)="onDelete(index)" color="warn" mat-flat-button>Delete</button>
     </mat-card-actions>
 </mat-card>
 

@@ -13,7 +13,7 @@ import {TraineeAccessTrainingFormGroup} from './trainee-access-training-form-gro
 import {AbstractControl, ReactiveFormsModule} from '@angular/forms';
 import {MatCard, MatCardActions, MatCardContent, MatCardSubtitle, MatCardTitle} from "@angular/material/card";
 import {MatError, MatFormField, MatInput, MatLabel} from "@angular/material/input";
-import {NgIf} from "@angular/common";
+
 import {MatIcon} from "@angular/material/icon";
 
 /**
@@ -25,22 +25,21 @@ import {MatIcon} from "@angular/material/icon";
     styleUrls: ['./access-training-run.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
-        MatCard,
-        MatCardTitle,
-        MatCardSubtitle,
-        MatCardContent,
-        MatFormField,
-        MatLabel,
-        MatInput,
-        MatFormField,
-        MatIconButton,
-        MatIcon,
-        MatError,
-        NgIf,
-        ReactiveFormsModule,
-        MatCardActions,
-        MatButton
-    ]
+    MatCard,
+    MatCardTitle,
+    MatCardSubtitle,
+    MatCardContent,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    MatFormField,
+    MatIconButton,
+    MatIcon,
+    MatError,
+    ReactiveFormsModule,
+    MatCardActions,
+    MatButton
+]
 })
 export class AccessTrainingRunComponent implements OnInit {
     @ViewChild('pin') accessTokenPinInput: ElementRef;

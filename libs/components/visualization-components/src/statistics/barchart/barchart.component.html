@@ -1,0 +1,46 @@
+<div id="barchartPlaceholder">
+    <mat-card>
+        <!-- Contains the title of the chart,
+          which can be set manually when calling this component -->
+        <mat-card-title/>
+        <mat-divider/>
+        <!-- Contains the chart and the types panel -->
+        <mat-card-content>
+            <mat-grid-list cols="12" rowHeight="5%">
+                <!-- Enables to set the type of the barchart -->
+                <mat-grid-tile colspan="12" rowspan="2">
+          <span id="buttonGroup">
+            <!-- Enables to switch between stacked/grouped chart-->
+            <mat-radio-group>
+              <mat-radio-button value="stacked" [checked]="chartType === 'stacked'" (change)="onRadioChange('stacked')">
+                Stacked
+              </mat-radio-button>
+              <mat-radio-button value="grouped" [checked]="chartType === 'grouped'" (change)="onRadioChange('grouped')">
+                Grouped
+              </mat-radio-button>
+            </mat-radio-group>
+              <!-- Defines whether only the wrong answers should be shown -->
+            <mat-checkbox [checked]="onlyWrongFlags" (change)="onCheckboxChange()"
+            >Show only the wrong answers</mat-checkbox
+            >
+          </span>
+                </mat-grid-tile>
+                <!-- Contains the y axis of the chart -->
+                <mat-grid-tile colspan="1" rowspan="17" id="yAxisPlaceholder">
+                    <svg id="yAxisSvg"></svg>
+                </mat-grid-tile>
+                <!-- Contains the barchart -->
+                <mat-grid-tile colspan="9" rowspan="17" id="chartPlaceholder">
+                    <!-- Enables to attach a horizontal scrollbar to the chart -->
+                    <div id="scrollableDiv">
+                        <svg id="chartSvg"></svg>
+                    </div>
+                </mat-grid-tile>
+                <!-- Contains the legend -->
+                <mat-grid-tile colspan="2" rowspan="17" id="legendPlaceholder">
+                    <svg id="legendSvg"></svg>
+                </mat-grid-tile>
+            </mat-grid-list>
+        </mat-card-content>
+    </mat-card>
+</div>

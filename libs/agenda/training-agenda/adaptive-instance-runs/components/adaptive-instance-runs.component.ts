@@ -1,19 +1,19 @@
 import {ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {OffsetPaginationEvent} from '@sentinel/common/pagination';
-import {SentinelControlItemSignal} from '@sentinel/components/controls';
 import {TrainingInstance, TrainingRun} from '@crczp/training-model';
 import {SentinelTable, TableActionEvent} from '@sentinel/components/table';
-import {async, Observable} from 'rxjs';
+import {Observable} from 'rxjs';
 import {map, switchMap, take, tap} from 'rxjs/operators';
 import {AdaptiveRunTable} from '../model/adaptive-run-table';
 import {AdaptiveRunService} from '../services/runs/adaptive-run.service';
 import {ADAPTIVE_INSTANCE_DATA_ATTRIBUTE_NAME} from '@crczp/training-agenda';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {PaginationStorageService} from "@crczp/common";
+import {PortalConfig} from "@crczp/common";
 import {AdaptiveRunOverviewComponent} from "./training-run-overview/adaptive-run-overview.component";
 import {MatCard} from "@angular/material/card";
-import {AsyncPipe, NgIf} from "@angular/common";
+import {AsyncPipe} from "@angular/common";
+import {AdaptiveRunConcreteService} from "../services/runs/adaptive-run-concrete.service";
 
 /**
  * Smart component of training instance runs
@@ -26,22 +26,18 @@ import {AsyncPipe, NgIf} from "@angular/common";
     imports: [
         AdaptiveRunOverviewComponent,
         MatCard,
-        NgIf,
         AsyncPipe
-    ]
+    ],
+    providers: [{provide: AdaptiveRunService, useClass: AdaptiveRunConcreteService}],
 })
 export class AdaptiveInstanceRunsComponent implements OnInit {
-    private activeRoute = inject(ActivatedRoute);
-    private paginationService = inject(PaginationStorageService);
-    private adaptiveRunService = inject(AdaptiveRunService);
-
     trainingInstance$: Observable<TrainingInstance>;
     trainingRuns$: Observable<SentinelTable<TrainingRun>>;
     trainingRunsHasError$: Observable<boolean>;
-    trainingRunsControls: SentinelControlItemSignal[];
-    selectedTrainingRunIds: number[] = [];
     destroyRef = inject(DestroyRef);
-    protected readonly async = async;
+    defaultPageSize = inject(PortalConfig).defaultPageSize;
+    private activeRoute = inject(ActivatedRoute);
+    private adaptiveRunService = inject(AdaptiveRunService);
     private trainingInstance: TrainingInstance;
 
     ngOnInit(): void {
@@ -64,7 +60,7 @@ export class AdaptiveInstanceRunsComponent implements OnInit {
     }
 
     private initRunsOverviewComponent() {
-        const initialPagination = new OffsetPaginationEvent(0, this.paginationService.DEFAULT_PAGE_SIZE, '', 'asc');
+        const initialPagination = new OffsetPaginationEvent(0, this.defaultPageSize, '', 'asc');
         this.trainingInstance$
             .pipe(
                 take(1),

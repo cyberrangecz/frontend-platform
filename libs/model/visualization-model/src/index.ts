@@ -1,25 +1,25 @@
-export * from './lib/adaptive/adaptive-run-visualization-model';
-export * from './lib/adaptive/phase/access-phase-model';
-export * from './lib/adaptive/phase/info-phase-model';
-export * from './lib/adaptive/phase/questionnaire-phase-mode';
-export * from './lib/adaptive/phase/training-phase-model';
-export * from './lib/adaptive/phase/transition-phase-model';
+export * from './adaptive/adaptive-run-visualization-model';
+export * from './adaptive/phase/access-phase-model';
+export * from './adaptive/phase/info-phase-model';
+export * from './adaptive/phase/questionnaire-phase-mode';
+export * from './adaptive/phase/training-phase-model';
+export * from './adaptive/phase/transition-phase-model';
 
-export * from './lib/assessment/model';
+export * from './assessment/model';
 
-export * from './lib/clustering/model';
+export * from './clustering/model';
 
-export * from './lib/command/command-resource-select';
-export * from './lib/command/commands-model';
+export * from './command/command-resource-select';
+export * from './command/commands-model';
 
-export * from './lib/event/command/command-events-model';
-export * from './lib/event/data-entry';
-export * from './lib/event/progress/progress-events-model';
+export * from './event/command/command-events-model';
+export * from './event/data-entry';
+export * from './event/progress/progress-events-model';
 
-export * from './lib/progress/data-model';
-export * from './lib/progress/entry-model';
+export * from './progress/data-model';
+export * from './progress/entry-model';
 
-export * from './lib/statistics/statistics-model';
-export * from './lib/statistics/filter';
+export * from './statistics/statistics-model';
+export * from './statistics/filter';
 
-export * from './lib/walkthrough/walkthrough-visualization-model';
+export * from './walkthrough/walkthrough-visualization-model';

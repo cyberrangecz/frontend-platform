@@ -1,0 +1,8 @@
+@function decimal-to-name($decimal) {
+    $integer: floor($decimal);
+    $fraction: str-slice(#{$decimal}, 3);
+    @if $fraction == '' {
+        @return $integer;
+    }
+    @return $integer + '-' + $fraction;
+}

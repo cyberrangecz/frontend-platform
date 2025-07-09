@@ -1,14 +1,47 @@
 import {Component, ElementRef, EventEmitter, Input, OnChanges, Output, ViewChild} from '@angular/core';
 import {MitreTechnique} from '@crczp/training-model';
 import {COMMA, ENTER, SEMICOLON} from '@angular/cdk/keycodes';
-import {MatChipInputEvent} from '@angular/material/chips';
-import {UntypedFormControl} from '@angular/forms';
-import {MatAutocompleteSelectedEvent} from '@angular/material/autocomplete';
+import {MatChipGrid, MatChipInput, MatChipInputEvent, MatChipRemove, MatChipRow} from '@angular/material/chips';
+import {ReactiveFormsModule, UntypedFormControl} from '@angular/forms';
+import {
+    MatAutocomplete,
+    MatAutocompleteSelectedEvent,
+    MatAutocompleteTrigger,
+    MatOption
+} from '@angular/material/autocomplete';
+import {MatError, MatFormField, MatHint, MatInput, MatLabel} from "@angular/material/input";
+import {MatIcon} from "@angular/material/icon";
+import {
+    MatExpansionPanel,
+    MatExpansionPanelDescription,
+    MatExpansionPanelHeader,
+    MatExpansionPanelTitle
+} from "@angular/material/expansion";
 
 @Component({
     selector: 'crczp-mitre-technique-select',
     templateUrl: './mitre-technique-select.component.html',
     styleUrls: ['./mitre-technique-select.component.css'],
+    imports: [
+        MatError,
+        MatHint,
+        MatOption,
+        MatAutocomplete,
+        MatIcon,
+        MatChipRemove,
+        MatChipRow,
+        MatChipGrid,
+        MatLabel,
+        MatFormField,
+        MatExpansionPanelDescription,
+        MatExpansionPanelTitle,
+        MatExpansionPanelHeader,
+        MatExpansionPanel,
+        ReactiveFormsModule,
+        MatChipInput,
+        MatAutocompleteTrigger,
+        MatInput
+    ]
 })
 export class MitreTechniqueSelectComponent implements OnChanges {
     @Input() mitreTechniques: MitreTechnique[];
@@ -34,7 +67,7 @@ export class MitreTechniqueSelectComponent implements OnChanges {
                 this.pushTechnique(value.trim());
                 event.chipInput?.clear();
             } else {
-                this.chipListCtrl.setErrors({ wrongFormat: true });
+                this.chipListCtrl.setErrors({wrongFormat: true});
                 this.chipListCtrl.markAsTouched();
             }
         }
@@ -69,7 +102,7 @@ export class MitreTechniqueSelectComponent implements OnChanges {
     }
 
     onInput(event: any): void {
-        this.chipListCtrl.setErrors({ wrongFormat: false });
+        this.chipListCtrl.setErrors({wrongFormat: false});
         this.chipListCtrl.markAsUntouched();
         this.filteredTechniquesList = this.filter(event.target.value);
     }

@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, Component, DestroyRef, inject, Input, OnInit} f
 import {ActivatedRoute} from '@angular/router';
 import {OffsetPaginationEvent} from '@sentinel/common/pagination';
 import {TrainingInstance, TrainingRun} from '@crczp/training-model';
-import {async, Observable} from 'rxjs';
+import {Observable} from 'rxjs';
 import {map, switchMap, take, tap} from 'rxjs/operators';
 import {
     ADAPTIVE_INSTANCE_DATA_ATTRIBUTE_NAME,
@@ -14,7 +14,15 @@ import {SentinelTable, TableActionEvent, TableLoadEvent} from '@sentinel/compone
 import {AdaptiveRunService} from '../services/state/runs/adaptive-run.service';
 import {AdaptiveRunTable} from '../model/adaptive-run-table';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {PaginationStorageService} from "@crczp/common";
+import {PaginationStorageService, providePaginationStorageService} from "@crczp/common";
+import {
+    AdaptiveInstanceSummaryConcreteService
+} from "../services/state/summary/adaptive-instance-summary-concrete.service";
+import {AdaptiveRunConcreteService} from "../services/state/runs/adaptive-run-concrete.service";
+import {MatCard} from "@angular/material/card";
+import {AdaptiveInstanceInfoComponent} from "./info/adaptive-instance-info.component";
+import {AdaptiveInstanceRunsComponent} from "./runs/adaptive-instance-runs.component";
+import {AsyncPipe} from "@angular/common";
 
 /**
  * Smart component of adaptive instance summary
@@ -24,27 +32,35 @@ import {PaginationStorageService} from "@crczp/common";
     templateUrl: './adaptive-instance-summary.component.html',
     styleUrls: ['./adaptive-instance-summary.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    providers: [
+        {provide: AdaptiveInstanceSummaryService, useClass: AdaptiveInstanceSummaryConcreteService},
+        {provide: AdaptiveRunService, useClass: AdaptiveRunConcreteService},
+        providePaginationStorageService(AdaptiveInstanceSummaryComponent)
+    ],
+    imports: [
+        MatCard,
+        AdaptiveInstanceInfoComponent,
+        AdaptiveInstanceRunsComponent,
+        AsyncPipe
+    ]
 })
 export class AdaptiveInstanceSummaryComponent implements OnInit {
+    @Input() paginationId = 'adaptive-instance-summary';
+    trainingInstance$: Observable<TrainingInstance>;
+    adaptiveRuns$: Observable<SentinelTable<TrainingRun>>;
+    adaptiveRunsHasError$: Observable<boolean>;
+    hasStarted$: Observable<boolean>;
+    trainingInstanceAccessTokenLink: string;
+    trainingInstancePoolIdLink: string;
+    adaptiveDefinitionLink: string;
+    hasPool: boolean;
+    destroyRef = inject(DestroyRef);
     private activeRoute = inject(ActivatedRoute);
     private navigator = inject(TrainingNavigator);
     private adaptiveInstanceSummaryService = inject(AdaptiveInstanceSummaryService);
     private paginationService = inject(PaginationStorageService);
     private adaptiveRunService = inject(AdaptiveRunService);
     private notificationService = inject(TrainingNotificationService);
-
-    @Input() paginationId = 'adaptive-instance-summary';
-
-    trainingInstance$: Observable<TrainingInstance>;
-    adaptiveRuns$: Observable<SentinelTable<TrainingRun>>;
-    adaptiveRunsHasError$: Observable<boolean>;
-    hasStarted$: Observable<boolean>;
-
-    trainingInstanceAccessTokenLink: string;
-    trainingInstancePoolIdLink: string;
-    adaptiveDefinitionLink: string;
-    hasPool: boolean;
-    destroyRef = inject(DestroyRef);
 
     ngOnInit(): void {
         this.trainingInstance$ = this.activeRoute.data.pipe(
@@ -127,5 +143,4 @@ export class AdaptiveInstanceSummaryComponent implements OnInit {
         this.adaptiveRunsHasError$ = this.adaptiveRunService.hasError$;
     }
 
-    protected readonly async = async;
 }

@@ -1,8 +1,8 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
 import {AdaptiveQuestion, QuestionnaireTypeEnum} from '@crczp/training-model';
 import {SentinelMarkdownEditorComponent} from "@sentinel/components/markdown-editor";
-import {NgForOf, NgIf} from "@angular/common";
-import {MatFormField, MatInput} from "@angular/material/input";
+
+import {MatFormField, MatInput, MatLabel} from "@angular/material/input";
 
 @Component({
     selector: 'crczp-adaptive-free-form-question-edit',
@@ -11,10 +11,9 @@ import {MatFormField, MatInput} from "@angular/material/input";
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         SentinelMarkdownEditorComponent,
-        NgIf,
-        NgForOf,
         MatFormField,
-        MatInput
+        MatInput,
+        MatLabel
     ]
 })
 /**

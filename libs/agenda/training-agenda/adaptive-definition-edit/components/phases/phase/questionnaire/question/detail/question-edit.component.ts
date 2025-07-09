@@ -8,7 +8,7 @@ import {RatingFormQuestionEditComponent} from "../rating-form-question/rating-fo
 import {MatCheckbox} from "@angular/material/checkbox";
 import {SentinelMarkdownViewComponent} from "@sentinel/components/markdown-view";
 import {FormsModule} from "@angular/forms";
-import {NgIf} from "@angular/common";
+
 
 @Component({
     selector: 'crczp-adaptive-question-edit',
@@ -25,8 +25,7 @@ import {NgIf} from "@angular/common";
         MatCardTitle,
         MatCardHeader,
         MatCard,
-        FormsModule,
-        NgIf
+        FormsModule
     ]
 })
 export class QuestionEditComponent {

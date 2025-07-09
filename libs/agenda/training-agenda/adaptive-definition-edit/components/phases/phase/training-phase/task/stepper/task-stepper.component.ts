@@ -1,5 +1,19 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, inject } from '@angular/core';
-import {SentinelStepper, StepperStateChange, StepStateEnum} from '@sentinel/components/stepper';
+import {
+    ChangeDetectionStrategy,
+    Component,
+    EventEmitter,
+    inject,
+    Input,
+    OnChanges,
+    Output,
+    SimpleChanges
+} from '@angular/core';
+import {
+    SentinelStepper,
+    SentinelStepperComponent,
+    StepperStateChange,
+    StepStateEnum
+} from '@sentinel/components/stepper';
 import {MatDialog} from '@angular/material/dialog';
 import {PhaseMoveEvent} from '../../../../../../model/events/phase-move-event';
 import {PhaseStepperAdapter} from '@crczp/training-agenda/internal';
@@ -9,6 +23,9 @@ import {PhaseStepperAdapter} from '@crczp/training-agenda/internal';
     templateUrl: './task-stepper.component.html',
     styleUrls: ['./task-stepper.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        SentinelStepperComponent
+    ]
 })
 export class TaskStepperComponent implements OnChanges {
     dialog = inject(MatDialog);
@@ -18,7 +35,7 @@ export class TaskStepperComponent implements OnChanges {
     @Output() activeStepChange: EventEmitter<number> = new EventEmitter();
     @Output() phaseMove: EventEmitter<PhaseMoveEvent> = new EventEmitter();
 
-    taskStepper: SentinelStepper<PhaseStepperAdapter> = { items: [] };
+    taskStepper: SentinelStepper<PhaseStepperAdapter> = {items: []};
     private previousActiveStep = -1;
 
     ngOnChanges(changes: SimpleChanges): void {

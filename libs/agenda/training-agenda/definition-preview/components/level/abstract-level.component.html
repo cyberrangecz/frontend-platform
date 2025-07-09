@@ -1,7 +1,15 @@
 <h1>{{ level?.title }}</h1>
-<ng-container [ngSwitch]="level?.type">
-    <crczp-assessment-level *ngSwitchCase="levelTypes.Assessment" [level]="level"/>
-    <crczp-training-level *ngSwitchCase="levelTypes.Training" [level]="level"/>
-    <crczp-info-level *ngSwitchCase="levelTypes.Info" [level]="level"/>
-    <crczp-access-level *ngSwitchCase="levelTypes.Access" [level]="level"/>
-</ng-container>
+@switch (level?.type) {
+    @case (levelTypes.Assessment) {
+        <crczp-assessment-level [level]="$any(level)"/>
+    }
+    @case (levelTypes.Training) {
+        <crczp-training-level [level]="$any(level)"/>
+    }
+    @case (levelTypes.Info) {
+        <crczp-info-level [level]="$any(level)"/>
+    }
+    @case (levelTypes.Access) {
+        <crczp-access-level [level]="$any(level)"/>
+    }
+}

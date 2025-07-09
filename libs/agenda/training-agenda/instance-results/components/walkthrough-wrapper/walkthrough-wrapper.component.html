@@ -1,11 +1,10 @@
-<ng-container *ngIf="(levels$ | async) as levels else noLevels">
+@if ((levels$ | async); as levels) {
     <div class="container">
-        <crczp-walkthrough-visualization
+        <crczp-walkthrough-visualization-wrapper
             [levels]="levels"
             [instanceId]="(trainingInstance$ | async)?.id">
-        </crczp-walkthrough-visualization>
+        </crczp-walkthrough-visualization-wrapper>
     </div>
-</ng-container>
-<ng-template #noLevels>
+} @else {
     <h3 class="message">*No levels for a given training definition of a training instance: {{ trainingInstance$ }}.</h3>
-</ng-template>
+}

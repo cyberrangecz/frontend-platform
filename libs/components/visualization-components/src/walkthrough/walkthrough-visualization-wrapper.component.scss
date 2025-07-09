@@ -1,0 +1,54 @@
+.container {
+    //background-color: #456089;
+    width: 100%;
+    height: calc(100% - 50px);
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: stretch;
+    align-content: stretch;
+    align-items: flex-start;
+    min-height: 300px;
+}
+
+.chartContainer {
+    min-height: 750px;
+    max-height: 750px;
+    flex: 1 5 auto;
+    background-color: var(--primary-95);
+    border-radius: 1rem;
+    padding: 1rem 0;
+    margin: 25px;
+    height: calc(100% - 50px);
+    width: calc(100% - 50px);
+    align-self: center;
+}
+
+.top-container {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.button-container {
+    margin-left: 30px;
+    margin-top: 30px;
+}
+
+mat-form-field {
+    width: 300px;
+}
+
+text {
+    font-family: sans-serif;
+}
+
+.message-container {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.empty-data {
+    color: gainsboro;
+}

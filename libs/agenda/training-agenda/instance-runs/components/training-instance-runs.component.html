@@ -1,11 +1,13 @@
-<div *ngIf="trainingInstance$ | async as trainingInstance">
+@if (trainingInstance$ | async; as trainingInstance) {
+  <div>
     <mat-card appearance="outlined">
-        <crczp-training-run-overview
-            [trainingRuns]="trainingRuns$ | async"
-            [hasError]="trainingRunsHasError$ | async"
-            [isLoading]="loadingTrainingRuns$ | async"
-            (tableAction)="onTrainingRunsTableAction($event)"
-            (TableLoadEvent)="onTrainingRunsLoadEvent($event)"
+      <crczp-training-run-overview
+        [trainingRuns]="trainingRuns$ | async"
+        [hasError]="trainingRunsHasError$ | async"
+        [isLoading]="loadingTrainingRuns$ | async"
+        (tableAction)="onTrainingRunsTableAction($event)"
+        (TableLoadEvent)="onTrainingRunsLoadEvent($event)"
         />
     </mat-card>
-</div>
+  </div>
+}

@@ -1,32 +1,35 @@
 <mat-expansion-panel>
-    <mat-expansion-panel-header>
-        <mat-panel-title> Expected Commands</mat-panel-title>
-        <mat-panel-description>
-      <span *ngIf="expectedCommands.length > 0; else noCommandsLabel">
-        This level contains {{ expectedCommands.length }} expected command(s)</span
-      >
-            <ng-template #noCommandsLabel>
-                <span>This level has no expected commands</span>
-            </ng-template>
-        </mat-panel-description>
+  <mat-expansion-panel-header>
+    <mat-panel-title> Expected Commands</mat-panel-title>
+    <mat-panel-description>
+      @if (expectedCommands.length > 0) {
+        <span>
+          This level contains {{ expectedCommands.length }} expected command(s)</span
+          >
+        } @else {
+          <span>This level has no expected commands</span>
+        }
+      </mat-panel-description>
     </mat-expansion-panel-header>
     <mat-form-field class="chip-list" appearance="outline">
-        <mat-label>Expected Commands</mat-label>
-        <mat-chip-grid #chipList>
-            <mat-chip-row *ngFor="let expectedCommand of expectedCommands" (removed)="remove(expectedCommand)" selected>
-                {{ expectedCommand }}
-                <button matChipRemove>
-                    <mat-icon>cancel</mat-icon>
-                </button>
-            </mat-chip-row>
-            <input
-                placeholder="New Expected Command..."
-                [matChipInputFor]="chipList"
-                [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-                [matChipInputAddOnBlur]="true"
-                (matChipInputTokenEnd)="add($event)"
-                (paste)="paste($event)"
-            />
-        </mat-chip-grid>
+      <mat-label>Expected Commands</mat-label>
+      <mat-chip-grid #chipList>
+        @for (expectedCommand of expectedCommands; track expectedCommand) {
+          <mat-chip-row (removed)="remove(expectedCommand)" selected>
+            {{ expectedCommand }}
+            <button matChipRemove>
+              <mat-icon>cancel</mat-icon>
+            </button>
+          </mat-chip-row>
+        }
+        <input
+          placeholder="New Expected Command..."
+          [matChipInputFor]="chipList"
+          [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+          [matChipInputAddOnBlur]="true"
+          (matChipInputTokenEnd)="add($event)"
+          (paste)="paste($event)"
+          />
+      </mat-chip-grid>
     </mat-form-field>
-</mat-expansion-panel>
+  </mat-expansion-panel>

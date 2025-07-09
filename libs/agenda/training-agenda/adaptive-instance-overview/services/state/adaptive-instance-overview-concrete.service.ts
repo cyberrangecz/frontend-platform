@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import {inject, Injectable} from '@angular/core';
 import {Router} from '@angular/router';
 import {OffsetPaginationEvent, PaginatedResource,} from '@sentinel/common/pagination';
 import {PoolApi} from '@crczp/sandbox-api';
@@ -8,7 +8,6 @@ import {EMPTY, Observable, of} from 'rxjs';
 import {catchError, map, switchMap, tap} from 'rxjs/operators';
 import {AdaptiveInstanceFilter} from '../../model/adapters/adaptive-instance-filter';
 import {TrainingErrorHandler, TrainingNavigator, TrainingNotificationService,} from '@crczp/training-agenda';
-import {TrainingAgendaContext} from '@crczp/training-agenda/internal';
 import {AdaptiveInstanceOverviewService} from './adaptive-instance-overview.service';
 import {
     SentinelConfirmationDialogComponent,
@@ -16,7 +15,7 @@ import {
     SentinelDialogResultEnum,
 } from '@sentinel/components/dialogs';
 import {MatDialog} from '@angular/material/dialog';
-import {Settings} from '@crczp/common';
+import {PortalConfig} from '@crczp/common';
 
 @Injectable()
 export class AdaptiveInstanceOverviewConcreteService extends AdaptiveInstanceOverviewService {
@@ -25,7 +24,6 @@ export class AdaptiveInstanceOverviewConcreteService extends AdaptiveInstanceOve
     private poolApi = inject(PoolApi);
     private router = inject(Router);
     private navigator = inject(TrainingNavigator);
-    private context = inject(TrainingAgendaContext);
     private notificationService = inject(TrainingNotificationService);
     private errorHandler = inject(TrainingErrorHandler);
 
@@ -33,9 +31,7 @@ export class AdaptiveInstanceOverviewConcreteService extends AdaptiveInstanceOve
     private lastFilters: string;
 
     constructor() {
-        const settings = inject(Settings);
-
-        super(settings.DEFAULT_PAGE_SIZE);
+        super(inject(PortalConfig).defaultPageSize);
     }
 
     getAll(

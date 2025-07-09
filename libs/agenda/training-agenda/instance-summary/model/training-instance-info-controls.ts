@@ -1,5 +1,5 @@
 import {EventEmitter} from '@angular/core';
-import {SentinelControlItemSignal} from '@sentinel/components/controls';
+import {SentinelControlItem} from '@sentinel/components/controls';
 import {defer, EMPTY, Observable} from 'rxjs';
 
 /**
@@ -19,9 +19,9 @@ export class TrainingInstanceInfoControls {
         showCheatingDetection: EventEmitter<boolean>,
         exportScore: EventEmitter<boolean>,
         disabled$: Observable<boolean>,
-    ): SentinelControlItemSignal[] {
+    ): SentinelControlItem[] {
         return [
-            new SentinelControlItemSignal(
+            new SentinelControlItem(
                 this.PROGRESS_ACTION_ID,
                 'Show Progress',
                 'primary',
@@ -31,7 +31,7 @@ export class TrainingInstanceInfoControls {
                     return EMPTY;
                 }),
             ),
-            new SentinelControlItemSignal(
+            new SentinelControlItem(
                 this.RESULTS_ACTION_ID,
                 'Show Results',
                 'primary',
@@ -41,7 +41,7 @@ export class TrainingInstanceInfoControls {
                     return EMPTY;
                 }),
             ),
-            new SentinelControlItemSignal(
+            new SentinelControlItem(
                 this.CHEATING_DETECTION_ID,
                 'Cheating Detection',
                 'primary',
@@ -51,7 +51,7 @@ export class TrainingInstanceInfoControls {
                     return EMPTY;
                 }),
             ),
-            new SentinelControlItemSignal(
+            new SentinelControlItem(
                 this.EXPORT_SCORE_ID,
                 'Export Score',
                 'primary',

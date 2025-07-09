@@ -1,7 +1,11 @@
-import { bootstrapApplication } from '@angular/platform-browser';
-import { appConfig } from './app/app.config';
-import { AppComponent } from './app/app.component';
+import {enableProdMode} from '@angular/core';
+import {environment} from './environments/environment';
+import {SentinelBootstrapper, SentinelConfig} from '@sentinel/common/dynamic-env';
+import {platformBrowser} from "@angular/platform-browser";
+import {AppModule} from "./app/app.module";
 
-bootstrapApplication(AppComponent, appConfig).catch((err) =>
-  console.error(err)
-);
+if (environment.production) {
+    enableProdMode();
+}
+
+SentinelBootstrapper.bootstrap<AppModule, SentinelConfig>('assets/config.json', AppModule, platformBrowser());

@@ -7,7 +7,7 @@ import {
     TableActionEvent,
     TableLoadEvent
 } from '@sentinel/components/table';
-import {NgIf} from "@angular/common";
+
 import {MatRipple} from "@angular/material/core";
 import {MatIcon} from "@angular/material/icon";
 import {MatTooltip} from "@angular/material/tooltip";
@@ -23,7 +23,6 @@ import {MatTooltip} from "@angular/material/tooltip";
     imports: [
         SentinelTableComponent,
         SentinelRowDirective,
-        NgIf,
         MatRipple,
         MatIcon,
         MatTooltip

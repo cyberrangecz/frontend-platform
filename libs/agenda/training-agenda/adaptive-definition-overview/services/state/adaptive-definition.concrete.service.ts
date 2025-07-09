@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import {inject, Injectable} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import {Router} from '@angular/router';
 import {
@@ -19,7 +19,7 @@ import {
 import {TrainingErrorHandler, TrainingNavigator, TrainingNotificationService,} from '@crczp/training-agenda';
 import {AdaptiveFileUploadProgressService} from '../file-upload/adaptive-file-upload-progress.service';
 import {AdaptiveDefinitionService} from './adaptive-definition.service';
-import {Settings} from '@crczp/common';
+import {PortalConfig} from '@crczp/common';
 
 /**
  * Basic implementation of a layer between a component and an API service.
@@ -39,9 +39,7 @@ export class AdaptiveDefinitionConcreteService extends AdaptiveDefinitionService
     private lastFilters: string;
 
     constructor() {
-        const settings = inject(Settings);
-
-        super(settings.DEFAULT_PAGE_SIZE);
+        super(inject(PortalConfig).defaultPageSize);
     }
 
     /**

@@ -1,76 +1,79 @@
 <mat-expansion-panel class="mat-elevation-z0 panel-align">
-    <mat-expansion-panel-header>
-        <mat-panel-title>
-            <h3>
-                <mat-icon class="level-type" [inline]="true" matTooltip="Training Level"> videogame_asset</mat-icon>
-                <span> {{ level.order + 1 }}.</span>
-                <span> {{ level.title }}</span>
-            </h3>
-        </mat-panel-title>
-    </mat-expansion-panel-header>
+  <mat-expansion-panel-header>
+    <mat-panel-title>
+      <h3>
+        <mat-icon class="level-type" [inline]="true" matTooltip="Training Level"> videogame_asset</mat-icon>
+        <span> {{ level.order + 1 }}.</span>
+        <span> {{ level.title }}</span>
+      </h3>
+    </mat-panel-title>
+  </mat-expansion-panel-header>
+  <div class="data-field">
+    <div class="key-field">Estimated Duration:</div>
+    <div>{{ level.estimatedDuration }}</div>
+  </div>
+  <div class="data-field">
+    <div class="key-field">Hints:</div>
+    <div>{{ level.hints.length }}</div>
+  </div>
+  @if (level.answerVariableName) {
     <div class="data-field">
-        <div class="key-field">Estimated Duration:</div>
-        <div>{{ level.estimatedDuration }}</div>
+      <div class="key-field">Answer Variable Name:</div>
+      <div>{{ level.answerVariableName }}</div>
     </div>
+  } @else {
     <div class="data-field">
-        <div class="key-field">Hints:</div>
-        <div>{{ level.hints.length }}</div>
+      <div class="key-field">Answer:</div>
+      <div>{{ level.answer }}</div>
     </div>
-    <div *ngIf="level.answerVariableName; else answer" class="data-field">
-        <div class="key-field">Answer Variable Name:</div>
-        <div>{{ level.answerVariableName }}</div>
-    </div>
-    <ng-template #answer>
-        <div class="data-field">
-            <div class="key-field">Answer:</div>
-            <div>{{ level.answer }}</div>
-        </div>
-    </ng-template>
-    <div class="data-field markdown-data">
-        <div class="key-field">Content:</div>
-        <sentinel-markdown-view [markdown]="level?.content"/>
-    </div>
-    <div class="data-field markdown-data">
-        <div class="key-field">Solution:</div>
-        <sentinel-markdown-view [markdown]="level?.solution"/>
-    </div>
+  }
+  <div class="data-field markdown-data">
+    <div class="key-field">Content:</div>
+    <sentinel-markdown-view [markdown]="level?.content"/>
+  </div>
+  <div class="data-field markdown-data">
+    <div class="key-field">Solution:</div>
+    <sentinel-markdown-view [markdown]="level?.solution"/>
+  </div>
 
-    <div class="data-field markdown-data">
-        <div class="key-field">Hints:</div>
-        <div class="hints-container">
-            <div *ngFor="let hint of level?.hints" class="hint-container">
-                <div class="data-field">
-                    <h4>{{ hint?.title }}</h4>
-                </div>
-                <div>
-                    <div class="data-field markdown-data">
-                        <div class="key-field">Content:</div>
-                            <sentinel-markdown-view [markdown]="hint?.content"/>
-                    </div>
-                    <div class="data-field">
-                        <div class="key-field">Penalty:</div>
-                        <div>{{ hint?.penalty }}</div>
-                    </div>
-                </div>
+  <div class="data-field markdown-data">
+    <div class="key-field">Hints:</div>
+    <div class="hints-container">
+      @for (hint of level?.hints; track hint) {
+        <div class="hint-container">
+          <div class="data-field">
+            <h4>{{ hint?.title }}</h4>
+          </div>
+          <div>
+            <div class="data-field markdown-data">
+              <div class="key-field">Content:</div>
+              <sentinel-markdown-view [markdown]="hint?.content"/>
             </div>
+            <div class="data-field">
+              <div class="key-field">Penalty:</div>
+              <div>{{ hint?.penalty }}</div>
+            </div>
+          </div>
         </div>
+      }
     </div>
-    <div class="data-field">
-        <div class="key-field">Points:</div>
-        <div>{{ level?.maxScore }}</div>
+  </div>
+  <div class="data-field">
+    <div class="key-field">Points:</div>
+    <div>{{ level?.maxScore }}</div>
+  </div>
+  <div class="data-field">
+    <div class="key-field">Incorrect Answer Limit:</div>
+    <div>{{ level?.incorrectAnswerLimit }}</div>
+  </div>
+  <div class="data-field">
+    <div class="key-field">Solution Penalized:</div>
+    <div>{{ level?.solutionPenalized }}</div>
+  </div>
+  <div class="data-field">
+    <div class="key-field">MITRE ATT&CK Techniques:</div>
+    <div>
+      {{ getMitreTechniques() }}
     </div>
-    <div class="data-field">
-        <div class="key-field">Incorrect Answer Limit:</div>
-        <div>{{ level?.incorrectAnswerLimit }}</div>
-    </div>
-    <div class="data-field">
-        <div class="key-field">Solution Penalized:</div>
-        <div>{{ level?.solutionPenalized }}</div>
-    </div>
-    <div class="data-field">
-        <div class="key-field">MITRE ATT&CK Techniques:</div>
-        <div>
-            {{ getMitreTechniques() }}
-        </div>
-    </div>
+  </div>
 </mat-expansion-panel>

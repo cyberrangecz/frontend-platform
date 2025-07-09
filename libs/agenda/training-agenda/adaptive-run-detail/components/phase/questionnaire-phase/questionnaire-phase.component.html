@@ -1,72 +1,83 @@
 <div class="container">
-    <div class="level-content">
-        <div class="questions" *ngFor="let question of phase.questions; index as i">
-            <h2>{{ i + 1 }}. {{ question.text }}</h2>
-
-            <ng-container [ngSwitch]="question.questionType">
-                <p class="required-note" *ngIf="question.answerRequired && !isBacktracked">Answer required</p>
-                <div class="question" *ngSwitchCase="questionTypes.FFQ">
-                    <mat-form-field appearance="outline">
-                        <mat-label> Answer</mat-label>
-                        <input matInput
-                               [disabled]="isBacktracked"
-                               [maxLength]="1023"
-                               [required]="question.answerRequired"
-                               [(ngModel)]="questionAnswers[i].answers[0]"
-                        />
-                    </mat-form-field>
-
-                    <mat-error
-                        id="max-length-ffq-answer"
-                        *ngIf="questionAnswers[i].answers[0] && questionAnswers[i].answers[0].length === 1023"
-                    >
-                        * You have reached the maximal size of message. If you wish to write longer message, please
-                        contact your
-                        administrator.
-                    </mat-error>
+  <div class="level-content">
+    @for (question of phase.questions; track question; let i = $index) {
+      <div class="questions">
+        <h2>{{ i + 1 }}. {{ question.text }}</h2>
+        @if (question.answerRequired && !isBacktracked) {
+          <p class="required-note">Answer required</p>
+        }
+        @switch (question.questionType) {
+          @case (questionTypes.FFQ) {
+            <div class="question">
+              <mat-form-field appearance="outline">
+                <mat-label> Answer</mat-label>
+                <input [(ngModel)]="questionAnswers[i].answers[0]"
+                  [disabled]="isBacktracked"
+                  [maxLength]="1023"
+                  [required]="question.answerRequired"
+                  matInput
+                  />
+              </mat-form-field>
+              @if (questionAnswers[i].answers[0] && questionAnswers[i].answers[0].length === 1023) {
+                <mat-error
+                  id="max-length-ffq-answer"
+                  >
+                  * You have reached the maximal size of message. If you wish to write longer message, please
+                  contact your
+                  administrator.
+                </mat-error>
+              }
+            </div>
+          }
+          @case (questionTypes.MCQ) {
+            <div class="mcq-question">
+              @for (choice of question.choices; track choice) {
+                <div>
+                  <mat-checkbox
+                    (change)="onMCQChecked($event, i, choice.text)"
+                    [checked]="checkedAsAnswered(question, choice)"
+                    [disabled]="isBacktracked"
+                    [required]="question.answerRequired"
+                    />
+                  <p class="mcq-answer">{{ choice.text }}</p>
                 </div>
-
-                <div class="mcq-question" *ngSwitchCase="questionTypes.MCQ">
-                    <div *ngFor="let choice of question.choices">
-                        <mat-checkbox
-                            [disabled]="isBacktracked"
-                            (change)="onMCQChecked($event, i, choice.text)"
-                            [required]="question.answerRequired"
-                            [checked]="checkedAsAnswered(question, choice)"
-                        />
-                        <p class="mcq-answer">{{ choice.text }}</p>
-                    </div>
+              }
+            </div>
+          }
+          @case (questionTypes.RFQ) {
+            <div class="rfq-question">
+              @for (choice of question.choices; track choice) {
+                <div class="rfq-answer">
+                  <mat-checkbox
+                    (change)="onRFQChecked($event, i, choice.text)"
+                    [checked]="checkedAsAnswered(question, choice)"
+                    [disabled]="isBacktracked"
+                    [required]="question.answerRequired"
+                    />
+                  <p>{{ choice.text }}</p>
                 </div>
-
-                <div class="rfq-question" *ngSwitchCase="questionTypes.RFQ">
-                    <div class="rfq-answer" *ngFor="let choice of question.choices">
-                        <mat-checkbox
-                            [disabled]="isBacktracked"
-                            (change)="onRFQChecked($event, i, choice.text)"
-                            [required]="question.answerRequired"
-                            [checked]="checkedAsAnswered(question, choice)"
-                        />
-                        <p>{{ choice.text }}</p>
-                    </div>
-                </div>
-            </ng-container>
-        </div>
-    </div>
-    <!-- Differentiate submit action by different button style -->
-    @if (isBacktracked) {
-        <button
-            class="next-button"
-            mat-raised-button
-            (click)="onNext()">
-            Next
-        </button>
-    } @else {
-        <button
-            class="next-button"
-            mat-flat-button
-            (click)="submit()"
-            [disabled]="!canSubmit">
-            {{ isLast ? "Finish" : "Submit" }}
-        </button>
+              }
+            </div>
+          }
+        }
+      </div>
     }
+  </div>
+  <!-- Differentiate submit action by different button style -->
+  @if (isBacktracked) {
+    <button
+      class="next-button"
+      mat-raised-button
+      (click)="onNext()">
+      Next
+    </button>
+  } @else {
+    <button
+      class="next-button"
+      mat-flat-button
+      (click)="submit()"
+      [disabled]="!canSubmit">
+      {{ isLast ? "Finish" : "Submit" }}
+    </button>
+  }
 </div>

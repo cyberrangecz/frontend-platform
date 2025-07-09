@@ -1,6 +1,14 @@
-<ng-container [ngSwitch]="phase.type">
-    <crczp-info-phase-detail *ngSwitchCase="AbstractPhaseTypeEnum.Info" [phase]="phase"/>
-    <crczp-access-phase-detail *ngSwitchCase="AbstractPhaseTypeEnum.Access" [phase]="phase"/>
-    <crczp-training-phase-detail *ngSwitchCase="AbstractPhaseTypeEnum.Training" [phase]="phase"/>
-    <crczp-questionnaire-phase-detail *ngSwitchCase="AbstractPhaseTypeEnum.Questionnaire" [phase]="phase"/>
-</ng-container>
+@switch (phase.type) {
+    @case (AbstractPhaseTypeEnum.Info) {
+        <crczp-info-phase-detail [phase]="$any(phase)"/>
+    }
+    @case (AbstractPhaseTypeEnum.Access) {
+        <crczp-access-phase-detail [phase]="$any(phase)"/>
+    }
+    @case (AbstractPhaseTypeEnum.Training) {
+        <crczp-training-phase-detail [phase]="$any(phase)"/>
+    }
+    @case (AbstractPhaseTypeEnum.Questionnaire) {
+        <crczp-questionnaire-phase-detail [phase]="$any(phase)"/>
+    }
+}

@@ -3,13 +3,13 @@ import * as d3 from 'd3';
 import {AdaptiveVisualizationTask} from '../../model/phase/adaptiveVisualizationTask';
 import {AdaptiveVisualizationPhase} from '../../model/phase/adaptive-visualization-phase';
 import {TransitionGraphVisualizationData} from '../../model/transition-graph-visualization-data';
-import {async, BehaviorSubject} from 'rxjs';
+import {BehaviorSubject} from 'rxjs';
 import {PlayersTransitionsComponent} from "../training-runs-transitions/training-runs-transitions.component";
 import {PhasesTasksComponent} from "../phases-tasks/phases-tasks.component";
 import {ChartBaseComponent} from "../chart-base/chart-base.component";
 import {MatDivider} from "@angular/material/divider";
 import {TaskPreviewComponent} from "../task-preview/task-preview.component";
-import {AsyncPipe, NgIf} from "@angular/common";
+import {AsyncPipe} from "@angular/common";
 import {MatIcon} from "@angular/material/icon";
 import {MatIconButton} from "@angular/material/button";
 import {RunVisualizationPathNode} from "@crczp/visualization-model";
@@ -25,7 +25,6 @@ import {RunVisualizationPathNode} from "@crczp/visualization-model";
         MatDivider,
         MatIcon,
         TaskPreviewComponent,
-        NgIf,
         MatIconButton,
         AsyncPipe
     ]
@@ -79,7 +78,6 @@ export class AdaptiveTransitionVisualizationWrapperComponent implements OnInit {
         '#ffc0cb',
         '#696969',
     ];
-    protected readonly async = async;
     @ViewChild('chart', {static: true}) private chartContainer?: ElementRef;
     private contentGroup: any;
 

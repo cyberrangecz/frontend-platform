@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit} from '@a
 import {OffsetPaginationEvent} from '@sentinel/common/pagination';
 import {AccessedTrainingRun} from '@crczp/training-model';
 import {SentinelTable, SentinelTableComponent, TableActionEvent, TableLoadEvent} from '@sentinel/components/table';
-import {async, Observable} from 'rxjs';
+import {Observable} from 'rxjs';
 import {map, take} from 'rxjs/operators';
 import {AccessedTrainingRunTable} from '../model/accessed-training-run-table';
 import {AccessedTrainingRunService} from '../services/state/training/accessed-training-run.service';
@@ -10,9 +10,20 @@ import {AccessedAdaptiveRunService} from '../services/state/adaptive/accessed-ad
 import {SentinelControlItem, SentinelControlItemSignal, SentinelControlsComponent} from '@sentinel/components/controls';
 import {AccessedTrainingRunControls} from '../model/accessed-training-run-controls';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {Settings} from "@crczp/common";
+import {PortalConfig} from "@crczp/common";
 import {AsyncPipe} from "@angular/common";
 import {AccessTrainingRunComponent} from "./access/access-training-run.component";
+import {
+    AccessAdaptiveRunResolver,
+    AccessTrainingRunResolver,
+    AdaptiveRunResultsResolver,
+    TrainingRunResultsResolver
+} from "@crczp/training-agenda/resolvers";
+import {TrainingDefaultNavigator, TrainingNavigator} from "@crczp/training-agenda";
+import {RunningTrainingRunConcreteService, RunningTrainingRunService} from "@crczp/training-agenda/run-detail";
+import {RunningAdaptiveRunConcreteService, RunningAdaptiveRunService} from "@crczp/training-agenda/adaptive-run-detail";
+import {AccessedTrainingRunConcreteService} from "../services/state/training/accessed-training-run-concrete.service";
+import {AccessedAdaptiveRunConcreteService} from "../services/state/adaptive/accessed-adaptive-run-concrete.service";
 
 /**
  * Main smart component of the trainee overview.
@@ -27,19 +38,28 @@ import {AccessTrainingRunComponent} from "./access/access-training-run.component
         AccessTrainingRunComponent,
         SentinelControlsComponent,
         SentinelTableComponent
-    ]
+    ],
+    providers: [
+        AccessTrainingRunResolver,
+        AccessAdaptiveRunResolver,
+        TrainingRunResultsResolver,
+        AdaptiveRunResultsResolver,
+        {provide: TrainingNavigator, useClass: TrainingDefaultNavigator},
+        {provide: RunningTrainingRunService, useClass: RunningTrainingRunConcreteService},
+        {provide: RunningAdaptiveRunService, useClass: RunningAdaptiveRunConcreteService},
+        {provide: AccessedTrainingRunService, useClass: AccessedTrainingRunConcreteService},
+        {provide: AccessedAdaptiveRunService, useClass: AccessedAdaptiveRunConcreteService},
+    ],
 })
 export class TrainingRunOverviewComponent implements OnInit {
-    private trainingRunOverviewService = inject(AccessedTrainingRunService);
-    private accessedAdaptiveRunService = inject(AccessedAdaptiveRunService);
-    private settings = inject(Settings);
-
     trainingRuns$: Observable<SentinelTable<AccessedTrainingRun>>;
     hasError$: Observable<boolean>;
     isLoading = false;
     controls: SentinelControlItem[];
     destroyRef = inject(DestroyRef);
-    protected readonly async = async;
+    private trainingRunOverviewService = inject(AccessedTrainingRunService);
+    private accessedAdaptiveRunService = inject(AccessedAdaptiveRunService);
+    private settings = inject(PortalConfig);
 
     constructor() {
         const trainingRunOverviewService = this.trainingRunOverviewService;
@@ -94,7 +114,7 @@ export class TrainingRunOverviewComponent implements OnInit {
 
     private initTable() {
         const initialLoadEvent: TableLoadEvent = {
-            pagination: new OffsetPaginationEvent(0, this.settings.DEFAULT_PAGE_SIZE, '', 'asc'),
+            pagination: new OffsetPaginationEvent(0, this.settings.defaultPageSize, '', 'asc'),
         };
 
         this.trainingRuns$ = this.trainingRunOverviewService.resource$.pipe(

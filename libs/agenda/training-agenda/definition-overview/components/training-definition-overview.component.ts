@@ -8,16 +8,28 @@ import {
     TableActionEvent,
     TableLoadEvent
 } from '@sentinel/components/table';
-import {async, Observable} from 'rxjs';
+import {Observable} from 'rxjs';
 import {map, take} from 'rxjs/operators';
 import {TrainingDefinitionOverviewControls} from '../model/training-definition-overview-controls';
 import {TrainingDefinitionTable} from '../model/training-definition-table';
-import {TrainingNavigator} from '@crczp/training-agenda';
+import {TrainingDefaultNavigator, TrainingNavigator} from '@crczp/training-agenda';
 import {TrainingDefinitionService} from '../services/state/training-definition.service';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {PaginationStorageService, TableDateCellComponent, TableStateCellComponent} from "@crczp/common";
-import {SentinelControlItem, SentinelControlsComponent} from "@sentinel/components/controls";
+import {
+    PaginationStorageService,
+    providePaginationStorageService,
+    TableDateCellComponent,
+    TableStateCellComponent
+} from "@crczp/common";
+import {SentinelControlItem, SentinelControlItemSignal, SentinelControlsComponent} from "@sentinel/components/controls";
 import {AsyncPipe} from "@angular/common";
+import {FileUploadProgressService} from "../services/file-upload/file-upload-progress.service";
+import {
+    TrainingDefinitionBreadcrumbResolver,
+    TrainingDefinitionResolver,
+    TrainingDefinitionTitleResolver
+} from "@crczp/training-agenda/resolvers";
+import {TrainingDefinitionConcreteService} from "../services/state/training-definition.concrete.service";
 
 /**
  * Main smart component of training definition overview
@@ -33,25 +45,30 @@ import {AsyncPipe} from "@angular/common";
         TableStateCellComponent,
         TableDateCellComponent,
         SentinelRowDirective
-    ]
+    ],
+    providers: [
+        FileUploadProgressService,
+        TrainingDefinitionBreadcrumbResolver,
+        TrainingDefinitionResolver,
+        TrainingDefinitionTitleResolver,
+        {provide: TrainingNavigator, useClass: TrainingDefaultNavigator},
+        {provide: TrainingDefinitionService, useClass: TrainingDefinitionConcreteService},
+        providePaginationStorageService(TrainingDefinitionOverviewComponent)
+    ],
 })
 export class TrainingDefinitionOverviewComponent implements OnInit {
-    private trainingDefinitionService = inject(TrainingDefinitionService);
-    private paginationService = inject(PaginationStorageService);
-    private navigator = inject(TrainingNavigator);
-
     @Input() paginationId = 'training-definition-overview';
-
     readonly INIT_SORT_NAME = 'lastEdited';
     readonly INIT_SORT_DIR = 'desc';
-
     trainingDefinitions$: Observable<SentinelTable<TrainingDefinition>>;
     hasError$: Observable<boolean>;
     isLoading$: Observable<boolean>;
     topControls: SentinelControlItem[] = [];
     bottomControls: SentinelControlItem[] = [];
     destroyRef = inject(DestroyRef);
-    protected readonly async = async;
+    private trainingDefinitionService = inject(TrainingDefinitionService);
+    private paginationService = inject(PaginationStorageService);
+    private navigator = inject(TrainingNavigator);
 
     ngOnInit(): void {
         this.topControls = TrainingDefinitionOverviewControls.createTopControls(this.trainingDefinitionService);
@@ -83,7 +100,7 @@ export class TrainingDefinitionOverviewComponent implements OnInit {
      * Resolves controls action and calls appropriate handler
      * @param control selected control emitted by controls component
      */
-    onControlsAction(control: SentinelControlItem): void {
+    onControlsAction(control: SentinelControlItemSignal): void {
         control.result$.pipe(take(1)).subscribe();
     }
 

@@ -1,8 +1,13 @@
-import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import {ChangeDetectionStrategy, Component, inject, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {async, Observable, take} from 'rxjs';
+import {Observable, take} from 'rxjs';
 import {MitreTechniquesOverviewService} from '../services/mitre-techniques.service';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import {MitreTechniquesOverviewConcreteService} from "../services/mitre-techniques-concrete.service";
+import {AsyncPipe} from "@angular/common";
+import {MatCard} from "@angular/material/card";
+import {MatSlideToggle} from "@angular/material/slide-toggle";
+import {SafeHtmlPipe} from "./safe-html.pipe";
 
 /**
  * Smart component of mitre techniques
@@ -12,14 +17,20 @@ import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
     templateUrl: './mitre-techniques.component.html',
     styleUrls: ['./mitre-techniques.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    providers: [{provide: MitreTechniquesOverviewService, useClass: MitreTechniquesOverviewConcreteService}],
+    imports: [
+        AsyncPipe,
+        MatCard,
+        MatSlideToggle,
+        SafeHtmlPipe
+    ]
 })
 export class MitreTechniquesComponent implements OnInit {
-    private mitreTechniquesOverviewService = inject(MitreTechniquesOverviewService);
-    private activeRoute = inject(ActivatedRoute);
-
     mitreTableHtml$: Observable<string>;
     showSwitch: boolean;
     played: boolean;
+    private mitreTechniquesOverviewService = inject(MitreTechniquesOverviewService);
+    private activeRoute = inject(ActivatedRoute);
 
     constructor() {
         this.activeRoute.data.pipe(takeUntilDestroyed()).subscribe((data) => {
@@ -41,6 +52,4 @@ export class MitreTechniquesComponent implements OnInit {
     loadData(): void {
         this.mitreTechniquesOverviewService.getMitreTechniques(this.played).pipe(take(1)).subscribe();
     }
-
-    protected readonly async = async;
 }

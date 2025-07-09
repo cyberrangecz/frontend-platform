@@ -9,17 +9,40 @@ import {
     Output,
     SimpleChanges,
 } from '@angular/core';
-import {AbstractControl, UntypedFormArray, UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
+import {
+    AbstractControl,
+    ReactiveFormsModule,
+    UntypedFormArray,
+    UntypedFormControl,
+    UntypedFormGroup,
+    Validators
+} from '@angular/forms';
 import {SentinelValidators} from '@sentinel/common';
 import {FreeFormQuestion, Question} from '@crczp/training-model';
 import {FreeFormQuestionFormGroup} from './free-form-question-form-group';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import {MatError, MatFormField, MatInput, MatLabel, MatSuffix} from "@angular/material/input";
+import {MatButton, MatIconButton} from "@angular/material/button";
+import {MatIcon} from "@angular/material/icon";
+import {SentinelMarkdownEditorComponent} from "@sentinel/components/markdown-editor";
 
 @Component({
     selector: 'crczp-free-form-question-edit',
     templateUrl: './free-form-question-edit.component.html',
     styleUrls: ['./free-form-question-edit.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        MatError,
+        MatButton,
+        MatIcon,
+        MatIconButton,
+        MatSuffix,
+        MatInput,
+        ReactiveFormsModule,
+        MatFormField,
+        MatLabel,
+        SentinelMarkdownEditorComponent
+    ]
 })
 /**
  * Component for editing a question of type Free Form

@@ -1,5 +1,5 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, inject } from '@angular/core';
-import {HostNode, Node, NodePhysicalRoleEnum, RouterNode, SwitchNode,} from '@crczp/topology-graph-model';
+import {Component, EventEmitter, inject, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import {HostNode, NodePhysicalRoleEnum, RouterNode, SwitchNode,} from '@crczp/topology-graph-model';
 import {GraphEventService} from '../../services/graph-event.service';
 import {ICONS_PATH} from '../../icons-path';
 import {Dimensions} from '../../model/others/dimensions';
@@ -14,12 +14,7 @@ import {Dimensions} from '../../model/others/dimensions';
     standalone: false
 })
 export class GraphNodeVisualComponent implements OnDestroy, OnInit {
-    private graphEventService = inject(GraphEventService);
-
-    private readonly DEFAULT_NODE_WIDTH = 92;
-    private readonly DEFAULT_NODE_HEIGHT = 70;
-
-    @Input() node: Node;
+    @Input() node: HostNode | RouterNode;
     @Input() zoom: number;
     @Input() cloudSandboxInstance: boolean;
     @Input() graphSize: Dimensions;
@@ -27,7 +22,6 @@ export class GraphNodeVisualComponent implements OnDestroy, OnInit {
     @Output() polling: EventEmitter<boolean> = new EventEmitter();
     @Output() loadConsoles: EventEmitter<string> = new EventEmitter();
     @Output() showContainers: EventEmitter<boolean> = new EventEmitter();
-
     iconsPath = ICONS_PATH;
     hasContextMenu: boolean;
     width: number;
@@ -35,7 +29,9 @@ export class GraphNodeVisualComponent implements OnDestroy, OnInit {
     labels = [];
     subnetSize = 0;
     hasContainers = false;
-
+    private graphEventService = inject(GraphEventService);
+    private readonly DEFAULT_NODE_WIDTH = 92;
+    private readonly DEFAULT_NODE_HEIGHT = 70;
     private _decoratorEventSubscription;
 
     /**
@@ -73,6 +69,23 @@ export class GraphNodeVisualComponent implements OnDestroy, OnInit {
     }
 
     /**
+     * Decides whether subnet is hidden or expanded
+     * @returns {boolean} true if hidden, false otherwise
+     */
+    isSubnetHidden(): boolean {
+        return (
+            this.node instanceof SwitchNode &&
+            this.node.physicalRole === NodePhysicalRoleEnum.Cloud
+        );
+    }
+
+    ngOnDestroy(): void {
+        if (this._decoratorEventSubscription) {
+            this._decoratorEventSubscription.unsubscribe();
+        }
+    }
+
+    /**
      * Changes subnetwork state (Revealed -> Hidden, Hidden -> Revealed) and sends requests to graph to delete hidden nodes and links
      * @param {SwitchNode} node which state should be changed
      */
@@ -95,17 +108,6 @@ export class GraphNodeVisualComponent implements OnDestroy, OnInit {
                 this.graphEventService.revealSubnet(node);
             }
         }
-    }
-
-    /**
-     * Decides whether subnet is hidden or expanded
-     * @returns {boolean} true if hidden, false otherwise
-     */
-    isSubnetHidden(): boolean {
-        return (
-            this.node instanceof SwitchNode &&
-            this.node.physicalRole === NodePhysicalRoleEnum.Cloud
-        );
     }
 
     /**
@@ -166,12 +168,6 @@ export class GraphNodeVisualComponent implements OnDestroy, OnInit {
         //if at least one node has visible containers, we want to emit the info for the legend
         if (this.hasContainers) {
             this.showContainers.emit(true);
-        }
-    }
-
-    ngOnDestroy(): void {
-        if (this._decoratorEventSubscription) {
-            this._decoratorEventSubscription.unsubscribe();
         }
     }
 }

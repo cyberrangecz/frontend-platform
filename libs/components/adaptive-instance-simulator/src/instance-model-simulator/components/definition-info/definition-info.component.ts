@@ -21,7 +21,7 @@ import {MatDivider} from "@angular/material/divider";
 import {MatIcon} from "@angular/material/icon";
 import {MatFormField, MatInput, MatLabel} from "@angular/material/input";
 import {MatCheckbox} from "@angular/material/checkbox";
-import {NgForOf, NgIf} from "@angular/common";
+
 import {AbstractPhaseEditComponent} from "./phase-edit/abstract-phase-edit.component";
 import {PhaseStepperComponent} from "./stepper/phase-stepper.component";
 import {MatTooltip} from "@angular/material/tooltip";
@@ -32,23 +32,21 @@ import {MatTooltip} from "@angular/material/tooltip";
     styleUrls: ['./definition-info.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
-        MatExpansionPanel,
-        MatExpansionPanelHeader,
-        MatExpansionPanelTitle,
-        MatExpansionPanelContent,
-        MatIcon,
-        MatDivider,
-        MatFormField,
-        MatLabel,
-        MatExpansionPanelDescription,
-        MatInput,
-        MatCheckbox,
-        MatTooltip,
-        NgIf,
-        NgForOf,
-        AbstractPhaseEditComponent,
-        PhaseStepperComponent
-    ]
+    MatExpansionPanel,
+    MatExpansionPanelHeader,
+    MatExpansionPanelTitle,
+    MatExpansionPanelContent,
+    MatIcon,
+    MatDivider,
+    MatFormField,
+    MatLabel,
+    MatExpansionPanelDescription,
+    MatInput,
+    MatCheckbox,
+    MatTooltip,
+    AbstractPhaseEditComponent,
+    PhaseStepperComponent
+]
 })
 export class DefinitionInfoComponent implements OnInit, OnChanges {
     @Input() definitionInfo: TrainingDefinition;

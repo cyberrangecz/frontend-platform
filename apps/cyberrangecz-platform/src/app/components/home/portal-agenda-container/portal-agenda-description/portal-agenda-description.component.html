@@ -1,0 +1,9 @@
+@if (!disabled) {
+  <span
+    class="text-reactive"
+    [ngClass]="{'text-elevation' : (elevation === label)}"
+    (mouseover)="setElevation( label + ' button')"
+    (mouseleave)="setElevation('')">
+    {{ description }}
+  </span>
+}

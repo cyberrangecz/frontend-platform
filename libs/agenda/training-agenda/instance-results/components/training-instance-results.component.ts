@@ -6,6 +6,8 @@ import {TRAINING_INSTANCE_DATA_ATTRIBUTE_NAME} from '@crczp/training-agenda';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {MatTabLink, MatTabNav} from "@angular/material/tabs";
 import {MatIcon} from "@angular/material/icon";
+import {WalkthroughService} from "./walkthrough-wrapper/services/walkthrough.service";
+import {TrainingInstanceResultsRoutingModule} from "./training-instance-results-routing.module";
 
 /**
  * Component displaying training instance results visualizations
@@ -21,15 +23,16 @@ import {MatIcon} from "@angular/material/icon";
         RouterLink,
         RouterLinkActive,
         MatIcon,
-        RouterOutlet
-    ]
+        RouterOutlet,
+        TrainingInstanceResultsRoutingModule
+    ],
+    providers: [WalkthroughService],
 })
 export class TrainingInstanceResultsComponent implements OnInit {
-    private activeRoute = inject(ActivatedRoute);
-    private trainingDefinitionApi = inject(TrainingDefinitionApi);
-
     hasReferenceSolution$: Observable<boolean>;
     destroyRef = inject(DestroyRef);
+    private activeRoute = inject(ActivatedRoute);
+    private trainingDefinitionApi = inject(TrainingDefinitionApi);
 
     ngOnInit(): void {
         this.activeRoute.data

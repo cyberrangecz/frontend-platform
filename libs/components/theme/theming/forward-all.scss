@@ -1,5 +1,5 @@
-@forward '@danielmoncada/angular-datetime-picker/assets/style/picker.min.css';
-
+@forward 'definitions/theme-definition';
+@forward 'definitions/variables';
 @forward 'styles/auth-provider';
 @forward 'styles/document';
 @forward 'styles/misc';

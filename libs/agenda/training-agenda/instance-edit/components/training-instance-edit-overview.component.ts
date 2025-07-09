@@ -3,7 +3,7 @@ import {ActivatedRoute} from '@angular/router';
 import {OffsetPaginationEvent} from '@sentinel/common/pagination';
 import {SentinelControlItem, SentinelControlItemSignal, SentinelControlsComponent} from '@sentinel/components/controls';
 import {TrainingDefinitionInfo, TrainingInstance,} from '@crczp/training-model';
-import {async, combineLatestWith, Observable, switchMap} from 'rxjs';
+import {combineLatestWith, Observable, switchMap} from 'rxjs';
 import {filter, map, take} from 'rxjs/operators';
 import {TrainingInstanceEditControls} from '../model/adapter/training-instance-edit-controls';
 import {TRAINING_INSTANCE_DATA_ATTRIBUTE_NAME} from '@crczp/training-agenda';
@@ -25,8 +25,9 @@ import {MatDivider} from "@angular/material/divider";
 import {TrainingInstanceEditComponent} from "./training-instance-edit/training-instance-edit.component";
 import {MatIcon} from "@angular/material/icon";
 import {MatError} from "@angular/material/input";
-import {AsyncPipe, NgIf} from "@angular/common";
-import {Settings} from "@crczp/common";
+import {AsyncPipe} from "@angular/common";
+import {PortalConfig} from "@crczp/common";
+import {TrainingInstanceCanDeactivate} from "../services/can-deactivate/training-instance-can-deactivate.service";
 
 /**
  * Main component of training instance edit/create page. Serves mainly as a smart component wrapper
@@ -45,6 +46,7 @@ import {Settings} from "@crczp/common";
             provide: SentinelUserAssignService,
             useClass: OrganizersAssignService,
         },
+        TrainingInstanceCanDeactivate
     ],
     imports: [
         MatExpansionPanel,
@@ -58,17 +60,11 @@ import {Settings} from "@crczp/common";
         MatDivider,
         TrainingInstanceEditComponent,
         AsyncPipe,
-        SentinelUserAssignComponent,
-        NgIf
+        SentinelUserAssignComponent
     ]
 })
 export class TrainingInstanceEditOverviewComponent implements OnInit {
-    private activeRoute = inject(ActivatedRoute);
-    private editService = inject(TrainingInstanceEditService);
-    private organizersAssignService = inject(SentinelUserAssignService);
-
     readonly PAGE_SIZE: number = 999;
-
     trainingInstance$: Observable<TrainingInstance>;
     trainingDefinitions$: Observable<TrainingDefinitionInfo[]>;
     pools$: Observable<Pool[]>;
@@ -82,12 +78,14 @@ export class TrainingInstanceEditOverviewComponent implements OnInit {
     defaultPaginationSize: number;
     controls: SentinelControlItem[];
     destroyRef = inject(DestroyRef);
-    protected readonly async = async;
+    private activeRoute = inject(ActivatedRoute);
+    private editService = inject(TrainingInstanceEditService);
+    private organizersAssignService = inject(SentinelUserAssignService);
 
     constructor() {
-        const settings = inject(Settings);
+        const settings = inject(PortalConfig);
 
-        this.defaultPaginationSize = settings.DEFAULT_PAGE_SIZE;
+        this.defaultPaginationSize = settings.defaultPageSize;
         this.trainingInstance$ = this.editService.trainingInstance$;
         this.hasStarted$ = this.editService.hasStarted$;
         this.instanceValid$ = this.editService.instanceValid$;

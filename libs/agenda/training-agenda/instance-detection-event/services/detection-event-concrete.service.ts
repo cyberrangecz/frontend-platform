@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import {inject, Injectable} from '@angular/core';
 import {DetectionEventApi} from '@crczp/training-api';
 import {Router} from '@angular/router';
 import {TrainingNavigator,} from '@crczp/training-agenda';
@@ -8,7 +8,7 @@ import {from, Observable} from 'rxjs';
 import {AbstractDetectionEvent} from '@crczp/training-model';
 import {tap} from 'rxjs/operators';
 import {DetectionEventFilter} from '../model/detection-event-filter';
-import {Settings} from '@crczp/common';
+import {PortalConfig} from '@crczp/common';
 
 /**
  * Basic implementation of a layer between a component and an API services.
@@ -22,9 +22,7 @@ export class DetectionEventConcreteService extends DetectionEventService {
 
 
     constructor() {
-        const settings = inject(Settings);
-
-        super(settings.DEFAULT_PAGE_SIZE);
+        super(inject(PortalConfig).defaultPageSize);
     }
 
     /**

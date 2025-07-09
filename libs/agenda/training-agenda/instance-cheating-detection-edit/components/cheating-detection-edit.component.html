@@ -1,182 +1,184 @@
 <sentinel-controls [controls]="controls" (itemClicked)="onControlsAction($event)"/>
 <form [formGroup]="cheatingDetectionEditFormGroup.formGroup">
-    <div class="form-container">
-        <mat-expansion-panel [expanded]="true">
-            <mat-expansion-panel-header>
-                <mat-panel-title>
-                    <span>Cheating Detection Methods</span>
-                </mat-panel-title>
-            </mat-expansion-panel-header>
-            <div class="checkbox-container">
-                <div class="slide-toggle-container">
-                    <div class="detection-name"><span>Answer Similarity</span></div>
-                    <mat-slide-toggle [disabled]="ifNotAPG()"
-                                      formControlName="answerSimilarityDetection"
-                    >
-                    </mat-slide-toggle>
-                    <div class="detection-tooltip">
-          <span>Shows users that submitted a flag that belongs to someone else.
-            <b>Don't use for trainings without variant answers</b></span>
-                    </div>
-                </div>
-
-                <div class="slide-toggle-container">
-                    <div class="detection-name"><span>Location Similarity</span></div>
-                    <mat-slide-toggle
-                        formControlName="locationSimilarityDetection"
-                    >
-                    </mat-slide-toggle>
-                    <div class="detection-tooltip">
-                        <span>Shows users that had similar IP for accessing the training.</span>
-                    </div>
-                </div>
-
-                <div class="slide-toggle-container">
-                    <div class="detection-name"><span>Time Proximity</span></div>
-                    <mat-slide-toggle
-                        formControlName="timeProximityDetection"
-                    >
-                    </mat-slide-toggle>
-                    <div class="detection-tooltip">
-                        <span>Shows users submitting answers in a similar time frame. Specify the proximity below.</span>
-                    </div>
-                </div>
-
-                <div class="slide-toggle-container">
-                    <div class="detection-name"><span>Minimal Solve Time</span></div>
-                    <mat-slide-toggle
-                        formControlName="minimalSolveTimeDetection"
-                    >
-                    </mat-slide-toggle>
-                    <div class="detection-tooltip">
-                        <span>Shows users that solved a task in less than minimal possible solve time.</span>
-                    </div>
-                </div>
-
-                <div class="slide-toggle-container">
-                    <div class="detection-name"><span>No Commands</span></div>
-                    <mat-slide-toggle
-                        formControlName="noCommandsDetection"
-
-                    >
-                    </mat-slide-toggle>
-                    <div class="detection-tooltip">
-                        <span>Shows users that used no commands to solve a level requiring commands.</span>
-                    </div>
-                </div>
-
-                <div class="slide-toggle-container">
-                    <div class="detection-name"><span>Forbidden Commands</span></div>
-                    <mat-slide-toggle
-                        formControlName="forbiddenCommandsDetection"
-                    >
-                    </mat-slide-toggle>
-                    <div class="detection-tooltip">
-                        <span>Shows users that submitted forbidden commands. Specify the commands below.</span>
-                    </div>
-                </div>
+  <div class="form-container">
+    <mat-expansion-panel [expanded]="true">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <span>Cheating Detection Methods</span>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <div class="checkbox-container">
+        <div class="slide-toggle-container">
+          <div class="detection-name"><span>Answer Similarity</span></div>
+          <mat-slide-toggle [disabled]="ifNotAPG()"
+            formControlName="answerSimilarityDetection"
+            >
+          </mat-slide-toggle>
+          <div class="detection-tooltip">
+            <span>Shows users that submitted a flag that belongs to someone else.
+              <b>Don't use for trainings without variant answers</b></span>
             </div>
-        </mat-expansion-panel>
+          </div>
 
-        <mat-divider/>
+          <div class="slide-toggle-container">
+            <div class="detection-name"><span>Location Similarity</span></div>
+            <mat-slide-toggle
+              formControlName="locationSimilarityDetection"
+              >
+            </mat-slide-toggle>
+            <div class="detection-tooltip">
+              <span>Shows users that had similar IP for accessing the training.</span>
+            </div>
+          </div>
 
-        <mat-expansion-panel class="time-proximity-panel"
-                             (keydown.enter)="$event.preventDefault()"
-                             [disabled]=!timeProximityMethod.value
-                             [expanded]=timeProximityMethod.value>
-            <mat-expansion-panel-header>
-                <mat-panel-title>
-                    <span>Time Proximity Configuration</span>
-                </mat-panel-title>
-            </mat-expansion-panel-header>
+          <div class="slide-toggle-container">
+            <div class="detection-name"><span>Time Proximity</span></div>
+            <mat-slide-toggle
+              formControlName="timeProximityDetection"
+              >
+            </mat-slide-toggle>
+            <div class="detection-tooltip">
+              <span>Shows users submitting answers in a similar time frame. Specify the proximity below.</span>
+            </div>
+          </div>
 
-            <div class="proximity-wrapper">
-                <span>Proximity (in seconds) for time proximity detection. Default value is 120:</span>
-                <mat-form-field appearance="outline"
-                                [matTooltipPosition]="'right'"
+          <div class="slide-toggle-container">
+            <div class="detection-name"><span>Minimal Solve Time</span></div>
+            <mat-slide-toggle
+              formControlName="minimalSolveTimeDetection"
+              >
+            </mat-slide-toggle>
+            <div class="detection-tooltip">
+              <span>Shows users that solved a task in less than minimal possible solve time.</span>
+            </div>
+          </div>
+
+          <div class="slide-toggle-container">
+            <div class="detection-name"><span>No Commands</span></div>
+            <mat-slide-toggle
+              formControlName="noCommandsDetection"
+
+              >
+            </mat-slide-toggle>
+            <div class="detection-tooltip">
+              <span>Shows users that used no commands to solve a level requiring commands.</span>
+            </div>
+          </div>
+
+          <div class="slide-toggle-container">
+            <div class="detection-name"><span>Forbidden Commands</span></div>
+            <mat-slide-toggle
+              formControlName="forbiddenCommandsDetection"
+              >
+            </mat-slide-toggle>
+            <div class="detection-tooltip">
+              <span>Shows users that submitted forbidden commands. Specify the commands below.</span>
+            </div>
+          </div>
+        </div>
+      </mat-expansion-panel>
+
+      <mat-divider/>
+
+      <mat-expansion-panel class="time-proximity-panel"
+        (keydown.enter)="$event.preventDefault()"
+        [disabled]=!timeProximityMethod.value
+        [expanded]=timeProximityMethod.value>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <span>Time Proximity Configuration</span>
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+
+        <div class="proximity-wrapper">
+          <span>Proximity (in seconds) for time proximity detection. Default value is 120:</span>
+          <mat-form-field appearance="outline"
+            [matTooltipPosition]="'right'"
                                 [matTooltip]=" ' Represents the time window in which two participants that submit an answer ' +
                                'in the same level should be marked in a detection event.' ">
-                    <mat-label>Time Threshold</mat-label>
-                    <input matInput placeholder="proximity threshold" type="number"
-                           min="1" max="{{maximumProximityThreshold}}" formControlName="timeThreshold">
-                </mat-form-field>
-            </div>
+            <mat-label>Time Threshold</mat-label>
+            <input matInput placeholder="proximity threshold" type="number"
+              min="1" max="{{maximumProximityThreshold}}" formControlName="timeThreshold">
+          </mat-form-field>
+        </div>
 
-        </mat-expansion-panel>
+      </mat-expansion-panel>
 
-        <mat-divider/>
-        <mat-expansion-panel class="forbidden-commands-expansion"
-                             (keydown.enter)="$event.preventDefault()"
-                             [disabled]=!forbiddenCommandsMethod.value
-                             [expanded]=forbiddenCommandsMethod.value>
-            <mat-expansion-panel-header>
-                <mat-panel-title>
-                    <span>Forbidden Commands Configuration</span>
-                </mat-panel-title>
-            </mat-expansion-panel-header>
-            <button class="add-forbidden-command" (click)="addForbiddenCommand()" mat-button color="primary">Add
-                Forbidden Command
-            </button>
+      <mat-divider/>
+      <mat-expansion-panel class="forbidden-commands-expansion"
+        (keydown.enter)="$event.preventDefault()"
+        [disabled]=!forbiddenCommandsMethod.value
+        [expanded]=forbiddenCommandsMethod.value>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <span>Forbidden Commands Configuration</span>
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <button class="add-forbidden-command" (click)="addForbiddenCommand()" mat-button color="primary">Add
+          Forbidden Command
+        </button>
 
 
-            <div class="forbidden-commands-panel">
+        <div class="forbidden-commands-panel">
 
-                <div formArrayName="forbiddenCommands">
-                    <div class="divideWrapper"
-                         *ngFor="let forbiddenCommandsGroup of forbiddenCommands.controls; index as i"
-                         [formGroupName]="i">
-                        <div class="forbidden-commands-wrapper">
-
-                            <div class="forbidden-command-type-element1">
-
-                                <mat-radio-group class="type-options">
-                                    <mat-radio-button labelPosition="after"
-                                                      value="bash"
-                                                      (change)="changeType(i, 'BASH')"
-                                                      formControlName="type">BASH
-                                    </mat-radio-button>
-                                    <mat-radio-button labelPosition="after"
-                                                      value="msf"
-                                                      (change)="changeType(i, 'MSF')"
-                                                      formControlName="type">Metasploit
-                                    </mat-radio-button>
-                                    <mat-error *ngIf="forbiddenCommandsGroup.get('type').hasError('required')">You need
-                                        to select command type
-                                    </mat-error>
-                                </mat-radio-group>
-
-                            </div>
-
-                            <div class="forbidden-command-label-element2">
-                                <mat-form-field appearance="outline">
-                                    <mat-label class="command-input">Command {{ i + 1 }}</mat-label>
-                                    <input matInput placeholder="Forbidden Command" formControlName="command" required/>
-                                    <mat-error *ngIf="forbiddenCommandsGroup.get('command').hasError('whitespace')">
-                                        Command text cannot be empty
-                                    </mat-error>
-                                </mat-form-field>
-                            </div>
-
-                            <div class="forbidden-command-button-element3">
-                                <button class="delete-button"
-                                        matSuffix
-                                        mat-icon-button
-                                        aria-label="Delete command"
-                                        color="warn"
-                                        matTooltip="Delete command"
-                                        (click)="deleteForbiddenCommand(i)"
-                                >
-                                    <mat-icon>remove_circle</mat-icon>
-                                </button>
-                            </div>
-                            <mat-divider/>
-                        </div>
-                        <mat-divider/>
-                        <mat-error *ngIf="forbiddenCommands.hasError('required')">Choices cannot be empty</mat-error>
-                    </div>
+          <div formArrayName="forbiddenCommands">
+            @for (forbiddenCommandsGroup of forbiddenCommands.controls; track forbiddenCommandsGroup; let i = $index) {
+              <div class="divideWrapper"
+                [formGroupName]="i">
+                <div class="forbidden-commands-wrapper">
+                  <div class="forbidden-command-type-element1">
+                    <mat-radio-group class="type-options">
+                      <mat-radio-button labelPosition="after"
+                        value="bash"
+                        (change)="changeType(i, 'BASH')"
+                        formControlName="type">BASH
+                      </mat-radio-button>
+                      <mat-radio-button labelPosition="after"
+                        value="msf"
+                        (change)="changeType(i, 'MSF')"
+                        formControlName="type">Metasploit
+                      </mat-radio-button>
+                      @if (forbiddenCommandsGroup.get('type').hasError('required')) {
+                        <mat-error>You need
+                          to select command type
+                        </mat-error>
+                      }
+                    </mat-radio-group>
+                  </div>
+                  <div class="forbidden-command-label-element2">
+                    <mat-form-field appearance="outline">
+                      <mat-label class="command-input">Command {{ i + 1 }}</mat-label>
+                      <input matInput placeholder="Forbidden Command" formControlName="command" required/>
+                      @if (forbiddenCommandsGroup.get('command').hasError('whitespace')) {
+                        <mat-error>
+                          Command text cannot be empty
+                        </mat-error>
+                      }
+                    </mat-form-field>
+                  </div>
+                  <div class="forbidden-command-button-element3">
+                    <button class="delete-button"
+                      matSuffix
+                      mat-icon-button
+                      aria-label="Delete command"
+                      color="warn"
+                      matTooltip="Delete command"
+                      (click)="deleteForbiddenCommand(i)"
+                      >
+                      <mat-icon>remove_circle</mat-icon>
+                    </button>
+                  </div>
+                  <mat-divider/>
                 </div>
-            </div>
-        </mat-expansion-panel>
+                <mat-divider/>
+                @if (forbiddenCommands.hasError('required')) {
+                  <mat-error>Choices cannot be empty</mat-error>
+                }
+              </div>
+            }
+          </div>
+        </div>
+      </mat-expansion-panel>
     </div>
-</form>
+  </form>
 

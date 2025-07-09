@@ -13,11 +13,23 @@ import {map, take} from 'rxjs/operators';
 import {TrainingDefinitionOverviewControls} from '../model/training-definition-overview-controls';
 import {TrainingDefinitionTable} from '../model/training-definition-table';
 import {AdaptiveDefinitionService} from '../services/state/adaptive-definition.service';
-import {TrainingNavigator} from '@crczp/training-agenda';
+import {TrainingDefaultNavigator, TrainingNavigator} from '@crczp/training-agenda';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {PaginationStorageService, TableDateCellComponent, TableStateCellComponent} from "@crczp/common";
+import {
+    PaginationStorageService,
+    providePaginationStorageService,
+    TableDateCellComponent,
+    TableStateCellComponent
+} from "@crczp/common";
 import {SentinelControlItem, SentinelControlItemSignal, SentinelControlsComponent} from "@sentinel/components/controls";
 import {AsyncPipe} from "@angular/common";
+import {AdaptiveFileUploadProgressService} from "../services/file-upload/adaptive-file-upload-progress.service";
+import {
+    AdaptiveDefinitionBreadcrumbResolver,
+    AdaptiveDefinitionResolver,
+    AdaptiveDefinitionTitleResolver
+} from "@crczp/training-agenda/resolvers";
+import {AdaptiveDefinitionConcreteService} from "../services/state/adaptive-definition.concrete.service";
 
 /**
  * Main smart component of training definition overview
@@ -33,23 +45,30 @@ import {AsyncPipe} from "@angular/common";
         TableStateCellComponent,
         TableDateCellComponent,
         SentinelRowDirective
-    ]
+    ],
+    providers: [
+        AdaptiveFileUploadProgressService,
+        AdaptiveDefinitionResolver,
+        AdaptiveDefinitionBreadcrumbResolver,
+        AdaptiveDefinitionTitleResolver,
+        providePaginationStorageService(AdaptiveDefinitionOverviewComponent),
+        {provide: TrainingNavigator, useClass: TrainingDefaultNavigator},
+        {provide: AdaptiveDefinitionService, useClass: AdaptiveDefinitionConcreteService},
+    ],
 })
 export class AdaptiveDefinitionOverviewComponent implements OnInit {
-    private paginationService = inject(PaginationStorageService);
-    private trainingDefinitionService = inject(AdaptiveDefinitionService);
-    private trainingNavigator = inject(TrainingNavigator);
-
     @Input() paginationId = 'adaptive-definition-overview';
     readonly INIT_SORT_NAME = 'lastEdited';
     readonly INIT_SORT_DIR = 'desc';
-
     trainingDefinitions$: Observable<SentinelTable<TrainingDefinition>>;
     hasError$: Observable<boolean>;
     isLoading$: Observable<boolean>;
     topControls: SentinelControlItem[] = [];
     bottomControls: SentinelControlItem[] = [];
     destroyRef = inject(DestroyRef);
+    private paginationService = inject(PaginationStorageService);
+    private trainingDefinitionService = inject(AdaptiveDefinitionService);
+    private trainingNavigator = inject(TrainingNavigator);
 
     ngOnInit(): void {
         this.topControls = TrainingDefinitionOverviewControls.createTopControls(this.trainingDefinitionService);

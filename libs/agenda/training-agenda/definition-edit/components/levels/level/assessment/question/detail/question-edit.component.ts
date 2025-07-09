@@ -9,6 +9,14 @@ import {
 } from '@angular/core';
 import {ExtendedMatchingItems, FreeFormQuestion, MultipleChoiceQuestion, Question} from '@crczp/training-model';
 import {QuestionChangeEvent} from '../../../../../../model/events/question-change-event';
+import {MatCard, MatCardActions, MatCardContent, MatCardHeader, MatCardTitle} from "@angular/material/card";
+import {SentinelMarkdownViewComponent} from "@sentinel/components/markdown-view";
+import {MatCheckbox} from "@angular/material/checkbox";
+import {FormsModule} from "@angular/forms";
+import {MultipleChoiceQuestionEditComponent} from "../multiple-choice-question/multiple-choice-question-edit.component";
+import {FreeFormQuestionEditComponent} from "../free-form-question/free-form-question-edit.component";
+import {ExtendedMatchingItemsEditComponent} from "../extended-matching-items/extended-matching-items-edit.component";
+import {MatButton} from "@angular/material/button";
 
 /**
  * Wrapper component of a specific question type edit component. Resolves type of the question and creates sub component accordingly
@@ -18,6 +26,20 @@ import {QuestionChangeEvent} from '../../../../../../model/events/question-chang
     templateUrl: './question-edit.component.html',
     styleUrls: ['./question-edit.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        MatCard,
+        MatCardHeader,
+        MatCardTitle,
+        SentinelMarkdownViewComponent,
+        MatCheckbox,
+        FormsModule,
+        MatCardContent,
+        MultipleChoiceQuestionEditComponent,
+        FreeFormQuestionEditComponent,
+        ExtendedMatchingItemsEditComponent,
+        MatCardActions,
+        MatButton
+    ]
 })
 export class QuestionEditComponent implements OnChanges {
     @Input() question: Question;

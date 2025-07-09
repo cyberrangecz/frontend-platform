@@ -9,16 +9,32 @@ import {
     Output,
     SimpleChanges,
 } from '@angular/core';
-import {AbstractControl, Validators} from '@angular/forms';
+import {AbstractControl, ReactiveFormsModule, Validators} from '@angular/forms';
 import {Hint} from '@crczp/training-model';
 import {HintEditFormGroup} from './hint-edit-form-group';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import {SentinelMarkdownEditorComponent} from "@sentinel/components/markdown-editor";
+import {MatError, MatFormField, MatInput, MatLabel, MatSuffix} from "@angular/material/input";
+import {MatIconButton} from "@angular/material/button";
+import {MatIcon} from "@angular/material/icon";
 
 @Component({
     selector: 'crczp-hint-edit',
     templateUrl: './hint-detail-edit.component.html',
     styleUrls: ['./hint-detail-edit.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        MatError,
+        SentinelMarkdownEditorComponent,
+        MatError,
+        MatLabel,
+        MatSuffix,
+        MatIconButton,
+        MatFormField,
+        ReactiveFormsModule,
+        MatInput,
+        MatIcon
+    ]
 })
 /**
  * Component to edit new or existing training level hint

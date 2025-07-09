@@ -2,12 +2,16 @@ import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output,} from '
 import * as d3 from 'd3';
 import {AdaptiveVisualizationPhase} from '../../model/phase/adaptive-visualization-phase';
 import {RunVisualizationPathNode} from "@crczp/visualization-model";
+import {PhaseTasksComponent} from "./phase-tasks/phase-tasks.component";
 
 @Component({
     // eslint-disable-next-line @angular-eslint/component-selector
     selector: 'g[phases-tasks]',
     templateUrl: './phases-tasks.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        PhaseTasksComponent
+    ]
 })
 export class PhasesTasksComponent {
     @Input() phases!: AdaptiveVisualizationPhase[];

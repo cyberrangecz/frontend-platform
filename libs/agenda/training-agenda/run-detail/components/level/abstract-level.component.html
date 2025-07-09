@@ -2,16 +2,17 @@
     <h1
         class="level-title"
     >{{ level?.title }}</h1>
-    <crczp-training-timer
-        *ngIf="startTime"
-        [startTime]="startTime"
-        class="timer" matTooltip="Time since the start of the run" matTooltipPosition="above"/>
+    @if (startTime) {
+        <crczp-training-timer
+            [startTime]="startTime"
+            class="timer" matTooltip="Time since the start of the run" matTooltipPosition="above"/>
+    }
 </div>
-<ng-container *ngIf="level?.type as type">
+@if (level?.type; as type) {
     @switch (type) {
         @case (levelTypes.Assessment) {
             <crczp-assessment-level
-                [level]="level"
+                [level]="$any(level)"
                 [isLevelAnswered]="isLevelAnswered"
                 [isBacktracked]="isBacktracked"
                 [isLast]="isLast"
@@ -19,7 +20,7 @@
         }
         @case (levelTypes.Training) {
             <crczp-training-level
-                [level]="level"
+                [level]="$any(level)"
                 [isLast]="isLast"
                 [isLevelAnswered]="isLevelAnswered"
                 [isBacktracked]="isBacktracked"
@@ -30,14 +31,14 @@
         }
         @case (levelTypes.Info) {
             <crczp-info-level
-                [level]="level"
+                [level]="$any(level)"
                 [isBacktracked]="isBacktracked"
                 [isLast]="isLast"
                 (next)="onNext()"/>
         }
         @case (levelTypes.Access) {
             <crczp-access-level
-                [level]="level"
+                [level]="$any(level)"
                 [isBacktracked]="isBacktracked"
                 [isStepperDisplayed]="isStepperDisplayed"
                 [sandboxInstanceId]="sandboxInstanceId"
@@ -48,4 +49,4 @@
                 (next)="onNext()"/>
         }
     }
-</ng-container>
+}

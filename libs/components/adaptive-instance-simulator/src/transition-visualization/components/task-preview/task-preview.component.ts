@@ -27,6 +27,7 @@ export class TaskPreviewComponent {
     @Input() localEnvironment?: boolean;
 
     AbstractTaskTypeEnum = AbstractTaskTypeEnum;
+    protected readonly QuestionnairePhaseTask = QuestionnairePhaseTask;
 
     taskTypeResolver(task: AdaptiveVisualizationTask | undefined) {
         switch (true) {

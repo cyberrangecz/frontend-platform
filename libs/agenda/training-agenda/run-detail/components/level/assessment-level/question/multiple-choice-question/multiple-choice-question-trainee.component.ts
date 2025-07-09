@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@
 import {MatCheckbox, MatCheckboxChange} from '@angular/material/checkbox';
 import {MultipleChoiceQuestion, Question, QuestionChoice} from '@crczp/training-model';
 import {SentinelMarkdownViewComponent} from "@sentinel/components/markdown-view";
-import {NgForOf, NgIf} from "@angular/common";
+
 
 @Component({
     selector: 'crczp-trainee-multiple-choice-question',
@@ -10,11 +10,9 @@ import {NgForOf, NgIf} from "@angular/common";
     styleUrls: ['./multiple-choice-question-trainee.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
-        SentinelMarkdownViewComponent,
-        MatCheckbox,
-        NgForOf,
-        NgIf
-    ]
+    SentinelMarkdownViewComponent,
+    MatCheckbox
+]
 })
 /**
  * Component displaying MCQ type of question in the assessment level of a trainees training run.

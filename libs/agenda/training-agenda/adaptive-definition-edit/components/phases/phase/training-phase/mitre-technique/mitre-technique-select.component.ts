@@ -15,7 +15,7 @@ import {
     MatExpansionPanelHeader,
     MatExpansionPanelTitle
 } from "@angular/material/expansion";
-import {NgForOf, NgIf} from "@angular/common";
+
 import {MatError, MatFormField, MatHint, MatInput, MatLabel} from "@angular/material/input";
 import {MatIcon} from "@angular/material/icon";
 
@@ -24,26 +24,24 @@ import {MatIcon} from "@angular/material/icon";
     templateUrl: './mitre-technique-select.component.html',
     styleUrls: ['./mitre-technique-select.component.css'],
     imports: [
-        MatExpansionPanel,
-        MatExpansionPanelHeader,
-        MatExpansionPanelTitle,
-        MatExpansionPanelDescription,
-        MatFormField,
-        MatLabel,
-        MatChipGrid,
-        NgForOf,
-        MatAutocomplete,
-        MatHint,
-        MatOption,
-        MatError,
-        NgIf,
-        MatChipInput,
-        MatAutocompleteTrigger,
-        MatInput,
-        MatIcon,
-        MatChipRow,
-        ReactiveFormsModule
-    ]
+    MatExpansionPanel,
+    MatExpansionPanelHeader,
+    MatExpansionPanelTitle,
+    MatExpansionPanelDescription,
+    MatFormField,
+    MatLabel,
+    MatChipGrid,
+    MatAutocomplete,
+    MatHint,
+    MatOption,
+    MatError,
+    MatChipInput,
+    MatAutocompleteTrigger,
+    MatInput,
+    MatIcon,
+    MatChipRow,
+    ReactiveFormsModule
+]
 })
 export class MitreTechniqueSelectComponent implements OnChanges {
     @Input() mitreTechniques: MitreTechnique[];

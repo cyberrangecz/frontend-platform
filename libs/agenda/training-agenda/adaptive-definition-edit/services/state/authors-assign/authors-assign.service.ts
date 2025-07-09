@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import {inject, Injectable} from '@angular/core';
 import {OffsetPagination, OffsetPaginationEvent, PaginatedResource,} from '@sentinel/common/pagination';
 import {UserApi} from '@crczp/training-api';
 import {Designer} from '@crczp/training-model';
@@ -7,7 +7,7 @@ import {BehaviorSubject, Observable} from 'rxjs';
 import {switchMap, tap} from 'rxjs/operators';
 import {TrainingErrorHandler} from '@crczp/training-agenda';
 import {UserNameFilters,} from '@crczp/training-agenda/internal';
-import {Settings} from '@crczp/common';
+import {PortalConfig} from '@crczp/common';
 
 /**
  * Designer/Author implementation of UserAssignService from user assign library.
@@ -17,7 +17,7 @@ import {Settings} from '@crczp/common';
 export class AuthorsAssignService extends SentinelUserAssignService {
     private userApi = inject(UserApi);
     private errorHandler = inject(TrainingErrorHandler);
-    private settings = inject(Settings);
+    private settings = inject(PortalConfig);
 
     private lastAssignedPagination: OffsetPaginationEvent;
     private lastAssignedFilter: string;
@@ -218,7 +218,7 @@ export class AuthorsAssignService extends SentinelUserAssignService {
             new OffsetPagination(
                 0,
                 0,
-                this.settings.DEFAULT_PAGE_SIZE,
+                this.settings.defaultPageSize,
                 0,
                 0
             )

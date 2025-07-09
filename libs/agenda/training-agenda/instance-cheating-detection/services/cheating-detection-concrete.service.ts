@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import {inject, Injectable} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import {Router} from '@angular/router';
 import {
@@ -12,9 +12,8 @@ import {CheatingDetection} from '@crczp/training-model';
 import {EMPTY, from, Observable} from 'rxjs';
 import {switchMap, tap} from 'rxjs/operators';
 import {TrainingErrorHandler, TrainingNavigator, TrainingNotificationService,} from '@crczp/training-agenda';
-import {TrainingAgendaContext} from '@crczp/training-agenda/internal';
 import {CheatingDetectionService} from './cheating-detection.service';
-import {Settings} from '@crczp/common';
+import {PortalConfig} from '@crczp/common';
 
 /**
  * Basic implementation of a layer between a component and an API services.
@@ -25,18 +24,14 @@ export class CheatingDetectionConcreteService extends CheatingDetectionService {
     private api = inject(CheatingDetectionApi);
     private dialog = inject(MatDialog);
     private router = inject(Router);
-    private context = inject(TrainingAgendaContext);
     private navigator = inject(TrainingNavigator);
     private notificationService = inject(TrainingNotificationService);
     private errorHandler = inject(TrainingErrorHandler);
 
     private lastPagination: OffsetPaginationEvent;
-    private lastFilters: string;
 
     constructor() {
-        const settings = inject(Settings);
-
-        super(settings.DEFAULT_PAGE_SIZE);
+        super(inject(PortalConfig).defaultPageSize);
     }
 
     /**

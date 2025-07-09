@@ -81,7 +81,8 @@ const markdownParserConfig = {
         QuestionnairePhaseComponent,
     ],
     providers: [
-        { provide: DividerPositionSynchronizerService, useClass: PersistentDividerPositionSynchronizerService },
+        {provide: DividerPositionSynchronizerService, useClass: PersistentDividerPositionSynchronizerService},
     ],
 })
-export class PhaseComponentsModule {}
+export class PhaseComponentsModule {
+}

@@ -7,7 +7,7 @@ import {
     Output,
     SimpleChanges,
 } from '@angular/core';
-import {async, Observable} from 'rxjs';
+import {Observable} from 'rxjs';
 import {
     AbstractPhaseTypeEnum,
     AdaptiveQuestion,
@@ -48,7 +48,6 @@ export class AbstractPhaseEditComponent implements OnChanges {
     @Output() phaseChange: EventEmitter<Phase> = new EventEmitter();
     phaseTypes = AbstractPhaseTypeEnum;
     relatedQuestions: AdaptiveQuestion[] = [];
-    protected readonly async = async;
 
     onPhaseChange(phase: Phase): void {
         this.phaseChange.emit(phase);

@@ -1,11 +1,17 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
 import {MultipleChoiceQuestion} from '@crczp/training-model';
+import {SentinelMarkdownViewComponent} from "@sentinel/components/markdown-view";
+import {MatCheckbox} from "@angular/material/checkbox";
 
 @Component({
     selector: 'crczp-trainee-multiple-choice-question',
     templateUrl: './multiple-choice-question-trainee.component.html',
     styleUrls: ['./multiple-choice-question-trainee.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        SentinelMarkdownViewComponent,
+        MatCheckbox
+    ]
 })
 /**
  * Component displaying MCQ type of question in the assessment level of a trainees training run.

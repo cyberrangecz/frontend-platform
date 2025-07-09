@@ -9,7 +9,7 @@ import {
     Output,
     SimpleChanges,
 } from '@angular/core';
-import {AdaptiveQuestion, QuestionTypeEnum} from '@crczp/training-model';
+import {AdaptiveQuestion, QuestionnaireTypeEnum, QuestionTypeEnum} from '@crczp/training-model';
 import {AdaptiveQuestionStepperAdapter} from '@crczp/training-agenda/internal';
 import {SentinelStepper, SentinelStepperComponent, StepStateEnum} from '@sentinel/components/stepper';
 import {
@@ -35,7 +35,7 @@ import {
     MatExpansionPanelHeader,
     MatExpansionPanelTitle
 } from "@angular/material/expansion";
-import {NgIf} from "@angular/common";
+
 import {MatDivider} from "@angular/material/divider";
 import {MatIcon} from "@angular/material/icon";
 import {MatError} from "@angular/material/input";
@@ -50,14 +50,13 @@ import {QuestionEditComponent} from "../detail/question-edit.component";
         MatExpansionPanelHeader,
         MatExpansionPanelTitle,
         MatExpansionPanelDescription,
-        NgIf,
         MatIcon,
         MatError,
         SentinelControlsComponent,
         MatExpansionPanelContent,
         MatDivider,
         SentinelStepperComponent,
-        QuestionEditComponent
+        QuestionEditComponent,
     ]
 })
 export class QuestionsOverviewComponent implements OnInit, OnChanges {
@@ -65,7 +64,7 @@ export class QuestionsOverviewComponent implements OnInit, OnChanges {
 
     @Input() questions: AdaptiveQuestion[];
     @Input() questionnaireOrder: number;
-    @Input() questionnaireType: QuestionTypeEnum;
+    @Input() questionnaireType: QuestionnaireTypeEnum;
     @Output() deleteRelationChange: EventEmitter<number> = new EventEmitter();
     @Output() questionsChange: EventEmitter<AdaptiveQuestion[]> = new EventEmitter();
 

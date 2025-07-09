@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import {inject, Injectable} from '@angular/core';
 import {AdaptiveRunAccessPhaseService} from './adaptive-run-access-phase.service';
 import {AdaptiveRunApi} from '@crczp/training-api';
 import {SandboxInstanceApi} from '@crczp/sandbox-api';
@@ -13,17 +13,12 @@ export class AdaptiveRunAccessPhaseConcreteService extends AdaptiveRunAccessPhas
     private api = inject(AdaptiveRunApi);
     private sandboxApi = inject(SandboxInstanceApi);
     private errorHandler = inject(TrainingErrorHandler);
-    protected notificationService: SentinelNotificationService;
-    protected runningAdaptiveRunService: RunningAdaptiveRunService;
 
     constructor() {
         const notificationService = inject(SentinelNotificationService);
         const runningAdaptiveRunService = inject(RunningAdaptiveRunService);
 
         super(notificationService, runningAdaptiveRunService);
-    
-        this.notificationService = notificationService;
-        this.runningAdaptiveRunService = runningAdaptiveRunService;
     }
 
     getAccessFile(): Observable<any> {

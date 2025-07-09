@@ -11,7 +11,7 @@ import {TrainingDefinitionChangeEvent} from '../../model/events/training-definit
 import {AdaptiveTrainingDefinitionEditFormGroup} from './adaptive-training-definition-edit-form-group';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {MatError, MatFormField, MatInput, MatLabel} from "@angular/material/input";
-import {NgIf} from "@angular/common";
+
 import {MatCheckbox} from "@angular/material/checkbox";
 import {SentinelFreeFormComponent} from "@sentinel/components/free-form";
 import {MatTooltip} from "@angular/material/tooltip";
@@ -26,18 +26,17 @@ import {MatIconButton} from "@angular/material/button";
     templateUrl: './adaptive-training-definition-edit.component.html',
     styleUrls: ['./adaptive-training-definition-edit.component.css'],
     imports: [
-        MatFormField,
-        MatLabel,
-        MatInput,
-        NgIf,
-        MatIcon,
-        MatError,
-        ReactiveFormsModule,
-        MatCheckbox,
-        MatTooltip,
-        SentinelFreeFormComponent,
-        MatIconButton
-    ]
+    MatFormField,
+    MatLabel,
+    MatInput,
+    MatIcon,
+    MatError,
+    ReactiveFormsModule,
+    MatCheckbox,
+    MatTooltip,
+    SentinelFreeFormComponent,
+    MatIconButton
+]
 })
 export class AdaptiveTrainingDefinitionEditComponent implements OnChanges {
     @Input() trainingDefinition: TrainingDefinition;

@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component, ElementRef, Input, OnChanges, SimpleChanges, inject } from '@angular/core';
+import {ChangeDetectionStrategy, Component, ElementRef, inject, Input, OnChanges, SimpleChanges} from '@angular/core';
 import * as d3 from 'd3';
-import {AdaptiveRunVisualization} from '../../../../model/training-run-data';
+import {AdaptiveRunVisualization} from "@crczp/visualization-model";
 
 @Component({
     // eslint-disable-next-line @angular-eslint/component-selector

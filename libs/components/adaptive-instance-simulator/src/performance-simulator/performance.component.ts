@@ -18,7 +18,7 @@ import {MatButton} from "@angular/material/button";
 import {MatTooltip} from "@angular/material/tooltip";
 import {MatCheckbox} from "@angular/material/checkbox";
 import {MatError, MatFormField, MatInput} from "@angular/material/input";
-import {NgIf} from "@angular/common";
+
 
 @Component({
     selector: 'crczp-performance-simulator',
@@ -26,15 +26,14 @@ import {NgIf} from "@angular/common";
     styleUrls: ['./performance.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
-        MatButton,
-        MatTooltip,
-        ReactiveFormsModule,
-        MatCheckbox,
-        MatFormField,
-        MatError,
-        MatInput,
-        NgIf,
-    ]
+    MatButton,
+    MatTooltip,
+    ReactiveFormsModule,
+    MatCheckbox,
+    MatFormField,
+    MatError,
+    MatInput
+]
 })
 export class PerformanceComponent implements OnChanges {
     @Input() phase: TrainingPhase;

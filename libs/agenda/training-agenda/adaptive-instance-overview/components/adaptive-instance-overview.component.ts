@@ -1,27 +1,39 @@
 import {OffsetPaginationEvent} from '@sentinel/common/pagination';
 import {ChangeDetectionStrategy, Component, DestroyRef, inject, Input, OnInit} from '@angular/core';
 import {Observable} from 'rxjs';
-import {SentinelTable, SentinelTableComponent, TableActionEvent, TableLoadEvent} from '@sentinel/components/table';
+import {
+    SentinelRowDirective,
+    SentinelTable,
+    SentinelTableComponent,
+    TableActionEvent,
+    TableLoadEvent
+} from '@sentinel/components/table';
 import {TrainingInstance} from '@crczp/training-model';
 import {SentinelControlItem, SentinelControlItemSignal, SentinelControlsComponent} from '@sentinel/components/controls';
 import {map, take} from 'rxjs/operators';
 import {AdaptiveInstanceOverviewService} from '../services/state/adaptive-instance-overview.service';
-import {TrainingNavigator, TrainingNotificationService} from '@crczp/training-agenda';
+import {TrainingDefaultNavigator, TrainingNavigator, TrainingNotificationService} from '@crczp/training-agenda';
 import {AdaptiveInstanceOverviewControls} from '../model/adapters/adaptive-instance-overview-controls';
 import {AdaptiveInstanceTable} from '../model/adapters/adaptive-instance-table';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {
     LogoSpinnerComponent,
     PaginationStorageService,
+    providePaginationStorageService,
     TableCountdownComponent,
     TableDateCellComponent
 } from "@crczp/common";
-import {AsyncPipe, NgIf} from "@angular/common";
+import {AsyncPipe, NgClass} from "@angular/common";
 import {CdkCopyToClipboard} from "@angular/cdk/clipboard";
 import {MatTooltip} from "@angular/material/tooltip";
 import {MatButton} from "@angular/material/button";
 import {MatIcon} from "@angular/material/icon";
-import {MatProgressSpinner} from "@angular/material/progress-spinner";
+import {
+    AdaptiveInstanceBreadcrumbResolver,
+    AdaptiveInstanceResolver,
+    AdaptiveInstanceTitleResolver
+} from "@crczp/training-agenda/resolvers";
+import {AdaptiveInstanceOverviewConcreteService} from "../services/state/adaptive-instance-overview-concrete.service";
 
 @Component({
     selector: 'crczp-adaptive-instance-overview',
@@ -38,26 +50,31 @@ import {MatProgressSpinner} from "@angular/material/progress-spinner";
         MatTooltip,
         MatButton,
         MatIcon,
-        MatProgressSpinner,
         LogoSpinnerComponent,
-        NgIf
-    ]
+        NgClass,
+        SentinelRowDirective,
+    ],
+    providers: [
+        providePaginationStorageService(AdaptiveInstanceOverviewComponent),
+        AdaptiveInstanceResolver,
+        AdaptiveInstanceTitleResolver,
+        AdaptiveInstanceBreadcrumbResolver,
+        {provide: TrainingNavigator, useClass: TrainingDefaultNavigator},
+        {provide: AdaptiveInstanceOverviewService, useClass: AdaptiveInstanceOverviewConcreteService},
+    ],
 })
 export class AdaptiveInstanceOverviewComponent implements OnInit {
+    @Input() paginationId = 'adaptive-instance-overview';
+    readonly INITIAL_SORT_NAME = 'startTime';
+    readonly INITIAL_SORT_DIR = 'desc';
+    instances$: Observable<SentinelTable<TrainingInstance>>;
+    hasError$: Observable<boolean>;
+    controls: SentinelControlItem[];
+    destroyRef = inject(DestroyRef);
     private service = inject(AdaptiveInstanceOverviewService);
     private paginationService = inject(PaginationStorageService);
     private navigator = inject(TrainingNavigator);
     private notificationService = inject(TrainingNotificationService);
-
-    @Input() paginationId = 'adaptive-instance-overview';
-    readonly INITIAL_SORT_NAME = 'startTime';
-    readonly INITIAL_SORT_DIR = 'desc';
-
-    instances$: Observable<SentinelTable<TrainingInstance>>;
-    hasError$: Observable<boolean>;
-
-    controls: SentinelControlItem[];
-    destroyRef = inject(DestroyRef);
 
     ngOnInit(): void {
         this.controls = AdaptiveInstanceOverviewControls.create(this.service);

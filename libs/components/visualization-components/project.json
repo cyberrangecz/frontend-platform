@@ -5,10 +5,15 @@
     "prefix": "lib",
     "projectType": "library",
     "tags": [],
+    "implicitDependencies": [
+        "theme"
+    ],
     "targets": {
         "build": {
             "executor": "@nx/angular:ng-packagr-lite",
-            "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
+            "outputs": [
+                "{workspaceRoot}/dist/{projectRoot}"
+            ],
             "options": {
                 "project": "libs/components/visualization-components/ng-package.json"
             },
@@ -24,7 +29,9 @@
         },
         "test": {
             "executor": "@nx/vite:test",
-            "outputs": ["{options.reportsDirectory}"],
+            "outputs": [
+                "{options.reportsDirectory}"
+            ],
             "options": {
                 "reportsDirectory": "../../../coverage/libs/components/visualization-components"
             }

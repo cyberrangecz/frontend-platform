@@ -1,4 +1,16 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, OnInit, Output, QueryList, SimpleChanges, ViewChildren, inject } from '@angular/core';
+import {
+    ChangeDetectionStrategy,
+    Component,
+    EventEmitter,
+    inject,
+    Input,
+    OnChanges,
+    OnInit,
+    Output,
+    QueryList,
+    SimpleChanges,
+    ViewChildren
+} from '@angular/core';
 import {AssessmentLevel, AssessmentTypeEnum, Question} from '@crczp/training-model';
 import {take} from 'rxjs/operators';
 import {TraineeQuestionComponent} from './question/trainee-question.component';
@@ -10,7 +22,7 @@ import {
 } from '../../../services/training-run/level/assessment/training-run-assessment-level-concrete.service';
 import {SentinelMarkdownViewComponent} from "@sentinel/components/markdown-view";
 import {MatDivider} from "@angular/material/divider";
-import {NgForOf} from "@angular/common";
+
 import {MatButton} from "@angular/material/button";
 
 @Component({
@@ -20,13 +32,12 @@ import {MatButton} from "@angular/material/button";
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [{provide: TrainingRunAssessmentLevelService, useClass: TrainingRunAssessmentLevelConcreteService}],
     imports: [
-        SentinelMarkdownViewComponent,
-        MatDivider,
-        NgForOf,
-        TraineeQuestionComponent,
-        MatButton,
-        MatButton
-    ]
+    SentinelMarkdownViewComponent,
+    MatDivider,
+    TraineeQuestionComponent,
+    MatButton,
+    MatButton
+]
 })
 /**
  * Component that displays assessment level in a trainees training run. If the questions are type of test, trainee needs

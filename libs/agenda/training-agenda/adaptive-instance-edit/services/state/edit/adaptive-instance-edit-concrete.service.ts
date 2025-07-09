@@ -1,4 +1,3 @@
-import { Injectable, inject } from '@angular/core';
 import {Router} from '@angular/router';
 import {PoolApi, SandboxDefinitionApi} from '@crczp/sandbox-api';
 import {AdaptiveDefinitionApiService, AdaptiveInstanceApi} from '@crczp/training-api';
@@ -11,7 +10,8 @@ import {AdaptiveInstanceEditService} from './adaptive-instance-edit.service';
 import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
 import {Pool, SandboxDefinition} from '@crczp/sandbox-model';
 import {SentinelFilter} from '@sentinel/common/filter';
-import {LoadingTracker, Settings} from "@crczp/common";
+import {LoadingTracker, PortalConfig} from "@crczp/common";
+import {inject, Injectable} from "@angular/core";
 
 /**
  * Basic implementation of layer between component and API service.
@@ -26,7 +26,7 @@ export class AdaptiveInstanceEditConcreteService extends AdaptiveInstanceEditSer
     private navigator = inject(TrainingNavigator);
     private errorHandler = inject(TrainingErrorHandler);
     private notificationService = inject(TrainingNotificationService);
-    private settings = inject(Settings);
+    private settings = inject(PortalConfig);
 
     private editedSnapshot: TrainingInstance;
     private lastPagination: OffsetPaginationEvent;
@@ -35,6 +35,11 @@ export class AdaptiveInstanceEditConcreteService extends AdaptiveInstanceEditSer
         this.loadingTracker.isLoading$,
         this.saveDisabledSubject$.asObservable(),
     ).pipe(map(([loading, invalid]) => loading || invalid));
+
+
+    constructor() {
+        super();
+    }
 
     /**
      * Updated saveDisabled$ and saved snapshot of edited training instance
@@ -150,7 +155,7 @@ export class AdaptiveInstanceEditConcreteService extends AdaptiveInstanceEditSer
     }
 
     isLocalEnvironmentAllowed(): boolean {
-        return !!this.settings.LOCAL_MODE_ALLOWED;
+        return !!this.settings.enableLocalMode;
     }
 
     private checkInstanceValidity(): void {

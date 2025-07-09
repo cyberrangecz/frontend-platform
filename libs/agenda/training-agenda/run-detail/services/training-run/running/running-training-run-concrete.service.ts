@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import {inject, Injectable} from '@angular/core';
 import {Router} from '@angular/router';
 import {TrainingRunApi} from '@crczp/training-api';
 import {AccessTrainingRunInfo, Level} from '@crczp/training-model';

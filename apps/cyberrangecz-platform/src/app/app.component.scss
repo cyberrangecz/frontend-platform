@@ -1,0 +1,23 @@
+h1, .subtitle {
+    text-align: center;
+}
+
+.subtitle {
+    font-style: italic;
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+
+    > *:not(router-outlet) {
+        flex: 1;
+        display: block;
+    }
+}
+
+.username {
+    font-size: 1.5rem;
+    font-weight: 700;
+    font-stretch: semi-expanded;
+}

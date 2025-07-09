@@ -1,5 +1,14 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, inject } from '@angular/core';
-import {SentinelStepper, StepStateEnum} from '@sentinel/components/stepper';
+import {
+    ChangeDetectionStrategy,
+    Component,
+    EventEmitter,
+    inject,
+    Input,
+    OnChanges,
+    Output,
+    SimpleChanges
+} from '@angular/core';
+import {SentinelStepper, SentinelStepperComponent, StepStateEnum} from '@sentinel/components/stepper';
 import {MatDialog} from '@angular/material/dialog';
 import {PhaseStepperAdapter} from '../../../../../../model/adapters/phase-stepper-adapter';
 
@@ -8,6 +17,9 @@ import {PhaseStepperAdapter} from '../../../../../../model/adapters/phase-steppe
     templateUrl: './task-stepper.component.html',
     styleUrls: ['./task-stepper.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        SentinelStepperComponent
+    ]
 })
 export class TaskStepperComponent implements OnChanges {
     dialog = inject(MatDialog);

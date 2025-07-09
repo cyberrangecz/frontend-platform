@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FreeFormQuestion, Question} from '@crczp/training-model';
 import {FormsModule} from "@angular/forms";
-import {NgIf} from "@angular/common";
+
 import {MatFormField, MatInput, MatLabel, MatSuffix} from "@angular/material/input";
 import {MatIconButton} from "@angular/material/button";
 import {SentinelMarkdownViewComponent} from "@sentinel/components/markdown-view";
@@ -13,16 +13,15 @@ import {MatIcon} from "@angular/material/icon";
     styleUrls: ['./free-form-question-trainee.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
-        FormsModule,
-        MatIconButton,
-        MatSuffix,
-        NgIf,
-        MatInput,
-        MatFormField,
-        MatLabel,
-        MatIcon,
-        SentinelMarkdownViewComponent
-    ]
+    FormsModule,
+    MatIconButton,
+    MatSuffix,
+    MatInput,
+    MatFormField,
+    MatLabel,
+    MatIcon,
+    SentinelMarkdownViewComponent
+]
 })
 /**
  * Component displaying FFQ type of question in the assessment level of a trainees training run.

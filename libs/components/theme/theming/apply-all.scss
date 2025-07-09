@@ -10,7 +10,7 @@
 
 :root {
     @include mat.core();
-    @include mat.core-theme($theme);
+    @include mat.core-theme(theme.$theme);
 
     @include mat.color-variants-backwards-compatibility(theme.$theme);
     @include mat.all-component-themes(theme.$theme);

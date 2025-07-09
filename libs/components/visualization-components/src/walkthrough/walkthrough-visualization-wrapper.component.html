@@ -1,0 +1,48 @@
+<div>
+    <div class="button-container">
+        <mat-form-field appearance="fill">
+            <mat-label>Choose Training Level</mat-label>
+            <mat-select (selectionChange)="onSelectionChange($event)">
+                @for (level of levels; track level) {
+                    <mat-option [value]="level.id">
+                        @if (level.order) {
+                            <span>
+                {{ level.order }}.
+              </span>
+                        }
+                        {{ level.title }}
+                    </mat-option>
+                }
+            </mat-select>
+        </mat-form-field>
+    </div>
+    @if ((data$ | async); as data) {
+        <div class="container">
+            @if (data !== null) {
+                <div class="top-container">
+                    <h2>{{ data.title }}</h2>
+                </div>
+            }
+            @if (data.usersData.length > 0) {
+                <div class="chartContainer">
+                    <crczp-walkthrough-visualization [data]="data"/>
+                </div>
+            } @else {
+                <div class="message-container">
+                    <h3 class="empty-data">*No trainees present for selected level</h3>
+                </div>
+            }
+        </div>
+    } @else {
+        <div class="message-container">
+            @if (!(levels.length > 0)) {
+                <h3 class="empty-data">*Missing levels for visualization</h3>
+            } @else {
+                <h3 class="empty-data">*Given instance does not have any data for selected level</h3>
+            }
+        </div>
+    }
+
+</div>
+
+

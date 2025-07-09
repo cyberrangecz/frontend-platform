@@ -17,16 +17,28 @@ import {
     SentinelDialogResultEnum,
 } from '@sentinel/components/dialogs';
 import {
+    SentinelControlItem,
     SentinelControlItemSignal,
     SentinelControlMenuItem,
+    SentinelControlsComponent,
     SentinelExpandableControlItem,
 } from '@sentinel/components/controls';
 import {ExtendedMatchingItems, FreeFormQuestion, MultipleChoiceQuestion, Question} from '@crczp/training-model';
 import {defer, EMPTY, Observable, of} from 'rxjs';
 import {QuestionChangeEvent} from '../../../../../../model/events/question-change-event';
-import {SentinelStepper, StepStateEnum} from '@sentinel/components/stepper';
+import {SentinelStepper, SentinelStepperComponent, StepStateEnum} from '@sentinel/components/stepper';
 import {QuestionStepperAdapter} from '@crczp/training-agenda/internal';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import {
+    MatExpansionPanel,
+    MatExpansionPanelDescription,
+    MatExpansionPanelHeader,
+    MatExpansionPanelTitle
+} from "@angular/material/expansion";
+import {MatDivider} from "@angular/material/divider";
+import {MatIcon} from "@angular/material/icon";
+import {MatError} from "@angular/material/input";
+import {QuestionEditComponent} from "../detail/question-edit.component";
 
 /**
  * Wrapper component for questions inside the assessment level
@@ -36,6 +48,18 @@ import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
     templateUrl: './questions-overview.component.html',
     styleUrls: ['./questions-overview.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        MatExpansionPanel,
+        MatExpansionPanelHeader,
+        MatExpansionPanelTitle,
+        MatExpansionPanelDescription,
+        MatIcon,
+        MatError,
+        SentinelControlsComponent,
+        SentinelStepperComponent,
+        MatDivider,
+        QuestionEditComponent
+    ]
 })
 export class QuestionsOverviewComponent implements OnInit, OnChanges {
     dialog = inject(MatDialog);
@@ -49,7 +73,7 @@ export class QuestionsOverviewComponent implements OnInit, OnChanges {
     questionsHasError: boolean;
     stepperQuestions: SentinelStepper<QuestionStepperAdapter> = {items: []};
     selectedStep: number;
-    controls: SentinelControlItemSignal[];
+    controls: SentinelControlItem[];
     questionChanged: boolean;
     destroyRef = inject(DestroyRef);
 

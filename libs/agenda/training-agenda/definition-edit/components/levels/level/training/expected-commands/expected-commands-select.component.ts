@@ -1,11 +1,31 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
-import {MatChipInputEvent} from '@angular/material/chips';
+import {MatChipGrid, MatChipInput, MatChipInputEvent, MatChipRow} from '@angular/material/chips';
+import {
+    MatExpansionPanel,
+    MatExpansionPanelDescription,
+    MatExpansionPanelHeader,
+    MatExpansionPanelTitle
+} from "@angular/material/expansion";
+import {MatFormField, MatLabel} from "@angular/material/input";
+import {MatIcon} from "@angular/material/icon";
 
 @Component({
     selector: 'crczp-expected-commands-select',
     templateUrl: './expected-commands-select.component.html',
     styleUrls: ['./expected-commands-select.component.css'],
+    imports: [
+        MatExpansionPanel,
+        MatExpansionPanelHeader,
+        MatExpansionPanelTitle,
+        MatExpansionPanelDescription,
+        MatLabel,
+        MatFormField,
+        MatChipGrid,
+        MatChipRow,
+        MatIcon,
+        MatChipInput
+    ]
 })
 export class ExpectedCommandsSelectComponent {
     @Input() expectedCommands: string[];

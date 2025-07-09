@@ -1,8 +1,17 @@
-import { ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, OnChanges, Output, SimpleChanges, inject } from '@angular/core';
+import {
+    ChangeDetectionStrategy,
+    Component,
+    ElementRef,
+    EventEmitter,
+    inject,
+    Input,
+    OnChanges,
+    Output,
+    SimpleChanges
+} from '@angular/core';
 import * as d3 from 'd3';
 import {easeQuad} from 'd3';
-import {RunVisualizationPathNode} from '../../../../model/training-run-path-node';
-import {AdaptiveRunVisualization} from '../../../../model/training-run-data';
+import {AdaptiveRunVisualization, RunVisualizationPathNode} from "@crczp/visualization-model";
 
 @Component({
     // eslint-disable-next-line @angular-eslint/component-selector

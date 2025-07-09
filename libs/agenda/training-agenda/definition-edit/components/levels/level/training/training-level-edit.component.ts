@@ -11,9 +11,18 @@ import {
 } from '@angular/core';
 import {Hint, MitreTechnique, TrainingLevel} from '@crczp/training-model';
 import {TrainingLevelEditFormGroup} from './training-level-edit-form-group';
-import {AbstractControl} from '@angular/forms';
+import {AbstractControl, ReactiveFormsModule} from '@angular/forms';
 import {SentinelControlItemSignal} from '@sentinel/components/controls';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import {ExpectedCommandsSelectComponent} from "./expected-commands/expected-commands-select.component";
+import {MitreTechniqueSelectComponent} from "./mitre-technique/mitre-technique-select.component";
+import {HintsOverviewComponent} from "./hint/overview/hints-overview.component";
+import {MatCheckbox} from "@angular/material/checkbox";
+import {MatTooltip} from "@angular/material/tooltip";
+import {MatIconButton} from "@angular/material/button";
+import {MatError, MatFormField, MatHint, MatInput, MatLabel, MatSuffix} from "@angular/material/input";
+import {SentinelMarkdownEditorComponent} from "@sentinel/components/markdown-editor";
+import {MatIcon} from "@angular/material/icon";
 
 /**
  * Component for editing new or existing training level
@@ -23,6 +32,23 @@ import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
     templateUrl: './training-level-edit.component.html',
     styleUrls: ['./training-level-edit.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        ExpectedCommandsSelectComponent,
+        MitreTechniqueSelectComponent,
+        HintsOverviewComponent,
+        MatCheckbox,
+        MatTooltip,
+        MatIconButton,
+        MatSuffix,
+        ReactiveFormsModule,
+        MatFormField,
+        MatLabel,
+        MatError,
+        MatIcon,
+        SentinelMarkdownEditorComponent,
+        MatInput,
+        MatHint
+    ]
 })
 export class TrainingLevelEditComponent implements OnChanges {
     @Input() level: TrainingLevel;

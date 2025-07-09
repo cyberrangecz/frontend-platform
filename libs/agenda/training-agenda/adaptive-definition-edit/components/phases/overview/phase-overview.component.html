@@ -1,32 +1,33 @@
-<div *ngIf="trainingDefinition.id else trainingDefinitionNotCreated">
+@if (trainingDefinition.id) {
+  <div>
     <sentinel-controls [controls]="controls"
-                       (itemClicked)="onControlAction($event)">
+      (itemClicked)="onControlAction($event)">
     </sentinel-controls>
     <mat-divider/>
-    <div *ngIf="(stepperPhases$ | async).length > 0 else noPhases">
+    @if ((stepperPhases$ | async).length > 0) {
+      <div>
         <crczp-phase-stepper [activeStep]="activeStep$ | async"
-                            [phases]="stepperPhases$ | async"
-                            [movingInProgress]="phaseMovingInProgress"
-                            (phaseMove)="onPhaseMoved($event)"
-                            (activeStepChange)="onActivePhaseChange($event)">
+          [phases]="stepperPhases$ | async"
+          [movingInProgress]="phaseMovingInProgress"
+          (phaseMove)="onPhaseMoved($event)"
+          (activeStepChange)="onActivePhaseChange($event)">
         </crczp-phase-stepper>
         <mat-divider/>
         <crczp-phase-edit [phase]="(stepperPhases$ | async)[activeStep$ | async].phase"
-                         [updateMatrix$]="updateMatrix$"
-                         [phaseRelations]="phaseRelations"
-                         [questions]="questions"
-                         [presentTrainingPhases$]="presentTrainingPhases$"
-                         [mitreTechniquesList]="mitreTechniquesList"
-                         (phaseChange)="onActivePhaseChanged($event)">
+          [updateMatrix$]="updateMatrix$"
+          [phaseRelations]="phaseRelations"
+          [questions]="questions"
+          [presentTrainingPhases$]="presentTrainingPhases$"
+          [mitreTechniquesList]="mitreTechniquesList"
+          (phaseChange)="onActivePhaseChanged($event)">
         </crczp-phase-edit>
-    </div>
-
-    <ng-template #noPhases>
-        <h3>Start by clicking on Add button</h3>
-    </ng-template>
-</div>
-<ng-template #trainingDefinitionNotCreated>
-    <h3>To add phases, fill in and save the basic information about the training definition.</h3>
-</ng-template>
+      </div>
+    } @else {
+      <h3>Start by clicking on Add button</h3>
+    }
+  </div>
+} @else {
+  <h3>To add phases, fill in and save the basic information about the training definition.</h3>
+}
 
 

@@ -1,10 +1,15 @@
 import {ChangeDetectionStrategy, Component, DestroyRef, HostListener, inject, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {TrainingInstance} from '@crczp/training-model';
-import {async, Observable} from 'rxjs';
+import {Observable} from 'rxjs';
 import {map, tap} from 'rxjs/operators';
 import {TRAINING_INSTANCE_DATA_ATTRIBUTE_NAME} from '@crczp/training-agenda';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import {MatTab, MatTabContent, MatTabGroup, MatTabLabel} from "@angular/material/tabs";
+import {CommandTimelineComponent} from "@crczp/visualization-components";
+import {MatIcon} from "@angular/material/icon";
+import {SankeyVisualizationComponent} from "@crczp/adaptive-instance-simulator";
+import {AsyncPipe} from "@angular/common";
 
 /**
  * Component displaying adaptive instance progress visualizations
@@ -14,13 +19,22 @@ import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
     templateUrl: './adaptive-instance-progress.component.html',
     styleUrls: ['./adaptive-instance-progress.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        MatTabGroup,
+        MatTab,
+        MatIcon,
+        CommandTimelineComponent,
+        MatTabLabel,
+        MatTabContent,
+        SankeyVisualizationComponent,
+        AsyncPipe,
+    ]
 })
 export class AdaptiveInstanceProgressComponent implements OnInit {
-    private activeRoute = inject(ActivatedRoute);
-
     trainingInstance$: Observable<TrainingInstance>;
     vizSize: { width: number; height: number };
     destroyRef = inject(DestroyRef);
+    private activeRoute = inject(ActivatedRoute);
 
     @HostListener('window:resize', ['$event'])
     onResize(event: any): void {
@@ -38,8 +52,6 @@ export class AdaptiveInstanceProgressComponent implements OnInit {
     private calculateVisualizationSize(windowWidth: number, windowHeight: number) {
         const width = windowWidth / 2;
         const height = windowHeight / 2;
-        this.vizSize = { width, height };
+        this.vizSize = {width, height};
     }
-
-    protected readonly async = async;
 }

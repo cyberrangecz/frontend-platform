@@ -17,11 +17,11 @@ import {map} from 'rxjs/operators';
 import {AbstractControl, ReactiveFormsModule} from '@angular/forms';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {Pool, SandboxDefinition} from '@crczp/sandbox-model';
-import {async, BehaviorSubject, combineLatestWith, Observable} from 'rxjs';
+import {BehaviorSubject, combineLatestWith, Observable} from 'rxjs';
 import {TrainingInstanceFormGroup} from './adaptive-instance-form-group';
 import {AdaptiveInstanceChangeEvent} from '../../models/events/adaptive-instance-change-event';
 import {TrainingNavigator} from '@crczp/training-agenda';
-import {AsyncPipe, NgIf} from "@angular/common";
+import {AsyncPipe} from "@angular/common";
 import {
     SentinelResourceSelectorComponent,
     SentinelSelectorElementDirective,
@@ -48,7 +48,6 @@ import {RouterLink} from "@angular/router";
         ReactiveFormsModule,
         MatFormField,
         MatLabel,
-        NgIf,
         MatInput,
         MatIcon,
         MatError,
@@ -79,7 +78,6 @@ export class AdaptiveInstanceEditComponent implements OnChanges, AfterViewInit {
     @ViewChild('poolSelect', {static: false, read: ElementRef}) poolSelect: ElementRef;
     now: Date;
     trainingInstanceFormGroup: TrainingInstanceFormGroup;
-    protected readonly async = async;
     private trainingDefinitionsSubject = new BehaviorSubject<TrainingDefinitionInfo[]>([]);
     private poolSubject = new BehaviorSubject<Pool[]>([]);
     private sandboxDefinitionSubject = new BehaviorSubject<SandboxDefinition[]>([]);

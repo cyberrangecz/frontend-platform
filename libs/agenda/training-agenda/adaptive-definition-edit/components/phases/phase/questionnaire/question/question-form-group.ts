@@ -51,7 +51,7 @@ export class QuestionFormGroup {
         let error = null;
         const choices = control.get('choices');
         if (choices && choices.value.length === 0 && this.questionnaireType === QuestionnaireTypeEnum.Adaptive) {
-            error = { noSelectedChoices: true };
+            error = {noSelectedChoices: true};
         }
         return error ? error : null;
     };

@@ -1,27 +1,28 @@
-<mat-tab-group mat-stretch-tabs class="mat-elevation-z4" *ngIf="(trainingInstance$ | async) as trainingInstance">
-    <mat-tab>
-        <ng-template mat-tab-label>
-            <mat-icon class="tab-icon">dashboard</mat-icon>
-            Participants' Transitions Between Phases
-        </ng-template>
-        <ng-template matTabContent>
-            <crczp-sankey-visualization
-                [trainingInstanceId]="trainingInstance?.id"/>
-        </ng-template>
-    </mat-tab>
-
-    <mat-tab>
-        <ng-template mat-tab-label>
-            <mat-icon class="tab-icon">timeline</mat-icon>
-            Command timeline
-        </ng-template>
-        <ng-template matTabContent>
-            <crczp-timeline
-                [trainingInstanceId]="trainingInstance?.id"
-                [isStandalone]="true"
-                [isForbidden]="false"
-                [isAdaptive]="true"
-            />
-        </ng-template>
-    </mat-tab>
-</mat-tab-group>
+@if ((trainingInstance$ | async); as trainingInstance) {
+    <mat-tab-group mat-stretch-tabs="always" class="mat-elevation-z4">
+        <mat-tab>
+            <ng-template mat-tab-label>
+                <mat-icon class="tab-icon">dashboard</mat-icon>
+                Participants' Transitions Between Phases
+            </ng-template>
+            <ng-template matTabContent>
+                <crczp-sankey-visualization
+                    [trainingInstanceId]="trainingInstance?.id"/>
+            </ng-template>
+        </mat-tab>
+        <mat-tab>
+            <ng-template mat-tab-label>
+                <mat-icon class="tab-icon">timeline</mat-icon>
+                Command timeline
+            </ng-template>
+            <ng-template matTabContent>
+                <crczp-timeline
+                    [trainingInstanceId]="trainingInstance?.id"
+                    [isStandalone]="true"
+                    [isForbidden]="false"
+                    [isAdaptive]="true"
+                />
+            </ng-template>
+        </mat-tab>
+    </mat-tab-group>
+}

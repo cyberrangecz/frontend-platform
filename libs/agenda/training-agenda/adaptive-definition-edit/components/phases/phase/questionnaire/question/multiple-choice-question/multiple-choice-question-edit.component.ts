@@ -12,7 +12,7 @@ import {
 import {QuestionFormGroup} from '../question-form-group';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {SentinelMarkdownEditorComponent} from "@sentinel/components/markdown-editor";
-import {NgForOf, NgIf} from "@angular/common";
+
 import {MatError, MatFormField, MatInput, MatLabel, MatSuffix} from "@angular/material/input";
 import {MatIcon} from "@angular/material/icon";
 import {MatButton, MatIconButton} from "@angular/material/button";
@@ -26,7 +26,6 @@ import {MatCheckbox} from "@angular/material/checkbox";
     imports: [
         SentinelMarkdownEditorComponent,
         MatError,
-        NgForOf,
         MatIcon,
         MatSuffix,
         MatIconButton,
@@ -36,8 +35,7 @@ import {MatCheckbox} from "@angular/material/checkbox";
         MatFormField,
         MatLabel,
         MatButton,
-        MatInput,
-        NgIf
+        MatInput
     ]
 })
 /**

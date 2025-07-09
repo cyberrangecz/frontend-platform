@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import {inject, Injectable} from '@angular/core';
 import {TrainingRunApi} from '@crczp/training-api';
 import {Question} from '@crczp/training-model';
 import {Observable} from 'rxjs';

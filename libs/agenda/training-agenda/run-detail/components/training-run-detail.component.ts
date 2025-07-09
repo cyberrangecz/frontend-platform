@@ -1,6 +1,6 @@
 import {AfterViewInit, ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit} from '@angular/core';
 import {Level} from '@crczp/training-model';
-import {async, Observable} from 'rxjs';
+import {Observable} from 'rxjs';
 import {take, tap} from 'rxjs/operators';
 import {LevelStepperAdapter} from '@crczp/training-agenda/internal';
 import {TrainingRunStepper} from '../model/training-run-stepper';
@@ -10,7 +10,8 @@ import {RunningTrainingRunService} from '../services/training-run/running/runnin
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {AbstractLevelComponent} from "./level/abstract-level.component";
 import {SentinelStepperComponent} from "@sentinel/components/stepper";
-import {AsyncPipe, NgIf} from "@angular/common";
+import {AsyncPipe} from "@angular/common";
+import {TrainingRunLevelsDeactivateGuard} from "../services/can-deactivate/training-run-levels-can-deactivate.service";
 
 @Component({
     selector: 'crczp-training-run-detail',
@@ -20,25 +21,21 @@ import {AsyncPipe, NgIf} from "@angular/common";
     imports: [
         AbstractLevelComponent,
         SentinelStepperComponent,
-        AsyncPipe,
-        NgIf
-    ]
+        AsyncPipe
+    ],
+    providers: [TrainingRunLevelsDeactivateGuard],
 })
 /**
  * Main component of trainees training. Displays window with current level of a training and navigation to the next.
  * Optionally displays stepper with progress of the training and timer counting time from the start of a training.
  */
 export class TrainingRunDetailComponent implements OnInit, AfterViewInit {
-    private trainingRunService = inject(RunningTrainingRunService);
-    private auth = inject(SentinelAuthService);
-
     user$: Observable<SentinelUser>;
     activeLevel$: Observable<Level>;
     backtrackedLevel$: Observable<Level>;
     isCurrentLevelAnswered$: Observable<boolean>;
     levels: Level[];
     stepper: TrainingRunStepper;
-
     isStepperDisplayed: boolean;
     startTime: Date;
     isLast: boolean;
@@ -47,7 +44,8 @@ export class TrainingRunDetailComponent implements OnInit, AfterViewInit {
     localEnvironment: boolean;
     backwardMode: boolean;
     destroyRef = inject(DestroyRef);
-    protected readonly async = async;
+    private trainingRunService = inject(RunningTrainingRunService);
+    private auth = inject(SentinelAuthService);
 
     ngOnInit(): void {
         this.init();

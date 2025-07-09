@@ -9,16 +9,16 @@ import {
 import {map} from 'rxjs/operators';
 
 export abstract class AdaptiveRunAccessPhaseService {
+    isCorrectPasskeySubmitted$: Observable<boolean>;
+    isLoading$: Observable<boolean>;
+    protected isCorrectPasskeySubmittedSubject$: BehaviorSubject<boolean>;
+    protected isLoadingSubject$: BehaviorSubject<boolean>;
+
     protected constructor(
         protected notificationService: SentinelNotificationService,
         protected runningAdaptiveRunService: RunningAdaptiveRunService,
-    ) {}
-
-    protected isCorrectPasskeySubmittedSubject$: BehaviorSubject<boolean>;
-    isCorrectPasskeySubmitted$: Observable<boolean>;
-
-    protected isLoadingSubject$: BehaviorSubject<boolean>;
-    isLoading$: Observable<boolean>;
+    ) {
+    }
 
     abstract submitPasskey(passkey: string): Observable<any>;
 

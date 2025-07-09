@@ -15,7 +15,7 @@ import {TrainingPhase} from '@crczp/training-model';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {MatTooltip} from "@angular/material/tooltip";
 import {MatError, MatFormField, MatInput, MatLabel} from "@angular/material/input";
-import {NgForOf, NgIf} from "@angular/common";
+
 import {TasksOverviewComponent} from "./task/overview/tasks-overview.component";
 import {MatIconButton} from "@angular/material/button";
 import {MatIcon} from "@angular/material/icon";
@@ -26,18 +26,16 @@ import {MatIcon} from "@angular/material/icon";
     styleUrls: ['./training-phase-edit.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
-        MatError,
-        ReactiveFormsModule,
-        MatTooltip,
-        MatFormField,
-        NgIf,
-        MatInput,
-        TasksOverviewComponent,
-        MatLabel,
-        MatIcon,
-        MatIconButton,
-        NgForOf
-    ]
+    MatError,
+    ReactiveFormsModule,
+    MatTooltip,
+    MatFormField,
+    MatInput,
+    TasksOverviewComponent,
+    MatLabel,
+    MatIcon,
+    MatIconButton
+]
 })
 export class TrainingPhaseEditComponent implements OnChanges {
     @Input() phase: TrainingPhase;

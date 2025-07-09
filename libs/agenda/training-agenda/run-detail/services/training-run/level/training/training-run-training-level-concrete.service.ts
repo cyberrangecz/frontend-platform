@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import {inject, Injectable} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import {SentinelDialogResultEnum} from '@sentinel/components/dialogs';
 import {TrainingRunApi} from '@crczp/training-api';
@@ -19,7 +19,6 @@ export class TrainingRunTrainingLevelConcreteService extends TrainingRunTraining
     private api = inject(TrainingRunApi);
     private sandboxApi = inject(SandboxInstanceApi);
     private errorHandler = inject(TrainingErrorHandler);
-    protected runningTrainingRunService: RunningTrainingRunService;
 
     constructor() {
         const notificationService = inject(SentinelNotificationService);
@@ -27,8 +26,6 @@ export class TrainingRunTrainingLevelConcreteService extends TrainingRunTraining
         const runningTrainingRunService = inject(RunningTrainingRunService);
 
         super(dialog, notificationService, runningTrainingRunService);
-    
-        this.runningTrainingRunService = runningTrainingRunService;
     }
 
     /**

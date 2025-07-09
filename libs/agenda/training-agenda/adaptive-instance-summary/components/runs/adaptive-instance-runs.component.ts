@@ -1,12 +1,15 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@angular/core';
 import {TrainingRun} from '@crczp/training-model';
-import {SentinelTable, TableActionEvent, TableLoadEvent} from '@sentinel/components/table';
+import {SentinelTable, SentinelTableComponent, TableActionEvent, TableLoadEvent} from '@sentinel/components/table';
 
 @Component({
     selector: 'crczp-adaptive-instance-runs',
     templateUrl: './adaptive-instance-runs.component.html',
     styleUrls: ['./adaptive-instance-runs.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        SentinelTableComponent
+    ]
 })
 export class AdaptiveInstanceRunsComponent {
     @Input() trainingRuns: SentinelTable<TrainingRun>;

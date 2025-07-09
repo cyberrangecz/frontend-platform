@@ -1,0 +1,32 @@
+@if (data) {
+  <div class="block-content" style="width: 85vw">
+    <mat-grid-list cols="2" [rowHeight]="detailHeight" class="pool-expand-grid">
+      <mat-grid-tile>
+        <p><b>Build progression notifications: </b>{{ data.notifyBuild }}</p>
+      </mat-grid-tile>
+      <mat-grid-tile>
+        <p class="resource-heading"><b>Resources utilization: </b></p>
+        @if (data.usedSize > 0) {
+          <div class="resource-content">
+            @for (resource of displayedResources; track resource; let i = $index) {
+              @if (data.resources?.quotas[resource]) {
+                <div>
+                  <span>{{ data.resources.quotas[resource].name }}
+                  ({{ data[resource + 'Utilization'].toFixed(1) }}%):</span>
+                  <crczp-resource-bar
+                    [quota]="data.resources?.quotas[resource]"
+                    [poolUsage]="data[resource +'Utilization']"
+                    [color]="resourceColors[i]">
+                  </crczp-resource-bar>
+                </div>
+              }
+            }
+          </div>
+        }
+        @if (data.usedSize === 0 || data.resources === undefined) {
+          <p> No data to display</p>
+        }
+      </mat-grid-tile>
+    </mat-grid-list>
+  </div>
+}

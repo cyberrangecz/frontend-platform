@@ -1,6 +1,0 @@
-<svg:g
-    y-axis
-    *ngFor="let item of [].constructor(getAxesCount() - 1); let myIndex = index"
-    [xRelative]="absolutePositionService.getRelativeXPositionOfEvent(myIndex, this.getAxesCount())"
-></svg:g>
-<svg:g success-axis [userData]="usersData"></svg:g>

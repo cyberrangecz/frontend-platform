@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import {inject, Injectable} from '@angular/core';
 import {AdaptiveRunTrainingPhaseService} from './adaptive-run-training-phase.service';
 import {AdaptiveRunApi} from '@crczp/training-api';
 import {SandboxInstanceApi} from '@crczp/sandbox-api';

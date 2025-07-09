@@ -1,8 +1,7 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
 import {QuestionnairePhase, QuestionnaireTypeEnum, QuestionTypeEnum, TrainingPhase} from '@crczp/training-model';
 import {MatFormField, MatInput, MatLabel} from "@angular/material/input";
-import {QuestionsOverviewComponent} from "./question/overview/questions-overview.component";
-import {NgForOf, NgIf} from "@angular/common";
+
 import {MatDivider} from "@angular/material/divider";
 import {
     MatExpansionPanel,
@@ -11,6 +10,7 @@ import {
     MatExpansionPanelTitle
 } from "@angular/material/expansion";
 import {MatIcon} from "@angular/material/icon";
+import {QuestionsOverviewVsualizationComponent} from "./question/overview/questions-overview-vsualization.component";
 
 @Component({
     selector: 'crczp-questionnaire-phase-configuration',
@@ -21,15 +21,13 @@ import {MatIcon} from "@angular/material/icon";
         MatFormField,
         MatLabel,
         MatInput,
-        QuestionsOverviewComponent,
-        NgIf,
         MatDivider,
         MatExpansionPanel,
         MatExpansionPanelHeader,
         MatExpansionPanelTitle,
         MatExpansionPanelContent,
-        NgForOf,
-        MatIcon
+        MatIcon,
+        QuestionsOverviewVsualizationComponent
     ]
 })
 export class QuestionnairePhaseEditComponent {

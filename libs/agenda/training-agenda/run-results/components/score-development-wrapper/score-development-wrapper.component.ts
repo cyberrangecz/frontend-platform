@@ -1,26 +1,29 @@
 import {Component, DestroyRef, HostListener, inject, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {TrainingRun} from '@crczp/training-model';
-import {async, map, Observable} from 'rxjs';
 import {VisualizationInfo} from '@crczp/training-agenda/internal';
-import {TraineeModeInfo} from '@crczp/overview-visualization';
 import {TRAINING_RUN_DATA_ATTRIBUTE_NAME} from '@crczp/training-agenda';
-import {TrainingDefinitionApi} from '@crczp/training-api';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import {Observable} from "rxjs";
+import {map} from "rxjs/operators";
+import {TrainingsVisualizationsOverviewLibModule, VizOverviewTraineeInfo} from "@crczp/visualization-components";
+import {AsyncPipe} from "@angular/common";
 
 @Component({
     selector: 'crczp-score-development-wrapper',
     templateUrl: './score-development-wrapper.component.html',
     styleUrls: ['./score-development-wrapper.component.css'],
+    imports: [
+        AsyncPipe,
+        TrainingsVisualizationsOverviewLibModule
+    ]
 })
 export class ScoreDevelopmentWrapperComponent implements OnInit {
-    private activatedRoute = inject(ActivatedRoute);
-    private trainingDefinitionApi = inject(TrainingDefinitionApi);
-
     visualizationInfo$: Observable<VisualizationInfo>;
-    traineeModeInfo$: Observable<TraineeModeInfo>;
+    traineeModeInfo$: Observable<VizOverviewTraineeInfo>;
     vizSize: { width: number; height: number };
     destroyRef = inject(DestroyRef);
+    private activatedRoute = inject(ActivatedRoute);
 
     @HostListener('window:resize', ['$event'])
     onResize(event: any): void {
@@ -42,9 +45,10 @@ export class ScoreDevelopmentWrapperComponent implements OnInit {
         );
         this.traineeModeInfo$ = this.visualizationInfo$.pipe(
             map((vizInfo) => {
-                const traineeModeInfo = new TraineeModeInfo();
+                const traineeModeInfo = new VizOverviewTraineeInfo();
                 traineeModeInfo.trainingRunId = vizInfo.trainingRunId;
                 traineeModeInfo.activeTraineeId = vizInfo.traineeId;
+
                 return traineeModeInfo;
             }),
         );
@@ -63,8 +67,6 @@ export class ScoreDevelopmentWrapperComponent implements OnInit {
         const divideBy = 2;
         const width = windowWidth / divideBy;
         const height = windowHeight / divideBy;
-        this.vizSize = { width, height };
+        this.vizSize = {width, height};
     }
-
-    protected readonly async = async;
 }

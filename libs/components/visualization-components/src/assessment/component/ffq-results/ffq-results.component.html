@@ -1,0 +1,35 @@
+<div (click)="clear()" class="content">
+    <mat-form-field
+        class="filter"
+        subscriptSizing="dynamic">
+        <input
+            (keyup)="applyFilter($event.target)"
+            class="filter-input"
+            matInput
+            placeholder="Filter by answer"/>
+    </mat-form-field>
+    <table [dataSource]="dataSource" class="table" mat-table>
+        <div></div>
+        <!-- Name Column -->
+        <ng-container matColumnDef="name">
+            <th *matHeaderCellDef mat-header-cell> Name</th>
+            <td *matCellDef="let data" mat-cell>
+                {{ data.participant.fullName }}
+            </td>
+        </ng-container>
+
+        <!-- Answer Column -->
+        <ng-container matColumnDef="answer">
+            <th *matHeaderCellDef mat-header-cell> Answer</th>
+            <td *matCellDef="let data" [ngClass]="{'correct': isTest && data.isCorrect,'incorrect': isTest && !data.isCorrect}"
+                mat-cell>
+                {{ data.answer }}
+            </td>
+        </ng-container>
+        <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+        <tr (click)="highlight(data.participant, $event)"
+            *matRowDef="let data; columns: displayedColumns;"
+            [ngClass]="{'row-active' : data.participant.isHighlighted}"
+            mat-row></tr>
+    </table>
+</div>

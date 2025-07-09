@@ -1,2 +1,21 @@
-<app-nx-welcome></app-nx-welcome>
-<router-outlet></router-outlet>
+<sentinel-layout1 (login)="onLogin()"
+                  (logout)="onLogout()"
+                  [agendaContainers]="agendaContainers$ | async"
+                  [isLoading]="isLoading$ | async"
+                  [notificationsRoute]="notificationRoute"
+                  [user]="activeUser$ | async"
+                  [version]="version"
+                  logoSrc="./assets/logo/logo.svg">
+    <div role="toolbar">
+        @if (activeUser$ | async) {
+            <span class="username">{{ (activeUser$ | async).nameWithAcademicTitles }}</span>
+        }
+    </div>
+    @if (title$ | async; as title) {
+        <h1>{{ title }}</h1>
+    }
+    @if (subtitle$ | async; as subtitle) {
+        <p class="subtitle">{{ subtitle }}</p>
+    }
+    <router-outlet/>
+</sentinel-layout1>

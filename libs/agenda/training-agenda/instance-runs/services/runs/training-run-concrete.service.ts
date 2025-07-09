@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import {inject, Injectable} from '@angular/core';
 import {OffsetPaginationEvent, PaginatedResource,} from '@sentinel/common/pagination';
 import {TrainingInstanceApi, TrainingRunApi} from '@crczp/training-api';
 import {TrainingRun} from '@crczp/training-model';
@@ -14,7 +14,7 @@ import {
     SentinelDialogResultEnum,
 } from '@sentinel/components/dialogs';
 import {SandboxInstance} from '@crczp/sandbox-model';
-import {Settings} from '@crczp/common';
+import {PortalConfig} from '@crczp/common';
 
 /**
  * Basic implementation of layer between component and API service.
@@ -33,9 +33,9 @@ export class TrainingRunConcreteService extends TrainingRunService {
     private lastTrainingInstanceId: number;
 
     constructor() {
-        const settings = inject(Settings);
+        const settings = inject(PortalConfig);
 
-        super(settings.DEFAULT_PAGE_SIZE, settings.POLLING_PERIOD_SHORT);
+        super(settings.defaultPageSize, settings.polling.pollingPeriodShort);
     }
 
     /**
@@ -88,7 +88,7 @@ export class TrainingRunConcreteService extends TrainingRunService {
                 this.lastTrainingInstanceId,
                 this.lastPagination
             )
-            .pipe(tap({ error: () => this.onGetAllError() }));
+            .pipe(tap({error: () => this.onGetAllError()}));
     }
 
     protected onManualResourceRefresh(

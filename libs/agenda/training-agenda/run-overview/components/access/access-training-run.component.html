@@ -1,59 +1,71 @@
 <mat-card appearance="outlined">
-    <mat-card-title>Access Training</mat-card-title>
-    <mat-card-subtitle>Fill in access token provided by the organizer to start the
-        training
-    </mat-card-subtitle>
-    <mat-card-content>
-        <form autocomplete="off" [formGroup]="traineeAccessTrainingFormGroup.formGroup">
-            <mat-form-field appearance="outline" class="prefix-form"
-                            (keydown.enter)="$event.preventDefault()">
+  <mat-card-title>Access Training</mat-card-title>
+  <mat-card-subtitle>Fill in access token provided by the organizer to start the
+    training
+  </mat-card-subtitle>
+  <mat-card-content>
+    <form autocomplete="off" [formGroup]="traineeAccessTrainingFormGroup.formGroup">
+      <mat-form-field appearance="outline" class="prefix-form"
+        (keydown.enter)="$event.preventDefault()">
 
-                <mat-label>Access Token Prefix</mat-label>
-                <input matInput (paste)="onPaste($event)" (keyup)="onKeyup($event)"
-                       placeholder="Access Token Prefix" formControlName="accessTokenPrefix"
-                       required>
-                <button *ngIf="accessTokenPrefix.value" matSuffix
-                        mat-icon-button aria-label="Clear"
-                        (click)="accessTokenPrefix.setValue('')">
-                    <mat-icon>close</mat-icon>
-                </button>
-                <mat-error *ngIf="accessTokenPrefix.hasError('whitespace')">Prefix cannot
-                    be empty
-                </mat-error>
-            </mat-form-field>
+        <mat-label>Access Token Prefix</mat-label>
+        <input matInput (paste)="onPaste($event)" (keyup)="onKeyup($event)"
+          placeholder="Access Token Prefix" formControlName="accessTokenPrefix"
+          required>
+        @if (accessTokenPrefix.value) {
+          <button matSuffix
+            mat-icon-button aria-label="Clear"
+            (click)="accessTokenPrefix.setValue('')">
+            <mat-icon>close</mat-icon>
+          </button>
+        }
+        @if (accessTokenPrefix.hasError('whitespace')) {
+          <mat-error>Prefix cannot
+            be empty
+          </mat-error>
+        }
+      </mat-form-field>
 
-            <span class="divider">-</span>
+      <span class="divider">-</span>
 
-            <mat-form-field appearance="outline" class="pin-form"
-                            (keydown.enter)="$event.preventDefault()">
+      <mat-form-field appearance="outline" class="pin-form"
+        (keydown.enter)="$event.preventDefault()">
 
-                <mat-label>Access Token PIN</mat-label>
-                <input #pin matInput (paste)="onPaste($event)" placeholder="Access Token PIN"
-                       pattern="[0-9]*" maxlength="4" minlength="4"
-                       formControlName="accessTokenPin" required>
-                <button *ngIf="accessTokenPin.value" matSuffix
-                        mat-icon-button aria-label="Clear"
-                        (click)="accessTokenPin.setValue('')">
-                    <mat-icon>close</mat-icon>
-                </button>
-                <mat-error *ngIf="accessTokenPin.hasError('pattern')">PIN must be
-                    numeric
-                </mat-error>
-                <mat-error *ngIf="accessTokenPin.hasError('minLength') ||
-          accessTokenPin.hasError('maxLength')">PIN must contains 4 digits
-                </mat-error>
-                <mat-error *ngIf="accessTokenPin.hasError('required')">PIN cannot be
-                    empty
-                </mat-error>
-            </mat-form-field>
-        </form>
+        <mat-label>Access Token PIN</mat-label>
+        <input #pin matInput (paste)="onPaste($event)" placeholder="Access Token PIN"
+          pattern="[0-9]*" maxlength="4" minlength="4"
+          formControlName="accessTokenPin" required>
+        @if (accessTokenPin.value) {
+          <button matSuffix
+            mat-icon-button aria-label="Clear"
+            (click)="accessTokenPin.setValue('')">
+            <mat-icon>close</mat-icon>
+          </button>
+        }
+        @if (accessTokenPin.hasError('pattern')) {
+          <mat-error>PIN must be
+            numeric
+          </mat-error>
+        }
+        @if (accessTokenPin.hasError('minLength') ||
+          accessTokenPin.hasError('maxLength')) {
+          <mat-error>PIN must contains 4 digits
+          </mat-error>
+        }
+        @if (accessTokenPin.hasError('required')) {
+          <mat-error>PIN cannot be
+            empty
+          </mat-error>
+        }
+      </mat-form-field>
+    </form>
 
-        <span class="spacer"></span>
-    </mat-card-content>
-    <mat-card-actions align="end">
-        <button #accessButton mat-raised-button color="primary"
-                [disabled]="!traineeAccessTrainingFormGroup.formGroup.valid || isLoading"
-                (click)="access()">Access
-        </button>
-    </mat-card-actions>
+    <span class="spacer"></span>
+  </mat-card-content>
+  <mat-card-actions align="end">
+    <button #accessButton mat-raised-button color="primary"
+      [disabled]="!traineeAccessTrainingFormGroup.formGroup.valid || isLoading"
+      (click)="access()">Access
+    </button>
+  </mat-card-actions>
 </mat-card>

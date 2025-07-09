@@ -1,10 +1,8 @@
 import {OffsetPaginationEvent} from '@sentinel/common/pagination';
 import {ChangeDetectionStrategy, Component, DestroyRef, HostListener, inject, OnInit} from '@angular/core';
-import {async, combineLatestWith, Observable, switchMap} from 'rxjs';
 import {TrainingDefinitionInfo, TrainingInstance} from '@crczp/training-model';
 import {SentinelControlItem, SentinelControlItemSignal, SentinelControlsComponent} from '@sentinel/components/controls';
-import {ActivatedRoute} from '@angular/router';
-import {filter, map, take} from 'rxjs/operators';
+import {filter, map, switchMap, take} from 'rxjs/operators';
 import {AdaptiveInstanceEditService} from '../services/state/edit/adaptive-instance-edit.service';
 import {AdaptiveInstanceEditControls} from '../models/adapter/adaptive-instance-edit-controls';
 import {ADAPTIVE_INSTANCE_DATA_ATTRIBUTE_NAME} from '@crczp/training-agenda';
@@ -14,7 +12,7 @@ import {OrganizersAssignService} from '../services/state/organizers-assign/organ
 import {Pool, SandboxDefinition} from '@crczp/sandbox-model';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {SentinelUserAssignComponent, SentinelUserAssignService} from '@sentinel/components/user-assign';
-import {PaginationStorageService} from "@crczp/common";
+import {PortalConfig} from "@crczp/common";
 import {
     MatExpansionPanel,
     MatExpansionPanelContent,
@@ -26,7 +24,10 @@ import {AdaptiveInstanceEditComponent} from "./adaptive-instance-edit/adaptive-i
 import {MatIcon} from "@angular/material/icon";
 import {MatError} from "@angular/material/input";
 import {MatDivider} from "@angular/material/divider";
-import {AsyncPipe, NgIf} from "@angular/common";
+import {AsyncPipe} from "@angular/common";
+import {AdaptiveInstanceCanDeactivate} from "../services/can-deactivate/adaptive-instance-can-deactivate.service";
+import {combineLatestWith, Observable} from "rxjs";
+import {ActivatedRoute} from "@angular/router";
 
 @Component({
     selector: 'crczp-adaptive-instance-edit-overview',
@@ -36,6 +37,7 @@ import {AsyncPipe, NgIf} from "@angular/common";
     providers: [
         {provide: AdaptiveInstanceEditService, useClass: AdaptiveInstanceEditConcreteService},
         {provide: SentinelUserAssignService, useClass: OrganizersAssignService},
+        AdaptiveInstanceCanDeactivate
     ],
     imports: [
         MatIcon,
@@ -49,18 +51,11 @@ import {AsyncPipe, NgIf} from "@angular/common";
         SentinelControlsComponent,
         MatDivider,
         AsyncPipe,
-        SentinelUserAssignComponent,
-        NgIf
+        SentinelUserAssignComponent
     ]
 })
 export class AdaptiveInstanceEditOverviewComponent implements OnInit {
-    private activeRoute = inject(ActivatedRoute);
-    private paginationService = inject(PaginationStorageService);
-    private editService = inject(AdaptiveInstanceEditService);
-    private userAssignService = inject(SentinelUserAssignService);
-
     readonly PAGE_SIZE: number = 999;
-
     trainingInstance$: Observable<TrainingInstance>;
     trainingDefinitions$: Observable<TrainingDefinitionInfo[]>;
     pools$: Observable<Pool[]>;
@@ -71,13 +66,15 @@ export class AdaptiveInstanceEditOverviewComponent implements OnInit {
     instanceValid$: Observable<boolean>;
     canDeactivateOrganizers = true;
     canDeactivateTIEdit = true;
-    defaultPaginationSize: number;
     controls: SentinelControlItem[];
+
+    defaultPaginationSize = inject(PortalConfig).defaultPageSize;
     destroyRef = inject(DestroyRef);
-    protected readonly async = async;
+    private editService = inject(AdaptiveInstanceEditService);
+    private userAssignService = inject(SentinelUserAssignService);
+    private activeRoute = inject(ActivatedRoute);
 
     constructor() {
-        this.defaultPaginationSize = this.paginationService.DEFAULT_PAGE_SIZE;
         this.trainingInstance$ = this.editService.trainingInstance$;
         this.hasStarted$ = this.editService.hasStarted$;
         this.instanceValid$ = this.editService.instanceValid$;

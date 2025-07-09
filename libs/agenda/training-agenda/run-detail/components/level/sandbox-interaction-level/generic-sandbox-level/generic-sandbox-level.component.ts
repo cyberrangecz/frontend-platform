@@ -2,9 +2,13 @@ import {Component, DestroyRef, EventEmitter, inject, Input, Output, TemplateRef}
 import {
     AnswerFormHintsComponent
 } from '../subcomponents/answer-floating-form/answer-form-hints/answer-form-hints.component';
-import {async, Observable, of} from 'rxjs';
-import {AsyncPipe} from "@angular/common";
+import {Observable, of} from 'rxjs';
+import {AsyncPipe, NgTemplateOutlet} from "@angular/common";
 import {DividerPositionSynchronizerService, SplitContainerComponent} from "@crczp/common";
+import {MatButton} from "@angular/material/button";
+import {FloatingAnswerFormComponent} from "../subcomponents/answer-floating-form/floating-answer-form.component";
+import {SentinelMarkdownViewComponent} from "@sentinel/components/markdown-view";
+import {TopologyWrapperComponent} from "../subcomponents/topology-wrapper/topology-wrapper.component";
 
 @Component({
     selector: 'crczp-generic-sandbox-level',
@@ -12,33 +16,31 @@ import {DividerPositionSynchronizerService, SplitContainerComponent} from "@crcz
     styleUrl: './generic-sandbox-level.component.css',
     imports: [
         AsyncPipe,
-        SplitContainerComponent
+        SplitContainerComponent,
+        NgTemplateOutlet,
+        MatButton,
+        FloatingAnswerFormComponent,
+        SentinelMarkdownViewComponent,
+        TopologyWrapperComponent
     ]
 })
 export class GenericSandboxLevelComponent {
-    protected dividerPositionSynchronizer = inject(DividerPositionSynchronizerService);
-
     @Input({required: true}) levelContent: string;
-
     @Input() isLast: boolean;
     @Input() isBacktracked: boolean;
     @Input() isStepperDisplayed: boolean;
     @Input() isLoading: Observable<boolean> = of(false);
     @Input() isCorrectAnswerSubmitted$: Observable<boolean> = of(false);
     @Input() isSolutionRevealed$: Observable<boolean> = of(false);
-
     @Input() sandboxInstanceId: string;
     @Input() sandboxDefinitionId: number;
-
     @Input() displayedSolutionContent$: Observable<string> = of();
     @Input() displayedHintsContent$: Observable<string> = of();
     @Input() hints!: TemplateRef<AnswerFormHintsComponent>;
-
     @Output() getAccessFile: EventEmitter<void> = new EventEmitter();
     @Output() next: EventEmitter<void> = new EventEmitter();
     @Output() answerSubmitted: EventEmitter<string> = new EventEmitter();
-
     destroyRef = inject(DestroyRef);
+    protected dividerPositionSynchronizer = inject(DividerPositionSynchronizerService);
     protected readonly window = window;
-    protected readonly async = async;
 }

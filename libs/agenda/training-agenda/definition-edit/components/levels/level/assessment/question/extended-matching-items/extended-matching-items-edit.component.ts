@@ -9,11 +9,23 @@ import {
     Output,
     SimpleChanges,
 } from '@angular/core';
-import {AbstractControl, UntypedFormArray, UntypedFormControl, UntypedFormGroup} from '@angular/forms';
+import {
+    AbstractControl,
+    ReactiveFormsModule,
+    UntypedFormArray,
+    UntypedFormControl,
+    UntypedFormGroup
+} from '@angular/forms';
 import {SentinelValidators} from '@sentinel/common';
 import {ExtendedMatchingItems, Question} from '@crczp/training-model';
 import {ExtendedMatchingItemsFormGroup} from './extended-matching-items-form-group';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import {MatError, MatFormField, MatInput, MatLabel, MatSuffix} from "@angular/material/input";
+import {MatButton, MatIconButton} from "@angular/material/button";
+import {MatRadioButton, MatRadioGroup} from "@angular/material/radio";
+import {MatTooltip} from "@angular/material/tooltip";
+import {MatIcon} from "@angular/material/icon";
+import {SentinelMarkdownEditorComponent} from "@sentinel/components/markdown-editor";
 
 /**
  * Component for editing a question of type Extended Matching Items
@@ -23,6 +35,21 @@ import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
     templateUrl: './extended-matching-items-edit.component.html',
     styleUrls: ['./extended-matching-items-edit.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        MatError,
+        MatTooltip,
+        MatIconButton,
+        MatIcon,
+        MatRadioButton,
+        MatRadioGroup,
+        MatSuffix,
+        MatInput,
+        ReactiveFormsModule,
+        MatLabel,
+        MatFormField,
+        SentinelMarkdownEditorComponent,
+        MatButton
+    ]
 })
 export class ExtendedMatchingItemsEditComponent implements OnChanges {
     @Input() question: ExtendedMatchingItems;

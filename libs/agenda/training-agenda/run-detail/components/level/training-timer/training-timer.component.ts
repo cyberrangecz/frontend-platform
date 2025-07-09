@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, DestroyRef, inject, Input, OnChanges, SimpleChanges} from '@angular/core';
-import {async, Observable, timer} from 'rxjs';
+import {Observable, timer} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {AsyncPipe} from "@angular/common";
@@ -20,7 +20,6 @@ export class TrainingTimerComponent implements OnChanges {
     @Input() startTime: Date;
     timeElapsed: Observable<number>;
     destroyRef = inject(DestroyRef);
-    protected readonly async = async;
 
     ngOnChanges(changes: SimpleChanges): void {
         if ('startTime' in changes) {

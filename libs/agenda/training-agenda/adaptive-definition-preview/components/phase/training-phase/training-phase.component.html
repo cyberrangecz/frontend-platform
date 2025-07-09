@@ -1,31 +1,33 @@
 <div class="container">
-    <div class="content">
-        <div class="left-panel">
-            <div #levelContent #solution class="level-content">
-                <div>
-                    <mat-tab-group [(selectedIndex)]="selectedTab">
-                        <div *ngFor="let task of phase.tasks; index as i">
-                            <mat-tab label="{{ i + 1 }}. {{ task.title }}">
-                                <sentinel-markdown-view [markdown]="task.content"/>
-                                <h2><span> Solution: </span></h2>
-                                <sentinel-markdown-view [markdown]="task.solution"/>
-                            </mat-tab>
-                        </div>
-                    </mat-tab-group>
-                </div>
-            </div>
+  <div class="content">
+    <div class="left-panel">
+      <div #levelContent #solution class="level-content">
+        <div>
+          <mat-tab-group [(selectedIndex)]="selectedTab">
+            @for (task of phase.tasks; track task; let i = $index) {
+              <div>
+                <mat-tab label="{{ i + 1 }}. {{ task.title }}">
+                  <sentinel-markdown-view [markdown]="task.content"/>
+                  <h2><span> Solution: </span></h2>
+                  <sentinel-markdown-view [markdown]="task.solution"/>
+                </mat-tab>
+              </div>
+            }
+          </mat-tab-group>
         </div>
-        <div class="right-panel">
-            <div class="container">
-                <div class="topology-placeholder">
-                    <img
-                        class="topology-placeholder-image"
-                        src="assets/training-agenda/topology-placeholder.png"
-                        alt="Topology placeholder"
-                    />
-                </div>
-                <h3 class="message">*This is just a template topology</h3>
-            </div>
-        </div>
+      </div>
     </div>
+    <div class="right-panel">
+      <div class="container">
+        <div class="topology-placeholder">
+          <img
+            class="topology-placeholder-image"
+            src="assets/training-agenda/topology-placeholder.png"
+            alt="Topology placeholder"
+            />
+        </div>
+        <h3 class="message">*This is just a template topology</h3>
+      </div>
+    </div>
+  </div>
 </div>

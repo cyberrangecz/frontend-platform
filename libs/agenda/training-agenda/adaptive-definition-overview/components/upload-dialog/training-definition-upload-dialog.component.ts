@@ -1,7 +1,10 @@
-import { Component, EventEmitter, inject } from '@angular/core';
-import {MatDialogRef} from '@angular/material/dialog';
-import {async, Observable} from 'rxjs';
+import {Component, EventEmitter, inject} from '@angular/core';
+import {MatDialogActions, MatDialogContent, MatDialogRef, MatDialogTitle} from '@angular/material/dialog';
+import {Observable} from 'rxjs';
 import {AdaptiveFileUploadProgressService} from '../../services/file-upload/adaptive-file-upload-progress.service';
+import {AsyncPipe} from "@angular/common";
+import {MatButton} from "@angular/material/button";
+import {MatProgressBar} from "@angular/material/progress-bar";
 
 /**
  * Component of training definition upload dialog window
@@ -10,14 +13,21 @@ import {AdaptiveFileUploadProgressService} from '../../services/file-upload/adap
     selector: 'crczp-training-upload-dialog',
     templateUrl: './training-definition-upload-dialog.component.html',
     styleUrls: ['./training-definition-upload-dialog.component.css'],
+    imports: [
+        AsyncPipe,
+        MatDialogActions,
+        MatButton,
+        MatProgressBar,
+        MatDialogContent,
+        MatDialogTitle
+    ]
 })
 export class TrainingDefinitionUploadDialogComponent {
     dialogRef = inject<MatDialogRef<TrainingDefinitionUploadDialogComponent>>(MatDialogRef);
-    private uploadProgressService = inject(AdaptiveFileUploadProgressService);
-
     selectedFile: File;
     uploadInProgress$: Observable<boolean>;
     onUpload$ = new EventEmitter<File>();
+    private uploadProgressService = inject(AdaptiveFileUploadProgressService);
 
     constructor() {
         this.uploadInProgress$ = this.uploadProgressService.isInProgress$;
@@ -43,6 +53,4 @@ export class TrainingDefinitionUploadDialogComponent {
     clearFile(): void {
         this.selectedFile = null;
     }
-
-    protected readonly async = async;
 }

@@ -1,26 +1,31 @@
 <h4>
-    <span>{{ question.order + 1 }}. </span>
-    <mat-icon class="question-type" [inline]="true" matTooltip="Free Form Question"> help_outline</mat-icon>
-    <span> {{ question.title }}</span>
+  <span>{{ question.order + 1 }}. </span>
+  <mat-icon class="question-type" [inline]="true" matTooltip="Free Form Question"> help_outline</mat-icon>
+  <span> {{ question.title }}</span>
 </h4>
-<div *ngIf="isTest">
+@if (isTest) {
+  <div>
     <div class="data-field">
-        <div class="key-field">Points:</div>
-        <div>{{ question.score }}</div>
+      <div class="key-field">Points:</div>
+      <div>{{ question.score }}</div>
     </div>
     <div class="data-field">
-        <div class="key-field">Penalty:</div>
-        <div>{{ question.penalty }}</div>
+      <div class="key-field">Penalty:</div>
+      <div>{{ question.penalty }}</div>
     </div>
-    <div *ngIf="isTest">
+    @if (isTest) {
+      <div>
         <div class="data-field">
-            <div class="key-field">Choices</div>
-            <div class="choices">
-                <div *ngFor="let choice of question.choices">
-                    <div>{{ choice.text }}</div>
-                </div>
-            </div>
+          <div class="key-field">Choices</div>
+          <div class="choices">
+            @for (choice of question.choices; track choice) {
+              <div>
+                <div>{{ choice.text }}</div>
+              </div>
+            }
+          </div>
         </div>
-    </div>
-
-</div>
+      </div>
+    }
+  </div>
+}

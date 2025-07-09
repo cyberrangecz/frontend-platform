@@ -1,38 +1,51 @@
 <h4>
-    <span>{{ question.order + 1 }}. </span>
-    <mat-icon class="question-type" [inline]="true" matTooltip="Extended Matching Question"> list_alt</mat-icon>
-    <span> {{ question.title }}</span>
+  <span>{{ question.order + 1 }}. </span>
+  <mat-icon class="question-type" [inline]="true" matTooltip="Extended Matching Question"> list_alt</mat-icon>
+  <span> {{ question.title }}</span>
 </h4>
-<div *ngIf="isTest">
+@if (isTest) {
+  <div>
     <div class="data-field">
-        <div class="key-field">Points:</div>
-        <div>{{ question.score }}</div>
+      <div class="key-field">Points:</div>
+      <div>{{ question.score }}</div>
     </div>
     <div class="data-field">
-        <div class="key-field">Penalty:</div>
-        <div>{{ question.penalty }}</div>
+      <div class="key-field">Penalty:</div>
+      <div>{{ question.penalty }}</div>
     </div>
-</div>
+  </div>
+}
 <div class="data-field">
-    <div class="key-field">Matching Items:</div>
-    <div>
-        <table>
-            <thead>
-            <th></th>
-            <th *ngFor="let option of question.extendedMatchingOptions">{{ option.text }}</th>
-            </thead>
-            <tr *ngFor="let statement of question.extendedMatchingStatements">
-                <td>{{ statement.text }}</td>
-                <td *ngFor="let option of question.extendedMatchingOptions; index as i" class="inner-td">
-                    <div *ngIf="isTest; else questionnaire">
-                        <mat-icon [inline]="true" *ngIf="statement.correctOptionOrder === i">done</mat-icon>
-                        <mat-icon [inline]="true" *ngIf="statement.correctOptionOrder !== i">close</mat-icon>
-                    </div>
-                    <ng-template #questionnaire>
-                        <mat-icon [inline]="true">radio_button_unchecked</mat-icon>
-                    </ng-template>
-                </td>
-            </tr>
-        </table>
-    </div>
+  <div class="key-field">Matching Items:</div>
+  <div>
+    <table>
+      <thead>
+        <th></th>
+        @for (option of question.extendedMatchingOptions; track option) {
+          <th>{{ option.text }}</th>
+        }
+      </thead>
+      @for (statement of question.extendedMatchingStatements; track statement) {
+        <tr>
+          <td>{{ statement.text }}</td>
+          @for (option of question.extendedMatchingOptions; track option; let i = $index) {
+            <td class="inner-td">
+              @if (isTest) {
+                <div>
+                  @if (statement.correctOptionOrder === i) {
+                    <mat-icon [inline]="true">done</mat-icon>
+                  }
+                  @if (statement.correctOptionOrder !== i) {
+                    <mat-icon [inline]="true">close</mat-icon>
+                  }
+                </div>
+              } @else {
+                <mat-icon [inline]="true">radio_button_unchecked</mat-icon>
+              }
+            </td>
+          }
+        </tr>
+      }
+    </table>
+  </div>
 </div>

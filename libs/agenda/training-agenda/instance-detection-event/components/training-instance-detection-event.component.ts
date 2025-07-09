@@ -1,16 +1,21 @@
 import {Component, DestroyRef, inject, Input, OnInit} from '@angular/core';
 import {OffsetPaginationEvent} from '@sentinel/common/pagination';
-import {async, Observable} from 'rxjs';
+import {Observable} from 'rxjs';
 import {SentinelTable, SentinelTableComponent, TableActionEvent, TableLoadEvent} from '@sentinel/components/table';
 import {AbstractDetectionEvent} from '@crczp/training-model';
-import {TRAINING_INSTANCE_DATA_ATTRIBUTE_NAME, TrainingNavigator} from '@crczp/training-agenda';
+import {
+    TRAINING_INSTANCE_DATA_ATTRIBUTE_NAME,
+    TrainingDefaultNavigator,
+    TrainingNavigator
+} from '@crczp/training-agenda';
 import {map, take} from 'rxjs/operators';
 import {DetectionEventTable} from '../model/detection-event-table';
 import {DetectionEventService} from '../services/detection-event.service';
 import {ActivatedRoute} from '@angular/router';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {PaginationStorageService} from "@crczp/common";
+import {PaginationStorageService, providePaginationStorageService} from "@crczp/common";
 import {AsyncPipe} from "@angular/common";
+import {DetectionEventConcreteService} from "../services/detection-event-concrete.service";
 
 /**
  * Main component of training instance detection event.
@@ -22,25 +27,27 @@ import {AsyncPipe} from "@angular/common";
     imports: [
         AsyncPipe,
         SentinelTableComponent
-    ]
+    ],
+    providers: [
+        providePaginationStorageService(TrainingInstanceDetectionEventComponent),
+        {provide: TrainingNavigator, useClass: TrainingDefaultNavigator},
+        {provide: DetectionEventService, useClass: DetectionEventConcreteService},
+    ],
 })
 export class TrainingInstanceDetectionEventComponent implements OnInit {
-    private detectionEventService = inject(DetectionEventService);
-    private paginationService = inject(PaginationStorageService);
-    private activeRoute = inject(ActivatedRoute);
-    private navigator = inject(TrainingNavigator);
-
     @Input() paginationId = 'training-instance-detection-event';
     readonly INIT_SORT_NAME = 'levelId';
     readonly INIT_SORT_DIR = 'asc';
-
     cheatingDetectionId: number;
     detectionEvents$: Observable<SentinelTable<AbstractDetectionEvent>>;
     hasError$: Observable<boolean>;
     isLoading$: Observable<boolean>;
     trainingInstanceId: number;
     destroyRef = inject(DestroyRef);
-    protected readonly async = async;
+    private detectionEventService = inject(DetectionEventService);
+    private paginationService = inject(PaginationStorageService);
+    private activeRoute = inject(ActivatedRoute);
+    private navigator = inject(TrainingNavigator);
 
     ngOnInit(): void {
         this.activeRoute.data.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((data) => {

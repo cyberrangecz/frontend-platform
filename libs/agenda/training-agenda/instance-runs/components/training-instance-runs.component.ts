@@ -3,13 +3,17 @@ import {ActivatedRoute} from '@angular/router';
 import {OffsetPaginationEvent} from '@sentinel/common/pagination';
 import {TrainingInstance, TrainingRun} from '@crczp/training-model';
 import {SentinelTable, TableActionEvent, TableLoadEvent} from '@sentinel/components/table';
-import {async, Observable} from 'rxjs';
+import {Observable} from 'rxjs';
 import {map, switchMap, take, tap} from 'rxjs/operators';
 import {TrainingRunTable} from '../model/training-run-table';
 import {TRAINING_INSTANCE_DATA_ATTRIBUTE_NAME} from '@crczp/training-agenda';
 import {TrainingRunService} from '../services/runs/training-run.service';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {PaginationStorageService} from "@crczp/common";
+import {PaginationStorageService, providePaginationStorageService} from "@crczp/common";
+import {MatCard} from "@angular/material/card";
+import {TrainingRunOverviewComponent} from "./training-run-overview/training-run-overview.component";
+import {AsyncPipe} from "@angular/common";
+import {TrainingRunConcreteService} from "../services/runs/training-run-concrete.service";
 
 /**
  * Smart component of training instance runs
@@ -19,19 +23,26 @@ import {PaginationStorageService} from "@crczp/common";
     templateUrl: './training-instance-runs.component.html',
     styleUrls: ['./training-instance-runs.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    providers: [
+        {provide: TrainingRunService, useClass: TrainingRunConcreteService},
+        providePaginationStorageService(TrainingInstanceRunsComponent)
+    ],
+    imports: [
+        MatCard,
+        TrainingRunOverviewComponent,
+        AsyncPipe
+    ]
 })
 export class TrainingInstanceRunsComponent implements OnInit {
-    private activeRoute = inject(ActivatedRoute);
-    private paginationService = inject(PaginationStorageService);
-    private trainingRunService = inject(TrainingRunService);
-
     @Input() paginationId = 'training-instance-runs';
     trainingInstance$: Observable<TrainingInstance>;
     trainingRuns$: Observable<SentinelTable<TrainingRun>>;
     trainingRunsHasError$: Observable<boolean>;
     loadingTrainingRuns$: Observable<boolean>;
     destroyRef = inject(DestroyRef);
-
+    private activeRoute = inject(ActivatedRoute);
+    private paginationService = inject(PaginationStorageService);
+    private trainingRunService = inject(TrainingRunService);
     private trainingInstance: TrainingInstance;
 
     ngOnInit(): void {
@@ -85,6 +96,4 @@ export class TrainingInstanceRunsComponent implements OnInit {
         this.trainingRunsHasError$ = this.trainingRunService.hasError$;
         this.loadingTrainingRuns$ = this.trainingRunService.isLoading$;
     }
-
-    protected readonly async = async;
 }

@@ -5,7 +5,15 @@
         "declaration": true,
         "declarationMap": true,
         "inlineSources": true,
-        "types": []
+        "strict": false,
+        "strictFunctionTypes": false,
+    },
+    "types": [],
+    "angularCompilerOptions": {
+        "enableI18nLegacyMessageIdFormat": false,
+        "strictInjectionParameters": true,
+        "strictInputAccessModifiers": true,
+        "strictTemplates": true
     },
     "exclude": [
         "src/**/*.spec.ts",

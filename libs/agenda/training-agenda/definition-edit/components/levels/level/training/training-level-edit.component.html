@@ -1,233 +1,254 @@
 <div class="content">
-    <form [formGroup]="trainingLevelConfigFormGroup.formGroup">
-        <div class="panel-wrapper">
-            <div class="left-panel">
-                <!-- TITLE filed -->
-                <mat-form-field appearance="outline" (keydown.enter)="$event.preventDefault()">
-                    <mat-label>Title</mat-label>
-                    <input matInput placeholder="Title" formControlName="title" required/>
-                    <button
-                        *ngIf="title.value"
-                        matSuffix
-                        mat-icon-button
-                        aria-label="Clear"
-                        (click)="title.setValue('')"
-                    >
-                        <mat-icon>close</mat-icon>
-                    </button>
-                    <mat-error *ngIf="title.hasError('whitespace')">Title cannot be empty</mat-error>
-                </mat-form-field>
+  <form [formGroup]="trainingLevelConfigFormGroup.formGroup">
+    <div class="panel-wrapper">
+      <div class="left-panel">
+        <!-- TITLE filed -->
+        <mat-form-field appearance="outline" (keydown.enter)="$event.preventDefault()">
+          <mat-label>Title</mat-label>
+          <input matInput placeholder="Title" formControlName="title" required/>
+          @if (title.value) {
+            <button
+              matSuffix
+              mat-icon-button
+              aria-label="Clear"
+              (click)="title.setValue('')"
+              >
+              <mat-icon>close</mat-icon>
+            </button>
+          }
+          @if (title.hasError('whitespace')) {
+            <mat-error>Title cannot be empty</mat-error>
+          }
+        </mat-form-field>
 
-                <div class="time-configuration-container">
-                    <!-- ESTIMATED DURATION field -->
-                    <mat-form-field
-                        appearance="outline"
-                        hintLabel="Number in minutes greater than 1."
-                    >
-                        <mat-label>Estimated Duration in Minutes</mat-label>
-                        <input
-                            matInput
-                            placeholder="Estimated Duration in Minutes"
-                            min="1"
-                            maxlength="9"
-                            formControlName="estimatedDuration"
-                        />
-                        <mat-error *ngIf="estimatedDuration.hasError('pattern') || estimatedDuration.hasError('min')">
-                            Estimated Duration must be a number greater than or equal to 1
-                        </mat-error>
-                    </mat-form-field>
+        <div class="time-configuration-container">
+          <!-- ESTIMATED DURATION field -->
+          <mat-form-field
+            appearance="outline"
+            hintLabel="Number in minutes greater than 1."
+            >
+            <mat-label>Estimated Duration in Minutes</mat-label>
+            <input
+              matInput
+              placeholder="Estimated Duration in Minutes"
+              min="1"
+              maxlength="9"
+              formControlName="estimatedDuration"
+              />
+            @if (estimatedDuration.hasError('pattern') || estimatedDuration.hasError('min')) {
+              <mat-error>
+                Estimated Duration must be a number greater than or equal to 1
+              </mat-error>
+            }
+          </mat-form-field>
 
-                    <!-- MINIMAL POSSIBLE SOLVE TIME field -->
-                    <mat-form-field
-                        appearance="outline"
-                        hintLabel="Number in minutes greater 0."
-                    >
-                        <mat-label>Minimal Possible Solve Time in Minutes</mat-label>
-                        <input
-                            matInput
-                            placeholder="Minimal Possible Solve Time in Minutes"
-                            min="0"
-                            maxlength="9"
-                            formControlName="minimalPossibleSolveTime"
-                        />
-                        <mat-error
-                            *ngIf="minimalPossibleSolveTime.hasError('pattern') || estimatedDuration.hasError('min')">
-                            Minimal Possible Solve Time must be a number greater than or equal to 0
-                        </mat-error>
-                    </mat-form-field>
-                </div>
+          <!-- MINIMAL POSSIBLE SOLVE TIME field -->
+          <mat-form-field
+            appearance="outline"
+            hintLabel="Number in minutes greater 0."
+            >
+            <mat-label>Minimal Possible Solve Time in Minutes</mat-label>
+            <input
+              matInput
+              placeholder="Minimal Possible Solve Time in Minutes"
+              min="0"
+              maxlength="9"
+              formControlName="minimalPossibleSolveTime"
+              />
+            @if (minimalPossibleSolveTime.hasError('pattern') || estimatedDuration.hasError('min')) {
+              <mat-error
+                >
+                Minimal Possible Solve Time must be a number greater than or equal to 0
+              </mat-error>
+            }
+          </mat-form-field>
+        </div>
 
-                <!--CONTENT field -->
-                <h3>Content</h3>
-                <sentinel-markdown-editor
-                    class="mrkdwn-content"
-                    [sentinel-markdown-file-upload]="false"
-                    (contentChange)="content.setValue($event)"
-                    [content]="content.value"
-                />
-                <mat-error *ngIf="content.hasError('whitespace')">Content cannot be empty</mat-error>
-                <!--SOLUTION field -->
-                <h3>Solution</h3>
-                <div class="content-info">
-                    <div class="content-info-head">
-                        <mat-icon>tips_and_updates</mat-icon>
-                        <h4>Use Placeholder Variable</h4>
-                    </div>
-                    <div class="content-info-content">
-                        <p>
-                            Display an actual value of the answer in the solution content by using the variable
-                            <strong style="background: #d8d8d8">{{ '${ANSWER}' }}</strong>,
-                            that will be resolved and replaced in displayed solution during the training run.
-                        </p>
-                    </div>
-                </div>
-                <sentinel-markdown-editor
-                    class="mrkdwn-solution"
-                    [sentinel-markdown-file-upload]="false"
-                    (contentChange)="solution.setValue($event)"
-                    [content]="solution.value"
-                />
-                <mat-error *ngIf="solution.hasError('whitespace')">Solution cannot be empty</mat-error>
-            </div>
+        <!--CONTENT field -->
+        <h3>Content</h3>
+        <sentinel-markdown-editor
+          class="mrkdwn-content"
+          [sentinel-markdown-file-upload]="false"
+          (contentChange)="content.setValue($event)"
+          [content]="content.value"
+          />
+        @if (content.hasError('whitespace')) {
+          <mat-error>Content cannot be empty</mat-error>
+        }
+        <!--SOLUTION field -->
+        <h3>Solution</h3>
+        <div class="content-info">
+          <div class="content-info-head">
+            <mat-icon>tips_and_updates</mat-icon>
+            <h4>Use Placeholder Variable</h4>
+          </div>
+          <div class="content-info-content">
+            <p>
+              Display an actual value of the answer in the solution content by using the variable
+              <strong style="background: #d8d8d8">{{ '${ANSWER}' }}</strong>,
+              that will be resolved and replaced in displayed solution during the training run.
+            </p>
+          </div>
+        </div>
+        <sentinel-markdown-editor
+          class="mrkdwn-solution"
+          [sentinel-markdown-file-upload]="false"
+          (contentChange)="solution.setValue($event)"
+          [content]="solution.value"
+          />
+        @if (solution.hasError('whitespace')) {
+          <mat-error>Solution cannot be empty</mat-error>
+        }
+      </div>
 
-            <div class="right-panel">
-                <!-- MAX SCORE filed -->
-                <mat-form-field
-                    appearance="outline"
+      <div class="right-panel">
+        <!-- MAX SCORE filed -->
+        <mat-form-field
+          appearance="outline"
                     hintLabel="Number in range from 0
           to 100"
-                >
-                    <mat-label>Points for the Level</mat-label>
-                    <input
-                        matInput
-                        placeholder="Points for the level"
-                        type="number"
-                        max="100"
-                        min="0"
-                        formControlName="maxScore"
-                        required
-                    />
-                    <mat-error>Maximal score must be a number in range from 0 to 100</mat-error>
-                </mat-form-field>
+          >
+          <mat-label>Points for the Level</mat-label>
+          <input
+            matInput
+            placeholder="Points for the level"
+            type="number"
+            max="100"
+            min="0"
+            formControlName="maxScore"
+            required
+            />
+          <mat-error>Maximal score must be a number in range from 0 to 100</mat-error>
+        </mat-form-field>
 
-                <!-- INCORRECT ANSWER LIMIT field -->
-                <mat-form-field
-                    appearance="outline"
+        <!-- INCORRECT ANSWER LIMIT field -->
+        <mat-form-field
+          appearance="outline"
                     hintLabel="1 to 100. If the limit
           will be overreached, solution will be displayed automatically."
-                >
-                    <mat-label>Incorrect Answer Limit</mat-label>
-                    <input
-                        matInput
-                        placeholder="Incorrect Answer Limit"
-                        type="number"
-                        min="1"
-                        max="100"
-                        formControlName="incorrectAnswerLimit"
-                        required
-                    />
-                    <mat-error>Incorrect answer limit must be in range of 1 to 100</mat-error>
-                </mat-form-field>
+          >
+          <mat-label>Incorrect Answer Limit</mat-label>
+          <input
+            matInput
+            placeholder="Incorrect Answer Limit"
+            type="number"
+            min="1"
+            max="100"
+            formControlName="incorrectAnswerLimit"
+            required
+            />
+          <mat-error>Incorrect answer limit must be in range of 1 to 100</mat-error>
+        </mat-form-field>
 
-                <!-- SHOW VARIANT ANSWERS checkbox -->
-                <mat-checkbox
-                    matTooltip="Requires a sandbox definition with defined variables which will be generated uniquely for each sandbox."
-                    labelPosition="after"
-                    formControlName="variantAnswers"
-                >
-                    Variant Answers (requires a specific sandbox definition)
-                </mat-checkbox>
+        <!-- SHOW VARIANT ANSWERS checkbox -->
+        <mat-checkbox
+          matTooltip="Requires a sandbox definition with defined variables which will be generated uniquely for each sandbox."
+          labelPosition="after"
+          formControlName="variantAnswers"
+          >
+          Variant Answers (requires a specific sandbox definition)
+        </mat-checkbox>
 
-                <!-- ANSWER field -->
-                <mat-form-field
-                    *ngIf="!variantAnswers.value"
-                    appearance="outline"
-                    hintLabel="'Max 50 characters'"
-                    (keydown.enter)="$event.preventDefault()"
+        <!-- ANSWER field -->
+        @if (!variantAnswers.value) {
+          <mat-form-field
+            appearance="outline"
+            hintLabel="'Max 50 characters'"
+            (keydown.enter)="$event.preventDefault()"
+            >
+            <mat-label>Correct Answer - Static</mat-label>
+            <input matInput placeholder="Correct Answer - Static" maxlength="50" formControlName="answer"/>
+            @if (answer) {
+              <button
+                matSuffix
+                mat-icon-button
+                aria-label="Clear"
+                (click)="answer.setValue(null)"
                 >
-                    <mat-label>Correct Answer - Static</mat-label>
-                    <input matInput placeholder="Correct Answer - Static" maxlength="50" formControlName="answer"/>
-                    <button
-                        *ngIf="answer"
-                        matSuffix
-                        mat-icon-button
-                        aria-label="Clear"
-                        (click)="answer.setValue(null)"
-                    >
-                        <mat-icon>close</mat-icon>
-                    </button>
-                    <mat-hint align="end">{{ answer.value?.length || 0 }}/50</mat-hint>
-                    <mat-error *ngIf="answer.hasError('whitespace')"> 'Correct Answer - Static' cannot be empty
-                    </mat-error>
-                </mat-form-field>
+                <mat-icon>close</mat-icon>
+              </button>
+            }
+            <mat-hint align="end">{{ answer.value?.length || 0 }}/50</mat-hint>
+            @if (answer.hasError('whitespace')) {
+              <mat-error> 'Correct Answer - Static' cannot be empty
+              </mat-error>
+            }
+          </mat-form-field>
+        }
 
-                <!-- VARIABLE NAME field -->
-                <mat-form-field
-                    *ngIf="variantAnswers.value"
-                    appearance="outline"
-                    hintLabel="'Max 50 characters'"
-                    (keydown.enter)="$event.preventDefault()"
+        <!-- VARIABLE NAME field -->
+        @if (variantAnswers.value) {
+          <mat-form-field
+            appearance="outline"
+            hintLabel="'Max 50 characters'"
+            (keydown.enter)="$event.preventDefault()"
+            >
+            <mat-label>Correct Answer - Variable Name</mat-label>
+            <input
+              matInput
+              placeholder="Correct Answer - Variable Name"
+              maxlength="50"
+              formControlName="answerVariableName"
+              />
+            @if (answerVariableName) {
+              <button
+                matSuffix
+                mat-icon-button
+                aria-label="Clear"
+                (click)="answerVariableName.setValue(null)"
                 >
-                    <mat-label>Correct Answer - Variable Name</mat-label>
-                    <input
-                        matInput
-                        placeholder="Correct Answer - Variable Name"
-                        maxlength="50"
-                        formControlName="answerVariableName"
-                    />
-                    <button
-                        *ngIf="answerVariableName"
-                        matSuffix
-                        mat-icon-button
-                        aria-label="Clear"
-                        (click)="answerVariableName.setValue(null)"
-                    >
-                        <mat-icon>close</mat-icon>
-                    </button>
-                    <mat-hint *ngIf="variantAnswers" align="end">{{ answerVariableName.value?.length || 0 }}/50
-                    </mat-hint>
-                    <mat-error *ngIf="answerVariableName.hasError('whitespace')">
-                        'Correct Answers - Variable Name' cannot be empty
-                    </mat-error>
-                </mat-form-field>
+                <mat-icon>close</mat-icon>
+              </button>
+            }
+            @if (variantAnswers) {
+              <mat-hint align="end">{{ answerVariableName.value?.length || 0 }}/50
+              </mat-hint>
+            }
+            @if (answerVariableName.hasError('whitespace')) {
+              <mat-error>
+                'Correct Answers - Variable Name' cannot be empty
+              </mat-error>
+            }
+          </mat-form-field>
+        }
 
-                <!-- SOLUTION PENALIZED field -->
-                <mat-checkbox
-                    formControlName="solutionPenalized"
+        <!-- SOLUTION PENALIZED field -->
+        <mat-checkbox
+          formControlName="solutionPenalized"
                     matTooltip="Penalty
           for displaying the solution"
-                >Solution Penalized (trainee will get 0 points for the level)
-                </mat-checkbox
-                >
+          >Solution Penalized (trainee will get 0 points for the level)
+          </mat-checkbox
+          >
 
-                <!-- COMMANDS REQUIRED field -->
-                <mat-checkbox
-                    formControlName="commandsRequired"
-                    matTooltip="Indicates if level can be completed without using commands or not"
-                >Is any command required to complete the level?
-                </mat-checkbox
-                >
-            </div>
+          <!-- COMMANDS REQUIRED field -->
+          <mat-checkbox
+            formControlName="commandsRequired"
+            matTooltip="Indicates if level can be completed without using commands or not"
+            >Is any command required to complete the level?
+            </mat-checkbox
+            >
+          </div>
         </div>
 
         <!--HINTS component -->
         <crczp-hints-overview
-            (hintsChange)="hintsChanged($event)"
-            [hints]="level.hints"
-            [levelMaxScore]="level.maxScore"
-            [levelId]="level.id"
-        >
+          (hintsChange)="hintsChanged($event)"
+          [hints]="level.hints"
+          [levelMaxScore]="level.maxScore"
+          [levelId]="level.id"
+          >
         </crczp-hints-overview>
 
         <crczp-mitre-technique-select
-            [mitreTechniques]="level.mitreTechniques"
-            [mitreTechniquesList]="mitreTechniquesList"
-            (mitreTechniquesChange)="mitreTechniquesChanged($event)"
-        />
+          [mitreTechniques]="level.mitreTechniques"
+          [mitreTechniquesList]="mitreTechniquesList"
+          (mitreTechniquesChange)="mitreTechniquesChanged($event)"
+          />
 
         <crczp-expected-commands-select
-            [expectedCommands]="level.expectedCommands"
-            (expectedCommandsChange)="expectedCommandsChanged($event)"
-        />
-    </form>
-</div>
+          [expectedCommands]="level.expectedCommands"
+          (expectedCommandsChange)="expectedCommandsChanged($event)"
+          />
+      </form>
+    </div>
