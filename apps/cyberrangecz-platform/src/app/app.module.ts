@@ -11,10 +11,10 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {SentinelConfirmationDialogComponent} from '@sentinel/components/dialogs';
 import {AppComponent} from './app.component';
 import {loadingInterceptor} from './services/http-interceptors/loading-interceptor';
-import {APP_CONFIG, appConfigProvider} from '@sentinel/common/dynamic-env';
-import {ErrorHandlerService} from './services/shared/error-handler.service';
-import {LoadingService} from './services/shared/loading.service';
-import {NotificationService} from './services/shared/notification.service';
+import {APP_CONFIG, appConfigProvider, SentinelConfig} from '@sentinel/common/dynamic-env';
+import {ErrorHandlerService} from '../../../../libs/common/src/error-handling/error-handler.service';
+import {LoadingService} from '../../../../libs/common/src/error-handling/loading.service';
+import {NotificationService} from '../../../../libs/common/src/error-handling/notification.service';
 import {tokenRefreshInterceptor} from './services/http-interceptors/token-refresh-interceptor';
 import {TokenRefreshService} from './services/shared/token-refresh.service';
 import {SentinelLayout1Component} from "@sentinel/layout/layout1";
@@ -89,7 +89,7 @@ export class SentinelUagAuthorizationStrategy extends SentinelAuthorizationStrat
         appConfigProvider,
         {
             provide: PortalConfig,
-            useFactory: () => PortalConfig.parse(inject(APP_CONFIG)),
+            useFactory: (config: SentinelConfig) => PortalConfig.schema().parse(config),
             deps: [APP_CONFIG],
         },
         {

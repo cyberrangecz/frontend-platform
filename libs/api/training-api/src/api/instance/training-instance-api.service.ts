@@ -3,7 +3,7 @@ import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/paginat
 import {TrainingInstance, TrainingRun} from '@crczp/training-model';
 import {Observable} from 'rxjs';
 
-export abstract class TrainingInstanceApi {
+export abstract class LinearTrainingInstanceApi {
     /**
      * Sends http request to retrieve all training instances on specified page of a pagination
      * @param pagination requested pagination

@@ -125,9 +125,6 @@
             "@crczp/training-agenda/instance-cheating-detection-edit": [
                 "libs/agenda/training-agenda/instance-cheating-detection-edit/index.ts"
             ],
-            "@crczp/training-agenda/instance-detail": [
-                "libs/agenda/training-agenda/instance-detail/index.ts"
-            ],
             "@crczp/training-agenda/instance-detection-event": [
                 "libs/agenda/training-agenda/instance-detection-event/index.ts"
             ],

@@ -14,3 +14,5 @@ export * from './utils/date-utils';
 export * from './utils/loading-tracker';
 export * from './utils/nav-builder';
 export * from './utils/property-provision';
+export * from './routing/routing-namespace'
+

@@ -9,11 +9,7 @@ import {
     TableLoadEvent
 } from '@sentinel/components/table';
 import {map, take} from 'rxjs/operators';
-import {
-    TRAINING_INSTANCE_DATA_ATTRIBUTE_NAME,
-    TrainingDefaultNavigator,
-    TrainingNavigator
-} from '@crczp/training-agenda';
+import {TRAINING_INSTANCE_DATA_ATTRIBUTE_NAME, TrainingNavigator} from '@crczp/training-agenda';
 import {CheatingDetectionOverviewControls} from '../model/cheating-detection-overview-controls';
 import {CheatingDetectionService} from '../services/cheating-detection.service';
 import {CheatingDetectionTable} from '../model/cheating-detection-table';

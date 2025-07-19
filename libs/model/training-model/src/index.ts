@@ -23,6 +23,7 @@ export * from './enums/question-type.enum';
 export * from './enums/questionnaire-type.enum';
 export * from './enums/training-run-type-enum';
 export * from './enums/detected-forbidden-command-type.enum';
+export * from './enums/training-type.enum';
 
 // MAIN
 export * from './training/access-training-run-info';

@@ -1,6 +1,6 @@
 import {inject, Injectable} from '@angular/core';
 import {OffsetPaginationEvent, PaginatedResource,} from '@sentinel/common/pagination';
-import {TrainingInstanceApi, TrainingRunApi} from '@crczp/training-api';
+import {LinearRunApi, LinearTrainingInstanceApi} from '@crczp/training-api';
 import {TrainingRun, TrainingRunInfo} from '@crczp/training-model';
 import {Observable} from 'rxjs';
 import {tap} from 'rxjs/operators';
@@ -14,8 +14,8 @@ import {PortalConfig} from '@crczp/common';
  */
 @Injectable()
 export class TrainingRunConcreteService extends TrainingRunService {
-    private trainingInstanceApi = inject(TrainingInstanceApi);
-    private trainingRunApi = inject(TrainingRunApi);
+    private trainingInstanceApi = inject(LinearTrainingInstanceApi);
+    private trainingRunApi = inject(LinearRunApi);
     private errorHandler = inject(TrainingErrorHandler);
 
 

@@ -1,7 +1,7 @@
 import {inject, Injectable} from '@angular/core';
 import {Router} from '@angular/router';
 import {PoolApi, SandboxDefinitionApi} from '@crczp/sandbox-api';
-import {TrainingDefinitionApi, TrainingInstanceApi} from '@crczp/training-api';
+import {LinearTrainingInstanceApi, TrainingDefinitionApi} from '@crczp/training-api';
 import {TrainingDefinitionInfo, TrainingInstance} from '@crczp/training-model';
 import {combineLatest, from, Observable} from 'rxjs';
 import {map, switchMap, tap} from 'rxjs/operators';
@@ -18,7 +18,7 @@ import {LoadingTracker, PortalConfig} from "@crczp/common";
  */
 @Injectable()
 export class TrainingInstanceEditConcreteService extends TrainingInstanceEditService {
-    private trainingInstanceApi = inject(TrainingInstanceApi);
+    private trainingInstanceApi = inject(LinearTrainingInstanceApi);
     private trainingDefinitionApi = inject(TrainingDefinitionApi);
     private poolApi = inject(PoolApi);
     private sandboxDefinitionApi = inject(SandboxDefinitionApi);

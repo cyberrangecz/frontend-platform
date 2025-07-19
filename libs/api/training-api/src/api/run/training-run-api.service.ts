@@ -12,7 +12,7 @@ import {
 } from '@crczp/training-model';
 import {Observable} from 'rxjs';
 
-export abstract class TrainingRunApi {
+export abstract class LinearRunApi {
     /**
      * Sends http request to retrieve all training runs on specified page of a pagination
      * @param pagination requested pagination

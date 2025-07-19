@@ -3,9 +3,9 @@ import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 import {SentinelAuthService, User} from '@sentinel/auth';
 import {AgendaContainer} from '@sentinel/layout';
 import {Observable} from 'rxjs';
-import {filter, map, tap} from 'rxjs/operators';
+import {filter, map} from 'rxjs/operators';
 import {NOTIFICATIONS_PATH} from './paths';
-import {LoadingService} from './services/shared/loading.service';
+import {LoadingService} from '../../../../libs/common/src/error-handling/loading.service';
 import {NavConfigFactory} from './utils/nav-config-factory';
 import {PortalDynamicEnvironment} from './portal-dynamic-environment';
 import packagejson from '../../../../package.json';
@@ -38,17 +38,12 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
 
     ngOnInit(): void {
-        console.log("ngOnInit");
-        this.activeUser$ = this.authService.activeUser$.pipe(
-            tap(activeUser => console.log(activeUser)),
-        );
-        console.log(this.authService.getActiveUserAuthorizationHeader())
+        this.activeUser$ = this.authService.activeUser$;
         this.title$ = this.getTitleFromRouter();
         this.subtitle$ = this.getSubtitleFromRouter();
         this.agendaContainers$ = this.authService.activeUser$.pipe(
             filter((user) => user !== null && user !== undefined),
             map((user) => NavBuilder.buildNav(NavConfigFactory.buildNavConfig(user))),
-            tap((data) => console.log(data))
         );
         this.isLoading$ = this.loadingService.isLoading$; // <-- causes angular error
         this.version = PortalDynamicEnvironment.getConfig().version || packagejson.version;
@@ -56,7 +51,6 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     ngAfterViewInit(): void {
         this.router.events.pipe(
-            tap((event) => console.log(event)),
             filter((event) => event instanceof NavigationEnd)
         ).subscribe();
     }

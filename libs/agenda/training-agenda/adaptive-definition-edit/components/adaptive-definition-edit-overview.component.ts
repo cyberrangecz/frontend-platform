@@ -11,7 +11,7 @@ import {filter, map, tap} from 'rxjs/operators';
 import {TrainingDefinitionEditControls} from '../model/adapters/training-definition-edit-controls';
 import {TrainingDefinitionChangeEvent} from '../model/events/training-definition-change-event';
 import {AdaptiveDefinitionEditService} from '../services/state/edit/adaptive-definition-edit.service';
-import {ADAPTIVE_DEFINITION_DATA_ATTRIBUTE_NAME} from '@crczp/training-agenda';
+import {ADAPTIVE_DEFINITION_DATA_ATTRIBUTE_NAME, TrainingNavigator} from '@crczp/training-agenda';
 import {AdaptiveDefinitionEditConcreteService} from '../services/state/edit/adaptive-definition-edit-concrete.service';
 import {AuthorsAssignService} from '../services/state/authors-assign/authors-assign.service';
 import {PhaseEditService} from '../services/state/phase/phase-edit.service';
@@ -21,7 +21,7 @@ import {MitreTechniquesConcreteService} from '../services/state/mitre-techniques
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {OffsetPaginationEvent} from '@sentinel/common/pagination';
 import {SentinelUserAssignComponent, SentinelUserAssignService,} from '@sentinel/components/user-assign';
-import {PaginationStorageService, PortalConfig, providePaginationStorageService} from '@crczp/common';
+import {PortalConfig, providePaginationStorageService} from '@crczp/common';
 import {
     MatExpansionPanel,
     MatExpansionPanelContent,
@@ -68,6 +68,7 @@ import {
             provide: MitreTechniquesService,
             useClass: MitreTechniquesConcreteService,
         },
+        TrainingNavigator,
         providePaginationStorageService(AdaptiveDefinitionEditOverviewComponent)
     ],
     imports: [
@@ -104,7 +105,6 @@ export class AdaptiveDefinitionEditOverviewComponent implements OnInit {
     destroyRef = inject(DestroyRef);
     defaultPaginationSize: number = inject(PortalConfig).defaultPageSize;
     private activeRoute = inject(ActivatedRoute);
-    private paginationService = inject(PaginationStorageService);
     private editService = inject(AdaptiveDefinitionEditService);
     private phaseEditService = inject(PhaseEditService);
     private mitreTechniquesService = inject(MitreTechniquesService);

@@ -2,9 +2,9 @@ import {Injectable} from '@angular/core';
 import {SentinelAuthService} from "@sentinel/auth";
 
 
-type RoleKey = keyof typeof RoleService.ROLES;
+export type RoleKey = keyof typeof RoleService.ROLES;
 
-type RolePredicateMap = {
+export type RolePredicateMap = {
     [K in RoleKey as `${K}Guard`]: () => boolean;
 };
 
@@ -30,7 +30,7 @@ export class RoleService {
     public readonly rolePredicates: RolePredicateMap = Object.fromEntries(
         (Object.keys(this) as RoleKey[]).map((key) => [
             `is${String(key).charAt(0).toUpperCase() + String(key).slice(1)}`,
-            () => this.hasRole(RoleService.ROLES[key])
+            () => this.hasRole(key)
         ])
     ) as RolePredicateMap;
 
@@ -47,15 +47,17 @@ export class RoleService {
         )
     }
 
-    hasRole(roleType: string) {
-        return this.rolesDict.has(roleType);
+    hasRole(roleKey: RoleKey) {
+        return this.rolesDict.has(RoleService.ROLES[roleKey]);
     }
 
-    hasAny(roles: string[]) {
-        return roles.some(role => this.rolesDict.has(role));
+    hasAny(roles: RoleKey[]) {
+        return roles.map(roleKey => RoleService.ROLES[roleKey])
+            .some(role => this.rolesDict.has(role));
     }
 
-    hasAll(roles: string[]) {
-        return !roles.some(role => !this.rolesDict.has(role));
+    hasAll(roles: RoleKey[]) {
+        return !roles.map(roleKey => RoleService.ROLES[roleKey])
+            .some(role => !this.rolesDict.has(role));
     }
 }

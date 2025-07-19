@@ -1,6 +1,6 @@
 import {inject, Injectable} from '@angular/core';
 import {Router} from '@angular/router';
-import {TrainingRunApi} from '@crczp/training-api';
+import {LinearRunApi} from '@crczp/training-api';
 import {AccessTrainingRunInfo, Level} from '@crczp/training-model';
 import {EMPTY, Observable} from 'rxjs';
 import {switchMap, tap} from 'rxjs/operators';
@@ -16,7 +16,7 @@ import {LoadingDialogComponent, LoadingDialogConfig} from "@crczp/common";
  */
 @Injectable()
 export class RunningTrainingRunConcreteService extends RunningTrainingRunService {
-    private api = inject(TrainingRunApi);
+    private api = inject(LinearRunApi);
     private topologyService = inject(TopologyApi);
     private errorHandler = inject(TrainingErrorHandler);
     private navigator = inject(TrainingNavigator);

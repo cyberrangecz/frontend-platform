@@ -1,6 +1,6 @@
 import {inject, Injectable} from '@angular/core';
 import {Router} from '@angular/router';
-import {AdaptiveRunApi, TrainingRunApi} from '@crczp/training-api';
+import {AdaptiveRunApi, LinearRunApi} from '@crczp/training-api';
 import {AccessedTrainingRun} from '@crczp/training-model';
 import {from, Observable} from 'rxjs';
 import {concatMap, map, tap} from 'rxjs/operators';
@@ -15,7 +15,7 @@ import {PortalConfig} from '@crczp/common';
  */
 @Injectable()
 export class AccessedTrainingRunConcreteService extends AccessedTrainingRunService {
-    private trainingApi = inject(TrainingRunApi);
+    private trainingApi = inject(LinearRunApi);
     private adaptiveApi = inject(AdaptiveRunApi);
     private router = inject(Router);
     private navigator = inject(TrainingNavigator);

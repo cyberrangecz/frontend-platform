@@ -1,7 +1,7 @@
 import {inject, Injectable} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import {SentinelDialogResultEnum} from '@sentinel/components/dialogs';
-import {TrainingRunApi} from '@crczp/training-api';
+import {LinearRunApi} from '@crczp/training-api';
 import {Hint, TrainingLevel} from '@crczp/training-model';
 import {EMPTY, Observable} from 'rxjs';
 import {switchMap, tap} from 'rxjs/operators';
@@ -16,7 +16,7 @@ import {SentinelNotificationService} from '@sentinel/layout/notification';
  * Handles events and actions specific for training level in training run
  */
 export class TrainingRunTrainingLevelConcreteService extends TrainingRunTrainingLevelService {
-    private api = inject(TrainingRunApi);
+    private api = inject(LinearRunApi);
     private sandboxApi = inject(SandboxInstanceApi);
     private errorHandler = inject(TrainingErrorHandler);
 

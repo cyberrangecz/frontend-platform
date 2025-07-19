@@ -1,28 +1,18 @@
 import {NgModule} from '@angular/core';
-import {ExtraOptions, RouterModule, Routes} from '@angular/router';
+import {ExtraOptions, RouterModule} from '@angular/router';
 import {HomeComponent} from './components/home/home.component';
-import {HOME_PATH, LOGIN_PATH, LOGOUT_PATH, NOTIFICATIONS_PATH} from './paths';
 import {LoginComponent} from "./components/login/login.component";
 import {sentinelAuthGuard, sentinelAuthGuardWithLoading, sentinelNegativeAuthGuard} from "@sentinel/auth";
-import {
-    ADAPTIVE_DEFINITION_PATH,
-    ADAPTIVE_INSTANCE_PATH,
-    MITRE_TECHNIQUES_PATH,
-    TRAINING_DEFINITION_PATH,
-    TRAINING_INSTANCE_PATH,
-    TRAINING_RUN_PATH
-} from "@crczp/training-agenda";
 import {RoleGuards} from "./utils/guards";
 import {RoleService} from "./services/role.service";
-import {SANDBOX_DEFINITION_PATH, SANDBOX_IMAGES_PATH, SANDBOX_POOL_PATH} from "@crczp/sandbox-agenda";
-import {GROUP_PATH, MICROSERVICE_PATH, USER_PATH} from "@crczp/user-and-group-agenda";
+import {ValidRoutes} from "../../../../libs/common/src/routing/router-types";
 
-const routes: Routes = [
+const routes: ValidRoutes<''> = [
     {
-        path: TRAINING_DEFINITION_PATH,
+        path: 'linear-definition',
         loadChildren: () =>
-            import('./modules/training-agenda/definition/overview/training-definition-overview.module').then(
-                (m) => m.TrainingDefinitionOverviewModule,
+            import('./modules/training-agenda/training-definition-routing.module').then(
+                (m) => m.TrainingDefinitionRoutingModule,
             ),
         canActivate: [RoleGuards.trainingDesignerGuard],
         data: {
@@ -32,10 +22,10 @@ const routes: Routes = [
         },
     },
     {
-        path: ADAPTIVE_DEFINITION_PATH,
+        path: 'linear-definition',
         loadChildren: () =>
-            import('./modules/training-agenda/adaptive-definition/overview/adaptive-definition-overview.module').then(
-                (m) => m.AdaptiveDefinitionOverviewModule,
+            import('./modules/training-agenda/adaptive-definition-routing.module').then(
+                (m) => m.AdaptiveDefinitionRoutingModule,
             ),
         canActivate: [RoleGuards.adaptiveTrainingDesignerGuard],
         data: {
@@ -45,23 +35,10 @@ const routes: Routes = [
         },
     },
     {
-        path: SANDBOX_DEFINITION_PATH,
+        path: 'linear-instance',
         loadChildren: () =>
-            import('./modules/sandbox-agenda/definition/sandbox-definition-overview.module').then(
-                (m) => m.SandboxDefinitionOverviewModule,
-            ),
-        canActivate: [RoleGuards.sandboxDesignerGuard],
-        data: {
-            breadcrumb: 'Sandbox Definitions',
-            title: 'Sandbox Definition Overview',
-            preloadRoleCondition: RoleService.ROLES.sandboxDesigner,
-        },
-    },
-    {
-        path: TRAINING_INSTANCE_PATH,
-        loadChildren: () =>
-            import('./modules/training-agenda/instance/overview/training-instance-overview.module').then(
-                (m) => m.TrainingInstanceOverviewModule,
+            import('./modules/training-agenda/training-instance-routing.module').then(
+                (m) => m.TrainingInstanceRoutingModule,
             ),
         canActivate: [RoleGuards.trainingOrganizerGuard],
         data: {
@@ -71,10 +48,10 @@ const routes: Routes = [
         },
     },
     {
-        path: ADAPTIVE_INSTANCE_PATH,
+        path: 'adaptive-instance',
         loadChildren: () =>
-            import('./modules/training-agenda/adaptive-instance/overview/adaptive-instance-overview.module').then(
-                (m) => m.AdaptiveInstanceOverviewModule,
+            import('./modules/training-agenda/adaptive-instance-routing.module').then(
+                (m) => m.AdaptiveInstanceRoutingModule,
             ),
         canActivate: [RoleGuards.adaptiveTrainingOrganizerGuard],
         data: {
@@ -84,9 +61,22 @@ const routes: Routes = [
         },
     },
     {
-        path: SANDBOX_POOL_PATH,
+        path: 'sandbox-definition',
         loadChildren: () =>
-            import('./modules/sandbox-agenda/pool/pool-overview.module').then((m) => m.PoolOverviewModule),
+            import('./modules/sandbox-agenda/sandbox-definition-routing.module')
+                .then((m) => m.SandboxDefinitionRoutingModule),
+        canActivate: [RoleGuards.sandboxDesignerGuard],
+        data: {
+            breadcrumb: 'Sandbox Definitions',
+            title: 'Sandbox Definition Overview',
+            preloadRoleCondition: RoleService.ROLES.sandboxDesigner,
+        },
+    },
+    {
+        path: 'pool',
+        loadChildren: () =>
+            import('./modules/sandbox-agenda/pool-routing.module')
+                .then((m) => m.PoolRoutingModule),
         canActivate: [RoleGuards.sandboxOrganizerGuard],
         data: {
             breadcrumb: 'Pools',
@@ -95,9 +85,10 @@ const routes: Routes = [
         },
     },
     {
-        path: SANDBOX_IMAGES_PATH,
+        path: 'sandbox-image',
         loadChildren: () =>
-            import('./modules/sandbox-agenda/images/sandbox-images.module').then((m) => m.SandboxImagesOverviewModule),
+            import('./modules/sandbox-agenda/sandbox-images-routing.module')
+                .then((m) => m.SandboxImagesRoutingModule),
         canActivate: [RoleGuards.sandboxOrganizerGuard],
         data: {
             breadcrumb: 'Images',
@@ -106,10 +97,10 @@ const routes: Routes = [
         },
     },
     {
-        path: TRAINING_RUN_PATH,
+        path: 'run',
         loadChildren: () =>
-            import('./modules/training-agenda/run/overview/training-run-overview.module').then(
-                (m) => m.TrainingRunOverviewModule,
+            import('./modules/training-agenda/training-run-routing.module').then(
+                (m) => m.TrainingRunRoutingModule,
             ),
         canActivate: [RoleGuards.trainingTraineeGuard],
         data: {
@@ -119,10 +110,10 @@ const routes: Routes = [
         },
     },
     { // for trainees
-        path: MITRE_TECHNIQUES_PATH,
-        loadChildren: () =>
-            import('./modules/training-agenda/mitre-techniques/mitre-techniques.module').then(
-                (m) => m.MitreTechniquesModule,
+        path: 'mitre-techniques',
+        loadComponent: () =>
+            import('@crczp/training-agenda/mitre-techniques').then(
+                (m) => m.MitreTechniquesComponent,
             ),
         canActivate: [RoleGuards.trainingTraineeGuard],
         data: {
@@ -133,23 +124,24 @@ const routes: Routes = [
         },
     },
     { // for designers
-        path: MITRE_TECHNIQUES_PATH,
-        loadChildren: () =>
-            import('./modules/training-agenda/mitre-techniques/mitre-techniques.module').then(
-                (m) => m.MitreTechniquesModule,
+        path: 'mitre-techniques',
+        loadComponent: () =>
+            import('@crczp/training-agenda/mitre-techniques').then(
+                (m) => m.MitreTechniquesComponent,
             ),
         canActivate: [RoleGuards.trainingDesignerGuard],
         data: {
             title: 'MITRE ATT&CK Techniques',
             breadcrumb: 'MITRE ATT&CK Techniques',
-            showSwitch: false,
+            [Boolean.name]: false,
             preloadRoleCondition: RoleService.ROLES.trainingDesigner,
         },
     },
     {
-        path: USER_PATH,
+        path: 'user',
         loadChildren: () =>
-            import('./modules/user-and-group-agenda/user/user-overview.module').then((m) => m.UserOverviewModule),
+            import('./modules/user-and-group-agenda/user-routing.module')
+                .then((m) => m.UserRoutingModule),
         canActivate: [RoleGuards.uagAdminGuard],
         data: {
             breadcrumb: 'Users',
@@ -158,9 +150,10 @@ const routes: Routes = [
         },
     },
     {
-        path: GROUP_PATH,
+        path: 'group',
         loadChildren: () =>
-            import('./modules/user-and-group-agenda/group/group-overview.module').then((m) => m.GroupOverviewModule),
+            import('./modules/user-and-group-agenda/group-routing.module')
+                .then((m) => m.GroupRoutingModule),
         canActivate: [RoleGuards.uagAdminGuard],
         data: {
             breadcrumb: 'Groups',
@@ -169,10 +162,10 @@ const routes: Routes = [
         },
     },
     {
-        path: MICROSERVICE_PATH,
+        path: 'microservice',
         loadChildren: () =>
-            import('./modules/user-and-group-agenda/microservice/microservice-overview.module').then(
-                (m) => m.MicroserviceOverviewModule,
+            import('./modules/user-and-group-agenda/microservice-routing.module').then(
+                (m) => m.MicroserviceRoutingModule,
             ),
         canActivate: [RoleGuards.uagAdminGuard],
         data: {
@@ -182,33 +175,35 @@ const routes: Routes = [
         },
     },
     {
-        path: NOTIFICATIONS_PATH,
+        path: 'notifications',
         canActivate: [sentinelAuthGuard],
         loadChildren: () =>
-            import('./modules/notifications/notifications-overview.module').then((m) => m.NotificationsOverviewModule),
+            import('./modules/notifications/notifications-routing.module').then(
+                (m) => m.NotificationsRoutingModule
+            ),
         data: {
             breadcrumb: 'Notifications',
             title: 'Notifications'
         },
     },
     {
-        path: LOGIN_PATH,
+        path: 'login',
         component: LoginComponent,
         canActivate: [sentinelNegativeAuthGuard],
     },
     {
-        path: HOME_PATH,
+        path: 'home',
         component: HomeComponent,
         canActivate: [sentinelAuthGuardWithLoading, RoleGuards.advancedUserGuard],
     },
     {
-        path: LOGOUT_PATH,
-        redirectTo: HOME_PATH,
+        path: 'logout',
+        redirectTo: 'login',
         pathMatch: 'full',
     },
     {
         path: '',
-        redirectTo: HOME_PATH,
+        redirectTo: 'home',
         pathMatch: 'full',
     },
 ];

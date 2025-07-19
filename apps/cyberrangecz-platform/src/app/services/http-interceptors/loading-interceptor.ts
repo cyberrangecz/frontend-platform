@@ -1,7 +1,7 @@
 import {HttpEvent, HttpHandlerFn, HttpRequest, HttpResponse} from '@angular/common/http';
 import {inject} from '@angular/core';
 import {Observable, Subscriber} from 'rxjs';
-import {LoadingService} from '../shared/loading.service';
+import {LoadingService} from '../../../../../../libs/common/src/error-handling/loading.service';
 
 /**
  * Intercepts http requests and displays loading while at least one http request is waiting on a response

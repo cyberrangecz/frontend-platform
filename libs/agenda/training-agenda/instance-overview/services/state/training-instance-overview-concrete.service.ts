@@ -2,7 +2,7 @@ import {inject, Injectable} from '@angular/core';
 import {Router} from '@angular/router';
 import {OffsetPaginationEvent, PaginatedResource,} from '@sentinel/common/pagination';
 import {PoolApi} from '@crczp/sandbox-api';
-import {TrainingInstanceApi} from '@crczp/training-api';
+import {LinearTrainingInstanceApi} from '@crczp/training-api';
 import {TrainingInstance} from '@crczp/training-model';
 import {EMPTY, Observable, of} from 'rxjs';
 import {catchError, map, switchMap, tap} from 'rxjs/operators';
@@ -19,7 +19,7 @@ import {PortalConfig} from '@crczp/common';
 
 @Injectable()
 export class TrainingInstanceOverviewConcreteService extends TrainingInstanceOverviewService {
-    private trainingInstanceApi = inject(TrainingInstanceApi);
+    private trainingInstanceApi = inject(LinearTrainingInstanceApi);
     private dialog = inject(MatDialog);
     private poolApi = inject(PoolApi);
     private router = inject(Router);

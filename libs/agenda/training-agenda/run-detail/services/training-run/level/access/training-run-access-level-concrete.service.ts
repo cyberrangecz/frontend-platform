@@ -1,5 +1,5 @@
 import {inject, Injectable} from '@angular/core';
-import {TrainingRunApi} from '@crczp/training-api';
+import {LinearRunApi} from '@crczp/training-api';
 import {Observable} from 'rxjs';
 import {switchMap, tap} from 'rxjs/operators';
 import {TrainingErrorHandler} from '@crczp/training-agenda';
@@ -13,7 +13,7 @@ import {SentinelNotificationService} from '@sentinel/layout/notification';
  * Handles events and actions specific for training level in training run
  */
 export class TrainingRunAccessLevelConcreteService extends TrainingRunAccessLevelService {
-    private api = inject(TrainingRunApi);
+    private api = inject(LinearRunApi);
     private sandboxApi = inject(SandboxInstanceApi);
     private errorHandler = inject(TrainingErrorHandler);
 

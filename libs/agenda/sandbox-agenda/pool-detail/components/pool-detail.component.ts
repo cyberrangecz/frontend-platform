@@ -15,7 +15,7 @@ import {
 } from '@sentinel/components/table';
 import {Observable, Subscription} from 'rxjs';
 import {map, take} from 'rxjs/operators';
-import {POOL_DATA_ATTRIBUTE_NAME, SandboxNavigator,} from '@crczp/sandbox-agenda';
+import {SANDBOX_ROUTE_VARIABLES, SandboxNavigator,} from '@crczp/sandbox-agenda';
 import {EditableCommentComponent, ResourcePollingService,} from '@crczp/sandbox-agenda/internal';
 import {AllocationRequestsService} from '../services/state/request/allocation/requests/allocation-requests.service';
 import {CleanupRequestsService} from '../services/state/request/cleanup/cleanup-requests.service';
@@ -177,7 +177,7 @@ export class PoolDetailComponent implements OnInit, AfterViewInit {
         this.activeRoute.data
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe((data) => {
-                this.pool = data[POOL_DATA_ATTRIBUTE_NAME];
+                this.pool = data[SANDBOX_ROUTE_VARIABLES.POOL_DATA];
                 this.onLoadEvent(initialLoadEvent);
             });
 

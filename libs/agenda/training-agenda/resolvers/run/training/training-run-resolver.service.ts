@@ -1,6 +1,6 @@
 import {inject, Injectable} from '@angular/core';
 import {ActivatedRouteSnapshot, Router} from '@angular/router';
-import {TrainingRunApi} from '@crczp/training-api';
+import {LinearRunApi} from '@crczp/training-api';
 import {AccessTrainingRunInfo} from '@crczp/training-model';
 import {EMPTY, Observable, of} from 'rxjs';
 import {catchError, mergeMap, take, tap} from 'rxjs/operators';
@@ -17,7 +17,7 @@ import {RunningTrainingRunService} from '@crczp/training-agenda/run-detail';
  */
 @Injectable()
 export class AccessTrainingRunResolver {
-    private api = inject(TrainingRunApi);
+    private api = inject(LinearRunApi);
     private runningTrainingRunService = inject(RunningTrainingRunService);
     private errorHandler = inject(TrainingErrorHandler);
     private navigator = inject(TrainingNavigator);

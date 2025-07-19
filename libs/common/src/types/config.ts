@@ -33,8 +33,7 @@ export class PortalConfig extends Z.class({
     defaultPageSize: z
         .number({required_error: 'Default page size field is required'})
         .gt(0, 'Page size must be greater than 0'),
-
-    roleMapping: RoleMapping.schema().describe('Role mapping configuration'),
+    roleMapping: RoleMapping.schema(),
 
     polling: z.object({
         pollingPeriodShort: z

@@ -4,9 +4,9 @@ import {TrainingDefinitionApi} from './api/definition/training-definition-api.se
 import {TrainingDefinitionDefaultApi} from './api/definition/training-definition-default-api.service';
 import {TrainingEventApi} from './api/event/training-event-api.service';
 import {TrainingEventDefaultApi} from './api/event/training-event-default-api.service';
-import {TrainingInstanceApi} from './api/instance/training-instance-api.service';
+import {LinearTrainingInstanceApi} from './api/instance/training-instance-api.service';
 import {TrainingInstanceDefaultApi} from './api/instance/training-instance-default-api.service';
-import {TrainingRunApi} from './api/run/training-run-api.service';
+import {LinearRunApi} from './api/run/training-run-api.service';
 import {TrainingRunDefaultApi} from './api/run/training-run-default-api.service';
 import {UserApi} from './api/user/user-api.service';
 import {UserDefaultApi} from './api/user/user-default-api.service';
@@ -30,8 +30,8 @@ import {DetectionEventApi} from './api/detection-event/detection-event-api.servi
     providers: [
         {provide: TrainingDefinitionApi, useClass: TrainingDefinitionDefaultApi},
         {provide: AdaptiveDefinitionApiService, useClass: AdaptiveDefinitionDefaultApiService},
-        {provide: TrainingInstanceApi, useClass: TrainingInstanceDefaultApi},
-        {provide: TrainingRunApi, useClass: TrainingRunDefaultApi},
+        {provide: LinearTrainingInstanceApi, useClass: TrainingInstanceDefaultApi},
+        {provide: LinearRunApi, useClass: TrainingRunDefaultApi},
         {provide: UserApi, useClass: UserDefaultApi},
         {provide: TrainingEventApi, useClass: TrainingEventDefaultApi},
         {provide: VisualizationApi, useClass: VisualizationDefaultApi},

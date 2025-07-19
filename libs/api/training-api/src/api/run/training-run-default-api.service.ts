@@ -27,7 +27,7 @@ import {AccessTrainingRunMapper} from '../../mappers/training-run/access-trainin
 import {AccessedTrainingRunMapper} from '../../mappers/training-run/accessed-training-run-mapper';
 import {LevelAnswerMapper} from '../../mappers/training-run/level-answer-mapper';
 import {TrainingRunMapper} from '../../mappers/training-run/training-run-mapper';
-import {TrainingRunApi} from './training-run-api.service';
+import {LinearRunApi} from './training-run-api.service';
 import {TrainingRunInfoDTO} from '../../dto/training-run/training-run-info-dto';
 import {TrainingRunInfoMapper} from '../../mappers/training-run/training-run-info-mapper';
 import {AnsweredLevelMapper} from '../../mappers/training-run/training-run-levels/answered-level-mapper';
@@ -38,7 +38,7 @@ import {PortalConfig} from "@crczp/common";
  * Default implementation of service abstracting http communication with training run endpoints.
  */
 @Injectable()
-export class TrainingRunDefaultApi extends TrainingRunApi {
+export class TrainingRunDefaultApi extends LinearRunApi {
     private readonly http = inject(HttpClient);
 
     private readonly apiUrl = inject(PortalConfig).basePaths.linearTraining + 'training-runs';
