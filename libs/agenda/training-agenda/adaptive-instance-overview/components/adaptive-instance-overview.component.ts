@@ -12,12 +12,12 @@ import {TrainingInstance} from '@crczp/training-model';
 import {SentinelControlItem, SentinelControlItemSignal, SentinelControlsComponent} from '@sentinel/components/controls';
 import {map, take} from 'rxjs/operators';
 import {AdaptiveInstanceOverviewService} from '../services/state/adaptive-instance-overview.service';
-import {TrainingDefaultNavigator, TrainingNavigator, TrainingNotificationService} from '@crczp/training-agenda';
 import {AdaptiveInstanceOverviewControls} from '../model/adapters/adaptive-instance-overview-controls';
 import {AdaptiveInstanceTable} from '../model/adapters/adaptive-instance-table';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {
     LogoSpinnerComponent,
+    NotificationService,
     PaginationStorageService,
     providePaginationStorageService,
     TableCountdownComponent,
@@ -28,11 +28,6 @@ import {CdkCopyToClipboard} from "@angular/cdk/clipboard";
 import {MatTooltip} from "@angular/material/tooltip";
 import {MatButton} from "@angular/material/button";
 import {MatIcon} from "@angular/material/icon";
-import {
-    AdaptiveInstanceBreadcrumbResolver,
-    AdaptiveInstanceResolver,
-    AdaptiveInstanceTitleResolver
-} from "@crczp/training-agenda/resolvers";
 import {AdaptiveInstanceOverviewConcreteService} from "../services/state/adaptive-instance-overview-concrete.service";
 
 @Component({
@@ -56,10 +51,6 @@ import {AdaptiveInstanceOverviewConcreteService} from "../services/state/adaptiv
     ],
     providers: [
         providePaginationStorageService(AdaptiveInstanceOverviewComponent),
-        AdaptiveInstanceResolver,
-        AdaptiveInstanceTitleResolver,
-        AdaptiveInstanceBreadcrumbResolver,
-        {provide: TrainingNavigator, useClass: TrainingDefaultNavigator},
         {provide: AdaptiveInstanceOverviewService, useClass: AdaptiveInstanceOverviewConcreteService},
     ],
 })
@@ -73,8 +64,7 @@ export class AdaptiveInstanceOverviewComponent implements OnInit {
     destroyRef = inject(DestroyRef);
     private service = inject(AdaptiveInstanceOverviewService);
     private paginationService = inject(PaginationStorageService);
-    private navigator = inject(TrainingNavigator);
-    private notificationService = inject(TrainingNotificationService);
+    private notificationService = inject(NotificationService);
 
     ngOnInit(): void {
         this.controls = AdaptiveInstanceOverviewControls.create(this.service);
@@ -133,7 +123,7 @@ export class AdaptiveInstanceOverviewComponent implements OnInit {
             ),
         };
         this.instances$ = this.service.resource$.pipe(
-            map((instances) => new AdaptiveInstanceTable(instances, this.service, this.navigator)),
+            map((instances) => new AdaptiveInstanceTable(instances, this.service)),
         );
         this.hasError$ = this.service.hasError$;
         this.onInstancesLoadEvent(initLoadEvent);

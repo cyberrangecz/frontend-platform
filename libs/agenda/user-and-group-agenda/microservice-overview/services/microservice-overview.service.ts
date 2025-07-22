@@ -6,15 +6,13 @@ import {Router} from '@angular/router';
 import {Microservice} from '@crczp/user-and-group-model';
 import {Observable, of} from 'rxjs';
 import {tap} from 'rxjs/operators';
-import {UserAndGroupErrorHandler, UserAndGroupNavigator,} from '@crczp/user-and-group-agenda';
-import {PortalConfig} from '@crczp/common';
+import {ErrorHandlerService, PortalConfig, Routing} from '@crczp/common';
 
 @Injectable()
 export class MicroserviceOverviewService extends SelectablePaginatedService<Microservice> {
     private api = inject(MicroserviceApi);
     private router = inject(Router);
-    private navigator = inject(UserAndGroupNavigator);
-    private errorHandler = inject(UserAndGroupErrorHandler);
+    private errorHandler = inject(ErrorHandlerService);
 
     constructor() {
         super(inject(PortalConfig).defaultPageSize);
@@ -46,7 +44,7 @@ export class MicroserviceOverviewService extends SelectablePaginatedService<Micr
     }
 
     register(): Observable<any> {
-        this.router.navigate([this.navigator.toNewMicroservice()]);
+        this.router.navigate([Routing.RouteBuilder.microservice.create.build()]);
         return of(true);
     }
 }

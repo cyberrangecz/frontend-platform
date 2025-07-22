@@ -4,18 +4,14 @@ import {EMPTY, Observable} from 'rxjs';
 import {AbstractPhaseTypeEnum, AccessTrainingRunInfo, Phase, QuestionAnswer} from '@crczp/training-model';
 import {AdaptiveRunApi} from '@crczp/training-api';
 import {Router} from '@angular/router';
-import {TrainingErrorHandler, TrainingNavigator} from '@crczp/training-agenda';
 import {switchMap, tap} from 'rxjs/operators';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
-import {ConsoleUrl, TopologyApi} from '@crczp/topology-graph';
-import {LoadingDialogComponent, LoadingDialogConfig} from "@crczp/common";
+import {ErrorHandlerService, LoadingDialogComponent, LoadingDialogConfig, Routing} from "@crczp/common";
 
 @Injectable()
 export class RunningAdaptiveRunConcreteService extends RunningAdaptiveRunService {
     private api = inject(AdaptiveRunApi);
-    private topologyService = inject(TopologyApi);
-    private errorHandler = inject(TrainingErrorHandler);
-    private navigator = inject(TrainingNavigator);
+    private errorHandler = inject(ErrorHandlerService);
     private router = inject(Router);
     private dialog = inject(MatDialog);
 
@@ -106,18 +102,6 @@ export class RunningAdaptiveRunConcreteService extends RunningAdaptiveRunService
         );
     }
 
-    /**
-     * Sends request to preload VM consoles on backend for user for further use in topology.
-     * @param sandboxId id of sandbox in which the vm exists
-     */
-    loadConsoles(sandboxId: string): Observable<ConsoleUrl[]> {
-        return this.topologyService.getVMConsolesUrl(sandboxId).pipe(
-            tap({
-                error: (err) => this.errorHandler.emit(err, 'Obtaining console URL'),
-            }),
-        );
-    }
-
     private setActivePhase(phase: Phase) {
         this.activePhaseSubject$.next(phase);
     }
@@ -134,8 +118,8 @@ export class RunningAdaptiveRunConcreteService extends RunningAdaptiveRunService
                 const tmpTrainingRunId = this.trainingRunId;
                 setTimeout(() => {
                     dialog.close();
-                    this.router.navigate([this.navigator.toAdaptiveRunResult(tmpTrainingRunId)]);
-                }, 5000);
+                    this.router.navigate([Routing.RouteBuilder.run.adaptive.runId(tmpTrainingRunId).results]);
+                }, 3000);
                 return EMPTY;
             }),
             tap(() => this.clear()),

@@ -1,17 +1,16 @@
 import {Router} from '@angular/router';
 import {PoolApi, SandboxDefinitionApi} from '@crczp/sandbox-api';
-import {AdaptiveDefinitionApiService, AdaptiveInstanceApi} from '@crczp/training-api';
+import {AdaptiveInstanceApi, AdaptiveTrainingDefinitionApi} from '@crczp/training-api';
 import {TrainingDefinitionInfo, TrainingInstance} from '@crczp/training-model';
 import {combineLatest, from, Observable} from 'rxjs';
 import {map, switchMap, tap} from 'rxjs/operators';
-import {TrainingErrorHandler, TrainingNavigator, TrainingNotificationService,} from '@crczp/training-agenda';
-import {AdaptiveInstanceChangeEvent} from '../../../models/events/adaptive-instance-change-event';
 import {AdaptiveInstanceEditService} from './adaptive-instance-edit.service';
 import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
 import {Pool, SandboxDefinition} from '@crczp/sandbox-model';
 import {SentinelFilter} from '@sentinel/common/filter';
-import {LoadingTracker, PortalConfig} from "@crczp/common";
+import {ErrorHandlerService, LoadingTracker, NotificationService, PortalConfig, Routing} from "@crczp/common";
 import {inject, Injectable} from "@angular/core";
+import {AdaptiveInstanceChangeEvent} from "../../../models/events/adaptive-instance-change-event";
 
 /**
  * Basic implementation of layer between component and API service.
@@ -19,13 +18,12 @@ import {inject, Injectable} from "@angular/core";
 @Injectable()
 export class AdaptiveInstanceEditConcreteService extends AdaptiveInstanceEditService {
     private trainingInstanceApi = inject(AdaptiveInstanceApi);
-    private trainingDefinitionApi = inject(AdaptiveDefinitionApiService);
+    private trainingDefinitionApi = inject(AdaptiveTrainingDefinitionApi);
     private poolApi = inject(PoolApi);
     private sandboxDefinitionApi = inject(SandboxDefinitionApi);
     private router = inject(Router);
-    private navigator = inject(TrainingNavigator);
-    private errorHandler = inject(TrainingErrorHandler);
-    private notificationService = inject(TrainingNotificationService);
+    private errorHandler = inject(ErrorHandlerService);
+    private notificationService = inject(NotificationService);
     private settings = inject(PortalConfig);
 
     private editedSnapshot: TrainingInstance;
@@ -83,7 +81,9 @@ export class AdaptiveInstanceEditConcreteService extends AdaptiveInstanceEditSer
             return this.update();
         } else {
             return this.create().pipe(
-                switchMap((id) => from(this.router.navigate([this.navigator.toAdaptiveInstanceEdit(id)]))),
+                switchMap((id) => from(this.router.navigate([
+                    Routing.RouteBuilder.adaptive_instance.instanceId(id).build()
+                ]))),
             );
         }
     }

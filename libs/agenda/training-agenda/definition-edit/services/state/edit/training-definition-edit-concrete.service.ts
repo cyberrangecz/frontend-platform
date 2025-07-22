@@ -1,14 +1,13 @@
 import {inject, Injectable} from '@angular/core';
 import {Router} from '@angular/router';
-import {TrainingDefinitionApi} from '@crczp/training-api';
+import {LinearTrainingDefinitionApi} from '@crczp/training-api';
 import {TrainingDefinition} from '@crczp/training-model';
 import {combineLatest, concat, Observable} from 'rxjs';
 import {map, tap} from 'rxjs/operators';
 import {TrainingDefinitionChangeEvent} from '../../../model/events/training-definition-change-event';
-import {TrainingErrorHandler, TrainingNavigator, TrainingNotificationService} from '@crczp/training-agenda';
 import {TrainingDefinitionEditService} from './training-definition-edit.service';
 import {LevelEditService} from '../level/level-edit.service';
-import {LoadingTracker} from "@crczp/common";
+import {ErrorHandlerService, LoadingTracker, NotificationService, Routing} from "@crczp/common";
 
 /**
  * Service handling editing of training definition and related operations.
@@ -18,10 +17,9 @@ import {LoadingTracker} from "@crczp/common";
 @Injectable()
 export class TrainingDefinitionEditConcreteService extends TrainingDefinitionEditService {
     private router = inject(Router);
-    private api = inject(TrainingDefinitionApi);
-    private errorHandler = inject(TrainingErrorHandler);
-    private navigator = inject(TrainingNavigator);
-    private notificationService = inject(TrainingNotificationService);
+    private api = inject(LinearTrainingDefinitionApi);
+    private errorHandler = inject(ErrorHandlerService);
+    private notificationService = inject(NotificationService);
     private levelEditService = inject(LevelEditService);
 
     private editedSnapshot: TrainingDefinition;
@@ -55,7 +53,9 @@ export class TrainingDefinitionEditConcreteService extends TrainingDefinitionEdi
                 return this.levelEditService.saveUnsavedLevels();
             }
         } else {
-            return this.create().pipe(map((id) => this.router.navigate([this.navigator.toTrainingDefinitionEdit(id)])));
+            return this.create().pipe(map((id) => this.router.navigate(
+                [Routing.RouteBuilder.linear_definition.definitionId(id).edit.build()]
+            )));
         }
     }
 

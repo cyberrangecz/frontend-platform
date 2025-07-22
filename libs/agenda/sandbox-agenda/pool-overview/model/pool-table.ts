@@ -10,11 +10,11 @@ import {
     RowExpand,
 } from '@sentinel/components/table';
 import {defer, Observable, of} from 'rxjs';
-import {SandboxNavigator} from '@crczp/sandbox-agenda';
 import {PoolRowAdapter} from './pool-row-adapter';
 import {AbstractPoolService} from '../services/abstract-pool/abstract-sandbox/abstract-pool.service';
 import {SandboxInstanceService} from '@crczp/sandbox-agenda/pool-detail';
 import {PoolExpandDetailComponent} from '../components/pool-expand-detail/pool-expand-detail.component';
+import {Routing} from "@crczp/common";
 
 /**
  * Helper class transforming paginated resource to class for common table component
@@ -26,10 +26,9 @@ export class PoolTable extends ExpandableSentinelTable<PoolRowAdapter, PoolExpan
         resources: Observable<Resources>,
         abstractPoolService: AbstractPoolService,
         sandboxInstanceService: SandboxInstanceService,
-        navigator: SandboxNavigator,
     ) {
         const rows = data.elements.map((element) =>
-            PoolTable.createRow(element, resources, abstractPoolService, sandboxInstanceService, navigator),
+            PoolTable.createRow(element, resources, abstractPoolService, sandboxInstanceService),
         );
         const columns = [
             new Column('title', 'Title', true, 'id'),
@@ -50,7 +49,6 @@ export class PoolTable extends ExpandableSentinelTable<PoolRowAdapter, PoolExpan
         resources: Observable<Resources>,
         abstractPoolService: AbstractPoolService,
         sandboxInstanceService: SandboxInstanceService,
-        navigator: SandboxNavigator,
     ): Row<PoolRowAdapter> {
         const rowAdapter = pool as PoolRowAdapter;
         rowAdapter.title = `Pool ${rowAdapter.id}`;
@@ -71,7 +69,7 @@ export class PoolTable extends ExpandableSentinelTable<PoolRowAdapter, PoolExpan
         resources.subscribe((data) => (rowAdapter.resources = data));
 
         const row = new Row(rowAdapter, this.createActions(pool, abstractPoolService, sandboxInstanceService));
-        row.addLink('title', navigator.toPool(rowAdapter.id));
+        row.addLink('title', Routing.RouteBuilder.pool.poolId(rowAdapter.id).build());
         return row;
     }
 

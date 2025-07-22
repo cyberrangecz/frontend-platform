@@ -5,8 +5,7 @@ import {Group, User} from '@crczp/user-and-group-model';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {switchMap, tap} from 'rxjs/operators';
 import {GroupFilter, UserFilter} from '@crczp/user-and-group-agenda/internal';
-import {UserAndGroupErrorHandler} from '@crczp/user-and-group-agenda';
-import {PortalConfig} from '@crczp/common';
+import {ErrorHandlerService, PortalConfig} from '@crczp/common';
 
 /**
  * Basic implementation of a layer between a component and an API service.
@@ -41,7 +40,7 @@ export class UserAssignService {
         this.selectedGroupsToImportSubject$.asObservable();
     private api = inject(GroupApi);
     private userApi = inject(UserApi);
-    private errorHandler = inject(UserAndGroupErrorHandler);
+    private errorHandler = inject(ErrorHandlerService);
     private assignedUsersSubject$: BehaviorSubject<PaginatedResource<User>> =
         new BehaviorSubject(this.initSubject());
     assignedUsers$: Observable<PaginatedResource<User>> =

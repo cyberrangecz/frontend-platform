@@ -1,10 +1,10 @@
-import { Injectable, inject } from '@angular/core';
+import {inject, Injectable} from '@angular/core';
 import {ActivatedRouteSnapshot, RouterStateSnapshot} from '@angular/router';
 import {EMPTY, Observable, of} from 'rxjs';
 import {User} from '@crczp/user-and-group-model';
 import {catchError, map} from 'rxjs/operators';
 import {UserResolverService} from './user-resolver.service';
-import {USER_DETAIL_PATH, USER_SELECTOR} from "@crczp/user-and-group-agenda";
+import {Routing} from "@crczp/common";
 
 @Injectable()
 export class UserBreadcrumbResolverService {
@@ -17,18 +17,18 @@ export class UserBreadcrumbResolverService {
      * @param state router state snapshot
      */
     resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<string> | Promise<string> | string {
-        if (route.paramMap.has(USER_SELECTOR)) {
+        if (route.paramMap.has(User.name)) {
             const resolved = this.userResolver.resolve(route, state) as Observable<User>;
             return resolved.pipe(
-                map((group) => (group ? this.getBreadcrumbFromUser(group, state) : '')),
+                map((group) => (group ? this.getBreadcrumbFromUser(group, route) : '')),
                 catchError(() => of(''))
             );
         }
         return EMPTY;
     }
 
-    private getBreadcrumbFromUser(group: User, state: RouterStateSnapshot): string {
-        if (state.url.includes(USER_DETAIL_PATH)) {
+    private getBreadcrumbFromUser(group: User, state: ActivatedRouteSnapshot): string {
+        if (Routing.Utils.hasVariable('groupId', state)) {
             return `${group.name} Detail`;
         }
         return group.name;

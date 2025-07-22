@@ -37,6 +37,8 @@ import {RoleService} from "./services/role.service";
 import {errorLogInterceptor} from "./services/http-interceptors/error-log-interceptor";
 import {catchError, Observable, retry, throwError} from "rxjs";
 import {map} from "rxjs/operators";
+import {provideHttpCache, withHttpCacheInterceptor, withLocalStorage} from "@ngneat/cashew";
+import {environment} from "../environments/environment";
 
 
 @Injectable()
@@ -81,9 +83,20 @@ export class SentinelUagAuthorizationStrategy extends SentinelAuthorizationStrat
             useClass: ErrorHandlerService,
         },
         {provide: HTTP_INTERCEPTORS, useClass: UnauthorizedInterceptor, multi: true},
-        provideHttpClient(withInterceptors([
-            loadingInterceptor, tokenRefreshInterceptor, errorLogInterceptor,
-        ]), withInterceptorsFromDi()),
+        provideHttpClient(
+            withInterceptorsFromDi(),
+            withInterceptors(
+                [
+                    loadingInterceptor,
+                    tokenRefreshInterceptor,
+                    errorLogInterceptor,
+                ].concat(
+                    // NOTE caching disabled for debug mode
+                    environment.production ? withHttpCacheInterceptor() : []
+                )
+            )),
+        // NOTE caching disabled for debug mode
+        environment.production ? provideHttpCache(withLocalStorage()) : null,
         provideSentinelNotifications(),
         importProvidersFrom(BrowserModule),
         appConfigProvider,

@@ -6,23 +6,23 @@ import {Observable} from 'rxjs';
 export abstract class TrainingInstanceOverviewService extends OffsetPaginatedElementsService<TrainingInstance> {
     abstract getAll(pagination: OffsetPaginationEvent, filter: string): Observable<PaginatedResource<TrainingInstance>>;
 
-    abstract create(): Observable<any>;
+    abstract create(): Promise<boolean>;
 
-    abstract edit(id: number): Observable<any>;
+    abstract edit(id: number): Promise<boolean>;
 
-    abstract download(id: number): Observable<any>;
+    abstract download(id: number): Observable<boolean>;
 
     abstract delete(trainingInstance: TrainingInstance): Observable<PaginatedResource<TrainingInstance>>;
 
-    abstract runs(id: number): Observable<any>;
+    abstract runs(id: number): Promise<boolean>;
 
-    abstract token(id: number): Observable<any>;
+    abstract token(id: number): Promise<boolean>;
 
-    abstract progress(id: number): Observable<any>;
+    abstract progress(id: number): Promise<boolean>;
 
-    abstract results(id: number): Observable<any>;
+    abstract results(id: number): Promise<boolean>;
 
-    abstract aggregatedResults(id: number): Observable<any>;
+    abstract aggregatedResults(id: number): Promise<boolean>;
 
     /**
      * Returns size of a pool specified by @poolId and '-' if the pool does not exist.

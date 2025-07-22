@@ -11,7 +11,6 @@ import {filter, map, tap} from 'rxjs/operators';
 import {TrainingDefinitionEditControls} from '../model/adapters/training-definition-edit-controls';
 import {TrainingDefinitionChangeEvent} from '../model/events/training-definition-change-event';
 import {AdaptiveDefinitionEditService} from '../services/state/edit/adaptive-definition-edit.service';
-import {ADAPTIVE_DEFINITION_DATA_ATTRIBUTE_NAME, TrainingNavigator} from '@crczp/training-agenda';
 import {AdaptiveDefinitionEditConcreteService} from '../services/state/edit/adaptive-definition-edit-concrete.service';
 import {AuthorsAssignService} from '../services/state/authors-assign/authors-assign.service';
 import {PhaseEditService} from '../services/state/phase/phase-edit.service';
@@ -39,11 +38,6 @@ import {
     AdaptiveTrainingDefinitionEditComponent
 } from './adaptive-definition/adaptive-training-definition-edit.component';
 import {AdaptiveDefinitionCanDeactivate} from "../services/can-deactivate/adaptive-definition-can-deactivate.service";
-import {
-    AdaptiveDefinitionBreadcrumbResolver,
-    AdaptiveDefinitionResolver,
-    AdaptiveDefinitionTitleResolver
-} from "@crczp/training-agenda/resolvers";
 
 /**
  * Main smart component of training definition edit/new page.
@@ -55,9 +49,6 @@ import {
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [
         AdaptiveDefinitionCanDeactivate,
-        AdaptiveDefinitionResolver,
-        AdaptiveDefinitionTitleResolver,
-        AdaptiveDefinitionBreadcrumbResolver,
         {
             provide: AdaptiveDefinitionEditService,
             useClass: AdaptiveDefinitionEditConcreteService,
@@ -68,7 +59,6 @@ import {
             provide: MitreTechniquesService,
             useClass: MitreTechniquesConcreteService,
         },
-        TrainingNavigator,
         providePaginationStorageService(AdaptiveDefinitionEditOverviewComponent)
     ],
     imports: [
@@ -135,7 +125,7 @@ export class AdaptiveDefinitionEditOverviewComponent implements OnInit {
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe((data) =>
                 this.editService.set(
-                    data[ADAPTIVE_DEFINITION_DATA_ATTRIBUTE_NAME]
+                    data[TrainingDefinition.name]
                 )
             );
         this.editMode$ = this.editService.editMode$.pipe(

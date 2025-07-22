@@ -1,11 +1,11 @@
-import { Injectable, inject } from '@angular/core';
+import {inject, Injectable} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import {Router} from '@angular/router';
 import {CheatingDetectionApi} from '@crczp/training-api';
 import {CheatingDetection} from '@crczp/training-model';
 import {Observable} from 'rxjs';
 import {switchMap, tap} from 'rxjs/operators';
-import {TrainingErrorHandler, TrainingNavigator, TrainingNotificationService} from '@crczp/training-agenda';
+import {ErrorHandlerService, NotificationService, TrainingNavigator} from '@crczp/training-agenda';
 import {CheatingDetectionEditService} from './cheating-detection-edit.service';
 
 @Injectable()
@@ -13,8 +13,8 @@ export class CheatingDetectionEditConcreteService extends CheatingDetectionEditS
     private router = inject(Router);
     private dialog = inject(MatDialog);
     private navigator = inject(TrainingNavigator);
-    private notificationService = inject(TrainingNotificationService);
-    private errorHandler = inject(TrainingErrorHandler);
+    private notificationService = inject(NotificationService);
+    private errorHandler = inject(ErrorHandlerService);
     private api = inject(CheatingDetectionApi);
 
 

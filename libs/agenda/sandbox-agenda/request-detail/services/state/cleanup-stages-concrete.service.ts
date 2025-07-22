@@ -5,20 +5,18 @@ import {CleanupRequestsApi} from '@crczp/sandbox-api';
 import {Request, RequestStage} from '@crczp/sandbox-model';
 import {Observable, zip} from 'rxjs';
 import {map, take, tap} from 'rxjs/operators';
-import {SandboxErrorHandler, SandboxNavigator, SandboxNotificationService,} from '@crczp/sandbox-agenda';
 import {RequestStagesService} from './request-stages.service';
 import {StageAdapter} from '../../model/adapters/stage-adapter';
 import {StageAdapterMapper} from '../../model/adapters/stage-adapter-mapper';
-import {PortalConfig} from "@crczp/common";
+import {ErrorHandlerService, NotificationService, PortalConfig, Routing} from "@crczp/common";
 
 @Injectable()
 export class CleanupStagesConcreteService extends RequestStagesService {
     private api = inject(CleanupRequestsApi);
     private router = inject(Router);
     private route = inject(ActivatedRoute);
-    private navigator = inject(SandboxNavigator);
-    private notificationService = inject(SandboxNotificationService);
-    private errorHandler = inject(SandboxErrorHandler);
+    private notificationService = inject(NotificationService);
+    private errorHandler = inject(ErrorHandlerService);
 
     constructor() {
         const settings = inject(PortalConfig);
@@ -78,7 +76,9 @@ export class CleanupStagesConcreteService extends RequestStagesService {
         this.route.paramMap
             .pipe(take(1))
             .subscribe(() =>
-                this.router.navigate([this.navigator.toPoolOverview()])
+                this.router.navigate([
+                    Routing.RouteBuilder.pool.build()
+                ])
             );
     }
 }

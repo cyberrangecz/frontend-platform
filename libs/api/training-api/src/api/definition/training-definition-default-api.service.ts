@@ -23,7 +23,7 @@ import {TrainingDefinitionDTO} from '../../dto/training-definition/training-defi
 import {LevelMapper} from '../../mappers/level/level-mapper';
 import {TrainingDefinitionInfoMapper} from '../../mappers/training-definition/training-definition-info-mapper';
 import {TrainingDefinitionMapper} from '../../mappers/training-definition/training-definition-mapper';
-import {TrainingDefinitionApi} from './training-definition-api.service';
+import {LinearTrainingDefinitionApi} from './training-definition-api.service';
 import {
     BlobFileSaver,
     handleJsonError,
@@ -38,7 +38,7 @@ import {PortalConfig} from "@crczp/common";
  * Service abstracting http communication with training definition endpoints.
  */
 @Injectable()
-export class TrainingDefinitionDefaultApi extends TrainingDefinitionApi {
+export class TrainingDefinitionDefaultApi extends LinearTrainingDefinitionApi {
     private readonly http = inject(HttpClient);
 
     private readonly trainingDefinitionUriExtension = 'training-definitions';

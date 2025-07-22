@@ -3,7 +3,7 @@ import {ActivatedRoute} from '@angular/router';
 import {Group, User, UserRole} from '@crczp/user-and-group-model';
 import {OffsetPaginationEvent} from '@sentinel/common/pagination';
 import {map} from 'rxjs/operators';
-import {Observable} from 'rxjs';
+import {from, Observable} from 'rxjs';
 import {MembersDetailTable} from '../model/members-detail-table';
 import {RolesDetailTable} from '../model/roles-detail-table';
 import {SentinelRowDirective, SentinelTable, SentinelTableComponent, TableLoadEvent,} from '@sentinel/components/table';
@@ -15,7 +15,13 @@ import {MembersDetailService} from '../services/members-detail.service';
 import {RolesDetailService} from '../services/roles-detail.service';
 import {CommonModule} from '@angular/common';
 import {PaginationStorageService, providePaginationStorageService,} from '@crczp/common';
-import {GROUP_DATA_ATTRIBUTE_NAME} from '@crczp/user-and-group-agenda';
+import {Group
+
+.
+name
+}
+from
+'@crczp/user-and-group-agenda';
 
 @Component({
     selector: 'crczp-group-detail',
@@ -95,7 +101,7 @@ export class GroupDetailComponent implements OnInit {
         this.activeRoute.data
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe((data) => {
-                this.group = data[GROUP_DATA_ATTRIBUTE_NAME];
+                this.group = data[Group.name];
                 this.initMembersTable();
                 this.initRolesTable();
             });

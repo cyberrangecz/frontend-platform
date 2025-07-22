@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import {inject, Injectable} from '@angular/core';
 import {SentinelFilter} from '@sentinel/common/filter';
 import {OffsetPagination, OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
 import {GroupApi, RoleApi} from '@crczp/user-and-group-api';
@@ -6,7 +6,7 @@ import {UserRole} from '@crczp/user-and-group-model';
 import {BehaviorSubject, forkJoin, Observable, of} from 'rxjs';
 import {catchError, switchMap, tap} from 'rxjs/operators';
 import {RoleFilter} from '@crczp/user-and-group-agenda/internal';
-import {UserAndGroupErrorHandler} from '@crczp/user-and-group-agenda';
+import {ErrorHandlerService} from "@crczp/common";
 
 /**
  * Basic implementation of a layer between a component and an API service.
@@ -14,10 +14,6 @@ import {UserAndGroupErrorHandler} from '@crczp/user-and-group-agenda';
  */
 @Injectable()
 export class RoleAssignService {
-    private api = inject(GroupApi);
-    private roleApi = inject(RoleApi);
-    private errorHandler = inject(UserAndGroupErrorHandler);
-
     protected hasErrorSubject$: BehaviorSubject<boolean> = new BehaviorSubject(false);
     /**
      * True if error was returned from API, false otherwise
@@ -32,6 +28,9 @@ export class RoleAssignService {
     selectedRolesToAssign$: Observable<UserRole[]> = this.selectedRolesToAssignSubject$;
     protected selectedAssignedRolesSubject$: BehaviorSubject<UserRole[]> = new BehaviorSubject([]);
     selectedAssignedRoles$: Observable<UserRole[]> = this.selectedAssignedRolesSubject$.asObservable();
+    private api = inject(GroupApi);
+    private roleApi = inject(RoleApi);
+    private errorHandler = inject(ErrorHandlerService);
     private assignedRolesSubject$: BehaviorSubject<PaginatedResource<UserRole>> = new BehaviorSubject(
         this.initSubject()
     );

@@ -13,7 +13,6 @@ import {
 } from '@sentinel/components/controls';
 import {map, take} from 'rxjs/operators';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {UserAndGroupDefaultNavigator, UserAndGroupNavigator,} from '@crczp/user-and-group-agenda';
 import {AsyncPipe} from '@angular/common';
 import {PaginationStorageService, providePaginationStorageService,} from '@crczp/common';
 
@@ -24,10 +23,6 @@ import {PaginationStorageService, providePaginationStorageService,} from '@crczp
     imports: [SentinelTableComponent, SentinelControlsComponent, AsyncPipe],
     providers: [
         providePaginationStorageService(MicroserviceOverviewComponent),
-        {
-            provide: UserAndGroupNavigator,
-            useClass: UserAndGroupDefaultNavigator,
-        },
         {
             provide: MicroserviceOverviewService,
             useClass: MicroserviceOverviewService,

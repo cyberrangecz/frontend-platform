@@ -16,7 +16,6 @@ import {
 import {defer, Observable, of} from 'rxjs';
 import {map, take} from 'rxjs/operators';
 import {PoolTable} from '../model/pool-table';
-import {SandboxDefaultNavigator, SandboxNavigator,} from '@crczp/sandbox-agenda';
 
 import {AbstractPoolService} from '../services/abstract-pool/abstract-sandbox/abstract-pool.service';
 import {
@@ -27,7 +26,6 @@ import {
 } from '@crczp/sandbox-agenda/pool-detail';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {SandboxResourcesService} from '../services/resources/sandbox-resources.service';
-import {PoolBreadcrumbResolver, PoolCommentResolver, PoolResolver,} from '@crczp/sandbox-agenda/resolvers';
 import {
     EditableCommentComponent,
     ResourcePollingService,
@@ -61,11 +59,7 @@ import {AsyncPipe} from '@angular/common';
         SentinelRowDirective,
     ],
     providers: [
-        PoolResolver,
-        PoolBreadcrumbResolver,
-        PoolCommentResolver,
         ResourcePollingService,
-        {provide: SandboxNavigator, useClass: SandboxDefaultNavigator},
         {provide: PoolOverviewService, useClass: PoolOverviewConcreteService},
         {
             provide: SandboxInstanceService,
@@ -99,7 +93,6 @@ export class PoolOverviewComponent implements OnInit {
     private sandboxResourcesService = inject(SandboxResourcesService);
     private abstractPoolService = inject(AbstractPoolService);
     private sandboxInstanceService = inject(SandboxInstanceService);
-    private navigator = inject(SandboxNavigator);
     private paginationService = inject(PaginationStorageService);
 
     constructor() {
@@ -168,7 +161,6 @@ export class PoolOverviewComponent implements OnInit {
                         this.resources$,
                         this.abstractPoolService,
                         this.sandboxInstanceService,
-                        this.navigator
                     )
             )
         );

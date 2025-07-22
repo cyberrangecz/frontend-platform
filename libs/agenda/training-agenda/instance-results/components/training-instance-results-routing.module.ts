@@ -1,20 +1,14 @@
-import {RouterModule, Routes} from '@angular/router';
+import {RouterModule} from '@angular/router';
 import {NgModule} from '@angular/core';
-import {
-    TRAINING_RUN_RESULTS_ASSESSMENT_PATH,
-    TRAINING_RUN_RESULTS_COMMAND_ANALYSIS_PATH,
-    TRAINING_RUN_RESULTS_COMMAND_TIMELINE_PATH,
-    TRAINING_RUN_RESULTS_DASHBOARD_PATH,
-    TRAINING_RUN_RESULTS_WALKTHROUGH_PATH,
-} from '@crczp/training-agenda';
 import {AssessmentWrapperComponent} from './assessment-wrapper/assessment-wrapper.component';
 import {DashboardWrapperComponent} from './dashboard-wrapper/dashboard-wrapper.component';
 import {TrainingInstanceResultsComponent} from './training-instance-results.component';
 import {CommandTimelineWrapperComponent} from './command-timeline-wrapper/command-timeline-wrapper.component';
 import {CommandAnalysisWrapperComponent} from './command-analysis-wrapper/command-analysis-wrapper.component';
 import {WalkthroughWrapperComponent} from './walkthrough-wrapper/walkthrough-wrapper.component';
+import {ValidRouterConfig} from "@crczp/common";
 
-const routes: Routes = [
+const routes: ValidRouterConfig<'linear-instance/:instanceId/results'> = [
     {
         path: '',
         component: TrainingInstanceResultsComponent,
@@ -22,26 +16,26 @@ const routes: Routes = [
             {
                 path: '',
                 pathMatch: 'prefix',
-                redirectTo: TRAINING_RUN_RESULTS_DASHBOARD_PATH,
+                redirectTo: 'dashboard',
             },
             {
-                path: TRAINING_RUN_RESULTS_DASHBOARD_PATH,
+                path: 'dashboard',
                 component: DashboardWrapperComponent,
             },
             {
-                path: TRAINING_RUN_RESULTS_ASSESSMENT_PATH,
+                path: 'quiz-results',
                 component: AssessmentWrapperComponent,
             },
             {
-                path: TRAINING_RUN_RESULTS_WALKTHROUGH_PATH,
+                path: 'walkthrough',
                 component: WalkthroughWrapperComponent,
             },
             {
-                path: TRAINING_RUN_RESULTS_COMMAND_TIMELINE_PATH,
+                path: 'command-timeline',
                 component: CommandTimelineWrapperComponent,
             },
             {
-                path: TRAINING_RUN_RESULTS_COMMAND_ANALYSIS_PATH,
+                path: 'command-analysis',
                 component: CommandAnalysisWrapperComponent,
             },
         ],

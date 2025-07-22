@@ -1,51 +1,46 @@
 import {NgModule} from '@angular/core';
-import {RouterModule, Routes} from '@angular/router';
+import {RouterModule} from '@angular/router';
 import {AdaptiveDefinitionOverviewComponent} from '@crczp/training-agenda/adaptive-definition-overview';
-import {ADAPTIVE_DEFINITION_DATA_ATTRIBUTE_NAME, PATHS} from '@crczp/training-agenda';
-import {
-    AdaptiveDefinitionBreadcrumbResolver,
-    AdaptiveDefinitionDetailBreadcrumbResolver,
-    AdaptiveDefinitionDetailTitleResolver,
-    AdaptiveDefinitionResolver,
-    AdaptiveDefinitionTitleResolver,
-} from '@crczp/training-agenda/resolvers';
 import {SandboxApiModule} from '@crczp/sandbox-api';
 import {TrainingApiModule} from '@crczp/training-api';
 import {AdaptiveDefinitionCanDeactivate} from '@crczp/training-agenda/adaptive-definition-edit';
+import {Routing, ValidRouterConfig} from "@crczp/common";
+import {TrainingDefinition} from "@crczp/training-model";
+import Resolvers = Routing.Resolvers;
 
-const routes: Routes = [
+const routes: ValidRouterConfig<'adaptive-definition'> = [
     {
         path: '',
         component: AdaptiveDefinitionOverviewComponent,
     },
     {
-        path: `${PATHS.DEFINITION.ADAPTIVE}/${PATHS.ACTION.CREATE}`,
+        path: 'create',
         loadComponent: () =>
             import('@crczp/training-agenda/adaptive-definition-edit').then(
                 (m) => m.AdaptiveDefinitionEditOverviewComponent
             ),
         resolve: {
-            [PATHS.DEFINITION.ATTRIBUTE.ID]: AdaptiveDefinitionResolver,
-            breadcrumb: AdaptiveDefinitionBreadcrumbResolver,
-            title: AdaptiveDefinitionTitleResolver,
+            [TrainingDefinition.name]: Resolvers.TrainingDefinition.linearDefinitionResolver,
+            breadcrumb: Resolvers.TrainingDefinition.linearDefinitionBreadcrumbResolver,
+            title: Resolvers.TrainingDefinition.linearDefinitionTitleResolver,
         },
         canDeactivate: [AdaptiveDefinitionCanDeactivate],
     },
     {
-        path: `:${PATHS.DEFINITION.ADAPTIVE}/${PATHS.ACTION.EDIT}`,
+        path: ':definitionId/edit',
         loadComponent: () =>
             import('@crczp/training-agenda/adaptive-definition-edit').then(
                 (m) => m.AdaptiveDefinitionEditOverviewComponent
             ),
         resolve: {
-            [PATHS.DEFINITION.ATTRIBUTE.ID]: AdaptiveDefinitionResolver,
-            breadcrumb: AdaptiveDefinitionBreadcrumbResolver,
-            title: AdaptiveDefinitionTitleResolver,
+            [TrainingDefinition.name]: Resolvers.TrainingDefinition.linearDefinitionResolver,
+            breadcrumb: Resolvers.TrainingDefinition.adaptiveDefinitionBreadcrumbResolver,
+            title: Resolvers.TrainingDefinition.linearDefinitionTitleResolver
         },
         canDeactivate: [AdaptiveDefinitionCanDeactivate],
     },
     {
-        path: `:${PATHS.DEFINITION.ADAPTIVE}/${PATHS.VIEW.PREVIEW}`,
+        path: ':definitionId/preview',
         loadComponent: () =>
             import('@crczp/training-agenda/adaptive-definition-preview').then(
                 (m) => m.AdaptivePreviewComponent
@@ -54,24 +49,24 @@ const routes: Routes = [
             title: undefined,
         },
         resolve: {
-            [ADAPTIVE_DEFINITION_DATA_ATTRIBUTE_NAME]: AdaptiveDefinitionResolver,
-            breadcrumb: AdaptiveDefinitionBreadcrumbResolver,
+            [TrainingDefinition.name]: Resolvers.TrainingDefinition.linearDefinitionResolver,
+            breadcrumb: Resolvers.TrainingDefinition.adaptiveDefinitionBreadcrumbResolver,
         },
     },
     {
-        path: `:${PATHS.DEFINITION.ADAPTIVE}/${PATHS.VIEW.SUMMARY}`,
+        path: ':definitionId/detail',
         loadComponent: () =>
             import('@crczp/training-agenda/adaptive-definition-summary').then(
                 (m) => m.AdaptiveDefinitionSummaryComponent
             ),
         resolve: {
-            [ADAPTIVE_DEFINITION_DATA_ATTRIBUTE_NAME]: AdaptiveDefinitionResolver,
-            breadcrumb: AdaptiveDefinitionDetailBreadcrumbResolver,
-            title: AdaptiveDefinitionDetailTitleResolver,
+            [TrainingDefinition.name]: Resolvers.TrainingDefinition.linearDefinitionResolver,
+            breadcrumb: Resolvers.TrainingDefinition.adaptiveDefinitionBreadcrumbResolver,
+            title: Resolvers.TrainingDefinition.linearDefinitionTitleResolver
         },
     },
     {
-        path: `:${PATHS.DEFINITION.ADAPTIVE}/${PATHS.INSTANCE.SIMULATOR}`,
+        path: ':definitionId/simulator',
         loadComponent: () =>
             import('@crczp/training-agenda/adaptive-definition-simulator').then(
                 (m) => m.AdaptiveDefinitionSimulatorComponent
@@ -80,7 +75,7 @@ const routes: Routes = [
             title: 'Adaptive Model Simulating Tool',
         },
         resolve: {
-            breadcrumb: AdaptiveDefinitionBreadcrumbResolver,
+            breadcrumb: Resolvers.TrainingDefinition.adaptiveDefinitionBreadcrumbResolver,
         },
     },
 ];

@@ -2,6 +2,7 @@ import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@
 import {PortalAgendaContainer} from '../../../model/portal-agenda-container';
 import {PortalAgendaDescriptionComponent} from "./portal-agenda-description/portal-agenda-description.component";
 import {PortalAgendaLinkComponent} from "./portal-agenda-link/portal-agenda-link.component";
+import {ValidPath} from "@crczp/common";
 
 @Component({
     selector: 'crczp-portal-agenda-container',
@@ -18,14 +19,14 @@ export class PortalAgendaContainerComponent {
     @Input() elevation: string;
     @Input() isLast: boolean;
 
-    @Output() navigation: EventEmitter<string> = new EventEmitter();
+    @Output() navigation: EventEmitter<ValidPath> = new EventEmitter();
     @Output() setElevation: EventEmitter<string> = new EventEmitter();
 
     elevate(event: string): void {
         this.setElevation.emit(event);
     }
 
-    navigate(event: string): void {
+    navigate(event: ValidPath): void {
         this.navigation.emit(event);
     }
 }

@@ -16,8 +16,6 @@ import {
 } from '@crczp/sandbox-agenda/internal';
 import {SandboxDefinitionOverviewControls} from './sandbox-definition-overview-controls';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {SandboxDefinitionBreadcrumbResolver, SandboxDefinitionResolver,} from '@crczp/sandbox-agenda/resolvers';
-import {SandboxDefaultNavigator, SandboxNavigator,} from '@crczp/sandbox-agenda';
 import {AsyncPipe} from '@angular/common';
 import {PaginationStorageService, providePaginationStorageService} from '@crczp/common';
 
@@ -27,13 +25,10 @@ import {PaginationStorageService, providePaginationStorageService} from '@crczp/
     styleUrls: ['./sandbox-definition-overview.component.scss'],
     imports: [SentinelControlsComponent, SentinelTableComponent, AsyncPipe],
     providers: [
-        SandboxDefinitionResolver,
-        SandboxDefinitionBreadcrumbResolver,
         {
             provide: SandboxDefinitionOverviewService,
             useClass: SandboxDefinitionOverviewConcreteService,
         },
-        {provide: SandboxNavigator, useClass: SandboxDefaultNavigator},
         providePaginationStorageService(SandboxDefinitionOverviewComponent)
     ],
 })

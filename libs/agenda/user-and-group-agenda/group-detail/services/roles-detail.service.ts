@@ -1,11 +1,11 @@
-import { Injectable, inject } from '@angular/core';
+import {inject, Injectable} from '@angular/core';
 import {GroupApi} from '@crczp/user-and-group-api';
 import {UserRole} from '@crczp/user-and-group-model';
 import {SentinelFilter} from '@sentinel/common/filter';
 import {OffsetPagination, OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {tap} from 'rxjs/operators';
-import {UserAndGroupErrorHandler} from "@crczp/user-and-group-agenda";
+import {ErrorHandlerService} from "@crczp/user-and-group-agenda";
 
 /**
  * Basic implementation of a layer between a component and an API service.
@@ -13,9 +13,6 @@ import {UserAndGroupErrorHandler} from "@crczp/user-and-group-agenda";
  */
 @Injectable()
 export class RolesDetailService {
-    private api = inject(GroupApi);
-    private errorHandler = inject(UserAndGroupErrorHandler);
-
     /**
      * List of roles already assigned to the resource
      */
@@ -30,6 +27,8 @@ export class RolesDetailService {
      * True if service is waiting on response from API for request to get assigned users
      */
     isLoadingAssigned$: Observable<boolean> = this.isLoadingAssignedSubject$.asObservable();
+    private api = inject(GroupApi);
+    private errorHandler = inject(ErrorHandlerService);
     private assignedRolesSubject$: BehaviorSubject<PaginatedResource<UserRole>> = new BehaviorSubject(
         this.initSubject()
     );

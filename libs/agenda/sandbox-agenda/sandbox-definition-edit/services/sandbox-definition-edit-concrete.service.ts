@@ -4,16 +4,15 @@ import {SandboxDefinitionApi} from '@crczp/sandbox-api';
 import {SandboxDefinition} from '@crczp/sandbox-model';
 import {BehaviorSubject, defer, finalize, Observable} from 'rxjs';
 import {map, switchMap, tap} from 'rxjs/operators';
-import {SandboxErrorHandler, SandboxNavigator, SandboxNotificationService} from '@crczp/sandbox-agenda';
 import {SandboxDefinitionEditService} from './sandbox-definition-edit.service';
+import {ErrorHandlerService, NotificationService, Routing} from "@crczp/common";
 
 @Injectable()
 export class SandboxDefinitionEditConcreteService extends SandboxDefinitionEditService {
     private api = inject(SandboxDefinitionApi);
     private router = inject(Router);
-    private navigator = inject(SandboxNavigator);
-    private alertService = inject(SandboxNotificationService);
-    private errorHandler = inject(SandboxErrorHandler);
+    private alertService = inject(NotificationService);
+    private errorHandler = inject(ErrorHandlerService);
 
 
     private requestsCountSubject$ = new BehaviorSubject<number>(0);
@@ -34,7 +33,9 @@ export class SandboxDefinitionEditConcreteService extends SandboxDefinitionEditS
                     () => this.alertService.emit('success', 'Sandbox definition was successfully created'),
                     (err) => this.errorHandler.emit(err, 'Creating sandbox definition'),
                 ),
-                switchMap(() => this.router.navigate([this.navigator.toSandboxDefinitionOverview()])),
+                switchMap(() => this.router.navigate([
+                    Routing.RouteBuilder.sandbox_definition.build()
+                ])),
                 finalize(() => this.requestsCountSubject$.next(this.requestsCountSubject$.value - 1)),
             );
         });

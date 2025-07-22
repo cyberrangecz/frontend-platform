@@ -15,9 +15,7 @@ export abstract class AdaptiveDefinitionService extends OffsetPaginatedElementsS
     abstract edit(trainingDefinition: TrainingDefinition): Observable<any>;
 
     abstract preview(trainingDefinition: TrainingDefinition): Observable<any>;
-
-    abstract toAdaptivePreview(trainingDefinition: TrainingDefinition): Observable<boolean>;
-
+    
     abstract showMitreTechniques(): Observable<any>;
 
     abstract toSimulator(): Observable<boolean>;

@@ -10,7 +10,7 @@ export * from './mappers/user/user-mapper';
 
 // API ABSTRACT SERVICES
 export * from './api/definition/training-definition-api.service';
-export * from './api/adaptive-definition/adaptive-definition-api.service';
+export * from './api/adaptive-definition/adaptive-training-definition.api';
 export * from './api/instance/training-instance-api.service';
 export * from './api/adaptive-instance/adaptive-instance-api.service';
 export * from './api/run/training-run-api.service';

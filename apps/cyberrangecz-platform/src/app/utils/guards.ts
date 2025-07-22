@@ -3,10 +3,9 @@ import {sentinelAuthGuard} from "@sentinel/auth";
 import {inject} from "@angular/core";
 import {ActivatedRouteSnapshot, CanActivateFn, Router, RouterStateSnapshot} from "@angular/router";
 import {RoleService} from "../services/role.service";
-import {TRAINING_RUN_PATH} from "@crczp/training-agenda";
 import {PortalDynamicEnvironment} from "../portal-dynamic-environment";
 import {from, Observable, of} from "rxjs";
-import {HOME_PATH} from "../paths";
+import {ValidPath} from "@crczp/common";
 
 
 /**
@@ -34,7 +33,7 @@ function canActivateToObservable(fromResult: boolean | Promise<boolean> | Observ
  * @param permissionsPredicate function that returns true if the user fulfills conditions
  */
 function guardBuilder(
-    redirect: string,
+    redirect: ValidPath,
     permissionsPredicate: () => boolean,
 ): CanActivateFn {
     return (route: ActivatedRouteSnapshot, state: RouterStateSnapshot) => {
@@ -59,8 +58,8 @@ function guardBuilder(
  * @param role role to check for
  */
 function guardBuilderForRole(
-    redirect: string,
-    role: string
+    redirect: ValidPath,
+    role: RoleKey
 ): CanActivateFn {
     return (route: ActivatedRouteSnapshot, state: RouterStateSnapshot) => {
         const roleService = inject(RoleService);
@@ -81,10 +80,10 @@ const advancedUserGuard: CanActivateFn =
         const roleMapping = PortalDynamicEnvironment.getConfig().roleMapping;
 
         return guardBuilder(
-            TRAINING_RUN_PATH,
+            'run',
             () => roleService.hasAny(
                 Object.values(roleMapping)
-                    .map((role) => role as string)
+                    .map((role) => role as RoleKey)
                     .filter((role) => role !== roleMapping.trainingTrainee)
             )
         )(route, state);
@@ -112,8 +111,8 @@ export const RoleGuards: RoleGuardMap = Object.fromEntries(
     (Object.keys(RoleService.ROLES) as RoleKey[]).map((key) => [
         `${key}Guard`,
         guardBuilderForRole(
-            HOME_PATH,
-            RoleService.ROLES[key]
+            'home',
+            key
         ),
     ]).concat(Object.entries(customGuards))
 ) as RoleGuardMap;

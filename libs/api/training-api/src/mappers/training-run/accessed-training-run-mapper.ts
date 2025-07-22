@@ -1,4 +1,4 @@
-import {AccessedTrainingRun, TraineeAccessTrainingRunActionEnum, TrainingRunTypeEnum} from '@crczp/training-model';
+import {AccessedTrainingRun, TraineeAccessTrainingRunActionEnum, TrainingTypeEnum} from '@crczp/training-model';
 import {AccessedTrainingRunDTO} from '../../dto/training-run/accessed-training-run-dto';
 import PossibleActionEnum = AccessedTrainingRunDTO.PossibleActionEnum;
 
@@ -18,7 +18,7 @@ export class AccessedTrainingRunMapper {
         result.trainingInstanceFormattedDuration = `${this.extractDate(result.trainingInstanceStartTime.toString())} -
          ${this.extractDate(result.trainingInstanceEndTime.toString())}`;
         result.action = this.resolvePossibleAction(dto.possible_action);
-        result.type = TrainingRunTypeEnum.LINEAR;
+        result.type = TrainingTypeEnum.LINEAR;
         result.localEnvironment = dto.local_environment;
         result.sandboxDefinitionId = dto.sandbox_definition_id;
         return result;

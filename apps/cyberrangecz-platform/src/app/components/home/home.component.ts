@@ -1,21 +1,13 @@
 import {Component, DestroyRef, inject, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
 import {SentinelAuthService, UserRole} from '@sentinel/auth';
-import {SANDBOX_DEFINITION_PATH, SANDBOX_IMAGES_PATH, SANDBOX_POOL_PATH} from '@crczp/sandbox-agenda';
-import {
-    ADAPTIVE_DEFINITION_PATH,
-    ADAPTIVE_INSTANCE_PATH,
-    TRAINING_DEFINITION_PATH,
-    TRAINING_INSTANCE_PATH,
-    TRAINING_RUN_PATH,
-} from '@crczp/training-agenda';
-import {GROUP_PATH, MICROSERVICE_PATH, USER_PATH} from '@crczp/user-and-group-agenda';
 import {AgendaPortalLink} from '../../model/agenda-portal-link';
 import {PortalAgendaContainer} from '../../model/portal-agenda-container';
 import {RoleResolver} from '../../utils/role-resolver';
 import {AgendaMenuItem} from '../../model/agenda-menu-item';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {PortalAgendaContainerComponent} from "./portal-agenda-container/portal-agenda-container.component";
+import {ValidPath} from "@crczp/common";
 
 /**
  * Main component of homepage (portal) page. Portal page is a main crossroad of possible sub pages. Only those matching with user
@@ -42,7 +34,7 @@ export class HomeComponent implements OnInit {
     ) {
     }
 
-    static createExpandedControlButtons(path: string[]): AgendaMenuItem[] {
+    static createExpandedControlButtons(path: ValidPath[]): AgendaMenuItem[] {
         return [
             new AgendaMenuItem('timeline', 'Adaptive', path[0]),
             new AgendaMenuItem('videogame_asset', 'Linear', path[1]),
@@ -60,7 +52,7 @@ export class HomeComponent implements OnInit {
      * Navigates to specified route
      * @param route route to which should router navigate
      */
-    navigateToRoute(route: string): void {
+    navigateToRoute(route: ValidPath): void {
         this.router.navigate([route]);
     }
 
@@ -102,7 +94,7 @@ export class HomeComponent implements OnInit {
             new AgendaPortalLink(
                 'Training Run',
                 !RoleResolver.isTrainingTrainee(this.roles),
-                TRAINING_RUN_PATH,
+                'run',
                 'Training Run allows you to start a new training, return to unfinished one,' +
                 ' or to access results of those you already finished.',
                 'games',
@@ -115,7 +107,7 @@ export class HomeComponent implements OnInit {
             new AgendaPortalLink(
                 'Sandbox Definition',
                 !RoleResolver.isSandboxDesigner(this.roles),
-                SANDBOX_DEFINITION_PATH,
+                'sandbox-definition',
                 'In the sandbox definition agenda, you can manage sandbox configurations, i.e., descriptions' +
                 ' of virtual networks and computers that can be instantiated in isolated sandboxes.',
                 'event_note',
@@ -123,10 +115,10 @@ export class HomeComponent implements OnInit {
             new AgendaPortalLink(
                 'Training Definition',
                 !RoleResolver.isTrainingDesigner(this.roles),
-                TRAINING_DEFINITION_PATH,
+                'linear-definition',
                 'The training definition is a plot of the single-player trainings. You can manage your own and design new ones.',
                 'assignment',
-                HomeComponent.createExpandedControlButtons([ADAPTIVE_DEFINITION_PATH, TRAINING_DEFINITION_PATH]),
+                HomeComponent.createExpandedControlButtons(['adaptive-definition', 'linear-definition']),
             ),
         ];
     }
@@ -136,7 +128,7 @@ export class HomeComponent implements OnInit {
             new AgendaPortalLink(
                 'Pool',
                 !RoleResolver.isSandboxOrganizer(this.roles),
-                SANDBOX_POOL_PATH,
+                'pool',
                 'As an instructor, you can create Pools of sandboxes that serve for the ' +
                 'instantiating and management of sandbox definitions.',
                 'subscriptions',
@@ -144,15 +136,15 @@ export class HomeComponent implements OnInit {
             new AgendaPortalLink(
                 'Training Instance',
                 !RoleResolver.isTrainingOrganizer(this.roles),
-                TRAINING_INSTANCE_PATH,
+                'linear-instance',
                 'You can also create training instances that are necessary if you want to organize a training hands-on session.',
                 'event',
-                HomeComponent.createExpandedControlButtons([ADAPTIVE_INSTANCE_PATH, TRAINING_INSTANCE_PATH]),
+                HomeComponent.createExpandedControlButtons(['adaptive-instance', 'linear-instance']),
             ),
             new AgendaPortalLink(
                 'Images',
                 !RoleResolver.isSandboxOrganizer(this.roles),
-                SANDBOX_IMAGES_PATH,
+                'sandbox-image',
                 'In the images agenda, you can view cloud images and its state.',
                 'donut_large',
             ),
@@ -165,21 +157,21 @@ export class HomeComponent implements OnInit {
             new AgendaPortalLink(
                 'Groups',
                 disabled,
-                GROUP_PATH,
+                'group',
                 'In Groups, you can manage groups and define access rights available to the group members.',
                 'group',
             ),
             new AgendaPortalLink(
                 'Users',
                 disabled,
-                USER_PATH,
+                'user',
                 'The Users agenda serves for assigning users to existing groups.',
                 'person',
             ),
             new AgendaPortalLink(
                 'Microservices',
                 disabled,
-                MICROSERVICE_PATH,
+                'microservice',
                 'You can also manage microservices that provide the CyberRangeᶜᶻ Platform`s functionality.' +
                 ' Please do not mess with it unless you know what you are doing.',
                 'account_tree',

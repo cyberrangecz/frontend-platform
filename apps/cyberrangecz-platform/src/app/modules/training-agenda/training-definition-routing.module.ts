@@ -1,24 +1,19 @@
 import {NgModule} from '@angular/core';
-import {RouterModule, Routes} from '@angular/router';
-import {PATHS, TRAINING_DEFINITION_DATA_ATTRIBUTE_NAME,} from '@crczp/training-agenda';
+import {RouterModule} from '@angular/router';
 import {TrainingDefinitionOverviewComponent} from '@crczp/training-agenda/definition-overview';
-import {
-    TrainingDefinitionBreadcrumbResolver,
-    TrainingDefinitionDetailBreadcrumbResolver,
-    TrainingDefinitionDetailTitleResolver,
-    TrainingDefinitionResolver,
-} from '@crczp/training-agenda/resolvers';
 import {SandboxApiModule} from "@crczp/sandbox-api";
 import {TrainingApiModule} from "@crczp/training-api";
 import {TrainingDefinitionCanDeactivate} from "@crczp/training-agenda/definition-edit";
+import {Routing, ValidRouterConfig} from "@crczp/common";
+import {TrainingDefinition} from "@crczp/training-model";
 
-const routes: Routes = [
+const routes: ValidRouterConfig<'linear-definition'> = [
     {
         path: '',
         component: TrainingDefinitionOverviewComponent,
     },
     {
-        path: PATHS.ACTION.CREATE,
+        path: 'create',
         loadComponent: () =>
             import('@crczp/training-agenda/definition-edit').then(
                 (m) => m.TrainingDefinitionEditOverviewComponent,
@@ -26,7 +21,7 @@ const routes: Routes = [
         canDeactivate: [TrainingDefinitionCanDeactivate],
     },
     {
-        path: `:${PATHS.DEFINITION.ATTRIBUTE.ID}/${PATHS.ACTION.EDIT}`,
+        path: ':definitionId/edit',
         loadComponent: () =>
             import('@crczp/training-agenda/definition-edit').then(
                 (m) => m.TrainingDefinitionEditOverviewComponent,
@@ -34,7 +29,7 @@ const routes: Routes = [
         canDeactivate: [TrainingDefinitionCanDeactivate],
     },
     {
-        path: `:${PATHS.DEFINITION.ATTRIBUTE.ID}/${PATHS.VIEW.PREVIEW}`,
+        path: ':definitionId/preview',
         loadComponent: () => import('@crczp/training-agenda/definition-preview').then(
             (m) => m.TrainingPreviewComponent
         ),
@@ -42,20 +37,20 @@ const routes: Routes = [
             title: undefined,
         },
         resolve: {
-            [TRAINING_DEFINITION_DATA_ATTRIBUTE_NAME]: TrainingDefinitionResolver,
-            breadcrumb: TrainingDefinitionBreadcrumbResolver,
+            [TrainingDefinition.name]: Routing.Resolvers.TrainingDefinition.linearDefinitionResolver,
+            breadcrumb: Routing.Resolvers.TrainingDefinition.linearDefinitionBreadcrumbResolver,
         },
     },
     {
-        path: `:${PATHS.DEFINITION.ATTRIBUTE.ID}/${PATHS.VIEW.SUMMARY}`,
+        path: ':definitionId/detail',
         loadComponent: () =>
             import('@crczp/training-agenda/definition-summary').then(
                 (m) => m.TrainingDefinitionSummaryComponent
             ),
         resolve: {
-            [TRAINING_DEFINITION_DATA_ATTRIBUTE_NAME]: TrainingDefinitionResolver,
-            breadcrumb: TrainingDefinitionDetailBreadcrumbResolver,
-            title: TrainingDefinitionDetailTitleResolver,
+            [TrainingDefinition.name]: Routing.Resolvers.TrainingDefinition.linearDefinitionResolver,
+            breadcrumb: Routing.Resolvers.TrainingDefinition.linearDefinitionBreadcrumbResolver,
+            title: Routing.Resolvers.TrainingDefinition.linearDefinitionTitleResolver,
         },
     },
 ];

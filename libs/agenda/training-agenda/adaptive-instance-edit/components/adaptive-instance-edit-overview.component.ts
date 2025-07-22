@@ -5,7 +5,6 @@ import {SentinelControlItem, SentinelControlItemSignal, SentinelControlsComponen
 import {filter, map, switchMap, take} from 'rxjs/operators';
 import {AdaptiveInstanceEditService} from '../services/state/edit/adaptive-instance-edit.service';
 import {AdaptiveInstanceEditControls} from '../models/adapter/adaptive-instance-edit-controls';
-import {ADAPTIVE_INSTANCE_DATA_ATTRIBUTE_NAME} from '@crczp/training-agenda';
 import {AdaptiveInstanceChangeEvent} from '../models/events/adaptive-instance-change-event';
 import {AdaptiveInstanceEditConcreteService} from '../services/state/edit/adaptive-instance-edit-concrete.service';
 import {OrganizersAssignService} from '../services/state/organizers-assign/organizers-assign.service';
@@ -83,7 +82,7 @@ export class AdaptiveInstanceEditOverviewComponent implements OnInit {
         this.tiTitle$ = this.editService.trainingInstance$.pipe(map((ti) => ti.title));
         this.activeRoute.data
             .pipe(takeUntilDestroyed(this.destroyRef))
-            .subscribe((data) => this.editService.set(data[ADAPTIVE_INSTANCE_DATA_ATTRIBUTE_NAME]));
+            .subscribe((data) => this.editService.set(data[TrainingInstance.name]));
 
         this.trainingDefinitions$ = this.editService.releasedTrainingDefinitions$.pipe(
             combineLatestWith(this.editService.unreleasedTrainingDefinitions$),

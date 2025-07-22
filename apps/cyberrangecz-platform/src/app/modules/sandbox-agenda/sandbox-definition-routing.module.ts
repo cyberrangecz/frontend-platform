@@ -1,17 +1,17 @@
 import {NgModule} from '@angular/core';
-import {RouterModule, Routes} from '@angular/router';
-import {SANDBOX_ROUTE_VARIABLES} from '@crczp/sandbox-agenda';
-import {SandboxDefinitionOverviewComponent} from '@crczp/sandbox-agenda/sandbox-definition-overview';
-import {SandboxDefinitionBreadcrumbResolver, SandboxDefinitionResolver} from '@crczp/sandbox-agenda/resolvers';
-import {PATHS} from "../../paths";
+import {RouterModule} from '@angular/router';
+import {SandboxDefinitionOverviewComponent} from "@crczp/sandbox-agenda/sandbox-definition-overview";
+import {Routing, ValidRouterConfig} from "@crczp/common";
+import {SandboxDefinition} from "@crczp/sandbox-model";
+import Resolvers = Routing.Resolvers;
 
-const routes: Routes = [
+const routes: ValidRouterConfig<'sandbox-definition'> = [
     {
         path: '',
         component: SandboxDefinitionOverviewComponent,
     },
     {
-        path: PATHS.ACTION.CREATE,
+        path: 'create',
         loadChildren: () =>
             import('@crczp/sandbox-agenda/sandbox-definition-edit').then((m) => m.SandboxDefinitionEditComponent),
         data: {
@@ -20,12 +20,12 @@ const routes: Routes = [
         },
     },
     {
-        path: `:${PATHS.SANDBOX.DEFINITION_ID}/${PATHS.SANDBOX.TOPOLOGY}`,
+        path: ':definitionId/topology',
         loadChildren: () =>
             import('@crczp/sandbox-agenda/topology').then((m) => m.SandboxTopologyComponent),
         resolve: {
-            breadcrumb: SandboxDefinitionBreadcrumbResolver,
-            [SANDBOX_ROUTE_VARIABLES.SANDBOX_DEFINITION_DATA]: SandboxDefinitionResolver,
+            breadcrumb: Resolvers.SandboxDefinition.resolveSandboxDefinitionBreadcrumb,
+            [SandboxDefinition.name]: Resolvers.SandboxDefinition.resolveSandboxDefinition,
         },
         data: {
             title: 'Sandbox Definition Topology',

@@ -4,6 +4,7 @@ import {NgClass} from "@angular/common";
 import {MatButton} from "@angular/material/button";
 import {MatIcon} from "@angular/material/icon";
 import {MatMenu, MatMenuItem, MatMenuTrigger} from "@angular/material/menu";
+import {ValidPath} from "@crczp/common";
 
 @Component({
     selector: 'crczp-portal-agenda-link',
@@ -23,14 +24,14 @@ export class PortalAgendaLinkComponent {
     @Input() portalAgendaLink: AgendaPortalLink;
     @Input() elevation: string;
 
-    @Output() navigate: EventEmitter<string> = new EventEmitter();
+    @Output() navigate: EventEmitter<ValidPath> = new EventEmitter();
     @Output() elevate: EventEmitter<string> = new EventEmitter();
 
     setElevation(elevation: string): void {
         this.elevate.emit(elevation);
     }
 
-    setRoute(route: string): void {
+    setRoute(route: ValidPath): void {
         this.navigate.emit(route);
     }
 }

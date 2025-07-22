@@ -1,16 +1,11 @@
-import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import {ChangeDetectionStrategy, Component, inject, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
 import {MicroserviceApi} from '@crczp/user-and-group-api';
 import {Microservice} from '@crczp/user-and-group-model';
-import {
-    UserAndGroupDefaultNavigator,
-    UserAndGroupErrorHandler,
-    UserAndGroupNavigator,
-    UserAndGroupNotificationService
-} from '@crczp/user-and-group-agenda';
 import {MicroserviceEditCanDeactivate} from '../services/microservice-edit-can-deactivate.service';
 import {MicroserviceEditControlsComponent} from './microservice-edit-controls/microservice-edit-controls.component';
 import {MicroserviceEditComponent} from './microservice-edit/microservice-edit.component';
+import {ErrorHandlerService, NotificationService, Routing} from "@crczp/common";
 
 /**
  * Main smart component of microservice-registration state page
@@ -26,16 +21,9 @@ import {MicroserviceEditComponent} from './microservice-edit/microservice-edit.c
     ],
     providers: [
         MicroserviceEditCanDeactivate,
-        {provide: UserAndGroupNavigator, useClass: UserAndGroupDefaultNavigator}
     ]
 })
 export class MicroserviceEditOverviewComponent implements OnInit {
-    private api = inject(MicroserviceApi);
-    private navigator = inject(UserAndGroupNavigator);
-    private router = inject(Router);
-    private notificationService = inject(UserAndGroupNotificationService);
-    private errorHandler = inject(UserAndGroupErrorHandler);
-
     /**
      * Edited/created microservice-registration
      */
@@ -52,6 +40,10 @@ export class MicroserviceEditOverviewComponent implements OnInit {
      * True if form data are saved, false otherwise
      */
     canDeactivateForm = true;
+    private api = inject(MicroserviceApi);
+    private router = inject(Router);
+    private notificationService = inject(NotificationService);
+    private errorHandler = inject(ErrorHandlerService);
 
     ngOnInit(): void {
         this.initMicroservice();
@@ -85,7 +77,7 @@ export class MicroserviceEditOverviewComponent implements OnInit {
     create(): void {
         this.api.create(this.microservice).subscribe(
             () => {
-                this.router.navigate([this.navigator.toMicroserviceOverview()]);
+                this.router.navigate([Routing.RouteBuilder.microservice.build()]);
                 this.notificationService.emit('success', 'Microservice was created');
                 this.canDeactivateForm = true;
             },

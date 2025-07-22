@@ -8,28 +8,25 @@ import {map, switchMap, tap} from 'rxjs/operators';
 import {
     SandboxDefinitionSelectComponent
 } from '../components/sandbox-definition-select/sandbox-definition-select.component';
-import {SandboxErrorHandler, SandboxNavigator, SandboxNotificationService} from '@crczp/sandbox-agenda';
 import {PoolEditService} from './pool-edit.service';
 import {PoolChangedEvent} from '../model/pool-changed-event';
+import {ErrorHandlerService, NotificationService, Routing} from "@crczp/common";
 
 @Injectable()
 export class PoolEditConcreteService extends PoolEditService {
     private router = inject(Router);
     private dialog = inject(MatDialog);
-    private navigator = inject(SandboxNavigator);
-    private notificationService = inject(SandboxNotificationService);
-    private errorHandler = inject(SandboxErrorHandler);
+    private notificationService = inject(NotificationService);
+    private errorHandler = inject(ErrorHandlerService);
     private api = inject(PoolApi);
 
 
     private editModeSubject$: BehaviorSubject<boolean> = new BehaviorSubject(false);
-    private requestsCountSubject$: BehaviorSubject<number> = new BehaviorSubject(0);
-
     /**
      * True if existing pool is edited, false if new one is created
      */
     editMode$: Observable<boolean> = this.editModeSubject$.asObservable();
-
+    private requestsCountSubject$: BehaviorSubject<number> = new BehaviorSubject(0);
     isLoading$: Observable<boolean> = this.requestsCountSubject$.asObservable().pipe(map((value: number) => value > 0));
 
     private poolSubject$: ReplaySubject<Pool> = new ReplaySubject();
@@ -53,7 +50,9 @@ export class PoolEditConcreteService extends PoolEditService {
                     () => this.notificationService.emit('success', 'Pool was created'),
                     (err) => this.errorHandler.emit(err, 'Creating pool'),
                 ),
-                switchMap(() => from(this.router.navigate([this.navigator.toPoolOverview()]))),
+                switchMap(() => from(this.router.navigate([
+                    Routing.RouteBuilder.pool.build()
+                ]))),
                 finalize(() => this.requestsCountSubject$.next(this.requestsCountSubject$.value - 1)),
             );
         });
@@ -88,7 +87,7 @@ export class PoolEditConcreteService extends PoolEditService {
     }
 
     selectDefinition(currSelected: SandboxDefinition): Observable<SandboxDefinition> {
-        const dialogRef = this.dialog.open(SandboxDefinitionSelectComponent, { data: currSelected });
+        const dialogRef = this.dialog.open(SandboxDefinitionSelectComponent, {data: currSelected});
         return dialogRef.afterClosed();
     }
 
@@ -96,9 +95,12 @@ export class PoolEditConcreteService extends PoolEditService {
      * Saves/creates edited pool
      */
     save(): Observable<any> {
-        return this.editModeSubject$.getValue()
-            ? this.update().pipe(tap(() => this.router.navigate([this.navigator.toPoolOverview()])))
-            : this.create().pipe(tap(() => this.router.navigate([this.navigator.toPoolOverview()])));
+        return (this.editModeSubject$.getValue()
+                ? this.update()
+                : this.create()
+        ).pipe(tap(() => this.router.navigate([
+            Routing.RouteBuilder.pool.build()
+        ])));
     }
 
     /**

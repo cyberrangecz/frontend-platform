@@ -11,9 +11,8 @@ import {SandboxDefinitionApi} from '@crczp/sandbox-api';
 import {SandboxDefinition} from '@crczp/sandbox-model';
 import {EMPTY, from, Observable, of} from 'rxjs';
 import {switchMap, tap} from 'rxjs/operators';
-import {SandboxErrorHandler, SandboxNavigator, SandboxNotificationService,} from '@crczp/sandbox-agenda';
 import {SandboxDefinitionOverviewService} from './sandbox-definition-overview.service';
-import {PortalConfig} from '@crczp/common';
+import {ErrorHandlerService, NotificationService, PortalConfig, Routing} from '@crczp/common';
 
 /**
  * Basic implementation of a layer between a component and an API service.
@@ -24,9 +23,8 @@ export class SandboxDefinitionOverviewConcreteService extends SandboxDefinitionO
     private api = inject(SandboxDefinitionApi);
     private router = inject(Router);
     private dialog = inject(MatDialog);
-    private alertService = inject(SandboxNotificationService);
-    private errorHandler = inject(SandboxErrorHandler);
-    private navigator = inject(SandboxNavigator);
+    private notificationService = inject(NotificationService);
+    private errorHandler = inject(ErrorHandlerService);
 
     private lastPagination: OffsetPaginationEvent;
 
@@ -58,7 +56,7 @@ export class SandboxDefinitionOverviewConcreteService extends SandboxDefinitionO
 
     create(): Observable<any> {
         return of(
-            this.router.navigate([this.navigator.toNewSandboxDefinition()])
+            this.router.navigate([Routing.RouteBuilder.sandbox_definition.create.build()])
         );
     }
 
@@ -81,9 +79,7 @@ export class SandboxDefinitionOverviewConcreteService extends SandboxDefinitionO
     showTopology(sandboxDefinition: SandboxDefinition): Observable<any> {
         return from(
             this.router.navigate([
-                this.navigator.toSandboxDefinitionTopology(
-                    sandboxDefinition.id
-                ),
+                Routing.RouteBuilder.sandbox_definition.definitionId(sandboxDefinition.id).topology.build()
             ])
         );
     }
@@ -111,7 +107,7 @@ export class SandboxDefinitionOverviewConcreteService extends SandboxDefinitionO
         return this.api.delete(sandboxDefinition.id).pipe(
             tap(
                 () =>
-                    this.alertService.emit(
+                    this.notificationService.emit(
                         'success',
                         'Sandbox definition was successfully deleted'
                     ),

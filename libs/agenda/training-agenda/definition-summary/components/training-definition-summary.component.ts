@@ -1,6 +1,5 @@
 import {ChangeDetectionStrategy, Component, inject, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {TRAINING_DEFINITION_DATA_ATTRIBUTE_NAME} from '@crczp/training-agenda';
 import {TrainingDefinition} from '@crczp/training-model';
 import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
@@ -28,7 +27,7 @@ export class TrainingDefinitionSummaryComponent implements OnInit {
 
     ngOnInit(): void {
         this.trainingDefinition$ = this.activeRoute.data.pipe(
-            map((data) => data[TRAINING_DEFINITION_DATA_ATTRIBUTE_NAME]),
+            map((data) => data[TrainingDefinition.name]),
         );
     }
 }

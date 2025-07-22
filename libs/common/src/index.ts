@@ -15,4 +15,7 @@ export * from './utils/loading-tracker';
 export * from './utils/nav-builder';
 export * from './utils/property-provision';
 export * from './routing/routing-namespace'
-
+export * from './routing/router-types'
+export * from './error-handling/error-handler.service'
+export * from './error-handling/loading.service'
+export * from './error-handling/notification.service'

@@ -3,7 +3,6 @@ import {ActivatedRoute} from '@angular/router';
 import {TrainingInstance} from '@crczp/training-model';
 import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
-import {TRAINING_INSTANCE_DATA_ATTRIBUTE_NAME} from '@crczp/training-agenda';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {AsyncPipe, TitleCasePipe} from "@angular/common";
 
@@ -27,7 +26,7 @@ export class AccessTokenDetailComponent {
     constructor() {
         this.trainingInstance$ = this.activeRoute.data.pipe(
             takeUntilDestroyed(),
-            map((data) => data[TRAINING_INSTANCE_DATA_ATTRIBUTE_NAME]),
+            map((data) => data[TrainingInstance.name]),
         );
     }
 }

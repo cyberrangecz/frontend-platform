@@ -2,7 +2,6 @@ import {ChangeDetectionStrategy, Component, inject, OnInit} from '@angular/core'
 import {ActivatedRoute} from '@angular/router';
 import {Observable} from 'rxjs';
 import {map, take} from 'rxjs/operators';
-import {ADAPTIVE_RUN_DATA_ATTRIBUTE_NAME} from '@crczp/training-agenda';
 import {SentinelControlItem, SentinelControlItemSignal} from '@sentinel/components/controls';
 import {TrainingRunResultsControls} from '../model/training-run-results-controls';
 import {MitreTechniquesOverviewService} from '../service/mitre-techniques.service';
@@ -10,6 +9,7 @@ import {AsyncPipe} from "@angular/common";
 import {MatCard} from "@angular/material/card";
 import {AdaptiveTransitionVisualizationComponent} from "@crczp/adaptive-instance-simulator";
 import {MitreTechniquesOverviewConcreteService} from "../service/mitre-techniques-concrete.service";
+import {TrainingRun} from "@crczp/training-model";
 
 @Component({
     selector: 'crczp-adaptive-run-results',
@@ -44,7 +44,7 @@ export class AdaptiveRunResultsComponent implements OnInit {
 
     ngOnInit(): void {
         this.controls = TrainingRunResultsControls.createControls(this.service);
-        this.trainingRun$ = this.activatedRoute.data.pipe(map((data) => data[ADAPTIVE_RUN_DATA_ATTRIBUTE_NAME]));
+        this.trainingRun$ = this.activatedRoute.data.pipe(map((data) => data[TrainingRun.name]));
     }
 
 }

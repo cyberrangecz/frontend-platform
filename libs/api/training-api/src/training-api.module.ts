@@ -1,6 +1,6 @@
 import {CommonModule} from '@angular/common';
 import {inject, NgModule} from '@angular/core';
-import {TrainingDefinitionApi} from './api/definition/training-definition-api.service';
+import {LinearTrainingDefinitionApi} from './api/definition/training-definition-api.service';
 import {TrainingDefinitionDefaultApi} from './api/definition/training-definition-default-api.service';
 import {TrainingEventApi} from './api/event/training-event-api.service';
 import {TrainingEventDefaultApi} from './api/event/training-event-default-api.service';
@@ -12,7 +12,7 @@ import {UserApi} from './api/user/user-api.service';
 import {UserDefaultApi} from './api/user/user-default-api.service';
 import {VisualizationApi} from './api/visualization/visualization-api.service';
 import {VisualizationDefaultApi} from './api/visualization/visualization-default-api.service';
-import {AdaptiveDefinitionApiService} from './api/adaptive-definition/adaptive-definition-api.service';
+import {AdaptiveTrainingDefinitionApi} from './api/adaptive-definition/adaptive-training-definition.api';
 import {AdaptiveDefinitionDefaultApiService} from './api/adaptive-definition/adaptive-definition-default-api.service';
 import {AdaptiveInstanceDefaultApi} from './api/adaptive-instance/adaptive-instance-default-api.service';
 import {AdaptiveInstanceApi} from './api/adaptive-instance/adaptive-instance-api.service';
@@ -28,8 +28,8 @@ import {DetectionEventApi} from './api/detection-event/detection-event-api.servi
 @NgModule({
     imports: [CommonModule],
     providers: [
-        {provide: TrainingDefinitionApi, useClass: TrainingDefinitionDefaultApi},
-        {provide: AdaptiveDefinitionApiService, useClass: AdaptiveDefinitionDefaultApiService},
+        {provide: LinearTrainingDefinitionApi, useClass: TrainingDefinitionDefaultApi},
+        {provide: AdaptiveTrainingDefinitionApi, useClass: AdaptiveDefinitionDefaultApiService},
         {provide: LinearTrainingInstanceApi, useClass: TrainingInstanceDefaultApi},
         {provide: LinearRunApi, useClass: TrainingRunDefaultApi},
         {provide: UserApi, useClass: UserDefaultApi},

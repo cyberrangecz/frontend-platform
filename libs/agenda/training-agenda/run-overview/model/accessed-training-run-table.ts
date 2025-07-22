@@ -1,7 +1,7 @@
 import {PaginatedResource} from '@sentinel/common/pagination';
-import {AccessedTrainingRun, TraineeAccessTrainingRunActionEnum, TrainingRunTypeEnum} from '@crczp/training-model';
+import {AccessedTrainingRun, TraineeAccessTrainingRunActionEnum} from '@crczp/training-model';
 import {Column, Row, RowAction, SentinelTable} from '@sentinel/components/table';
-import {defer, EMPTY, of} from 'rxjs';
+import {defer, of} from 'rxjs';
 import {AccessedTrainingRunService} from '../services/state/training/accessed-training-run.service';
 import {AccessedTrainingRunRowAdapter} from './accessed-training-run-row-adapter';
 
@@ -50,11 +50,7 @@ export class AccessedTrainingRunTable extends SentinelTable<AccessedTrainingRunR
                 'primary',
                 'Resume training run',
                 of(trainingRun.action !== TraineeAccessTrainingRunActionEnum.Resume),
-                defer(() =>
-                    trainingRun.type === TrainingRunTypeEnum.LINEAR
-                        ? service.resumeLinear(trainingRun.trainingRunId)
-                        : service.resumeAdaptive(trainingRun.trainingRunId),
-                ),
+                defer(() => service.toResumeRun(trainingRun.trainingRunId, trainingRun.type)),
             ),
             new RowAction(
                 'results',
@@ -63,17 +59,7 @@ export class AccessedTrainingRunTable extends SentinelTable<AccessedTrainingRunR
                 'primary',
                 'Access Results',
                 of(trainingRun.action !== TraineeAccessTrainingRunActionEnum.Results),
-                defer(() => {
-                    switch (trainingRun.type) {
-                        case TrainingRunTypeEnum.LINEAR:
-                            service.resultsLinear(trainingRun.trainingRunId);
-                            break;
-                        case TrainingRunTypeEnum.ADAPTIVE:
-                            service.resultsAdaptive(trainingRun.trainingRunId);
-                            break;
-                    }
-                    return EMPTY;
-                }),
+                defer(() => service.toRunResults(trainingRun.trainingRunId, trainingRun.type)),
             ),
         ];
     }

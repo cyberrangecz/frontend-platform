@@ -19,7 +19,9 @@ export const DEFINED_ROUTES = {
 
     ['adaptive-definition']: {
         create: {},
+        simulator: {},
         VAR_definitionId: {
+            edit: {},
             preview: {},
             detail: {},
             simulator: {},
@@ -29,6 +31,7 @@ export const DEFINED_ROUTES = {
     ['linear-definition']: {
         create: {},
         VAR_definitionId: {
+            edit: {},
             preview: {},
             detail: {},
         }
@@ -56,8 +59,18 @@ export const DEFINED_ROUTES = {
             ['access-token']: {},
             runs: {},
             simulator: {},
-            results: {},
-            ['cheating-detection']: {}
+            results: {
+                dashboard: {},
+                ['quiz-results']: {},
+                walkthrough: {},
+                ['command-timeline']: {},
+                ['command-analysis']: {}
+            },
+            ['aggregated-results']: {},
+            ['cheating-detection']: {
+                create: {},
+                VAR_eventId: {}
+            }
         }
     },
 
@@ -77,9 +90,14 @@ export const DEFINED_ROUTES = {
             },
             EXCL_VAR_runId: {
                 resume: {},
-                results: {}
+                results: {
+                    ['score-development']: {},
+                    ['command-timeline']: {},
+                    ['command-analysis']: {}
+                }
             }
-        }
+        },
+        ['mitre-techniques']: {},
     },
 
     ['mitre-techniques']: {},
@@ -202,8 +220,8 @@ function createNavigationBuilder<T extends Record<string, any>, P extends string
         const safeKey = stripped.replace(/-/g, '_');
 
         if (isVariable) {
-            builder[safeKey] = (value: string) =>
-                createNavigationBuilder(routes[rawKey], `${basePath}/${value}`);
+            builder[safeKey] = (value: any) =>
+                createNavigationBuilder(routes[rawKey], `${basePath}/${value.toString()}`);
         } else {
             const nextPath = `${basePath}/${stripped}`.replace(/\/+/, '/');
             const childBuilder = createNavigationBuilder(routes[rawKey], nextPath);

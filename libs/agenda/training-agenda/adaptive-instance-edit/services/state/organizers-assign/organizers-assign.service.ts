@@ -5,9 +5,8 @@ import {Organizer} from '@crczp/training-model';
 import {SentinelUserAssignService} from '@sentinel/components/user-assign';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {switchMap, tap} from 'rxjs/operators';
-import {TrainingErrorHandler} from '@crczp/training-agenda';
 import {UserNameFilters} from '@crczp/training-agenda/internal';
-import {PortalConfig} from "@crczp/common";
+import {ErrorHandlerService, PortalConfig} from "@crczp/common";
 
 /**
  * Organizer implementation of UserAssignService from user assign library.
@@ -16,7 +15,7 @@ import {PortalConfig} from "@crczp/common";
 @Injectable()
 export class OrganizersAssignService extends SentinelUserAssignService {
     private userApi = inject(UserApi);
-    private errorHandler = inject(TrainingErrorHandler);
+    private errorHandler = inject(ErrorHandlerService);
     private settings = inject(PortalConfig);
 
     private lastAssignedPagination: OffsetPaginationEvent;

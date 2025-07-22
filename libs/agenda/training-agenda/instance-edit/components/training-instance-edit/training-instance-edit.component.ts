@@ -20,7 +20,6 @@ import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {Pool, SandboxDefinition} from '@crczp/sandbox-model';
 import {BehaviorSubject, combineLatestWith, Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
-import {TrainingNavigator} from '@crczp/training-agenda';
 import {MatError, MatFormField, MatHint, MatInput, MatLabel} from "@angular/material/input";
 import {MatIcon} from "@angular/material/icon";
 import {MatSlideToggle} from "@angular/material/slide-toggle";
@@ -33,6 +32,7 @@ import {
 } from "@sentinel/components/resource-selector";
 import {MatAnchor, MatIconButton} from "@angular/material/button";
 import {RouterLink} from "@angular/router";
+import {Routing} from "@crczp/common";
 
 /**
  * Component for creating new or editing existing training instance
@@ -86,7 +86,6 @@ export class TrainingInstanceEditComponent implements OnChanges, AfterViewInit {
     private sandboxDefinitionSearchStringSubject = new BehaviorSubject<string>('');
     private poolSearchStringSubject = new BehaviorSubject<string>('');
     private readonly destroyRef = inject(DestroyRef);
-    private readonly navigator = inject(TrainingNavigator);
 
     get startTime(): AbstractControl {
         return this.trainingInstanceFormGroup.formGroup.get('startTime');
@@ -269,11 +268,11 @@ export class TrainingInstanceEditComponent implements OnChanges, AfterViewInit {
     }
 
     getPoolUrl(id: string) {
-        return `/${this.navigator.toPool(id)}`;
+        return `/${Routing.RouteBuilder.pool.poolId(id).build()}`;
     }
 
     getTrainingDefinitionUrl(id: number) {
-        return `/${this.navigator.toTrainingDefinitionDetail(id)}`;
+        return `/${Routing.RouteBuilder.linear_definition.definitionId(id).build()}`;
     }
 
     private changeValidity(error: boolean, resourceSelector: ElementRef) {

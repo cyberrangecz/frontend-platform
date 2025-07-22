@@ -2,7 +2,6 @@ import {Component, DestroyRef, HostListener, inject, OnInit} from '@angular/core
 import {ActivatedRoute} from '@angular/router';
 import {TrainingRun} from '@crczp/training-model';
 import {VisualizationInfo} from '@crczp/training-agenda/internal';
-import {TRAINING_RUN_DATA_ATTRIBUTE_NAME} from '@crczp/training-agenda';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {Observable} from "rxjs";
 import {map} from "rxjs/operators";
@@ -41,7 +40,7 @@ export class ScoreDevelopmentWrapperComponent implements OnInit {
     loadVisualizationInfo(): void {
         this.visualizationInfo$ = this.activatedRoute.data.pipe(
             takeUntilDestroyed(this.destroyRef),
-            map((data) => this.createTrainingVisualizationInfo(data[TRAINING_RUN_DATA_ATTRIBUTE_NAME])),
+            map((data) => this.createTrainingVisualizationInfo(data[TrainingRun.name])),
         );
         this.traineeModeInfo$ = this.visualizationInfo$.pipe(
             map((vizInfo) => {

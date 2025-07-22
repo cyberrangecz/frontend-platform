@@ -5,11 +5,11 @@ import {LinearRunApi} from '@crczp/training-api';
 import {Hint, TrainingLevel} from '@crczp/training-model';
 import {EMPTY, Observable} from 'rxjs';
 import {switchMap, tap} from 'rxjs/operators';
-import {TrainingErrorHandler} from '@crczp/training-agenda';
 import {TrainingRunTrainingLevelService} from './training-run-training-level.service';
 import {RunningTrainingRunService} from '../../running/running-training-run.service';
 import {SandboxInstanceApi} from '@crczp/sandbox-api';
 import {SentinelNotificationService} from '@sentinel/layout/notification';
+import {ErrorHandlerService} from "@crczp/common";
 
 @Injectable()
 /**
@@ -18,7 +18,7 @@ import {SentinelNotificationService} from '@sentinel/layout/notification';
 export class TrainingRunTrainingLevelConcreteService extends TrainingRunTrainingLevelService {
     private api = inject(LinearRunApi);
     private sandboxApi = inject(SandboxInstanceApi);
-    private errorHandler = inject(TrainingErrorHandler);
+    private errorHandler = inject(ErrorHandlerService);
 
     constructor() {
         const notificationService = inject(SentinelNotificationService);

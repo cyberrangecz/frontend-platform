@@ -12,7 +12,6 @@ import {Observable} from 'rxjs';
 import {map, take} from 'rxjs/operators';
 import {TrainingDefinitionOverviewControls} from '../model/training-definition-overview-controls';
 import {TrainingDefinitionTable} from '../model/training-definition-table';
-import {TrainingDefaultNavigator, TrainingNavigator} from '@crczp/training-agenda';
 import {TrainingDefinitionService} from '../services/state/training-definition.service';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {
@@ -24,11 +23,6 @@ import {
 import {SentinelControlItem, SentinelControlItemSignal, SentinelControlsComponent} from "@sentinel/components/controls";
 import {AsyncPipe} from "@angular/common";
 import {FileUploadProgressService} from "../services/file-upload/file-upload-progress.service";
-import {
-    TrainingDefinitionBreadcrumbResolver,
-    TrainingDefinitionResolver,
-    TrainingDefinitionTitleResolver
-} from "@crczp/training-agenda/resolvers";
 import {TrainingDefinitionConcreteService} from "../services/state/training-definition.concrete.service";
 
 /**
@@ -48,10 +42,6 @@ import {TrainingDefinitionConcreteService} from "../services/state/training-defi
     ],
     providers: [
         FileUploadProgressService,
-        TrainingDefinitionBreadcrumbResolver,
-        TrainingDefinitionResolver,
-        TrainingDefinitionTitleResolver,
-        {provide: TrainingNavigator, useClass: TrainingDefaultNavigator},
         {provide: TrainingDefinitionService, useClass: TrainingDefinitionConcreteService},
         providePaginationStorageService(TrainingDefinitionOverviewComponent)
     ],
@@ -68,7 +58,6 @@ export class TrainingDefinitionOverviewComponent implements OnInit {
     destroyRef = inject(DestroyRef);
     private trainingDefinitionService = inject(TrainingDefinitionService);
     private paginationService = inject(PaginationStorageService);
-    private navigator = inject(TrainingNavigator);
 
     ngOnInit(): void {
         this.topControls = TrainingDefinitionOverviewControls.createTopControls(this.trainingDefinitionService);
@@ -127,7 +116,7 @@ export class TrainingDefinitionOverviewComponent implements OnInit {
         this.hasError$ = this.trainingDefinitionService.hasError$;
         this.isLoading$ = this.trainingDefinitionService.isLoading$;
         this.trainingDefinitions$ = this.trainingDefinitionService.resource$.pipe(
-            map((resource) => new TrainingDefinitionTable(resource, this.trainingDefinitionService, this.navigator)),
+            map((resource) => new TrainingDefinitionTable(resource, this.trainingDefinitionService)),
         );
         const initialPagination = new OffsetPaginationEvent(
             0,

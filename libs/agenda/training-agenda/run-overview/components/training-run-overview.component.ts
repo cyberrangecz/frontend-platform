@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit} from '@angular/core';
 import {OffsetPaginationEvent} from '@sentinel/common/pagination';
-import {AccessedTrainingRun} from '@crczp/training-model';
+import {AccessedTrainingRun, TrainingTypeEnum} from '@crczp/training-model';
 import {SentinelTable, SentinelTableComponent, TableActionEvent, TableLoadEvent} from '@sentinel/components/table';
 import {Observable} from 'rxjs';
 import {map, take} from 'rxjs/operators';
@@ -13,16 +13,9 @@ import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {PortalConfig} from "@crczp/common";
 import {AsyncPipe} from "@angular/common";
 import {AccessTrainingRunComponent} from "./access/access-training-run.component";
-import {
-    AccessAdaptiveRunResolver,
-    AccessTrainingRunResolver,
-    AdaptiveRunResultsResolver,
-    TrainingRunResultsResolver
-} from "@crczp/training-agenda/resolvers";
-import {TrainingDefaultNavigator, TrainingNavigator} from "@crczp/training-agenda";
+
 import {RunningTrainingRunConcreteService, RunningTrainingRunService} from "@crczp/training-agenda/run-detail";
 import {RunningAdaptiveRunConcreteService, RunningAdaptiveRunService} from "@crczp/training-agenda/adaptive-run-detail";
-import {AccessedTrainingRunConcreteService} from "../services/state/training/accessed-training-run-concrete.service";
 import {AccessedAdaptiveRunConcreteService} from "../services/state/adaptive/accessed-adaptive-run-concrete.service";
 
 /**
@@ -40,14 +33,9 @@ import {AccessedAdaptiveRunConcreteService} from "../services/state/adaptive/acc
         SentinelTableComponent
     ],
     providers: [
-        AccessTrainingRunResolver,
-        AccessAdaptiveRunResolver,
-        TrainingRunResultsResolver,
-        AdaptiveRunResultsResolver,
-        {provide: TrainingNavigator, useClass: TrainingDefaultNavigator},
         {provide: RunningTrainingRunService, useClass: RunningTrainingRunConcreteService},
         {provide: RunningAdaptiveRunService, useClass: RunningAdaptiveRunConcreteService},
-        {provide: AccessedTrainingRunService, useClass: AccessedTrainingRunConcreteService},
+        {provide: AccessedTrainingRunService, useClass: AccessedTrainingRunService},
         {provide: AccessedAdaptiveRunService, useClass: AccessedAdaptiveRunConcreteService},
     ],
 })
@@ -77,17 +65,12 @@ export class TrainingRunOverviewComponent implements OnInit {
      */
     access(accessToken: string): void {
         this.isLoading = true;
-        if (this.isAdaptiveToken(accessToken)) {
-            this.accessedAdaptiveRunService
-                .access(accessToken)
-                .pipe(takeUntilDestroyed(this.destroyRef))
-                .subscribe(() => (this.isLoading = false));
-        } else {
-            this.trainingRunOverviewService
-                .access(accessToken)
-                .pipe(takeUntilDestroyed(this.destroyRef))
-                .subscribe(() => (this.isLoading = false));
-        }
+        this.trainingRunOverviewService
+            .toAccessRun(accessToken, this.isAdaptiveToken(accessToken) ?
+                TrainingTypeEnum.ADAPTIVE : TrainingTypeEnum.LINEAR)
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe(() => (this.isLoading = false));
+
     }
 
     /**

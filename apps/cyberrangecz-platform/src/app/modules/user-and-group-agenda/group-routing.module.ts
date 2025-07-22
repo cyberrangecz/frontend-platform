@@ -1,51 +1,45 @@
 import {NgModule} from '@angular/core';
-import {RouterModule, Routes} from '@angular/router';
-
-
-import {
-    GroupBreadcrumbResolver,
-    GroupOverviewComponent,
-    GroupResolver,
-    GroupTitleResolver,
-} from '@crczp/user-and-group-agenda/group-overview';
+import {RouterModule} from '@angular/router';
 import {GroupEditCanDeactivate} from "@crczp/user-and-group-agenda/group-edit";
-import {GROUP_DATA_ATTRIBUTE_NAME} from "@crczp/user-and-group-agenda";
-import {PATHS} from "../../paths";
+import {Routing, ValidRouterConfig} from "@crczp/common";
+import {Group} from "@crczp/user-and-group-model";
+import {GroupOverviewComponent} from "@crczp/user-and-group-agenda/group-overview";
 
-const routes: Routes = [
+const routes: ValidRouterConfig<'group'> = [
     {
         path: '',
         component: GroupOverviewComponent,
     },
     {
-        path: PATHS.ACTION.CREATE,
+        path: 'create',
         loadComponent: () =>
             import('@crczp/user-and-group-agenda/group-edit').then((m) => m.GroupEditComponent),
         resolve: {
-            [GROUP_DATA_ATTRIBUTE_NAME]: GroupResolver,
-            breadcrumb: GroupBreadcrumbResolver,
-            title: GroupTitleResolver,
+            [Group.name]: Routing.Resolvers.Group.resolveGroup,
+            breadcrumb: Routing.Resolvers.Group.resolveGroupBreadcrumb,
+            title: Routing.Resolvers.Group.resolveGroupTitle,
         },
         canDeactivate: [GroupEditCanDeactivate],
     },
     {
-        path: `:${GROUP_SELECTOR}/${GROUP_EDIT_PATH}`,
+        path: ':groupId/edit',
         loadComponent: () =>
             import('@crczp/user-and-group-agenda/group-edit').then((m) => m.GroupEditComponent),
         resolve: {
-            [GROUP_DATA_ATTRIBUTE_NAME]: GroupResolver,
-            breadcrumb: GroupBreadcrumbResolver,
-            title: GroupTitleResolver,
+            [Group.name]: Routing.Resolvers.Group.resolveGroup,
+            breadcrumb: Routing.Resolvers.Group.resolveGroupBreadcrumb,
+            title: Routing.Resolvers.Group.resolveGroupTitle,
         },
         canDeactivate: [GroupEditCanDeactivate],
     },
     {
-        path: `:${GROUP_SELECTOR}/${GROUP_DETAIL_PATH}`,
-        loadComponent: () => import('./detail/group-detail.module').then((m) => m.GroupDetailModule),
+        path: ':groupId',
+        loadComponent: () =>
+            import('@crczp/user-and-group-agenda/group-edit').then((m) => m.GroupUserAssignComponent),
         resolve: {
-            [GROUP_DATA_ATTRIBUTE_NAME]: GroupResolver,
-            breadcrumb: GroupBreadcrumbResolver,
-            title: GroupTitleResolver,
+            [Group.name]: Routing.Resolvers.Group.resolveGroup,
+            breadcrumb: Routing.Resolvers.Group.resolveGroupBreadcrumb,
+            title: Routing.Resolvers.Group.resolveGroupTitle,
         },
     },
 ];

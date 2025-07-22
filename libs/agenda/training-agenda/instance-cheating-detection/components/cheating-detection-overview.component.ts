@@ -1,6 +1,6 @@
 import {Component, DestroyRef, EventEmitter, inject, Input, OnInit, Output} from '@angular/core';
 import {OffsetPaginationEvent} from '@sentinel/common/pagination';
-import {Observable} from 'rxjs';
+import {from, Observable} from 'rxjs';
 import {
     SentinelRowDirective,
     SentinelTable,
@@ -9,7 +9,6 @@ import {
     TableLoadEvent
 } from '@sentinel/components/table';
 import {map, take} from 'rxjs/operators';
-import {TRAINING_INSTANCE_DATA_ATTRIBUTE_NAME, TrainingNavigator} from '@crczp/training-agenda';
 import {CheatingDetectionOverviewControls} from '../model/cheating-detection-overview-controls';
 import {CheatingDetectionService} from '../services/cheating-detection.service';
 import {CheatingDetectionTable} from '../model/cheating-detection-table';
@@ -21,6 +20,13 @@ import {SentinelControlItem, SentinelControlItemSignal, SentinelControlsComponen
 import {AsyncPipe} from "@angular/common";
 import {StageOverviewComponent} from "./stage-overview/stage-overview.component";
 import {CheatingDetectionConcreteService} from "../services/cheating-detection-concrete.service";
+import {TrainingInstance
+
+.
+name, TrainingNavigator
+}
+from
+'@crczp/training-agenda';
 
 /**
  * Main component of cheating detection.
@@ -62,7 +68,7 @@ export class CheatingDetectionOverviewComponent implements OnInit {
     ngOnInit(): void {
         this.trainingInstance$ = this.activeRoute.data.pipe(
             takeUntilDestroyed(this.destroyRef),
-            map((data) => data[TRAINING_INSTANCE_DATA_ATTRIBUTE_NAME]),
+            map((data) => data[TrainingInstance.name]),
         );
         this.trainingInstance$.subscribe((instance) => {
             this.trainingInstanceId = instance.id;

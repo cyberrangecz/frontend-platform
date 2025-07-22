@@ -4,17 +4,11 @@ import {OffsetPaginationEvent} from '@sentinel/common/pagination';
 import {TrainingInstance, TrainingRun} from '@crczp/training-model';
 import {Observable} from 'rxjs';
 import {map, switchMap, take, tap} from 'rxjs/operators';
-import {
-    ADAPTIVE_INSTANCE_DATA_ATTRIBUTE_NAME,
-    TrainingNavigator,
-    TrainingNotificationService,
-} from '@crczp/training-agenda';
 import {AdaptiveInstanceSummaryService} from '../services/state/summary/adaptive-instance-summary.service';
 import {SentinelTable, TableActionEvent, TableLoadEvent} from '@sentinel/components/table';
 import {AdaptiveRunService} from '../services/state/runs/adaptive-run.service';
-import {AdaptiveRunTable} from '../model/adaptive-run-table';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {PaginationStorageService, providePaginationStorageService} from "@crczp/common";
+import {NotificationService, PaginationStorageService, providePaginationStorageService, Routing} from "@crczp/common";
 import {
     AdaptiveInstanceSummaryConcreteService
 } from "../services/state/summary/adaptive-instance-summary-concrete.service";
@@ -23,6 +17,7 @@ import {MatCard} from "@angular/material/card";
 import {AdaptiveInstanceInfoComponent} from "./info/adaptive-instance-info.component";
 import {AdaptiveInstanceRunsComponent} from "./runs/adaptive-instance-runs.component";
 import {AsyncPipe} from "@angular/common";
+import {AdaptiveRunTable} from "../model/adaptive-run-table";
 
 /**
  * Smart component of adaptive instance summary
@@ -56,15 +51,14 @@ export class AdaptiveInstanceSummaryComponent implements OnInit {
     hasPool: boolean;
     destroyRef = inject(DestroyRef);
     private activeRoute = inject(ActivatedRoute);
-    private navigator = inject(TrainingNavigator);
     private adaptiveInstanceSummaryService = inject(AdaptiveInstanceSummaryService);
     private paginationService = inject(PaginationStorageService);
     private adaptiveRunService = inject(AdaptiveRunService);
-    private notificationService = inject(TrainingNotificationService);
+    private notificationService = inject(NotificationService);
 
     ngOnInit(): void {
         this.trainingInstance$ = this.activeRoute.data.pipe(
-            map((data) => data[ADAPTIVE_INSTANCE_DATA_ATTRIBUTE_NAME]),
+            map((data) => data[TrainingInstance.name]),
             tap((ti) => {
                 this.initSummaryComponent(ti);
             }),
@@ -114,11 +108,13 @@ export class AdaptiveInstanceSummaryComponent implements OnInit {
 
     private initSummaryComponent(trainingInstance: TrainingInstance) {
         this.adaptiveInstanceSummaryService.init(trainingInstance);
-        this.trainingInstanceAccessTokenLink = `/${this.navigator.toAdaptiveInstanceAccessToken(trainingInstance.id)}`;
-        this.trainingInstancePoolIdLink = `/${this.navigator.toPool(trainingInstance.poolId)}`;
-        this.adaptiveDefinitionLink = `/${this.navigator.toAdaptiveDefinitionDetail(
-            trainingInstance.trainingDefinition.id,
-        )}`;
+        this.trainingInstanceAccessTokenLink = `/${Routing.RouteBuilder.adaptive_instance.instanceId(trainingInstance.id).access_token.build()}`;
+        this.trainingInstancePoolIdLink = `/${Routing.RouteBuilder.pool.poolId(trainingInstance.poolId).build()}`;
+        this.adaptiveDefinitionLink = `/${Routing.RouteBuilder.adaptive_definition.definitionId(trainingInstance.id).build()}`;
+
+        //     this.navigator.toAdaptiveDefinitionDetail(
+        //     trainingInstance.trainingDefinition.id,
+        // )}`;
         this.hasPool = trainingInstance.hasPool();
         this.hasStarted$ = this.adaptiveInstanceSummaryService.hasStarted$;
     }

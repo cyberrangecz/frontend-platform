@@ -1,51 +1,45 @@
 import {NgModule} from '@angular/core';
-import {RouterModule, Routes} from '@angular/router';
-import {SANDBOX_ROUTE_VARIABLES} from '@crczp/sandbox-agenda';
+import {RouterModule} from '@angular/router';
 import {PoolOverviewComponent} from '@crczp/sandbox-agenda/pool-overview';
-import {
-    PoolBreadcrumbResolver,
-    PoolCommentResolver,
-    PoolResolver,
-    RequestBreadcrumbResolver,
-    RequestResolver,
-    SandboxInstanceBreadcrumbResolver,
-    SandboxInstanceResolver
-} from '@crczp/sandbox-agenda/resolvers';
-import {PATHS} from "../../paths";
+import {Routing, ValidRouterConfig} from "@crczp/common";
+import {AllocationRequest, CleanupRequest, Pool} from '@crczp/sandbox-model';
 
-const routes: Routes = [
+const routes: ValidRouterConfig<'pool'> = [
     {
         path: '',
         component: PoolOverviewComponent,
     },
     {
-        path: PATHS.ACTION.CREATE,
-        loadComponent: () => import('@crczp/sandbox-agenda/pool-edit').then((m) => m.PoolEditComponent),
+        path: 'create',
+        loadComponent: () =>
+            import('@crczp/sandbox-agenda/pool-edit').then((m) => m.PoolEditComponent),
         resolve: {
-            breadcrumb: PoolBreadcrumbResolver,
+            breadcrumb: Routing.Resolvers.Pool.resolvePoolBreadcrumb,
         },
         data: {
             title: 'Create Pool',
         },
     },
     {
-        path: `:${PATHS.SANDBOX.POOL_ID}/${PATHS.ACTION.EDIT}`,
-        loadComponent: () => import('@crczp/sandbox-agenda/pool-edit').then((m) => m.PoolEditComponent),
+        path: ':poolId/edit',
+        loadComponent: () =>
+            import('@crczp/sandbox-agenda/pool-edit').then((m) => m.PoolEditComponent),
         resolve: {
-            breadcrumb: PoolBreadcrumbResolver,
-            pool: PoolResolver,
+            breadcrumb: Routing.Resolvers.Pool.resolvePoolBreadcrumb,
+            [Pool.name]: Routing.Resolvers.Pool.resolvePool,
         },
         data: {
             title: 'Edit Pool',
         },
     },
     {
-        path: `:${PATHS.SANDBOX.POOL_ID}`,
-        loadComponent: () => import('./pool/detail/pool-detail.module').then((m) => m.PoolDetailModule),
+        path: ':poolId',
+        loadComponent: () =>
+            import('@crczp/sandbox-agenda/pool-detail').then((m) => m.PoolDetailComponent),
         resolve: {
-            [SANDBOX_ROUTE_VARIABLES.POOL_DATA]: PoolResolver,
-            breadcrumb: PoolBreadcrumbResolver,
-            subtitle: PoolCommentResolver,
+            [Pool.name]: Routing.Resolvers.Pool.resolvePool,
+            breadcrumb: Routing.Resolvers.Pool.resolvePoolBreadcrumb,
+            subtitle: Routing.Resolvers.Pool.resolvePoolComment
         },
         data: {
             title: 'Pool Detail',
@@ -53,38 +47,38 @@ const routes: Routes = [
 
     },
     {
-        path: `:${PATHS.SANDBOX.POOL_ID}/${PATHS.SANDBOX.SANDBOX_INSTANCE}/:${PATHS.SANDBOX.SANDBOX_INSTANCE_ID}`,
+        path: ':poolId/sandbox-instance/:sandboxInstanceId',
         loadChildren: () =>
             import('@crczp/sandbox-agenda/request-detail').then((m) => m.AllocationRequestDetailComponent),
         resolve: {
-            breadcrumb: RequestBreadcrumbResolver,
-            [SANDBOX_ROUTE_VARIABLES.POOL_DATA]: PoolResolver,
-            [SANDBOX_ROUTE_VARIABLES.POOL_REQUEST_DATA]: RequestResolver,
+            breadcrumb: Routing.Resolvers.Sandbox.resolveSandboxBreadcrumb,
+            [Pool.name]: Routing.Resolvers.Pool.resolvePool,
+            [AllocationRequest.name]: Routing.Resolvers.Sandbox.resolveSandbox
         },
         data: {
             title: 'Allocation Request Stages',
         },
     },
     {
-        path: `:${PATHS.SANDBOX.POOL_ID}/${PATHS.SANDBOX.SANDBOX_INSTANCE}/:${PATHS.SANDBOX.SANDBOX_INSTANCE_ID}/${PATHS.SANDBOX.SANDBOX_INSTANCE_CLEANUP}`,
+        path: ':poolId/sandbox-instance/:sandboxInstanceId/cleanup',
         loadChildren: () =>
             import('@crczp/sandbox-agenda/request-detail').then((m) => m.CleanupRequestDetailComponent),
         resolve: {
-            breadcrumb: RequestBreadcrumbResolver,
-            [SANDBOX_ROUTE_VARIABLES.POOL_DATA]: PoolResolver,
-            [SANDBOX_ROUTE_VARIABLES.POOL_REQUEST_DATA]: RequestResolver,
+            breadcrumb: Routing.Resolvers.Sandbox.resolveSandboxBreadcrumb,
+            [Pool.name]: Routing.Resolvers.Pool.resolvePool,
+            [CleanupRequest.name]: Routing.Resolvers.Sandbox.resolveSandbox
         },
         data: {
             title: 'Cleanup Request Stages',
         },
     },
     {
-        path: `:${PATHS.SANDBOX.POOL_ID}/${PATHS.SANDBOX.SANDBOX_INSTANCE}/:${PATHS.SANDBOX.SANDBOX_INSTANCE_ID}/${PATHS.SANDBOX.TOPOLOGY}`,
+        path: ':poolId/sandbox-instance/:sandboxInstanceId/topology',
         loadChildren: () =>
             import('@crczp/sandbox-agenda/topology').then((m) => m.SandboxTopologyComponent),
         resolve: {
-            breadcrumb: SandboxInstanceBreadcrumbResolver,
-            [PATHS.SANDBOX.SANDBOX_INSTANCE_ID]: SandboxInstanceResolver,
+            breadcrumb: Routing.Resolvers.Sandbox.resolveSandboxBreadcrumb,
+            [AllocationRequest.name]: Routing.Resolvers.Sandbox.resolveSandbox
         },
         data: {
             title: 'Sandbox Topology',

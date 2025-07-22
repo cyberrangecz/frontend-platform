@@ -1,10 +1,10 @@
-import { Injectable, inject } from '@angular/core';
+import {inject, Injectable} from '@angular/core';
 import {ActivatedRouteSnapshot, RouterStateSnapshot} from '@angular/router';
 import {Observable, of} from 'rxjs';
 import {catchError, map, take} from 'rxjs/operators';
 import {UserResolverService} from './user-resolver.service';
 import {User} from '@crczp/user-and-group-model';
-import {USER_DETAIL_PATH, USER_SELECTOR} from "@crczp/user-and-group-agenda";
+import {Routing} from "@crczp/common";
 
 @Injectable()
 export class UserTitleResolverService {
@@ -17,19 +17,19 @@ export class UserTitleResolverService {
      * @param state router state snapshot
      */
     resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<string> | Promise<string> | string {
-        if (route.paramMap.has(USER_SELECTOR)) {
+        if (route.paramMap.has(User.name)) {
             const resolved = this.userResolver.resolve(route, state) as Observable<User>;
             return resolved.pipe(
                 take(1),
-                map((user) => (user ? this.getTitleFromUser(user, state) : '')),
+                map((user) => (user ? this.getTitleFromUser(user, route) : '')),
                 catchError(() => of(''))
             );
         }
         return '';
     }
 
-    private getTitleFromUser(user: User, state: RouterStateSnapshot): string {
-        if (state.url.includes(USER_DETAIL_PATH)) {
+    private getTitleFromUser(user: User, snapshot: ActivatedRouteSnapshot): string {
+        if (Routing.Utils.hasVariable('userId', snapshot)) {
             return `${user.name} Detail`;
         }
         return user.name;

@@ -1,4 +1,3 @@
-import {SandboxErrorHandler} from '@crczp/sandbox-agenda';
 import {VMImagesApi} from '@crczp/sandbox-api';
 import {tap} from 'rxjs/operators';
 import {Observable} from 'rxjs';
@@ -7,12 +6,12 @@ import {VirtualImage} from '@crczp/sandbox-model';
 import {SentinelFilter} from '@sentinel/common/filter';
 import {OffsetPaginationEvent, PaginatedResource,} from '@sentinel/common/pagination';
 import {VMImagesService} from './vm-images.service';
-import {PortalConfig} from '@crczp/common';
+import {ErrorHandlerService, PortalConfig} from '@crczp/common';
 
 @Injectable()
 export class VMImagesConcreteService extends VMImagesService {
     private vmImagesApi = inject(VMImagesApi);
-    private errorHandler = inject(SandboxErrorHandler);
+    private errorHandler = inject(ErrorHandlerService);
 
     constructor() {
         super(inject(PortalConfig).defaultPageSize);

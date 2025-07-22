@@ -3,7 +3,6 @@ import {ActivatedRoute} from '@angular/router';
 import {TrainingInstance} from '@crczp/training-model';
 import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
-import {TRAINING_INSTANCE_DATA_ATTRIBUTE_NAME} from '@crczp/training-agenda';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {AsyncPipe} from "@angular/common";
 import {MatTab, MatTabContent, MatTabGroup, MatTabLabel} from "@angular/material/tabs";
@@ -38,7 +37,7 @@ export class TrainingInstanceProgressComponent implements OnInit {
     ngOnInit(): void {
         this.trainingInstance$ = this.activeRoute.data.pipe(
             takeUntilDestroyed(this.destroyRef),
-            map((data) => data[TRAINING_INSTANCE_DATA_ATTRIBUTE_NAME]),
+            map((data) => data[TrainingInstance.name]),
         );
     }
 }

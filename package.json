@@ -15,6 +15,7 @@
         "@angular/platform-browser": "20.0.6",
         "@angular/platform-browser-dynamic": "20.0.6",
         "@angular/router": "20.0.6",
+        "@ngneat/cashew": "^5.1.0",
         "@nx/devkit": "21.2.1",
         "@sentinel/auth": "^20.0.0",
         "@sentinel/common": "^20.0.0",

@@ -3,9 +3,9 @@ import {LinearRunApi} from '@crczp/training-api';
 import {Question} from '@crczp/training-model';
 import {Observable} from 'rxjs';
 import {switchMap, tap} from 'rxjs/operators';
-import {TrainingErrorHandler} from '@crczp/training-agenda';
 import {RunningTrainingRunService} from '../../running/running-training-run.service';
 import {TrainingRunAssessmentLevelService} from './training-run-assessment-level.service';
+import {ErrorHandlerService} from "@crczp/common";
 
 /**
  * Handles events and actions specific for assessment level in training run
@@ -13,7 +13,7 @@ import {TrainingRunAssessmentLevelService} from './training-run-assessment-level
 @Injectable()
 export class TrainingRunAssessmentLevelConcreteService extends TrainingRunAssessmentLevelService {
     private api = inject(LinearRunApi);
-    private errorHandler = inject(TrainingErrorHandler);
+    private errorHandler = inject(ErrorHandlerService);
     private runningTrainingRunService = inject(RunningTrainingRunService);
 
 

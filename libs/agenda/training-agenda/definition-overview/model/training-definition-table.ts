@@ -11,9 +11,8 @@ import {
 } from '@sentinel/components/table';
 import {defer, of} from 'rxjs';
 import {TrainingDefinitionService} from '../services/state/training-definition.service';
-import {TrainingNavigator} from '@crczp/training-agenda';
 import {TrainingDefinitionRowAdapter} from './training-definition-row-adapter';
-import {DateUtils} from "@crczp/common";
+import {DateUtils, Routing} from "@crczp/common";
 
 /**
  * Helper class transforming paginated resource to class for common table component
@@ -23,7 +22,6 @@ export class TrainingDefinitionTable extends SentinelTable<TrainingDefinition> {
     constructor(
         resource: PaginatedResource<TrainingDefinition>,
         service: TrainingDefinitionService,
-        navigator: TrainingNavigator,
     ) {
         const columns = [
             new Column('title', 'title', true),
@@ -35,7 +33,7 @@ export class TrainingDefinitionTable extends SentinelTable<TrainingDefinition> {
         ];
 
         const rows = resource.elements.map((definition) =>
-            TrainingDefinitionTable.createRow(definition, service, navigator),
+            TrainingDefinitionTable.createRow(definition, service),
         );
         super(rows, columns);
         this.pagination = resource.pagination;
@@ -47,12 +45,11 @@ export class TrainingDefinitionTable extends SentinelTable<TrainingDefinition> {
     private static createRow(
         td: TrainingDefinition,
         service: TrainingDefinitionService,
-        navigator: TrainingNavigator,
     ): Row<TrainingDefinition> {
         const adapter = td as TrainingDefinitionRowAdapter;
         adapter.duration = DateUtils.formatDurationFull(td.estimatedDuration * 60);
         const row = new Row(adapter, TrainingDefinitionTable.createActions(adapter, service));
-        row.addLink('title', navigator.toTrainingDefinitionDetail(td.id));
+        row.addLink('title', Routing.RouteBuilder.linear_definition.definitionId(td.id).build())
         return row;
     }
 
@@ -65,7 +62,7 @@ export class TrainingDefinitionTable extends SentinelTable<TrainingDefinition> {
             new EditAction(
                 'Edit training definition',
                 of(false),
-                defer(() => service.edit(td)),
+                defer(() => service.edit(td.id)),
             ),
             new DeleteAction(
                 'Delete training definition',
@@ -93,7 +90,7 @@ export class TrainingDefinitionTable extends SentinelTable<TrainingDefinition> {
                 'primary',
                 'Preview training run',
                 of(false),
-                defer(() => service.preview(td)),
+                defer(() => service.preview(td.id)),
             ),
         ];
     }

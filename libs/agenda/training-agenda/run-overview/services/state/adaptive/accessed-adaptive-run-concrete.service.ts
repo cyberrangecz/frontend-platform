@@ -5,9 +5,8 @@ import {AdaptiveRunApi} from '@crczp/training-api';
 import {AccessedTrainingRun} from '@crczp/training-model';
 import {from, Observable} from 'rxjs';
 import {tap} from 'rxjs/operators';
-import {TrainingErrorHandler, TrainingNavigator,} from '@crczp/training-agenda';
 import {AccessedAdaptiveRunService} from './accessed-adaptive-run.service';
-import {PortalConfig} from '@crczp/common';
+import {ErrorHandlerService, PortalConfig, Routing} from '@crczp/common';
 
 /**
  * Basic implementation of layer between component and API service.
@@ -16,8 +15,7 @@ import {PortalConfig} from '@crczp/common';
 export class AccessedAdaptiveRunConcreteService extends AccessedAdaptiveRunService {
     private api = inject(AdaptiveRunApi);
     private router = inject(Router);
-    private navigator = inject(TrainingNavigator);
-    private errorHandler = inject(TrainingErrorHandler);
+    private errorHandler = inject(ErrorHandlerService);
 
     constructor() {
         super(inject(PortalConfig).defaultPageSize);
@@ -50,19 +48,19 @@ export class AccessedAdaptiveRunConcreteService extends AccessedAdaptiveRunServi
      */
     resume(id: number): Observable<any> {
         return from(
-            this.router.navigate([this.navigator.toResumeAdaptiveRun(id)])
+            this.router.navigate([Routing.RouteBuilder.run.adaptive.runId(id).resume.build()])
         );
     }
 
     access(token: string): Observable<any> {
         return from(
-            this.router.navigate([this.navigator.toAccessAdaptiveRun(token)])
+            this.router.navigate([Routing.RouteBuilder.run.adaptive.runToken(token).access.build()])
         );
     }
 
     results(id: number): Observable<any> {
         return from(
-            this.router.navigate([this.navigator.toTrainingRunResult(id)])
+            this.router.navigate([Routing.RouteBuilder.run.adaptive.runId(id).results.build()])
         );
     }
 }

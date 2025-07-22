@@ -12,9 +12,9 @@ import {Observable} from 'rxjs';
 export abstract class TrainingDefinitionService extends OffsetPaginatedElementsService<TrainingDefinition> {
     abstract create(): Observable<any>;
 
-    abstract edit(trainingDefinition: TrainingDefinition): Observable<any>;
+    abstract edit(trainingDefinitionId: number): Observable<any>;
 
-    abstract preview(trainingDefinition: TrainingDefinition): Observable<any>;
+    abstract preview(trainingDefinitionId: number): Observable<any>;
 
     /**
      * Gets training definition by @definitionId. Updates related observables or handles an error

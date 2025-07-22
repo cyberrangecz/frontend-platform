@@ -1,37 +1,101 @@
-import {OffsetPaginatedElementsService} from '@sentinel/common';
-import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
-import {AccessedTrainingRun} from '@crczp/training-model';
-import {Observable} from 'rxjs';
+import {inject, Injectable} from '@angular/core';
+import {Router} from '@angular/router';
+import {AdaptiveRunApi, LinearRunApi} from '@crczp/training-api';
+import {AccessedTrainingRun, TrainingTypeEnum} from '@crczp/training-model';
+import {BehaviorSubject, from, Observable} from 'rxjs';
+import {concatMap, map, tap} from 'rxjs/operators';
+import {OffsetPaginationEvent, PaginatedResource,} from '@sentinel/common/pagination';
+import {SentinelFilter} from '@sentinel/common/filter';
+import {ErrorHandlerService, PortalConfig, Routing} from '@crczp/common';
+import {OffsetPaginatedElementsService} from "@sentinel/common";
 
 /**
- * Layer between component and API service. Implement concrete service by extending this class.
- * Provide concrete class in Angular Module. For more info see https://angular.io/guide/dependency-injection-providers.
- * You can use get methods to get paginated resources and other actions to modify data.
+ * Basic implementation of layer between component and API service.
  */
-export abstract class AccessedTrainingRunService extends OffsetPaginatedElementsService<AccessedTrainingRun> {
+@Injectable()
+export class AccessedTrainingRunService extends OffsetPaginatedElementsService<AccessedTrainingRun> {
+    public hasErrorSubject$ = new BehaviorSubject<boolean>(false);
+    private trainingApi = inject(LinearRunApi);
+    private adaptiveApi = inject(AdaptiveRunApi);
+    private router = inject(Router);
+    private errorHandler = inject(ErrorHandlerService);
+
+    constructor() {
+        super(inject(PortalConfig).defaultPageSize);
+    }
+
     /**
-     * Requests paginated data
+     * Gets paginated accessed training runs and updates related observables or handles error.
      * @param pagination requested pagination info
      * @param filter filters to be applied on resources
      */
-    abstract getAll(
+    getAll(
         pagination: OffsetPaginationEvent,
-        filter: string,
-    ): Observable<PaginatedResource<AccessedTrainingRun>>;
+        filter: string
+    ): Observable<PaginatedResource<AccessedTrainingRun>> {
+        this.hasErrorSubject$.next(false);
+        const filters = filter ? [new SentinelFilter('title', filter)] : [];
+        pagination.size = Number.MAX_SAFE_INTEGER;
+        return this.trainingApi.getAccessed(pagination, filters).pipe(
+            concatMap((trainingRuns) =>
+                this.getAllAdaptive(pagination, trainingRuns)
+            ),
+            tap(
+                (runs) => {
+                    this.resourceSubject$.next(runs);
+                },
+                (err) => {
+                    this.errorHandler.emit(err, 'Fetching training runs');
+                    this.hasErrorSubject$.next(true);
+                }
+            )
+        );
+    }
 
-    /**
-     * Resume in already started training run
-     * @param trainingRunId id of training run to resume
-     */
-    abstract resumeLinear(trainingRunId: number): Observable<any>;
+    toResumeRun(id: number, type: TrainingTypeEnum): Observable<any> {
+        return from(
+            this.router.navigate([Routing.RouteBuilder.run[type].runId(id).resume.build()])
+        );
+    }
 
-    abstract resumeAdaptive(id: number): Observable<any>;
+    toAccessRun(token: string, type: TrainingTypeEnum): Observable<any> {
+        return from(
+            this.router.navigate([Routing.RouteBuilder.run[type].runToken(token).access.build()])
+        );
+    }
 
-    abstract resultsLinear(trainingRunId: number): Observable<any>;
+    toRunResults(id: number, type: TrainingTypeEnum): Observable<any> {
+        return from(
+            this.router.navigate([Routing.RouteBuilder.run[type].runId(id).results.build()])
+        );
+    }
 
-    abstract resultsAdaptive(trainingRunId: number): Observable<any>;
+    showMitreTechniques(): Observable<any> {
+        return from(
+            this.router.navigate([
+                Routing.RouteBuilder.mitre_techniques.build,
+            ])
+        );
+    }
 
-    abstract access(token: string): Observable<any>;
-
-    abstract showMitreTechniques(): Observable<any>;
+    private getAllAdaptive(
+        pagination: OffsetPaginationEvent,
+        trainingRuns: PaginatedResource<AccessedTrainingRun>
+    ): Observable<PaginatedResource<AccessedTrainingRun>> {
+        return this.adaptiveApi.getAccessed(pagination).pipe(
+            map(
+                (adaptiveRuns) => {
+                    trainingRuns.elements = [
+                        ...trainingRuns.elements,
+                        ...adaptiveRuns.elements,
+                    ];
+                    return trainingRuns;
+                },
+                (err) => {
+                    this.errorHandler.emit(err, 'Fetching adaptive runs');
+                    this.hasErrorSubject$.next(true);
+                }
+            )
+        );
+    }
 }

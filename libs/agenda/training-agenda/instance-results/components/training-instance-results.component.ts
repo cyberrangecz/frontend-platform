@@ -1,13 +1,13 @@
 import {ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit} from '@angular/core';
 import {ActivatedRoute, RouterLink, RouterLinkActive, RouterOutlet} from '@angular/router';
 import {Observable} from 'rxjs';
-import {TrainingDefinitionApi} from '@crczp/training-api';
-import {TRAINING_INSTANCE_DATA_ATTRIBUTE_NAME} from '@crczp/training-agenda';
+import {LinearTrainingDefinitionApi} from '@crczp/training-api';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {MatTabLink, MatTabNav} from "@angular/material/tabs";
 import {MatIcon} from "@angular/material/icon";
 import {WalkthroughService} from "./walkthrough-wrapper/services/walkthrough.service";
 import {TrainingInstanceResultsRoutingModule} from "./training-instance-results-routing.module";
+import {TrainingInstance} from "@crczp/training-model";
 
 /**
  * Component displaying training instance results visualizations
@@ -32,7 +32,7 @@ export class TrainingInstanceResultsComponent implements OnInit {
     hasReferenceSolution$: Observable<boolean>;
     destroyRef = inject(DestroyRef);
     private activeRoute = inject(ActivatedRoute);
-    private trainingDefinitionApi = inject(TrainingDefinitionApi);
+    private trainingDefinitionApi = inject(LinearTrainingDefinitionApi);
 
     ngOnInit(): void {
         this.activeRoute.data
@@ -40,7 +40,7 @@ export class TrainingInstanceResultsComponent implements OnInit {
             .subscribe(
                 (data) =>
                     (this.hasReferenceSolution$ = this.trainingDefinitionApi.hasReferenceSolution(
-                        data[TRAINING_INSTANCE_DATA_ATTRIBUTE_NAME].trainingDefinition.id,
+                        data[TrainingInstance.name].trainingDefinition.id,
                     )),
             );
     }

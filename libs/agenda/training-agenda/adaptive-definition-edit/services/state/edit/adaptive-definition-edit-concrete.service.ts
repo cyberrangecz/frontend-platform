@@ -1,14 +1,13 @@
 import {inject, Injectable} from '@angular/core';
 import {Router} from '@angular/router';
-import {AdaptiveDefinitionApiService} from '@crczp/training-api';
+import {AdaptiveTrainingDefinitionApi} from '@crczp/training-api';
 import {TrainingDefinition} from '@crczp/training-model';
 import {combineLatest, concat, Observable} from 'rxjs';
 import {map, tap} from 'rxjs/operators';
 import {TrainingDefinitionChangeEvent} from '../../../model/events/training-definition-change-event';
-import {TrainingErrorHandler, TrainingNavigator, TrainingNotificationService} from '@crczp/training-agenda';
 import {AdaptiveDefinitionEditService} from './adaptive-definition-edit.service';
 import {PhaseEditService} from '../phase/phase-edit.service';
-import {LoadingTracker} from "@crczp/common";
+import {ErrorHandlerService, LoadingTracker, NotificationService, Routing} from "@crczp/common";
 
 /**
  * Service handling editing of training definition and related operations.
@@ -18,10 +17,9 @@ import {LoadingTracker} from "@crczp/common";
 @Injectable()
 export class AdaptiveDefinitionEditConcreteService extends AdaptiveDefinitionEditService {
     private router = inject(Router);
-    private api = inject(AdaptiveDefinitionApiService);
-    private errorHandler = inject(TrainingErrorHandler);
-    private navigator = inject(TrainingNavigator);
-    private notificationService = inject(TrainingNotificationService);
+    private api = inject(AdaptiveTrainingDefinitionApi);
+    private errorHandler = inject(ErrorHandlerService);
+    private notificationService = inject(NotificationService);
     private phaseEditService = inject(PhaseEditService);
 
     private editedSnapshot: TrainingDefinition;
@@ -60,7 +58,9 @@ export class AdaptiveDefinitionEditConcreteService extends AdaptiveDefinitionEdi
                 );
             }
         } else {
-            return this.create().pipe(map((id) => this.router.navigate([this.navigator.toAdaptiveDefinitionEdit(id)])));
+            return this.create().pipe(map((id) => this.router.navigate([
+                Routing.RouteBuilder.adaptive_definition.definitionId(id).edit.build()
+            ])));
         }
     }
 

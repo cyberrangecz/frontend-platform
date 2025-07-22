@@ -6,7 +6,6 @@ import {SentinelTable, TableActionEvent, TableLoadEvent} from '@sentinel/compone
 import {Observable} from 'rxjs';
 import {map, switchMap, take, tap} from 'rxjs/operators';
 import {TrainingRunTable} from '../model/training-run-table';
-import {TRAINING_INSTANCE_DATA_ATTRIBUTE_NAME} from '@crczp/training-agenda';
 import {TrainingRunService} from '../services/runs/training-run.service';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {PaginationStorageService, providePaginationStorageService} from "@crczp/common";
@@ -47,7 +46,7 @@ export class TrainingInstanceRunsComponent implements OnInit {
 
     ngOnInit(): void {
         this.trainingInstance$ = this.activeRoute.data.pipe(
-            map((data) => data[TRAINING_INSTANCE_DATA_ATTRIBUTE_NAME]),
+            map((data) => data[TrainingInstance.name]),
             tap((ti) => {
                 this.trainingInstance = ti;
             }),

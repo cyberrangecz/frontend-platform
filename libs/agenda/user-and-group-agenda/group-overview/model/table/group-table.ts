@@ -6,15 +6,15 @@ import {GroupOverviewService} from '../../services/group-overview.service';
 import {GroupDeleteAction} from './group-delete-action';
 import {GroupEditAction} from './group-edit-action';
 import {GroupRowAdapter} from './group-row-adapter';
-import {UserAndGroupNavigator} from '@crczp/user-and-group-agenda';
+import {Routing} from "@crczp/common";
 
 /**
  * @dynamic
  * Class creating data source for group-overview table
  */
 export class GroupTable extends SentinelTable<GroupRowAdapter> {
-    constructor(resource: PaginatedResource<Group>, service: GroupOverviewService, navigator: UserAndGroupNavigator) {
-        const rows = resource.elements.map((element) => GroupTable.createRow(element, service, navigator));
+    constructor(resource: PaginatedResource<Group>, service: GroupOverviewService) {
+        const rows = resource.elements.map((element) => GroupTable.createRow(element, service));
         const columns = [
             new Column('name', 'name', true),
             new Column('description', 'description', true, 'description'),
@@ -29,8 +29,7 @@ export class GroupTable extends SentinelTable<GroupRowAdapter> {
 
     private static createRow(
         group: Group,
-        service: GroupOverviewService,
-        navigator: UserAndGroupNavigator
+        service: GroupOverviewService
     ): Row<GroupRowAdapter> {
         const rowAdapter = group as GroupRowAdapter;
         if (rowAdapter.expirationDate) {
@@ -40,7 +39,7 @@ export class GroupTable extends SentinelTable<GroupRowAdapter> {
             rowAdapter.expirationDateFormatted = '-';
         }
         const row = new Row(rowAdapter, GroupTable.createActions(group, service));
-        row.addLink('name', navigator.toGroupDetail(rowAdapter.id));
+        row.addLink('name', Routing.RouteBuilder.group.groupId(group.id).build());
         return row;
     }
 

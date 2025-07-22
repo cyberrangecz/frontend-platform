@@ -2,11 +2,11 @@ import {inject, Injectable} from '@angular/core';
 import {LinearRunApi} from '@crczp/training-api';
 import {Observable} from 'rxjs';
 import {switchMap, tap} from 'rxjs/operators';
-import {TrainingErrorHandler} from '@crczp/training-agenda';
 import {RunningTrainingRunService} from '../../running/running-training-run.service';
 import {SandboxInstanceApi} from '@crczp/sandbox-api';
 import {TrainingRunAccessLevelService} from './training-run-access-level.service';
 import {SentinelNotificationService} from '@sentinel/layout/notification';
+import {ErrorHandlerService} from "@crczp/common";
 
 @Injectable()
 /**
@@ -15,7 +15,7 @@ import {SentinelNotificationService} from '@sentinel/layout/notification';
 export class TrainingRunAccessLevelConcreteService extends TrainingRunAccessLevelService {
     private api = inject(LinearRunApi);
     private sandboxApi = inject(SandboxInstanceApi);
-    private errorHandler = inject(TrainingErrorHandler);
+    private errorHandler = inject(ErrorHandlerService);
 
     constructor() {
         const notificationService = inject(SentinelNotificationService);

@@ -6,7 +6,6 @@ import {SandboxDefinitionFormGroup} from './sandbox-definition-edit-form-group';
 import {AbstractControl, ReactiveFormsModule} from '@angular/forms';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {map} from 'rxjs/operators';
-import {SandboxDefaultNavigator, SandboxNavigator} from "@crczp/sandbox-agenda";
 import {SandboxDefinitionEditConcreteService} from "../services/sandbox-definition-edit-concrete.service";
 import {MatCard} from "@angular/material/card";
 import {MatError, MatFormField, MatInput, MatLabel} from "@angular/material/input";
@@ -23,27 +22,25 @@ import {MatIcon} from "@angular/material/icon";
     styleUrls: ['./sandbox-definition-edit.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
-    SentinelControlsComponent,
-    MatCard,
-    ReactiveFormsModule,
-    MatFormField,
-    MatLabel,
-    MatError,
-    MatInput,
-    MatIcon,
-    MatIconButton
-],
+        SentinelControlsComponent,
+        MatCard,
+        ReactiveFormsModule,
+        MatFormField,
+        MatLabel,
+        MatError,
+        MatInput,
+        MatIcon,
+        MatIconButton
+    ],
     providers: [
-        {provide: SandboxNavigator, useClass: SandboxDefaultNavigator},
         {provide: SandboxDefinitionEditService, useClass: SandboxDefinitionEditConcreteService},
     ]
 })
 export class SandboxDefinitionEditComponent implements OnInit {
-    private sandboxDefinitionService = inject(SandboxDefinitionEditService);
-
     sandboxDefinitionFormGroup: SandboxDefinitionFormGroup;
     controls: SentinelControlItem[];
     destroyRef = inject(DestroyRef);
+    private sandboxDefinitionService = inject(SandboxDefinitionEditService);
 
     get gitUrl(): AbstractControl {
         return this.sandboxDefinitionFormGroup.formGroup.get('gitUrl');

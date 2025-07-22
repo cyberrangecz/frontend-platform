@@ -1,11 +1,11 @@
 import {inject, Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
 import {TrainingDefinition} from '@crczp/training-model';
-import {TrainingDefinitionApi} from '@crczp/training-api';
+import {LinearTrainingDefinitionApi} from '@crczp/training-api';
 
 @Injectable()
 export class WalkthroughService {
-    private api = inject(TrainingDefinitionApi);
+    private api = inject(LinearTrainingDefinitionApi);
 
 
     /**

@@ -2,16 +2,15 @@ import {ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit} from '@a
 import {ActivatedRoute, RouterLink, RouterLinkActive, RouterOutlet} from '@angular/router';
 import {Observable} from 'rxjs';
 import {take} from 'rxjs/operators';
-import {TRAINING_RUN_DATA_ATTRIBUTE_NAME} from '@crczp/training-agenda';
-import {TrainingDefinitionApi} from '@crczp/training-api';
+import {LinearTrainingDefinitionApi} from '@crczp/training-api';
 import {SentinelControlItemSignal} from '@sentinel/components/controls';
 import {MitreTechniquesOverviewService} from '../service/mitre-techniques.service';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {MatTabLink, MatTabNav} from "@angular/material/tabs";
 import {MatIcon} from "@angular/material/icon";
 import {TrainingRunResultsRoutingModule} from "./training-run-results-routing.module";
-import {MitreTechniquesOverviewConcreteService} from "../service/mitre-techniques-concrete.service";
 import {AsyncPipe} from "@angular/common";
+import {TrainingRun} from "@crczp/training-model";
 
 
 @Component({
@@ -30,7 +29,9 @@ import {AsyncPipe} from "@angular/common";
         TrainingRunResultsRoutingModule,
         AsyncPipe
     ],
-    providers: [{provide: MitreTechniquesOverviewService, useClass: MitreTechniquesOverviewConcreteService}],
+    providers: [
+        MitreTechniquesOverviewService
+    ],
 })
 /**
  * Component displaying visualization of training run results
@@ -39,7 +40,7 @@ export class TrainingRunResultsComponent implements OnInit {
     hasReferenceSolution$: Observable<boolean>;
     destroyRef = inject(DestroyRef);
     private activatedRoute = inject(ActivatedRoute);
-    private trainingDefinitionApi = inject(TrainingDefinitionApi);
+    private trainingDefinitionApi = inject(LinearTrainingDefinitionApi);
     private service = inject(MitreTechniquesOverviewService);
 
     ngOnInit(): void {
@@ -63,7 +64,7 @@ export class TrainingRunResultsComponent implements OnInit {
             .subscribe(
                 (data) =>
                     (this.hasReferenceSolution$ = this.trainingDefinitionApi.hasReferenceSolution(
-                        data[TRAINING_RUN_DATA_ATTRIBUTE_NAME].trainingDefinitionId,
+                        data[TrainingRun.name].trainingDefinitionId,
                     )),
             );
     }

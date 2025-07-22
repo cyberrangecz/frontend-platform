@@ -1,12 +1,13 @@
-import { Component } from '@angular/core';
-import { RouterModule } from '@angular/router';
-import { NxWelcome } from './nx-welcome';
+import {Component} from '@angular/core';
+import {RouterOutlet} from "@angular/router";
 
 @Component({
-    imports: [NxWelcome, RouterModule],
     selector: 'crczp-root',
     templateUrl: './app.html',
     styleUrl: './app.scss',
+    imports: [
+        RouterOutlet,
+    ]
 })
 export class App {
     protected title = 'examples';

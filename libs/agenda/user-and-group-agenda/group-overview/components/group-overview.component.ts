@@ -12,11 +12,7 @@ import {map, take} from 'rxjs/operators';
 import {GroupTable} from '../model/table/group-table';
 import {DeleteControlItem, SaveControlItem,} from '@crczp/user-and-group-agenda/internal';
 import {GroupOverviewService} from '../services/group-overview.service';
-import {UserAndGroupDefaultNavigator, UserAndGroupNavigator,} from '@crczp/user-and-group-agenda';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {GroupResolver} from '../services/resolvers/group-resolver.service';
-import {GroupTitleResolver} from '../services/resolvers/group-title-resolver.service';
-import {GroupBreadcrumbResolver} from '../services/resolvers/group-breadcrumb-resolver.service';
 import {GroupOverviewConcreteService} from '../services/group-overview.concrete.service';
 import {AsyncPipe} from '@angular/common';
 import {PaginationStorageService, providePaginationStorageService,} from '@crczp/common';
@@ -30,16 +26,9 @@ import {PaginationStorageService, providePaginationStorageService,} from '@crczp
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [
         providePaginationStorageService(GroupOverviewComponent),
-        GroupResolver,
-        GroupTitleResolver,
-        GroupBreadcrumbResolver,
         {
             provide: GroupOverviewService,
             useClass: GroupOverviewConcreteService,
-        },
-        {
-            provide: UserAndGroupNavigator,
-            useClass: UserAndGroupDefaultNavigator,
         },
     ],
     imports: [SentinelTableComponent, SentinelControlsComponent, AsyncPipe],
@@ -60,7 +49,6 @@ export class GroupOverviewComponent implements OnInit {
     destroyRef = inject(DestroyRef);
     private groupService = inject(GroupOverviewService);
     private paginationService = inject(PaginationStorageService);
-    private navigator = inject(UserAndGroupNavigator);
 
     ngOnInit(): void {
         const initialLoadEvent: TableLoadEvent = {
@@ -74,7 +62,7 @@ export class GroupOverviewComponent implements OnInit {
         this.groups$ = this.groupService.resource$.pipe(
             map(
                 (groups) =>
-                    new GroupTable(groups, this.groupService, this.navigator)
+                    new GroupTable(groups, this.groupService)
             )
         );
         this.groupsHasError$ = this.groupService.hasError$;

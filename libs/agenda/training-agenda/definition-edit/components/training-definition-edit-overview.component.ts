@@ -5,7 +5,6 @@ import {Level, MitreTechnique, TrainingDefinition} from '@crczp/training-model';
 import {combineLatest, Observable, switchMap} from 'rxjs';
 import {filter, map, tap} from 'rxjs/operators';
 import {TrainingDefinitionEditControls} from '../model/adapters/training-definition-edit-controls';
-import {TRAINING_DEFINITION_DATA_ATTRIBUTE_NAME} from '@crczp/training-agenda';
 import {TrainingDefinitionChangeEvent} from '../model/events/training-definition-change-event';
 import {TrainingDefinitionEditService} from '../services/state/edit/training-definition-edit.service';
 import {SentinelUserAssignComponent, SentinelUserAssignService} from '@sentinel/components/user-assign';
@@ -31,11 +30,6 @@ import {TrainingDefinitionEditComponent} from "./definition/training-definition-
 import {LevelOverviewComponent} from "./levels/overview/level-overview.component";
 import {AsyncPipe} from "@angular/common";
 import {TrainingDefinitionCanDeactivate} from "../services/can-deactivate/training-definition-can-deactivate.service";
-import {
-    TrainingDefinitionBreadcrumbResolver,
-    TrainingDefinitionResolver,
-    TrainingDefinitionTitleResolver
-} from "@crczp/training-agenda/resolvers";
 
 /**
  * Main smart component of training definition edit/new page.
@@ -47,9 +41,6 @@ import {
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [
         TrainingDefinitionCanDeactivate,
-        TrainingDefinitionResolver,
-        TrainingDefinitionTitleResolver,
-        TrainingDefinitionBreadcrumbResolver,
         {provide: SentinelUserAssignService, useClass: AuthorsAssignService},
         {provide: LevelEditService, useClass: LevelEditConcreteService},
         {provide: TrainingDefinitionEditService, useClass: TrainingDefinitionEditConcreteService},
@@ -108,7 +99,7 @@ export class TrainingDefinitionEditOverviewComponent implements OnInit {
         this.unsavedLevels$ = levelEditService.unsavedLevels$;
         this.activeRoute.data
             .pipe(takeUntilDestroyed(this.destroyRef))
-            .subscribe((data) => this.editService.set(data[TRAINING_DEFINITION_DATA_ATTRIBUTE_NAME]));
+            .subscribe((data) => this.editService.set(data[TrainingDefinition.name]));
         this.editMode$ = this.editService.editMode$.pipe(
             tap(
                 () =>

@@ -1,7 +1,6 @@
 import {BehaviorSubject, Observable} from 'rxjs';
 import {skipWhile} from 'rxjs/operators';
 import {AccessTrainingRunInfo, Phase, QuestionAnswer} from '@crczp/training-model';
-import {ConsoleUrl} from '@crczp/topology-graph';
 
 export abstract class RunningAdaptiveRunService {
     sandboxInstanceId: string;
@@ -50,5 +49,4 @@ export abstract class RunningAdaptiveRunService {
 
     abstract submitQuestionnaire(answers: QuestionAnswer[]): Observable<any>;
 
-    abstract loadConsoles(sandboxId: string): Observable<ConsoleUrl[]>;
 }

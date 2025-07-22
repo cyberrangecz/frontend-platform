@@ -11,14 +11,9 @@ import {GroupApi} from '@crczp/user-and-group-api';
 import {Group} from '@crczp/user-and-group-model';
 import {EMPTY, Observable, of} from 'rxjs';
 import {map, switchMap, tap} from 'rxjs/operators';
-import {
-    UserAndGroupErrorHandler,
-    UserAndGroupNavigator,
-    UserAndGroupNotificationService,
-} from '@crczp/user-and-group-agenda';
 import {GroupFilter} from '@crczp/user-and-group-agenda/internal';
 import {GroupOverviewService} from './group-overview.service';
-import {PortalConfig} from '@crczp/common';
+import {ErrorHandlerService, NotificationService, PortalConfig, Routing} from '@crczp/common';
 
 /**
  * Basic implementation of a layer between a component and an API service.
@@ -28,11 +23,10 @@ import {PortalConfig} from '@crczp/common';
 @Injectable()
 export class GroupOverviewConcreteService extends GroupOverviewService {
     private api = inject(GroupApi);
-    private alertService = inject(UserAndGroupNotificationService);
+    private alertService = inject(NotificationService);
     private dialog = inject(MatDialog);
     private router = inject(Router);
-    private navigator = inject(UserAndGroupNavigator);
-    private errorHandler = inject(UserAndGroupErrorHandler);
+    private errorHandler = inject(ErrorHandlerService);
 
     private lastPagination: OffsetPaginationEvent;
     private lastFilter: string;
@@ -90,12 +84,12 @@ export class GroupOverviewConcreteService extends GroupOverviewService {
     }
 
     edit(group: Group): Observable<any> {
-        this.router.navigate([this.navigator.toGroupEdit(group.id)]);
+        this.router.navigate([Routing.RouteBuilder.group.groupId(group.id).edit.build()]);
         return of(true);
     }
 
     create(): Observable<any> {
-        this.router.navigate([this.navigator.toNewGroup()]);
+        this.router.navigate([Routing.RouteBuilder.group.create.build()]);
         return of(true);
     }
 

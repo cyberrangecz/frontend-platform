@@ -4,11 +4,6 @@ import {SentinelControlItem, SentinelControlItemSignal, SentinelControlsComponen
 import {Group} from '@crczp/user-and-group-model';
 import {defer, Observable, of} from 'rxjs';
 import {take, tap} from 'rxjs/operators';
-import {
-    GROUP_DATA_ATTRIBUTE_NAME,
-    UserAndGroupDefaultNavigator,
-    UserAndGroupNavigator
-} from '@crczp/user-and-group-agenda';
 import {SaveControlItem} from '@crczp/user-and-group-agenda/internal';
 import {GroupChangedEvent} from '../model/group-changed-event';
 import {GroupEditService} from '../services/state/group-edit.service';
@@ -50,7 +45,6 @@ import {GroupRoleAssignComponent} from './group-role-assign/group-role-assign.co
     providers: [
         GroupEditCanDeactivate,
         {provide: GroupEditService, useClass: GroupEditService},
-        {provide: UserAndGroupNavigator, useClass: UserAndGroupDefaultNavigator},
     ]
 })
 export class GroupEditOverviewComponent {
@@ -71,7 +65,7 @@ export class GroupEditOverviewComponent {
         this.editMode$ = this.editService.editMode$.pipe(tap((editMode) => this.initControls(editMode)));
         this.activeRoute.data
             .pipe(takeUntilDestroyed(this.destroyRef))
-            .subscribe((data) => this.editService.set(data[GROUP_DATA_ATTRIBUTE_NAME]));
+            .subscribe((data) => this.editService.set(data[Group.name]));
     }
 
     /**

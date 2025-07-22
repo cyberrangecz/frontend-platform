@@ -1,7 +1,7 @@
 import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 import {inject, Injectable} from '@angular/core';
 import {fromEvent, Observable} from 'rxjs';
-import {AdaptiveDefinitionApiService} from './adaptive-definition-api.service';
+import {AdaptiveTrainingDefinitionApi} from './adaptive-training-definition.api';
 import {
     AccessPhase,
     AdaptiveTask,
@@ -40,7 +40,7 @@ import {TrainingDefinitionInfoDTO} from '../../dto/training-definition/training-
 import {PortalConfig} from "@crczp/common";
 
 @Injectable()
-export class AdaptiveDefinitionDefaultApiService extends AdaptiveDefinitionApiService {
+export class AdaptiveDefinitionDefaultApiService extends AdaptiveTrainingDefinitionApi {
     private readonly http = inject(HttpClient);
 
     private readonly trainingDefinitionUriExtension = 'training-definitions';

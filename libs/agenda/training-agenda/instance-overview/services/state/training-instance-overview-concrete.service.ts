@@ -7,7 +7,6 @@ import {TrainingInstance} from '@crczp/training-model';
 import {EMPTY, Observable, of} from 'rxjs';
 import {catchError, map, switchMap, tap} from 'rxjs/operators';
 import {TrainingInstanceFilter} from '../../model/adapters/training-instance-filter';
-import {TrainingErrorHandler, TrainingNavigator, TrainingNotificationService,} from '@crczp/training-agenda';
 import {TrainingInstanceOverviewService} from './training-instance-overview.service';
 import {
     SentinelConfirmationDialogComponent,
@@ -15,7 +14,7 @@ import {
     SentinelDialogResultEnum,
 } from '@sentinel/components/dialogs';
 import {MatDialog} from '@angular/material/dialog';
-import {PortalConfig} from '@crczp/common';
+import {ErrorHandlerService, NotificationService, PortalConfig, Routing} from '@crczp/common';
 
 @Injectable()
 export class TrainingInstanceOverviewConcreteService extends TrainingInstanceOverviewService {
@@ -23,9 +22,8 @@ export class TrainingInstanceOverviewConcreteService extends TrainingInstanceOve
     private dialog = inject(MatDialog);
     private poolApi = inject(PoolApi);
     private router = inject(Router);
-    private navigator = inject(TrainingNavigator);
-    private notificationService = inject(TrainingNotificationService);
-    private errorHandler = inject(TrainingErrorHandler);
+    private notificationService = inject(NotificationService);
+    private errorHandler = inject(ErrorHandlerService);
 
     private lastPagination: OffsetPaginationEvent;
     private lastFilter: string;
@@ -55,19 +53,15 @@ export class TrainingInstanceOverviewConcreteService extends TrainingInstanceOve
         );
     }
 
-    create(): Observable<any> {
-        return of(
-            this.router.navigate([this.navigator.toNewTrainingInstance()])
-        );
+    create(): Promise<boolean> {
+        return this.router.navigate([Routing.RouteBuilder.linear_instance.create.build()]);
     }
 
-    edit(id: number): Observable<any> {
-        return of(
-            this.router.navigate([this.navigator.toTrainingInstanceEdit(id)])
-        );
+    edit(id: number): Promise<boolean> {
+        return this.router.navigate([Routing.RouteBuilder.linear_instance.instanceId(id).edit.build()])
     }
 
-    download(id: number): Observable<any> {
+    download(id: number): Observable<boolean> {
         return this.trainingInstanceApi
             .archive(id)
             .pipe(
@@ -91,40 +85,26 @@ export class TrainingInstanceOverviewConcreteService extends TrainingInstanceOve
         );
     }
 
-    runs(id: number): Observable<any> {
-        return of(
-            this.router.navigate([this.navigator.toTrainingInstanceRuns(id)])
-        );
+    runs(id: number) {
+        return this.router.navigate([Routing.RouteBuilder.linear_instance.instanceId(id).runs.build()])
     }
 
-    token(id: number): Observable<any> {
-        return of(
-            this.router.navigate([
-                this.navigator.toTrainingInstanceAccessToken(id),
-            ])
-        );
+    token(id: number) {
+        return this.router.navigate([Routing.RouteBuilder.linear_instance.instanceId(id).access_token.build()])
     }
 
-    progress(id: number): Observable<any> {
-        return of(
-            this.router.navigate([
-                this.navigator.toTrainingInstanceProgress(id),
-            ])
-        );
+    progress(id: number) {
+        return this.router.navigate([
+            Routing.RouteBuilder.linear_instance.instanceId(id).progress.build()
+        ])
     }
 
-    results(id: number): Observable<any> {
-        return of(
-            this.router.navigate([this.navigator.toTrainingInstanceResults(id)])
-        );
+    results(id: number) {
+        return this.router.navigate([Routing.RouteBuilder.linear_instance.instanceId(id).results.build()])
     }
 
-    aggregatedResults(id: number): Observable<any> {
-        return of(
-            this.router.navigate([
-                this.navigator.toTrainingInstanceAggregatedResults(id),
-            ])
-        );
+    aggregatedResults(id: number) {
+        return this.router.navigate([Routing.RouteBuilder.linear_instance.instanceId(id).aggregated_results.build()])
     }
 
     /**

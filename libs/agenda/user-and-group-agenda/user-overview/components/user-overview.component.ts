@@ -18,7 +18,6 @@ import {UserBreadcrumbResolverService} from '../services/resolvers/user-breadcru
 import {FileUploadProgressService} from '../services/file-upload/file-upload-progress.service';
 import {UserOverviewService} from '../services/user-overview.service';
 import {PaginationStorageService, providePaginationStorageService,} from '@crczp/common';
-import {UserAndGroupDefaultNavigator, UserAndGroupNavigator,} from '@crczp/user-and-group-agenda';
 import {AsyncPipe} from '@angular/common';
 
 /**
@@ -37,10 +36,6 @@ import {AsyncPipe} from '@angular/common';
         providePaginationStorageService(UserOverviewComponent),
         FileUploadProgressService,
         UserOverviewService,
-        {
-            provide: UserAndGroupNavigator,
-            useClass: UserAndGroupDefaultNavigator,
-        },
     ],
 })
 export class UserOverviewComponent implements OnInit {
@@ -59,7 +54,6 @@ export class UserOverviewComponent implements OnInit {
     controls: SentinelControlItem[];
     private userService = inject(UserOverviewService);
     private paginationService = inject(PaginationStorageService);
-    private navigator = inject(UserAndGroupNavigator);
 
     ngOnInit(): void {
         const initialLoadEvent: TableLoadEvent = {
@@ -73,7 +67,7 @@ export class UserOverviewComponent implements OnInit {
         this.users$ = this.userService.resource$.pipe(
             map(
                 (groups) =>
-                    new UserTable(groups, this.userService, this.navigator)
+                    new UserTable(groups, this.userService)
             )
         );
         this.usersHasError$ = this.userService.hasError$;

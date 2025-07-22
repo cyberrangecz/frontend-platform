@@ -1,5 +1,14 @@
-import {Observable} from 'rxjs';
+import {from, Observable} from 'rxjs';
+import {inject, Injectable} from "@angular/core";
+import {Router} from "@angular/router";
+import {Routing} from "@crczp/common";
 
-export abstract class MitreTechniquesOverviewService {
-    abstract showMitreTechniques(): Observable<any>;
+@Injectable()
+export class MitreTechniquesOverviewService {
+    private router = inject(Router);
+
+
+    showMitreTechniques(): Observable<any> {
+        return from(this.router.navigate([Routing.RouteBuilder.mitre_techniques.build()]));
+    }
 }

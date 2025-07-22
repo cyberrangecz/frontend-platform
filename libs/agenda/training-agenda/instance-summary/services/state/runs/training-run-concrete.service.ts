@@ -5,8 +5,7 @@ import {TrainingRun, TrainingRunInfo} from '@crczp/training-model';
 import {Observable} from 'rxjs';
 import {tap} from 'rxjs/operators';
 import {TrainingRunService} from './training-run.service';
-import {TrainingErrorHandler} from '@crczp/training-agenda';
-import {PortalConfig} from '@crczp/common';
+import {ErrorHandlerService, PortalConfig} from '@crczp/common';
 
 /**
  * Basic implementation of layer between component and API service.
@@ -16,7 +15,7 @@ import {PortalConfig} from '@crczp/common';
 export class TrainingRunConcreteService extends TrainingRunService {
     private trainingInstanceApi = inject(LinearTrainingInstanceApi);
     private trainingRunApi = inject(LinearRunApi);
-    private errorHandler = inject(TrainingErrorHandler);
+    private errorHandler = inject(ErrorHandlerService);
 
 
     constructor() {

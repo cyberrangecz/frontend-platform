@@ -4,7 +4,6 @@ import {BehaviorSubject, combineLatestWith, EMPTY, Observable} from 'rxjs';
 import {OffsetPagination, OffsetPaginationEvent, PaginatedResource,} from '@sentinel/common/pagination';
 import {PoolApi, SandboxAllocationUnitsApi} from '@crczp/sandbox-api';
 import {SandboxAllocationUnit} from '@crczp/sandbox-model';
-import {SandboxErrorHandler, SandboxNotificationService,} from '@crczp/sandbox-agenda';
 import {ResourcePollingService} from '@crczp/sandbox-agenda/internal';
 import {map, switchMap, tap} from 'rxjs/operators';
 import {HttpErrorResponse} from '@angular/common/http';
@@ -14,7 +13,7 @@ import {
     SentinelDialogResultEnum,
 } from '@sentinel/components/dialogs';
 import {MatDialog} from '@angular/material/dialog';
-import {PortalConfig} from "@crczp/common";
+import {ErrorHandlerService, NotificationService, PortalConfig} from "@crczp/common";
 
 @Injectable()
 export class SandboxAllocationUnitsConcreteService extends SandboxAllocationUnitsService {
@@ -22,8 +21,8 @@ export class SandboxAllocationUnitsConcreteService extends SandboxAllocationUnit
     private sauApi = inject(SandboxAllocationUnitsApi);
     private resourcePollingService = inject(ResourcePollingService);
     private dialog = inject(MatDialog);
-    private notificationService = inject(SandboxNotificationService);
-    private errorHandler = inject(SandboxErrorHandler);
+    private notificationService = inject(NotificationService);
+    private errorHandler = inject(ErrorHandlerService);
 
     private lastPoolId: number;
     private poolPollingPeriod: number;

@@ -1,7 +1,6 @@
 import {Component, DestroyRef, inject, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {User} from '@crczp/user-and-group-model';
-import {USER_DATA_ATTRIBUTE_NAME} from '@crczp/user-and-group-agenda';
 import {
     MatAccordion,
     MatExpansionPanel,
@@ -47,7 +46,7 @@ export class UserDetailComponent implements OnInit {
 
     private initTable() {
         this.activeRoute.data.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((data) => {
-            this.user = data[USER_DATA_ATTRIBUTE_NAME];
+            this.user = data[User.name];
         });
     }
 }

@@ -11,9 +11,8 @@ import {PoolApi} from '@crczp/sandbox-api';
 import {Pool} from '@crczp/sandbox-model';
 import {EMPTY, from, Observable} from 'rxjs';
 import {catchError, switchMap, tap} from 'rxjs/operators';
-import {SandboxErrorHandler, SandboxNavigator, SandboxNotificationService,} from '@crczp/sandbox-agenda';
 import {PoolOverviewService} from './pool-overview.service';
-import {PortalConfig} from '@crczp/common';
+import {ErrorHandlerService, NotificationService, PortalConfig, Routing} from '@crczp/common';
 
 /**
  * Basic implementation of a layer between a component and an API service.
@@ -24,9 +23,8 @@ export class PoolOverviewConcreteService extends PoolOverviewService {
     private poolApi = inject(PoolApi);
     private dialog = inject(MatDialog);
     private router = inject(Router);
-    private navigator = inject(SandboxNavigator);
-    private notificationService = inject(SandboxNotificationService);
-    private errorHandler = inject(SandboxErrorHandler);
+    private notificationService = inject(NotificationService);
+    private errorHandler = inject(ErrorHandlerService);
 
     private lastPagination: OffsetPaginationEvent;
 
@@ -111,12 +109,16 @@ export class PoolOverviewConcreteService extends PoolOverviewService {
     }
 
     create(): Observable<any> {
-        return from(this.router.navigate([this.navigator.toCreatePool()]));
+        return from(this.router.navigate([
+            Routing.RouteBuilder.pool.create.build()
+        ]));
     }
 
-    update(pool: Pool): Observable<any> {
+    edit(pool: Pool): Observable<any> {
         return from(
-            this.router.navigate([this.navigator.toUpdatePool(pool.id)])
+            this.router.navigate([
+                Routing.RouteBuilder.pool.poolId(pool.id).edit.build()
+            ])
         );
     }
 

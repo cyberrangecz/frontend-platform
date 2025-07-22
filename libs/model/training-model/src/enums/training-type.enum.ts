@@ -1,4 +1,4 @@
-export declare enum TrainingTypeEnum {
+export enum TrainingTypeEnum {
     ADAPTIVE = "adaptive",
     LINEAR = "linear"
 }

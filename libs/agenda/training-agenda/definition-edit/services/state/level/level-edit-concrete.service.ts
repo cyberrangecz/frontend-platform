@@ -5,7 +5,7 @@ import {
     SentinelConfirmationDialogConfig,
     SentinelDialogResultEnum,
 } from '@sentinel/components/dialogs';
-import {TrainingDefinitionApi} from '@crczp/training-api';
+import {LinearTrainingDefinitionApi} from '@crczp/training-api';
 import {
     AbstractLevelTypeEnum,
     AccessLevel,
@@ -16,8 +16,8 @@ import {
 } from '@crczp/training-model';
 import {EMPTY, Observable} from 'rxjs';
 import {switchMap, tap} from 'rxjs/operators';
-import {TrainingErrorHandler, TrainingNotificationService} from '@crczp/training-agenda';
 import {LevelEditService} from './level-edit.service';
+import {ErrorHandlerService, NotificationService} from "@crczp/common";
 
 /**
  * Service handling editing of training definition's levels and related operations.
@@ -26,10 +26,10 @@ import {LevelEditService} from './level-edit.service';
  */
 @Injectable()
 export class LevelEditConcreteService extends LevelEditService {
-    private api = inject(TrainingDefinitionApi);
+    private api = inject(LinearTrainingDefinitionApi);
     private dialog = inject(MatDialog);
-    private errorHandler = inject(TrainingErrorHandler);
-    private notificationService = inject(TrainingNotificationService);
+    private errorHandler = inject(ErrorHandlerService);
+    private notificationService = inject(NotificationService);
 
 
     /**

@@ -2,10 +2,10 @@ import {PaginatedResource} from '@sentinel/common/pagination';
 import {TrainingInstance} from '@crczp/training-model';
 import {Column, DeleteAction, EditAction, Row, RowAction, SentinelTable} from '@sentinel/components/table';
 import {combineLatest, defer, of, startWith} from 'rxjs';
-import {TrainingNavigator} from '@crczp/training-agenda';
 import {TrainingInstanceOverviewService} from '../../services/state/training-instance-overview.service';
 import {TrainingInstanceRowAdapter} from './training-instance-row-adapter';
 import {map} from 'rxjs/operators';
+import {Routing} from "@crczp/common";
 
 /**
  * @dynamic
@@ -14,7 +14,6 @@ export class TrainingInstanceTable extends SentinelTable<TrainingInstanceRowAdap
     constructor(
         resource: PaginatedResource<TrainingInstance>,
         service: TrainingInstanceOverviewService,
-        navigator: TrainingNavigator,
     ) {
         const columns = [
             new Column('title', 'Title', true),
@@ -27,7 +26,8 @@ export class TrainingInstanceTable extends SentinelTable<TrainingInstanceRowAdap
             new Column('poolSize', 'Pool Size', false),
             new Column('accessToken', 'Access Token', true, 'accessToken'),
         ];
-        const rows = resource.elements.map((element) => TrainingInstanceTable.createRow(element, service, navigator));
+        const rows = resource.elements.map((element) =>
+            TrainingInstanceTable.createRow(element, service));
         super(rows, columns);
         this.pagination = resource.pagination;
         this.filterLabel = 'Filter by title';
@@ -38,7 +38,6 @@ export class TrainingInstanceTable extends SentinelTable<TrainingInstanceRowAdap
     private static createRow(
         ti: TrainingInstance,
         service: TrainingInstanceOverviewService,
-        navigator: TrainingNavigator,
     ): Row<TrainingInstanceRowAdapter> {
         const adapter = ti as TrainingInstanceRowAdapter;
         adapter.tdTitle = adapter.trainingDefinition.title;
@@ -51,14 +50,14 @@ export class TrainingInstanceTable extends SentinelTable<TrainingInstanceRowAdap
         }
         const row = new Row(adapter, this.createActions(ti, service));
 
-        row.addLink('title', navigator.toTrainingInstanceDetail(ti.id));
-        row.addLink('tdTitle', navigator.toTrainingDefinitionDetail(adapter.trainingDefinition.id));
+        row.addLink('title', Routing.RouteBuilder.linear_instance.instanceId(ti.id).build());
+        row.addLink('tdTitle', Routing.RouteBuilder.linear_definition.definitionId(ti.trainingDefinition.id).build());
         if (ti.hasPool()) {
             row.element.poolSize = combineLatest([
                 service.getPoolSize(ti.poolId),
                 service.getAvailableSandboxes(ti.poolId),
             ]);
-            row.addLink('poolTitle', navigator.toPool(ti.poolId));
+            row.addLink('poolTitle', Routing.RouteBuilder.pool.poolId(ti.poolId).build());
         } else {
             row.element.poolSize = of(['-', '']);
         }

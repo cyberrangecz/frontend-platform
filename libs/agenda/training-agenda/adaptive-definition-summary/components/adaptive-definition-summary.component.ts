@@ -1,6 +1,5 @@
 import {ChangeDetectionStrategy, Component, inject, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {ADAPTIVE_DEFINITION_DATA_ATTRIBUTE_NAME} from '@crczp/training-agenda';
 import {TrainingDefinition} from '@crczp/training-model';
 import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
@@ -27,9 +26,9 @@ export class AdaptiveDefinitionSummaryComponent implements OnInit {
     private activeRoute = inject(ActivatedRoute);
 
     ngOnInit(): void {
-        this.activeRoute.data.pipe(map((data) => data[ADAPTIVE_DEFINITION_DATA_ATTRIBUTE_NAME]));
+        this.activeRoute.data.pipe(map((data) => data[TrainingDefinition.name]));
         this.adaptiveDefinition$ = this.activeRoute.data.pipe(
-            map((data) => data[ADAPTIVE_DEFINITION_DATA_ATTRIBUTE_NAME]),
+            map((data) => data[TrainingDefinition.name]),
         );
     }
 }

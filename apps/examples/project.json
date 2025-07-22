@@ -5,23 +5,38 @@
     "prefix": "crczp",
     "sourceRoot": "apps/examples/src",
     "tags": [],
+    "implicitDependencies": [
+        "theme"
+    ],
     "targets": {
         "build": {
             "executor": "@angular/build:application",
-            "outputs": ["{options.outputPath}"],
+            "outputs": [
+                "{options.outputPath}"
+            ],
             "options": {
                 "outputPath": "dist/apps/examples",
                 "browser": "apps/examples/src/main.ts",
-                "polyfills": ["zone.js"],
+                "polyfills": [
+                    "zone.js"
+                ],
                 "tsConfig": "apps/examples/tsconfig.app.json",
                 "inlineStyleLanguage": "scss",
                 "assets": [
                     {
                         "glob": "**/*",
-                        "input": "apps/examples/public"
+                        "input": "apps/examples/public",
+                        "output": "./assets/"
+                    },
+                    {
+                        "glob": "**/*",
+                        "input": "dist/libs/components/theme/assets/",
+                        "output": "./assets"
                     }
                 ],
-                "styles": ["apps/examples/src/styles.scss"]
+                "styles": [
+                    "apps/examples/src/styles.scss"
+                ]
             },
             "configurations": {
                 "production": {
@@ -71,7 +86,9 @@
         },
         "test": {
             "executor": "@nx/vite:test",
-            "outputs": ["{options.reportsDirectory}"],
+            "outputs": [
+                "{options.reportsDirectory}"
+            ],
             "options": {
                 "reportsDirectory": "../../coverage/apps/examples"
             }

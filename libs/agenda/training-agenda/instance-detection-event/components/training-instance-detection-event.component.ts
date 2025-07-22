@@ -1,13 +1,8 @@
 import {Component, DestroyRef, inject, Input, OnInit} from '@angular/core';
 import {OffsetPaginationEvent} from '@sentinel/common/pagination';
-import {Observable} from 'rxjs';
+import {from, Observable} from 'rxjs';
 import {SentinelTable, SentinelTableComponent, TableActionEvent, TableLoadEvent} from '@sentinel/components/table';
 import {AbstractDetectionEvent} from '@crczp/training-model';
-import {
-    TRAINING_INSTANCE_DATA_ATTRIBUTE_NAME,
-    TrainingDefaultNavigator,
-    TrainingNavigator
-} from '@crczp/training-agenda';
 import {map, take} from 'rxjs/operators';
 import {DetectionEventTable} from '../model/detection-event-table';
 import {DetectionEventService} from '../services/detection-event.service';
@@ -16,6 +11,16 @@ import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {PaginationStorageService, providePaginationStorageService} from "@crczp/common";
 import {AsyncPipe} from "@angular/common";
 import {DetectionEventConcreteService} from "../services/detection-event-concrete.service";
+import {
+    TrainingInstance
+
+.
+name,
+    TrainingDefaultNavigator,
+    TrainingNavigator
+}
+from
+'@crczp/training-agenda';
 
 /**
  * Main component of training instance detection event.
@@ -51,7 +56,7 @@ export class TrainingInstanceDetectionEventComponent implements OnInit {
 
     ngOnInit(): void {
         this.activeRoute.data.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((data) => {
-            this.trainingInstanceId = data[TRAINING_INSTANCE_DATA_ATTRIBUTE_NAME].id;
+            this.trainingInstanceId = data[TrainingInstance.name].id;
         });
         this.cheatingDetectionId = this.activeRoute.snapshot.params['trainingInstanceId'];
         this.initTable();

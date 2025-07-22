@@ -8,7 +8,7 @@ import {
 } from '@sentinel/components/dialogs';
 import {SentinelFilter} from '@sentinel/common/filter';
 import {OffsetPaginationEvent, PaginatedResource,} from '@sentinel/common/pagination';
-import {AdaptiveDefinitionApiService} from '@crczp/training-api';
+import {AdaptiveTrainingDefinitionApi} from '@crczp/training-api';
 import {TrainingDefinition, TrainingDefinitionStateEnum,} from '@crczp/training-model';
 import {EMPTY, from, Observable} from 'rxjs';
 import {map, switchMap, take, tap} from 'rxjs/operators';
@@ -16,10 +16,9 @@ import {CloneDialogComponent} from '../../components/clone-dialog/clone-dialog.c
 import {
     TrainingDefinitionUploadDialogComponent
 } from '../../components/upload-dialog/training-definition-upload-dialog.component';
-import {TrainingErrorHandler, TrainingNavigator, TrainingNotificationService,} from '@crczp/training-agenda';
 import {AdaptiveFileUploadProgressService} from '../file-upload/adaptive-file-upload-progress.service';
 import {AdaptiveDefinitionService} from './adaptive-definition.service';
-import {PortalConfig} from '@crczp/common';
+import {ErrorHandlerService, NotificationService, PortalConfig, Routing} from '@crczp/common';
 
 /**
  * Basic implementation of a layer between a component and an API service.
@@ -27,13 +26,12 @@ import {PortalConfig} from '@crczp/common';
  */
 @Injectable()
 export class AdaptiveDefinitionConcreteService extends AdaptiveDefinitionService {
-    private api = inject(AdaptiveDefinitionApiService);
+    private api = inject(AdaptiveTrainingDefinitionApi);
     private dialog = inject(MatDialog);
     private router = inject(Router);
-    private navigator = inject(TrainingNavigator);
-    private notificationService = inject(TrainingNotificationService);
+    private notificationService = inject(NotificationService);
     private fileUploadProgressService = inject(AdaptiveFileUploadProgressService);
-    private errorHandler = inject(TrainingErrorHandler);
+    private errorHandler = inject(ErrorHandlerService);
 
     private lastPagination: OffsetPaginationEvent;
     private lastFilters: string;
@@ -61,14 +59,16 @@ export class AdaptiveDefinitionConcreteService extends AdaptiveDefinitionService
 
     create(): Observable<any> {
         return from(
-            this.router.navigate([this.navigator.toNewAdaptiveDefinition()])
+            this.router.navigate([
+                Routing.RouteBuilder.adaptive_definition.create.build()
+            ])
         );
     }
 
     edit(trainingDefinition: TrainingDefinition): Observable<any> {
         return from(
             this.router.navigate([
-                this.navigator.toAdaptiveDefinitionEdit(trainingDefinition.id),
+                Routing.RouteBuilder.adaptive_definition.definitionId(trainingDefinition.id).build()
             ])
         );
     }
@@ -76,31 +76,21 @@ export class AdaptiveDefinitionConcreteService extends AdaptiveDefinitionService
     preview(trainingDefinition: TrainingDefinition): Observable<any> {
         return from(
             this.router.navigate([
-                this.navigator.toTrainingDefinitionPreview(
-                    trainingDefinition.id
-                ),
-            ])
-        );
-    }
-
-    toAdaptivePreview(
-        trainingDefinition: TrainingDefinition
-    ): Observable<boolean> {
-        return from(
-            this.router.navigate([
-                this.navigator.toAdaptiveDefinitionPreview(
-                    trainingDefinition.id
-                ),
+                Routing.RouteBuilder.adaptive_definition.definitionId(trainingDefinition.id).preview.build()
             ])
         );
     }
 
     showMitreTechniques(): Observable<any> {
-        return from(this.router.navigate([this.navigator.toMitreTechniques()]));
+        return from(this.router.navigate([
+            Routing.RouteBuilder.mitre_techniques.build()
+        ]));
     }
 
     toSimulator(): Observable<boolean> {
-        return from(this.router.navigate([this.navigator.toSimulator()]));
+        return from(this.router.navigate([
+            Routing.RouteBuilder.adaptive_definition.simulator.build()
+        ]));
     }
 
     /**

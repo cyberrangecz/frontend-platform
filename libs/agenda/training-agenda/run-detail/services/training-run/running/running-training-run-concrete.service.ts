@@ -4,11 +4,9 @@ import {LinearRunApi} from '@crczp/training-api';
 import {AccessTrainingRunInfo, Level} from '@crczp/training-model';
 import {EMPTY, Observable} from 'rxjs';
 import {switchMap, tap} from 'rxjs/operators';
-import {TrainingErrorHandler, TrainingNavigator} from '@crczp/training-agenda';
 import {RunningTrainingRunService} from './running-training-run.service';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
-import {ConsoleUrl, TopologyApi} from '@crczp/topology-graph';
-import {LoadingDialogComponent, LoadingDialogConfig} from "@crczp/common";
+import {ErrorHandlerService, LoadingDialogComponent, LoadingDialogConfig, Routing} from "@crczp/common";
 
 /**
  * Main service for running training training. Holds levels and its state. Handles user general training run user actions and events.
@@ -17,9 +15,7 @@ import {LoadingDialogComponent, LoadingDialogConfig} from "@crczp/common";
 @Injectable()
 export class RunningTrainingRunConcreteService extends RunningTrainingRunService {
     private api = inject(LinearRunApi);
-    private topologyService = inject(TopologyApi);
-    private errorHandler = inject(TrainingErrorHandler);
-    private navigator = inject(TrainingNavigator);
+    private errorHandler = inject(ErrorHandlerService);
     private router = inject(Router);
     private dialog = inject(MatDialog);
 
@@ -102,12 +98,8 @@ export class RunningTrainingRunConcreteService extends RunningTrainingRunService
      * Sends request to preload VM consoles on backend for user for further use in topology.
      * @param sandboxId id of sandbox in which the vm exists
      */
-    loadConsoles(sandboxId: string): Observable<ConsoleUrl[]> {
-        return this.topologyService.getVMConsolesUrl(sandboxId).pipe(
-            tap({
-                error: (err) => this.errorHandler.emit(err, 'Obtaining console URL'),
-            }),
-        );
+    loadConsoles(sandboxId: string): Observable<any[]> {
+        return EMPTY;
     }
 
     getBackwardMode(): boolean {
@@ -144,7 +136,7 @@ export class RunningTrainingRunConcreteService extends RunningTrainingRunService
                 const tmpTrainingRunId = this.trainingRunId;
                 setTimeout(() => {
                     dialog.close();
-                    this.router.navigate([this.navigator.toTrainingRunResult(tmpTrainingRunId)]);
+                    this.router.navigate([Routing.RouteBuilder.run.linear.runId(tmpTrainingRunId).results.build()]);
                 }, 5000);
                 return EMPTY;
             }),

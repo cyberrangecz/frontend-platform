@@ -1,4 +1,4 @@
-import {AfterViewInit, ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit} from '@angular/core';
 import {Phase} from '@crczp/training-model';
 import {Observable} from 'rxjs';
 import {take, tap} from 'rxjs/operators';
@@ -29,7 +29,7 @@ import {AbstractPhaseComponent} from "./phase/abstract-phase.component";
  * Main component of trainees training. Displays window with current level of a training and navigation to the next.
  * Optionally displays stepper with progress of the training and timer counting time from the start of a training.
  */
-export class AdaptiveRunDetailComponent implements OnInit, AfterViewInit {
+export class AdaptiveRunDetailComponent implements OnInit {
     user$: Observable<SentinelUser>;
     activePhase$: Observable<Phase>;
     isCurrentPhaseAnswered$: Observable<boolean>;
@@ -51,12 +51,6 @@ export class AdaptiveRunDetailComponent implements OnInit, AfterViewInit {
 
     ngOnInit(): void {
         this.init();
-    }
-
-    ngAfterViewInit(): void {
-        if (!this.localEnvironment) {
-            this.trainingRunService.loadConsoles(this.sandboxInstanceId).pipe(take(1)).subscribe();
-        }
     }
 
     /**

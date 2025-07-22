@@ -3,13 +3,13 @@ import {Observable} from 'rxjs';
 import {tap} from 'rxjs/operators';
 import {MitreTechniquesApi} from '@crczp/training-api';
 import {MitreTechnique} from '@crczp/training-model';
-import {TrainingErrorHandler} from '@crczp/training-agenda';
 import {MitreTechniquesService} from './mitre-techniques.service';
+import {ErrorHandlerService} from "@crczp/common";
 
 @Injectable()
 export class MitreTechniquesConcreteService extends MitreTechniquesService {
     private api = inject(MitreTechniquesApi);
-    private errorHandler = inject(TrainingErrorHandler);
+    private errorHandler = inject(ErrorHandlerService);
 
 
     getAll(): Observable<MitreTechnique[]> {

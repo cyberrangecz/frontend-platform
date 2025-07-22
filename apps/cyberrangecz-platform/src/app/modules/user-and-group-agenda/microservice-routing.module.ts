@@ -1,16 +1,16 @@
 import {NgModule} from '@angular/core';
-import {RouterModule, Routes} from '@angular/router';
+import {RouterModule} from '@angular/router';
 import {MicroserviceOverviewComponent} from '@crczp/user-and-group-agenda/microservice-overview';
 import {MicroserviceEditCanDeactivate} from "@crczp/user-and-group-agenda/microservice-registration";
-import {PATHS} from "../../paths";
+import {ValidRouterConfig} from "@crczp/common";
 
-const routes: Routes = [
+const routes: ValidRouterConfig<'microservice'> = [
     {
         path: '',
         component: MicroserviceOverviewComponent,
     },
     {
-        path: PATHS.ACTION.CREATE,
+        path: 'create',
         loadComponent: () =>
             import('@crczp/user-and-group-agenda/microservice-registration').then((m) => m.MicroserviceEditComponent),
         data: {

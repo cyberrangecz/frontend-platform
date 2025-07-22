@@ -54,3 +54,11 @@ export {Quota} from './resources/quota';
 // VM IMAGES
 export {VirtualImage} from './vm-images/virtual-image';
 export {OwnerSpecified} from './vm-images/owner-specified';
+
+export * from './topology-graph/graph-node';
+export * from './topology-graph/switch-node';
+export * from './topology-graph/router-node';
+export * from './topology-graph/host-node';
+export * from './topology-graph/special-node';
+export * from './topology-graph/graph-node-link';
+export * from './topology-graph/graph-node-type';

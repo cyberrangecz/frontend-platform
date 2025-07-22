@@ -1,15 +1,14 @@
-import { Injectable, inject } from '@angular/core';
+import {inject, Injectable} from '@angular/core';
 import {Router} from '@angular/router';
 import {TrainingInstance} from '@crczp/training-model';
 import {from, Observable, timer} from 'rxjs';
 import {map} from 'rxjs/operators';
-import {TrainingNavigator} from '@crczp/training-agenda';
 import {AdaptiveInstanceSummaryService} from './adaptive-instance-summary.service';
+import {Routing} from "@crczp/common";
 
 @Injectable()
 export class AdaptiveInstanceSummaryConcreteService extends AdaptiveInstanceSummaryService {
     private router = inject(Router);
-    private navigator = inject(TrainingNavigator);
 
 
     init(ti: TrainingInstance): void {
@@ -18,14 +17,14 @@ export class AdaptiveInstanceSummaryConcreteService extends AdaptiveInstanceSumm
     }
 
     showProgress(): Observable<any> {
-        return from(this.router.navigate([this.navigator.toAdaptiveInstanceProgress(this.trainingInstance.id)]));
+        return from(this.router.navigate([Routing.RouteBuilder.adaptive_instance.instanceId(this.trainingInstance.id).progress.build()]));
     }
 
     showResults(): Observable<any> {
-        return from(this.router.navigate([this.navigator.toAdaptiveInstanceResults(this.trainingInstance.id)]));
+        return from(this.router.navigate([Routing.RouteBuilder.adaptive_instance.instanceId(this.trainingInstance.id).results.build()]));
     }
 
     showToken(): Observable<any> {
-        return from(this.router.navigate([this.navigator.toAdaptiveInstanceAccessToken(this.trainingInstance.id)]));
+        return from(this.router.navigate([Routing.RouteBuilder.adaptive_instance.instanceId(this.trainingInstance.id).access_token.build()]));
     }
 }

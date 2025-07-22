@@ -1,8 +1,5 @@
 import {Component, DestroyRef, EventEmitter, inject, Input, OnInit, Output} from '@angular/core';
 import {Observable, of} from 'rxjs';
-import {TopologyErrorService, TopologyGraphModule} from '@crczp/topology-graph';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {TrainingErrorHandler} from '@crczp/training-agenda';
 import {AsyncPipe} from "@angular/common";
 import {MatButton} from "@angular/material/button";
 import {MatTooltip} from "@angular/material/tooltip";
@@ -14,7 +11,6 @@ import {MatTooltip} from "@angular/material/tooltip";
     imports: [
         AsyncPipe,
         MatButton,
-        TopologyGraphModule,
         MatTooltip
     ]
 })
@@ -24,17 +20,12 @@ export class TopologyWrapperComponent implements OnInit {
     @Input() sandboxDefinitionId!: number;
     @Output() getAccessFile = new EventEmitter<void>();
     destroyRef = inject(DestroyRef);
-    private topologyErrorService = inject(TopologyErrorService);
-    private errorHandler = inject(TrainingErrorHandler);
 
     ngOnInit(): void {
         this.subscribeToTopologyErrorHandler();
     }
 
     private subscribeToTopologyErrorHandler() {
-        this.topologyErrorService.error$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-            next: (event) => this.errorHandler.emit(event.err, event.action),
-            error: (err) => this.errorHandler.emit(err, 'There is a problem with topology error handler.'),
-        });
+
     }
 }

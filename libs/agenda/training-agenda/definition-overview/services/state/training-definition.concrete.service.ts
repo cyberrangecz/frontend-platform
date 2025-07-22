@@ -8,7 +8,7 @@ import {
 } from '@sentinel/components/dialogs';
 import {SentinelFilter} from '@sentinel/common/filter';
 import {OffsetPaginationEvent, PaginatedResource,} from '@sentinel/common/pagination';
-import {TrainingDefinitionApi} from '@crczp/training-api';
+import {LinearTrainingDefinitionApi} from '@crczp/training-api';
 import {TrainingDefinition, TrainingDefinitionStateEnum,} from '@crczp/training-model';
 import {EMPTY, from, Observable} from 'rxjs';
 import {map, switchMap, take, tap} from 'rxjs/operators';
@@ -16,10 +16,9 @@ import {CloneDialogComponent} from '../../components/clone-dialog/clone-dialog.c
 import {
     TrainingDefinitionUploadDialogComponent
 } from '../../components/upload-dialog/training-definition-upload-dialog.component';
-import {TrainingErrorHandler, TrainingNavigator, TrainingNotificationService,} from '@crczp/training-agenda';
 import {FileUploadProgressService} from '../file-upload/file-upload-progress.service';
 import {TrainingDefinitionService} from './training-definition.service';
-import {PortalConfig} from '@crczp/common';
+import {ErrorHandlerService, NotificationService, PortalConfig, Routing} from '@crczp/common';
 
 /**
  * Basic implementation of a layer between a component and an API service.
@@ -27,13 +26,12 @@ import {PortalConfig} from '@crczp/common';
  */
 @Injectable()
 export class TrainingDefinitionConcreteService extends TrainingDefinitionService {
-    private api = inject(TrainingDefinitionApi);
+    private api = inject(LinearTrainingDefinitionApi);
     private dialog = inject(MatDialog);
     private router = inject(Router);
-    private navigator = inject(TrainingNavigator);
-    private notificationService = inject(TrainingNotificationService);
+    private notificationService = inject(NotificationService);
     private fileUploadProgressService = inject(FileUploadProgressService);
-    private errorHandler = inject(TrainingErrorHandler);
+    private errorHandler = inject(ErrorHandlerService);
 
     private lastPagination: OffsetPaginationEvent;
     private lastFilters: string;
@@ -69,32 +67,30 @@ export class TrainingDefinitionConcreteService extends TrainingDefinitionService
         return this.callApiToGetAll(pagination, filters);
     }
 
-    create(): Observable<any> {
+    create(): Observable<boolean> {
         return from(
-            this.router.navigate([this.navigator.toNewTrainingDefinition()])
+            this.router.navigate([Routing.RouteBuilder.linear_definition.create.build()])
         );
     }
 
-    edit(trainingDefinition: TrainingDefinition): Observable<any> {
+    edit(trainingDefinitionId: number): Observable<boolean> {
         return from(
             this.router.navigate([
-                this.navigator.toTrainingDefinitionEdit(trainingDefinition.id),
+                Routing.RouteBuilder.linear_definition.definitionId(trainingDefinitionId).edit.build()
             ])
         );
     }
 
-    preview(trainingDefinition: TrainingDefinition): Observable<any> {
+    preview(trainingDefinitionId: number): Observable<boolean> {
         return from(
             this.router.navigate([
-                this.navigator.toTrainingDefinitionPreview(
-                    trainingDefinition.id
-                ),
+                Routing.RouteBuilder.linear_definition.definitionId(trainingDefinitionId).preview.build()
             ])
         );
     }
 
-    showMitreTechniques(): Observable<any> {
-        return from(this.router.navigate([this.navigator.toMitreTechniques()]));
+    showMitreTechniques(): Observable<boolean> {
+        return from(this.router.navigate([Routing.RouteBuilder.mitre_techniques.build()]));
     }
 
     /**

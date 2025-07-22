@@ -1,17 +1,16 @@
 import {inject, Injectable} from '@angular/core';
 import {Router} from '@angular/router';
 import {PoolApi, SandboxDefinitionApi} from '@crczp/sandbox-api';
-import {LinearTrainingInstanceApi, TrainingDefinitionApi} from '@crczp/training-api';
+import {LinearTrainingDefinitionApi, LinearTrainingInstanceApi} from '@crczp/training-api';
 import {TrainingDefinitionInfo, TrainingInstance} from '@crczp/training-model';
 import {combineLatest, from, Observable} from 'rxjs';
 import {map, switchMap, tap} from 'rxjs/operators';
 import {TrainingInstanceChangeEvent} from '../../../model/events/training-instance-change-event';
-import {TrainingErrorHandler, TrainingNavigator, TrainingNotificationService,} from '@crczp/training-agenda';
 import {TrainingInstanceEditService} from './training-instance-edit.service';
 import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
 import {Pool, SandboxDefinition} from '@crczp/sandbox-model';
 import {SentinelFilter} from '@sentinel/common/filter';
-import {LoadingTracker, PortalConfig} from "@crczp/common";
+import {ErrorHandlerService, LoadingTracker, NotificationService, PortalConfig, Routing} from "@crczp/common";
 
 /**
  * Basic implementation of layer between component and API service.
@@ -19,13 +18,12 @@ import {LoadingTracker, PortalConfig} from "@crczp/common";
 @Injectable()
 export class TrainingInstanceEditConcreteService extends TrainingInstanceEditService {
     private trainingInstanceApi = inject(LinearTrainingInstanceApi);
-    private trainingDefinitionApi = inject(TrainingDefinitionApi);
+    private trainingDefinitionApi = inject(LinearTrainingDefinitionApi);
     private poolApi = inject(PoolApi);
     private sandboxDefinitionApi = inject(SandboxDefinitionApi);
     private router = inject(Router);
-    private navigator = inject(TrainingNavigator);
-    private errorHandler = inject(TrainingErrorHandler);
-    private notificationService = inject(TrainingNotificationService);
+    private errorHandler = inject(ErrorHandlerService);
+    private notificationService = inject(NotificationService);
     private settings = inject(PortalConfig);
 
     private editedSnapshot: TrainingInstance;
@@ -81,7 +79,7 @@ export class TrainingInstanceEditConcreteService extends TrainingInstanceEditSer
             return this.update();
         } else {
             return this.create().pipe(
-                switchMap((id) => from(this.router.navigate([this.navigator.toTrainingInstanceEdit(id)]))),
+                switchMap((id) => from(this.router.navigate([Routing.RouteBuilder.linear_instance.instanceId(id).edit.build()])))
             );
         }
     }

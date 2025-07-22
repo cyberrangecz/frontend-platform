@@ -11,9 +11,8 @@ import {AllocationRequestsApi, PoolApi, SandboxAllocationUnitsApi,} from '@crczp
 import {Request} from '@crczp/sandbox-model';
 import {EMPTY, Observable} from 'rxjs';
 import {switchMap, tap} from 'rxjs/operators';
-import {SandboxErrorHandler, SandboxNotificationService,} from '@crczp/sandbox-agenda';
 import {AllocationRequestsService} from './allocation-requests.service';
-import {PortalConfig} from '@crczp/common';
+import {ErrorHandlerService, NotificationService, PortalConfig} from '@crczp/common';
 
 /**
  * Basic implementation of a layer between a component and an API service.
@@ -25,8 +24,8 @@ export class AllocationRequestsConcreteService extends AllocationRequestsService
     private allocationRequestsApi = inject(AllocationRequestsApi);
     private sauApi = inject(SandboxAllocationUnitsApi);
     private dialog = inject(MatDialog);
-    private notificationService = inject(SandboxNotificationService);
-    private errorHandler = inject(SandboxErrorHandler);
+    private notificationService = inject(NotificationService);
+    private errorHandler = inject(ErrorHandlerService);
 
     private lastPoolId: number;
 

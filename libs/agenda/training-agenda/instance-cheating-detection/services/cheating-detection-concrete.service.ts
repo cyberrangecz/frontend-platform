@@ -11,7 +11,7 @@ import {CheatingDetectionApi} from '@crczp/training-api';
 import {CheatingDetection} from '@crczp/training-model';
 import {EMPTY, from, Observable} from 'rxjs';
 import {switchMap, tap} from 'rxjs/operators';
-import {TrainingErrorHandler, TrainingNavigator, TrainingNotificationService,} from '@crczp/training-agenda';
+import {ErrorHandlerService, NotificationService, TrainingNavigator,} from '@crczp/training-agenda';
 import {CheatingDetectionService} from './cheating-detection.service';
 import {PortalConfig} from '@crczp/common';
 
@@ -25,8 +25,8 @@ export class CheatingDetectionConcreteService extends CheatingDetectionService {
     private dialog = inject(MatDialog);
     private router = inject(Router);
     private navigator = inject(TrainingNavigator);
-    private notificationService = inject(TrainingNotificationService);
-    private errorHandler = inject(TrainingErrorHandler);
+    private notificationService = inject(NotificationService);
+    private errorHandler = inject(ErrorHandlerService);
 
     private lastPagination: OffsetPaginationEvent;
 

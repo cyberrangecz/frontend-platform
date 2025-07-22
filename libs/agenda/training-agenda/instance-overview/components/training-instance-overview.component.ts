@@ -13,11 +13,11 @@ import {Observable} from 'rxjs';
 import {map, take} from 'rxjs/operators';
 import {TrainingInstanceOverviewControls} from '../model/adapters/training-instance-overview-controls';
 import {TrainingInstanceTable} from '../model/adapters/training-instance-table';
-import {TrainingDefaultNavigator, TrainingNavigator, TrainingNotificationService} from '@crczp/training-agenda';
 import {TrainingInstanceOverviewService} from '../services/state/training-instance-overview.service';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {
     LogoSpinnerComponent,
+    NotificationService,
     PaginationStorageService,
     providePaginationStorageService,
     TableDateCellComponent
@@ -28,11 +28,6 @@ import {MatTooltip} from "@angular/material/tooltip";
 import {MatButton} from "@angular/material/button";
 import {MatIcon} from "@angular/material/icon";
 import {CdkCopyToClipboard} from "@angular/cdk/clipboard";
-import {
-    TrainingInstanceBreadcrumbResolver,
-    TrainingInstanceResolver,
-    TrainingInstanceTitleResolver
-} from "@crczp/training-agenda/resolvers";
 import {TrainingInstanceOverviewConcreteService} from "../services/state/training-instance-overview-concrete.service";
 
 /**
@@ -59,10 +54,6 @@ import {TrainingInstanceOverviewConcreteService} from "../services/state/trainin
     ],
     providers: [
         providePaginationStorageService(TrainingInstanceOverviewComponent),
-        TrainingInstanceResolver,
-        TrainingInstanceTitleResolver,
-        TrainingInstanceBreadcrumbResolver,
-        {provide: TrainingNavigator, useClass: TrainingDefaultNavigator},
         {provide: TrainingInstanceOverviewService, useClass: TrainingInstanceOverviewConcreteService},
     ],
 })
@@ -76,8 +67,7 @@ export class TrainingInstanceOverviewComponent {
     controls: SentinelControlItem[];
     private service = inject(TrainingInstanceOverviewService);
     private paginationService = inject(PaginationStorageService);
-    private navigator = inject(TrainingNavigator);
-    private notificationService = inject(TrainingNotificationService);
+    private notificationService = inject(NotificationService);
 
     constructor() {
         this.controls = TrainingInstanceOverviewControls.create(this.service);
@@ -136,7 +126,7 @@ export class TrainingInstanceOverviewComponent {
             ),
         };
         this.instances$ = this.service.resource$.pipe(
-            map((instances) => new TrainingInstanceTable(instances, this.service, this.navigator)),
+            map((instances) => new TrainingInstanceTable(instances, this.service)),
         );
         this.hasError$ = this.service.hasError$;
         this.onInstancesLoadEvent(initLoadEvent);

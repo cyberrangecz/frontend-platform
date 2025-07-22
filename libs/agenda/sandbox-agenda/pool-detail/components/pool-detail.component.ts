@@ -15,7 +15,6 @@ import {
 } from '@sentinel/components/table';
 import {Observable, Subscription} from 'rxjs';
 import {map, take} from 'rxjs/operators';
-import {SANDBOX_ROUTE_VARIABLES, SandboxNavigator,} from '@crczp/sandbox-agenda';
 import {EditableCommentComponent, ResourcePollingService,} from '@crczp/sandbox-agenda/internal';
 import {AllocationRequestsService} from '../services/state/request/allocation/requests/allocation-requests.service';
 import {CleanupRequestsService} from '../services/state/request/cleanup/cleanup-requests.service';
@@ -30,12 +29,6 @@ import {PoolDetailTable} from '../model/pool-detail-table';
 import {AbstractSandbox} from '../model/abstract-sandbox';
 import {SelectedStage} from '../model/selected-stage';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {
-    RequestBreadcrumbResolver,
-    RequestResolver,
-    SandboxInstanceBreadcrumbResolver,
-    SandboxInstanceResolver,
-} from '@crczp/sandbox-agenda/resolvers';
 import {PaginationStorageService, providePaginationStorageService} from '@crczp/common';
 import {MatCard} from '@angular/material/card';
 import {StageOverviewComponent} from './stage-overview/stage-overview.component';
@@ -63,10 +56,6 @@ import {AsyncPipe} from '@angular/common';
             provide: SandboxInstanceService,
             useClass: SandboxInstanceConcreteService,
         },
-        RequestResolver,
-        RequestBreadcrumbResolver,
-        SandboxInstanceResolver,
-        SandboxInstanceBreadcrumbResolver,
         providePaginationStorageService(PoolDetailComponent)
     ],
     imports: [
@@ -91,7 +80,6 @@ export class PoolDetailComponent implements OnInit, AfterViewInit {
     readonly DEFAULT_SORT_DIRECTION = 'asc';
     private sandboxInstanceService = inject(SandboxInstanceService);
     private paginationService = inject(PaginationStorageService);
-    private navigator = inject(SandboxNavigator);
     private activeRoute = inject(ActivatedRoute);
     private subscription: Subscription;
 
@@ -177,7 +165,7 @@ export class PoolDetailComponent implements OnInit, AfterViewInit {
         this.activeRoute.data
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe((data) => {
-                this.pool = data[SANDBOX_ROUTE_VARIABLES.POOL_DATA];
+                this.pool = data[Pool.name];
                 this.onLoadEvent(initialLoadEvent);
             });
 
@@ -192,7 +180,6 @@ export class PoolDetailComponent implements OnInit, AfterViewInit {
                         resource.pagination
                     ),
                     this.sandboxInstanceService,
-                    this.navigator
                 );
             })
         );

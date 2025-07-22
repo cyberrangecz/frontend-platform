@@ -4,12 +4,10 @@ import {SentinelAuthService, User} from '@sentinel/auth';
 import {AgendaContainer} from '@sentinel/layout';
 import {Observable} from 'rxjs';
 import {filter, map} from 'rxjs/operators';
-import {NOTIFICATIONS_PATH} from './paths';
-import {LoadingService} from '../../../../libs/common/src/error-handling/loading.service';
 import {NavConfigFactory} from './utils/nav-config-factory';
 import {PortalDynamicEnvironment} from './portal-dynamic-environment';
 import packagejson from '../../../../package.json';
-import {NavBuilder} from "@crczp/common";
+import {LoadingService, NavBuilder, ValidPath} from "@crczp/common";
 
 /**
  * Main component serving as wrapper for layout and router outlet
@@ -26,7 +24,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     title$: Observable<string>;
     subtitle$: Observable<string>;
     agendaContainers$: Observable<AgendaContainer[]>;
-    notificationRoute = NOTIFICATIONS_PATH;
+    notificationRoute: ValidPath = 'notifications';
     version: string = '';
 
     constructor(

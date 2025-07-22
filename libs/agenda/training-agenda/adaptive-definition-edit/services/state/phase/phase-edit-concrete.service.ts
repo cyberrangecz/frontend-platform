@@ -8,7 +8,7 @@ import {
 import {EMPTY, Observable} from 'rxjs';
 import {switchMap, tap} from 'rxjs/operators';
 import {PhaseEditService} from './phase-edit.service';
-import {AdaptiveDefinitionApiService} from '@crczp/training-api';
+import {AdaptiveTrainingDefinitionApi} from '@crczp/training-api';
 import {
     AbstractPhaseTypeEnum,
     AccessPhase,
@@ -19,14 +19,14 @@ import {
     QuestionnaireTypeEnum,
     TrainingPhase,
 } from '@crczp/training-model';
-import {TrainingErrorHandler, TrainingNotificationService} from '@crczp/training-agenda';
+import {ErrorHandlerService, NotificationService} from "@crczp/common";
 
 @Injectable()
 export class PhaseEditConcreteService extends PhaseEditService {
-    private api = inject(AdaptiveDefinitionApiService);
+    private api = inject(AdaptiveTrainingDefinitionApi);
     private dialog = inject(MatDialog);
-    private errorHandler = inject(TrainingErrorHandler);
-    private notificationService = inject(TrainingNotificationService);
+    private errorHandler = inject(ErrorHandlerService);
+    private notificationService = inject(NotificationService);
 
     private unsavedTasks: number[] = [];
 

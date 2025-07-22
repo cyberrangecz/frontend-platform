@@ -13,8 +13,7 @@ import {map, switchMap, take, tap} from 'rxjs/operators';
 import {SelectablePaginatedService, UserFilter,} from '@crczp/user-and-group-agenda/internal';
 import {UsersUploadDialogComponent} from '../components/upload-dialog/users-upload-dialog.component';
 import {FileUploadProgressService} from './file-upload/file-upload-progress.service';
-import {UserAndGroupErrorHandler, UserAndGroupNotificationService,} from '@crczp/user-and-group-agenda';
-import {PortalConfig} from '@crczp/common';
+import {ErrorHandlerService, NotificationService, PortalConfig} from '@crczp/common';
 
 /**
  * Basic implementation of a layer between a component and an API service.
@@ -25,9 +24,9 @@ import {PortalConfig} from '@crczp/common';
 export class UserOverviewService extends SelectablePaginatedService<User> {
     private api = inject(UserApi);
     private dialog = inject(MatDialog);
-    private alertService = inject(UserAndGroupNotificationService);
+    private notificationService = inject(NotificationService);
     private fileUploadProgressService = inject(FileUploadProgressService);
-    private errorHandler = inject(UserAndGroupErrorHandler);
+    private errorHandler = inject(ErrorHandlerService);
 
     private lastPagination: OffsetPaginationEvent;
     private lastFilter: string;
@@ -132,7 +131,7 @@ export class UserOverviewService extends SelectablePaginatedService<User> {
             switchMap((file) => this.api.importUsers(file)),
             tap(
                 () => {
-                    this.alertService.emit('success', 'Users were imported');
+                    this.notificationService.emit('success', 'Users were imported');
                     this.fileUploadProgressService.finish();
                     dialogRef.close();
                 },
@@ -175,7 +174,7 @@ export class UserOverviewService extends SelectablePaginatedService<User> {
             tap(
                 () => {
                     this.clearSelection();
-                    this.alertService.emit(
+                    this.notificationService.emit(
                         'success',
                         'Selected users were deleted'
                     );

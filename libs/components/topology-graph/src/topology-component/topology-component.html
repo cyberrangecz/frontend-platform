@@ -1,0 +1,20 @@
+<mat-tab-group
+    [(selectedIndex)]="selectedIndex"
+    [animationDuration]="0.2"
+    [mat-stretch-tabs]="false"
+    [preserveContent]="true">
+    <mat-tab label="Topology">
+        <crczp-topology-graph
+            (openConsole)="handleOpenConsole($event)"
+            [links]="presetLinks"
+            [nodes]="presetNodes"
+        />
+    </mat-tab>
+    @for (tab of tabs(); let i = $index; track $index) {
+        <mat-tab [label]="tab.title" [matTooltip]="tab.ip">
+            <ng-template matTabContent>
+            </ng-template>
+        </mat-tab>
+    }
+
+</mat-tab-group>

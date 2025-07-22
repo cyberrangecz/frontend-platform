@@ -5,9 +5,9 @@ import {LoginComponent} from "./components/login/login.component";
 import {sentinelAuthGuard, sentinelAuthGuardWithLoading, sentinelNegativeAuthGuard} from "@sentinel/auth";
 import {RoleGuards} from "./utils/guards";
 import {RoleService} from "./services/role.service";
-import {ValidRoutes} from "../../../../libs/common/src/routing/router-types";
+import {ValidRouterConfig} from "@crczp/common";
 
-const routes: ValidRoutes<''> = [
+const routes: ValidRouterConfig<''> = [
     {
         path: 'linear-definition',
         loadChildren: () =>

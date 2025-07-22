@@ -1,11 +1,9 @@
 import {Component, inject, OnInit} from '@angular/core';
-import {Level} from '@crczp/training-model';
+import {Level, TrainingDefinition} from '@crczp/training-model';
 import {LevelStepperAdapter} from '@crczp/training-agenda/internal';
 import {ActivatedRoute} from '@angular/router';
 import {TrainingPreviewStepper} from '../model/training-preview-stepper';
-import {TRAINING_DEFINITION_DATA_ATTRIBUTE_NAME} from '@crczp/training-agenda';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {TrainingDefinitionBreadcrumbResolver, TrainingDefinitionResolver} from "@crczp/training-agenda/resolvers";
 import {SentinelStepperComponent} from "@sentinel/components/stepper";
 import {AbstractLevelComponent} from "./level/abstract-level.component";
 
@@ -16,7 +14,6 @@ import {AbstractLevelComponent} from "./level/abstract-level.component";
     selector: 'crczp-designer-preview',
     templateUrl: './training-preview.component.html',
     styleUrls: ['./training-preview.component.css'],
-    providers: [TrainingDefinitionResolver, TrainingDefinitionBreadcrumbResolver],
     imports: [
         SentinelStepperComponent,
         AbstractLevelComponent
@@ -30,7 +27,7 @@ export class TrainingPreviewComponent implements OnInit {
 
     constructor() {
         this.activeRoute.data.pipe(takeUntilDestroyed()).subscribe((data) => {
-            this.levels = data[TRAINING_DEFINITION_DATA_ATTRIBUTE_NAME].levels;
+            this.levels = data[TrainingDefinition.name].levels;
         });
     }
 

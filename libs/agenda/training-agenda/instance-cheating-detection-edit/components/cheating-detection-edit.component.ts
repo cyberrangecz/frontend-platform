@@ -14,8 +14,7 @@ import {ActivatedRoute} from '@angular/router';
 import {CheatingDetection, TrainingInstance} from '@crczp/training-model';
 import {SentinelControlItem, SentinelControlItemSignal, SentinelControlsComponent} from '@sentinel/components/controls';
 import {map, take} from 'rxjs/operators';
-import {defer, Observable, of} from 'rxjs';
-import {TRAINING_INSTANCE_DATA_ATTRIBUTE_NAME} from '@crczp/training-agenda';
+import {defer, from, Observable, of} from 'rxjs';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle} from "@angular/material/expansion";
 import {MatSlideToggle} from "@angular/material/slide-toggle";
@@ -27,6 +26,13 @@ import {MatRadioButton, MatRadioGroup} from "@angular/material/radio";
 import {MatButton, MatIconButton} from "@angular/material/button";
 import {MatIcon} from "@angular/material/icon";
 import {CheatingDetectionEditConcreteService} from "../services/cheating-detection-edit-concrete.service";
+import {TrainingInstance
+
+.
+name
+}
+from
+'@crczp/training-agenda';
 
 /**
  * Main component of training instance cheating detection edit.
@@ -72,7 +78,7 @@ export class CheatingDetectionEditComponent {
     constructor() {
         this.trainingInstance$ = this.activeRoute.data.pipe(
             takeUntilDestroyed(this.destroyRef),
-            map((data) => data[TRAINING_INSTANCE_DATA_ATTRIBUTE_NAME]),
+            map((data) => data[TrainingInstance.name]),
         );
         this.trainingInstance$.subscribe((instance) => {
             this.trainingInstanceId = instance.id;

@@ -1,14 +1,10 @@
-import { Injectable, inject } from '@angular/core';
+import {inject, Injectable} from '@angular/core';
 import {Router} from '@angular/router';
 import {GroupApi} from '@crczp/user-and-group-api';
 import {Group} from '@crczp/user-and-group-model';
 import {BehaviorSubject, Observable, ReplaySubject} from 'rxjs';
 import {tap} from 'rxjs/operators';
-import {
-    UserAndGroupErrorHandler,
-    UserAndGroupNavigator,
-    UserAndGroupNotificationService
-} from '@crczp/user-and-group-agenda';
+import {ErrorHandlerService, NotificationService, Routing} from '@crczp/common';
 import {GroupChangedEvent} from '../../model/group-changed-event';
 
 /**
@@ -21,10 +17,9 @@ import {GroupChangedEvent} from '../../model/group-changed-event';
 @Injectable()
 export class GroupEditService {
     private api = inject(GroupApi);
-    private notificationService = inject(UserAndGroupNotificationService);
+    private notificationService = inject(NotificationService);
     private router = inject(Router);
-    private navigator = inject(UserAndGroupNavigator);
-    private errorHandler = inject(UserAndGroupErrorHandler);
+    private errorHandler = inject(ErrorHandlerService);
 
     private editModeSubject$: BehaviorSubject<boolean> = new BehaviorSubject(false);
     /**
@@ -71,11 +66,11 @@ export class GroupEditService {
     save(): Observable<any> {
         return this.editModeSubject$.getValue()
             ? this.update()
-            : this.create().pipe(tap(() => this.router.navigate([this.navigator.toGroupOverview()])));
+            : this.create().pipe(tap(() => this.router.navigate([Routing.RouteBuilder.group.build()])));
     }
 
     createAndEdit(): Observable<any> {
-        return this.create().pipe(tap((id) => this.router.navigate([this.navigator.toGroupEdit(id)])));
+        return this.create().pipe(tap((id) => this.router.navigate([Routing.RouteBuilder.group.groupId(id).edit.build()])));
     }
 
     private setEditMode(group: Group) {

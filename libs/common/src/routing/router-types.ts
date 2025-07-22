@@ -18,6 +18,7 @@ type SplitPath<T extends string> =
         ? Head | SplitPath<Rest>
         : T;
 
+
 type IsNavigable<K extends string> = K extends `EXCL_${string}` ? false : true;
 
 type ExtractNavigablePaths<T, Prefix extends string = ''> = {
@@ -70,12 +71,18 @@ type ExtractParamsFromPath<T extends string> =
             ? Param
             : never;
 
-type ValidRoute<Prefix extends ValidPathPrefix> =
+type JoinPathIfValidPrefix<A extends string, B extends string> =
+    JoinPath<A, B> extends ValidPathPrefix ? JoinPath<A, B> : never;
+
+
+type ValidRouteConfig<Prefix extends ValidPathPrefix> =
     Omit<Route, 'path' | 'children' | 'redirectTo'>
     & {
     path?: '' | PathSuffixes<ValidPath, Prefix>;
-    redirectTo?: '' | ValidPath;
-    children?: never // NOT IMPLEMENTED;
+    redirectTo?: '' | PathSuffixes<ValidPath, Prefix>;
+    children?: PathSuffixes<ValidPath, Prefix> extends infer Suffix extends string
+        ? ValidRouterConfig<JoinPathIfValidPrefix<Prefix, Suffix>>
+        : never;
 };
 
 type SplitPathToTuple<S extends string> =
@@ -137,7 +144,7 @@ export type ValidPathSuffix<Prefix extends ValidPathPrefix> =
 
 export type ValidPath = ExtractNavigablePaths<typeof DEFINED_ROUTES>;
 
-export type ValidRoutes<Prefix extends ValidPathPrefix> = ValidRoute<Prefix>[]
+export type ValidRouterConfig<Prefix extends ValidPathPrefix> = ValidRouteConfig<Prefix>[]
 
 export type ValidSegment = ValidPath extends infer P extends string
     ? AllContiguousPathSegments<P>
@@ -157,7 +164,7 @@ export type NavigationBuilder<T, Path extends string = ''> = {
     [K in keyof T as K extends string ? StripMarkers<K> extends infer SK extends string ? SafeKey<SK> : never : never]:
     K extends string
         ? K extends `${string}VAR_${infer Param}`
-            ? (value: string) => NavigationBuilder<T[K], JoinPath<Path, `:${Param}`>>
+            ? (value: any) => NavigationBuilder<T[K], JoinPath<Path, `:${Param}`>>
             : NavigationBuilder<T[K], JoinPath<Path, ToPathPart<K>>>
         : never;
 } & (Path extends '' ? {} : {

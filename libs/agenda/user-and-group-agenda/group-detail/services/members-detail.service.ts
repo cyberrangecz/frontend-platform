@@ -5,7 +5,7 @@ import {User} from '@crczp/user-and-group-model';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {tap} from 'rxjs/operators';
 import {PortalConfig} from '@crczp/common';
-import {UserAndGroupErrorHandler} from '@crczp/user-and-group-agenda';
+import {ErrorHandlerService} from '@crczp/user-and-group-agenda';
 import {UserFilter} from '@crczp/user-and-group-agenda/internal';
 
 /**
@@ -28,7 +28,7 @@ export class MembersDetailService {
     isLoadingAssigned$: Observable<boolean> =
         this.isLoadingAssignedSubject$.asObservable();
     private userApi = inject(UserApi);
-    private errorHandler = inject(UserAndGroupErrorHandler);
+    private errorHandler = inject(ErrorHandlerService);
     private assignedUsersSubject$: BehaviorSubject<PaginatedResource<User>> =
         new BehaviorSubject(this.initSubject());
     /**

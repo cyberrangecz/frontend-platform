@@ -1,10 +1,5 @@
 import {RouterModule, Routes} from '@angular/router';
 import {NgModule} from '@angular/core';
-import {
-    TRAINING_RUN_RESULTS_COMMAND_ANALYSIS_PATH,
-    TRAINING_RUN_RESULTS_COMMAND_TIMELINE_PATH,
-    TRAINING_RUN_RESULTS_SCORE_DEVELOPMENT_PATH,
-} from '@crczp/training-agenda';
 
 import {CommandTimelineWrapperComponent} from './command-timeline-wrapper/command-timeline-wrapper.component';
 import {CommandAnalysisWrapperComponent} from './command-analysis-wrapper/command-analysis-wrapper.component';
@@ -16,17 +11,17 @@ const routes: Routes = [
         path: '',
         component: TrainingRunResultsComponent,
         children: [
-            { path: '', pathMatch: 'prefix', redirectTo: TRAINING_RUN_RESULTS_SCORE_DEVELOPMENT_PATH },
+            {path: '', pathMatch: 'prefix', redirectTo: 'score-developmen'},
             {
-                path: TRAINING_RUN_RESULTS_SCORE_DEVELOPMENT_PATH,
+                path: 'score-developmen',
                 component: ScoreDevelopmentWrapperComponent,
             },
             {
-                path: TRAINING_RUN_RESULTS_COMMAND_TIMELINE_PATH,
+                path: 'command-timeline',
                 component: CommandTimelineWrapperComponent,
             },
             {
-                path: TRAINING_RUN_RESULTS_COMMAND_ANALYSIS_PATH,
+                path: 'command-analysis',
                 component: CommandAnalysisWrapperComponent,
             },
         ],

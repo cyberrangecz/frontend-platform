@@ -1,4 +1,5 @@
-@use "common" as common;
+@use "./common" as common;
+@use "sass:math";
 
 .wh-100 {
     width: 100%;
@@ -10,11 +11,11 @@
     $size-name: calc($i * 10);
 
     .w-#{$size-name} {
-        width: percentage($size);
+        width: math.percentage($size);
     }
 
     .h-#{$size-name} {
-        height: percentage($size);
+        height: math.percentage($size);
     }
 }
 
@@ -23,11 +24,11 @@
     $size-name: calc($i * 25);
 
     .w-#{$size-name} {
-        width: percentage($size);
+        width: math.percentage($size);
     }
 
     .h-#{$size-name} {
-        height: percentage($size);
+        height: math.percentage($size);
     }
 }
 

@@ -22,24 +22,31 @@ export namespace RoutingUtils {
     }
 
     export function extractVariable<Prefix extends ValidPathPrefix>(
-        path: ActivatedRouteSnapshot,
-        variable: ValidPathParamByPrefix<Prefix>
+        variable: ValidPathParamByPrefix<Prefix>,
+        path: ActivatedRouteSnapshot
     ): string | null {
         return path.paramMap.get(variable);
     }
 
     export function hasVariable(
-        path: ActivatedRouteSnapshot,
-        variable: ValidPathParam
+        variable: ValidPathParam,
+        path: ActivatedRouteSnapshot
     ) {
         return path.paramMap.has(variable);
     }
 
     export function containsSubroute<Prefix extends ValidSegment>(
-        state: RouterStateSnapshot,
-        searchedSegment: ValidSubsegment<Prefix>
+        searchedSegment: ValidSubsegment<Prefix>,
+        state: RouterStateSnapshot
     ) {
-        return ('/' + state.url + '/').includes(`/${searchedSegment}/`);
+        // Replace :param with regex for any URL segment
+        const segmentPattern = searchedSegment.replace(/:([^/]+)/g, '[^/]+');
+        const regex = new RegExp(`/${segmentPattern}(?:/|$)`);
+
+        // Ensure exactly one leading and trailing slash
+        const normalizedUrl = `/${state.url.replace(/^\/|\/$/g, '')}/`;
+
+        return regex.test(normalizedUrl);
     }
 
 }

@@ -6,10 +6,10 @@ import {
     UserResolverService,
     UserTitleResolverService,
 } from '@crczp/user-and-group-agenda/user-overview';
-import {ValidRoutes} from "../../../../../../libs/common/src/routing/router-types";
 import {User} from "@crczp/user-and-group-model";
+import {ValidRouterConfig} from "@crczp/common";
 
-const routes: ValidRoutes<'user'> = [
+const routes: ValidRouterConfig<'user'> = [
     {
         path: '',
         component: UserOverviewComponent,

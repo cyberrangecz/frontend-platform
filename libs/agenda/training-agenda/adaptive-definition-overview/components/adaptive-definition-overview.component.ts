@@ -13,7 +13,6 @@ import {map, take} from 'rxjs/operators';
 import {TrainingDefinitionOverviewControls} from '../model/training-definition-overview-controls';
 import {TrainingDefinitionTable} from '../model/training-definition-table';
 import {AdaptiveDefinitionService} from '../services/state/adaptive-definition.service';
-import {TrainingDefaultNavigator, TrainingNavigator} from '@crczp/training-agenda';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {
     PaginationStorageService,
@@ -24,11 +23,6 @@ import {
 import {SentinelControlItem, SentinelControlItemSignal, SentinelControlsComponent} from "@sentinel/components/controls";
 import {AsyncPipe} from "@angular/common";
 import {AdaptiveFileUploadProgressService} from "../services/file-upload/adaptive-file-upload-progress.service";
-import {
-    AdaptiveDefinitionBreadcrumbResolver,
-    AdaptiveDefinitionResolver,
-    AdaptiveDefinitionTitleResolver
-} from "@crczp/training-agenda/resolvers";
 import {AdaptiveDefinitionConcreteService} from "../services/state/adaptive-definition.concrete.service";
 
 /**
@@ -48,11 +42,7 @@ import {AdaptiveDefinitionConcreteService} from "../services/state/adaptive-defi
     ],
     providers: [
         AdaptiveFileUploadProgressService,
-        AdaptiveDefinitionResolver,
-        AdaptiveDefinitionBreadcrumbResolver,
-        AdaptiveDefinitionTitleResolver,
         providePaginationStorageService(AdaptiveDefinitionOverviewComponent),
-        {provide: TrainingNavigator, useClass: TrainingDefaultNavigator},
         {provide: AdaptiveDefinitionService, useClass: AdaptiveDefinitionConcreteService},
     ],
 })
@@ -68,7 +58,6 @@ export class AdaptiveDefinitionOverviewComponent implements OnInit {
     destroyRef = inject(DestroyRef);
     private paginationService = inject(PaginationStorageService);
     private trainingDefinitionService = inject(AdaptiveDefinitionService);
-    private trainingNavigator = inject(TrainingNavigator);
 
     ngOnInit(): void {
         this.topControls = TrainingDefinitionOverviewControls.createTopControls(this.trainingDefinitionService);
@@ -130,7 +119,7 @@ export class AdaptiveDefinitionOverviewComponent implements OnInit {
         this.trainingDefinitions$ = this.trainingDefinitionService.resource$.pipe(
             map(
                 (resource) =>
-                    new TrainingDefinitionTable(resource, this.trainingDefinitionService, this.trainingNavigator),
+                    new TrainingDefinitionTable(resource, this.trainingDefinitionService),
             ),
         );
         const initialPagination = new OffsetPaginationEvent(

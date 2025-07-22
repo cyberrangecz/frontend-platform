@@ -1,5 +1,5 @@
 import {ActivatedRoute} from '@angular/router';
-import {Request, RequestStage} from '@crczp/sandbox-model';
+import {Pool, Request, RequestStage} from '@crczp/sandbox-model';
 import {exhaustMap, Observable} from 'rxjs';
 import {map, switchMap, tap} from 'rxjs/operators';
 import {RequestStagesService} from '../../services/state/request-stages.service';
@@ -7,7 +7,6 @@ import {StageAdapter} from '../../model/adapters/stage-adapter';
 import {StagesDetailPollRegistry} from '../../services/state/detail/stages-detail-poll-registry.service';
 import {DestroyRef, inject} from '@angular/core';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {POOL_REQUEST_DATA_ATTRIBUTE_NAME} from "@crczp/sandbox-agenda";
 
 /**
  * Smart component for pool request detail page
@@ -74,9 +73,9 @@ export abstract class RequestDetailComponent {
             }),
             exhaustMap(() => this.activeRoute.data),
             tap((data) => {
-                this.request = data[POOL_REQUEST_DATA_ATTRIBUTE_NAME];
+                this.request = data[Pool.name];
             }),
-            switchMap((data) => this.requestStagesService.getAll(data[POOL_REQUEST_DATA_ATTRIBUTE_NAME])),
+            switchMap((data) => this.requestStagesService.getAll(data[Pool.name])),
             takeUntilDestroyed(this.destroyRef),
         );
         this.hasError$ = this.requestStagesService.hasError$;

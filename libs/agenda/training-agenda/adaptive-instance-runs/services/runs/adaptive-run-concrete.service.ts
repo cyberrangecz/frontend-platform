@@ -12,9 +12,8 @@ import {AdaptiveInstanceApi, AdaptiveRunApi} from '@crczp/training-api';
 import {TrainingRun} from '@crczp/training-model';
 import {EMPTY, Observable, of} from 'rxjs';
 import {switchMap, tap} from 'rxjs/operators';
-import {TrainingErrorHandler, TrainingNotificationService,} from '@crczp/training-agenda';
 import {AdaptiveRunService} from './adaptive-run.service';
-import {PortalConfig} from '@crczp/common';
+import {ErrorHandlerService, NotificationService, PortalConfig} from '@crczp/common';
 
 /**
  * Basic implementation of layer between component and API service.
@@ -27,8 +26,8 @@ export class AdaptiveRunConcreteService extends AdaptiveRunService {
     private sandboxApi = inject(SandboxInstanceApi);
     private sauApi = inject(SandboxAllocationUnitsApi);
     private dialog = inject(MatDialog);
-    private notificationService = inject(TrainingNotificationService);
-    private errorHandler = inject(TrainingErrorHandler);
+    private notificationService = inject(NotificationService);
+    private errorHandler = inject(ErrorHandlerService);
 
     private lastTrainingInstanceId: number;
 

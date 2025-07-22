@@ -4,8 +4,8 @@ import {Routing} from "../../routing-namespace";
 import {catchError, map, take} from "rxjs/operators";
 import {Observable, of} from "rxjs";
 import {ErrorHandlerService} from "../../../error-handling/error-handler.service";
-import {AccessTrainingRunInfo, TrainingRun} from "@crczp/training-model";
-import {AdaptiveRunApi, LinearRunApi} from "@crczp/training-api";
+import {AccessTrainingRunInfo, TrainingRun} from "libs/model/training-model/src";
+import {AdaptiveRunApi, LinearRunApi} from "libs/api/training-api/src";
 
 export namespace TrainingRunResolvers {
 
@@ -15,18 +15,12 @@ export namespace TrainingRunResolvers {
         )
     }
 
-    function resolveRunAccess(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<AccessTrainingRunInfo | UrlTree> | UrlTree {
+    export function resolveRunAccess(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<AccessTrainingRunInfo | UrlTree> | UrlTree {
 
-        const runId = Routing.Utils.extractVariable<'run'>(
-            route, 'runId'
-        )
-        const runToken = Routing.Utils.extractVariable<'run'>(
-            route, 'runToken'
-        )
+        const runId = Routing.Utils.extractVariable<'run'>('runId', route)
+        const runToken = Routing.Utils.extractVariable<'run'>('runToken', route)
 
-        const isAdaptive = Routing.Utils.containsSubroute(
-            state, 'run/adaptive'
-        )
+        const isAdaptive = Routing.Utils.containsSubroute('run/adaptive', state)
 
         const api = isAdaptive ? inject(AdaptiveRunApi) : inject(LinearRunApi);
 
@@ -45,15 +39,11 @@ export namespace TrainingRunResolvers {
         )
     }
 
-    function resolveAccessedTrainingRunResults(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<TrainingRun | UrlTree> | UrlTree {
+    export function resolveAccessedTrainingRunResults(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<TrainingRun | UrlTree> | UrlTree {
 
-        const runId = Routing.Utils.extractVariable<'run'>(
-            route, 'runId'
-        )
+        const runId = Routing.Utils.extractVariable<'run'>('runId', route)
 
-        const isAdaptive = Routing.Utils.containsSubroute(
-            state, 'run/adaptive'
-        )
+        const isAdaptive = Routing.Utils.containsSubroute('run/adaptive', state)
 
         const api = isAdaptive ? inject(AdaptiveRunApi) : inject(LinearRunApi);
 

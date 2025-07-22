@@ -6,7 +6,6 @@ import {TrainingDefinitionInfo, TrainingInstance,} from '@crczp/training-model';
 import {combineLatestWith, Observable, switchMap} from 'rxjs';
 import {filter, map, take} from 'rxjs/operators';
 import {TrainingInstanceEditControls} from '../model/adapter/training-instance-edit-controls';
-import {TRAINING_INSTANCE_DATA_ATTRIBUTE_NAME} from '@crczp/training-agenda';
 import {TrainingInstanceChangeEvent} from '../model/events/training-instance-change-event';
 import {TrainingInstanceEditService} from '../services/state/edit/training-instance-edit.service';
 import {TrainingInstanceEditConcreteService} from '../services/state/edit/training-instance-edit-concrete.service';
@@ -99,7 +98,7 @@ export class TrainingInstanceEditOverviewComponent implements OnInit {
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe((data) =>
                 this.editService.set(
-                    data[TRAINING_INSTANCE_DATA_ATTRIBUTE_NAME]
+                    data[TrainingInstance.name]
                 )
             );
 

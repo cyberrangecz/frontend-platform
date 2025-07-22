@@ -1,5 +1,4 @@
 import {CleanupRequest, SandboxInstance} from '@crczp/sandbox-model';
-import {SandboxNavigator} from '@crczp/sandbox-agenda';
 import {Column, DeleteAction, Row, RowAction, SentinelTable} from '@sentinel/components/table';
 import {PaginatedResource} from '@sentinel/common/pagination';
 import {defer, of} from 'rxjs';
@@ -8,6 +7,7 @@ import {CleanupRequestsService} from '../services/state/request/cleanup/cleanup-
 import {AbstractSandbox} from './abstract-sandbox';
 import {SandboxInstanceService} from '../services/state/sandbox-instance/sandbox-instance.service';
 import {DatePipe} from '@angular/common';
+import {Routing} from "@crczp/common";
 
 /**
  * @dynamic
@@ -16,7 +16,6 @@ export class PoolDetailTable extends SentinelTable<PoolDetailRowAdapter> {
     constructor(
         resource: PaginatedResource<AbstractSandbox>,
         sandboxInstanceService: SandboxInstanceService,
-        navigator: SandboxNavigator,
     ) {
         const columns = [
             new Column('name', 'name', true, 'id'),
@@ -28,7 +27,7 @@ export class PoolDetailTable extends SentinelTable<PoolDetailRowAdapter> {
             new Column('stages', 'stages', false),
         ];
         const rows = resource.elements.map((element) =>
-            PoolDetailTable.createRow(element, sandboxInstanceService, navigator),
+            PoolDetailTable.createRow(element, sandboxInstanceService),
         );
         super(rows, columns);
         this.pagination = resource.pagination;
@@ -37,7 +36,6 @@ export class PoolDetailTable extends SentinelTable<PoolDetailRowAdapter> {
     private static createRow(
         data: AbstractSandbox,
         sandboxInstanceService: SandboxInstanceService,
-        navigator: SandboxNavigator,
     ): Row<PoolDetailRowAdapter> {
         const rowAdapter = new PoolDetailRowAdapter();
         const dateFormatter = new DatePipe('en-US');
@@ -50,7 +48,7 @@ export class PoolDetailTable extends SentinelTable<PoolDetailRowAdapter> {
         rowAdapter.state = data.stateResolver();
         rowAdapter.stages = this.requestStageResolver(data);
         const row = new Row(rowAdapter, this.createActions(data, sandboxInstanceService));
-        row.addLink('name', navigator.toAllocationRequest(data.poolId, data.allocationRequest.id));
+        row.addLink('name', Routing.RouteBuilder.pool.poolId(data.poolId).sandbox_instance.sandboxInstanceId(data.allocationRequest.id).build());
         return row;
     }
 

@@ -3,13 +3,12 @@ import {Router} from '@angular/router';
 import {TrainingInstance} from '@crczp/training-model';
 import {from, Observable, timer} from 'rxjs';
 import {map} from 'rxjs/operators';
-import {TrainingNavigator} from '@crczp/training-agenda';
 import {TrainingInstanceSummaryService} from './training-instance-summary.service';
+import {Routing} from "@crczp/common";
 
 @Injectable()
 export class TrainingInstanceSummaryConcreteService extends TrainingInstanceSummaryService {
     private router = inject(Router);
-    private navigator = inject(TrainingNavigator);
 
 
     init(ti: TrainingInstance): void {
@@ -18,22 +17,22 @@ export class TrainingInstanceSummaryConcreteService extends TrainingInstanceSumm
     }
 
     showProgress(): Observable<boolean> {
-        return from(this.router.navigate([this.navigator.toTrainingInstanceProgress(this.trainingInstance.id)]));
+        return from(this.router.navigate([Routing.RouteBuilder.linear_instance.instanceId(this.trainingInstance.id).progress]));
     }
 
     showResults(): Observable<any> {
-        return from(this.router.navigate([this.navigator.toTrainingInstanceResults(this.trainingInstance.id)]));
+        return from(this.router.navigate([Routing.RouteBuilder.linear_instance.instanceId(this.trainingInstance.id).results]));
     }
 
     showAggregatedResults(): Observable<any> {
         return from(
-            this.router.navigate([this.navigator.toTrainingInstanceAggregatedResults(this.trainingInstance.id)]),
+            this.router.navigate([Routing.RouteBuilder.linear_instance.instanceId(this.trainingInstance.id).aggregated_results]),
         );
     }
 
     showCheatingDetection(): Observable<any> {
         return from(
-            this.router.navigate([this.navigator.toTrainingInstanceCheatingDetection(this.trainingInstance.id)]),
+            this.router.navigate([Routing.RouteBuilder.linear_instance.instanceId(this.trainingInstance.id).cheating_detection]),
         );
     }
 }

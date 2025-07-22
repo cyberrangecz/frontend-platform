@@ -12,7 +12,6 @@ import {PoolApi, SandboxAllocationUnitsApi, SandboxInstanceApi,} from '@crczp/sa
 import {SandboxAllocationUnit, SandboxInstance} from '@crczp/sandbox-model';
 import {EMPTY, from, Observable, of} from 'rxjs';
 import {catchError, switchMap, tap} from 'rxjs/operators';
-import {SandboxErrorHandler, SandboxNavigator, SandboxNotificationService,} from '@crczp/sandbox-agenda';
 import {SandboxInstanceService} from './sandbox-instance.service';
 import {SandboxAllocationUnitsService} from '../sandbox-allocation-unit/sandbox-allocation-units.service';
 import {
@@ -21,7 +20,7 @@ import {
 import {
     AllocateVariableSandboxesDialogResult
 } from '../../../components/allocate-variable-sandboxes/allocateVariableSandboxesDialogResult';
-import {PortalConfig} from '@crczp/common';
+import {ErrorHandlerService, NotificationService, PortalConfig, Routing} from '@crczp/common';
 
 /**
  * Basic implementation of a layer between a component and an API service.
@@ -35,9 +34,8 @@ export class SandboxInstanceConcreteService extends SandboxInstanceService {
     private allocationUnitsService = inject(SandboxAllocationUnitsService);
     private router = inject(Router);
     private dialog = inject(MatDialog);
-    private navigator = inject(SandboxNavigator);
-    private notificationService = inject(SandboxNotificationService);
-    private errorHandler = inject(SandboxErrorHandler);
+    private notificationService = inject(NotificationService);
+    private errorHandler = inject(ErrorHandlerService);
 
     private lastPoolId: number;
 
@@ -255,7 +253,7 @@ export class SandboxInstanceConcreteService extends SandboxInstanceService {
     showTopology(poolId: number, sandboxUuid: string): Observable<boolean> {
         return from(
             this.router.navigate([
-                this.navigator.toSandboxInstanceTopology(poolId, sandboxUuid),
+                Routing.RouteBuilder.pool.poolId(poolId).sandbox_instance.sandboxInstanceId(sandboxUuid).topology.build(),
             ])
         );
     }
@@ -342,7 +340,7 @@ export class SandboxInstanceConcreteService extends SandboxInstanceService {
             case 0:
             case 1:
             case 2:
-                path = this.navigator.toAllocationRequest(poolId, sandboxId);
+                path = Routing.RouteBuilder.pool.poolId(poolId).sandbox_instance.sandboxInstanceId(sandboxId).build();
                 break;
             default:
                 path = '';

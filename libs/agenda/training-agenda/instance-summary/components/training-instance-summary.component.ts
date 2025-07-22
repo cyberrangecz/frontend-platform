@@ -4,17 +4,12 @@ import {OffsetPaginationEvent} from '@sentinel/common/pagination';
 import {TrainingInstance, TrainingRun} from '@crczp/training-model';
 import {Observable} from 'rxjs';
 import {map, switchMap, take, tap} from 'rxjs/operators';
-import {
-    TRAINING_INSTANCE_DATA_ATTRIBUTE_NAME,
-    TrainingNavigator,
-    TrainingNotificationService,
-} from '@crczp/training-agenda';
 import {TrainingInstanceSummaryService} from '../services/state/summary/training-instance-summary.service';
 import {SentinelTable, TableActionEvent, TableLoadEvent} from '@sentinel/components/table';
 import {TrainingRunService} from '../services/state/runs/training-run.service';
 import {TrainingRunTable} from '../model/training-run-table';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {PaginationStorageService, providePaginationStorageService} from "@crczp/common";
+import {NotificationService, PaginationStorageService, providePaginationStorageService, Routing} from "@crczp/common";
 import {
     TrainingInstanceSummaryConcreteService
 } from "../services/state/summary/training-instance-summary-concrete.service";
@@ -55,15 +50,14 @@ export class TrainingInstanceSummaryComponent implements OnInit {
     trainingDefinitionLink: string;
     destroyRef = inject(DestroyRef);
     private activeRoute = inject(ActivatedRoute);
-    private navigator = inject(TrainingNavigator);
     private trainingInstanceSummaryService = inject(TrainingInstanceSummaryService);
-    private notificationService = inject(TrainingNotificationService);
+    private notificationService = inject(NotificationService);
     private paginationService = inject(PaginationStorageService);
     private trainingRunService = inject(TrainingRunService);
 
     ngOnInit(): void {
         this.trainingInstance$ = this.activeRoute.data.pipe(
-            map((data) => data[TRAINING_INSTANCE_DATA_ATTRIBUTE_NAME]),
+            map((data) => data[TrainingInstance.name]),
             tap((ti) => {
                 this.initSummaryComponent(ti);
             }),
@@ -138,11 +132,9 @@ export class TrainingInstanceSummaryComponent implements OnInit {
 
     private initSummaryComponent(trainingInstance: TrainingInstance) {
         this.trainingInstanceSummaryService.init(trainingInstance);
-        this.trainingInstanceAccessTokenLink = `/${this.navigator.toTrainingInstanceAccessToken(trainingInstance.id)}`;
-        this.trainingInstancePoolIdLink = `/${this.navigator.toPool(trainingInstance.poolId)}`;
-        this.trainingDefinitionLink = `/${this.navigator.toTrainingDefinitionDetail(
-            trainingInstance.trainingDefinition.id,
-        )}`;
+        this.trainingInstanceAccessTokenLink = `/${Routing.RouteBuilder.linear_instance.instanceId(trainingInstance.id).access_token}`;
+        this.trainingInstancePoolIdLink = `/${Routing.RouteBuilder.pool.poolId(trainingInstance.id)}`;
+        this.trainingDefinitionLink = `/${Routing.RouteBuilder.linear_definition.definitionId(trainingInstance.id)}`;
         this.hasStarted$ = this.trainingInstanceSummaryService.hasStarted$;
     }
 

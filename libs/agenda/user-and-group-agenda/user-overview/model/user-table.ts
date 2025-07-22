@@ -3,15 +3,15 @@ import {User} from '@crczp/user-and-group-model';
 import {Column, Row, SentinelTable} from '@sentinel/components/table';
 import {defer, of} from 'rxjs';
 import {UserDeleteAction} from '@crczp/user-and-group-agenda/internal';
-import {UserAndGroupNavigator} from "@crczp/user-and-group-agenda";
 import {UserOverviewService} from "../services/user-overview.service";
+import {Routing} from "@crczp/common";
 
 /**
  * Class creating data source for user table
  */
 export class UserTable extends SentinelTable<User> {
-    constructor(resource: PaginatedResource<User>, service: UserOverviewService, navigator: UserAndGroupNavigator) {
-        const rows = resource.elements.map((element) => UserTable.createRow(element, service, navigator));
+    constructor(resource: PaginatedResource<User>, service: UserOverviewService) {
+        const rows = resource.elements.map((element) => UserTable.createRow(element, service));
 
         const columns = [
             new Column('id', 'id', true),
@@ -27,9 +27,9 @@ export class UserTable extends SentinelTable<User> {
         this.selectable = true;
     }
 
-    private static createRow(user: User, service: UserOverviewService, navigator: UserAndGroupNavigator) {
+    private static createRow(user: User, service: UserOverviewService) {
         const row = new Row(user, [UserTable.createActions(user, service)]);
-        row.addLink('name', navigator.toUserDetail(user.id));
+        row.addLink('name', Routing.RouteBuilder.user.userId(user.id.toString()).build());
         return row;
     }
 

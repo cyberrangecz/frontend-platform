@@ -5,7 +5,6 @@ import {CleanupRequestsApi, PoolApi, SandboxAllocationUnitsApi,} from '@crczp/sa
 import {CleanupRequest, Request} from '@crczp/sandbox-model';
 import {EMPTY, Observable} from 'rxjs';
 import {switchMap, tap} from 'rxjs/operators';
-import {SandboxErrorHandler, SandboxNotificationService,} from '@crczp/sandbox-agenda';
 import {RequestsService} from '../requests.service';
 import {
     SentinelConfirmationDialogComponent,
@@ -13,7 +12,7 @@ import {
     SentinelDialogResultEnum,
 } from '@sentinel/components/dialogs';
 import {MatDialog} from '@angular/material/dialog';
-import {PortalConfig} from '@crczp/common';
+import {ErrorHandlerService, NotificationService, PortalConfig} from '@crczp/common';
 
 /**
  * Basic implementation of a layer between a component and an API service.
@@ -25,8 +24,8 @@ export class CleanupRequestsConcreteService extends RequestsService {
     private sauApi = inject(SandboxAllocationUnitsApi);
     private cleanupRequestsApi = inject(CleanupRequestsApi);
     private dialog = inject(MatDialog);
-    private notificationService = inject(SandboxNotificationService);
-    private errorHandler = inject(SandboxErrorHandler);
+    private notificationService = inject(NotificationService);
+    private errorHandler = inject(ErrorHandlerService);
 
     private lastPoolId: number;
 

@@ -1,91 +1,85 @@
-import {RouterModule, Routes} from '@angular/router';
-import {ADAPTIVE_INSTANCE_DATA_ATTRIBUTE_NAME, PATHS,} from '@crczp/training-agenda';
+import {RouterModule} from '@angular/router';
 import {NgModule} from '@angular/core';
-import {
-    AdaptiveInstanceBreadcrumbResolver,
-    AdaptiveInstanceDetailBreadcrumbResolver,
-    AdaptiveInstanceDetailTitleResolver,
-    AdaptiveInstanceResolver,
-    AdaptiveInstanceTitleResolver,
-} from '@crczp/training-agenda/resolvers';
 import {AdaptiveInstanceOverviewComponent} from '@crczp/training-agenda/adaptive-instance-overview';
 import {TrainingApiModule} from "@crczp/training-api";
 import {SandboxApiModule} from "@crczp/sandbox-api";
 import {AdaptiveInstanceCanDeactivate} from "@crczp/training-agenda/adaptive-instance-edit";
+import {Routing, ValidRouterConfig} from "@crczp/common";
+import {TrainingInstance} from '@crczp/training-model';
 
-const routes: Routes = [
+const routes: ValidRouterConfig<'adaptive-instance'> = [
     {
         path: '',
         component: AdaptiveInstanceOverviewComponent,
     },
     {
-        path: PATHS.ACTION.CREATE,
+        path: 'create',
         loadComponent: () =>
             import('@crczp/training-agenda/instance-edit').then((m) => m.TrainingInstanceEditOverviewComponent),
         resolve: {
-            [ADAPTIVE_INSTANCE_DATA_ATTRIBUTE_NAME]: AdaptiveInstanceResolver,
-            breadcrumb: AdaptiveInstanceBreadcrumbResolver,
-            title: AdaptiveInstanceTitleResolver,
+            [TrainingInstance.name]: Routing.Resolvers.TrainingInstance.adaptiveInstanceResolver,
+            breadcrumb: Routing.Resolvers.TrainingInstance.adaptiveInstanceBreadcrumbResolver,
+            title: Routing.Resolvers.TrainingInstance.adaptiveInstanceTitleResolver
         },
         canDeactivate: [AdaptiveInstanceCanDeactivate],
     },
     {
-        path: `:${PATHS.INSTANCE.ATTRIBUTE.ID}/${PATHS.ACTION.EDIT}`,
+        path: ':instanceId/edit',
         loadComponent: () =>
             import('@crczp/training-agenda/instance-edit').then((m) => m.TrainingInstanceEditOverviewComponent),
         resolve: {
-            [ADAPTIVE_INSTANCE_DATA_ATTRIBUTE_NAME]: AdaptiveInstanceResolver,
-            breadcrumb: AdaptiveInstanceBreadcrumbResolver,
-            title: AdaptiveInstanceTitleResolver,
+            [TrainingInstance.name]: Routing.Resolvers.TrainingInstance.adaptiveInstanceResolver,
+            breadcrumb: Routing.Resolvers.TrainingInstance.adaptiveInstanceBreadcrumbResolver,
+            title: Routing.Resolvers.TrainingInstance.adaptiveInstanceTitleResolver
         },
         canDeactivate: [AdaptiveInstanceCanDeactivate],
     },
     {
-        path: `:${PATHS.INSTANCE.ATTRIBUTE.ID}/${PATHS.INSTANCE.ACESS_TOKEN}`,
+        path: ':instanceId/access-token',
         loadComponent: () =>
             import('@crczp/training-agenda/instance-access-token').then((m) => m.AccessTokenDetailComponent),
         resolve: {
-            [ADAPTIVE_INSTANCE_DATA_ATTRIBUTE_NAME]: AdaptiveInstanceResolver,
-            breadcrumb: AdaptiveInstanceBreadcrumbResolver,
-            title: AdaptiveInstanceTitleResolver,
+            [TrainingInstance.name]: Routing.Resolvers.TrainingInstance.adaptiveInstanceResolver,
+            breadcrumb: Routing.Resolvers.TrainingInstance.adaptiveInstanceBreadcrumbResolver,
+            title: Routing.Resolvers.TrainingInstance.adaptiveInstanceTitleResolver
         },
     },
     {
-        path: `:${PATHS.INSTANCE.ATTRIBUTE.ID}/${PATHS.INSTANCE.SUMMARY}`,
+        path: ':instanceId/detail',
         resolve: {
-            [ADAPTIVE_INSTANCE_DATA_ATTRIBUTE_NAME]: AdaptiveInstanceResolver,
-            breadcrumb: AdaptiveInstanceDetailBreadcrumbResolver,
-            title: AdaptiveInstanceDetailTitleResolver,
+            [TrainingInstance.name]: Routing.Resolvers.TrainingInstance.adaptiveInstanceResolver,
+            breadcrumb: Routing.Resolvers.TrainingInstance.adaptiveInstanceBreadcrumbResolver,
+            title: Routing.Resolvers.TrainingInstance.adaptiveInstanceTitleResolver
         },
         loadChildren: () =>
             import('@crczp/training-agenda/adaptive-instance-summary').then((m) => m.AdaptiveInstanceSummaryComponent),
     },
     {
-        path: `:${PATHS.INSTANCE.ATTRIBUTE.ID}/${PATHS.INSTANCE.RESULTS}`,
+        path: ':instanceId/results',
         resolve: {
-            trainingInstance: AdaptiveInstanceResolver,
-            breadcrumb: AdaptiveInstanceDetailBreadcrumbResolver,
-            title: AdaptiveInstanceDetailTitleResolver,
+            trainingInstance: Routing.Resolvers.TrainingInstance.adaptiveInstanceResolver,
+            breadcrumb: Routing.Resolvers.TrainingInstance.adaptiveInstanceBreadcrumbResolver,
+            title: Routing.Resolvers.TrainingInstance.adaptiveInstanceTitleResolver
         },
         loadChildren: () =>
             import('@crczp/training-agenda/adaptive-instance-results').then((m) => m.AdaptiveInstanceResultsComponent),
     },
     {
-        path: `:${PATHS.INSTANCE.ATTRIBUTE.ID}/${PATHS.INSTANCE.PROGRESS}`,
+        path: ':instanceId/progress',
         resolve: {
-            trainingInstance: AdaptiveInstanceResolver,
-            breadcrumb: AdaptiveInstanceDetailBreadcrumbResolver,
-            title: AdaptiveInstanceDetailTitleResolver,
+            trainingInstance: Routing.Resolvers.TrainingInstance.adaptiveInstanceResolver,
+            breadcrumb: Routing.Resolvers.TrainingInstance.adaptiveInstanceBreadcrumbResolver,
+            title: Routing.Resolvers.TrainingInstance.adaptiveInstanceTitleResolver
         },
         loadChildren: () =>
             import('@crczp/training-agenda/adaptive-instance-progress').then((m) => m.AdaptiveInstanceProgressComponent),
     },
     {
-        path: `:${PATHS.INSTANCE.ATTRIBUTE.ID}/${PATHS.INSTANCE.RUNS}`,
+        path: ':instanceId/runs',
         resolve: {
-            trainingInstance: AdaptiveInstanceResolver,
-            breadcrumb: AdaptiveInstanceDetailBreadcrumbResolver,
-            title: AdaptiveInstanceDetailTitleResolver,
+            trainingInstance: Routing.Resolvers.TrainingInstance.adaptiveInstanceResolver,
+            breadcrumb: Routing.Resolvers.TrainingInstance.adaptiveInstanceBreadcrumbResolver,
+            title: Routing.Resolvers.TrainingInstance.adaptiveInstanceTitleResolver
         },
         loadChildren: () => import('@crczp/training-agenda/adaptive-instance-runs').then((m) => m.AdaptiveInstanceRunsComponent),
     },

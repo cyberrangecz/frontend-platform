@@ -7,7 +7,6 @@ import {Observable} from 'rxjs';
 import {map, switchMap, take, tap} from 'rxjs/operators';
 import {AdaptiveRunTable} from '../model/adaptive-run-table';
 import {AdaptiveRunService} from '../services/runs/adaptive-run.service';
-import {ADAPTIVE_INSTANCE_DATA_ATTRIBUTE_NAME} from '@crczp/training-agenda';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {PortalConfig} from "@crczp/common";
 import {AdaptiveRunOverviewComponent} from "./training-run-overview/adaptive-run-overview.component";
@@ -42,7 +41,7 @@ export class AdaptiveInstanceRunsComponent implements OnInit {
 
     ngOnInit(): void {
         this.trainingInstance$ = this.activeRoute.data.pipe(
-            map((data) => data[ADAPTIVE_INSTANCE_DATA_ATTRIBUTE_NAME]),
+            map((data) => data[TrainingInstance.name]),
             tap((ti) => {
                 this.trainingInstance = ti;
             }),
