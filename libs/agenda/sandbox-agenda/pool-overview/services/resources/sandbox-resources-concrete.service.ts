@@ -1,10 +1,10 @@
-import {tap} from 'rxjs/operators';
-import {ResourcesApi} from '@crczp/sandbox-api';
-import {Observable, ReplaySubject} from 'rxjs';
-import {inject, Injectable} from '@angular/core';
-import {Resources} from '@crczp/sandbox-model';
-import {SandboxResourcesService} from './sandbox-resources.service';
-import {ErrorHandlerService} from "@crczp/common";
+import { tap } from 'rxjs/operators';
+import { ResourcesApi } from '@crczp/sandbox-api';
+import { Observable, ReplaySubject } from 'rxjs';
+import { inject, Injectable } from '@angular/core';
+import { Resources } from '@crczp/sandbox-model';
+import { SandboxResourcesService } from './sandbox-resources.service';
+import { ErrorHandlerService } from '@crczp/utils';
 
 @Injectable()
 export class SandboxResourcesConcreteService extends SandboxResourcesService {
@@ -22,8 +22,8 @@ export class SandboxResourcesConcreteService extends SandboxResourcesService {
                 },
                 (err) => {
                     this.errorHandler.emit(err, 'Fetching resources');
-                },
-            ),
+                }
+            )
         );
     }
 }

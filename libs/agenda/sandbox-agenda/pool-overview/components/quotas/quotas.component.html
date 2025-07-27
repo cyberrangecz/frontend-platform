@@ -1,13 +1,17 @@
 <mat-card appearance="outlined">
-  <h2>{{ resources?.projectName }}</h2>
-  <div class="resources">
-    @for (resource of displayedResources; track resource; let i = $index) {
-      @if ((resources?.quotas)[resource]) {
-        <crczp-quota-pie-chart
-          [quota]="(resources?.quotas)[resource]"
-          [quotaColor]="resourceColors[i]"
-          />
-      }
-    }
-  </div>
+    <h2>{{ resources?.projectName }}</h2>
+    <div class="resources">
+        @if (!resources) {
+            <crczp-logo-spinner />
+        } @else {
+            @for (resource of displayedResources; track resource; let i = $index) {
+                @if (resource in resources.quotas) {
+                    <crczp-quota-pie-chart
+                        [quota]="(resources?.quotas)[resource]"
+                        [quotaColor]="resourceColors[i]"
+                    />
+                }
+            }
+        }
+    </div>
 </mat-card>

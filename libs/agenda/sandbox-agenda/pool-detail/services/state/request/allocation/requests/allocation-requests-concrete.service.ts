@@ -1,18 +1,18 @@
-import {HttpErrorResponse} from '@angular/common/http';
-import {inject, Injectable} from '@angular/core';
-import {MatDialog} from '@angular/material/dialog';
+import { HttpErrorResponse } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import {
     SentinelConfirmationDialogComponent,
     SentinelConfirmationDialogConfig,
-    SentinelDialogResultEnum,
+    SentinelDialogResultEnum
 } from '@sentinel/components/dialogs';
-import {OffsetPaginationEvent, PaginatedResource,} from '@sentinel/common/pagination';
-import {AllocationRequestsApi, PoolApi, SandboxAllocationUnitsApi,} from '@crczp/sandbox-api';
-import {Request} from '@crczp/sandbox-model';
-import {EMPTY, Observable} from 'rxjs';
-import {switchMap, tap} from 'rxjs/operators';
-import {AllocationRequestsService} from './allocation-requests.service';
-import {ErrorHandlerService, NotificationService, PortalConfig} from '@crczp/common';
+import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
+import { AllocationRequestsApi, PoolApi, SandboxAllocationUnitsApi } from '@crczp/sandbox-api';
+import { Request } from '@crczp/sandbox-model';
+import { EMPTY, Observable } from 'rxjs';
+import { switchMap, tap } from 'rxjs/operators';
+import { AllocationRequestsService } from './allocation-requests.service';
+import { ErrorHandlerService, NotificationService, PortalConfig } from '@crczp/utils';
 
 /**
  * Basic implementation of a layer between a component and an API service.
@@ -32,10 +32,7 @@ export class AllocationRequestsConcreteService extends AllocationRequestsService
     constructor() {
         const settings = inject(PortalConfig);
 
-        super(
-            settings.defaultPageSize,
-            settings.polling.pollingPeriodShort
-        );
+        super(settings.defaultPageSize, settings.polling.pollingPeriodShort);
     }
 
     /**
@@ -110,7 +107,7 @@ export class AllocationRequestsConcreteService extends AllocationRequestsService
         this.hasErrorSubject$.next(false);
         return this.poolApi
             .getAllocationRequests(this.lastPoolId, this.lastPagination)
-            .pipe(tap({error: (err) => this.onGetAllError(err)}));
+            .pipe(tap({ error: (err) => this.onGetAllError(err) }));
     }
 
     private displayConfirmationDialog(

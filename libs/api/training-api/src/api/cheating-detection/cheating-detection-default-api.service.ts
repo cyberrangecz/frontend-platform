@@ -1,13 +1,13 @@
-import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
-import {inject, Injectable} from '@angular/core';
-import {ResponseHeaderContentDispositionReader} from '@sentinel/common';
-import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
-import {CheatingDetection} from '@crczp/training-model';
-import {Observable} from 'rxjs';
-import {map} from 'rxjs/operators';
-import {CheatingDetectionApi} from './cheating-detection-api.service';
-import {CheatingDetectionDTO} from '../../dto/cheating-detection/cheating-detection-dto';
-import {CheatingDetectionMapper} from '../../mappers/cheating-detection/cheating-detection-mapper';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
+import { ResponseHeaderContentDispositionReader } from '@sentinel/common';
+import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
+import { CheatingDetection } from '@crczp/training-model';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { CheatingDetectionApi } from './cheating-detection-api.service';
+import { CheatingDetectionDTO } from '../../dto/cheating-detection/cheating-detection-dto';
+import { CheatingDetectionMapper } from '../../mappers/cheating-detection/cheating-detection-mapper';
 import {
     BlobFileSaver,
     handleJsonError,
@@ -15,7 +15,7 @@ import {
     PaginationMapper,
     ParamsBuilder
 } from '@crczp/api-common';
-import {PortalConfig} from "@crczp/common";
+import { PortalConfig } from '@crczp/utils';
 
 /**
  * Default implementation of service abstracting http communication with training event endpoints.
@@ -24,7 +24,8 @@ import {PortalConfig} from "@crczp/common";
 export class CheatingDetectionDefaultApi extends CheatingDetectionApi {
     private readonly http = inject(HttpClient);
 
-    private readonly apiUrl = inject(PortalConfig).basePaths.linearTraining + 'cheating-detections';
+    private readonly apiUrl =
+        inject(PortalConfig).basePaths.linearTraining + '/cheating-detections';
 
     constructor() {
         super();
@@ -37,7 +38,7 @@ export class CheatingDetectionDefaultApi extends CheatingDetectionApi {
      */
     getAll(
         pagination: OffsetPaginationEvent,
-        trainingInstanceId: number,
+        trainingInstanceId: number
     ): Observable<PaginatedResource<CheatingDetection>> {
         const params = ParamsBuilder.javaPaginationParams(pagination);
         return this.http
@@ -45,16 +46,16 @@ export class CheatingDetectionDefaultApi extends CheatingDetectionApi {
                 `${this.apiUrl}/${trainingInstanceId}/detections`,
                 {
                     params,
-                },
+                }
             )
             .pipe(
                 map(
                     (response) =>
                         new PaginatedResource<CheatingDetection>(
                             CheatingDetectionMapper.fromDTOs(response.content),
-                            PaginationMapper.fromJavaDTO(response.pagination),
-                        ),
-                ),
+                            PaginationMapper.fromJavaDTO(response.pagination)
+                        )
+                )
             );
     }
 
@@ -65,7 +66,7 @@ export class CheatingDetectionDefaultApi extends CheatingDetectionApi {
     createAndExecute(cheatingDetection: CheatingDetection): Observable<any> {
         return this.http.post<CheatingDetectionDTO>(
             `${this.apiUrl}/detection`,
-            CheatingDetectionMapper.toDTO(cheatingDetection),
+            CheatingDetectionMapper.toDTO(cheatingDetection)
         );
     }
 
@@ -74,10 +75,13 @@ export class CheatingDetectionDefaultApi extends CheatingDetectionApi {
      * @param cheatingDetectionId id of cheating detection to run
      * @param trainingInstanceId id of training instance
      */
-    rerun(cheatingDetectionId: number, trainingInstanceId: number): Observable<any> {
+    rerun(
+        cheatingDetectionId: number,
+        trainingInstanceId: number
+    ): Observable<any> {
         return this.http.patch(
             `${this.apiUrl}/${cheatingDetectionId}/rerun/${trainingInstanceId}`,
-            {},
+            {}
         );
     }
 
@@ -86,10 +90,16 @@ export class CheatingDetectionDefaultApi extends CheatingDetectionApi {
      * @param cheatingDetectionId id of cheating detection which cheats should be deleted
      * @param trainingInstanceId id of training instance
      */
-    delete(cheatingDetectionId: number, trainingInstanceId: number): Observable<any> {
+    delete(
+        cheatingDetectionId: number,
+        trainingInstanceId: number
+    ): Observable<any> {
         let params = new HttpParams();
         params = params.append('trainingInstanceId', trainingInstanceId);
-        return this.http.delete<any>(`${this.apiUrl}/${cheatingDetectionId}/delete`, {params});
+        return this.http.delete<any>(
+            `${this.apiUrl}/${cheatingDetectionId}/delete`,
+            { params }
+        );
     }
 
     /**
@@ -111,14 +121,20 @@ export class CheatingDetectionDefaultApi extends CheatingDetectionApi {
                 map((resp) => {
                     BlobFileSaver.saveBlob(
                         resp.body,
-                        ResponseHeaderContentDispositionReader.getFilenameFromResponse(resp, filename),
-                    )
+                        ResponseHeaderContentDispositionReader.getFilenameFromResponse(
+                            resp,
+                            filename
+                        )
+                    );
                     BlobFileSaver.saveBlob(
                         resp.body,
-                        ResponseHeaderContentDispositionReader.getFilenameFromResponse(resp, filename),
+                        ResponseHeaderContentDispositionReader.getFilenameFromResponse(
+                            resp,
+                            filename
+                        )
                     );
                     return true;
-                }),
+                })
             );
     }
 }

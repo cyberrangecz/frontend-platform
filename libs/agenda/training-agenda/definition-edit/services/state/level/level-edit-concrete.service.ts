@@ -1,23 +1,23 @@
-import {inject, Injectable} from '@angular/core';
-import {MatDialog} from '@angular/material/dialog';
+import { inject, Injectable } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import {
     SentinelConfirmationDialogComponent,
     SentinelConfirmationDialogConfig,
-    SentinelDialogResultEnum,
+    SentinelDialogResultEnum
 } from '@sentinel/components/dialogs';
-import {LinearTrainingDefinitionApi} from '@crczp/training-api';
+import { LinearTrainingDefinitionApi } from '@crczp/training-api';
 import {
     AbstractLevelTypeEnum,
     AccessLevel,
     AssessmentLevel,
     InfoLevel,
     Level,
-    TrainingLevel,
+    TrainingLevel
 } from '@crczp/training-model';
-import {EMPTY, Observable} from 'rxjs';
-import {switchMap, tap} from 'rxjs/operators';
-import {LevelEditService} from './level-edit.service';
-import {ErrorHandlerService, NotificationService} from "@crczp/common";
+import { EMPTY, Observable } from 'rxjs';
+import { switchMap, tap } from 'rxjs/operators';
+import { LevelEditService } from './level-edit.service';
+import { ErrorHandlerService, NotificationService } from '@crczp/utils';
 
 /**
  * Service handling editing of training definition's levels and related operations.
@@ -30,7 +30,6 @@ export class LevelEditConcreteService extends LevelEditService {
     private dialog = inject(MatDialog);
     private errorHandler = inject(ErrorHandlerService);
     private notificationService = inject(NotificationService);
-
 
     /**
      * Initiates service with levels and related training definition id
@@ -61,11 +60,15 @@ export class LevelEditConcreteService extends LevelEditService {
         this.levelsSaveDisabledSubject$.next(!level.valid);
         this.levelsValidSubject$.next(level.valid);
         this.levelsSubject$.next(newLevels);
-        this.unsavedLevelsSubject$.next(this.levelsSubject$.getValue().filter((level) => level.isUnsaved));
+        this.unsavedLevelsSubject$.next(
+            this.levelsSubject$.getValue().filter((level) => level.isUnsaved)
+        );
     }
 
     getSelected(): Level {
-        return this.levelsSubject$.getValue()[this.activeStepSubject$.getValue()];
+        return this.levelsSubject$.getValue()[
+            this.activeStepSubject$.getValue()
+        ];
     }
 
     navigateToLastLevel(): void {
@@ -105,21 +108,32 @@ export class LevelEditConcreteService extends LevelEditService {
                 break;
             }
             default:
-                console.error('Unsupported type of level in add method od LevelEditService');
+                console.error(
+                    'Unsupported type of level in add method od LevelEditService'
+                );
         }
         return added$.pipe(tap(() => this.navigateToLastLevel()));
     }
 
     saveUnsavedLevels(): Observable<any> {
         if (this.unsavedLevelsSubject$.getValue().length > 0) {
-            return this.sendRequestToSaveLevels(this.unsavedLevelsSubject$.getValue()).pipe(
+            return this.sendRequestToSaveLevels(
+                this.unsavedLevelsSubject$.getValue()
+            ).pipe(
                 tap(
                     () => {
                         this.onLevelsSaved();
-                        this.notificationService.emit('success', `Levels have been saved`);
+                        this.notificationService.emit(
+                            'success',
+                            `Levels have been saved`
+                        );
                     },
-                    (err) => this.errorHandler.emit(err, `Saving levels in training definition`),
-                ),
+                    (err) =>
+                        this.errorHandler.emit(
+                            err,
+                            `Saving levels in training definition`
+                        )
+                )
             );
         } else {
             return EMPTY;
@@ -133,8 +147,10 @@ export class LevelEditConcreteService extends LevelEditService {
         const level = this.getSelected();
         return this.displayDialogToDelete(level).pipe(
             switchMap((result) =>
-                result === SentinelDialogResultEnum.CONFIRMED ? this.callApiToDelete(level) : EMPTY,
-            ),
+                result === SentinelDialogResultEnum.CONFIRMED
+                    ? this.callApiToDelete(level)
+                    : EMPTY
+            )
         );
     }
 
@@ -147,15 +163,20 @@ export class LevelEditConcreteService extends LevelEditService {
         const levels = this.levelsSubject$.getValue();
         const from = levels[fromIndex];
         this.moveInternally(fromIndex, toIndex);
-        return this.api.moveLevelTo(this.trainingDefinitionId, from.id, toIndex).pipe(
-            tap(
-                (_) => _,
-                (err) => {
-                    this.moveRollback(fromIndex);
-                    this.errorHandler.emit(err, `Moving level "${from.title}"`);
-                },
-            ),
-        );
+        return this.api
+            .moveLevelTo(this.trainingDefinitionId, from.id, toIndex)
+            .pipe(
+                tap(
+                    (_) => _,
+                    (err) => {
+                        this.moveRollback(fromIndex);
+                        this.errorHandler.emit(
+                            err,
+                            `Moving level "${from.title}"`
+                        );
+                    }
+                )
+            );
     }
 
     private moveRollback(fromIndex: number) {
@@ -166,53 +187,78 @@ export class LevelEditConcreteService extends LevelEditService {
 
     private addTrainingLevel(): Observable<TrainingLevel> {
         return this.api.createTrainingLevel(this.trainingDefinitionId).pipe(
-            switchMap((basicLevelInfo) => this.api.getLevel(basicLevelInfo.id) as Observable<TrainingLevel>),
+            switchMap(
+                (basicLevelInfo) =>
+                    this.api.getLevel(
+                        basicLevelInfo.id
+                    ) as Observable<TrainingLevel>
+            ),
             tap(
                 (level) => this.onLevelAdded(level),
-                (err) => this.errorHandler.emit(err, 'Adding training level'),
-            ),
+                (err) => this.errorHandler.emit(err, 'Adding training level')
+            )
         );
     }
 
     private addAccessLevel(): Observable<AccessLevel> {
         return this.api.createAccessLevel(this.trainingDefinitionId).pipe(
-            switchMap((basicLevelInfo) => this.api.getLevel(basicLevelInfo.id) as Observable<AccessLevel>),
+            switchMap(
+                (basicLevelInfo) =>
+                    this.api.getLevel(
+                        basicLevelInfo.id
+                    ) as Observable<AccessLevel>
+            ),
             tap(
                 (level) => this.onLevelAdded(level),
-                (err) => this.errorHandler.emit(err, 'Adding training level'),
-            ),
+                (err) => this.errorHandler.emit(err, 'Adding training level')
+            )
         );
     }
 
     private addInfoLevel(): Observable<InfoLevel> {
         return this.api.createInfoLevel(this.trainingDefinitionId).pipe(
-            switchMap((basicLevelInfo) => this.api.getLevel(basicLevelInfo.id) as Observable<InfoLevel>),
+            switchMap(
+                (basicLevelInfo) =>
+                    this.api.getLevel(
+                        basicLevelInfo.id
+                    ) as Observable<InfoLevel>
+            ),
             tap(
                 (level) => this.onLevelAdded(level),
-                (err) => this.errorHandler.emit(err, 'Adding info level'),
-            ),
+                (err) => this.errorHandler.emit(err, 'Adding info level')
+            )
         );
     }
 
     private addAssessmentLevel(): Observable<AssessmentLevel> {
         return this.api.createAssessmentLevel(this.trainingDefinitionId).pipe(
-            switchMap((basicLevelInfo) => this.api.getLevel(basicLevelInfo.id) as Observable<AssessmentLevel>),
+            switchMap(
+                (basicLevelInfo) =>
+                    this.api.getLevel(
+                        basicLevelInfo.id
+                    ) as Observable<AssessmentLevel>
+            ),
             tap(
                 (level) => this.onLevelAdded(level),
-                (err) => this.errorHandler.emit(err, 'Adding assessment level'),
-            ),
+                (err) => this.errorHandler.emit(err, 'Adding assessment level')
+            )
         );
     }
 
-    private displayDialogToDelete(level: Level): Observable<SentinelDialogResultEnum> {
-        const dialogRef = this.dialog.open(SentinelConfirmationDialogComponent, {
-            data: new SentinelConfirmationDialogConfig(
-                'Delete Level',
-                `Do you want to delete level "${level.title}"?`,
-                'Cancel',
-                'Delete',
-            ),
-        });
+    private displayDialogToDelete(
+        level: Level
+    ): Observable<SentinelDialogResultEnum> {
+        const dialogRef = this.dialog.open(
+            SentinelConfirmationDialogComponent,
+            {
+                data: new SentinelConfirmationDialogConfig(
+                    'Delete Level',
+                    `Do you want to delete level "${level.title}"?`,
+                    'Cancel',
+                    'Delete'
+                ),
+            }
+        );
         return dialogRef.afterClosed();
     }
 
@@ -220,13 +266,21 @@ export class LevelEditConcreteService extends LevelEditService {
         return this.api.deleteLevel(this.trainingDefinitionId, level.id).pipe(
             tap(
                 () => this.onLevelDeleted(level.id),
-                (err) => this.errorHandler.emit(err, 'Deleting level "' + level.title + '"'),
-            ),
+                (err) =>
+                    this.errorHandler.emit(
+                        err,
+                        'Deleting level "' + level.title + '"'
+                    )
+            )
         );
     }
 
     private onLevelDeleted(deletedId: number) {
-        this.levelsSubject$.next(this.levelsSubject$.getValue().filter((level) => level.id !== deletedId));
+        this.levelsSubject$.next(
+            this.levelsSubject$
+                .getValue()
+                .filter((level) => level.id !== deletedId)
+        );
         this.navigateToPreviousLevel();
     }
 
@@ -235,7 +289,10 @@ export class LevelEditConcreteService extends LevelEditService {
     }
 
     private sendRequestToSaveLevels(levels: Level[]): Observable<any> {
-        return this.api.updateTrainingDefinitionLevels(this.trainingDefinitionId, levels);
+        return this.api.updateTrainingDefinitionLevels(
+            this.trainingDefinitionId,
+            levels
+        );
     }
 
     private onLevelsSaved(): void {
@@ -247,7 +304,11 @@ export class LevelEditConcreteService extends LevelEditService {
         this.levelsSaveDisabledSubject$.next(true);
     }
 
-    private moveInternally(fromIndex: number, toIndex: number, activeIndex?: number) {
+    private moveInternally(
+        fromIndex: number,
+        toIndex: number,
+        activeIndex?: number
+    ) {
         const levels = this.levelsSubject$.getValue();
         levels.splice(toIndex, 0, levels.splice(fromIndex, 1)[0]);
         levels.forEach((level, index) => (level.order = index));

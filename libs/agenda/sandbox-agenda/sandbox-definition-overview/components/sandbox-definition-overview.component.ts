@@ -1,23 +1,31 @@
-import {Component, DestroyRef, inject, Input, OnInit} from '@angular/core';
-import {OffsetPaginationEvent} from '@sentinel/common/pagination';
+import { Component, DestroyRef, inject, Input, OnInit } from '@angular/core';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import {
     SentinelControlItem,
     SentinelControlItemSignal,
     SentinelControlsComponent,
 } from '@sentinel/components/controls';
-import {SandboxDefinition} from '@crczp/sandbox-model';
-import {SentinelTable, SentinelTableComponent, TableActionEvent, TableLoadEvent,} from '@sentinel/components/table';
-import {Observable} from 'rxjs';
-import {map, take} from 'rxjs/operators';
-import {SandboxDefinitionTable} from '../model/sandbox-definition-table';
+import { SandboxDefinition } from '@crczp/sandbox-model';
+import {
+    SentinelTable,
+    SentinelTableComponent,
+    TableActionEvent,
+    TableLoadEvent,
+} from '@sentinel/components/table';
+import { Observable } from 'rxjs';
+import { map, take } from 'rxjs/operators';
+import { SandboxDefinitionTable } from '../model/sandbox-definition-table';
 import {
     SandboxDefinitionOverviewConcreteService,
     SandboxDefinitionOverviewService,
 } from '@crczp/sandbox-agenda/internal';
-import {SandboxDefinitionOverviewControls} from './sandbox-definition-overview-controls';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {AsyncPipe} from '@angular/common';
-import {PaginationStorageService, providePaginationStorageService} from '@crczp/common';
+import { SandboxDefinitionOverviewControls } from './sandbox-definition-overview-controls';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { AsyncPipe } from '@angular/common';
+import {
+    PaginationStorageService,
+    providePaginationStorageService,
+} from '@crczp/utils';
 
 @Component({
     selector: 'crczp-sandbox-definition-overview',
@@ -29,7 +37,7 @@ import {PaginationStorageService, providePaginationStorageService} from '@crczp/
             provide: SandboxDefinitionOverviewService,
             useClass: SandboxDefinitionOverviewConcreteService,
         },
-        providePaginationStorageService(SandboxDefinitionOverviewComponent)
+        providePaginationStorageService(SandboxDefinitionOverviewComponent),
     ],
 })
 

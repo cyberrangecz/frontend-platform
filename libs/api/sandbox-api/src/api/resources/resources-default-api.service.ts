@@ -1,14 +1,14 @@
-import {SandboxResourcesDTO} from '../../dto/sandbox-resources/sandbox-resources-dto';
-import {Observable} from 'rxjs';
-import {inject, Injectable} from '@angular/core';
-import {ResourcesApi} from './resources-api.service';
-import {HttpClient} from '@angular/common/http';
-import {ResourcesMapper} from '../../mappers/sandbox-resources/resources-mapper';
-import {HardwareUsage, Resources} from '@crczp/sandbox-model';
-import {map} from 'rxjs/operators';
-import {HardwareUsageDTO} from '../../dto/sandbox-instance/hardware-usage-dto';
-import {HardwareUsageMapper} from '../../mappers/sandbox-instance/hardware-usage-mapper';
-import {PortalConfig} from "@crczp/common";
+import { SandboxResourcesDTO } from '../../dto/sandbox-resources/sandbox-resources-dto';
+import { Observable } from 'rxjs';
+import { inject, Injectable } from '@angular/core';
+import { ResourcesApi } from './resources-api.service';
+import { HttpClient } from '@angular/common/http';
+import { ResourcesMapper } from '../../mappers/sandbox-resources/resources-mapper';
+import { HardwareUsage, Resources } from '@crczp/sandbox-model';
+import { map } from 'rxjs/operators';
+import { HardwareUsageDTO } from '../../dto/sandbox-instance/hardware-usage-dto';
+import { HardwareUsageMapper } from '../../mappers/sandbox-instance/hardware-usage-mapper';
+import { PortalConfig } from '@crczp/utils';
 
 /**
  * Default implementation of service abstracting http communication with resources endpoints.
@@ -24,8 +24,8 @@ export class ResourceDefaultApi extends ResourcesApi {
         super();
 
         const baseUrl = inject(PortalConfig).basePaths.sandbox;
-        this.resourcesEndpointUri = `${baseUrl}/info`
-        this.limitsEndpointUri = `${baseUrl}/limits`
+        this.resourcesEndpointUri = `${baseUrl}/info`;
+        this.limitsEndpointUri = `${baseUrl}/limits`;
     }
 
     /**

@@ -1,13 +1,13 @@
-import {HttpErrorResponse} from '@angular/common/http';
-import {inject, Injectable} from '@angular/core';
-import {Request} from '@crczp/sandbox-model';
-import {Observable, zip} from 'rxjs';
-import {RequestStagesService} from './request-stages.service';
-import {AllocationRequestsApi} from '@crczp/sandbox-api';
-import {map} from 'rxjs/operators';
-import {StageAdapterMapper} from '../../model/adapters/stage-adapter-mapper';
-import {StageAdapter} from '../../model/adapters/stage-adapter';
-import {ErrorHandlerService, PortalConfig} from "@crczp/common";
+import { HttpErrorResponse } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
+import { Request } from '@crczp/sandbox-model';
+import { Observable, zip } from 'rxjs';
+import { RequestStagesService } from './request-stages.service';
+import { AllocationRequestsApi } from '@crczp/sandbox-api';
+import { map } from 'rxjs/operators';
+import { StageAdapterMapper } from '../../model/adapters/stage-adapter-mapper';
+import { StageAdapter } from '../../model/adapters/stage-adapter';
+import { ErrorHandlerService, PortalConfig } from '@crczp/utils';
 
 /**
  * Basic implementation of a layer between a component and an API service.

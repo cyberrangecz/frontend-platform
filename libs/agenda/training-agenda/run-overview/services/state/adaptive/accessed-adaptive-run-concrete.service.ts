@@ -1,12 +1,13 @@
-import {inject, Injectable} from '@angular/core';
-import {Router} from '@angular/router';
-import {OffsetPaginationEvent, PaginatedResource,} from '@sentinel/common/pagination';
-import {AdaptiveRunApi} from '@crczp/training-api';
-import {AccessedTrainingRun} from '@crczp/training-model';
-import {from, Observable} from 'rxjs';
-import {tap} from 'rxjs/operators';
-import {AccessedAdaptiveRunService} from './accessed-adaptive-run.service';
-import {ErrorHandlerService, PortalConfig, Routing} from '@crczp/common';
+import { inject, Injectable } from '@angular/core';
+import { Router } from '@angular/router';
+import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
+import { AdaptiveRunApi } from '@crczp/training-api';
+import { AccessedTrainingRun } from '@crczp/training-model';
+import { from, Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
+import { AccessedAdaptiveRunService } from './accessed-adaptive-run.service';
+import { ErrorHandlerService, PortalConfig } from '@crczp/utils';
+import { Routing } from '@crczp/routing-commons';
 
 /**
  * Basic implementation of layer between component and API service.
@@ -48,19 +49,27 @@ export class AccessedAdaptiveRunConcreteService extends AccessedAdaptiveRunServi
      */
     resume(id: number): Observable<any> {
         return from(
-            this.router.navigate([Routing.RouteBuilder.run.adaptive.runId(id).resume.build()])
+            this.router.navigate([
+                Routing.RouteBuilder.run.adaptive.runId(id).resume.build(),
+            ])
         );
     }
 
     access(token: string): Observable<any> {
         return from(
-            this.router.navigate([Routing.RouteBuilder.run.adaptive.runToken(token).access.build()])
+            this.router.navigate([
+                Routing.RouteBuilder.run.adaptive
+                    .runToken(token)
+                    .access.build(),
+            ])
         );
     }
 
     results(id: number): Observable<any> {
         return from(
-            this.router.navigate([Routing.RouteBuilder.run.adaptive.runId(id).results.build()])
+            this.router.navigate([
+                Routing.RouteBuilder.run.adaptive.runId(id).results.build(),
+            ])
         );
     }
 }

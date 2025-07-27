@@ -10,29 +10,29 @@ import {
     OnChanges,
     Output,
     SimpleChanges,
-    ViewChild,
+    ViewChild
 } from '@angular/core';
-import {TrainingDefinitionInfo, TrainingInstance} from '@crczp/training-model';
-import {TrainingInstanceChangeEvent} from '../../model/events/training-instance-change-event';
-import {TrainingInstanceFormGroup} from './training-instance-form-group';
-import {AbstractControl, ReactiveFormsModule} from '@angular/forms';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {Pool, SandboxDefinition} from '@crczp/sandbox-model';
-import {BehaviorSubject, combineLatestWith, Observable} from 'rxjs';
-import {map} from 'rxjs/operators';
-import {MatError, MatFormField, MatHint, MatInput, MatLabel} from "@angular/material/input";
-import {MatIcon} from "@angular/material/icon";
-import {MatSlideToggle} from "@angular/material/slide-toggle";
-import {MatTooltip} from "@angular/material/tooltip";
-import {AsyncPipe} from "@angular/common";
+import { TrainingDefinitionInfo, TrainingInstance } from '@crczp/training-model';
+import { TrainingInstanceChangeEvent } from '../../model/events/training-instance-change-event';
+import { TrainingInstanceFormGroup } from './training-instance-form-group';
+import { AbstractControl, ReactiveFormsModule } from '@angular/forms';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Pool, SandboxDefinition } from '@crczp/sandbox-model';
+import { BehaviorSubject, combineLatestWith, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { MatError, MatFormField, MatHint, MatInput, MatLabel } from '@angular/material/input';
+import { MatIcon } from '@angular/material/icon';
+import { MatSlideToggle } from '@angular/material/slide-toggle';
+import { MatTooltip } from '@angular/material/tooltip';
+import { AsyncPipe } from '@angular/common';
 import {
     SentinelResourceSelectorComponent,
     SentinelSelectorElementDirective,
     SentinelSelectorSelectedElementDirective
-} from "@sentinel/components/resource-selector";
-import {MatAnchor, MatIconButton} from "@angular/material/button";
-import {RouterLink} from "@angular/router";
-import {Routing} from "@crczp/common";
+} from '@sentinel/components/resource-selector';
+import { MatAnchor, MatIconButton } from '@angular/material/button';
+import { RouterLink } from '@angular/router';
+import { Routing } from '@crczp/routing-commons';
 
 /**
  * Component for creating new or editing existing training instance
@@ -60,8 +60,8 @@ import {Routing} from "@crczp/common";
         RouterLink,
         SentinelSelectorSelectedElementDirective,
         SentinelSelectorElementDirective,
-        MatAnchor
-    ]
+        MatAnchor,
+    ],
 })
 export class TrainingInstanceEditComponent implements OnChanges, AfterViewInit {
     @Input() trainingInstance: TrainingInstance;
@@ -72,18 +72,30 @@ export class TrainingInstanceEditComponent implements OnChanges, AfterViewInit {
     @Input() sandboxDefinitions: SandboxDefinition[];
     @Input() localEnvironmentAllowed: boolean;
 
-    @Output() edited: EventEmitter<TrainingInstanceChangeEvent> = new EventEmitter();
+    @Output() edited: EventEmitter<TrainingInstanceChangeEvent> =
+        new EventEmitter();
 
-    @ViewChild('trainingDefinitionSelect', {static: false, read: ElementRef}) trainingDefinitionSelect: ElementRef;
-    @ViewChild('sandboxDefinitionSelect', {static: false, read: ElementRef}) sandboxDefinitionSelect: ElementRef;
-    @ViewChild('poolSelect', {static: false, read: ElementRef}) poolSelect: ElementRef;
+    @ViewChild('trainingDefinitionSelect', { static: false, read: ElementRef })
+    trainingDefinitionSelect: ElementRef;
+    @ViewChild('sandboxDefinitionSelect', { static: false, read: ElementRef })
+    sandboxDefinitionSelect: ElementRef;
+    @ViewChild('poolSelect', { static: false, read: ElementRef })
+    poolSelect: ElementRef;
     now: Date;
     trainingInstanceFormGroup: TrainingInstanceFormGroup;
-    private trainingDefinitionsSubject = new BehaviorSubject<TrainingDefinitionInfo[]>([]);
+    private trainingDefinitionsSubject = new BehaviorSubject<
+        TrainingDefinitionInfo[]
+    >([]);
     private poolSubject = new BehaviorSubject<Pool[]>([]);
-    private sandboxDefinitionSubject = new BehaviorSubject<SandboxDefinition[]>([]);
-    private trainingDefinitionSearchStringSubject = new BehaviorSubject<string>('');
-    private sandboxDefinitionSearchStringSubject = new BehaviorSubject<string>('');
+    private sandboxDefinitionSubject = new BehaviorSubject<SandboxDefinition[]>(
+        []
+    );
+    private trainingDefinitionSearchStringSubject = new BehaviorSubject<string>(
+        ''
+    );
+    private sandboxDefinitionSearchStringSubject = new BehaviorSubject<string>(
+        ''
+    );
     private poolSearchStringSubject = new BehaviorSubject<string>('');
     private readonly destroyRef = inject(DestroyRef);
 
@@ -100,11 +112,15 @@ export class TrainingInstanceEditComponent implements OnChanges, AfterViewInit {
     }
 
     get trainingDefinition(): AbstractControl {
-        return this.trainingInstanceFormGroup.formGroup.get('trainingDefinition');
+        return this.trainingInstanceFormGroup.formGroup.get(
+            'trainingDefinition'
+        );
     }
 
     get accessTokenPrefix(): AbstractControl {
-        return this.trainingInstanceFormGroup.formGroup.get('accessTokenPrefix');
+        return this.trainingInstanceFormGroup.formGroup.get(
+            'accessTokenPrefix'
+        );
     }
 
     get localEnvironment(): AbstractControl {
@@ -124,23 +140,35 @@ export class TrainingInstanceEditComponent implements OnChanges, AfterViewInit {
     }
 
     get sandboxDefinitionId(): AbstractControl {
-        return this.trainingInstanceFormGroup.formGroup.get('sandboxDefinitionId');
+        return this.trainingInstanceFormGroup.formGroup.get(
+            'sandboxDefinitionId'
+        );
     }
 
     get trainingDefinitions$(): Observable<TrainingDefinitionInfo[]> {
         return this.trainingDefinitionsSubject.pipe(
             combineLatestWith(this.trainingDefinitionSearchStringSubject),
-            map(([tds, search]) => tds.filter((td) => td.title.toLowerCase().includes(search.toLowerCase()))),
+            map(([tds, search]) =>
+                tds.filter((td) =>
+                    td.title.toLowerCase().includes(search.toLowerCase())
+                )
+            )
         );
     }
 
     get pools$(): Observable<Pool[]> {
         return this.poolSubject.pipe(
-            map((pools) => pools.filter((pool) => pool.lockState === 'unlocked')),
+            map((pools) =>
+                pools.filter((pool) => pool.lockState === 'unlocked')
+            ),
             combineLatestWith(this.poolSearchStringSubject),
             map(([pools, search]) =>
-                pools.filter((pool) => this.poolToDisplayString(pool).toLowerCase().includes(search.toLowerCase())),
-            ),
+                pools.filter((pool) =>
+                    this.poolToDisplayString(pool)
+                        .toLowerCase()
+                        .includes(search.toLowerCase())
+                )
+            )
         );
     }
 
@@ -149,21 +177,31 @@ export class TrainingInstanceEditComponent implements OnChanges, AfterViewInit {
             combineLatestWith(this.sandboxDefinitionSearchStringSubject),
             map(([sds, search]) =>
                 sds.filter((sd) =>
-                    this.sandboxDefinitionToDisplayString(sd).toLowerCase().includes(search.toLowerCase()),
-                ),
-            ),
+                    this.sandboxDefinitionToDisplayString(sd)
+                        .toLowerCase()
+                        .includes(search.toLowerCase())
+                )
+            )
         );
     }
 
     ngAfterViewInit() {
         this.trainingDefinition.statusChanges
             .pipe(takeUntilDestroyed(this.destroyRef))
-            .subscribe(() => this.changeValidity(this.isTrainingDefinitionError(), this.trainingDefinitionSelect));
+            .subscribe(() =>
+                this.changeValidity(
+                    this.isTrainingDefinitionError(),
+                    this.trainingDefinitionSelect
+                )
+            );
         this.trainingInstanceFormGroup.formGroup.statusChanges
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe(() => {
                 if (this.sandboxDefinitionSelect) {
-                    this.changeValidity(this.isSandboxDefinitionIdError(), this.sandboxDefinitionSelect);
+                    this.changeValidity(
+                        this.isSandboxDefinitionIdError(),
+                        this.sandboxDefinitionSelect
+                    );
                 }
                 if (this.poolSelect) {
                     this.changeValidity(this.isPoolIdError(), this.poolSelect);
@@ -178,16 +216,22 @@ export class TrainingInstanceEditComponent implements OnChanges, AfterViewInit {
 
     ngOnChanges(changes: SimpleChanges): void {
         if ('trainingDefinitions' in changes) {
-            this.trainingDefinitionsSubject.next(changes.trainingDefinitions.currentValue);
+            this.trainingDefinitionsSubject.next(
+                changes.trainingDefinitions.currentValue
+            );
         }
         if ('pools' in changes) {
             this.poolSubject.next(changes.pools.currentValue);
         }
         if ('sandboxDefinitions' in changes) {
-            this.sandboxDefinitionSubject.next(changes.sandboxDefinitions.currentValue);
+            this.sandboxDefinitionSubject.next(
+                changes.sandboxDefinitions.currentValue
+            );
         }
         if ('trainingInstance' in changes) {
-            this.trainingInstanceFormGroup = new TrainingInstanceFormGroup(this.trainingInstance);
+            this.trainingInstanceFormGroup = new TrainingInstanceFormGroup(
+                this.trainingInstance
+            );
             this.setupOnFormChangedEvent();
         }
         if ('hasStarted' in changes && this.hasStarted) {
@@ -202,10 +246,17 @@ export class TrainingInstanceEditComponent implements OnChanges, AfterViewInit {
         if (!pool) {
             return '';
         }
-        return 'Pool ' + pool.id + ' - ' + this.sandboxDefinitionToDisplayString(pool.definition);
+        return (
+            'Pool ' +
+            pool.id +
+            ' - ' +
+            this.sandboxDefinitionToDisplayString(pool.definition)
+        );
     }
 
-    sandboxDefinitionToDisplayString(sandboxDefinition?: SandboxDefinition): string {
+    sandboxDefinitionToDisplayString(
+        sandboxDefinition?: SandboxDefinition
+    ): string {
         if (!sandboxDefinition) {
             return '';
         }
@@ -241,11 +292,19 @@ export class TrainingInstanceEditComponent implements OnChanges, AfterViewInit {
     }
 
     getSelectedSandboxDefinition() {
-        return this.sandboxDefinitionSubject.value.find((sd) => sd.id === this.sandboxDefinitionId.value) || undefined;
+        return (
+            this.sandboxDefinitionSubject.value.find(
+                (sd) => sd.id === this.sandboxDefinitionId.value
+            ) || undefined
+        );
     }
 
     getSelectedPool() {
-        return this.poolSubject.value.find((pool) => pool.id === this.poolId.value) || undefined;
+        return (
+            this.poolSubject.value.find(
+                (pool) => pool.id === this.poolId.value
+            ) || undefined
+        );
     }
 
     getSelectedTrainingDefinition() {
@@ -253,18 +312,24 @@ export class TrainingInstanceEditComponent implements OnChanges, AfterViewInit {
     }
 
     isTrainingDefinitionError() {
-        return this.trainingDefinition.errors && !this.trainingDefinition.untouched;
+        return (
+            this.trainingDefinition.errors && !this.trainingDefinition.untouched
+        );
     }
 
     isSandboxDefinitionIdError() {
         return (
-            this.trainingInstanceFormGroup.formGroup.hasError('sandboxDefinitionRequired') &&
-            !this.sandboxDefinitionId.untouched
+            this.trainingInstanceFormGroup.formGroup.hasError(
+                'sandboxDefinitionRequired'
+            ) && !this.sandboxDefinitionId.untouched
         );
     }
 
     isPoolIdError() {
-        return this.trainingInstanceFormGroup.formGroup.hasError('poolRequired') && !this.poolId.untouched;
+        return (
+            this.trainingInstanceFormGroup.formGroup.hasError('poolRequired') &&
+            !this.poolId.untouched
+        );
     }
 
     getPoolUrl(id: string) {
@@ -272,7 +337,9 @@ export class TrainingInstanceEditComponent implements OnChanges, AfterViewInit {
     }
 
     getTrainingDefinitionUrl(id: number) {
-        return `/${Routing.RouteBuilder.linear_definition.definitionId(id).build()}`;
+        return `/${Routing.RouteBuilder.linear_definition
+            .definitionId(id)
+            .build()}`;
     }
 
     private changeValidity(error: boolean, resourceSelector: ElementRef) {
@@ -294,9 +361,14 @@ export class TrainingInstanceEditComponent implements OnChanges, AfterViewInit {
     }
 
     private onChanged() {
-        this.trainingInstanceFormGroup.setValuesToTrainingInstance(this.trainingInstance);
+        this.trainingInstanceFormGroup.setValuesToTrainingInstance(
+            this.trainingInstance
+        );
         this.edited.emit(
-            new TrainingInstanceChangeEvent(this.trainingInstance, this.trainingInstanceFormGroup.formGroup.valid),
+            new TrainingInstanceChangeEvent(
+                this.trainingInstance,
+                this.trainingInstanceFormGroup.formGroup.valid
+            )
         );
     }
 }

@@ -1,23 +1,20 @@
-import {Component, inject} from '@angular/core';
+import { Component, inject } from '@angular/core';
 import {
     InstanceModelSimulatorComponent,
     SimulatorState,
-    SimulatorStateEventTypeEnum
-} from "@crczp/adaptive-instance-simulator";
-import {ErrorHandlerService, NotificationService} from "@crczp/common";
+    SimulatorStateEventTypeEnum,
+} from '@crczp/adaptive-instance-simulator';
+import { ErrorHandlerService, NotificationService } from '@crczp/utils';
 
 @Component({
     selector: 'crczp-adaptive-definition-simulator-wrapper',
     templateUrl: './adaptive-definition-simulator.component.html',
     styleUrls: ['./adaptive-definition-simulator.component.css'],
-    imports: [
-        InstanceModelSimulatorComponent
-    ]
+    imports: [InstanceModelSimulatorComponent],
 })
 export class AdaptiveDefinitionSimulatorComponent {
     private errorHandler = inject(ErrorHandlerService);
     private notificationService = inject(NotificationService);
-
 
     handleState(event: SimulatorState) {
         if (event && event.state === SimulatorStateEventTypeEnum.ERROR_EVENT) {

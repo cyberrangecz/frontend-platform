@@ -1,6 +1,6 @@
-import {Component, DestroyRef, inject, Input, OnInit} from '@angular/core';
-import {OffsetPaginationEvent} from '@sentinel/common/pagination';
-import {AsyncPipe, DatePipe} from '@angular/common';
+import { Component, DestroyRef, inject, Input, OnInit } from '@angular/core';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
+import { AsyncPipe, DatePipe } from '@angular/common';
 import {
     AbstractDetectionEvent,
     AbstractDetectionEventTypeEnum,
@@ -11,34 +11,34 @@ import {
     LocationSimilarityDetectionEvent,
     MinimalSolveTimeDetectionEvent,
     NoCommandsDetectionEvent,
-    TimeProximityDetectionEvent,
+    TimeProximityDetectionEvent
 } from '@crczp/training-model';
-import {Observable} from 'rxjs';
-import {SentinelTable, SentinelTableComponent, TableActionEvent, TableLoadEvent} from '@sentinel/components/table';
-import {map, take} from 'rxjs/operators';
-import {DetectionEventParticipantTable} from '../model/detection-event-participant-table';
-import {DetectionEventParticipantService} from '../services/participant/detection-event-participant.service';
-import {DetectionEventService} from '../services/detection-event/detection-event.service';
-import {ActivatedRoute} from '@angular/router';
+import { Observable } from 'rxjs';
+import { SentinelTable, SentinelTableComponent, TableActionEvent, TableLoadEvent } from '@sentinel/components/table';
+import { map, take } from 'rxjs/operators';
+import { DetectionEventParticipantTable } from '../model/detection-event-participant-table';
+import { DetectionEventParticipantService } from '../services/participant/detection-event-participant.service';
+import { DetectionEventService } from '../services/detection-event/detection-event.service';
+import { ActivatedRoute } from '@angular/router';
 import {
     DetectionEventForbiddenCommandsService
 } from '../services/forbidden-commands/detection-event-forbidden-commands.service';
-import {DetectionEventForbiddenCommandsTable} from '../model/detection-event-forbidden-commands-table';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {PaginationStorageService, providePaginationStorageService} from "@crczp/common";
-import {TrainingDefaultNavigator, TrainingNavigator} from "@crczp/training-agenda";
-import {DetectionEventConcreteService} from "../services/detection-event/detection-event-concrete.service";
+import { DetectionEventForbiddenCommandsTable } from '../model/detection-event-forbidden-commands-table';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { TrainingDefaultNavigator, TrainingNavigator } from '@crczp/training-agenda';
+import { DetectionEventConcreteService } from '../services/detection-event/detection-event-concrete.service';
 import {
     DetectionEventParticipantConcreteService
-} from "../services/participant/detection-event-participant-concrete.service";
+} from '../services/participant/detection-event-participant-concrete.service';
 import {
     DetectionEventForbiddenCommandsConcreteService
-} from "../services/forbidden-commands/detection-event-forbidden-commands-concrete.service";
-import {MatCard} from "@angular/material/card";
-import {MatIcon} from "@angular/material/icon";
-import {MatDivider} from "@angular/material/divider";
-import {MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle} from "@angular/material/expansion";
-import {CommandTimelineComponent} from "@crczp/visualization-components";
+} from '../services/forbidden-commands/detection-event-forbidden-commands-concrete.service';
+import { MatCard } from '@angular/material/card';
+import { MatIcon } from '@angular/material/icon';
+import { MatDivider } from '@angular/material/divider';
+import { MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
+import { CommandTimelineComponent } from '@crczp/visualization-components';
+import { PaginationStorageService, providePaginationStorageService } from '@crczp/utils';
 
 /**
  * Main component of training instance detection event detail.
@@ -48,11 +48,22 @@ import {CommandTimelineComponent} from "@crczp/visualization-components";
     templateUrl: './training-instance-detection-event-detail.component.html',
     styleUrls: ['./training-instance-detection-event-detail.component.css'],
     providers: [
-        providePaginationStorageService(TrainingInstanceDetectionEventDetailComponent),
-        {provide: TrainingNavigator, useClass: TrainingDefaultNavigator},
-        {provide: DetectionEventService, useClass: DetectionEventConcreteService},
-        {provide: DetectionEventParticipantService, useClass: DetectionEventParticipantConcreteService},
-        {provide: DetectionEventForbiddenCommandsService, useClass: DetectionEventForbiddenCommandsConcreteService},
+        providePaginationStorageService(
+            TrainingInstanceDetectionEventDetailComponent
+        ),
+        { provide: TrainingNavigator, useClass: TrainingDefaultNavigator },
+        {
+            provide: DetectionEventService,
+            useClass: DetectionEventConcreteService,
+        },
+        {
+            provide: DetectionEventParticipantService,
+            useClass: DetectionEventParticipantConcreteService,
+        },
+        {
+            provide: DetectionEventForbiddenCommandsService,
+            useClass: DetectionEventForbiddenCommandsConcreteService,
+        },
     ],
     imports: [
         MatCard,
@@ -64,8 +75,8 @@ import {CommandTimelineComponent} from "@crczp/visualization-components";
         MatExpansionPanelHeader,
         MatExpansionPanelTitle,
         CommandTimelineComponent,
-        DatePipe
-    ]
+        DatePipe,
+    ],
 })
 export class TrainingInstanceDetectionEventDetailComponent implements OnInit {
     @Input() event: AbstractDetectionEvent;
@@ -91,13 +102,19 @@ export class TrainingInstanceDetectionEventDetailComponent implements OnInit {
     eventTypeFormatted: string;
     destroyRef = inject(DestroyRef);
     private detectionEventService = inject(DetectionEventService);
-    private detectionEventParticipantService = inject(DetectionEventParticipantService);
-    private detectionEventForbiddenCommandsService = inject(DetectionEventForbiddenCommandsService);
+    private detectionEventParticipantService = inject(
+        DetectionEventParticipantService
+    );
+    private detectionEventForbiddenCommandsService = inject(
+        DetectionEventForbiddenCommandsService
+    );
     private paginationService = inject(PaginationStorageService);
     private activeRoute = inject(ActivatedRoute);
 
     ngOnInit(): void {
-        this.eventId = Number(this.activeRoute.snapshot.paramMap.get('eventId'));
+        this.eventId = Number(
+            this.activeRoute.snapshot.paramMap.get('eventId')
+        );
         this.detectionEvent$ = this.detectionEventService.get(this.eventId);
         this.detectionEvent$.subscribe((event) => {
             this.detectionRunAt = event.detectedAt;
@@ -112,27 +129,45 @@ export class TrainingInstanceDetectionEventDetailComponent implements OnInit {
         switch (this.eventType) {
             case AbstractDetectionEventTypeEnum.Answer_similarity:
                 this.eventTypeFormatted = 'Answer similarity';
-                this.answerSimilarityEvent$ = this.detectionEventService.getAnswerSimilarityEventById(this.eventId);
+                this.answerSimilarityEvent$ =
+                    this.detectionEventService.getAnswerSimilarityEventById(
+                        this.eventId
+                    );
                 break;
             case AbstractDetectionEventTypeEnum.Location_similarity:
                 this.eventTypeFormatted = 'Location similarity';
-                this.locationSimilarityEvent$ = this.detectionEventService.getLocationSimilarityEventById(this.eventId);
+                this.locationSimilarityEvent$ =
+                    this.detectionEventService.getLocationSimilarityEventById(
+                        this.eventId
+                    );
                 break;
             case AbstractDetectionEventTypeEnum.Time_proximity:
                 this.eventTypeFormatted = 'Time proximity';
-                this.timeProximityEvent$ = this.detectionEventService.getTimeProximityEventById(this.eventId);
+                this.timeProximityEvent$ =
+                    this.detectionEventService.getTimeProximityEventById(
+                        this.eventId
+                    );
                 break;
             case AbstractDetectionEventTypeEnum.Minimal_solve_time:
                 this.eventTypeFormatted = 'Minimal solve time';
-                this.minimalSolveTimeEvent$ = this.detectionEventService.getMinimalSolveTimeEventById(this.eventId);
+                this.minimalSolveTimeEvent$ =
+                    this.detectionEventService.getMinimalSolveTimeEventById(
+                        this.eventId
+                    );
                 break;
             case AbstractDetectionEventTypeEnum.No_commands:
                 this.eventTypeFormatted = 'No commands';
-                this.noCommandsEvent$ = this.detectionEventService.getNoCommandsEventById(this.eventId);
+                this.noCommandsEvent$ =
+                    this.detectionEventService.getNoCommandsEventById(
+                        this.eventId
+                    );
                 break;
             case AbstractDetectionEventTypeEnum.Forbidden_commands:
                 this.eventTypeFormatted = 'Forbidden commands';
-                this.forbiddenCommandsEvent$ = this.detectionEventService.getForbiddenCommandsEventById(this.eventId);
+                this.forbiddenCommandsEvent$ =
+                    this.detectionEventService.getForbiddenCommandsEventById(
+                        this.eventId
+                    );
                 break;
             default:
                 this.eventTypeFormatted = 'Undefined';
@@ -148,16 +183,23 @@ export class TrainingInstanceDetectionEventDetailComponent implements OnInit {
      * Resolves type of emitted event and calls appropriate handler
      * @param event action event emitted from table component
      */
-    onParticipantTableAction(event: TableActionEvent<DetectionEventParticipant>): void {
+    onParticipantTableAction(
+        event: TableActionEvent<DetectionEventParticipant>
+    ): void {
         event.action.result$.pipe(take(1)).subscribe();
     }
 
-    onForbiddenCommandTableAction(event: TableActionEvent<DetectedForbiddenCommand>): void {
+    onForbiddenCommandTableAction(
+        event: TableActionEvent<DetectedForbiddenCommand>
+    ): void {
         event.action.result$.pipe(take(1)).subscribe();
     }
 
     isNotForbidden(event: AbstractDetectionEvent): boolean {
-        return event.detectionEventType !== AbstractDetectionEventTypeEnum.Forbidden_commands;
+        return (
+            event.detectionEventType !==
+            AbstractDetectionEventTypeEnum.Forbidden_commands
+        );
     }
 
     /**
@@ -173,8 +215,8 @@ export class TrainingInstanceDetectionEventDetailComponent implements OnInit {
                     0,
                     loadEvent.pagination.size,
                     loadEvent.pagination.sort,
-                    loadEvent.pagination.sortDir,
-                ),
+                    loadEvent.pagination.sortDir
+                )
             )
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe();
@@ -189,40 +231,49 @@ export class TrainingInstanceDetectionEventDetailComponent implements OnInit {
                     0,
                     loadEvent.pagination.size,
                     loadEvent.pagination.sort,
-                    loadEvent.pagination.sortDir,
-                ),
+                    loadEvent.pagination.sortDir
+                )
             )
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe();
     }
 
     private initParticipantsTable() {
-        this.participantTableHasError$ = this.detectionEventParticipantService.hasError$;
-        this.participantTableIsLoading$ = this.detectionEventParticipantService.isLoading$;
-        this.participants$ = this.detectionEventParticipantService.resource$.pipe(
-            map((resource) => new DetectionEventParticipantTable(resource)),
-        );
+        this.participantTableHasError$ =
+            this.detectionEventParticipantService.hasError$;
+        this.participantTableIsLoading$ =
+            this.detectionEventParticipantService.isLoading$;
+        this.participants$ =
+            this.detectionEventParticipantService.resource$.pipe(
+                map((resource) => new DetectionEventParticipantTable(resource))
+            );
         const initialPagination = new OffsetPaginationEvent(
             0,
             this.paginationService.loadPageSize(),
             this.INIT_SORT_NAME,
-            this.INIT_SORT_DIR,
+            this.INIT_SORT_DIR
         );
-        this.onLoadEventParticipants({pagination: initialPagination});
+        this.onLoadEventParticipants({ pagination: initialPagination });
     }
 
     private initForbiddenCommandsTable() {
-        this.forbiddenCommandsTableHasError$ = this.detectionEventForbiddenCommandsService.hasError$;
-        this.forbiddenCommandsTableIsLoading$ = this.detectionEventForbiddenCommandsService.isLoading$;
-        this.forbiddenCommands$ = this.detectionEventForbiddenCommandsService.resource$.pipe(
-            map((resource) => new DetectionEventForbiddenCommandsTable(resource)),
-        );
+        this.forbiddenCommandsTableHasError$ =
+            this.detectionEventForbiddenCommandsService.hasError$;
+        this.forbiddenCommandsTableIsLoading$ =
+            this.detectionEventForbiddenCommandsService.isLoading$;
+        this.forbiddenCommands$ =
+            this.detectionEventForbiddenCommandsService.resource$.pipe(
+                map(
+                    (resource) =>
+                        new DetectionEventForbiddenCommandsTable(resource)
+                )
+            );
         const initialPagination = new OffsetPaginationEvent(
             0,
             this.paginationService.loadPageSize(),
             this.INIT_SORT_NAME,
-            this.INIT_SORT_DIR,
+            this.INIT_SORT_DIR
         );
-        this.onLoadEventForbiddenCommands({pagination: initialPagination});
+        this.onLoadEventForbiddenCommands({ pagination: initialPagination });
     }
 }

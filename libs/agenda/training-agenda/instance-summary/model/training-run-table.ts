@@ -1,15 +1,19 @@
-import {DatePipe} from '@angular/common';
-import {PaginatedResource} from '@sentinel/common/pagination';
-import {TrainingRun, TrainingRunStateEnum} from '@crczp/training-model';
-import {Column, ExpandableSentinelTable, Row, RowExpand} from '@sentinel/components/table';
-import {TrainingRunRowAdapter} from './training-run-row-adapter';
-import {TrainingRunInfoComponent} from '../components/runs/detail/training-run-info.component';
-import {DateUtils} from "@crczp/common";
+import { DatePipe } from '@angular/common';
+import { PaginatedResource } from '@sentinel/common/pagination';
+import { TrainingRun, TrainingRunStateEnum } from '@crczp/training-model';
+import { Column, ExpandableSentinelTable, Row, RowExpand } from '@sentinel/components/table';
+import { TrainingRunRowAdapter } from './training-run-row-adapter';
+import { TrainingRunInfoComponent } from '../components/runs/detail/training-run-info.component';
+import { DateUtils } from '@crczp/utils';
 
 /**
  * @dynamic
  */
-export class TrainingRunTable extends ExpandableSentinelTable<TrainingRun, TrainingRunInfoComponent, null> {
+export class TrainingRunTable extends ExpandableSentinelTable<
+    TrainingRun,
+    TrainingRunInfoComponent,
+    null
+> {
     constructor(resource: PaginatedResource<TrainingRun>) {
         const columns = [
             new Column('playerName', 'player', true, 'participantRef'),
@@ -23,7 +27,9 @@ export class TrainingRunTable extends ExpandableSentinelTable<TrainingRun, Train
              */
             // new Column('hasDetectionEvents', 'has detection events', false),
         ];
-        const rows = resource.elements.map((element) => TrainingRunTable.createRow(element));
+        const rows = resource.elements.map((element) =>
+            TrainingRunTable.createRow(element)
+        );
         const expand = new RowExpand(TrainingRunInfoComponent, null);
         super(rows, columns, expand);
         this.pagination = resource.pagination;
@@ -37,7 +43,10 @@ export class TrainingRunTable extends ExpandableSentinelTable<TrainingRun, Train
         adapter.startTimeFormatted = `${datePipe.transform(adapter.startTime)}`;
         if (adapter.state === TrainingRunStateEnum.FINISHED) {
             adapter.endTimeFormatted = `${datePipe.transform(adapter.endTime)}`;
-            adapter.duration = DateUtils.timeBetweenDatesSimple(adapter.startTime, adapter.endTime);
+            adapter.duration = DateUtils.timeBetweenDatesSimple(
+                adapter.startTime,
+                adapter.endTime
+            );
         } else {
             adapter.endTimeFormatted = '-';
             adapter.duration = '-';

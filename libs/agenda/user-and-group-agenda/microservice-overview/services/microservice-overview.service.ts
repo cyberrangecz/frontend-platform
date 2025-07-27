@@ -1,12 +1,19 @@
-import {MicroserviceFilter, SelectablePaginatedService,} from '@crczp/user-and-group-agenda/internal';
-import {inject, Injectable} from '@angular/core';
-import {OffsetPaginationEvent, PaginatedResource,} from '@sentinel/common/pagination';
-import {MicroserviceApi} from '@crczp/user-and-group-api';
-import {Router} from '@angular/router';
-import {Microservice} from '@crczp/user-and-group-model';
-import {Observable, of} from 'rxjs';
-import {tap} from 'rxjs/operators';
-import {ErrorHandlerService, PortalConfig, Routing} from '@crczp/common';
+import {
+    MicroserviceFilter,
+    SelectablePaginatedService,
+} from '@crczp/user-and-group-agenda/internal';
+import { inject, Injectable } from '@angular/core';
+import {
+    OffsetPaginationEvent,
+    PaginatedResource,
+} from '@sentinel/common/pagination';
+import { MicroserviceApi } from '@crczp/user-and-group-api';
+import { Router } from '@angular/router';
+import { Microservice } from '@crczp/user-and-group-model';
+import { Observable, of } from 'rxjs';
+import { tap } from 'rxjs/operators';
+import { ErrorHandlerService, PortalConfig } from '@crczp/utils';
+import { Routing } from '@crczp/routing-commons';
 
 @Injectable()
 export class MicroserviceOverviewService extends SelectablePaginatedService<Microservice> {
@@ -44,7 +51,9 @@ export class MicroserviceOverviewService extends SelectablePaginatedService<Micr
     }
 
     register(): Observable<any> {
-        this.router.navigate([Routing.RouteBuilder.microservice.create.build()]);
+        this.router.navigate([
+            Routing.RouteBuilder.microservice.create.build(),
+        ]);
         return of(true);
     }
 }

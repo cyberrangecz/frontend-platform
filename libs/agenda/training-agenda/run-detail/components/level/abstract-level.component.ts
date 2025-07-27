@@ -1,13 +1,22 @@
-import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@angular/core';
-import {AbstractLevelTypeEnum, Level} from '@crczp/training-model';
-import {MarkedOptions} from "@sentinel/components/markdown-view";
-import {AssessmentLevelComponent} from "./assessment-level/assessment-level.component";
-import {TrainingTimerComponent} from "./training-timer/training-timer.component";
-import {TrainingLevelComponent} from "./sandbox-interaction-level/training-level/training-level.component";
-import {InfoLevelComponent} from "./info-level/info-level.component";
-import {AccessLevelComponent} from "./sandbox-interaction-level/access-level/access-level.component";
-import {MatTooltip} from "@angular/material/tooltip";
-import {DividerPositionSynchronizerService, PersistentDividerPositionSynchronizerService} from "@crczp/common";
+import {
+    ChangeDetectionStrategy,
+    Component,
+    EventEmitter,
+    Input,
+    Output,
+} from '@angular/core';
+import { AbstractLevelTypeEnum, Level } from '@crczp/training-model';
+import { MarkedOptions } from '@sentinel/components/markdown-view';
+import { AssessmentLevelComponent } from './assessment-level/assessment-level.component';
+import { TrainingTimerComponent } from './training-timer/training-timer.component';
+import { TrainingLevelComponent } from './sandbox-interaction-level/training-level/training-level.component';
+import { InfoLevelComponent } from './info-level/info-level.component';
+import { AccessLevelComponent } from './sandbox-interaction-level/access-level/access-level.component';
+import { MatTooltip } from '@angular/material/tooltip';
+import {
+    DividerPositionSynchronizerService,
+    PersistentDividerPositionSynchronizerService,
+} from '@crczp/utils';
 
 export const markdownParserConfig = {
     markedOptions: {
@@ -22,7 +31,6 @@ export const markdownParserConfig = {
         },
     },
 };
-
 
 /**
  * Component to display one level in a training run. Serves mainly as a wrapper which determines the type of the training
@@ -39,10 +47,13 @@ export const markdownParserConfig = {
         TrainingLevelComponent,
         InfoLevelComponent,
         AccessLevelComponent,
-        MatTooltip
+        MatTooltip,
     ],
     providers: [
-        {provide: DividerPositionSynchronizerService, useClass: PersistentDividerPositionSynchronizerService},
+        {
+            provide: DividerPositionSynchronizerService,
+            useClass: PersistentDividerPositionSynchronizerService,
+        },
     ],
 })
 export class AbstractLevelComponent {

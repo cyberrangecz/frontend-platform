@@ -1,9 +1,9 @@
-import {inject, Injectable} from '@angular/core';
-import {Observable} from 'rxjs';
-import {HttpClient} from '@angular/common/http';
-import {PlayerTableDataDTO} from '../dto/table/player-table-data-dto';
-import {PortalConfig} from "@crczp/common";
-import {VizConfigService} from "../../../../common/viz-config.service";
+import { inject, Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { PlayerTableDataDTO } from '../dto/table/player-table-data-dto';
+import { PortalConfig } from '@crczp/utils';
+import { VizConfigService } from '../../../../common/viz-config.service';
 
 @Injectable()
 export class TableApiService {
@@ -13,12 +13,13 @@ export class TableApiService {
     private readonly trainingVisualizationEndpoint: string;
     private readonly anonymizedTrainingVisualizationEndpoint: string;
 
-
     constructor() {
         const baseUrl = inject(PortalConfig).basePaths.linearTraining;
 
-        this.trainingVisualizationEndpoint = baseUrl + 'visualizations/training-runs';
-        this.anonymizedTrainingVisualizationEndpoint = baseUrl + 'visualizations/training-instances';
+        this.trainingVisualizationEndpoint =
+            baseUrl + 'visualizations/training-runs';
+        this.anonymizedTrainingVisualizationEndpoint =
+            baseUrl + 'visualizations/training-instances';
     }
 
     getTableVisualizationData(): Observable<PlayerTableDataDTO[]> {

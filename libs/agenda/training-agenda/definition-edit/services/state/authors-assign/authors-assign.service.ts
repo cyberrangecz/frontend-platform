@@ -1,12 +1,12 @@
-import {inject, Injectable} from '@angular/core';
-import {OffsetPagination, OffsetPaginationEvent, PaginatedResource,} from '@sentinel/common/pagination';
-import {UserApi} from '@crczp/training-api';
-import {Designer} from '@crczp/training-model';
-import {SentinelUserAssignService} from '@sentinel/components/user-assign';
-import {BehaviorSubject, Observable} from 'rxjs';
-import {switchMap, tap} from 'rxjs/operators';
-import {UserNameFilters} from '@crczp/training-agenda/internal';
-import {ErrorHandlerService, PortalConfig} from '@crczp/common';
+import { inject, Injectable } from '@angular/core';
+import { OffsetPagination, OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
+import { UserApi } from '@crczp/training-api';
+import { Designer } from '@crczp/training-model';
+import { SentinelUserAssignService } from '@sentinel/components/user-assign';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { switchMap, tap } from 'rxjs/operators';
+import { UserNameFilters } from '@crczp/training-agenda/internal';
+import { ErrorHandlerService, PortalConfig } from '@crczp/utils';
 
 /**
  * Designer/Author implementation of UserAssignService from user assign library.

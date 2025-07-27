@@ -1,12 +1,12 @@
-import {inject, Injectable} from '@angular/core';
-import {LinearRunApi} from '@crczp/training-api';
-import {Observable} from 'rxjs';
-import {switchMap, tap} from 'rxjs/operators';
-import {RunningTrainingRunService} from '../../running/running-training-run.service';
-import {SandboxInstanceApi} from '@crczp/sandbox-api';
-import {TrainingRunAccessLevelService} from './training-run-access-level.service';
-import {SentinelNotificationService} from '@sentinel/layout/notification';
-import {ErrorHandlerService} from "@crczp/common";
+import { inject, Injectable } from '@angular/core';
+import { LinearRunApi } from '@crczp/training-api';
+import { Observable } from 'rxjs';
+import { switchMap, tap } from 'rxjs/operators';
+import { RunningTrainingRunService } from '../../running/running-training-run.service';
+import { SandboxInstanceApi } from '@crczp/sandbox-api';
+import { TrainingRunAccessLevelService } from './training-run-access-level.service';
+import { SentinelNotificationService } from '@sentinel/layout/notification';
+import { ErrorHandlerService } from '@crczp/utils';
 
 @Injectable()
 /**
@@ -28,14 +28,16 @@ export class TrainingRunAccessLevelConcreteService extends TrainingRunAccessLeve
      * Retrieves file for ssh access for trainee
      */
     getAccessFile(): Observable<any> {
-        return this.sandboxApi.getUserSshAccess(this.runningTrainingRunService.sandboxInstanceId).pipe(
-            tap(
-                (_) => _,
-                (err) => {
-                    this.errorHandler.emit(err, 'Access files for trainee');
-                },
-            ),
-        );
+        return this.sandboxApi
+            .getUserSshAccess(this.runningTrainingRunService.sandboxInstanceId)
+            .pipe(
+                tap(
+                    (_) => _,
+                    (err) => {
+                        this.errorHandler.emit(err, 'Access files for trainee');
+                    }
+                )
+            );
     }
 
     /**
@@ -47,15 +49,24 @@ export class TrainingRunAccessLevelConcreteService extends TrainingRunAccessLeve
             return this.onWrongPasskeySubmitted('Passkey cannot be empty');
         }
         this.isLoadingSubject$.next(true);
-        return this.api.isCorrectPasskey(this.runningTrainingRunService.trainingRunId, passkey).pipe(
-            switchMap((isCorrect) => (isCorrect ? this.onCorrectPasskeySubmitted() : this.onWrongPasskeySubmitted())),
-            tap(
-                () => this.isLoadingSubject$.next(false),
-                (err) => {
-                    this.isLoadingSubject$.next(false);
-                    this.errorHandler.emit(err, 'Submitting passkey');
-                },
-            ),
-        );
+        return this.api
+            .isCorrectPasskey(
+                this.runningTrainingRunService.trainingRunId,
+                passkey
+            )
+            .pipe(
+                switchMap((isCorrect) =>
+                    isCorrect
+                        ? this.onCorrectPasskeySubmitted()
+                        : this.onWrongPasskeySubmitted()
+                ),
+                tap(
+                    () => this.isLoadingSubject$.next(false),
+                    (err) => {
+                        this.isLoadingSubject$.next(false);
+                        this.errorHandler.emit(err, 'Submitting passkey');
+                    }
+                )
+            );
     }
 }

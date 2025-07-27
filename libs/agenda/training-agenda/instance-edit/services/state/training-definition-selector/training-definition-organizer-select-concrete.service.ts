@@ -1,12 +1,14 @@
-import {inject, Injectable} from '@angular/core';
-import {SentinelFilter} from '@sentinel/common/filter';
-import {OffsetPaginationEvent, PaginatedResource,} from '@sentinel/common/pagination';
-import {LinearTrainingDefinitionApi} from '@crczp/training-api';
-import {TrainingDefinitionInfo} from '@crczp/training-model';
-import {Observable} from 'rxjs';
-import {tap} from 'rxjs/operators';
-import {TrainingDefinitionOrganizerSelectService} from './training-definition-organizer-select.service';
-import {ErrorHandlerService, PortalConfig} from '@crczp/common';
+import { inject, Injectable } from '@angular/core';
+import { SentinelFilter } from '@sentinel/common/filter';
+import {
+    OffsetPaginationEvent,
+    PaginatedResource,
+} from '@sentinel/common/pagination';
+import { LinearTrainingDefinitionApi } from '@crczp/training-api';
+import { TrainingDefinitionInfo } from '@crczp/training-model';
+import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
+import { TrainingDefinitionOrganizerSelectService } from './training-definition-organizer-select.service';
 
 /**
  * Layer between component and API service

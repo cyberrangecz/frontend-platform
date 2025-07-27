@@ -1,11 +1,11 @@
-import {HttpClient, HttpParams} from '@angular/common/http';
-import {inject, Injectable} from '@angular/core';
-import {MitreTechnique} from '@crczp/training-model';
-import {map, Observable} from 'rxjs';
-import {MitreTechniquesListDTO} from '../../dto/mitre-techniques/mitre-techniques-list-dto';
-import {MitreTechniquesListMapper} from '../../mappers/mitre-techniques/mitre-techniques-list-mapper';
-import {MitreTechniquesApi} from './mitre-techniques-api.service';
-import {PortalConfig} from "@crczp/common";
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
+import { MitreTechnique } from '@crczp/training-model';
+import { map, Observable } from 'rxjs';
+import { MitreTechniquesListDTO } from '../../dto/mitre-techniques/mitre-techniques-list-dto';
+import { MitreTechniquesListMapper } from '../../mappers/mitre-techniques/mitre-techniques-list-mapper';
+import { MitreTechniquesApi } from './mitre-techniques-api.service';
+import { PortalConfig } from '@crczp/utils';
 
 /**
  * Service abstracting http communication with training definition endpoints.
@@ -21,8 +21,10 @@ export class MitreTechniquesDefaultApi extends MitreTechniquesApi {
         super();
 
         const mitreBasePath = inject(PortalConfig).basePaths.mitre;
-        this.mitreTechniquesEndpointUri = mitreBasePath + 'mitre-matrix-visualisation';
-        this.mitreTechniquesListEndpointUri = mitreBasePath + 'mitre-technqiue-index';
+        this.mitreTechniquesEndpointUri =
+            mitreBasePath + '/mitre-matrix-visualisation';
+        this.mitreTechniquesListEndpointUri =
+            mitreBasePath + '/mitre-technqiue-index';
     }
 
     /**
@@ -31,7 +33,10 @@ export class MitreTechniquesDefaultApi extends MitreTechniquesApi {
      */
     getMitreTechniques(played: boolean): Observable<string> {
         const params = new HttpParams().append('played', played);
-        return this.http.get(this.mitreTechniquesEndpointUri, {params: params, responseType: 'text'});
+        return this.http.get(this.mitreTechniquesEndpointUri, {
+            params: params,
+            responseType: 'text',
+        });
     }
 
     /**
@@ -41,6 +46,8 @@ export class MitreTechniquesDefaultApi extends MitreTechniquesApi {
         return this.http
 
             .get<MitreTechniquesListDTO>(this.mitreTechniquesListEndpointUri)
-            .pipe(map((response) => MitreTechniquesListMapper.fromDTO(response)));
+            .pipe(
+                map((response) => MitreTechniquesListMapper.fromDTO(response))
+            );
     }
 }

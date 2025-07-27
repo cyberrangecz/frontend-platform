@@ -1,6 +1,7 @@
-import {NgModule} from '@angular/core';
-import {RouterModule, Routes} from '@angular/router';
-import {ImagesPageComponent} from '@crczp/sandbox-agenda/sandbox-images';
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+import { ImagesPageComponent } from '@crczp/sandbox-agenda/sandbox-images';
+import { SandboxApiModule } from '@crczp/sandbox-api';
 
 const routes: Routes = [
     {
@@ -13,8 +14,7 @@ const routes: Routes = [
  * Sandbox images overview routing
  */
 @NgModule({
-    imports: [RouterModule.forChild(routes)],
+    imports: [RouterModule.forChild(routes), SandboxApiModule],
     exports: [RouterModule],
 })
-export class SandboxImagesRoutingModule {
-}
+export class SandboxImagesRoutingModule {}

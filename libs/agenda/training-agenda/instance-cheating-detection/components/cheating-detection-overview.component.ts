@@ -1,6 +1,6 @@
-import {Component, DestroyRef, EventEmitter, inject, Input, OnInit, Output} from '@angular/core';
-import {OffsetPaginationEvent} from '@sentinel/common/pagination';
-import {from, Observable} from 'rxjs';
+import { Component, DestroyRef, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
+import { Observable } from 'rxjs';
 import {
     SentinelRowDirective,
     SentinelTable,
@@ -8,25 +8,22 @@ import {
     TableActionEvent,
     TableLoadEvent
 } from '@sentinel/components/table';
-import {map, take} from 'rxjs/operators';
-import {CheatingDetectionOverviewControls} from '../model/cheating-detection-overview-controls';
-import {CheatingDetectionService} from '../services/cheating-detection.service';
-import {CheatingDetectionTable} from '../model/cheating-detection-table';
-import {CheatingDetection, TrainingInstance} from '@crczp/training-model';
-import {ActivatedRoute} from '@angular/router';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {PaginationStorageService, providePaginationStorageService} from "@crczp/common";
-import {SentinelControlItem, SentinelControlItemSignal, SentinelControlsComponent} from "@sentinel/components/controls";
-import {AsyncPipe} from "@angular/common";
-import {StageOverviewComponent} from "./stage-overview/stage-overview.component";
-import {CheatingDetectionConcreteService} from "../services/cheating-detection-concrete.service";
-import {TrainingInstance
-
-.
-name, TrainingNavigator
-}
-from
-'@crczp/training-agenda';
+import { map, take } from 'rxjs/operators';
+import { CheatingDetectionOverviewControls } from '../model/cheating-detection-overview-controls';
+import { CheatingDetectionService } from '../services/cheating-detection.service';
+import { CheatingDetectionTable } from '../model/cheating-detection-table';
+import { ActivatedRoute } from '@angular/router';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {
+    SentinelControlItem,
+    SentinelControlItemSignal,
+    SentinelControlsComponent
+} from '@sentinel/components/controls';
+import { AsyncPipe } from '@angular/common';
+import { StageOverviewComponent } from './stage-overview/stage-overview.component';
+import { CheatingDetectionConcreteService } from '../services/cheating-detection-concrete.service';
+import { PaginationStorageService, providePaginationStorageService } from '@crczp/utils';
+import { CheatingDetection, TrainingInstance } from '@crczp/training-model';
 
 /**
  * Main component of cheating detection.
@@ -40,17 +37,21 @@ from
         SentinelTableComponent,
         SentinelControlsComponent,
         StageOverviewComponent,
-        SentinelRowDirective
+        SentinelRowDirective,
     ],
     providers: [
-        {provide: TrainingNavigator, useClass: TrainingDefaultNavigator},
-        {provide: CheatingDetectionService, useClass: CheatingDetectionConcreteService},
-        providePaginationStorageService(CheatingDetectionOverviewComponent)
+        { provide: TrainingNavigator, useClass: TrainingDefaultNavigator },
+        {
+            provide: CheatingDetectionService,
+            useClass: CheatingDetectionConcreteService,
+        },
+        providePaginationStorageService(CheatingDetectionOverviewComponent),
     ],
 })
 export class CheatingDetectionOverviewComponent implements OnInit {
     @Input() paginationId = 'cheating-detection-overview';
-    @Output() showCheatingDetectionCreate: EventEmitter<boolean> = new EventEmitter();
+    @Output() showCheatingDetectionCreate: EventEmitter<boolean> =
+        new EventEmitter();
     readonly INIT_SORT_NAME = 'lastEdited';
     readonly INIT_SORT_DIR = 'asc';
     trainingInstance$: Observable<TrainingInstance>;
@@ -68,14 +69,14 @@ export class CheatingDetectionOverviewComponent implements OnInit {
     ngOnInit(): void {
         this.trainingInstance$ = this.activeRoute.data.pipe(
             takeUntilDestroyed(this.destroyRef),
-            map((data) => data[TrainingInstance.name]),
+            map((data) => data[TrainingInstance.name])
         );
         this.trainingInstance$.subscribe((instance) => {
             this.trainingInstanceId = instance.id;
         });
         this.topControls = CheatingDetectionOverviewControls.createTopControls(
             this.cheatingDetectionService,
-            this.trainingInstanceId,
+            this.trainingInstanceId
         );
         this.initTable();
     }
@@ -93,8 +94,8 @@ export class CheatingDetectionOverviewComponent implements OnInit {
                     0,
                     loadEvent.pagination.size,
                     loadEvent.pagination.sort,
-                    loadEvent.pagination.sortDir,
-                ),
+                    loadEvent.pagination.sortDir
+                )
             )
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe();
@@ -120,14 +121,21 @@ export class CheatingDetectionOverviewComponent implements OnInit {
         this.hasError$ = this.cheatingDetectionService.hasError$;
         this.isLoading$ = this.cheatingDetectionService.isLoading$;
         this.cheatingDetections$ = this.cheatingDetectionService.resource$.pipe(
-            map((resource) => new CheatingDetectionTable(resource, this.cheatingDetectionService, this.navigator)),
+            map(
+                (resource) =>
+                    new CheatingDetectionTable(
+                        resource,
+                        this.cheatingDetectionService,
+                        this.navigator
+                    )
+            )
         );
         const initialPagination = new OffsetPaginationEvent(
             0,
             this.paginationService.loadPageSize(),
             this.INIT_SORT_NAME,
-            this.INIT_SORT_DIR,
+            this.INIT_SORT_DIR
         );
-        this.onLoadEvent({pagination: initialPagination});
+        this.onLoadEvent({ pagination: initialPagination });
     }
 }

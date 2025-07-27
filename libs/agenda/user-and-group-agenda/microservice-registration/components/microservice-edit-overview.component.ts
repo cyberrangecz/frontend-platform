@@ -1,11 +1,12 @@
-import {ChangeDetectionStrategy, Component, inject, OnInit} from '@angular/core';
-import {Router} from '@angular/router';
-import {MicroserviceApi} from '@crczp/user-and-group-api';
-import {Microservice} from '@crczp/user-and-group-model';
-import {MicroserviceEditCanDeactivate} from '../services/microservice-edit-can-deactivate.service';
-import {MicroserviceEditControlsComponent} from './microservice-edit-controls/microservice-edit-controls.component';
-import {MicroserviceEditComponent} from './microservice-edit/microservice-edit.component';
-import {ErrorHandlerService, NotificationService, Routing} from "@crczp/common";
+import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { MicroserviceApi } from '@crczp/user-and-group-api';
+import { Microservice } from '@crczp/user-and-group-model';
+import { MicroserviceEditControlsComponent } from './microservice-edit-controls/microservice-edit-controls.component';
+import { MicroserviceEditComponent } from './microservice-edit/microservice-edit.component';
+import { ErrorHandlerService, NotificationService } from '@crczp/utils';
+import { Routing } from '@crczp/routing-commons';
+import { MicroserviceEditCanDeactivate } from '../services/microservice-edit-can-deactivate.service';
 
 /**
  * Main smart component of microservice-registration state page
@@ -15,13 +16,8 @@ import {ErrorHandlerService, NotificationService, Routing} from "@crczp/common";
     templateUrl: './microservice-edit-overview.component.html',
     styleUrls: ['./microservice-edit-overview.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [
-        MicroserviceEditControlsComponent,
-        MicroserviceEditComponent
-    ],
-    providers: [
-        MicroserviceEditCanDeactivate,
-    ]
+    imports: [MicroserviceEditControlsComponent, MicroserviceEditComponent],
+    providers: [MicroserviceEditCanDeactivate],
 })
 export class MicroserviceEditOverviewComponent implements OnInit {
     /**
@@ -77,11 +73,20 @@ export class MicroserviceEditOverviewComponent implements OnInit {
     create(): void {
         this.api.create(this.microservice).subscribe(
             () => {
-                this.router.navigate([Routing.RouteBuilder.microservice.build()]);
-                this.notificationService.emit('success', 'Microservice was created');
+                this.router.navigate([
+                    Routing.RouteBuilder.microservice.build(),
+                ]);
+                this.notificationService.emit(
+                    'success',
+                    'Microservice was created'
+                );
                 this.canDeactivateForm = true;
             },
-            (err) => this.errorHandler.emit(err, 'Creating microservice-registration')
+            (err) =>
+                this.errorHandler.emit(
+                    err,
+                    'Creating microservice-registration'
+                )
         );
     }
 

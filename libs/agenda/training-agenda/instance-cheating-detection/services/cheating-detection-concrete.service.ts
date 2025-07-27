@@ -1,19 +1,26 @@
-import {inject, Injectable} from '@angular/core';
-import {MatDialog} from '@angular/material/dialog';
-import {Router} from '@angular/router';
+import { inject, Injectable } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import {
     SentinelConfirmationDialogComponent,
     SentinelConfirmationDialogConfig,
     SentinelDialogResultEnum,
 } from '@sentinel/components/dialogs';
-import {OffsetPaginationEvent, PaginatedResource,} from '@sentinel/common/pagination';
-import {CheatingDetectionApi} from '@crczp/training-api';
-import {CheatingDetection} from '@crczp/training-model';
-import {EMPTY, from, Observable} from 'rxjs';
-import {switchMap, tap} from 'rxjs/operators';
-import {ErrorHandlerService, NotificationService, TrainingNavigator,} from '@crczp/training-agenda';
-import {CheatingDetectionService} from './cheating-detection.service';
-import {PortalConfig} from '@crczp/common';
+import {
+    OffsetPaginationEvent,
+    PaginatedResource,
+} from '@sentinel/common/pagination';
+import { CheatingDetectionApi } from '@crczp/training-api';
+import { CheatingDetection } from '@crczp/training-model';
+import { EMPTY, from, Observable } from 'rxjs';
+import { switchMap, tap } from 'rxjs/operators';
+import {
+    ErrorHandlerService,
+    NotificationService,
+    TrainingNavigator,
+} from '@crczp/training-agenda';
+import { CheatingDetectionService } from './cheating-detection.service';
+import { PortalConfig } from '@crczp/utils';
 
 /**
  * Basic implementation of a layer between a component and an API services.
@@ -99,9 +106,9 @@ export class CheatingDetectionConcreteService extends CheatingDetectionService {
             switchMap((result) =>
                 result === SentinelDialogResultEnum.CONFIRMED
                     ? this.callApiToDelete(
-                        cheatingDetectionId,
-                        trainingInstanceId
-                    )
+                          cheatingDetectionId,
+                          trainingInstanceId
+                      )
                     : EMPTY
             )
         );
@@ -156,17 +163,15 @@ export class CheatingDetectionConcreteService extends CheatingDetectionService {
     }
 
     public download(cheatingDetectionId: number): Observable<any> {
-        return this.api
-            .archive(cheatingDetectionId)
-            .pipe(
-                tap({
-                    error: (err) =>
-                        this.errorHandler.emit(
-                            err,
-                            'Downloading cheating detection'
-                        ),
-                })
-            );
+        return this.api.archive(cheatingDetectionId).pipe(
+            tap({
+                error: (err) =>
+                    this.errorHandler.emit(
+                        err,
+                        'Downloading cheating detection'
+                    ),
+            })
+        );
     }
 
     private displayDialogToDelete(

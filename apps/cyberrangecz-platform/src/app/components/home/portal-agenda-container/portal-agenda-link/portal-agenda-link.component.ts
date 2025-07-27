@@ -1,10 +1,16 @@
-import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@angular/core';
-import {AgendaPortalLink} from '../../../../model/agenda-portal-link';
-import {NgClass} from "@angular/common";
-import {MatButton} from "@angular/material/button";
-import {MatIcon} from "@angular/material/icon";
-import {MatMenu, MatMenuItem, MatMenuTrigger} from "@angular/material/menu";
-import {ValidPath} from "@crczp/common";
+import {
+    ChangeDetectionStrategy,
+    Component,
+    EventEmitter,
+    Input,
+    Output,
+} from '@angular/core';
+import { AgendaPortalLink } from '../../../../model/agenda-portal-link';
+import { NgClass } from '@angular/common';
+import { MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
+import { ValidPath } from '@crczp/routing-commons';
 
 @Component({
     selector: 'crczp-portal-agenda-link',
@@ -17,8 +23,8 @@ import {ValidPath} from "@crczp/common";
         MatButton,
         MatMenuItem,
         MatMenu,
-        MatMenuTrigger
-    ]
+        MatMenuTrigger,
+    ],
 })
 export class PortalAgendaLinkComponent {
     @Input() portalAgendaLink: AgendaPortalLink;

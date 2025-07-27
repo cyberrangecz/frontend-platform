@@ -1,14 +1,21 @@
-import {Component, DestroyRef, EventEmitter, inject, Input, Output, TemplateRef} from '@angular/core';
 import {
-    AnswerFormHintsComponent
-} from '../subcomponents/answer-floating-form/answer-form-hints/answer-form-hints.component';
-import {Observable, of} from 'rxjs';
-import {AsyncPipe, NgTemplateOutlet} from "@angular/common";
-import {DividerPositionSynchronizerService, SplitContainerComponent} from "@crczp/common";
-import {MatButton} from "@angular/material/button";
-import {FloatingAnswerFormComponent} from "../subcomponents/answer-floating-form/floating-answer-form.component";
-import {SentinelMarkdownViewComponent} from "@sentinel/components/markdown-view";
-import {TopologyWrapperComponent} from "../subcomponents/topology-wrapper/topology-wrapper.component";
+    Component,
+    DestroyRef,
+    EventEmitter,
+    inject,
+    Input,
+    Output,
+    TemplateRef,
+} from '@angular/core';
+import { AnswerFormHintsComponent } from '../subcomponents/answer-floating-form/answer-form-hints/answer-form-hints.component';
+import { Observable, of } from 'rxjs';
+import { AsyncPipe, NgTemplateOutlet } from '@angular/common';
+import { MatButton } from '@angular/material/button';
+import { FloatingAnswerFormComponent } from '../subcomponents/answer-floating-form/floating-answer-form.component';
+import { SentinelMarkdownViewComponent } from '@sentinel/components/markdown-view';
+import { TopologyWrapperComponent } from '../subcomponents/topology-wrapper/topology-wrapper.component';
+import { SplitContainerComponent } from '@crczp/components';
+import { DividerPositionSynchronizerService } from '@crczp/utils';
 
 @Component({
     selector: 'crczp-generic-sandbox-level',
@@ -21,11 +28,11 @@ import {TopologyWrapperComponent} from "../subcomponents/topology-wrapper/topolo
         MatButton,
         FloatingAnswerFormComponent,
         SentinelMarkdownViewComponent,
-        TopologyWrapperComponent
-    ]
+        TopologyWrapperComponent,
+    ],
 })
 export class GenericSandboxLevelComponent {
-    @Input({required: true}) levelContent: string;
+    @Input({ required: true }) levelContent: string;
     @Input() isLast: boolean;
     @Input() isBacktracked: boolean;
     @Input() isStepperDisplayed: boolean;
@@ -41,6 +48,8 @@ export class GenericSandboxLevelComponent {
     @Output() next: EventEmitter<void> = new EventEmitter();
     @Output() answerSubmitted: EventEmitter<string> = new EventEmitter();
     destroyRef = inject(DestroyRef);
-    protected dividerPositionSynchronizer = inject(DividerPositionSynchronizerService);
+    protected dividerPositionSynchronizer = inject(
+        DividerPositionSynchronizerService
+    );
     protected readonly window = window;
 }

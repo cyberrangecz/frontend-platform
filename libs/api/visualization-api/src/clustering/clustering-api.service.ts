@@ -1,13 +1,13 @@
-import {HttpClient} from '@angular/common/http';
-import {inject, Injectable} from '@angular/core';
-import {Observable} from 'rxjs';
-import {map} from 'rxjs/operators';
-import {ClusteringVisualizationData} from '@crczp/visualization-model';
-import {ClusteringVisualizationDataDTO, SseDTO} from './dtos';
-import {RadarChartDataMapper} from './mappers/radar-chart-data-mapper';
-import {ClusterVisualizationDataMapper} from './mappers/cluster-visualization-data-mapper';
-import {SseDataMapper} from './mappers/sse-data-mapper';
-import {PortalConfig} from "@crczp/common";
+import { HttpClient } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { ClusteringVisualizationData } from '@crczp/visualization-model';
+import { ClusteringVisualizationDataDTO, SseDTO } from './dtos';
+import { RadarChartDataMapper } from './mappers/radar-chart-data-mapper';
+import { ClusterVisualizationDataMapper } from './mappers/cluster-visualization-data-mapper';
+import { SseDataMapper } from './mappers/sse-data-mapper';
+import { PortalConfig } from '@crczp/utils';
 
 /**
  * Default implementation of service abstracting http communication with visualization data endpoints.
@@ -16,7 +16,8 @@ import {PortalConfig} from "@crczp/common";
 export class ClusteringApi {
     private readonly http = inject(HttpClient);
 
-    private readonly apiUrl = inject(PortalConfig).basePaths.linearTraining + 'clusters';
+    private readonly apiUrl =
+        inject(PortalConfig).basePaths.linearTraining + '/clusters';
 
     /**
      * Sends http request to retrieve all data for visualizations
@@ -26,14 +27,18 @@ export class ClusteringApi {
         featureType: string,
         numberOfClusters: number,
         instanceIds: number[],
-        level: number,
+        level: number
     ): Observable<ClusteringVisualizationData> {
         return this.http
             .get<ClusteringVisualizationDataDTO>(
                 `${this.apiUrl}/training-definitions/${trainingDefinitionId}/${featureType}`,
-                {params: this.addParams(numberOfClusters, instanceIds, level)},
+                { params: this.addParams(numberOfClusters, instanceIds, level) }
             )
-            .pipe(map((response) => ClusterVisualizationDataMapper.fromDTO(response)));
+            .pipe(
+                map((response) =>
+                    ClusterVisualizationDataMapper.fromDTO(response)
+                )
+            );
     }
 
     /**
@@ -43,12 +48,12 @@ export class ClusteringApi {
         trainingDefinitionId: number,
         numberOfClusters: number,
         instanceIds: number[],
-        level: number,
+        level: number
     ): Observable<ClusteringVisualizationData> {
         return this.http
             .get<ClusteringVisualizationDataDTO>(
                 `${this.apiUrl}/training-definitions/${trainingDefinitionId}/n-dimensional`,
-                {params: this.addParams(numberOfClusters, instanceIds, level)},
+                { params: this.addParams(numberOfClusters, instanceIds, level) }
             )
             .pipe(map((response) => RadarChartDataMapper.fromDTO(response)));
     }
@@ -58,20 +63,25 @@ export class ClusteringApi {
         featureType: string,
         numberOfClusters: number,
         instanceIds: number[],
-        level: number,
+        level: number
     ): Observable<SseDataMapper> {
         return this.http
             .get<SseDTO>(
                 `${this.apiUrl}/training-definitions/${trainingDefinitionId}/${featureType}/sse`,
-                {params: this.addParams(numberOfClusters, instanceIds, level)},
+                { params: this.addParams(numberOfClusters, instanceIds, level) }
             )
             .pipe(map((response) => SseDataMapper.fromDTO(response)));
     }
 
-    private addParams(numberOfClusters: number, instanceIds: number[], level: number) {
+    private addParams(
+        numberOfClusters: number,
+        instanceIds: number[],
+        level: number
+    ) {
         const params = {};
         params['numberOfClusters'] = numberOfClusters;
-        if (instanceIds !== undefined && instanceIds.length !== 0) params['instanceIds'] = instanceIds;
+        if (instanceIds !== undefined && instanceIds.length !== 0)
+            params['instanceIds'] = instanceIds;
         if (level) params['levelId'] = level;
         return params;
     }

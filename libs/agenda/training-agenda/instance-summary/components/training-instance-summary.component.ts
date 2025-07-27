@@ -1,23 +1,24 @@
-import {ChangeDetectionStrategy, Component, DestroyRef, inject, Input, OnInit} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
-import {OffsetPaginationEvent} from '@sentinel/common/pagination';
-import {TrainingInstance, TrainingRun} from '@crczp/training-model';
-import {Observable} from 'rxjs';
-import {map, switchMap, take, tap} from 'rxjs/operators';
-import {TrainingInstanceSummaryService} from '../services/state/summary/training-instance-summary.service';
-import {SentinelTable, TableActionEvent, TableLoadEvent} from '@sentinel/components/table';
-import {TrainingRunService} from '../services/state/runs/training-run.service';
-import {TrainingRunTable} from '../model/training-run-table';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {NotificationService, PaginationStorageService, providePaginationStorageService, Routing} from "@crczp/common";
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, Input, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
+import { TrainingInstance, TrainingRun } from '@crczp/training-model';
+import { Observable } from 'rxjs';
+import { map, switchMap, take, tap } from 'rxjs/operators';
+import { TrainingInstanceSummaryService } from '../services/state/summary/training-instance-summary.service';
+import { SentinelTable, TableActionEvent, TableLoadEvent } from '@sentinel/components/table';
+import { TrainingRunService } from '../services/state/runs/training-run.service';
+import { TrainingRunTable } from '../model/training-run-table';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
     TrainingInstanceSummaryConcreteService
-} from "../services/state/summary/training-instance-summary-concrete.service";
-import {TrainingRunConcreteService} from "../services/state/runs/training-run-concrete.service";
-import {MatCard} from "@angular/material/card";
-import {TrainingInstanceInfoComponent} from "./info/training-instance-info.component";
-import {TrainingInstanceRunsComponent} from "./runs/training-instance-runs.component";
-import {AsyncPipe} from "@angular/common";
+} from '../services/state/summary/training-instance-summary-concrete.service';
+import { TrainingRunConcreteService } from '../services/state/runs/training-run-concrete.service';
+import { MatCard } from '@angular/material/card';
+import { TrainingInstanceInfoComponent } from './info/training-instance-info.component';
+import { TrainingInstanceRunsComponent } from './runs/training-instance-runs.component';
+import { AsyncPipe } from '@angular/common';
+import { NotificationService, PaginationStorageService, providePaginationStorageService } from '@crczp/utils';
+import { Routing } from '@crczp/routing-commons';
 
 /**
  * Smart component of training instance summary
@@ -28,16 +29,19 @@ import {AsyncPipe} from "@angular/common";
     styleUrls: ['./training-instance-summary.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [
-        {provide: TrainingInstanceSummaryService, useClass: TrainingInstanceSummaryConcreteService},
-        {provide: TrainingRunService, useClass: TrainingRunConcreteService},
-        providePaginationStorageService(TrainingInstanceSummaryComponent)
+        {
+            provide: TrainingInstanceSummaryService,
+            useClass: TrainingInstanceSummaryConcreteService,
+        },
+        { provide: TrainingRunService, useClass: TrainingRunConcreteService },
+        providePaginationStorageService(TrainingInstanceSummaryComponent),
     ],
     imports: [
         MatCard,
         TrainingInstanceInfoComponent,
         TrainingInstanceRunsComponent,
-        AsyncPipe
-    ]
+        AsyncPipe,
+    ],
 })
 export class TrainingInstanceSummaryComponent implements OnInit {
     @Input() paginationId = 'training-instance-summary';
@@ -50,7 +54,9 @@ export class TrainingInstanceSummaryComponent implements OnInit {
     trainingDefinitionLink: string;
     destroyRef = inject(DestroyRef);
     private activeRoute = inject(ActivatedRoute);
-    private trainingInstanceSummaryService = inject(TrainingInstanceSummaryService);
+    private trainingInstanceSummaryService = inject(
+        TrainingInstanceSummaryService
+    );
     private notificationService = inject(NotificationService);
     private paginationService = inject(PaginationStorageService);
     private trainingRunService = inject(TrainingRunService);
@@ -60,7 +66,7 @@ export class TrainingInstanceSummaryComponent implements OnInit {
             map((data) => data[TrainingInstance.name]),
             tap((ti) => {
                 this.initSummaryComponent(ti);
-            }),
+            })
         );
         this.initTrainingRunsComponent();
     }
@@ -88,11 +94,11 @@ export class TrainingInstanceSummaryComponent implements OnInit {
                             0,
                             event.pagination.size,
                             event.pagination.sort,
-                            event.pagination.sortDir,
-                        ),
-                    ),
+                            event.pagination.sortDir
+                        )
+                    )
                 ),
-                takeUntilDestroyed(this.destroyRef),
+                takeUntilDestroyed(this.destroyRef)
             )
             .subscribe();
     }
@@ -125,16 +131,23 @@ export class TrainingInstanceSummaryComponent implements OnInit {
         this.trainingInstance$
             .pipe(
                 switchMap((ti) => this.trainingRunService.exportScore(ti.id)),
-                take(1),
+                take(1)
             )
             .subscribe();
     }
 
     private initSummaryComponent(trainingInstance: TrainingInstance) {
         this.trainingInstanceSummaryService.init(trainingInstance);
-        this.trainingInstanceAccessTokenLink = `/${Routing.RouteBuilder.linear_instance.instanceId(trainingInstance.id).access_token}`;
-        this.trainingInstancePoolIdLink = `/${Routing.RouteBuilder.pool.poolId(trainingInstance.id)}`;
-        this.trainingDefinitionLink = `/${Routing.RouteBuilder.linear_definition.definitionId(trainingInstance.id)}`;
+        this.trainingInstanceAccessTokenLink = `/${
+            Routing.RouteBuilder.linear_instance.instanceId(trainingInstance.id)
+                .access_token
+        }`;
+        this.trainingInstancePoolIdLink = `/${Routing.RouteBuilder.pool.poolId(
+            trainingInstance.id
+        )}`;
+        this.trainingDefinitionLink = `/${Routing.RouteBuilder.linear_definition.definitionId(
+            trainingInstance.id
+        )}`;
         this.hasStarted$ = this.trainingInstanceSummaryService.hasStarted$;
     }
 
@@ -143,19 +156,20 @@ export class TrainingInstanceSummaryComponent implements OnInit {
             0,
             this.paginationService.loadPageSize(),
             '',
-            'asc',
+            'asc'
         );
         this.trainingInstance$
             .pipe(
                 take(1),
-                switchMap((ti) => this.trainingRunService.getAll(ti.id, initialPagination)),
+                switchMap((ti) =>
+                    this.trainingRunService.getAll(ti.id, initialPagination)
+                )
             )
             .subscribe();
         this.trainingRuns$ = this.trainingRunService.resource$.pipe(
             takeUntilDestroyed(this.destroyRef),
-            map((resource) => new TrainingRunTable(resource)),
+            map((resource) => new TrainingRunTable(resource))
         );
         this.trainingRunsHasError$ = this.trainingRunService.hasError$;
     }
-
 }

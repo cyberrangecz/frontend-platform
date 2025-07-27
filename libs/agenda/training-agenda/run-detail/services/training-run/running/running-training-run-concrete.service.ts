@@ -1,12 +1,14 @@
-import {inject, Injectable} from '@angular/core';
-import {Router} from '@angular/router';
-import {LinearRunApi} from '@crczp/training-api';
-import {AccessTrainingRunInfo, Level} from '@crczp/training-model';
-import {EMPTY, Observable} from 'rxjs';
-import {switchMap, tap} from 'rxjs/operators';
-import {RunningTrainingRunService} from './running-training-run.service';
-import {MatDialog, MatDialogRef} from '@angular/material/dialog';
-import {ErrorHandlerService, LoadingDialogComponent, LoadingDialogConfig, Routing} from "@crczp/common";
+import { inject, Injectable } from '@angular/core';
+import { Router } from '@angular/router';
+import { LinearRunApi } from '@crczp/training-api';
+import { AccessTrainingRunInfo, Level } from '@crczp/training-model';
+import { EMPTY, Observable } from 'rxjs';
+import { switchMap, tap } from 'rxjs/operators';
+import { RunningTrainingRunService } from './running-training-run.service';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { ErrorHandlerService } from '@crczp/utils';
+import { Routing } from '@crczp/routing-commons';
+import { LoadingDialogComponent, LoadingDialogConfig } from '@crczp/components';
 
 /**
  * Main service for running training training. Holds levels and its state. Handles user general training run user actions and events.
@@ -38,7 +40,9 @@ export class RunningTrainingRunConcreteService extends RunningTrainingRunService
         this.activeLevels = trainingRunInfo.levels as Level[];
         this.setActiveLevel(trainingRunInfo.currentLevel as Level);
         this.backwardMode = trainingRunInfo.backwardMode;
-        this.isCurrentLevelAnsweredSubject$.next(trainingRunInfo.isLevelAnswered);
+        this.isCurrentLevelAnsweredSubject$.next(
+            trainingRunInfo.isLevelAnswered
+        );
     }
 
     getLevels(): Level[] {
@@ -50,7 +54,9 @@ export class RunningTrainingRunConcreteService extends RunningTrainingRunService
     }
 
     getActiveLevelPosition(): number {
-        return this.activeLevels.findIndex((level) => level?.id === this.getActiveLevel()?.id);
+        return this.activeLevels.findIndex(
+            (level) => level?.id === this.getActiveLevel()?.id
+        );
     }
 
     getStartTime(): Date {
@@ -65,20 +71,25 @@ export class RunningTrainingRunConcreteService extends RunningTrainingRunService
      * Sends request to move to next level. If response is successful, the next level in order is set as active
      */
     next(): Observable<any> {
-        return this.isLast() ? this.callApiToFinish() : this.callApiToNextLevel();
+        return this.isLast()
+            ? this.callApiToFinish()
+            : this.callApiToNextLevel();
     }
 
     moveToLevel(levelId: number): Observable<Level> {
         return this.api.moveToLevel(this.trainingRunId, levelId).pipe(
             tap(
                 (level) => this.setBacktrackedLevel(level),
-                (err) => this.errorHandler.emit(err, 'Moving to next level'),
-            ),
+                (err) => this.errorHandler.emit(err, 'Moving to next level')
+            )
         );
     }
 
     isLast(): boolean {
-        return this.getActiveLevel()?.id === this.activeLevels[this.activeLevels.length - 1]?.id;
+        return (
+            this.getActiveLevel()?.id ===
+            this.activeLevels[this.activeLevels.length - 1]?.id
+        );
     }
 
     /**
@@ -121,8 +132,8 @@ export class RunningTrainingRunConcreteService extends RunningTrainingRunService
                     this.isCurrentLevelAnsweredSubject$.next(false);
                     this.setActiveLevel(level);
                 },
-                (err) => this.errorHandler.emit(err, 'Moving to next level'),
-            ),
+                (err) => this.errorHandler.emit(err, 'Moving to next level')
+            )
         );
     }
 
@@ -130,17 +141,22 @@ export class RunningTrainingRunConcreteService extends RunningTrainingRunService
         const dialog = this.displayLoadingDialog();
         return this.api.finish(this.trainingRunId).pipe(
             tap({
-                error: (err) => this.errorHandler.emit(err, 'Finishing training'),
+                error: (err) =>
+                    this.errorHandler.emit(err, 'Finishing training'),
             }),
             switchMap(() => {
                 const tmpTrainingRunId = this.trainingRunId;
                 setTimeout(() => {
                     dialog.close();
-                    this.router.navigate([Routing.RouteBuilder.run.linear.runId(tmpTrainingRunId).results.build()]);
+                    this.router.navigate([
+                        Routing.RouteBuilder.run.linear
+                            .runId(tmpTrainingRunId)
+                            .results.build(),
+                    ]);
                 }, 5000);
                 return EMPTY;
             }),
-            tap(() => this.clear()),
+            tap(() => this.clear())
         );
     }
 
@@ -148,7 +164,7 @@ export class RunningTrainingRunConcreteService extends RunningTrainingRunService
         return this.dialog.open(LoadingDialogComponent, {
             data: new LoadingDialogConfig(
                 'Processing training data for visualization',
-                `Please wait while your training data are being processed`,
+                `Please wait while your training data are being processed`
             ),
         });
     }

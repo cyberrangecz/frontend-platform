@@ -1,15 +1,22 @@
-import {Component, EventEmitter, Input, OnChanges, Output, SimpleChanges,} from '@angular/core';
-import {MatCardModule} from '@angular/material/card';
+import {
+    Component,
+    EventEmitter,
+    Input,
+    OnChanges,
+    Output,
+    SimpleChanges,
+} from '@angular/core';
+import { MatCardModule } from '@angular/material/card';
 
-import {MatIconModule} from '@angular/material/icon';
-import {MatSliderModule} from '@angular/material/slider';
-import {MatFormFieldModule} from '@angular/material/form-field';
-import {MatSlideToggleModule} from '@angular/material/slide-toggle';
-import {MatExpansionModule} from '@angular/material/expansion';
-import {MatTooltipModule} from '@angular/material/tooltip';
-import {MatInputModule} from '@angular/material/input';
-import {DateUtils} from '@crczp/common';
-import {MatButtonModule} from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatSliderModule } from '@angular/material/slider';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatInputModule } from '@angular/material/input';
+import { DateUtils } from '@crczp/utils';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
     selector: 'crczp-viz-hurdling-settings',
@@ -24,7 +31,7 @@ import {MatButtonModule} from '@angular/material/button';
         MatExpansionModule,
         MatTooltipModule,
         MatInputModule,
-        MatButtonModule
+        MatButtonModule,
     ],
 })
 export class HurdlingConfigComponent implements OnChanges {

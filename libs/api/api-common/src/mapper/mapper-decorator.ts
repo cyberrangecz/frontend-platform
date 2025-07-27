@@ -1,16 +1,22 @@
-import {ApiReadMapping, ApiWriteMapping} from './mapper-types';
-import {MapperBuilder} from './mapper-builder';
-import {InjectionToken, ModuleWithProviders, NgModule, Type} from '@angular/core';
+import { ApiReadMapping, ApiWriteMapping } from './mapper-types';
+import { MapperBuilder } from './mapper-builder';
+import {
+    InjectionToken,
+    ModuleWithProviders,
+    NgModule,
+    Type,
+} from '@angular/core';
 
 @NgModule()
 export class MappersModule {
-
-    public static getMapperToken<From, To>(fromType: Type<From>, toType: Type<To>): InjectionToken<(from: From) => To> {
-        console.log('token name',`Mapper<${fromType.name}->${toType.name}>`)
-
-        return new InjectionToken<(from: From) => To>(`Mapper<${fromType.name}->${toType.name}>`);
+    public static getMapperToken<From, To>(
+        fromType: Type<From>,
+        toType: Type<To>
+    ): InjectionToken<(from: From) => To> {
+        return new InjectionToken<(from: From) => To>(
+            `Mapper<${fromType.name}->${toType.name}>`
+        );
     }
-
 
     public static provideMappers(): ModuleWithProviders<MappersModule> {
         return {
@@ -18,15 +24,14 @@ export class MappersModule {
             providers: [
                 Array.from(readMappers)
                     .concat(Array.from(Array.from(writeMappers)))
-                    .map(
-                        ([from, val]) => Array.from(val).map(
-                            ([to, mapper]) => (
-                                { provide: this.getMapperToken(from, to), useValue: mapper }
-                            )
-                        )
-                    )
-            ]
-        }
+                    .map(([from, val]) =>
+                        Array.from(val).map(([to, mapper]) => ({
+                            provide: this.getMapperToken(from, to),
+                            useValue: mapper,
+                        }))
+                    ),
+            ],
+        };
     }
 }
 
@@ -55,12 +60,7 @@ function registerReadMapper<DTO, MODEL>(
     key: MapperKey<MODEL>,
     mapper: (from: DTO) => MODEL
 ) {
-    registerMapper(
-        registererClass,
-        key,
-        mapper,
-        readMappers
-    )
+    registerMapper(registererClass, key, mapper, readMappers);
 }
 
 function registerWriteMapper<MODEL, DTO>(
@@ -68,13 +68,9 @@ function registerWriteMapper<MODEL, DTO>(
     key: MapperKey<DTO>,
     mapper: (from: MODEL) => DTO
 ) {
-    registerMapper(
-        registererClass,
-        key,
-        mapper,
-        writeMappers
-    )
+    registerMapper(registererClass, key, mapper, writeMappers);
 }
+
 /*
 export function getReadMapper<DTO, MODEL>(
     registeredBy: new (...args: any[]) => DTO,
@@ -90,29 +86,33 @@ export function getWriteMapper<MODEL, DTO>(
     return writeMappers.get(registeredBy)?.get(key) as ((from: MODEL) => DTO) | undefined;
 }*/
 
-
 type MapperKey<T = {}> = new () => T;
 
-function NoArgConstructorMixin<T extends { new(...args: any[]): any }>(Base: T) {
+function NoArgConstructorMixin<T extends { new (...args: any[]): any }>(
+    Base: T
+) {
     return class extends Base {
         constructor(...args: any[]) {
             if (args.length > 0) {
-                throw new Error('No arguments allowed in a DTO bean class')
+                throw new Error('No arguments allowed in a DTO bean class');
             }
-            super()
+            super();
         }
     };
 }
 
 export function ApiReadMapper<DTO, MODEL>(
     mappings: ApiReadMapping<DTO, MODEL> & {
-        resultClass: MapperKey<MODEL>
+        resultClass: MapperKey<MODEL>;
     }
 ) {
     return function (from: Function) {
         const mappedConstructor = from as MapperKey<DTO>;
 
-        const mappingFunction = MapperBuilder.createDTOtoModelMapper<DTO, MODEL>({
+        const mappingFunction = MapperBuilder.createDTOtoModelMapper<
+            DTO,
+            MODEL
+        >({
             ...mappings,
             constructor: mappings.resultClass,
         });
@@ -130,14 +130,14 @@ export function ApiReadMapper<DTO, MODEL>(
 
 export function ApiWriteMapper<MODEL, DTO>(
     mappings: ApiWriteMapping<MODEL, DTO> & {
-        resultClass: MapperKey<DTO>
+        resultClass: MapperKey<DTO>;
     }
 ) {
     return function (from: Function) {
-
-        const mappingFunction = MapperBuilder.createModelToDtoMapper<MODEL, DTO>(
-            { ...mappings, constructor: mappings.resultClass },
-        );
+        const mappingFunction = MapperBuilder.createModelToDtoMapper<
+            MODEL,
+            DTO
+        >({ ...mappings, constructor: mappings.resultClass });
 
         registerWriteMapper<MODEL, DTO>(
             from,
@@ -145,6 +145,6 @@ export function ApiWriteMapper<MODEL, DTO>(
             mappingFunction
         );
 
-        return NoArgConstructorMixin(from())
+        return NoArgConstructorMixin(from());
     };
 }

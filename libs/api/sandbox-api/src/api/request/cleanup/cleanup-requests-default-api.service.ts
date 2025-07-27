@@ -1,20 +1,20 @@
-import {CleanupRequestsApi} from './cleanup-requests.api.service';
-import {inject, Injectable} from '@angular/core';
-import {Observable} from 'rxjs';
+import { CleanupRequestsApi } from './cleanup-requests.api.service';
+import { inject, Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 import {
     CleanupRequest,
     NetworkingAnsibleCleanupStage,
     TerraformCleanupStage,
     UserAnsibleCleanupStage,
 } from '@crczp/sandbox-model';
-import {HttpClient} from '@angular/common/http';
-import {RequestDTO} from '../../../dto/sandbox-instance/request-dto';
-import {map} from 'rxjs/operators';
-import {RequestMapper} from '../../../mappers/sandbox-instance/request-mapper';
-import {TerraformCleanupStageDTO} from '../../../dto/sandbox-instance/stages/terraform-cleanup-stage-dto';
-import {RequestStageMapper} from '../../../mappers/sandbox-instance/request-stage-mapper';
-import {AnsibleCleanupStageDTO} from '../../../dto/sandbox-instance/stages/ansible-cleanup-stage-dto';
-import {PortalConfig} from "@crczp/common";
+import { HttpClient } from '@angular/common/http';
+import { RequestDTO } from '../../../dto/sandbox-instance/request-dto';
+import { map } from 'rxjs/operators';
+import { RequestMapper } from '../../../mappers/sandbox-instance/request-mapper';
+import { TerraformCleanupStageDTO } from '../../../dto/sandbox-instance/stages/terraform-cleanup-stage-dto';
+import { RequestStageMapper } from '../../../mappers/sandbox-instance/request-stage-mapper';
+import { AnsibleCleanupStageDTO } from '../../../dto/sandbox-instance/stages/ansible-cleanup-stage-dto';
+import { PortalConfig } from '@crczp/utils';
 
 /**
  * Default implementation of service abstracting http communication with cleanup requests endpoints.
@@ -23,7 +23,8 @@ import {PortalConfig} from "@crczp/common";
 export class CleanupRequestsDefaultApi extends CleanupRequestsApi {
     private readonly http = inject(HttpClient);
 
-    private readonly apiUrl = inject(PortalConfig).basePaths.sandbox + 'cleanup-requests';
+    private readonly apiUrl =
+        inject(PortalConfig).basePaths.sandbox + '/cleanup-requests';
     private readonly stagesUriExtension = 'stages';
 
     constructor() {
@@ -52,24 +53,36 @@ export class CleanupRequestsDefaultApi extends CleanupRequestsApi {
      * Sends http request to retrieve networking ansible stage detail
      * @param requestId id of the request associated with the networking ansible stage
      */
-    getNetworkingAnsibleStage(requestId: number): Observable<NetworkingAnsibleCleanupStage> {
+    getNetworkingAnsibleStage(
+        requestId: number
+    ): Observable<NetworkingAnsibleCleanupStage> {
         return this.http
             .get<AnsibleCleanupStageDTO>(
-                `${this.apiUrl}/${requestId}/${this.stagesUriExtension}/networking-ansible`,
+                `${this.apiUrl}/${requestId}/${this.stagesUriExtension}/networking-ansible`
             )
-            .pipe(map((resp) => RequestStageMapper.fromNetworkingAnsibleCleanupDTO(resp)));
+            .pipe(
+                map((resp) =>
+                    RequestStageMapper.fromNetworkingAnsibleCleanupDTO(resp)
+                )
+            );
     }
 
     /**
      * Sends http request to retrieve user ansible stage detail
      * @param requestId id of the request associated with the user ansible stage
      */
-    getUserAnsibleStage(requestId: number): Observable<UserAnsibleCleanupStage> {
+    getUserAnsibleStage(
+        requestId: number
+    ): Observable<UserAnsibleCleanupStage> {
         return this.http
             .get<AnsibleCleanupStageDTO>(
-                `${this.apiUrl}/${requestId}/${this.stagesUriExtension}/user-ansible`,
+                `${this.apiUrl}/${requestId}/${this.stagesUriExtension}/user-ansible`
             )
-            .pipe(map((resp) => RequestStageMapper.fromUserAnsibleCleanupDTO(resp)));
+            .pipe(
+                map((resp) =>
+                    RequestStageMapper.fromUserAnsibleCleanupDTO(resp)
+                )
+            );
     }
 
     /**
@@ -79,8 +92,10 @@ export class CleanupRequestsDefaultApi extends CleanupRequestsApi {
     getTerraformStage(requestId: number): Observable<TerraformCleanupStage> {
         return this.http
             .get<TerraformCleanupStageDTO>(
-                `${this.apiUrl}/${requestId}/${this.stagesUriExtension}/terraform`,
+                `${this.apiUrl}/${requestId}/${this.stagesUriExtension}/terraform`
             )
-            .pipe(map((resp) => RequestStageMapper.fromTerraformCleanupDTO(resp)));
+            .pipe(
+                map((resp) => RequestStageMapper.fromTerraformCleanupDTO(resp))
+            );
     }
 }

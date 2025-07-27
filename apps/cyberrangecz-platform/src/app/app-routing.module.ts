@@ -1,20 +1,23 @@
-import {NgModule} from '@angular/core';
-import {ExtraOptions, RouterModule} from '@angular/router';
-import {HomeComponent} from './components/home/home.component';
-import {LoginComponent} from "./components/login/login.component";
-import {sentinelAuthGuard, sentinelAuthGuardWithLoading, sentinelNegativeAuthGuard} from "@sentinel/auth";
-import {RoleGuards} from "./utils/guards";
-import {RoleService} from "./services/role.service";
-import {ValidRouterConfig} from "@crczp/common";
+import { NgModule } from '@angular/core';
+import { ExtraOptions, RouterModule } from '@angular/router';
+import { HomeComponent } from './components/home/home.component';
+import { LoginComponent } from './components/login/login.component';
+import {
+    sentinelAuthGuard,
+    sentinelAuthGuardWithLoading,
+    sentinelNegativeAuthGuard,
+} from '@sentinel/auth';
+import { RoleService } from './services/role.service';
+import { ValidRouterConfig } from '@crczp/routing-commons';
 
 const routes: ValidRouterConfig<''> = [
     {
         path: 'linear-definition',
         loadChildren: () =>
-            import('./modules/training-agenda/training-definition-routing.module').then(
-                (m) => m.TrainingDefinitionRoutingModule,
-            ),
-        canActivate: [RoleGuards.trainingDesignerGuard],
+            import(
+                './modules/training-agenda/training-definition-routing.module'
+            ).then((m) => m.TrainingDefinitionRoutingModule),
+        // canActivate: [RoleGuards.trainingDesignerGuard],
         data: {
             breadcrumb: 'Linear Training Definitions',
             title: 'Linear Training Definition Overview',
@@ -22,12 +25,12 @@ const routes: ValidRouterConfig<''> = [
         },
     },
     {
-        path: 'linear-definition',
+        path: 'adaptive-definition',
         loadChildren: () =>
-            import('./modules/training-agenda/adaptive-definition-routing.module').then(
-                (m) => m.AdaptiveDefinitionRoutingModule,
-            ),
-        canActivate: [RoleGuards.adaptiveTrainingDesignerGuard],
+            import(
+                './modules/training-agenda/adaptive-definition-routing.module'
+            ).then((m) => m.AdaptiveDefinitionRoutingModule),
+        // canActivate: [RoleGuards.adaptiveTrainingDesignerGuard],
         data: {
             breadcrumb: 'Adaptive Training Definitions',
             title: 'Adaptive Training Definition Overview',
@@ -37,10 +40,10 @@ const routes: ValidRouterConfig<''> = [
     {
         path: 'linear-instance',
         loadChildren: () =>
-            import('./modules/training-agenda/training-instance-routing.module').then(
-                (m) => m.TrainingInstanceRoutingModule,
-            ),
-        canActivate: [RoleGuards.trainingOrganizerGuard],
+            import(
+                './modules/training-agenda/training-instance-routing.module'
+            ).then((m) => m.TrainingInstanceRoutingModule),
+        // canActivate: [RoleGuards.trainingOrganizerGuard],
         data: {
             breadcrumb: 'Linear Training Instances',
             title: 'Linear Training Instance Overview',
@@ -50,10 +53,10 @@ const routes: ValidRouterConfig<''> = [
     {
         path: 'adaptive-instance',
         loadChildren: () =>
-            import('./modules/training-agenda/adaptive-instance-routing.module').then(
-                (m) => m.AdaptiveInstanceRoutingModule,
-            ),
-        canActivate: [RoleGuards.adaptiveTrainingOrganizerGuard],
+            import(
+                './modules/training-agenda/adaptive-instance-routing.module'
+            ).then((m) => m.AdaptiveInstanceRoutingModule),
+        // canActivate: [RoleGuards.adaptiveTrainingOrganizerGuard],
         data: {
             breadcrumb: 'Adaptive Training Instances',
             title: 'Adaptive Training Instance Overview',
@@ -63,9 +66,10 @@ const routes: ValidRouterConfig<''> = [
     {
         path: 'sandbox-definition',
         loadChildren: () =>
-            import('./modules/sandbox-agenda/sandbox-definition-routing.module')
-                .then((m) => m.SandboxDefinitionRoutingModule),
-        canActivate: [RoleGuards.sandboxDesignerGuard],
+            import(
+                './modules/sandbox-agenda/sandbox-definition-routing.module'
+            ).then((m) => m.SandboxDefinitionRoutingModule),
+        // canActivate: [RoleGuards.sandboxDesignerGuard],
         data: {
             breadcrumb: 'Sandbox Definitions',
             title: 'Sandbox Definition Overview',
@@ -75,9 +79,10 @@ const routes: ValidRouterConfig<''> = [
     {
         path: 'pool',
         loadChildren: () =>
-            import('./modules/sandbox-agenda/pool-routing.module')
-                .then((m) => m.PoolRoutingModule),
-        canActivate: [RoleGuards.sandboxOrganizerGuard],
+            import('./modules/sandbox-agenda/pool-routing.module').then(
+                (m) => m.PoolRoutingModule
+            ),
+        // canActivate: [RoleGuards.sandboxOrganizerGuard],
         data: {
             breadcrumb: 'Pools',
             title: 'Pool Overview',
@@ -87,9 +92,10 @@ const routes: ValidRouterConfig<''> = [
     {
         path: 'sandbox-image',
         loadChildren: () =>
-            import('./modules/sandbox-agenda/sandbox-images-routing.module')
-                .then((m) => m.SandboxImagesRoutingModule),
-        canActivate: [RoleGuards.sandboxOrganizerGuard],
+            import(
+                './modules/sandbox-agenda/sandbox-images-routing.module'
+            ).then((m) => m.SandboxImagesRoutingModule),
+        // canActivate: [RoleGuards.sandboxOrganizerGuard],
         data: {
             breadcrumb: 'Images',
             title: 'Images Overview',
@@ -99,23 +105,24 @@ const routes: ValidRouterConfig<''> = [
     {
         path: 'run',
         loadChildren: () =>
-            import('./modules/training-agenda/training-run-routing.module').then(
-                (m) => m.TrainingRunRoutingModule,
-            ),
-        canActivate: [RoleGuards.trainingTraineeGuard],
+            import(
+                './modules/training-agenda/training-run-routing.module'
+            ).then((m) => m.TrainingRunRoutingModule),
+        // canActivate: [RoleGuards.trainingTraineeGuard],
         data: {
             breadcrumb: 'Training Runs',
             title: 'Training Run Overview',
             preloadRoleCondition: RoleService.ROLES.trainingTrainee,
         },
     },
-    { // for trainees
+    {
+        // for trainees
         path: 'mitre-techniques',
         loadComponent: () =>
             import('@crczp/training-agenda/mitre-techniques').then(
-                (m) => m.MitreTechniquesComponent,
+                (m) => m.MitreTechniquesComponent
             ),
-        canActivate: [RoleGuards.trainingTraineeGuard],
+        // canActivate: [RoleGuards.trainingTraineeGuard],
         data: {
             title: 'MITRE ATT&CK Techniques',
             breadcrumb: 'MITRE ATT&CK Techniques',
@@ -123,13 +130,14 @@ const routes: ValidRouterConfig<''> = [
             preloadRoleCondition: RoleService.ROLES.trainingTrainee,
         },
     },
-    { // for designers
+    {
+        // for designers
         path: 'mitre-techniques',
         loadComponent: () =>
             import('@crczp/training-agenda/mitre-techniques').then(
-                (m) => m.MitreTechniquesComponent,
+                (m) => m.MitreTechniquesComponent
             ),
-        canActivate: [RoleGuards.trainingDesignerGuard],
+        // canActivate: [RoleGuards.trainingDesignerGuard],
         data: {
             title: 'MITRE ATT&CK Techniques',
             breadcrumb: 'MITRE ATT&CK Techniques',
@@ -140,9 +148,10 @@ const routes: ValidRouterConfig<''> = [
     {
         path: 'user',
         loadChildren: () =>
-            import('./modules/user-and-group-agenda/user-routing.module')
-                .then((m) => m.UserRoutingModule),
-        canActivate: [RoleGuards.uagAdminGuard],
+            import('./modules/user-and-group-agenda/user-routing.module').then(
+                (m) => m.UserRoutingModule
+            ),
+        // canActivate: [RoleGuards.uagAdminGuard],
         data: {
             breadcrumb: 'Users',
             title: 'User Overview',
@@ -152,9 +161,10 @@ const routes: ValidRouterConfig<''> = [
     {
         path: 'group',
         loadChildren: () =>
-            import('./modules/user-and-group-agenda/group-routing.module')
-                .then((m) => m.GroupRoutingModule),
-        canActivate: [RoleGuards.uagAdminGuard],
+            import('./modules/user-and-group-agenda/group-routing.module').then(
+                (m) => m.GroupRoutingModule
+            ),
+        // canActivate: [RoleGuards.uagAdminGuard],
         data: {
             breadcrumb: 'Groups',
             title: 'Group Overview',
@@ -164,10 +174,10 @@ const routes: ValidRouterConfig<''> = [
     {
         path: 'microservice',
         loadChildren: () =>
-            import('./modules/user-and-group-agenda/microservice-routing.module').then(
-                (m) => m.MicroserviceRoutingModule,
-            ),
-        canActivate: [RoleGuards.uagAdminGuard],
+            import(
+                './modules/user-and-group-agenda/microservice-routing.module'
+            ).then((m) => m.MicroserviceRoutingModule),
+        // canActivate: [RoleGuards.uagAdminGuard],
         data: {
             breadcrumb: 'Microservice',
             title: 'Microservice Overview',
@@ -183,7 +193,7 @@ const routes: ValidRouterConfig<''> = [
             ),
         data: {
             breadcrumb: 'Notifications',
-            title: 'Notifications'
+            title: 'Notifications',
         },
     },
     {
@@ -194,7 +204,7 @@ const routes: ValidRouterConfig<''> = [
     {
         path: 'home',
         component: HomeComponent,
-        canActivate: [sentinelAuthGuardWithLoading, RoleGuards.advancedUserGuard],
+        canActivate: [sentinelAuthGuardWithLoading],
     },
     {
         path: 'logout',
@@ -220,5 +230,4 @@ const routes: ValidRouterConfig<''> = [
 /**
  * Main routing module. Contains routes to all lazy-loaded app agendas.
  */
-export class AppRoutingModule {
-}
+export class AppRoutingModule {}

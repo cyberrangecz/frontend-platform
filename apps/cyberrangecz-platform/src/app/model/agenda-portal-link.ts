@@ -1,6 +1,6 @@
-import {Agenda} from '@sentinel/layout';
-import {AgendaMenuItem} from './agenda-menu-item';
-import {ValidPath} from "@crczp/common";
+import { Agenda } from '@sentinel/layout';
+import { AgendaMenuItem } from './agenda-menu-item';
+import { ValidPath } from '@crczp/routing-commons';
 
 export class AgendaPortalLink extends Agenda {
     disabled: boolean;
@@ -16,7 +16,7 @@ export class AgendaPortalLink extends Agenda {
         route: ValidPath,
         description: string,
         icon: string,
-        menu?: AgendaMenuItem[],
+        menu?: AgendaMenuItem[]
     ) {
         super(name, route);
         this.path = route;

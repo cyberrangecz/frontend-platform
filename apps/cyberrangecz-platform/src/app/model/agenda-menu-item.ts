@@ -1,4 +1,4 @@
-import {ValidPath} from "@crczp/common";
+import { ValidPath } from '@crczp/routing-commons';
 
 export class AgendaMenuItem {
     icon: string;

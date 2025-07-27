@@ -1,38 +1,38 @@
-import {AfterViewInit, ChangeDetectionStrategy, Component, DestroyRef, inject, Input, OnInit,} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
-import {OffsetPaginationEvent, PaginatedResource,} from '@sentinel/common/pagination';
+import { AfterViewInit, ChangeDetectionStrategy, Component, DestroyRef, inject, Input, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
 import {
     SentinelControlItem,
     SentinelControlItemSignal,
-    SentinelControlsComponent,
+    SentinelControlsComponent
 } from '@sentinel/components/controls';
-import {Pool, RequestStageState, SandboxAllocationUnit,} from '@crczp/sandbox-model';
+import { Pool, RequestStageState, SandboxAllocationUnit } from '@crczp/sandbox-model';
 import {
     SentinelRowDirective,
     SentinelTableComponent,
     TableActionEvent,
-    TableLoadEvent,
+    TableLoadEvent
 } from '@sentinel/components/table';
-import {Observable, Subscription} from 'rxjs';
-import {map, take} from 'rxjs/operators';
-import {EditableCommentComponent, ResourcePollingService,} from '@crczp/sandbox-agenda/internal';
-import {AllocationRequestsService} from '../services/state/request/allocation/requests/allocation-requests.service';
-import {CleanupRequestsService} from '../services/state/request/cleanup/cleanup-requests.service';
-import {SandboxInstanceService} from '../services/state/sandbox-instance/sandbox-instance.service';
-import {PoolDetailControls} from './pool-detail-controls';
+import { Observable, Subscription } from 'rxjs';
+import { map, take } from 'rxjs/operators';
+import { EditableCommentComponent, ResourcePollingService } from '@crczp/sandbox-agenda/internal';
+import { AllocationRequestsService } from '../services/state/request/allocation/requests/allocation-requests.service';
+import { CleanupRequestsService } from '../services/state/request/cleanup/cleanup-requests.service';
+import { SandboxInstanceService } from '../services/state/sandbox-instance/sandbox-instance.service';
+import { PoolDetailControls } from './pool-detail-controls';
 import {
     AllocationRequestsConcreteService
 } from '../services/state/request/allocation/requests/allocation-requests-concrete.service';
-import {CleanupRequestsConcreteService} from '../services/state/request/cleanup/cleanup-requests-concrete.service';
-import {SandboxInstanceConcreteService} from '../services/state/sandbox-instance/sandbox-instance-concrete.service';
-import {PoolDetailTable} from '../model/pool-detail-table';
-import {AbstractSandbox} from '../model/abstract-sandbox';
-import {SelectedStage} from '../model/selected-stage';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {PaginationStorageService, providePaginationStorageService} from '@crczp/common';
-import {MatCard} from '@angular/material/card';
-import {StageOverviewComponent} from './stage-overview/stage-overview.component';
-import {AsyncPipe} from '@angular/common';
+import { CleanupRequestsConcreteService } from '../services/state/request/cleanup/cleanup-requests-concrete.service';
+import { SandboxInstanceConcreteService } from '../services/state/sandbox-instance/sandbox-instance-concrete.service';
+import { PoolDetailTable } from '../model/pool-detail-table';
+import { AbstractSandbox } from '../model/abstract-sandbox';
+import { SelectedStage } from '../model/selected-stage';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { MatCard } from '@angular/material/card';
+import { StageOverviewComponent } from './stage-overview/stage-overview.component';
+import { AsyncPipe } from '@angular/common';
+import { PaginationStorageService, providePaginationStorageService } from '@crczp/utils';
 
 /**
  * Smart component of pool detail page
@@ -56,7 +56,7 @@ import {AsyncPipe} from '@angular/common';
             provide: SandboxInstanceService,
             useClass: SandboxInstanceConcreteService,
         },
-        providePaginationStorageService(PoolDetailComponent)
+        providePaginationStorageService(PoolDetailComponent),
     ],
     imports: [
         SentinelControlsComponent,
@@ -179,7 +179,7 @@ export class PoolDetailComponent implements OnInit, AfterViewInit {
                         data,
                         resource.pagination
                     ),
-                    this.sandboxInstanceService,
+                    this.sandboxInstanceService
                 );
             })
         );

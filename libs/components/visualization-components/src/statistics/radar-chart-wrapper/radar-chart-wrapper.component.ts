@@ -1,15 +1,23 @@
-import { AfterContentChecked, ApplicationRef, Component, Input, OnChanges, SimpleChanges, inject } from '@angular/core';
+import {
+    AfterContentChecked,
+    ApplicationRef,
+    Component,
+    inject,
+    Input,
+    OnChanges,
+    SimpleChanges,
+} from '@angular/core';
 import * as d3 from 'd3';
-import {TrainingInstanceStatistics} from '@crczp/visualization-model';
-import {MatCardModule} from '@angular/material/card';
-import {ClusteringVisualizationsComponent} from '../../clustering/clustering-visualizations.component';
-import {MatGridListModule} from '@angular/material/grid-list';
-import {MatFormFieldModule} from '@angular/material/form-field';
-import {MatDividerModule} from '@angular/material/divider';
-import {MatIconModule} from '@angular/material/icon';
-import {MatTooltipModule} from '@angular/material/tooltip';
-import {MatButtonModule} from '@angular/material/button';
-import {MatInputModule} from '@angular/material/input';
+import { TrainingInstanceStatistics } from '@crczp/visualization-model';
+import { MatCardModule } from '@angular/material/card';
+import { ClusteringVisualizationsComponent } from '../../clustering/clustering-visualizations.component';
+import { MatGridListModule } from '@angular/material/grid-list';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatButtonModule } from '@angular/material/button';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
     selector: 'crczp-radar-chart-wrapper',
@@ -23,11 +31,13 @@ import {MatInputModule} from '@angular/material/input';
         MatDividerModule,
         MatTooltipModule,
         MatButtonModule,
-        MatInputModule
+        MatInputModule,
     ],
-    styleUrls: ['./radar-chart-wrapper.component.css']
+    styleUrls: ['./radar-chart-wrapper.component.css'],
 })
-export class RadarChartWrapperComponent implements OnChanges, AfterContentChecked {
+export class RadarChartWrapperComponent
+    implements OnChanges, AfterContentChecked
+{
     @Input() level;
     @Input() trainingDefinitionId: number;
     @Input() trainingInstanceStatistics: TrainingInstanceStatistics[];
@@ -52,8 +62,13 @@ export class RadarChartWrapperComponent implements OnChanges, AfterContentChecke
     }
 
     ngOnChanges(changes: SimpleChanges): void {
-        this.trainingInstanceIds = this.trainingInstanceStatistics.map((ti) => ti.instanceId);
-        this.levelTitle = this.level !== null ? '(for <i>level ' + this.level + '</i> only)' : '';
+        this.trainingInstanceIds = this.trainingInstanceStatistics.map(
+            (ti) => ti.instanceId
+        );
+        this.levelTitle =
+            this.level !== null
+                ? '(for <i>level ' + this.level + '</i> only)'
+                : '';
     }
 
     toggleView(isOpen: boolean) {
@@ -68,7 +83,6 @@ export class RadarChartWrapperComponent implements OnChanges, AfterContentChecke
         const box = document.querySelector(
             '#radarchartSvgPlaceholder crczp-clustering-visualization'
         ) as HTMLElement | null;
-        //console.log(box.getBoundingClientRect());
 
         if (box != null) {
             return box.getBoundingClientRect().height + 24;
@@ -76,6 +90,9 @@ export class RadarChartWrapperComponent implements OnChanges, AfterContentChecke
     }
 
     hideChart(item) {
-        d3.select('#radarchartDiv').style('display', item[0].hide ? 'none' : 'block');
+        d3.select('#radarchartDiv').style(
+            'display',
+            item[0].hide ? 'none' : 'block'
+        );
     }
 }

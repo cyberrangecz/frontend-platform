@@ -1,12 +1,15 @@
-import {StageDetailService} from './stage-detail.service';
-import {AllocationRequestsApi} from '@crczp/sandbox-api';
-import {RequestStage} from '@crczp/sandbox-model';
-import {OffsetPaginationEvent, PaginatedResource,} from '@sentinel/common/pagination';
-import {Observable} from 'rxjs';
-import {map} from 'rxjs/operators';
-import {inject, Injectable} from '@angular/core';
-import {StagesDetailPollRegistry} from './stages-detail-poll-registry.service';
-import {PortalConfig} from '@crczp/common';
+import { StageDetailService } from './stage-detail.service';
+import { AllocationRequestsApi } from '@crczp/sandbox-api';
+import { RequestStage } from '@crczp/sandbox-model';
+import {
+    OffsetPaginationEvent,
+    PaginatedResource,
+} from '@sentinel/common/pagination';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { inject, Injectable } from '@angular/core';
+import { StagesDetailPollRegistry } from './stages-detail-poll-registry.service';
+import { PortalConfig } from '@crczp/utils';
 
 @Injectable()
 export class CloudResourcesService extends StageDetailService {

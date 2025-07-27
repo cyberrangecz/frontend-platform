@@ -1,16 +1,17 @@
-import {Router} from '@angular/router';
-import {PoolApi, SandboxDefinitionApi} from '@crczp/sandbox-api';
-import {AdaptiveInstanceApi, AdaptiveTrainingDefinitionApi} from '@crczp/training-api';
-import {TrainingDefinitionInfo, TrainingInstance} from '@crczp/training-model';
-import {combineLatest, from, Observable} from 'rxjs';
-import {map, switchMap, tap} from 'rxjs/operators';
-import {AdaptiveInstanceEditService} from './adaptive-instance-edit.service';
-import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
-import {Pool, SandboxDefinition} from '@crczp/sandbox-model';
-import {SentinelFilter} from '@sentinel/common/filter';
-import {ErrorHandlerService, LoadingTracker, NotificationService, PortalConfig, Routing} from "@crczp/common";
-import {inject, Injectable} from "@angular/core";
-import {AdaptiveInstanceChangeEvent} from "../../../models/events/adaptive-instance-change-event";
+import { Router } from '@angular/router';
+import { PoolApi, SandboxDefinitionApi } from '@crczp/sandbox-api';
+import { AdaptiveInstanceApi, AdaptiveTrainingDefinitionApi } from '@crczp/training-api';
+import { TrainingDefinitionInfo, TrainingInstance } from '@crczp/training-model';
+import { combineLatest, from, Observable } from 'rxjs';
+import { map, switchMap, tap } from 'rxjs/operators';
+import { AdaptiveInstanceEditService } from './adaptive-instance-edit.service';
+import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
+import { Pool, SandboxDefinition } from '@crczp/sandbox-model';
+import { SentinelFilter } from '@sentinel/common/filter';
+import { inject, Injectable } from '@angular/core';
+import { AdaptiveInstanceChangeEvent } from '../../../models/events/adaptive-instance-change-event';
+import { ErrorHandlerService, LoadingTracker, NotificationService, PortalConfig } from '@crczp/utils';
+import { Routing } from '@crczp/routing-commons';
 
 /**
  * Basic implementation of layer between component and API service.
@@ -31,9 +32,8 @@ export class AdaptiveInstanceEditConcreteService extends AdaptiveInstanceEditSer
     private loadingTracker = new LoadingTracker();
     public saveDisabled$: Observable<boolean> = combineLatest(
         this.loadingTracker.isLoading$,
-        this.saveDisabledSubject$.asObservable(),
+        this.saveDisabledSubject$.asObservable()
     ).pipe(map(([loading, invalid]) => loading || invalid));
-
 
     constructor() {
         super();
@@ -45,7 +45,8 @@ export class AdaptiveInstanceEditConcreteService extends AdaptiveInstanceEditSer
      */
     change(changeEvent: AdaptiveInstanceChangeEvent): void {
         this.instanceValidSubject$.next(changeEvent.isValid);
-        if (changeEvent.trainingInstance.localEnvironment) changeEvent.trainingInstance.poolId = null;
+        if (changeEvent.trainingInstance.localEnvironment)
+            changeEvent.trainingInstance.poolId = null;
         this.editedSnapshot = changeEvent.trainingInstance;
         this.checkInstanceValidity();
     }
@@ -65,7 +66,10 @@ export class AdaptiveInstanceEditConcreteService extends AdaptiveInstanceEditSer
             this.editedSnapshot = this.trainingInstanceSubject$.getValue();
             this.editedSnapshot.accessToken =
                 this.editedSnapshot.accessToken.indexOf('-') !== -1
-                    ? this.editedSnapshot.accessToken.substring(0, this.editedSnapshot.accessToken.lastIndexOf('-'))
+                    ? this.editedSnapshot.accessToken.substring(
+                          0,
+                          this.editedSnapshot.accessToken.lastIndexOf('-')
+                      )
                     : this.editedSnapshot.accessToken;
         }
         this.editedSnapshot.sandboxDefinitionId = sandboxDefinitionId;
@@ -81,9 +85,15 @@ export class AdaptiveInstanceEditConcreteService extends AdaptiveInstanceEditSer
             return this.update();
         } else {
             return this.create().pipe(
-                switchMap((id) => from(this.router.navigate([
-                    Routing.RouteBuilder.adaptive_instance.instanceId(id).build()
-                ]))),
+                switchMap((id) =>
+                    from(
+                        this.router.navigate([
+                            Routing.RouteBuilder.adaptive_instance
+                                .instanceId(id)
+                                .build(),
+                        ])
+                    )
+                )
             );
         }
     }
@@ -106,27 +116,39 @@ export class AdaptiveInstanceEditConcreteService extends AdaptiveInstanceEditSer
 
     getAllTrainingDefinitions(
         offsetPaginationEvent: OffsetPaginationEvent,
-        stateFilter: string,
+        stateFilter: string
     ): Observable<PaginatedResource<TrainingDefinitionInfo>> {
         this.lastPagination = offsetPaginationEvent;
         this.lastPagination.size = Number.MAX_SAFE_INTEGER;
         return this.trainingDefinitionApi
-            .getAllForOrganizer(offsetPaginationEvent, [new SentinelFilter('state', stateFilter)])
+            .getAllForOrganizer(offsetPaginationEvent, [
+                new SentinelFilter('state', stateFilter),
+            ])
             .pipe(
                 tap(
                     (definitions) => {
                         if (stateFilter === 'RELEASED') {
-                            this.releasedTrainingDefinitionsSubject.next(definitions);
+                            this.releasedTrainingDefinitionsSubject.next(
+                                definitions
+                            );
                         } else {
-                            this.unreleasedTrainingDefinitionsSubject.next(definitions);
+                            this.unreleasedTrainingDefinitionsSubject.next(
+                                definitions
+                            );
                         }
                     },
-                    (err) => this.errorHandler.emit(err, 'Fetching available training definitions'),
-                ),
+                    (err) =>
+                        this.errorHandler.emit(
+                            err,
+                            'Fetching available training definitions'
+                        )
+                )
             );
     }
 
-    getAllPools(offsetPaginationEvent: OffsetPaginationEvent): Observable<PaginatedResource<Pool>> {
+    getAllPools(
+        offsetPaginationEvent: OffsetPaginationEvent
+    ): Observable<PaginatedResource<Pool>> {
         this.lastPagination = offsetPaginationEvent;
         this.lastPagination.size = Number.MAX_SAFE_INTEGER;
         return this.poolApi.getPools(offsetPaginationEvent).pipe(
@@ -134,13 +156,13 @@ export class AdaptiveInstanceEditConcreteService extends AdaptiveInstanceEditSer
                 (pools) => {
                     this.poolsSubject$.next(pools);
                 },
-                (err) => this.errorHandler.emit(err, 'Fetching available pools'),
-            ),
+                (err) => this.errorHandler.emit(err, 'Fetching available pools')
+            )
         );
     }
 
     getAllSandboxDefinitions(
-        offsetPaginationEvent: OffsetPaginationEvent,
+        offsetPaginationEvent: OffsetPaginationEvent
     ): Observable<PaginatedResource<SandboxDefinition>> {
         this.lastPagination = offsetPaginationEvent;
         this.lastPagination.size = Number.MAX_SAFE_INTEGER;
@@ -149,8 +171,12 @@ export class AdaptiveInstanceEditConcreteService extends AdaptiveInstanceEditSer
                 (sandboxDefinitions) => {
                     this.sandboxDefinitionsSubject$.next(sandboxDefinitions);
                 },
-                (err) => this.errorHandler.emit(err, 'Fetching available sandbox definitions'),
-            ),
+                (err) =>
+                    this.errorHandler.emit(
+                        err,
+                        'Fetching available sandbox definitions'
+                    )
+            )
         );
     }
 
@@ -160,7 +186,9 @@ export class AdaptiveInstanceEditConcreteService extends AdaptiveInstanceEditSer
 
     private checkInstanceValidity(): void {
         this.saveDisabledSubject$.next(
-            !this.instanceValidSubject$.value || (!this.editedSnapshot.localEnvironment && !this.editedSnapshot.poolId),
+            !this.instanceValidSubject$.value ||
+                (!this.editedSnapshot.localEnvironment &&
+                    !this.editedSnapshot.poolId)
         );
     }
 
@@ -170,19 +198,27 @@ export class AdaptiveInstanceEditConcreteService extends AdaptiveInstanceEditSer
 
     private create(): Observable<number> {
         if (this.editedSnapshot) {
-            if (!this.editedSnapshot.startTime) this.editedSnapshot.startTime = new Date();
+            if (!this.editedSnapshot.startTime)
+                this.editedSnapshot.startTime = new Date();
         }
         return this.loadingTracker.trackRequest(() =>
             this.trainingInstanceApi.create(this.editedSnapshot).pipe(
                 map((ti) => ti.id),
                 tap(
                     () => {
-                        this.notificationService.emit('success', 'Adaptive instance was created');
+                        this.notificationService.emit(
+                            'success',
+                            'Adaptive instance was created'
+                        );
                         this.onSaved();
                     },
-                    (err) => this.errorHandler.emit(err, 'Creating adaptive instance'),
-                ),
-            ),
+                    (err) =>
+                        this.errorHandler.emit(
+                            err,
+                            'Creating adaptive instance'
+                        )
+                )
+            )
         );
     }
 
@@ -194,21 +230,31 @@ export class AdaptiveInstanceEditConcreteService extends AdaptiveInstanceEditSer
         this.saveDisabledSubject$.next(true);
         return this.loadingTracker.trackRequest(() =>
             this.trainingInstanceApi.update(this.editedSnapshot).pipe(
-                switchMap(() => this.getAllTrainingDefinitions(pagination, 'RELEASED')),
-                switchMap(() => this.getAllTrainingDefinitions(pagination, 'UNRELEASED')),
+                switchMap(() =>
+                    this.getAllTrainingDefinitions(pagination, 'RELEASED')
+                ),
+                switchMap(() =>
+                    this.getAllTrainingDefinitions(pagination, 'UNRELEASED')
+                ),
                 switchMap(() => this.getAllPools(pagination)),
                 switchMap(() => this.getAllSandboxDefinitions(pagination)),
                 tap(
                     () => {
-                        this.notificationService.emit('success', 'Adaptive training instance was successfully saved');
+                        this.notificationService.emit(
+                            'success',
+                            'Adaptive training instance was successfully saved'
+                        );
                         this.onSaved();
                     },
                     (err) => {
                         this.saveDisabledSubject$.next(false);
-                        this.errorHandler.emit(err, 'Editing training instance');
-                    },
-                ),
-            ),
+                        this.errorHandler.emit(
+                            err,
+                            'Editing training instance'
+                        );
+                    }
+                )
+            )
         );
     }
 

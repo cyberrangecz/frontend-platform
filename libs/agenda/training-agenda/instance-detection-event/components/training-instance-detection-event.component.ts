@@ -1,26 +1,16 @@
-import {Component, DestroyRef, inject, Input, OnInit} from '@angular/core';
-import {OffsetPaginationEvent} from '@sentinel/common/pagination';
-import {from, Observable} from 'rxjs';
-import {SentinelTable, SentinelTableComponent, TableActionEvent, TableLoadEvent} from '@sentinel/components/table';
-import {AbstractDetectionEvent} from '@crczp/training-model';
-import {map, take} from 'rxjs/operators';
-import {DetectionEventTable} from '../model/detection-event-table';
-import {DetectionEventService} from '../services/detection-event.service';
-import {ActivatedRoute} from '@angular/router';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {PaginationStorageService, providePaginationStorageService} from "@crczp/common";
-import {AsyncPipe} from "@angular/common";
-import {DetectionEventConcreteService} from "../services/detection-event-concrete.service";
-import {
-    TrainingInstance
-
-.
-name,
-    TrainingDefaultNavigator,
-    TrainingNavigator
-}
-from
-'@crczp/training-agenda';
+import { Component, DestroyRef, inject, Input, OnInit } from '@angular/core';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
+import { Observable } from 'rxjs';
+import { SentinelTable, SentinelTableComponent, TableActionEvent, TableLoadEvent } from '@sentinel/components/table';
+import { AbstractDetectionEvent, TrainingInstance } from '@crczp/training-model';
+import { map, take } from 'rxjs/operators';
+import { DetectionEventTable } from '../model/detection-event-table';
+import { DetectionEventService } from '../services/detection-event.service';
+import { ActivatedRoute } from '@angular/router';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { AsyncPipe } from '@angular/common';
+import { DetectionEventConcreteService } from '../services/detection-event-concrete.service';
+import { PaginationStorageService, providePaginationStorageService } from '@crczp/utils';
 
 /**
  * Main component of training instance detection event.
@@ -29,14 +19,16 @@ from
     selector: 'crczp-training-instance-detection-event',
     templateUrl: './training-instance-detection-event.component.html',
     styleUrls: ['./training-instance-detection-event.component.css'],
-    imports: [
-        AsyncPipe,
-        SentinelTableComponent
-    ],
+    imports: [AsyncPipe, SentinelTableComponent],
     providers: [
-        providePaginationStorageService(TrainingInstanceDetectionEventComponent),
-        {provide: TrainingNavigator, useClass: TrainingDefaultNavigator},
-        {provide: DetectionEventService, useClass: DetectionEventConcreteService},
+        providePaginationStorageService(
+            TrainingInstanceDetectionEventComponent
+        ),
+        { provide: TrainingNavigator, useClass: TrainingDefaultNavigator },
+        {
+            provide: DetectionEventService,
+            useClass: DetectionEventConcreteService,
+        },
     ],
 })
 export class TrainingInstanceDetectionEventComponent implements OnInit {
@@ -55,10 +47,13 @@ export class TrainingInstanceDetectionEventComponent implements OnInit {
     private navigator = inject(TrainingNavigator);
 
     ngOnInit(): void {
-        this.activeRoute.data.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((data) => {
-            this.trainingInstanceId = data[TrainingInstance.name].id;
-        });
-        this.cheatingDetectionId = this.activeRoute.snapshot.params['trainingInstanceId'];
+        this.activeRoute.data
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe((data) => {
+                this.trainingInstanceId = data[TrainingInstance.name].id;
+            });
+        this.cheatingDetectionId =
+            this.activeRoute.snapshot.params['trainingInstanceId'];
         this.initTable();
     }
 
@@ -76,9 +71,9 @@ export class TrainingInstanceDetectionEventComponent implements OnInit {
                     0,
                     loadEvent.pagination.size,
                     loadEvent.pagination.sort,
-                    loadEvent.pagination.sortDir,
+                    loadEvent.pagination.sortDir
                 ),
-                loadEvent.filter,
+                loadEvent.filter
             )
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe();
@@ -96,14 +91,21 @@ export class TrainingInstanceDetectionEventComponent implements OnInit {
         this.hasError$ = this.detectionEventService.hasError$;
         this.isLoading$ = this.detectionEventService.isLoading$;
         this.detectionEvents$ = this.detectionEventService.resource$.pipe(
-            map((resource) => new DetectionEventTable(resource, this.detectionEventService, this.navigator)),
+            map(
+                (resource) =>
+                    new DetectionEventTable(
+                        resource,
+                        this.detectionEventService,
+                        this.navigator
+                    )
+            )
         );
         const initialPagination = new OffsetPaginationEvent(
             0,
             this.paginationService.loadPageSize(),
             this.INIT_SORT_NAME,
-            this.INIT_SORT_DIR,
+            this.INIT_SORT_DIR
         );
-        this.onLoadEvent({pagination: initialPagination});
+        this.onLoadEvent({ pagination: initialPagination });
     }
 }

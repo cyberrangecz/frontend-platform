@@ -1,4 +1,11 @@
-import {ChangeDetectionStrategy, Component, DestroyRef, inject, Input, OnInit} from '@angular/core';
+import {
+    ChangeDetectionStrategy,
+    Component,
+    DestroyRef,
+    inject,
+    Input,
+    OnInit,
+} from '@angular/core';
 import {
     MAT_DIALOG_DATA,
     MatDialogActions,
@@ -6,20 +13,29 @@ import {
     MatDialogRef,
     MatDialogTitle,
 } from '@angular/material/dialog';
-import {OffsetPaginationEvent, PaginatedResource,} from '@sentinel/common/pagination';
-import {SandboxDefinition} from '@crczp/sandbox-model';
-import {Observable} from 'rxjs';
-import {map} from 'rxjs/operators';
+import {
+    OffsetPaginationEvent,
+    PaginatedResource,
+} from '@sentinel/common/pagination';
+import { SandboxDefinition } from '@crczp/sandbox-model';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import {
     SandboxDefinitionOverviewConcreteService,
     SandboxDefinitionOverviewService,
 } from '@crczp/sandbox-agenda/internal';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {SentinelListComponent, SentinelListElementDirective,} from '@sentinel/components/list';
-import {MatButton} from '@angular/material/button';
-import {AsyncPipe} from '@angular/common';
-import {MatDivider} from '@angular/material/divider';
-import {PaginationStorageService, providePaginationStorageService} from '@crczp/common';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {
+    SentinelListComponent,
+    SentinelListElementDirective,
+} from '@sentinel/components/list';
+import { MatButton } from '@angular/material/button';
+import { AsyncPipe } from '@angular/common';
+import { MatDivider } from '@angular/material/divider';
+import {
+    PaginationStorageService,
+    providePaginationStorageService,
+} from '@crczp/utils';
 
 @Component({
     selector: 'crczp-sandbox-definition-select',
@@ -31,7 +47,7 @@ import {PaginationStorageService, providePaginationStorageService} from '@crczp/
             provide: SandboxDefinitionOverviewService,
             useClass: SandboxDefinitionOverviewConcreteService,
         },
-        providePaginationStorageService(SandboxDefinitionSelectComponent)
+        providePaginationStorageService(SandboxDefinitionSelectComponent),
     ],
     imports: [
         MatDialogContent,
@@ -45,8 +61,11 @@ import {PaginationStorageService, providePaginationStorageService} from '@crczp/
     ],
 })
 export class SandboxDefinitionSelectComponent implements OnInit {
-    preselected = inject<SandboxDefinition>(MAT_DIALOG_DATA, {optional: true});
-    dialogRef = inject<MatDialogRef<SandboxDefinitionSelectComponent>>(MatDialogRef);
+    preselected = inject<SandboxDefinition>(MAT_DIALOG_DATA, {
+        optional: true,
+    });
+    dialogRef =
+        inject<MatDialogRef<SandboxDefinitionSelectComponent>>(MatDialogRef);
     @Input() paginationId = 'crczp-sandbox-definition-select';
     readonly PAGE_SIZE: number;
     definitions$: Observable<PaginatedResource<SandboxDefinition>>;
@@ -83,15 +102,15 @@ export class SandboxDefinitionSelectComponent implements OnInit {
                 takeUntilDestroyed(this.destroyRef)
             )
             .subscribe();
-        this.fetch(new OffsetPaginationEvent(0, Number.MAX_SAFE_INTEGER, '', 'asc'));
+        this.fetch(
+            new OffsetPaginationEvent(0, Number.MAX_SAFE_INTEGER, '', 'asc')
+        );
     }
 
     fetch(pagination: OffsetPaginationEvent): void {
         this.paginationService.savePageSize(pagination.size);
         this.definitionService
-            .getAll(
-                pagination
-            )
+            .getAll(pagination)
             .pipe(
                 map((resources) => {
                     resources.elements.map(
@@ -133,5 +152,4 @@ export class SandboxDefinitionSelectComponent implements OnInit {
     ): boolean {
         return a.id === b.id;
     }
-
 }

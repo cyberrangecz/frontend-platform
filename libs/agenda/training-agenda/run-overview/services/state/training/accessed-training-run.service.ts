@@ -1,13 +1,14 @@
-import {inject, Injectable} from '@angular/core';
-import {Router} from '@angular/router';
-import {AdaptiveRunApi, LinearRunApi} from '@crczp/training-api';
-import {AccessedTrainingRun, TrainingTypeEnum} from '@crczp/training-model';
-import {BehaviorSubject, from, Observable} from 'rxjs';
-import {concatMap, map, tap} from 'rxjs/operators';
-import {OffsetPaginationEvent, PaginatedResource,} from '@sentinel/common/pagination';
-import {SentinelFilter} from '@sentinel/common/filter';
-import {ErrorHandlerService, PortalConfig, Routing} from '@crczp/common';
-import {OffsetPaginatedElementsService} from "@sentinel/common";
+import { inject, Injectable } from '@angular/core';
+import { Router } from '@angular/router';
+import { AdaptiveRunApi, LinearRunApi } from '@crczp/training-api';
+import { AccessedTrainingRun, TrainingTypeEnum } from '@crczp/training-model';
+import { BehaviorSubject, from, Observable } from 'rxjs';
+import { concatMap, map, tap } from 'rxjs/operators';
+import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
+import { SentinelFilter } from '@sentinel/common/filter';
+import { OffsetPaginatedElementsService } from '@sentinel/common';
+import { ErrorHandlerService, PortalConfig } from '@crczp/utils';
+import { Routing } from '@crczp/routing-commons';
 
 /**
  * Basic implementation of layer between component and API service.
@@ -54,27 +55,31 @@ export class AccessedTrainingRunService extends OffsetPaginatedElementsService<A
 
     toResumeRun(id: number, type: TrainingTypeEnum): Observable<any> {
         return from(
-            this.router.navigate([Routing.RouteBuilder.run[type].runId(id).resume.build()])
+            this.router.navigate([
+                Routing.RouteBuilder.run[type].runId(id).resume.build(),
+            ])
         );
     }
 
     toAccessRun(token: string, type: TrainingTypeEnum): Observable<any> {
         return from(
-            this.router.navigate([Routing.RouteBuilder.run[type].runToken(token).access.build()])
+            this.router.navigate([
+                Routing.RouteBuilder.run[type].runToken(token).access.build(),
+            ])
         );
     }
 
     toRunResults(id: number, type: TrainingTypeEnum): Observable<any> {
         return from(
-            this.router.navigate([Routing.RouteBuilder.run[type].runId(id).results.build()])
+            this.router.navigate([
+                Routing.RouteBuilder.run[type].runId(id).results.build(),
+            ])
         );
     }
 
     showMitreTechniques(): Observable<any> {
         return from(
-            this.router.navigate([
-                Routing.RouteBuilder.mitre_techniques.build,
-            ])
+            this.router.navigate([Routing.RouteBuilder.mitre_techniques.build])
         );
     }
 

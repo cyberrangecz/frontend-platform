@@ -1,14 +1,17 @@
-import {inject, Injectable} from '@angular/core';
-import {DetectionEventApi} from '@crczp/training-api';
-import {Router} from '@angular/router';
-import {TrainingNavigator,} from '@crczp/training-agenda';
-import {DetectionEventService} from './detection-event.service';
-import {OffsetPaginationEvent, PaginatedResource,} from '@sentinel/common/pagination';
-import {from, Observable} from 'rxjs';
-import {AbstractDetectionEvent} from '@crczp/training-model';
-import {tap} from 'rxjs/operators';
-import {DetectionEventFilter} from '../model/detection-event-filter';
-import {PortalConfig} from '@crczp/common';
+import { inject, Injectable } from '@angular/core';
+import { DetectionEventApi } from '@crczp/training-api';
+import { Router } from '@angular/router';
+import { TrainingNavigator } from '@crczp/training-agenda';
+import { DetectionEventService } from './detection-event.service';
+import {
+    OffsetPaginationEvent,
+    PaginatedResource,
+} from '@sentinel/common/pagination';
+import { from, Observable } from 'rxjs';
+import { AbstractDetectionEvent } from '@crczp/training-model';
+import { tap } from 'rxjs/operators';
+import { DetectionEventFilter } from '../model/detection-event-filter';
+import { PortalConfig } from '@crczp/utils';
 
 /**
  * Basic implementation of a layer between a component and an API services.
@@ -19,7 +22,6 @@ export class DetectionEventConcreteService extends DetectionEventService {
     private api = inject(DetectionEventApi);
     private router = inject(Router);
     private navigator = inject(TrainingNavigator);
-
 
     constructor() {
         super(inject(PortalConfig).defaultPageSize);

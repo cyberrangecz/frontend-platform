@@ -1,8 +1,8 @@
-import {HttpClient} from '@angular/common/http';
-import {inject, Injectable} from '@angular/core';
-import {Observable} from 'rxjs';
-import {TrainingEventApi} from './training-event-api.service';
-import {PortalConfig} from "@crczp/common";
+import { HttpClient } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { TrainingEventApi } from './training-event-api.service';
+import { PortalConfig } from '@crczp/utils';
 
 /**
  * Default implementation of service abstracting http communication with training event endpoints.
@@ -16,7 +16,9 @@ export class TrainingEventDefaultApi extends TrainingEventApi {
     private readonly trainingInstanceUrlExtension = 'training-instances';
     private readonly trainingRunUrlExtension = 'training-runs';
     private readonly trainingEventUriExtension = 'training-platform-events';
-    private readonly trainingEventEndpointUri = inject(PortalConfig).basePaths.linearTraining + this.trainingEventUriExtension;
+    private readonly trainingEventEndpointUri =
+        inject(PortalConfig).basePaths.linearTraining +
+        this.trainingEventUriExtension;
 
     constructor() {
         super();
@@ -27,11 +29,14 @@ export class TrainingEventDefaultApi extends TrainingEventApi {
      * @param trainingDefinitionId id of a training definition associated with retrieved events
      * @param trainingInstanceId id of a training instance associated with retrieved events
      */
-    getAll(trainingDefinitionId: number, trainingInstanceId: number): Observable<any> {
+    getAll(
+        trainingDefinitionId: number,
+        trainingInstanceId: number
+    ): Observable<any> {
         return this.http.get(
             `${this.trainingEventEndpointUri}/
             ${this.trainingDefinitionUriExtension}/
-            ${trainingDefinitionId}/${this.trainingInstanceUrlExtension}/${trainingInstanceId}`,
+            ${trainingDefinitionId}/${this.trainingInstanceUrlExtension}/${trainingInstanceId}`
         );
     }
 
@@ -41,11 +46,15 @@ export class TrainingEventDefaultApi extends TrainingEventApi {
      * @param trainingInstanceId id of a training instance associated with retrieved events
      * @param trainingRunId id of a training run associated with retrieved events
      */
-    getAllForRun(trainingDefinitionId: number, trainingInstanceId: number, trainingRunId: number): Observable<any> {
+    getAllForRun(
+        trainingDefinitionId: number,
+        trainingInstanceId: number,
+        trainingRunId: number
+    ): Observable<any> {
         return this.http.get(
             `${this.trainingEventEndpointUri}/${this.trainingDefinitionUriExtension}/
             ${trainingDefinitionId}/${this.trainingInstanceUrlExtension}/
-            ${trainingInstanceId}/${this.trainingRunUrlExtension}/${trainingRunId}`,
+            ${trainingInstanceId}/${this.trainingRunUrlExtension}/${trainingRunId}`
         );
     }
 
@@ -54,10 +63,13 @@ export class TrainingEventDefaultApi extends TrainingEventApi {
      * @param trainingInstanceId id of a training instance associated with retrieved events
      * @param trainingRunId id of a training run associated with retrieved events
      */
-    deleteAllEvents(trainingInstanceId: number, trainingRunId: number): Observable<any> {
+    deleteAllEvents(
+        trainingInstanceId: number,
+        trainingRunId: number
+    ): Observable<any> {
         return this.http.delete(
             `${this.trainingEventEndpointUri}/${this.trainingInstanceUrlExtension}/
-            ${trainingInstanceId}/${this.trainingRunUrlExtension}/${trainingRunId}`,
+            ${trainingInstanceId}/${this.trainingRunUrlExtension}/${trainingRunId}`
         );
     }
 }

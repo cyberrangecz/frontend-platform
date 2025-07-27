@@ -1,16 +1,23 @@
-import {inject, Injectable} from '@angular/core';
-import {MatDialog} from '@angular/material/dialog';
-import {Router} from '@angular/router';
-import {PoolApi} from '@crczp/sandbox-api';
-import {Pool, SandboxDefinition} from '@crczp/sandbox-model';
-import {BehaviorSubject, combineLatest, defer, finalize, from, Observable, ReplaySubject} from 'rxjs';
-import {map, switchMap, tap} from 'rxjs/operators';
+import { inject, Injectable } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
+import { PoolApi } from '@crczp/sandbox-api';
+import { Pool, SandboxDefinition } from '@crczp/sandbox-model';
 import {
-    SandboxDefinitionSelectComponent
-} from '../components/sandbox-definition-select/sandbox-definition-select.component';
-import {PoolEditService} from './pool-edit.service';
-import {PoolChangedEvent} from '../model/pool-changed-event';
-import {ErrorHandlerService, NotificationService, Routing} from "@crczp/common";
+    BehaviorSubject,
+    combineLatest,
+    defer,
+    finalize,
+    from,
+    Observable,
+    ReplaySubject,
+} from 'rxjs';
+import { map, switchMap, tap } from 'rxjs/operators';
+import { SandboxDefinitionSelectComponent } from '../components/sandbox-definition-select/sandbox-definition-select.component';
+import { PoolEditService } from './pool-edit.service';
+import { PoolChangedEvent } from '../model/pool-changed-event';
+import { ErrorHandlerService, NotificationService } from '@crczp/utils';
+import { Routing } from '@crczp/routing-commons';
 
 @Injectable()
 export class PoolEditConcreteService extends PoolEditService {
@@ -20,40 +27,61 @@ export class PoolEditConcreteService extends PoolEditService {
     private errorHandler = inject(ErrorHandlerService);
     private api = inject(PoolApi);
 
-
-    private editModeSubject$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+    private editModeSubject$: BehaviorSubject<boolean> = new BehaviorSubject(
+        false
+    );
     /**
      * True if existing pool is edited, false if new one is created
      */
     editMode$: Observable<boolean> = this.editModeSubject$.asObservable();
-    private requestsCountSubject$: BehaviorSubject<number> = new BehaviorSubject(0);
-    isLoading$: Observable<boolean> = this.requestsCountSubject$.asObservable().pipe(map((value: number) => value > 0));
+    private requestsCountSubject$: BehaviorSubject<number> =
+        new BehaviorSubject(0);
+    isLoading$: Observable<boolean> = this.requestsCountSubject$
+        .asObservable()
+        .pipe(map((value: number) => value > 0));
 
     private poolSubject$: ReplaySubject<Pool> = new ReplaySubject();
 
-    private isValidSubject$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+    private isValidSubject$: BehaviorSubject<boolean> = new BehaviorSubject(
+        false
+    );
 
     /**
      * True if saving is disabled (for example invalid data), false otherwise
      */
-    saveDisabled$: Observable<boolean> = combineLatest(this.isValidSubject$.asObservable(), this.isLoading$).pipe(
-        map(([valid, loading]) => !valid || loading),
-    );
+    saveDisabled$: Observable<boolean> = combineLatest(
+        this.isValidSubject$.asObservable(),
+        this.isLoading$
+    ).pipe(map(([valid, loading]) => !valid || loading));
 
     private editedPool: Pool;
 
     create(): Observable<any> {
         return defer(() => {
-            this.requestsCountSubject$.next(this.requestsCountSubject$.value + 1);
+            this.requestsCountSubject$.next(
+                this.requestsCountSubject$.value + 1
+            );
             return this.api.createPool(this.editedPool).pipe(
                 tap(
-                    () => this.notificationService.emit('success', 'Pool was created'),
-                    (err) => this.errorHandler.emit(err, 'Creating pool'),
+                    () =>
+                        this.notificationService.emit(
+                            'success',
+                            'Pool was created'
+                        ),
+                    (err) => this.errorHandler.emit(err, 'Creating pool')
                 ),
-                switchMap(() => from(this.router.navigate([
-                    Routing.RouteBuilder.pool.build()
-                ]))),
-                finalize(() => this.requestsCountSubject$.next(this.requestsCountSubject$.value - 1)),
+                switchMap(() =>
+                    from(
+                        this.router.navigate([
+                            Routing.RouteBuilder.pool.build(),
+                        ])
+                    )
+                ),
+                finalize(() =>
+                    this.requestsCountSubject$.next(
+                        this.requestsCountSubject$.value - 1
+                    )
+                )
             );
         });
     }
@@ -72,22 +100,35 @@ export class PoolEditConcreteService extends PoolEditService {
      */
     update(): Observable<any> {
         return defer(() => {
-            this.requestsCountSubject$.next(this.requestsCountSubject$.value + 1);
+            this.requestsCountSubject$.next(
+                this.requestsCountSubject$.value + 1
+            );
             return this.api.updatePool(this.editedPool).pipe(
                 tap(
                     () => {
-                        this.notificationService.emit('success', 'Pool was updated');
+                        this.notificationService.emit(
+                            'success',
+                            'Pool was updated'
+                        );
                         this.onSaved();
                     },
-                    (err) => this.errorHandler.emit(err, 'Editing pool'),
+                    (err) => this.errorHandler.emit(err, 'Editing pool')
                 ),
-                finalize(() => this.requestsCountSubject$.next(this.requestsCountSubject$.value - 1)),
+                finalize(() =>
+                    this.requestsCountSubject$.next(
+                        this.requestsCountSubject$.value - 1
+                    )
+                )
             );
         });
     }
 
-    selectDefinition(currSelected: SandboxDefinition): Observable<SandboxDefinition> {
-        const dialogRef = this.dialog.open(SandboxDefinitionSelectComponent, {data: currSelected});
+    selectDefinition(
+        currSelected: SandboxDefinition
+    ): Observable<SandboxDefinition> {
+        const dialogRef = this.dialog.open(SandboxDefinitionSelectComponent, {
+            data: currSelected,
+        });
         return dialogRef.afterClosed();
     }
 
@@ -95,12 +136,11 @@ export class PoolEditConcreteService extends PoolEditService {
      * Saves/creates edited pool
      */
     save(): Observable<any> {
-        return (this.editModeSubject$.getValue()
-                ? this.update()
-                : this.create()
-        ).pipe(tap(() => this.router.navigate([
-            Routing.RouteBuilder.pool.build()
-        ])));
+        return (
+            this.editModeSubject$.getValue() ? this.update() : this.create()
+        ).pipe(
+            tap(() => this.router.navigate([Routing.RouteBuilder.pool.build()]))
+        );
     }
 
     /**

@@ -1,6 +1,6 @@
-import {Component, DestroyRef, inject, Input, OnInit} from '@angular/core';
-import {OffsetPaginationEvent} from '@sentinel/common/pagination';
-import {TrainingDefinition, TrainingDefinitionStateEnum} from '@crczp/training-model';
+import { Component, DestroyRef, inject, Input, OnInit } from '@angular/core';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
+import { TrainingDefinition, TrainingDefinitionStateEnum } from '@crczp/training-model';
 import {
     SentinelRowDirective,
     SentinelTable,
@@ -8,22 +8,22 @@ import {
     TableActionEvent,
     TableLoadEvent
 } from '@sentinel/components/table';
-import {Observable} from 'rxjs';
-import {map, take} from 'rxjs/operators';
-import {TrainingDefinitionOverviewControls} from '../model/training-definition-overview-controls';
-import {TrainingDefinitionTable} from '../model/training-definition-table';
-import {TrainingDefinitionService} from '../services/state/training-definition.service';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import { Observable } from 'rxjs';
+import { map, take } from 'rxjs/operators';
+import { TrainingDefinitionOverviewControls } from '../model/training-definition-overview-controls';
+import { TrainingDefinitionTable } from '../model/training-definition-table';
+import { TrainingDefinitionService } from '../services/state/training-definition.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
-    PaginationStorageService,
-    providePaginationStorageService,
-    TableDateCellComponent,
-    TableStateCellComponent
-} from "@crczp/common";
-import {SentinelControlItem, SentinelControlItemSignal, SentinelControlsComponent} from "@sentinel/components/controls";
-import {AsyncPipe} from "@angular/common";
-import {FileUploadProgressService} from "../services/file-upload/file-upload-progress.service";
-import {TrainingDefinitionConcreteService} from "../services/state/training-definition.concrete.service";
+    SentinelControlItem,
+    SentinelControlItemSignal,
+    SentinelControlsComponent
+} from '@sentinel/components/controls';
+import { AsyncPipe } from '@angular/common';
+import { FileUploadProgressService } from '../services/file-upload/file-upload-progress.service';
+import { TrainingDefinitionConcreteService } from '../services/state/training-definition.concrete.service';
+import { TableDateCellComponent, TableStateCellComponent } from '@crczp/components';
+import { PaginationStorageService, providePaginationStorageService } from '@crczp/utils';
 
 /**
  * Main smart component of training definition overview
@@ -38,12 +38,15 @@ import {TrainingDefinitionConcreteService} from "../services/state/training-defi
         SentinelTableComponent,
         TableStateCellComponent,
         TableDateCellComponent,
-        SentinelRowDirective
+        SentinelRowDirective,
     ],
     providers: [
         FileUploadProgressService,
-        {provide: TrainingDefinitionService, useClass: TrainingDefinitionConcreteService},
-        providePaginationStorageService(TrainingDefinitionOverviewComponent)
+        {
+            provide: TrainingDefinitionService,
+            useClass: TrainingDefinitionConcreteService,
+        },
+        providePaginationStorageService(TrainingDefinitionOverviewComponent),
     ],
 })
 export class TrainingDefinitionOverviewComponent implements OnInit {
@@ -60,8 +63,13 @@ export class TrainingDefinitionOverviewComponent implements OnInit {
     private paginationService = inject(PaginationStorageService);
 
     ngOnInit(): void {
-        this.topControls = TrainingDefinitionOverviewControls.createTopControls(this.trainingDefinitionService);
-        this.bottomControls = TrainingDefinitionOverviewControls.createBottomControls(this.trainingDefinitionService);
+        this.topControls = TrainingDefinitionOverviewControls.createTopControls(
+            this.trainingDefinitionService
+        );
+        this.bottomControls =
+            TrainingDefinitionOverviewControls.createBottomControls(
+                this.trainingDefinitionService
+            );
         this.initTable();
     }
 
@@ -77,9 +85,9 @@ export class TrainingDefinitionOverviewComponent implements OnInit {
                     0,
                     loadEvent.pagination.size,
                     loadEvent.pagination.sort,
-                    loadEvent.pagination.sortDir,
+                    loadEvent.pagination.sortDir
                 ),
-                loadEvent.filter,
+                loadEvent.filter
             )
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe();
@@ -115,15 +123,22 @@ export class TrainingDefinitionOverviewComponent implements OnInit {
     private initTable() {
         this.hasError$ = this.trainingDefinitionService.hasError$;
         this.isLoading$ = this.trainingDefinitionService.isLoading$;
-        this.trainingDefinitions$ = this.trainingDefinitionService.resource$.pipe(
-            map((resource) => new TrainingDefinitionTable(resource, this.trainingDefinitionService)),
-        );
+        this.trainingDefinitions$ =
+            this.trainingDefinitionService.resource$.pipe(
+                map(
+                    (resource) =>
+                        new TrainingDefinitionTable(
+                            resource,
+                            this.trainingDefinitionService
+                        )
+                )
+            );
         const initialPagination = new OffsetPaginationEvent(
             0,
             this.paginationService.loadPageSize(),
             this.INIT_SORT_NAME,
-            this.INIT_SORT_DIR,
+            this.INIT_SORT_DIR
         );
-        this.onLoadEvent({pagination: initialPagination});
+        this.onLoadEvent({ pagination: initialPagination });
     }
 }

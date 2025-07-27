@@ -1,15 +1,15 @@
-import {inject, Injectable} from '@angular/core';
-import {MatDialog} from '@angular/material/dialog';
-import {SentinelDialogResultEnum} from '@sentinel/components/dialogs';
-import {LinearRunApi} from '@crczp/training-api';
-import {Hint, TrainingLevel} from '@crczp/training-model';
-import {EMPTY, Observable} from 'rxjs';
-import {switchMap, tap} from 'rxjs/operators';
-import {TrainingRunTrainingLevelService} from './training-run-training-level.service';
-import {RunningTrainingRunService} from '../../running/running-training-run.service';
-import {SandboxInstanceApi} from '@crczp/sandbox-api';
-import {SentinelNotificationService} from '@sentinel/layout/notification';
-import {ErrorHandlerService} from "@crczp/common";
+import { inject, Injectable } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { SentinelDialogResultEnum } from '@sentinel/components/dialogs';
+import { LinearRunApi } from '@crczp/training-api';
+import { Hint, TrainingLevel } from '@crczp/training-model';
+import { EMPTY, Observable } from 'rxjs';
+import { switchMap, tap } from 'rxjs/operators';
+import { TrainingRunTrainingLevelService } from './training-run-training-level.service';
+import { RunningTrainingRunService } from '../../running/running-training-run.service';
+import { SandboxInstanceApi } from '@crczp/sandbox-api';
+import { SentinelNotificationService } from '@sentinel/layout/notification';
+import { ErrorHandlerService } from '@crczp/utils';
 
 @Injectable()
 /**
@@ -32,14 +32,16 @@ export class TrainingRunTrainingLevelConcreteService extends TrainingRunTraining
      * Retrieves file for ssh access for trainee
      */
     getAccessFile(): Observable<any> {
-        return this.sandboxApi.getUserSshAccess(this.runningTrainingRunService.sandboxInstanceId).pipe(
-            tap(
-                (_) => _,
-                (err) => {
-                    this.errorHandler.emit(err, 'Access files for trainee');
-                },
-            ),
-        );
+        return this.sandboxApi
+            .getUserSshAccess(this.runningTrainingRunService.sandboxInstanceId)
+            .pipe(
+                tap(
+                    (_) => _,
+                    (err) => {
+                        this.errorHandler.emit(err, 'Access files for trainee');
+                    }
+                )
+            );
     }
 
     /**
@@ -51,20 +53,25 @@ export class TrainingRunTrainingLevelConcreteService extends TrainingRunTraining
             return this.displayEmptyAnswerDialog();
         }
         this.isLoadingSubject$.next(true);
-        return this.api.isCorrectAnswer(this.runningTrainingRunService.trainingRunId, answer).pipe(
-            switchMap((answerCheckResult) =>
-                answerCheckResult.isCorrect
-                    ? this.onCorrectAnswerSubmitted()
-                    : this.onWrongAnswerSubmitted(answerCheckResult),
-            ),
-            tap(
-                () => this.isLoadingSubject$.next(false),
-                (err) => {
-                    this.isLoadingSubject$.next(false);
-                    this.errorHandler.emit(err, 'Submitting answer');
-                },
-            ),
-        );
+        return this.api
+            .isCorrectAnswer(
+                this.runningTrainingRunService.trainingRunId,
+                answer
+            )
+            .pipe(
+                switchMap((answerCheckResult) =>
+                    answerCheckResult.isCorrect
+                        ? this.onCorrectAnswerSubmitted()
+                        : this.onWrongAnswerSubmitted(answerCheckResult)
+                ),
+                tap(
+                    () => this.isLoadingSubject$.next(false),
+                    (err) => {
+                        this.isLoadingSubject$.next(false);
+                        this.errorHandler.emit(err, 'Submitting answer');
+                    }
+                )
+            );
     }
 
     /**
@@ -74,9 +81,11 @@ export class TrainingRunTrainingLevelConcreteService extends TrainingRunTraining
         return this.displayRevealSolutionDialog(level.solutionPenalized).pipe(
             switchMap((result) =>
                 result === SentinelDialogResultEnum.CONFIRMED
-                    ? this.callApiToRevealSolution(this.runningTrainingRunService.trainingRunId)
-                    : EMPTY,
-            ),
+                    ? this.callApiToRevealSolution(
+                          this.runningTrainingRunService.trainingRunId
+                      )
+                    : EMPTY
+            )
         );
     }
 
@@ -88,9 +97,12 @@ export class TrainingRunTrainingLevelConcreteService extends TrainingRunTraining
         return this.displayTakeHintDialog(hint).pipe(
             switchMap((result) =>
                 result === SentinelDialogResultEnum.CONFIRMED
-                    ? this.callApiToTakeHint(this.runningTrainingRunService.trainingRunId, hint)
-                    : EMPTY,
-            ),
+                    ? this.callApiToTakeHint(
+                          this.runningTrainingRunService.trainingRunId,
+                          hint
+                      )
+                    : EMPTY
+            )
         );
     }
 
@@ -105,12 +117,15 @@ export class TrainingRunTrainingLevelConcreteService extends TrainingRunTraining
                 (err) => {
                     this.isLoadingSubject$.next(false);
                     this.errorHandler.emit(err, 'Revealing solution');
-                },
-            ),
+                }
+            )
         );
     }
 
-    private callApiToTakeHint(trainingRunId: number, hint: Hint): Observable<Hint> {
+    private callApiToTakeHint(
+        trainingRunId: number,
+        hint: Hint
+    ): Observable<Hint> {
         this.isLoadingSubject$.next(true);
         return this.api.takeHint(trainingRunId, hint.id).pipe(
             tap(
@@ -121,8 +136,8 @@ export class TrainingRunTrainingLevelConcreteService extends TrainingRunTraining
                 (err) => {
                     this.isLoadingSubject$.next(false);
                     this.errorHandler.emit(err, `Taking hint "${hint.title}"`);
-                },
-            ),
+                }
+            )
         );
     }
 }

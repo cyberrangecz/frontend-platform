@@ -1,11 +1,11 @@
-import {PaginatedResource} from '@sentinel/common/pagination';
-import {TrainingInstance, TrainingRun, TrainingRunStateEnum} from '@crczp/training-model';
-import {Column, DeleteAction, Row, RowAction, SentinelTable} from '@sentinel/components/table';
-import {defer, of} from 'rxjs';
-import {AdaptiveRunService} from '../services/runs/adaptive-run.service';
-import {AdaptiveRunRowAdapter} from './adaptive-run-row-adapter';
-import {DatePipe} from '@angular/common';
-import {DateUtils} from "@crczp/common";
+import { PaginatedResource } from '@sentinel/common/pagination';
+import { TrainingInstance, TrainingRun, TrainingRunStateEnum } from '@crczp/training-model';
+import { Column, DeleteAction, Row, RowAction, SentinelTable } from '@sentinel/components/table';
+import { defer, of } from 'rxjs';
+import { AdaptiveRunService } from '../services/runs/adaptive-run.service';
+import { AdaptiveRunRowAdapter } from './adaptive-run-row-adapter';
+import { DatePipe } from '@angular/common';
+import { DateUtils } from '@crczp/utils';
 
 /**
  * Helper class transforming paginated resource to class for common table component
@@ -15,7 +15,7 @@ export class AdaptiveRunTable extends SentinelTable<AdaptiveRunRowAdapter> {
     constructor(
         resource: PaginatedResource<TrainingRun>,
         service: AdaptiveRunService,
-        trainingInstance: TrainingInstance,
+        trainingInstance: TrainingInstance
     ) {
         const columns = [
             new Column('playerName', 'player', false),
@@ -30,7 +30,11 @@ export class AdaptiveRunTable extends SentinelTable<AdaptiveRunRowAdapter> {
         ];
         const rows = resource.elements.map((element) => {
             element.trainingInstanceId = trainingInstance.id;
-            return AdaptiveRunTable.createRow(element, service, trainingInstance);
+            return AdaptiveRunTable.createRow(
+                element,
+                service,
+                trainingInstance
+            );
         });
         super(rows, columns);
         this.selectable = false;
@@ -41,7 +45,7 @@ export class AdaptiveRunTable extends SentinelTable<AdaptiveRunRowAdapter> {
     private static createRow(
         element: TrainingRun,
         service: AdaptiveRunService,
-        instance: TrainingInstance,
+        instance: TrainingInstance
     ): Row<AdaptiveRunRowAdapter> {
         const datePipe = new DatePipe('en-EN');
         const adapter = element as AdaptiveRunRowAdapter;
@@ -50,7 +54,10 @@ export class AdaptiveRunTable extends SentinelTable<AdaptiveRunRowAdapter> {
         adapter.startTimeFormatted = `${datePipe.transform(adapter.startTime)}`;
         if (adapter.state === TrainingRunStateEnum.FINISHED) {
             adapter.endTimeFormatted = `${datePipe.transform(adapter.endTime)}`;
-            adapter.duration = DateUtils.timeBetweenDatesSimple(adapter.startTime, adapter.endTime);
+            adapter.duration = DateUtils.timeBetweenDatesSimple(
+                adapter.startTime,
+                adapter.endTime
+            );
         } else {
             adapter.endTimeFormatted = '-';
             adapter.duration = '-';
@@ -61,13 +68,13 @@ export class AdaptiveRunTable extends SentinelTable<AdaptiveRunRowAdapter> {
     private static createActions(
         element: TrainingRun,
         service: AdaptiveRunService,
-        instance: TrainingInstance,
+        instance: TrainingInstance
     ): RowAction[] {
         return [
             new DeleteAction(
                 'Delete training run with sandbox',
                 of(false),
-                defer(() => service.delete(element, instance.localEnvironment)),
+                defer(() => service.delete(element, instance.localEnvironment))
             ),
         ];
     }

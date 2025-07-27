@@ -1,20 +1,28 @@
-import {inject, Injectable} from '@angular/core';
-import {Router} from '@angular/router';
-import {OffsetPaginationEvent, PaginatedResource,} from '@sentinel/common/pagination';
-import {PoolApi} from '@crczp/sandbox-api';
-import {LinearTrainingInstanceApi} from '@crczp/training-api';
-import {TrainingInstance} from '@crczp/training-model';
-import {EMPTY, Observable, of} from 'rxjs';
-import {catchError, map, switchMap, tap} from 'rxjs/operators';
-import {TrainingInstanceFilter} from '../../model/adapters/training-instance-filter';
-import {TrainingInstanceOverviewService} from './training-instance-overview.service';
+import { inject, Injectable } from '@angular/core';
+import { Router } from '@angular/router';
+import {
+    OffsetPaginationEvent,
+    PaginatedResource,
+} from '@sentinel/common/pagination';
+import { PoolApi } from '@crczp/sandbox-api';
+import { LinearTrainingInstanceApi } from '@crczp/training-api';
+import { TrainingInstance } from '@crczp/training-model';
+import { EMPTY, Observable, of } from 'rxjs';
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
+import { TrainingInstanceFilter } from '../../model/adapters/training-instance-filter';
+import { TrainingInstanceOverviewService } from './training-instance-overview.service';
 import {
     SentinelConfirmationDialogComponent,
     SentinelConfirmationDialogConfig,
     SentinelDialogResultEnum,
 } from '@sentinel/components/dialogs';
-import {MatDialog} from '@angular/material/dialog';
-import {ErrorHandlerService, NotificationService, PortalConfig, Routing} from '@crczp/common';
+import { MatDialog } from '@angular/material/dialog';
+import {
+    ErrorHandlerService,
+    NotificationService,
+    PortalConfig,
+} from '@crczp/utils';
+import { Routing } from '@crczp/routing-commons';
 
 @Injectable()
 export class TrainingInstanceOverviewConcreteService extends TrainingInstanceOverviewService {
@@ -54,25 +62,27 @@ export class TrainingInstanceOverviewConcreteService extends TrainingInstanceOve
     }
 
     create(): Promise<boolean> {
-        return this.router.navigate([Routing.RouteBuilder.linear_instance.create.build()]);
+        return this.router.navigate([
+            Routing.RouteBuilder.linear_instance.create.build(),
+        ]);
     }
 
     edit(id: number): Promise<boolean> {
-        return this.router.navigate([Routing.RouteBuilder.linear_instance.instanceId(id).edit.build()])
+        return this.router.navigate([
+            Routing.RouteBuilder.linear_instance.instanceId(id).edit.build(),
+        ]);
     }
 
     download(id: number): Observable<boolean> {
-        return this.trainingInstanceApi
-            .archive(id)
-            .pipe(
-                tap({
-                    error: (err) =>
-                        this.errorHandler.emit(
-                            err,
-                            'Downloading training instance'
-                        ),
-                })
-            );
+        return this.trainingInstanceApi.archive(id).pipe(
+            tap({
+                error: (err) =>
+                    this.errorHandler.emit(
+                        err,
+                        'Downloading training instance'
+                    ),
+            })
+        );
     }
 
     delete(trainingInstance: TrainingInstance): Observable<any> {
@@ -86,25 +96,39 @@ export class TrainingInstanceOverviewConcreteService extends TrainingInstanceOve
     }
 
     runs(id: number) {
-        return this.router.navigate([Routing.RouteBuilder.linear_instance.instanceId(id).runs.build()])
+        return this.router.navigate([
+            Routing.RouteBuilder.linear_instance.instanceId(id).runs.build(),
+        ]);
     }
 
     token(id: number) {
-        return this.router.navigate([Routing.RouteBuilder.linear_instance.instanceId(id).access_token.build()])
+        return this.router.navigate([
+            Routing.RouteBuilder.linear_instance
+                .instanceId(id)
+                .access_token.build(),
+        ]);
     }
 
     progress(id: number) {
         return this.router.navigate([
-            Routing.RouteBuilder.linear_instance.instanceId(id).progress.build()
-        ])
+            Routing.RouteBuilder.linear_instance
+                .instanceId(id)
+                .progress.build(),
+        ]);
     }
 
     results(id: number) {
-        return this.router.navigate([Routing.RouteBuilder.linear_instance.instanceId(id).results.build()])
+        return this.router.navigate([
+            Routing.RouteBuilder.linear_instance.instanceId(id).results.build(),
+        ]);
     }
 
     aggregatedResults(id: number) {
-        return this.router.navigate([Routing.RouteBuilder.linear_instance.instanceId(id).aggregated_results.build()])
+        return this.router.navigate([
+            Routing.RouteBuilder.linear_instance
+                .instanceId(id)
+                .aggregated_results.build(),
+        ]);
     }
 
     /**

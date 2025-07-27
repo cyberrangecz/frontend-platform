@@ -1,5 +1,5 @@
-import {PaginatedResource} from '@sentinel/common/pagination';
-import {TrainingDefinition, TrainingDefinitionStateEnum} from '@crczp/training-model';
+import { PaginatedResource } from '@sentinel/common/pagination';
+import { TrainingDefinition, TrainingDefinitionStateEnum } from '@crczp/training-model';
 import {
     Column,
     DeleteAction,
@@ -7,12 +7,13 @@ import {
     EditAction,
     Row,
     RowAction,
-    SentinelTable,
+    SentinelTable
 } from '@sentinel/components/table';
-import {defer, of} from 'rxjs';
-import {AdaptiveDefinitionService} from '../services/state/adaptive-definition.service';
-import {TrainingDefinitionRowAdapter} from './training-definition-row-adapter';
-import {DateUtils, Routing} from "@crczp/common";
+import { defer, of } from 'rxjs';
+import { AdaptiveDefinitionService } from '../services/state/adaptive-definition.service';
+import { TrainingDefinitionRowAdapter } from './training-definition-row-adapter';
+import { DateUtils } from '@crczp/utils';
+import { Routing } from '@crczp/routing-commons';
 
 /**
  * Helper class transforming paginated resource to class for common table component
@@ -21,11 +22,16 @@ import {DateUtils, Routing} from "@crczp/common";
 export class TrainingDefinitionTable extends SentinelTable<TrainingDefinition> {
     constructor(
         resource: PaginatedResource<TrainingDefinition>,
-        service: AdaptiveDefinitionService,
+        service: AdaptiveDefinitionService
     ) {
         const columns = [
             new Column('title', 'title', true),
-            new Column('duration', 'estimated duration', true, 'estimatedDuration'),
+            new Column(
+                'duration',
+                'estimated duration',
+                true,
+                'estimatedDuration'
+            ),
             new Column('createdAt', 'created at', true, 'createdAt'),
             new Column('lastEditTime', 'last edit', true, 'lastEdited'),
             new Column('lastEditBy', 'last edit by', false),
@@ -33,7 +39,7 @@ export class TrainingDefinitionTable extends SentinelTable<TrainingDefinition> {
         ];
 
         const rows = resource.elements.map((definition) =>
-            TrainingDefinitionTable.createRow(definition, service),
+            TrainingDefinitionTable.createRow(definition, service)
         );
         super(rows, columns);
 
@@ -45,31 +51,48 @@ export class TrainingDefinitionTable extends SentinelTable<TrainingDefinition> {
 
     private static createRow(
         td: TrainingDefinition,
-        service: AdaptiveDefinitionService,
+        service: AdaptiveDefinitionService
     ): Row<TrainingDefinition> {
         const adapter = td as TrainingDefinitionRowAdapter;
-        adapter.duration = DateUtils.formatDurationFull(td.estimatedDuration * 60);
+        adapter.duration = DateUtils.formatDurationFull(
+            td.estimatedDuration * 60
+        );
         adapter.createdAt = new Date(td.createdAt);
-        const row = new Row(adapter, TrainingDefinitionTable.createActions(adapter, service));
-        row.addLink('title', Routing.RouteBuilder.adaptive_definition.definitionId(td.id).build());
+        const row = new Row(
+            adapter,
+            TrainingDefinitionTable.createActions(adapter, service)
+        );
+        row.addLink(
+            'title',
+            Routing.RouteBuilder.adaptive_definition.definitionId(td.id).build()
+        );
         return row;
     }
 
-    private static createActions(td: TrainingDefinition, service: AdaptiveDefinitionService): RowAction[] {
-        return [...this.createBaseActions(td, service), ...this.createStateActions(td, service)];
+    private static createActions(
+        td: TrainingDefinition,
+        service: AdaptiveDefinitionService
+    ): RowAction[] {
+        return [
+            ...this.createBaseActions(td, service),
+            ...this.createStateActions(td, service),
+        ];
     }
 
-    private static createBaseActions(td: TrainingDefinition, service: AdaptiveDefinitionService): RowAction[] {
+    private static createBaseActions(
+        td: TrainingDefinition,
+        service: AdaptiveDefinitionService
+    ): RowAction[] {
         return [
             new EditAction(
                 'Edit training definition',
                 of(false),
-                defer(() => service.edit(td)),
+                defer(() => service.edit(td))
             ),
             new DeleteAction(
                 'Delete training definition',
                 of(false),
-                defer(() => service.delete(td)),
+                defer(() => service.delete(td))
             ),
             new RowAction(
                 'clone',
@@ -78,12 +101,12 @@ export class TrainingDefinitionTable extends SentinelTable<TrainingDefinition> {
                 'primary',
                 'Clone training definition',
                 of(false),
-                defer(() => service.clone(td)),
+                defer(() => service.clone(td))
             ),
             new DownloadAction(
                 'Download training definition',
                 of(false),
-                defer(() => service.download(td)),
+                defer(() => service.download(td))
             ),
             new RowAction(
                 'preview',
@@ -92,12 +115,19 @@ export class TrainingDefinitionTable extends SentinelTable<TrainingDefinition> {
                 'primary',
                 'Preview training run',
                 of(false),
-                defer(() => Routing.RouteBuilder.adaptive_definition.definitionId(td.id).preview.build()),
+                defer(() =>
+                    Routing.RouteBuilder.adaptive_definition
+                        .definitionId(td.id)
+                        .preview.build()
+                )
             ),
         ];
     }
 
-    private static createStateActions(td: TrainingDefinition, service: AdaptiveDefinitionService): RowAction[] {
+    private static createStateActions(
+        td: TrainingDefinition,
+        service: AdaptiveDefinitionService
+    ): RowAction[] {
         switch (td.state) {
             case TrainingDefinitionStateEnum.Released:
                 return [
@@ -108,7 +138,12 @@ export class TrainingDefinitionTable extends SentinelTable<TrainingDefinition> {
                         'primary',
                         'Unrelease training definition',
                         of(false),
-                        defer(() => service.changeState(td, TrainingDefinitionStateEnum.Unreleased)),
+                        defer(() =>
+                            service.changeState(
+                                td,
+                                TrainingDefinitionStateEnum.Unreleased
+                            )
+                        )
                     ),
                     new RowAction(
                         'archive',
@@ -117,7 +152,12 @@ export class TrainingDefinitionTable extends SentinelTable<TrainingDefinition> {
                         'warn',
                         'Archive training definition',
                         of(false),
-                        defer(() => service.changeState(td, TrainingDefinitionStateEnum.Archived)),
+                        defer(() =>
+                            service.changeState(
+                                td,
+                                TrainingDefinitionStateEnum.Archived
+                            )
+                        )
                     ),
                 ];
             case TrainingDefinitionStateEnum.Unreleased:
@@ -129,7 +169,12 @@ export class TrainingDefinitionTable extends SentinelTable<TrainingDefinition> {
                         'primary',
                         'Release training definition',
                         of(false),
-                        defer(() => service.changeState(td, TrainingDefinitionStateEnum.Released)),
+                        defer(() =>
+                            service.changeState(
+                                td,
+                                TrainingDefinitionStateEnum.Released
+                            )
+                        )
                     ),
                 ];
             default:

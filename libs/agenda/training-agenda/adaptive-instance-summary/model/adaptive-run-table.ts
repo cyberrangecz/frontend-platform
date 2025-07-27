@@ -1,9 +1,9 @@
-import {PaginatedResource} from '@sentinel/common/pagination';
-import {DatePipe} from '@angular/common';
-import {TrainingRun, TrainingRunStateEnum} from '@crczp/training-model';
-import {Column, Row, SentinelTable} from '@sentinel/components/table';
-import {AdaptiveRunRowAdapter} from './adaptive-run-row-adapter';
-import {DateUtils} from "@crczp/common";
+import { PaginatedResource } from '@sentinel/common/pagination';
+import { DatePipe } from '@angular/common';
+import { TrainingRun, TrainingRunStateEnum } from '@crczp/training-model';
+import { Column, Row, SentinelTable } from '@sentinel/components/table';
+import { AdaptiveRunRowAdapter } from './adaptive-run-row-adapter';
+import { DateUtils } from '@crczp/utils';
 
 /**
  * @dynamic
@@ -18,7 +18,9 @@ export class AdaptiveRunTable extends SentinelTable<AdaptiveRunRowAdapter> {
             new Column('duration', 'duration', false),
             new Column('sandboxInstanceId', 'sandbox id', false),
         ];
-        const rows = resource.elements.map((element) => AdaptiveRunTable.createRow(element));
+        const rows = resource.elements.map((element) =>
+            AdaptiveRunTable.createRow(element)
+        );
         super(rows, columns);
         this.pagination = resource.pagination;
         this.filterable = false;
@@ -31,7 +33,10 @@ export class AdaptiveRunTable extends SentinelTable<AdaptiveRunRowAdapter> {
         adapter.startTimeFormatted = `${datePipe.transform(adapter.startTime)}`;
         if (adapter.state === TrainingRunStateEnum.FINISHED) {
             adapter.endTimeFormatted = `${datePipe.transform(adapter.endTime)}`;
-            adapter.duration = DateUtils.timeBetweenDatesSimple(adapter.startTime, adapter.endTime);
+            adapter.duration = DateUtils.timeBetweenDatesSimple(
+                adapter.startTime,
+                adapter.endTime
+            );
         } else {
             adapter.endTimeFormatted = '-';
             adapter.duration = '-';

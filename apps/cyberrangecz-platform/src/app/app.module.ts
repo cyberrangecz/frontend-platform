@@ -3,25 +3,34 @@ import {
     HttpClient,
     provideHttpClient,
     withInterceptors,
-    withInterceptorsFromDi
+    withInterceptorsFromDi,
 } from '@angular/common/http';
-import {ErrorHandler, importProvidersFrom, inject, Injectable, NgModule} from '@angular/core';
-import {BrowserModule} from '@angular/platform-browser';
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {SentinelConfirmationDialogComponent} from '@sentinel/components/dialogs';
-import {AppComponent} from './app.component';
-import {loadingInterceptor} from './services/http-interceptors/loading-interceptor';
-import {APP_CONFIG, appConfigProvider, SentinelConfig} from '@sentinel/common/dynamic-env';
-import {ErrorHandlerService} from '../../../../libs/common/src/error-handling/error-handler.service';
-import {LoadingService} from '../../../../libs/common/src/error-handling/loading.service';
-import {NotificationService} from '../../../../libs/common/src/error-handling/notification.service';
-import {tokenRefreshInterceptor} from './services/http-interceptors/token-refresh-interceptor';
-import {TokenRefreshService} from './services/shared/token-refresh.service';
-import {SentinelLayout1Component} from "@sentinel/layout/layout1";
-import {AppRoutingModule} from "./app-routing.module";
-import {LoginComponent} from "./components/login/login.component";
-import {PortalConfig} from "@crczp/common";
-import {provideSentinelNotifications} from "@sentinel/layout/notification";
+import {
+    ErrorHandler,
+    importProvidersFrom,
+    inject,
+    Injectable,
+    NgModule,
+} from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+import {
+    BrowserAnimationsModule,
+    provideAnimations,
+} from '@angular/platform-browser/animations';
+import { SentinelConfirmationDialogComponent } from '@sentinel/components/dialogs';
+import { AppComponent } from './app.component';
+import { loadingInterceptor } from './services/http-interceptors/loading-interceptor';
+import {
+    APP_CONFIG,
+    appConfigProvider,
+    SentinelConfig,
+} from '@sentinel/common/dynamic-env';
+import { tokenRefreshInterceptor } from './services/http-interceptors/token-refresh-interceptor';
+import { TokenRefreshService } from './services/shared/token-refresh.service';
+import { SentinelLayout1Component } from '@sentinel/layout/layout1';
+import { AppRoutingModule } from './app-routing.module';
+import { LoginComponent } from './components/login/login.component';
+import { provideSentinelNotifications } from '@sentinel/layout/notification';
 import {
     provideSentinelAuth,
     SentinelAuthConfig,
@@ -31,15 +40,24 @@ import {
     SentinelUagStrategyConfig,
     UnauthorizedInterceptor,
     User,
-    UserDTO
-} from "@sentinel/auth";
-import {RoleService} from "./services/role.service";
-import {errorLogInterceptor} from "./services/http-interceptors/error-log-interceptor";
-import {catchError, Observable, retry, throwError} from "rxjs";
-import {map} from "rxjs/operators";
-import {provideHttpCache, withHttpCacheInterceptor, withLocalStorage} from "@ngneat/cashew";
-import {environment} from "../environments/environment";
-
+    UserDTO,
+} from '@sentinel/auth';
+import { RoleService } from './services/role.service';
+import { errorLogInterceptor } from './services/http-interceptors/error-log-interceptor';
+import { catchError, Observable, retry, throwError } from 'rxjs';
+import { map } from 'rxjs/operators';
+import {
+    provideHttpCache,
+    withHttpCacheInterceptor,
+    withLocalStorage,
+} from '@ngneat/cashew';
+import { environment } from '../environments/environment';
+import { LoadingService } from './services/loading.service';
+import {
+    ErrorHandlerService,
+    NotificationService,
+    PortalConfig,
+} from '@crczp/utils';
 
 @Injectable()
 export class SentinelUagAuthorizationStrategy extends SentinelAuthorizationStrategy {
@@ -49,7 +67,8 @@ export class SentinelUagAuthorizationStrategy extends SentinelAuthorizationStrat
     private readonly POSSIBLE_RETRIES = 3;
 
     authorize(): Observable<User> {
-        const config = this.configService.config.authorizationStrategyConfig as SentinelUagStrategyConfig;
+        const config = this.configService.config
+            .authorizationStrategyConfig as SentinelUagStrategyConfig;
         if (config.authorizationUrl) {
             return this.http.get<UserDTO>(config.authorizationUrl).pipe(
                 map((resp) => User.fromDTO(resp)),
@@ -57,10 +76,15 @@ export class SentinelUagAuthorizationStrategy extends SentinelAuthorizationStrat
                 catchError((err) => {
                     this.errorHandler.emit(err, 'Authorizing to User & Group');
                     return throwError(err);
-                }),
+                })
             );
         } else {
-            return throwError(() => new Error('Failed to read authorizationUrl from SentinelUagStrategyConfig'));
+            return throwError(
+                () =>
+                    new Error(
+                        'Failed to read authorizationUrl from SentinelUagStrategyConfig'
+                    )
+            );
         }
     }
 }
@@ -76,57 +100,58 @@ export class SentinelUagAuthorizationStrategy extends SentinelAuthorizationStrat
         SentinelConfirmationDialogComponent,
     ],
     providers: [
+        importProvidersFrom(BrowserModule),
+        provideAnimations(),
+        appConfigProvider,
+        {
+            provide: PortalConfig,
+            useFactory: (config: SentinelConfig) =>
+                PortalConfig.schema().parse(config),
+            deps: [APP_CONFIG],
+        },
+        provideSentinelNotifications(),
         ErrorHandlerService,
-        {provide: ErrorHandler, useClass: ErrorHandlerService},
+        { provide: ErrorHandler, useExisting: ErrorHandlerService },
         {
             provide: SentinelAuthErrorHandler,
-            useClass: ErrorHandlerService,
+            useExisting: ErrorHandlerService,
         },
-        {provide: HTTP_INTERCEPTORS, useClass: UnauthorizedInterceptor, multi: true},
+        {
+            provide: HTTP_INTERCEPTORS,
+            useClass: UnauthorizedInterceptor,
+            multi: true,
+        },
         provideHttpClient(
             withInterceptorsFromDi(),
             withInterceptors(
                 [
-                    loadingInterceptor,
                     tokenRefreshInterceptor,
+                    loadingInterceptor,
                     errorLogInterceptor,
                 ].concat(
-                    // NOTE caching disabled for debug mode
+                    //NOTE caching disabled for debug mode
                     environment.production ? withHttpCacheInterceptor() : []
                 )
-            )),
-        // NOTE caching disabled for debug mode
-        environment.production ? provideHttpCache(withLocalStorage()) : null,
-        provideSentinelNotifications(),
-        importProvidersFrom(BrowserModule),
-        appConfigProvider,
-        {
-            provide: PortalConfig,
-            useFactory: (config: SentinelConfig) => PortalConfig.schema().parse(config),
-            deps: [APP_CONFIG],
-        },
+            )
+        ),
         {
             provide: SentinelAuthConfig,
             useFactory: () => inject(PortalConfig).authConfig,
             deps: [PortalConfig],
         },
         RoleService,
-        {provide: SentinelAuthorizationStrategy, useClass: SentinelUagAuthorizationStrategy},
-        provideSentinelAuth(
-            () => inject(APP_CONFIG).authConfig,
-            [APP_CONFIG],
-        ),
+        {
+            provide: SentinelAuthorizationStrategy,
+            useClass: SentinelUagAuthorizationStrategy,
+        },
+        provideSentinelAuth(() => inject(APP_CONFIG).authConfig, [APP_CONFIG]),
         LoadingService,
         NotificationService,
         TokenRefreshService,
-
-    ],
+    ].concat(
+        //NOTE caching disabled for debug mode
+        environment.production ? [provideHttpCache(withLocalStorage())] : []
+    ),
     bootstrap: [AppComponent],
 })
-/**
- * Main app module. Contains global providers and module imports.
- */
-export class AppModule {
-}
-
-
+export class AppModule {}

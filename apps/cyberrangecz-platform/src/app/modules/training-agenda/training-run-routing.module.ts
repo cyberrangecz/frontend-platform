@@ -1,8 +1,13 @@
-import {NgModule} from '@angular/core';
-import {RouterModule} from '@angular/router';
-import {TrainingRunOverviewComponent} from '@crczp/training-agenda/run-overview';
-import {Routing, ValidRouterConfig} from "@crczp/common";
-import {AccessTrainingRunInfo, TrainingRun} from "@crczp/training-model";
+import { NgModule } from '@angular/core';
+import { RouterModule } from '@angular/router';
+import { TrainingRunOverviewComponent } from '@crczp/training-agenda/run-overview';
+import { AccessTrainingRunInfo, TrainingRun } from '@crczp/training-model';
+import { TrainingApiModule } from '@crczp/training-api';
+import {
+    Routing,
+    TrainingResolverHelperService,
+    ValidRouterConfig,
+} from '@crczp/routing-commons';
 
 const routes: ValidRouterConfig<'run'> = [
     {
@@ -12,66 +17,99 @@ const routes: ValidRouterConfig<'run'> = [
     {
         path: 'adaptive/:runToken/access',
         loadComponent: () =>
-            import('@crczp/training-agenda/adaptive-run-detail').then((m) => m.AdaptiveRunDetailComponent),
+            import('@crczp/training-agenda/adaptive-run-detail').then(
+                (m) => m.AdaptiveRunDetailComponent
+            ),
         data: {
             breadcrumb: 'Training',
             title: undefined,
         },
-        resolve: {[AccessTrainingRunInfo.name]: Routing.Resolvers.TrainingRun.resolveRunAccess},
+        resolve: {
+            [AccessTrainingRunInfo.name]:
+                Routing.Resolvers.TrainingRun.resolveRunAccess,
+        },
     },
     {
         path: 'adaptive/:runId/resume',
         loadComponent: () =>
-            import('@crczp/training-agenda/adaptive-run-detail').then((m) => m.AdaptiveRunDetailComponent),
+            import('@crczp/training-agenda/adaptive-run-detail').then(
+                (m) => m.AdaptiveRunDetailComponent
+            ),
         data: {
             breadcrumb: 'Training',
             title: undefined,
         },
-        resolve: {[AccessTrainingRunInfo.name]: Routing.Resolvers.TrainingRun.resolveRunAccess},
+        resolve: {
+            [AccessTrainingRunInfo.name]:
+                Routing.Resolvers.TrainingRun.resolveRunAccess,
+        },
     },
     {
         path: 'linear/:runToken/access',
         loadComponent: () =>
-            import('@crczp/training-agenda/run-detail').then((m) => m.TrainingRunDetailComponent),
+            import('@crczp/training-agenda/run-detail').then(
+                (m) => m.TrainingRunDetailComponent
+            ),
         data: {
             breadcrumb: 'Training',
             title: undefined,
         },
-        resolve: {[AccessTrainingRunInfo.name]: Routing.Resolvers.TrainingRun.resolveRunAccess},
+        resolve: {
+            [AccessTrainingRunInfo.name]:
+                Routing.Resolvers.TrainingRun.resolveRunAccess,
+        },
     },
     {
         path: 'adaptive/:runId/resume',
         loadComponent: () =>
-            import('@crczp/training-agenda/run-detail').then((m) => m.TrainingRunDetailComponent),
+            import('@crczp/training-agenda/run-detail').then(
+                (m) => m.TrainingRunDetailComponent
+            ),
         data: {
             breadcrumb: 'Training',
             title: undefined,
         },
-        resolve: {[AccessTrainingRunInfo.name]: Routing.Resolvers.TrainingRun.resolveRunAccess},
+        resolve: {
+            [AccessTrainingRunInfo.name]:
+                Routing.Resolvers.TrainingRun.resolveRunAccess,
+        },
     },
     {
         path: 'linear/:runId/results',
         loadComponent: () =>
-            import('@crczp/training-agenda/run-results').then((m) => m.TrainingRunResultsComponent),
+            import('@crczp/training-agenda/run-results').then(
+                (m) => m.TrainingRunResultsComponent
+            ),
         data: {
             breadcrumb: 'Results',
             title: 'Training Run Results',
         },
-        resolve: {[TrainingRun.name]: Routing.Resolvers.TrainingRun.resolveAccessedTrainingRunResults},
+        resolve: {
+            [TrainingRun.name]:
+                Routing.Resolvers.TrainingRun.resolveAccessedTrainingRunResults,
+        },
     },
     {
         path: 'adaptive/:runId/results',
         loadComponent: () =>
-            import('@crczp/training-agenda/adaptive-run-results').then((m) => m.AdaptiveRunResultsComponent),
+            import('@crczp/training-agenda/adaptive-run-results').then(
+                (m) => m.AdaptiveRunResultsComponent
+            ),
         data: {
             breadcrumb: 'Results',
             title: 'Training Run Results',
         },
-        resolve: {[TrainingRun.name]: Routing.Resolvers.TrainingRun.resolveAccessedTrainingRunResults},
+        resolve: {
+            [TrainingRun.name]:
+                Routing.Resolvers.TrainingRun.resolveAccessedTrainingRunResults,
+        },
     },
     {
         path: 'mitre-techniques',
-        loadComponent: () => import('@crczp/training-agenda/mitre-techniques').then((m) => m.MitreTechniquesComponent),
+        loadComponent: () =>
+            import('@crczp/training-agenda/mitre-techniques').then(
+                (m) => m.MitreTechniquesComponent
+            ),
         data: {
             title: 'MITRE Techniques',
             breadcrumb: 'MITRE Techniques',
@@ -83,9 +121,10 @@ const routes: ValidRouterConfig<'run'> = [
 @NgModule({
     imports: [
         RouterModule.forChild(routes),
+        TrainingApiModule,
         TrainingRunOverviewComponent,
     ],
+    providers: [TrainingResolverHelperService],
     exports: [RouterModule],
 })
-export class TrainingRunRoutingModule {
-}
+export class TrainingRunRoutingModule {}

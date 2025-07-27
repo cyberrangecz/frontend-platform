@@ -1,19 +1,29 @@
-import {inject, Injectable} from '@angular/core';
-import {MatDialog} from '@angular/material/dialog';
+import { inject, Injectable } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import {
     SentinelConfirmationDialogComponent,
     SentinelConfirmationDialogConfig,
     SentinelDialogResultEnum,
 } from '@sentinel/components/dialogs';
-import {OffsetPaginationEvent, PaginatedResource,} from '@sentinel/common/pagination';
-import {UserApi} from '@crczp/user-and-group-api';
-import {User} from '@crczp/user-and-group-model';
-import {EMPTY, Observable} from 'rxjs';
-import {map, switchMap, take, tap} from 'rxjs/operators';
-import {SelectablePaginatedService, UserFilter,} from '@crczp/user-and-group-agenda/internal';
-import {UsersUploadDialogComponent} from '../components/upload-dialog/users-upload-dialog.component';
-import {FileUploadProgressService} from './file-upload/file-upload-progress.service';
-import {ErrorHandlerService, NotificationService, PortalConfig} from '@crczp/common';
+import {
+    OffsetPaginationEvent,
+    PaginatedResource,
+} from '@sentinel/common/pagination';
+import { UserApi } from '@crczp/user-and-group-api';
+import { User } from '@crczp/user-and-group-model';
+import { EMPTY, Observable } from 'rxjs';
+import { map, switchMap, take, tap } from 'rxjs/operators';
+import {
+    SelectablePaginatedService,
+    UserFilter,
+} from '@crczp/user-and-group-agenda/internal';
+import { UsersUploadDialogComponent } from '../components/upload-dialog/users-upload-dialog.component';
+import { FileUploadProgressService } from './file-upload/file-upload-progress.service';
+import {
+    ErrorHandlerService,
+    NotificationService,
+    PortalConfig,
+} from '@crczp/utils';
 
 /**
  * Basic implementation of a layer between a component and an API service.
@@ -107,17 +117,12 @@ export class UserOverviewService extends SelectablePaginatedService<User> {
      * Gets OIDC users info
      */
     getLocalOIDCUsers(): Observable<any> {
-        return this.api
-            .getLocalOIDCUsers()
-            .pipe(
-                tap({
-                    error: (err) =>
-                        this.errorHandler.emit(
-                            err,
-                            'Downloading OIDC users info'
-                        ),
-                })
-            );
+        return this.api.getLocalOIDCUsers().pipe(
+            tap({
+                error: (err) =>
+                    this.errorHandler.emit(err, 'Downloading OIDC users info'),
+            })
+        );
     }
 
     /**
@@ -131,7 +136,10 @@ export class UserOverviewService extends SelectablePaginatedService<User> {
             switchMap((file) => this.api.importUsers(file)),
             tap(
                 () => {
-                    this.notificationService.emit('success', 'Users were imported');
+                    this.notificationService.emit(
+                        'success',
+                        'Users were imported'
+                    );
                     this.fileUploadProgressService.finish();
                     dialogRef.close();
                 },
@@ -159,7 +167,7 @@ export class UserOverviewService extends SelectablePaginatedService<User> {
 
         const dialogRef = this.dialog.open(
             SentinelConfirmationDialogComponent,
-            {data: dialogData}
+            { data: dialogData }
         );
         return dialogRef
             .afterClosed()

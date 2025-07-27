@@ -1,8 +1,9 @@
-import {NgModule} from '@angular/core';
-import {RouterModule} from '@angular/router';
-import {MicroserviceOverviewComponent} from '@crczp/user-and-group-agenda/microservice-overview';
-import {MicroserviceEditCanDeactivate} from "@crczp/user-and-group-agenda/microservice-registration";
-import {ValidRouterConfig} from "@crczp/common";
+import { NgModule } from '@angular/core';
+import { RouterModule } from '@angular/router';
+import { MicroserviceOverviewComponent } from '@crczp/user-and-group-agenda/microservice-overview';
+import { MicroserviceEditCanDeactivate } from '@crczp/user-and-group-agenda/microservice-registration';
+import { UserAndGroupApiModule } from '@crczp/user-and-group-api';
+import { ValidRouterConfig } from '@crczp/routing-commons';
 
 const routes: ValidRouterConfig<'microservice'> = [
     {
@@ -12,7 +13,9 @@ const routes: ValidRouterConfig<'microservice'> = [
     {
         path: 'create',
         loadComponent: () =>
-            import('@crczp/user-and-group-agenda/microservice-registration').then((m) => m.MicroserviceEditComponent),
+            import(
+                '@crczp/user-and-group-agenda/microservice-registration'
+            ).then((m) => m.MicroserviceEditComponent),
         data: {
             breadcrumb: 'Registration',
             title: 'Microservice Registration',
@@ -25,8 +28,7 @@ const routes: ValidRouterConfig<'microservice'> = [
  * Routing module training definition overview
  */
 @NgModule({
-    imports: [RouterModule.forChild(routes)],
+    imports: [RouterModule.forChild(routes), UserAndGroupApiModule],
     exports: [RouterModule],
 })
-export class MicroserviceRoutingModule {
-}
+export class MicroserviceRoutingModule {}

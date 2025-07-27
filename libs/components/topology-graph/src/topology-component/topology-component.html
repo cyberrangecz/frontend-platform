@@ -1,20 +1,36 @@
-<mat-tab-group
-    [(selectedIndex)]="selectedIndex"
-    [animationDuration]="0.2"
-    [mat-stretch-tabs]="false"
-    [preserveContent]="true">
-    <mat-tab label="Topology">
-        <crczp-topology-graph
-            (openConsole)="handleOpenConsole($event)"
-            [links]="presetLinks"
-            [nodes]="presetNodes"
-        />
-    </mat-tab>
-    @for (tab of tabs(); let i = $index; track $index) {
-        <mat-tab [label]="tab.title" [matTooltip]="tab.ip">
-            <ng-template matTabContent>
-            </ng-template>
+<div [class.mat-elevation-z2]="true" class="toplogy-wrapper wh-100">
+    <mat-tab-group
+        [(selectedIndex)]="selectedIndex"
+        [animationDuration]="0.2"
+        [mat-stretch-tabs]="false"
+        [preserveContent]="true"
+    >
+        <mat-tab label="Topology">
+            <crczp-topology-graph
+                (openConsole)="handleOpenConsole($event)"
+                [links]="links"
+                [nodes]="nodes"
+            />
         </mat-tab>
-    }
+        @for (tab of tabs(); let i = $index; track $index) {
+            <mat-tab [matTooltip]="tab.ip">
+                <ng-template mat-tab-label>
+                    <span class="tab-label">
+                        {{ tab.title }}
+                        <span class="tab-ip">{{ tab.ip }}</span>
+                        <button>
+                            x
+                        </button>
+                    </span>
+                </ng-template>
 
-</mat-tab-group>
+                <crczp-console-view
+                    [sandboxUUID]="''"
+                    [machineIP]="''"
+                />
+            </mat-tab>
+        }
+    </mat-tab-group>
+</div>
+
+

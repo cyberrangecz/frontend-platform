@@ -1,15 +1,14 @@
-import {inject, Injectable} from '@angular/core';
-import {MitreTechniquesApi} from '@crczp/training-api';
-import {Observable} from 'rxjs';
-import {tap} from 'rxjs/operators';
-import {MitreTechniquesOverviewService} from './mitre-techniques.service';
-import {ErrorHandlerService} from "@crczp/common";
+import { inject, Injectable } from '@angular/core';
+import { MitreTechniquesApi } from '@crczp/training-api';
+import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
+import { MitreTechniquesOverviewService } from './mitre-techniques.service';
+import { ErrorHandlerService } from '@crczp/utils';
 
 @Injectable()
 export class MitreTechniquesOverviewConcreteService extends MitreTechniquesOverviewService {
     private mitreTechniquesApi = inject(MitreTechniquesApi);
     private errorHandler = inject(ErrorHandlerService);
-
 
     getMitreTechniques(played: boolean): Observable<string> {
         return this.mitreTechniquesApi.getMitreTechniques(played).pipe(
@@ -20,8 +19,8 @@ export class MitreTechniquesOverviewConcreteService extends MitreTechniquesOverv
                 (err) => {
                     this.hasErrorSubject$.next(true);
                     this.errorHandler.emit(err, 'Fetching mitre techniques');
-                },
-            ),
+                }
+            )
         );
     }
 }

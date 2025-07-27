@@ -1,24 +1,25 @@
-import {inject, Injectable} from '@angular/core';
-import {MatDialog} from '@angular/material/dialog';
-import {Router} from '@angular/router';
+import { inject, Injectable } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import {
     SentinelConfirmationDialogComponent,
     SentinelConfirmationDialogConfig,
-    SentinelDialogResultEnum,
+    SentinelDialogResultEnum
 } from '@sentinel/components/dialogs';
-import {SentinelFilter} from '@sentinel/common/filter';
-import {OffsetPaginationEvent, PaginatedResource,} from '@sentinel/common/pagination';
-import {LinearTrainingDefinitionApi} from '@crczp/training-api';
-import {TrainingDefinition, TrainingDefinitionStateEnum,} from '@crczp/training-model';
-import {EMPTY, from, Observable} from 'rxjs';
-import {map, switchMap, take, tap} from 'rxjs/operators';
-import {CloneDialogComponent} from '../../components/clone-dialog/clone-dialog.component';
+import { SentinelFilter } from '@sentinel/common/filter';
+import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
+import { LinearTrainingDefinitionApi } from '@crczp/training-api';
+import { TrainingDefinition, TrainingDefinitionStateEnum } from '@crczp/training-model';
+import { EMPTY, from, Observable } from 'rxjs';
+import { map, switchMap, take, tap } from 'rxjs/operators';
+import { CloneDialogComponent } from '../../components/clone-dialog/clone-dialog.component';
 import {
     TrainingDefinitionUploadDialogComponent
 } from '../../components/upload-dialog/training-definition-upload-dialog.component';
-import {FileUploadProgressService} from '../file-upload/file-upload-progress.service';
-import {TrainingDefinitionService} from './training-definition.service';
-import {ErrorHandlerService, NotificationService, PortalConfig, Routing} from '@crczp/common';
+import { FileUploadProgressService } from '../file-upload/file-upload-progress.service';
+import { TrainingDefinitionService } from './training-definition.service';
+import { ErrorHandlerService, NotificationService, PortalConfig } from '@crczp/utils';
+import { Routing } from '@crczp/routing-commons';
 
 /**
  * Basic implementation of a layer between a component and an API service.
@@ -69,14 +70,18 @@ export class TrainingDefinitionConcreteService extends TrainingDefinitionService
 
     create(): Observable<boolean> {
         return from(
-            this.router.navigate([Routing.RouteBuilder.linear_definition.create.build()])
+            this.router.navigate([
+                Routing.RouteBuilder.linear_definition.create.build(),
+            ])
         );
     }
 
     edit(trainingDefinitionId: number): Observable<boolean> {
         return from(
             this.router.navigate([
-                Routing.RouteBuilder.linear_definition.definitionId(trainingDefinitionId).edit.build()
+                Routing.RouteBuilder.linear_definition
+                    .definitionId(trainingDefinitionId)
+                    .edit.build(),
             ])
         );
     }
@@ -84,13 +89,19 @@ export class TrainingDefinitionConcreteService extends TrainingDefinitionService
     preview(trainingDefinitionId: number): Observable<boolean> {
         return from(
             this.router.navigate([
-                Routing.RouteBuilder.linear_definition.definitionId(trainingDefinitionId).preview.build()
+                Routing.RouteBuilder.linear_definition
+                    .definitionId(trainingDefinitionId)
+                    .preview.build(),
             ])
         );
     }
 
     showMitreTechniques(): Observable<boolean> {
-        return from(this.router.navigate([Routing.RouteBuilder.mitre_techniques.build()]));
+        return from(
+            this.router.navigate([
+                Routing.RouteBuilder.mitre_techniques.build(),
+            ])
+        );
     }
 
     /**
@@ -132,17 +143,15 @@ export class TrainingDefinitionConcreteService extends TrainingDefinitionService
      * @param trainingDefinition training definition to be downloaded
      */
     download(trainingDefinition: TrainingDefinition): Observable<any> {
-        return this.api
-            .download(trainingDefinition.id)
-            .pipe(
-                tap({
-                    error: (err) =>
-                        this.errorHandler.emit(
-                            err,
-                            'Downloading training definition'
-                        ),
-                })
-            );
+        return this.api.download(trainingDefinition.id).pipe(
+            tap({
+                error: (err) =>
+                    this.errorHandler.emit(
+                        err,
+                        'Downloading training definition'
+                    ),
+            })
+        );
     }
 
     /**

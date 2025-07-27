@@ -1,14 +1,18 @@
-import {SandboxAllocationUnitsApi} from './sandbox-allocation-units-api.service';
-import {inject, Injectable} from '@angular/core';
-import {AllocationRequest, CleanupRequest, SandboxAllocationUnit} from '@crczp/sandbox-model';
-import {Observable} from 'rxjs';
-import {HttpClient, HttpParams} from '@angular/common/http';
-import {SandboxAllocationUnitDTO} from '../../dto/sandbox-instance/sandbox-allocation-unit-dto';
-import {map} from 'rxjs/operators';
-import {SandboxAllocationUnitMapper} from '../../mappers/sandbox-instance/sandbox-allocation-unit-mapper';
-import {RequestDTO} from '../../dto/sandbox-instance/request-dto';
-import {RequestMapper} from '../../mappers/sandbox-instance/request-mapper';
-import {PortalConfig} from "@crczp/common";
+import { SandboxAllocationUnitsApi } from './sandbox-allocation-units-api.service';
+import { inject, Injectable } from '@angular/core';
+import {
+    AllocationRequest,
+    CleanupRequest,
+    SandboxAllocationUnit,
+} from '@crczp/sandbox-model';
+import { Observable } from 'rxjs';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { SandboxAllocationUnitDTO } from '../../dto/sandbox-instance/sandbox-allocation-unit-dto';
+import { map } from 'rxjs/operators';
+import { SandboxAllocationUnitMapper } from '../../mappers/sandbox-instance/sandbox-allocation-unit-mapper';
+import { RequestDTO } from '../../dto/sandbox-instance/request-dto';
+import { RequestMapper } from '../../mappers/sandbox-instance/request-mapper';
+import { PortalConfig } from '@crczp/utils';
 
 /**
  * Default implementation of service abstracting http communication with sandbox allocation units endpoints.
@@ -17,10 +21,10 @@ import {PortalConfig} from "@crczp/common";
 export class SandboxAllocationUnitsDefaultApi extends SandboxAllocationUnitsApi {
     private readonly http = inject(HttpClient);
 
-    private readonly apiUrl: string = inject(PortalConfig).basePaths.sandbox + 'sandbox-allocation-units';
+    private readonly apiUrl: string =
+        inject(PortalConfig).basePaths.sandbox + '/sandbox-allocation-units';
     private readonly allocationRequestUriExtension = 'allocation-request';
     private readonly cleanupRequestUriExtension = 'cleanup-request';
-
 
     constructor() {
         super();
@@ -43,7 +47,10 @@ export class SandboxAllocationUnitsDefaultApi extends SandboxAllocationUnitsApi 
     update(unit: SandboxAllocationUnit): Observable<SandboxAllocationUnit> {
         const updateSAUnitDTO = SandboxAllocationUnitMapper.toUpdateDTO(unit);
         return this.http
-            .patch<SandboxAllocationUnitDTO>(`${this.apiUrl}/${unit.id}`, updateSAUnitDTO)
+            .patch<SandboxAllocationUnitDTO>(
+                `${this.apiUrl}/${unit.id}`,
+                updateSAUnitDTO
+            )
             .pipe(map((dto) => SandboxAllocationUnitMapper.fromDTO(dto)));
     }
 
@@ -53,7 +60,9 @@ export class SandboxAllocationUnitsDefaultApi extends SandboxAllocationUnitsApi 
      */
     getAllocationRequest(unitId: number): Observable<AllocationRequest> {
         return this.http
-            .get<RequestDTO>(`${this.apiUrl}/${unitId}/${this.allocationRequestUriExtension}`)
+            .get<RequestDTO>(
+                `${this.apiUrl}/${unitId}/${this.allocationRequestUriExtension}`
+            )
             .pipe(map((dto) => RequestMapper.fromAllocationDTO(dto)));
     }
 
@@ -64,9 +73,12 @@ export class SandboxAllocationUnitsDefaultApi extends SandboxAllocationUnitsApi 
     createRetryRequest(unitId: number): Observable<SandboxAllocationUnit> {
         const param = new HttpParams();
         return this.http
-            .patch<SandboxAllocationUnitDTO>(`${this.apiUrl}/${unitId}/allocation-stages/restart`, {
-                params: param
-            })
+            .patch<SandboxAllocationUnitDTO>(
+                `${this.apiUrl}/${unitId}/allocation-stages/restart`,
+                {
+                    params: param,
+                }
+            )
             .pipe(map((dto) => SandboxAllocationUnitMapper.fromDTO(dto)));
     }
 
@@ -76,7 +88,9 @@ export class SandboxAllocationUnitsDefaultApi extends SandboxAllocationUnitsApi 
      */
     getCleanupRequest(unitId: number): Observable<CleanupRequest> {
         return this.http
-            .get<RequestDTO>(`${this.apiUrl}/${unitId}/${this.cleanupRequestUriExtension}`)
+            .get<RequestDTO>(
+                `${this.apiUrl}/${unitId}/${this.cleanupRequestUriExtension}`
+            )
             .pipe(map((dto) => RequestMapper.fromCleanupDTO(dto)));
     }
 
@@ -87,7 +101,11 @@ export class SandboxAllocationUnitsDefaultApi extends SandboxAllocationUnitsApi 
     createCleanupRequest(unitId: number): Observable<CleanupRequest> {
         const params = new HttpParams().append('force', 'true');
         return this.http
-            .post<RequestDTO>(`${this.apiUrl}/${unitId}/${this.cleanupRequestUriExtension}`, {}, {params})
+            .post<RequestDTO>(
+                `${this.apiUrl}/${unitId}/${this.cleanupRequestUriExtension}`,
+                {},
+                { params }
+            )
             .pipe(map((dto) => RequestMapper.fromCleanupDTO(dto)));
     }
 
@@ -96,6 +114,8 @@ export class SandboxAllocationUnitsDefaultApi extends SandboxAllocationUnitsApi 
      * @param unitId sandbox allocation unit id of the cleanup request to delete
      */
     deleteCleanupRequest(unitId: number): Observable<any> {
-        return this.http.delete(`${this.apiUrl}/${unitId}/${this.cleanupRequestUriExtension}`);
+        return this.http.delete(
+            `${this.apiUrl}/${unitId}/${this.cleanupRequestUriExtension}`
+        );
     }
 }

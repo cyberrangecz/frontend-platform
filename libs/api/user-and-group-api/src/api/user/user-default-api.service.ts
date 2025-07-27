@@ -1,18 +1,29 @@
-import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
-import {inject, Injectable} from '@angular/core';
-import {ResponseHeaderContentDispositionReader, SentinelParamsMerger} from '@sentinel/common';
-import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
-import {SentinelFilter} from '@sentinel/common/filter';
-import {User, UserRole} from '@crczp/user-and-group-model';
-import {fromEvent, mergeMap, Observable} from 'rxjs';
-import {map} from 'rxjs/operators';
-import {RoleDTO} from '../../DTO/role/role-dto';
-import {UserAndGroupUserDTO} from '../../DTO/user/user-dto.model';
-import {RoleMapper} from '../../mappers/role-mapper';
-import {UserMapper} from '../../mappers/user.mapper';
-import {UserApi} from './user-api.service';
-import {BlobFileSaver, handleJsonError, JavaPaginatedResource, ParamsBuilder} from '@crczp/api-common';
-import {PortalConfig} from "@crczp/common";
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
+import {
+    ResponseHeaderContentDispositionReader,
+    SentinelParamsMerger,
+} from '@sentinel/common';
+import {
+    OffsetPaginationEvent,
+    PaginatedResource,
+} from '@sentinel/common/pagination';
+import { SentinelFilter } from '@sentinel/common/filter';
+import { User, UserRole } from '@crczp/user-and-group-model';
+import { fromEvent, mergeMap, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { RoleDTO } from '../../DTO/role/role-dto';
+import { UserAndGroupUserDTO } from '../../DTO/user/user-dto.model';
+import { RoleMapper } from '../../mappers/role-mapper';
+import { UserMapper } from '../../mappers/user.mapper';
+import { UserApi } from './user-api.service';
+import {
+    BlobFileSaver,
+    handleJsonError,
+    JavaPaginatedResource,
+    ParamsBuilder,
+} from '@crczp/api-common';
+import { PortalConfig } from '@crczp/utils';
 
 /**
  * Default implementation of abstracting http communication with user endpoints
@@ -21,7 +32,8 @@ import {PortalConfig} from "@crczp/common";
 export class UserDefaultApi extends UserApi {
     private readonly http = inject(HttpClient);
 
-    private readonly apiUrl = inject(PortalConfig).basePaths.userAndGroup + 'users';
+    private readonly apiUrl =
+        inject(PortalConfig).basePaths.userAndGroup + '/users';
 
     constructor() {
         super();
@@ -32,15 +44,18 @@ export class UserDefaultApi extends UserApi {
      * @param pagination requested pagination
      * @param filter filter to be applied on users
      */
-    getAll(pagination: OffsetPaginationEvent, filter: SentinelFilter[] = []): Observable<PaginatedResource<User>> {
+    getAll(
+        pagination: OffsetPaginationEvent,
+        filter: SentinelFilter[] = []
+    ): Observable<PaginatedResource<User>> {
         const params = SentinelParamsMerger.merge([
             ParamsBuilder.javaPaginationParams(pagination),
             ParamsBuilder.filterParams(filter),
         ]);
         return this.http
-            .get<
-                JavaPaginatedResource<UserAndGroupUserDTO>
-            >(this.apiUrl, {params})
+            .get<JavaPaginatedResource<UserAndGroupUserDTO>>(this.apiUrl, {
+                params,
+            })
             .pipe(map((resp) => UserMapper.mapUserDTOsToUsers(resp)));
     }
 
@@ -73,16 +88,17 @@ export class UserDefaultApi extends UserApi {
     getUsersNotInGroup(
         groupId: number,
         pagination: OffsetPaginationEvent,
-        filters: SentinelFilter[] = [],
+        filters: SentinelFilter[] = []
     ): Observable<PaginatedResource<User>> {
         const params = SentinelParamsMerger.merge([
             ParamsBuilder.javaPaginationParams(pagination),
             ParamsBuilder.filterParams(filters),
         ]);
         return this.http
-            .get<
-                JavaPaginatedResource<UserAndGroupUserDTO>
-            >(`${this.apiUrl}/not-in-group/${groupId}`, {params})
+            .get<JavaPaginatedResource<UserAndGroupUserDTO>>(
+                `${this.apiUrl}/not-in-group/${groupId}`,
+                { params }
+            )
             .pipe(map((resp) => UserMapper.mapUserDTOsToUsers(resp)));
     }
 
@@ -95,7 +111,7 @@ export class UserDefaultApi extends UserApi {
     getUsersInGroups(
         groupIds: number[],
         pagination: OffsetPaginationEvent,
-        filters: SentinelFilter[] = [],
+        filters: SentinelFilter[] = []
     ): Observable<PaginatedResource<User>> {
         const idParams = new HttpParams().set('ids', groupIds.toString());
         const params = SentinelParamsMerger.merge([
@@ -104,9 +120,12 @@ export class UserDefaultApi extends UserApi {
             idParams,
         ]);
         return this.http
-            .get<JavaPaginatedResource<UserAndGroupUserDTO>>(`${this.apiUrl}/groups`, {
-                params,
-            })
+            .get<JavaPaginatedResource<UserAndGroupUserDTO>>(
+                `${this.apiUrl}/groups`,
+                {
+                    params,
+                }
+            )
             .pipe(map((resp) => UserMapper.mapUserDTOsToUsers(resp)));
     }
 
@@ -124,9 +143,7 @@ export class UserDefaultApi extends UserApi {
      */
     getUserRoles(userId: number): Observable<PaginatedResource<UserRole>> {
         return this.http
-            .get<
-                JavaPaginatedResource<RoleDTO>
-            >(`${this.apiUrl}/${userId}`)
+            .get<JavaPaginatedResource<RoleDTO>>(`${this.apiUrl}/${userId}`)
             .pipe(map((resp) => RoleMapper.mapPaginatedRolesDTOtoRoles(resp)));
     }
 
@@ -137,9 +154,12 @@ export class UserDefaultApi extends UserApi {
     getUsersByIds(userIds: number): Observable<PaginatedResource<User>> {
         const idParams = new HttpParams().set('ids', userIds.toString());
         return this.http
-            .get<JavaPaginatedResource<UserAndGroupUserDTO>>(`${this.apiUrl}/ids`, {
-                params: idParams,
-            })
+            .get<JavaPaginatedResource<UserAndGroupUserDTO>>(
+                `${this.apiUrl}/ids`,
+                {
+                    params: idParams,
+                }
+            )
             .pipe(map((resp) => UserMapper.mapUserDTOsToUsers(resp)));
     }
 
@@ -170,10 +190,13 @@ export class UserDefaultApi extends UserApi {
                 map((resp) => {
                     BlobFileSaver.saveBlob(
                         resp.body,
-                        ResponseHeaderContentDispositionReader.getFilenameFromResponse(resp, 'oidc_user_info.yml'),
+                        ResponseHeaderContentDispositionReader.getFilenameFromResponse(
+                            resp,
+                            'oidc_user_info.yml'
+                        )
                     );
                     return true;
-                }),
+                })
             );
     }
 
@@ -182,11 +205,8 @@ export class UserDefaultApi extends UserApi {
         const fileRead$ = fromEvent(fileReader, 'load').pipe(
             mergeMap(() => {
                 const jsonBody = JSON.parse(fileReader.result as string);
-                return this.http.post<any>(
-                    this.apiUrl,
-                    jsonBody,
-                );
-            }),
+                return this.http.post<any>(this.apiUrl, jsonBody);
+            })
         );
         fileReader.readAsText(file);
         return fileRead$;

@@ -1,21 +1,39 @@
-import {ChangeDetectionStrategy, Component, DestroyRef, inject, Input, OnInit,} from '@angular/core';
-import {OffsetPaginationEvent} from '@sentinel/common/pagination';
+import {
+    ChangeDetectionStrategy,
+    Component,
+    DestroyRef,
+    inject,
+    Input,
+    OnInit,
+} from '@angular/core';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import {
     SentinelControlItem,
     SentinelControlItemSignal,
     SentinelControlsComponent,
 } from '@sentinel/components/controls';
-import {Group} from '@crczp/user-and-group-model';
-import {SentinelTable, SentinelTableComponent, TableActionEvent, TableLoadEvent,} from '@sentinel/components/table';
-import {defer, Observable, of} from 'rxjs';
-import {map, take} from 'rxjs/operators';
-import {GroupTable} from '../model/table/group-table';
-import {DeleteControlItem, SaveControlItem,} from '@crczp/user-and-group-agenda/internal';
-import {GroupOverviewService} from '../services/group-overview.service';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {GroupOverviewConcreteService} from '../services/group-overview.concrete.service';
-import {AsyncPipe} from '@angular/common';
-import {PaginationStorageService, providePaginationStorageService,} from '@crczp/common';
+import { Group } from '@crczp/user-and-group-model';
+import {
+    SentinelTable,
+    SentinelTableComponent,
+    TableActionEvent,
+    TableLoadEvent,
+} from '@sentinel/components/table';
+import { defer, Observable, of } from 'rxjs';
+import { map, take } from 'rxjs/operators';
+import { GroupTable } from '../model/table/group-table';
+import {
+    DeleteControlItem,
+    SaveControlItem,
+} from '@crczp/user-and-group-agenda/internal';
+import { GroupOverviewService } from '../services/group-overview.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { GroupOverviewConcreteService } from '../services/group-overview.concrete.service';
+import { AsyncPipe } from '@angular/common';
+import {
+    PaginationStorageService,
+    providePaginationStorageService,
+} from '@crczp/utils';
 
 /**
  * Main smart component of group-overview overview page
@@ -60,10 +78,7 @@ export class GroupOverviewComponent implements OnInit {
             ),
         };
         this.groups$ = this.groupService.resource$.pipe(
-            map(
-                (groups) =>
-                    new GroupTable(groups, this.groupService)
-            )
+            map((groups) => new GroupTable(groups, this.groupService))
         );
         this.groupsHasError$ = this.groupService.hasError$;
         this.groupService.selected$

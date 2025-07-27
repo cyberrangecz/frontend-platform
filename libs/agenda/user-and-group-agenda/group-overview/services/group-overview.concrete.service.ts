@@ -1,19 +1,20 @@
-import {inject, Injectable} from '@angular/core';
-import {MatDialog} from '@angular/material/dialog';
-import {Router} from '@angular/router';
+import { inject, Injectable } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import {
     SentinelConfirmationDialogComponent,
     SentinelConfirmationDialogConfig,
-    SentinelDialogResultEnum,
+    SentinelDialogResultEnum
 } from '@sentinel/components/dialogs';
-import {OffsetPaginationEvent, PaginatedResource,} from '@sentinel/common/pagination';
-import {GroupApi} from '@crczp/user-and-group-api';
-import {Group} from '@crczp/user-and-group-model';
-import {EMPTY, Observable, of} from 'rxjs';
-import {map, switchMap, tap} from 'rxjs/operators';
-import {GroupFilter} from '@crczp/user-and-group-agenda/internal';
-import {GroupOverviewService} from './group-overview.service';
-import {ErrorHandlerService, NotificationService, PortalConfig, Routing} from '@crczp/common';
+import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
+import { GroupApi } from '@crczp/user-and-group-api';
+import { Group } from '@crczp/user-and-group-model';
+import { EMPTY, Observable, of } from 'rxjs';
+import { map, switchMap, tap } from 'rxjs/operators';
+import { GroupFilter } from '@crczp/user-and-group-agenda/internal';
+import { GroupOverviewService } from './group-overview.service';
+import { ErrorHandlerService, NotificationService, PortalConfig } from '@crczp/utils';
+import { Routing } from '@crczp/routing-commons';
 
 /**
  * Basic implementation of a layer between a component and an API service.
@@ -84,7 +85,9 @@ export class GroupOverviewConcreteService extends GroupOverviewService {
     }
 
     edit(group: Group): Observable<any> {
-        this.router.navigate([Routing.RouteBuilder.group.groupId(group.id).edit.build()]);
+        this.router.navigate([
+            Routing.RouteBuilder.group.groupId(group.id).edit.build(),
+        ]);
         return of(true);
     }
 
@@ -107,7 +110,7 @@ export class GroupOverviewConcreteService extends GroupOverviewService {
         );
         const dialogRef = this.dialog.open(
             SentinelConfirmationDialogComponent,
-            {data: dialogData}
+            { data: dialogData }
         );
         return dialogRef
             .afterClosed()

@@ -1,15 +1,14 @@
-import {Route} from '@angular/router';
+import { Route } from '@angular/router';
+import { TopologyExample } from './topology/topology-example';
 
 export const appRoutes: Route[] = [
     {
         path: 'topology',
-        loadComponent: () => import("@crczp/topology-graph").then(
-            m => m.TopologyComponent
-        )
-    }
-    , {
+        component: TopologyExample,
+    },
+    {
         path: '',
         pathMatch: 'full',
-        redirectTo: 'topology'
-    }
+        redirectTo: 'topology',
+    },
 ];

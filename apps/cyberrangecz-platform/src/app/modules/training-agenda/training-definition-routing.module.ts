@@ -1,11 +1,15 @@
-import {NgModule} from '@angular/core';
-import {RouterModule} from '@angular/router';
-import {TrainingDefinitionOverviewComponent} from '@crczp/training-agenda/definition-overview';
-import {SandboxApiModule} from "@crczp/sandbox-api";
-import {TrainingApiModule} from "@crczp/training-api";
-import {TrainingDefinitionCanDeactivate} from "@crczp/training-agenda/definition-edit";
-import {Routing, ValidRouterConfig} from "@crczp/common";
-import {TrainingDefinition} from "@crczp/training-model";
+import { NgModule } from '@angular/core';
+import { RouterModule } from '@angular/router';
+import { TrainingDefinitionOverviewComponent } from '@crczp/training-agenda/definition-overview';
+import { SandboxApiModule } from '@crczp/sandbox-api';
+import { TrainingApiModule } from '@crczp/training-api';
+import { TrainingDefinitionCanDeactivate } from '@crczp/training-agenda/definition-edit';
+import { TrainingDefinition } from '@crczp/training-model';
+import {
+    Routing,
+    TrainingResolverHelperService,
+    ValidRouterConfig,
+} from '@crczp/routing-commons';
 
 const routes: ValidRouterConfig<'linear-definition'> = [
     {
@@ -16,7 +20,7 @@ const routes: ValidRouterConfig<'linear-definition'> = [
         path: 'create',
         loadComponent: () =>
             import('@crczp/training-agenda/definition-edit').then(
-                (m) => m.TrainingDefinitionEditOverviewComponent,
+                (m) => m.TrainingDefinitionEditOverviewComponent
             ),
         canDeactivate: [TrainingDefinitionCanDeactivate],
     },
@@ -24,21 +28,25 @@ const routes: ValidRouterConfig<'linear-definition'> = [
         path: ':definitionId/edit',
         loadComponent: () =>
             import('@crczp/training-agenda/definition-edit').then(
-                (m) => m.TrainingDefinitionEditOverviewComponent,
+                (m) => m.TrainingDefinitionEditOverviewComponent
             ),
         canDeactivate: [TrainingDefinitionCanDeactivate],
     },
     {
         path: ':definitionId/preview',
-        loadComponent: () => import('@crczp/training-agenda/definition-preview').then(
-            (m) => m.TrainingPreviewComponent
-        ),
+        loadComponent: () =>
+            import('@crczp/training-agenda/definition-preview').then(
+                (m) => m.TrainingPreviewComponent
+            ),
         data: {
             title: undefined,
         },
         resolve: {
-            [TrainingDefinition.name]: Routing.Resolvers.TrainingDefinition.linearDefinitionResolver,
-            breadcrumb: Routing.Resolvers.TrainingDefinition.linearDefinitionBreadcrumbResolver,
+            [TrainingDefinition.name]:
+                Routing.Resolvers.TrainingDefinition.linearDefinitionResolver,
+            breadcrumb:
+                Routing.Resolvers.TrainingDefinition
+                    .linearDefinitionBreadcrumbResolver,
         },
     },
     {
@@ -48,9 +56,13 @@ const routes: ValidRouterConfig<'linear-definition'> = [
                 (m) => m.TrainingDefinitionSummaryComponent
             ),
         resolve: {
-            [TrainingDefinition.name]: Routing.Resolvers.TrainingDefinition.linearDefinitionResolver,
-            breadcrumb: Routing.Resolvers.TrainingDefinition.linearDefinitionBreadcrumbResolver,
-            title: Routing.Resolvers.TrainingDefinition.linearDefinitionTitleResolver,
+            [TrainingDefinition.name]:
+                Routing.Resolvers.TrainingDefinition.linearDefinitionResolver,
+            breadcrumb:
+                Routing.Resolvers.TrainingDefinition
+                    .linearDefinitionBreadcrumbResolver,
+            title: Routing.Resolvers.TrainingDefinition
+                .linearDefinitionTitleResolver,
         },
     },
 ];
@@ -64,7 +76,7 @@ const routes: ValidRouterConfig<'linear-definition'> = [
         SandboxApiModule,
         TrainingApiModule,
     ],
+    providers: [TrainingResolverHelperService],
     exports: [RouterModule],
 })
-export class TrainingDefinitionRoutingModule {
-}
+export class TrainingDefinitionRoutingModule {}

@@ -1,8 +1,8 @@
-import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
-import {inject, Injectable} from '@angular/core';
-import {ResponseHeaderContentDispositionReader, SentinelParamsMerger} from '@sentinel/common';
-import {SentinelFilter} from '@sentinel/common/filter';
-import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
+import { ResponseHeaderContentDispositionReader, SentinelParamsMerger } from '@sentinel/common';
+import { SentinelFilter } from '@sentinel/common/filter';
+import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
 import {
     AccessLevel,
     AssessmentLevel,
@@ -13,17 +13,17 @@ import {
     TrainingDefinitionStateEnum,
     TrainingLevel
 } from '@crczp/training-model';
-import {fromEvent, Observable} from 'rxjs';
-import {map, mergeMap} from 'rxjs/operators';
-import {AssessmentLevelDTO} from '../../dto/level/assessment/assessment-level-dto';
-import {BasicLevelInfoDTO} from '../../dto/level/basic-level-info-dto';
-import {TrainingLevelDto} from '../../dto/level/training/training-level-dto';
-import {InfoLevelDTO} from '../../dto/level/info/info-level-dto';
-import {TrainingDefinitionDTO} from '../../dto/training-definition/training-definition-dto';
-import {LevelMapper} from '../../mappers/level/level-mapper';
-import {TrainingDefinitionInfoMapper} from '../../mappers/training-definition/training-definition-info-mapper';
-import {TrainingDefinitionMapper} from '../../mappers/training-definition/training-definition-mapper';
-import {LinearTrainingDefinitionApi} from './training-definition-api.service';
+import { fromEvent, Observable } from 'rxjs';
+import { map, mergeMap } from 'rxjs/operators';
+import { AssessmentLevelDTO } from '../../dto/level/assessment/assessment-level-dto';
+import { BasicLevelInfoDTO } from '../../dto/level/basic-level-info-dto';
+import { TrainingLevelDto } from '../../dto/level/training/training-level-dto';
+import { InfoLevelDTO } from '../../dto/level/info/info-level-dto';
+import { TrainingDefinitionDTO } from '../../dto/training-definition/training-definition-dto';
+import { LevelMapper } from '../../mappers/level/level-mapper';
+import { TrainingDefinitionInfoMapper } from '../../mappers/training-definition/training-definition-info-mapper';
+import { TrainingDefinitionMapper } from '../../mappers/training-definition/training-definition-mapper';
+import { LinearTrainingDefinitionApi } from './training-definition-api.service';
 import {
     BlobFileSaver,
     handleJsonError,
@@ -31,8 +31,8 @@ import {
     PaginationMapper,
     ParamsBuilder
 } from '@crczp/api-common';
-import {TrainingDefinitionInfoDTO} from '../../dto/training-definition/training-definition-info-dto';
-import {PortalConfig} from "@crczp/common";
+import { TrainingDefinitionInfoDTO } from '../../dto/training-definition/training-definition-info-dto';
+import { PortalConfig } from '@crczp/utils';
 
 /**
  * Service abstracting http communication with training definition endpoints.
@@ -52,9 +52,10 @@ export class TrainingDefinitionDefaultApi extends LinearTrainingDefinitionApi {
         super();
 
         const basePath = inject(PortalConfig).basePaths.linearTraining;
-        this.trainingDefsEndpointUri = basePath + this.trainingDefinitionUriExtension;
-        this.trainingExportEndpointUri = basePath + 'exports';
-        this.trainingImportEndpointUri = basePath + 'imports';
+        this.trainingDefsEndpointUri =
+            basePath + '/' + this.trainingDefinitionUriExtension;
+        this.trainingExportEndpointUri = basePath + '/exports';
+        this.trainingImportEndpointUri = basePath + '/imports';
     }
 
     /**
@@ -64,22 +65,28 @@ export class TrainingDefinitionDefaultApi extends LinearTrainingDefinitionApi {
      */
     getAll(
         pagination: OffsetPaginationEvent,
-        filters: SentinelFilter[] = [],
+        filters: SentinelFilter[] = []
     ): Observable<PaginatedResource<TrainingDefinition>> {
         const params = SentinelParamsMerger.merge([
             ParamsBuilder.javaPaginationParams(pagination),
             ParamsBuilder.filterParams(filters),
         ]);
         return this.http
-            .get<JavaPaginatedResource<TrainingDefinitionDTO>>(this.trainingDefsEndpointUri, {params})
+            .get<JavaPaginatedResource<TrainingDefinitionDTO>>(
+                this.trainingDefsEndpointUri,
+                { params }
+            )
             .pipe(
                 map(
                     (response) =>
                         new PaginatedResource(
-                            TrainingDefinitionMapper.fromDTOs(response.content, false),
-                            PaginationMapper.fromJavaDTO(response.pagination),
-                        ),
-                ),
+                            TrainingDefinitionMapper.fromDTOs(
+                                response.content,
+                                false
+                            ),
+                            PaginationMapper.fromJavaDTO(response.pagination)
+                        )
+                )
             );
     }
 
@@ -90,22 +97,27 @@ export class TrainingDefinitionDefaultApi extends LinearTrainingDefinitionApi {
      */
     getAllForOrganizer(
         pagination: OffsetPaginationEvent,
-        filters: SentinelFilter[] = [],
+        filters: SentinelFilter[] = []
     ): Observable<PaginatedResource<TrainingDefinitionInfo>> {
         const params = SentinelParamsMerger.merge([
             ParamsBuilder.javaPaginationParams(pagination),
             ParamsBuilder.filterParams(filters),
         ]);
         return this.http
-            .get<JavaPaginatedResource<TrainingDefinitionInfoDTO>>(`${this.trainingDefsEndpointUri}/for-organizers`, {params})
+            .get<JavaPaginatedResource<TrainingDefinitionInfoDTO>>(
+                `${this.trainingDefsEndpointUri}/for-organizers`,
+                { params }
+            )
             .pipe(
                 map(
                     (response) =>
                         new PaginatedResource(
-                            TrainingDefinitionInfoMapper.fromDTOs(response.content),
-                            PaginationMapper.fromJavaDTO(response.pagination),
-                        ),
-                ),
+                            TrainingDefinitionInfoMapper.fromDTOs(
+                                response.content
+                            ),
+                            PaginationMapper.fromJavaDTO(response.pagination)
+                        )
+                )
             );
     }
 
@@ -117,7 +129,11 @@ export class TrainingDefinitionDefaultApi extends LinearTrainingDefinitionApi {
     get(id: number, withLevels = false): Observable<TrainingDefinition> {
         return this.http
             .get<TrainingDefinitionDTO>(`${this.trainingDefsEndpointUri}/${id}`)
-            .pipe(map((response) => TrainingDefinitionMapper.fromDTO(response, withLevels)));
+            .pipe(
+                map((response) =>
+                    TrainingDefinitionMapper.fromDTO(response, withLevels)
+                )
+            );
     }
 
     /**
@@ -125,10 +141,17 @@ export class TrainingDefinitionDefaultApi extends LinearTrainingDefinitionApi {
      * @param trainingDefinitionId id of a training definition which state should be changed
      * @param newState new state to be set
      */
-    changeState(trainingDefinitionId: number, newState: TrainingDefinitionStateEnum): Observable<any> {
+    changeState(
+        trainingDefinitionId: number,
+        newState: TrainingDefinitionStateEnum
+    ): Observable<any> {
         return this.http.put(
-            `${this.trainingDefsEndpointUri}/${trainingDefinitionId}/states/${TrainingDefinitionMapper.stateToDTO(newState)}`,
-            {},
+            `${
+                this.trainingDefsEndpointUri
+            }/${trainingDefinitionId}/states/${TrainingDefinitionMapper.stateToDTO(
+                newState
+            )}`,
+            {}
         );
     }
 
@@ -138,9 +161,9 @@ export class TrainingDefinitionDefaultApi extends LinearTrainingDefinitionApi {
      */
     getLevel(levelId: number): Observable<Level> {
         return this.http
-            .get<
-                TrainingLevelDto | InfoLevelDTO | AssessmentLevelDTO
-            >(`${this.trainingDefsEndpointUri}/${this.levelsUriExtension}/${levelId}`)
+            .get<TrainingLevelDto | InfoLevelDTO | AssessmentLevelDTO>(
+                `${this.trainingDefsEndpointUri}/${this.levelsUriExtension}/${levelId}`
+            )
             .pipe(map((response) => LevelMapper.fromDTO(response)));
     }
 
@@ -153,11 +176,14 @@ export class TrainingDefinitionDefaultApi extends LinearTrainingDefinitionApi {
         headers.set('Accept', ['application/octet-stream']);
 
         return this.http
-            .get(`${this.trainingExportEndpointUri}/${this.trainingDefinitionUriExtension}/${id}`, {
-                responseType: 'blob',
-                observe: 'response',
-                headers,
-            })
+            .get(
+                `${this.trainingExportEndpointUri}/${this.trainingDefinitionUriExtension}/${id}`,
+                {
+                    responseType: 'blob',
+                    observe: 'response',
+                    headers,
+                }
+            )
             .pipe(
                 handleJsonError(),
                 map((resp) => {
@@ -165,11 +191,11 @@ export class TrainingDefinitionDefaultApi extends LinearTrainingDefinitionApi {
                         resp.body,
                         ResponseHeaderContentDispositionReader.getFilenameFromResponse(
                             resp,
-                            'training-definition.json',
-                        ),
+                            'training-definition.json'
+                        )
                     );
                     return true;
-                }),
+                })
             );
     }
 
@@ -185,12 +211,14 @@ export class TrainingDefinitionDefaultApi extends LinearTrainingDefinitionApi {
                 const jsonBody = JSON.parse(fileReader.result as string);
                 return this.http.post<TrainingDefinitionDTO>(
                     `${this.trainingImportEndpointUri}/${this.trainingDefinitionUriExtension}`,
-                    jsonBody,
+                    jsonBody
                 );
-            }),
+            })
         );
         fileReader.readAsText(file);
-        return fileRead$.pipe(map((resp) => TrainingDefinitionMapper.fromDTO(resp, false)));
+        return fileRead$.pipe(
+            map((resp) => TrainingDefinitionMapper.fromDTO(resp, false))
+        );
     }
 
     /**
@@ -198,7 +226,9 @@ export class TrainingDefinitionDefaultApi extends LinearTrainingDefinitionApi {
      * @param id id of training definition which should be deleted
      */
     delete(id: number): Observable<any> {
-        return this.http.delete(`${this.trainingDefsEndpointUri}/${id}`, {headers: this.createDefaultHeaders()});
+        return this.http.delete(`${this.trainingDefsEndpointUri}/${id}`, {
+            headers: this.createDefaultHeaders(),
+        });
     }
 
     /**
@@ -215,7 +245,7 @@ export class TrainingDefinitionDefaultApi extends LinearTrainingDefinitionApi {
             {
                 params,
                 headers: this.createDefaultHeaders(),
-            },
+            }
         );
     }
 
@@ -227,7 +257,7 @@ export class TrainingDefinitionDefaultApi extends LinearTrainingDefinitionApi {
         return this.http.put<number>(
             this.trainingDefsEndpointUri,
             TrainingDefinitionMapper.toUpdateDTO(trainingDefinition),
-            {headers: this.createDefaultHeaders()},
+            { headers: this.createDefaultHeaders() }
         );
     }
 
@@ -235,12 +265,14 @@ export class TrainingDefinitionDefaultApi extends LinearTrainingDefinitionApi {
      * Sends http request to create new training definition
      * @param trainingDefinition training definition which should be created
      */
-    create(trainingDefinition: TrainingDefinition): Observable<TrainingDefinition> {
+    create(
+        trainingDefinition: TrainingDefinition
+    ): Observable<TrainingDefinition> {
         return this.http
             .post<TrainingDefinitionDTO>(
                 this.trainingDefsEndpointUri,
                 TrainingDefinitionMapper.toCreateDTO(trainingDefinition),
-                {headers: this.createDefaultHeaders()},
+                { headers: this.createDefaultHeaders() }
             )
             .pipe(map((resp) => TrainingDefinitionMapper.fromDTO(resp, false)));
     }
@@ -249,28 +281,36 @@ export class TrainingDefinitionDefaultApi extends LinearTrainingDefinitionApi {
      * Sends http request to create new assessment level associated with training definition
      * @param trainingDefinitionId id of training definition which should be associated with the new level
      */
-    createAssessmentLevel(trainingDefinitionId: number): Observable<AssessmentLevel> {
+    createAssessmentLevel(
+        trainingDefinitionId: number
+    ): Observable<AssessmentLevel> {
         return this.http
             .post<BasicLevelInfoDTO>(
                 `${this.trainingDefsEndpointUri}/${trainingDefinitionId}/${this.levelsUriExtension}/ASSESSMENT`,
                 {},
-                {headers: this.createDefaultHeaders()},
+                { headers: this.createDefaultHeaders() }
             )
-            .pipe(map((resp) => LevelMapper.fromBasicDTO(resp) as AssessmentLevel));
+            .pipe(
+                map((resp) => LevelMapper.fromBasicDTO(resp) as AssessmentLevel)
+            );
     }
 
     /**
      * Sends http request to create new training level associated with training definition
      * @param trainingDefinitionId id of training definition which should be associated with the new level
      */
-    createTrainingLevel(trainingDefinitionId: number): Observable<TrainingLevel> {
+    createTrainingLevel(
+        trainingDefinitionId: number
+    ): Observable<TrainingLevel> {
         return this.http
             .post<BasicLevelInfoDTO>(
                 `${this.trainingDefsEndpointUri}/${trainingDefinitionId}/${this.levelsUriExtension}/TRAINING`,
                 {},
-                {headers: this.createDefaultHeaders()},
+                { headers: this.createDefaultHeaders() }
             )
-            .pipe(map((resp) => LevelMapper.fromBasicDTO(resp) as TrainingLevel));
+            .pipe(
+                map((resp) => LevelMapper.fromBasicDTO(resp) as TrainingLevel)
+            );
     }
 
     /**
@@ -282,7 +322,7 @@ export class TrainingDefinitionDefaultApi extends LinearTrainingDefinitionApi {
             .post<BasicLevelInfoDTO>(
                 `${this.trainingDefsEndpointUri}/${trainingDefinitionId}/${this.levelsUriExtension}/ACCESS`,
                 {},
-                {headers: this.createDefaultHeaders()},
+                { headers: this.createDefaultHeaders() }
             )
             .pipe(map((resp) => LevelMapper.fromBasicDTO(resp) as AccessLevel));
     }
@@ -296,7 +336,7 @@ export class TrainingDefinitionDefaultApi extends LinearTrainingDefinitionApi {
             .post<BasicLevelInfoDTO>(
                 `${this.trainingDefsEndpointUri}/${trainingDefId}/${this.levelsUriExtension}/INFO`,
                 {},
-                {headers: this.createDefaultHeaders()},
+                { headers: this.createDefaultHeaders() }
             )
             .pipe(map((resp) => LevelMapper.fromBasicDTO(resp) as InfoLevel));
     }
@@ -306,13 +346,16 @@ export class TrainingDefinitionDefaultApi extends LinearTrainingDefinitionApi {
      * @param trainingDefinitionId id of training definition associated with the level which should be deleted
      * @param levelId id of level which should be deleted
      */
-    deleteLevel(trainingDefinitionId: number, levelId: number): Observable<Level[]> {
+    deleteLevel(
+        trainingDefinitionId: number,
+        levelId: number
+    ): Observable<Level[]> {
         // prettier-ignore
         return this.http
             .delete<BasicLevelInfoDTO[]>(
                 `${this.trainingDefsEndpointUri}/${trainingDefinitionId}/` +
                 `${this.levelsUriExtension}/${levelId}`,
-                {headers: this.createDefaultHeaders()}
+                { headers: this.createDefaultHeaders() }
             )
             .pipe(map((resp) => LevelMapper.fromBasicDTOs(resp)));
     }
@@ -322,11 +365,14 @@ export class TrainingDefinitionDefaultApi extends LinearTrainingDefinitionApi {
      * @param trainingDefinitionId id of training definition associated with the levels
      * @param levels training levels which should be updated
      */
-    updateTrainingDefinitionLevels(trainingDefinitionId: number, levels: Level[]): Observable<any> {
+    updateTrainingDefinitionLevels(
+        trainingDefinitionId: number,
+        levels: Level[]
+    ): Observable<any> {
         return this.http.put(
             `${this.trainingDefsEndpointUri}/${trainingDefinitionId}/levels`,
             LevelMapper.toUpdateDTOs(levels),
-            {headers: this.createDefaultHeaders()},
+            { headers: this.createDefaultHeaders() }
         );
     }
 
@@ -336,14 +382,18 @@ export class TrainingDefinitionDefaultApi extends LinearTrainingDefinitionApi {
      * @param levelId id of a level which should be moved
      * @param toPosition index of new position of a level
      */
-    moveLevelTo(trainingDefinitionId: number, levelId: number, toPosition: number): Observable<Level[]> {
+    moveLevelTo(
+        trainingDefinitionId: number,
+        levelId: number,
+        toPosition: number
+    ): Observable<Level[]> {
         // prettier-ignore
         return this.http
             .put<BasicLevelInfoDTO[]>(
                 `${this.trainingDefsEndpointUri}/${trainingDefinitionId}/` +
                 `${this.levelsUriExtension}/${levelId}/move-to/${toPosition}`,
                 {},
-                {headers: this.createDefaultHeaders()}
+                { headers: this.createDefaultHeaders() }
             )
             .pipe(map((resp) => LevelMapper.fromBasicDTOs(resp)));
     }
@@ -354,14 +404,18 @@ export class TrainingDefinitionDefaultApi extends LinearTrainingDefinitionApi {
      * @param levelIdFrom id of a first level which should be swaped
      * @param levelIdTo id of a second level which should be swaped
      */
-    swapLevelWith(trainingDefinitionId: number, levelIdFrom: number, levelIdTo: number): Observable<Level[]> {
+    swapLevelWith(
+        trainingDefinitionId: number,
+        levelIdFrom: number,
+        levelIdTo: number
+    ): Observable<Level[]> {
         // prettier-ignore
         return this.http
             .put<BasicLevelInfoDTO[]>(
                 `${this.trainingDefsEndpointUri}/${trainingDefinitionId}/` +
                 `${this.levelsUriExtension}/${levelIdFrom}/swap-with/${levelIdTo}`,
                 {},
-                {headers: this.createDefaultHeaders()}
+                { headers: this.createDefaultHeaders() }
             )
             .pipe(map((resp) => LevelMapper.fromBasicDTOs(resp)));
     }
@@ -371,7 +425,9 @@ export class TrainingDefinitionDefaultApi extends LinearTrainingDefinitionApi {
      * @param trainingDefinitionId training definition id
      */
     hasReferenceSolution(trainingDefinitionId: number): Observable<boolean> {
-        return this.http.get<boolean>(`${this.trainingDefsEndpointUri}/${trainingDefinitionId}/has-reference-solution`);
+        return this.http.get<boolean>(
+            `${this.trainingDefsEndpointUri}/${trainingDefinitionId}/has-reference-solution`
+        );
     }
 
     /**
@@ -383,7 +439,7 @@ export class TrainingDefinitionDefaultApi extends LinearTrainingDefinitionApi {
     geTrainingDefinition(
         sandboxDefId: number,
         pagination: OffsetPaginationEvent,
-        filters: SentinelFilter[] = [],
+        filters: SentinelFilter[] = []
     ): Observable<PaginatedResource<TrainingDefinition>> {
         const params = SentinelParamsMerger.merge([
             ParamsBuilder.javaPaginationParams(pagination),
@@ -392,16 +448,19 @@ export class TrainingDefinitionDefaultApi extends LinearTrainingDefinitionApi {
         return this.http
             .get<JavaPaginatedResource<TrainingDefinitionDTO>>(
                 `${this.trainingDefsEndpointUri}/${this.sandboxDefUriExtension}/${sandboxDefId}`,
-                {params},
+                { params }
             )
             .pipe(
                 map(
                     (response) =>
                         new PaginatedResource(
-                            TrainingDefinitionMapper.fromDTOs(response.content, false),
-                            PaginationMapper.fromJavaDTO(response.pagination),
-                        ),
-                ),
+                            TrainingDefinitionMapper.fromDTOs(
+                                response.content,
+                                false
+                            ),
+                            PaginationMapper.fromJavaDTO(response.pagination)
+                        )
+                )
             );
     }
 

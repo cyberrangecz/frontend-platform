@@ -1,9 +1,9 @@
-import {inject, Injectable} from '@angular/core';
-import {Observable} from 'rxjs';
-import {HttpClient} from '@angular/common/http';
-import {ClusteringVisualizationResourceDTO} from '../dto/clustering/clustering-visualization-resource-dto';
-import {PortalConfig} from "@crczp/common";
-import {VizConfigService} from "../../../../common/viz-config.service";
+import { inject, Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { ClusteringVisualizationResourceDTO } from '../dto/clustering/clustering-visualization-resource-dto';
+import { PortalConfig } from '@crczp/utils';
+import { VizConfigService } from '../../../../common/viz-config.service';
 
 @Injectable()
 export class ClusteringApiService {
@@ -16,8 +16,10 @@ export class ClusteringApiService {
     constructor() {
         const baseUrl = inject(PortalConfig).basePaths.linearTraining;
 
-        this.trainingVisualizationEndpoint = baseUrl + 'visualizations/training-instances';
-        this.anonymizedTrainingVisualizationEndpoint = baseUrl + 'visualizations/training-runs';
+        this.trainingVisualizationEndpoint =
+            baseUrl + 'visualizations/training-instances';
+        this.anonymizedTrainingVisualizationEndpoint =
+            baseUrl + 'visualizations/training-runs';
     }
 
     /**
@@ -25,11 +27,13 @@ export class ClusteringApiService {
      * data from multiple instances specified by this parameter.
      * @param instanceIds if present uses endpoint that aggregates data from multiple instances.
      */
-    getClusteringVisualizationData(instanceIds?: number[]): Observable<ClusteringVisualizationResourceDTO> {
+    getClusteringVisualizationData(
+        instanceIds?: number[]
+    ): Observable<ClusteringVisualizationResourceDTO> {
         return this.http.get<ClusteringVisualizationResourceDTO>(
             `${this.trainingVisualizationEndpoint}/clustering`,
             {
-                params: {instanceIds: instanceIds}
+                params: { instanceIds: instanceIds },
             }
         );
     }
@@ -39,5 +43,4 @@ export class ClusteringApiService {
             `${this.anonymizedTrainingVisualizationEndpoint}/${this.configService.trainingRunId}/clustering`
         );
     }
-
 }

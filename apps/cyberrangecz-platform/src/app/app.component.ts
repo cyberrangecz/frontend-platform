@@ -1,13 +1,15 @@
-import {AfterViewInit, Component, OnInit} from '@angular/core';
-import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
-import {SentinelAuthService, User} from '@sentinel/auth';
-import {AgendaContainer} from '@sentinel/layout';
-import {Observable} from 'rxjs';
-import {filter, map} from 'rxjs/operators';
-import {NavConfigFactory} from './utils/nav-config-factory';
-import {PortalDynamicEnvironment} from './portal-dynamic-environment';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { SentinelAuthService, User } from '@sentinel/auth';
+import { AgendaContainer } from '@sentinel/layout';
+import { Observable } from 'rxjs';
+import { filter, map } from 'rxjs/operators';
+import { NavConfigFactory } from './utils/nav-config-factory';
+import { PortalDynamicEnvironment } from './portal-dynamic-environment';
 import packagejson from '../../../../package.json';
-import {LoadingService, NavBuilder, ValidPath} from "@crczp/common";
+import { LoadingService } from './services/loading.service';
+import { ValidPath } from '@crczp/routing-commons';
+import { NavBuilder } from '@crczp/utils';
 
 /**
  * Main component serving as wrapper for layout and router outlet
@@ -16,7 +18,7 @@ import {LoadingService, NavBuilder, ValidPath} from "@crczp/common";
     selector: 'crczp-app-root',
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.scss'],
-    standalone: false
+    standalone: false,
 })
 export class AppComponent implements OnInit, AfterViewInit {
     isLoading$: Observable<boolean>;
@@ -31,9 +33,8 @@ export class AppComponent implements OnInit, AfterViewInit {
         private router: Router,
         private activatedRoute: ActivatedRoute,
         private loadingService: LoadingService,
-        private authService: SentinelAuthService,
-    ) {
-    }
+        private authService: SentinelAuthService
+    ) {}
 
     ngOnInit(): void {
         this.activeUser$ = this.authService.activeUser$;
@@ -41,20 +42,22 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.subtitle$ = this.getSubtitleFromRouter();
         this.agendaContainers$ = this.authService.activeUser$.pipe(
             filter((user) => user !== null && user !== undefined),
-            map((user) => NavBuilder.buildNav(NavConfigFactory.buildNavConfig(user))),
+            map((user) =>
+                NavBuilder.buildNav(NavConfigFactory.buildNavConfig(user))
+            )
         );
         this.isLoading$ = this.loadingService.isLoading$; // <-- causes angular error
-        this.version = PortalDynamicEnvironment.getConfig().version || packagejson.version;
+        this.version =
+            PortalDynamicEnvironment.getConfig().version || packagejson.version;
     }
 
     ngAfterViewInit(): void {
-        this.router.events.pipe(
-            filter((event) => event instanceof NavigationEnd)
-        ).subscribe();
+        this.router.events
+            .pipe(filter((event) => event instanceof NavigationEnd))
+            .subscribe();
     }
 
     onLogin(): void {
-        console.log("onLogin");
         this.authService.login();
     }
 
@@ -74,7 +77,7 @@ export class AppComponent implements OnInit, AfterViewInit {
             }),
             filter((route) => route.outlet === 'primary'),
             map((route) => route.snapshot),
-            map((snapshot) => snapshot.data['title']),
+            map((snapshot) => snapshot.data['title'])
         );
     }
 
@@ -90,7 +93,7 @@ export class AppComponent implements OnInit, AfterViewInit {
             }),
             filter((route) => route.outlet === 'primary'),
             map((route) => route.snapshot),
-            map((snapshot) => snapshot.data['subtitle']),
+            map((snapshot) => snapshot.data['subtitle'])
         );
     }
 }

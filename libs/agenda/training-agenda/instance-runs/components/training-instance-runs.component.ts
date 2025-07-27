@@ -1,18 +1,18 @@
-import {ChangeDetectionStrategy, Component, DestroyRef, inject, Input, OnInit} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
-import {OffsetPaginationEvent} from '@sentinel/common/pagination';
-import {TrainingInstance, TrainingRun} from '@crczp/training-model';
-import {SentinelTable, TableActionEvent, TableLoadEvent} from '@sentinel/components/table';
-import {Observable} from 'rxjs';
-import {map, switchMap, take, tap} from 'rxjs/operators';
-import {TrainingRunTable} from '../model/training-run-table';
-import {TrainingRunService} from '../services/runs/training-run.service';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {PaginationStorageService, providePaginationStorageService} from "@crczp/common";
-import {MatCard} from "@angular/material/card";
-import {TrainingRunOverviewComponent} from "./training-run-overview/training-run-overview.component";
-import {AsyncPipe} from "@angular/common";
-import {TrainingRunConcreteService} from "../services/runs/training-run-concrete.service";
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, Input, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
+import { TrainingInstance, TrainingRun } from '@crczp/training-model';
+import { SentinelTable, TableActionEvent, TableLoadEvent } from '@sentinel/components/table';
+import { Observable } from 'rxjs';
+import { map, switchMap, take, tap } from 'rxjs/operators';
+import { TrainingRunTable } from '../model/training-run-table';
+import { TrainingRunService } from '../services/runs/training-run.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { MatCard } from '@angular/material/card';
+import { TrainingRunOverviewComponent } from './training-run-overview/training-run-overview.component';
+import { AsyncPipe } from '@angular/common';
+import { TrainingRunConcreteService } from '../services/runs/training-run-concrete.service';
+import { PaginationStorageService, providePaginationStorageService } from '@crczp/utils';
 
 /**
  * Smart component of training instance runs
@@ -23,14 +23,10 @@ import {TrainingRunConcreteService} from "../services/runs/training-run-concrete
     styleUrls: ['./training-instance-runs.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [
-        {provide: TrainingRunService, useClass: TrainingRunConcreteService},
-        providePaginationStorageService(TrainingInstanceRunsComponent)
+        { provide: TrainingRunService, useClass: TrainingRunConcreteService },
+        providePaginationStorageService(TrainingInstanceRunsComponent),
     ],
-    imports: [
-        MatCard,
-        TrainingRunOverviewComponent,
-        AsyncPipe
-    ]
+    imports: [MatCard, TrainingRunOverviewComponent, AsyncPipe],
 })
 export class TrainingInstanceRunsComponent implements OnInit {
     @Input() paginationId = 'training-instance-runs';
@@ -49,7 +45,7 @@ export class TrainingInstanceRunsComponent implements OnInit {
             map((data) => data[TrainingInstance.name]),
             tap((ti) => {
                 this.trainingInstance = ti;
-            }),
+            })
         );
         this.initRunsOverviewComponent();
     }
@@ -65,7 +61,15 @@ export class TrainingInstanceRunsComponent implements OnInit {
     onTrainingRunsLoadEvent(loadEvent: TableLoadEvent): void {
         this.paginationService.savePageSize(loadEvent.pagination.size);
         this.trainingRunService
-            .getAll(this.trainingInstance.id, new OffsetPaginationEvent(0, loadEvent.pagination.size, '', 'asc'))
+            .getAll(
+                this.trainingInstance.id,
+                new OffsetPaginationEvent(
+                    0,
+                    loadEvent.pagination.size,
+                    '',
+                    'asc'
+                )
+            )
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe();
     }
@@ -75,21 +79,27 @@ export class TrainingInstanceRunsComponent implements OnInit {
             0,
             this.paginationService.loadPageSize(),
             '',
-            'asc',
+            'asc'
         );
 
         this.trainingInstance$
             .pipe(
                 take(1),
-                switchMap((ti) => this.trainingRunService.getAll(ti.id, initialPagination)),
+                switchMap((ti) =>
+                    this.trainingRunService.getAll(ti.id, initialPagination)
+                )
             )
             .subscribe();
 
         this.trainingRuns$ = this.trainingRunService.resource$.pipe(
             takeUntilDestroyed(this.destroyRef),
             map((resource) => {
-                return new TrainingRunTable(resource, this.trainingRunService, this.trainingInstance);
-            }),
+                return new TrainingRunTable(
+                    resource,
+                    this.trainingRunService,
+                    this.trainingInstance
+                );
+            })
         );
 
         this.trainingRunsHasError$ = this.trainingRunService.hasError$;

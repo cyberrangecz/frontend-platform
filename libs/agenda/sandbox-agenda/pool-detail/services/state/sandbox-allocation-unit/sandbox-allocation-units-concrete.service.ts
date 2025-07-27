@@ -1,19 +1,27 @@
-import {inject, Injectable} from '@angular/core';
-import {SandboxAllocationUnitsService} from './sandbox-allocation-units.service';
-import {BehaviorSubject, combineLatestWith, EMPTY, Observable} from 'rxjs';
-import {OffsetPagination, OffsetPaginationEvent, PaginatedResource,} from '@sentinel/common/pagination';
-import {PoolApi, SandboxAllocationUnitsApi} from '@crczp/sandbox-api';
-import {SandboxAllocationUnit} from '@crczp/sandbox-model';
-import {ResourcePollingService} from '@crczp/sandbox-agenda/internal';
-import {map, switchMap, tap} from 'rxjs/operators';
-import {HttpErrorResponse} from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
+import { SandboxAllocationUnitsService } from './sandbox-allocation-units.service';
+import { BehaviorSubject, combineLatestWith, EMPTY, Observable } from 'rxjs';
+import {
+    OffsetPagination,
+    OffsetPaginationEvent,
+    PaginatedResource,
+} from '@sentinel/common/pagination';
+import { PoolApi, SandboxAllocationUnitsApi } from '@crczp/sandbox-api';
+import { SandboxAllocationUnit } from '@crczp/sandbox-model';
+import { ResourcePollingService } from '@crczp/sandbox-agenda/internal';
+import { map, switchMap, tap } from 'rxjs/operators';
+import { HttpErrorResponse } from '@angular/common/http';
 import {
     SentinelConfirmationDialogComponent,
     SentinelConfirmationDialogConfig,
     SentinelDialogResultEnum,
 } from '@sentinel/components/dialogs';
-import {MatDialog} from '@angular/material/dialog';
-import {ErrorHandlerService, NotificationService, PortalConfig} from "@crczp/common";
+import { MatDialog } from '@angular/material/dialog';
+import {
+    ErrorHandlerService,
+    NotificationService,
+    PortalConfig,
+} from '@crczp/utils';
 
 @Injectable()
 export class SandboxAllocationUnitsConcreteService extends SandboxAllocationUnitsService {
@@ -71,7 +79,11 @@ export class SandboxAllocationUnitsConcreteService extends SandboxAllocationUnit
                 )
             );
         return this.resourcePollingService
-            .startPolling(observable$, this.poolPollingPeriod, this.retryAttempts)
+            .startPolling(
+                observable$,
+                this.poolPollingPeriod,
+                this.retryAttempts
+            )
             .pipe(
                 tap(
                     (_) => _,

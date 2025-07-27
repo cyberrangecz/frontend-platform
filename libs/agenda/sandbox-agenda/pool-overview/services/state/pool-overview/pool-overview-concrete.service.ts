@@ -1,18 +1,19 @@
-import {inject, Injectable} from '@angular/core';
-import {MatDialog} from '@angular/material/dialog';
-import {Router} from '@angular/router';
+import { inject, Injectable } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import {
     SentinelConfirmationDialogComponent,
     SentinelConfirmationDialogConfig,
-    SentinelDialogResultEnum,
+    SentinelDialogResultEnum
 } from '@sentinel/components/dialogs';
-import {OffsetPaginationEvent, PaginatedResource,} from '@sentinel/common/pagination';
-import {PoolApi} from '@crczp/sandbox-api';
-import {Pool} from '@crczp/sandbox-model';
-import {EMPTY, from, Observable} from 'rxjs';
-import {catchError, switchMap, tap} from 'rxjs/operators';
-import {PoolOverviewService} from './pool-overview.service';
-import {ErrorHandlerService, NotificationService, PortalConfig, Routing} from '@crczp/common';
+import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
+import { PoolApi } from '@crczp/sandbox-api';
+import { Pool } from '@crczp/sandbox-model';
+import { EMPTY, from, Observable } from 'rxjs';
+import { catchError, switchMap, tap } from 'rxjs/operators';
+import { PoolOverviewService } from './pool-overview.service';
+import { ErrorHandlerService, NotificationService, PortalConfig } from '@crczp/utils';
+import { Routing } from '@crczp/routing-commons';
 
 /**
  * Basic implementation of a layer between a component and an API service.
@@ -109,15 +110,15 @@ export class PoolOverviewConcreteService extends PoolOverviewService {
     }
 
     create(): Observable<any> {
-        return from(this.router.navigate([
-            Routing.RouteBuilder.pool.create.build()
-        ]));
+        return from(
+            this.router.navigate([Routing.RouteBuilder.pool.create.build()])
+        );
     }
 
     edit(pool: Pool): Observable<any> {
         return from(
             this.router.navigate([
-                Routing.RouteBuilder.pool.poolId(pool.id).edit.build()
+                Routing.RouteBuilder.pool.poolId(pool.id).edit.build(),
             ])
         );
     }

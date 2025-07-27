@@ -1,14 +1,14 @@
-import {inject, Injectable} from '@angular/core';
-import {map, Observable} from 'rxjs';
-import {HttpClient, HttpHeaders} from '@angular/common/http';
-import {InstanceSimulatorMapper} from '../mapper/instance-simulator-mapper';
-import {InstanceModelSimulator} from '../../model/instance/instance-model-simulator';
-import {InstanceModelSimulatorDTO} from '../../model/instance/instance-model-simulator-dto';
-import {InstanceModelUpdateMapper} from '../mapper/instance-model-update-mapper';
-import {SankeyData} from '../../model/sankey/sankey-data';
-import {SankeyDataDTO} from '../../model/sankey/dto/sankey-data-dto';
-import {SankeyDataMapper} from '../../model/sankey/mapper/sankey-data-mapper';
-import {PortalConfig} from '@crczp/common';
+import { inject, Injectable } from '@angular/core';
+import { map, Observable } from 'rxjs';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { InstanceSimulatorMapper } from '../mapper/instance-simulator-mapper';
+import { InstanceModelSimulator } from '../../model/instance/instance-model-simulator';
+import { InstanceModelSimulatorDTO } from '../../model/instance/instance-model-simulator-dto';
+import { InstanceModelUpdateMapper } from '../mapper/instance-model-update-mapper';
+import { SankeyData } from '../../model/sankey/sankey-data';
+import { SankeyDataDTO } from '../../model/sankey/dto/sankey-data-dto';
+import { SankeyDataMapper } from '../../model/sankey/mapper/sankey-data-mapper';
+import { PortalConfig } from '@crczp/utils';
 
 @Injectable()
 export class InstanceSimulatorApiService {

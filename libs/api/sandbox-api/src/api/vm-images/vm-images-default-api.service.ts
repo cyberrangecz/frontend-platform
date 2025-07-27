@@ -1,16 +1,16 @@
-import {VirtualImagesMapper} from '../../mappers/vm-images/virtual-images-mapper';
-import {VirtualImagesDTO} from '../../dto/vm-images/virtual-images-dto';
-import {Observable} from 'rxjs';
-import {inject, Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
-import {VirtualImage} from '@crczp/sandbox-model';
-import {SentinelParamsMerger} from '@sentinel/common';
-import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
-import {SentinelFilter} from '@sentinel/common/filter';
-import {VMImagesApi} from './vm-images-api.service';
-import {map} from 'rxjs/operators';
-import {DjangoResourceDTO, PaginationMapper, ParamsBuilder} from '@crczp/api-common';
-import {PortalConfig} from "@crczp/common";
+import { VirtualImagesMapper } from '../../mappers/vm-images/virtual-images-mapper';
+import { VirtualImagesDTO } from '../../dto/vm-images/virtual-images-dto';
+import { Observable } from 'rxjs';
+import { inject, Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { VirtualImage } from '@crczp/sandbox-model';
+import { SentinelParamsMerger } from '@sentinel/common';
+import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
+import { SentinelFilter } from '@sentinel/common/filter';
+import { VMImagesApi } from './vm-images-api.service';
+import { map } from 'rxjs/operators';
+import { DjangoResourceDTO, PaginationMapper, ParamsBuilder } from '@crczp/api-common';
+import { PortalConfig } from '@crczp/utils';
 
 /**
  * Default implementation of service abstracting http communication with vm images endpoints.
@@ -19,7 +19,8 @@ import {PortalConfig} from "@crczp/common";
 export class VMImagesDefaultApi extends VMImagesApi {
     private readonly http = inject(HttpClient);
 
-    private readonly apiUrl = inject(PortalConfig).basePaths.sandbox + 'images';
+    private readonly apiUrl =
+        inject(PortalConfig).basePaths.sandbox + '/images';
 
     constructor() {
         super();
@@ -40,14 +41,17 @@ export class VMImagesDefaultApi extends VMImagesApi {
         cached = false,
         filters?: SentinelFilter[]
     ): Observable<PaginatedResource<VirtualImage>> {
-        const params = SentinelParamsMerger.merge([ParamsBuilder.djangoPaginationParams(pagination), ParamsBuilder.filterParams(filters)])
+        const params = SentinelParamsMerger.merge([
+            ParamsBuilder.djangoPaginationParams(pagination),
+            ParamsBuilder.filterParams(filters),
+        ])
             .append('onlyCustom', onlyCrczpImages)
             .append('GUI', onlyGuiAccess)
             .append('cached', cached);
 
         return this.http
             .get<DjangoResourceDTO<VirtualImagesDTO>>(this.apiUrl, {
-                params: params
+                params: params,
             })
             .pipe(
                 map(

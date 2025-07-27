@@ -1,26 +1,27 @@
-import {HttpErrorResponse} from '@angular/common/http';
-import {inject, Injectable} from '@angular/core';
-import {MatDialog} from '@angular/material/dialog';
-import {Router} from '@angular/router';
+import { HttpErrorResponse } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import {
     SentinelConfirmationDialogComponent,
     SentinelConfirmationDialogConfig,
-    SentinelDialogResultEnum,
+    SentinelDialogResultEnum
 } from '@sentinel/components/dialogs';
-import {OffsetPaginationEvent, PaginatedResource,} from '@sentinel/common/pagination';
-import {PoolApi, SandboxAllocationUnitsApi, SandboxInstanceApi,} from '@crczp/sandbox-api';
-import {SandboxAllocationUnit, SandboxInstance} from '@crczp/sandbox-model';
-import {EMPTY, from, Observable, of} from 'rxjs';
-import {catchError, switchMap, tap} from 'rxjs/operators';
-import {SandboxInstanceService} from './sandbox-instance.service';
-import {SandboxAllocationUnitsService} from '../sandbox-allocation-unit/sandbox-allocation-units.service';
+import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
+import { PoolApi, SandboxAllocationUnitsApi, SandboxInstanceApi } from '@crczp/sandbox-api';
+import { SandboxAllocationUnit, SandboxInstance } from '@crczp/sandbox-model';
+import { EMPTY, from, Observable, of } from 'rxjs';
+import { catchError, switchMap, tap } from 'rxjs/operators';
+import { SandboxInstanceService } from './sandbox-instance.service';
+import { SandboxAllocationUnitsService } from '../sandbox-allocation-unit/sandbox-allocation-units.service';
 import {
     AllocateVariableSandboxesDialogComponent
 } from '../../../components/allocate-variable-sandboxes/allocate-variable-sandboxes-dialog.component';
 import {
     AllocateVariableSandboxesDialogResult
 } from '../../../components/allocate-variable-sandboxes/allocateVariableSandboxesDialogResult';
-import {ErrorHandlerService, NotificationService, PortalConfig, Routing} from '@crczp/common';
+import { ErrorHandlerService, NotificationService, PortalConfig } from '@crczp/utils';
+import { Routing } from '@crczp/routing-commons';
 
 /**
  * Basic implementation of a layer between a component and an API service.
@@ -139,28 +140,28 @@ export class SandboxInstanceConcreteService extends SandboxInstanceService {
             switchMap((result) =>
                 result.result !== null
                     ? this.poolApi
-                        .allocateSandboxes(poolId, result.result)
-                        .pipe(
-                            tap(
-                                () =>
-                                    this.notificationService.emit(
-                                        'success',
-                                        `Allocation of specified sandboxes of pool ${poolId} started`
-                                    ),
-                                (err) =>
-                                    this.errorHandler.emit(
-                                        err,
-                                        `Allocating pool ${poolId}`
-                                    )
-                            ),
-                            switchMap(() => {
-                                this.lastPoolId = this.lastPoolId ?? poolId;
-                                return this.getAllUnits(
-                                    this.lastPoolId,
-                                    this.lastPagination
-                                );
-                            })
-                        )
+                          .allocateSandboxes(poolId, result.result)
+                          .pipe(
+                              tap(
+                                  () =>
+                                      this.notificationService.emit(
+                                          'success',
+                                          `Allocation of specified sandboxes of pool ${poolId} started`
+                                      ),
+                                  (err) =>
+                                      this.errorHandler.emit(
+                                          err,
+                                          `Allocating pool ${poolId}`
+                                      )
+                              ),
+                              switchMap(() => {
+                                  this.lastPoolId = this.lastPoolId ?? poolId;
+                                  return this.getAllUnits(
+                                      this.lastPoolId,
+                                      this.lastPagination
+                                  );
+                              })
+                          )
                     : EMPTY
             )
         );
@@ -253,7 +254,10 @@ export class SandboxInstanceConcreteService extends SandboxInstanceService {
     showTopology(poolId: number, sandboxUuid: string): Observable<boolean> {
         return from(
             this.router.navigate([
-                Routing.RouteBuilder.pool.poolId(poolId).sandbox_instance.sandboxInstanceId(sandboxUuid).topology.build(),
+                Routing.RouteBuilder.pool
+                    .poolId(poolId)
+                    .sandbox_instance.sandboxInstanceId(sandboxUuid)
+                    .topology.build(),
             ])
         );
     }
@@ -340,17 +344,20 @@ export class SandboxInstanceConcreteService extends SandboxInstanceService {
             case 0:
             case 1:
             case 2:
-                path = Routing.RouteBuilder.pool.poolId(poolId).sandbox_instance.sandboxInstanceId(sandboxId).build();
+                path = Routing.RouteBuilder.pool
+                    .poolId(poolId)
+                    .sandbox_instance.sandboxInstanceId(sandboxId)
+                    .build();
                 break;
             default:
                 path = '';
         }
         return path !== ''
             ? from(
-                this.router.navigate([path], {
-                    fragment: `stage-${stageOrder}`,
-                })
-            )
+                  this.router.navigate([path], {
+                      fragment: `stage-${stageOrder}`,
+                  })
+              )
             : of(false);
     }
 
@@ -387,7 +394,7 @@ export class SandboxInstanceConcreteService extends SandboxInstanceService {
         this.hasErrorSubject$.next(false);
         return this.sandboxApi
             .getSandboxes(this.lastPoolId, this.lastPagination)
-            .pipe(tap({error: (err) => this.onGetAllError(err)}));
+            .pipe(tap({ error: (err) => this.onGetAllError(err) }));
     }
 
     private getNumberOfSandboxes(

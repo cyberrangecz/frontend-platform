@@ -1,32 +1,36 @@
-import {ChangeDetectionStrategy, Component, DestroyRef, HostListener, inject, OnInit,} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
-import {OffsetPaginationEvent} from '@sentinel/common/pagination';
-import {SentinelControlItem, SentinelControlItemSignal, SentinelControlsComponent} from '@sentinel/components/controls';
-import {TrainingDefinitionInfo, TrainingInstance,} from '@crczp/training-model';
-import {combineLatestWith, Observable, switchMap} from 'rxjs';
-import {filter, map, take} from 'rxjs/operators';
-import {TrainingInstanceEditControls} from '../model/adapter/training-instance-edit-controls';
-import {TrainingInstanceChangeEvent} from '../model/events/training-instance-change-event';
-import {TrainingInstanceEditService} from '../services/state/edit/training-instance-edit.service';
-import {TrainingInstanceEditConcreteService} from '../services/state/edit/training-instance-edit-concrete.service';
-import {OrganizersAssignService} from '../services/state/organizers-assign/organizers-assign.service';
-import {Pool, SandboxDefinition} from '@crczp/sandbox-model';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {SentinelUserAssignComponent, SentinelUserAssignService} from '@sentinel/components/user-assign';
+import { ChangeDetectionStrategy, Component, DestroyRef, HostListener, inject, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
+import {
+    SentinelControlItem,
+    SentinelControlItemSignal,
+    SentinelControlsComponent
+} from '@sentinel/components/controls';
+import { TrainingDefinitionInfo, TrainingInstance } from '@crczp/training-model';
+import { combineLatestWith, Observable, switchMap } from 'rxjs';
+import { filter, map, take } from 'rxjs/operators';
+import { TrainingInstanceEditControls } from '../model/adapter/training-instance-edit-controls';
+import { TrainingInstanceChangeEvent } from '../model/events/training-instance-change-event';
+import { TrainingInstanceEditService } from '../services/state/edit/training-instance-edit.service';
+import { TrainingInstanceEditConcreteService } from '../services/state/edit/training-instance-edit-concrete.service';
+import { OrganizersAssignService } from '../services/state/organizers-assign/organizers-assign.service';
+import { Pool, SandboxDefinition } from '@crczp/sandbox-model';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { SentinelUserAssignComponent, SentinelUserAssignService } from '@sentinel/components/user-assign';
 import {
     MatExpansionPanel,
     MatExpansionPanelContent,
     MatExpansionPanelDescription,
     MatExpansionPanelHeader,
     MatExpansionPanelTitle
-} from "@angular/material/expansion";
-import {MatDivider} from "@angular/material/divider";
-import {TrainingInstanceEditComponent} from "./training-instance-edit/training-instance-edit.component";
-import {MatIcon} from "@angular/material/icon";
-import {MatError} from "@angular/material/input";
-import {AsyncPipe} from "@angular/common";
-import {PortalConfig} from "@crczp/common";
-import {TrainingInstanceCanDeactivate} from "../services/can-deactivate/training-instance-can-deactivate.service";
+} from '@angular/material/expansion';
+import { MatDivider } from '@angular/material/divider';
+import { TrainingInstanceEditComponent } from './training-instance-edit/training-instance-edit.component';
+import { MatIcon } from '@angular/material/icon';
+import { MatError } from '@angular/material/input';
+import { AsyncPipe } from '@angular/common';
+import { PortalConfig } from '@crczp/utils';
+import { TrainingInstanceCanDeactivate } from '../services/can-deactivate/training-instance-can-deactivate.service';
 
 /**
  * Main component of training instance edit/create page. Serves mainly as a smart component wrapper
@@ -45,7 +49,7 @@ import {TrainingInstanceCanDeactivate} from "../services/can-deactivate/training
             provide: SentinelUserAssignService,
             useClass: OrganizersAssignService,
         },
-        TrainingInstanceCanDeactivate
+        TrainingInstanceCanDeactivate,
     ],
     imports: [
         MatExpansionPanel,
@@ -59,8 +63,8 @@ import {TrainingInstanceCanDeactivate} from "../services/can-deactivate/training
         MatDivider,
         TrainingInstanceEditComponent,
         AsyncPipe,
-        SentinelUserAssignComponent
-    ]
+        SentinelUserAssignComponent,
+    ],
 })
 export class TrainingInstanceEditOverviewComponent implements OnInit {
     readonly PAGE_SIZE: number = 999;
@@ -97,9 +101,7 @@ export class TrainingInstanceEditOverviewComponent implements OnInit {
         this.activeRoute.data
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe((data) =>
-                this.editService.set(
-                    data[TrainingInstance.name]
-                )
+                this.editService.set(data[TrainingInstance.name])
             );
 
         this.trainingDefinitions$ =

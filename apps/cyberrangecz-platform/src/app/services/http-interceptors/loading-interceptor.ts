@@ -1,7 +1,12 @@
-import {HttpEvent, HttpHandlerFn, HttpRequest, HttpResponse} from '@angular/common/http';
-import {inject} from '@angular/core';
-import {Observable, Subscriber} from 'rxjs';
-import {LoadingService} from '../../../../../../libs/common/src/error-handling/loading.service';
+import {
+    HttpEvent,
+    HttpHandlerFn,
+    HttpRequest,
+    HttpResponse,
+} from '@angular/common/http';
+import { inject } from '@angular/core';
+import { Observable, Subscriber } from 'rxjs';
+import { LoadingService } from '../loading.service';
 
 /**
  * Intercepts http requests and displays loading while at least one http request is waiting on a response
@@ -9,7 +14,10 @@ import {LoadingService} from '../../../../../../libs/common/src/error-handling/l
 
 const requests: HttpRequest<any>[] = [];
 
-export function loadingInterceptor(req: HttpRequest<unknown>, next: HttpHandlerFn): Observable<HttpEvent<unknown>> {
+export function loadingInterceptor(
+    req: HttpRequest<unknown>,
+    next: HttpHandlerFn
+): Observable<HttpEvent<unknown>> {
     const loadingService = inject(LoadingService);
 
     requests.push(req);
@@ -29,7 +37,7 @@ export function loadingInterceptor(req: HttpRequest<unknown>, next: HttpHandlerF
             () => {
                 removeRequest(req, loadingService);
                 observer.complete();
-            },
+            }
         );
         return () => {
             removeRequest(req, loadingService);

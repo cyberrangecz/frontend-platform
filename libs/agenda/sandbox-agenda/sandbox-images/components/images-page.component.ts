@@ -1,16 +1,33 @@
-import {map} from 'rxjs/operators';
-import {VirtualImage} from '@crczp/sandbox-model';
-import {OffsetPaginationEvent, PaginationBaseEvent,} from '@sentinel/common/pagination';
-import {ChangeDetectionStrategy, Component, DestroyRef, inject, Input, OnInit,} from '@angular/core';
-import {Observable} from 'rxjs';
-import {SentinelTable, SentinelTableComponent, TableLoadEvent,} from '@sentinel/components/table';
-import {VMImagesService} from '../services/vm-images.service';
-import {VirtualImagesTable} from '../models/virtual-images-table';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {PaginationStorageService, providePaginationStorageService} from '@crczp/common';
-import {VMImagesConcreteService} from '../services/vm-images-concrete.service';
-import {MatCheckbox} from '@angular/material/checkbox';
-import {AsyncPipe} from '@angular/common';
+import { map } from 'rxjs/operators';
+import { VirtualImage } from '@crczp/sandbox-model';
+import {
+    OffsetPaginationEvent,
+    PaginationBaseEvent,
+} from '@sentinel/common/pagination';
+import {
+    ChangeDetectionStrategy,
+    Component,
+    DestroyRef,
+    inject,
+    Input,
+    OnInit,
+} from '@angular/core';
+import { Observable } from 'rxjs';
+import {
+    SentinelTable,
+    SentinelTableComponent,
+    TableLoadEvent,
+} from '@sentinel/components/table';
+import { VMImagesService } from '../services/vm-images.service';
+import { VirtualImagesTable } from '../models/virtual-images-table';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { VMImagesConcreteService } from '../services/vm-images-concrete.service';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { AsyncPipe } from '@angular/common';
+import {
+    PaginationStorageService,
+    providePaginationStorageService,
+} from '@crczp/utils';
 
 @Component({
     selector: 'crczp-images-page',
@@ -23,7 +40,7 @@ import {AsyncPipe} from '@angular/common';
             provide: VMImagesService,
             useClass: VMImagesConcreteService,
         },
-        providePaginationStorageService(ImagesPageComponent)
+        providePaginationStorageService(ImagesPageComponent),
     ],
 })
 export class ImagesPageComponent implements OnInit {

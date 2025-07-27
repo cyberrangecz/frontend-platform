@@ -1,8 +1,8 @@
-import {HttpClient, HttpParams} from '@angular/common/http';
-import {inject, Injectable} from '@angular/core';
-import {SentinelParamsMerger} from '@sentinel/common';
-import {SentinelFilter} from '@sentinel/common/filter';
-import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
+import { SentinelParamsMerger } from '@sentinel/common';
+import { SentinelFilter } from '@sentinel/common/filter';
+import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
 import {
     AccessedTrainingRun,
     AccessTrainingRunInfo,
@@ -13,26 +13,26 @@ import {
     TrainingRun,
     TrainingRunInfo
 } from '@crczp/training-model';
-import {Observable} from 'rxjs';
-import {map} from 'rxjs/operators';
-import {AbstractLevelDTO} from '../../dto/level/abstract-level-dto';
-import {HintDTO} from '../../dto/level/training/hint-dto';
-import {IsCorrectAnswerDto} from '../../dto/level/training/is-correct-answer-dto';
-import {AccessTrainingRunDTO} from '../../dto/training-run/access-training-run-dto';
-import {TrainingRunDTO} from '../../dto/training-run/training-run-dto';
-import {QuestionMapper} from '../../mappers/level/assessment/question-mapper';
-import {HintMapper} from '../../mappers/level/training/hint-mapper';
-import {LevelMapper} from '../../mappers/level/level-mapper';
-import {AccessTrainingRunMapper} from '../../mappers/training-run/access-training-run-mapper';
-import {AccessedTrainingRunMapper} from '../../mappers/training-run/accessed-training-run-mapper';
-import {LevelAnswerMapper} from '../../mappers/training-run/level-answer-mapper';
-import {TrainingRunMapper} from '../../mappers/training-run/training-run-mapper';
-import {LinearRunApi} from './training-run-api.service';
-import {TrainingRunInfoDTO} from '../../dto/training-run/training-run-info-dto';
-import {TrainingRunInfoMapper} from '../../mappers/training-run/training-run-info-mapper';
-import {AnsweredLevelMapper} from '../../mappers/training-run/training-run-levels/answered-level-mapper';
-import {JavaPaginatedResource, PaginationMapper, ParamsBuilder} from '@crczp/api-common';
-import {PortalConfig} from "@crczp/common";
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { AbstractLevelDTO } from '../../dto/level/abstract-level-dto';
+import { HintDTO } from '../../dto/level/training/hint-dto';
+import { IsCorrectAnswerDto } from '../../dto/level/training/is-correct-answer-dto';
+import { AccessTrainingRunDTO } from '../../dto/training-run/access-training-run-dto';
+import { TrainingRunDTO } from '../../dto/training-run/training-run-dto';
+import { QuestionMapper } from '../../mappers/level/assessment/question-mapper';
+import { HintMapper } from '../../mappers/level/training/hint-mapper';
+import { LevelMapper } from '../../mappers/level/level-mapper';
+import { AccessTrainingRunMapper } from '../../mappers/training-run/access-training-run-mapper';
+import { AccessedTrainingRunMapper } from '../../mappers/training-run/accessed-training-run-mapper';
+import { LevelAnswerMapper } from '../../mappers/training-run/level-answer-mapper';
+import { TrainingRunMapper } from '../../mappers/training-run/training-run-mapper';
+import { LinearRunApi } from './training-run-api.service';
+import { TrainingRunInfoDTO } from '../../dto/training-run/training-run-info-dto';
+import { TrainingRunInfoMapper } from '../../mappers/training-run/training-run-info-mapper';
+import { AnsweredLevelMapper } from '../../mappers/training-run/training-run-levels/answered-level-mapper';
+import { JavaPaginatedResource, PaginationMapper, ParamsBuilder } from '@crczp/api-common';
+import { PortalConfig } from '@crczp/utils';
 
 /**
  * Default implementation of service abstracting http communication with training run endpoints.
@@ -41,7 +41,8 @@ import {PortalConfig} from "@crczp/common";
 export class TrainingRunDefaultApi extends LinearRunApi {
     private readonly http = inject(HttpClient);
 
-    private readonly apiUrl = inject(PortalConfig).basePaths.linearTraining + 'training-runs';
+    private readonly apiUrl =
+        inject(PortalConfig).basePaths.linearTraining + '/training-runs';
 
     constructor() {
         super();
@@ -54,22 +55,22 @@ export class TrainingRunDefaultApi extends LinearRunApi {
      */
     getAll(
         pagination: OffsetPaginationEvent,
-        filters: SentinelFilter[] = [],
+        filters: SentinelFilter[] = []
     ): Observable<PaginatedResource<TrainingRun>> {
         const params = SentinelParamsMerger.merge([
             ParamsBuilder.javaPaginationParams(pagination),
             ParamsBuilder.filterParams(filters),
         ]);
         return this.http
-            .get<JavaPaginatedResource<TrainingRunDTO>>(this.apiUrl, {params})
+            .get<JavaPaginatedResource<TrainingRunDTO>>(this.apiUrl, { params })
             .pipe(
                 map(
                     (response) =>
                         new PaginatedResource<TrainingRun>(
                             TrainingRunMapper.fromDTOs(response.content),
-                            PaginationMapper.fromJavaDTO(response.pagination),
-                        ),
-                ),
+                            PaginationMapper.fromJavaDTO(response.pagination)
+                        )
+                )
             );
     }
 
@@ -90,7 +91,7 @@ export class TrainingRunDefaultApi extends LinearRunApi {
      */
     getAccessed(
         pagination: OffsetPaginationEvent,
-        filters: SentinelFilter[] = [],
+        filters: SentinelFilter[] = []
     ): Observable<PaginatedResource<AccessedTrainingRun>> {
         const params = SentinelParamsMerger.merge([
             ParamsBuilder.javaPaginationParams(pagination),
@@ -98,15 +99,20 @@ export class TrainingRunDefaultApi extends LinearRunApi {
         ]);
 
         return this.http
-            .get<JavaPaginatedResource<AccessTrainingRunDTO>>(`${this.apiUrl}/accessible`, {params})
+            .get<JavaPaginatedResource<AccessTrainingRunDTO>>(
+                `${this.apiUrl}/accessible`,
+                { params }
+            )
             .pipe(
                 map(
                     (response) =>
                         new PaginatedResource<AccessedTrainingRun>(
-                            AccessedTrainingRunMapper.fromDTOs(response.content),
-                            PaginationMapper.fromJavaDTO(response.pagination),
-                        ),
-                ),
+                            AccessedTrainingRunMapper.fromDTOs(
+                                response.content
+                            ),
+                            PaginationMapper.fromJavaDTO(response.pagination)
+                        )
+                )
             );
     }
 
@@ -127,7 +133,7 @@ export class TrainingRunDefaultApi extends LinearRunApi {
      */
     delete(trainingRunId: number, force = false): Observable<any> {
         const params = new HttpParams().append('forceDelete', force.toString());
-        return this.http.delete(`${this.apiUrl}/${trainingRunId}`, {params});
+        return this.http.delete(`${this.apiUrl}/${trainingRunId}`, { params });
     }
 
     /**
@@ -139,7 +145,7 @@ export class TrainingRunDefaultApi extends LinearRunApi {
         const params = new HttpParams()
             .append('trainingRunIds', trainingRunIds.toString())
             .append('forceDelete', force.toString());
-        return this.http.delete(this.apiUrl, {params});
+        return this.http.delete(this.apiUrl, { params });
     }
 
     /**
@@ -149,7 +155,7 @@ export class TrainingRunDefaultApi extends LinearRunApi {
     access(token: string): Observable<AccessTrainingRunInfo> {
         const params = new HttpParams().append('accessToken', token);
         return this.http
-            .post<AccessTrainingRunDTO>(this.apiUrl, {}, {params})
+            .post<AccessTrainingRunDTO>(this.apiUrl, {}, { params })
             .pipe(map((response) => AccessTrainingRunMapper.fromDTO(response)));
     }
 
@@ -159,7 +165,9 @@ export class TrainingRunDefaultApi extends LinearRunApi {
      */
     resume(trainingRunId: number): Observable<AccessTrainingRunInfo> {
         return this.http
-            .get<AccessTrainingRunDTO>(`${this.apiUrl}/${trainingRunId}/resumption`)
+            .get<AccessTrainingRunDTO>(
+                `${this.apiUrl}/${trainingRunId}/resumption`
+            )
             .pipe(map((response) => AccessTrainingRunMapper.fromDTO(response)));
     }
 
@@ -169,7 +177,9 @@ export class TrainingRunDefaultApi extends LinearRunApi {
      */
     nextLevel(trainingRunId: number): Observable<Level> {
         return this.http
-            .get<AbstractLevelDTO>(`${this.apiUrl}/${trainingRunId}/next-levels`)
+            .get<AbstractLevelDTO>(
+                `${this.apiUrl}/${trainingRunId}/next-levels`
+            )
             .pipe(map((response) => LevelMapper.fromDTO(response)));
     }
 
@@ -178,9 +188,15 @@ export class TrainingRunDefaultApi extends LinearRunApi {
      * @param trainingRunId id of training run in which the answer should be submitted
      * @param answer a answer submitted by user
      */
-    isCorrectAnswer(trainingRunId: number, answer: string): Observable<LevelAnswerCheck> {
+    isCorrectAnswer(
+        trainingRunId: number,
+        answer: string
+    ): Observable<LevelAnswerCheck> {
         return this.http
-            .post<IsCorrectAnswerDto>(`${this.apiUrl}/${trainingRunId}/is-correct-answer`, {answer})
+            .post<IsCorrectAnswerDto>(
+                `${this.apiUrl}/${trainingRunId}/is-correct-answer`,
+                { answer }
+            )
             .pipe(map((response) => LevelAnswerMapper.fromDTO(response)));
     }
 
@@ -189,10 +205,16 @@ export class TrainingRunDefaultApi extends LinearRunApi {
      * @param trainingRunId id of training run in which the passkey should be submitted
      * @param passkey a passkey submitted by user
      */
-    isCorrectPasskey(trainingRunId: number, passkey: string): Observable<boolean> {
-        return this.http.post<boolean>(`${this.apiUrl}/${trainingRunId}/is-correct-passkey`, {
-            passkey,
-        });
+    isCorrectPasskey(
+        trainingRunId: number,
+        passkey: string
+    ): Observable<boolean> {
+        return this.http.post<boolean>(
+            `${this.apiUrl}/${trainingRunId}/is-correct-passkey`,
+            {
+                passkey,
+            }
+        );
     }
 
     /**
@@ -211,7 +233,9 @@ export class TrainingRunDefaultApi extends LinearRunApi {
      * @param trainingRunId id of the training run in which, solution should be revealed
      */
     takeSolution(trainingRunId: number): Observable<string> {
-        return this.http.get(`${this.apiUrl}/${trainingRunId}/solutions`, {responseType: 'text'});
+        return this.http.get(`${this.apiUrl}/${trainingRunId}/solutions`, {
+            responseType: 'text',
+        });
     }
 
     /**
@@ -219,10 +243,13 @@ export class TrainingRunDefaultApi extends LinearRunApi {
      * @param trainingRunId id of the training run in which, questions should be submitted
      * @param questions questions which answers should be submitted
      */
-    submitAnswers(trainingRunId: number, questions: Question[]): Observable<any> {
+    submitAnswers(
+        trainingRunId: number,
+        questions: Question[]
+    ): Observable<any> {
         return this.http.put(
             `${this.apiUrl}/${trainingRunId}/assessment-evaluations`,
-            QuestionMapper.toAnswersDTOs(questions),
+            QuestionMapper.toAnswersDTOs(questions)
         );
     }
 
@@ -249,7 +276,9 @@ export class TrainingRunDefaultApi extends LinearRunApi {
      */
     moveToLevel(trainingRunId: number, levelId: number): Observable<Level> {
         return this.http
-            .get<AbstractLevelDTO>(`${this.apiUrl}/${trainingRunId}/levels/${levelId}`)
+            .get<AbstractLevelDTO>(
+                `${this.apiUrl}/${trainingRunId}/levels/${levelId}`
+            )
             .pipe(map((response) => AnsweredLevelMapper.fromDTO(response)));
     }
 }

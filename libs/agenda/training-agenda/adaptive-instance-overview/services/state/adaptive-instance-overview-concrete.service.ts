@@ -1,20 +1,28 @@
-import {inject, Injectable} from '@angular/core';
-import {Router} from '@angular/router';
-import {OffsetPaginationEvent, PaginatedResource,} from '@sentinel/common/pagination';
-import {PoolApi} from '@crczp/sandbox-api';
-import {AdaptiveInstanceApi} from '@crczp/training-api';
-import {TrainingInstance} from '@crczp/training-model';
-import {EMPTY, from, Observable, of} from 'rxjs';
-import {catchError, map, switchMap, tap} from 'rxjs/operators';
-import {AdaptiveInstanceFilter} from '../../model/adapters/adaptive-instance-filter';
-import {AdaptiveInstanceOverviewService} from './adaptive-instance-overview.service';
+import { inject, Injectable } from '@angular/core';
+import { Router } from '@angular/router';
+import {
+    OffsetPaginationEvent,
+    PaginatedResource,
+} from '@sentinel/common/pagination';
+import { PoolApi } from '@crczp/sandbox-api';
+import { AdaptiveInstanceApi } from '@crczp/training-api';
+import { TrainingInstance } from '@crczp/training-model';
+import { EMPTY, from, Observable, of } from 'rxjs';
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
+import { AdaptiveInstanceFilter } from '../../model/adapters/adaptive-instance-filter';
+import { AdaptiveInstanceOverviewService } from './adaptive-instance-overview.service';
 import {
     SentinelConfirmationDialogComponent,
     SentinelConfirmationDialogConfig,
     SentinelDialogResultEnum,
 } from '@sentinel/components/dialogs';
-import {MatDialog} from '@angular/material/dialog';
-import {ErrorHandlerService, NotificationService, PortalConfig, Routing} from '@crczp/common';
+import { MatDialog } from '@angular/material/dialog';
+import {
+    ErrorHandlerService,
+    NotificationService,
+    PortalConfig,
+} from '@crczp/utils';
+import { Routing } from '@crczp/routing-commons';
 
 @Injectable()
 export class AdaptiveInstanceOverviewConcreteService extends AdaptiveInstanceOverviewService {
@@ -55,30 +63,34 @@ export class AdaptiveInstanceOverviewConcreteService extends AdaptiveInstanceOve
 
     create(): Observable<any> {
         return from(
-            this.router.navigate([Routing.RouteBuilder.adaptive_instance.create.build()])
+            this.router.navigate([
+                Routing.RouteBuilder.adaptive_instance.create.build(),
+            ])
             //this.navigator.toNewAdaptiveInstance()])
         );
     }
 
     edit(id: number): Observable<any> {
         return from(
-            this.router.navigate([Routing.RouteBuilder.adaptive_instance.instanceId(id).edit.build()])
+            this.router.navigate([
+                Routing.RouteBuilder.adaptive_instance
+                    .instanceId(id)
+                    .edit.build(),
+            ])
             //this.navigator.toAdaptiveInstanceEdit(id)])
         );
     }
 
     download(id: number): Observable<any> {
-        return this.adaptiveInstanceApi
-            .archive(id)
-            .pipe(
-                tap({
-                    error: (err) =>
-                        this.errorHandler.emit(
-                            err,
-                            'Downloading training instance'
-                        ),
-                })
-            );
+        return this.adaptiveInstanceApi.archive(id).pipe(
+            tap({
+                error: (err) =>
+                    this.errorHandler.emit(
+                        err,
+                        'Downloading training instance'
+                    ),
+            })
+        );
     }
 
     delete(
@@ -95,20 +107,30 @@ export class AdaptiveInstanceOverviewConcreteService extends AdaptiveInstanceOve
 
     runs(id: number): Observable<any> {
         return from(
-            this.router.navigate([Routing.RouteBuilder.adaptive_instance.instanceId(id).runs.build()])
+            this.router.navigate([
+                Routing.RouteBuilder.adaptive_instance
+                    .instanceId(id)
+                    .runs.build(),
+            ])
         );
     }
 
     token(id: number): Observable<any> {
         return from(
-            this.router.navigate([Routing.RouteBuilder.adaptive_instance.instanceId(id).access_token.build()])
+            this.router.navigate([
+                Routing.RouteBuilder.adaptive_instance
+                    .instanceId(id)
+                    .access_token.build(),
+            ])
         );
     }
 
     progress(id: number): Observable<any> {
         return from(
             this.router.navigate([
-                Routing.RouteBuilder.adaptive_instance.instanceId(id).progress.build()
+                Routing.RouteBuilder.adaptive_instance
+                    .instanceId(id)
+                    .progress.build(),
             ])
         );
     }
@@ -116,7 +138,9 @@ export class AdaptiveInstanceOverviewConcreteService extends AdaptiveInstanceOve
     results(id: number): Observable<any> {
         return from(
             this.router.navigate([
-                Routing.RouteBuilder.adaptive_instance.instanceId(id).results.build()
+                Routing.RouteBuilder.adaptive_instance
+                    .instanceId(id)
+                    .results.build(),
             ])
         );
     }

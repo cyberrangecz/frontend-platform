@@ -1,32 +1,49 @@
-import {OffsetPaginationEvent} from '@sentinel/common/pagination';
-import {ChangeDetectionStrategy, Component, DestroyRef, HostListener, inject, OnInit} from '@angular/core';
-import {TrainingDefinitionInfo, TrainingInstance} from '@crczp/training-model';
-import {SentinelControlItem, SentinelControlItemSignal, SentinelControlsComponent} from '@sentinel/components/controls';
-import {filter, map, switchMap, take} from 'rxjs/operators';
-import {AdaptiveInstanceEditService} from '../services/state/edit/adaptive-instance-edit.service';
-import {AdaptiveInstanceEditControls} from '../models/adapter/adaptive-instance-edit-controls';
-import {AdaptiveInstanceChangeEvent} from '../models/events/adaptive-instance-change-event';
-import {AdaptiveInstanceEditConcreteService} from '../services/state/edit/adaptive-instance-edit-concrete.service';
-import {OrganizersAssignService} from '../services/state/organizers-assign/organizers-assign.service';
-import {Pool, SandboxDefinition} from '@crczp/sandbox-model';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {SentinelUserAssignComponent, SentinelUserAssignService} from '@sentinel/components/user-assign';
-import {PortalConfig} from "@crczp/common";
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
+import {
+    ChangeDetectionStrategy,
+    Component,
+    DestroyRef,
+    HostListener,
+    inject,
+    OnInit,
+} from '@angular/core';
+import {
+    TrainingDefinitionInfo,
+    TrainingInstance,
+} from '@crczp/training-model';
+import {
+    SentinelControlItem,
+    SentinelControlItemSignal,
+    SentinelControlsComponent,
+} from '@sentinel/components/controls';
+import { filter, map, switchMap, take } from 'rxjs/operators';
+import { AdaptiveInstanceEditService } from '../services/state/edit/adaptive-instance-edit.service';
+import { AdaptiveInstanceEditControls } from '../models/adapter/adaptive-instance-edit-controls';
+import { AdaptiveInstanceChangeEvent } from '../models/events/adaptive-instance-change-event';
+import { AdaptiveInstanceEditConcreteService } from '../services/state/edit/adaptive-instance-edit-concrete.service';
+import { OrganizersAssignService } from '../services/state/organizers-assign/organizers-assign.service';
+import { Pool, SandboxDefinition } from '@crczp/sandbox-model';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {
+    SentinelUserAssignComponent,
+    SentinelUserAssignService,
+} from '@sentinel/components/user-assign';
+import { PortalConfig } from '@crczp/utils';
 import {
     MatExpansionPanel,
     MatExpansionPanelContent,
     MatExpansionPanelDescription,
     MatExpansionPanelHeader,
-    MatExpansionPanelTitle
-} from "@angular/material/expansion";
-import {AdaptiveInstanceEditComponent} from "./adaptive-instance-edit/adaptive-instance-edit.component";
-import {MatIcon} from "@angular/material/icon";
-import {MatError} from "@angular/material/input";
-import {MatDivider} from "@angular/material/divider";
-import {AsyncPipe} from "@angular/common";
-import {AdaptiveInstanceCanDeactivate} from "../services/can-deactivate/adaptive-instance-can-deactivate.service";
-import {combineLatestWith, Observable} from "rxjs";
-import {ActivatedRoute} from "@angular/router";
+    MatExpansionPanelTitle,
+} from '@angular/material/expansion';
+import { AdaptiveInstanceEditComponent } from './adaptive-instance-edit/adaptive-instance-edit.component';
+import { MatIcon } from '@angular/material/icon';
+import { MatError } from '@angular/material/input';
+import { MatDivider } from '@angular/material/divider';
+import { AsyncPipe } from '@angular/common';
+import { AdaptiveInstanceCanDeactivate } from '../services/can-deactivate/adaptive-instance-can-deactivate.service';
+import { combineLatestWith, Observable } from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
     selector: 'crczp-adaptive-instance-edit-overview',
@@ -34,9 +51,15 @@ import {ActivatedRoute} from "@angular/router";
     styleUrls: ['./adaptive-instance-edit-overview.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [
-        {provide: AdaptiveInstanceEditService, useClass: AdaptiveInstanceEditConcreteService},
-        {provide: SentinelUserAssignService, useClass: OrganizersAssignService},
-        AdaptiveInstanceCanDeactivate
+        {
+            provide: AdaptiveInstanceEditService,
+            useClass: AdaptiveInstanceEditConcreteService,
+        },
+        {
+            provide: SentinelUserAssignService,
+            useClass: OrganizersAssignService,
+        },
+        AdaptiveInstanceCanDeactivate,
     ],
     imports: [
         MatIcon,
@@ -50,8 +73,8 @@ import {ActivatedRoute} from "@angular/router";
         SentinelControlsComponent,
         MatDivider,
         AsyncPipe,
-        SentinelUserAssignComponent
-    ]
+        SentinelUserAssignComponent,
+    ],
 })
 export class AdaptiveInstanceEditOverviewComponent implements OnInit {
     readonly PAGE_SIZE: number = 999;
@@ -77,25 +100,42 @@ export class AdaptiveInstanceEditOverviewComponent implements OnInit {
         this.trainingInstance$ = this.editService.trainingInstance$;
         this.hasStarted$ = this.editService.hasStarted$;
         this.instanceValid$ = this.editService.instanceValid$;
-        const saveDisabled$: Observable<boolean> = this.editService.saveDisabled$;
+        const saveDisabled$: Observable<boolean> =
+            this.editService.saveDisabled$;
         this.editMode$ = this.editService.editMode$;
-        this.tiTitle$ = this.editService.trainingInstance$.pipe(map((ti) => ti.title));
+        this.tiTitle$ = this.editService.trainingInstance$.pipe(
+            map((ti) => ti.title)
+        );
         this.activeRoute.data
             .pipe(takeUntilDestroyed(this.destroyRef))
-            .subscribe((data) => this.editService.set(data[TrainingInstance.name]));
+            .subscribe((data) =>
+                this.editService.set(data[TrainingInstance.name])
+            );
 
-        this.trainingDefinitions$ = this.editService.releasedTrainingDefinitions$.pipe(
-            combineLatestWith(this.editService.unreleasedTrainingDefinitions$),
-            map(([released, unreleased]) => [...released.elements, ...unreleased.elements]),
+        this.trainingDefinitions$ =
+            this.editService.releasedTrainingDefinitions$.pipe(
+                combineLatestWith(
+                    this.editService.unreleasedTrainingDefinitions$
+                ),
+                map(([released, unreleased]) => [
+                    ...released.elements,
+                    ...unreleased.elements,
+                ])
+            );
+        this.pools$ = this.editService.pools$.pipe(
+            map((pools) => pools.elements)
         );
-        this.pools$ = this.editService.pools$.pipe(map((pools) => pools.elements));
         this.sandboxDefinitions$ = this.editService.sandboxDefinitions$.pipe(
-            map((definitions) => definitions.elements),
+            map((definitions) => definitions.elements)
         );
         this.refreshTrainingDefinitions();
         this.refreshPools();
         this.refreshSandboxDefinitions();
-        this.controls = AdaptiveInstanceEditControls.create(this.editService, saveDisabled$, this.instanceValid$);
+        this.controls = AdaptiveInstanceEditControls.create(
+            this.editService,
+            saveDisabled$,
+            this.instanceValid$
+        );
     }
 
     ngOnInit(): void {
@@ -105,12 +145,18 @@ export class AdaptiveInstanceEditOverviewComponent implements OnInit {
                 filter((editMode) => editMode),
                 switchMap(() => this.editService.trainingInstance$),
                 takeUntilDestroyed(this.destroyRef),
-                filter((trainingInstance) => !!trainingInstance && !!trainingInstance.id),
+                filter(
+                    (trainingInstance) =>
+                        !!trainingInstance && !!trainingInstance.id
+                )
             )
             .subscribe((trainingInstance) =>
                 this.userAssignService
-                    .getAssigned(trainingInstance.id, new OffsetPaginationEvent(0, this.defaultPaginationSize))
-                    .subscribe(),
+                    .getAssigned(
+                        trainingInstance.id,
+                        new OffsetPaginationEvent(0, this.defaultPaginationSize)
+                    )
+                    .subscribe()
             );
     }
 
@@ -157,18 +203,42 @@ export class AdaptiveInstanceEditOverviewComponent implements OnInit {
     }
 
     private refreshTrainingDefinitions() {
-        const pagination = new OffsetPaginationEvent(0, this.PAGE_SIZE, '', 'asc');
-        this.editService.getAllTrainingDefinitions(pagination, 'RELEASED').pipe(take(1)).subscribe();
-        this.editService.getAllTrainingDefinitions(pagination, 'UNRELEASED').pipe(take(1)).subscribe();
+        const pagination = new OffsetPaginationEvent(
+            0,
+            this.PAGE_SIZE,
+            '',
+            'asc'
+        );
+        this.editService
+            .getAllTrainingDefinitions(pagination, 'RELEASED')
+            .pipe(take(1))
+            .subscribe();
+        this.editService
+            .getAllTrainingDefinitions(pagination, 'UNRELEASED')
+            .pipe(take(1))
+            .subscribe();
     }
 
     private refreshPools() {
-        const pagination = new OffsetPaginationEvent(0, this.PAGE_SIZE, '', 'asc');
+        const pagination = new OffsetPaginationEvent(
+            0,
+            this.PAGE_SIZE,
+            '',
+            'asc'
+        );
         this.editService.getAllPools(pagination).pipe(take(1)).subscribe();
     }
 
     private refreshSandboxDefinitions() {
-        const pagination = new OffsetPaginationEvent(0, this.PAGE_SIZE, '', 'asc');
-        this.editService.getAllSandboxDefinitions(pagination).pipe(take(1)).subscribe();
+        const pagination = new OffsetPaginationEvent(
+            0,
+            this.PAGE_SIZE,
+            '',
+            'asc'
+        );
+        this.editService
+            .getAllSandboxDefinitions(pagination)
+            .pipe(take(1))
+            .subscribe();
     }
 }

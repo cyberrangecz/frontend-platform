@@ -1,18 +1,19 @@
-import {inject, Injectable} from '@angular/core';
-import {MatDialog} from '@angular/material/dialog';
-import {Router} from '@angular/router';
+import { inject, Injectable } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import {
     SentinelConfirmationDialogComponent,
     SentinelConfirmationDialogConfig,
-    SentinelDialogResultEnum,
+    SentinelDialogResultEnum
 } from '@sentinel/components/dialogs';
-import {OffsetPaginationEvent, PaginatedResource,} from '@sentinel/common/pagination';
-import {SandboxDefinitionApi} from '@crczp/sandbox-api';
-import {SandboxDefinition} from '@crczp/sandbox-model';
-import {EMPTY, from, Observable, of} from 'rxjs';
-import {switchMap, tap} from 'rxjs/operators';
-import {SandboxDefinitionOverviewService} from './sandbox-definition-overview.service';
-import {ErrorHandlerService, NotificationService, PortalConfig, Routing} from '@crczp/common';
+import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
+import { SandboxDefinitionApi } from '@crczp/sandbox-api';
+import { SandboxDefinition } from '@crczp/sandbox-model';
+import { EMPTY, from, Observable, of } from 'rxjs';
+import { switchMap, tap } from 'rxjs/operators';
+import { SandboxDefinitionOverviewService } from './sandbox-definition-overview.service';
+import { ErrorHandlerService, NotificationService, PortalConfig } from '@crczp/utils';
+import { Routing } from '@crczp/routing-commons';
 
 /**
  * Basic implementation of a layer between a component and an API service.
@@ -56,7 +57,9 @@ export class SandboxDefinitionOverviewConcreteService extends SandboxDefinitionO
 
     create(): Observable<any> {
         return of(
-            this.router.navigate([Routing.RouteBuilder.sandbox_definition.create.build()])
+            this.router.navigate([
+                Routing.RouteBuilder.sandbox_definition.create.build(),
+            ])
         );
     }
 
@@ -79,7 +82,9 @@ export class SandboxDefinitionOverviewConcreteService extends SandboxDefinitionO
     showTopology(sandboxDefinition: SandboxDefinition): Observable<any> {
         return from(
             this.router.navigate([
-                Routing.RouteBuilder.sandbox_definition.definitionId(sandboxDefinition.id).topology.build()
+                Routing.RouteBuilder.sandbox_definition
+                    .definitionId(sandboxDefinition.id)
+                    .topology.build(),
             ])
         );
     }

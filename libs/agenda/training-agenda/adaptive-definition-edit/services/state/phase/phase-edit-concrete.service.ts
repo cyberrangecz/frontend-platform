@@ -1,14 +1,14 @@
-import {inject, Injectable} from '@angular/core';
-import {MatDialog} from '@angular/material/dialog';
+import { inject, Injectable } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import {
     SentinelConfirmationDialogComponent,
     SentinelConfirmationDialogConfig,
     SentinelDialogResultEnum,
 } from '@sentinel/components/dialogs';
-import {EMPTY, Observable} from 'rxjs';
-import {switchMap, tap} from 'rxjs/operators';
-import {PhaseEditService} from './phase-edit.service';
-import {AdaptiveTrainingDefinitionApi} from '@crczp/training-api';
+import { EMPTY, Observable } from 'rxjs';
+import { switchMap, tap } from 'rxjs/operators';
+import { PhaseEditService } from './phase-edit.service';
+import { AdaptiveTrainingDefinitionApi } from '@crczp/training-api';
 import {
     AbstractPhaseTypeEnum,
     AccessPhase,
@@ -19,7 +19,7 @@ import {
     QuestionnaireTypeEnum,
     TrainingPhase,
 } from '@crczp/training-model';
-import {ErrorHandlerService, NotificationService} from "@crczp/common";
+import { ErrorHandlerService, NotificationService } from '@crczp/utils';
 
 @Injectable()
 export class PhaseEditConcreteService extends PhaseEditService {
@@ -41,7 +41,10 @@ export class PhaseEditConcreteService extends PhaseEditService {
 
     setActivePhase(phaseIndex: number): void {
         this.activeStepSubject$.next(phaseIndex);
-        if (this.phasesSubject$.value.length > 0 && this.getSelected().type === AbstractPhaseTypeEnum.Training) {
+        if (
+            this.phasesSubject$.value.length > 0 &&
+            this.getSelected().type === AbstractPhaseTypeEnum.Training
+        ) {
             this.activeTaskStepSubject$.next(0);
             this.updateActiveTasks();
         }
@@ -69,7 +72,9 @@ export class PhaseEditConcreteService extends PhaseEditService {
         task.isUnsaved = true;
         this.getSelected().isUnsaved = true;
         const newPhases = this.phasesSubject$.getValue();
-        (newPhases[this.activeStepSubject$.getValue()] as TrainingPhase).tasks[task.order] = task;
+        (newPhases[this.activeStepSubject$.getValue()] as TrainingPhase).tasks[
+            task.order
+        ] = task;
         this.saveDisabledSubject$.next(!task.valid);
         this.updateActiveTasks();
         this.emitUnsavedTasks(task.id);
@@ -98,7 +103,10 @@ export class PhaseEditConcreteService extends PhaseEditService {
         }
     }
 
-    add(phaseType: AbstractPhaseTypeEnum, questionnaireType?: QuestionnaireTypeEnum): Observable<Phase> {
+    add(
+        phaseType: AbstractPhaseTypeEnum,
+        questionnaireType?: QuestionnaireTypeEnum
+    ): Observable<Phase> {
         let added$: Observable<Phase>;
         switch (phaseType) {
             case AbstractPhaseTypeEnum.Info: {
@@ -118,7 +126,9 @@ export class PhaseEditConcreteService extends PhaseEditService {
                 break;
             }
             default:
-                console.error('Unsupported type of phases in add method od PhaseEditService');
+                console.error(
+                    'Unsupported type of phases in add method od PhaseEditService'
+                );
         }
         return added$.pipe(tap(() => this.navigateToLastPhase()));
     }
@@ -128,19 +138,30 @@ export class PhaseEditConcreteService extends PhaseEditService {
             const phases: Phase[] = this.unsavedPhasesSubject$.getValue();
             this.unsavedPhasesSubject$.getValue().forEach((phase, index) => {
                 if (phase.type === AbstractPhaseTypeEnum.Training) {
-                    (phases[index] as TrainingPhase).tasks = (phase as TrainingPhase).tasks.filter((task) =>
-                        this.unsavedTasks.includes(task.id),
+                    (phases[index] as TrainingPhase).tasks = (
+                        phase as TrainingPhase
+                    ).tasks.filter((task) =>
+                        this.unsavedTasks.includes(task.id)
                     );
                 }
             });
-            return this.sendRequestToSavePhases(this.unsavedPhasesSubject$.getValue()).pipe(
+            return this.sendRequestToSavePhases(
+                this.unsavedPhasesSubject$.getValue()
+            ).pipe(
                 tap(
                     () => {
                         this.onPhasesSaved();
-                        this.notificationService.emit('success', 'Phases have been saved');
+                        this.notificationService.emit(
+                            'success',
+                            'Phases have been saved'
+                        );
                     },
-                    (err) => this.errorHandler.emit(err, 'Saving phases in adaptive training definition'),
-                ),
+                    (err) =>
+                        this.errorHandler.emit(
+                            err,
+                            'Saving phases in adaptive training definition'
+                        )
+                )
             );
         } else {
             return EMPTY;
@@ -151,8 +172,10 @@ export class PhaseEditConcreteService extends PhaseEditService {
         const phase = this.getSelected();
         return this.displayDialogToDeletePhase(phase).pipe(
             switchMap((result) =>
-                result === SentinelDialogResultEnum.CONFIRMED ? this.callApiToDeletePhase(phase) : EMPTY,
-            ),
+                result === SentinelDialogResultEnum.CONFIRMED
+                    ? this.callApiToDeletePhase(phase)
+                    : EMPTY
+            )
         );
     }
 
@@ -160,8 +183,10 @@ export class PhaseEditConcreteService extends PhaseEditService {
         const task = this.getSelectedTask();
         return this.displayDialogToDeleteTask(task).pipe(
             switchMap((result) =>
-                result === SentinelDialogResultEnum.CONFIRMED ? this.callApiToDeleteTask(task.id) : EMPTY,
-            ),
+                result === SentinelDialogResultEnum.CONFIRMED
+                    ? this.callApiToDeleteTask(task.id)
+                    : EMPTY
+            )
         );
     }
 
@@ -173,11 +198,15 @@ export class PhaseEditConcreteService extends PhaseEditService {
                 .pipe(
                     switchMap((result) => {
                         if (result === SentinelDialogResultEnum.CONFIRMED) {
-                            return this.callApiToMove(fromIndex, toIndex, from.id);
+                            return this.callApiToMove(
+                                fromIndex,
+                                toIndex,
+                                from.id
+                            );
                         } else {
                             this.moveRollback(fromIndex);
                         }
-                    }),
+                    })
                 )
                 .subscribe();
         } else {
@@ -190,14 +219,18 @@ export class PhaseEditConcreteService extends PhaseEditService {
         return this.api.createTask(this.trainingDefinitionId, phaseId).pipe(
             tap(
                 (task) => this.onTaskAdded(task),
-                (err) => this.errorHandler.emit(err, 'Adding task'),
-            ),
+                (err) => this.errorHandler.emit(err, 'Adding task')
+            )
         );
     }
 
     moveTasks(fromIndex: number, toIndex: number): void {
         const phaseId = this.getSelected().id;
-        const tasks = (this.phasesSubject$.getValue()[this.activeStepSubject$.getValue()] as TrainingPhase).tasks;
+        const tasks = (
+            this.phasesSubject$.getValue()[
+                this.activeStepSubject$.getValue()
+            ] as TrainingPhase
+        ).tasks;
         const from = tasks[fromIndex];
         this.moveTasksInternally(fromIndex, toIndex);
         this.api
@@ -205,7 +238,7 @@ export class PhaseEditConcreteService extends PhaseEditService {
             .pipe(
                 tap(() => {
                     this.updateActiveTasks();
-                }),
+                })
             )
             .subscribe();
     }
@@ -217,28 +250,34 @@ export class PhaseEditConcreteService extends PhaseEditService {
     cloneTask(): Observable<AdaptiveTask> {
         const phaseId = this.getSelected().id;
         const clonedTask = this.getSelectedTask();
-        return this.api.cloneTask(this.trainingDefinitionId, phaseId, clonedTask).pipe(
-            tap(
-                (task) => this.onTaskAdded(task),
-                (err) => this.errorHandler.emit(err, 'Cloning task'),
-            ),
-        );
+        return this.api
+            .cloneTask(this.trainingDefinitionId, phaseId, clonedTask)
+            .pipe(
+                tap(
+                    (task) => this.onTaskAdded(task),
+                    (err) => this.errorHandler.emit(err, 'Cloning task')
+                )
+            );
     }
 
     private getSelected(): Phase {
-        return this.phasesSubject$.getValue()[this.activeStepSubject$.getValue()];
+        return this.phasesSubject$.getValue()[
+            this.activeStepSubject$.getValue()
+        ];
     }
 
     private getSelectedTask(): AdaptiveTask {
-        return this.activeTasksSubject$.getValue()[this.activeTaskStepSubject$.getValue()];
+        return this.activeTasksSubject$.getValue()[
+            this.activeTaskStepSubject$.getValue()
+        ];
     }
 
     private addInfoPhase(): Observable<InfoPhase> {
         return this.api.createInfoPhase(this.trainingDefinitionId).pipe(
             tap(
                 (phase) => this.onPhaseAdded(phase),
-                (err) => this.errorHandler.emit(err, 'Adding info phase'),
-            ),
+                (err) => this.errorHandler.emit(err, 'Adding info phase')
+            )
         );
     }
 
@@ -247,10 +286,13 @@ export class PhaseEditConcreteService extends PhaseEditService {
             tap(
                 (phase) => {
                     this.onPhaseAdded(phase);
-                    this.presentTrainingPhasesSubject$.next([...this.presentTrainingPhasesSubject$.getValue(), phase]);
+                    this.presentTrainingPhasesSubject$.next([
+                        ...this.presentTrainingPhasesSubject$.getValue(),
+                        phase,
+                    ]);
                 },
-                (err) => this.errorHandler.emit(err, 'Adding training phase'),
-            ),
+                (err) => this.errorHandler.emit(err, 'Adding training phase')
+            )
         );
     }
 
@@ -260,73 +302,104 @@ export class PhaseEditConcreteService extends PhaseEditService {
                 (phase) => {
                     this.onPhaseAdded(phase);
                 },
-                (err) => this.errorHandler.emit(err, 'Adding access phase'),
-            ),
+                (err) => this.errorHandler.emit(err, 'Adding access phase')
+            )
         );
     }
 
-    private addQuestionnairePhase(questionnaireType: QuestionnaireTypeEnum): Observable<QuestionnairePhase> {
+    private addQuestionnairePhase(
+        questionnaireType: QuestionnaireTypeEnum
+    ): Observable<QuestionnairePhase> {
         switch (questionnaireType) {
             case QuestionnaireTypeEnum.Adaptive: {
-                return this.api.createAdaptiveQuestionnairePhase(this.trainingDefinitionId).pipe(
-                    tap(
-                        (phase) => {
-                            this.onPhaseAdded(phase);
-                        },
-                        (err) => this.errorHandler.emit(err, 'Adding adaptive questionnaire phase'),
-                    ),
-                );
+                return this.api
+                    .createAdaptiveQuestionnairePhase(this.trainingDefinitionId)
+                    .pipe(
+                        tap(
+                            (phase) => {
+                                this.onPhaseAdded(phase);
+                            },
+                            (err) =>
+                                this.errorHandler.emit(
+                                    err,
+                                    'Adding adaptive questionnaire phase'
+                                )
+                        )
+                    );
             }
             case QuestionnaireTypeEnum.General: {
-                return this.api.createGeneralQuestionnairePhase(this.trainingDefinitionId).pipe(
-                    tap(
-                        (phase) => {
-                            this.onPhaseAdded(phase);
-                        },
-                        (err) => this.errorHandler.emit(err, 'Adding general questionnaire phase'),
-                    ),
-                );
+                return this.api
+                    .createGeneralQuestionnairePhase(this.trainingDefinitionId)
+                    .pipe(
+                        tap(
+                            (phase) => {
+                                this.onPhaseAdded(phase);
+                            },
+                            (err) =>
+                                this.errorHandler.emit(
+                                    err,
+                                    'Adding general questionnaire phase'
+                                )
+                        )
+                    );
             }
         }
     }
 
-    private displayDialogToDeletePhase(phase: Phase): Observable<SentinelDialogResultEnum> {
+    private displayDialogToDeletePhase(
+        phase: Phase
+    ): Observable<SentinelDialogResultEnum> {
         let matrixWarn = '';
         if (phase.type === AbstractPhaseTypeEnum.Training) {
-            matrixWarn = ' This might affect data in subsequent decision matrices.';
+            matrixWarn =
+                ' This might affect data in subsequent decision matrices.';
         }
-        const dialogRef = this.dialog.open(SentinelConfirmationDialogComponent, {
-            data: new SentinelConfirmationDialogConfig(
-                'Delete Phase',
-                `Do you want to delete phase "${phase.title}"?` + matrixWarn,
-                'Cancel',
-                'Delete',
-            ),
-        });
+        const dialogRef = this.dialog.open(
+            SentinelConfirmationDialogComponent,
+            {
+                data: new SentinelConfirmationDialogConfig(
+                    'Delete Phase',
+                    `Do you want to delete phase "${phase.title}"?` +
+                        matrixWarn,
+                    'Cancel',
+                    'Delete'
+                ),
+            }
+        );
         return dialogRef.afterClosed();
     }
 
-    private displayDialogToMoveTrainingPhase(phase: Phase): Observable<SentinelDialogResultEnum> {
-        const dialogRef = this.dialog.open(SentinelConfirmationDialogComponent, {
-            data: new SentinelConfirmationDialogConfig(
-                'Move Training Phase',
-                `Do you want to move phase "${phase.title}"? This might affect data in subsequent decision matrices.`,
-                'Cancel',
-                'Move',
-            ),
-        });
+    private displayDialogToMoveTrainingPhase(
+        phase: Phase
+    ): Observable<SentinelDialogResultEnum> {
+        const dialogRef = this.dialog.open(
+            SentinelConfirmationDialogComponent,
+            {
+                data: new SentinelConfirmationDialogConfig(
+                    'Move Training Phase',
+                    `Do you want to move phase "${phase.title}"? This might affect data in subsequent decision matrices.`,
+                    'Cancel',
+                    'Move'
+                ),
+            }
+        );
         return dialogRef.afterClosed();
     }
 
-    private displayDialogToDeleteTask(task: AdaptiveTask): Observable<SentinelDialogResultEnum> {
-        const dialogRef = this.dialog.open(SentinelConfirmationDialogComponent, {
-            data: new SentinelConfirmationDialogConfig(
-                'Delete Task',
-                `Do you want to delete task "${task.title}"?`,
-                'Cancel',
-                'Delete',
-            ),
-        });
+    private displayDialogToDeleteTask(
+        task: AdaptiveTask
+    ): Observable<SentinelDialogResultEnum> {
+        const dialogRef = this.dialog.open(
+            SentinelConfirmationDialogComponent,
+            {
+                data: new SentinelConfirmationDialogConfig(
+                    'Delete Task',
+                    `Do you want to delete task "${task.title}"?`,
+                    'Cancel',
+                    'Delete'
+                ),
+            }
+        );
         return dialogRef.afterClosed();
     }
 
@@ -336,21 +409,24 @@ export class PhaseEditConcreteService extends PhaseEditService {
                 () => {
                     this.onPhaseDeleted(phase.id);
                 },
-                (err) => this.errorHandler.emit(err, `Deleting phase ${phase.title}`),
-            ),
+                (err) =>
+                    this.errorHandler.emit(err, `Deleting phase ${phase.title}`)
+            )
         );
     }
 
     private callApiToDeleteTask(taskId: number): Observable<any> {
         const phaseId = this.getSelected().id;
-        return this.api.deleteTask(this.trainingDefinitionId, phaseId, taskId).pipe(
-            tap(
-                () => {
-                    this.onTaskDeleted(taskId);
-                },
-                (err) => this.errorHandler.emit(err, 'Deleting task'),
-            ),
-        );
+        return this.api
+            .deleteTask(this.trainingDefinitionId, phaseId, taskId)
+            .pipe(
+                tap(
+                    () => {
+                        this.onTaskDeleted(taskId);
+                    },
+                    (err) => this.errorHandler.emit(err, 'Deleting task')
+                )
+            );
     }
 
     private sendRequestToSavePhases(phases: Phase[]): Observable<any> {
@@ -374,23 +450,39 @@ export class PhaseEditConcreteService extends PhaseEditService {
     private onPhaseDeleted(deletedId: number): void {
         if (this.getSelected().type === AbstractPhaseTypeEnum.Training) {
             this.presentTrainingPhasesSubject$.next(
-                this.presentTrainingPhasesSubject$.getValue().filter((trainingPhase) => trainingPhase.id !== deletedId),
+                this.presentTrainingPhasesSubject$
+                    .getValue()
+                    .filter((trainingPhase) => trainingPhase.id !== deletedId)
             );
             this.updateRelations(deletedId);
         }
-        this.phasesSubject$.next(this.phasesSubject$.getValue().filter((phase) => phase.id !== deletedId));
+        this.phasesSubject$.next(
+            this.phasesSubject$
+                .getValue()
+                .filter((phase) => phase.id !== deletedId)
+        );
         this.updateMatrices();
         this.navigateToPreviousPhase();
     }
 
     private onTaskAdded(task: AdaptiveTask): void {
-        (this.phasesSubject$.getValue()[this.activeStepSubject$.getValue()] as TrainingPhase).tasks.push(task);
+        (
+            this.phasesSubject$.getValue()[
+                this.activeStepSubject$.getValue()
+            ] as TrainingPhase
+        ).tasks.push(task);
         this.updateActiveTasks();
     }
 
     private onTaskDeleted(id: number): void {
-        (this.phasesSubject$.getValue()[this.activeStepSubject$.getValue()] as TrainingPhase).tasks = (
-            this.phasesSubject$.getValue()[this.activeStepSubject$.getValue()] as TrainingPhase
+        (
+            this.phasesSubject$.getValue()[
+                this.activeStepSubject$.getValue()
+            ] as TrainingPhase
+        ).tasks = (
+            this.phasesSubject$.getValue()[
+                this.activeStepSubject$.getValue()
+            ] as TrainingPhase
         ).tasks.filter((task) => task.id !== id);
         this.navigateToPreviousTask();
         // this.unsavedTasks.filter(taskId => taskId !== id);
@@ -398,7 +490,9 @@ export class PhaseEditConcreteService extends PhaseEditService {
     }
 
     private emitUnsavedPhases(): void {
-        this.unsavedPhasesSubject$.next(this.phasesSubject$.getValue().filter((phase) => phase.isUnsaved));
+        this.unsavedPhasesSubject$.next(
+            this.phasesSubject$.getValue().filter((phase) => phase.isUnsaved)
+        );
     }
 
     private emitUnsavedTasks(taskId: number): void {
@@ -407,16 +501,22 @@ export class PhaseEditConcreteService extends PhaseEditService {
         }
     }
 
-    private callApiToMove(fromIndex: number, toIndex: number, phaseId: number): Observable<any> {
+    private callApiToMove(
+        fromIndex: number,
+        toIndex: number,
+        phaseId: number
+    ): Observable<any> {
         this.moveInternally(fromIndex, toIndex);
-        return this.api.movePhaseTo(this.trainingDefinitionId, phaseId, toIndex).pipe(
-            tap(() => {
-                this.updateOrder();
-                this.updateMatrices();
-                this.updateActiveTasks();
-                this.updatePresentTrainingPhases();
-            }),
-        );
+        return this.api
+            .movePhaseTo(this.trainingDefinitionId, phaseId, toIndex)
+            .pipe(
+                tap(() => {
+                    this.updateOrder();
+                    this.updateMatrices();
+                    this.updateActiveTasks();
+                    this.updatePresentTrainingPhases();
+                })
+            );
     }
 
     private moveInternally(fromIndex: number, toIndex: number): void {
@@ -426,10 +526,18 @@ export class PhaseEditConcreteService extends PhaseEditService {
     }
 
     private moveTasksInternally(fromIndex: number, toIndex: number): void {
-        const tasks = (this.phasesSubject$.getValue()[this.activeStepSubject$.getValue()] as TrainingPhase).tasks;
+        const tasks = (
+            this.phasesSubject$.getValue()[
+                this.activeStepSubject$.getValue()
+            ] as TrainingPhase
+        ).tasks;
         tasks.splice(toIndex, 0, tasks.splice(fromIndex, 1)[0]);
         tasks.forEach((phase, index) => (phase.order = index));
-        (this.phasesSubject$.getValue()[this.activeStepSubject$.getValue()] as TrainingPhase).tasks = tasks;
+        (
+            this.phasesSubject$.getValue()[
+                this.activeStepSubject$.getValue()
+            ] as TrainingPhase
+        ).tasks = tasks;
     }
 
     private moveRollback(fromIndex: number): void {
@@ -442,11 +550,17 @@ export class PhaseEditConcreteService extends PhaseEditService {
         const phases = this.phasesSubject$.getValue();
         phases.forEach((phase) => {
             if (phase.type === AbstractPhaseTypeEnum.Training) {
-                this.api.getPhase(this.trainingDefinitionId, phase.id).subscribe((val) => {
-                    (phase as TrainingPhase).decisionMatrix = (val as TrainingPhase).decisionMatrix;
-                    this.phasesSubject$.next(phases);
-                    this.updateMatrixSubject$.next(!this.updateMatrixSubject$.getValue());
-                });
+                this.api
+                    .getPhase(this.trainingDefinitionId, phase.id)
+                    .subscribe((val) => {
+                        (phase as TrainingPhase).decisionMatrix = (
+                            val as TrainingPhase
+                        ).decisionMatrix;
+                        this.phasesSubject$.next(phases);
+                        this.updateMatrixSubject$.next(
+                            !this.updateMatrixSubject$.getValue()
+                        );
+                    });
             }
         });
     }
@@ -455,8 +569,10 @@ export class PhaseEditConcreteService extends PhaseEditService {
         const updated = this.phasesSubject$.value;
         updated.forEach((phase) => {
             if (phase.type === AbstractPhaseTypeEnum.Questionnaire) {
-                (phase as QuestionnairePhase).phaseRelations = (phase as QuestionnairePhase).phaseRelations.filter(
-                    (relation) => relation.phaseId !== deletedId,
+                (phase as QuestionnairePhase).phaseRelations = (
+                    phase as QuestionnairePhase
+                ).phaseRelations.filter(
+                    (relation) => relation.phaseId !== deletedId
                 );
             }
         });
@@ -469,14 +585,16 @@ export class PhaseEditConcreteService extends PhaseEditService {
     }
 
     private updateActiveTasks(): void {
-        this.activeTasksSubject$.next((this.getSelected() as TrainingPhase).tasks);
+        this.activeTasksSubject$.next(
+            (this.getSelected() as TrainingPhase).tasks
+        );
     }
 
     private updatePresentTrainingPhases(): void {
         this.presentTrainingPhasesSubject$.next(
             this.phasesSubject$.value.filter(
-                (phase) => phase.type === AbstractPhaseTypeEnum.Training,
-            ) as TrainingPhase[],
+                (phase) => phase.type === AbstractPhaseTypeEnum.Training
+            ) as TrainingPhase[]
         );
     }
 }

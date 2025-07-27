@@ -1,18 +1,18 @@
-import {HttpErrorResponse} from '@angular/common/http';
-import {inject, Injectable} from '@angular/core';
-import {OffsetPaginationEvent, PaginatedResource,} from '@sentinel/common/pagination';
-import {CleanupRequestsApi, PoolApi, SandboxAllocationUnitsApi,} from '@crczp/sandbox-api';
-import {CleanupRequest, Request} from '@crczp/sandbox-model';
-import {EMPTY, Observable} from 'rxjs';
-import {switchMap, tap} from 'rxjs/operators';
-import {RequestsService} from '../requests.service';
+import { HttpErrorResponse } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
+import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
+import { CleanupRequestsApi, PoolApi, SandboxAllocationUnitsApi } from '@crczp/sandbox-api';
+import { CleanupRequest, Request } from '@crczp/sandbox-model';
+import { EMPTY, Observable } from 'rxjs';
+import { switchMap, tap } from 'rxjs/operators';
+import { RequestsService } from '../requests.service';
 import {
     SentinelConfirmationDialogComponent,
     SentinelConfirmationDialogConfig,
-    SentinelDialogResultEnum,
+    SentinelDialogResultEnum
 } from '@sentinel/components/dialogs';
-import {MatDialog} from '@angular/material/dialog';
-import {ErrorHandlerService, NotificationService, PortalConfig} from '@crczp/common';
+import { MatDialog } from '@angular/material/dialog';
+import { ErrorHandlerService, NotificationService, PortalConfig } from '@crczp/utils';
 
 /**
  * Basic implementation of a layer between a component and an API service.
@@ -105,7 +105,7 @@ export class CleanupRequestsConcreteService extends RequestsService {
         this.hasErrorSubject$.next(false);
         return this.poolApi
             .getCleanupRequests(this.lastPoolId, this.lastPagination)
-            .pipe(tap({error: (err) => this.onGetAllError(err)}));
+            .pipe(tap({ error: (err) => this.onGetAllError(err) }));
     }
 
     private onGetAllError(err: HttpErrorResponse) {

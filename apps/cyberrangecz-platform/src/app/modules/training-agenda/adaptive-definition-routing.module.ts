@@ -1,12 +1,15 @@
-import {NgModule} from '@angular/core';
-import {RouterModule} from '@angular/router';
-import {AdaptiveDefinitionOverviewComponent} from '@crczp/training-agenda/adaptive-definition-overview';
-import {SandboxApiModule} from '@crczp/sandbox-api';
-import {TrainingApiModule} from '@crczp/training-api';
-import {AdaptiveDefinitionCanDeactivate} from '@crczp/training-agenda/adaptive-definition-edit';
-import {Routing, ValidRouterConfig} from "@crczp/common";
-import {TrainingDefinition} from "@crczp/training-model";
-import Resolvers = Routing.Resolvers;
+import { NgModule } from '@angular/core';
+import { RouterModule } from '@angular/router';
+import { AdaptiveDefinitionOverviewComponent } from '@crczp/training-agenda/adaptive-definition-overview';
+import { SandboxApiModule } from '@crczp/sandbox-api';
+import { TrainingApiModule } from '@crczp/training-api';
+import { AdaptiveDefinitionCanDeactivate } from '@crczp/training-agenda/adaptive-definition-edit';
+import { TrainingDefinition } from '@crczp/training-model';
+import {
+    Routing,
+    TrainingResolverHelperService,
+    ValidRouterConfig,
+} from '@crczp/routing-commons';
 
 const routes: ValidRouterConfig<'adaptive-definition'> = [
     {
@@ -20,9 +23,13 @@ const routes: ValidRouterConfig<'adaptive-definition'> = [
                 (m) => m.AdaptiveDefinitionEditOverviewComponent
             ),
         resolve: {
-            [TrainingDefinition.name]: Resolvers.TrainingDefinition.linearDefinitionResolver,
-            breadcrumb: Resolvers.TrainingDefinition.linearDefinitionBreadcrumbResolver,
-            title: Resolvers.TrainingDefinition.linearDefinitionTitleResolver,
+            [TrainingDefinition.name]:
+                Routing.Resolvers.TrainingDefinition.adaptiveDefinitionResolver,
+            breadcrumb:
+                Routing.Resolvers.TrainingDefinition
+                    .adaptiveDefinitionBreadcrumbResolver,
+            title: Routing.Resolvers.TrainingDefinition
+                .adaptiveDefinitionTitleResolver,
         },
         canDeactivate: [AdaptiveDefinitionCanDeactivate],
     },
@@ -33,9 +40,13 @@ const routes: ValidRouterConfig<'adaptive-definition'> = [
                 (m) => m.AdaptiveDefinitionEditOverviewComponent
             ),
         resolve: {
-            [TrainingDefinition.name]: Resolvers.TrainingDefinition.linearDefinitionResolver,
-            breadcrumb: Resolvers.TrainingDefinition.adaptiveDefinitionBreadcrumbResolver,
-            title: Resolvers.TrainingDefinition.linearDefinitionTitleResolver
+            [TrainingDefinition.name]:
+                Routing.Resolvers.TrainingDefinition.adaptiveDefinitionResolver,
+            breadcrumb:
+                Routing.Resolvers.TrainingDefinition
+                    .adaptiveDefinitionBreadcrumbResolver,
+            title: Routing.Resolvers.TrainingDefinition
+                .adaptiveDefinitionTitleResolver,
         },
         canDeactivate: [AdaptiveDefinitionCanDeactivate],
     },
@@ -49,8 +60,11 @@ const routes: ValidRouterConfig<'adaptive-definition'> = [
             title: undefined,
         },
         resolve: {
-            [TrainingDefinition.name]: Resolvers.TrainingDefinition.linearDefinitionResolver,
-            breadcrumb: Resolvers.TrainingDefinition.adaptiveDefinitionBreadcrumbResolver,
+            [TrainingDefinition.name]:
+                Routing.Resolvers.TrainingDefinition.adaptiveDefinitionResolver,
+            breadcrumb:
+                Routing.Resolvers.TrainingDefinition
+                    .adaptiveDefinitionBreadcrumbResolver,
         },
     },
     {
@@ -60,9 +74,13 @@ const routes: ValidRouterConfig<'adaptive-definition'> = [
                 (m) => m.AdaptiveDefinitionSummaryComponent
             ),
         resolve: {
-            [TrainingDefinition.name]: Resolvers.TrainingDefinition.linearDefinitionResolver,
-            breadcrumb: Resolvers.TrainingDefinition.adaptiveDefinitionBreadcrumbResolver,
-            title: Resolvers.TrainingDefinition.linearDefinitionTitleResolver
+            [TrainingDefinition.name]:
+                Routing.Resolvers.TrainingDefinition.adaptiveDefinitionResolver,
+            breadcrumb:
+                Routing.Resolvers.TrainingDefinition
+                    .adaptiveDefinitionBreadcrumbResolver,
+            title: Routing.Resolvers.TrainingDefinition
+                .adaptiveDefinitionTitleResolver,
         },
     },
     {
@@ -75,7 +93,9 @@ const routes: ValidRouterConfig<'adaptive-definition'> = [
             title: 'Adaptive Model Simulating Tool',
         },
         resolve: {
-            breadcrumb: Resolvers.TrainingDefinition.adaptiveDefinitionBreadcrumbResolver,
+            breadcrumb:
+                Routing.Resolvers.TrainingDefinition
+                    .adaptiveDefinitionBreadcrumbResolver,
         },
     },
 ];
@@ -89,7 +109,7 @@ const routes: ValidRouterConfig<'adaptive-definition'> = [
         SandboxApiModule,
         TrainingApiModule,
     ],
+    providers: [TrainingResolverHelperService],
     exports: [RouterModule],
 })
-export class AdaptiveDefinitionRoutingModule {
-}
+export class AdaptiveDefinitionRoutingModule {}

@@ -1,17 +1,23 @@
-import {Component, DestroyRef, inject, Input, OnInit, signal, WritableSignal} from '@angular/core';
-import {TrainingInstance} from '@crczp/training-model';
-import {timer} from 'rxjs';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {DateUtils} from "@crczp/common";
-import {MatIcon} from "@angular/material/icon";
+import {
+    Component,
+    DestroyRef,
+    inject,
+    Input,
+    OnInit,
+    signal,
+    WritableSignal,
+} from '@angular/core';
+import { TrainingInstance } from '@crczp/training-model';
+import { timer } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { MatIcon } from '@angular/material/icon';
+import { DateUtils } from '@crczp/utils';
 
 @Component({
     selector: 'crczp-instance-countdown',
     templateUrl: './instance-countdown.component.html',
     styleUrl: './instance-countdown.component.css',
-    imports: [
-        MatIcon
-    ]
+    imports: [MatIcon],
 })
 export class InstanceCountdownComponent implements OnInit {
     static readonly EXPIRED_TEXT = 'expired';
@@ -41,7 +47,9 @@ export class InstanceCountdownComponent implements OnInit {
     }
 
     private updateTime() {
-        const timeToExpire = DateUtils.formatDurationSimple(this.trainingInstance.endTime);
+        const timeToExpire = DateUtils.formatDurationSimple(
+            this.trainingInstance.endTime
+        );
         if (timeToExpire.length === 0) {
             this.timeToExpiration.set(InstanceCountdownComponent.EXPIRED_TEXT);
             this.expired.set(true);

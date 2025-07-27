@@ -7,10 +7,10 @@ import {
     OnChanges,
     OnDestroy,
     Output,
-    ViewEncapsulation
+    ViewEncapsulation,
 } from '@angular/core';
-import {PROGRESS_CONFIG} from '../../../progress-config';
-import {DisplayView, TraineeViewEnum, ViewEnum} from '../../types';
+import { PROGRESS_CONFIG } from '../../../progress-config';
+import { DisplayView, TraineeViewEnum, ViewEnum } from '../../types';
 import {
     HintTakenEvent,
     PlanDataEntry,
@@ -26,24 +26,24 @@ import {
     TrainingRunEndedEvent,
     WrongAnswerEvent,
 } from '@crczp/visualization-model';
-import {TrainingAnalysisEventService} from './training-analysis-event-service';
-import {BaseConfig, Padding} from '../../../base-config';
-import {D3, D3Service} from '../../../../common/d3-service/d3-service';
-import {Axis, ScaleBand, ScaleLinear} from 'd3';
-import {Subscription} from 'rxjs';
-import {PlanConfig, PlanData} from '../../../plan-config';
-import {FilteringService} from '../../../services/filtering.service';
-import {ProgressConfigService} from '../../../services/progress-config.service';
-import {SortingService} from '../../../services/sorting.service';
-import {AbstractLevelTypeEnum} from '@crczp/training-model';
-import {DateUtils} from '@crczp/common';
-import {TraineeDetailComponent} from '../trainee-detail/trainee-detail.component';
-import {ColumnHeaderComponent} from '../column-header/column-header.component';
-import {CommonModule} from '@angular/common';
-import {MouseWheelDirective} from '../../../directives/mousewheel.directive';
-import {MouseMoveDirective} from '../../../directives/mousemove.directive';
-import {LegendComponent} from '../legend/legend.component';
-import {FormsModule} from '@angular/forms';
+import { TrainingAnalysisEventService } from './training-analysis-event-service';
+import { BaseConfig, Padding } from '../../../base-config';
+import { D3, D3Service } from '../../../../common/d3-service/d3-service';
+import { Axis, ScaleBand, ScaleLinear } from 'd3';
+import { Subscription } from 'rxjs';
+import { PlanConfig, PlanData } from '../../../plan-config';
+import { FilteringService } from '../../../services/filtering.service';
+import { ProgressConfigService } from '../../../services/progress-config.service';
+import { SortingService } from '../../../services/sorting.service';
+import { AbstractLevelTypeEnum } from '@crczp/training-model';
+import { TraineeDetailComponent } from '../trainee-detail/trainee-detail.component';
+import { ColumnHeaderComponent } from '../column-header/column-header.component';
+import { CommonModule } from '@angular/common';
+import { MouseWheelDirective } from '../../../directives/mousewheel.directive';
+import { MouseMoveDirective } from '../../../directives/mousemove.directive';
+import { LegendComponent } from '../legend/legend.component';
+import { FormsModule } from '@angular/forms';
+import { DateUtils } from '@crczp/utils';
 
 @Component({
     selector: 'crczp-viz-hurdling',
@@ -61,7 +61,8 @@ import {FormsModule} from '@angular/forms';
     ],
 })
 export class TrainingAnalysisComponent
-    implements OnChanges, OnDestroy, AfterViewInit {
+    implements OnChanges, OnDestroy, AfterViewInit
+{
     @Input() visualizationData: ProgressVisualizationData;
     @Input() view = PROGRESS_CONFIG.defaultView;
     @Input() selectedTraineeView: TraineeViewEnum = TraineeViewEnum.Both;
@@ -529,7 +530,7 @@ export class TrainingAnalysisComponent
                 .map((traineeLevel, i) => {
                     return traineeLevel.state != 'FINISHED'
                         ? this.visualizationData.levels[i].estimatedDuration *
-                        60
+                              60
                         : 0;
                 })
                 .reduce((a, b) => a + b, 0);
@@ -640,10 +641,10 @@ export class TrainingAnalysisComponent
             .attr(
                 'transform',
                 'translate(' +
-                (this.wrapperWidth / 2) * this.zoomValue +
-                ', ' +
-                this.wrapperHeight +
-                ')'
+                    (this.wrapperWidth / 2) * this.zoomValue +
+                    ', ' +
+                    this.wrapperHeight +
+                    ')'
             )
             .style('text-anchor', 'middle')
             .text('Time');
@@ -660,8 +661,8 @@ export class TrainingAnalysisComponent
             this.wrapperWidth < 500
                 ? 1800
                 : this.xScale(this.fullTime) < 1000
-                    ? 300
-                    : 900;
+                ? 300
+                : 900;
         if (this.wrapperWidth > 500 && this.wrapperWidth < 1200) {
             interval = 600;
         }
@@ -916,7 +917,7 @@ export class TrainingAnalysisComponent
             .attr('fill', (d, i: string) => this.getColor(+i));
     }
 
-    createSegmentForEachTeam({layer, trainingData, layers}) {
+    createSegmentForEachTeam({ layer, trainingData, layers }) {
         const xScale: ScaleLinear<number, number> = this.xScale;
         layer
             .selectAll('rect.training-segment')
@@ -988,7 +989,7 @@ export class TrainingAnalysisComponent
                         .style('opacity', () =>
                             this.sortLevel !== 0 &&
                             typeof data['level' + this.sortLevel] ===
-                            'undefined' &&
+                                'undefined' &&
                             currentState !== 'level' + this.sortLevel
                                 ? 0.3
                                 : 0.5
@@ -1035,11 +1036,11 @@ export class TrainingAnalysisComponent
                             (thisLevel.levelType === 'info'
                                 ? 'Info level'
                                 : thisLevel.levelType === 'access'
-                                    ? 'Access level'
-                                    : thisLevel.levelType === 'assessment'
-                                        ? 'Questionnaire level'
-                                        : 'ProgressLevelInfo ' +
-                                        this.getTrainingLevelIndex(thisLevel)) +
+                                ? 'Access level'
+                                : thisLevel.levelType === 'assessment'
+                                ? 'Questionnaire level'
+                                : 'ProgressLevelInfo ' +
+                                  this.getTrainingLevelIndex(thisLevel)) +
                             ' </span>' +
                             '<span>' +
                             thisLevel.title +
@@ -1180,8 +1181,8 @@ export class TrainingAnalysisComponent
                     currentState: string = data['currentState'];
 
                 return currentState === 'FINISHED' ||
-                currentState === levelKey ||
-                levelIndex >= parseInt(currentState.split('level')[1])
+                    currentState === levelKey ||
+                    levelIndex >= parseInt(currentState.split('level')[1])
                     ? 1
                     : 0;
             })
@@ -1242,7 +1243,7 @@ export class TrainingAnalysisComponent
                 if (
                     typeof trainingData.teams[i].offsets !== 'undefined' &&
                     typeof trainingData.teams[i].offsets[this.sortLevel] !==
-                    'undefined'
+                        'undefined'
                 ) {
                     teamOffset = trainingData.teams[i].offsets[this.sortLevel];
                 }
@@ -1290,7 +1291,7 @@ export class TrainingAnalysisComponent
                                     : eventX,
                             previousEventX: number = previousOffset
                                 ? this.xScale(previousEvent.timestamp) +
-                                eventIconWidth / 2
+                                  eventIconWidth / 2
                                 : this.xScale(previousEvent.timestamp),
                             diff: number = currentEventX - previousEventX;
                         isDuplicated =
@@ -1353,11 +1354,11 @@ export class TrainingAnalysisComponent
     }
 
     createEvents({
-                     trainingData,
-                     eventShapePaths,
-                     groupCircleWidth,
-                     eventIconWidth,
-                 }) {
+        trainingData,
+        eventShapePaths,
+        groupCircleWidth,
+        eventIconWidth,
+    }) {
         const d3 = this.d3;
         const eventsLayer = this.trainingChart
             .append('g')
@@ -1373,7 +1374,7 @@ export class TrainingAnalysisComponent
                 if (
                     typeof trainingData.teams[i].offsets !== 'undefined' &&
                     typeof trainingData.teams[i].offsets[this.sortLevel] !==
-                    'undefined'
+                        'undefined'
                 ) {
                     teamOffset = trainingData.teams[i].offsets[this.sortLevel];
                 }
@@ -1417,7 +1418,7 @@ export class TrainingAnalysisComponent
                 const colorIndex: number = +d.level - 1; // in final overview is no first transparent column for start
                 // check if the event is in current unfinished level
                 return teamStruct['currentState'] === 'level' + d.level &&
-                this.view !== ViewEnum.Overview
+                    this.view !== ViewEnum.Overview
                     ? this.getSegmentColor(d.events[0].traineeName, d.level)
                     : this.getPlanColor(colorIndex);
             })
@@ -1450,10 +1451,10 @@ export class TrainingAnalysisComponent
                 const teamIndex: string = teamNode.level;
                 if (
                     typeof trainingData.teams[teamIndex]?.offsets !==
-                    'undefined' &&
+                        'undefined' &&
                     typeof trainingData.teams[teamIndex]?.offsets[
                         this.sortLevel
-                        ] !== 'undefined'
+                    ] !== 'undefined'
                 ) {
                     teamOffset =
                         trainingData.teams[teamIndex].offsets[this.sortLevel];
@@ -1468,8 +1469,8 @@ export class TrainingAnalysisComponent
                                 '<span class="ctf-progress-tooltip-item">',
                                 '<svg width="14" height="14" viewBox="0 0 16 16">',
                                 '<path d="' +
-                                eventShapePaths[event.type] +
-                                '"/>',
+                                    eventShapePaths[event.type] +
+                                    '"/>',
                                 '</svg>',
                                 this.resolveEventTooltip(event),
                                 '</span>'
@@ -1912,7 +1913,7 @@ export class TrainingAnalysisComponent
                 (item) => item.id !== traineeId
             );
         } else {
-            this.runsToCompare.push({id: traineeId, avatar: ''});
+            this.runsToCompare.push({ id: traineeId, avatar: '' });
         }
 
         this.d3
@@ -2019,7 +2020,7 @@ export class TrainingAnalysisComponent
         this.columnInfo.time =
             this.getTimeString(
                 this.visualizationData.currentTime -
-                this.visualizationData.startTime
+                    this.visualizationData.startTime
             ).length * this.approxFontWidth;
         this.columnInfo.progress =
             (this.d3.select('.visualization-container').node() as HTMLElement)

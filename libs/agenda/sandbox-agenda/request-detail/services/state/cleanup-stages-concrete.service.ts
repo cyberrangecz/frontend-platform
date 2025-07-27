@@ -1,14 +1,19 @@
-import {HttpErrorResponse} from '@angular/common/http';
-import {inject, Injectable} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
-import {CleanupRequestsApi} from '@crczp/sandbox-api';
-import {Request, RequestStage} from '@crczp/sandbox-model';
-import {Observable, zip} from 'rxjs';
-import {map, take, tap} from 'rxjs/operators';
-import {RequestStagesService} from './request-stages.service';
-import {StageAdapter} from '../../model/adapters/stage-adapter';
-import {StageAdapterMapper} from '../../model/adapters/stage-adapter-mapper';
-import {ErrorHandlerService, NotificationService, PortalConfig, Routing} from "@crczp/common";
+import { HttpErrorResponse } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { CleanupRequestsApi } from '@crczp/sandbox-api';
+import { Request, RequestStage } from '@crczp/sandbox-model';
+import { Observable, zip } from 'rxjs';
+import { map, take, tap } from 'rxjs/operators';
+import { RequestStagesService } from './request-stages.service';
+import { StageAdapter } from '../../model/adapters/stage-adapter';
+import { StageAdapterMapper } from '../../model/adapters/stage-adapter-mapper';
+import {
+    ErrorHandlerService,
+    NotificationService,
+    PortalConfig,
+} from '@crczp/utils';
+import { Routing } from '@crczp/routing-commons';
 
 @Injectable()
 export class CleanupStagesConcreteService extends RequestStagesService {
@@ -21,9 +26,8 @@ export class CleanupStagesConcreteService extends RequestStagesService {
     constructor() {
         const settings = inject(PortalConfig);
 
-        super(settings.polling.pollingPeriodShort)
+        super(settings.polling.pollingPeriodShort);
     }
-
 
     protected refreshStages(): Observable<StageAdapter[]> {
         return super
@@ -76,9 +80,7 @@ export class CleanupStagesConcreteService extends RequestStagesService {
         this.route.paramMap
             .pipe(take(1))
             .subscribe(() =>
-                this.router.navigate([
-                    Routing.RouteBuilder.pool.build()
-                ])
+                this.router.navigate([Routing.RouteBuilder.pool.build()])
             );
     }
 }

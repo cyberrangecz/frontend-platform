@@ -11,6 +11,14 @@
     "targets": {
         "build": {
             "executor": "@angular/build:application",
+            "dependsOn": [
+                {
+                    "target": "build",
+                    "projects": [
+                        "theme"
+                    ]
+                }
+            ],
             "outputs": [
                 "{options.outputPath}"
             ],
@@ -35,6 +43,8 @@
                     }
                 ],
                 "styles": [
+                    "@angular/material/prebuilt-themes/deeppurple-amber.css",
+                    "dist/libs/components/theme/theme/apply-all.scss",
                     "apps/examples/src/styles.scss"
                 ]
             },
@@ -44,7 +54,7 @@
                         {
                             "type": "initial",
                             "maximumWarning": "500kb",
-                            "maximumError": "1mb"
+                            "maximumError": "2mb"
                         },
                         {
                             "type": "anyComponentStyle",

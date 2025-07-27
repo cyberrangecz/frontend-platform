@@ -1,34 +1,47 @@
-import {OffsetPaginationEvent} from '@sentinel/common/pagination';
-import {ChangeDetectionStrategy, Component, DestroyRef, inject, Input, OnInit} from '@angular/core';
-import {Observable} from 'rxjs';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
+import {
+    ChangeDetectionStrategy,
+    Component,
+    DestroyRef,
+    inject,
+    Input,
+    OnInit,
+} from '@angular/core';
+import { Observable } from 'rxjs';
 import {
     SentinelRowDirective,
     SentinelTable,
     SentinelTableComponent,
     TableActionEvent,
-    TableLoadEvent
+    TableLoadEvent,
 } from '@sentinel/components/table';
-import {TrainingInstance} from '@crczp/training-model';
-import {SentinelControlItem, SentinelControlItemSignal, SentinelControlsComponent} from '@sentinel/components/controls';
-import {map, take} from 'rxjs/operators';
-import {AdaptiveInstanceOverviewService} from '../services/state/adaptive-instance-overview.service';
-import {AdaptiveInstanceOverviewControls} from '../model/adapters/adaptive-instance-overview-controls';
-import {AdaptiveInstanceTable} from '../model/adapters/adaptive-instance-table';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import { TrainingInstance } from '@crczp/training-model';
+import {
+    SentinelControlItem,
+    SentinelControlItemSignal,
+    SentinelControlsComponent,
+} from '@sentinel/components/controls';
+import { map, take } from 'rxjs/operators';
+import { AdaptiveInstanceOverviewService } from '../services/state/adaptive-instance-overview.service';
+import { AdaptiveInstanceOverviewControls } from '../model/adapters/adaptive-instance-overview-controls';
+import { AdaptiveInstanceTable } from '../model/adapters/adaptive-instance-table';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { AsyncPipe, NgClass } from '@angular/common';
+import { CdkCopyToClipboard } from '@angular/cdk/clipboard';
+import { MatTooltip } from '@angular/material/tooltip';
+import { MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { AdaptiveInstanceOverviewConcreteService } from '../services/state/adaptive-instance-overview-concrete.service';
 import {
     LogoSpinnerComponent,
+    TableCountdownComponent,
+    TableDateCellComponent,
+} from '@crczp/components';
+import {
     NotificationService,
     PaginationStorageService,
     providePaginationStorageService,
-    TableCountdownComponent,
-    TableDateCellComponent
-} from "@crczp/common";
-import {AsyncPipe, NgClass} from "@angular/common";
-import {CdkCopyToClipboard} from "@angular/cdk/clipboard";
-import {MatTooltip} from "@angular/material/tooltip";
-import {MatButton} from "@angular/material/button";
-import {MatIcon} from "@angular/material/icon";
-import {AdaptiveInstanceOverviewConcreteService} from "../services/state/adaptive-instance-overview-concrete.service";
+} from '@crczp/utils';
 
 @Component({
     selector: 'crczp-adaptive-instance-overview',
@@ -51,7 +64,10 @@ import {AdaptiveInstanceOverviewConcreteService} from "../services/state/adaptiv
     ],
     providers: [
         providePaginationStorageService(AdaptiveInstanceOverviewComponent),
-        {provide: AdaptiveInstanceOverviewService, useClass: AdaptiveInstanceOverviewConcreteService},
+        {
+            provide: AdaptiveInstanceOverviewService,
+            useClass: AdaptiveInstanceOverviewConcreteService,
+        },
     ],
 })
 export class AdaptiveInstanceOverviewComponent implements OnInit {
@@ -83,9 +99,9 @@ export class AdaptiveInstanceOverviewComponent implements OnInit {
                     0,
                     loadEvent.pagination.size,
                     loadEvent.pagination.sort,
-                    loadEvent.pagination.sortDir,
+                    loadEvent.pagination.sortDir
                 ),
-                loadEvent.filter,
+                loadEvent.filter
             )
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe();
@@ -96,10 +112,17 @@ export class AdaptiveInstanceOverviewComponent implements OnInit {
     }
 
     onCopyToken(): void {
-        this.notificationService.emit('success', 'Access token has been copied');
+        this.notificationService.emit(
+            'success',
+            'Access token has been copied'
+        );
     }
 
-    getAccessTokenTooltip(freeSandboxes: string, localEnvironment: boolean, poolSize: string) {
+    getAccessTokenTooltip(
+        freeSandboxes: string,
+        localEnvironment: boolean,
+        poolSize: string
+    ) {
         if (!localEnvironment) {
             if (freeSandboxes === '') {
                 if (poolSize === '-') {
@@ -119,11 +142,14 @@ export class AdaptiveInstanceOverviewComponent implements OnInit {
                 0,
                 this.paginationService.loadPageSize(),
                 this.INITIAL_SORT_NAME,
-                this.INITIAL_SORT_DIR,
+                this.INITIAL_SORT_DIR
             ),
         };
         this.instances$ = this.service.resource$.pipe(
-            map((instances) => new AdaptiveInstanceTable(instances, this.service)),
+            map(
+                (instances) =>
+                    new AdaptiveInstanceTable(instances, this.service)
+            )
         );
         this.hasError$ = this.service.hasError$;
         this.onInstancesLoadEvent(initLoadEvent);

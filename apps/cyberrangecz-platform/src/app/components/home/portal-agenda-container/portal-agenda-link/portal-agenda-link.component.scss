@@ -43,10 +43,30 @@ mat-icon {
 
 .expanded-menu-item {
     min-width: 100px;
-
 }
 
 .agenda-link-label {
     text-align: center;
+}
+
+.dropdown-button {
+    padding-top: 24px;
+    overflow: hidden;
+}
+
+.dropdown-icon-band {
+    width: 8rem;
+    height: 18px;
+    margin-top: 10px;
+    background-color: var(--primary-40);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none; /* allow clicks to pass through if needed */
+}
+
+.arrow-icon {
+    font-size: 20px;
+    color: var(--neutral-100);
 }
 

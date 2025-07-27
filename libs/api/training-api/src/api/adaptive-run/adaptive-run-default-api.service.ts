@@ -1,38 +1,46 @@
-import {inject, Injectable} from '@angular/core';
-import {AdaptiveRunApi} from './adaptive-run-api.service';
-import {HttpClient, HttpParams} from '@angular/common/http';
-import {SentinelParamsMerger} from '@sentinel/common';
-import {SentinelFilter} from '@sentinel/common/filter';
-import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
-import {Observable} from 'rxjs';
+import { inject, Injectable } from '@angular/core';
+import { AdaptiveRunApi } from './adaptive-run-api.service';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { SentinelParamsMerger } from '@sentinel/common';
+import { SentinelFilter } from '@sentinel/common/filter';
+import {
+    OffsetPaginationEvent,
+    PaginatedResource,
+} from '@sentinel/common/pagination';
+import { Observable } from 'rxjs';
 import {
     AccessedTrainingRun,
     AccessTrainingRunInfo,
     Phase,
     PhaseAnswerCheck,
     QuestionAnswer,
-    TrainingRun
+    TrainingRun,
 } from '@crczp/training-model';
-import {map} from 'rxjs/operators';
-import {TrainingRunDTO} from '../../dto/training-run/training-run-dto';
-import {AccessTrainingRunDTO} from '../../dto/training-run/access-training-run-dto';
-import {AdaptiveRunMapper} from '../../mappers/training-run/adaptive-run-mapper';
-import {AccessedAdaptiveRunMapper} from '../../mappers/training-run/accessed-adaptive-run-mapper';
-import {AccessAdaptiveRunMapper} from '../../mappers/training-run/access-adaptive-run-mapper';
-import {AbstractPhaseDTO} from '../../dto/phase/abstract-phase-dto';
-import {PhaseMapper} from '../../mappers/phase/phase-mapper';
-import {IsCorrectAnswerDTO} from '../../dto/phase/training-phase/is-correct-answer-dto';
-import {TaskAnswerMapper} from '../../mappers/training-run/task-answer-mapper';
-import {QuestionAnswerMapper} from '../../mappers/phase/question-answer-mapper';
-import {AnsweredPhaseMapper} from '../../mappers/training-run/training-run-phases/answered-phase-mapper';
-import {JavaPaginatedResource, PaginationMapper, ParamsBuilder} from '@crczp/api-common';
-import {PortalConfig} from "@crczp/common";
+import { map } from 'rxjs/operators';
+import { TrainingRunDTO } from '../../dto/training-run/training-run-dto';
+import { AccessTrainingRunDTO } from '../../dto/training-run/access-training-run-dto';
+import { AdaptiveRunMapper } from '../../mappers/training-run/adaptive-run-mapper';
+import { AccessedAdaptiveRunMapper } from '../../mappers/training-run/accessed-adaptive-run-mapper';
+import { AccessAdaptiveRunMapper } from '../../mappers/training-run/access-adaptive-run-mapper';
+import { AbstractPhaseDTO } from '../../dto/phase/abstract-phase-dto';
+import { PhaseMapper } from '../../mappers/phase/phase-mapper';
+import { IsCorrectAnswerDTO } from '../../dto/phase/training-phase/is-correct-answer-dto';
+import { TaskAnswerMapper } from '../../mappers/training-run/task-answer-mapper';
+import { QuestionAnswerMapper } from '../../mappers/phase/question-answer-mapper';
+import { AnsweredPhaseMapper } from '../../mappers/training-run/training-run-phases/answered-phase-mapper';
+import {
+    JavaPaginatedResource,
+    PaginationMapper,
+    ParamsBuilder,
+} from '@crczp/api-common';
+import { PortalConfig } from '@crczp/utils';
 
 @Injectable()
 export class AdaptiveRunDefaultApi extends AdaptiveRunApi {
     private readonly http = inject(HttpClient);
 
-    private readonly apiUrl = inject(PortalConfig).basePaths.adaptiveTraining + 'training-runs';
+    private readonly apiUrl =
+        inject(PortalConfig).basePaths.adaptiveTraining + '/training-runs';
 
     constructor() {
         super();
@@ -40,22 +48,22 @@ export class AdaptiveRunDefaultApi extends AdaptiveRunApi {
 
     getAll(
         pagination: OffsetPaginationEvent,
-        filters: SentinelFilter[] = [],
+        filters: SentinelFilter[] = []
     ): Observable<PaginatedResource<TrainingRun>> {
         const params = SentinelParamsMerger.merge([
             ParamsBuilder.javaPaginationParams(pagination),
             ParamsBuilder.filterParams(filters),
         ]);
         return this.http
-            .get<JavaPaginatedResource<TrainingRunDTO>>(this.apiUrl, {params})
+            .get<JavaPaginatedResource<TrainingRunDTO>>(this.apiUrl, { params })
             .pipe(
                 map(
                     (response) =>
                         new PaginatedResource<TrainingRun>(
                             AdaptiveRunMapper.fromDTOs(response.content),
-                            PaginationMapper.fromJavaDTO(response.pagination),
-                        ),
-                ),
+                            PaginationMapper.fromJavaDTO(response.pagination)
+                        )
+                )
             );
     }
 
@@ -73,19 +81,26 @@ export class AdaptiveRunDefaultApi extends AdaptiveRunApi {
      * Sends http request to retrieve training run already accessed by logged in user
      * @param pagination requested pagination
      */
-    getAccessed(pagination: OffsetPaginationEvent): Observable<PaginatedResource<AccessedTrainingRun>> {
+    getAccessed(
+        pagination: OffsetPaginationEvent
+    ): Observable<PaginatedResource<AccessedTrainingRun>> {
         return this.http
-            .get<JavaPaginatedResource<TrainingRunDTO>>(`${this.apiUrl}/accessible`, {
-                params: ParamsBuilder.javaPaginationParams(pagination),
-            })
+            .get<JavaPaginatedResource<TrainingRunDTO>>(
+                `${this.apiUrl}/accessible`,
+                {
+                    params: ParamsBuilder.javaPaginationParams(pagination),
+                }
+            )
             .pipe(
                 map(
                     (response) =>
                         new PaginatedResource<AccessedTrainingRun>(
-                            AccessedAdaptiveRunMapper.fromDTOs(response.content),
-                            PaginationMapper.fromJavaDTO(response.pagination),
-                        ),
-                ),
+                            AccessedAdaptiveRunMapper.fromDTOs(
+                                response.content
+                            ),
+                            PaginationMapper.fromJavaDTO(response.pagination)
+                        )
+                )
             );
     }
 
@@ -96,7 +111,7 @@ export class AdaptiveRunDefaultApi extends AdaptiveRunApi {
      */
     delete(trainingRunId: number, force = false): Observable<any> {
         const params = new HttpParams().append('forceDelete', force.toString());
-        return this.http.delete(`${this.apiUrl}/${trainingRunId}`, {params});
+        return this.http.delete(`${this.apiUrl}/${trainingRunId}`, { params });
     }
 
     /**
@@ -108,7 +123,7 @@ export class AdaptiveRunDefaultApi extends AdaptiveRunApi {
         const params = new HttpParams()
             .append('trainingRunIds', trainingRunIds.toString())
             .append('forceDelete', force.toString());
-        return this.http.delete(this.apiUrl, {params});
+        return this.http.delete(this.apiUrl, { params });
     }
 
     /**
@@ -118,7 +133,7 @@ export class AdaptiveRunDefaultApi extends AdaptiveRunApi {
     access(token: string): Observable<AccessTrainingRunInfo> {
         const params = new HttpParams().append('accessToken', token);
         return this.http
-            .post<AccessTrainingRunDTO>(this.apiUrl, {}, {params})
+            .post<AccessTrainingRunDTO>(this.apiUrl, {}, { params })
             .pipe(map((response) => AccessAdaptiveRunMapper.fromDTO(response)));
     }
 
@@ -128,26 +143,42 @@ export class AdaptiveRunDefaultApi extends AdaptiveRunApi {
      */
     resume(trainingRunId: number): Observable<AccessTrainingRunInfo> {
         return this.http
-            .get<AccessTrainingRunDTO>(`${this.apiUrl}/${trainingRunId}/resumption`)
+            .get<AccessTrainingRunDTO>(
+                `${this.apiUrl}/${trainingRunId}/resumption`
+            )
             .pipe(map((response) => AccessAdaptiveRunMapper.fromDTO(response)));
     }
 
     nextPhase(trainingRunId: number): Observable<Phase> {
         return this.http
-            .get<AbstractPhaseDTO>(`${this.apiUrl}/${trainingRunId}/next-phases`)
+            .get<AbstractPhaseDTO>(
+                `${this.apiUrl}/${trainingRunId}/next-phases`
+            )
             .pipe(map((response) => PhaseMapper.fromDTO(response)));
     }
 
-    isCorrectAnswer(trainingRunId: number, answer: string): Observable<PhaseAnswerCheck> {
+    isCorrectAnswer(
+        trainingRunId: number,
+        answer: string
+    ): Observable<PhaseAnswerCheck> {
         return this.http
-            .post<IsCorrectAnswerDTO>(`${this.apiUrl}/${trainingRunId}/is-correct-answer`, {answer})
+            .post<IsCorrectAnswerDTO>(
+                `${this.apiUrl}/${trainingRunId}/is-correct-answer`,
+                { answer }
+            )
             .pipe(map((response) => TaskAnswerMapper.fromDTO(response)));
     }
 
-    isCorrectPasskey(trainingRunId: number, passkey: string): Observable<boolean> {
-        return this.http.post<boolean>(`${this.apiUrl}/${trainingRunId}/is-correct-passkey`, {
-            passkey,
-        });
+    isCorrectPasskey(
+        trainingRunId: number,
+        passkey: string
+    ): Observable<boolean> {
+        return this.http.post<boolean>(
+            `${this.apiUrl}/${trainingRunId}/is-correct-passkey`,
+            {
+                passkey,
+            }
+        );
     }
 
     /**
@@ -155,13 +186,21 @@ export class AdaptiveRunDefaultApi extends AdaptiveRunApi {
      * @param trainingRunId id of the training run in which, solution should be revealed
      */
     takeSolution(trainingRunId: number): Observable<string> {
-        return this.http.get(`${this.apiUrl}/${trainingRunId}/solutions`, {responseType: 'text'});
+        return this.http.get(`${this.apiUrl}/${trainingRunId}/solutions`, {
+            responseType: 'text',
+        });
     }
 
-    evaluateQuestionnaire(trainingRunId: number, questionAnswers: QuestionAnswer[]): Observable<any> {
-        return this.http.put(`${this.apiUrl}/${trainingRunId}/questionnaire-evaluation`, {
-            answers: QuestionAnswerMapper.toDTOs(questionAnswers),
-        });
+    evaluateQuestionnaire(
+        trainingRunId: number,
+        questionAnswers: QuestionAnswer[]
+    ): Observable<any> {
+        return this.http.put(
+            `${this.apiUrl}/${trainingRunId}/questionnaire-evaluation`,
+            {
+                answers: QuestionAnswerMapper.toDTOs(questionAnswers),
+            }
+        );
     }
 
     /**
@@ -187,7 +226,9 @@ export class AdaptiveRunDefaultApi extends AdaptiveRunApi {
      */
     moveToPhase(trainingRunId: number, phaseId: number): Observable<Phase> {
         return this.http
-            .get<AbstractPhaseDTO>(`${this.apiUrl}/${trainingRunId}/phases/${phaseId}`)
+            .get<AbstractPhaseDTO>(
+                `${this.apiUrl}/${trainingRunId}/phases/${phaseId}`
+            )
             .pipe(map((response) => AnsweredPhaseMapper.fromDTO(response)));
     }
 }

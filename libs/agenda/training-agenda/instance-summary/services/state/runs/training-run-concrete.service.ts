@@ -1,11 +1,11 @@
-import {inject, Injectable} from '@angular/core';
-import {OffsetPaginationEvent, PaginatedResource,} from '@sentinel/common/pagination';
-import {LinearRunApi, LinearTrainingInstanceApi} from '@crczp/training-api';
-import {TrainingRun, TrainingRunInfo} from '@crczp/training-model';
-import {Observable} from 'rxjs';
-import {tap} from 'rxjs/operators';
-import {TrainingRunService} from './training-run.service';
-import {ErrorHandlerService, PortalConfig} from '@crczp/common';
+import { inject, Injectable } from '@angular/core';
+import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
+import { LinearRunApi, LinearTrainingInstanceApi } from '@crczp/training-api';
+import { TrainingRun, TrainingRunInfo } from '@crczp/training-model';
+import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
+import { TrainingRunService } from './training-run.service';
+import { ErrorHandlerService, PortalConfig } from '@crczp/utils';
 
 /**
  * Basic implementation of layer between component and API service.
@@ -16,7 +16,6 @@ export class TrainingRunConcreteService extends TrainingRunService {
     private trainingInstanceApi = inject(LinearTrainingInstanceApi);
     private trainingRunApi = inject(LinearRunApi);
     private errorHandler = inject(ErrorHandlerService);
-
 
     constructor() {
         super(inject(PortalConfig).defaultPageSize);
@@ -57,17 +56,15 @@ export class TrainingRunConcreteService extends TrainingRunService {
      * @param trainingInstanceId id of training instance
      */
     exportScore(trainingInstanceId: number): Observable<any> {
-        return this.trainingInstanceApi
-            .exportScore(trainingInstanceId)
-            .pipe(
-                tap({
-                    error: (err) =>
-                        this.errorHandler.emit(
-                            err,
-                            'Downloading training instance scores'
-                        ),
-                })
-            );
+        return this.trainingInstanceApi.exportScore(trainingInstanceId).pipe(
+            tap({
+                error: (err) =>
+                    this.errorHandler.emit(
+                        err,
+                        'Downloading training instance scores'
+                    ),
+            })
+        );
     }
 
     private onGetAllError() {

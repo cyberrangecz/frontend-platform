@@ -1,7 +1,7 @@
-import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
-import {inject, Injectable} from '@angular/core';
-import {fromEvent, Observable} from 'rxjs';
-import {AdaptiveTrainingDefinitionApi} from './adaptive-training-definition.api';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
+import { fromEvent, Observable } from 'rxjs';
+import { AdaptiveTrainingDefinitionApi } from './adaptive-training-definition.api';
 import {
     AccessPhase,
     AdaptiveTask,
@@ -11,33 +11,39 @@ import {
     TrainingDefinition,
     TrainingDefinitionInfo,
     TrainingDefinitionStateEnum,
-    TrainingPhase
+    TrainingPhase,
 } from '@crczp/training-model';
-import {InfoPhaseDTO} from '../../dto/phase/info-phase/info-phase-dto';
-import {PhaseMapper} from '../../mappers/phase/phase-mapper';
-import {map, mergeMap} from 'rxjs/operators';
-import {TrainingPhaseDTO} from '../../dto/phase/training-phase/training-phase-dto';
-import {QuestionnairePhaseDTO} from '../../dto/phase/questionnaire-phase/questionnaire-phase-dto';
-import {TrainingPhaseMapper} from '../../mappers/phase/training-phase-mapper';
-import {QuestionnairePhaseMapper} from '../../mappers/phase/questionnaire-phase-mapper';
-import {InfoPhaseMapper} from '../../mappers/phase/info-phase-mapper';
-import {TaskDTO} from '../../dto/phase/training-phase/task-dto';
-import {TaskMapper} from '../../mappers/phase/task-mapper';
-import {ResponseHeaderContentDispositionReader, SentinelParamsMerger} from '@sentinel/common';
-import {SentinelFilter} from '@sentinel/common/filter';
-import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
-import {TrainingDefinitionMapper} from '../../mappers/training-definition/training-definition-mapper';
-import {TrainingDefinitionDTO} from '../../dto/training-definition/training-definition-dto';
-import {TrainingDefinitionInfoMapper} from '../../mappers/training-definition/training-definition-info-mapper';
+import { InfoPhaseDTO } from '../../dto/phase/info-phase/info-phase-dto';
+import { PhaseMapper } from '../../mappers/phase/phase-mapper';
+import { map, mergeMap } from 'rxjs/operators';
+import { TrainingPhaseDTO } from '../../dto/phase/training-phase/training-phase-dto';
+import { QuestionnairePhaseDTO } from '../../dto/phase/questionnaire-phase/questionnaire-phase-dto';
+import { TrainingPhaseMapper } from '../../mappers/phase/training-phase-mapper';
+import { QuestionnairePhaseMapper } from '../../mappers/phase/questionnaire-phase-mapper';
+import { InfoPhaseMapper } from '../../mappers/phase/info-phase-mapper';
+import { TaskDTO } from '../../dto/phase/training-phase/task-dto';
+import { TaskMapper } from '../../mappers/phase/task-mapper';
+import {
+    ResponseHeaderContentDispositionReader,
+    SentinelParamsMerger,
+} from '@sentinel/common';
+import { SentinelFilter } from '@sentinel/common/filter';
+import {
+    OffsetPaginationEvent,
+    PaginatedResource,
+} from '@sentinel/common/pagination';
+import { TrainingDefinitionMapper } from '../../mappers/training-definition/training-definition-mapper';
+import { TrainingDefinitionDTO } from '../../dto/training-definition/training-definition-dto';
+import { TrainingDefinitionInfoMapper } from '../../mappers/training-definition/training-definition-info-mapper';
 import {
     BlobFileSaver,
     handleJsonError,
     JavaPaginatedResource,
     PaginationMapper,
-    ParamsBuilder
+    ParamsBuilder,
 } from '@crczp/api-common';
-import {TrainingDefinitionInfoDTO} from '../../dto/training-definition/training-definition-info-dto';
-import {PortalConfig} from "@crczp/common";
+import { TrainingDefinitionInfoDTO } from '../../dto/training-definition/training-definition-info-dto';
+import { PortalConfig } from '@crczp/utils';
 
 @Injectable()
 export class AdaptiveDefinitionDefaultApiService extends AdaptiveTrainingDefinitionApi {
@@ -53,16 +59,25 @@ export class AdaptiveDefinitionDefaultApiService extends AdaptiveTrainingDefinit
     constructor() {
         super();
 
-        const adaptiveBasePath = inject(PortalConfig).basePaths.adaptiveTraining;
-        this.adaptiveDefinitionsUri = adaptiveBasePath + this.trainingDefinitionUriExtension;
-        this.trainingExportEndpointUri = adaptiveBasePath + 'exports';
-        this.trainingImportEndpointUri = adaptiveBasePath + 'imports';
+        const adaptiveBasePath =
+            inject(PortalConfig).basePaths.adaptiveTraining;
+        this.adaptiveDefinitionsUri =
+            adaptiveBasePath + '/' + this.trainingDefinitionUriExtension;
+        this.trainingExportEndpointUri = adaptiveBasePath + '/exports';
+        this.trainingImportEndpointUri = adaptiveBasePath + '/imports';
     }
 
-    changeState(trainingDefinitionId: number, newState: TrainingDefinitionStateEnum): Observable<any> {
+    changeState(
+        trainingDefinitionId: number,
+        newState: TrainingDefinitionStateEnum
+    ): Observable<any> {
         return this.http.put(
-            `${this.adaptiveDefinitionsUri}/${trainingDefinitionId}/states/${TrainingDefinitionMapper.stateToDTO(newState)}`,
-            {},
+            `${
+                this.adaptiveDefinitionsUri
+            }/${trainingDefinitionId}/states/${TrainingDefinitionMapper.stateToDTO(
+                newState
+            )}`,
+            {}
         );
     }
 
@@ -75,22 +90,26 @@ export class AdaptiveDefinitionDefaultApiService extends AdaptiveTrainingDefinit
             {
                 params,
                 headers: this.createDefaultHeaders(),
-            },
+            }
         );
     }
 
-    create(trainingDefinition: TrainingDefinition): Observable<TrainingDefinition> {
+    create(
+        trainingDefinition: TrainingDefinition
+    ): Observable<TrainingDefinition> {
         return this.http
             .post<TrainingDefinitionDTO>(
                 this.adaptiveDefinitionsUri,
                 TrainingDefinitionMapper.toCreateDTO(trainingDefinition),
-                {headers: this.createDefaultHeaders()},
+                { headers: this.createDefaultHeaders() }
             )
             .pipe(map((resp) => TrainingDefinitionMapper.fromDTO(resp, false)));
     }
 
     delete(id: number): Observable<any> {
-        return this.http.delete(`${this.adaptiveDefinitionsUri}/${id}`, {headers: this.createDefaultHeaders()});
+        return this.http.delete(`${this.adaptiveDefinitionsUri}/${id}`, {
+            headers: this.createDefaultHeaders(),
+        });
     }
 
     download(id: number): Observable<boolean> {
@@ -98,11 +117,14 @@ export class AdaptiveDefinitionDefaultApiService extends AdaptiveTrainingDefinit
         headers.set('Accept', ['application/octet-stream']);
 
         return this.http
-            .get(`${this.trainingExportEndpointUri}/${this.trainingDefinitionUriExtension}/${id}`, {
-                responseType: 'blob',
-                observe: 'response',
-                headers,
-            })
+            .get(
+                `${this.trainingExportEndpointUri}/${this.trainingDefinitionUriExtension}/${id}`,
+                {
+                    responseType: 'blob',
+                    observe: 'response',
+                    headers,
+                }
+            )
             .pipe(
                 handleJsonError(),
                 map((resp) => {
@@ -110,59 +132,78 @@ export class AdaptiveDefinitionDefaultApiService extends AdaptiveTrainingDefinit
                         resp.body,
                         ResponseHeaderContentDispositionReader.getFilenameFromResponse(
                             resp,
-                            'training-definition.json',
-                        ),
+                            'training-definition.json'
+                        )
                     );
                     return true;
-                }),
+                })
             );
     }
 
     get(id: number, withPhases = false): Observable<TrainingDefinition> {
         return this.http
             .get<TrainingDefinitionDTO>(`${this.adaptiveDefinitionsUri}/${id}`)
-            .pipe(map((response) => TrainingDefinitionMapper.fromDTO(response, false, withPhases)));
+            .pipe(
+                map((response) =>
+                    TrainingDefinitionMapper.fromDTO(
+                        response,
+                        false,
+                        withPhases
+                    )
+                )
+            );
     }
 
     getAll(
         pagination: OffsetPaginationEvent,
-        filters?: SentinelFilter[],
+        filters?: SentinelFilter[]
     ): Observable<PaginatedResource<TrainingDefinition>> {
         const params = SentinelParamsMerger.merge([
             ParamsBuilder.javaPaginationParams(pagination),
             ParamsBuilder.filterParams(filters),
         ]);
         return this.http
-            .get<JavaPaginatedResource<TrainingDefinitionDTO>>(this.adaptiveDefinitionsUri, {params})
+            .get<JavaPaginatedResource<TrainingDefinitionDTO>>(
+                this.adaptiveDefinitionsUri,
+                { params }
+            )
             .pipe(
                 map(
                     (response) =>
                         new PaginatedResource(
-                            TrainingDefinitionMapper.fromDTOs(response.content, false),
-                            PaginationMapper.fromJavaDTO(response.pagination),
-                        ),
-                ),
+                            TrainingDefinitionMapper.fromDTOs(
+                                response.content,
+                                false
+                            ),
+                            PaginationMapper.fromJavaDTO(response.pagination)
+                        )
+                )
             );
     }
 
     getAllForOrganizer(
         pagination: OffsetPaginationEvent,
-        filters?: SentinelFilter[],
+        filters?: SentinelFilter[]
     ): Observable<PaginatedResource<TrainingDefinitionInfo>> {
         const params = SentinelParamsMerger.merge([
             ParamsBuilder.javaPaginationParams(pagination),
             ParamsBuilder.filterParams(filters),
         ]);
         return this.http
-            .get<JavaPaginatedResource<TrainingDefinitionInfoDTO>>(`${this.adaptiveDefinitionsUri}/for-organizers`, {params})
+            .get<JavaPaginatedResource<TrainingDefinitionInfoDTO>>(
+                `${this.adaptiveDefinitionsUri}/for-organizers`,
+                { params }
+            )
             .pipe(
                 map(
                     (response) =>
                         new PaginatedResource(
-                            TrainingDefinitionInfoMapper.fromDTOs(response.content),
-                            PaginationMapper.fromJavaDTO(response.pagination),
-                        ),
-                ),
+                            TrainingDefinitionInfoMapper.fromDTOs(
+                                response.content
+                            ),
+                            PaginationMapper.fromJavaDTO(response.pagination)
+                        )
+                )
             );
     }
 
@@ -170,7 +211,7 @@ export class AdaptiveDefinitionDefaultApiService extends AdaptiveTrainingDefinit
         return this.http.put<number>(
             this.adaptiveDefinitionsUri,
             TrainingDefinitionMapper.toUpdateDTO(trainingDefinition),
-            {headers: this.createDefaultHeaders()},
+            { headers: this.createDefaultHeaders() }
         );
     }
 
@@ -181,30 +222,34 @@ export class AdaptiveDefinitionDefaultApiService extends AdaptiveTrainingDefinit
                 const jsonBody = JSON.parse(fileReader.result as string);
                 return this.http.post<TrainingDefinitionDTO>(
                     `${this.trainingImportEndpointUri}/${this.trainingDefinitionUriExtension}`,
-                    jsonBody,
+                    jsonBody
                 );
-            }),
+            })
         );
         fileReader.readAsText(file);
-        return fileRead$.pipe(map((resp) => TrainingDefinitionMapper.fromDTO(resp, false)));
+        return fileRead$.pipe(
+            map((resp) => TrainingDefinitionMapper.fromDTO(resp, false))
+        );
     }
 
     createInfoPhase(trainingDefinitionId: number): Observable<InfoPhase> {
         return this.http
             .post<InfoPhaseDTO>(
                 `${this.adaptiveDefinitionsUri}/${trainingDefinitionId}/${this.phasesUriExtension}`,
-                {phase_type: 'INFO'},
-                {headers: this.createDefaultHeaders()},
+                { phase_type: 'INFO' },
+                { headers: this.createDefaultHeaders() }
             )
             .pipe(map((resp) => PhaseMapper.fromDTO(resp) as InfoPhase));
     }
 
-    createTrainingPhase(trainingDefinitionId: number): Observable<TrainingPhase> {
+    createTrainingPhase(
+        trainingDefinitionId: number
+    ): Observable<TrainingPhase> {
         return this.http
             .post<TrainingPhaseDTO>(
                 `${this.adaptiveDefinitionsUri}/${trainingDefinitionId}/${this.phasesUriExtension}`,
-                {phase_type: 'TRAINING'},
-                {headers: this.createDefaultHeaders()},
+                { phase_type: 'TRAINING' },
+                { headers: this.createDefaultHeaders() }
             )
             .pipe(map((resp) => PhaseMapper.fromDTO(resp) as TrainingPhase));
     }
@@ -213,145 +258,200 @@ export class AdaptiveDefinitionDefaultApiService extends AdaptiveTrainingDefinit
         return this.http
             .post<TrainingPhaseDTO>(
                 `${this.adaptiveDefinitionsUri}/${trainingDefinitionId}/${this.phasesUriExtension}`,
-                {phase_type: 'ACCESS'},
-                {headers: this.createDefaultHeaders()},
+                { phase_type: 'ACCESS' },
+                { headers: this.createDefaultHeaders() }
             )
             .pipe(map((resp) => PhaseMapper.fromDTO(resp) as AccessPhase));
     }
 
-    createAdaptiveQuestionnairePhase(trainingDefinitionId: number): Observable<QuestionnairePhase> {
+    createAdaptiveQuestionnairePhase(
+        trainingDefinitionId: number
+    ): Observable<QuestionnairePhase> {
         return this.http
             .post<QuestionnairePhaseDTO>(
                 `${this.adaptiveDefinitionsUri}/${trainingDefinitionId}/${this.phasesUriExtension}`,
-                {phase_type: 'QUESTIONNAIRE', questionnaire_type: 'ADAPTIVE'},
-                {headers: this.createDefaultHeaders()},
+                { phase_type: 'QUESTIONNAIRE', questionnaire_type: 'ADAPTIVE' },
+                { headers: this.createDefaultHeaders() }
             )
-            .pipe(map((resp) => PhaseMapper.fromDTO(resp) as QuestionnairePhase));
+            .pipe(
+                map((resp) => PhaseMapper.fromDTO(resp) as QuestionnairePhase)
+            );
     }
 
-    createGeneralQuestionnairePhase(trainingDefinitionId: number): Observable<QuestionnairePhase> {
+    createGeneralQuestionnairePhase(
+        trainingDefinitionId: number
+    ): Observable<QuestionnairePhase> {
         return this.http
             .post<QuestionnairePhaseDTO>(
                 `${this.adaptiveDefinitionsUri}/${trainingDefinitionId}/${this.phasesUriExtension}`,
-                {phase_type: 'QUESTIONNAIRE', questionnaire_type: 'GENERAL'},
-                {headers: this.createDefaultHeaders()},
+                { phase_type: 'QUESTIONNAIRE', questionnaire_type: 'GENERAL' },
+                { headers: this.createDefaultHeaders() }
             )
-            .pipe(map((resp) => PhaseMapper.fromDTO(resp) as QuestionnairePhase));
+            .pipe(
+                map((resp) => PhaseMapper.fromDTO(resp) as QuestionnairePhase)
+            );
     }
 
     getPhase(trainingDefinitionId: number, phaseId: number): Observable<Phase> {
         return this.http
-            .get<
-                InfoPhaseDTO | TrainingPhaseDTO | QuestionnairePhaseDTO
-            >(`${this.adaptiveDefinitionsUri}/${trainingDefinitionId}/${this.phasesUriExtension}/${phaseId}`)
+            .get<InfoPhaseDTO | TrainingPhaseDTO | QuestionnairePhaseDTO>(
+                `${this.adaptiveDefinitionsUri}/${trainingDefinitionId}/${this.phasesUriExtension}/${phaseId}`
+            )
             .pipe(map((response) => PhaseMapper.fromDTO(response)));
     }
 
-    deletePhase(trainingDefinitionId: number, phaseId: number): Observable<any> {
+    deletePhase(
+        trainingDefinitionId: number,
+        phaseId: number
+    ): Observable<any> {
         return this.http.delete(
             `${this.adaptiveDefinitionsUri}/${trainingDefinitionId}/${this.phasesUriExtension}/${phaseId}`,
-            {headers: this.createDefaultHeaders()},
+            { headers: this.createDefaultHeaders() }
         );
     }
 
-    updatePhases(trainingDefinitionId: number, phases: Phase[]): Observable<any> {
+    updatePhases(
+        trainingDefinitionId: number,
+        phases: Phase[]
+    ): Observable<any> {
         return this.http.put(
             `${this.adaptiveDefinitionsUri}/${trainingDefinitionId}/${this.phasesUriExtension}`,
             PhaseMapper.toUpdateDTOs(phases),
-            {headers: this.createDefaultHeaders()},
+            { headers: this.createDefaultHeaders() }
         );
     }
 
-    updateTrainingPhase(trainingDefinitionId: number, trainingPhase: TrainingPhase): Observable<any> {
+    updateTrainingPhase(
+        trainingDefinitionId: number,
+        trainingPhase: TrainingPhase
+    ): Observable<any> {
         return this.http.put(
             `${this.adaptiveDefinitionsUri}/${trainingDefinitionId}/${this.phasesUriExtension}/${trainingPhase.id}/training`,
             TrainingPhaseMapper.toUpdateDTO(trainingPhase),
-            {headers: this.createDefaultHeaders()},
+            { headers: this.createDefaultHeaders() }
         );
     }
 
     updateQuestionnairePhase(
         trainingDefinitionId: number,
-        questionnairePhase: QuestionnairePhase,
+        questionnairePhase: QuestionnairePhase
     ): Observable<QuestionnairePhase> {
         return this.http
             .put<QuestionnairePhaseDTO>(
                 `${this.adaptiveDefinitionsUri}/${trainingDefinitionId}/${this.phasesUriExtension}/${questionnairePhase.id}/questionnaire`,
-                QuestionnairePhaseMapper.mapQuestionnaireToUpdateDTO(questionnairePhase),
-                {headers: this.createDefaultHeaders()},
+                QuestionnairePhaseMapper.mapQuestionnaireToUpdateDTO(
+                    questionnairePhase
+                ),
+                { headers: this.createDefaultHeaders() }
             )
-            .pipe(map((response) => PhaseMapper.fromDTO(response) as QuestionnairePhase));
+            .pipe(
+                map(
+                    (response) =>
+                        PhaseMapper.fromDTO(response) as QuestionnairePhase
+                )
+            );
     }
 
-    updateInfoPhase(trainingDefinitionId: number, infoPhase: InfoPhase): Observable<any> {
+    updateInfoPhase(
+        trainingDefinitionId: number,
+        infoPhase: InfoPhase
+    ): Observable<any> {
         return this.http.put(
             `${this.adaptiveDefinitionsUri}/${trainingDefinitionId}/${this.phasesUriExtension}/${infoPhase.id}/info`,
             InfoPhaseMapper.toUpdateDTO(infoPhase),
-            {headers: this.createDefaultHeaders()},
+            { headers: this.createDefaultHeaders() }
         );
     }
 
-    movePhaseTo(trainingDefinitionId: number, phaseId: number, newPosition: number): Observable<any> {
+    movePhaseTo(
+        trainingDefinitionId: number,
+        phaseId: number,
+        newPosition: number
+    ): Observable<any> {
         return this.http.put<void>(
             `${this.adaptiveDefinitionsUri}/${trainingDefinitionId}/${this.phasesUriExtension}/${phaseId}/move-to/${newPosition}`,
             {},
-            {headers: this.createDefaultHeaders()},
+            { headers: this.createDefaultHeaders() }
         );
     }
 
-    moveTaskTo(trainingDefinitionId: number, phaseId: number, taskId: number, newPosition: number): Observable<any> {
+    moveTaskTo(
+        trainingDefinitionId: number,
+        phaseId: number,
+        taskId: number,
+        newPosition: number
+    ): Observable<any> {
         return this.http.put<void>(
             // eslint-disable-next-line max-len
             `${this.adaptiveDefinitionsUri}/${trainingDefinitionId}/${this.phasesUriExtension}/${phaseId}/${this.tasksUriExtension}/${taskId}/move-to/${newPosition}`,
             {},
-            {headers: this.createDefaultHeaders()},
+            { headers: this.createDefaultHeaders() }
         );
     }
 
-    createTask(trainingDefinitionId: number, trainingPhaseId: number): Observable<AdaptiveTask> {
+    createTask(
+        trainingDefinitionId: number,
+        trainingPhaseId: number
+    ): Observable<AdaptiveTask> {
         return this.http
             .post<TaskDTO>(
                 // eslint-disable-next-line max-len
                 `${this.adaptiveDefinitionsUri}/${trainingDefinitionId}/${this.phasesUriExtension}/${trainingPhaseId}/${this.tasksUriExtension}`,
                 {},
-                {headers: this.createDefaultHeaders()},
+                { headers: this.createDefaultHeaders() }
             )
             .pipe(map((resp) => TaskMapper.fromDTO(resp) as AdaptiveTask));
     }
 
-    cloneTask(trainingDefinitionId: number, trainingPhaseId: number, clonedTask: AdaptiveTask): Observable<AdaptiveTask> {
+    cloneTask(
+        trainingDefinitionId: number,
+        trainingPhaseId: number,
+        clonedTask: AdaptiveTask
+    ): Observable<AdaptiveTask> {
         return this.http
             .post<TaskDTO>(
                 // eslint-disable-next-line max-len
                 `${this.adaptiveDefinitionsUri}/${trainingDefinitionId}/${this.phasesUriExtension}/${trainingPhaseId}/${this.tasksUriExtension}/${clonedTask.id}`,
                 TaskMapper.toCopyDTO(clonedTask),
-                {headers: this.createDefaultHeaders()},
+                { headers: this.createDefaultHeaders() }
             )
             .pipe(map((resp) => TaskMapper.fromDTO(resp) as AdaptiveTask));
     }
 
-    deleteTask(trainingDefinitionId: number, trainingPhaseId: number, taskId: number): Observable<any> {
+    deleteTask(
+        trainingDefinitionId: number,
+        trainingPhaseId: number,
+        taskId: number
+    ): Observable<any> {
         return this.http.delete(
             // eslint-disable-next-line max-len
             `${this.adaptiveDefinitionsUri}/${trainingDefinitionId}/${this.phasesUriExtension}/${trainingPhaseId}/${this.tasksUriExtension}/${taskId}`,
-            {headers: this.createDefaultHeaders()},
+            { headers: this.createDefaultHeaders() }
         );
     }
 
-    getTask(trainingDefinitionId: number, trainingPhaseId: number, taskId: number): Observable<Phase> {
+    getTask(
+        trainingDefinitionId: number,
+        trainingPhaseId: number,
+        taskId: number
+    ): Observable<Phase> {
         return this.http
             .get<TaskDTO>(
                 // eslint-disable-next-line max-len
-                `${this.adaptiveDefinitionsUri}/${trainingDefinitionId}/${this.phasesUriExtension}/${trainingPhaseId}/${this.tasksUriExtension}/${taskId}`,
+                `${this.adaptiveDefinitionsUri}/${trainingDefinitionId}/${this.phasesUriExtension}/${trainingPhaseId}/${this.tasksUriExtension}/${taskId}`
             )
             .pipe(map((response) => TaskMapper.fromDTO(response)));
     }
 
-    updateTask(trainingDefinitionId: number, trainingPhaseId: number, task: AdaptiveTask): Observable<any> {
+    updateTask(
+        trainingDefinitionId: number,
+        trainingPhaseId: number,
+        task: AdaptiveTask
+    ): Observable<any> {
         return this.http.put(
             `${this.adaptiveDefinitionsUri}/${trainingDefinitionId}/${this.phasesUriExtension}/${trainingPhaseId}/tasks/${task.id}`,
             TaskMapper.toUpdateDTO(task),
-            {headers: this.createDefaultHeaders()},
+            { headers: this.createDefaultHeaders() }
         );
     }
 

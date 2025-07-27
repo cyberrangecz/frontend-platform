@@ -1,5 +1,5 @@
-import {HttpClient} from '@angular/common/http';
-import {inject, Injectable} from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
 import {
     AllocationRequest,
     CloudResource,
@@ -8,20 +8,20 @@ import {
     TerraformOutput,
     UserAnsibleAllocationStage
 } from '@crczp/sandbox-model';
-import {Observable} from 'rxjs';
-import {map} from 'rxjs/operators';
-import {RequestDTO} from '../../../dto/sandbox-instance/request-dto';
-import {RequestMapper} from '../../../mappers/sandbox-instance/request-mapper';
-import {AllocationRequestsApi} from './allocation-requests-api.service';
-import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
-import {TerraformAllocationStageDTO} from '../../../dto/sandbox-instance/stages/terraform-allocation-stage-dto';
-import {RequestStageMapper} from '../../../mappers/sandbox-instance/request-stage-mapper';
-import {AnsibleAllocationStageDTO} from '../../../dto/sandbox-instance/stages/ansible-allocation-stage-dto';
-import {AnsibleAllocationOutputDTO} from '../../../dto/sandbox-instance/stages/ansible-allocation-output-dto';
-import {TerraformOutputDTO} from '../../../dto/sandbox-instance/stages/terraform-output-dto';
-import {CloudResourceDTO} from '../../../dto/sandbox-instance/stages/cloud-resource-dto';
-import {DjangoResourceDTO, PaginationMapper, ParamsBuilder} from '@crczp/api-common';
-import {PortalConfig} from "@crczp/common";
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { RequestDTO } from '../../../dto/sandbox-instance/request-dto';
+import { RequestMapper } from '../../../mappers/sandbox-instance/request-mapper';
+import { AllocationRequestsApi } from './allocation-requests-api.service';
+import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
+import { TerraformAllocationStageDTO } from '../../../dto/sandbox-instance/stages/terraform-allocation-stage-dto';
+import { RequestStageMapper } from '../../../mappers/sandbox-instance/request-stage-mapper';
+import { AnsibleAllocationStageDTO } from '../../../dto/sandbox-instance/stages/ansible-allocation-stage-dto';
+import { AnsibleAllocationOutputDTO } from '../../../dto/sandbox-instance/stages/ansible-allocation-output-dto';
+import { TerraformOutputDTO } from '../../../dto/sandbox-instance/stages/terraform-output-dto';
+import { CloudResourceDTO } from '../../../dto/sandbox-instance/stages/cloud-resource-dto';
+import { DjangoResourceDTO, PaginationMapper, ParamsBuilder } from '@crczp/api-common';
+import { PortalConfig } from '@crczp/utils';
 
 /**
  * Default implementation of service abstracting http communication with allocation requests endpoints.
@@ -30,7 +30,8 @@ import {PortalConfig} from "@crczp/common";
 export class AllocationRequestsDefaultApi extends AllocationRequestsApi {
     private readonly http = inject(HttpClient);
 
-    private readonly apiUrl = inject(PortalConfig).basePaths.sandbox + 'allocation-requests';
+    private readonly apiUrl =
+        inject(PortalConfig).basePaths.sandbox + '/allocation-requests';
     private readonly stagesUriExtension = 'stages';
 
     constructor() {
@@ -59,12 +60,18 @@ export class AllocationRequestsDefaultApi extends AllocationRequestsApi {
      * Sends http request to retrieve networking ansible stage detail
      * @param requestId id of the request associated with the networking ansible stage
      */
-    getNetworkingAnsibleStage(requestId: number): Observable<NetworkingAnsibleAllocationStage> {
+    getNetworkingAnsibleStage(
+        requestId: number
+    ): Observable<NetworkingAnsibleAllocationStage> {
         return this.http
             .get<AnsibleAllocationStageDTO>(
-                `${this.apiUrl}/${requestId}/${this.stagesUriExtension}/networking-ansible`,
+                `${this.apiUrl}/${requestId}/${this.stagesUriExtension}/networking-ansible`
             )
-            .pipe(map((resp) => RequestStageMapper.fromNetworkingAnsibleAllocationDTO(resp)));
+            .pipe(
+                map((resp) =>
+                    RequestStageMapper.fromNetworkingAnsibleAllocationDTO(resp)
+                )
+            );
     }
 
     /**
@@ -74,23 +81,25 @@ export class AllocationRequestsDefaultApi extends AllocationRequestsApi {
      */
     getNetworkingAnsibleOutputs(
         requestId: number,
-        pagination: OffsetPaginationEvent,
+        pagination: OffsetPaginationEvent
     ): Observable<PaginatedResource<string>> {
         return this.http
             .get<DjangoResourceDTO<AnsibleAllocationOutputDTO>>(
                 `${this.apiUrl}/${requestId}/${this.stagesUriExtension}/networking-ansible/outputs`,
                 {
                     params: ParamsBuilder.djangoPaginationParams(pagination),
-                },
+                }
             )
             .pipe(
                 map(
                     (resp) =>
                         new PaginatedResource<string>(
-                            RequestStageMapper.fromAnsibleAllocationOutputDTOs(resp.results),
-                            PaginationMapper.fromDjangoDTO(resp),
-                        ),
-                ),
+                            RequestStageMapper.fromAnsibleAllocationOutputDTOs(
+                                resp.results
+                            ),
+                            PaginationMapper.fromDjangoDTO(resp)
+                        )
+                )
             );
     }
 
@@ -98,12 +107,18 @@ export class AllocationRequestsDefaultApi extends AllocationRequestsApi {
      * Sends http request to retrieve user ansible stage detail
      * @param requestId id of the request associated with the user ansible stage
      */
-    getUserAnsibleStage(requestId: number): Observable<UserAnsibleAllocationStage> {
+    getUserAnsibleStage(
+        requestId: number
+    ): Observable<UserAnsibleAllocationStage> {
         return this.http
             .get<AnsibleAllocationStageDTO>(
-                `${this.apiUrl}/${requestId}/${this.stagesUriExtension}/user-ansible`,
+                `${this.apiUrl}/${requestId}/${this.stagesUriExtension}/user-ansible`
             )
-            .pipe(map((resp) => RequestStageMapper.fromUserAnsibleAllocationDTO(resp)));
+            .pipe(
+                map((resp) =>
+                    RequestStageMapper.fromUserAnsibleAllocationDTO(resp)
+                )
+            );
     }
 
     /**
@@ -111,22 +126,27 @@ export class AllocationRequestsDefaultApi extends AllocationRequestsApi {
      * @param requestId id of the request associated with the user ansible stage
      * @param pagination requested pagination
      */
-    getUserAnsibleOutputs(requestId: number, pagination: OffsetPaginationEvent): Observable<PaginatedResource<string>> {
+    getUserAnsibleOutputs(
+        requestId: number,
+        pagination: OffsetPaginationEvent
+    ): Observable<PaginatedResource<string>> {
         return this.http
             .get<DjangoResourceDTO<AnsibleAllocationOutputDTO>>(
                 `${this.apiUrl}/${requestId}/${this.stagesUriExtension}/user-ansible/outputs`,
                 {
                     params: ParamsBuilder.djangoPaginationParams(pagination),
-                },
+                }
             )
             .pipe(
                 map(
                     (resp) =>
                         new PaginatedResource<string>(
-                            RequestStageMapper.fromAnsibleAllocationOutputDTOs(resp.results),
-                            PaginationMapper.fromDjangoDTO(resp),
-                        ),
-                ),
+                            RequestStageMapper.fromAnsibleAllocationOutputDTOs(
+                                resp.results
+                            ),
+                            PaginationMapper.fromDjangoDTO(resp)
+                        )
+                )
             );
     }
 
@@ -137,9 +157,13 @@ export class AllocationRequestsDefaultApi extends AllocationRequestsApi {
     getTerraformStage(requestId: number): Observable<TerraformAllocationStage> {
         return this.http
             .get<TerraformAllocationStageDTO>(
-                `${this.apiUrl}/${requestId}/${this.stagesUriExtension}/terraform`,
+                `${this.apiUrl}/${requestId}/${this.stagesUriExtension}/terraform`
             )
-            .pipe(map((resp) => RequestStageMapper.fromTerraformAllocationDTO(resp)));
+            .pipe(
+                map((resp) =>
+                    RequestStageMapper.fromTerraformAllocationDTO(resp)
+                )
+            );
     }
 
     /**
@@ -149,23 +173,25 @@ export class AllocationRequestsDefaultApi extends AllocationRequestsApi {
      */
     getCloudResources(
         requestId: number,
-        pagination: OffsetPaginationEvent,
+        pagination: OffsetPaginationEvent
     ): Observable<PaginatedResource<CloudResource>> {
         return this.http
             .get<DjangoResourceDTO<CloudResourceDTO>>(
                 `${this.apiUrl}/${requestId}/${this.stagesUriExtension}/openstack/resources`,
                 {
                     params: ParamsBuilder.djangoPaginationParams(pagination),
-                },
+                }
             )
             .pipe(
                 map(
                     (response) =>
                         new PaginatedResource<CloudResource>(
-                            RequestStageMapper.fromCloudResourceDTOs(response.results),
-                            PaginationMapper.fromDjangoDTO(response),
-                        ),
-                ),
+                            RequestStageMapper.fromCloudResourceDTOs(
+                                response.results
+                            ),
+                            PaginationMapper.fromDjangoDTO(response)
+                        )
+                )
             );
     }
 
@@ -176,23 +202,25 @@ export class AllocationRequestsDefaultApi extends AllocationRequestsApi {
      */
     getTerraformOutputs(
         requestId: number,
-        pagination: OffsetPaginationEvent,
+        pagination: OffsetPaginationEvent
     ): Observable<PaginatedResource<TerraformOutput>> {
         return this.http
             .get<DjangoResourceDTO<TerraformOutputDTO>>(
                 `${this.apiUrl}/${requestId}/${this.stagesUriExtension}/terraform/outputs`,
                 {
                     params: ParamsBuilder.djangoPaginationParams(pagination),
-                },
+                }
             )
             .pipe(
                 map(
                     (response) =>
                         new PaginatedResource<TerraformOutput>(
-                            RequestStageMapper.fromTerraformOutputDTOs(response.results),
-                            PaginationMapper.fromDjangoDTO(response),
-                        ),
-                ),
+                            RequestStageMapper.fromTerraformOutputDTOs(
+                                response.results
+                            ),
+                            PaginationMapper.fromDjangoDTO(response)
+                        )
+                )
             );
     }
 }

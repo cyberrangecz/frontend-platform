@@ -1,19 +1,19 @@
-import {inject, Injectable} from '@angular/core';
-import {OffsetPaginationEvent, PaginatedResource,} from '@sentinel/common/pagination';
-import {LinearRunApi, LinearTrainingInstanceApi} from '@crczp/training-api';
-import {TrainingRun} from '@crczp/training-model';
-import {EMPTY, Observable, of} from 'rxjs';
-import {switchMap, tap} from 'rxjs/operators';
-import {TrainingRunService} from './training-run.service';
-import {SandboxAllocationUnitsApi, SandboxInstanceApi,} from '@crczp/sandbox-api';
-import {MatDialog} from '@angular/material/dialog';
+import { inject, Injectable } from '@angular/core';
+import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
+import { LinearRunApi, LinearTrainingInstanceApi } from '@crczp/training-api';
+import { TrainingRun } from '@crczp/training-model';
+import { EMPTY, Observable, of } from 'rxjs';
+import { switchMap, tap } from 'rxjs/operators';
+import { TrainingRunService } from './training-run.service';
+import { SandboxAllocationUnitsApi, SandboxInstanceApi } from '@crczp/sandbox-api';
+import { MatDialog } from '@angular/material/dialog';
 import {
     SentinelConfirmationDialogComponent,
     SentinelConfirmationDialogConfig,
-    SentinelDialogResultEnum,
+    SentinelDialogResultEnum
 } from '@sentinel/components/dialogs';
-import {SandboxInstance} from '@crczp/sandbox-model';
-import {ErrorHandlerService, NotificationService, PortalConfig} from '@crczp/common';
+import { SandboxInstance } from '@crczp/sandbox-model';
+import { ErrorHandlerService, NotificationService, PortalConfig } from '@crczp/utils';
 
 /**
  * Basic implementation of layer between component and API service.
@@ -87,7 +87,7 @@ export class TrainingRunConcreteService extends TrainingRunService {
                 this.lastTrainingInstanceId,
                 this.lastPagination
             )
-            .pipe(tap({error: () => this.onGetAllError()}));
+            .pipe(tap({ error: () => this.onGetAllError() }));
     }
 
     protected onManualResourceRefresh(

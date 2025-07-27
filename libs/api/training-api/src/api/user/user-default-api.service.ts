@@ -1,16 +1,28 @@
-import {HttpClient, HttpParams} from '@angular/common/http';
-import {inject, Injectable} from '@angular/core';
-import {SentinelParamsMerger} from '@sentinel/common';
-import {SentinelFilter} from '@sentinel/common/filter';
-import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
-import {BetaTester, Designer, Organizer, TrainingUser} from '@crczp/training-model';
-import {Observable} from 'rxjs';
-import {map} from 'rxjs/operators';
-import {UserMapper} from '../../mappers/user/user-mapper';
-import {UserRefDTO} from '../../dto/user/user-ref-dto';
-import {UserApi} from './user-api.service';
-import {JavaPaginatedResource, PaginationMapper, ParamsBuilder} from '@crczp/api-common';
-import {PortalConfig} from "@crczp/common";
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
+import { SentinelParamsMerger } from '@sentinel/common';
+import { SentinelFilter } from '@sentinel/common/filter';
+import {
+    OffsetPaginationEvent,
+    PaginatedResource,
+} from '@sentinel/common/pagination';
+import {
+    BetaTester,
+    Designer,
+    Organizer,
+    TrainingUser,
+} from '@crczp/training-model';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { UserMapper } from '../../mappers/user/user-mapper';
+import { UserRefDTO } from '../../dto/user/user-ref-dto';
+import { UserApi } from './user-api.service';
+import {
+    JavaPaginatedResource,
+    PaginationMapper,
+    ParamsBuilder,
+} from '@crczp/api-common';
+import { PortalConfig } from '@crczp/utils';
 
 /**
  * Default implementation of service abstracting http communication with user related endpoints.
@@ -32,13 +44,19 @@ export class UserDefaultApi extends UserApi {
         super();
 
         const linearBasePath = inject(PortalConfig).basePaths.linearTraining;
-        const adaptiveBasePath = inject(PortalConfig).basePaths.adaptiveTraining;
+        const adaptiveBasePath =
+            inject(PortalConfig).basePaths.adaptiveTraining;
 
-        this.trainingDefsEndpointUri = linearBasePath + this.trainingDefinitionUriExtension;
-        this.adaptiveDefsEndpointUri = adaptiveBasePath + this.trainingDefinitionUriExtension;
-        this.trainingInstancesEndpointUri = linearBasePath + this.trainingInstanceUrlExtension;
-        this.adaptiveInstancesEndpointUri = adaptiveBasePath + this.trainingInstanceUrlExtension;
-        this.trainingRunEndpointUri = linearBasePath + this.trainingRunUrlExtension;
+        this.trainingDefsEndpointUri =
+            linearBasePath + '/' + this.trainingDefinitionUriExtension;
+        this.adaptiveDefsEndpointUri =
+            adaptiveBasePath + '/' + this.trainingDefinitionUriExtension;
+        this.trainingInstancesEndpointUri =
+            linearBasePath + '/' + this.trainingInstanceUrlExtension;
+        this.adaptiveInstancesEndpointUri =
+            adaptiveBasePath + '/' + this.trainingInstanceUrlExtension;
+        this.trainingRunEndpointUri =
+            linearBasePath + '/' + this.trainingRunUrlExtension;
     }
 
     /**
@@ -52,7 +70,7 @@ export class UserDefaultApi extends UserApi {
         trainingInstanceId: number,
         pagination: OffsetPaginationEvent,
         adaptive: boolean,
-        filters: SentinelFilter[] = [],
+        filters: SentinelFilter[] = []
     ): Observable<PaginatedResource<Organizer>> {
         const params = SentinelParamsMerger.merge([
             ParamsBuilder.javaPaginationParams(pagination),
@@ -61,9 +79,11 @@ export class UserDefaultApi extends UserApi {
         return this.http
             .get<JavaPaginatedResource<UserRefDTO>>(
                 `${
-                    adaptive ? this.adaptiveInstancesEndpointUri : this.trainingInstancesEndpointUri
+                    adaptive
+                        ? this.adaptiveInstancesEndpointUri
+                        : this.trainingInstancesEndpointUri
                 }/${trainingInstanceId}/organizers-not-in-training-instance`,
-                {params},
+                { params }
             )
             .pipe(map((resp) => this.paginatedUsersFromDTO(resp)));
     }
@@ -79,7 +99,7 @@ export class UserDefaultApi extends UserApi {
         trainingDefinitionId: number,
         pagination: OffsetPaginationEvent,
         adaptive: boolean,
-        filters: SentinelFilter[] = [],
+        filters: SentinelFilter[] = []
     ): Observable<PaginatedResource<Designer>> {
         const params = SentinelParamsMerger.merge([
             ParamsBuilder.javaPaginationParams(pagination),
@@ -88,9 +108,11 @@ export class UserDefaultApi extends UserApi {
         return this.http
             .get<JavaPaginatedResource<UserRefDTO>>(
                 `${
-                    adaptive ? this.adaptiveDefsEndpointUri : this.trainingDefsEndpointUri
+                    adaptive
+                        ? this.adaptiveDefsEndpointUri
+                        : this.trainingDefsEndpointUri
                 }/${trainingDefinitionId}/designers-not-in-training-definition`,
-                {params},
+                { params }
             )
             .pipe(map((resp) => this.paginatedUsersFromDTO(resp)));
     }
@@ -106,7 +128,7 @@ export class UserDefaultApi extends UserApi {
         trainingDefinitionId: number,
         pagination: OffsetPaginationEvent,
         adaptive: boolean,
-        filters: SentinelFilter[] = [],
+        filters: SentinelFilter[] = []
     ): Observable<PaginatedResource<Designer>> {
         const params = SentinelParamsMerger.merge([
             ParamsBuilder.javaPaginationParams(pagination),
@@ -114,8 +136,12 @@ export class UserDefaultApi extends UserApi {
         ]);
         return this.http
             .get<JavaPaginatedResource<UserRefDTO>>(
-                `${adaptive ? this.adaptiveDefsEndpointUri : this.trainingDefsEndpointUri}/${trainingDefinitionId}/authors`,
-                {params},
+                `${
+                    adaptive
+                        ? this.adaptiveDefsEndpointUri
+                        : this.trainingDefsEndpointUri
+                }/${trainingDefinitionId}/authors`,
+                { params }
             )
             .pipe(map((resp) => this.paginatedUsersFromDTO(resp)));
     }
@@ -131,7 +157,7 @@ export class UserDefaultApi extends UserApi {
         trainingInstanceId: number,
         pagination: OffsetPaginationEvent,
         adaptive: boolean,
-        filters: SentinelFilter[] = [],
+        filters: SentinelFilter[] = []
     ): Observable<PaginatedResource<Organizer>> {
         const params = SentinelParamsMerger.merge([
             ParamsBuilder.javaPaginationParams(pagination),
@@ -140,9 +166,11 @@ export class UserDefaultApi extends UserApi {
         return this.http
             .get<JavaPaginatedResource<UserRefDTO>>(
                 `${
-                    adaptive ? this.adaptiveInstancesEndpointUri : this.trainingInstancesEndpointUri
+                    adaptive
+                        ? this.adaptiveInstancesEndpointUri
+                        : this.trainingInstancesEndpointUri
                 }/${trainingInstanceId}/organizers`,
-                {params},
+                { params }
             )
             .pipe(map((resp) => this.paginatedUsersFromDTO(resp)));
     }
@@ -158,16 +186,20 @@ export class UserDefaultApi extends UserApi {
         trainingDefinitionId: number,
         additions: number[],
         adaptive: boolean,
-        removals: number[],
+        removals: number[]
     ): Observable<any> {
         return this.http.put(
-            `${adaptive ? this.adaptiveDefsEndpointUri : this.trainingDefsEndpointUri}/${trainingDefinitionId}/authors`,
+            `${
+                adaptive
+                    ? this.adaptiveDefsEndpointUri
+                    : this.trainingDefsEndpointUri
+            }/${trainingDefinitionId}/authors`,
             {},
             {
                 params: new HttpParams()
                     .set('authorsAddition', additions.toString())
                     .set('authorsRemoval', removals.toString()),
-            },
+            }
         );
     }
 
@@ -182,18 +214,20 @@ export class UserDefaultApi extends UserApi {
         trainingInstanceId: number,
         additions: number[],
         adaptive: boolean,
-        removals: number[],
+        removals: number[]
     ): Observable<any> {
         return this.http.put(
             `${
-                adaptive ? this.adaptiveInstancesEndpointUri : this.trainingInstancesEndpointUri
+                adaptive
+                    ? this.adaptiveInstancesEndpointUri
+                    : this.trainingInstancesEndpointUri
             }/${trainingInstanceId}/organizers`,
             {},
             {
                 params: new HttpParams()
                     .set('organizersAddition', additions.toString())
                     .set('organizersRemoval', removals.toString()),
-            },
+            }
         );
     }
 
@@ -208,7 +242,7 @@ export class UserDefaultApi extends UserApi {
         trainingInstanceId: number,
         pagination: OffsetPaginationEvent,
         adaptive: boolean,
-        filters: SentinelFilter[] = [],
+        filters: SentinelFilter[] = []
     ): Observable<PaginatedResource<BetaTester>> {
         const params = SentinelParamsMerger.merge([
             ParamsBuilder.javaPaginationParams(pagination),
@@ -217,9 +251,11 @@ export class UserDefaultApi extends UserApi {
         return this.http
             .get<JavaPaginatedResource<UserRefDTO>>(
                 `${
-                    adaptive ? this.adaptiveInstancesEndpointUri : this.trainingInstancesEndpointUri
+                    adaptive
+                        ? this.adaptiveInstancesEndpointUri
+                        : this.trainingInstancesEndpointUri
                 }/${trainingInstanceId}/beta-testers`,
-                {params},
+                { params }
             )
             .pipe(map((resp) => this.paginatedUsersFromDTO(resp)));
     }
@@ -235,7 +271,7 @@ export class UserDefaultApi extends UserApi {
         trainingDefinitionId: number,
         pagination: OffsetPaginationEvent,
         adaptive: boolean,
-        filters: SentinelFilter[] = [],
+        filters: SentinelFilter[] = []
     ): Observable<PaginatedResource<Designer>> {
         const params = SentinelParamsMerger.merge([
             ParamsBuilder.javaPaginationParams(pagination),
@@ -243,8 +279,12 @@ export class UserDefaultApi extends UserApi {
         ]);
         return this.http
             .get<JavaPaginatedResource<UserRefDTO>>(
-                `${adaptive ? this.adaptiveDefsEndpointUri : this.trainingDefsEndpointUri}/${trainingDefinitionId}/designers`,
-                {params},
+                `${
+                    adaptive
+                        ? this.adaptiveDefsEndpointUri
+                        : this.trainingDefsEndpointUri
+                }/${trainingDefinitionId}/designers`,
+                { params }
             )
             .pipe(map((resp) => this.paginatedUsersFromDTO(resp)));
     }
@@ -260,7 +300,7 @@ export class UserDefaultApi extends UserApi {
         trainingDefinitionId: number,
         pagination: OffsetPaginationEvent,
         adaptive: boolean,
-        filters: SentinelFilter[] = [],
+        filters: SentinelFilter[] = []
     ): Observable<PaginatedResource<Organizer>> {
         const params = SentinelParamsMerger.merge([
             ParamsBuilder.javaPaginationParams(pagination),
@@ -268,8 +308,12 @@ export class UserDefaultApi extends UserApi {
         ]);
         return this.http
             .get<JavaPaginatedResource<UserRefDTO>>(
-                `${adaptive ? this.adaptiveDefsEndpointUri : this.trainingDefsEndpointUri}/${trainingDefinitionId}/organizers`,
-                {params},
+                `${
+                    adaptive
+                        ? this.adaptiveDefsEndpointUri
+                        : this.trainingDefsEndpointUri
+                }/${trainingDefinitionId}/organizers`,
+                { params }
             )
             .pipe(map((resp) => this.paginatedUsersFromDTO(resp)));
     }
@@ -280,14 +324,18 @@ export class UserDefaultApi extends UserApi {
      */
     getParticipant(trainingRunId: number): Observable<TrainingUser> {
         return this.http
-            .get<UserRefDTO>(`${this.trainingRunEndpointUri}/${trainingRunId}/organizers`)
+            .get<UserRefDTO>(
+                `${this.trainingRunEndpointUri}/${trainingRunId}/organizers`
+            )
             .pipe(map((resp) => UserMapper.fromDTO(resp)));
     }
 
-    private paginatedUsersFromDTO(dto: JavaPaginatedResource<UserRefDTO>): PaginatedResource<TrainingUser> {
+    private paginatedUsersFromDTO(
+        dto: JavaPaginatedResource<UserRefDTO>
+    ): PaginatedResource<TrainingUser> {
         return new PaginatedResource<TrainingUser>(
             UserMapper.fromDTOs(dto.content),
-            PaginationMapper.fromJavaDTO(dto.pagination),
+            PaginationMapper.fromJavaDTO(dto.pagination)
         );
     }
 }

@@ -1,22 +1,29 @@
-import {ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit} from '@angular/core';
-import {OffsetPaginationEvent} from '@sentinel/common/pagination';
-import {AccessedTrainingRun, TrainingTypeEnum} from '@crczp/training-model';
-import {SentinelTable, SentinelTableComponent, TableActionEvent, TableLoadEvent} from '@sentinel/components/table';
-import {Observable} from 'rxjs';
-import {map, take} from 'rxjs/operators';
-import {AccessedTrainingRunTable} from '../model/accessed-training-run-table';
-import {AccessedTrainingRunService} from '../services/state/training/accessed-training-run.service';
-import {AccessedAdaptiveRunService} from '../services/state/adaptive/accessed-adaptive-run.service';
-import {SentinelControlItem, SentinelControlItemSignal, SentinelControlsComponent} from '@sentinel/components/controls';
-import {AccessedTrainingRunControls} from '../model/accessed-training-run-controls';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {PortalConfig} from "@crczp/common";
-import {AsyncPipe} from "@angular/common";
-import {AccessTrainingRunComponent} from "./access/access-training-run.component";
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
+import { AccessedTrainingRun, TrainingTypeEnum } from '@crczp/training-model';
+import { SentinelTable, SentinelTableComponent, TableActionEvent, TableLoadEvent } from '@sentinel/components/table';
+import { Observable } from 'rxjs';
+import { map, take } from 'rxjs/operators';
+import { AccessedTrainingRunTable } from '../model/accessed-training-run-table';
+import { AccessedTrainingRunService } from '../services/state/training/accessed-training-run.service';
+import { AccessedAdaptiveRunService } from '../services/state/adaptive/accessed-adaptive-run.service';
+import {
+    SentinelControlItem,
+    SentinelControlItemSignal,
+    SentinelControlsComponent
+} from '@sentinel/components/controls';
+import { AccessedTrainingRunControls } from '../model/accessed-training-run-controls';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { PortalConfig } from '@crczp/utils';
+import { AsyncPipe } from '@angular/common';
+import { AccessTrainingRunComponent } from './access/access-training-run.component';
 
-import {RunningTrainingRunConcreteService, RunningTrainingRunService} from "@crczp/training-agenda/run-detail";
-import {RunningAdaptiveRunConcreteService, RunningAdaptiveRunService} from "@crczp/training-agenda/adaptive-run-detail";
-import {AccessedAdaptiveRunConcreteService} from "../services/state/adaptive/accessed-adaptive-run-concrete.service";
+import { RunningTrainingRunConcreteService, RunningTrainingRunService } from '@crczp/training-agenda/run-detail';
+import {
+    RunningAdaptiveRunConcreteService,
+    RunningAdaptiveRunService
+} from '@crczp/training-agenda/adaptive-run-detail';
+import { AccessedAdaptiveRunConcreteService } from '../services/state/adaptive/accessed-adaptive-run-concrete.service';
 
 /**
  * Main smart component of the trainee overview.
@@ -30,13 +37,25 @@ import {AccessedAdaptiveRunConcreteService} from "../services/state/adaptive/acc
         AsyncPipe,
         AccessTrainingRunComponent,
         SentinelControlsComponent,
-        SentinelTableComponent
+        SentinelTableComponent,
     ],
     providers: [
-        {provide: RunningTrainingRunService, useClass: RunningTrainingRunConcreteService},
-        {provide: RunningAdaptiveRunService, useClass: RunningAdaptiveRunConcreteService},
-        {provide: AccessedTrainingRunService, useClass: AccessedTrainingRunService},
-        {provide: AccessedAdaptiveRunService, useClass: AccessedAdaptiveRunConcreteService},
+        {
+            provide: RunningTrainingRunService,
+            useClass: RunningTrainingRunConcreteService,
+        },
+        {
+            provide: RunningAdaptiveRunService,
+            useClass: RunningAdaptiveRunConcreteService,
+        },
+        {
+            provide: AccessedTrainingRunService,
+            useClass: AccessedTrainingRunService,
+        },
+        {
+            provide: AccessedAdaptiveRunService,
+            useClass: AccessedAdaptiveRunConcreteService,
+        },
     ],
 })
 export class TrainingRunOverviewComponent implements OnInit {
@@ -52,7 +71,9 @@ export class TrainingRunOverviewComponent implements OnInit {
     constructor() {
         const trainingRunOverviewService = this.trainingRunOverviewService;
 
-        this.controls = AccessedTrainingRunControls.create(trainingRunOverviewService);
+        this.controls = AccessedTrainingRunControls.create(
+            trainingRunOverviewService
+        );
     }
 
     ngOnInit(): void {
@@ -66,11 +87,14 @@ export class TrainingRunOverviewComponent implements OnInit {
     access(accessToken: string): void {
         this.isLoading = true;
         this.trainingRunOverviewService
-            .toAccessRun(accessToken, this.isAdaptiveToken(accessToken) ?
-                TrainingTypeEnum.ADAPTIVE : TrainingTypeEnum.LINEAR)
+            .toAccessRun(
+                accessToken,
+                this.isAdaptiveToken(accessToken)
+                    ? TrainingTypeEnum.ADAPTIVE
+                    : TrainingTypeEnum.LINEAR
+            )
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe(() => (this.isLoading = false));
-
     }
 
     /**
@@ -86,7 +110,10 @@ export class TrainingRunOverviewComponent implements OnInit {
      */
     loadAccessedTrainingRuns(loadEvent: TableLoadEvent): void {
         this.trainingRunOverviewService
-            .getAll(new OffsetPaginationEvent(0, 0, '', 'asc'), loadEvent.filter)
+            .getAll(
+                new OffsetPaginationEvent(0, 0, '', 'asc'),
+                loadEvent.filter
+            )
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe();
     }
@@ -97,11 +124,22 @@ export class TrainingRunOverviewComponent implements OnInit {
 
     private initTable() {
         const initialLoadEvent: TableLoadEvent = {
-            pagination: new OffsetPaginationEvent(0, this.settings.defaultPageSize, '', 'asc'),
+            pagination: new OffsetPaginationEvent(
+                0,
+                this.settings.defaultPageSize,
+                '',
+                'asc'
+            ),
         };
 
         this.trainingRuns$ = this.trainingRunOverviewService.resource$.pipe(
-            map((resource) => new AccessedTrainingRunTable(resource, this.trainingRunOverviewService)),
+            map(
+                (resource) =>
+                    new AccessedTrainingRunTable(
+                        resource,
+                        this.trainingRunOverviewService
+                    )
+            )
         );
         this.hasError$ = this.trainingRunOverviewService.hasError$;
         this.loadAccessedTrainingRuns(initialLoadEvent);

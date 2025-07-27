@@ -1,7 +1,7 @@
-import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
-import {inject, Injectable} from '@angular/core';
-import {ResponseHeaderContentDispositionReader} from '@sentinel/common';
-import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
+import { ResponseHeaderContentDispositionReader } from '@sentinel/common';
+import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
 import {
     AllocationRequest,
     CleanupRequest,
@@ -13,25 +13,25 @@ import {
     SandboxInstance,
     SandboxKeyPair
 } from '@crczp/sandbox-model';
-import {Observable} from 'rxjs';
-import {map} from 'rxjs/operators';
-import {SandboxDefinitionDTO} from '../../dto/sandbox-definition/sandbox-definition-dto';
-import {LockDTO} from '../../dto/sandbox-instance/lock-dto';
-import {PoolDTO} from '../../dto/sandbox-instance/pool-dto';
-import {SandboxAllocationUnitDTO} from '../../dto/sandbox-instance/sandbox-allocation-unit-dto';
-import {SandboxInstanceDTO} from '../../dto/sandbox-instance/sandbox-instance-dto';
-import {SandboxKeyPairDTO} from '../../dto/sandbox-instance/sandbox-key-pair-dto';
-import {LockMapper} from '../../mappers/sandbox-instance/lock-mapper';
-import {PoolMapper} from '../../mappers/sandbox-instance/pool-mapper';
-import {SandboxKeyPairMapper} from '../../mappers/sandbox-instance/sandbox-key-pair-mapper';
-import {SandboxDefinitionMapper} from '../../mappers/sandbox-definition/sandbox-definition-mapper';
-import {SandboxAllocationUnitMapper} from '../../mappers/sandbox-instance/sandbox-allocation-unit-mapper';
-import {SandboxInstanceMapper} from '../../mappers/sandbox-instance/sandbox-instance-mapper';
-import {PoolApi} from './pool.api.service';
-import {RequestDTO} from '../../dto/sandbox-instance/request-dto';
-import {RequestMapper} from '../../mappers/sandbox-instance/request-mapper';
-import {BlobFileSaver, DjangoResourceDTO, handleJsonError, PaginationMapper, ParamsBuilder} from '@crczp/api-common';
-import {PortalConfig} from "@crczp/common";
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { SandboxDefinitionDTO } from '../../dto/sandbox-definition/sandbox-definition-dto';
+import { LockDTO } from '../../dto/sandbox-instance/lock-dto';
+import { PoolDTO } from '../../dto/sandbox-instance/pool-dto';
+import { SandboxAllocationUnitDTO } from '../../dto/sandbox-instance/sandbox-allocation-unit-dto';
+import { SandboxInstanceDTO } from '../../dto/sandbox-instance/sandbox-instance-dto';
+import { SandboxKeyPairDTO } from '../../dto/sandbox-instance/sandbox-key-pair-dto';
+import { LockMapper } from '../../mappers/sandbox-instance/lock-mapper';
+import { PoolMapper } from '../../mappers/sandbox-instance/pool-mapper';
+import { SandboxKeyPairMapper } from '../../mappers/sandbox-instance/sandbox-key-pair-mapper';
+import { SandboxDefinitionMapper } from '../../mappers/sandbox-definition/sandbox-definition-mapper';
+import { SandboxAllocationUnitMapper } from '../../mappers/sandbox-instance/sandbox-allocation-unit-mapper';
+import { SandboxInstanceMapper } from '../../mappers/sandbox-instance/sandbox-instance-mapper';
+import { PoolApi } from './pool.api.service';
+import { RequestDTO } from '../../dto/sandbox-instance/request-dto';
+import { RequestMapper } from '../../mappers/sandbox-instance/request-mapper';
+import { BlobFileSaver, DjangoResourceDTO, handleJsonError, PaginationMapper, ParamsBuilder } from '@crczp/api-common';
+import { PortalConfig } from '@crczp/utils';
 
 /**
  * Default implementation of service abstracting http communication with pools endpoints.
@@ -40,8 +40,9 @@ import {PortalConfig} from "@crczp/common";
 export class PoolDefaultApi extends PoolApi {
     private readonly http = inject(HttpClient);
 
-    private readonly apiUrl = inject(PortalConfig).basePaths.sandbox + 'pools';
-    private readonly sandboxAllocationUnitsUriExtension = 'sandbox-allocation-units';
+    private readonly apiUrl = inject(PortalConfig).basePaths.sandbox + '/pools';
+    private readonly sandboxAllocationUnitsUriExtension =
+        'sandbox-allocation-units';
     private readonly locksUriExtension = 'locks';
     private readonly sandboxInstancesUriExtension = 'sandboxes';
     private readonly allocationRequestUriExtension = 'allocation-requests';
@@ -55,7 +56,9 @@ export class PoolDefaultApi extends PoolApi {
      * Sends http request to retrieve all pools on specified page of a pagination
      * @param pagination requested pagination
      */
-    getPools(pagination: OffsetPaginationEvent): Observable<PaginatedResource<Pool>> {
+    getPools(
+        pagination: OffsetPaginationEvent
+    ): Observable<PaginatedResource<Pool>> {
         return this.http
             .get<DjangoResourceDTO<PoolDTO>>(this.apiUrl, {
                 params: ParamsBuilder.djangoPaginationParams(pagination),
@@ -65,9 +68,9 @@ export class PoolDefaultApi extends PoolApi {
                     (response) =>
                         new PaginatedResource<Pool>(
                             PoolMapper.fromDTOs(response.results),
-                            PaginationMapper.fromDjangoDTO(response),
-                        ),
-                ),
+                            PaginationMapper.fromDjangoDTO(response)
+                        )
+                )
             );
     }
 
@@ -100,7 +103,9 @@ export class PoolDefaultApi extends PoolApi {
      * @param poolId id of the pool to clear
      */
     clearPool(poolId: number): Observable<any> {
-        return this.http.delete(`${this.apiUrl}/${poolId}/${this.sandboxAllocationUnitsUriExtension}`);
+        return this.http.delete(
+            `${this.apiUrl}/${poolId}/${this.sandboxAllocationUnitsUriExtension}`
+        );
     }
 
     /**
@@ -128,7 +133,7 @@ export class PoolDefaultApi extends PoolApi {
             null,
             {
                 params,
-            },
+            }
         );
     }
 
@@ -139,23 +144,23 @@ export class PoolDefaultApi extends PoolApi {
      */
     getAllocationRequests(
         poolId: number,
-        pagination: OffsetPaginationEvent,
+        pagination: OffsetPaginationEvent
     ): Observable<PaginatedResource<AllocationRequest>> {
         return this.http
             .get<DjangoResourceDTO<RequestDTO>>(
                 `${this.apiUrl}/${poolId}/${this.allocationRequestUriExtension}`,
                 {
                     params: ParamsBuilder.djangoPaginationParams(pagination),
-                },
+                }
             )
             .pipe(
                 map(
                     (response) =>
                         new PaginatedResource<Request>(
                             RequestMapper.fromAllocationDTOs(response.results),
-                            PaginationMapper.fromDjangoDTO(response),
-                        ),
-                ),
+                            PaginationMapper.fromDjangoDTO(response)
+                        )
+                )
             );
     }
 
@@ -166,23 +171,23 @@ export class PoolDefaultApi extends PoolApi {
      */
     getCleanupRequests(
         poolId: number,
-        pagination: OffsetPaginationEvent,
+        pagination: OffsetPaginationEvent
     ): Observable<PaginatedResource<CleanupRequest>> {
         return this.http
             .get<DjangoResourceDTO<RequestDTO>>(
                 `${this.apiUrl}/${poolId}/${this.cleanupRequestUriExtension}`,
                 {
                     params: ParamsBuilder.djangoPaginationParams(pagination),
-                },
+                }
             )
             .pipe(
                 map(
                     (response) =>
                         new PaginatedResource<Request>(
                             RequestMapper.fromCleanupDTOs(response.results),
-                            PaginationMapper.fromDjangoDTO(response),
-                        ),
-                ),
+                            PaginationMapper.fromDjangoDTO(response)
+                        )
+                )
             );
     }
 
@@ -197,7 +202,10 @@ export class PoolDefaultApi extends PoolApi {
         };
 
         return this.http
-            .post<LockDTO>(`${this.apiUrl}/${poolId}/${this.locksUriExtension}`, body)
+            .post<LockDTO>(
+                `${this.apiUrl}/${poolId}/${this.locksUriExtension}`,
+                body
+            )
             .pipe(map((response) => LockMapper.fromDTO(response)));
     }
 
@@ -207,7 +215,9 @@ export class PoolDefaultApi extends PoolApi {
      * @param lockId id of current lock
      */
     unlockPool(poolId: number, lockId: number): Observable<any> {
-        return this.http.delete(`${this.apiUrl}/${poolId}/${this.locksUriExtension}/${lockId}`);
+        return this.http.delete(
+            `${this.apiUrl}/${poolId}/${this.locksUriExtension}/${lockId}`
+        );
     }
 
     /**
@@ -217,20 +227,23 @@ export class PoolDefaultApi extends PoolApi {
      */
     getDefinition(
         poolId: number,
-        pagination?: OffsetPaginationEvent,
+        pagination?: OffsetPaginationEvent
     ): Observable<PaginatedResource<SandboxDefinition>> {
         return this.http
-            .get<DjangoResourceDTO<SandboxDefinitionDTO>>(`${this.apiUrl}/${poolId}/definition`, {
-                params: ParamsBuilder.djangoPaginationParams(pagination),
-            })
+            .get<DjangoResourceDTO<SandboxDefinitionDTO>>(
+                `${this.apiUrl}/${poolId}/definition`,
+                {
+                    params: ParamsBuilder.djangoPaginationParams(pagination),
+                }
+            )
             .pipe(
                 map(
                     (response) =>
                         new PaginatedResource<SandboxDefinition>(
                             SandboxDefinitionMapper.fromDTOs(response.results),
-                            PaginationMapper.fromDjangoDTO(response),
-                        ),
-                ),
+                            PaginationMapper.fromDjangoDTO(response)
+                        )
+                )
             );
     }
 
@@ -240,7 +253,9 @@ export class PoolDefaultApi extends PoolApi {
      */
     getSandboxKeyPair(poolId: number): Observable<SandboxKeyPair> {
         return this.http
-            .get<SandboxKeyPairDTO>(`${this.apiUrl}/${poolId}/key-pairs/management`)
+            .get<SandboxKeyPairDTO>(
+                `${this.apiUrl}/${poolId}/key-pairs/management`
+            )
             .pipe(map((response) => SandboxKeyPairMapper.fromDTO(response)));
     }
 
@@ -250,15 +265,17 @@ export class PoolDefaultApi extends PoolApi {
      */
     getPoolsLocks(poolId: number): Observable<PaginatedResource<Lock>> {
         return this.http
-            .get<DjangoResourceDTO<LockDTO>>(`${this.apiUrl}/${poolId}/${this.locksUriExtension}`)
+            .get<DjangoResourceDTO<LockDTO>>(
+                `${this.apiUrl}/${poolId}/${this.locksUriExtension}`
+            )
             .pipe(
                 map(
                     (response) =>
                         new PaginatedResource<Lock>(
                             LockMapper.fromDTOs(response.results),
-                            PaginationMapper.fromDjangoDTO(response),
-                        ),
-                ),
+                            PaginationMapper.fromDjangoDTO(response)
+                        )
+                )
             );
     }
 
@@ -269,7 +286,9 @@ export class PoolDefaultApi extends PoolApi {
      */
     getPoolsSpecificLock(poolId: number, lockId: number): Observable<Lock> {
         return this.http
-            .get<LockDTO>(`${this.apiUrl}/${poolId}/${this.locksUriExtension}/${lockId}`)
+            .get<LockDTO>(
+                `${this.apiUrl}/${poolId}/${this.locksUriExtension}/${lockId}`
+            )
             .pipe(map((response) => LockMapper.fromDTO(response)));
     }
 
@@ -280,7 +299,7 @@ export class PoolDefaultApi extends PoolApi {
      */
     getPoolsSandboxAllocationUnits(
         poolId: number,
-        pagination?: OffsetPaginationEvent,
+        pagination?: OffsetPaginationEvent
     ): Observable<PaginatedResource<SandboxAllocationUnit>> {
         if (pagination && pagination.sort) {
             pagination.sort = pagination.sort.replace('allocation_unit__', '');
@@ -290,16 +309,18 @@ export class PoolDefaultApi extends PoolApi {
                 `${this.apiUrl}/${poolId}/${this.sandboxAllocationUnitsUriExtension}`,
                 {
                     params: ParamsBuilder.djangoPaginationParams(pagination),
-                },
+                }
             )
             .pipe(
                 map(
                     (response) =>
                         new PaginatedResource<SandboxAllocationUnit>(
-                            SandboxAllocationUnitMapper.fromDTOs(response.results),
-                            PaginationMapper.fromDjangoDTO(response),
-                        ),
-                ),
+                            SandboxAllocationUnitMapper.fromDTOs(
+                                response.results
+                            ),
+                            PaginationMapper.fromDjangoDTO(response)
+                        )
+                )
             );
     }
 
@@ -308,10 +329,13 @@ export class PoolDefaultApi extends PoolApi {
      * @param poolId id of a pool
      * @param trainingAccessToken the training access token
      */
-    getSandboxAndLockIt(poolId: number, trainingAccessToken: string): Observable<SandboxInstance> {
+    getSandboxAndLockIt(
+        poolId: number,
+        trainingAccessToken: string
+    ): Observable<SandboxInstance> {
         return this.http
             .get<SandboxInstanceDTO>(
-                `${this.apiUrl}/${poolId}/${this.sandboxInstancesUriExtension}/get-and-lock/${trainingAccessToken}`,
+                `${this.apiUrl}/${poolId}/${this.sandboxInstancesUriExtension}/get-and-lock/${trainingAccessToken}`
             )
             .pipe(map((response) => SandboxInstanceMapper.fromDTO(response)));
     }
@@ -336,11 +360,11 @@ export class PoolDefaultApi extends PoolApi {
                         resp.body,
                         ResponseHeaderContentDispositionReader.getFilenameFromResponse(
                             resp,
-                            'management-ssh-access.zip',
-                        ),
+                            'management-ssh-access.zip'
+                        )
                     );
                     return true;
-                }),
+                })
             );
     }
 
@@ -351,23 +375,30 @@ export class PoolDefaultApi extends PoolApi {
      */
     getPoolsSandboxes(
         poolId: number,
-        pagination?: OffsetPaginationEvent,
+        pagination?: OffsetPaginationEvent
     ): Observable<PaginatedResource<SandboxInstance>> {
-        if (pagination && pagination.sort && !pagination.sort.startsWith('allocation_unit')) {
+        if (
+            pagination &&
+            pagination.sort &&
+            !pagination.sort.startsWith('allocation_unit')
+        ) {
             pagination.sort = `allocation_unit__${pagination.sort}`;
         }
         return this.http
-            .get<DjangoResourceDTO<SandboxInstanceDTO>>(`${this.apiUrl}/${poolId}/sandboxes`, {
-                params: ParamsBuilder.djangoPaginationParams(pagination),
-            })
+            .get<DjangoResourceDTO<SandboxInstanceDTO>>(
+                `${this.apiUrl}/${poolId}/sandboxes`,
+                {
+                    params: ParamsBuilder.djangoPaginationParams(pagination),
+                }
+            )
             .pipe(
                 map(
                     (response) =>
                         new PaginatedResource<SandboxInstance>(
                             SandboxInstanceMapper.fromDTOs(response.results),
-                            PaginationMapper.fromDjangoDTO(response),
-                        ),
-                ),
+                            PaginationMapper.fromDjangoDTO(response)
+                        )
+                )
             );
     }
 
@@ -376,9 +407,16 @@ export class PoolDefaultApi extends PoolApi {
      * @param poolId id of a pool
      * @param force states whether the delete action should be forced
      */
-    createMultipleCleanupRequests(poolId: number, force = false): Observable<any> {
+    createMultipleCleanupRequests(
+        poolId: number,
+        force = false
+    ): Observable<any> {
         const params = new HttpParams().append('force', force.toString());
-        return this.http.post(`${this.apiUrl}/${poolId}/cleanup-requests`, {}, {params});
+        return this.http.post(
+            `${this.apiUrl}/${poolId}/cleanup-requests`,
+            {},
+            { params }
+        );
     }
 
     /**
@@ -386,9 +424,16 @@ export class PoolDefaultApi extends PoolApi {
      * @param poolId id of a pool
      * @param force states whether the delete action should be forced
      */
-    createUnlockedCleanupRequests(poolId: number, force = false): Observable<any> {
+    createUnlockedCleanupRequests(
+        poolId: number,
+        force = false
+    ): Observable<any> {
         const params = new HttpParams().append('force', force.toString());
-        return this.http.post(`${this.apiUrl}/${poolId}/cleanup-unlocked`, {}, {params});
+        return this.http.post(
+            `${this.apiUrl}/${poolId}/cleanup-unlocked`,
+            {},
+            { params }
+        );
     }
 
     /**
@@ -396,9 +441,16 @@ export class PoolDefaultApi extends PoolApi {
      * @param poolId id of a pool
      * @param force states whether the delete action should be forced
      */
-    createFailedCleanupRequests(poolId: number, force = false): Observable<any> {
+    createFailedCleanupRequests(
+        poolId: number,
+        force = false
+    ): Observable<any> {
         const params = new HttpParams().append('force', force.toString());
-        return this.http.post(`${this.apiUrl}/${poolId}/cleanup-failed`, {}, {params});
+        return this.http.post(
+            `${this.apiUrl}/${poolId}/cleanup-failed`,
+            {},
+            { params }
+        );
     }
 
     /**

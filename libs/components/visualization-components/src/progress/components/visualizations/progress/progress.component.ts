@@ -7,9 +7,16 @@ import {
     OnChanges,
     Output,
     SimpleChanges,
-    ViewEncapsulation
+    ViewEncapsulation,
 } from '@angular/core';
-import {Axis, NumberValue, ScaleBand, ScaleTime, ZoomBehavior, ZoomTransform,} from 'd3';
+import {
+    Axis,
+    NumberValue,
+    ScaleBand,
+    ScaleTime,
+    ZoomBehavior,
+    ZoomTransform,
+} from 'd3';
 
 import {
     HintTakenEvent,
@@ -20,19 +27,18 @@ import {
     TraineeProgressData,
     WrongAnswerEvent,
 } from '@crczp/visualization-model';
-import {TraineeViewEnum, ViewEnum} from '../../types';
-import {D3, D3Service} from '../../../../common/d3-service/d3-service';
-import {PROGRESS_CONFIG} from '../../../progress-config';
-import {DateUtils} from '@crczp/common';
-import {Level} from '@crczp/training-model';
-import {TraineeSelectionComponent} from '../trainee-selection/trainee-selection.component';
-import {OverviewProgressBarComponent} from '../overview-progress-bar/overview-progress-bar.component';
-import {LevelListComponent} from '../level-list/level-list.component';
-import {TraineeDetailComponent} from '../trainee-detail/trainee-detail.component';
-import {ColumnHeaderComponent} from '../column-header/column-header.component';
-import {LegendComponent} from '../legend/legend.component';
-import {MatTooltipModule} from '@angular/material/tooltip';
-
+import { TraineeViewEnum, ViewEnum } from '../../types';
+import { D3, D3Service } from '../../../../common/d3-service/d3-service';
+import { PROGRESS_CONFIG } from '../../../progress-config';
+import { DateUtils } from '@crczp/utils';
+import { Level } from '@crczp/training-model';
+import { TraineeSelectionComponent } from '../trainee-selection/trainee-selection.component';
+import { OverviewProgressBarComponent } from '../overview-progress-bar/overview-progress-bar.component';
+import { LevelListComponent } from '../level-list/level-list.component';
+import { TraineeDetailComponent } from '../trainee-detail/trainee-detail.component';
+import { ColumnHeaderComponent } from '../column-header/column-header.component';
+import { LegendComponent } from '../legend/legend.component';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
     selector: 'crczp-viz-progress',
@@ -46,7 +52,7 @@ import {MatTooltipModule} from '@angular/material/tooltip';
         LevelListComponent,
         TraineeDetailComponent,
         ColumnHeaderComponent,
-        LegendComponent
+        LegendComponent,
     ],
 })
 export class ProgressComponent implements OnChanges, AfterViewInit {
@@ -111,7 +117,7 @@ export class ProgressComponent implements OnChanges, AfterViewInit {
     private timeIndication = 125;
 
     // used by margin convention in d3 (https://bl.ocks.org/mbostock/3019563)
-    private margin = {top: 0, right: 140, bottom: 20, left: 230};
+    private margin = { top: 0, right: 140, bottom: 20, left: 230 };
     private minXAxisVal: number;
     private maxXAxisVal: number;
 
@@ -202,15 +208,15 @@ export class ProgressComponent implements OnChanges, AfterViewInit {
                 .sort((a, b) =>
                     this.sortReverse
                         ? b.name
-                            .toLowerCase()
-                            .localeCompare(a.name.toLowerCase(), 'en', {
-                                numeric: true,
-                            })
+                              .toLowerCase()
+                              .localeCompare(a.name.toLowerCase(), 'en', {
+                                  numeric: true,
+                              })
                         : a.name
-                            .toLowerCase()
-                            .localeCompare(b.name.toLowerCase(), 'en', {
-                                numeric: true,
-                            })
+                              .toLowerCase()
+                              .localeCompare(b.name.toLowerCase(), 'en', {
+                                  numeric: true,
+                              })
                 )
                 .map((d) => d.userRefId);
 
@@ -425,7 +431,7 @@ export class ProgressComponent implements OnChanges, AfterViewInit {
             .style('left', this.margin.left + newPosition - moveTimeText + 'px')
             .style('opacity', () => {
                 return newPosition > this.xScale(this.maxXAxisVal) ||
-                newPosition < this.xScale(this.visualizationData.startTime)
+                    newPosition < this.xScale(this.visualizationData.startTime)
                     ? '0'
                     : '1';
             });
@@ -509,7 +515,7 @@ export class ProgressComponent implements OnChanges, AfterViewInit {
     brushed(event): void {
         const newPosition =
             this.xScale(this.visualizationData.currentTime) *
-            this.zoomTransform.k +
+                this.zoomTransform.k +
             this.zoomTransform.x;
         const moveTimeText =
             newPosition < this.timeIndication
@@ -556,7 +562,12 @@ export class ProgressComponent implements OnChanges, AfterViewInit {
                     .select(nodes[i])
                     .selectAll('rect')
                     .attr('height', this.brushYScale.bandwidth())
-                    .attr('y', this.brushYScale((d as TraineeProgressData).trainingRunId));
+                    .attr(
+                        'y',
+                        this.brushYScale(
+                            (d as TraineeProgressData).trainingRunId
+                        )
+                    );
             });
     }
 
@@ -569,16 +580,16 @@ export class ProgressComponent implements OnChanges, AfterViewInit {
                     (trainee) => trainee.name.length
                 )
             ) *
-            this.approxFontWidth +
+                this.approxFontWidth +
             20;
 
         // set right side for trainee times by the duration (only times or with days?)
         this.margin.right =
             this.getTimeString(
                 this.visualizationData.currentTime -
-                this.visualizationData.startTime
+                    this.visualizationData.startTime
             ).length *
-            this.approxFontWidth +
+                this.approxFontWidth +
             20; // 20 = additional margin after time
 
         this.width =
@@ -611,25 +622,25 @@ export class ProgressComponent implements OnChanges, AfterViewInit {
         this.minXAxisVal = this.restrictToVisibleTrainees
             ? this.traineeRestrictedXScale.min
             : this.restrictToCustomTimelines
-                ? this.visualizationData.startTime +
-                this.customRestrictedXScale.minRestriction
-                : this.visualizationData.startTime;
+            ? this.visualizationData.startTime +
+              this.customRestrictedXScale.minRestriction
+            : this.visualizationData.startTime;
         this.maxXAxisVal = this.restrictToVisibleTrainees
             ? this.traineeRestrictedXScale.max
             : this.restrictToCustomTimelines
-                ? this.visualizationData.currentTime -
-                this.customRestrictedXScale.maxRestriction
-                : this.visualizationData.currentTime;
+            ? this.visualizationData.currentTime -
+              this.customRestrictedXScale.maxRestriction
+            : this.visualizationData.currentTime;
 
         const maxStripTime = this.restrictToVisibleTrainees
             ? 0
             : Math.min(
-                this.stripUnfinishedTimes,
-                this.traineeRestrictedXScale.inactive
-            );
+                  this.stripUnfinishedTimes,
+                  this.traineeRestrictedXScale.inactive
+              );
         this.getMaxTime.emit(
             this.visualizationData.currentTime -
-            this.visualizationData.startTime
+                this.visualizationData.startTime
         );
         this.getStepSize.emit(this.timelineStepSize);
         this.xScale = this.d3
@@ -661,8 +672,8 @@ export class ProgressComponent implements OnChanges, AfterViewInit {
                         // there are events, get time from the last one
                         const lastTimestamp =
                             value.levels[levelLength - 1].events[
-                            value.levels[levelLength - 1].events.length - 1
-                                ].timestamp;
+                                value.levels[levelLength - 1].events.length - 1
+                            ].timestamp;
                         inactiveEndInterval =
                             this.visualizationData.currentTime - lastTimestamp;
                         return lastTimestamp;
@@ -754,9 +765,9 @@ export class ProgressComponent implements OnChanges, AfterViewInit {
             .attr(
                 'y2',
                 this.yScale.bandwidth() *
-                this.filteredRuns.length *
-                (1 + this.gutter) +
-                1
+                    this.filteredRuns.length *
+                    (1 + this.gutter) +
+                    1
             );
 
         this.d3
@@ -764,8 +775,8 @@ export class ProgressComponent implements OnChanges, AfterViewInit {
             .style(
                 'left',
                 this.margin.left +
-                this.xScale(this.visualizationData.currentTime) +
-                'px'
+                    this.xScale(this.visualizationData.currentTime) +
+                    'px'
             );
     }
 
@@ -966,8 +977,8 @@ export class ProgressComponent implements OnChanges, AfterViewInit {
                 return (
                     this.xScale(
                         this.getLevelById(traineeLevel.id).estimatedDuration *
-                        60 +
-                        traineeLevel.startTime
+                            60 +
+                            traineeLevel.startTime
                     ) - this.xScale(traineeLevel.startTime)
                 );
             })
@@ -1090,10 +1101,10 @@ export class ProgressComponent implements OnChanges, AfterViewInit {
             .attr('x', (level: ProgressLevelInfo, i, j) =>
                 this.xScale(
                     this.visualizationData.currentTime +
-                    this.getPositionForPendingLevel(
-                        level,
-                        (this.d3.select(j[i].parentNode).data() as any)[0]
-                    )
+                        this.getPositionForPendingLevel(
+                            level,
+                            (this.d3.select(j[i].parentNode).data() as any)[0]
+                        )
                 )
             )
             .attr('y', (_, i, j) =>
@@ -1110,15 +1121,15 @@ export class ProgressComponent implements OnChanges, AfterViewInit {
                         (level.estimatedDuration > 0
                             ? level.estimatedDuration
                             : PROGRESS_CONFIG.defaultEstimatedTime) *
-                        60 +
-                        this.visualizationData.startTime
+                            60 +
+                            this.visualizationData.startTime
                     ) - this.xScale(this.visualizationData.startTime)
             )
             .attr(
                 'fill',
                 'url(#diagonalHatch-' +
-                PROGRESS_CONFIG.levelsColorEstimates[3] +
-                ')'
+                    PROGRESS_CONFIG.levelsColorEstimates[3] +
+                    ')'
             )
             .attr('height', this.yScale.bandwidth())
             .attr('class', 'planned-trainee-segments');
@@ -1226,7 +1237,7 @@ export class ProgressComponent implements OnChanges, AfterViewInit {
                     if (
                         i > 0 &&
                         ev.position - level.events[i - 1].position <
-                        eventIconSize * 0.9
+                            eventIconSize * 0.9
                     ) {
                         group[group.length - 1].push(ev);
                     } else {
@@ -1330,8 +1341,8 @@ export class ProgressComponent implements OnChanges, AfterViewInit {
                                 '<span class="progress-tooltip-item">',
                                 '<svg width="14" height="14" viewBox="0 0 16 16">',
                                 '<path d="' +
-                                eventProps.eventShapes[event.type] +
-                                '"/>',
+                                    eventProps.eventShapes[event.type] +
+                                    '"/>',
                                 '</svg>',
                                 this.resolveEventTooltip(event),
                                 '</span>'

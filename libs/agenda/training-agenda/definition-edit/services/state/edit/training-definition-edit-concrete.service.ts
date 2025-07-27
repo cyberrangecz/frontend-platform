@@ -1,13 +1,14 @@
-import {inject, Injectable} from '@angular/core';
-import {Router} from '@angular/router';
-import {LinearTrainingDefinitionApi} from '@crczp/training-api';
-import {TrainingDefinition} from '@crczp/training-model';
-import {combineLatest, concat, Observable} from 'rxjs';
-import {map, tap} from 'rxjs/operators';
-import {TrainingDefinitionChangeEvent} from '../../../model/events/training-definition-change-event';
-import {TrainingDefinitionEditService} from './training-definition-edit.service';
-import {LevelEditService} from '../level/level-edit.service';
-import {ErrorHandlerService, LoadingTracker, NotificationService, Routing} from "@crczp/common";
+import { inject, Injectable } from '@angular/core';
+import { Router } from '@angular/router';
+import { LinearTrainingDefinitionApi } from '@crczp/training-api';
+import { TrainingDefinition } from '@crczp/training-model';
+import { combineLatest, concat, Observable } from 'rxjs';
+import { map, tap } from 'rxjs/operators';
+import { TrainingDefinitionChangeEvent } from '../../../model/events/training-definition-change-event';
+import { TrainingDefinitionEditService } from './training-definition-edit.service';
+import { LevelEditService } from '../level/level-edit.service';
+import { ErrorHandlerService, LoadingTracker, NotificationService } from '@crczp/utils';
+import { Routing } from '@crczp/routing-commons';
 
 /**
  * Service handling editing of training definition and related operations.
@@ -24,9 +25,10 @@ export class TrainingDefinitionEditConcreteService extends TrainingDefinitionEdi
 
     private editedSnapshot: TrainingDefinition;
     private loadingTracker = new LoadingTracker();
-    public saveDisabled$ = combineLatest(this.loadingTracker.isLoading$, this.saveDisabledSubject$).pipe(
-        map(([loading, invalid]) => loading || invalid),
-    );
+    public saveDisabled$ = combineLatest(
+        this.loadingTracker.isLoading$,
+        this.saveDisabledSubject$
+    ).pipe(map(([loading, invalid]) => loading || invalid));
 
     /**
      * Sets training definition as currently edited
@@ -48,14 +50,23 @@ export class TrainingDefinitionEditConcreteService extends TrainingDefinitionEdi
         if (this.editModeSubject$.getValue()) {
             // checks if TD was edited if not only levels are updated
             if (this.editedSnapshot) {
-                return concat(this.update(), this.levelEditService.saveUnsavedLevels());
+                return concat(
+                    this.update(),
+                    this.levelEditService.saveUnsavedLevels()
+                );
             } else {
                 return this.levelEditService.saveUnsavedLevels();
             }
         } else {
-            return this.create().pipe(map((id) => this.router.navigate(
-                [Routing.RouteBuilder.linear_definition.definitionId(id).edit.build()]
-            )));
+            return this.create().pipe(
+                map((id) =>
+                    this.router.navigate([
+                        Routing.RouteBuilder.linear_definition
+                            .definitionId(id)
+                            .edit.build(),
+                    ])
+                )
+            );
         }
     }
 
@@ -78,12 +89,19 @@ export class TrainingDefinitionEditConcreteService extends TrainingDefinitionEdi
             this.api.update(this.editedSnapshot).pipe(
                 tap(
                     () => {
-                        this.notificationService.emit('success', 'Changes were saved');
+                        this.notificationService.emit(
+                            'success',
+                            'Changes were saved'
+                        );
                         this.onSaved();
                     },
-                    (err) => this.errorHandler.emit(err, 'Editing training definition'),
-                ),
-            ),
+                    (err) =>
+                        this.errorHandler.emit(
+                            err,
+                            'Editing training definition'
+                        )
+                )
+            )
         );
     }
 
@@ -92,13 +110,20 @@ export class TrainingDefinitionEditConcreteService extends TrainingDefinitionEdi
             this.api.create(this.editedSnapshot).pipe(
                 tap(
                     () => {
-                        this.notificationService.emit('success', 'Training was created');
+                        this.notificationService.emit(
+                            'success',
+                            'Training was created'
+                        );
                         this.onSaved();
                     },
-                    (err) => this.errorHandler.emit(err, 'Creating training definition'),
+                    (err) =>
+                        this.errorHandler.emit(
+                            err,
+                            'Creating training definition'
+                        )
                 ),
-                map((td) => td.id),
-            ),
+                map((td) => td.id)
+            )
         );
     }
 

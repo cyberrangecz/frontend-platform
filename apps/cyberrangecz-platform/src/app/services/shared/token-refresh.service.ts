@@ -1,7 +1,7 @@
-import {Injectable} from '@angular/core';
-import {OAuthService} from 'angular-oauth2-oidc';
-import {BehaviorSubject, concatMap, from, Observable, of} from 'rxjs';
-import {HttpRequest} from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
+import { OAuthService } from 'angular-oauth2-oidc';
+import { BehaviorSubject, concatMap, from, Observable, of } from 'rxjs';
+import { HttpRequest } from '@angular/common/http';
 
 export enum TokenRefreshState {
     REFRESHING,
@@ -9,7 +9,7 @@ export enum TokenRefreshState {
     OK,
 }
 
-@Injectable({providedIn: 'root'})
+@Injectable({ providedIn: 'root' })
 /**
  * Service responsible for refreshing access token
  *
@@ -18,10 +18,10 @@ export enum TokenRefreshState {
 export class TokenRefreshService {
     private readonly TOKEN_PREFIX = 'Bearer ';
 
-    private stateSubject: BehaviorSubject<number> = new BehaviorSubject(TokenRefreshState.OK);
-
-    constructor(private oauthService: OAuthService) {
-    }
+    private oauthService = inject(OAuthService);
+    private stateSubject: BehaviorSubject<number> = new BehaviorSubject(
+        TokenRefreshState.OK
+    );
 
     /**
      * @returns Observable that emits the immediate state and all subsequent states of token refreshing
@@ -44,12 +44,12 @@ export class TokenRefreshService {
      */
     refreshToken(): Observable<TokenRefreshState> {
         if (this.isTokenExpired()) {
-            console.log("token expired");
+            console.log('token expired');
             this.stateSubject.next(TokenRefreshState.REFRESHING);
             return from(
                 this.oauthService.discoveryDocumentLoaded
                     ? Promise.resolve()
-                    : this.oauthService.loadDiscoveryDocument(),
+                    : this.oauthService.loadDiscoveryDocument()
             ).pipe(
                 concatMap(() =>
                     this.oauthService.refreshToken().then(
@@ -60,9 +60,9 @@ export class TokenRefreshService {
                         () => {
                             this.stateSubject.next(TokenRefreshState.FAILED);
                             return TokenRefreshState.FAILED;
-                        },
-                    ),
-                ),
+                        }
+                    )
+                )
             );
         }
         this.stateSubject.next(TokenRefreshState.OK);
@@ -78,7 +78,8 @@ export class TokenRefreshService {
     updateRequestToken(req: HttpRequest<any>): HttpRequest<any> {
         return req.clone({
             setHeaders: {
-                Authorization: this.TOKEN_PREFIX + this.oauthService.getAccessToken(),
+                Authorization:
+                    this.TOKEN_PREFIX + this.oauthService.getAccessToken(),
             },
         });
     }
@@ -89,7 +90,10 @@ export class TokenRefreshService {
      * @returns true if token is overdue, false otherwise
      */
     isTokenExpired(): boolean {
-        return new Date().getTime().valueOf() > this.oauthService.getAccessTokenExpiration();
+        return (
+            new Date().getTime().valueOf() >
+            this.oauthService.getAccessTokenExpiration()
+        );
     }
 
     /**
@@ -98,6 +102,9 @@ export class TokenRefreshService {
      * @returns true has refresh token and token endpoint is set, false otherwise
      */
     canRefresh(): boolean {
-        return !!this.oauthService.getRefreshToken() && !!this.oauthService.tokenEndpoint;
+        return (
+            !!this.oauthService.getRefreshToken() &&
+            !!this.oauthService.tokenEndpoint
+        );
     }
 }

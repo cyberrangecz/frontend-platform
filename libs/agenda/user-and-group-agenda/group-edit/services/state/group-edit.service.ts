@@ -1,11 +1,12 @@
-import {inject, Injectable} from '@angular/core';
-import {Router} from '@angular/router';
-import {GroupApi} from '@crczp/user-and-group-api';
-import {Group} from '@crczp/user-and-group-model';
-import {BehaviorSubject, Observable, ReplaySubject} from 'rxjs';
-import {tap} from 'rxjs/operators';
-import {ErrorHandlerService, NotificationService, Routing} from '@crczp/common';
-import {GroupChangedEvent} from '../../model/group-changed-event';
+import { inject, Injectable } from '@angular/core';
+import { Router } from '@angular/router';
+import { GroupApi } from '@crczp/user-and-group-api';
+import { Group } from '@crczp/user-and-group-model';
+import { BehaviorSubject, Observable, ReplaySubject } from 'rxjs';
+import { tap } from 'rxjs/operators';
+import { GroupChangedEvent } from '../../model/group-changed-event';
+import { ErrorHandlerService, NotificationService } from '@crczp/utils';
+import { Routing } from '@crczp/routing-commons';
 
 /**
  * A layer between a component and an API service. Implement a concrete service by extending this class.
@@ -21,7 +22,9 @@ export class GroupEditService {
     private router = inject(Router);
     private errorHandler = inject(ErrorHandlerService);
 
-    private editModeSubject$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+    private editModeSubject$: BehaviorSubject<boolean> = new BehaviorSubject(
+        false
+    );
     /**
      * True if existing group-overview is edited, false if new one is created
      */
@@ -31,11 +34,13 @@ export class GroupEditService {
      * Edited group-overview
      */
     group$: Observable<Group> = this.groupSubject$.asObservable();
-    private saveDisabledSubject$: BehaviorSubject<boolean> = new BehaviorSubject(true);
+    private saveDisabledSubject$: BehaviorSubject<boolean> =
+        new BehaviorSubject(true);
     /**
      * True if saving is disabled (for example invalid data), false otherwise
      */
-    saveDisabled$: Observable<boolean> = this.saveDisabledSubject$.asObservable();
+    saveDisabled$: Observable<boolean> =
+        this.saveDisabledSubject$.asObservable();
     private editedGroup: Group;
 
     /**
@@ -66,11 +71,21 @@ export class GroupEditService {
     save(): Observable<any> {
         return this.editModeSubject$.getValue()
             ? this.update()
-            : this.create().pipe(tap(() => this.router.navigate([Routing.RouteBuilder.group.build()])));
+            : this.create().pipe(
+                  tap(() =>
+                      this.router.navigate([Routing.RouteBuilder.group.build()])
+                  )
+              );
     }
 
     createAndEdit(): Observable<any> {
-        return this.create().pipe(tap((id) => this.router.navigate([Routing.RouteBuilder.group.groupId(id).edit.build()])));
+        return this.create().pipe(
+            tap((id) =>
+                this.router.navigate([
+                    Routing.RouteBuilder.group.groupId(id).edit.build(),
+                ])
+            )
+        );
     }
 
     private setEditMode(group: Group) {
@@ -93,7 +108,10 @@ export class GroupEditService {
         return this.api.create(this.editedGroup).pipe(
             tap(
                 () => {
-                    this.notificationService.emit('success', 'Group was created');
+                    this.notificationService.emit(
+                        'success',
+                        'Group was created'
+                    );
                     this.onSaved();
                 },
                 (err) => this.errorHandler.emit(err, 'Creating group-overview')
