@@ -15,7 +15,7 @@ import { ConsoleTab } from '../../model/model';
 import { Network, Options } from 'vis-network';
 import { DataSet } from 'vis-data';
 import { Minimap } from '../minimap/minimap';
-import { ContextMenu } from '../context-menu/context-menu';
+import { ContextMenu, ContextMenuItem } from '../context-menu/context-menu';
 
 @Component({
     selector: 'crczp-topology-graph',
@@ -33,7 +33,9 @@ export class TopologyGraph implements AfterViewInit, OnChanges {
     @Input() minimapMaxSize = 200;
     @Input() minimapScale = 1;
     @Input() minimapFadeOutDuration = 500;
-    @Input() consoles: SandboxConsole[] = [];
+    @Input() consoles: any[] = [];
+    @Input() minZoom = 0.4;
+    @Input() maxZoom = 2;
 
     @ViewChild('networkContainer', { static: false })
     networkContainer: ElementRef;
@@ -49,7 +51,9 @@ export class TopologyGraph implements AfterViewInit, OnChanges {
         }
     }
 
-    handleOpenConsole(nodeName: string): string {}
+    handleOpenConsole(nodeName: ContextMenuItem): void {
+        console.log(nodeName);
+    }
 
     private enforceViewportBounds(): void {
         const viewPosition = this.network.getViewPosition(); // {x, y}
@@ -74,6 +78,22 @@ export class TopologyGraph implements AfterViewInit, OnChanges {
             this.network.moveTo({
                 position: { x: boundedX, y: boundedY },
                 scale,
+                animation: {
+                    duration: 400,
+                    easingFunction: 'easeOutQuad',
+                },
+            });
+        }
+    }
+
+    private enforceZoomLimits(): void {
+        const scale = this.network.getScale();
+
+        if (scale < this.minZoom || scale > this.maxZoom) {
+            const viewPosition = this.network.getViewPosition();
+            this.network.moveTo({
+                position: viewPosition,
+                scale: Math.max(this.minZoom, Math.min(scale, this.maxZoom)),
                 animation: false,
             });
         }
@@ -112,8 +132,9 @@ export class TopologyGraph implements AfterViewInit, OnChanges {
             },
             physics: {
                 barnesHut: {
+                    centralGravity: 0.5,
                     gravitationalConstant: -10000,
-                    springConstant: 0.1,
+                    springConstant: 0.2,
                     theta: 0.2,
                     damping: 0.2,
                 },
@@ -130,6 +151,11 @@ export class TopologyGraph implements AfterViewInit, OnChanges {
         );
 
         this.network.on('dragEnd', () => {
+            this.enforceViewportBounds();
+        });
+
+        this.network.on('zoom', () => {
+            this.enforceZoomLimits();
             this.enforceViewportBounds();
         });
     }

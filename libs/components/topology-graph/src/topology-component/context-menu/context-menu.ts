@@ -1,9 +1,11 @@
 import {
     Component,
     ElementRef,
+    EventEmitter,
     HostListener,
     Input,
     OnChanges,
+    Output,
     SimpleChanges,
     ViewChild,
 } from '@angular/core';
@@ -17,7 +19,6 @@ export interface ContextMenuItem {
 
 @Component({
     selector: 'crczp-context-menu',
-    standalone: true,
     imports: [CommonModule],
     templateUrl: './context-menu.html',
     styleUrl: './context-menu.scss',
@@ -25,6 +26,7 @@ export interface ContextMenuItem {
 export class ContextMenu implements OnChanges {
     @Input({ required: true }) network!: Network;
     @Input() items: ContextMenuItem[] = [];
+    @Output() itemSelected = new EventEmitter<ContextMenuItem>();
 
     @ViewChild('contextMenu', { static: false })
     contextMenuRef!: ElementRef<HTMLDivElement>;

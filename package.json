@@ -32,6 +32,7 @@
         "moment-mini": "^2.29.4",
         "ngx-file-drop": "^16.0.0",
         "rxjs": "~7.8.0",
+        "vis-data": "^8.0.1",
         "vis-network": "^10.0.1",
         "zod-validation-error": "^4.0.0-beta.1",
         "zone.js": "~0.15.0"

@@ -12,8 +12,8 @@ import Guacamole from 'guacamole-common-js';
 @Component({
     selector: 'crczp-console-view',
     imports: [CommonModule],
-    templateUrl: './console-view.html',
-    styleUrl: './console-view.scss',
+    templateUrl: './console-view.component.html',
+    styleUrl: './console-view.component.scss',
 })
 export class ConsoleView implements OnInit, OnDestroy {
     @Input({ required: true }) sandboxUUID: string;
