@@ -1,44 +1,54 @@
 @if (!portalAgendaLink.disabled) {
     <div class="portal-item-container">
         @if (portalAgendaLink.menu) {
-            <div>
+            <div class="simple-button-wrapper" (mouseenter)="menuExpanded.set(true)"
+                 (mouseleave)="menuExpanded.set(false)"
+            >
                 <button
-                    mat-raised-button
-                    class="simple-button b-40-f f-100-f dropdown-button vflex"
-                    [ngClass]="{'button-elevation' : (elevation === portalAgendaLink.label + ' button')}"
-                    (mouseover)="setElevation(portalAgendaLink.label)"
+                    class="simple-button dropdown-button b-40-f f-100-f"
+
+                    [ngClass]="{'button-highlight' : (elevation === portalAgendaLink.label + ' button')}"
+                    (mouseenter)="setElevation(portalAgendaLink.label)"
                     (mouseleave)="setElevation('')"
-                    [matMenuTriggerFor]="controlMenu"
                 >
                     <mat-icon>{{ portalAgendaLink.icon }}</mat-icon>
 
-                    <div class="dropdown-icon-band">
-                        <mat-icon class="arrow-icon">arrow_drop_down</mat-icon>
-                    </div>
-                </button>
+                    @if (menuExpanded()) {
+                        <div class="expanded-menu-item-wrapper">
+                            @for (expandedControl of portalAgendaLink.menu; track expandedControl) {
+                                <button
+                                    class="expanded-menu-item"
+                                    (click)="setRoute(expandedControl.path)">
+                                    <mat-icon>{{ expandedControl?.icon }}</mat-icon>
+                                    <span>{{ expandedControl?.label }}</span>
+                                </button>
+                            }
+                            <div class="dropdown-icon-band dropdown-icon-band--extended center">
+                                <div class="dropdown-icon-band-cutout"></div>
+                                <div class="dash"></div>
+                            </div>
+                        </div>
 
-                <mat-menu #controlMenu="matMenu">
-                    @for (expandedControl of portalAgendaLink.menu; track expandedControl) {
-                        <button
-                            mat-menu-item
-                            class="expanded-menu-item b-98-f"
-                            (click)="setRoute(expandedControl.path)">
-                            <mat-icon>{{ expandedControl?.icon }}</mat-icon>
-                            <span>{{ expandedControl?.label }}</span>
-                        </button>
+                    } @else {
+                        <div class="dropdown-icon-band center">
+                            <div class="dropdown-icon-band-cutout"></div>
+                            <div class="dash"></div>
+                        </div>
                     }
-                </mat-menu>
+                </button>
             </div>
         } @else {
-            <button
-                mat-raised-button
-                class="simple-button b-40-f f-100-f"
-                [ngClass]="{'button-elevation' : (elevation === portalAgendaLink.label + ' button')}"
-                (mouseover)="setElevation(portalAgendaLink.label)"
-                (mouseleave)="setElevation('')"
-                (click)="setRoute(portalAgendaLink.path)">
-                <mat-icon>{{ portalAgendaLink.icon }}</mat-icon>
-            </button>
+            <div class="simple-button-wrapper">
+                <button
+                    mat-raised-button
+                    class="simple-button b-40-f f-100-f"
+                    [ngClass]="{'button-highlight' : (elevation === portalAgendaLink.label + ' button')}"
+                    (mouseenter)="setElevation(portalAgendaLink.label)"
+                    (mouseleave)="setElevation('')"
+                    (click)="setRoute(portalAgendaLink.path)">
+                    <mat-icon>{{ portalAgendaLink.icon }}</mat-icon>
+                </button>
+            </div>
         }
         <h3 class="agenda-link-label">{{ portalAgendaLink.label }}</h3>
     </div>

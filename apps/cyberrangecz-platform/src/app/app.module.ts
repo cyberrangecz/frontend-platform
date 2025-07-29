@@ -58,6 +58,7 @@ import {
     NotificationService,
     PortalConfig,
 } from '@crczp/utils';
+import { provideNativeDateAdapter } from '@angular/material/core';
 
 @Injectable()
 export class SentinelUagAuthorizationStrategy extends SentinelAuthorizationStrategy {
@@ -102,6 +103,7 @@ export class SentinelUagAuthorizationStrategy extends SentinelAuthorizationStrat
     providers: [
         importProvidersFrom(BrowserModule),
         provideAnimations(),
+        provideNativeDateAdapter(),
         appConfigProvider,
         {
             provide: PortalConfig,
