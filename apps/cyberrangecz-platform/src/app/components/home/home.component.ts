@@ -130,27 +130,27 @@ export class HomeComponent implements OnInit {
                 'Pool',
                 !RoleResolver.isSandboxOrganizer(this.roles),
                 'pool',
-                'As an instructor, you can create Pools of sandboxes that serve for the ' +
-                    'instantiating and management of sandbox definitions.',
+                'As an instructor, you can create pools of sandboxes. ' +
+                    'These are the elementary organisational units for instantiation of sandbox definitions.',
                 'subscriptions'
-            ),
-            new AgendaPortalLink(
-                'Training Instance',
-                !RoleResolver.isTrainingOrganizer(this.roles),
-                'linear-instance',
-                'You can also create training instances that are necessary if you want to organize a training hands-on session.',
-                'event',
-                HomeComponent.createExpandedControlButtons([
-                    'adaptive-instance',
-                    'linear-instance',
-                ])
             ),
             new AgendaPortalLink(
                 'Images',
                 !RoleResolver.isSandboxOrganizer(this.roles),
                 'sandbox-image',
-                'In the images agenda, you can view cloud images and its state.',
+                'In the images agenda, you can view available cloud images.',
                 'donut_large'
+            ),
+            new AgendaPortalLink(
+                'Training Instance',
+                !RoleResolver.isTrainingOrganizer(this.roles),
+                'linear-instance',
+                'You can also create training instances that are necessary if you want to organize a hands-on training session.',
+                'event',
+                HomeComponent.createExpandedControlButtons([
+                    'adaptive-instance',
+                    'linear-instance',
+                ])
             ),
         ];
     }
@@ -162,22 +162,22 @@ export class HomeComponent implements OnInit {
                 'Groups',
                 disabled,
                 'group',
-                'In Groups, you can manage groups and define access rights available to the group members.',
+                'In groups, you can manage groups and grant access rights to the group members.',
                 'group'
             ),
             new AgendaPortalLink(
                 'Users',
                 disabled,
                 'user',
-                'The Users agenda serves for assigning users to existing groups.',
+                'The users agenda serves for assigning users to existing groups.',
                 'person'
             ),
             new AgendaPortalLink(
                 'Microservices',
                 disabled,
                 'microservice',
-                'You can also manage microservices that provide the CyberRangeᶜᶻ Platform`s functionality.' +
-                    ' Please do not mess with it unless you know what you are doing.',
+                'You can also manage microservices that provide the CyberRangeᶜᶻ Platform`s functionality. ' +
+                    'Please make sure, you know what you are doing before making any changes to the microservices.',
                 'account_tree'
             ),
         ];
