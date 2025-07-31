@@ -118,9 +118,9 @@ const routes: ValidRouterConfig<''> = [
     {
         // for trainees
         path: 'mitre-techniques',
-        loadComponent: () =>
-            import('@crczp/training-agenda/mitre-techniques').then(
-                (m) => m.MitreTechniquesComponent
+        loadChildren: () =>
+            import('./modules/training-agenda/mitre-routing.module').then(
+                (m) => m.TrainingRunRoutingModule
             ),
         // canActivate: [RoleGuards.trainingTraineeGuard],
         data: {
@@ -133,15 +133,15 @@ const routes: ValidRouterConfig<''> = [
     {
         // for designers
         path: 'mitre-techniques',
-        loadComponent: () =>
-            import('@crczp/training-agenda/mitre-techniques').then(
-                (m) => m.MitreTechniquesComponent
+        loadChildren: () =>
+            import('./modules/training-agenda/mitre-routing.module').then(
+                (m) => m.TrainingRunRoutingModule
             ),
         // canActivate: [RoleGuards.trainingDesignerGuard],
         data: {
             title: 'MITRE ATT&CK Techniques',
             breadcrumb: 'MITRE ATT&CK Techniques',
-            [Boolean.name]: false,
+            showSwitch: false,
             preloadRoleCondition: RoleService.ROLES.trainingDesigner,
         },
     },

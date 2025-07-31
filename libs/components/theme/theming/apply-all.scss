@@ -5,13 +5,16 @@
 @use '@sentinel/layout/sidebar-mixin' as sentinel-layout-sidebar;
 @use '@sentinel/components/theming' as sentinel-components;
 @use '@sentinel/components/typography' as sentinel-typography;
-
 @use 'forward-all' as theme;
+@import '@danielmoncada/angular-datetime-picker/assets/style/picker.min.css';
+@import "styles/components/moncada-datepicker.scss";
+
 
 :root {
     @include mat.core();
     @include mat.core-theme(theme.$theme);
 
+    @include sentinel-layout-notification-card.notification-card-theme(theme.$theme);
     @include mat.color-variants-backwards-compatibility(theme.$theme);
     @include mat.all-component-themes(theme.$theme);
     @include mat.system-level-colors(theme.$theme);

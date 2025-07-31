@@ -99,7 +99,11 @@ export class GroupEditService {
                     this.notificationService.emit('success', 'Group was saved');
                     this.onSaved();
                 },
-                (err) => this.errorHandler.emit(err, 'Editing group-overview')
+                (err) =>
+                    this.errorHandler.emitAPIError(
+                        err,
+                        'Editing group-overview'
+                    )
             )
         );
     }
@@ -114,7 +118,11 @@ export class GroupEditService {
                     );
                     this.onSaved();
                 },
-                (err) => this.errorHandler.emit(err, 'Creating group-overview')
+                (err) =>
+                    this.errorHandler.emitAPIError(
+                        err,
+                        'Creating group-overview'
+                    )
             )
         );
     }

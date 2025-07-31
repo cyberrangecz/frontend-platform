@@ -6,22 +6,55 @@ import {
     SentinelNotificationService,
     SentinelNotificationTypeEnum,
 } from '@sentinel/layout/notification';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, Subject } from 'rxjs';
+import { filter, map } from 'rxjs/operators';
 import { PortalConfig } from '../types/config';
+import { Event, NavigationError, Router } from '@angular/router';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 /**
  * Resolves type of error and emits alert with appropriate message
  */
 export class ErrorHandlerService implements ErrorHandler {
-    private config: PortalConfig = inject(PortalConfig);
-    private notificationService: SentinelNotificationService = inject(
-        SentinelNotificationService
-    );
+    private config = inject(PortalConfig);
+    private notificationService = inject(SentinelNotificationService);
+    private router = inject(Router);
 
-    handleError(error: any): void {
-        console.error('[ErrorHandlerService]', error);
+    private navigationErrorSubject = new Subject<NavigationError>();
+    public navigationError$ = this.navigationErrorSubject.asObservable();
+
+    constructor() {
+        this.setupNavigationErrorHandling();
+    }
+
+    handleError(error: any) {
+        this.emitFrontendErrorNotification(
+            error?.toString() || 'Unknown error',
+            'ErrorHandler'
+        );
+    }
+
+    /**
+     * Handles navigation errors and displays appropriate notifications
+     * @param error the navigation error
+     * @param url the url that caused the navigation error
+     */
+    emitNavigationError(error: any, url?: string): Observable<boolean> {
+        const notification: SentinelNotification = {
+            type: SentinelNotificationTypeEnum.Error,
+            title: 'Navigation',
+            source: url || 'Unknown url',
+            additionalInfo: [
+                'Unable to navigate to the requested page.',
+                error?.message || 'Unknown navigation error',
+            ],
+        };
+
+        return this.notificationService
+            .emit(notification)
+            .pipe(
+                map((result) => result === SentinelNotificationResult.CONFIRMED)
+            );
     }
 
     /**
@@ -30,7 +63,7 @@ export class ErrorHandlerService implements ErrorHandler {
      * @param action name of the action button displayed in the notification
      * @param operation description of an operation which caused the error
      */
-    emit(
+    emitAPIError(
         err: HttpErrorResponse,
         operation: string,
         action?: string
@@ -89,6 +122,37 @@ export class ErrorHandlerService implements ErrorHandler {
             .pipe(
                 map((result) => result === SentinelNotificationResult.CONFIRMED)
             );
+    }
+
+    emitFrontendErrorNotification(
+        message: string,
+        source?: string
+    ): Observable<boolean> {
+        console.error(`${source || 'Error'}: ${message}`);
+        return this.notificationService
+            .emit({
+                type: SentinelNotificationTypeEnum.Error,
+                title: source || 'Error',
+                additionalInfo: [message],
+            })
+            .pipe(
+                map((result) => result === SentinelNotificationResult.CONFIRMED)
+            );
+    }
+
+    private setupNavigationErrorHandling(): void {
+        this.router.events
+            .pipe(
+                filter(
+                    (event: Event): event is NavigationError =>
+                        event instanceof NavigationError
+                )
+            )
+            .subscribe((errorEvent: NavigationError) => {
+                this.navigationErrorSubject.next(errorEvent);
+
+                this.emitNavigationError(errorEvent.error, errorEvent.url);
+            });
     }
 
     private setJavaApiErrorNotification(

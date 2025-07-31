@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { GroupEditCanDeactivate } from '@crczp/user-and-group-agenda/group-edit';
+import { canDeactivateGroup } from '@crczp/user-and-group-agenda/group-edit';
 import { Group } from '@crczp/user-and-group-model';
 import { GroupOverviewComponent } from '@crczp/user-and-group-agenda/group-overview';
 import { UserAndGroupApiModule } from '@crczp/user-and-group-api';
@@ -22,7 +22,7 @@ const routes: ValidRouterConfig<'group'> = [
             breadcrumb: Routing.Resolvers.Group.resolveGroupBreadcrumb,
             title: Routing.Resolvers.Group.resolveGroupTitle,
         },
-        canDeactivate: [GroupEditCanDeactivate],
+        canDeactivate: [canDeactivateGroup],
     },
     {
         path: ':groupId/edit',
@@ -35,7 +35,7 @@ const routes: ValidRouterConfig<'group'> = [
             breadcrumb: Routing.Resolvers.Group.resolveGroupBreadcrumb,
             title: Routing.Resolvers.Group.resolveGroupTitle,
         },
-        canDeactivate: [GroupEditCanDeactivate],
+        canDeactivate: [canDeactivateGroup],
     },
     {
         path: ':groupId',

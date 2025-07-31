@@ -51,7 +51,6 @@ import {
     withHttpCacheInterceptor,
     withLocalStorage,
 } from '@ngneat/cashew';
-import { environment } from '../environments/environment';
 import { LoadingService } from './services/loading.service';
 import {
     ErrorHandlerService,
@@ -76,7 +75,7 @@ export class SentinelUagAuthorizationStrategy extends SentinelAuthorizationStrat
                 retry(this.POSSIBLE_RETRIES),
                 catchError((err) => {
                     this.errorHandler.emit(err, 'Authorizing to User & Group');
-                    return throwError(err);
+                    return throwError(() => err);
                 })
             );
         } else {
@@ -125,16 +124,12 @@ export class SentinelUagAuthorizationStrategy extends SentinelAuthorizationStrat
         },
         provideHttpClient(
             withInterceptorsFromDi(),
-            withInterceptors(
-                [
-                    tokenRefreshInterceptor,
-                    loadingInterceptor,
-                    errorLogInterceptor,
-                ].concat(
-                    //NOTE caching disabled for debug mode
-                    environment.production ? withHttpCacheInterceptor() : []
-                )
-            )
+            withInterceptors([
+                tokenRefreshInterceptor,
+                loadingInterceptor,
+                errorLogInterceptor,
+                withHttpCacheInterceptor(),
+            ])
         ),
         {
             provide: SentinelAuthConfig,
@@ -150,10 +145,8 @@ export class SentinelUagAuthorizationStrategy extends SentinelAuthorizationStrat
         LoadingService,
         NotificationService,
         TokenRefreshService,
-    ].concat(
-        //NOTE caching disabled for debug mode
-        environment.production ? [provideHttpCache(withLocalStorage())] : []
-    ),
+        provideHttpCache(withLocalStorage()),
+    ],
     bootstrap: [AppComponent],
 })
 export class AppModule {}

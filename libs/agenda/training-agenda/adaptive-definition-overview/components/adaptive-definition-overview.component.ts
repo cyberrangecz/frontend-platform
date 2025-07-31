@@ -13,7 +13,6 @@ import { map, take } from 'rxjs/operators';
 import { TrainingDefinitionOverviewControls } from '../model/training-definition-overview-controls';
 import { TrainingDefinitionTable } from '../model/training-definition-table';
 import { AdaptiveDefinitionService } from '../services/state/adaptive-definition.service';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
     SentinelControlItem,
     SentinelControlItemSignal,
@@ -24,6 +23,7 @@ import { AdaptiveFileUploadProgressService } from '../services/file-upload/adapt
 import { AdaptiveDefinitionConcreteService } from '../services/state/adaptive-definition.concrete.service';
 import { TableDateCellComponent, TableStateCellComponent } from '@crczp/components';
 import { PaginationStorageService, providePaginationStorageService } from '@crczp/utils';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 /**
  * Main smart component of training definition overview
@@ -54,15 +54,18 @@ export class AdaptiveDefinitionOverviewComponent implements OnInit {
     readonly INIT_SORT_NAME = 'lastEdited';
     readonly INIT_SORT_DIR = 'desc';
     trainingDefinitions$: Observable<SentinelTable<TrainingDefinition>>;
-    hasError$: Observable<boolean>;
-    isLoading$: Observable<boolean>;
+
     topControls: SentinelControlItem[] = [];
     bottomControls: SentinelControlItem[] = [];
     destroyRef = inject(DestroyRef);
+    hasError$: Observable<boolean>;
+    isLoading$: Observable<boolean>;
     private paginationService = inject(PaginationStorageService);
     private trainingDefinitionService = inject(AdaptiveDefinitionService);
 
     ngOnInit(): void {
+        this.hasError$ = this.trainingDefinitionService.hasError$;
+        this.isLoading$ = this.trainingDefinitionService.isLoading$;
         this.topControls = TrainingDefinitionOverviewControls.createTopControls(
             this.trainingDefinitionService
         );
@@ -122,8 +125,6 @@ export class AdaptiveDefinitionOverviewComponent implements OnInit {
     }
 
     private initTable() {
-        this.hasError$ = this.trainingDefinitionService.hasError$;
-        this.isLoading$ = this.trainingDefinitionService.isLoading$;
         this.trainingDefinitions$ =
             this.trainingDefinitionService.resource$.pipe(
                 map(

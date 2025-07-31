@@ -4,7 +4,7 @@ import { TrainingRun, TrainingRunStateEnum } from '@crczp/training-model';
 import { Column, ExpandableSentinelTable, Row, RowExpand } from '@sentinel/components/table';
 import { TrainingRunRowAdapter } from './training-run-row-adapter';
 import { TrainingRunInfoComponent } from '../components/runs/detail/training-run-info.component';
-import { DateUtils } from '@crczp/utils';
+import { Utils } from '@crczp/utils';
 
 /**
  * @dynamic
@@ -43,7 +43,7 @@ export class TrainingRunTable extends ExpandableSentinelTable<
         adapter.startTimeFormatted = `${datePipe.transform(adapter.startTime)}`;
         if (adapter.state === TrainingRunStateEnum.FINISHED) {
             adapter.endTimeFormatted = `${datePipe.transform(adapter.endTime)}`;
-            adapter.duration = DateUtils.timeBetweenDatesSimple(
+            adapter.duration = Utils.Date.timeBetweenDatesSimple(
                 adapter.startTime,
                 adapter.endTime
             );

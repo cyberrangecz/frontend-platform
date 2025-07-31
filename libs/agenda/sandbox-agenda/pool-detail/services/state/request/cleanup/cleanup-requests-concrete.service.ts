@@ -109,7 +109,7 @@ export class CleanupRequestsConcreteService extends RequestsService {
     }
 
     private onGetAllError(err: HttpErrorResponse) {
-        this.errorHandler.emit(err, 'Fetching cleanup requests');
+        this.errorHandler.emitAPIError(err, 'Fetching cleanup requests');
         this.hasErrorSubject$.next(true);
     }
 
@@ -142,7 +142,11 @@ export class CleanupRequestsConcreteService extends RequestsService {
                         'success',
                         `Delete cleanup request`
                     ),
-                (err) => this.errorHandler.emit(err, 'Deleting cleanup request')
+                (err) =>
+                    this.errorHandler.emitAPIError(
+                        err,
+                        'Deleting cleanup request'
+                    )
             ),
             switchMap(() => this.getAll(this.lastPoolId, this.lastPagination))
         );
@@ -157,7 +161,7 @@ export class CleanupRequestsConcreteService extends RequestsService {
                         `Cleanup request ${request.id} cancelled`
                     ),
                 (err) =>
-                    this.errorHandler.emit(
+                    this.errorHandler.emitAPIError(
                         err,
                         'Cancelling cleanup request ' + request.id
                     )

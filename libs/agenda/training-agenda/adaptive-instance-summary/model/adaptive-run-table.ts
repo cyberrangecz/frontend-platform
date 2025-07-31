@@ -3,7 +3,7 @@ import { DatePipe } from '@angular/common';
 import { TrainingRun, TrainingRunStateEnum } from '@crczp/training-model';
 import { Column, Row, SentinelTable } from '@sentinel/components/table';
 import { AdaptiveRunRowAdapter } from './adaptive-run-row-adapter';
-import { DateUtils } from '@crczp/utils';
+import { Utils } from '@crczp/utils';
 
 /**
  * @dynamic
@@ -33,7 +33,7 @@ export class AdaptiveRunTable extends SentinelTable<AdaptiveRunRowAdapter> {
         adapter.startTimeFormatted = `${datePipe.transform(adapter.startTime)}`;
         if (adapter.state === TrainingRunStateEnum.FINISHED) {
             adapter.endTimeFormatted = `${datePipe.transform(adapter.endTime)}`;
-            adapter.duration = DateUtils.timeBetweenDatesSimple(
+            adapter.duration = Utils.Date.timeBetweenDatesSimple(
                 adapter.startTime,
                 adapter.endTime
             );

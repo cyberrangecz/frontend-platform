@@ -157,7 +157,7 @@ export class PhaseEditConcreteService extends PhaseEditService {
                         );
                     },
                     (err) =>
-                        this.errorHandler.emit(
+                        this.errorHandler.emitAPIError(
                             err,
                             'Saving phases in adaptive training definition'
                         )
@@ -219,7 +219,7 @@ export class PhaseEditConcreteService extends PhaseEditService {
         return this.api.createTask(this.trainingDefinitionId, phaseId).pipe(
             tap(
                 (task) => this.onTaskAdded(task),
-                (err) => this.errorHandler.emit(err, 'Adding task')
+                (err) => this.errorHandler.emitAPIError(err, 'Adding task')
             )
         );
     }
@@ -255,7 +255,7 @@ export class PhaseEditConcreteService extends PhaseEditService {
             .pipe(
                 tap(
                     (task) => this.onTaskAdded(task),
-                    (err) => this.errorHandler.emit(err, 'Cloning task')
+                    (err) => this.errorHandler.emitAPIError(err, 'Cloning task')
                 )
             );
     }
@@ -276,7 +276,8 @@ export class PhaseEditConcreteService extends PhaseEditService {
         return this.api.createInfoPhase(this.trainingDefinitionId).pipe(
             tap(
                 (phase) => this.onPhaseAdded(phase),
-                (err) => this.errorHandler.emit(err, 'Adding info phase')
+                (err) =>
+                    this.errorHandler.emitAPIError(err, 'Adding info phase')
             )
         );
     }
@@ -291,7 +292,8 @@ export class PhaseEditConcreteService extends PhaseEditService {
                         phase,
                     ]);
                 },
-                (err) => this.errorHandler.emit(err, 'Adding training phase')
+                (err) =>
+                    this.errorHandler.emitAPIError(err, 'Adding training phase')
             )
         );
     }
@@ -302,7 +304,8 @@ export class PhaseEditConcreteService extends PhaseEditService {
                 (phase) => {
                     this.onPhaseAdded(phase);
                 },
-                (err) => this.errorHandler.emit(err, 'Adding access phase')
+                (err) =>
+                    this.errorHandler.emitAPIError(err, 'Adding access phase')
             )
         );
     }
@@ -320,7 +323,7 @@ export class PhaseEditConcreteService extends PhaseEditService {
                                 this.onPhaseAdded(phase);
                             },
                             (err) =>
-                                this.errorHandler.emit(
+                                this.errorHandler.emitAPIError(
                                     err,
                                     'Adding adaptive questionnaire phase'
                                 )
@@ -336,7 +339,7 @@ export class PhaseEditConcreteService extends PhaseEditService {
                                 this.onPhaseAdded(phase);
                             },
                             (err) =>
-                                this.errorHandler.emit(
+                                this.errorHandler.emitAPIError(
                                     err,
                                     'Adding general questionnaire phase'
                                 )
@@ -410,7 +413,10 @@ export class PhaseEditConcreteService extends PhaseEditService {
                     this.onPhaseDeleted(phase.id);
                 },
                 (err) =>
-                    this.errorHandler.emit(err, `Deleting phase ${phase.title}`)
+                    this.errorHandler.emitAPIError(
+                        err,
+                        `Deleting phase ${phase.title}`
+                    )
             )
         );
     }
@@ -424,7 +430,8 @@ export class PhaseEditConcreteService extends PhaseEditService {
                     () => {
                         this.onTaskDeleted(taskId);
                     },
-                    (err) => this.errorHandler.emit(err, 'Deleting task')
+                    (err) =>
+                        this.errorHandler.emitAPIError(err, 'Deleting task')
                 )
             );
     }

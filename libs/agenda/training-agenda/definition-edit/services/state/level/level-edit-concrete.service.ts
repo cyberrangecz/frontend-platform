@@ -129,7 +129,7 @@ export class LevelEditConcreteService extends LevelEditService {
                         );
                     },
                     (err) =>
-                        this.errorHandler.emit(
+                        this.errorHandler.emitAPIError(
                             err,
                             `Saving levels in training definition`
                         )
@@ -170,7 +170,7 @@ export class LevelEditConcreteService extends LevelEditService {
                     (_) => _,
                     (err) => {
                         this.moveRollback(fromIndex);
-                        this.errorHandler.emit(
+                        this.errorHandler.emitAPIError(
                             err,
                             `Moving level "${from.title}"`
                         );
@@ -195,7 +195,8 @@ export class LevelEditConcreteService extends LevelEditService {
             ),
             tap(
                 (level) => this.onLevelAdded(level),
-                (err) => this.errorHandler.emit(err, 'Adding training level')
+                (err) =>
+                    this.errorHandler.emitAPIError(err, 'Adding training level')
             )
         );
     }
@@ -210,7 +211,8 @@ export class LevelEditConcreteService extends LevelEditService {
             ),
             tap(
                 (level) => this.onLevelAdded(level),
-                (err) => this.errorHandler.emit(err, 'Adding training level')
+                (err) =>
+                    this.errorHandler.emitAPIError(err, 'Adding training level')
             )
         );
     }
@@ -225,7 +227,8 @@ export class LevelEditConcreteService extends LevelEditService {
             ),
             tap(
                 (level) => this.onLevelAdded(level),
-                (err) => this.errorHandler.emit(err, 'Adding info level')
+                (err) =>
+                    this.errorHandler.emitAPIError(err, 'Adding info level')
             )
         );
     }
@@ -240,7 +243,11 @@ export class LevelEditConcreteService extends LevelEditService {
             ),
             tap(
                 (level) => this.onLevelAdded(level),
-                (err) => this.errorHandler.emit(err, 'Adding assessment level')
+                (err) =>
+                    this.errorHandler.emitAPIError(
+                        err,
+                        'Adding assessment level'
+                    )
             )
         );
     }
@@ -267,7 +274,7 @@ export class LevelEditConcreteService extends LevelEditService {
             tap(
                 () => this.onLevelDeleted(level.id),
                 (err) =>
-                    this.errorHandler.emit(
+                    this.errorHandler.emitAPIError(
                         err,
                         'Deleting level "' + level.title + '"'
                     )

@@ -48,7 +48,7 @@ export class PoolOverviewConcreteService extends PoolOverviewService {
                     this.resourceSubject$.next(paginatedPools);
                 },
                 (err) => {
-                    this.errorHandler.emit(err, 'Fetching pools');
+                    this.errorHandler.emitAPIError(err, 'Fetching pools');
                     this.hasErrorSubject$.next(true);
                 }
             )
@@ -75,7 +75,10 @@ export class PoolOverviewConcreteService extends PoolOverviewService {
                         `Allocation of pool ${pool.id} started`
                     ),
                 (err) =>
-                    this.errorHandler.emit(err, `Allocation of pool ${pool.id}`)
+                    this.errorHandler.emitAPIError(
+                        err,
+                        `Allocation of pool ${pool.id}`
+                    )
             )
         );
     }
@@ -131,7 +134,11 @@ export class PoolOverviewConcreteService extends PoolOverviewService {
                         'success',
                         `Pool ${pool.id} was locked`
                     ),
-                (err) => this.errorHandler.emit(err, `Locking pool ${pool.id}`)
+                (err) =>
+                    this.errorHandler.emitAPIError(
+                        err,
+                        `Locking pool ${pool.id}`
+                    )
             )
         );
     }
@@ -139,7 +146,7 @@ export class PoolOverviewConcreteService extends PoolOverviewService {
     getSshAccess(poolId: number): Observable<boolean> {
         return this.poolApi.getManagementSshAccess(poolId).pipe(
             catchError((err) => {
-                this.errorHandler.emit(
+                this.errorHandler.emitAPIError(
                     err,
                     `Management SSH Access for pool: ${poolId}`
                 );
@@ -166,7 +173,8 @@ export class PoolOverviewConcreteService extends PoolOverviewService {
                         'success',
                         `Pool comment for ${pool.id} was updated`
                     ),
-                (err) => this.errorHandler.emit(err, 'Editing pool comment')
+                (err) =>
+                    this.errorHandler.emitAPIError(err, 'Editing pool comment')
             )
         );
     }
@@ -218,7 +226,11 @@ export class PoolOverviewConcreteService extends PoolOverviewService {
                         'success',
                         `Pool ${pool.id} was deleted`
                     ),
-                (err) => this.errorHandler.emit(err, `Deleting pool ${pool.id}`)
+                (err) =>
+                    this.errorHandler.emitAPIError(
+                        err,
+                        `Deleting pool ${pool.id}`
+                    )
             )
         );
     }
@@ -232,7 +244,7 @@ export class PoolOverviewConcreteService extends PoolOverviewService {
                         `Pool ${poolId} has been cleared`
                     ),
                 (err) =>
-                    this.errorHandler.emit(
+                    this.errorHandler.emitAPIError(
                         err,
                         'Clearing pool ' + poolId.toString()
                     )
@@ -250,7 +262,10 @@ export class PoolOverviewConcreteService extends PoolOverviewService {
                         `Pool ${pool.id} was unlocked`
                     ),
                 (err) =>
-                    this.errorHandler.emit(err, `Unlocking pool ${pool.id}`)
+                    this.errorHandler.emitAPIError(
+                        err,
+                        `Unlocking pool ${pool.id}`
+                    )
             )
         );
     }

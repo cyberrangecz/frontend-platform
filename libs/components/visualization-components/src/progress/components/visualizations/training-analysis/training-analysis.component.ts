@@ -43,7 +43,7 @@ import { MouseWheelDirective } from '../../../directives/mousewheel.directive';
 import { MouseMoveDirective } from '../../../directives/mousemove.directive';
 import { LegendComponent } from '../legend/legend.component';
 import { FormsModule } from '@angular/forms';
-import { DateUtils } from '@crczp/utils';
+import { Utils } from '@crczp/utils';
 
 @Component({
     selector: 'crczp-viz-hurdling',
@@ -2124,7 +2124,7 @@ export class TrainingAnalysisComponent
                     switch (name) {
                         case 'time':
                             return !isNaN(d.totalTime)
-                                ? DateUtils.formatDurationFull(d.totalTime)
+                                ? Utils.Date.formatDurationFull(d.totalTime)
                                 : '';
                         case 'score':
                             return !isNaN(d.score) ? String(d.score) : '';

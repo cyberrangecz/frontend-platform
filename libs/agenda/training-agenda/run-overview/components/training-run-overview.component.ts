@@ -5,8 +5,7 @@ import { SentinelTable, SentinelTableComponent, TableActionEvent, TableLoadEvent
 import { Observable } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { AccessedTrainingRunTable } from '../model/accessed-training-run-table';
-import { AccessedTrainingRunService } from '../services/state/training/accessed-training-run.service';
-import { AccessedAdaptiveRunService } from '../services/state/adaptive/accessed-adaptive-run.service';
+import { AccessedTrainingRunService } from '../services/state/accessed-training-run.service';
 import {
     SentinelControlItem,
     SentinelControlItemSignal,
@@ -23,7 +22,6 @@ import {
     RunningAdaptiveRunConcreteService,
     RunningAdaptiveRunService
 } from '@crczp/training-agenda/adaptive-run-detail';
-import { AccessedAdaptiveRunConcreteService } from '../services/state/adaptive/accessed-adaptive-run-concrete.service';
 
 /**
  * Main smart component of the trainee overview.
@@ -52,10 +50,6 @@ import { AccessedAdaptiveRunConcreteService } from '../services/state/adaptive/a
             provide: AccessedTrainingRunService,
             useClass: AccessedTrainingRunService,
         },
-        {
-            provide: AccessedAdaptiveRunService,
-            useClass: AccessedAdaptiveRunConcreteService,
-        },
     ],
 })
 export class TrainingRunOverviewComponent implements OnInit {
@@ -65,7 +59,6 @@ export class TrainingRunOverviewComponent implements OnInit {
     controls: SentinelControlItem[];
     destroyRef = inject(DestroyRef);
     private trainingRunOverviewService = inject(AccessedTrainingRunService);
-    private accessedAdaptiveRunService = inject(AccessedAdaptiveRunService);
     private settings = inject(PortalConfig);
 
     constructor() {

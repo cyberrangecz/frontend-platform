@@ -1,9 +1,4 @@
-import {
-    HttpEvent,
-    HttpHandlerFn,
-    HttpRequest,
-    HttpResponse,
-} from '@angular/common/http';
+import { HttpEvent, HttpHandlerFn, HttpRequest, HttpResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Observable, Subscriber } from 'rxjs';
 import { LoadingService } from '../loading.service';
@@ -12,7 +7,7 @@ import { LoadingService } from '../loading.service';
  * Intercepts http requests and displays loading while at least one http request is waiting on a response
  */
 
-const requests: HttpRequest<any>[] = [];
+const requests = new Set<string>();
 
 export function loadingInterceptor(
     req: HttpRequest<unknown>,
@@ -20,36 +15,36 @@ export function loadingInterceptor(
 ): Observable<HttpEvent<unknown>> {
     const loadingService = inject(LoadingService);
 
-    requests.push(req);
+    const requestId = `${req.method}-${req.urlWithParams}`;
+    requests.add(requestId);
     loadingService.set(true);
+
     return new Observable((observer: Subscriber<HttpEvent<any>>) => {
-        const subscription = next(req).subscribe(
-            (event) => {
+        const subscription = next(req).subscribe({
+            next: (event) => {
                 if (event instanceof HttpResponse) {
-                    removeRequest(req, loadingService);
-                    observer.next(event);
+                    removeRequest(requestId, loadingService);
                 }
+                observer.next(event);
             },
-            (err) => {
-                removeRequest(req, loadingService);
+            error: (err) => {
+                removeRequest(requestId, loadingService);
                 observer.error(err);
             },
-            () => {
-                removeRequest(req, loadingService);
+            complete: () => {
+                removeRequest(requestId, loadingService);
                 observer.complete();
-            }
-        );
+            },
+        });
+
         return () => {
-            removeRequest(req, loadingService);
+            removeRequest(requestId, loadingService);
             subscription.unsubscribe();
         };
     });
 }
 
-function removeRequest(req: HttpRequest<any>, loadingService: LoadingService) {
-    const i = requests.indexOf(req);
-    if (i >= 0) {
-        requests.splice(i, 1);
-    }
-    loadingService.set(requests.length > 0);
+function removeRequest(requestId: string, loadingService: LoadingService) {
+    requests.delete(requestId);
+    loadingService.set(requests.size > 0);
 }

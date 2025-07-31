@@ -31,7 +31,10 @@ export class AdaptiveRunTrainingPhaseConcreteService extends AdaptiveRunTraining
                 tap(
                     (_) => _,
                     (err) => {
-                        this.errorHandler.emit(err, 'Access files for trainee');
+                        this.errorHandler.emitAPIError(
+                            err,
+                            'Access files for trainee'
+                        );
                     }
                 )
             );
@@ -57,7 +60,10 @@ export class AdaptiveRunTrainingPhaseConcreteService extends AdaptiveRunTraining
                     () => this.isLoadingSubject$.next(false),
                     (err) => {
                         this.isLoadingSubject$.next(false);
-                        this.errorHandler.emit(err, 'Submitting answer');
+                        this.errorHandler.emitAPIError(
+                            err,
+                            'Submitting answer'
+                        );
                     }
                 )
             );
@@ -85,7 +91,7 @@ export class AdaptiveRunTrainingPhaseConcreteService extends AdaptiveRunTraining
                 },
                 (err) => {
                     this.isLoadingSubject$.next(false);
-                    this.errorHandler.emit(err, 'Revealing solution');
+                    this.errorHandler.emitAPIError(err, 'Revealing solution');
                 }
             )
         );

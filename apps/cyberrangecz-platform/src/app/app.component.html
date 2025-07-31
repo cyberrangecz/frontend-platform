@@ -1,6 +1,7 @@
 <sentinel-layout1 (login)="onLogin()"
                   (logout)="onLogout()"
                   [agendaContainers]="agendaContainers$ | async"
+                  [displayNotificationsIcon]="true"
                   [isLoading]="isLoading$ | async"
                   [notificationsRoute]="notificationRoute"
                   [user]="activeUser$ | async"
@@ -17,5 +18,5 @@
     @if (subtitle$ | async; as subtitle) {
         <p class="subtitle">{{ subtitle }}</p>
     }
-    <router-outlet/>
+    <router-outlet />
 </sentinel-layout1>

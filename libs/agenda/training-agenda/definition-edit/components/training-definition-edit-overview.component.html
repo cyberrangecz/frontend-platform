@@ -1,82 +1,78 @@
 <mat-expansion-panel [expanded]="true">
-  <mat-expansion-panel-header>
-    <mat-panel-title>
-      @if ((editMode$ | async)) {
-        <span>Training Definition</span>
-      } @else {
-        Create Linear Training Definition
-      }
-    </mat-panel-title>
-    <mat-panel-description>
-      <span class="spacer"></span>
-      @if (!canDeactivateTDEdit || (unsavedLevels$ | async).length !== 0) {
-        <div class="panel-description-error">
-          <mat-icon color="warn">warning</mat-icon>
-          <mat-error>Changes are not saved</mat-error>
-        </div>
-      }
-      <mat-icon>edit</mat-icon>
-    </mat-panel-description>
+    <mat-expansion-panel-header>
+        <mat-panel-title>
+            <span>Linear Training Definition</span>
+        </mat-panel-title>
+        <mat-panel-description>
+            <span class="spacer"></span>
+            @if (!canDeactivateTDEdit || (unsavedLevels$ | async).length !== 0) {
+                <div class="panel-description-error">
+                    <mat-icon color="warn">warning</mat-icon>
+                    <mat-error>Changes are not saved</mat-error>
+                </div>
+            }
+            <mat-icon>edit</mat-icon>
+        </mat-panel-description>
 
-  </mat-expansion-panel-header>
-  <ng-template matExpansionPanelContent>
-    <sentinel-controls [controls]="controls"
-      (itemClicked)="onControlsAction($event)">
-    </sentinel-controls>
-    <mat-divider/>
-    <!-- EDIT TRAINING DEFINITION -->
-    <crczp-training-definition-edit
-      (edited)="onTrainingDefinitionChanged($event)"
-      [trainingDefinition]="trainingDefinition$ | async"/>
+    </mat-expansion-panel-header>
+    <ng-template matExpansionPanelContent>
+        <sentinel-controls (itemClicked)="onControlsAction($event)"
+                           [controls]="controls">
+        </sentinel-controls>
+        <mat-divider />
+        <!-- EDIT TRAINING DEFINITION -->
+        <crczp-training-definition-edit
+            (edited)="onTrainingDefinitionChanged($event)"
+            [trainingDefinition]="trainingDefinition$ | async" />
 
-    <mat-divider/>
-    <!-- EDIT LEVELS -->
-    <div>
-      <div class="levels-header">
-        <h3>Levels</h3>
-        @if ((levelsCount >= 0 && (editMode$ | async))) {
-          <span class="levels-info">
+        <mat-divider />
+        <!-- EDIT LEVELS -->
+        <div>
+            <div class="levels-header">
+                <h3>Levels</h3>
+                @if ((levelsCount >= 0 && (editMode$ | async))) {
+                    <span class="levels-info">
             Training definition contains {{ levelsCount }} level(s)
           </span>
-        }
-        <mat-icon class="header-icon">games</mat-icon>
-      </div>
-      <crczp-level-overview [trainingDefinition]="trainingDefinition$ | async"
-        [editMode]="editMode$ | async"
-        [mitreTechniquesList]="mitreTechniques$ | async"
-        (levelsCount)="onLevelsCountChanged($event)"
-        (unsavedLevels)="onUnsavedLevelsChanged($event)"/>
-    </div>
-  </ng-template>
+                }
+                <mat-icon class="header-icon">games</mat-icon>
+            </div>
+            <crczp-level-overview (levelsCount)="onLevelsCountChanged($event)"
+                                  (unsavedLevels)="onUnsavedLevelsChanged($event)"
+                                  [editMode]="editMode$ | async"
+                                  [mitreTechniquesList]="mitreTechniques$ | async"
+                                  [trainingDefinition]="trainingDefinition$ | async" />
+        </div>
+    </ng-template>
 </mat-expansion-panel>
 
 <!-- EDIT AUTHORS -->
 @if ((editMode$ | async)) {
-  <mat-expansion-panel [expanded]="editMode$ | async">
-    <mat-expansion-panel-header>
-      <mat-panel-title>Designers</mat-panel-title>
-      <mat-panel-description>
-        <span class="spacer"></span>
-        @if (!canDeactivateAuthors) {
-          <div class="panel-description-error">
-            <mat-icon color="warn">warning</mat-icon>
-            <mat-error>Designers are not saved</mat-error>
-          </div>
-        }
-        <mat-icon>person</mat-icon>
-      </mat-panel-description>
-    </mat-expansion-panel-header>
-    <ng-template matExpansionPanelContent>
-      @if (editMode$ | async) {
-        <sentinel-user-assign
-          resourceMatIcon="list_alt"
-          [resource]="trainingDefinition$ | async"
-          [defaultPaginationSize]="defaultPaginationSize"
-          (hasUnsavedChanges)="onAuthorsChanged($event)"
-          toAssignTitle="Designers"
-          assigneesTitle="Designers">
-        </sentinel-user-assign>
-      }
-    </ng-template>
-  </mat-expansion-panel>
+    <mat-expansion-panel [expanded]="editMode$ | async">
+        <mat-expansion-panel-header>
+            <mat-panel-title>Designers</mat-panel-title>
+            <mat-panel-description>
+                <span class="spacer"></span>
+                @if (!canDeactivateAuthors) {
+                    <div class="panel-description-error">
+                        <mat-icon color="warn">warning</mat-icon>
+                        <mat-error>Designers are not saved</mat-error>
+                    </div>
+                }
+                <mat-icon>person</mat-icon>
+            </mat-panel-description>
+        </mat-expansion-panel-header>
+        <ng-template matExpansionPanelContent>
+            @if (editMode$ | async) {
+                <sentinel-user-assign
+                    resourceMatIcon="list_alt"
+                    [resource]="trainingDefinition$ | async"
+                    [defaultPaginationSize]="defaultPaginationSize"
+                    (hasUnsavedChanges)="onAuthorsChanged($event)"
+                    toAssignTitle="Designers"
+                    assigneesTitle="Designers">
+                </sentinel-user-assign>
+            }
+        </ng-template>
+    </mat-expansion-panel>
 }

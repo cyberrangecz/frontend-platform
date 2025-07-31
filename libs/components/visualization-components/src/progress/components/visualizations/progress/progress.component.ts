@@ -30,7 +30,6 @@ import {
 import { TraineeViewEnum, ViewEnum } from '../../types';
 import { D3, D3Service } from '../../../../common/d3-service/d3-service';
 import { PROGRESS_CONFIG } from '../../../progress-config';
-import { DateUtils } from '@crczp/utils';
 import { Level } from '@crczp/training-model';
 import { TraineeSelectionComponent } from '../trainee-selection/trainee-selection.component';
 import { OverviewProgressBarComponent } from '../overview-progress-bar/overview-progress-bar.component';
@@ -39,6 +38,7 @@ import { TraineeDetailComponent } from '../trainee-detail/trainee-detail.compone
 import { ColumnHeaderComponent } from '../column-header/column-header.component';
 import { LegendComponent } from '../legend/legend.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { Utils } from '@crczp/utils';
 
 @Component({
     selector: 'crczp-viz-progress',
@@ -1450,7 +1450,7 @@ export class ProgressComponent implements OnChanges, AfterViewInit {
     }
 
     public getTimeString(seconds: number): string {
-        return DateUtils.formatDurationFull(seconds);
+        return Utils.Date.formatDurationFull(seconds);
     }
 
     createZoomListener() {

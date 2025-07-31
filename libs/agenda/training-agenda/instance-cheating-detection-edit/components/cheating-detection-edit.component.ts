@@ -1,5 +1,5 @@
-import {Component, DestroyRef, inject} from '@angular/core';
-import {SentinelValidators} from '@sentinel/common';
+import { Component, DestroyRef, inject } from '@angular/core';
+import { SentinelValidators } from '@sentinel/common';
 import {
     AbstractControl,
     ReactiveFormsModule,
@@ -8,24 +8,28 @@ import {
     UntypedFormGroup,
     Validators
 } from '@angular/forms';
-import {CheatingDetectionEditFormGroup} from './cheating-detection-edit-form-group';
-import {CheatingDetectionEditService} from '../services/cheating-detection-edit.service';
-import {ActivatedRoute} from '@angular/router';
-import {CheatingDetection, TrainingInstance} from '@crczp/training-model';
-import {SentinelControlItem, SentinelControlItemSignal, SentinelControlsComponent} from '@sentinel/components/controls';
-import {map, take} from 'rxjs/operators';
-import {defer, from, Observable, of} from 'rxjs';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle} from "@angular/material/expansion";
-import {MatSlideToggle} from "@angular/material/slide-toggle";
-import {MatDivider} from "@angular/material/divider";
-import {MatError, MatFormField, MatInput, MatLabel, MatSuffix} from "@angular/material/input";
-import {MatTooltip} from "@angular/material/tooltip";
+import { CheatingDetectionEditFormGroup } from './cheating-detection-edit-form-group';
+import { CheatingDetectionEditService } from '../services/cheating-detection-edit.service';
+import { ActivatedRoute } from '@angular/router';
+import { CheatingDetection, TrainingInstance } from '@crczp/training-model';
+import {
+    SentinelControlItem,
+    SentinelControlItemSignal,
+    SentinelControlsComponent
+} from '@sentinel/components/controls';
+import { map, take } from 'rxjs/operators';
+import { defer, from, Observable, of } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
+import { MatSlideToggle } from '@angular/material/slide-toggle';
+import { MatDivider } from '@angular/material/divider';
+import { MatError, MatFormField, MatInput, MatLabel, MatSuffix } from '@angular/material/input';
+import { MatTooltip } from '@angular/material/tooltip';
 
-import {MatRadioButton, MatRadioGroup} from "@angular/material/radio";
-import {MatButton, MatIconButton} from "@angular/material/button";
-import {MatIcon} from "@angular/material/icon";
-import {CheatingDetectionEditConcreteService} from "../services/cheating-detection-edit-concrete.service";
+import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
+import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { CheatingDetectionEditConcreteService } from '../services/cheating-detection-edit-concrete.service';
 import {TrainingInstance
 
 .
@@ -78,7 +82,7 @@ export class CheatingDetectionEditComponent {
     constructor() {
         this.trainingInstance$ = this.activeRoute.data.pipe(
             takeUntilDestroyed(this.destroyRef),
-            map((data) => data[TrainingInstance.name]),
+            map((data) => data[TrainingInstance.name] || null),
         );
         this.trainingInstance$.subscribe((instance) => {
             this.trainingInstanceId = instance.id;

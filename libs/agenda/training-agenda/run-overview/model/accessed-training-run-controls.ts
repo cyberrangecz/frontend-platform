@@ -1,6 +1,6 @@
-import {defer, of} from 'rxjs';
-import {AccessedTrainingRunService} from '../services/state/training/accessed-training-run.service';
-import {SentinelControlItem} from "@sentinel/components/controls";
+import { defer, of } from 'rxjs';
+import { AccessedTrainingRunService } from '../services/state/accessed-training-run.service';
+import { SentinelControlItem } from '@sentinel/components/controls';
 
 /**
  * @dynamic
@@ -15,7 +15,7 @@ export class AccessedTrainingRunControls {
                 'MITRE ATT&CK Techniques',
                 'primary',
                 of(false),
-                defer(() => service.showMitreTechniques()),
+                defer(() => service.showMitreTechniques())
             ),
         ];
     }

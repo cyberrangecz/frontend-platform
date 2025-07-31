@@ -1,27 +1,37 @@
-import {ChangeDetectionStrategy, Component, DestroyRef, EventEmitter, inject, Output} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
-import {SentinelControlItem, SentinelControlItemSignal, SentinelControlsComponent} from '@sentinel/components/controls';
-import {Group} from '@crczp/user-and-group-model';
-import {defer, Observable, of} from 'rxjs';
-import {take, tap} from 'rxjs/operators';
-import {SaveControlItem} from '@crczp/user-and-group-agenda/internal';
-import {GroupChangedEvent} from '../model/group-changed-event';
-import {GroupEditService} from '../services/state/group-edit.service';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {GroupEditCanDeactivate} from '../services/can-deactivate/group-edit-can-deactivate.service';
+import {
+    ChangeDetectionStrategy,
+    Component,
+    DestroyRef,
+    EventEmitter,
+    inject,
+    Output,
+} from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import {
+    SentinelControlItem,
+    SentinelControlItemSignal,
+    SentinelControlsComponent,
+} from '@sentinel/components/controls';
+import { Group } from '@crczp/user-and-group-model';
+import { defer, Observable, of } from 'rxjs';
+import { take, tap } from 'rxjs/operators';
+import { SaveControlItem } from '@crczp/user-and-group-agenda/internal';
+import { GroupChangedEvent } from '../model/group-changed-event';
+import { GroupEditService } from '../services/state/group-edit.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
     MatExpansionPanel,
     MatExpansionPanelDescription,
     MatExpansionPanelHeader,
-    MatExpansionPanelTitle
+    MatExpansionPanelTitle,
 } from '@angular/material/expansion';
-import {GroupEditComponent} from './group-edit/group-edit.component';
-import {MatDivider} from '@angular/material/divider';
-import {AsyncPipe} from '@angular/common';
-import {GroupUserAssignComponent} from './group-user-assign/group-user-assign.component';
-import {MatIcon} from '@angular/material/icon';
-import {MatError} from '@angular/material/input';
-import {GroupRoleAssignComponent} from './group-role-assign/group-role-assign.component';
+import { GroupEditComponent } from './group-edit/group-edit.component';
+import { MatDivider } from '@angular/material/divider';
+import { AsyncPipe } from '@angular/common';
+import { GroupUserAssignComponent } from './group-user-assign/group-user-assign.component';
+import { MatIcon } from '@angular/material/icon';
+import { MatError } from '@angular/material/input';
+import { GroupRoleAssignComponent } from './group-role-assign/group-role-assign.component';
 
 @Component({
     selector: 'crczp-group-edit-overview',
@@ -40,12 +50,9 @@ import {GroupRoleAssignComponent} from './group-role-assign/group-role-assign.co
         MatExpansionPanelTitle,
         MatIcon,
         SentinelControlsComponent,
-        MatExpansionPanelHeader
+        MatExpansionPanelHeader,
     ],
-    providers: [
-        GroupEditCanDeactivate,
-        {provide: GroupEditService, useClass: GroupEditService},
-    ]
+    providers: [{ provide: GroupEditService, useClass: GroupEditService }],
 })
 export class GroupEditOverviewComponent {
     @Output() canDeactivateEvent: EventEmitter<boolean> = new EventEmitter();
@@ -62,7 +69,9 @@ export class GroupEditOverviewComponent {
 
     constructor() {
         this.group$ = this.editService.group$;
-        this.editMode$ = this.editService.editMode$.pipe(tap((editMode) => this.initControls(editMode)));
+        this.editMode$ = this.editService.editMode$.pipe(
+            tap((editMode) => this.initControls(editMode))
+        );
         this.activeRoute.data
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe((data) => this.editService.set(data[Group.name]));
@@ -72,7 +81,11 @@ export class GroupEditOverviewComponent {
      * Determines if all changes in subcomponents are saved and user can navigate to different component
      */
     canDeactivate(): boolean {
-        return this.canDeactivateGroupEdit && this.canDeactivateMembers && this.canDeactivateRoles;
+        return (
+            this.canDeactivateGroupEdit &&
+            this.canDeactivateMembers &&
+            this.canDeactivateRoles
+        );
     }
 
     onControlAction(controlItem: SentinelControlItemSignal): void {
@@ -96,7 +109,11 @@ export class GroupEditOverviewComponent {
         const saveItem = new SaveControlItem(
             'Save',
             this.editService.saveDisabled$,
-            defer(() => this.editService.save().pipe(tap(() => (this.canDeactivateGroupEdit = true))))
+            defer(() =>
+                this.editService
+                    .save()
+                    .pipe(tap(() => (this.canDeactivateGroupEdit = true)))
+            )
         );
         if (isEditMode) {
             this.controls = [saveItem];
@@ -105,7 +122,11 @@ export class GroupEditOverviewComponent {
             const saveAndStayItem = new SaveControlItem(
                 'Create and continue editing',
                 this.editService.saveDisabled$,
-                defer(() => this.editService.createAndEdit().pipe(tap(() => (this.canDeactivateGroupEdit = true))))
+                defer(() =>
+                    this.editService
+                        .createAndEdit()
+                        .pipe(tap(() => (this.canDeactivateGroupEdit = true)))
+                )
             );
             saveAndStayItem.id = 'save_and_stay';
             this.controls = [saveItem, saveAndStayItem];

@@ -114,7 +114,10 @@ export class SandboxInstanceConcreteService extends SandboxInstanceService {
                         `Allocation of pool ${poolId} started`
                     ),
                 (err) =>
-                    this.errorHandler.emit(err, `Allocating pool ${poolId}`)
+                    this.errorHandler.emitAPIError(
+                        err,
+                        `Allocating pool ${poolId}`
+                    )
             ),
             switchMap(() => {
                 this.lastPoolId = this.lastPoolId ?? poolId;
@@ -149,7 +152,7 @@ export class SandboxInstanceConcreteService extends SandboxInstanceService {
                                           `Allocation of specified sandboxes of pool ${poolId} started`
                                       ),
                                   (err) =>
-                                      this.errorHandler.emit(
+                                      this.errorHandler.emitAPIError(
                                           err,
                                           `Allocating pool ${poolId}`
                                       )
@@ -180,7 +183,10 @@ export class SandboxInstanceConcreteService extends SandboxInstanceService {
                         `Allocation of sandbox ${unitId} started`
                     ),
                 (err) =>
-                    this.errorHandler.emit(err, `Allocating sandbox ${unitId}`)
+                    this.errorHandler.emitAPIError(
+                        err,
+                        `Allocating sandbox ${unitId}`
+                    )
             ),
             switchMap(() =>
                 this.getAllUnits(this.lastPoolId, this.lastPagination)
@@ -219,7 +225,7 @@ export class SandboxInstanceConcreteService extends SandboxInstanceService {
                         `Sandbox ${allocationUnitId} was locked`
                     ),
                 (err) =>
-                    this.errorHandler.emit(
+                    this.errorHandler.emitAPIError(
                         err,
                         `Locking sandbox ${allocationUnitId}`
                     )
@@ -237,7 +243,7 @@ export class SandboxInstanceConcreteService extends SandboxInstanceService {
     getUserSshAccess(sandboxUuid: string): Observable<boolean> {
         return this.sandboxApi.getUserSshAccess(sandboxUuid).pipe(
             catchError((err) => {
-                this.errorHandler.emit(
+                this.errorHandler.emitAPIError(
                     err,
                     `User SSH Access for sandbox: ${sandboxUuid}`
                 );
@@ -320,7 +326,10 @@ export class SandboxInstanceConcreteService extends SandboxInstanceService {
                         `Sandbox ${unitId} was deleted`
                     ),
                 (err) =>
-                    this.errorHandler.emit(err, `Deleting sandbox ${unitId}`)
+                    this.errorHandler.emitAPIError(
+                        err,
+                        `Deleting sandbox ${unitId}`
+                    )
             ),
             switchMap(() =>
                 this.getAllUnits(this.lastPoolId, this.lastPagination)
@@ -372,7 +381,7 @@ export class SandboxInstanceConcreteService extends SandboxInstanceService {
                         `Comment for sandbox ${allocationUnit.id} was updated`
                     ),
                 (err) =>
-                    this.errorHandler.emit(
+                    this.errorHandler.emitAPIError(
                         err,
                         `Updating comment for sandbox ${allocationUnit.id}`
                     )
@@ -440,7 +449,7 @@ export class SandboxInstanceConcreteService extends SandboxInstanceService {
                         `Sandbox ${allocationUnitId} was unlocked`
                     ),
                 (err) =>
-                    this.errorHandler.emit(
+                    this.errorHandler.emitAPIError(
                         err,
                         `Unlocking sandbox ${allocationUnitId}`
                     )
@@ -464,7 +473,7 @@ export class SandboxInstanceConcreteService extends SandboxInstanceService {
                             `Sandbox ${sandboxInstance.id} was deleted`
                         ),
                     (err) =>
-                        this.errorHandler.emit(
+                        this.errorHandler.emitAPIError(
                             err,
                             `Deleting sandbox ${sandboxInstance.id}`
                         )
@@ -476,7 +485,7 @@ export class SandboxInstanceConcreteService extends SandboxInstanceService {
     }
 
     private onGetAllError(err: HttpErrorResponse) {
-        this.errorHandler.emit(err, 'Fetching sandbox instances');
+        this.errorHandler.emitAPIError(err, 'Fetching sandbox instances');
         this.hasErrorSubject$.next(true);
     }
 }

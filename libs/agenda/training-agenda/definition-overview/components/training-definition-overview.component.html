@@ -1,35 +1,41 @@
-<sentinel-controls [controls]="topControls" (itemClicked)="onControlsAction($event)"/>
+<sentinel-controls (itemClicked)="onControlsAction($event)" [controls]="topControls" />
 <sentinel-table
+    (rowAction)="onTableAction($event)"
+    (tableLoad)="onLoadEvent($event)"
+    [data]="trainingDefinitions$ | async"
     [defaultSortDirection]="INIT_SORT_DIR"
     [defaultSortName]="INIT_SORT_NAME"
-    [data]="trainingDefinitions$ | async"
-    [hasError]="hasError$ | async"
-    [isLoading]="isLoading$ | async"
     [displayedActionsCount]="7"
-    (tableLoad)="onLoadEvent($event)"
-    (rowAction)="onTableAction($event)">
-    <ng-container *sentinelRow="'state'; template: state"/>
-    <ng-container *sentinelRow="'createdAt'; template: createdAt"/>
-    <ng-container *sentinelRow="'lastEditTime'; template: lastEditTime"/>
+    [hasError]="hasError$ | async"
+    [isLoading]="isLoading$ | async">
+
+    <ng-container *sentinelRow="'createdAt'; template: createdAt" />
+    <ng-container *sentinelRow="'lastEditTime'; template: lastEditTime" />
+    <ng-container *sentinelRow="'state'; template: state" />
+
+    <ng-template #state let-row>
+        <crczp-table-state-cell
+            [icon]="stateToIcon(row.element.state)"
+            [text]="row.element.state"
+        />
+    </ng-template>
+
+    <ng-template #createdAt let-row>
+        <crczp-table-date-cell
+            [displayedDate]="row.element.createdAt"
+            [isLoading]="isLoading$ | async"
+            [showTimeWhenPossible]="true" />
+    </ng-template>
+
+    <ng-template #lastEditTime let-row>
+        <crczp-table-date-cell
+            [displayedDate]="row.element.lastEditTime"
+            [isLoading]="isLoading$ | async"
+            [showTimeWhenPossible]="true" />
+    </ng-template>
 </sentinel-table>
-<ng-template #state let-row>
-    <crczp-table-state-cell
-        [value]="row.element.state"
-        [toIcon]="stateToIcon"/>
-</ng-template>
-<ng-template #createdAt let-row>
-    <crczp-table-date-cell
-        [isLoading]="isLoading$ | async"
-        [showTimeWhenPossible]="true"
-        [displayedDate]="row.element.createdAt"/>
-</ng-template>
-<ng-template #lastEditTime let-row>
-    <crczp-table-date-cell
-        [isLoading]="isLoading$ | async"
-        [showTimeWhenPossible]="true"
-        [displayedDate]="row.element.lastEditTime"/>
-</ng-template>
+
 <div class="bottom-controls">
-    <sentinel-controls [controls]="bottomControls" [titlecased]="false"
-                       (itemClicked)="onControlsAction($event)"/>
+    <sentinel-controls (itemClicked)="onControlsAction($event)" [controls]="bottomControls"
+                       [titlecased]="false" />
 </div>

@@ -1,6 +1,6 @@
 @use "./common" as common;
 
-$gaps: [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 2.5, 3];
+$gaps: [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 2.25, 2.5,2.75, 3,3.5,4,5,8,10,12,16];
 
 $positions: (
     t: top,
@@ -8,9 +8,8 @@ $positions: (
     b: bottom,
     l: left,
 );
-@for $i from 1 through 16 {
-    $size: calc($i / 4);
 
+@each $size in $gaps {
     .g-#{common.decimal-to-name($size)}rem {
         gap: #{$size}rem;
     }

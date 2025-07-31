@@ -21,7 +21,7 @@ export class SandboxResourcesConcreteService extends SandboxResourcesService {
                     this.resourcesSubject$.next(resource);
                 },
                 (err) => {
-                    this.errorHandler.emit(err, 'Fetching resources');
+                    this.errorHandler.emitAPIError(err, 'Fetching resources');
                 }
             )
         );

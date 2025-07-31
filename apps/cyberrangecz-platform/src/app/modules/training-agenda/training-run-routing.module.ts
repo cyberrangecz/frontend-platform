@@ -104,18 +104,6 @@ const routes: ValidRouterConfig<'run'> = [
                 Routing.Resolvers.TrainingRun.resolveAccessedTrainingRunResults,
         },
     },
-    {
-        path: 'mitre-techniques',
-        loadComponent: () =>
-            import('@crczp/training-agenda/mitre-techniques').then(
-                (m) => m.MitreTechniquesComponent
-            ),
-        data: {
-            title: 'MITRE Techniques',
-            breadcrumb: 'MITRE Techniques',
-            showSwitch: true,
-        },
-    },
 ];
 
 @NgModule({

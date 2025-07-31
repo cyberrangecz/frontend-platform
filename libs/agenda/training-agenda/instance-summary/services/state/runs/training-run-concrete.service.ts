@@ -59,7 +59,7 @@ export class TrainingRunConcreteService extends TrainingRunService {
         return this.trainingInstanceApi.exportScore(trainingInstanceId).pipe(
             tap({
                 error: (err) =>
-                    this.errorHandler.emit(
+                    this.errorHandler.emitAPIError(
                         err,
                         'Downloading training instance scores'
                     ),

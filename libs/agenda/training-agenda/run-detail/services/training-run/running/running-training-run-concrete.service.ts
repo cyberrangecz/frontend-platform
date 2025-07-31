@@ -80,7 +80,8 @@ export class RunningTrainingRunConcreteService extends RunningTrainingRunService
         return this.api.moveToLevel(this.trainingRunId, levelId).pipe(
             tap(
                 (level) => this.setBacktrackedLevel(level),
-                (err) => this.errorHandler.emit(err, 'Moving to next level')
+                (err) =>
+                    this.errorHandler.emitAPIError(err, 'Moving to next level')
             )
         );
     }
@@ -132,7 +133,8 @@ export class RunningTrainingRunConcreteService extends RunningTrainingRunService
                     this.isCurrentLevelAnsweredSubject$.next(false);
                     this.setActiveLevel(level);
                 },
-                (err) => this.errorHandler.emit(err, 'Moving to next level')
+                (err) =>
+                    this.errorHandler.emitAPIError(err, 'Moving to next level')
             )
         );
     }
@@ -142,7 +144,7 @@ export class RunningTrainingRunConcreteService extends RunningTrainingRunService
         return this.api.finish(this.trainingRunId).pipe(
             tap({
                 error: (err) =>
-                    this.errorHandler.emit(err, 'Finishing training'),
+                    this.errorHandler.emitAPIError(err, 'Finishing training'),
             }),
             switchMap(() => {
                 const tmpTrainingRunId = this.trainingRunId;

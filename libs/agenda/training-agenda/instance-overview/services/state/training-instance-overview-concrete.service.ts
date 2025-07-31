@@ -55,7 +55,10 @@ export class TrainingInstanceOverviewConcreteService extends TrainingInstanceOve
                 },
                 (err) => {
                     this.hasErrorSubject$.next(true);
-                    this.errorHandler.emit(err, 'Fetching training instances');
+                    this.errorHandler.emitAPIError(
+                        err,
+                        'Fetching training instances'
+                    );
                 }
             )
         );
@@ -77,7 +80,7 @@ export class TrainingInstanceOverviewConcreteService extends TrainingInstanceOve
         return this.trainingInstanceApi.archive(id).pipe(
             tap({
                 error: (err) =>
-                    this.errorHandler.emit(
+                    this.errorHandler.emitAPIError(
                         err,
                         'Downloading training instance'
                     ),
@@ -141,7 +144,7 @@ export class TrainingInstanceOverviewConcreteService extends TrainingInstanceOve
                 (pool) => pool.maxSize.toString(),
                 (err) => {
                     this.hasErrorSubject$.next(true);
-                    this.errorHandler.emit(err, 'Fetching pool size');
+                    this.errorHandler.emitAPIError(err, 'Fetching pool size');
                     return EMPTY;
                 }
             ),
@@ -175,7 +178,7 @@ export class TrainingInstanceOverviewConcreteService extends TrainingInstanceOve
                             .length.toString(),
                     (err) => {
                         this.hasErrorSubject$.next(true);
-                        this.errorHandler.emit(
+                        this.errorHandler.emitAPIError(
                             err,
                             'Fetching available sandboxes'
                         );
@@ -191,7 +194,7 @@ export class TrainingInstanceOverviewConcreteService extends TrainingInstanceOve
     getSshAccess(poolId: number): Observable<boolean> {
         return this.poolApi.getManagementSshAccess(poolId).pipe(
             catchError((err) => {
-                this.errorHandler.emit(err, 'Management SSH Access');
+                this.errorHandler.emitAPIError(err, 'Management SSH Access');
                 return EMPTY;
             })
         );
@@ -256,7 +259,7 @@ export class TrainingInstanceOverviewConcreteService extends TrainingInstanceOve
                         )
                     );
                 }
-                return this.errorHandler.emit(
+                return this.errorHandler.emitAPIError(
                     err,
                     'Deleting training instance'
                 );
@@ -274,7 +277,7 @@ export class TrainingInstanceOverviewConcreteService extends TrainingInstanceOve
                         'Training instance was successfully deleted'
                     ),
                 (err) =>
-                    this.errorHandler.emit(
+                    this.errorHandler.emitAPIError(
                         err,
                         'Force deleting training instance'
                     )

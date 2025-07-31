@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { TrainingApiModule } from '@crczp/training-api';
 import { SandboxApiModule } from '@crczp/sandbox-api';
-import { TrainingInstanceCanDeactivate } from '@crczp/training-agenda/instance-edit';
 import { TrainingInstanceOverviewComponent } from '@crczp/training-agenda/instance-overview';
 import { TrainingInstance } from '@crczp/training-model';
 import {
@@ -10,6 +9,7 @@ import {
     TrainingResolverHelperService,
     ValidRouterConfig,
 } from '@crczp/routing-commons';
+import { canDeactivateTrainingInstance } from '@crczp/training-agenda/instance-edit';
 
 const routes: ValidRouterConfig<'linear-instance'> = [
     {
@@ -20,25 +20,24 @@ const routes: ValidRouterConfig<'linear-instance'> = [
         path: 'create',
         loadComponent: () =>
             import('@crczp/training-agenda/instance-edit').then(
-                (m) => m.TrainingInstanceEditOverviewComponent
+                (m) => m.LinearTrainingInstanceEditOverviewComponent
             ),
+        canDeactivate: [canDeactivateTrainingInstance],
         resolve: {
-            [TrainingInstance.name]:
-                Routing.Resolvers.TrainingInstance.linearInstanceResolver,
             breadcrumb:
                 Routing.Resolvers.TrainingInstance
                     .linearInstanceBreadcrumbResolver,
             title: Routing.Resolvers.TrainingInstance
                 .linearInstanceTitleResolver,
-            canDeactivate: [TrainingInstanceCanDeactivate],
         },
     },
     {
         path: ':instanceId/edit',
         loadComponent: () =>
             import('@crczp/training-agenda/instance-edit').then(
-                (m) => m.TrainingInstanceEditOverviewComponent
+                (m) => m.LinearTrainingInstanceEditOverviewComponent
             ),
+        canDeactivate: [canDeactivateTrainingInstance],
         resolve: {
             [TrainingInstance.name]:
                 Routing.Resolvers.TrainingInstance.linearInstanceResolver,
@@ -47,7 +46,6 @@ const routes: ValidRouterConfig<'linear-instance'> = [
                     .linearInstanceBreadcrumbResolver,
             title: Routing.Resolvers.TrainingInstance
                 .linearInstanceTitleResolver,
-            canDeactivate: [TrainingInstanceCanDeactivate],
         },
     },
     {

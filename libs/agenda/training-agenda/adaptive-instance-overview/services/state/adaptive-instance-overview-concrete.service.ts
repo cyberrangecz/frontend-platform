@@ -5,7 +5,7 @@ import {
     PaginatedResource,
 } from '@sentinel/common/pagination';
 import { PoolApi } from '@crczp/sandbox-api';
-import { AdaptiveInstanceApi } from '@crczp/training-api';
+import { AdaptiveTrainingInstanceApi } from '@crczp/training-api';
 import { TrainingInstance } from '@crczp/training-model';
 import { EMPTY, from, Observable, of } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
@@ -26,7 +26,7 @@ import { Routing } from '@crczp/routing-commons';
 
 @Injectable()
 export class AdaptiveInstanceOverviewConcreteService extends AdaptiveInstanceOverviewService {
-    private adaptiveInstanceApi = inject(AdaptiveInstanceApi);
+    private adaptiveInstanceApi = inject(AdaptiveTrainingInstanceApi);
     private dialog = inject(MatDialog);
     private poolApi = inject(PoolApi);
     private router = inject(Router);
@@ -55,7 +55,10 @@ export class AdaptiveInstanceOverviewConcreteService extends AdaptiveInstanceOve
                 },
                 (err) => {
                     this.hasErrorSubject$.next(true);
-                    this.errorHandler.emit(err, 'Fetching training instances');
+                    this.errorHandler.emitAPIError(
+                        err,
+                        'Fetching training instances'
+                    );
                 }
             )
         );
@@ -85,7 +88,7 @@ export class AdaptiveInstanceOverviewConcreteService extends AdaptiveInstanceOve
         return this.adaptiveInstanceApi.archive(id).pipe(
             tap({
                 error: (err) =>
-                    this.errorHandler.emit(
+                    this.errorHandler.emitAPIError(
                         err,
                         'Downloading training instance'
                     ),
@@ -155,7 +158,7 @@ export class AdaptiveInstanceOverviewConcreteService extends AdaptiveInstanceOve
                 (pool) => pool.maxSize.toString(),
                 (err) => {
                     this.hasErrorSubject$.next(true);
-                    this.errorHandler.emit(err, 'Fetching pool size');
+                    this.errorHandler.emitAPIError(err, 'Fetching pool size');
                     return EMPTY;
                 }
             ),
@@ -189,7 +192,7 @@ export class AdaptiveInstanceOverviewConcreteService extends AdaptiveInstanceOve
                             .length.toString(),
                     (err) => {
                         this.hasErrorSubject$.next(true);
-                        this.errorHandler.emit(
+                        this.errorHandler.emitAPIError(
                             err,
                             'Fetching available sandboxes'
                         );
@@ -205,7 +208,7 @@ export class AdaptiveInstanceOverviewConcreteService extends AdaptiveInstanceOve
     getSshAccess(poolId: number): Observable<boolean> {
         return this.poolApi.getManagementSshAccess(poolId).pipe(
             catchError((err) => {
-                this.errorHandler.emit(err, 'Management SSH Access');
+                this.errorHandler.emitAPIError(err, 'Management SSH Access');
                 return EMPTY;
             })
         );
@@ -270,7 +273,7 @@ export class AdaptiveInstanceOverviewConcreteService extends AdaptiveInstanceOve
                         )
                     );
                 }
-                return this.errorHandler.emit(
+                return this.errorHandler.emitAPIError(
                     err,
                     'Deleting training instance'
                 );
@@ -288,7 +291,7 @@ export class AdaptiveInstanceOverviewConcreteService extends AdaptiveInstanceOve
                         'Training instance was successfully deleted'
                     ),
                 (err) =>
-                    this.errorHandler.emit(
+                    this.errorHandler.emitAPIError(
                         err,
                         'Force deleting training instance'
                     )

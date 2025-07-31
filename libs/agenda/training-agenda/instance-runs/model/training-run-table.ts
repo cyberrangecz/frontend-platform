@@ -5,7 +5,7 @@ import { Column, DeleteAction, Row, RowAction, SentinelTable } from '@sentinel/c
 import { defer, of } from 'rxjs';
 import { TrainingRunService } from '../services/runs/training-run.service';
 import { TrainingRunRowAdapter } from './training-run-row-adapter';
-import { DateUtils } from '@crczp/utils';
+import { Utils } from '@crczp/utils';
 
 /**
  * Helper class transforming paginated resource to class for common table component
@@ -54,7 +54,7 @@ export class TrainingRunTable extends SentinelTable<TrainingRunRowAdapter> {
         adapter.startTimeFormatted = `${datePipe.transform(adapter.startTime)}`;
         if (adapter.state === TrainingRunStateEnum.FINISHED) {
             adapter.endTimeFormatted = `${datePipe.transform(adapter.endTime)}`;
-            adapter.duration = DateUtils.timeBetweenDatesSimple(
+            adapter.duration = Utils.Date.timeBetweenDatesSimple(
                 adapter.startTime,
                 adapter.endTime
             );

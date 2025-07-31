@@ -12,7 +12,7 @@ import {
     SimpleChanges,
     ViewChild
 } from '@angular/core';
-import { TrainingDefinitionInfo, TrainingInstance } from '@crczp/training-model';
+import { TrainingDefinitionInfo, TrainingInstance, TrainingTypeEnum } from '@crczp/training-model';
 import { TrainingInstanceChangeEvent } from '../../model/events/training-instance-change-event';
 import { TrainingInstanceFormGroup } from './training-instance-form-group';
 import { AbstractControl, ReactiveFormsModule } from '@angular/forms';
@@ -20,19 +20,21 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Pool, SandboxDefinition } from '@crczp/sandbox-model';
 import { BehaviorSubject, combineLatestWith, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { MatError, MatFormField, MatHint, MatInput, MatLabel } from '@angular/material/input';
-import { MatIcon } from '@angular/material/icon';
-import { MatSlideToggle } from '@angular/material/slide-toggle';
-import { MatTooltip } from '@angular/material/tooltip';
-import { AsyncPipe } from '@angular/common';
+import { Routing } from '@crczp/routing-commons';
 import {
     SentinelResourceSelectorComponent,
     SentinelSelectorElementDirective,
     SentinelSelectorSelectedElementDirective
 } from '@sentinel/components/resource-selector';
-import { MatAnchor, MatIconButton } from '@angular/material/button';
+import { AsyncPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { Routing } from '@crczp/routing-commons';
+import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatTooltip } from '@angular/material/tooltip';
+import { MatIcon } from '@angular/material/icon';
+import { OwlDateTimeModule, OwlNativeDateTimeModule } from '@danielmoncada/angular-datetime-picker';
+import { MatSlideToggle } from '@angular/material/slide-toggle';
+import { MatError, MatFormField, MatHint, MatInput, MatLabel, MatSuffix } from '@angular/material/input';
+import { TRAINING_TYPE_TOKEN } from '../training-type-token';
 
 /**
  * Component for creating new or editing existing training instance
@@ -43,24 +45,27 @@ import { Routing } from '@crczp/routing-commons';
     styleUrls: ['./training-instance-edit.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
-        ReactiveFormsModule,
-        MatFormField,
-        MatLabel,
+        SentinelResourceSelectorComponent,
+        SentinelSelectorSelectedElementDirective,
+        AsyncPipe,
+        SentinelSelectorElementDirective,
+        RouterLink,
+        MatButton,
+        MatTooltip,
         MatIcon,
-        MatError,
+        OwlDateTimeModule,
         MatFormField,
         MatFormField,
         MatSlideToggle,
-        MatTooltip,
-        AsyncPipe,
+        ReactiveFormsModule,
         MatIconButton,
+        MatSuffix,
         MatInput,
+        MatFormField,
+        MatLabel,
+        MatError,
+        OwlNativeDateTimeModule,
         MatHint,
-        SentinelResourceSelectorComponent,
-        RouterLink,
-        SentinelSelectorSelectedElementDirective,
-        SentinelSelectorElementDirective,
-        MatAnchor,
     ],
 })
 export class TrainingInstanceEditComponent implements OnChanges, AfterViewInit {
@@ -83,6 +88,7 @@ export class TrainingInstanceEditComponent implements OnChanges, AfterViewInit {
     poolSelect: ElementRef;
     now: Date;
     trainingInstanceFormGroup: TrainingInstanceFormGroup;
+    protected readonly TrainingTypeEnum = TrainingTypeEnum;
     private trainingDefinitionsSubject = new BehaviorSubject<
         TrainingDefinitionInfo[]
     >([]);
@@ -98,6 +104,7 @@ export class TrainingInstanceEditComponent implements OnChanges, AfterViewInit {
     );
     private poolSearchStringSubject = new BehaviorSubject<string>('');
     private readonly destroyRef = inject(DestroyRef);
+    private readonly trainingType = inject(TRAINING_TYPE_TOKEN);
 
     get startTime(): AbstractControl {
         return this.trainingInstanceFormGroup.formGroup.get('startTime');
@@ -333,13 +340,17 @@ export class TrainingInstanceEditComponent implements OnChanges, AfterViewInit {
     }
 
     getPoolUrl(id: string) {
-        return `/${Routing.RouteBuilder.pool.poolId(id).build()}`;
+        return Routing.RouteBuilder.pool.poolId(id).build();
     }
 
     getTrainingDefinitionUrl(id: number) {
-        return `/${Routing.RouteBuilder.linear_definition
+        return Routing.RouteBuilder[
+            this.trainingType === TrainingTypeEnum.ADAPTIVE
+                ? 'adaptive_definition'
+                : 'linear_definition'
+        ]
             .definitionId(id)
-            .build()}`;
+            .build();
     }
 
     private changeValidity(error: boolean, resourceSelector: ElementRef) {

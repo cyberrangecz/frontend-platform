@@ -146,7 +146,7 @@ export class TrainingDefinitionConcreteService extends TrainingDefinitionService
         return this.api.download(trainingDefinition.id).pipe(
             tap({
                 error: (err) =>
-                    this.errorHandler.emit(
+                    this.errorHandler.emitAPIError(
                         err,
                         'Downloading training definition'
                     ),
@@ -196,7 +196,7 @@ export class TrainingDefinitionConcreteService extends TrainingDefinitionService
                 },
                 (err) => {
                     this.fileUploadProgressService.finish();
-                    this.errorHandler.emit(
+                    this.errorHandler.emitAPIError(
                         err,
                         'Uploading training definition'
                     );
@@ -220,7 +220,7 @@ export class TrainingDefinitionConcreteService extends TrainingDefinitionService
                 (err) => {
                     this.hasErrorSubject$.next(true);
                     this.isLoadingSubject$.next(false);
-                    this.errorHandler.emit(
+                    this.errorHandler.emitAPIError(
                         err,
                         'Fetching training definitions'
                     );
@@ -257,7 +257,10 @@ export class TrainingDefinitionConcreteService extends TrainingDefinitionService
                         'Training definition was deleted'
                     ),
                 (err) =>
-                    this.errorHandler.emit(err, 'Deleting training definition')
+                    this.errorHandler.emitAPIError(
+                        err,
+                        'Deleting training definition'
+                    )
             ),
             switchMap(() => this.getAll(this.lastPagination, this.lastFilters))
         );
@@ -290,7 +293,10 @@ export class TrainingDefinitionConcreteService extends TrainingDefinitionService
                         'Training definition was cloned'
                     ),
                 (err) =>
-                    this.errorHandler.emit(err, 'Cloning training definition')
+                    this.errorHandler.emitAPIError(
+                        err,
+                        'Cloning training definition'
+                    )
             ),
             switchMap(() => this.getAll(this.lastPagination, this.lastFilters))
         );
@@ -322,7 +328,7 @@ export class TrainingDefinitionConcreteService extends TrainingDefinitionService
             tap(
                 () => this.onChangedState(trainingDefinition.id, newState),
                 (err) =>
-                    this.errorHandler.emit(
+                    this.errorHandler.emitAPIError(
                         err,
                         'Changing training definition state'
                     )

@@ -62,7 +62,7 @@ export class CleanupStagesConcreteService extends RequestStagesService {
             this.navigateBack();
             return;
         }
-        this.errorHandler.emit(err, 'Fetching stages');
+        this.errorHandler.emitAPIError(err, 'Fetching stages');
         this.hasErrorSubject$.next(true);
     }
 

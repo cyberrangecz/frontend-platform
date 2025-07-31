@@ -3,13 +3,13 @@ import { RouterModule } from '@angular/router';
 import { AdaptiveDefinitionOverviewComponent } from '@crczp/training-agenda/adaptive-definition-overview';
 import { SandboxApiModule } from '@crczp/sandbox-api';
 import { TrainingApiModule } from '@crczp/training-api';
-import { AdaptiveDefinitionCanDeactivate } from '@crczp/training-agenda/adaptive-definition-edit';
 import { TrainingDefinition } from '@crczp/training-model';
 import {
     Routing,
     TrainingResolverHelperService,
     ValidRouterConfig,
 } from '@crczp/routing-commons';
+import { canDeactivateAdaptiveDefinition } from '@crczp/training-agenda/adaptive-definition-edit';
 
 const routes: ValidRouterConfig<'adaptive-definition'> = [
     {
@@ -31,7 +31,7 @@ const routes: ValidRouterConfig<'adaptive-definition'> = [
             title: Routing.Resolvers.TrainingDefinition
                 .adaptiveDefinitionTitleResolver,
         },
-        canDeactivate: [AdaptiveDefinitionCanDeactivate],
+        canDeactivate: [canDeactivateAdaptiveDefinition],
     },
     {
         path: ':definitionId/edit',
@@ -48,7 +48,7 @@ const routes: ValidRouterConfig<'adaptive-definition'> = [
             title: Routing.Resolvers.TrainingDefinition
                 .adaptiveDefinitionTitleResolver,
         },
-        canDeactivate: [AdaptiveDefinitionCanDeactivate],
+        canDeactivate: [canDeactivateAdaptiveDefinition],
     },
     {
         path: ':definitionId/preview',

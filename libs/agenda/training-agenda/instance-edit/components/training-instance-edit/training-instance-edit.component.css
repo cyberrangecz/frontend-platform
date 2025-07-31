@@ -22,14 +22,11 @@ mat-form-field {
 }
 
 .slide-toggle-container {
-    margin-top: 0.25rem;
+    margin-top: 0.75rem;
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
-}
-
-.slide-toggle-container--vertical {
-    flex-direction: column;
+    justify-content: flex-start;
+    gap: 1rem;
 }
 
 .slide-toggle-container mat-slide-toggle {
@@ -92,9 +89,6 @@ button.main {
         flex-direction: column;
     }
 
-    .slide-toggle-container {
-        flex-direction: column;
-    }
 
     .half-panel {
         width: 100%;

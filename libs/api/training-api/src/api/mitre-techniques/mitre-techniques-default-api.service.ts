@@ -6,6 +6,7 @@ import { MitreTechniquesListDTO } from '../../dto/mitre-techniques/mitre-techniq
 import { MitreTechniquesListMapper } from '../../mappers/mitre-techniques/mitre-techniques-list-mapper';
 import { MitreTechniquesApi } from './mitre-techniques-api.service';
 import { PortalConfig } from '@crczp/utils';
+import { withCache } from '@ngneat/cashew';
 
 /**
  * Service abstracting http communication with training definition endpoints.
@@ -36,6 +37,10 @@ export class MitreTechniquesDefaultApi extends MitreTechniquesApi {
         return this.http.get(this.mitreTechniquesEndpointUri, {
             params: params,
             responseType: 'text',
+            context: withCache({
+                storage: 'localStorage',
+                ttl: 7.2e6, // 2h
+            }),
         });
     }
 
@@ -44,8 +49,12 @@ export class MitreTechniquesDefaultApi extends MitreTechniquesApi {
      */
     getMitreTechniquesList(): Observable<MitreTechnique[]> {
         return this.http
-
-            .get<MitreTechniquesListDTO>(this.mitreTechniquesListEndpointUri)
+            .get<MitreTechniquesListDTO>(this.mitreTechniquesListEndpointUri, {
+                context: withCache({
+                    storage: 'localStorage',
+                    ttl: 7.2e6, // 2h
+                }),
+            })
             .pipe(
                 map((response) => MitreTechniquesListMapper.fromDTO(response))
             );

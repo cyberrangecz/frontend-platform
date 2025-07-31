@@ -53,7 +53,7 @@ export class VMImagesConcreteService extends VMImagesService {
                         this.isLoadingSubject$.next(false);
                     },
                     (err) => {
-                        this.errorHandler.emit(err, 'Fetching images');
+                        this.errorHandler.emitAPIError(err, 'Fetching images');
                         this.hasErrorSubject$.next(true);
                         this.isLoadingSubject$.next(false);
                     }

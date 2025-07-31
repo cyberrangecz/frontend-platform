@@ -88,7 +88,8 @@ export class RunningAdaptiveRunConcreteService extends RunningAdaptiveRunService
         return this.api.moveToPhase(this.trainingRunId, phaseId).pipe(
             tap(
                 (level) => this.setBacktrackedPhase(level),
-                (err) => this.errorHandler.emit(err, 'Moving to next level')
+                (err) =>
+                    this.errorHandler.emitAPIError(err, 'Moving to next level')
             )
         );
     }
@@ -114,7 +115,8 @@ export class RunningAdaptiveRunConcreteService extends RunningAdaptiveRunService
         return this.api.evaluateQuestionnaire(this.trainingRunId, answers).pipe(
             tap(
                 (_) => _,
-                (err) => this.errorHandler.emit(err, 'Submitting answers')
+                (err) =>
+                    this.errorHandler.emitAPIError(err, 'Submitting answers')
             ),
             switchMap(() => this.next())
         );
@@ -132,7 +134,7 @@ export class RunningAdaptiveRunConcreteService extends RunningAdaptiveRunService
         return this.api.finish(this.trainingRunId).pipe(
             tap({
                 error: (err) =>
-                    this.errorHandler.emit(err, 'Finishing training'),
+                    this.errorHandler.emitAPIError(err, 'Finishing training'),
             }),
             switchMap(() => {
                 const dialog = this.displayLoadingDialog();
@@ -167,7 +169,10 @@ export class RunningAdaptiveRunConcreteService extends RunningAdaptiveRunService
                     },
                     (err) => {
                         dialogRef.close();
-                        this.errorHandler.emit(err, 'Moving to next phase');
+                        this.errorHandler.emitAPIError(
+                            err,
+                            'Moving to next phase'
+                        );
                     }
                 )
             );
@@ -178,7 +183,11 @@ export class RunningAdaptiveRunConcreteService extends RunningAdaptiveRunService
                         this.isCurrentPhaseAnsweredSubject$.next(false);
                         this.setActivePhase(phase);
                     },
-                    (err) => this.errorHandler.emit(err, 'Moving to next phase')
+                    (err) =>
+                        this.errorHandler.emitAPIError(
+                            err,
+                            'Moving to next phase'
+                        )
                 )
             );
         }

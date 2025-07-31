@@ -1,13 +1,13 @@
-import {ChangeDetectionStrategy, Component, DestroyRef, inject, Input, OnInit} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
-import {TrainingInstance} from '@crczp/training-model';
-import {Observable} from 'rxjs';
-import {map} from 'rxjs/operators';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {AsyncPipe} from "@angular/common";
-import {MatTab, MatTabContent, MatTabGroup, MatTabLabel} from "@angular/material/tabs";
-import {CommandTimelineComponent, ProgressVisualizationsComponent, ViewEnum} from "@crczp/visualization-components";
-import {MatIcon} from "@angular/material/icon";
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, Input, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { TrainingInstance } from '@crczp/training-model';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { AsyncPipe } from '@angular/common';
+import { MatTab, MatTabContent, MatTabGroup, MatTabLabel } from '@angular/material/tabs';
+import { CommandTimelineComponent, ProgressVisualizationsComponent, ViewEnum } from '@crczp/visualization-components';
+import { MatIcon } from '@angular/material/icon';
 
 /**
  * Component displaying progress visualization
@@ -25,8 +25,8 @@ import {MatIcon} from "@angular/material/icon";
         ProgressVisualizationsComponent,
         MatTabLabel,
         MatTabContent,
-        CommandTimelineComponent
-    ]
+        CommandTimelineComponent,
+    ],
 })
 export class TrainingInstanceProgressComponent implements OnInit {
     @Input() trainingInstance$: Observable<TrainingInstance>;
@@ -37,7 +37,7 @@ export class TrainingInstanceProgressComponent implements OnInit {
     ngOnInit(): void {
         this.trainingInstance$ = this.activeRoute.data.pipe(
             takeUntilDestroyed(this.destroyRef),
-            map((data) => data[TrainingInstance.name]),
+            map((data) => data[TrainingInstance.name] || null)
         );
     }
 }

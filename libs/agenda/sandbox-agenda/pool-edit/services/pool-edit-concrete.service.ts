@@ -68,7 +68,8 @@ export class PoolEditConcreteService extends PoolEditService {
                             'success',
                             'Pool was created'
                         ),
-                    (err) => this.errorHandler.emit(err, 'Creating pool')
+                    (err) =>
+                        this.errorHandler.emitAPIError(err, 'Creating pool')
                 ),
                 switchMap(() =>
                     from(
@@ -112,7 +113,7 @@ export class PoolEditConcreteService extends PoolEditService {
                         );
                         this.onSaved();
                     },
-                    (err) => this.errorHandler.emit(err, 'Editing pool')
+                    (err) => this.errorHandler.emitAPIError(err, 'Editing pool')
                 ),
                 finalize(() =>
                     this.requestsCountSubject$.next(

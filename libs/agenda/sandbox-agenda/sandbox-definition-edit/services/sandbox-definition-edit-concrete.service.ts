@@ -38,7 +38,7 @@ export class SandboxDefinitionEditConcreteService extends SandboxDefinitionEditS
                             'Sandbox definition was successfully created'
                         ),
                     (err) =>
-                        this.errorHandler.emit(
+                        this.errorHandler.emitAPIError(
                             err,
                             'Creating sandbox definition'
                         )

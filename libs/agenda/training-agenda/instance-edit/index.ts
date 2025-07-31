@@ -1,4 +1,3 @@
-export * from './components/training-instance-edit-overview.component';
-export * from './services/can-deactivate/training-instance-can-deactivate.service';
-export * from './services/state/edit/training-instance-edit.service';
-export * from './services/state/training-definition-selector/training-definition-organizer-select.service';
+export * from './components/adaptive-training-instance-edit-overview/adaptive-training-instance-edit-overview.component';
+export * from './components/linear-training-instance-edit-overview/linear-training-instance-edit-overview.component';
+export * from './components/training-instance-can-deactivate';

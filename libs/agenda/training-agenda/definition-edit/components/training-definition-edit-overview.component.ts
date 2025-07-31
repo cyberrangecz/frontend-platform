@@ -1,35 +1,40 @@
-import {ChangeDetectionStrategy, Component, DestroyRef, HostListener, inject, OnInit} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
-import {SentinelControlItem, SentinelControlItemSignal, SentinelControlsComponent} from '@sentinel/components/controls';
-import {Level, MitreTechnique, TrainingDefinition} from '@crczp/training-model';
-import {combineLatest, Observable, switchMap} from 'rxjs';
-import {filter, map, tap} from 'rxjs/operators';
-import {TrainingDefinitionEditControls} from '../model/adapters/training-definition-edit-controls';
-import {TrainingDefinitionChangeEvent} from '../model/events/training-definition-change-event';
-import {TrainingDefinitionEditService} from '../services/state/edit/training-definition-edit.service';
-import {SentinelUserAssignComponent, SentinelUserAssignService} from '@sentinel/components/user-assign';
-import {AuthorsAssignService} from '../services/state/authors-assign/authors-assign.service';
-import {TrainingDefinitionEditConcreteService} from '../services/state/edit/training-definition-edit-concrete.service';
-import {LevelEditService} from '../services/state/level/level-edit.service';
-import {LevelEditConcreteService} from '../services/state/level/level-edit-concrete.service';
-import {MitreTechniquesService} from '../services/state/mitre-techniques/mitre-techniques.service';
-import {MitreTechniquesConcreteService} from '../services/state/mitre-techniques/mitre-techniques-concrete.service';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {OffsetPaginationEvent} from '@sentinel/common/pagination';
+import { ChangeDetectionStrategy, Component, DestroyRef, HostListener, inject, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import {
+    SentinelControlItem,
+    SentinelControlItemSignal,
+    SentinelControlsComponent
+} from '@sentinel/components/controls';
+import { Level, MitreTechnique, TrainingDefinition } from '@crczp/training-model';
+import { combineLatest, Observable, switchMap } from 'rxjs';
+import { filter, map, tap } from 'rxjs/operators';
+import { TrainingDefinitionEditControls } from '../model/adapters/training-definition-edit-controls';
+import { TrainingDefinitionChangeEvent } from '../model/events/training-definition-change-event';
+import { TrainingDefinitionEditService } from '../services/state/edit/training-definition-edit.service';
+import { SentinelUserAssignComponent, SentinelUserAssignService } from '@sentinel/components/user-assign';
+import { AuthorsAssignService } from '../services/state/authors-assign/authors-assign.service';
+import {
+    TrainingDefinitionEditConcreteService
+} from '../services/state/edit/training-definition-edit-concrete.service';
+import { LevelEditService } from '../services/state/level/level-edit.service';
+import { LevelEditConcreteService } from '../services/state/level/level-edit-concrete.service';
+import { MitreTechniquesService } from '../services/state/mitre-techniques/mitre-techniques.service';
+import { MitreTechniquesConcreteService } from '../services/state/mitre-techniques/mitre-techniques-concrete.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import {
     MatExpansionPanel,
     MatExpansionPanelContent,
     MatExpansionPanelDescription,
     MatExpansionPanelHeader,
     MatExpansionPanelTitle
-} from "@angular/material/expansion";
-import {MatIcon} from "@angular/material/icon";
-import {MatError} from "@angular/material/input";
-import {MatDivider} from "@angular/material/divider";
-import {TrainingDefinitionEditComponent} from "./definition/training-definition-edit.component";
-import {LevelOverviewComponent} from "./levels/overview/level-overview.component";
-import {AsyncPipe} from "@angular/common";
-import {TrainingDefinitionCanDeactivate} from "../services/can-deactivate/training-definition-can-deactivate.service";
+} from '@angular/material/expansion';
+import { MatIcon } from '@angular/material/icon';
+import { MatError } from '@angular/material/input';
+import { MatDivider } from '@angular/material/divider';
+import { TrainingDefinitionEditComponent } from './definition/training-definition-edit.component';
+import { LevelOverviewComponent } from './levels/overview/level-overview.component';
+import { AsyncPipe } from '@angular/common';
 
 /**
  * Main smart component of training definition edit/new page.
@@ -40,11 +45,16 @@ import {TrainingDefinitionCanDeactivate} from "../services/can-deactivate/traini
     styleUrls: ['./training-definition-edit-overview.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [
-        TrainingDefinitionCanDeactivate,
-        {provide: SentinelUserAssignService, useClass: AuthorsAssignService},
-        {provide: LevelEditService, useClass: LevelEditConcreteService},
-        {provide: TrainingDefinitionEditService, useClass: TrainingDefinitionEditConcreteService},
-        {provide: MitreTechniquesService, useClass: MitreTechniquesConcreteService},
+        { provide: SentinelUserAssignService, useClass: AuthorsAssignService },
+        { provide: LevelEditService, useClass: LevelEditConcreteService },
+        {
+            provide: TrainingDefinitionEditService,
+            useClass: TrainingDefinitionEditConcreteService,
+        },
+        {
+            provide: MitreTechniquesService,
+            useClass: MitreTechniquesConcreteService,
+        },
     ],
     imports: [
         MatIcon,
@@ -59,8 +69,8 @@ import {TrainingDefinitionCanDeactivate} from "../services/can-deactivate/traini
         LevelOverviewComponent,
         MatExpansionPanelContent,
         AsyncPipe,
-        SentinelUserAssignComponent
-    ]
+        SentinelUserAssignComponent,
+    ],
 })
 export class TrainingDefinitionEditOverviewComponent implements OnInit {
     trainingDefinition$: Observable<TrainingDefinition>;
@@ -87,19 +97,26 @@ export class TrainingDefinitionEditOverviewComponent implements OnInit {
         const levelEditService = this.levelEditService;
 
         this.trainingDefinition$ = this.editService.trainingDefinition$;
-        this.tdTitle$ = this.editService.trainingDefinition$.pipe(map((td) => td.title));
+        this.tdTitle$ = this.editService.trainingDefinition$.pipe(
+            map((td) => td.title)
+        );
         this.saveDisabled$ = this.editService.saveDisabled$;
         this.mitreTechniques$ = this.mitreTechniquesService.mitreTechniques$;
-        this.mitreTechniquesService.getAll().pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
-        const valid$: Observable<boolean> = combineLatest(
+        this.mitreTechniquesService
+            .getAll()
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe();
+        const valid$: Observable<boolean> = combineLatest([
             this.editService.definitionValid$,
             this.levelEditService.levelsValid$,
-        ).pipe(map((valid) => valid[0] && valid[1]));
+        ]).pipe(map((valid) => valid[0] && valid[1]));
         this.levelSaveDisabled$ = this.levelEditService.levelsSaveDisabled$;
         this.unsavedLevels$ = levelEditService.unsavedLevels$;
         this.activeRoute.data
             .pipe(takeUntilDestroyed(this.destroyRef))
-            .subscribe((data) => this.editService.set(data[TrainingDefinition.name]));
+            .subscribe((data) =>
+                this.editService.set(data[TrainingDefinition.name] || null)
+            );
         this.editMode$ = this.editService.editMode$.pipe(
             tap(
                 () =>
@@ -107,9 +124,9 @@ export class TrainingDefinitionEditOverviewComponent implements OnInit {
                         this.editService,
                         this.saveDisabled$,
                         this.levelSaveDisabled$,
-                        valid$,
-                    )),
-            ),
+                        valid$
+                    ))
+            )
         );
     }
 
@@ -120,12 +137,18 @@ export class TrainingDefinitionEditOverviewComponent implements OnInit {
                 filter((editMode) => editMode),
                 switchMap(() => this.editService.trainingDefinition$),
                 takeUntilDestroyed(this.destroyRef),
-                filter((trainingDefinition) => !!trainingDefinition && !!trainingDefinition.id),
+                filter(
+                    (trainingDefinition) =>
+                        !!trainingDefinition && !!trainingDefinition.id
+                )
             )
             .subscribe((trainingDefinition) =>
                 this.authorsAssignService
-                    .getAssigned(trainingDefinition.id, new OffsetPaginationEvent(0, this.defaultPaginationSize))
-                    .subscribe(),
+                    .getAssigned(
+                        trainingDefinition.id,
+                        new OffsetPaginationEvent(0, this.defaultPaginationSize)
+                    )
+                    .subscribe()
             );
     }
 
@@ -141,7 +164,11 @@ export class TrainingDefinitionEditOverviewComponent implements OnInit {
      * Determines if all changes in sub components are saved and user can navigate to different page
      */
     canDeactivate(): boolean {
-        return this.canDeactivateTDEdit && this.canDeactivateAuthors && this.unsavedLevels.length <= 0;
+        return (
+            this.canDeactivateTDEdit &&
+            this.canDeactivateAuthors &&
+            this.unsavedLevels.length <= 0
+        );
     }
 
     /**
@@ -154,7 +181,9 @@ export class TrainingDefinitionEditOverviewComponent implements OnInit {
     }
 
     onControlsAction(control: SentinelControlItemSignal): void {
-        control.result$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => (this.canDeactivateTDEdit = true));
+        control.result$
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe(() => (this.canDeactivateTDEdit = true));
     }
 
     /**

@@ -10,7 +10,7 @@ import { TrainingInstanceAssignPoolDTO } from '../../dto/training-instance/train
 import { TrainingInstanceDTO } from '../../dto/training-instance/training-instance-dto';
 import { TrainingInstanceMapper } from '../../mappers/training-instance/training-instance-mapper';
 import { TrainingRunMapper } from '../../mappers/training-run/training-run-mapper';
-import { AdaptiveInstanceApi } from './adaptive-instance-api.service';
+import { AdaptiveTrainingInstanceApi } from './adaptive-instance-api.service';
 import {
     BlobFileSaver,
     handleJsonError,
@@ -25,7 +25,7 @@ import { PortalConfig } from '@crczp/utils';
  * Default implementation of service abstracting http communication with training instance endpoints.
  */
 @Injectable()
-export class AdaptiveInstanceDefaultApi extends AdaptiveInstanceApi {
+export class AdaptiveInstanceDefaultApi extends AdaptiveTrainingInstanceApi {
     private readonly http = inject(HttpClient);
 
     private readonly trainingInstancesUriExtension = 'training-instances';

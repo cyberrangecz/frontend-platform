@@ -105,7 +105,10 @@ export class SandboxAllocationUnitsConcreteService extends SandboxAllocationUnit
                         `Sandbox ${unit.id} updated`
                     ),
                 (err) =>
-                    this.errorHandler.emit(err, `Updating sandbox ${unit.id}`)
+                    this.errorHandler.emitAPIError(
+                        err,
+                        `Updating sandbox ${unit.id}`
+                    )
             )
         );
     }
@@ -192,7 +195,7 @@ export class SandboxAllocationUnitsConcreteService extends SandboxAllocationUnit
     }
 
     private onGetAllError(err: HttpErrorResponse) {
-        this.errorHandler.emit(err, 'Fetching allocation units');
+        this.errorHandler.emitAPIError(err, 'Fetching allocation units');
         this.hasErrorSubject$.next(true);
     }
 
@@ -226,7 +229,7 @@ export class SandboxAllocationUnitsConcreteService extends SandboxAllocationUnit
                         `Cleanup request for pool ${poolId}`
                     ),
                 error: (err) =>
-                    this.errorHandler.emit(
+                    this.errorHandler.emitAPIError(
                         err,
                         `Creating cleanup request for pool ${poolId}`
                     ),

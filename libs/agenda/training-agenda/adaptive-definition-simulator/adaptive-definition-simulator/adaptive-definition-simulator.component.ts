@@ -18,7 +18,7 @@ export class AdaptiveDefinitionSimulatorComponent {
 
     handleState(event: SimulatorState) {
         if (event && event.state === SimulatorStateEventTypeEnum.ERROR_EVENT) {
-            this.errorHandler.emit(event?.error, event.message);
+            this.errorHandler.emitAPIError(event?.error, event.message);
         } else if (event) {
             this.notificationService.emit('success', event.message);
         }

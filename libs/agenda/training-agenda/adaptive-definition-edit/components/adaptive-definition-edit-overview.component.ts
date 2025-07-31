@@ -38,7 +38,6 @@ import { PhaseOverviewComponent } from './phases/overview/phase-overview.compone
 import {
     AdaptiveTrainingDefinitionEditComponent
 } from './adaptive-definition/adaptive-training-definition-edit.component';
-import { AdaptiveDefinitionCanDeactivate } from '../services/can-deactivate/adaptive-definition-can-deactivate.service';
 import { PortalConfig, providePaginationStorageService } from '@crczp/utils';
 
 /**
@@ -50,7 +49,6 @@ import { PortalConfig, providePaginationStorageService } from '@crczp/utils';
     styleUrls: ['./adaptive-definition-edit-overview.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [
-        AdaptiveDefinitionCanDeactivate,
         {
             provide: AdaptiveDefinitionEditService,
             useClass: AdaptiveDefinitionEditConcreteService,
@@ -128,7 +126,7 @@ export class AdaptiveDefinitionEditOverviewComponent implements OnInit {
         this.activeRoute.data
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe((data) =>
-                this.editService.set(data[TrainingDefinition.name])
+                this.editService.set(data[TrainingDefinition.name] || null)
             );
         this.editMode$ = this.editService.editMode$.pipe(
             tap(

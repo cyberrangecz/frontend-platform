@@ -43,7 +43,10 @@ export class MicroserviceOverviewService extends SelectablePaginatedService<Micr
                     this.resourceSubject$.next(microservices);
                 },
                 (err) => {
-                    this.errorHandler.emit(err, 'Fetching microservices');
+                    this.errorHandler.emitAPIError(
+                        err,
+                        'Fetching microservices'
+                    );
                     this.hasErrorSubject$.next(true);
                 }
             )

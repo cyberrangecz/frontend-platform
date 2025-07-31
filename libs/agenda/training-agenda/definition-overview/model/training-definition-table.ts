@@ -12,8 +12,8 @@ import {
 import { defer, of } from 'rxjs';
 import { TrainingDefinitionService } from '../services/state/training-definition.service';
 import { TrainingDefinitionRowAdapter } from './training-definition-row-adapter';
-import { DateUtils } from '@crczp/utils';
 import { Routing } from '@crczp/routing-commons';
+import { Utils } from '@crczp/utils';
 
 /**
  * Helper class transforming paginated resource to class for common table component
@@ -53,7 +53,7 @@ export class TrainingDefinitionTable extends SentinelTable<TrainingDefinition> {
         service: TrainingDefinitionService
     ): Row<TrainingDefinition> {
         const adapter = td as TrainingDefinitionRowAdapter;
-        adapter.duration = DateUtils.formatDurationFull(
+        adapter.duration = Utils.Date.formatDurationFull(
             td.estimatedDuration * 60
         );
         const row = new Row(

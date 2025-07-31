@@ -100,7 +100,7 @@ export class AuthorsAssignService extends SentinelUserAssignService {
                         this.isLoadingAssignedSubject.next(false);
                     },
                     (err) => {
-                        this.errorHandler.emit(err, 'Fetching authors');
+                        this.errorHandler.emitAPIError(err, 'Fetching authors');
                         this.isLoadingAssignedSubject.next(false);
                         this.hasErrorSubject$.next(true);
                     }
@@ -133,7 +133,10 @@ export class AuthorsAssignService extends SentinelUserAssignService {
             .pipe(
                 tap({
                     error: (err) =>
-                        this.errorHandler.emit(err, 'Fetching designers'),
+                        this.errorHandler.emitAPIError(
+                            err,
+                            'Fetching designers'
+                        ),
                 })
             );
     }
@@ -160,7 +163,7 @@ export class AuthorsAssignService extends SentinelUserAssignService {
             .pipe(
                 tap({
                     error: (err) =>
-                        this.errorHandler.emit(err, 'Updating authors'),
+                        this.errorHandler.emitAPIError(err, 'Updating authors'),
                 }),
                 switchMap(() =>
                     this.getAssigned(
@@ -179,7 +182,7 @@ export class AuthorsAssignService extends SentinelUserAssignService {
         return this.userApi.updateAuthors(resourceId, userIds, true, []).pipe(
             tap(
                 () => this.clearSelectedUsersToAssign(),
-                (err) => this.errorHandler.emit(err, 'Adding authors')
+                (err) => this.errorHandler.emitAPIError(err, 'Adding authors')
             ),
             switchMap(() =>
                 this.getAssigned(
@@ -196,7 +199,7 @@ export class AuthorsAssignService extends SentinelUserAssignService {
             tap(
                 () => this.clearSelectedAssignedUsers(),
                 (err) =>
-                    this.errorHandler.emit(
+                    this.errorHandler.emitAPIError(
                         err,
                         'Deleting authors from training definition'
                     )

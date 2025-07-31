@@ -38,7 +38,10 @@ export class TrainingRunTrainingLevelConcreteService extends TrainingRunTraining
                 tap(
                     (_) => _,
                     (err) => {
-                        this.errorHandler.emit(err, 'Access files for trainee');
+                        this.errorHandler.emitAPIError(
+                            err,
+                            'Access files for trainee'
+                        );
                     }
                 )
             );
@@ -68,7 +71,10 @@ export class TrainingRunTrainingLevelConcreteService extends TrainingRunTraining
                     () => this.isLoadingSubject$.next(false),
                     (err) => {
                         this.isLoadingSubject$.next(false);
-                        this.errorHandler.emit(err, 'Submitting answer');
+                        this.errorHandler.emitAPIError(
+                            err,
+                            'Submitting answer'
+                        );
                     }
                 )
             );
@@ -116,7 +122,7 @@ export class TrainingRunTrainingLevelConcreteService extends TrainingRunTraining
                 },
                 (err) => {
                     this.isLoadingSubject$.next(false);
-                    this.errorHandler.emit(err, 'Revealing solution');
+                    this.errorHandler.emitAPIError(err, 'Revealing solution');
                 }
             )
         );
@@ -135,7 +141,10 @@ export class TrainingRunTrainingLevelConcreteService extends TrainingRunTraining
                 },
                 (err) => {
                     this.isLoadingSubject$.next(false);
-                    this.errorHandler.emit(err, `Taking hint "${hint.title}"`);
+                    this.errorHandler.emitAPIError(
+                        err,
+                        `Taking hint "${hint.title}"`
+                    );
                 }
             )
         );

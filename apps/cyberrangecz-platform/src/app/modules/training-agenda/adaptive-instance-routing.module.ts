@@ -3,13 +3,13 @@ import { NgModule } from '@angular/core';
 import { AdaptiveInstanceOverviewComponent } from '@crczp/training-agenda/adaptive-instance-overview';
 import { TrainingApiModule } from '@crczp/training-api';
 import { SandboxApiModule } from '@crczp/sandbox-api';
-import { AdaptiveInstanceCanDeactivate } from '@crczp/training-agenda/adaptive-instance-edit';
 import { TrainingInstance } from '@crczp/training-model';
 import {
     Routing,
     TrainingResolverHelperService,
     ValidRouterConfig,
 } from '@crczp/routing-commons';
+import { canDeactivateTrainingInstance } from '@crczp/training-agenda/instance-edit';
 
 const routes: ValidRouterConfig<'adaptive-instance'> = [
     {
@@ -20,24 +20,22 @@ const routes: ValidRouterConfig<'adaptive-instance'> = [
         path: 'create',
         loadComponent: () =>
             import('@crczp/training-agenda/instance-edit').then(
-                (m) => m.TrainingInstanceEditOverviewComponent
+                (m) => m.AdaptiveTrainingInstanceEditOverviewComponent
             ),
         resolve: {
-            [TrainingInstance.name]:
-                Routing.Resolvers.TrainingInstance.adaptiveInstanceResolver,
             breadcrumb:
                 Routing.Resolvers.TrainingInstance
                     .adaptiveInstanceBreadcrumbResolver,
             title: Routing.Resolvers.TrainingInstance
                 .adaptiveInstanceTitleResolver,
         },
-        canDeactivate: [AdaptiveInstanceCanDeactivate],
+        canDeactivate: [canDeactivateTrainingInstance],
     },
     {
         path: ':instanceId/edit',
         loadComponent: () =>
             import('@crczp/training-agenda/instance-edit').then(
-                (m) => m.TrainingInstanceEditOverviewComponent
+                (m) => m.AdaptiveTrainingInstanceEditOverviewComponent
             ),
         resolve: {
             [TrainingInstance.name]:
@@ -48,7 +46,7 @@ const routes: ValidRouterConfig<'adaptive-instance'> = [
             title: Routing.Resolvers.TrainingInstance
                 .adaptiveInstanceTitleResolver,
         },
-        canDeactivate: [AdaptiveInstanceCanDeactivate],
+        canDeactivate: [canDeactivateTrainingInstance],
     },
     {
         path: ':instanceId/access-token',

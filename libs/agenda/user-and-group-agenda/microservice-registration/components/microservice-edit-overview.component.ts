@@ -6,7 +6,6 @@ import { MicroserviceEditControlsComponent } from './microservice-edit-controls/
 import { MicroserviceEditComponent } from './microservice-edit/microservice-edit.component';
 import { ErrorHandlerService, NotificationService } from '@crczp/utils';
 import { Routing } from '@crczp/routing-commons';
-import { MicroserviceEditCanDeactivate } from '../services/microservice-edit-can-deactivate.service';
 
 /**
  * Main smart component of microservice-registration state page
@@ -17,7 +16,6 @@ import { MicroserviceEditCanDeactivate } from '../services/microservice-edit-can
     styleUrls: ['./microservice-edit-overview.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [MicroserviceEditControlsComponent, MicroserviceEditComponent],
-    providers: [MicroserviceEditCanDeactivate],
 })
 export class MicroserviceEditOverviewComponent implements OnInit {
     /**
@@ -83,7 +81,7 @@ export class MicroserviceEditOverviewComponent implements OnInit {
                 this.canDeactivateForm = true;
             },
             (err) =>
-                this.errorHandler.emit(
+                this.errorHandler.emitAPIError(
                     err,
                     'Creating microservice-registration'
                 )

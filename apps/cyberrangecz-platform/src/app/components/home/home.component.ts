@@ -93,8 +93,7 @@ export class HomeComponent implements OnInit {
                 'Training Run',
                 !RoleResolver.isTrainingTrainee(this.roles),
                 'run',
-                'Training Run allows you to start a new training, return to unfinished one,' +
-                    ' or to access results of those you already finished.',
+                'Training Run lets you start or resume a training session or view the results of a completed training.',
                 'games'
             ),
         ];
@@ -106,15 +105,14 @@ export class HomeComponent implements OnInit {
                 'Sandbox Definition',
                 !RoleResolver.isSandboxDesigner(this.roles),
                 'sandbox-definition',
-                'In the sandbox definition agenda, you can manage sandbox configurations, i.e., descriptions' +
-                    ' of virtual networks and computers that can be instantiated in isolated sandboxes.',
+                'In the Sandbox Definition agenda, you can manage sandbox definitions—descriptions of virtual networks and computers that can be instantiated in isolated sandboxes.',
                 'event_note'
             ),
             new AgendaPortalLink(
                 'Training Definition',
                 !RoleResolver.isTrainingDesigner(this.roles),
                 'linear-definition',
-                'The training definition is a plot of the single-player trainings. You can manage your own and design new ones.',
+                'Training Definition is the blueprint for trainings. You can manage existing trainings and design new ones.',
                 'assignment',
                 HomeComponent.createExpandedControlButtons([
                     'adaptive-definition',
@@ -130,22 +128,21 @@ export class HomeComponent implements OnInit {
                 'Pool',
                 !RoleResolver.isSandboxOrganizer(this.roles),
                 'pool',
-                'As an instructor, you can create pools of sandboxes. ' +
-                    'These are the elementary organisational units for instantiation of sandbox definitions.',
+                'As an instructor, you can create pools of sandboxes—the basic organizational units for instantiating sandbox definitions.',
                 'subscriptions'
             ),
             new AgendaPortalLink(
                 'Images',
                 !RoleResolver.isSandboxOrganizer(this.roles),
                 'sandbox-image',
-                'In the images agenda, you can view available cloud images.',
+                'In the Images agenda, you can view available cloud images.',
                 'donut_large'
             ),
             new AgendaPortalLink(
                 'Training Instance',
                 !RoleResolver.isTrainingOrganizer(this.roles),
                 'linear-instance',
-                'You can also create training instances that are necessary if you want to organize a hands-on training session.',
+                'You can create training instances required for organizing hands-on training sessions.',
                 'event',
                 HomeComponent.createExpandedControlButtons([
                     'adaptive-instance',
@@ -162,22 +159,21 @@ export class HomeComponent implements OnInit {
                 'Groups',
                 disabled,
                 'group',
-                'In groups, you can manage groups and grant access rights to the group members.',
+                'In Groups, you can manage groups and grant access rights to their members.',
                 'group'
             ),
             new AgendaPortalLink(
                 'Users',
                 disabled,
                 'user',
-                'The users agenda serves for assigning users to existing groups.',
+                'The Users agenda lets you assign users to existing groups.',
                 'person'
             ),
             new AgendaPortalLink(
                 'Microservices',
                 disabled,
                 'microservice',
-                'You can also manage microservices that provide the CyberRangeᶜᶻ Platform`s functionality. ' +
-                    'Please make sure, you know what you are doing before making any changes to the microservices.',
+                'You can also manage the microservices that provide the CyberRangeᶜᶻ Platform’s functionality. Make sure you understand the implications before making any changes.',
                 'account_tree'
             ),
         ];

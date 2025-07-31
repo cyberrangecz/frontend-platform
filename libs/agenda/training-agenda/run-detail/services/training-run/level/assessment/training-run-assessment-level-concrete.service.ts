@@ -29,7 +29,11 @@ export class TrainingRunAssessmentLevelConcreteService extends TrainingRunAssess
             .pipe(
                 tap(
                     (_) => _,
-                    (err) => this.errorHandler.emit(err, 'Submitting answers')
+                    (err) =>
+                        this.errorHandler.emitAPIError(
+                            err,
+                            'Submitting answers'
+                        )
                 ),
                 switchMap(() => this.runningTrainingRunService.next())
             );

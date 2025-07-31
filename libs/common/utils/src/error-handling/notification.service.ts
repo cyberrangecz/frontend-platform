@@ -1,45 +1,46 @@
-import {Injectable} from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import {
-    SentinelNotification,
     SentinelNotificationResult,
     SentinelNotificationService,
-    SentinelNotificationTypeEnum,
+    SentinelNotificationTypeEnum
 } from '@sentinel/layout/notification';
-import {Observable} from 'rxjs';
-import {map} from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 
 /**
  * Global service emitting alert events.
  */
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class NotificationService {
-    constructor(private layoutNotificationService: SentinelNotificationService) {}
+    private readonly layoutNotificationService = inject(
+        SentinelNotificationService
+    );
 
-    /**
-     * Adds new alert to the queue and if its the only element in queue calls method to display it.
-     * @param type type of alert
-     * @param message alert to display to user
-     * @param action name of the action button displayed in the notification
-     * @param duration how long should the alert be displayed.
-     *  In millis, use 0 if it should be displayed until users clicks on button
-     *  Returns observable.
-     *  Value of the observable is true if the provided action was selected, false otherwise (no reaction or dismissed)
-     */
-    emit(type: 'success' | 'error' | 'warning' | 'info', message: string, action?: string): Observable<boolean> {
-        const notification: SentinelNotification = {
-            type: this.convertNotificationType(type),
-            duration: 5000,
-            title: message,
-        };
-        if (action !== undefined) {
-            notification.action = action;
-        }
+    public emit(
+        type: 'success' | 'error' | 'warning' | 'info',
+        title: string,
+        additionalInfo?: string[],
+        source?: string,
+        duration?: number,
+        action?: string
+    ) {
+        const sentinelType = this.convertNotificationType(type);
         return this.layoutNotificationService
-            .emit(notification)
-            .pipe(map((result) => result === SentinelNotificationResult.CONFIRMED));
+            .emit({
+                title,
+                type: sentinelType,
+                additionalInfo,
+                source,
+                duration,
+                action,
+            })
+            .pipe(
+                map((result) => result === SentinelNotificationResult.CONFIRMED)
+            );
     }
 
-    private convertNotificationType(type: 'success' | 'error' | 'warning' | 'info'): SentinelNotificationTypeEnum {
+    private convertNotificationType(
+        type: 'success' | 'error' | 'warning' | 'info'
+    ): SentinelNotificationTypeEnum {
         switch (type) {
             case 'warning':
                 return SentinelNotificationTypeEnum.Warning;

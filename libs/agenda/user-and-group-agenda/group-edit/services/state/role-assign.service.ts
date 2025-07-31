@@ -88,7 +88,7 @@ export class RoleAssignService {
             .pipe(
                 tap({
                     error: (err) =>
-                        this.errorHandler.emit(err, 'Fetching roles'),
+                        this.errorHandler.emitAPIError(err, 'Fetching roles'),
                 })
             );
     }
@@ -119,7 +119,7 @@ export class RoleAssignService {
                     this.isLoadingAssignedSubject$.next(false);
                 },
                 (err) => {
-                    this.errorHandler.emit(
+                    this.errorHandler.emitAPIError(
                         err,
                         'Fetching roles of group-overview'
                     );
@@ -175,7 +175,7 @@ export class RoleAssignService {
                     (result) => result === 'failed'
                 );
                 if (failedRequests.length > 1) {
-                    this.errorHandler.emit(
+                    this.errorHandler.emitAPIError(
                         undefined,
                         'Assigning some roles failed'
                     );
@@ -202,7 +202,7 @@ export class RoleAssignService {
                     (result) => result === 'failed'
                 );
                 if (failedRequests.length > 1) {
-                    this.errorHandler.emit(
+                    this.errorHandler.emitAPIError(
                         undefined,
                         'Assigning some roles failed'
                     );

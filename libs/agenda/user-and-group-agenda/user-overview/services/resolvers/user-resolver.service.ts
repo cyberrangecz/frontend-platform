@@ -1,9 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import {
-    ActivatedRouteSnapshot,
-    Router,
-    RouterStateSnapshot,
-} from '@angular/router';
+import { ActivatedRouteSnapshot, Router, RouterStateSnapshot } from '@angular/router';
 import { User } from '@crczp/user-and-group-model';
 import { UserApi } from '@crczp/user-and-group-api';
 import { EMPTY, Observable, of } from 'rxjs';
@@ -32,7 +28,10 @@ export class UserResolverService {
                     user ? of(user) : this.navigateToOverview()
                 ),
                 catchError((err) => {
-                    this.errorHandler.emit(err, 'Resolving user-overview');
+                    this.errorHandler.emitAPIError(
+                        err,
+                        'Resolving user-overview'
+                    );
                     return this.navigateToOverview();
                 })
             );

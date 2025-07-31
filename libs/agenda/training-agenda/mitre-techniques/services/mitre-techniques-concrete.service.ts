@@ -18,7 +18,10 @@ export class MitreTechniquesOverviewConcreteService extends MitreTechniquesOverv
                 },
                 (err) => {
                     this.hasErrorSubject$.next(true);
-                    this.errorHandler.emit(err, 'Fetching mitre techniques');
+                    this.errorHandler.emitAPIError(
+                        err,
+                        'Fetching mitre techniques'
+                    );
                 }
             )
         );

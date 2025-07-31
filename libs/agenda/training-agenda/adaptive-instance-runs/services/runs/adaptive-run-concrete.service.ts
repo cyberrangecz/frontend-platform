@@ -8,7 +8,7 @@ import {
 import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
 import { SandboxAllocationUnitsApi, SandboxInstanceApi } from '@crczp/sandbox-api';
 import { SandboxInstance } from '@crczp/sandbox-model';
-import { AdaptiveInstanceApi, AdaptiveRunApi } from '@crczp/training-api';
+import { AdaptiveRunApi, AdaptiveTrainingInstanceApi } from '@crczp/training-api';
 import { TrainingRun } from '@crczp/training-model';
 import { EMPTY, Observable, of } from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
@@ -21,7 +21,7 @@ import { ErrorHandlerService, NotificationService, PortalConfig } from '@crczp/u
  */
 @Injectable()
 export class AdaptiveRunConcreteService extends AdaptiveRunService {
-    private adaptiveInstanceApi = inject(AdaptiveInstanceApi);
+    private adaptiveInstanceApi = inject(AdaptiveTrainingInstanceApi);
     private adaptiveRunApi = inject(AdaptiveRunApi);
     private sandboxApi = inject(SandboxInstanceApi);
     private sauApi = inject(SandboxAllocationUnitsApi);
@@ -134,7 +134,10 @@ export class AdaptiveRunConcreteService extends AdaptiveRunService {
                         'Deleting of sandbox instance started'
                     ),
                 (err) =>
-                    this.errorHandler.emit(err, 'Deleting sandbox instance')
+                    this.errorHandler.emitAPIError(
+                        err,
+                        'Deleting sandbox instance'
+                    )
             )
         );
     }
@@ -147,7 +150,8 @@ export class AdaptiveRunConcreteService extends AdaptiveRunService {
                         'success',
                         'Deleting of training run started'
                     ),
-                (err) => this.errorHandler.emit(err, 'Deleting training run')
+                (err) =>
+                    this.errorHandler.emitAPIError(err, 'Deleting training run')
             )
         );
     }

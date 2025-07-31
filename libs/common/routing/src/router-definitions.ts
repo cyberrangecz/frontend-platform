@@ -99,7 +99,6 @@ export const DEFINED_ROUTES = {
                 },
             },
         },
-        ['mitre-techniques']: {},
     },
 
     ['mitre-techniques']: {},

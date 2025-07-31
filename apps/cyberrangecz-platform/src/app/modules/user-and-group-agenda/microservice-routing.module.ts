@@ -1,9 +1,9 @@
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { MicroserviceOverviewComponent } from '@crczp/user-and-group-agenda/microservice-overview';
-import { MicroserviceEditCanDeactivate } from '@crczp/user-and-group-agenda/microservice-registration';
 import { UserAndGroupApiModule } from '@crczp/user-and-group-api';
 import { ValidRouterConfig } from '@crczp/routing-commons';
+import { canDeactivateMicroservice } from '@crczp/user-and-group-agenda/microservice-registration';
 
 const routes: ValidRouterConfig<'microservice'> = [
     {
@@ -20,7 +20,7 @@ const routes: ValidRouterConfig<'microservice'> = [
             breadcrumb: 'Registration',
             title: 'Microservice Registration',
         },
-        canDeactivate: [MicroserviceEditCanDeactivate],
+        canDeactivate: [canDeactivateMicroservice],
     },
 ];
 

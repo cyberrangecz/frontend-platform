@@ -134,7 +134,10 @@ export class TrainingRunConcreteService extends TrainingRunService {
                         'Deleting of sandbox instance started'
                     ),
                 (err) =>
-                    this.errorHandler.emit(err, 'Deleting sandbox instance')
+                    this.errorHandler.emitAPIError(
+                        err,
+                        'Deleting sandbox instance'
+                    )
             )
         );
     }
@@ -147,7 +150,8 @@ export class TrainingRunConcreteService extends TrainingRunService {
                         'success',
                         'Deleting of training run started'
                     ),
-                (err) => this.errorHandler.emit(err, 'Deleting training run')
+                (err) =>
+                    this.errorHandler.emitAPIError(err, 'Deleting training run')
             )
         );
     }

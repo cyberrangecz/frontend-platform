@@ -28,7 +28,10 @@ export class AdaptiveRunAccessPhaseConcreteService extends AdaptiveRunAccessPhas
                 tap(
                     (_) => _,
                     (err) => {
-                        this.errorHandler.emit(err, 'Access files for trainee');
+                        this.errorHandler.emitAPIError(
+                            err,
+                            'Access files for trainee'
+                        );
                     }
                 )
             );
@@ -54,7 +57,10 @@ export class AdaptiveRunAccessPhaseConcreteService extends AdaptiveRunAccessPhas
                     () => this.isLoadingSubject$.next(false),
                     (err) => {
                         this.isLoadingSubject$.next(false);
-                        this.errorHandler.emit(err, 'Submitting passkey');
+                        this.errorHandler.emitAPIError(
+                            err,
+                            'Submitting passkey'
+                        );
                     }
                 )
             );

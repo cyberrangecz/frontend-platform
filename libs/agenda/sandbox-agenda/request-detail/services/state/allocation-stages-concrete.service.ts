@@ -37,7 +37,7 @@ export class AllocationStagesConcreteService extends RequestStagesService {
     }
 
     protected onGetAllError(err: HttpErrorResponse): void {
-        this.errorHandler.emit(err, 'Fetching stages');
+        this.errorHandler.emitAPIError(err, 'Fetching stages');
         this.hasErrorSubject$.next(true);
     }
 }

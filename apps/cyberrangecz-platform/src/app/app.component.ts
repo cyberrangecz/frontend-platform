@@ -1,15 +1,15 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { SentinelAuthService, User } from '@sentinel/auth';
 import { AgendaContainer } from '@sentinel/layout';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { NavConfigFactory } from './utils/nav-config-factory';
 import { PortalDynamicEnvironment } from './portal-dynamic-environment';
 import packagejson from '../../../../package.json';
 import { LoadingService } from './services/loading.service';
 import { ValidPath } from '@crczp/routing-commons';
-import { NavBuilder } from '@crczp/utils';
+import { Utils } from '@crczp/utils';
 
 /**
  * Main component serving as wrapper for layout and router outlet
@@ -21,32 +21,30 @@ import { NavBuilder } from '@crczp/utils';
     standalone: false,
 })
 export class AppComponent implements OnInit, AfterViewInit {
-    isLoading$: Observable<boolean>;
+    isLoading$ = new BehaviorSubject(false);
     activeUser$: Observable<User | undefined>;
     title$: Observable<string>;
     subtitle$: Observable<string>;
     agendaContainers$: Observable<AgendaContainer[]>;
     notificationRoute: ValidPath = 'notifications';
-    version: string = '';
+    version = '';
 
-    constructor(
-        private router: Router,
-        private activatedRoute: ActivatedRoute,
-        private loadingService: LoadingService,
-        private authService: SentinelAuthService
-    ) {}
+    private readonly router = inject(Router);
+    private readonly activatedRoute = inject(ActivatedRoute);
+    private readonly loadingService = inject(LoadingService);
+    private readonly authService = inject(SentinelAuthService);
 
     ngOnInit(): void {
         this.activeUser$ = this.authService.activeUser$;
         this.title$ = this.getTitleFromRouter();
         this.subtitle$ = this.getSubtitleFromRouter();
         this.agendaContainers$ = this.authService.activeUser$.pipe(
-            filter((user) => user !== null && user !== undefined),
+            filter((user) => user != null),
             map((user) =>
-                NavBuilder.buildNav(NavConfigFactory.buildNavConfig(user))
+                Utils.NavBar.buildNav(NavConfigFactory.buildNavConfig(user))
             )
         );
-        this.isLoading$ = this.loadingService.isLoading$; // <-- causes angular error
+
         this.version =
             PortalDynamicEnvironment.getConfig().version || packagejson.version;
     }

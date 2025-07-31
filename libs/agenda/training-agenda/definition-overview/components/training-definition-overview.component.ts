@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, Input, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import { TrainingDefinition, TrainingDefinitionStateEnum } from '@crczp/training-model';
 import {
@@ -36,9 +36,9 @@ import { PaginationStorageService, providePaginationStorageService } from '@crcz
         AsyncPipe,
         SentinelControlsComponent,
         SentinelTableComponent,
-        TableStateCellComponent,
         TableDateCellComponent,
         SentinelRowDirective,
+        TableStateCellComponent,
     ],
     providers: [
         FileUploadProgressService,
@@ -50,7 +50,6 @@ import { PaginationStorageService, providePaginationStorageService } from '@crcz
     ],
 })
 export class TrainingDefinitionOverviewComponent implements OnInit {
-    @Input() paginationId = 'training-definition-overview';
     readonly INIT_SORT_NAME = 'lastEdited';
     readonly INIT_SORT_DIR = 'desc';
     trainingDefinitions$: Observable<SentinelTable<TrainingDefinition>>;

@@ -76,7 +76,10 @@ export class OrganizersAssignService extends SentinelUserAssignService {
                         this.isLoadingAssignedSubject.next(false);
                     },
                     (err) => {
-                        this.errorHandler.emit(err, 'Fetching organizers');
+                        this.errorHandler.emitAPIError(
+                            err,
+                            'Fetching organizers'
+                        );
                         this.isLoadingAssignedSubject.next(false);
                         this.hasErrorSubject$.next(true);
                     }
@@ -109,7 +112,10 @@ export class OrganizersAssignService extends SentinelUserAssignService {
             .pipe(
                 tap({
                     error: (err) =>
-                        this.errorHandler.emit(err, 'Fetching organizers'),
+                        this.errorHandler.emitAPIError(
+                            err,
+                            'Fetching organizers'
+                        ),
                 })
             );
     }
@@ -153,7 +159,10 @@ export class OrganizersAssignService extends SentinelUserAssignService {
             .pipe(
                 tap({
                     error: (err) =>
-                        this.errorHandler.emit(err, 'Updating organizers'),
+                        this.errorHandler.emitAPIError(
+                            err,
+                            'Updating organizers'
+                        ),
                 }),
                 switchMap(() =>
                     this.getAssigned(
@@ -182,7 +191,7 @@ export class OrganizersAssignService extends SentinelUserAssignService {
                 tap(
                     () => this.clearSelectedUsersToAssign(),
                     (err) =>
-                        this.errorHandler.emit(
+                        this.errorHandler.emitAPIError(
                             err,
                             'Assigning organizers to training instance'
                         )
@@ -207,7 +216,7 @@ export class OrganizersAssignService extends SentinelUserAssignService {
                 tap(
                     () => this.clearSelectedAssignedUsers(),
                     (err) =>
-                        this.errorHandler.emit(
+                        this.errorHandler.emitAPIError(
                             err,
                             'Deleting organizers from training instance'
                         )

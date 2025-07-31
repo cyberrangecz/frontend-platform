@@ -7,13 +7,10 @@ import {
     SentinelControlsComponent
 } from '@sentinel/components/controls';
 import { TrainingDefinitionInfo, TrainingInstance } from '@crczp/training-model';
-import { combineLatestWith, Observable, switchMap } from 'rxjs';
+import { BehaviorSubject, combineLatestWith, Observable, switchMap } from 'rxjs';
 import { filter, map, take } from 'rxjs/operators';
 import { TrainingInstanceEditControls } from '../model/adapter/training-instance-edit-controls';
 import { TrainingInstanceChangeEvent } from '../model/events/training-instance-change-event';
-import { TrainingInstanceEditService } from '../services/state/edit/training-instance-edit.service';
-import { TrainingInstanceEditConcreteService } from '../services/state/edit/training-instance-edit-concrete.service';
-import { OrganizersAssignService } from '../services/state/organizers-assign/organizers-assign.service';
 import { Pool, SandboxDefinition } from '@crczp/sandbox-model';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { SentinelUserAssignComponent, SentinelUserAssignService } from '@sentinel/components/user-assign';
@@ -24,13 +21,12 @@ import {
     MatExpansionPanelHeader,
     MatExpansionPanelTitle
 } from '@angular/material/expansion';
-import { MatDivider } from '@angular/material/divider';
-import { TrainingInstanceEditComponent } from './training-instance-edit/training-instance-edit.component';
+import { AsyncPipe } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { MatError } from '@angular/material/input';
-import { AsyncPipe } from '@angular/common';
-import { PortalConfig } from '@crczp/utils';
-import { TrainingInstanceCanDeactivate } from '../services/can-deactivate/training-instance-can-deactivate.service';
+import { TrainingInstanceEditComponent } from './training-instance-edit/training-instance-edit.component';
+import { MatDivider } from '@angular/material/divider';
+import { CommonTrainingInstanceEditService } from '../services/state/edit/common-training-instance-edit.service';
 
 /**
  * Main component of training instance edit/create page. Serves mainly as a smart component wrapper
@@ -40,55 +36,46 @@ import { TrainingInstanceCanDeactivate } from '../services/can-deactivate/traini
     templateUrl: './training-instance-edit-overview.component.html',
     styleUrls: ['./training-instance-edit-overview.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    providers: [
-        {
-            provide: TrainingInstanceEditService,
-            useClass: TrainingInstanceEditConcreteService,
-        },
-        {
-            provide: SentinelUserAssignService,
-            useClass: OrganizersAssignService,
-        },
-        TrainingInstanceCanDeactivate,
-    ],
     imports: [
-        MatExpansionPanel,
-        MatExpansionPanelHeader,
-        MatExpansionPanelTitle,
+        SentinelControlsComponent,
+        MatIcon,
         MatExpansionPanelDescription,
+        MatExpansionPanelTitle,
+        MatExpansionPanelHeader,
+        MatExpansionPanel,
+        MatExpansionPanelContent,
         MatIcon,
         MatError,
-        MatExpansionPanelContent,
-        SentinelControlsComponent,
-        MatDivider,
-        TrainingInstanceEditComponent,
         AsyncPipe,
+        TrainingInstanceEditComponent,
+        MatDivider,
         SentinelUserAssignComponent,
     ],
 })
 export class TrainingInstanceEditOverviewComponent implements OnInit {
     readonly PAGE_SIZE: number = 999;
-    trainingInstance$: Observable<TrainingInstance>;
-    trainingDefinitions$: Observable<TrainingDefinitionInfo[]>;
-    pools$: Observable<Pool[]>;
-    sandboxDefinitions$: Observable<SandboxDefinition[]>;
-    hasStarted$: Observable<boolean>;
-    editMode$: Observable<boolean>;
-    tiTitle$: Observable<string>;
-    instanceValid$: Observable<boolean>;
-    canDeactivateOrganizers = true;
-    canDeactivateTIEdit = true;
-    defaultPaginationSize: number;
-    controls: SentinelControlItem[];
-    destroyRef = inject(DestroyRef);
-    private activeRoute = inject(ActivatedRoute);
-    private editService = inject(TrainingInstanceEditService);
-    private organizersAssignService = inject(SentinelUserAssignService);
+    protected tiTitle$: Observable<string>;
+    protected editMode$: Observable<boolean>;
+    protected controls: SentinelControlItem[];
+    protected trainingInstance$: Observable<TrainingInstance>;
+    protected trainingDefinitions$: Observable<TrainingDefinitionInfo[]>;
+    protected pools$: Observable<Pool[]>;
+    protected sandboxDefinitions$: Observable<SandboxDefinition[]>;
+    protected hasStarted$: Observable<boolean>;
+    protected readonly canDeactivateOrganizers = new BehaviorSubject<boolean>(
+        true
+    );
+    protected readonly canDeactivateTIEdit = new BehaviorSubject<boolean>(true);
+    private readonly instanceValid$: Observable<boolean>;
+    private defaultPaginationSize: number;
+    private destroyRef = inject(DestroyRef);
+    private readonly activeRoute = inject(ActivatedRoute);
+    private readonly editService = inject(CommonTrainingInstanceEditService);
+    private readonly organizersAssignService = inject(
+        SentinelUserAssignService
+    );
 
     constructor() {
-        const settings = inject(PortalConfig);
-
-        this.defaultPaginationSize = settings.defaultPageSize;
         this.trainingInstance$ = this.editService.trainingInstance$;
         this.hasStarted$ = this.editService.hasStarted$;
         this.instanceValid$ = this.editService.instanceValid$;
@@ -101,7 +88,7 @@ export class TrainingInstanceEditOverviewComponent implements OnInit {
         this.activeRoute.data
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe((data) =>
-                this.editService.set(data[TrainingInstance.name])
+                this.editService.set(data[TrainingInstance.name] || null)
             );
 
         this.trainingDefinitions$ =
@@ -157,20 +144,14 @@ export class TrainingInstanceEditOverviewComponent implements OnInit {
      */
     @HostListener('window:beforeunload')
     canRefreshOrLeave(): boolean {
-        return this.canDeactivateTIEdit && this.canDeactivateOrganizers;
+        return (
+            this.canDeactivateTIEdit.value && this.canDeactivateOrganizers.value
+        );
     }
 
     onControlsAction(control: SentinelControlItemSignal): void {
-        this.canDeactivateTIEdit = true;
+        this.canDeactivateTIEdit.next(true);
         control.result$.pipe(take(1)).subscribe();
-    }
-
-    /**
-     * Determines if all changes in sub components are saved and user can navigate to different component
-     * @returns true if saved all his changes, false otherwise
-     */
-    canDeactivate(): boolean {
-        return this.canDeactivateTIEdit && this.canDeactivateOrganizers;
     }
 
     /**
@@ -178,7 +159,7 @@ export class TrainingInstanceEditOverviewComponent implements OnInit {
      * @param hasUnsavedChanges true if organizers component has unsaved changes, false otherwise
      */
     onOrganizersChanged(hasUnsavedChanges: boolean): void {
-        this.canDeactivateOrganizers = !hasUnsavedChanges;
+        this.canDeactivateOrganizers.next(!hasUnsavedChanges);
     }
 
     /**
@@ -187,7 +168,7 @@ export class TrainingInstanceEditOverviewComponent implements OnInit {
      */
     onTrainingInstanceChanged($event: TrainingInstanceChangeEvent): void {
         this.editService.change($event);
-        this.canDeactivateTIEdit = false;
+        this.canDeactivateTIEdit.next(false);
     }
 
     isLocalEnvironmentAllowed(): boolean {

@@ -15,8 +15,8 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatInputModule } from '@angular/material/input';
-import { DateUtils } from '@crczp/utils';
 import { MatButtonModule } from '@angular/material/button';
+import { Utils } from '@crczp/utils';
 
 @Component({
     selector: 'crczp-viz-hurdling-settings',
@@ -52,7 +52,7 @@ export class HurdlingConfigComponent implements OnChanges {
     public restrictToVisibleTrainees = false;
 
     formatTime(seconds: number) {
-        return DateUtils.formatDurationSimple(seconds);
+        return Utils.Date.formatDurationSimple(seconds);
     }
 
     restrictTrainees() {

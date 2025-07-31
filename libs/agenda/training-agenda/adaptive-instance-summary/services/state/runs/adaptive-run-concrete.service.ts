@@ -1,9 +1,6 @@
 import { inject, Injectable } from '@angular/core';
-import {
-    OffsetPaginationEvent,
-    PaginatedResource,
-} from '@sentinel/common/pagination';
-import { AdaptiveInstanceApi } from '@crczp/training-api';
+import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
+import { AdaptiveTrainingInstanceApi } from '@crczp/training-api';
 import { TrainingRun } from '@crczp/training-model';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
@@ -16,7 +13,7 @@ import { PortalConfig } from '@crczp/utils';
  */
 @Injectable()
 export class AdaptiveRunConcreteService extends AdaptiveRunService {
-    private adaptiveInstanceApi = inject(AdaptiveInstanceApi);
+    private adaptiveInstanceApi = inject(AdaptiveTrainingInstanceApi);
 
     constructor() {
         super(inject(PortalConfig).defaultPageSize);

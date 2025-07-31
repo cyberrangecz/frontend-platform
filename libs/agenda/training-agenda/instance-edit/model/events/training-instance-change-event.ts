@@ -1,4 +1,4 @@
-import {TrainingInstance} from '@crczp/training-model';
+import { TrainingInstance } from '@crczp/training-model';
 
 /**
  * Event representing training instance change (edit)

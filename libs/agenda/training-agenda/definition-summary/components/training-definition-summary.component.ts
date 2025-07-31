@@ -1,12 +1,17 @@
-import {ChangeDetectionStrategy, Component, inject, OnInit} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
-import {TrainingDefinition} from '@crczp/training-model';
-import {Observable} from 'rxjs';
-import {map} from 'rxjs/operators';
-import {AsyncPipe} from "@angular/common";
-import {MatCard, MatCardContent} from "@angular/material/card";
-import {TrainingDefinitionInfoComponent} from "./info/training-definition-info.component";
-import {TrainingDefinitionLevelsDetailComponent} from "./levels/training-definition-levels.component";
+import {
+    ChangeDetectionStrategy,
+    Component,
+    inject,
+    OnInit,
+} from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { TrainingDefinition } from '@crczp/training-model';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { AsyncPipe } from '@angular/common';
+import { MatCard, MatCardContent } from '@angular/material/card';
+import { TrainingDefinitionInfoComponent } from './info/training-definition-info.component';
+import { TrainingDefinitionLevelsDetailComponent } from './levels/training-definition-levels.component';
 
 @Component({
     selector: 'crczp-training-definition-summary',
@@ -18,8 +23,8 @@ import {TrainingDefinitionLevelsDetailComponent} from "./levels/training-definit
         MatCard,
         MatCardContent,
         TrainingDefinitionInfoComponent,
-        TrainingDefinitionLevelsDetailComponent
-    ]
+        TrainingDefinitionLevelsDetailComponent,
+    ],
 })
 export class TrainingDefinitionSummaryComponent implements OnInit {
     trainingDefinition$: Observable<TrainingDefinition>;
@@ -27,7 +32,7 @@ export class TrainingDefinitionSummaryComponent implements OnInit {
 
     ngOnInit(): void {
         this.trainingDefinition$ = this.activeRoute.data.pipe(
-            map((data) => data[TrainingDefinition.name]),
+            map((data) => data[TrainingDefinition.name] || null)
         );
     }
 }

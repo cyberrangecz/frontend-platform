@@ -16,7 +16,10 @@ export class MitreTechniquesConcreteService extends MitreTechniquesService {
             tap(
                 (res) => this.mitreTechniquesSubject$.next(res),
                 (err) =>
-                    this.errorHandler.emit(err, 'Loading MITRE techniques list')
+                    this.errorHandler.emitAPIError(
+                        err,
+                        'Loading MITRE techniques list'
+                    )
             )
         );
     }

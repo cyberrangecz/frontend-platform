@@ -69,7 +69,7 @@ export class CheatingDetectionOverviewComponent implements OnInit {
     ngOnInit(): void {
         this.trainingInstance$ = this.activeRoute.data.pipe(
             takeUntilDestroyed(this.destroyRef),
-            map((data) => data[TrainingInstance.name])
+            map((data) => data[TrainingInstance.name] || null)
         );
         this.trainingInstance$.subscribe((instance) => {
             this.trainingInstanceId = instance.id;

@@ -140,7 +140,11 @@ export class AllocationRequestsConcreteService extends AllocationRequestsService
                         'success',
                         `Created cleanup request`
                     ),
-                (err) => this.errorHandler.emit(err, 'Creating cleanup request')
+                (err) =>
+                    this.errorHandler.emitAPIError(
+                        err,
+                        'Creating cleanup request'
+                    )
             ),
             switchMap(() => this.getAll(this.lastPoolId, this.lastPagination))
         );
@@ -155,7 +159,7 @@ export class AllocationRequestsConcreteService extends AllocationRequestsService
                         `Allocation request ${request.id} cancelled`
                     ),
                 (err) =>
-                    this.errorHandler.emit(
+                    this.errorHandler.emitAPIError(
                         err,
                         'Cancelling allocation request ' + request.id
                     )
@@ -165,7 +169,7 @@ export class AllocationRequestsConcreteService extends AllocationRequestsService
     }
 
     private onGetAllError(err: HttpErrorResponse) {
-        this.errorHandler.emit(err, 'Fetching allocation requests');
+        this.errorHandler.emitAPIError(err, 'Fetching allocation requests');
         this.hasErrorSubject$.next(true);
     }
 }

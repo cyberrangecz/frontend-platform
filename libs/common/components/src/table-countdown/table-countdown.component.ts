@@ -10,7 +10,7 @@ import {
 import { timer } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatIcon } from '@angular/material/icon';
-import { DateUtils } from '@crczp/utils';
+import { Utils } from '@crczp/utils';
 
 @Component({
     selector: 'crczp-table-countdown',
@@ -46,7 +46,7 @@ export class TableCountdownComponent implements OnInit {
     }
 
     private updateTime() {
-        const timeToExpire = DateUtils.formatDurationSimple(
+        const timeToExpire = Utils.Date.formatDurationSimple(
             this.endTime.getTime()
         );
         if (timeToExpire.length === 0) {

@@ -48,7 +48,10 @@ export class SandboxDefinitionOverviewConcreteService extends SandboxDefinitionO
                     this.resourceSubject$.next(paginatedResource);
                 },
                 (err) => {
-                    this.errorHandler.emit(err, 'Fetching sandbox definitions');
+                    this.errorHandler.emitAPIError(
+                        err,
+                        'Fetching sandbox definitions'
+                    );
                     this.hasErrorSubject$.next(true);
                 }
             )
@@ -117,7 +120,10 @@ export class SandboxDefinitionOverviewConcreteService extends SandboxDefinitionO
                         'Sandbox definition was successfully deleted'
                     ),
                 (err) =>
-                    this.errorHandler.emit(err, 'Removing sandbox definition')
+                    this.errorHandler.emitAPIError(
+                        err,
+                        'Removing sandbox definition'
+                    )
             ),
             switchMap(() => this.getAll(this.lastPagination))
         );

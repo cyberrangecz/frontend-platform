@@ -3,13 +3,13 @@ import { RouterModule } from '@angular/router';
 import { TrainingDefinitionOverviewComponent } from '@crczp/training-agenda/definition-overview';
 import { SandboxApiModule } from '@crczp/sandbox-api';
 import { TrainingApiModule } from '@crczp/training-api';
-import { TrainingDefinitionCanDeactivate } from '@crczp/training-agenda/definition-edit';
 import { TrainingDefinition } from '@crczp/training-model';
 import {
     Routing,
     TrainingResolverHelperService,
     ValidRouterConfig,
 } from '@crczp/routing-commons';
+import { canDeactivateTrainingDefinition } from '@crczp/training-agenda/definition-edit';
 
 const routes: ValidRouterConfig<'linear-definition'> = [
     {
@@ -22,7 +22,7 @@ const routes: ValidRouterConfig<'linear-definition'> = [
             import('@crczp/training-agenda/definition-edit').then(
                 (m) => m.TrainingDefinitionEditOverviewComponent
             ),
-        canDeactivate: [TrainingDefinitionCanDeactivate],
+        canDeactivate: [canDeactivateTrainingDefinition],
     },
     {
         path: ':definitionId/edit',
@@ -30,7 +30,7 @@ const routes: ValidRouterConfig<'linear-definition'> = [
             import('@crczp/training-agenda/definition-edit').then(
                 (m) => m.TrainingDefinitionEditOverviewComponent
             ),
-        canDeactivate: [TrainingDefinitionCanDeactivate],
+        canDeactivate: [canDeactivateTrainingDefinition],
     },
     {
         path: ':definitionId/preview',

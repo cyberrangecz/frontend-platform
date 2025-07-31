@@ -5,7 +5,7 @@ import { defer, of } from 'rxjs';
 import { AdaptiveRunService } from '../services/runs/adaptive-run.service';
 import { AdaptiveRunRowAdapter } from './adaptive-run-row-adapter';
 import { DatePipe } from '@angular/common';
-import { DateUtils } from '@crczp/utils';
+import { Utils } from '@crczp/utils';
 
 /**
  * Helper class transforming paginated resource to class for common table component
@@ -54,7 +54,7 @@ export class AdaptiveRunTable extends SentinelTable<AdaptiveRunRowAdapter> {
         adapter.startTimeFormatted = `${datePipe.transform(adapter.startTime)}`;
         if (adapter.state === TrainingRunStateEnum.FINISHED) {
             adapter.endTimeFormatted = `${datePipe.transform(adapter.endTime)}`;
-            adapter.duration = DateUtils.timeBetweenDatesSimple(
+            adapter.duration = Utils.Date.timeBetweenDatesSimple(
                 adapter.startTime,
                 adapter.endTime
             );

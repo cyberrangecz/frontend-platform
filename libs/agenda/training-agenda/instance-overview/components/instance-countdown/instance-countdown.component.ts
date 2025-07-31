@@ -11,7 +11,7 @@ import { TrainingInstance } from '@crczp/training-model';
 import { timer } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatIcon } from '@angular/material/icon';
-import { DateUtils } from '@crczp/utils';
+import { Utils } from '@crczp/utils';
 
 @Component({
     selector: 'crczp-instance-countdown',
@@ -47,7 +47,7 @@ export class InstanceCountdownComponent implements OnInit {
     }
 
     private updateTime() {
-        const timeToExpire = DateUtils.formatDurationSimple(
+        const timeToExpire = Utils.Date.formatDurationSimple(
             this.trainingInstance.endTime.getTime()
         );
         if (timeToExpire.length === 0) {

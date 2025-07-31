@@ -3,27 +3,17 @@ import { MatDialog } from '@angular/material/dialog';
 import {
     SentinelConfirmationDialogComponent,
     SentinelConfirmationDialogConfig,
-    SentinelDialogResultEnum,
+    SentinelDialogResultEnum
 } from '@sentinel/components/dialogs';
-import {
-    OffsetPaginationEvent,
-    PaginatedResource,
-} from '@sentinel/common/pagination';
+import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
 import { UserApi } from '@crczp/user-and-group-api';
 import { User } from '@crczp/user-and-group-model';
 import { EMPTY, Observable } from 'rxjs';
 import { map, switchMap, take, tap } from 'rxjs/operators';
-import {
-    SelectablePaginatedService,
-    UserFilter,
-} from '@crczp/user-and-group-agenda/internal';
+import { SelectablePaginatedService, UserFilter } from '@crczp/user-and-group-agenda/internal';
 import { UsersUploadDialogComponent } from '../components/upload-dialog/users-upload-dialog.component';
 import { FileUploadProgressService } from './file-upload/file-upload-progress.service';
-import {
-    ErrorHandlerService,
-    NotificationService,
-    PortalConfig,
-} from '@crczp/utils';
+import { ErrorHandlerService, NotificationService, PortalConfig } from '@crczp/utils';
 
 /**
  * Basic implementation of a layer between a component and an API service.
@@ -65,7 +55,7 @@ export class UserOverviewService extends SelectablePaginatedService<User> {
                     this.resourceSubject$.next(users);
                 },
                 (err) => {
-                    this.errorHandler.emit(err, 'Fetching users');
+                    this.errorHandler.emitAPIError(err, 'Fetching users');
                     this.hasErrorSubject$.next(true);
                 }
             )
@@ -82,7 +72,7 @@ export class UserOverviewService extends SelectablePaginatedService<User> {
             tap(
                 (_) => _,
                 (err) => {
-                    this.errorHandler.emit(
+                    this.errorHandler.emitAPIError(
                         err,
                         `Fetching user with id: ${userId}`
                     );
@@ -120,7 +110,10 @@ export class UserOverviewService extends SelectablePaginatedService<User> {
         return this.api.getLocalOIDCUsers().pipe(
             tap({
                 error: (err) =>
-                    this.errorHandler.emit(err, 'Downloading OIDC users info'),
+                    this.errorHandler.emitAPIError(
+                        err,
+                        'Downloading OIDC users info'
+                    ),
             })
         );
     }
@@ -145,7 +138,7 @@ export class UserOverviewService extends SelectablePaginatedService<User> {
                 },
                 (err) => {
                     this.fileUploadProgressService.finish();
-                    this.errorHandler.emit(err, 'Importing users');
+                    this.errorHandler.emitAPIError(err, 'Importing users');
                 }
             ),
             switchMap(() => this.getAll(this.lastPagination, this.lastFilter))
@@ -188,7 +181,7 @@ export class UserOverviewService extends SelectablePaginatedService<User> {
                     );
                 },
                 (err) => {
-                    this.errorHandler.emit(err, 'Deleting user');
+                    this.errorHandler.emitAPIError(err, 'Deleting user');
                     this.hasErrorSubject$.next(true);
                 }
             ),

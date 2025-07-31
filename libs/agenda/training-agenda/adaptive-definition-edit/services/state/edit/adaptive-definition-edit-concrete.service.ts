@@ -108,7 +108,7 @@ export class AdaptiveDefinitionEditConcreteService extends AdaptiveDefinitionEdi
                         this.onSaved();
                     },
                     (err) =>
-                        this.errorHandler.emit(
+                        this.errorHandler.emitAPIError(
                             err,
                             'Editing training definition'
                         )
@@ -129,7 +129,7 @@ export class AdaptiveDefinitionEditConcreteService extends AdaptiveDefinitionEdi
                         this.onSaved();
                     },
                     (err) =>
-                        this.errorHandler.emit(
+                        this.errorHandler.emitAPIError(
                             err,
                             'Creating training definition'
                         )

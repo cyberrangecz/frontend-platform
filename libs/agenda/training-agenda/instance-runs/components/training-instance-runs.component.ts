@@ -42,7 +42,7 @@ export class TrainingInstanceRunsComponent implements OnInit {
 
     ngOnInit(): void {
         this.trainingInstance$ = this.activeRoute.data.pipe(
-            map((data) => data[TrainingInstance.name]),
+            map((data) => data[TrainingInstance.name] || null),
             tap((ti) => {
                 this.trainingInstance = ti;
             })

@@ -56,7 +56,7 @@ export class GroupOverviewConcreteService extends GroupOverviewService {
                     this.resourceSubject$.next(groups);
                 },
                 (err) => {
-                    this.errorHandler.emit(err, 'Fetching groups');
+                    this.errorHandler.emitAPIError(err, 'Fetching groups');
                     this.hasErrorSubject$.next(true);
                 }
             )
@@ -130,7 +130,7 @@ export class GroupOverviewConcreteService extends GroupOverviewService {
                     this.alertService.emit('success', 'Groups were deleted');
                 },
                 (err) => {
-                    this.errorHandler.emit(err, 'Deleting groups');
+                    this.errorHandler.emitAPIError(err, 'Deleting groups');
                     this.hasErrorSubject$.next(true);
                 }
             ),

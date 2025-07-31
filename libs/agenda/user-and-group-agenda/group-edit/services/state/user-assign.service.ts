@@ -99,7 +99,7 @@ export class UserAssignService {
             .pipe(
                 tap({
                     error: (err) =>
-                        this.errorHandler.emit(err, 'Fetching users'),
+                        this.errorHandler.emitAPIError(err, 'Fetching users'),
                 })
             );
     }
@@ -119,7 +119,7 @@ export class UserAssignService {
             .pipe(
                 tap({
                     error: (err) =>
-                        this.errorHandler.emit(err, 'Fetching groups'),
+                        this.errorHandler.emitAPIError(err, 'Fetching groups'),
                 })
             );
     }
@@ -150,7 +150,7 @@ export class UserAssignService {
                         this.isLoadingAssignedSubject$.next(false);
                     },
                     (err) => {
-                        this.errorHandler.emit(err, 'Fetching users');
+                        this.errorHandler.emitAPIError(err, 'Fetching users');
                         this.isLoadingAssignedSubject$.next(false);
                         this.hasErrorSubject$.next(true);
                     }
@@ -217,7 +217,7 @@ export class UserAssignService {
                     this.clearSelectedUsersToAssign();
                     this.clearSelectedGroupsToImport();
                 },
-                (err) => this.errorHandler.emit(err, 'Adding users')
+                (err) => this.errorHandler.emitAPIError(err, 'Adding users')
             ),
             switchMap(() =>
                 this.getAssigned(
@@ -233,7 +233,7 @@ export class UserAssignService {
         return this.api.removeUsersFromGroup(resourceId, userIds).pipe(
             tap(
                 () => this.clearSelectedAssignedUsers(),
-                (err) => this.errorHandler.emit(err, 'Removing users')
+                (err) => this.errorHandler.emitAPIError(err, 'Removing users')
             ),
             switchMap(() =>
                 this.getAssigned(

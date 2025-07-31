@@ -34,7 +34,10 @@ export class TrainingRunAccessLevelConcreteService extends TrainingRunAccessLeve
                 tap(
                     (_) => _,
                     (err) => {
-                        this.errorHandler.emit(err, 'Access files for trainee');
+                        this.errorHandler.emitAPIError(
+                            err,
+                            'Access files for trainee'
+                        );
                     }
                 )
             );
@@ -64,7 +67,10 @@ export class TrainingRunAccessLevelConcreteService extends TrainingRunAccessLeve
                     () => this.isLoadingSubject$.next(false),
                     (err) => {
                         this.isLoadingSubject$.next(false);
-                        this.errorHandler.emit(err, 'Submitting passkey');
+                        this.errorHandler.emitAPIError(
+                            err,
+                            'Submitting passkey'
+                        );
                     }
                 )
             );
