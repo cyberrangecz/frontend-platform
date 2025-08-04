@@ -37,6 +37,7 @@ export class QuotaPieChartComponent implements AfterViewInit, OnChanges {
 
     /** Re-render when the @Input quota changes (host can call this) */
     render(): void {
+        if (!this.chart) return;
         const option = this.quota
             ? this.buildQuotaOption(this.quota)
             : this.buildSpinnerOption();
