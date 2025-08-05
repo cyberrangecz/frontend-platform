@@ -35,6 +35,14 @@ export default [
                     ],
                 },
             ],
+            '@typescript-eslint/no-unused-vars': [
+                'error',
+                {
+                    argsIgnorePattern: '^_',
+                    varsIgnorePattern: '^_',
+                    caughtErrorsIgnorePattern: '^_',
+                },
+            ],
         },
     },
     {
@@ -58,6 +66,23 @@ export default [
         },
         languageOptions: {
             parser: await import('jsonc-eslint-parser'),
+        },
+    },
+    {
+        files: ['**/*.html'],
+        languageOptions: {
+            parser: await import('@angular-eslint/template-parser'),
+        },
+        rules: {
+            '@angular-eslint/template/mouse-events-have-key-events': 'off',
+            '@angular-eslint/template/click-events-have-key-events': 'off',
+            '@angular-eslint/template/interactive-supports-focus': 'off',
+        },
+    },
+    {
+        files: ['**/*.ts'],
+        rules: {
+            '@angular-eslint/prefer-standalone': 'off',
         },
     },
 ];

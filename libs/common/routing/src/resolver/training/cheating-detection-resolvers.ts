@@ -18,11 +18,13 @@ function resolveCheatingDetectionBreadcrumb(
     if (Routing.Utils.containsSubroute('cheating-detection/create', state)) {
         return 'Create';
     }
-    if (Routing.Utils.containsSubroute('cheating-detection/:eventId', state)) {
-        return 'Detection-event-detail';
+    if (
+        Routing.Utils.containsSubroute('cheating-detection/:detectionId', state)
+    ) {
+        return 'Detection detail';
     }
     if (Routing.Utils.containsSubroute('cheating-detection', state)) {
-        return 'Detection-events';
+        return 'Cheating detections';
     }
 
     return '';

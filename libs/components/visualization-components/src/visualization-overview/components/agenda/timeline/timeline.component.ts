@@ -1,13 +1,23 @@
-import {Component, EventEmitter, inject, Input, OnChanges, OnInit, Output, ViewChild} from '@angular/core';
-import {LineComponent} from './line/line.component';
-import {VizOverviewTraineeInfo} from '../../../shared/interfaces/viz-overview-trainee-info';
-import {VizConfigService} from "../../../../common/viz-config.service";
+import {
+    Component,
+    EventEmitter,
+    inject,
+    Input,
+    OnChanges,
+    OnInit,
+    Output,
+    ViewChild,
+} from '@angular/core';
+import { LineComponent } from './line/line.component';
+import { VizOverviewTraineeInfo } from '../../../shared/interfaces/viz-overview-trainee-info';
+import { VizConfigService } from '../../../../common/viz-config.service';
 
 @Component({
     selector: 'crczp-visualization-overview-timeline',
     templateUrl: './timeline.component.html',
     styleUrls: ['./timeline.component.css'],
-    standalone: false
+    // eslint-disable-next-line
+    standalone: false,
 })
 export class TimelineComponent implements OnChanges, OnInit {
     /**
@@ -40,7 +50,7 @@ export class TimelineComponent implements OnChanges, OnInit {
      * Emits Id of trainee which should be highlighted
      */
     @Output() selectedTrainee: EventEmitter<number> = new EventEmitter();
-    @ViewChild(LineComponent, {static: true}) lineComponent: LineComponent;
+    @ViewChild(LineComponent, { static: true }) lineComponent: LineComponent;
 
     private readonly configService = inject(VizConfigService);
 
@@ -54,7 +64,8 @@ export class TimelineComponent implements OnChanges, OnInit {
         this.configService.trainingDefinitionId = this.trainingDefinitionId;
         this.configService.trainingInstanceId = this.trainingInstanceId;
         if (this.traineeModeInfo) {
-            this.configService.trainingRunId = this.traineeModeInfo.trainingRunId;
+            this.configService.trainingRunId =
+                this.traineeModeInfo.trainingRunId;
         }
     }
 

@@ -9,7 +9,7 @@ import { catchUndefinedOrNull } from '../catch-undefined-or-null';
 
 function resolveUser(
     route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot
+    _state: RouterStateSnapshot
 ): Observable<User> {
     const userId = Routing.Utils.extractVariable<'user'>('userId', route);
     const service = inject(UserAndGroupResolverHelperService);
@@ -30,7 +30,7 @@ function resolveUser(
  */
 function resolveUserTitle(
     route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot
+    _state: RouterStateSnapshot
 ): Observable<string> | string {
     const userId = Routing.Utils.extractVariable<'user'>('userId', route);
     if (!userId) return 'User Detail';

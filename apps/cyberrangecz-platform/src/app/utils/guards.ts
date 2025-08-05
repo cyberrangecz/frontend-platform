@@ -37,7 +37,7 @@ function guardBuilder(
     redirect: ValidPath,
     permissionsPredicate: () => boolean
 ): CanActivateFn {
-    return (route: ActivatedRouteSnapshot, state: RouterStateSnapshot) => {
+    return (_route: ActivatedRouteSnapshot, _state: RouterStateSnapshot) => {
         const router = inject(Router);
         return canActivateToObservable(sentinelAuthGuard()).pipe(
             map((isLoggedIn) => {

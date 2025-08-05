@@ -7,11 +7,13 @@ import {
     Input,
     OnChanges,
     Output,
-    SimpleChanges
 } from '@angular/core';
 import * as d3 from 'd3';
-import {easeQuad} from 'd3';
-import {AdaptiveRunVisualization, RunVisualizationPathNode} from "@crczp/visualization-model";
+import { easeQuad } from 'd3';
+import {
+    AdaptiveRunVisualization,
+    RunVisualizationPathNode,
+} from '@crczp/visualization-model';
 
 @Component({
     // eslint-disable-next-line @angular-eslint/component-selector
@@ -38,7 +40,7 @@ export class PlayerPathNodesComponent implements OnChanges {
         this.g = d3.select(element.nativeElement);
     }
 
-    ngOnChanges(changes: SimpleChanges): void {
+    ngOnChanges(): void {
         this.drawPathNodes();
     }
 
@@ -47,35 +49,52 @@ export class PlayerPathNodesComponent implements OnChanges {
             .selectAll('circle')
             .data(
                 this.playerTransitions.trainingRunPathNodes,
-                (playerPathNode: RunVisualizationPathNode) => playerPathNode.phaseOrder,
+                (playerPathNode: RunVisualizationPathNode) =>
+                    playerPathNode.phaseOrder
             )
             .join(
-                (enter: d3.Selection<any, any, any, any>) => this.appendPathNodes(enter),
-                (update: d3.Selection<any, any, any, any>) => this.updatePathNodes(update),
+                (enter: d3.Selection<any, any, any, any>) =>
+                    this.appendPathNodes(enter),
+                (update: d3.Selection<any, any, any, any>) =>
+                    this.updatePathNodes(update)
             );
     }
 
-    private appendPathNodes(enterSelection: d3.Selection<any, any, any, any>): d3.Selection<any, any, any, any> {
-        return enterSelection.append('circle').call((selection: d3.Selection<any, any, any, any>) => {
-            this.addStyle(selection);
-            this.animateCircleGrow(selection);
-            this.setPosition(selection);
-            this.addHoverAnimation(selection);
-            this.addClickEvent(selection);
-        });
+    private appendPathNodes(
+        enterSelection: d3.Selection<any, any, any, any>
+    ): d3.Selection<any, any, any, any> {
+        return enterSelection
+            .append('circle')
+            .call((selection: d3.Selection<any, any, any, any>) => {
+                this.addStyle(selection);
+                this.animateCircleGrow(selection);
+                this.setPosition(selection);
+                this.addHoverAnimation(selection);
+                this.addClickEvent(selection);
+            });
     }
 
-    private updatePathNodes(updateSelection: d3.Selection<any, any, any, any>): d3.Selection<any, any, any, any> {
-        return updateSelection.call((selection: d3.Selection<any, any, any, any>) => {
-            this.setPosition(selection);
-        });
+    private updatePathNodes(
+        updateSelection: d3.Selection<any, any, any, any>
+    ): d3.Selection<any, any, any, any> {
+        return updateSelection.call(
+            (selection: d3.Selection<any, any, any, any>) => {
+                this.setPosition(selection);
+            }
+        );
     }
 
     private addStyle(newPath: any): void {
-        newPath.attr('stroke', this.color).attr('stroke-width', 5).attr('fill', this.color).style('cursor', 'pointer');
+        newPath
+            .attr('stroke', this.color)
+            .attr('stroke-width', 5)
+            .attr('fill', this.color)
+            .style('cursor', 'pointer');
     }
 
-    private animateCircleGrow(circles: d3.Selection<d3.BaseType, unknown, any, any>): void {
+    private animateCircleGrow(
+        circles: d3.Selection<d3.BaseType, unknown, any, any>
+    ): void {
         circles
             .interrupt()
             .attr('r', 0)
@@ -83,28 +102,55 @@ export class PlayerPathNodesComponent implements OnChanges {
             .ease(d3.easeLinear)
             .duration(this.duration / circles.nodes().length)
             .delay((_, i) => {
-                return Math.min((this.duration / circles.nodes().length) * i, this.duration);
+                return Math.min(
+                    (this.duration / circles.nodes().length) * i,
+                    this.duration
+                );
             })
             .attr('r', 6);
     }
 
-    private setPosition(playerPathNodeSelection: d3.Selection<any, any, any, any>): void {
+    private setPosition(
+        playerPathNodeSelection: d3.Selection<any, any, any, any>
+    ): void {
         playerPathNodeSelection
-            .attr('cx', (playerPathNode: RunVisualizationPathNode) => this.xScale(playerPathNode.phaseOrder) as number)
-            .attr('cy', (playerPathNode: RunVisualizationPathNode) => this.yScale(playerPathNode.taskOrder) as number);
+            .attr(
+                'cx',
+                (playerPathNode: RunVisualizationPathNode) =>
+                    this.xScale(playerPathNode.phaseOrder) as number
+            )
+            .attr(
+                'cy',
+                (playerPathNode: RunVisualizationPathNode) =>
+                    this.yScale(playerPathNode.taskOrder) as number
+            );
     }
 
-    private addHoverAnimation(circles: d3.Selection<d3.BaseType, unknown, any, any>) {
+    private addHoverAnimation(
+        circles: d3.Selection<d3.BaseType, unknown, any, any>
+    ) {
         circles
             .on('mouseover', (event: any) =>
-                d3.select(event.target).transition().ease(easeQuad).duration(250).attr('r', 8),
+                d3
+                    .select(event.target)
+                    .transition()
+                    .ease(easeQuad)
+                    .duration(250)
+                    .attr('r', 8)
             )
-            .on('mouseout', (event: any) => d3.select(event.target).transition().duration(250).attr('r', 6));
+            .on('mouseout', (event: any) =>
+                d3.select(event.target).transition().duration(250).attr('r', 6)
+            );
     }
 
-    private addClickEvent(circles: d3.Selection<d3.BaseType, RunVisualizationPathNode, any, any>) {
-        circles.on('click', (_: any, playerPathNode: RunVisualizationPathNode) => {
-            this.taskPreviewEvent.emit(playerPathNode);
-        });
+    private addClickEvent(
+        circles: d3.Selection<d3.BaseType, RunVisualizationPathNode, any, any>
+    ) {
+        circles.on(
+            'click',
+            (_: any, playerPathNode: RunVisualizationPathNode) => {
+                this.taskPreviewEvent.emit(playerPathNode);
+            }
+        );
     }
 }

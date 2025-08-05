@@ -1,16 +1,23 @@
-import { AfterContentChecked, ApplicationRef, ChangeDetectorRef, Component, Input, OnChanges, SimpleChanges, inject } from '@angular/core';
+import {
+    AfterContentChecked,
+    ApplicationRef,
+    Component,
+    inject,
+    Input,
+    OnChanges,
+} from '@angular/core';
 import * as d3 from 'd3';
-import {TrainingInstanceStatistics} from '@crczp/visualization-model';
-import {MatCardModule} from '@angular/material/card';
-import {MatDividerModule} from '@angular/material/divider';
-import {MatGridListModule} from '@angular/material/grid-list';
-import {MatInputModule} from '@angular/material/input';
-import {MatTooltipModule} from '@angular/material/tooltip';
-import {MatButtonModule} from '@angular/material/button';
-import {MatFormFieldModule} from '@angular/material/form-field';
-import {MatRadioModule} from '@angular/material/radio';
-import {ClusteringVisualizationsComponent} from '../../clustering/clustering-visualizations.component';
-import {MatIconModule} from '@angular/material/icon';
+import { TrainingInstanceStatistics } from '@crczp/visualization-model';
+import { MatCardModule } from '@angular/material/card';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatGridListModule } from '@angular/material/grid-list';
+import { MatInputModule } from '@angular/material/input';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatRadioModule } from '@angular/material/radio';
+import { ClusteringVisualizationsComponent } from '../../clustering/clustering-visualizations.component';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
     selector: 'crczp-scatter-clusters-wrapper',
@@ -25,11 +32,13 @@ import {MatIconModule} from '@angular/material/icon';
         MatButtonModule,
         MatIconModule,
         MatRadioModule,
-        ClusteringVisualizationsComponent
+        ClusteringVisualizationsComponent,
     ],
-    styleUrls: ['./scatter-clusters-wrapper.component.css']
+    styleUrls: ['./scatter-clusters-wrapper.component.css'],
 })
-export class ScatterClustersWrapperComponent implements OnChanges, AfterContentChecked {
+export class ScatterClustersWrapperComponent
+    implements OnChanges, AfterContentChecked
+{
     @Input() level;
     @Input() trainingDefinitionId: number;
     @Input() trainingInstanceStatistics: TrainingInstanceStatistics[];
@@ -44,25 +53,30 @@ export class ScatterClustersWrapperComponent implements OnChanges, AfterContentC
         'The chart shows a relation between two distinct groups of actions or behavior, helps to identify connections between them.';
 
     constructor() {
-        const appRef = inject(ApplicationRef);
-
-        this.appRef = appRef;
+        this.appRef = inject(ApplicationRef);
     }
 
     ngAfterContentChecked() {
-        this.cardHeight = document.querySelector('crczp-clustering-visualization').getBoundingClientRect().height;
+        this.cardHeight = document
+            .querySelector('crczp-clustering-visualization')
+            .getBoundingClientRect().height;
     }
 
-    ngOnChanges(changes: SimpleChanges): void {
-        this.trainingInstanceIds = this.trainingInstanceStatistics.map((ti) => ti.instanceId);
-        this.levelTitle = this.level !== null ? '(for <i>level ' + this.level + '</i> only)' : '';
+    ngOnChanges(): void {
+        this.trainingInstanceIds = this.trainingInstanceStatistics.map(
+            (ti) => ti.instanceId
+        );
+        this.levelTitle =
+            this.level !== null
+                ? '(for <i>level ' + this.level + '</i> only)'
+                : '';
     }
 
     public onRadioChange(value: number): void {
         this.plotFeatures = value;
     }
 
-    toggleView(isOpen: boolean) {
+    toggleView() {
         this.appRef.tick();
     }
 
@@ -76,18 +90,31 @@ export class ScatterClustersWrapperComponent implements OnChanges, AfterContentC
      */
     hideChart(items: { hide: boolean; feature: any }[]) {
         const feature = this.plotFeatures,
-            missingFeatures = items.filter((value) => value.hide).map((val) => val.feature);
+            missingFeatures = items
+                .filter((value) => value.hide)
+                .map((val) => val.feature);
 
         // completely hide line chart for the missing view
-        d3.select('#scatterClusterDiv .clustering-feature-' + feature + ' crczp-viz-clustering-line-chart').style(
+        d3.select(
+            '#scatterClusterDiv .clustering-feature-' +
+                feature +
+                ' crczp-viz-clustering-line-chart'
+        ).style(
             'display',
             missingFeatures.includes(feature) ? 'none' : 'block'
         );
 
         // change styling of main plot to ensure the chart div does not interfere with other elements
-        d3.select('#scatterClusterDiv .clustering-feature-' + feature + ' crczp-viz-clustering-scatter-plot')
+        d3.select(
+            '#scatterClusterDiv .clustering-feature-' +
+                feature +
+                ' crczp-viz-clustering-scatter-plot'
+        )
             .style('opacity', missingFeatures.includes(feature) ? '0' : '1')
-            .style('pointer-events', missingFeatures.includes(feature) ? 'none' : 'initial');
+            .style(
+                'pointer-events',
+                missingFeatures.includes(feature) ? 'none' : 'initial'
+            );
 
         // if only one feature is available, shiw a message for the other
         d3.select('#scatterClusterDiv .cluster-no-data-message').style(

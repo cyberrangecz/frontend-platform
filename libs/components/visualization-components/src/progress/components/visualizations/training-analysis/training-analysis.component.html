@@ -7,7 +7,7 @@
                     <div class="ctf-progress-select-wrapper">
                         <div class="ctf-progress-select">
                             <svg class="ctf-progress-select-icon" height="20" viewBox="0 0 24 24" width="20">
-                                <path [attr.d]="$any(getEventShapePaths()).filter"/>
+                                <path [attr.d]="$any(getEventShapePaths()).filter" />
                             </svg>
                             <select (change)="onFilterValueChange()" [(ngModel)]="selectedFilterValue">
                                 @for (o of filterOptions; track o) {
@@ -22,7 +22,7 @@
                     <div class="ctf-progress-select-wrapper">
                         <div class="ctf-progress-select">
                             <svg class="ctf-progress-select-icon" height="20" viewBox="0 0 24 24" width="20">
-                                <path [attr.d]="$any(getEventShapePaths()).person"/>
+                                <path [attr.d]="$any(getEventShapePaths()).person" />
                             </svg>
                             <select (change)="onTraineeViewChange()" [(ngModel)]="selectedTraineeView">
                                 <option [ngValue]="'name'">Name</option>
@@ -43,7 +43,7 @@
                 (hideDetail)="onTraineeDetailChange()"
                 [trainee]=getTraineeData(traineeDetailId)
                 [trainingInstanceId]="trainingInstanceId"
-                [visualizationData]="visualizationData"/>
+                [visualizationData]="visualizationData" />
         </div>
     }
 
@@ -59,7 +59,7 @@
                                 [label]="'Trainee'"
                                 [selectedSortReverse]="sortReverse"
                                 [selectedSortType]="sortType"
-                                [sortType]="'name'"/>
+                                [sortType]="'name'" />
                         </div>
                     </div>
                 }
@@ -76,7 +76,7 @@
                                     [level]="level"
                                     [selectedSortReverse]="sortReverse"
                                     [selectedSortType]="sortType + sortLevel"
-                                    [sortType]="'level' + level.index"/>
+                                    [sortType]="'level' + level.index" />
                             }
                         </div>
                     </div>
@@ -89,7 +89,7 @@
                                 [label]="column.charAt(0).toUpperCase() + column.slice(1)"
                                 [selectedSortReverse]="sortReverse"
                                 [selectedSortType]="sortType"
-                                [sortType]="column"/>
+                                [sortType]="column" />
                         </div>
                     </div>
                 }
@@ -99,7 +99,10 @@
             }
             <div class="ctfh-row ctfh-no-gutters ctf-main-container">
                 <div class="ctfh-col-2 final-2-name">
-                    <div (click)="showTraineeDetail($event)" class="ctf-progress-column ctf-progress-teamcolumn
+                    <div
+                        (click)="showTraineeDetail($event)"
+                        (keydown.enter)="showTraineeDetail($event)"
+                        class="ctf-progress-column ctf-progress-teamcolumn
                 ctf-progress-column-data" id="ctf-progress-teamcolumn"></div>
                 </div>
                 <div class="ctfh-col-2 short">
@@ -117,8 +120,8 @@
                              [ngStyle]="{'cursor': 'pointer'}"
                              class="ctf-progress"
                              id="ctf-progress-chart"
-                             mouseMove
-                             mouseWheel></div>
+                             crczpMouseMove
+                             crczpMouseWheel></div>
                     </div>
                 </div>
                 @for (column of columns; track column) {
@@ -133,7 +136,7 @@
             <div class="legend-container">
                 <crczp-viz-hurdling-legend
                     (zoomResetChange)="onZoomReset()"
-                    [selectedViewValue]="view"/>
+                    [selectedViewValue]="view" />
             </div>
         </div>
     }
@@ -143,7 +146,7 @@
             <div class="ctfh-row ctfh-no-gutters ctfh-col-sm-8 ctfh-offset-sm-2">
                 <p class="ctf-progress-error">
                     <svg class="ctf-progress-error-icon" height="20" viewBox="0 0 24 24" width="20">
-                        <path d="M13,14H11V10H13M13,18H11V16H13M1,21H23L12,2L1,21Z"/>
+                        <path d="M13,14H11V10H13M13,18H11V16H13M1,21H23L12,2L1,21Z" />
                     </svg>
                     {{ errorMessage }}
                 </p>

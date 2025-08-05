@@ -7,9 +7,6 @@ export abstract class ProgressEvent {
     traineeId: number;
     traineeName: string;
 
-    protected constructor() {
-    }
-
     abstract getContent(): string;
 }
 
@@ -40,7 +37,6 @@ export class HintTakenEvent extends ProgressEvent {
     }
 }
 
-
 export class SolutionDisplayedEvent extends ProgressEvent {
     constructor() {
         super();
@@ -52,7 +48,6 @@ export class SolutionDisplayedEvent extends ProgressEvent {
     }
 }
 
-
 export class TrainingRunEndedEvent extends ProgressEvent {
     constructor() {
         super();
@@ -63,7 +58,6 @@ export class TrainingRunEndedEvent extends ProgressEvent {
     }
 }
 
-
 export class TrainingRunStartedEvent extends ProgressEvent {
     constructor() {
         super();
@@ -73,7 +67,6 @@ export class TrainingRunStartedEvent extends ProgressEvent {
         return '';
     }
 }
-
 
 export class WrongAnswerEvent extends ProgressEvent {
     declare type: string;

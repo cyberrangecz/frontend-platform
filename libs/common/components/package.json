@@ -1,9 +1,17 @@
 {
     "name": "@crczp/components",
-    "version": "0.0.1",
     "peerDependencies": {
-        "@angular/common": "^20.0.0",
-        "@angular/core": "^20.0.0"
+        "@angular/common": "*",
+        "@angular/core": "*",
+        "@angular/material": "*",
+        "@angular/forms": "*",
+        "ngx-file-drag-drop": "*",
+        "@crczp/utils": "*",
+        "rxjs": "*",
+        "d3": "*",
+        "vite": "*",
+        "@analogjs/vite-plugin-angular": "*",
+        "@nx/vite": "*"
     },
     "sideEffects": false
 }

@@ -1,20 +1,30 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, HostListener, Input, OnChanges, OnInit, Output, SimpleChanges, inject } from '@angular/core';
+import {
+    ChangeDetectionStrategy,
+    Component,
+    EventEmitter,
+    HostListener,
+    inject,
+    Input,
+    OnChanges,
+    OnInit,
+    Output,
+    SimpleChanges,
+} from '@angular/core';
 import * as d3 from 'd3';
 import {
-    IStatisticsFilter,
     LevelStatistics,
     ParticipantStatistics,
-    TrainingInstanceStatistics
+    TrainingInstanceStatistics,
 } from '@crczp/visualization-model';
-import {AxesCreationService} from '../service/axes-creation-service';
-import {TooltipCreationService} from '../service/tooltip-creation-service';
-import {SvgConfigurationService} from '../service/svg-configuration-service';
-import {LegendCreationService} from '../service/legend-creation-service';
-import {MatCardModule} from '@angular/material/card';
-import {MatGridListModule} from '@angular/material/grid-list';
-import {MatDividerModule} from '@angular/material/divider';
-import {MatButtonModule} from '@angular/material/button';
-import {MatRadioModule} from '@angular/material/radio';
+import { AxesCreationService } from '../service/axes-creation-service';
+import { TooltipCreationService } from '../service/tooltip-creation-service';
+import { SvgConfigurationService } from '../service/svg-configuration-service';
+import { LegendCreationService } from '../service/legend-creation-service';
+import { MatCardModule } from '@angular/material/card';
+import { MatGridListModule } from '@angular/material/grid-list';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatButtonModule } from '@angular/material/button';
+import { MatRadioModule } from '@angular/material/radio';
 
 @Component({
     selector: 'crczp-scatterplot',
@@ -25,23 +35,21 @@ import {MatRadioModule} from '@angular/material/radio';
         MatButtonModule,
         MatGridListModule,
         MatDividerModule,
-        MatRadioModule
+        MatRadioModule,
     ],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ScatterplotComponent implements OnInit, OnChanges {
-    private axesCreationService = inject(AxesCreationService);
-    private tooltipCreationService = inject(TooltipCreationService);
-    private svgConfigurationService = inject(SvgConfigurationService);
-    private legendCreationService = inject(LegendCreationService);
-
     @Input() trainingInstanceStatistics: TrainingInstanceStatistics[];
-
     @Input() highlightedParticipants: number[];
     @Input() highlightedInstances: number[];
     @Output() highlightInstance: EventEmitter<number[]> = new EventEmitter();
     // should be visualized by the color scheme
     public zScaleValue = 'hint';
+    private axesCreationService = inject(AxesCreationService);
+    private tooltipCreationService = inject(TooltipCreationService);
+    private svgConfigurationService = inject(SvgConfigurationService);
+    private legendCreationService = inject(LegendCreationService);
     // Marks the sizes of the svgs
     private chartWidth: number;
 
@@ -72,7 +80,12 @@ export class ScatterplotComponent implements OnInit, OnChanges {
     private componentWidth: string[] = ['100%', '100%'];
     // Marks the currently selected group based on the part of
     private componentHeight: string[] = ['28vw', '50vw'];
-    private circleColors: string[] = ['#46d246', '#adebad', '#d9d9d9', '#999999'];
+    private circleColors: string[] = [
+        '#46d246',
+        '#adebad',
+        '#d9d9d9',
+        '#999999',
+    ];
     private tooltipColors: string[] = ['#000000', '#ffffff'];
 
     @HostListener('window:resize') onResizeEvent() {
@@ -104,8 +117,13 @@ export class ScatterplotComponent implements OnInit, OnChanges {
      *                  all the components
      */
     ngOnChanges(changes: SimpleChanges): void {
-        if ('trainingInstanceStatistics' in changes && !changes['trainingInstanceStatistics'].isFirstChange()) {
-            this.trainingInstanceStatistics.map((statistics) => this.originalPlayers.push(...statistics.participants));
+        if (
+            'trainingInstanceStatistics' in changes &&
+            !changes['trainingInstanceStatistics'].isFirstChange()
+        ) {
+            this.trainingInstanceStatistics.map((statistics) =>
+                this.originalPlayers.push(...statistics.participants)
+            );
             this.initializeParticipants();
             this.initializeScatterplotData(true);
         }
@@ -121,7 +139,10 @@ export class ScatterplotComponent implements OnInit, OnChanges {
         }
 
         if ('highlightedParticipants' in changes) {
-            if (this.highlightedParticipants !== null && this.highlightedParticipants.length > 0) {
+            if (
+                this.highlightedParticipants !== null &&
+                this.highlightedParticipants.length > 0
+            ) {
                 this.highlightDataForFlag(this.highlightedParticipants);
             } else {
                 this.undoHighlightData();
@@ -172,7 +193,7 @@ export class ScatterplotComponent implements OnInit, OnChanges {
      * @param filters - if the first parameter is false, marks the trainings for which
      *                  data should be visualized
      */
-    public initializeScatterplotData(init: boolean, filters?: IStatisticsFilter[]): void {
+    public initializeScatterplotData(init: boolean): void {
         this.players = this.originalPlayers;
         // Ranges for the attributes should be saved only during initialization
         // because the min and max values should be the same for all the possible
@@ -193,8 +214,12 @@ export class ScatterplotComponent implements OnInit, OnChanges {
      * @param instanceId - marks the id of the actually selected training instance
      */
     public highlightDataForTraining(instanceId: number): void {
-        d3.select('#scatterplotPlaceholder').selectAll('circle').style('opacity', 0.1);
-        d3.select('#scatterplotPlaceholder').selectAll(`.trainingClass_${instanceId}`).style('opacity', 1);
+        d3.select('#scatterplotPlaceholder')
+            .selectAll('circle')
+            .style('opacity', 0.1);
+        d3.select('#scatterplotPlaceholder')
+            .selectAll(`.trainingClass_${instanceId}`)
+            .style('opacity', 1);
     }
 
     /**
@@ -206,11 +231,15 @@ export class ScatterplotComponent implements OnInit, OnChanges {
      *                    and whos circle should be highlighted
      */
     public highlightDataForFlag(playerIds: number[]): void {
-        d3.select('#scatterplotPlaceholder').selectAll('circle').style('opacity', 0.1);
+        d3.select('#scatterplotPlaceholder')
+            .selectAll('circle')
+            .style('opacity', 0.1);
         playerIds.forEach((id: number) => {
             // Finds the index of the given player because the circles are
             // marked by this index
-            const index: number = this.players.map((player) => player.userRefId).indexOf(id);
+            const index: number = this.players
+                .map((player) => player.userRefId)
+                .indexOf(id);
             d3.select('#scatterplotPlaceholder')
                 .select('#player_' + index)
                 .style('opacity', 1);
@@ -223,14 +252,18 @@ export class ScatterplotComponent implements OnInit, OnChanges {
      * If no element is selected, resets the opacity of all the circles
      */
     public undoHighlightData(): void {
-        d3.select('#scatterplotPlaceholder').selectAll('circle').style('opacity', 1);
+        d3.select('#scatterplotPlaceholder')
+            .selectAll('circle')
+            .style('opacity', 1);
     }
 
     private getMaxTime(): number {
         return Math.max(
             ...this.trainingInstanceStatistics
                 .map((instance) =>
-                    instance.participants.map((participant) => participant.levels.reduce((a, b) => a + b.duration, 0))
+                    instance.participants.map((participant) =>
+                        participant.levels.reduce((a, b) => a + b.duration, 0)
+                    )
                 )
                 .reduce((a, b) => (Math.max(...a) > Math.max(...b) ? a : b))
         );
@@ -240,7 +273,9 @@ export class ScatterplotComponent implements OnInit, OnChanges {
         return Math.min(
             ...this.trainingInstanceStatistics
                 .map((instance) =>
-                    instance.participants.map((participant) => participant.levels.reduce((a, b) => a + b.duration, 0))
+                    instance.participants.map((participant) =>
+                        participant.levels.reduce((a, b) => a + b.duration, 0)
+                    )
                 )
                 .reduce((a, b) => (Math.min(...a) < Math.min(...b) ? a : b))
         );
@@ -250,7 +285,9 @@ export class ScatterplotComponent implements OnInit, OnChanges {
         return Math.max(
             ...this.trainingInstanceStatistics
                 .map((instance) =>
-                    instance.participants.map((participant) => participant.levels.reduce((a, b) => a + b.score, 0))
+                    instance.participants.map((participant) =>
+                        participant.levels.reduce((a, b) => a + b.score, 0)
+                    )
                 )
                 .reduce((a, b) => (Math.max(...a) > Math.max(...b) ? a : b))
         );
@@ -270,9 +307,18 @@ export class ScatterplotComponent implements OnInit, OnChanges {
 
     private initializeParticipants(): void {
         this.originalPlayers.map((player) => {
-            player.totalScore = player.levels.reduce((acc: number, curr: LevelStatistics) => acc + curr.score, 0);
-            player.totalDuration = player.levels.reduce((acc: number, curr: LevelStatistics) => acc + curr.duration, 0);
-            player.hintsTaken = player.levels.reduce((acc: number, curr: LevelStatistics) => acc + curr.hintsTaken, 0);
+            player.totalScore = player.levels.reduce(
+                (acc: number, curr: LevelStatistics) => acc + curr.score,
+                0
+            );
+            player.totalDuration = player.levels.reduce(
+                (acc: number, curr: LevelStatistics) => acc + curr.duration,
+                0
+            );
+            player.hintsTaken = player.levels.reduce(
+                (acc: number, curr: LevelStatistics) => acc + curr.hintsTaken,
+                0
+            );
         });
     }
 
@@ -320,18 +366,21 @@ export class ScatterplotComponent implements OnInit, OnChanges {
                     'rgba(0, 204, 0, 1)',
                     'rgba(0, 204, 0, 0.4)',
                     'rgba(255, 51, 51, 0.4)',
-                    'rgba(255, 51, 51, 1)'
+                    'rgba(255, 51, 51, 1)',
                 ];
                 break;
             case 1:
                 this.circleColors = this.circleColors.concat([
                     'rgba(0, 204, 0, 0.4)',
                     'rgba(255, 51, 51, 0.4)',
-                    'rgba(255, 51, 51, 1)'
+                    'rgba(255, 51, 51, 1)',
                 ]);
                 break;
             case 2:
-                this.circleColors = this.circleColors.concat(['rgba(255, 51, 51, 0.4)', 'rgba(255, 51, 51, 1)']);
+                this.circleColors = this.circleColors.concat([
+                    'rgba(255, 51, 51, 0.4)',
+                    'rgba(255, 51, 51, 1)',
+                ]);
                 break;
             case 3:
                 this.circleColors.push('rgba(255, 51, 51, 1)');
@@ -353,7 +402,9 @@ export class ScatterplotComponent implements OnInit, OnChanges {
      * If nothing has been specified, uses a predefined text
      */
     private setTitle(): void {
-        d3.select('#scatterplotPlaceholder').select('mat-card-title').text('Time-score-hints Relationship');
+        d3.select('#scatterplotPlaceholder')
+            .select('mat-card-title')
+            .text('Time-score-hints Relationship');
     }
 
     /**
@@ -363,27 +414,53 @@ export class ScatterplotComponent implements OnInit, OnChanges {
      */
     private createChart(): void {
         this.svgConfigurationService.cleanSvgs('#scatterplotPlaceholder');
-        this.svgConfigurationService.setMatContentHeight('#scatterplotPlaceholder');
+        this.svgConfigurationService.setMatContentHeight(
+            '#scatterplotPlaceholder'
+        );
         this.resizeScatterplotSvg();
         this.attachResetGroupSelectionFunctionToSvgs();
         switch (this.zScaleValue) {
             case 'score':
                 this.getColorRanges(this.minScore, this.maxScore);
-                this.setScales([this.minTime, this.maxTime], [this.minHints, this.maxHints]);
-                this.createAxes('Time needed for game completing (hh:mm)', 'Number of hints taken');
-                this.createLegend(['Achieved score'], this.transformHintOrScoreRanges().reverse());
+                this.setScales(
+                    [this.minTime, this.maxTime],
+                    [this.minHints, this.maxHints]
+                );
+                this.createAxes(
+                    'Time needed for game completing (hh:mm)',
+                    'Number of hints taken'
+                );
+                this.createLegend(
+                    ['Achieved score'],
+                    this.transformHintOrScoreRanges().reverse()
+                );
                 break;
             case 'time':
                 this.getColorRanges(this.minTime, this.maxTime);
-                this.setScales([this.minScore, this.maxScore], [this.minHints, this.maxHints]);
+                this.setScales(
+                    [this.minScore, this.maxScore],
+                    [this.minHints, this.maxHints]
+                );
                 this.createAxes('Achieved score', 'Number of hints taken');
-                this.createLegend(['Time needed for', 'game completing', '(hh:mm)'], this.transformTimeRanges());
+                this.createLegend(
+                    ['Time needed for', 'game completing', '(hh:mm)'],
+                    this.transformTimeRanges()
+                );
                 break;
             case 'hint':
                 this.getColorRanges(this.minHints, this.maxHints);
-                this.setScales([this.minTime, this.maxTime], [this.minScore, this.maxScore]);
-                this.createAxes('Time needed for game completing (hh:mm)', 'Achieved score');
-                this.createLegend(['Number of hints', 'taken'], this.transformHintOrScoreRanges());
+                this.setScales(
+                    [this.minTime, this.maxTime],
+                    [this.minScore, this.maxScore]
+                );
+                this.createAxes(
+                    'Time needed for game completing (hh:mm)',
+                    'Achieved score'
+                );
+                this.createLegend(
+                    ['Number of hints', 'taken'],
+                    this.transformHintOrScoreRanges()
+                );
                 break;
         }
         this.createPoints();
@@ -396,7 +473,10 @@ export class ScatterplotComponent implements OnInit, OnChanges {
      */
     private attachResetGroupSelectionFunctionToSvgs(): void {
         d3.selectAll('svg').on('click', (event) => {
-            const svgElements: string[] = ['scatterplotSvg', 'scatterplotLegendSvg'];
+            const svgElements: string[] = [
+                'scatterplotSvg',
+                'scatterplotLegendSvg',
+            ];
             // If the id of the clicked element is among 'svgElements' it means,
             // that some canvas has been selected (not a circle or the legend)
             // and circles of all colors/groups should be shown
@@ -412,10 +492,11 @@ export class ScatterplotComponent implements OnInit, OnChanges {
      * Saves the current sizes into the given variables
      */
     private resizeScatterplotSvg(): void {
-        const size: { widths: number[]; height: number } = this.svgConfigurationService.resizeSvg([
-            '#scatterplotChartPlaceholder',
-            '#scatterplotLegendPlaceholder'
-        ]);
+        const size: { widths: number[]; height: number } =
+            this.svgConfigurationService.resizeSvg([
+                '#scatterplotChartPlaceholder',
+                '#scatterplotLegendPlaceholder',
+            ]);
         this.chartWidth = size.widths[0];
         this.legendWidth = size.widths[1];
         this.svgHeight = 0.92 * size.height;
@@ -430,7 +511,10 @@ export class ScatterplotComponent implements OnInit, OnChanges {
      * @param yDomain - specifies the domain of values that should be mapped
      *                  to 'yScale' (min and max of score, time or hints)
      */
-    private setScales(xDomain: [number, number], yDomain: [number, number]): void {
+    private setScales(
+        xDomain: [number, number],
+        yDomain: [number, number]
+    ): void {
         this.margin = Math.floor(0.1 * this.svgHeight);
 
         this.xScale = d3
@@ -450,15 +534,23 @@ export class ScatterplotComponent implements OnInit, OnChanges {
         // this value is the highest from the range
         // In case of scores, the weakest performance is represented by the lowest point
         // => the increasing order (from best to worst) of the ranges should be reversed
-        const actualColors: string[] = JSON.parse(JSON.stringify(this.circleColors));
+        const actualColors: string[] = JSON.parse(
+            JSON.stringify(this.circleColors)
+        );
         if (this.zScaleValue === 'score') {
             actualColors.reverse();
         }
-        this.zScale = d3.scaleQuantile<string>().range(actualColors).domain(this.colorRanges);
+        this.zScale = d3
+            .scaleQuantile<string>()
+            .range(actualColors)
+            .domain(this.colorRanges);
         // Students are classified into groups based on the color of their circles
         // 'zScalesToIndex' maps the students into these groups represented
         // the by indices 1, 2, 3, 4
-        this.zScaleToIndex = d3.scaleQuantile<string>().range(['1', '2', '3', '4']).domain(this.colorRanges);
+        this.zScaleToIndex = d3
+            .scaleQuantile<string>()
+            .range(['1', '2', '3', '4'])
+            .domain(this.colorRanges);
     }
 
     /**
@@ -481,7 +573,10 @@ export class ScatterplotComponent implements OnInit, OnChanges {
                 .ticks(5)
                 .tickFormat((d) => this.transformTime(Number(d)));
         } else {
-            xAxis = d3.axisBottom(this.xScale).ticks(5).tickFormat(d3.format('.0f'));
+            xAxis = d3
+                .axisBottom(this.xScale)
+                .ticks(5)
+                .tickFormat(d3.format('.0f'));
         }
         const yAxis: d3.Axis<number | { valueOf(): number }> = d3
             .axisLeft(this.yScale)
@@ -502,14 +597,18 @@ export class ScatterplotComponent implements OnInit, OnChanges {
             this.chartWidth - this.margin,
             this.svgHeight,
             xTitle,
-            this.axesCreationService.getAxisTitleFontSize('#scatterplotPlaceholder')
+            this.axesCreationService.getAxisTitleFontSize(
+                '#scatterplotPlaceholder'
+            )
         );
         this.axesCreationService.createYAxesTitle(
             '#scatterplotSvg',
             -this.margin,
             this.margin / 2,
             yTitle,
-            this.axesCreationService.getAxisTitleFontSize('#scatterplotPlaceholder')
+            this.axesCreationService.getAxisTitleFontSize(
+                '#scatterplotPlaceholder'
+            )
         );
     }
 
@@ -523,7 +622,13 @@ export class ScatterplotComponent implements OnInit, OnChanges {
      */
     private getColorRanges(min: number, max: number): void {
         const shift: number = Math.round((max - min) / 4);
-        this.colorRanges = [min, min + shift, Math.round((max - min) / 2), max - shift, max];
+        this.colorRanges = [
+            min,
+            min + shift,
+            Math.round((max - min) / 2),
+            max - shift,
+            max,
+        ];
     }
 
     /**
@@ -533,39 +638,43 @@ export class ScatterplotComponent implements OnInit, OnChanges {
     private createPoints(): void {
         switch (this.zScaleValue) {
             case 'score':
-                this.players.forEach((player: ParticipantStatistics, i: number) => {
-                    this.addPoint(
-                        player.totalDuration,
-                        player.hintsTaken,
-                        player.totalScore,
-                        i,
-                        player.instanceId,
-                        player.userRefId
-                    );
-                });
+                this.players.forEach(
+                    (player: ParticipantStatistics, i: number) => {
+                        this.addPoint(
+                            player.totalDuration,
+                            player.hintsTaken,
+                            player.totalScore,
+                            i,
+                            player.instanceId,
+                            player.userRefId
+                        );
+                    }
+                );
                 break;
             case 'time':
-                this.players.forEach((player: ParticipantStatistics, i: number) =>
-                    this.addPoint(
-                        player.totalScore,
-                        player.hintsTaken,
-                        player.totalDuration,
-                        i,
-                        player.instanceId,
-                        player.userRefId
-                    )
+                this.players.forEach(
+                    (player: ParticipantStatistics, i: number) =>
+                        this.addPoint(
+                            player.totalScore,
+                            player.hintsTaken,
+                            player.totalDuration,
+                            i,
+                            player.instanceId,
+                            player.userRefId
+                        )
                 );
                 break;
             case 'hint':
-                this.players.forEach((player: ParticipantStatistics, i: number) =>
-                    this.addPoint(
-                        player.totalDuration,
-                        player.totalScore,
-                        player.hintsTaken,
-                        i,
-                        player.instanceId,
-                        player.userRefId
-                    )
+                this.players.forEach(
+                    (player: ParticipantStatistics, i: number) =>
+                        this.addPoint(
+                            player.totalDuration,
+                            player.totalScore,
+                            player.hintsTaken,
+                            i,
+                            player.instanceId,
+                            player.userRefId
+                        )
                 );
                 break;
         }
@@ -599,7 +708,12 @@ export class ScatterplotComponent implements OnInit, OnChanges {
         d3.select('#scatterplotSvg')
             .append('circle')
             .attr('class', () => {
-                return 'legendGroup_' + this.zScaleToIndex(zValue) + ' trainingClass_' + `${trainingClass}`;
+                return (
+                    'legendGroup_' +
+                    this.zScaleToIndex(zValue) +
+                    ' trainingClass_' +
+                    `${trainingClass}`
+                );
             })
             .attr('id', () => 'player_' + index)
             .attr('userRefId', () => userRefId)
@@ -627,12 +741,18 @@ export class ScatterplotComponent implements OnInit, OnChanges {
      */
     private handleMouseOver(event: MouseEvent): void {
         const circleId: string = (<HTMLElement>event.target).id;
-        const classes: string[] = (<any>(<HTMLElement>event.target).className).baseVal.split(' ').sort();
+        const classes: string[] = (<any>(
+            (<HTMLElement>event.target).className
+        )).baseVal
+            .split(' ')
+            .sort();
         const groupClass: string = classes[0].split('_').pop();
         const instanceId = Number(classes[1].split('_').pop());
 
         if (this.selectedGroup === null || this.selectedGroup === groupClass) {
-            d3.select('#scatterplotSvg').selectAll('circle').style('opacity', 0.3);
+            d3.select('#scatterplotSvg')
+                .selectAll('circle')
+                .style('opacity', 0.3);
             d3.select('#scatterplotSvg')
                 .select('#' + circleId)
                 .attr('r', '1.3%')
@@ -674,7 +794,9 @@ export class ScatterplotComponent implements OnInit, OnChanges {
      * @param groupId - defines the currently selected group
      */
     private highlightGroupSelection(groupId: string): void {
-        d3.select('#scatterplotSvg').selectAll('circle').style('display', 'none');
+        d3.select('#scatterplotSvg')
+            .selectAll('circle')
+            .style('display', 'none');
 
         d3.select('#scatterplotSvg')
             .selectAll('.legendGroup_' + groupId)
@@ -688,7 +810,9 @@ export class ScatterplotComponent implements OnInit, OnChanges {
      */
     private resetGroupSelection(): void {
         this.selectedGroup = null;
-        d3.select('#scatterplotSvg').selectAll('circle').style('display', 'block');
+        d3.select('#scatterplotSvg')
+            .selectAll('circle')
+            .style('display', 'block');
     }
 
     /**
@@ -699,7 +823,10 @@ export class ScatterplotComponent implements OnInit, OnChanges {
      * of the components barchart and combined diagram to interact with them
      */
     private handleMouseOut(): void {
-        d3.select('#scatterplotSvg').selectAll('circle').attr('r', '1%').style('opacity', 1);
+        d3.select('#scatterplotSvg')
+            .selectAll('circle')
+            .attr('r', '1%')
+            .style('opacity', 1);
         d3.select('#scatterplotSvg').selectAll('.tooltip').remove();
 
         this.highlightInstance.emit(null);
@@ -717,7 +844,8 @@ export class ScatterplotComponent implements OnInit, OnChanges {
      */
     private createTooltip(index: number, playerId: number): void {
         const player: ParticipantStatistics = this.players[index];
-        const size: { width: number; height: number } = this.tooltipCreationService.getTooltipSize(this.chartWidth);
+        const size: { width: number; height: number } =
+            this.tooltipCreationService.getTooltipSize(this.chartWidth);
         let x: number;
         let y: number;
         switch (this.zScaleValue) {
@@ -759,12 +887,14 @@ export class ScatterplotComponent implements OnInit, OnChanges {
             'tooltip',
             x + size.width / 2,
             y + 0.2 * size.height,
-            this.tooltipCreationService.getTooltipFontSize('#scatterplotPlaceholder'),
+            this.tooltipCreationService.getTooltipFontSize(
+                '#scatterplotPlaceholder'
+            ),
             [
                 `${playerId}`,
                 'Total score: ' + player.totalScore,
                 'Total time: ' + this.transformTime(player.totalDuration),
-                'Hints taken: ' + player.hintsTaken
+                'Hints taken: ' + player.hintsTaken,
             ],
             [0, 0.3 * size.height, 0.2 * size.height, 0.2 * size.height],
             this.tooltipColors[1]
@@ -781,7 +911,9 @@ export class ScatterplotComponent implements OnInit, OnChanges {
      *                 levels of the color scale
      */
     private createLegend(text: string[], ranges: string[]): void {
-        const fontSize: number = this.legendCreationService.getLegendFontSize('#scatterplotPlaceholder');
+        const fontSize: number = this.legendCreationService.getLegendFontSize(
+            '#scatterplotPlaceholder'
+        );
         const y = (1.5 * fontSize * (3 - text.length)) / 2;
         const xShift: number[] = [0];
         const yShift: number[] = [0];
@@ -805,7 +937,9 @@ export class ScatterplotComponent implements OnInit, OnChanges {
             xShift,
             yShift
         );
-        const shift: number = Math.round(0.3 * (this.svgHeight - 2 * this.margin - 6 * fontSize));
+        const shift: number = Math.round(
+            0.3 * (this.svgHeight - 2 * this.margin - 6 * fontSize)
+        );
         // Attaches the text for individual scale levels
         this.legendCreationService.addLegendText(
             '#scatterplotLegendSvg',
@@ -829,7 +963,9 @@ export class ScatterplotComponent implements OnInit, OnChanges {
      *                 between their y coordinates
      */
     private createLegendBars(y: number, yShift: number): void {
-        const actualRanges: number[] = JSON.parse(JSON.stringify(this.colorRanges));
+        const actualRanges: number[] = JSON.parse(
+            JSON.stringify(this.colorRanges)
+        );
         let indexShift = 0;
         // If 'score' should be actually represented by the color scheme, the order
         // of the ranges should be reversed (as the lowest value is displayed

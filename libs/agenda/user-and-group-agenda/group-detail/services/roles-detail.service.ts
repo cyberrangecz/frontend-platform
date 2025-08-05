@@ -1,11 +1,11 @@
-import {inject, Injectable} from '@angular/core';
-import {GroupApi} from '@crczp/user-and-group-api';
-import {UserRole} from '@crczp/user-and-group-model';
-import {SentinelFilter} from '@sentinel/common/filter';
-import {OffsetPagination, OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
-import {BehaviorSubject, Observable} from 'rxjs';
-import {tap} from 'rxjs/operators';
-import {ErrorHandlerService} from "@crczp/user-and-group-agenda";
+import { inject, Injectable } from '@angular/core';
+import { GroupApi } from '@crczp/user-and-group-api';
+import { UserRole } from '@crczp/user-and-group-model';
+import { SentinelFilter } from '@sentinel/common/filter';
+import { OffsetPagination, OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
+import { ErrorHandlerService } from '@crczp/utils';
 
 /**
  * Basic implementation of a layer between a component and an API service.
@@ -17,7 +17,9 @@ export class RolesDetailService {
      * List of roles already assigned to the resource
      */
     assignedRoles$: Observable<PaginatedResource<UserRole>>;
-    protected hasErrorSubject$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+    protected hasErrorSubject$: BehaviorSubject<boolean> = new BehaviorSubject(
+        false
+    );
     /**
      * True if error was returned from API, false otherwise
      */
@@ -26,12 +28,13 @@ export class RolesDetailService {
     /**
      * True if service is waiting on response from API for request to get assigned users
      */
-    isLoadingAssigned$: Observable<boolean> = this.isLoadingAssignedSubject$.asObservable();
+    isLoadingAssigned$: Observable<boolean> =
+        this.isLoadingAssignedSubject$.asObservable();
     private api = inject(GroupApi);
     private errorHandler = inject(ErrorHandlerService);
-    private assignedRolesSubject$: BehaviorSubject<PaginatedResource<UserRole>> = new BehaviorSubject(
-        this.initSubject()
-    );
+    private assignedRolesSubject$: BehaviorSubject<
+        PaginatedResource<UserRole>
+    > = new BehaviorSubject(this.initSubject());
 
     /**
      * Gets roles assigned to a resource, updates related observables or handles error
@@ -44,7 +47,9 @@ export class RolesDetailService {
         pagination: OffsetPaginationEvent,
         filterValue: string = null
     ): Observable<PaginatedResource<UserRole>> {
-        const filter = filterValue ? [new SentinelFilter('roleType', filterValue)] : [];
+        const filter = filterValue
+            ? [new SentinelFilter('roleType', filterValue)]
+            : [];
         this.hasErrorSubject$.next(false);
         this.isLoadingAssignedSubject$.next(true);
         return this.api.getRolesOfGroup(resourceId, pagination, filter).pipe(
@@ -54,7 +59,10 @@ export class RolesDetailService {
                     this.isLoadingAssignedSubject$.next(false);
                 },
                 (err) => {
-                    this.errorHandler.emit(err, 'Fetching roles of group-overview');
+                    this.errorHandler.emitAPIError(
+                        err,
+                        'Fetching roles of group-overview'
+                    );
                     this.isLoadingAssignedSubject$.next(false);
                     this.hasErrorSubject$.next(true);
                 }

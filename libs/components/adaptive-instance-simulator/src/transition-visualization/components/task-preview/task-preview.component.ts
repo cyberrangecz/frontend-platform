@@ -1,17 +1,16 @@
-import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
-import {AbstractTaskTypeEnum} from '../../model/enums/abstract-task-type.enum';
-import {TrainingPhaseTask} from '../../model/phase/training-phase/training-phase-task';
-import {InfoPhaseTask} from '../../model/phase/info-phase/info-phase-task';
-import {AdaptiveVisualizationTask} from '../../model/phase/adaptiveVisualizationTask';
-import {QuestionnairePhaseTask} from '../../model/phase/questionnaire-phase/questionnaire-phase-task';
-import {AccessPhaseTask} from '../../model/phase/access-phase/access-phase-task';
-import {InfoTaskPreviewComponent} from "./info-task-preview/info-task-preview.component";
-import {TrainingTaskPreviewComponent} from "./training-task-preview/training-task-preview.component";
-import {QuestionnaireTaskPreviewComponent} from "./questionnaire-task-preview/questionnaire-task-preview.component";
-import {AccessTaskPreviewComponent} from "./access-task-preview/access-task-preview.component";
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { AbstractTaskTypeEnum } from '../../model/enums/abstract-task-type.enum';
+import { TrainingPhaseTask } from '../../model/phase/training-phase/training-phase-task';
+import { InfoPhaseTask } from '../../model/phase/info-phase/info-phase-task';
+import { AdaptiveVisualizationTask } from '../../model/phase/adaptiveVisualizationTask';
+import { QuestionnairePhaseTask } from '../../model/phase/questionnaire-phase/questionnaire-phase-task';
+import { AccessPhaseTask } from '../../model/phase/access-phase/access-phase-task';
+import { InfoTaskPreviewComponent } from './info-task-preview/info-task-preview.component';
+import { TrainingTaskPreviewComponent } from './training-task-preview/training-task-preview.component';
+import { QuestionnaireTaskPreviewComponent } from './questionnaire-task-preview/questionnaire-task-preview.component';
+import { AccessTaskPreviewComponent } from './access-task-preview/access-task-preview.component';
 
 @Component({
-    // eslint-disable-next-line @angular-eslint/component-selector
     selector: 'crczp-task-preview',
     templateUrl: './task-preview.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -19,8 +18,8 @@ import {AccessTaskPreviewComponent} from "./access-task-preview/access-task-prev
         InfoTaskPreviewComponent,
         TrainingTaskPreviewComponent,
         QuestionnaireTaskPreviewComponent,
-        AccessTaskPreviewComponent
-    ]
+        AccessTaskPreviewComponent,
+    ],
 })
 export class TaskPreviewComponent {
     @Input() task?: AdaptiveVisualizationTask;

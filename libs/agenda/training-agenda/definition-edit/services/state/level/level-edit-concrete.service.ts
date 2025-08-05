@@ -311,11 +311,7 @@ export class LevelEditConcreteService extends LevelEditService {
         this.levelsSaveDisabledSubject$.next(true);
     }
 
-    private moveInternally(
-        fromIndex: number,
-        toIndex: number,
-        activeIndex?: number
-    ) {
+    private moveInternally(fromIndex: number, toIndex: number) {
         const levels = this.levelsSubject$.getValue();
         levels.splice(toIndex, 0, levels.splice(fromIndex, 1)[0]);
         levels.forEach((level, index) => (level.order = index));

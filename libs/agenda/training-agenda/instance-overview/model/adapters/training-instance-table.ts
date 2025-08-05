@@ -53,7 +53,9 @@ export class TrainingInstanceTable extends SentinelTable<TrainingInstanceRowAdap
 
         row.addLink(
             'title',
-            Routing.RouteBuilder.linear_instance.instanceId(ti.id).build()
+            Routing.RouteBuilder.linear_instance
+                .instanceId(ti.id)
+                .detail.build()
         );
         row.addLink(
             'tdTitle',

@@ -1,21 +1,21 @@
 import {
     GraphNode,
+    GraphNodeLink,
     GraphNodeType,
     HostNode,
-    Link,
     LinkTypeEnum,
     NodePort,
     RouterNode,
     SpecialNode,
-    SwitchNode,
-} from '@crczp/topology-graph-model';
-import {TopologyDTO} from '../../../../../temp/model/DTO/topology-dto.model';
-import {PortDTO} from '../../../../../temp/model/DTO/port-dto.model';
-import {RouterDTO} from '../../../../../temp/model/DTO/router-dto.model';
-import {SwitchDTO} from '../../../../../temp/model/DTO/switch-dto.model';
-import {HostDTO} from '../../../../../temp/model/DTO/host-dto.model';
-import {LinkDTO} from '../../../../../temp/model/DTO/link-dto.model';
-import {SpecialNodeDTO} from '../../../../../temp/model/DTO/special-node-dto.model';
+    SwitchNode
+} from '@crczp/sandbox-model';
+import { SpecialNodeDTO } from '../../dto/topology/special-node-dto.model';
+import { TopologyDTO } from '../../dto/topology/topology-dto.model';
+import { HostDTO } from '../../dto/topology/host-dto.model';
+import { SwitchDTO } from '../../dto/topology/switch-dto.model';
+import { RouterDTO } from '../../dto/topology/router-dto.model';
+import { PortDTO } from '../../dto/topology/port-dto.model';
+import { LinkDTO } from '../../dto/topology/link-dto.model';
 
 /**
  * Maps DTOs to internal model
@@ -24,10 +24,9 @@ import {SpecialNodeDTO} from '../../../../../temp/model/DTO/special-node-dto.mod
  * implement functions needed for visualization  in our own way.
  */
 export class TopologyGraphMapper {
-
     public static mapTopologyFromDTO(topology: TopologyDTO): {
         nodes: GraphNode[];
-        links: Link[];
+        links: GraphNodeLink[];
     } {
         const ports = this.mapPortsFromDTO(topology);
         const nodes = this.mapNodesFromDTO(topology);
@@ -63,8 +62,11 @@ export class TopologyGraphMapper {
         return result;
     }
 
-    private static mapLinksFromDTO(topologyDTO: TopologyDTO, nodes: GraphNode[]): Link[] {
-        const links: Link[] = [];
+    private static mapLinksFromDTO(
+        topologyDTO: TopologyDTO,
+        nodes: GraphNode[]
+    ): GraphNodeLink[] {
+        const links: GraphNodeLink[] = [];
         let linksCounter = 0;
 
         topologyDTO.links.forEach((link) =>
@@ -81,14 +83,20 @@ export class TopologyGraphMapper {
         return ports;
     }
 
-    private static createHierarchicalStructure(nodes: GraphNode[], links: Link[]) {
+    private static createHierarchicalStructure(
+        nodes: GraphNode[],
+        links: GraphNodeLink[]
+    ) {
         const switches: SwitchNode[] = this.findSwitchesInNodes(nodes);
         switches.forEach((switchNode) => {
             switchNode.children = this.findChildrenOfNode(switchNode, links);
         });
     }
 
-    private static findChildrenOfNode(switchNode: SwitchNode, links: Link[]): GraphNode[] {
+    private static findChildrenOfNode(
+        switchNode: SwitchNode,
+        links: GraphNodeLink[]
+    ): GraphNode[] {
         const children: GraphNode[] = [];
         const nodeLinks = links.filter(
             (link) =>
@@ -140,11 +148,13 @@ export class TopologyGraphMapper {
         result.osType = hostDTO.os_type;
         result.guiAccess = hostDTO.gui_access;
         result.containers = hostDTO.containers;
-        result.physicalRole = GraphNodeType.Desktop;
+        result.nodeType = GraphNodeType.Desktop;
         return result;
     }
 
-    private static mapSpecialNodeFromDTO(specialNodeDTO: SpecialNodeDTO): SpecialNode {
+    private static mapSpecialNodeFromDTO(
+        specialNodeDTO: SpecialNodeDTO
+    ): SpecialNode {
         const result = new SpecialNode();
         result.name = specialNodeDTO.name;
         if (result.name === GraphNodeType.Internet) {
@@ -153,8 +163,12 @@ export class TopologyGraphMapper {
         return result;
     }
 
-    private static mapLinkFromDTO(linkDTO: LinkDTO, nodes: GraphNode[], linkId: number): Link {
-        const result = new Link();
+    private static mapLinkFromDTO(
+        linkDTO: LinkDTO,
+        nodes: GraphNode[],
+        linkId: number
+    ): GraphNodeLink {
+        const result = new GraphNodeLink();
         result.id = linkId;
         const nodeA = this.findNodeByPort(nodes, linkDTO.port_a);
         const nodeB = this.findNodeByPort(nodes, linkDTO.port_b);
@@ -172,11 +186,17 @@ export class TopologyGraphMapper {
         );
     }
 
-    private static findPortsOfNode(node: GraphNode, ports: NodePort[]): NodePort[] {
+    private static findPortsOfNode(
+        node: GraphNode,
+        ports: NodePort[]
+    ): NodePort[] {
         return ports.filter((port) => port.nodeName === node.name);
     }
 
-    private static findNodeByPort(nodes: GraphNode[], portName: string): GraphNode {
+    private static findNodeByPort(
+        nodes: GraphNode[],
+        portName: string
+    ): GraphNode {
         return nodes.find((node) =>
             node.nodePorts.some((port) => port.name === portName)
         );
@@ -186,7 +206,7 @@ export class TopologyGraphMapper {
         return ports.find((port) => port.name === name);
     }
 
-    private static resolveLinkType(link: Link): LinkTypeEnum {
+    private static resolveLinkType(link: GraphNodeLink): LinkTypeEnum {
         if (
             (link.source instanceof RouterNode ||
                 link.source instanceof SwitchNode) &&

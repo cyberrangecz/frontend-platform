@@ -4,23 +4,16 @@ import { Router } from '@angular/router';
 import {
     SentinelConfirmationDialogComponent,
     SentinelConfirmationDialogConfig,
-    SentinelDialogResultEnum,
+    SentinelDialogResultEnum
 } from '@sentinel/components/dialogs';
-import {
-    OffsetPaginationEvent,
-    PaginatedResource,
-} from '@sentinel/common/pagination';
+import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
 import { CheatingDetectionApi } from '@crczp/training-api';
 import { CheatingDetection } from '@crczp/training-model';
 import { EMPTY, from, Observable } from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
-import {
-    ErrorHandlerService,
-    NotificationService,
-    TrainingNavigator,
-} from '@crczp/training-agenda';
 import { CheatingDetectionService } from './cheating-detection.service';
-import { PortalConfig } from '@crczp/utils';
+import { ErrorHandlerService, NotificationService, PortalConfig } from '@crczp/utils';
+import { Routing } from '@crczp/routing-commons';
 
 /**
  * Basic implementation of a layer between a component and an API services.
@@ -31,7 +24,6 @@ export class CheatingDetectionConcreteService extends CheatingDetectionService {
     private api = inject(CheatingDetectionApi);
     private dialog = inject(MatDialog);
     private router = inject(Router);
-    private navigator = inject(TrainingNavigator);
     private notificationService = inject(NotificationService);
     private errorHandler = inject(ErrorHandlerService);
 
@@ -67,9 +59,9 @@ export class CheatingDetectionConcreteService extends CheatingDetectionService {
     toCreatePage(trainingInstanceId: number): Observable<boolean> {
         return from(
             this.router.navigate([
-                this.navigator.toTrainingInstanceCheatingDetectionCreate(
-                    trainingInstanceId
-                ),
+                Routing.RouteBuilder.linear_instance
+                    .instanceId(trainingInstanceId)
+                    .cheating_detection.create.build(),
             ])
         );
     }
@@ -85,10 +77,10 @@ export class CheatingDetectionConcreteService extends CheatingDetectionService {
     ): Observable<any> {
         return from(
             this.router.navigate([
-                this.navigator.toTrainingInstanceCheatingDetectionEvents(
-                    trainingInstanceId,
-                    cheatingDetectionId
-                ),
+                Routing.RouteBuilder.linear_instance
+                    .instanceId(trainingInstanceId)
+                    .cheating_detection.detectionId(cheatingDetectionId)
+                    .build(),
             ])
         );
     }
@@ -131,9 +123,9 @@ export class CheatingDetectionConcreteService extends CheatingDetectionService {
                         'Cheating Detection was re-executed.'
                     ),
                 (err) =>
-                    this.errorHandler.emit(
+                    this.errorHandler.emitAPIError(
                         err,
-                        'executing cheating detection rerun'
+                        'Executing cheating detection rerun'
                     )
             )
         );
@@ -154,7 +146,7 @@ export class CheatingDetectionConcreteService extends CheatingDetectionService {
                         'Cheating Detection was executed'
                     ),
                 (err) =>
-                    this.errorHandler.emit(
+                    this.errorHandler.emitAPIError(
                         err,
                         'Creating and executing cheating detection'
                     )
@@ -166,7 +158,7 @@ export class CheatingDetectionConcreteService extends CheatingDetectionService {
         return this.api.archive(cheatingDetectionId).pipe(
             tap({
                 error: (err) =>
-                    this.errorHandler.emit(
+                    this.errorHandler.emitAPIError(
                         err,
                         'Downloading cheating detection'
                     ),
@@ -203,7 +195,10 @@ export class CheatingDetectionConcreteService extends CheatingDetectionService {
                         'Cheating Detection was deleted'
                     ),
                 (err) =>
-                    this.errorHandler.emit(err, 'Deleting cheating detection')
+                    this.errorHandler.emitAPIError(
+                        err,
+                        'Deleting cheating detection'
+                    )
             ),
             switchMap(() =>
                 this.getAll(trainingInstanceId, this.lastPagination)

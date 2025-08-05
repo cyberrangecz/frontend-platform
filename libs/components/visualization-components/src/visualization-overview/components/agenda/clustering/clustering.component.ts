@@ -7,27 +7,30 @@ import {
     OnInit,
     Output,
     SimpleChanges,
-    ViewChild
+    ViewChild,
 } from '@angular/core';
-import {FinalComponent} from './final/final.component';
-import {LevelsComponent} from './levels/levels.component';
-import {VizOverviewTraineeInfo} from '../../../shared/interfaces/viz-overview-trainee-info';
-import {ClusteringTrainingData} from '../../model/clustering/clustering-training-data';
-import {VizConfigService} from "../../../../common/viz-config.service";
+import { FinalComponent } from './final/final.component';
+import { LevelsComponent } from './levels/levels.component';
+import { VizOverviewTraineeInfo } from '../../../shared/interfaces/viz-overview-trainee-info';
+import { ClusteringTrainingData } from '../../model/clustering/clustering-training-data';
+import { VizConfigService } from '../../../../common/viz-config.service';
 
 @Component({
     selector: 'crczp-visualization-overview-clustering',
     templateUrl: './clustering.component.html',
     styleUrls: ['./clustering.component.css'],
-    standalone: false
+    // eslint-disable-next-line
+    standalone: false,
 })
 export class ClusteringComponent implements OnInit, OnChanges {
-
-    @ViewChild(FinalComponent, {static: true}) finalComponent;
-    @ViewChild(LevelsComponent, {static: true}) levelsComponent;
+    @ViewChild(FinalComponent, { static: true }) finalComponent;
+    @ViewChild(LevelsComponent, { static: true }) levelsComponent;
 
     public selectedTrainingRunId: number;
-    clusteringTrainingData: ClusteringTrainingData = {finalResults: null, levels: null};
+    clusteringTrainingData: ClusteringTrainingData = {
+        finalResults: null,
+        levels: null,
+    };
     /**
      * Array of color strings for visualization.
      */
@@ -72,7 +75,7 @@ export class ClusteringComponent implements OnInit, OnChanges {
      * If provided is used for aggregated view across data from several instances.
      */
     @Input() instanceIds: number[];
-    private readonly configService = inject(VizConfigService)
+    private readonly configService = inject(VizConfigService);
 
     ngOnInit(): void {
         if (this.traineeModeInfo && this.standalone) {

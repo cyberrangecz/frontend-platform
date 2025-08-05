@@ -1,9 +1,23 @@
 {
     "name": "@crczp/adaptive-instance-simulator",
-    "version": "0.0.1",
     "peerDependencies": {
-        "@angular/common": "^20.0.6",
-        "@angular/core": "^20.0.6"
+        "@angular/common": "*",
+        "@angular/core": "*",
+        "@crczp/training-model": "*",
+        "@angular/material": "*",
+        "@sentinel/components": "*",
+        "@angular/forms": "*",
+        "@angular/cdk": "*",
+        "rxjs": "*",
+        "@crczp/utils": "*",
+        "d3": "*",
+        "d3-sankey": "*",
+        "@crczp/training-api": "*",
+        "file-saver": "*",
+        "@crczp/visualization-model": "*",
+        "vite": "*",
+        "@analogjs/vite-plugin-angular": "*",
+        "@nx/vite": "*"
     },
     "sideEffects": false
 }

@@ -1,12 +1,12 @@
-import {BehaviorSubject, Observable} from 'rxjs';
-import {RunningAdaptiveRunService} from '../running/running-adaptive-run.service';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { RunningAdaptiveRunService } from '../running/running-adaptive-run.service';
 import {
     SentinelNotification,
     SentinelNotificationResult,
     SentinelNotificationService,
     SentinelNotificationTypeEnum,
 } from '@sentinel/layout/notification';
-import {map} from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 
 export abstract class AdaptiveRunAccessPhaseService {
     isCorrectPasskeySubmitted$: Observable<boolean>;
@@ -16,17 +16,19 @@ export abstract class AdaptiveRunAccessPhaseService {
 
     protected constructor(
         protected notificationService: SentinelNotificationService,
-        protected runningAdaptiveRunService: RunningAdaptiveRunService,
-    ) {
-    }
+        protected runningAdaptiveRunService: RunningAdaptiveRunService
+    ) {}
 
     abstract submitPasskey(passkey: string): Observable<any>;
 
     abstract getAccessFile(): Observable<boolean>;
 
     init(isPhaseAnswered: boolean): void {
-        this.isCorrectPasskeySubmittedSubject$ = new BehaviorSubject(isPhaseAnswered);
-        this.isCorrectPasskeySubmitted$ = this.isCorrectPasskeySubmittedSubject$.asObservable();
+        this.isCorrectPasskeySubmittedSubject$ = new BehaviorSubject(
+            isPhaseAnswered
+        );
+        this.isCorrectPasskeySubmitted$ =
+            this.isCorrectPasskeySubmittedSubject$.asObservable();
         this.isLoadingSubject$ = new BehaviorSubject(false);
         this.isLoading$ = this.isLoadingSubject$.asObservable();
     }
@@ -36,7 +38,9 @@ export abstract class AdaptiveRunAccessPhaseService {
         return this.runningAdaptiveRunService.next();
     }
 
-    protected onWrongPasskeySubmitted(additionalData: string = 'The provided passkey is not correct'): Observable<any> {
+    protected onWrongPasskeySubmitted(
+        additionalData = 'The provided passkey is not correct'
+    ): Observable<any> {
         const notification: SentinelNotification = {
             type: SentinelNotificationTypeEnum.Error,
             title: 'Incorrect passkey',
@@ -44,6 +48,8 @@ export abstract class AdaptiveRunAccessPhaseService {
         };
         return this.notificationService
             .emit(notification)
-            .pipe(map((result) => result === SentinelNotificationResult.CONFIRMED));
+            .pipe(
+                map((result) => result === SentinelNotificationResult.CONFIRMED)
+            );
     }
 }

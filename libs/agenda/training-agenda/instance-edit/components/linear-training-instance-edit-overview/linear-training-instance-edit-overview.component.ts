@@ -6,7 +6,6 @@ import {
 import { OrganizersAssignService } from '../../services/state/organizers-assign/organizers-assign.service';
 import { TrainingTypeEnum } from '@crczp/training-model';
 import { CommonTrainingInstanceEditService } from '../../services/state/edit/common-training-instance-edit.service';
-import { TRAINING_TYPE_TOKEN } from '../training-type-token';
 import { SentinelControlsComponent } from '@sentinel/components/controls';
 import { MatIcon } from '@angular/material/icon';
 import {
@@ -22,6 +21,7 @@ import { TrainingInstanceEditComponent } from '../training-instance-edit/trainin
 import { MatDivider } from '@angular/material/divider';
 import { TrainingInstanceEditOverviewComponent } from '../training-instance-edit-overview.component';
 import { LinearTrainingInstanceEditService } from '../../services/state/edit/linear-training-instance-edit.service';
+import { Injection } from '@crczp/utils';
 
 @Component({
     selector: 'crczp-linear-training-instance-edit-overview',
@@ -52,7 +52,7 @@ import { LinearTrainingInstanceEditService } from '../../services/state/edit/lin
             provide: SentinelUserAssignService,
             useClass: OrganizersAssignService,
         },
-        { provide: TRAINING_TYPE_TOKEN, useValue: TrainingTypeEnum.LINEAR },
+        { provide: Injection.TrainingType, useValue: TrainingTypeEnum.LINEAR },
     ],
 })
 export class LinearTrainingInstanceEditOverviewComponent extends TrainingInstanceEditOverviewComponent {}

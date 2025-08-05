@@ -43,7 +43,9 @@ export class ContextMenu implements OnChanges {
             this.items = [
                 {
                     label: 'No actions available',
-                    action: () => {},
+                    action: () => {
+                        console.log('action');
+                    },
                 },
             ];
         }

@@ -13,10 +13,15 @@ import { filter, map, switchMap, take, tap } from 'rxjs/operators';
 import { CloneDialogComponent } from '../../components/clone-dialog/clone-dialog.component';
 import { TrainingDefinitionService } from './training-definition.service';
 import { inject, Injectable } from '@angular/core';
-import { ErrorHandlerService, FileUploadProgressService, NotificationService, PortalConfig } from '@crczp/utils';
+import {
+    ErrorHandlerService,
+    FileUploadProgressService,
+    Injection,
+    NotificationService,
+    PortalConfig
+} from '@crczp/utils';
 import { Routing } from '@crczp/routing-commons';
 import { FileUploadDialog } from '@crczp/components';
-import { TRAINING_TYPE_TOKEN } from '../../../instance-edit/components/training-type-token';
 import { AdaptiveTrainingDefinitionApi, LinearTrainingDefinitionApi } from '@crczp/training-api';
 
 /**
@@ -25,7 +30,7 @@ import { AdaptiveTrainingDefinitionApi, LinearTrainingDefinitionApi } from '@crc
  */
 @Injectable()
 export class TrainingDefinitionConcreteService extends TrainingDefinitionService {
-    private trainingType: TrainingTypeEnum = inject(TRAINING_TYPE_TOKEN);
+    private trainingType: TrainingTypeEnum = inject(Injection.TrainingType);
     private api =
         this.trainingType === TrainingTypeEnum.LINEAR
             ? inject(LinearTrainingDefinitionApi)

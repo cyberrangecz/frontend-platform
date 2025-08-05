@@ -40,7 +40,6 @@ import { CheatingDetection, TrainingInstance } from '@crczp/training-model';
         SentinelRowDirective,
     ],
     providers: [
-        { provide: TrainingNavigator, useClass: TrainingDefaultNavigator },
         {
             provide: CheatingDetectionService,
             useClass: CheatingDetectionConcreteService,
@@ -64,7 +63,6 @@ export class CheatingDetectionOverviewComponent implements OnInit {
     private activeRoute = inject(ActivatedRoute);
     private cheatingDetectionService = inject(CheatingDetectionService);
     private paginationService = inject(PaginationStorageService);
-    private navigator = inject(TrainingNavigator);
 
     ngOnInit(): void {
         this.trainingInstance$ = this.activeRoute.data.pipe(
@@ -125,8 +123,7 @@ export class CheatingDetectionOverviewComponent implements OnInit {
                 (resource) =>
                     new CheatingDetectionTable(
                         resource,
-                        this.cheatingDetectionService,
-                        this.navigator
+                        this.cheatingDetectionService
                     )
             )
         );

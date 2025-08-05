@@ -1,30 +1,38 @@
-import {Component, inject, Input, OnChanges, OnDestroy, OnInit} from '@angular/core';
-import {Subscription} from 'rxjs';
-import {VizOverviewTraineeInfo} from '../../../shared/interfaces/viz-overview-trainee-info';
-import {take} from 'rxjs/operators';
-import {TableData} from '../../model/table/table-data';
-import {PlayerTableData} from '../../model/table/player-table-data';
-import {LevelTableData} from '../../model/table/level-table-data';
-import {TableDataService} from './service/table-data.service';
-import {TableService} from '../../../services/table.service';
-import {FiltersService} from '../../../services/filters.service';
-import {VizConfigService} from "../../../../common/viz-config.service";
+import {
+    Component,
+    inject,
+    Input,
+    OnChanges,
+    OnDestroy,
+    OnInit,
+} from '@angular/core';
+import { Subscription } from 'rxjs';
+import { VizOverviewTraineeInfo } from '../../../shared/interfaces/viz-overview-trainee-info';
+import { take } from 'rxjs/operators';
+import { TableData } from '../../model/table/table-data';
+import { PlayerTableData } from '../../model/table/player-table-data';
+import { LevelTableData } from '../../model/table/level-table-data';
+import { TableDataService } from './service/table-data.service';
+import { TableService } from '../../../services/table.service';
+import { FiltersService } from '../../../services/filters.service';
+import { VizConfigService } from '../../../../common/viz-config.service';
 
 @Component({
     selector: 'crczp-visualization-overview-table',
     templateUrl: './table.component.html',
     styleUrls: ['./table.component.css'],
-    standalone: false
+    // eslint-disable-next-line
+    standalone: false,
 })
 export class TableComponent implements OnInit, OnChanges, OnDestroy {
     /**
      * Training data
      */
-    @Input() tableData: TableData = {players: null};
+    @Input() tableData: TableData = { players: null };
     /**
      * JSON data to use instead of data from API
      */
-    @Input() jsonTableData: TableData = {players: null};
+    @Input() jsonTableData: TableData = { players: null };
     /**
      * Flag to use in standalone mode
      */
@@ -56,12 +64,13 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
     private readonly configService = inject(VizConfigService);
 
     constructor() {
-        this.playerColorScaleSource = this.tableService.playerColorScale$.subscribe((scale) => {
-            setTimeout(() => (this.playerColorScale = scale), 0);
-        });
+        this.playerColorScaleSource =
+            this.tableService.playerColorScale$.subscribe((scale) => {
+                setTimeout(() => (this.playerColorScale = scale), 0);
+            });
     }
 
-    public playerColorScale = (id) => 'black';
+    public playerColorScale = () => 'black';
 
     ngOnDestroy() {
         this.playerColorScaleSource.unsubscribe();
@@ -72,13 +81,17 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     ngOnChanges() {
-        if (this.jsonTableData !== undefined && this.jsonTableData.players !== null) {
+        if (
+            this.jsonTableData !== undefined &&
+            this.jsonTableData.players !== null
+        ) {
             this.tableData.players = this.jsonTableData.players;
         }
         this.configService.trainingDefinitionId = this.trainingDefinitionId;
         this.configService.trainingInstanceId = this.trainingInstanceId;
         if (this.traineeModeInfo) {
-            this.configService.trainingRunId = this.traineeModeInfo.trainingRunId;
+            this.configService.trainingRunId =
+                this.traineeModeInfo.trainingRunId;
         }
         if (this.tableData.players) {
             this.getMaxReachedLevel();
@@ -157,10 +170,15 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
             return;
         }
         this.playersOrdered.sort((a, b) => {
-            if (typeof a.levels[levelNumber] === 'undefined' || typeof b.levels[levelNumber] === 'undefined') {
+            if (
+                typeof a.levels[levelNumber] === 'undefined' ||
+                typeof b.levels[levelNumber] === 'undefined'
+            ) {
                 return 1;
             }
-            const result = b.levels[levelNumber].wrongAnswers - a.levels[levelNumber].wrongAnswers;
+            const result =
+                b.levels[levelNumber].wrongAnswers -
+                a.levels[levelNumber].wrongAnswers;
             return this.sortedDesc ? result : -result;
         });
         this.sortedColumn = 'w' + levelNumber;
@@ -173,10 +191,15 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
             return;
         }
         this.playersOrdered.sort((a, b) => {
-            if (typeof a.levels[levelNumber] === 'undefined' || typeof b.levels[levelNumber] === 'undefined') {
+            if (
+                typeof a.levels[levelNumber] === 'undefined' ||
+                typeof b.levels[levelNumber] === 'undefined'
+            ) {
                 return 1;
             }
-            const result = b.levels[levelNumber].hintsTaken - a.levels[levelNumber].hintsTaken;
+            const result =
+                b.levels[levelNumber].hintsTaken -
+                a.levels[levelNumber].hintsTaken;
             return this.sortedDesc ? result : -result;
         });
         this.sortedColumn = 'h' + levelNumber;
@@ -194,7 +217,9 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
             } else if (typeof b.levels[levelNumber] === 'undefined') {
                 return 1;
             }
-            const result = b.levels[levelNumber].participantLevelScore - a.levels[levelNumber].participantLevelScore;
+            const result =
+                b.levels[levelNumber].participantLevelScore -
+                a.levels[levelNumber].participantLevelScore;
             return this.sortedDesc ? result : -result;
         });
         this.sortedColumn = levelNumber;
@@ -207,7 +232,9 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
             return;
         }
         this.playersOrdered.sort((a, b) => {
-            return this.sortedDesc ? b.totalScore - a.totalScore : a.totalScore - b.totalScore;
+            return this.sortedDesc
+                ? b.totalScore - a.totalScore
+                : a.totalScore - b.totalScore;
         });
         this.sortedColumn = -2;
     }
@@ -219,7 +246,9 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
             return;
         }
         this.playersOrdered.sort((a, b) => {
-            return !this.sortedDesc ? a.trainingRunId - b.trainingRunId : b.trainingRunId - a.trainingRunId;
+            return !this.sortedDesc
+                ? a.trainingRunId - b.trainingRunId
+                : b.trainingRunId - a.trainingRunId;
         });
         this.sortedColumn = -1;
     }

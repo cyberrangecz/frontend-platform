@@ -24,7 +24,7 @@ export class TrainingDefinition {
     outcomes: string[] = [];
     state!: TrainingDefinitionStateEnum;
     levels: Level[] | Phase[] = []
-    defaultContent: boolean = false;
+    defaultContent = false;
     lastEditBy!: string;
     hasReferenceSolution!: boolean;
     createdAt!: Date;

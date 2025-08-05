@@ -1435,15 +1435,7 @@ export class ProgressComponent implements OnChanges, AfterViewInit {
         this.traineeDetailId = null;
     }
 
-    setSort(level: any) {
-        console.log('sort deprecated');
-    }
-
-    onSortValueChange(
-        sortType: string,
-        sortReverse: boolean,
-        levelIndex?: number
-    ): void {
+    onSortValueChange(sortType: string, sortReverse: boolean): void {
         this.sortType = sortType;
         this.sortReverse = sortReverse;
         this.updateProgressChart();

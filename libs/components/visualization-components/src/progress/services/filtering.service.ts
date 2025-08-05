@@ -1,11 +1,9 @@
-import {Injectable} from '@angular/core';
+import { Injectable } from '@angular/core';
 
 @Injectable({
     providedIn: 'root',
 })
 export class FilteringService {
-    constructor() {}
-
     filter(trainingDataSet: any[], selectedFilterValue): any[] {
         let filteredTrainingDataSet: any[];
 
@@ -14,10 +12,16 @@ export class FilteringService {
                 filteredTrainingDataSet = trainingDataSet;
                 break;
             case 2:
-                filteredTrainingDataSet = this.filterByFinished(trainingDataSet, true);
+                filteredTrainingDataSet = this.filterByFinished(
+                    trainingDataSet,
+                    true
+                );
                 break;
             case 3:
-                filteredTrainingDataSet = this.filterByFinished(trainingDataSet, false);
+                filteredTrainingDataSet = this.filterByFinished(
+                    trainingDataSet,
+                    false
+                );
                 break;
         }
 

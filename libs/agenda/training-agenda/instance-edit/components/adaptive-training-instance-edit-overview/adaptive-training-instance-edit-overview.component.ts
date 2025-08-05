@@ -7,7 +7,6 @@ import { OrganizersAssignService } from '../../services/state/organizers-assign/
 import { TrainingTypeEnum } from '@crczp/training-model';
 import { CommonTrainingInstanceEditService } from '../../services/state/edit/common-training-instance-edit.service';
 import { AdaptiveTrainingInstanceEditService } from '../../services/state/edit/adaptive-training-instance-edit.service';
-import { TRAINING_TYPE_TOKEN } from '../training-type-token';
 import { TrainingInstanceEditOverviewComponent } from '../training-instance-edit-overview.component';
 import { SentinelControlsComponent } from '@sentinel/components/controls';
 import { MatIcon } from '@angular/material/icon';
@@ -22,6 +21,7 @@ import { MatError } from '@angular/material/input';
 import { AsyncPipe } from '@angular/common';
 import { TrainingInstanceEditComponent } from '../training-instance-edit/training-instance-edit.component';
 import { MatDivider } from '@angular/material/divider';
+import { Injection } from '@crczp/utils';
 
 @Component({
     selector: 'crczp-adaptive-training-instance-edit-overview',
@@ -52,7 +52,10 @@ import { MatDivider } from '@angular/material/divider';
             provide: SentinelUserAssignService,
             useClass: OrganizersAssignService,
         },
-        { provide: TRAINING_TYPE_TOKEN, useValue: TrainingTypeEnum.ADAPTIVE },
+        {
+            provide: Injection.TrainingType,
+            useValue: TrainingTypeEnum.ADAPTIVE,
+        },
     ],
 })
 export class AdaptiveTrainingInstanceEditOverviewComponent extends TrainingInstanceEditOverviewComponent {}

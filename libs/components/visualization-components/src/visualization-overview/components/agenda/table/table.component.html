@@ -1,174 +1,179 @@
 <div>
-  <table
-    class="table table-striped table-bordered table-condensed mat-elevation-z8 mat-table {{standalone ? 'full-table': ''}}">
-    <thead>
-      <tr class="mat-header-row">
-        <th (click)="onPlayerClick()"
-          (mouseout)="columnHovered = null"
-          (mouseover)="columnHovered = -1"
-          class="mat-header-cell"
-          style="cursor:pointer">
-          Player
-          @if (sortedColumn === -1 || columnHovered === -1) {
-            @if (sortedDesc) {
-              <span> ▼ </span>
-            }
-            @if (!sortedDesc) {
-              <span> ▲ </span>
-            }
-          } @else {
-            <span style="opacity: 0"> ▼ </span>
-          }
-        </th>
-        @for (level of tableLevelHeader; track level; let i = $index) {
-          <th class="mat-header-cell">
+    <table
+        class="table table-striped table-bordered table-condensed mat-elevation-z8 mat-table {{standalone ? 'full-table': ''}}">
+        <thead>
+        <tr class="mat-header-row">
+            <th (click)="onPlayerClick()"
+                (mouseout)="columnHovered = null"
+                (mouseover)="columnHovered = -1"
+                class="mat-header-cell"
+                style="cursor:pointer">
+                Player
+                @if (sortedColumn === -1 || columnHovered === -1) {
+                    @if (sortedDesc) {
+                        <span> ▼ </span>
+                    }
+                    @if (!sortedDesc) {
+                        <span> ▲ </span>
+                    }
+                } @else {
+                    <span style="opacity: 0"> ▼ </span>
+                }
+            </th>
+            @for (level of tableLevelHeader; track level; let i = $index) {
+                <th class="mat-header-cell">
             <span (click)="onLevelClick(i)" (mouseout)="columnHovered = null" (mouseover)="columnHovered = i"
-              style="cursor:pointer">
+                  style="cursor:pointer">
               Level {{ i + 1 }}
             </span> <br>
-            <span (click)="onLevelClick(i)" (mouseout)="columnHovered = null"
-              (mouseover)="columnHovered = i" style="font-size: 10px; cursor:pointer">
+                    <span (click)="onLevelClick(i)" (mouseout)="columnHovered = null"
+                          (mouseover)="columnHovered = i" style="font-size: 10px; cursor:pointer">
               <span>
                 {{ standalone || (!filters.hintFilter.checked && !filters.wrongAnswerFilter.checked) ? 'Score' : 'S' }}
               </span>
-              @if (sortedColumn === i || columnHovered === i) {
-                @if (sortedDesc) {
-                  <span>▼</span>
-                }
-                @if (!sortedDesc) {
-                  <span>▲</span>
-                }
-              } @else {
-                <span style="opacity: 0">▼</span>
-              }
+                        @if (sortedColumn === i || columnHovered === i) {
+                            @if (sortedDesc) {
+                                <span>▼</span>
+                            }
+                            @if (!sortedDesc) {
+                                <span>▲</span>
+                            }
+                        } @else {
+                            <span style="opacity: 0">▼</span>
+                        }
             </span>
-            @if (standalone || filters.hintFilter.checked || filters.wrongAnswerFilter.checked) {
-              @if (standalone || filters.wrongAnswerFilter.checked) {
-                <span
-                  (click)="onWrongClick(i)"
-                  (mouseout)="columnHovered = null"
-                  (mouseover)="columnHovered = 'w'+i"
-                  style="font-size: 10px; cursor:pointer">
+                    @if (standalone || filters.hintFilter.checked || filters.wrongAnswerFilter.checked) {
+                        @if (standalone || filters.wrongAnswerFilter.checked) {
+                            <span
+                                (click)="onWrongClick(i)"
+                                (keydown.enter)="onWrongClick(i)"
+                                (mouseout)="columnHovered = null"
+                                (mouseover)="columnHovered = 'w'+i"
+                                style="font-size: 10px; cursor:pointer">
                   / <span style="opacity: 0"> | </span>
                   <span>{{ standalone ? 'Wrong answers' : 'WA' }}</span>
-                  @if (sortedColumn === 'w'+i  || columnHovered === 'w'+i) {
-                    @if (sortedDesc) {
-                      <span>▼</span>
-                    }
-                    @if (!sortedDesc) {
-                      <span>▲</span>
-                    }
-                  } @else {
-                    <span style="opacity: 0">▼</span>
-                  }
+                                @if (sortedColumn === 'w' + i || columnHovered === 'w' + i) {
+                                    @if (sortedDesc) {
+                                        <span>▼</span>
+                                    }
+                                    @if (!sortedDesc) {
+                                        <span>▲</span>
+                                    }
+                                } @else {
+                                    <span style="opacity: 0">▼</span>
+                                }
                 </span>
-              }
-              @if (standalone || filters.hintFilter.checked) {
-                <span (click)="onHintsClick(i)" (mouseout)="columnHovered = null"
-                  (mouseover)="columnHovered = 'h'+i"
-                  style="font-size: 10px; cursor:pointer"
-                  > / <span style="opacity: 0"> | </span>
+                        }
+                        @if (standalone || filters.hintFilter.checked) {
+                            <span (click)="onHintsClick(i)" (mouseout)="columnHovered = null"
+                                  (mouseover)="columnHovered = 'h'+i"
+                                  style="font-size: 10px; cursor:pointer"
+                            > / <span style="opacity: 0"> | </span>
                   <span>{{ standalone ? 'Hints taken' : 'H' }}</span>
-                  @if (sortedColumn === 'h'+i  || columnHovered === 'h'+i) {
-                    @if (sortedDesc) {
-                      <span>▼</span>
-                    }
-                    @if (!sortedDesc) {
-                      <span>▲</span>
-                    }
-                  } @else {
-                    <span style="opacity: 0">▼</span>
-                  }
+                                @if (sortedColumn === 'h' + i || columnHovered === 'h' + i) {
+                                    @if (sortedDesc) {
+                                        <span>▼</span>
+                                    }
+                                    @if (!sortedDesc) {
+                                        <span>▲</span>
+                                    }
+                                } @else {
+                                    <span style="opacity: 0">▼</span>
+                                }
                 </span>
-              }
+                        }
+                    }
+                </th>
             }
-          </th>
-        }
-        <th (click)="onFinalClick()"
-          (mouseout)="columnHovered = null"
-          (mouseover)="columnHovered = -2"
-          class="mat-header-cell"
-          style="cursor:pointer">
-          Final<br>
-          <span style="font-size: 10px;"> Score
-            @if (sortedColumn === -2  || columnHovered === -2) {
-              @if (sortedDesc) {
-                <span>▼</span>
-              }
-              @if (!sortedDesc) {
-                <span>▲</span>
-              }
-            } @else {
-              <span style="opacity: 0">▼</span>
-            }
+            <th (click)="onFinalClick()"
+                (mouseout)="columnHovered = null"
+                (mouseover)="columnHovered = -2"
+                class="mat-header-cell"
+                style="cursor:pointer">
+                Final<br>
+                <span style="font-size: 10px;"> Score
+                    @if (sortedColumn === -2 || columnHovered === -2) {
+                        @if (sortedDesc) {
+                            <span>▼</span>
+                        }
+                        @if (!sortedDesc) {
+                            <span>▲</span>
+                        }
+                    } @else {
+                        <span style="opacity: 0">▼</span>
+                    }
           </span>
-        </th>
-      </tr>
-    </thead>
-    <tbody class="mdc-data-table__content" role="rowgroup">
-      @for (player of playersOrdered; track player) {
-        @if (player) {
-          <tr (click)="!standalone ? onRowClick(player) : null" (mouseout)="!standalone ? onRowMouseout(player): null"
-            (mouseover)="!standalone ?  onRowMouseover(player): null"
-            [ngClass]="{'checked' : standalone ? false : player.checked}"
-            [ngStyle]="{'cursor': standalone ? 'default' : 'pointer' }"
-            class="mat-mdc-row">
-            <td class="mat-cell">
-              @if (player.checked) {
-                <div [ngStyle]="{'background': player.avatarColor }"
-                class="row-stripe"></div>
-              }
-                    <span [ngStyle]="{
+            </th>
+        </tr>
+        </thead>
+        <tbody class="mdc-data-table__content" role="rowgroup">
+            @for (player of playersOrdered; track player) {
+                @if (player) {
+                    <tr
+                        (click)="!standalone ? onRowClick(player) : null"
+                        (keydown.enter)="!standalone ? onRowClick(player) : null"
+                        (mouseout)="!standalone ? onRowMouseout(player): null"
+                        (blur)="!standalone ? onRowMouseout(player): null"
+                        (mouseover)="!standalone ?  onRowMouseover(player): null"
+                        [ngClass]="{'checked' : standalone ? false : player.checked}"
+                        [ngStyle]="{'cursor': standalone ? 'default' : 'pointer' }"
+                        class="mat-mdc-row">
+                        <td class="mat-cell">
+                            @if (player.checked) {
+                                <div [ngStyle]="{'background': player.avatarColor }"
+                                     class="row-stripe"></div>
+                            }
+                            <span [ngStyle]="{
               'font-weight': player.trainingRunId === traineesTrainingRun ? 'bold' : 'normal',
               'padding-right': '10px',
               'padding-left': '8px'
               }">{{
-                player.name
-              }}</span>
-              @if (!standalone) {
-                <input [(ngModel)]="player.checked" [id]="player.id" name="player" style="display:none;"
-                  type="checkbox">
-              }
-            </td>
-            @for (level of player.levels; track level) {
-              <td class="mat-mdc-cell">
-                @if (level) {
-                  {{ level.participantLevelScore }}
-                  @if (standalone || filters.wrongAnswerFilter.checked) {
-                    <span>
+                                    player.name
+                                }}</span>
+                            @if (!standalone) {
+                                <input [(ngModel)]="player.checked" [id]="player.id" name="player" style="display:none;"
+                                       type="checkbox">
+                            }
+                        </td>
+                        @for (level of player.levels; track level) {
+                            <td class="mat-mdc-cell">
+                                @if (level) {
+                                    {{ level.participantLevelScore }}
+                                    @if (standalone || filters.wrongAnswerFilter.checked) {
+                                        <span>
                       / {{ level.wrongAnswers }}
                     </span>
-                  }
-                  @if (standalone || filters.hintFilter.checked) {
-                    <span>
+                                    }
+                                    @if (standalone || filters.hintFilter.checked) {
+                                        <span>
                       / {{ level.hintsTaken }}
                     </span>
-                  }
-                }
-                @if (!level) {
-                  <span>
+                                    }
+                                }
+                                @if (!level) {
+                                    <span>
                     -
                   </span>
+                                }
+                            </td>
+                        }
+                        <td class="mat-cell">{{ player.totalScore }}</td>
+                    </tr>
                 }
-              </td>
             }
-            <td class="mat-cell">{{ player.totalScore }}</td>
-          </tr>
-        }
-      }
-    </tbody>
-  </table>
+        </tbody>
+    </table>
 </div>
 
 <!-- material table outline -->
 <table [dataSource]="" class="mat-elevation-z8" mat-table style="display: none">
-  @for (column of []; track column) {
-    <ng-container [matColumnDef]="column">
-      <th *matHeaderCellDef mat-header-cell mat-sort-header> {{ column }}</th>
-      <td *matCellDef="let element" mat-cell> {{ element[column] }}</td>
-    </ng-container>
-  }
+    @for (column of []; track column) {
+        <ng-container [matColumnDef]="column">
+            <th *matHeaderCellDef mat-header-cell mat-sort-header> {{ column }}</th>
+            <td *matCellDef="let element" mat-cell> {{ element[column] }}</td>
+        </ng-container>
+    }
 
-  <tr *matHeaderRowDef="[]" mat-header-row></tr>
-  <tr *matRowDef="let row; columns: [];" mat-row></tr>
+    <tr *matHeaderRowDef="[]" mat-header-row></tr>
+    <tr *matRowDef="let row; columns: [];" mat-row></tr>
 </table>

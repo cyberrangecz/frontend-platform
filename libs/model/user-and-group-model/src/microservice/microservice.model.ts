@@ -8,7 +8,7 @@ export class Microservice {
     name: string;
     endpoint: string;
     roles: MicroserviceRole[];
-    valid: boolean = false
+    valid = false
 
     /**
      * True if microservice has default role, false otherwise

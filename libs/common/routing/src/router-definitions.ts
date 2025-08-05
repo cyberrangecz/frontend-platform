@@ -39,7 +39,7 @@ export const DEFINED_ROUTES = {
 
     ['adaptive-instance']: {
         create: {},
-        VAR_instanceId: {
+        EXCL_VAR_instanceId: {
             edit: {},
             detail: {},
             progress: {},
@@ -52,7 +52,7 @@ export const DEFINED_ROUTES = {
 
     ['linear-instance']: {
         create: {},
-        VAR_instanceId: {
+        EXCL_VAR_instanceId: {
             edit: {},
             detail: {},
             progress: {},
@@ -69,8 +69,10 @@ export const DEFINED_ROUTES = {
             ['aggregated-results']: {},
             ['cheating-detection']: {
                 create: {},
-                VAR_eventId: {
-                    detail: {},
+                VAR_detectionId: {
+                    EXCL_event: {
+                        VAR_eventId: {},
+                    },
                 },
             },
         },
@@ -182,12 +184,6 @@ function generateValidRoutes(
 
 export const VALID_ROUTES = generateValidRoutes(DEFINED_ROUTES) as {
     [K in ValidPath]: true;
-};
-
-type NavigationNode = {
-    build?: () => string;
-} & {
-    [key: string]: NavigationNode | ((param: string) => NavigationNode);
 };
 
 function createNavigationBuilder<

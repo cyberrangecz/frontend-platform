@@ -1,8 +1,7 @@
-import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
-import {TrainingPhaseTask} from '@crczp/visualization-model';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { TrainingPhaseTask } from '@crczp/visualization-model';
 
 @Component({
-    // eslint-disable-next-line @angular-eslint/component-selector
     selector: 'crczp-training-task-preview',
     templateUrl: './training-task-preview.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,

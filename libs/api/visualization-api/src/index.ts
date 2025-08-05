@@ -11,8 +11,9 @@ export * from './command/timeline/timeline-command-api.service';
 
 export * from './progress/mappers/progress-visualization-data-mapper';
 export * from './progress/visualization-data-api.service';
-export {ProgressVisualizationDataDTO} from './progress/dtos';
+export { ProgressVisualizationDataDTO } from './progress/dtos';
 
 export * from './statistics/instance-statistics-api.service';
 
 export * from './walkthrough/walkthrough-visualization-api.service';
+export * from './adaptive/adaptive-transition-visualization-api.service';

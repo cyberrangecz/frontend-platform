@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, Component, ElementRef, Input, OnChanges, SimpleChanges, inject } from '@angular/core';
+import {
+    ChangeDetectionStrategy,
+    Component,
+    ElementRef,
+    inject,
+    Input,
+    OnChanges,
+} from '@angular/core';
 import * as d3 from 'd3';
 
 @Component({
@@ -21,18 +28,27 @@ export class YAxisGridLinesComponent implements OnChanges {
         this.g = d3.select(element.nativeElement);
     }
 
-    ngOnChanges(changes: SimpleChanges): void {
+    ngOnChanges(): void {
         this.drawYGridLines();
         this.styleyGridLines();
     }
 
     private drawYGridLines() {
         const axisGenerator = d3.axisLeft(this.yScale).tickSize(-this.svgWidth);
-        this.g.attr('id', 'y-grid-lines').attr('class', 'grid').call(axisGenerator).selectAll('text').remove();
+        this.g
+            .attr('id', 'y-grid-lines')
+            .attr('class', 'grid')
+            .call(axisGenerator)
+            .selectAll('text')
+            .remove();
     }
 
     private styleyGridLines() {
-        this.g.selectAll('g').selectAll('line').attr('stroke', 'lightgrey').attr('stroke-opacity', 0.7);
+        this.g
+            .selectAll('g')
+            .selectAll('line')
+            .attr('stroke', 'lightgrey')
+            .attr('stroke-opacity', 0.7);
         this.g.selectAll('path').attr('stroke-width', 0);
     }
 }

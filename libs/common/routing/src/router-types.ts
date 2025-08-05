@@ -196,7 +196,7 @@ export type NavigationBuilder<T, Path extends string = ''> = {
             : NavigationBuilder<T[K], JoinPath<Path, ToPathPart<K>>>
         : never;
 } & (Path extends ''
-    ? {}
+    ? object
     : {
           build: () => Path;
       });

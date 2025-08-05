@@ -15,8 +15,6 @@ export class WalkthroughVisualizationApi {
         inject(PortalConfig).basePaths.linearTraining +
         '/visualizations/training-instances';
 
-    constructor() {}
-
     getData(
         levelId: number,
         instanceId: number

@@ -1,15 +1,14 @@
-import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import {
     AccessPhaseTask,
     InfoPhaseTask,
     QuestionnairePhaseTaskVisuazlization,
     TrainingPhaseTask,
-    TransitionTask
+    TransitionTask,
 } from '@crczp/visualization-model';
-import {AbstractPhaseTypeEnum} from '@crczp/training-model';
+import { AbstractPhaseTypeEnum } from '@crczp/training-model';
 
 @Component({
-    // eslint-disable-next-line @angular-eslint/component-selector
     selector: 'crczp-task-preview',
     templateUrl: './task-preview.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,

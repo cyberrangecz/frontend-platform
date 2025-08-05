@@ -5,8 +5,12 @@ export class TimelineQuestion {
     penalty: number;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace BasicQuestionInfo {
-    export type QuestionTypeEnum = 'FFQ_QUESTION' | 'MCQ_QUESTION' | 'EMI_QUESTION';
+    export type QuestionTypeEnum =
+        | 'FFQ_QUESTION'
+        | 'MCQ_QUESTION'
+        | 'EMI_QUESTION';
     export const AssessmentLevelTypeEnum = {
         FFQ: 'FFQ_QUESTION' as QuestionTypeEnum,
         MCQ: 'MCQ_QUESTION' as QuestionTypeEnum,

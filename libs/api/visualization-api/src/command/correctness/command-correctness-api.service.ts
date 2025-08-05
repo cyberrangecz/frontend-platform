@@ -16,8 +16,6 @@ export class CommandCorrectnessApi {
     private readonly visualizationsEndpoint =
         inject(PortalConfig).basePaths.linearTraining + '/visualizations';
 
-    constructor() {}
-
     /**
      * Get correct/incorrect commands executed during the given training runs.
      * Incorrect commands can be filtered by specific mistake types.

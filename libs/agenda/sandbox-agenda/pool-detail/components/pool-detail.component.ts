@@ -15,7 +15,6 @@ import {
 } from '@sentinel/components/table';
 import { Observable, Subscription } from 'rxjs';
 import { map, take } from 'rxjs/operators';
-import { EditableCommentComponent, ResourcePollingService } from '@crczp/sandbox-agenda/internal';
 import { AllocationRequestsService } from '../services/state/request/allocation/requests/allocation-requests.service';
 import { CleanupRequestsService } from '../services/state/request/cleanup/cleanup-requests.service';
 import { SandboxInstanceService } from '../services/state/sandbox-instance/sandbox-instance.service';
@@ -32,7 +31,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatCard } from '@angular/material/card';
 import { StageOverviewComponent } from './stage-overview/stage-overview.component';
 import { AsyncPipe } from '@angular/common';
-import { PaginationStorageService, providePaginationStorageService } from '@crczp/utils';
+import { PaginationStorageService, PollingService, providePaginationStorageService } from '@crczp/utils';
+import { EditableCommentComponent } from '@crczp/sandbox-agenda/internal';
 
 /**
  * Smart component of pool detail page
@@ -43,7 +43,7 @@ import { PaginationStorageService, providePaginationStorageService } from '@crcz
     styleUrls: ['./pool-detail.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [
-        ResourcePollingService,
+        PollingService,
         {
             provide: AllocationRequestsService,
             useClass: AllocationRequestsConcreteService,

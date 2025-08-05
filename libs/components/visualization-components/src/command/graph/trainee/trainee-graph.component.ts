@@ -1,18 +1,19 @@
-import { Component, Input, OnDestroy, OnInit, inject } from '@angular/core';
-import {Graphviz, graphviz} from 'd3-graphviz';
-import {TraineeGraphService} from './trainee-graph.service';
-import {UntypedFormBuilder} from '@angular/forms';
-import {take, takeWhile, tap} from 'rxjs/operators';
-import {BehaviorSubject, Observable} from 'rxjs';
-import {MatFormFieldModule} from '@angular/material/form-field';
-import {CommonModule} from '@angular/common';
-import {MatSelectModule} from '@angular/material/select';
-import {MatButtonModule} from '@angular/material/button';
-import {MatListModule} from '@angular/material/list';
-import {MatIconModule} from '@angular/material/icon';
-import {BaseType} from 'd3';
-import {Graph} from '@crczp/visualization-model';
-import {TrainingRun} from '@crczp/training-model';
+import { Component, inject, Input, OnDestroy, OnInit } from '@angular/core';
+import { Graphviz, graphviz } from 'd3-graphviz';
+import { TraineeGraphService } from './trainee-graph.service';
+import { UntypedFormBuilder } from '@angular/forms';
+import { take, takeWhile, tap } from 'rxjs/operators';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { CommonModule } from '@angular/common';
+import { MatSelectModule } from '@angular/material/select';
+import { MatButtonModule } from '@angular/material/button';
+import { MatListModule } from '@angular/material/list';
+import { MatIconModule } from '@angular/material/icon';
+import { BaseType } from 'd3';
+import { Graph } from '@crczp/visualization-model';
+import { TrainingRun } from '@crczp/training-model';
+import { MatLine } from '@angular/material/core';
 
 @Component({
     selector: 'crczp-trainee-graph',
@@ -24,25 +25,24 @@ import {TrainingRun} from '@crczp/training-model';
         MatSelectModule,
         MatButtonModule,
         MatListModule,
-        MatIconModule
-    ]
+        MatIconModule,
+        MatLine,
+    ],
 })
 export class TraineeGraphComponent implements OnInit, OnDestroy {
-    private graphService = inject(TraineeGraphService);
     fb = inject(UntypedFormBuilder);
-
     @Input() trainingInstanceId: number;
     @Input() trainingRunId: number;
-
-    private graphviz: Graphviz<BaseType,any,BaseType,any>;
     hasError = false;
     isAlive = true;
-
-    private selectedTrainingRunSubject$: BehaviorSubject<number> = new BehaviorSubject(null);
-    selectedTrainingRun$: Observable<number> = this.selectedTrainingRunSubject$.asObservable();
-
     traineeGraph$: Observable<Graph>;
     trainingRuns$: Observable<TrainingRun[]>;
+    private graphService = inject(TraineeGraphService);
+    private graphviz: Graphviz<BaseType, any, BaseType, any>;
+    private selectedTrainingRunSubject$: BehaviorSubject<number> =
+        new BehaviorSubject(null);
+    selectedTrainingRun$: Observable<number> =
+        this.selectedTrainingRunSubject$.asObservable();
 
     ngOnInit(): void {
         this.selectedTrainingRun$ = this.graphService.selectedTrainingRun$;
@@ -52,11 +52,14 @@ export class TraineeGraphComponent implements OnInit, OnDestroy {
             tap(
                 (result) => {
                     if (result) {
-                        this.graphviz = graphviz('div.trainee-graph').zoom(true).fit(true).renderDot(result.graph);
+                        this.graphviz = graphviz('div.trainee-graph')
+                            .zoom(true)
+                            .fit(true)
+                            .renderDot(result.graph);
                     }
                 },
-                () => (this.hasError = true),
-            ),
+                () => (this.hasError = true)
+            )
         );
         this.traineeGraph$.subscribe();
         if (this.trainingRunId) {
@@ -75,11 +78,17 @@ export class TraineeGraphComponent implements OnInit, OnDestroy {
     }
 
     onTraineesSelectionOpened(): void {
-        this.graphService.getTrainingRunsOfTrainingInstance(this.trainingInstanceId).pipe(take(1)).subscribe();
+        this.graphService
+            .getTrainingRunsOfTrainingInstance(this.trainingInstanceId)
+            .pipe(take(1))
+            .subscribe();
     }
 
     showTraineeGraph(trainingRunId: number): void {
-        this.graphService.getTraineeGraph(trainingRunId).pipe(take(1)).subscribe();
+        this.graphService
+            .getTraineeGraph(trainingRunId)
+            .pipe(take(1))
+            .subscribe();
     }
 
     onResetZoom(): void {

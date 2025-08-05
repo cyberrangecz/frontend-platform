@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, Component, ElementRef, Input, OnChanges, SimpleChanges, inject } from '@angular/core';
+import {
+    ChangeDetectionStrategy,
+    Component,
+    ElementRef,
+    inject,
+    Input,
+    OnChanges,
+} from '@angular/core';
 import * as d3 from 'd3';
 
 @Component({
@@ -21,13 +28,15 @@ export class XAxisGridLinesComponent implements OnChanges {
         this.g = d3.select(element.nativeElement);
     }
 
-    ngOnChanges(changes: SimpleChanges): void {
+    ngOnChanges(): void {
         this.drawXGridLines();
         this.styleXGridLines();
     }
 
     private drawXGridLines(): any {
-        const axisGenerator = d3.axisBottom(this.xScale).tickSize(-this.svgHeight);
+        const axisGenerator = d3
+            .axisBottom(this.xScale)
+            .tickSize(-this.svgHeight);
         this.g
             .attr('id', 'x-grid-lines')
             .attr('class', 'grid')
@@ -38,7 +47,11 @@ export class XAxisGridLinesComponent implements OnChanges {
     }
 
     private styleXGridLines() {
-        this.g.selectAll('g').selectAll('line').attr('stroke', 'lightgrey').attr('stroke-opacity', 0.7);
+        this.g
+            .selectAll('g')
+            .selectAll('line')
+            .attr('stroke', 'lightgrey')
+            .attr('stroke-opacity', 0.7);
         this.g.selectAll('path').attr('stroke-width', 0);
     }
 }

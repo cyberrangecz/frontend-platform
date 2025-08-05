@@ -25,7 +25,6 @@ import {
 } from '../services/forbidden-commands/detection-event-forbidden-commands.service';
 import { DetectionEventForbiddenCommandsTable } from '../model/detection-event-forbidden-commands-table';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { TrainingDefaultNavigator, TrainingNavigator } from '@crczp/training-agenda';
 import { DetectionEventConcreteService } from '../services/detection-event/detection-event-concrete.service';
 import {
     DetectionEventParticipantConcreteService
@@ -51,7 +50,6 @@ import { PaginationStorageService, providePaginationStorageService } from '@crcz
         providePaginationStorageService(
             TrainingInstanceDetectionEventDetailComponent
         ),
-        { provide: TrainingNavigator, useClass: TrainingDefaultNavigator },
         {
             provide: DetectionEventService,
             useClass: DetectionEventConcreteService,

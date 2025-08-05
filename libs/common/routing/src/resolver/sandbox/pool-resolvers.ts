@@ -40,7 +40,7 @@ function resolvePool(
  */
 function resolvePoolComment(
     route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot
+    _state: RouterStateSnapshot
 ): Observable<string> {
     const service = inject(SandboxResolverHelperService);
     return service

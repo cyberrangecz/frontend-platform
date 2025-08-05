@@ -1,15 +1,10 @@
 import { inject, Injectable } from '@angular/core';
-import {
-    OffsetPagination,
-    OffsetPaginationEvent,
-    PaginatedResource,
-} from '@sentinel/common/pagination';
+import { OffsetPagination, OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
 import { UserApi } from '@crczp/user-and-group-api';
 import { User } from '@crczp/user-and-group-model';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { PortalConfig } from '@crczp/utils';
-import { ErrorHandlerService } from '@crczp/user-and-group-agenda';
+import { ErrorHandlerService, PortalConfig } from '@crczp/utils';
 import { UserFilter } from '@crczp/user-and-group-agenda/internal';
 
 /**
@@ -72,7 +67,7 @@ export class MembersDetailService {
                         this.isLoadingAssignedSubject$.next(false);
                     },
                     (err) => {
-                        this.errorHandler.emit(err, 'Fetching users');
+                        this.errorHandler.emitAPIError(err, 'Fetching users');
                         this.isLoadingAssignedSubject$.next(false);
                         this.hasErrorSubject$.next(true);
                     }

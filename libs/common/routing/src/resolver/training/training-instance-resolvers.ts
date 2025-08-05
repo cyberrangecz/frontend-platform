@@ -85,7 +85,7 @@ function resolveInstanceBreadcrumb(
 export const TrainingInstanceResolvers = {
     linearInstanceResolver: (
         route: ActivatedRouteSnapshot,
-        state: RouterStateSnapshot
+        _state: RouterStateSnapshot
     ) =>
         resolveInstance(
             route,
@@ -94,7 +94,7 @@ export const TrainingInstanceResolvers = {
         ),
     adaptiveInstanceResolver: (
         route: ActivatedRouteSnapshot,
-        state: RouterStateSnapshot
+        _state: RouterStateSnapshot
     ) =>
         resolveInstance(
             route,

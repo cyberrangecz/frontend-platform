@@ -7,27 +7,29 @@ import {
     OnChanges,
     OnInit,
     Output,
-    SimpleChanges
+    SimpleChanges,
 } from '@angular/core';
 import * as d3 from 'd3';
-import {IStatisticsFilter, TrainingInstanceStatistics} from '@crczp/visualization-model';
-import {MatCardModule} from '@angular/material/card';
-import {MatGridListModule} from '@angular/material/grid-list';
-import {MatCheckboxModule} from '@angular/material/checkbox';
-import {MatIconModule} from '@angular/material/icon';
-
+import {
+    IStatisticsFilter,
+    TrainingInstanceStatistics,
+} from '@crczp/visualization-model';
+import { MatCardModule } from '@angular/material/card';
+import { MatGridListModule } from '@angular/material/grid-list';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
     selector: 'crczp-filter',
     templateUrl: './filter.component.html',
     styleUrls: ['./filter.component.css'],
     imports: [
-    MatCardModule,
-    MatGridListModule,
-    MatCheckboxModule,
-    MatIconModule
-],
-    changeDetection: ChangeDetectionStrategy.OnPush
+        MatCardModule,
+        MatGridListModule,
+        MatCheckboxModule,
+        MatIconModule,
+    ],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FilterComponent implements OnInit, OnChanges {
     @Input() initialTrainingInstance: number;
@@ -36,7 +38,8 @@ export class FilterComponent implements OnInit, OnChanges {
     // to the parent component and enables to define an arbitrary function
     // - to be called to handle onclick event - outside this component
     @Output() detailView: EventEmitter<number> = new EventEmitter();
-    @Output() filterChange: EventEmitter<IStatisticsFilter[]> = new EventEmitter();
+    @Output() filterChange: EventEmitter<IStatisticsFilter[]> =
+        new EventEmitter();
     // the current state of the corresponding checkboxes
     public checkboxes: IStatisticsFilter[] = [];
     // used to create the middle columns of the filter panel
@@ -66,7 +69,10 @@ export class FilterComponent implements OnInit, OnChanges {
     }
 
     ngOnChanges(changes: SimpleChanges) {
-        if ('trainingInstances' in changes && !changes['trainingInstances'].isFirstChange()) {
+        if (
+            'trainingInstances' in changes &&
+            !changes['trainingInstances'].isFirstChange()
+        ) {
             this.initCheckboxes();
             this.initTable();
         }
@@ -102,8 +108,6 @@ export class FilterComponent implements OnInit, OnChanges {
      */
     public onChange(item: IStatisticsFilter): void {
         item.checked = !item.checked;
-        // Finds the actually checked checkboxes
-        const checkedFilters: IStatisticsFilter[] = this.checkboxes.filter((checkbox: IStatisticsFilter) => checkbox.checked);
         this.filterChangeHandler();
     }
 
@@ -123,7 +127,9 @@ export class FilterComponent implements OnInit, OnChanges {
      * @private
      */
     private filterChangeHandler(): void {
-        const checkedFilters: IStatisticsFilter[] = this.checkboxes.filter((checkbox: IStatisticsFilter) => checkbox.checked);
+        const checkedFilters: IStatisticsFilter[] = this.checkboxes.filter(
+            (checkbox: IStatisticsFilter) => checkbox.checked
+        );
         if (checkedFilters.length === 0) {
             this.switchBetweenChartsAndNoData('none', 'block');
         } else {
@@ -138,9 +144,13 @@ export class FilterComponent implements OnInit, OnChanges {
      */
     private setComponentSize(): void {
         if (window.innerWidth >= 1024) {
-            d3.select('#filterPlaceholder').style('width', 1024).style('height', 1024);
+            d3.select('#filterPlaceholder')
+                .style('width', 1024)
+                .style('height', 1024);
         } else {
-            d3.select('#filterPlaceholder').style('width', 1024).style('height', 1024);
+            d3.select('#filterPlaceholder')
+                .style('width', 1024)
+                .style('height', 1024);
         }
     }
 
@@ -156,7 +166,7 @@ export class FilterComponent implements OnInit, OnChanges {
                 training: 'Training ' + training.instanceId,
                 checked: training.instanceId === this.initialTrainingInstance,
                 disabled: false,
-                instanceId: training.instanceId
+                instanceId: training.instanceId,
             });
         });
         this.filterChangeHandler();
@@ -174,7 +184,9 @@ export class FilterComponent implements OnInit, OnChanges {
             //this.tableData.push(`${instance.instanceId}`);
             this.tableData.push(instance.title);
             this.tableData.push(instance.date);
-            this.tableData.push(this.hoursMinutesSeconds(instance.duration / 1000));
+            this.tableData.push(
+                this.hoursMinutesSeconds(instance.duration / 1000)
+            );
             this.tableData.push(String(instance.participants.length));
         });
     }
@@ -185,7 +197,10 @@ export class FilterComponent implements OnInit, OnChanges {
      * @param chartStyle - marks whether the charts should be visible
      * @param noDataStyle - marks whether the 'no data' text should be visible
      */
-    private switchBetweenChartsAndNoData(chartStyle: string, noDataStyle: string): void {
+    private switchBetweenChartsAndNoData(
+        chartStyle: string,
+        noDataStyle: string
+    ): void {
         d3.select('#noDataCard').style('display', noDataStyle);
         d3.select('#barchartPlaceholder').style('display', chartStyle);
         d3.select('#bubblechartPlaceholder').style('display', chartStyle);

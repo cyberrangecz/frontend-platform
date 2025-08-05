@@ -110,7 +110,7 @@ export class RunningTrainingRunConcreteService extends RunningTrainingRunService
      * Sends request to preload VM consoles on backend for user for further use in topology.
      * @param sandboxId id of sandbox in which the vm exists
      */
-    loadConsoles(sandboxId: string): Observable<any[]> {
+    loadConsoles(_sandboxId: string): Observable<any[]> {
         return EMPTY;
     }
 

@@ -1,11 +1,10 @@
-import {GraphNodeType} from "./graph-node-type";
-import {NodePort} from "./node-port";
+import { GraphNodeType } from '../enums/graph-node-type';
+import { NodePort } from '../links/node-port';
 
 /**
  * Abstract node used in graph-visual. Has attributes used for D3 simulation and SVG drawing (x,y, etc.)
  */
 export abstract class GraphNode {
-
     /**
      * Unique name of the node
      */
@@ -14,12 +13,12 @@ export abstract class GraphNode {
     /**
      * Type of the node (Router, Computer, Switch, ...)
      */
-    nodeType: GraphNodeType = GraphNodeType.Switch
+    nodeType: GraphNodeType = GraphNodeType.Switch;
 
     /**
      * All ports associated with the node
      */
-    nodePorts: NodePort[] = []
+    nodePorts: NodePort[] = [];
 
     public toString = (): string => {
         let result = 'Name: ' + this.name + '\n';

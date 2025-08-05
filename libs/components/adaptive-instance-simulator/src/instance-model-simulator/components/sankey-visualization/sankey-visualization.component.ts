@@ -1,9 +1,9 @@
-import { Component, Input, OnChanges, OnInit, inject } from '@angular/core';
+import { Component, inject, Input, OnChanges, OnInit } from '@angular/core';
 import * as d3 from 'd3';
 import * as d3Sankey from 'd3-sankey';
-import {take} from 'rxjs/operators';
-import {SankeyData} from '../../model/sankey/sankey-data';
-import {SankeyDataService} from '../../service/sankey-data.service';
+import { take } from 'rxjs/operators';
+import { SankeyData } from '../../model/sankey/sankey-data';
+import { SankeyDataService } from '../../service/sankey-data.service';
 
 @Component({
     selector: 'crczp-sankey-visualization',
@@ -11,8 +11,6 @@ import {SankeyDataService} from '../../service/sankey-data.service';
     styleUrls: ['./sankey-visualization.component.css'],
 })
 export class SankeyVisualizationComponent implements OnInit, OnChanges {
-    private sankeyDataService = inject(SankeyDataService);
-
     /**
      * Flag to use local mock
      */
@@ -33,9 +31,8 @@ export class SankeyVisualizationComponent implements OnInit, OnChanges {
      * The height of the diagram
      */
     @Input() svgHeight = 500;
-
     data: SankeyData;
-
+    private sankeyDataService = inject(SankeyDataService);
     private svg: d3.Selection<d3.BaseType, unknown, HTMLElement, unknown>;
     private links: d3.Selection<d3.BaseType, unknown, SVGGElement, unknown>;
     private nodes: d3.Selection<null, undefined, SVGGElement, unknown>;
@@ -133,7 +130,11 @@ export class SankeyVisualizationComponent implements OnInit, OnChanges {
             .attr('x', (n: any) => n.x1 + 6)
             .attr('y', (n: any) => (n.y1 + n.y0) / 2)
             .attr('dy', '0.35em')
-            .text((n: any) => (n.taskOrder === null ? '' : 'AdaptiveRunVisualization ' + (n.taskOrder + 1)))
+            .text((n: any) =>
+                n.taskOrder === null
+                    ? ''
+                    : 'AdaptiveRunVisualization ' + (n.taskOrder + 1)
+            )
             .attr('text-anchor', 'start');
     }
 
@@ -178,16 +179,20 @@ export class SankeyVisualizationComponent implements OnInit, OnChanges {
     }
 
     private attachMouseOverEventOnLink(link: any) {
-        link.on('mouseover', (event, l) => {
+        link.on('mouseover', (event, _l) => {
             d3.select(event.currentTarget).attr('stroke-opacity', 0.6);
-            d3.select(event.currentTarget).select('text').style('font', 'bold 16px Arial');
+            d3.select(event.currentTarget)
+                .select('text')
+                .style('font', 'bold 16px Arial');
         }).selectAll('path');
     }
 
     private attachMouseOutEventOnLink(link: any) {
-        link.on('mouseout', (event, l) => {
+        link.on('mouseout', (event, _l) => {
             d3.select(event.currentTarget).attr('stroke-opacity', 0.2);
-            d3.select(event.currentTarget).select('text').style('font', 'normal 12px Arial');
+            d3.select(event.currentTarget)
+                .select('text')
+                .style('font', 'normal 12px Arial');
         }).selectAll('path');
     }
 
@@ -198,7 +203,9 @@ export class SankeyVisualizationComponent implements OnInit, OnChanges {
     private renderLinkPath(link: any) {
         link.append('path')
             .attr('d', d3Sankey.sankeyLinkHorizontal())
-            .attr('stroke', (l: any) => this.color(l.source.phaseId + l.source.taskId))
+            .attr('stroke', (l: any) =>
+                this.color(l.source.phaseId + l.source.taskId)
+            )
             .attr('stroke-width', (l: any) => Math.max(0, l.width));
     }
 
@@ -209,7 +216,10 @@ export class SankeyVisualizationComponent implements OnInit, OnChanges {
             .attr('fill', 'Black')
             .style('font', 'normal 12px Arial')
             .attr('dy', (l: any) => 6 + l.y0 + (l.y1 - l.y0) / 2)
-            .attr('dx', (l: any) => l.source.x1 + (l.target.x0 - l.source.x1) / 2)
+            .attr(
+                'dx',
+                (l: any) => l.source.x1 + (l.target.x0 - l.source.x1) / 2
+            )
             .attr('text-anchor', 'middle')
             .text((l) => (l.modified ? l.value - 1 : l.value));
     }

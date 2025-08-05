@@ -62,7 +62,9 @@ export class TrainingDefinitionTable extends SentinelTable<TrainingDefinition> {
         );
         row.addLink(
             'title',
-            Routing.RouteBuilder.linear_definition.definitionId(td.id).build()
+            Routing.RouteBuilder.linear_definition
+                .definitionId(td.id)
+                .detail.build()
         );
         return row;
     }

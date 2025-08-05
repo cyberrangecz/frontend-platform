@@ -1,8 +1,7 @@
 import { Component } from '@angular/core';
 import { TrainingTypeEnum } from '@crczp/training-model';
-import { TRAINING_TYPE_TOKEN } from '../../instance-edit/components/training-type-token';
 import { CommonTrainingDefinitionOverviewComponent } from './common-training-definition-overview.component';
-import { providePaginationStorageService } from '@crczp/utils';
+import { Injection, providePaginationStorageService } from '@crczp/utils';
 
 /**
  * Main smart component of training definition overview
@@ -16,7 +15,7 @@ import { providePaginationStorageService } from '@crczp/utils';
             AdaptiveTrainingDefinitionOverviewComponent
         ),
         {
-            provide: TRAINING_TYPE_TOKEN,
+            provide: Injection.TrainingType,
             useValue: TrainingTypeEnum.ADAPTIVE,
         },
     ],

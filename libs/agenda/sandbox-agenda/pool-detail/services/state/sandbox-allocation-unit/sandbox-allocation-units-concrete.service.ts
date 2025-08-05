@@ -8,7 +8,6 @@ import {
 } from '@sentinel/common/pagination';
 import { PoolApi, SandboxAllocationUnitsApi } from '@crczp/sandbox-api';
 import { SandboxAllocationUnit } from '@crczp/sandbox-model';
-import { ResourcePollingService } from '@crczp/sandbox-agenda/internal';
 import { map, switchMap, tap } from 'rxjs/operators';
 import { HttpErrorResponse } from '@angular/common/http';
 import {
@@ -20,6 +19,7 @@ import { MatDialog } from '@angular/material/dialog';
 import {
     ErrorHandlerService,
     NotificationService,
+    PollingService,
     PortalConfig,
 } from '@crczp/utils';
 
@@ -27,7 +27,7 @@ import {
 export class SandboxAllocationUnitsConcreteService extends SandboxAllocationUnitsService {
     private poolApi = inject(PoolApi);
     private sauApi = inject(SandboxAllocationUnitsApi);
-    private resourcePollingService = inject(ResourcePollingService);
+    private resourcePollingService = inject(PollingService);
     private dialog = inject(MatDialog);
     private notificationService = inject(NotificationService);
     private errorHandler = inject(ErrorHandlerService);

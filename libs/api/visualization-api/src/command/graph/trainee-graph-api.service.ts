@@ -15,8 +15,6 @@ export class TraineeGraphApiService {
     private readonly visualizationsEndpoint =
         inject(PortalConfig).basePaths.linearTraining + '/visualizations';
 
-    constructor() {}
-
     /**
      * Sends http request to retrieve trainee graph for trainee
      * @param runId sandbox id of trainee

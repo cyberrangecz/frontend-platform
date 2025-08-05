@@ -382,7 +382,6 @@ export class AdaptiveDefinitionDefaultApiService extends AdaptiveTrainingDefinit
         newPosition: number
     ): Observable<any> {
         return this.http.put<void>(
-            // eslint-disable-next-line max-len
             `${this.adaptiveDefinitionsUri}/${trainingDefinitionId}/${this.phasesUriExtension}/${phaseId}/${this.tasksUriExtension}/${taskId}/move-to/${newPosition}`,
             {},
             { headers: this.createDefaultHeaders() }
@@ -395,7 +394,6 @@ export class AdaptiveDefinitionDefaultApiService extends AdaptiveTrainingDefinit
     ): Observable<AdaptiveTask> {
         return this.http
             .post<TaskDTO>(
-                // eslint-disable-next-line max-len
                 `${this.adaptiveDefinitionsUri}/${trainingDefinitionId}/${this.phasesUriExtension}/${trainingPhaseId}/${this.tasksUriExtension}`,
                 {},
                 { headers: this.createDefaultHeaders() }
@@ -410,7 +408,6 @@ export class AdaptiveDefinitionDefaultApiService extends AdaptiveTrainingDefinit
     ): Observable<AdaptiveTask> {
         return this.http
             .post<TaskDTO>(
-                // eslint-disable-next-line max-len
                 `${this.adaptiveDefinitionsUri}/${trainingDefinitionId}/${this.phasesUriExtension}/${trainingPhaseId}/${this.tasksUriExtension}/${clonedTask.id}`,
                 TaskMapper.toCopyDTO(clonedTask),
                 { headers: this.createDefaultHeaders() }
@@ -424,7 +421,6 @@ export class AdaptiveDefinitionDefaultApiService extends AdaptiveTrainingDefinit
         taskId: number
     ): Observable<any> {
         return this.http.delete(
-            // eslint-disable-next-line max-len
             `${this.adaptiveDefinitionsUri}/${trainingDefinitionId}/${this.phasesUriExtension}/${trainingPhaseId}/${this.tasksUriExtension}/${taskId}`,
             { headers: this.createDefaultHeaders() }
         );
@@ -437,7 +433,6 @@ export class AdaptiveDefinitionDefaultApiService extends AdaptiveTrainingDefinit
     ): Observable<Phase> {
         return this.http
             .get<TaskDTO>(
-                // eslint-disable-next-line max-len
                 `${this.adaptiveDefinitionsUri}/${trainingDefinitionId}/${this.phasesUriExtension}/${trainingPhaseId}/${this.tasksUriExtension}/${taskId}`
             )
             .pipe(map((response) => TaskMapper.fromDTO(response)));

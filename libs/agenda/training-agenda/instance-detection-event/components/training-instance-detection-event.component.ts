@@ -24,7 +24,6 @@ import { PaginationStorageService, providePaginationStorageService } from '@crcz
         providePaginationStorageService(
             TrainingInstanceDetectionEventComponent
         ),
-        { provide: TrainingNavigator, useClass: TrainingDefaultNavigator },
         {
             provide: DetectionEventService,
             useClass: DetectionEventConcreteService,
@@ -44,7 +43,6 @@ export class TrainingInstanceDetectionEventComponent implements OnInit {
     private detectionEventService = inject(DetectionEventService);
     private paginationService = inject(PaginationStorageService);
     private activeRoute = inject(ActivatedRoute);
-    private navigator = inject(TrainingNavigator);
 
     ngOnInit(): void {
         this.activeRoute.data
@@ -95,8 +93,7 @@ export class TrainingInstanceDetectionEventComponent implements OnInit {
                 (resource) =>
                     new DetectionEventTable(
                         resource,
-                        this.detectionEventService,
-                        this.navigator
+                        this.detectionEventService
                     )
             )
         );

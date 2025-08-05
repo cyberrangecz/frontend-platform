@@ -7,6 +7,9 @@ import {
     Type,
 } from '@angular/core';
 
+type EmptyConstructor<T> = new () => T;
+type GenericConstructor<T> = new (...args: any[]) => T;
+
 @NgModule()
 export class MappersModule {
     public static getMapperToken<From, To>(
@@ -35,15 +38,24 @@ export class MappersModule {
     }
 }
 
-const readMappers = new Map<MapperKey<any>, Map<MapperKey<any>, Function>>();
+const readMappers = new Map<
+    EmptyConstructor<any>,
+    Map<EmptyConstructor<any>, (from: any) => any>
+>();
 
-const writeMappers = new Map<MapperKey<any>, Map<MapperKey<any>, Function>>();
+const writeMappers = new Map<
+    EmptyConstructor<any>,
+    Map<EmptyConstructor<any>, (from: any) => any>
+>();
 
 function registerMapper<FROM, TO>(
-    dtoClass: Function,
-    key: MapperKey<TO>,
+    dtoClass: EmptyConstructor<FROM>,
+    key: EmptyConstructor<TO>,
     mapper: (from: FROM) => TO,
-    store: Map<Function, Map<MapperKey<any>, Function>>
+    store: Map<
+        EmptyConstructor<FROM>,
+        Map<EmptyConstructor<any>, (from: any) => any>
+    >
 ) {
     if (!store.has(dtoClass)) {
         store.set(dtoClass, new Map());
@@ -52,20 +64,20 @@ function registerMapper<FROM, TO>(
         throw new Error("Duplicated mapper for key '" + key + "'");
     }
 
-    store.get(dtoClass)!.set(key, mapper);
+    store.get(dtoClass)?.set(key, mapper);
 }
 
 function registerReadMapper<DTO, MODEL>(
-    registererClass: Function,
-    key: MapperKey<MODEL>,
+    registererClass: EmptyConstructor<DTO>,
+    key: EmptyConstructor<MODEL>,
     mapper: (from: DTO) => MODEL
 ) {
     registerMapper(registererClass, key, mapper, readMappers);
 }
 
 function registerWriteMapper<MODEL, DTO>(
-    registererClass: Function,
-    key: MapperKey<DTO>,
+    registererClass: EmptyConstructor<MODEL>,
+    key: EmptyConstructor<DTO>,
     mapper: (from: MODEL) => DTO
 ) {
     registerMapper(registererClass, key, mapper, writeMappers);
@@ -86,29 +98,24 @@ export function getWriteMapper<MODEL, DTO>(
     return writeMappers.get(registeredBy)?.get(key) as ((from: MODEL) => DTO) | undefined;
 }*/
 
-type MapperKey<T = {}> = new () => T;
-
-function NoArgConstructorMixin<T extends { new (...args: any[]): any }>(
-    Base: T
-) {
-    return class extends Base {
+function NoArgConstructorMixin<T>(Base: new () => T) {
+    const genericBase = Base as GenericConstructor<any>;
+    return class extends genericBase {
         constructor(...args: any[]) {
             if (args.length > 0) {
                 throw new Error('No arguments allowed in a DTO bean class');
             }
-            super();
+            super(args);
         }
     };
 }
 
 export function ApiReadMapper<DTO, MODEL>(
     mappings: ApiReadMapping<DTO, MODEL> & {
-        resultClass: MapperKey<MODEL>;
+        resultClass: EmptyConstructor<MODEL>;
     }
 ) {
-    return function (from: Function) {
-        const mappedConstructor = from as MapperKey<DTO>;
-
+    return function (from: EmptyConstructor<DTO>) {
         const mappingFunction = MapperBuilder.createDTOtoModelMapper<
             DTO,
             MODEL
@@ -118,22 +125,22 @@ export function ApiReadMapper<DTO, MODEL>(
         });
 
         registerReadMapper<DTO, MODEL>(
-            mappedConstructor,
+            from,
             mappings.resultClass,
             mappingFunction
         );
 
         // Return the mixin-extended class instead of invoking it
-        return NoArgConstructorMixin(mappedConstructor);
+        return NoArgConstructorMixin<DTO>(from);
     };
 }
 
 export function ApiWriteMapper<MODEL, DTO>(
     mappings: ApiWriteMapping<MODEL, DTO> & {
-        resultClass: MapperKey<DTO>;
+        resultClass: EmptyConstructor<DTO>;
     }
 ) {
-    return function (from: Function) {
+    return function (from: EmptyConstructor<MODEL>) {
         const mappingFunction = MapperBuilder.createModelToDtoMapper<
             MODEL,
             DTO
@@ -145,6 +152,6 @@ export function ApiWriteMapper<MODEL, DTO>(
             mappingFunction
         );
 
-        return NoArgConstructorMixin(from());
+        return NoArgConstructorMixin<MODEL>(from);
     };
 }

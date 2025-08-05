@@ -1,23 +1,24 @@
-import { Injectable, inject } from '@angular/core';
-import {BehaviorSubject, merge, Observable, Subject, timer} from 'rxjs';
-import {TransitionGraphVisualizationData} from '../model/transition-graph-visualization-data';
-import {HttpErrorResponse} from '@angular/common/http';
-import {retryWhen, shareReplay, switchMap, tap} from 'rxjs/operators';
-import {AdaptiveTransitionVisualizationApi} from '../api/adaptive-transition-visualization-api.service';
+import { inject, Injectable } from '@angular/core';
+import { BehaviorSubject, merge, Observable, Subject, timer } from 'rxjs';
+import { TransitionGraphVisualizationData } from '../model/transition-graph-visualization-data';
+import { HttpErrorResponse } from '@angular/common/http';
+import { retryWhen, shareReplay, switchMap, tap } from 'rxjs/operators';
+import { AdaptiveTransitionVisualizationApi } from '../api/adaptive-transition-visualization-api.service';
+import { ErrorHandlerService } from '@crczp/utils';
 
 @Injectable({
     providedIn: 'root',
 })
 export class AdaptiveTransitionVisualizationPollingService {
-    private visualizationApi = inject(AdaptiveTransitionVisualizationApi);
-
     visualizationData$!: Observable<TransitionGraphVisualizationData>;
+    private visualizationApi = inject(AdaptiveTransitionVisualizationApi);
     private lastTrainingInstanceId!: number;
     /**
      * True if server returned error response on the latest request, false otherwise
      * Change internally in extending service. Client should subscribe to the observable
      */
-    private hasErrorSubject$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+    private hasErrorSubject$: BehaviorSubject<boolean> =
+        new BehaviorSubject<boolean>(false);
     /**
      * True if server returned error response on the latest request, false otherwise
      * @contract must be updated every time new data are received
@@ -27,7 +28,8 @@ export class AdaptiveTransitionVisualizationPollingService {
      * True if response to the latest request was not yet received
      * Change internally in extending service. Client should subscribe to the observable
      */
-    private isLoadingSubject$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
+    private isLoadingSubject$: BehaviorSubject<boolean> =
+        new BehaviorSubject<boolean>(true);
     /**
      * True if response to the latest request was not yet received
      * @contract must be updated every time new data are received
@@ -38,19 +40,27 @@ export class AdaptiveTransitionVisualizationPollingService {
      */
     private retryPolling$: Subject<boolean> = new Subject<boolean>();
     private visualizationDataSubject$: BehaviorSubject<TransitionGraphVisualizationData> =
-        new BehaviorSubject<TransitionGraphVisualizationData>(null as unknown as TransitionGraphVisualizationData);
+        new BehaviorSubject<TransitionGraphVisualizationData>(
+            null as unknown as TransitionGraphVisualizationData
+        );
     private pollPeriod: number;
+    private readonly errorHandler = inject(ErrorHandlerService);
 
     constructor() {
         this.pollPeriod = 2000;
-        this.visualizationData$ = merge(this.createPoll(), this.visualizationDataSubject$.asObservable());
+        this.visualizationData$ = merge(
+            this.createPoll(),
+            this.visualizationDataSubject$.asObservable()
+        );
     }
 
     /**
      * Gets all visualization data and updates related observables or handles an error
      * @param trainingInstanceId id of training instance
      */
-    getAll(trainingInstanceId: number): Observable<TransitionGraphVisualizationData> {
+    getAll(
+        trainingInstanceId: number
+    ): Observable<TransitionGraphVisualizationData> {
         this.onManualResourceRefresh(trainingInstanceId);
         return this.callApiToGetData(trainingInstanceId).pipe(
             tap(
@@ -58,15 +68,15 @@ export class AdaptiveTransitionVisualizationPollingService {
                     this.isLoadingSubject$.next(false);
                     this.visualizationDataSubject$.next(data);
                 },
-                (err) => this.onGetAllError(err),
-            ),
+                (err) => this.onGetAllError(err)
+            )
         );
     }
 
     protected refreshData(): Observable<TransitionGraphVisualizationData> {
         this.hasErrorSubject$.next(false);
         return this.callApiToGetData(this.lastTrainingInstanceId).pipe(
-            tap({error: (err) => this.onGetAllError(err)}),
+            tap({ error: (err) => this.onGetAllError(err) })
         );
     }
 
@@ -86,15 +96,20 @@ export class AdaptiveTransitionVisualizationPollingService {
         return timer(this.pollPeriod, this.pollPeriod).pipe(
             switchMap(() => this.refreshData()),
             retryWhen(() => this.retryPolling$),
-            shareReplay(Number.POSITIVE_INFINITY, this.pollPeriod),
+            shareReplay(Number.POSITIVE_INFINITY, this.pollPeriod)
         );
     }
 
-    protected callApiToGetData(trainingInstanceId: number): Observable<TransitionGraphVisualizationData> {
-        return this.visualizationApi.getDataForTrainingInstance(trainingInstanceId);
+    protected callApiToGetData(
+        trainingInstanceId: number
+    ): Observable<TransitionGraphVisualizationData> {
+        return this.visualizationApi.getDataForTrainingInstance(
+            trainingInstanceId
+        );
     }
 
     protected onGetAllError(err: HttpErrorResponse): void {
         this.hasErrorSubject$.next(true);
+        this.errorHandler.emitAPIError(err, 'Fetching data');
     }
 }

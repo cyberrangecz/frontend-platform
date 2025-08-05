@@ -1,4 +1,4 @@
-import {BasicLevelInfo} from './timeline-level';
+import { BasicLevelInfo } from './timeline-level';
 
 export class TimelineEvent {
     text: string;
@@ -10,6 +10,7 @@ export class TimelineEvent {
     type?: BasicEventInfo.TimelineEventTypeEnum;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace BasicEventInfo {
     export type TimelineEventTypeEnum =
         | 'CORRECT_ANSWER_EVENT'

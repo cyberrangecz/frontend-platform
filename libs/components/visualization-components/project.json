@@ -35,9 +35,6 @@
             "options": {
                 "reportsDirectory": "../../../coverage/libs/components/visualization-components"
             }
-        },
-        "lint": {
-            "executor": "@nx/eslint:lint"
         }
     }
 }

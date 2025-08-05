@@ -1,5 +1,5 @@
 import { RoutingUtils } from './utils';
-import { NAVIGATION_BUILDER } from './router-definitions';
+import { NAVIGATION_BUILDER, VALID_ROUTES } from './router-definitions';
 import { UserResolvers } from './resolver/user-and-group/user-resolvers';
 import { GroupResolvers } from './resolver/user-and-group/group-resolvers';
 import { PoolResolvers } from './resolver/sandbox/pool-resolvers';
@@ -24,4 +24,5 @@ export const Routing = {
         SandboxDefinition: SandboxDefinitionResolvers,
     },
     RouteBuilder: NAVIGATION_BUILDER,
+    ValidRoutes: VALID_ROUTES,
 };

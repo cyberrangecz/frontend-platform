@@ -6,9 +6,6 @@ import { Router } from '@angular/router';
 import { ErrorHandlerService, NotificationService, PortalConfig } from '@crczp/utils';
 import { Routing } from '@crczp/routing-commons';
 
-/**
- * Basic implementation of layer between component and API service.
- */
 @Injectable()
 export class AdaptiveTrainingInstanceEditService extends CommonTrainingInstanceEditService {
     constructor() {

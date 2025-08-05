@@ -1,13 +1,12 @@
 import { inject, Injectable } from '@angular/core';
-import { GraphNode, Link } from '@crczp/topology-graph-model';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, EMPTY, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { TopologyDTO } from '../../../../../temp/model/DTO/topology-dto.model';
-import { ConsoleUrl } from '../../../../../temp/model/others/console-url';
 import { PortalConfig } from '@crczp/utils';
 import { withCache } from '@ngneat/cashew';
 import { TopologyGraphMapper } from '../../mappers/topology/topology-mapper.service';
+import { GraphNode, GraphNodeLink, SandboxConsole } from '@crczp/sandbox-model';
+import { TopologyDTO } from '../../dto/topology/topology-dto.model';
 
 /**
  * Service for getting JSON data about topology of network and parsing them to model suitable for visualization
@@ -21,20 +20,21 @@ export class TopologyApi {
     private readonly http = inject(HttpClient);
     private settings = inject(PortalConfig);
 
-    private consolesSubject$: BehaviorSubject<ConsoleUrl[]> =
+    private consolesSubject$: BehaviorSubject<SandboxConsole[]> =
         new BehaviorSubject([]);
-    consoles$: Observable<ConsoleUrl[]> = this.consolesSubject$.asObservable();
+    consoles$: Observable<SandboxConsole[]> =
+        this.consolesSubject$.asObservable();
 
     getTopologyBySandboxInstanceId(
         sandboxUuid: string
-    ): Observable<{ nodes: GraphNode[]; links: Link[] }> {
+    ): Observable<{ nodes: GraphNode[]; links: GraphNodeLink[] }> {
         const url = `${this.settings.basePaths.sandbox}/sandboxes/${sandboxUuid}/topology`;
         return this.getTopology(url);
     }
 
     getTopologyBySandboxDefinitionId(
         sandboxDefinitionsId: number
-    ): Observable<{ nodes: GraphNode[]; links: Link[] }> {
+    ): Observable<{ nodes: GraphNode[]; links: GraphNodeLink[] }> {
         const url = `${this.settings.basePaths.sandbox}/definitions/${sandboxDefinitionsId}/topology`;
         return this.getTopology(url);
     }
@@ -57,7 +57,7 @@ export class TopologyApi {
      */
     private getTopology(
         url: string
-    ): Observable<{ nodes: GraphNode[]; links: Link[] }> {
+    ): Observable<{ nodes: GraphNode[]; links: GraphNodeLink[] }> {
         return this.http
             .get<TopologyDTO>(url, {
                 context: withCache({
@@ -70,9 +70,5 @@ export class TopologyApi {
                     TopologyGraphMapper.mapTopologyFromDTO(response)
                 )
             );
-    }
-
-    private getConsoleRedirectURI(): Observable<URLSearchParams> {
-        return EMPTY;
     }
 }

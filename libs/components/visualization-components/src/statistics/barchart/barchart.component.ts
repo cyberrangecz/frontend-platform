@@ -1,22 +1,32 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, HostListener, Input, OnChanges, OnInit, Output, SimpleChanges, inject } from '@angular/core';
+import {
+    ChangeDetectionStrategy,
+    Component,
+    EventEmitter,
+    HostListener,
+    inject,
+    Input,
+    OnChanges,
+    OnInit,
+    Output,
+    SimpleChanges,
+} from '@angular/core';
 import * as d3 from 'd3';
 import {
     IStatisticsFilter,
     LevelAnswersStatistics,
     LevelStatistics,
     ParticipantStatistics,
-    TrainingInstanceStatistics
+    TrainingInstanceStatistics,
 } from '@crczp/visualization-model';
-import {AxesCreationService} from '../service/axes-creation-service';
-import {TooltipCreationService} from '../service/tooltip-creation-service';
-import {SvgConfigurationService} from '../service/svg-configuration-service';
-import {LegendCreationService} from '../service/legend-creation-service';
-import {MatCardModule} from '@angular/material/card';
-import {MatDividerModule} from '@angular/material/divider';
-import {MatGridListModule} from '@angular/material/grid-list';
-import {MatRadioModule} from '@angular/material/radio';
-import {MatCheckboxModule} from '@angular/material/checkbox';
-
+import { AxesCreationService } from '../service/axes-creation-service';
+import { TooltipCreationService } from '../service/tooltip-creation-service';
+import { SvgConfigurationService } from '../service/svg-configuration-service';
+import { LegendCreationService } from '../service/legend-creation-service';
+import { MatCardModule } from '@angular/material/card';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatGridListModule } from '@angular/material/grid-list';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 @Component({
     selector: 'crczp-barchart',
@@ -27,24 +37,22 @@ import {MatCheckboxModule} from '@angular/material/checkbox';
         MatDividerModule,
         MatGridListModule,
         MatRadioModule,
-        MatCheckboxModule
+        MatCheckboxModule,
     ],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BarchartComponent implements OnInit, OnChanges {
-    private axesCreationService = inject(AxesCreationService);
-    private tooltipCreationService = inject(TooltipCreationService);
-    private svgConfigurationService = inject(SvgConfigurationService);
-    private legendCreationService = inject(LegendCreationService);
-
     @Input() trainingInstanceStatistics: TrainingInstanceStatistics[];
-
     @Input() highlightedInstances: number[];
     @Output() highlightInstance: EventEmitter<number[]> = new EventEmitter();
     @Output() selectedLevelId: EventEmitter<number> = new EventEmitter();
     // Both types of flags are shown using a stacked chart by default
     public onlyWrongFlags = false;
     public chartType = 'stacked';
+    private axesCreationService = inject(AxesCreationService);
+    private tooltipCreationService = inject(TooltipCreationService);
+    private svgConfigurationService = inject(SvgConfigurationService);
+    private legendCreationService = inject(LegendCreationService);
 
     // Marks the actual types for the barchart
     // Marks the sizes of the svgs
@@ -78,7 +86,13 @@ export class BarchartComponent implements OnInit, OnChanges {
     private componentWidth: string[] = ['100%', '100%'];
     // Contains the actual types of the filters
     private componentHeight: string[] = ['28vw', '50vw'];
-    private barColors: string[] = ['#47ACB1', '#87B6A1', '#F9AA7B', '#676766', '#FFE8AF'];
+    private barColors: string[] = [
+        '#47ACB1',
+        '#87B6A1',
+        '#F9AA7B',
+        '#676766',
+        '#FFE8AF',
+    ];
     private barTextColor = '#00000';
     private participantsLineColor = '#595959';
     private tooltipColors: string[] = ['#000000', '#ffffff'];
@@ -104,7 +118,10 @@ export class BarchartComponent implements OnInit, OnChanges {
     }
 
     public ngOnChanges(changes: SimpleChanges): void {
-        if ('trainingInstanceStatistics' in changes && !changes['trainingInstanceStatistics'].isFirstChange()) {
+        if (
+            'trainingInstanceStatistics' in changes &&
+            !changes['trainingInstanceStatistics'].isFirstChange()
+        ) {
             this.setOriginalData();
             this.createChart();
         }
@@ -131,7 +148,9 @@ export class BarchartComponent implements OnInit, OnChanges {
     public onResize(): void {
         this.setComponentSize();
         this.createChart();
-        d3.select('#barchartPlaceholder').select('#legendPlaceholder').classed('verticallyScrollable', false);
+        d3.select('#barchartPlaceholder')
+            .select('#legendPlaceholder')
+            .classed('verticallyScrollable', false);
     }
 
     /**
@@ -142,7 +161,9 @@ export class BarchartComponent implements OnInit, OnChanges {
     public onOrientationChange(): void {
         this.setComponentSize();
         this.createChart();
-        d3.select('#barchartPlaceholder').select('#legendPlaceholder').classed('verticallyScrollable', false);
+        d3.select('#barchartPlaceholder')
+            .select('#legendPlaceholder')
+            .classed('verticallyScrollable', false);
     }
 
     /**
@@ -178,11 +199,18 @@ export class BarchartComponent implements OnInit, OnChanges {
         this.originalPlayers = [];
         this.originalLevels = [];
         this.levels = [];
-        this.trainingInstanceStatistics.map((statistics) => this.originalPlayers.push(...statistics.participants));
         this.trainingInstanceStatistics.map((statistics) =>
-            statistics.participants.map((participant) => this.levels.push(...participant.levels))
+            this.originalPlayers.push(...statistics.participants)
         );
-        this.originalLevels.filter((level, index, self) => index === self.findIndex((t) => t.id === level.id));
+        this.trainingInstanceStatistics.map((statistics) =>
+            statistics.participants.map((participant) =>
+                this.levels.push(...participant.levels)
+            )
+        );
+        this.originalLevels.filter(
+            (level, index, self) =>
+                index === self.findIndex((t) => t.id === level.id)
+        );
         this.initializeBarchartData(true);
     }
 
@@ -199,15 +227,25 @@ export class BarchartComponent implements OnInit, OnChanges {
      * @param filters - if the first parameter is false, marks the trainings for which
      *                  data should be visualized
      */
-    public initializeBarchartData(init: boolean, filters?: IStatisticsFilter[]): void {
+    public initializeBarchartData(
+        init: boolean,
+        filters?: IStatisticsFilter[]
+    ): void {
         this.players = [];
         this.keys = [];
         this.filters = filters;
-        this.trainingInstanceStatistics.map((statistics) => this.players.push(...statistics.participants));
-        this.trainingInstanceStatistics.forEach((statistics) =>
-            statistics.participants.forEach((participant) => this.levels.concat(participant.levels))
+        this.trainingInstanceStatistics.map((statistics) =>
+            this.players.push(...statistics.participants)
         );
-        this.levels = this.levels.filter((level, index, self) => index === self.findIndex((t) => t.id === level.id));
+        this.trainingInstanceStatistics.forEach((statistics) =>
+            statistics.participants.forEach((participant) =>
+                this.levels.concat(participant.levels)
+            )
+        );
+        this.levels = this.levels.filter(
+            (level, index, self) =>
+                index === self.findIndex((t) => t.id === level.id)
+        );
         this.stackedData = this.createStackedObject();
         // Gets the key attributes from 'stackedData' which are required to create the
         // stacked bars and sorts them -> keys represent the individual layers of the bars
@@ -229,7 +267,10 @@ export class BarchartComponent implements OnInit, OnChanges {
      */
     public highlightDataForTraining(selectedTrainingId: number): void {
         // Blurs the elements that belong to other trainings
-        d3.select('#barchartPlaceholder').select('#chartSvg').selectAll('rect').style('opacity', 0.1);
+        d3.select('#barchartPlaceholder')
+            .select('#chartSvg')
+            .selectAll('rect')
+            .style('opacity', 0.1);
         // Resets the style of tooltips as they also consist of rectangles
         d3.selectAll('.barchartTooltip').style('opacity', 0.8);
         d3.selectAll('text').style('opacity', 1);
@@ -254,7 +295,10 @@ export class BarchartComponent implements OnInit, OnChanges {
      */
     public highlightDataForFlag(trainingInstanceIds?: number[]): void {
         // Blurs the elements that belong to other trainings
-        d3.select('#barchartPlaceholder').select('#chartSvg').selectAll('rect').style('opacity', 0.1);
+        d3.select('#barchartPlaceholder')
+            .select('#chartSvg')
+            .selectAll('rect')
+            .style('opacity', 0.1);
         // Resets the style of tooltips as they also consist of rectangles
         d3.selectAll('.barchartTooltip').style('opacity', 0.8);
         d3.selectAll('text').style('opacity', 1);
@@ -267,8 +311,10 @@ export class BarchartComponent implements OnInit, OnChanges {
             trainingInstanceIds = this.trainingInstanceStatistics
                 .filter(
                     (statistics) =>
-                        statistics.levelsAnswers.filter((levelAnswer) => levelAnswer.correctAnswerSubmitted > 0)
-                            .length > 0
+                        statistics.levelsAnswers.filter(
+                            (levelAnswer) =>
+                                levelAnswer.correctAnswerSubmitted > 0
+                        ).length > 0
                 )
                 .map((statistics) => statistics.instanceId);
         }
@@ -277,9 +323,15 @@ export class BarchartComponent implements OnInit, OnChanges {
         // the required elements should be selected different ways)
         trainingInstanceIds.forEach((id: number) => {
             if (this.chartType === 'stacked') {
-                this.highlightDataForStackedChart(id, `[id='${this.selectedLevel}']`);
+                this.highlightDataForStackedChart(
+                    id,
+                    `[id='${this.selectedLevel}']`
+                );
             } else {
-                this.highlightDataForGroupedChart(`[id='${this.selectedLevel}']`, id);
+                this.highlightDataForGroupedChart(
+                    `[id='${this.selectedLevel}']`,
+                    id
+                );
             }
         });
     }
@@ -289,8 +341,13 @@ export class BarchartComponent implements OnInit, OnChanges {
      * If no element is selected, resets the opacity of all the rectangles
      */
     public undoHighlightData(): void {
-        d3.select('#barchartPlaceholder').select('#chartSvg').selectAll('rect').style('opacity', 1);
-        d3.select('#barchartPlaceholder').selectAll('.wrong').style('opacity', 0.4);
+        d3.select('#barchartPlaceholder')
+            .select('#chartSvg')
+            .selectAll('rect')
+            .style('opacity', 1);
+        d3.select('#barchartPlaceholder')
+            .selectAll('.wrong')
+            .style('opacity', 0.4);
     }
 
     /**
@@ -301,9 +358,16 @@ export class BarchartComponent implements OnInit, OnChanges {
      *                       (all of them - in case of highlightDataForTraining;
      *                       just for one level - in case of highlightDataForFlag)
      */
-    private highlightDataForStackedChart(id: number, rectSelector: string): void {
-        d3.selectAll(`.number_of_correct_flags_${id}`).selectAll(rectSelector).style('opacity', 1);
-        d3.selectAll(`.number_of_wrong_flags_${id}`).selectAll(rectSelector).style('opacity', 1);
+    private highlightDataForStackedChart(
+        id: number,
+        rectSelector: string
+    ): void {
+        d3.selectAll(`.number_of_correct_flags_${id}`)
+            .selectAll(rectSelector)
+            .style('opacity', 1);
+        d3.selectAll(`.number_of_wrong_flags_${id}`)
+            .selectAll(rectSelector)
+            .style('opacity', 1);
     }
 
     /**
@@ -313,9 +377,16 @@ export class BarchartComponent implements OnInit, OnChanges {
      *                        just for one level - in case of highlightDataForFlag)
      * @param id - defines the training instance for which data should be highlighted
      */
-    private highlightDataForGroupedChart(groupSelector: string, id: number): void {
-        d3.selectAll(groupSelector).selectAll(`.number_of_correct_flags_${id}`).style('opacity', 1);
-        d3.selectAll(groupSelector).selectAll(`.number_of_wrong_flags_${id}`).style('opacity', 0.4);
+    private highlightDataForGroupedChart(
+        groupSelector: string,
+        id: number
+    ): void {
+        d3.selectAll(groupSelector)
+            .selectAll(`.number_of_correct_flags_${id}`)
+            .style('opacity', 1);
+        d3.selectAll(groupSelector)
+            .selectAll(`.number_of_wrong_flags_${id}`)
+            .style('opacity', 0.4);
     }
 
     /**
@@ -380,7 +451,9 @@ export class BarchartComponent implements OnInit, OnChanges {
      * If nothing has been specified, uses a predefined text
      */
     private setTitle(): void {
-        d3.select('#barchartPlaceholder').select('mat-card-title').text('Wrong Answers Overview');
+        d3.select('#barchartPlaceholder')
+            .select('mat-card-title')
+            .text('Wrong Answers Overview');
     }
 
     /**
@@ -388,7 +461,9 @@ export class BarchartComponent implements OnInit, OnChanges {
      */
     private createChart(): void {
         this.svgConfigurationService.cleanSvgs('#barchartPlaceholder');
-        this.svgConfigurationService.setMatContentHeight('#barchartPlaceholder');
+        this.svgConfigurationService.setMatContentHeight(
+            '#barchartPlaceholder'
+        );
         this.resizeBarchartSvg();
         // Attaches a function to all the svg canvases that hides
         // 'detailed info', if the user clicks outside the bars
@@ -421,11 +496,12 @@ export class BarchartComponent implements OnInit, OnChanges {
      * Saves the current sizes into the given variables
      */
     private resizeBarchartSvg(): void {
-        const size: { widths: number[]; height: number } = this.svgConfigurationService.resizeSvg([
-            '#yAxisPlaceholder',
-            '#chartPlaceholder',
-            '#legendPlaceholder'
-        ]);
+        const size: { widths: number[]; height: number } =
+            this.svgConfigurationService.resizeSvg([
+                '#yAxisPlaceholder',
+                '#chartPlaceholder',
+                '#legendPlaceholder',
+            ]);
         this.yAxisSvgWidth = size.widths[0];
         this.chartSvgWidth = size.widths[1];
         this.legendSvgWidth = size.widths[2];
@@ -447,7 +523,9 @@ export class BarchartComponent implements OnInit, OnChanges {
                 if (svgElements.includes(event.target.id)) {
                     this.selectedLevel = null;
                     this.createBubblechart(this.selectedLevel);
-                    d3.select('#chartSvg').selectAll('.detailedInfoElement').remove();
+                    d3.select('#chartSvg')
+                        .selectAll('.detailedInfoElement')
+                        .remove();
                 }
             });
     }
@@ -468,7 +546,11 @@ export class BarchartComponent implements OnInit, OnChanges {
         if (this.chartType === 'stacked') {
             this.xScale = d3
                 .scaleBand()
-                .domain(this.trainingInstanceStatistics[0].levelsAnswers.map((d: LevelAnswersStatistics) => `${d.id}`))
+                .domain(
+                    this.trainingInstanceStatistics[0].levelsAnswers.map(
+                        (d: LevelAnswersStatistics) => `${d.id}`
+                    )
+                )
                 .range([0, this.chartSvgWidth])
                 .padding(0.3);
             // Since the layers are on the top of each other, the maximum for the domain is
@@ -478,17 +560,21 @@ export class BarchartComponent implements OnInit, OnChanges {
                 .domain([
                     0,
                     Math.max(
-                        ...this.trainingInstanceStatistics[0].levelsAnswers.map((level) =>
-                            this.maxNumberOfFlagsForLevel(level.id)
+                        ...this.trainingInstanceStatistics[0].levelsAnswers.map(
+                            (level) => this.maxNumberOfFlagsForLevel(level.id)
                         )
-                    )
+                    ),
                 ])
                 .nice()
                 .rangeRound([this.svgHeight - this.margin, this.margin]);
         } else {
             this.xScale = d3
                 .scaleBand()
-                .domain(this.trainingInstanceStatistics[0].levelsAnswers.map((d: LevelAnswersStatistics) => `${d.id}`))
+                .domain(
+                    this.trainingInstanceStatistics[0].levelsAnswers.map(
+                        (d: LevelAnswersStatistics) => `${d.id}`
+                    )
+                )
                 .rangeRound([0, this.chartSvgWidth])
                 .paddingInner(0.1);
             // Since the layers are next to each other, the maximum of the domain
@@ -499,9 +585,11 @@ export class BarchartComponent implements OnInit, OnChanges {
                     0,
                     Math.max(
                         ...this.trainingInstanceStatistics.map((statistics) =>
-                            this.maxNumberOfFlagsForSingleLevel(statistics.levelsAnswers)
+                            this.maxNumberOfFlagsForSingleLevel(
+                                statistics.levelsAnswers
+                            )
                         )
-                    )
+                    ),
                 ])
                 .nice()
                 .rangeRound([this.svgHeight - this.margin, this.margin]);
@@ -514,30 +602,49 @@ export class BarchartComponent implements OnInit, OnChanges {
         // If the width of the bars is smaller than a predefined value than the width of the canvas is
         // enlarged, a scrollbar is added and the bar width is recalculated based on the new canvas width
         if (this.xScale.bandwidth() < 50) {
-            this.chartSvgWidth = this.trainingInstanceStatistics[0].levelsAnswers.length * 80;
+            this.chartSvgWidth =
+                this.trainingInstanceStatistics[0].levelsAnswers.length * 80;
             d3.select('#chartSvg')
                 .attr('width', this.chartSvgWidth)
-                .attr('viewbox', '0 0 ' + this.chartSvgWidth + ' ' + this.svgHeight);
+                .attr(
+                    'viewbox',
+                    '0 0 ' + this.chartSvgWidth + ' ' + this.svgHeight
+                );
             if (this.chartType === 'stacked') {
                 this.xScale = d3
                     .scaleBand()
-                    .domain(this.trainingInstanceStatistics[0].levelsAnswers.map((d: LevelAnswersStatistics) => `${d.id}`))
+                    .domain(
+                        this.trainingInstanceStatistics[0].levelsAnswers.map(
+                            (d: LevelAnswersStatistics) => `${d.id}`
+                        )
+                    )
                     .range([0, this.chartSvgWidth])
                     .padding(0.3);
             } else {
                 this.xScale = d3
                     .scaleBand()
-                    .domain(this.trainingInstanceStatistics[0].levelsAnswers.map((d: LevelAnswersStatistics) => `${d.id}`))
+                    .domain(
+                        this.trainingInstanceStatistics[0].levelsAnswers.map(
+                            (d: LevelAnswersStatistics) => `${d.id}`
+                        )
+                    )
                     .rangeRound([0, this.chartSvgWidth])
                     .paddingInner(0.1);
             }
         }
     }
 
-    private maxNumberOfFlagsForSingleLevel(level: LevelAnswersStatistics[]): number {
+    private maxNumberOfFlagsForSingleLevel(
+        level: LevelAnswersStatistics[]
+    ): number {
         let flagsMax = -1;
         level.forEach(
-            (level) => (flagsMax = Math.max(flagsMax, level.correctAnswerSubmitted, level.wrongAnswers.length))
+            (level) =>
+                (flagsMax = Math.max(
+                    flagsMax,
+                    level.correctAnswerSubmitted,
+                    level.wrongAnswers.length
+                ))
         );
         return flagsMax;
     }
@@ -569,8 +676,8 @@ export class BarchartComponent implements OnInit, OnChanges {
         let yAxes: d3.Axis<
             | number
             | {
-            valueOf(): number;
-        }
+                  valueOf(): number;
+              }
         >;
         if (this.chartType === 'stacked') {
             xAxes = d3.axisBottom(
@@ -578,7 +685,8 @@ export class BarchartComponent implements OnInit, OnChanges {
                     .scaleBand()
                     .domain(
                         this.trainingInstanceStatistics[0].levelsAnswers.map(
-                            (d: LevelAnswersStatistics, i: number) => `Level ${i + 1}`
+                            (d: LevelAnswersStatistics, i: number) =>
+                                `Level ${i + 1}`
                         )
                     )
                     .range([0, this.chartSvgWidth])
@@ -591,7 +699,8 @@ export class BarchartComponent implements OnInit, OnChanges {
                     .scaleBand()
                     .domain(
                         this.trainingInstanceStatistics[0].levelsAnswers.map(
-                            (d: LevelAnswersStatistics, i: number) => `Level ${i + 1}`
+                            (d: LevelAnswersStatistics, i: number) =>
+                                `Level ${i + 1}`
                         )
                     )
                     .rangeRound([0, this.chartSvgWidth])
@@ -615,7 +724,9 @@ export class BarchartComponent implements OnInit, OnChanges {
             -this.margin,
             this.margin / 2,
             'Number of submitted answers',
-            this.axesCreationService.getAxisTitleFontSize('#barchartPlaceholder')
+            this.axesCreationService.getAxisTitleFontSize(
+                '#barchartPlaceholder'
+            )
         );
 
         // Attaches a mousover and mouseout event
@@ -639,13 +750,25 @@ export class BarchartComponent implements OnInit, OnChanges {
      * @param level - defines the level to which the tooltip should be added
      */
     private appendTootlipToXAxis(level: LevelStatistics): void {
-        const fontSize: number = this.tooltipCreationService.getTooltipFontSize('#barchartPlaceholder');
-        const width: number = Math.round(0.6 * Math.max(level.title.length, 12) * fontSize);
+        const fontSize: number = this.tooltipCreationService.getTooltipFontSize(
+            '#barchartPlaceholder'
+        );
+        const width: number = Math.round(
+            0.6 * Math.max(level.title.length, 12) * fontSize
+        );
         const height: number = Math.round(3 * fontSize);
         let x: number = this.xScale(String(level.id));
         x = x > this.chartSvgWidth / 2 ? x - width - 10 : x + 10;
         const y: number = this.svgHeight - 2 * height;
-        this.createTooltip(x, y, width, height, y + fontSize, ['Level title: ', level.title], [0, 1.5 * fontSize]);
+        this.createTooltip(
+            x,
+            y,
+            width,
+            height,
+            y + fontSize,
+            ['Level title: ', level.title],
+            [0, 1.5 * fontSize]
+        );
     }
 
     /**
@@ -665,7 +788,7 @@ export class BarchartComponent implements OnInit, OnChanges {
         // flags should be shown, or only the wrong ones
         let actualKeys: string[];
         if (this.onlyWrongFlags) {
-            actualKeys = this.keys.filter(function(key) {
+            actualKeys = this.keys.filter(function (key) {
                 return key.includes('wrong');
             });
         } else {
@@ -687,7 +810,9 @@ export class BarchartComponent implements OnInit, OnChanges {
             })
             // The same color is used to define the correct and wrong flags of
             // the same training, only their opacity differs
-            .attr('fill', (d: any) => this.zScale(this.keys.indexOf(d.key) % (this.keys.length / 2)))
+            .attr('fill', (d: any) =>
+                this.zScale(this.keys.indexOf(d.key) % (this.keys.length / 2))
+            )
             .selectAll('rect')
             .data((d: any) => d)
             .enter()
@@ -713,20 +838,36 @@ export class BarchartComponent implements OnInit, OnChanges {
         const filteredStackedData: any = [];
         this.levels.forEach((level: LevelStatistics) => {
             const stackedObject = { level_id: level.id };
-            this.trainingInstanceStatistics.forEach((trainingInstanceStatistic: TrainingInstanceStatistics) => {
-                stackedObject['number_of_correct_flags_' + trainingInstanceStatistic.instanceId] =
-                    trainingInstanceStatistic.levelsAnswers
+            this.trainingInstanceStatistics.forEach(
+                (trainingInstanceStatistic: TrainingInstanceStatistics) => {
+                    stackedObject[
+                        'number_of_correct_flags_' +
+                            trainingInstanceStatistic.instanceId
+                    ] = trainingInstanceStatistic.levelsAnswers
                         .filter((answer) => answer.id == level.id)
                         .reduce(
-                            (sum: number, levelAnswer: LevelAnswersStatistics) => sum + levelAnswer.correctAnswerSubmitted,
+                            (
+                                sum: number,
+                                levelAnswer: LevelAnswersStatistics
+                            ) => sum + levelAnswer.correctAnswerSubmitted,
                             0
                         );
-                stackedObject['number_of_wrong_flags_' + trainingInstanceStatistic.instanceId] =
-                    trainingInstanceStatistic.levelsAnswers
+                    stackedObject[
+                        'number_of_wrong_flags_' +
+                            trainingInstanceStatistic.instanceId
+                    ] = trainingInstanceStatistic.levelsAnswers
                         .filter((answer) => answer.id == level.id)
-                        .reduce((sum: number, levelAnswer: LevelAnswersStatistics) => sum + levelAnswer.wrongAnswers.length, 0);
-                stackedObject['instanceId'] = trainingInstanceStatistic.instanceId;
-            });
+                        .reduce(
+                            (
+                                sum: number,
+                                levelAnswer: LevelAnswersStatistics
+                            ) => sum + levelAnswer.wrongAnswers.length,
+                            0
+                        );
+                    stackedObject['instanceId'] =
+                        trainingInstanceStatistic.instanceId;
+                }
+            );
             filteredStackedData.push(stackedObject);
         });
         return filteredStackedData;
@@ -747,7 +888,7 @@ export class BarchartComponent implements OnInit, OnChanges {
         // flags should be shown, or only the wrong ones
         let actualKeys: string[];
         if (this.onlyWrongFlags) {
-            actualKeys = this.keys.filter(function(key) {
+            actualKeys = this.keys.filter(function (key) {
                 return key.includes('wrong');
             });
         } else {
@@ -757,7 +898,10 @@ export class BarchartComponent implements OnInit, OnChanges {
 
         // Marks the position/coordinate of the individual bar
         // inside a specific group of bars
-        const x1 = d3.scaleBand().domain(actualKeys).rangeRound([0, this.xScale.bandwidth()]);
+        const x1 = d3
+            .scaleBand()
+            .domain(actualKeys)
+            .rangeRound([0, this.xScale.bandwidth()]);
 
         d3.select('#chartSvg')
             .append('g')
@@ -766,11 +910,19 @@ export class BarchartComponent implements OnInit, OnChanges {
             .enter()
             .append('g')
             .attr('id', (d: LevelStatistics) => `${d.id}`)
-            .attr('transform', (d: LevelStatistics) => `translate(${this.xScale(`${d.id}`)},0)`)
+            .attr(
+                'transform',
+                (d: LevelStatistics) => `translate(${this.xScale(`${d.id}`)},0)`
+            )
             .selectAll('rect')
             .data((d: LevelStatistics) => {
-                const data = this.stackedData.find((stackedData) => stackedData.level_id == d.id);
-                return actualKeys.map((key: string) => ({ key, value: data[key] }));
+                const data = this.stackedData.find(
+                    (stackedData) => stackedData.level_id == d.id
+                );
+                return actualKeys.map((key: string) => ({
+                    key,
+                    value: data[key],
+                }));
             })
             .enter()
             .append('rect')
@@ -785,7 +937,9 @@ export class BarchartComponent implements OnInit, OnChanges {
             .attr('y', (d: any) => this.yScale(d.value))
             .attr('width', x1.bandwidth())
             .attr('height', (d: any) => this.yScale(0) - this.yScale(d.value))
-            .attr('fill', (d: any) => this.zScale(this.keys.indexOf(d.key) % (this.keys.length / 2)))
+            .attr('fill', (d: any) =>
+                this.zScale(this.keys.indexOf(d.key) % (this.keys.length / 2))
+            )
             .style('cursor', 'pointer')
             .on('mouseover', (d: any, events) => {
                 this.visualizeNumberOfParticipantsForGroupedChart(
@@ -816,10 +970,16 @@ export class BarchartComponent implements OnInit, OnChanges {
         //   (participant: Participant[]) =>
         //     (numberOfParticipants = numberOfParticipants + element.length)
         // );
-        this.createLineForNumberOfParticipants('stackedChartLine', this.originalPlayers.length);
+        this.createLineForNumberOfParticipants(
+            'stackedChartLine',
+            this.originalPlayers.length
+        );
         d3.select('.stackedChartLine')
             .on('mouseover', () =>
-                this.createTooltipForNumberOfParticipants(<MouseEvent>event, this.originalPlayers.length)
+                this.createTooltipForNumberOfParticipants(
+                    <MouseEvent>event,
+                    this.originalPlayers.length
+                )
             )
             .on('mouseout', () => this.handleMouseOut());
     }
@@ -833,13 +993,19 @@ export class BarchartComponent implements OnInit, OnChanges {
      * @param trainingId - marks the selected training
      * @param event - marks the mouseover event
      */
-    private visualizeNumberOfParticipantsForGroupedChart(trainingId: number, event: MouseEvent): void {
+    private visualizeNumberOfParticipantsForGroupedChart(
+        trainingId: number,
+        event: MouseEvent
+    ): void {
         // let index = 0;
         // while (this.players[index].instanceId !== trainingId) {
         //   index++;
         // }
         const participants: number = this.players.length;
-        this.createLineForNumberOfParticipants('groupedChartLine', participants);
+        this.createLineForNumberOfParticipants(
+            'groupedChartLine',
+            participants
+        );
         this.createTooltipForNumberOfParticipants(event, participants);
     }
 
@@ -849,7 +1015,10 @@ export class BarchartComponent implements OnInit, OnChanges {
      * @param className - marks the chart type (stacked/grouped)
      * @param numberOfParticipants - indicates the number of players
      */
-    private createLineForNumberOfParticipants(className: string, numberOfParticipants: number): void {
+    private createLineForNumberOfParticipants(
+        className: string,
+        numberOfParticipants: number
+    ): void {
         d3.select('#chartSvg')
             .append('line')
             .attr('class', className)
@@ -872,25 +1041,51 @@ export class BarchartComponent implements OnInit, OnChanges {
      *                get the current position of the mouse
      * @param participants - defines the number of players
      */
-    private createTooltipForNumberOfParticipants(event: MouseEvent, participants: number): void {
-        const fontSize: number = this.tooltipCreationService.getTooltipFontSize('#barchartPlaceholder');
+    private createTooltipForNumberOfParticipants(
+        event: MouseEvent,
+        participants: number
+    ): void {
+        const fontSize: number = this.tooltipCreationService.getTooltipFontSize(
+            '#barchartPlaceholder'
+        );
         const width: number = Math.round(14 * fontSize);
         const height: number = Math.round(1.5 * fontSize);
         const coordinates: {
             x: number;
             y: number;
-        } = this.svgConfigurationService.convertScreenCoordToSvgCoord('chartSvg', event.clientX, event.clientY);
+        } = this.svgConfigurationService.convertScreenCoordToSvgCoord(
+            'chartSvg',
+            event.clientX,
+            event.clientY
+        );
         let x: number;
         let y: number;
         if (this.chartType === 'stacked') {
-            x = coordinates.x > this.chartSvgWidth / 2 ? coordinates.x - width - 10 : coordinates.x + 10;
-            y = coordinates.y > this.svgHeight / 2 ? coordinates.y - height - 10 : coordinates.y + 10;
+            x =
+                coordinates.x > this.chartSvgWidth / 2
+                    ? coordinates.x - width - 10
+                    : coordinates.x + 10;
+            y =
+                coordinates.y > this.svgHeight / 2
+                    ? coordinates.y - height - 10
+                    : coordinates.y + 10;
         } else {
-            x = coordinates.x > this.chartSvgWidth / 2 ? 10 : this.chartSvgWidth - width - 10;
+            x =
+                coordinates.x > this.chartSvgWidth / 2
+                    ? 10
+                    : this.chartSvgWidth - width - 10;
             y = this.yScale(participants) - height - 10;
         }
 
-        this.createTooltip(x, y, width, height, y + fontSize, ['number of participants: ' + participants], [0]);
+        this.createTooltip(
+            x,
+            y,
+            width,
+            height,
+            y + fontSize,
+            ['number of participants: ' + participants],
+            [0]
+        );
     }
 
     /**
@@ -919,14 +1114,18 @@ export class BarchartComponent implements OnInit, OnChanges {
             // hides detailed info and marks that no level is actually selected
             case selectedLevel:
                 this.selectedLevel = null;
-                d3.select('#chartSvg').selectAll('.detailedInfoElement').remove();
+                d3.select('#chartSvg')
+                    .selectAll('.detailedInfoElement')
+                    .remove();
                 break;
             // If an other level has been clicked, marks it as selected,
             // hides detailed info about the previously selected level and
             // shows detailed info about the actually selected level
             default:
                 this.selectedLevel = selectedLevel;
-                d3.select('#chartSvg').selectAll('.detailedInfoElement').remove();
+                d3.select('#chartSvg')
+                    .selectAll('.detailedInfoElement')
+                    .remove();
                 this.showDetailedInfo(selectedLevel);
                 break;
         }
@@ -955,26 +1154,31 @@ export class BarchartComponent implements OnInit, OnChanges {
             wrongAnswers: number;
             correctAnswerSubmitted: number;
         }[] = [];
-        const levelAnswer: LevelAnswersStatistics = this.trainingInstanceStatistics[0].levelsAnswers[0];
+        const levelAnswer: LevelAnswersStatistics =
+            this.trainingInstanceStatistics[0].levelsAnswers[0];
         levelAnswers.push({
             id: levelAnswer.id,
             wrongAnswers: 0,
-            correctAnswerSubmitted: 0
+            correctAnswerSubmitted: 0,
         });
 
         this.trainingInstanceStatistics
             .map((statistics) => statistics.levelsAnswers)
             .forEach((answers) => {
                 answers.forEach((answer) => {
-                    const level = levelAnswers.find((levelAnswer) => levelAnswer.id === answer.id);
+                    const level = levelAnswers.find(
+                        (levelAnswer) => levelAnswer.id === answer.id
+                    );
                     if (level !== undefined) {
                         level.wrongAnswers += answer.wrongAnswers.length;
-                        level.correctAnswerSubmitted += answer.correctAnswerSubmitted;
+                        level.correctAnswerSubmitted +=
+                            answer.correctAnswerSubmitted;
                     } else {
                         levelAnswers.push({
                             id: answer.id,
                             wrongAnswers: answer.wrongAnswers.length,
-                            correctAnswerSubmitted: answer.correctAnswerSubmitted
+                            correctAnswerSubmitted:
+                                answer.correctAnswerSubmitted,
                         });
                     }
                 });
@@ -984,35 +1188,70 @@ export class BarchartComponent implements OnInit, OnChanges {
             // about the exact number of correct/wrong flags and attaches a dashed line
             // Calls the proper functions based on the actual types of the barchart
             if (level.id == selectedLevel) {
-                numberOfWrongAnswersAtSelectedLevel = this.trainingInstanceStatistics
-                    .map((statistics) =>
-                        statistics.levelsAnswers
-                            .filter((levelAnswer) => levelAnswer.id === selectedLevel)
-                            .reduce((acc, cur) => acc + cur.wrongAnswers.length, 0)
-                    )
-                    .reduce((acc, cur) => acc + cur, 0);
-                const wrongAnswerSubmittedBy: number = this.trainingInstanceStatistics
-                    .find((statistics) => statistics.instanceId == this.selectedInstanceId)
-                    .participants.map((participant) =>
-                        participant.levels.map((level) => level).find((level) => level.id == Number(selectedLevel))
-                    )
-                    .reduce((acc, levels) => acc + (levels.wrongAnswerSubmitted.length > 0 ? 1 : 0), 0);
+                numberOfWrongAnswersAtSelectedLevel =
+                    this.trainingInstanceStatistics
+                        .map((statistics) =>
+                            statistics.levelsAnswers
+                                .filter(
+                                    (levelAnswer) =>
+                                        levelAnswer.id === selectedLevel
+                                )
+                                .reduce(
+                                    (acc, cur) => acc + cur.wrongAnswers.length,
+                                    0
+                                )
+                        )
+                        .reduce((acc, cur) => acc + cur, 0);
+                const wrongAnswerSubmittedBy: number =
+                    this.trainingInstanceStatistics
+                        .find(
+                            (statistics) =>
+                                statistics.instanceId == this.selectedInstanceId
+                        )
+                        .participants.map((participant) =>
+                            participant.levels
+                                .map((level) => level)
+                                .find(
+                                    (level) => level.id == Number(selectedLevel)
+                                )
+                        )
+                        .reduce(
+                            (acc, levels) =>
+                                acc +
+                                (levels.wrongAnswerSubmitted.length > 0
+                                    ? 1
+                                    : 0),
+                            0
+                        );
                 if (this.chartType === 'stacked') {
-                    this.createTextForSelectedLevel(selectedLevel, level.correctAnswerSubmitted, level.wrongAnswers);
+                    this.createTextForSelectedLevel(
+                        selectedLevel,
+                        level.correctAnswerSubmitted,
+                        level.wrongAnswers
+                    );
                     if (this.onlyWrongFlags) {
                         this.attachDashedLine(wrongAnswerSubmittedBy);
                     } else {
-                        this.attachDashedLine(wrongAnswerSubmittedBy + level.correctAnswerSubmitted);
+                        this.attachDashedLine(
+                            wrongAnswerSubmittedBy +
+                                level.correctAnswerSubmitted
+                        );
                     }
                 } else {
-                    const maxNumberOfFlags: number = this.maxNumberOfFlagsForLevel(level.id);
+                    const maxNumberOfFlags: number =
+                        this.maxNumberOfFlagsForLevel(level.id);
                     this.createTextForSelectedLevel(
                         selectedLevel,
                         level.correctAnswerSubmitted,
                         numberOfWrongAnswersAtSelectedLevel,
                         maxNumberOfFlags
                     );
-                    this.attachDashedLine(Math.max(level.correctAnswerSubmitted, wrongAnswerSubmittedBy));
+                    this.attachDashedLine(
+                        Math.max(
+                            level.correctAnswerSubmitted,
+                            wrongAnswerSubmittedBy
+                        )
+                    );
                 }
             } else {
                 // If the actually processed level is not the selected one, saves it to the variable
@@ -1021,16 +1260,21 @@ export class BarchartComponent implements OnInit, OnChanges {
                     id: level.id,
                     wrongAnswers: level.wrongAnswers,
                     correctAnswerSubmitted: level.correctAnswerSubmitted,
-                    maxNumberOfFlags: this.maxNumberOfFlagsForLevel(level.id)
+                    maxNumberOfFlags: this.maxNumberOfFlagsForLevel(level.id),
                 });
             }
         });
         // Since the text for the other levels contains a comparison to the selected one,
         // these levels can be processed only after all the levels have been checked -> to
         // ensure data about the selected level is already available
-        this.createTextForOtherLevels(statisticsAtOtherLevels, numberOfWrongAnswersAtSelectedLevel);
+        this.createTextForOtherLevels(
+            statisticsAtOtherLevels,
+            numberOfWrongAnswersAtSelectedLevel
+        );
         // Disables pointer events for these texts
-        d3.selectAll('.detailedInfoElement').style('cursor', 'pointer').attr('pointer-events', 'none');
+        d3.selectAll('.detailedInfoElement')
+            .style('cursor', 'pointer')
+            .attr('pointer-events', 'none');
     }
 
     /**
@@ -1066,16 +1310,23 @@ export class BarchartComponent implements OnInit, OnChanges {
      */
     private maxNumberOfFlagsForLevel(levelId: number): number {
         let maxNumberOfFlags = -1;
-        const levelAnswers: LevelAnswersStatistics[] = this.trainingInstanceStatistics.map((statistics) =>
-            statistics.levelsAnswers.find((levelAnswer) => levelAnswer.id === levelId)
-        );
+        const levelAnswers: LevelAnswersStatistics[] =
+            this.trainingInstanceStatistics.map((statistics) =>
+                statistics.levelsAnswers.find(
+                    (levelAnswer) => levelAnswer.id === levelId
+                )
+            );
         levelAnswers.forEach((levelAnswer: LevelAnswersStatistics) => {
             if (this.onlyWrongFlags) {
-                maxNumberOfFlags = Math.max(maxNumberOfFlags, levelAnswer.wrongAnswers.length);
+                maxNumberOfFlags = Math.max(
+                    maxNumberOfFlags,
+                    levelAnswer.wrongAnswers.length
+                );
             } else {
                 maxNumberOfFlags = Math.max(
                     maxNumberOfFlags,
-                    levelAnswer.correctAnswerSubmitted + levelAnswer.wrongAnswers.length
+                    levelAnswer.correctAnswerSubmitted +
+                        levelAnswer.wrongAnswers.length
                 );
             }
         });
@@ -1141,7 +1392,10 @@ export class BarchartComponent implements OnInit, OnChanges {
                 numberOfFlagsToVis = numberOfCorrectFlags + numberOfWrongFlags;
             }
         }
-        this.appendUpperTextToBar(selectedLevel, numberOfFlagsToVis, [numberOfWrongFlags + ' wrong', ' answers']);
+        this.appendUpperTextToBar(selectedLevel, numberOfFlagsToVis, [
+            numberOfWrongFlags + ' wrong',
+            ' answers',
+        ]);
     }
 
     /**
@@ -1152,18 +1406,29 @@ export class BarchartComponent implements OnInit, OnChanges {
      *                      the number of submission for the other levels
      * @param numberOfWrongFlagsAtSelectedLevel - number of wrong flags for the selected level
      */
-    private createTextForOtherLevels(otherLevels: any, numberOfWrongFlagsAtSelectedLevel: number): void {
+    private createTextForOtherLevels(
+        otherLevels: any,
+        numberOfWrongFlagsAtSelectedLevel: number
+    ): void {
         otherLevels.forEach((level) => {
             // Compares each level to the selected one
             let percentage = 0;
             if (numberOfWrongFlagsAtSelectedLevel > 0) {
-                percentage = 100 - Math.round((level.wrongAnswers / numberOfWrongFlagsAtSelectedLevel) * 100);
+                percentage =
+                    100 -
+                    Math.round(
+                        (level.wrongAnswers /
+                            numberOfWrongFlagsAtSelectedLevel) *
+                            100
+                    );
             }
             // Creates the text that should be attached to the bar
             let text = '';
             if (
-                level.wrongAnswers / numberOfWrongFlagsAtSelectedLevel === Number.POSITIVE_INFINITY ||
-                level.wrongAnswers / numberOfWrongFlagsAtSelectedLevel === Number.NEGATIVE_INFINITY
+                level.wrongAnswers / numberOfWrongFlagsAtSelectedLevel ===
+                    Number.POSITIVE_INFINITY ||
+                level.wrongAnswers / numberOfWrongFlagsAtSelectedLevel ===
+                    Number.NEGATIVE_INFINITY
             ) {
                 text = `Increase from Zero by ${level.wrongAnswers}`;
             } else if (percentage < 0) {
@@ -1182,10 +1447,14 @@ export class BarchartComponent implements OnInit, OnChanges {
                 if (this.onlyWrongFlags) {
                     numberOfFlags = level.correctAnswerSubmitted;
                 } else {
-                    numberOfFlags = level.correctAnswerSubmitted + level.wrongAnswers;
+                    numberOfFlags =
+                        level.correctAnswerSubmitted + level.wrongAnswers;
                 }
             }
-            this.appendUpperTextToBar(level.id, numberOfFlags, [text, 'wrong answers']);
+            this.appendUpperTextToBar(level.id, numberOfFlags, [
+                text,
+                'wrong answers',
+            ]);
         });
     }
 
@@ -1198,8 +1467,13 @@ export class BarchartComponent implements OnInit, OnChanges {
      * @param numberOfCorrectFlags - defines the amount of correct flags,
      *                               this number should be shown for the bar
      */
-    private appendLowerTextToBar(levelId: number, numberOfCorrectFlags: number): void {
-        const fontSize: number = this.legendCreationService.getLegendFontSize('#barchartPlaceholder');
+    private appendLowerTextToBar(
+        levelId: number,
+        numberOfCorrectFlags: number
+    ): void {
+        const fontSize: number = this.legendCreationService.getLegendFontSize(
+            '#barchartPlaceholder'
+        );
         this.legendCreationService.addLegendText(
             '#chartSvg',
             'detailedInfoElement',
@@ -1224,8 +1498,14 @@ export class BarchartComponent implements OnInit, OnChanges {
      *                        y coordinate of the text
      * @param text - defines the text, that should be attached to the bar
      */
-    private appendUpperTextToBar(levelId: number, numberOfFlags: number, text: string[]): void {
-        const fontSize: number = this.legendCreationService.getLegendFontSize('#barchartPlaceholder');
+    private appendUpperTextToBar(
+        levelId: number,
+        numberOfFlags: number,
+        text: string[]
+    ): void {
+        const fontSize: number = this.legendCreationService.getLegendFontSize(
+            '#barchartPlaceholder'
+        );
         let y: number;
         let xShift: number[];
         let yShift: number[];
@@ -1268,7 +1548,8 @@ export class BarchartComponent implements OnInit, OnChanges {
         // Blocks participant line for mouseover event
         d3.select('.stackedChartLine').attr('pointer-events', 'none');
         // Finds the actually selected training based on the class attribute
-        const selectedTrainingId: number = this.getTrainingToBeHighlighted(event);
+        const selectedTrainingId: number =
+            this.getTrainingToBeHighlighted(event);
 
         // Highlights the corresponding data in combined chart and scatterplot
         this.highlightInstance.emit([selectedTrainingId]);
@@ -1289,39 +1570,38 @@ export class BarchartComponent implements OnInit, OnChanges {
             Number(infoToBeVisualized.trainingId),
             infoToBeVisualized.numberOfFlags
         );
-        const size: { width: number; height: number } = this.tooltipCreationService.getTooltipSize(this.chartSvgWidth);
+        const size: { width: number; height: number } =
+            this.tooltipCreationService.getTooltipSize(this.chartSvgWidth);
         const coordinates: {
             x: number;
             y: number;
-        } = this.svgConfigurationService.convertScreenCoordToSvgCoord('chartSvg', event.clientX, event.clientY);
-        const x = coordinates.x > this.chartSvgWidth / 2 ? coordinates.x - size.width - 10 : coordinates.x + 10;
-        const y = coordinates.y > this.svgHeight / 2 ? coordinates.y - size.height - 10 : coordinates.y + 10;
-        this.createTooltip(x, y, size.width, size.height, y + 0.2 * size.height, tooltipText, [
-            0,
-            0.3 * size.height,
-            0.2 * size.height,
-            0.2 * size.height
-        ]);
+        } = this.svgConfigurationService.convertScreenCoordToSvgCoord(
+            'chartSvg',
+            event.clientX,
+            event.clientY
+        );
+        const x =
+            coordinates.x > this.chartSvgWidth / 2
+                ? coordinates.x - size.width - 10
+                : coordinates.x + 10;
+        const y =
+            coordinates.y > this.svgHeight / 2
+                ? coordinates.y - size.height - 10
+                : coordinates.y + 10;
+        this.createTooltip(
+            x,
+            y,
+            size.width,
+            size.height,
+            y + 0.2 * size.height,
+            tooltipText,
+            [0, 0.3 * size.height, 0.2 * size.height, 0.2 * size.height]
+        );
 
         // Higlights correct and wrong flags for the given training instance (only if no level is selected)
         if (this.selectedLevel === null) {
             this.highlightDataForTraining(selectedTrainingId);
         } else {
-            // If some level is selected, interacts with the bubblechart to highlight
-            // the flags submitted at the training which has been hovered over
-            const levelIndex: number = this.levels.map((o) => o.id).indexOf(this.selectedLevel);
-
-            //TODO BUBBLE CHART EMIT
-            // const trainingIndex: number = this.levels[levelIndex].trainings
-            //   .map((o) => o.trainingInstanceId)
-            //   .indexOf(selectedTrainingId);
-            // const anyCorrectFlagSubmitted: boolean =
-            //   this.levels[levelIndex].trainings[trainingIndex].numberOfCorrectFlags >
-            //   0;
-            // this.bubblechartReference.highlightFlagsForTraining(
-            //   selectedTrainingId,
-            //   anyCorrectFlagSubmitted
-            // );
         }
     }
 
@@ -1349,36 +1629,52 @@ export class BarchartComponent implements OnInit, OnChanges {
         // Specifies whether the rectangle represents correct flags or not
         if (this.chartType === 'stacked') {
             selectedLevel = (<HTMLElement>event.srcElement).id;
-            classNameKeyWords = (<any>(<HTMLElement>event.srcElement).parentElement.className).baseVal.split('_');
+            classNameKeyWords = (<any>(
+                (<HTMLElement>event.srcElement).parentElement.className
+            )).baseVal.split('_');
             selectedTraining = classNameKeyWords.sort()[0];
             showCorrectFlags = classNameKeyWords.includes('correct');
         } else {
             selectedLevel = (<HTMLElement>event.srcElement).parentElement.id;
-            classNameKeyWords = (<any>(<HTMLElement>event.srcElement).className).baseVal.split('_');
+            classNameKeyWords = (<any>(
+                (<HTMLElement>event.srcElement).className
+            )).baseVal.split('_');
             selectedTraining = classNameKeyWords.sort()[0];
             showCorrectFlags = classNameKeyWords.includes('correct');
         }
 
-        const selectedTrainingStatistics: TrainingInstanceStatistics = this.trainingInstanceStatistics.find(
-            (statistics) => statistics.instanceId === Number(selectedTraining)
-        );
-        const selectedTrainingLevelStatistics: LevelAnswersStatistics = selectedTrainingStatistics.levelsAnswers.find(
-            (level) => level.id === Number(selectedLevel)
-        );
-        const wrongAnswerSubmittedBy: number = selectedTrainingStatistics.participants
-            .map((participant) =>
-                participant.levels.map((level) => level).find((level) => level.id == Number(selectedLevel))
-            )
-            .reduce((acc, levels) => acc + (levels.wrongAnswerSubmitted.length > 0 ? 1 : 0), 0);
+        const selectedTrainingStatistics: TrainingInstanceStatistics =
+            this.trainingInstanceStatistics.find(
+                (statistics) =>
+                    statistics.instanceId === Number(selectedTraining)
+            );
+        const selectedTrainingLevelStatistics: LevelAnswersStatistics =
+            selectedTrainingStatistics.levelsAnswers.find(
+                (level) => level.id === Number(selectedLevel)
+            );
+        const wrongAnswerSubmittedBy: number =
+            selectedTrainingStatistics.participants
+                .map((participant) =>
+                    participant.levels
+                        .map((level) => level)
+                        .find((level) => level.id == Number(selectedLevel))
+                )
+                .reduce(
+                    (acc, levels) =>
+                        acc + (levels.wrongAnswerSubmitted.length > 0 ? 1 : 0),
+                    0
+                );
 
         return {
             showCorrectFlags: showCorrectFlags,
             trainingId: selectedTraining,
             numberOfFlags: {
-                numberOfCorrectFlags: selectedTrainingLevelStatistics.correctAnswerSubmitted,
-                numberOfWrongFlags: selectedTrainingLevelStatistics.wrongAnswers.length,
-                submittedBy: wrongAnswerSubmittedBy
-            }
+                numberOfCorrectFlags:
+                    selectedTrainingLevelStatistics.correctAnswerSubmitted,
+                numberOfWrongFlags:
+                    selectedTrainingLevelStatistics.wrongAnswers.length,
+                submittedBy: wrongAnswerSubmittedBy,
+            },
         };
     }
 
@@ -1405,14 +1701,14 @@ export class BarchartComponent implements OnInit, OnChanges {
                 `Training ${trainingId}:`,
                 numberOfFlags.numberOfCorrectFlags + ' participants',
                 'submitted',
-                'the correct answer'
+                'the correct answer',
             ];
         }
         return [
             `Training ${trainingId}:`,
             numberOfFlags.numberOfWrongFlags + ' wrong answers',
             'submitted by',
-            numberOfFlags.submittedBy + ' participants'
+            numberOfFlags.submittedBy + ' participants',
         ];
     }
 
@@ -1451,7 +1747,9 @@ export class BarchartComponent implements OnInit, OnChanges {
             'barchartTooltip',
             x + width / 2,
             textY,
-            this.tooltipCreationService.getTooltipFontSize('#barchartPlaceholder'),
+            this.tooltipCreationService.getTooltipFontSize(
+                '#barchartPlaceholder'
+            ),
             text,
             yShift,
             this.tooltipColors[1]
@@ -1467,10 +1765,17 @@ export class BarchartComponent implements OnInit, OnChanges {
         // The 'event' contains different attributes in case of a bar and a legend,
         // so the class attribute of the element can be found in different ways
         let layersClass: string[];
-        if ((<any>(<HTMLElement>event.target).className).baseVal === 'barchartRect') {
-            layersClass = (<any>(<HTMLElement>event.target).parentElement.className).baseVal.split('_');
+        if (
+            (<any>(<HTMLElement>event.target).className).baseVal ===
+            'barchartRect'
+        ) {
+            layersClass = (<any>(
+                (<HTMLElement>event.target).parentElement.className
+            )).baseVal.split('_');
         } else {
-            layersClass = (<any>(<HTMLElement>event.target).className).baseVal.split('_');
+            layersClass = (<any>(
+                (<HTMLElement>event.target).className
+            )).baseVal.split('_');
         }
         return Number(layersClass.pop());
     }
@@ -1484,7 +1789,9 @@ export class BarchartComponent implements OnInit, OnChanges {
      */
     private handleMouseOut(): void {
         d3.select('.stackedChartLine').attr('pointer-events', 'all');
-        d3.select('#barchartPlaceholder').selectAll('.barchartTooltip').remove();
+        d3.select('#barchartPlaceholder')
+            .selectAll('.barchartTooltip')
+            .remove();
         d3.select('#chartSvg').selectAll('.groupedChartLine').remove();
 
         this.undoHighlightData();
@@ -1501,7 +1808,9 @@ export class BarchartComponent implements OnInit, OnChanges {
      */
     private createLegend(): void {
         // Gets the list of training instances
-        const trainingIds: number[] = this.trainingInstanceStatistics.map((statistics) => statistics.instanceId);
+        const trainingIds: number[] = this.trainingInstanceStatistics.map(
+            (statistics) => statistics.instanceId
+        );
         trainingIds.sort();
         // Calculates the minimum height of canvas required to make the whole legend visible
         this.adjustLegendSvgSize(trainingIds.length);
@@ -1509,7 +1818,8 @@ export class BarchartComponent implements OnInit, OnChanges {
         // For each training instance creates the legend elements
         for (let i = 0; i < trainingIds.length; i++) {
             const lineShift: number = 0.03 * this.svgHeight;
-            const marginAndTrainingShift: number = this.margin + i * 0.22 * this.svgHeight;
+            const marginAndTrainingShift: number =
+                this.margin + i * 0.22 * this.svgHeight;
             // Each training instance is represented by a group element, which contains the
             // rectangles and texts belonging to the legend
             // A mouseover event is attached to this 'g' element that enables to highlight
@@ -1521,11 +1831,15 @@ export class BarchartComponent implements OnInit, OnChanges {
                 .style('cursor', 'pointer')
                 .on('mouseover', () => {
                     if (this.selectedLevel === null) {
-                        const selectedTrainingId: number = this.getTrainingToBeHighlighted(<MouseEvent>event);
+                        const selectedTrainingId: number =
+                            this.getTrainingToBeHighlighted(<MouseEvent>event);
                         this.highlightDataForTraining(selectedTrainingId);
                     }
                     if (this.chartType === 'grouped') {
-                        this.visualizeNumberOfParticipantsForGroupedChart(trainingIds[i], <MouseEvent>event);
+                        this.visualizeNumberOfParticipantsForGroupedChart(
+                            trainingIds[i],
+                            <MouseEvent>event
+                        );
                     }
                 })
                 .on('mouseout', () => this.handleMouseOut());
@@ -1537,10 +1851,20 @@ export class BarchartComponent implements OnInit, OnChanges {
                 'legendText',
                 0,
                 marginAndTrainingShift,
-                this.legendCreationService.getLegendFontSize('#barchartPlaceholder'),
+                this.legendCreationService.getLegendFontSize(
+                    '#barchartPlaceholder'
+                ),
                 '#000000',
-                ['Training ' + trainingIds[i], 'correct answers', 'wrong answers'],
-                [0.1 * this.legendSvgWidth, 0.25 * this.legendSvgWidth, 0.25 * this.legendSvgWidth],
+                [
+                    'Training ' + trainingIds[i],
+                    'correct answers',
+                    'wrong answers',
+                ],
+                [
+                    0.1 * this.legendSvgWidth,
+                    0.25 * this.legendSvgWidth,
+                    0.25 * this.legendSvgWidth,
+                ],
                 [0, 2 * lineShift, 2 * lineShift],
                 'left'
             );
@@ -1549,7 +1873,10 @@ export class BarchartComponent implements OnInit, OnChanges {
                 'legendRect',
                 [this.zScale(i), this.zScale(i)],
                 0.1 * this.legendSvgWidth,
-                [marginAndTrainingShift + lineShift, marginAndTrainingShift + 3 * lineShift],
+                [
+                    marginAndTrainingShift + lineShift,
+                    marginAndTrainingShift + 3 * lineShift,
+                ],
                 0.03 * this.svgHeight,
                 0.03 * this.svgHeight,
                 [1, 0.4]
@@ -1574,13 +1901,24 @@ export class BarchartComponent implements OnInit, OnChanges {
      */
     private adjustLegendSvgSize(numberOfTrainings: number): void {
         const requiredHeightOfLegendPlaceholder: number =
-            this.margin + 0.22 * numberOfTrainings * this.svgHeight + 0.12 * this.svgHeight;
+            this.margin +
+            0.22 * numberOfTrainings * this.svgHeight +
+            0.12 * this.svgHeight;
         // If the height of the canvas is too small, enlarges it
         if (requiredHeightOfLegendPlaceholder > this.svgHeight) {
             d3.select('#legendSvg')
                 .attr('height', requiredHeightOfLegendPlaceholder)
-                .attr('viewbox', '0 0 ' + this.legendSvgWidth + ' ' + requiredHeightOfLegendPlaceholder);
-            d3.select('#legendPlaceholder').classed('verticallyScrollable', true);
+                .attr(
+                    'viewbox',
+                    '0 0 ' +
+                        this.legendSvgWidth +
+                        ' ' +
+                        requiredHeightOfLegendPlaceholder
+                );
+            d3.select('#legendPlaceholder').classed(
+                'verticallyScrollable',
+                true
+            );
         }
     }
 

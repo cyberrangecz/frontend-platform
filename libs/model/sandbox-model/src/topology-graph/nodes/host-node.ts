@@ -1,7 +1,7 @@
 /**
  * Node of type host (desktop, server, mobile etc)
  */
-import {GraphNode} from "./graph-node";
+import { GraphNode } from './graph-node';
 
 export class HostNode extends GraphNode {
     consoleUrl: string;

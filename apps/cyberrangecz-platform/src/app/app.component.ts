@@ -1,15 +1,19 @@
 import { AfterViewInit, Component, inject, OnInit } from '@angular/core';
-import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { SentinelAuthService } from '@sentinel/auth';
 import { AgendaContainer } from '@sentinel/layout';
 import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { NavConfigFactory } from './utils/nav-config-factory';
 import { PortalDynamicEnvironment } from './portal-dynamic-environment';
+
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import packagejson from '../../../../package.json';
 import { LoadingService } from './services/loading.service';
 import { ValidPath } from '@crczp/routing-commons';
 import { Utils } from '@crczp/utils';
+import { CommonModule } from '@angular/common';
+import { SentinelLayout1Component } from '@sentinel/layout/layout1';
 
 /**
  * Main component serving as wrapper for layout and router outlet
@@ -18,7 +22,8 @@ import { Utils } from '@crczp/utils';
     selector: 'crczp-app-root',
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.scss'],
-    standalone: false,
+    standalone: true,
+    imports: [CommonModule, RouterOutlet, SentinelLayout1Component],
 })
 export class AppComponent implements OnInit, AfterViewInit {
     title$: Observable<string>;

@@ -19,7 +19,7 @@ export function loadingInterceptor(
     requests.add(requestId);
     loadingService.set(true);
 
-    return new Observable((observer: Subscriber<HttpEvent<any>>) => {
+    return new Observable((observer: Subscriber<HttpEvent<unknown>>) => {
         const subscription = next(req).subscribe({
             next: (event) => {
                 if (event instanceof HttpResponse) {

@@ -8,13 +8,12 @@ import {
     Input,
     OnChanges,
     Output,
-    SimpleChanges
 } from '@angular/core';
 import * as d3 from 'd3';
-import {easeQuad} from 'd3';
-import {RunVisualizationPathNode} from "@crczp/visualization-model";
-import {AdaptiveVisualizationTask} from "../../../model/phase/adaptiveVisualizationTask";
-import {AdaptiveVisualizationPhase} from "../../../model/phase/adaptive-visualization-phase";
+import { easeQuad } from 'd3';
+import { RunVisualizationPathNode } from '@crczp/visualization-model';
+import { AdaptiveVisualizationTask } from '../../../model/phase/adaptiveVisualizationTask';
+import { AdaptiveVisualizationPhase } from '../../../model/phase/adaptive-visualization-phase';
 
 @Component({
     // eslint-disable-next-line @angular-eslint/component-selector
@@ -36,7 +35,7 @@ export class PhaseTasksComponent implements OnChanges {
         this.g = d3.select(element.nativeElement);
     }
 
-    ngOnChanges(changes: SimpleChanges): void {
+    ngOnChanges(): void {
         this.drawTaskNodesForPhase();
     }
 
@@ -46,8 +45,11 @@ export class PhaseTasksComponent implements OnChanges {
             .data(this.phase.tasks)
             .join(
                 (enter: d3.Selection<any, any, any, any>) =>
-                    enter.append('circle').attr('class', 'possible-task').attr('r', 4),
-                (update: d3.Selection<any, any, any, any>) => update,
+                    enter
+                        .append('circle')
+                        .attr('class', 'possible-task')
+                        .attr('r', 4),
+                (update: d3.Selection<any, any, any, any>) => update
             )
             .attr('cx', () => {
                 return this.xScale(this.phase.order);
@@ -65,11 +67,16 @@ export class PhaseTasksComponent implements OnChanges {
                 thisNode.taskOrder = task.order;
                 this.taskPreviewEvent.emit(thisNode);
             })
-            .on('mouseover', (event: any, task: AdaptiveVisualizationTask) =>
-                d3.select(event.target).transition().ease(easeQuad).duration(250).attr('r', 6),
+            .on('mouseover', (event: any, _task: AdaptiveVisualizationTask) =>
+                d3
+                    .select(event.target)
+                    .transition()
+                    .ease(easeQuad)
+                    .duration(250)
+                    .attr('r', 6)
             )
-            .on('mouseout', (event: any, task: AdaptiveVisualizationTask) =>
-                d3.select(event.target).transition().duration(250).attr('r', 4),
+            .on('mouseout', (event: any, _task: AdaptiveVisualizationTask) =>
+                d3.select(event.target).transition().duration(250).attr('r', 4)
             );
     }
 }

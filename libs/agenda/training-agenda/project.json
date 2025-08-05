@@ -1,7 +1,7 @@
 {
     "name": "training-agenda",
     "$schema": "../../../node_modules/nx/schemas/project-schema.json",
-    "sourceRoot": "libs/agenda/training-agenda/src",
+    "sourceRoot": "libs/agenda/training-agenda",
     "prefix": "lib",
     "projectType": "library",
     "tags": [],

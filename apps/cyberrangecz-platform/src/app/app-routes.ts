@@ -1,5 +1,3 @@
-import { NgModule } from '@angular/core';
-import { ExtraOptions, RouterModule } from '@angular/router';
 import { HomeComponent } from './components/home/home.component';
 import { LoginComponent } from './components/login/login.component';
 import {
@@ -10,7 +8,7 @@ import {
 import { RoleService } from './services/role.service';
 import { ValidRouterConfig } from '@crczp/routing-commons';
 
-const routes: ValidRouterConfig<''> = [
+export const APP_ROUTES: ValidRouterConfig<''> = [
     {
         path: 'linear-definition',
         loadChildren: () =>
@@ -217,17 +215,3 @@ const routes: ValidRouterConfig<''> = [
         pathMatch: 'full',
     },
 ];
-
-@NgModule({
-    imports: [
-        RouterModule.forRoot(routes, {
-            initialNavigation: 'enabledNonBlocking',
-            paramsInheritanceStrategy: 'always',
-        } as ExtraOptions),
-    ],
-    exports: [RouterModule],
-})
-/**
- * Main routing module. Contains routes to all lazy-loaded app agendas.
- */
-export class AppRoutingModule {}

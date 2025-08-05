@@ -1,7 +1,7 @@
 /**
  * Parent class of all level types
  */
-import {AbstractLevelTypeEnum} from '../enums/abstract-level-type.enum';
+import { AbstractLevelTypeEnum } from '../enums/abstract-level-type.enum';
 
 export abstract class Level {
     id!: number;
@@ -10,8 +10,7 @@ export abstract class Level {
     estimatedDuration!: number;
     minimalPossibleSolveTime!: number;
     maxScore!: number;
-    valid: boolean = true;
+    valid = true;
     type!: AbstractLevelTypeEnum;
     isUnsaved!: boolean;
-
 }

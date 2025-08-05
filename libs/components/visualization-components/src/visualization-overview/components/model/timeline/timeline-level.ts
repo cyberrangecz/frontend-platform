@@ -1,4 +1,4 @@
-import {TimelineEvent} from './timeline-event';
+import { TimelineEvent } from './timeline-event';
 
 export abstract class TimelineLevel {
     id: number;
@@ -10,7 +10,11 @@ export abstract class TimelineLevel {
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace BasicLevelInfo {
-    export type TimelineLevelTypeEnum = 'ASSESSMENT_LEVEL' | 'INFO_LEVEL' | 'TRAINING_LEVEL' | 'ACCESS_LEVEL';
+    export type TimelineLevelTypeEnum =
+        | 'ASSESSMENT_LEVEL'
+        | 'INFO_LEVEL'
+        | 'TRAINING_LEVEL'
+        | 'ACCESS_LEVEL';
     export const TimelineLevelTypeEnum = {
         ASSESSMENT: 'ASSESSMENT_LEVEL' as TimelineLevelTypeEnum,
         INFO: 'INFO_LEVEL' as TimelineLevelTypeEnum,
@@ -19,6 +23,7 @@ export namespace BasicLevelInfo {
     };
 }
 
+// eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace BasicAssessmentInfo {
     export type AssessmentTypeEnum = 'TEST_ASSESSMENT';
     export const AssessmentTypeEnum = {

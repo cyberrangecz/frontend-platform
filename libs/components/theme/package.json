@@ -1,9 +1,9 @@
 {
     "name": "@crczp/theme",
-    "version": "0.0.1",
     "peerDependencies": {
-        "@angular/common": "^20.0.6",
-        "@angular/core": "^20.0.6"
+        "vite": "*",
+        "@analogjs/vite-plugin-angular": "*",
+        "@nx/vite": "*"
     },
     "sideEffects": false,
     "files": [

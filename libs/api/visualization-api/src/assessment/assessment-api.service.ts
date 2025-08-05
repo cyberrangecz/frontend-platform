@@ -17,8 +17,6 @@ export class AssessmentApi {
     private readonly visualizationsEndpoint =
         inject(PortalConfig).basePaths.linearTraining + '/visualizations';
 
-    constructor() {}
-
     /**
      * Sends http request to retrieve all assessments to be displayed in the visualization
      * @param instanceId id of instance

@@ -1,17 +1,18 @@
-import { Component, EventEmitter, OnInit, Output, inject } from '@angular/core';
-import {FiltersService} from '../../../services/filters.service';
+import { Component, EventEmitter, inject, OnInit, Output } from '@angular/core';
+import { FiltersService } from '../../../services/filters.service';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { FormsModule } from '@angular/forms';
 
 @Component({
     selector: 'crczp-visualization-overview-filters',
     templateUrl: './filters.component.html',
     styleUrls: ['./filters.component.css'],
-    standalone: false
+    imports: [MatCheckbox, FormsModule],
 })
 export class FiltersComponent implements OnInit {
-    private filtersService = inject(FiltersService);
-
     @Output() activeFilters: EventEmitter<any> = new EventEmitter();
     filtersArray: any;
+    private filtersService = inject(FiltersService);
 
     ngOnInit(): void {
         this.filtersArray = this.filtersService.getFiltersArray();

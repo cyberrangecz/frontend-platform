@@ -25,11 +25,11 @@ export class TableDateCellComponent
     implements OnInit, AfterViewInit, OnChanges, OnDestroy
 {
     @Input({ required: true }) displayedDate!: Date;
-    @Input() dateDisplayFormat: string = 'd MMM, yyyy';
-    @Input() timeDisplayFormat: string = 'HH:mm';
-    @Input() showTimeWhenPossible: boolean = false;
-    @Input() shrinkThreshold: number = 140;
-    @Input() isLoading: boolean = false;
+    @Input() dateDisplayFormat = 'd MMM, yyyy';
+    @Input() timeDisplayFormat = 'HH:mm';
+    @Input() showTimeWhenPossible = false;
+    @Input() shrinkThreshold = 140;
+    @Input() isLoading = false;
     hover = signal(false);
     initialized = signal(false);
     colWidth = signal(0);

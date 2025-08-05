@@ -138,16 +138,15 @@ export class TrainingInstanceSummaryComponent implements OnInit {
 
     private initSummaryComponent(trainingInstance: TrainingInstance) {
         this.trainingInstanceSummaryService.init(trainingInstance);
-        this.trainingInstanceAccessTokenLink = `/${
-            Routing.RouteBuilder.linear_instance.instanceId(trainingInstance.id)
-                .access_token
-        }`;
-        this.trainingInstancePoolIdLink = `/${Routing.RouteBuilder.pool.poolId(
-            trainingInstance.id
-        )}`;
-        this.trainingDefinitionLink = `/${Routing.RouteBuilder.linear_definition.definitionId(
-            trainingInstance.id
-        )}`;
+        this.trainingInstanceAccessTokenLink = `/${Routing.RouteBuilder.linear_instance
+            .instanceId(trainingInstance.id)
+            .access_token.build()}`;
+        this.trainingInstancePoolIdLink = `/${Routing.RouteBuilder.pool
+            .poolId(trainingInstance.id)
+            .build()}`;
+        this.trainingDefinitionLink = `/${Routing.RouteBuilder.linear_definition
+            .definitionId(trainingInstance.id)
+            .detail.build()}`;
         this.hasStarted$ = this.trainingInstanceSummaryService.hasStarted$;
     }
 

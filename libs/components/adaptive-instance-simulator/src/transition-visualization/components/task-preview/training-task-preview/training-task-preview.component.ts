@@ -1,15 +1,12 @@
-import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
-import {TrainingPhaseTask} from '../../../model/phase/training-phase/training-phase-task';
-import {SentinelMarkdownViewComponent} from "@sentinel/components/markdown-view";
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { TrainingPhaseTask } from '../../../model/phase/training-phase/training-phase-task';
+import { SentinelMarkdownViewComponent } from '@sentinel/components/markdown-view';
 
 @Component({
-    // eslint-disable-next-line @angular-eslint/component-selector
     selector: 'crczp-training-task-preview',
     templateUrl: './training-task-preview.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [
-        SentinelMarkdownViewComponent
-    ]
+    imports: [SentinelMarkdownViewComponent],
 })
 export class TrainingTaskPreviewComponent {
     @Input() task?: TrainingPhaseTask;

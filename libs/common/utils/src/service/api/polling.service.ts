@@ -1,9 +1,9 @@
-import {Injectable} from '@angular/core';
-import {delayWhen, EMPTY, exhaustMap, Observable, of, repeat, timer} from 'rxjs';
-import {catchError, tap} from 'rxjs/operators';
+import { Injectable } from '@angular/core';
+import { delayWhen, EMPTY, Observable, repeat, throwError, timer } from 'rxjs';
+import { catchError, tap } from 'rxjs/operators';
 
 @Injectable()
-export class ResourcePollingService {
+export class PollingService {
     /**
      * Start polling strategy on given observable with given period and maximal retry attempts on fail.
      * Retry attempts are reset on success if there was an error in previous attempt.
@@ -16,11 +16,11 @@ export class ResourcePollingService {
         observable$: Observable<Type>,
         pollingPeriod: number,
         retryAttempts: number,
-        initialDelay?: boolean,
+        initialDelay?: boolean
     ): Observable<Type> {
         let retryAttempt = 1;
-        const response$: Observable<any> = of({}).pipe(
-            exhaustMap(() => observable$), // waits for the response
+
+        return observable$.pipe(
             tap(() => {
                 // reset retry on successful request if it was previously increased (this resets polling delay as well)
                 if (retryAttempt > 1) {
@@ -31,16 +31,16 @@ export class ResourcePollingService {
                 // on 4xx or 5xx backend response increase attempts
                 retryAttempt++;
                 if (retryAttempt <= retryAttempts) {
-                    return of(EMPTY); // catch error to allow additional attempt
+                    return EMPTY; // catch error to allow additional attempt
                 } else {
-                    return err;
+                    return throwError(() => err);
                 }
             }),
             // increase delay exponentially on error
-            delayWhen(() => (initialDelay ? timer(pollingPeriod * retryAttempt) : timer(0))),
-            repeat(),
+            delayWhen(() =>
+                initialDelay ? timer(pollingPeriod * retryAttempt) : timer(0)
+            ),
+            repeat()
         );
-        initialDelay = true;
-        return response$;
     }
 }

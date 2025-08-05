@@ -28,7 +28,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { SandboxResourcesService } from '../services/resources/sandbox-resources.service';
 import {
     EditableCommentComponent,
-    ResourcePollingService,
     SandboxDefinitionOverviewConcreteService,
     SandboxDefinitionOverviewService
 } from '@crczp/sandbox-agenda/internal';
@@ -39,7 +38,7 @@ import { SandboxResourcesConcreteService } from '../services/resources/sandbox-r
 import { TableStateCellComponent } from './table-state-cell/table-state-cell.component';
 import { QuotasComponent } from './quotas/quotas.component';
 import { AsyncPipe } from '@angular/common';
-import { PaginationStorageService, providePaginationStorageService } from '@crczp/utils';
+import { PaginationStorageService, PollingService, providePaginationStorageService } from '@crczp/utils';
 
 /**
  * Smart component of sandbox pool overview page
@@ -59,7 +58,7 @@ import { PaginationStorageService, providePaginationStorageService } from '@crcz
         SentinelRowDirective,
     ],
     providers: [
-        ResourcePollingService,
+        PollingService,
         { provide: PoolOverviewService, useClass: PoolOverviewConcreteService },
         {
             provide: SandboxInstanceService,

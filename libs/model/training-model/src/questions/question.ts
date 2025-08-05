@@ -9,10 +9,10 @@ export abstract class Question {
     id!: number;
     title!: string;
     order!: number;
-    score: number = 0;
-    penalty: number = 0;
+    score = 0;
+    penalty = 0;
     required!: boolean;
-    valid: boolean = true;
+    valid = true;
 
     protected constructor(title: string) {
         this.title = title;

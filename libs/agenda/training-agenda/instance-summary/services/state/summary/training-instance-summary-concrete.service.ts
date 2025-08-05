@@ -20,9 +20,9 @@ export class TrainingInstanceSummaryConcreteService extends TrainingInstanceSumm
     showProgress(): Observable<boolean> {
         return from(
             this.router.navigate([
-                Routing.RouteBuilder.linear_instance.instanceId(
-                    this.trainingInstance.id
-                ).progress,
+                Routing.RouteBuilder.linear_instance
+                    .instanceId(this.trainingInstance.id)
+                    .progress.build(),
             ])
         );
     }
@@ -30,9 +30,9 @@ export class TrainingInstanceSummaryConcreteService extends TrainingInstanceSumm
     showResults(): Observable<any> {
         return from(
             this.router.navigate([
-                Routing.RouteBuilder.linear_instance.instanceId(
-                    this.trainingInstance.id
-                ).results,
+                Routing.RouteBuilder.linear_instance
+                    .instanceId(this.trainingInstance.id)
+                    .results.build(),
             ])
         );
     }
@@ -40,9 +40,9 @@ export class TrainingInstanceSummaryConcreteService extends TrainingInstanceSumm
     showAggregatedResults(): Observable<any> {
         return from(
             this.router.navigate([
-                Routing.RouteBuilder.linear_instance.instanceId(
-                    this.trainingInstance.id
-                ).aggregated_results,
+                Routing.RouteBuilder.linear_instance
+                    .instanceId(this.trainingInstance.id)
+                    .aggregated_results.build(),
             ])
         );
     }
@@ -50,9 +50,9 @@ export class TrainingInstanceSummaryConcreteService extends TrainingInstanceSumm
     showCheatingDetection(): Observable<any> {
         return from(
             this.router.navigate([
-                Routing.RouteBuilder.linear_instance.instanceId(
-                    this.trainingInstance.id
-                ).cheating_detection,
+                Routing.RouteBuilder.linear_instance
+                    .instanceId(this.trainingInstance.id)
+                    .cheating_detection.build(),
             ])
         );
     }

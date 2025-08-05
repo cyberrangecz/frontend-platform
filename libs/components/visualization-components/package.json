@@ -1,9 +1,26 @@
 {
     "name": "@crczp/visualization-components",
-    "version": "0.0.1",
     "peerDependencies": {
-        "@angular/common": "^20.0.6",
-        "@angular/core": "^20.0.6"
+        "@angular/common": "*",
+        "@angular/core": "*",
+        "@crczp/training-model": "*",
+        "@crczp/visualization-model": "*",
+        "@angular/forms": "*",
+        "rxjs": "*",
+        "d3": "*",
+        "@crczp/visualization-api": "*",
+        "@angular/material": "*",
+        "uuid": "*",
+        "@sentinel/components": "*",
+        "@sentinel/common": "*",
+        "angular-mgl-timeline": "*",
+        "d3-graphviz": "*",
+        "@crczp/utils": "*",
+        "fast-levenshtein": "*",
+        "@angular/cdk": "*",
+        "vite": "*",
+        "@analogjs/vite-plugin-angular": "*",
+        "@nx/vite": "*"
     },
     "sideEffects": false
 }

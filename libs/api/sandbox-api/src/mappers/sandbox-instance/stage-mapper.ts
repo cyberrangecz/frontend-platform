@@ -1,4 +1,4 @@
-import {RequestStageState} from 'libs/model/sandbox-model/src';
+import { RequestStageState } from '@crczp/sandbox-model';
 
 /**
  * @dynamic

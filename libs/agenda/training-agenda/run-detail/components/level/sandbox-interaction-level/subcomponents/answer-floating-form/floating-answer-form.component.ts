@@ -1,9 +1,16 @@
-import {Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
-import {MatCard} from "@angular/material/card";
-import {MatIcon} from "@angular/material/icon";
-import {MatButton, MatIconButton} from "@angular/material/button";
-import {MatFormField, MatInput} from "@angular/material/input";
-import {FormsModule} from "@angular/forms";
+import {
+    Component,
+    EventEmitter,
+    Input,
+    OnChanges,
+    Output,
+    SimpleChanges,
+} from '@angular/core';
+import { MatCard } from '@angular/material/card';
+import { MatIcon } from '@angular/material/icon';
+import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatFormField, MatInput } from '@angular/material/input';
+import { FormsModule } from '@angular/forms';
 
 @Component({
     selector: 'crczp-floating-answer-form',
@@ -16,19 +23,16 @@ import {FormsModule} from "@angular/forms";
         MatCard,
         FormsModule,
         MatIconButton,
-        MatInput
-    ]
+        MatInput,
+    ],
 })
 export class FloatingAnswerFormComponent implements OnChanges {
-    @Input() placeholder: string = 'Answer';
-    @Input() buttonLabel: string = 'Submit';
+    @Input() placeholder = 'Answer';
+    @Input() buttonLabel = 'Submit';
 
     @Output() answerSubmit: EventEmitter<string> = new EventEmitter();
 
     answer: string;
-
-    constructor() {
-    }
 
     ngOnChanges(changes: SimpleChanges): void {
         if ('level' in changes) {

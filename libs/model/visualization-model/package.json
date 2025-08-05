@@ -13,5 +13,8 @@
             "import": "./dist/command/index.js",
             "types": "./dist/command/index.d.ts"
         }
-    }
+    },
+  "dependencies": {
+    "@crczp/training-model": "0.0.1"
+  }
 }

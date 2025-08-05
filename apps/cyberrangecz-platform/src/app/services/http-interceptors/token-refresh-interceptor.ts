@@ -1,8 +1,8 @@
-import {HttpEvent, HttpHandlerFn, HttpRequest} from '@angular/common/http';
-import {inject} from '@angular/core';
-import {concatMap, EMPTY, Observable, skipWhile, switchMap, take} from 'rxjs';
-import {TokenRefreshService, TokenRefreshState} from '../shared/token-refresh.service';
-import {SentinelAuthConfig, SentinelAuthService} from '@sentinel/auth';
+import { HttpEvent, HttpHandlerFn, HttpRequest } from '@angular/common/http';
+import { inject } from '@angular/core';
+import { concatMap, EMPTY, Observable, skipWhile, switchMap, take } from 'rxjs';
+import { TokenRefreshService, TokenRefreshState } from '../shared/token-refresh.service';
+import { SentinelAuthConfig, SentinelAuthService } from '@sentinel/auth';
 
 /**
  * Intercepts http requests, to validate whether the access token is up-to-date.
@@ -19,13 +19,23 @@ import {SentinelAuthConfig, SentinelAuthService} from '@sentinel/auth';
  * @note • requires {@link SentinelAuthConfig}
  */
 
-function isOIDCRequest(req: HttpRequest<any>, sentinelAuthConfig: SentinelAuthConfig): boolean {
-    return sentinelAuthConfig.providers?.some(
-        (provider) => provider.oidcConfig?.issuer && req.url.startsWith(provider.oidcConfig?.issuer),
-    ) || false;
+function isOIDCRequest(
+    req: HttpRequest<unknown>,
+    sentinelAuthConfig: SentinelAuthConfig
+): boolean {
+    return (
+        sentinelAuthConfig.providers?.some(
+            (provider) =>
+                provider.oidcConfig?.issuer &&
+                req.url.startsWith(provider.oidcConfig?.issuer)
+        ) || false
+    );
 }
 
-export function tokenRefreshInterceptor(req: HttpRequest<unknown>, next: HttpHandlerFn): Observable<HttpEvent<unknown>> {
+export function tokenRefreshInterceptor(
+    req: HttpRequest<unknown>,
+    next: HttpHandlerFn
+): Observable<HttpEvent<unknown>> {
     const tokenRefreshService = inject(TokenRefreshService);
     const sentinelAuthService = inject(SentinelAuthService);
 
@@ -33,12 +43,18 @@ export function tokenRefreshInterceptor(req: HttpRequest<unknown>, next: HttpHan
         return next(req);
     }
 
-    function handleCurrentState(req: HttpRequest<any>, state: TokenRefreshState): Observable<HttpEvent<any>> {
+    function handleCurrentState(
+        req: HttpRequest<unknown>,
+        state: TokenRefreshState
+    ): Observable<HttpEvent<unknown>> {
         switch (state) {
             case TokenRefreshState.REFRESHING:
                 return waitUntilRefreshed(req);
             case TokenRefreshState.OK:
-                if (tokenRefreshService.isTokenExpired() && tokenRefreshService.canRefresh()) {
+                if (
+                    tokenRefreshService.isTokenExpired() &&
+                    tokenRefreshService.canRefresh()
+                ) {
                     return refreshAndSend(req);
                 }
                 return next(req);
@@ -48,26 +64,34 @@ export function tokenRefreshInterceptor(req: HttpRequest<unknown>, next: HttpHan
         }
     }
 
-    function waitUntilRefreshed(req: HttpRequest<any>): Observable<HttpEvent<any>> {
+    function waitUntilRefreshed(
+        req: HttpRequest<unknown>
+    ): Observable<HttpEvent<unknown>> {
         return tokenRefreshService.stateObservable.pipe(
             skipWhile((state) => state === TokenRefreshState.REFRESHING),
             take(1),
             switchMap((state) =>
-                handleCurrentState(tokenRefreshService.updateRequestToken(req), state),
-            ),
+                handleCurrentState(
+                    tokenRefreshService.updateRequestToken(req),
+                    state
+                )
+            )
         );
     }
 
-    function refreshAndSend(req: HttpRequest<any>): Observable<HttpEvent<any>> {
+    function refreshAndSend(
+        req: HttpRequest<unknown>
+    ): Observable<HttpEvent<unknown>> {
         return tokenRefreshService.refreshToken().pipe(
             take(1),
             concatMap((state) =>
-                handleCurrentState(tokenRefreshService.updateRequestToken(req), state),
-            ),
+                handleCurrentState(
+                    tokenRefreshService.updateRequestToken(req),
+                    state
+                )
+            )
         );
     }
 
     return handleCurrentState(req, tokenRefreshService.immediateState);
 }
-
-

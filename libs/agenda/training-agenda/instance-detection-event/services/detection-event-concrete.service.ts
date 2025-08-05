@@ -1,17 +1,14 @@
 import { inject, Injectable } from '@angular/core';
 import { DetectionEventApi } from '@crczp/training-api';
 import { Router } from '@angular/router';
-import { TrainingNavigator } from '@crczp/training-agenda';
 import { DetectionEventService } from './detection-event.service';
-import {
-    OffsetPaginationEvent,
-    PaginatedResource,
-} from '@sentinel/common/pagination';
+import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
 import { from, Observable } from 'rxjs';
 import { AbstractDetectionEvent } from '@crczp/training-model';
 import { tap } from 'rxjs/operators';
 import { DetectionEventFilter } from '../model/detection-event-filter';
 import { PortalConfig } from '@crczp/utils';
+import { Routing } from '@crczp/routing-commons';
 
 /**
  * Basic implementation of a layer between a component and an API services.
@@ -21,7 +18,6 @@ import { PortalConfig } from '@crczp/utils';
 export class DetectionEventConcreteService extends DetectionEventService {
     private api = inject(DetectionEventApi);
     private router = inject(Router);
-    private navigator = inject(TrainingNavigator);
 
     constructor() {
         super(inject(PortalConfig).defaultPageSize);
@@ -71,11 +67,11 @@ export class DetectionEventConcreteService extends DetectionEventService {
     ): Observable<any> {
         return from(
             this.router.navigate([
-                this.navigator.toTrainingInstanceCheatingDetectionEventDetail(
-                    trainingInstanceId,
-                    cheatingDetectionId,
-                    detectionEventId
-                ),
+                Routing.RouteBuilder.linear_instance
+                    .instanceId(trainingInstanceId)
+                    .cheating_detection.detectionId(cheatingDetectionId)
+                    .event.eventId(detectionEventId)
+                    .build(),
             ])
         );
     }

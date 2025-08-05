@@ -14,8 +14,6 @@ export class ReferenceGraphApi {
         inject(PortalConfig).basePaths.linearTraining +
         '/visualizations/graphs';
 
-    constructor() {}
-
     /**
      * Sends http request to retrieve reference graph for organizer view
      * @param instanceId training instance id

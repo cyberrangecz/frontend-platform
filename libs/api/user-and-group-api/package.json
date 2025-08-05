@@ -1,12 +1,16 @@
 {
     "name": "@crczp/user-and-group-api",
-    "version": "1.1.0",
-    "license": "MIT",
     "peerDependencies": {
-        "@angular/common": "^20.0.6",
-        "@angular/core": "^20.0.6",
-        "@sentinel/common": "^19.1.0",
-        "@crczp/user-and-group-model": "*"
+        "@angular/common": "*",
+        "@angular/core": "*",
+        "@sentinel/common": "*",
+        "@crczp/user-and-group-model": "*",
+        "rxjs": "*",
+        "@crczp/api-common": "*",
+        "@crczp/utils": "*",
+        "vite": "*",
+        "@analogjs/vite-plugin-angular": "*",
+        "@nx/vite": "*"
     },
     "sideEffects": false,
     "repository": {

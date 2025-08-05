@@ -4,7 +4,6 @@ import {
     Input,
     OnChanges,
     signal,
-    SimpleChanges,
     ViewChild,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -29,7 +28,7 @@ export class Minimap implements OnChanges {
     @ViewChild('minimapCanvas', { static: true })
     private minimapCanvasRef!: ElementRef<HTMLCanvasElement>;
 
-    ngOnChanges(changes: SimpleChanges): void {
+    ngOnChanges(): void {
         if (!this.parentContainer?.nativeElement) {
             console.warn('Minimap: parentContainer is not set');
             return;

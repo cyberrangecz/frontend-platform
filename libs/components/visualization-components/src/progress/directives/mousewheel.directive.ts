@@ -1,6 +1,13 @@
-import { Directive, ElementRef, EventEmitter, HostListener, Output, inject } from '@angular/core';
+import {
+    Directive,
+    ElementRef,
+    EventEmitter,
+    HostListener,
+    inject,
+    Output,
+} from '@angular/core';
 
-@Directive({ selector: '[mouseWheel]' })
+@Directive({ selector: '[crczpMouseWheel]' })
 export class MouseWheelDirective {
     element = inject(ElementRef);
 
@@ -11,7 +18,9 @@ export class MouseWheelDirective {
         this.mouseWheelFunc(event);
     }
 
-    @HostListener('DOMMouseScroll', ['$event']) onMouseWheelFirefox(event: any) {
+    @HostListener('DOMMouseScroll', ['$event']) onMouseWheelFirefox(
+        event: any
+    ) {
         this.mouseWheelFunc(event);
     }
 
@@ -21,12 +30,22 @@ export class MouseWheelDirective {
 
     mouseWheelFunc(event: any) {
         const mouseEvent = window.event || event;
-        const delta = Math.max(-1, Math.min(1, mouseEvent.wheelDelta || -mouseEvent.detail));
+        const delta = Math.max(
+            -1,
+            Math.min(1, mouseEvent.wheelDelta || -mouseEvent.detail)
+        );
         const pos: any = {
-            top: mouseEvent.clientY - this.element.nativeElement.getBoundingClientRect().top,
-            left: mouseEvent.clientX - this.element.nativeElement.getBoundingClientRect().left,
+            top:
+                mouseEvent.clientY -
+                this.element.nativeElement.getBoundingClientRect().top,
+            left:
+                mouseEvent.clientX -
+                this.element.nativeElement.getBoundingClientRect().left,
         };
-        if (typeof mouseEvent.ctrlKey === 'undefined' || mouseEvent.ctrlKey !== true) {
+        if (
+            typeof mouseEvent.ctrlKey === 'undefined' ||
+            mouseEvent.ctrlKey !== true
+        ) {
             return;
         }
         if (delta > 0) {

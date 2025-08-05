@@ -75,7 +75,7 @@ export class TokenRefreshService {
      * @param req request to be updated
      * @returns updated request
      */
-    updateRequestToken(req: HttpRequest<any>): HttpRequest<any> {
+    updateRequestToken(req: HttpRequest<unknown>): HttpRequest<unknown> {
         return req.clone({
             setHeaders: {
                 Authorization:

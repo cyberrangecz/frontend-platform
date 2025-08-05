@@ -1608,11 +1608,11 @@ export class TrainingAnalysisComponent
         const compareDataLayer: any = this.addOneColumn('compare');
 
         if (this.selectedTraineeView === 'avatar') {
-            this.addTraineeAvatar(teamDataLayer, this.trainingData);
+            this.addTraineeAvatar(teamDataLayer);
         } else if (this.selectedTraineeView === 'name') {
             this.addTraineeName(teamDataLayer, this.trainingData, 160);
         } else {
-            this.addTraineeAvatar(teamDataLayer, this.trainingData);
+            this.addTraineeAvatar(teamDataLayer);
             this.addTraineeName(teamDataLayer, this.trainingData);
         }
 
@@ -1638,7 +1638,7 @@ export class TrainingAnalysisComponent
                 }
                 return d.compare;
             })
-            .attr('d', (d) => {
+            .attr('d', (_d) => {
                 const h = this.yScale.bandwidth();
                 const w = 5;
                 return 'M0 ' + h + ' L ' + w + ' ' + h + ' L' + w + ' 0 L0 0 Z';
@@ -1925,7 +1925,7 @@ export class TrainingAnalysisComponent
 
         this.d3
             .selectAll('.training .training-layer rect')
-            .classed('faded', (data: any) => this.runsToCompare.length > 0);
+            .classed('faded', (_data: any) => this.runsToCompare.length > 0);
     }
 
     onFilterChange() {
@@ -2078,7 +2078,7 @@ export class TrainingAnalysisComponent
             .attr('cursor', 'default');
     }
 
-    private addTraineeAvatar(teamDataLayer, trainingData: TrainingData) {
+    private addTraineeAvatar(teamDataLayer) {
         teamDataLayer
             .selectAll('text.data-team')
             .data(this.trainingData.teams)

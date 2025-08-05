@@ -6,7 +6,7 @@ export class Hint {
     title!: string;
     content!: string;
     order!: number;
-    valid: boolean = true;
+    valid = true;
     penalty = 0;
 
     isRevealed(): boolean {

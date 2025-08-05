@@ -1,15 +1,14 @@
-/* eslint-disable @angular-eslint/no-output-on-prefix */
-import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@angular/core';
-import {StageAdapter} from '../../model/adapters/stage-adapter';
-import {MatCard, MatCardContent, MatCardHeader, MatCardTitle} from "@angular/material/card";
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { StageAdapter } from '../../model/adapters/stage-adapter';
+import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
 import {
     MatExpansionPanel,
     MatExpansionPanelContent,
     MatExpansionPanelHeader,
     MatExpansionPanelTitle
-} from "@angular/material/expansion";
-import {RequestStageHeaderComponent} from "./header/request-stage-header.component";
-import {RequestStageDetailComponent} from "./detail/request-stage-detail.component";
+} from '@angular/material/expansion';
+import { RequestStageHeaderComponent } from './header/request-stage-header.component';
+import { RequestStageDetailComponent } from './detail/request-stage-detail.component';
 
 /**
  * Component of request stage basic info

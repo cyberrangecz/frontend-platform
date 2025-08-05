@@ -13,7 +13,7 @@ import { catchUndefinedOrNull } from '../catch-undefined-or-null';
 
 export function resolveSandboxDefinition(
     route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot
+    _state: RouterStateSnapshot
 ): Observable<SandboxDefinition | UrlTree> | UrlTree | null {
     const service = inject(SandboxResolverHelperService);
     if (RoutingUtils.hasVariable('definitionId', route)) {

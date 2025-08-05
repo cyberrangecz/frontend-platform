@@ -10,26 +10,26 @@ import {
     Output,
     SimpleChanges
 } from '@angular/core';
-import {AXES_CONFIG, colorScheme, CONTEXT_CONFIG, SVG_MARGIN_CONFIG} from './config';
-import {SvgConfig} from '../../../../shared/interfaces/configurations/svg-config';
-import {SvgMarginConfig} from '../../../../shared/interfaces/configurations/svg-margin-config';
-import {VizOverviewTraineeInfo} from '../../../../shared/interfaces/viz-overview-trainee-info';
-import {take} from 'rxjs/operators';
-import {Timeline} from '../../../model/timeline/timeline';
-import {TimelineService} from '../service/timeline.service';
-import {TimelinePlayer} from '../../../model/timeline/timeline-player';
-import {BasicLevelInfo, TimelineLevel} from '../../../model/timeline/timeline-level';
-import {TrainingLevel} from '../../../model/timeline/training-level';
-import {TimelineEvent} from '../../../model/timeline/timeline-event';
-import {InfoLevel} from '../../../model/timeline/info-level';
-import {AssessmentLevel} from '../../../model/timeline/assessment-level';
-import {AccessLevel} from '../../../model/timeline/access-level';
-import {Axis, BrushBehavior, Line, ScaleLinear, ScaleOrdinal, ZoomBehavior} from 'd3';
-import {D3, D3Service} from '../../../../../common/d3-service/d3-service';
-import {Subscription} from 'rxjs';
-import {TableService} from '../../../../services/table.service';
-import {FiltersService} from '../../../../services/filters.service';
-import {VizConfigService} from "../../../../../common/viz-config.service";
+import { AXES_CONFIG, colorScheme, CONTEXT_CONFIG, SVG_MARGIN_CONFIG } from './config';
+import { SvgConfig } from '../../../../shared/interfaces/configurations/svg-config';
+import { SvgMarginConfig } from '../../../../shared/interfaces/configurations/svg-margin-config';
+import { VizOverviewTraineeInfo } from '../../../../shared/interfaces/viz-overview-trainee-info';
+import { take } from 'rxjs/operators';
+import { Timeline } from '../../../model/timeline/timeline';
+import { TimelineService } from '../service/timeline.service';
+import { TimelinePlayer } from '../../../model/timeline/timeline-player';
+import { BasicLevelInfo, TimelineLevel } from '../../../model/timeline/timeline-level';
+import { TrainingLevel } from '../../../model/timeline/training-level';
+import { TimelineEvent } from '../../../model/timeline/timeline-event';
+import { InfoLevel } from '../../../model/timeline/info-level';
+import { AssessmentLevel } from '../../../model/timeline/assessment-level';
+import { AccessLevel } from '../../../model/timeline/access-level';
+import { Axis, BrushBehavior, Line, ScaleLinear, ScaleOrdinal, ZoomBehavior } from 'd3';
+import { D3, D3Service } from '../../../../../common/d3-service/d3-service';
+import { Subscription } from 'rxjs';
+import { TableService } from '../../../../services/table.service';
+import { FiltersService } from '../../../../services/filters.service';
+import { VizConfigService } from '../../../../../common/viz-config.service';
 import TimelineLevelTypeEnum = BasicLevelInfo.TimelineLevelTypeEnum;
 
 @Component({
@@ -37,7 +37,8 @@ import TimelineLevelTypeEnum = BasicLevelInfo.TimelineLevelTypeEnum;
     templateUrl: './line.component.html',
     styleUrls: ['./line.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: false
+    // eslint-disable-next-line
+    standalone: false,
 })
 export class LineComponent implements OnDestroy, OnChanges, OnInit {
     /**
@@ -86,20 +87,25 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
      */
     @Input() activeFilters: any[];
     players: TimelinePlayer[] = [];
-    public svgConfig: SvgConfig = {width: 0, height: 0};
-    public svgMarginConfig: SvgMarginConfig = {top: 0, bottom: 0, right: 0, left: 0};
+    public svgConfig: SvgConfig = { width: 0, height: 0 };
+    public svgMarginConfig: SvgMarginConfig = {
+        top: 0,
+        bottom: 0,
+        right: 0,
+        left: 0,
+    };
     public playerColorScale: ScaleOrdinal<string, any>;
     public filters;
     public filtersArray;
     public isLoading: boolean;
-    W
+    W;
     private tableService = inject(TableService);
     private filtersService = inject(FiltersService);
     private timelineService = inject(TimelineService);
     /**
      * Training data
      */
-    private timelineData: Timeline = {timeline: null};
+    private timelineData: Timeline = { timeline: null };
     private clip;
     private timeAxisScale: ScaleLinear<number, number>;
     private d3: D3;
@@ -132,18 +138,26 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
         const d3service = inject(D3Service);
 
         this.d3 = d3service.getD3();
-        this.tableRowClicked = this.tableService.tableRowClicked$.subscribe((player: TimelinePlayer) => {
-            this.onRowClicked(player.trainingRunId);
-        });
-        this.tableRowMouseover = this.tableService.tableRowMouseover$.subscribe((id: any) => {
-            this.highlightLine(id);
-        });
-        this.tableRowMouseout = this.tableService.tableRowMouseout$.subscribe((id: any) => {
-            this.unhighlightLine(id);
-        });
-        this.filterChanged = this.filtersService.filterChanged$.subscribe(() => {
-            this.onFilterChange();
-        });
+        this.tableRowClicked = this.tableService.tableRowClicked$.subscribe(
+            (player: TimelinePlayer) => {
+                this.onRowClicked(player.trainingRunId);
+            }
+        );
+        this.tableRowMouseover = this.tableService.tableRowMouseover$.subscribe(
+            (id: any) => {
+                this.highlightLine(id);
+            }
+        );
+        this.tableRowMouseout = this.tableService.tableRowMouseout$.subscribe(
+            (id: any) => {
+                this.unhighlightLine(id);
+            }
+        );
+        this.filterChanged = this.filtersService.filterChanged$.subscribe(
+            () => {
+                this.onFilterChange();
+            }
+        );
     }
 
     ngOnDestroy(): void {
@@ -156,7 +170,8 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
         this.configService.trainingDefinitionId = this.trainingDefinitionId;
         this.configService.trainingInstanceId = this.trainingInstanceId;
         if (this.traineeModeInfo) {
-            this.configService.trainingRunId = this.traineeModeInfo.trainingRunId;
+            this.configService.trainingRunId =
+                this.traineeModeInfo.trainingRunId;
         }
         if (this.timelineData !== null && this.timelineData.timeline !== null) {
             this.players = this.timelineData.timeline.playerData;
@@ -167,10 +182,15 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
         }
 
         if ('highlightedTrainee' in changes) {
-            if (changes['highlightedTrainee'].currentValue !== changes['highlightedTrainee'].previousValue) {
+            if (
+                changes['highlightedTrainee'].currentValue !==
+                changes['highlightedTrainee'].previousValue
+            ) {
                 if (!changes['highlightedTrainee'].isFirstChange()) {
                     if (!this.zoomTransform) {
-                        this.unhighlightLine(changes['highlightedTrainee'].previousValue);
+                        this.unhighlightLine(
+                            changes['highlightedTrainee'].previousValue
+                        );
                     }
                     this.highlightLine(this.highlightedTrainee);
                 }
@@ -199,9 +219,13 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
                 this.timelineData = res;
                 this.players = this.timelineData.timeline.playerData;
                 this.redraw();
-                if (VizOverviewTraineeInfo.isTrainee(this.traineeModeInfo) && !this.standalone) {
+                if (
+                    VizOverviewTraineeInfo.isTrainee(this.traineeModeInfo) &&
+                    !this.standalone
+                ) {
                     this.onRowClicked(this.traineeModeInfo.trainingRunId);
-                    this.traineesTrainingRun = this.traineeModeInfo.trainingRunId;
+                    this.traineesTrainingRun =
+                        this.traineeModeInfo.trainingRunId;
                 }
             });
     }
@@ -241,7 +265,9 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
             this.drawPlayer(this.traineesTrainingRun);
         } else {
             if (this.filterPlayers) {
-                this.filterPlayers.forEach((playerId) => this.drawPlayer(playerId));
+                this.filterPlayers.forEach((playerId) =>
+                    this.drawPlayer(playerId)
+                );
             }
         }
     }
@@ -262,7 +288,11 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
             });
         } else {
             this.players = this.filterPlayers
-                ? this.players.filter((player) => this.filterPlayers.indexOf(player.trainingRunId) !== -1)
+                ? this.players.filter(
+                      (player) =>
+                          this.filterPlayers.indexOf(player.trainingRunId) !==
+                          -1
+                  )
                 : [];
         }
         return null;
@@ -273,17 +303,26 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
      */
     setup(): void {
         // first we want the table to fit in
-        if (this.timelineData !== null && this.getLevels().filter((level) => level.order !== undefined).length <= 4) {
+        if (
+            this.timelineData !== null &&
+            this.getLevels().filter((level) => level.order !== undefined)
+                .length <= 4
+        ) {
             this.size.width =
-                window.innerWidth < 1400 && this.enableAllPlayers ? this.size.width * 0.55 : this.size.width * 0.7;
+                window.innerWidth < 1400 && this.enableAllPlayers
+                    ? this.size.width * 0.55
+                    : this.size.width * 0.7;
             this.wideTable.emit(false);
         } else {
             // we want to notify the timeline, that the table should be placed under the visualization
             this.wideTable.emit(true);
         }
         this.svgConfig = {
-            width: this.size.width > window.innerWidth ? window.innerWidth : this.size.width,
-            height: this.size.height
+            width:
+                this.size.width > window.innerWidth
+                    ? window.innerWidth
+                    : this.size.width,
+            height: this.size.height,
         };
         this.svgMarginConfig = SVG_MARGIN_CONFIG;
         this.buildSVG();
@@ -300,11 +339,28 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
         this.svg = container
             .append('svg')
             .attr('class', 'score-progress-svg')
-            .attr('width', this.size.width + SVG_MARGIN_CONFIG.left + SVG_MARGIN_CONFIG.right)
-            .attr('height', this.size.height + SVG_MARGIN_CONFIG.top + SVG_MARGIN_CONFIG.bottom)
+            .attr(
+                'width',
+                this.size.width +
+                    SVG_MARGIN_CONFIG.left +
+                    SVG_MARGIN_CONFIG.right
+            )
+            .attr(
+                'height',
+                this.size.height +
+                    SVG_MARGIN_CONFIG.top +
+                    SVG_MARGIN_CONFIG.bottom
+            )
             .style('margin-right', '10px')
             .append('g')
-            .attr('transform', 'translate(' + SVG_MARGIN_CONFIG.left + ',' + SVG_MARGIN_CONFIG.top + ')');
+            .attr(
+                'transform',
+                'translate(' +
+                    SVG_MARGIN_CONFIG.left +
+                    ',' +
+                    SVG_MARGIN_CONFIG.top +
+                    ')'
+            );
     }
 
     /**
@@ -343,11 +399,11 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
             .scaleExtent([1, Infinity])
             .translateExtent([
                 [0, 0],
-                [this.size.width, this.size.height]
+                [this.size.width, this.size.height],
             ])
             .extent([
                 [0, 0],
-                [this.size.width, this.size.height]
+                [this.size.width, this.size.height],
             ])
             .on('start', (event, _) => this.onZoomStart(event))
             .on('zoom', (event, _) => this.onZoom(event))
@@ -357,7 +413,7 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
             .brushX()
             .extent([
                 [0, 0],
-                [this.size.width, 70]
+                [this.size.width, 70],
             ])
             .on('start', () => this.onBrushStart())
             .on('brush', (event, _) => this.onBrush(event))
@@ -404,10 +460,19 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
         this.redrawAxes(transform.k);
         this.redrawPlayers();
         this.redrawBars(transform);
-        if (event && event.sourceEvent && event.sourceEvent.type !== 'dbclick') {
+        if (
+            event &&
+            event.sourceEvent &&
+            event.sourceEvent.type !== 'dbclick'
+        ) {
             this.updateCrosshair(event);
         }
-        this.svg.select('.brush').call(this.brush.move, this.timeScale.range().map(transform.invertX, transform));
+        this.svg
+            .select('.brush')
+            .call(
+                this.brush.move,
+                this.timeScale.range().map(transform.invertX, transform)
+            );
         this.sourceEvent = null;
     }
 
@@ -426,7 +491,10 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
      * Change cursor to grab
      */
     onBrushStart(): void {
-        this.svg.select('.brush>.selection').attr('cursor', null).classed('grabbed', true);
+        this.svg
+            .select('.brush>.selection')
+            .attr('cursor', null)
+            .classed('grabbed', true);
     }
 
     /**
@@ -436,7 +504,10 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
         if (this.sourceEvent === 'zoom') return; // ignore brush-by-zoom
         this.sourceEvent = 'brush';
         const selection = event.selection || this.contextTimeScale;
-        const newDomain = selection.map(this.contextTimeScale.invert, this.contextTimeScale);
+        const newDomain = selection.map(
+            this.contextTimeScale.invert,
+            this.contextTimeScale
+        );
         this.timeScale.domain(newDomain);
 
         const scaleDomainStart = newDomain[0];
@@ -455,7 +526,9 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
         this.redrawAxes(transform.k);
         this.redrawPlayers();
         this.redrawBars(transform);
-        this.svg.select('.score-progress-zoom').call(this.zoom.transform, transform);
+        this.svg
+            .select('.score-progress-zoom')
+            .call(this.zoom.transform, transform);
         this.sourceEvent = null;
     }
 
@@ -484,7 +557,10 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
         this.scoreScale = this.d3
             .scaleLinear()
             .range([this.size.height, 0])
-            .domain([-0.5, Math.max(...this.timelineData.timeline.maxScoreOfLevels) + 0.5]);
+            .domain([
+                -0.5,
+                Math.max(...this.timelineData.timeline.maxScoreOfLevels) + 0.5,
+            ]);
 
         this.scoreScale.clamp(true);
 
@@ -501,7 +577,10 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
         this.contextScoreScale = this.d3
             .scaleLinear()
             .range([CONTEXT_CONFIG.height, 0])
-            .domain([-0.5, Math.max(...this.timelineData.timeline.maxScoreOfLevels) + 0.5]);
+            .domain([
+                -0.5,
+                Math.max(...this.timelineData.timeline.maxScoreOfLevels) + 0.5,
+            ]);
 
         this.eventsColorScale = this.d3.scaleOrdinal().range(colorScheme);
     }
@@ -537,7 +616,10 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
             .attr(
                 'width',
                 this.timelineData.timeline.estimatedTime -
-                Math.abs(this.size.width - this.timelineData.timeline.estimatedTime)
+                    Math.abs(
+                        this.size.width -
+                            this.timelineData.timeline.estimatedTime
+                    )
             )
             .attr('height', this.size.height)
             .attr('fill', 'url(#diagonalHatch)');
@@ -565,7 +647,12 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
         this.svg
             .append('g')
             .attr('class', 'score-progress x-axis')
-            .attr('transform', `translate(${AXES_CONFIG.xAxis.position.x}, ${this.size.height + 20})`)
+            .attr(
+                'transform',
+                `translate(${AXES_CONFIG.xAxis.position.x}, ${
+                    this.size.height + 20
+                })`
+            )
             .call(this.xAxis);
     }
 
@@ -586,7 +673,10 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
         this.svg
             .append('g')
             .attr('class', 'score-progress y-axis')
-            .attr('transform', `translate(${axesConfig.yAxis.position.x}, ${axesConfig.yAxis.position.y})`)
+            .attr(
+                'transform',
+                `translate(${axesConfig.yAxis.position.x}, ${axesConfig.yAxis.position.y})`
+            )
             .call(yAxis);
     }
 
@@ -596,7 +686,12 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
     drawAxesLabels(): void {
         this.svg
             .append('text')
-            .attr('transform', `translate(${this.svgConfig.width / 2 - 50}, ${this.svgConfig.height + 65})`)
+            .attr(
+                'transform',
+                `translate(${this.svgConfig.width / 2 - 50}, ${
+                    this.svgConfig.height + 65
+                })`
+            )
             .text('training time')
             .style('fill', '#4c4a4a');
 
@@ -604,7 +699,9 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
             .append('text')
             .attr(
                 'transform',
-                `translate(${AXES_CONFIG.yAxis.position.x - 75}, ${this.svgConfig.height / 2}) rotate(-90)`
+                `translate(${AXES_CONFIG.yAxis.position.x - 75}, ${
+                    this.svgConfig.height / 2
+                }) rotate(-90)`
             )
             .attr('text-anchor', 'middle')
             .style('fill', '#4c4a4a')
@@ -640,10 +737,18 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
      * Draw horizontal lines indicating maximum gainable score for each levels completed
      */
     drawLevelThresholds(): void {
-        const levelScores: number[] = this.svg.select('.y-axis').selectAll('.tick').data();
-        const levelScoresWithoutLastLevel = levelScores.slice(0, levelScores.length - 1);
+        const levelScores: number[] = this.svg
+            .select('.y-axis')
+            .selectAll('.tick')
+            .data();
+        const levelScoresWithoutLastLevel = levelScores.slice(
+            0,
+            levelScores.length - 1
+        );
         const lineGenerator = this.d3.line();
-        const thresholdsGroup = this.svg.append('g').attr('class', 'score-progress-thresholds');
+        const thresholdsGroup = this.svg
+            .append('g')
+            .attr('class', 'score-progress-thresholds');
 
         thresholdsGroup
             .selectAll('path')
@@ -657,7 +762,7 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
                 const y2 = y1;
                 return lineGenerator([
                     [x1, y1],
-                    [x2, y2]
+                    [x2, y2],
                 ]);
             });
     }
@@ -687,7 +792,7 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
             .attr('x', -7)
             .attr('y', -7);
 
-        const lineClip = this.svg
+        this.svg
             .append('defs')
             .append('svg:clipPath')
             .attr('id', 'lineClip')
@@ -713,9 +818,15 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
      * Appends tooltip HTML elements to DOM
      */
     buildTooltips(): void {
-        this.eventTooltip = this.d3.select('body').append('div').style('display', 'none');
+        this.eventTooltip = this.d3
+            .select('body')
+            .append('div')
+            .style('display', 'none');
 
-        this.lineTooltip = this.d3.select('body').append('div').style('display', 'none');
+        this.lineTooltip = this.d3
+            .select('body')
+            .append('div')
+            .style('display', 'none');
     }
 
     /**
@@ -730,10 +841,8 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
      * Build context element to DOM and call brush behavior on it
      */
     addBrush(): void {
-        const contextHeight = CONTEXT_CONFIG.height;
-        const context = this.buildContextAndReturn();
-        const brush = context
-            .append('g')
+        this.buildContextAndReturn()
+            .context.append('g')
             .attr('class', 'brush')
             .attr('transform', `translate(0,10)`)
             .call(this.brush)
@@ -749,7 +858,9 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
             .attr('class', 'context')
             .attr(
                 'transform',
-                `translate(${AXES_CONFIG.xAxis.position.x}, ${this.size.height + CONTEXT_CONFIG.height})`
+                `translate(${AXES_CONFIG.xAxis.position.x}, ${
+                    this.size.height + CONTEXT_CONFIG.height
+                })`
             );
 
         context
@@ -772,7 +883,10 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
      * Append crosshair to SVG and sets opacity to 0
      */
     buildCrosshair(): void {
-        const crosshairGroup = this.svg.append('g').attr('class', 'score-progress-crosshair').style('opacity', 0);
+        const crosshairGroup = this.svg
+            .append('g')
+            .attr('class', 'score-progress-crosshair')
+            .style('opacity', 0);
 
         this.buildTimeCrosshair(crosshairGroup);
 
@@ -793,9 +907,14 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
             .attr('class', 'focus-line')
             .style('pointer-events', 'none'); // Prevents events triggering when interacting with parent element
 
-        const crosshairLabelsGroup = crosshairGroup.append('g').attr('class', 'focus-labels');
+        const crosshairLabelsGroup = crosshairGroup
+            .append('g')
+            .attr('class', 'focus-labels');
 
-        crosshairLabelsGroup.append('text').attr('id', 'focus-label-time').attr('class', 'focus-label');
+        crosshairLabelsGroup
+            .append('text')
+            .attr('id', 'focus-label-time')
+            .attr('class', 'focus-label');
     }
 
     /**
@@ -828,9 +947,10 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
         const focusLines = d3.select('.score-progress-crosshair');
         const focusLabels = d3.select('.score-progress-crosshair');
         const isStaticCoordinatesUsed = staticCoordinates === undefined;
-        const coords = isStaticCoordinatesUsed ? this.d3.pointer(event, this.zoomableArea.node()) : staticCoordinates;
+        const coords = isStaticCoordinatesUsed
+            ? this.d3.pointer(event, this.zoomableArea.node())
+            : staticCoordinates;
         const x = coords[0];
-        const y = coords[1];
         const time = this.hoursMinutesSeconds(this.timeScale.invert(x));
         // Vertical line - time
         focusLines
@@ -867,7 +987,9 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
     drawLegend(): void {
         const x = -7; // 0;
         const y = -40;
-        const legendGroup = this.svg.append('g').attr('transform', 'translate(10, 0)');
+        const legendGroup = this.svg
+            .append('g')
+            .attr('transform', 'translate(10, 0)');
 
         const rectWidth = 80;
         const rectHeight = 20;
@@ -890,7 +1012,10 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
 
         legendGroup
             .append('text')
-            .attr('transform', `translate(${x + rectWidth + 10}, ${y + rectHeight / 1.5 + 1})`)
+            .attr(
+                'transform',
+                `translate(${x + rectWidth + 10}, ${y + rectHeight / 1.5 + 1})`
+            )
             .html('Estimated time');
 
         legendGroup
@@ -903,7 +1028,10 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
             .attr('y2', y + 20);
         legendGroup
             .append('text')
-            .attr('transform', `translate(${x + rectWidth + 179}, ${y + rectHeight / 1.5 + 1})`)
+            .attr(
+                'transform',
+                `translate(${x + rectWidth + 179}, ${y + rectHeight / 1.5 + 1})`
+            )
             .html('Average time');
     }
 
@@ -916,7 +1044,9 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
         if (this.players === null) {
             return;
         }
-        const player: TimelinePlayer = this.players.filter((p) => p.trainingRunId === trainingRunId)[0];
+        const player: TimelinePlayer = this.players.filter(
+            (p) => p.trainingRunId === trainingRunId
+        )[0];
         if (player === undefined) {
             return;
         }
@@ -938,14 +1068,19 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
      * @param player holding id and events
      * @param level
      */
-    drawMainLine(playersGroup, player: TimelinePlayer, level?: TimelineLevel) {
-        const lineGroup = playersGroup.append('g').attr('clip-path', 'url(#lineClip)');
+    drawMainLine(playersGroup, player: TimelinePlayer) {
+        const lineGroup = playersGroup
+            .append('g')
+            .attr('clip-path', 'url(#lineClip)');
 
         const line = lineGroup
             .append('path')
             .attr('d', this.lineGenerator(this.getEvents(player)))
             .attr('class', 'score-progress-player')
-            .classed('score-progress-player-highlight', player.trainingRunId === this.traineesTrainingRun)
+            .classed(
+                'score-progress-player-highlight',
+                player.trainingRunId === this.traineesTrainingRun
+            )
             .classed('visible-line', true)
             .datum(player)
             .style('opacity', '0')
@@ -964,7 +1099,9 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
 
         this.addListenersToLine(clickableLine);
 
-        playersGroup.append('g').attr('id', 'score-progress-events-' + player.trainingRunId);
+        playersGroup
+            .append('g')
+            .attr('id', 'score-progress-events-' + player.trainingRunId);
         this.drawPlayersEvents(player);
 
         return line;
@@ -974,8 +1111,12 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
      * @ignore
      */
     addListenersToLine(line): void {
-        line.on('mouseover', (event, datum) => this.onLineMouseover(event, datum))
-            .on('mousemove', (event, datum) => this.onLineMousemove(event, datum))
+        line.on('mouseover', (event, datum) =>
+            this.onLineMouseover(event, datum)
+        )
+            .on('mousemove', (event, datum) =>
+                this.onLineMousemove(event, datum)
+            )
             .on('mouseout', (event, datum) => this.onLineMouseout(datum))
             .on('wheel', (event, _) => this.disableScrolling(event));
     }
@@ -987,7 +1128,10 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
     onLineMouseover(event, player: TimelinePlayer): void {
         this.highlightLine(player.trainingRunId);
         if (this.standalone) {
-            this.lineTooltip = this.d3.select('body').append('div').style('display', 'none');
+            this.lineTooltip = this.d3
+                .select('body')
+                .append('div')
+                .style('display', 'none');
             this.updateLineTooltip(event, player);
         }
         this.lineTooltip.style('display', 'inline');
@@ -1001,7 +1145,9 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
      * @ignore
      */
     highlightLine(playerId: number): void {
-        const playerGroup = this.d3.select('#score-progress-player-' + playerId);
+        const playerGroup = this.d3.select(
+            '#score-progress-player-' + playerId
+        );
         const path = playerGroup.select('.visible-line');
         path.classed('score-progress-player-highlight', true);
     }
@@ -1054,7 +1200,9 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
         if (playerId === this.traineesTrainingRun) {
             return;
         }
-        const playerGroup = this.d3.select('#score-progress-player-' + playerId);
+        const playerGroup = this.d3.select(
+            '#score-progress-player-' + playerId
+        );
         const path = playerGroup.select('path');
         path.classed('score-progress-player-highlight', false);
     }
@@ -1064,7 +1212,7 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
      * @param player holding its id and events
      * @param level
      */
-    drawContextLine(player: TimelinePlayer, level?: TimelineLevel): void {
+    drawContextLine(player: TimelinePlayer): void {
         const contextLine = this.svg
             .select('.context')
             .append('path')
@@ -1081,13 +1229,15 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
      * @param player
      */
     drawPlayersEvents(player: TimelinePlayer): void {
-        const filteredEvents = this.filterEvents(this.getEvents(player), player.trainingRunId);
+        const filteredEvents = this.filterEvents(this.getEvents(player));
         const colorScale = this.eventsColorScale;
         const eventsGroup = this.playersGroup
             .select('#score-progress-player-' + player.trainingRunId)
             .select('#score-progress-events-' + player.trainingRunId);
 
-        let events = eventsGroup.selectAll('.event').data(filteredEvents, (event) => event.time);
+        let events = eventsGroup
+            .selectAll('.event')
+            .data(filteredEvents, (event) => event.time);
 
         this.removeFilteredEvents(events);
         events = this.addNewEventsAndReturnThem(events);
@@ -1100,7 +1250,9 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
                 if (event.levelOrder === undefined) {
                     return 'lightgray';
                 }
-                return this.d3.interpolateGreys((1 / (player.levels.length + 4)) * (event.levelOrder + 2));
+                return this.d3.interpolateGreys(
+                    (1 / (player.levels.length + 4)) * (event.levelOrder + 2)
+                );
             })
             .datum((event) => {
                 event.playerId = player.trainingRunId;
@@ -1119,16 +1271,25 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
      * @param unfilteredEvents to be filtered
      * @param playerId player's id
      */
-    filterEvents(unfilteredEvents: TimelineEvent[], playerId: number) {
+    filterEvents(unfilteredEvents: TimelineEvent[]) {
         let events = [];
         // checks if there is any checked filter if not empty array of events is set
-        if (Object.keys(this.filters).some((key) => this.filters[key].checked === true)) {
+        if (
+            Object.keys(this.filters).some(
+                (key) => this.filters[key].checked === true
+            )
+        ) {
             Object.keys(this.filters).forEach((key) => {
                 const filter = this.filters[key];
                 if (filter.checked) {
                     // Union operation between all events and filtered events. This needs to be done so filtering by multiple
                     // filters won't filter events from each other
-                    events = [...new Set([...events, ...unfilteredEvents.filter(filter.filterFunction)])];
+                    events = [
+                        ...new Set([
+                            ...events,
+                            ...unfilteredEvents.filter(filter.filterFunction),
+                        ]),
+                    ];
                 }
             });
         } else {
@@ -1145,7 +1306,11 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
     }
 
     addNewEventsAndReturnThem(events): void {
-        return events.enter().append('circle').attr('r', 0).attr('class', 'event');
+        return events
+            .enter()
+            .append('circle')
+            .attr('r', 0)
+            .attr('class', 'event');
     }
 
     /**
@@ -1159,7 +1324,9 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
 
     addListenersToEvents(events): void {
         events
-            .on('mouseover', (event, datum) => this.onEventMouseover(event, datum))
+            .on('mouseover', (event, datum) =>
+                this.onEventMouseover(event, datum)
+            )
             .on('mousemove', (event, _) => this.onEventMousemove(event))
             .on('mouseout', (event, datum) => this.onEventMouseout(datum))
             .on('wheel', (event) => this.disableScrolling(event));
@@ -1171,8 +1338,14 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
      * @param filteredEvents
      * @param colorScale
      */
-    drawInnerLevelUps(eventsGroup, filteredEvents: TimelineEvent[], colorScale): void {
-        let levelUpsInnerFill = eventsGroup.selectAll('.level-up').data(filteredEvents, (event) => event.time);
+    drawInnerLevelUps(
+        eventsGroup,
+        filteredEvents: TimelineEvent[],
+        colorScale
+    ): void {
+        let levelUpsInnerFill = eventsGroup
+            .selectAll('.level-up')
+            .data(filteredEvents, (event) => event.time);
 
         levelUpsInnerFill.exit().remove();
 
@@ -1180,14 +1353,19 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
             .enter()
             .filter(
                 (event) =>
-                    event.text.toUpperCase().split(' ')[0] === 'CORRECT' && event.level !== this.getLevels().length
+                    event.text.toUpperCase().split(' ')[0] === 'CORRECT' &&
+                    event.level !== this.getLevels().length
             )
             .append('circle')
             .attr('class', 'level-up')
             .attr('r', 4)
             .attr('cx', (event) => this.timeScale(event.time))
             .attr('cy', (event) => this.scoreScale(event.score))
-            .style('fill', (event) => this.d3.hsl(colorScale((event.level + 1).toString()).toString()).darker(0.9))
+            .style('fill', (event) =>
+                this.d3
+                    .hsl(colorScale((event.level + 1).toString()).toString())
+                    .darker(0.9)
+            )
             .style('stroke', 'black')
             .style('stroke-width', '0.2');
         this.addFadeInEffectTransition(levelUpsInnerFill);
@@ -1219,11 +1397,12 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
             .style('left', left + 'px')
             .style('top', top + 'px');
         const eventMessage = this.getEventMessage(player);
-        const scoreChange = player.score;
         const content = `
     ${eventMessage}
     <br>
-    <b>${player.scoreChange > 0 ? '+' : ''}${player.scoreChange !== 0 ? player.scoreChange : ''}</b>
+    <b>${player.scoreChange > 0 ? '+' : ''}${
+            player.scoreChange !== 0 ? player.scoreChange : ''
+        }</b>
     <hr style='margin: 5px'>
     Score: ${player.score}`;
         this.eventTooltip.html(content);
@@ -1294,8 +1473,12 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
      * Updates line length when zooming
      */
     redrawPlayers(): void {
-        this.playersGroup.selectAll('.score-progress-player').attr('d', (d) => this.lineGenerator(this.getEvents(d)));
-        this.playersGroup.selectAll('circle').attr('cx', (d) => this.timeScale(d.time));
+        this.playersGroup
+            .selectAll('.score-progress-player')
+            .attr('d', (d) => this.lineGenerator(this.getEvents(d)));
+        this.playersGroup
+            .selectAll('circle')
+            .attr('cx', (d) => this.timeScale(d.time));
     }
 
     /**
@@ -1306,7 +1489,10 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
         this.svg
             .select('.score-progress-bars')
             .selectAll('rect')
-            .attr('transform', `translate(${transform.x},0) scale(${transform.k}, 1)`);
+            .attr(
+                'transform',
+                `translate(${transform.x},0) scale(${transform.k}, 1)`
+            );
     }
 
     /**
@@ -1320,7 +1506,11 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
 
         // Filter duplicate levels
         levels = levels.filter(
-            (level, index, self) => index === self.findIndex((t) => t.id === level.id && t.name === level.name)
+            (level, index, self) =>
+                index ===
+                self.findIndex(
+                    (t) => t.id === level.id && t.name === level.name
+                )
         );
         return levels;
     }
@@ -1349,7 +1539,9 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
      */
     onFilterChange(): void {
         if (!this.standalone) {
-            const checkedPlayers = this.players.filter((player) => player.checked);
+            const checkedPlayers = this.players.filter(
+                (player) => player.checked
+            );
             checkedPlayers.forEach((player) => {
                 this.drawPlayersEvents(player);
             });

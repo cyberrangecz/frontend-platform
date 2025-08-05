@@ -1,11 +1,17 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {Observable, take} from 'rxjs';
-import {AbstractLevelTypeEnum, Level} from '@crczp/training-model';
-import {MatFormField, MatLabel, MatOption, MatSelect, MatSelectChange} from "@angular/material/select";
-import {AsyncPipe} from "@angular/common";
-import {WalkthroughVisualizationData} from "@crczp/visualization-model";
-import {WalkthroughVisualizationService} from "./service/walkthrough-visualization.service";
-import {WalkthroughVisualizationComponent} from "./walkthrough-visualization.component";
+import { Component, inject, Input, OnInit } from '@angular/core';
+import { Observable, take } from 'rxjs';
+import { AbstractLevelTypeEnum, Level } from '@crczp/training-model';
+import {
+    MatFormField,
+    MatLabel,
+    MatOption,
+    MatSelect,
+    MatSelectChange,
+} from '@angular/material/select';
+import { AsyncPipe } from '@angular/common';
+import { WalkthroughVisualizationData } from '@crczp/visualization-model';
+import { WalkthroughVisualizationService } from './service/walkthrough-visualization.service';
+import { WalkthroughVisualizationComponent } from './walkthrough-visualization.component';
 
 @Component({
     selector: 'crczp-walkthrough-visualization-wrapper',
@@ -19,18 +25,17 @@ import {WalkthroughVisualizationComponent} from "./walkthrough-visualization.com
         MatFormField,
         MatLabel,
         MatOption,
-        WalkthroughVisualizationComponent
-    ]
+        WalkthroughVisualizationComponent,
+    ],
 })
 export class WalkthroughVisualizationWrapperComponent implements OnInit {
     @Input() instanceId: number;
     @Input() levels: Level[];
-
     data$: Observable<WalkthroughVisualizationData>;
     currentLevel: Level;
-
-    constructor(private visualizationService: WalkthroughVisualizationService) {
-    }
+    private readonly visualizationService = inject(
+        WalkthroughVisualizationService
+    );
 
     ngOnInit() {
         this.levels = this.levels
@@ -42,7 +47,10 @@ export class WalkthroughVisualizationWrapperComponent implements OnInit {
 
     onSelectionChange(event: MatSelectChange<number>): void {
         if (event.value) {
-            this.visualizationService.getData(event.value, this.instanceId).pipe(take(1)).subscribe();
+            this.visualizationService
+                .getData(event.value, this.instanceId)
+                .pipe(take(1))
+                .subscribe();
         }
     }
 }

@@ -5,7 +5,6 @@ import {
     inject,
     Input,
     OnChanges,
-    SimpleChanges,
 } from '@angular/core';
 import * as d3 from 'd3';
 import { TrainingInstanceStatistics } from '@crczp/visualization-model';
@@ -61,7 +60,7 @@ export class RadarChartWrapperComponent
         this.cardHeight = this.getBBox() * 3;
     }
 
-    ngOnChanges(changes: SimpleChanges): void {
+    ngOnChanges(): void {
         this.trainingInstanceIds = this.trainingInstanceStatistics.map(
             (ti) => ti.instanceId
         );
@@ -71,7 +70,7 @@ export class RadarChartWrapperComponent
                 : '';
     }
 
-    toggleView(isOpen: boolean) {
+    toggleView() {
         this.appRef.tick();
     }
 

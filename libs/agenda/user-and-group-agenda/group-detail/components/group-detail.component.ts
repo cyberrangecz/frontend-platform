@@ -1,26 +1,35 @@
-import {ChangeDetectionStrategy, Component, DestroyRef, inject, Input, OnInit,} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
-import {Group, User, UserRole} from '@crczp/user-and-group-model';
-import {OffsetPaginationEvent} from '@sentinel/common/pagination';
-import {map} from 'rxjs/operators';
-import {from, Observable} from 'rxjs';
-import {MembersDetailTable} from '../model/members-detail-table';
-import {RolesDetailTable} from '../model/roles-detail-table';
-import {SentinelRowDirective, SentinelTable, SentinelTableComponent, TableLoadEvent,} from '@sentinel/components/table';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {MatCardModule} from '@angular/material/card';
-import {MatIconModule} from '@angular/material/icon';
-import {MatTooltipModule} from '@angular/material/tooltip';
-import {MembersDetailService} from '../services/members-detail.service';
-import {RolesDetailService} from '../services/roles-detail.service';
-import {CommonModule} from '@angular/common';
-import {Group
-
-.
-name
-}
-from
-'@crczp/user-and-group-agenda';
+import {
+    ChangeDetectionStrategy,
+    Component,
+    DestroyRef,
+    inject,
+    Input,
+    OnInit,
+} from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { Group, User, UserRole } from '@crczp/user-and-group-model';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
+import { map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { MembersDetailTable } from '../model/members-detail-table';
+import { RolesDetailTable } from '../model/roles-detail-table';
+import {
+    SentinelRowDirective,
+    SentinelTable,
+    SentinelTableComponent,
+    TableLoadEvent,
+} from '@sentinel/components/table';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MembersDetailService } from '../services/members-detail.service';
+import { RolesDetailService } from '../services/roles-detail.service';
+import { CommonModule } from '@angular/common';
+import {
+    PaginationStorageService,
+    providePaginationStorageService,
+} from '@crczp/utils';
 
 @Component({
     selector: 'crczp-group-detail',

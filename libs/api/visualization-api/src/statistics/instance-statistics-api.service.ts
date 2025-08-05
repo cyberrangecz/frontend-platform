@@ -19,8 +19,6 @@ export class InstanceStatisticsApiService {
     private readonly trainingInstancesEndpoint =
         inject(PortalConfig).basePaths.linearTraining + '/training-instances';
 
-    constructor() {}
-
     getAll(definitionId: number): Observable<TrainingInstanceStatistics[]> {
         return this.http
             .get<TrainingInstanceStatisticsDTO[]>(

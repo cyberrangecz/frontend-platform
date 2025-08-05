@@ -1,7 +1,7 @@
-import {ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
-import {SandboxDefinition, SandboxInstance} from '@crczp/sandbox-model';
-import {Observable} from 'rxjs';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { SandboxDefinition, SandboxInstance } from '@crczp/sandbox-model';
+import { Observable } from 'rxjs';
 
 /**
  * Smart component of sandbox instance topology page
@@ -12,14 +12,9 @@ import {Observable} from 'rxjs';
     styleUrls: ['./sandbox-topology.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SandboxTopologyComponent implements OnInit {
+export class SandboxTopologyComponent {
     sandboxInstance$: Observable<SandboxInstance>;
     sandboxDefinition$: Observable<SandboxDefinition>;
     destroyRef = inject(DestroyRef);
     private activeRoute = inject(ActivatedRoute);
-
-    ngOnInit(): void {
-
-    }
-
 }
