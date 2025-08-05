@@ -1,10 +1,10 @@
-import {Component, EventEmitter, inject} from '@angular/core';
-import {MatDialogActions, MatDialogContent, MatDialogRef, MatDialogTitle} from '@angular/material/dialog';
-import {Observable} from 'rxjs';
-import {FileUploadProgressService} from '../../service/instance/file-upload-progress.service';
-import {AsyncPipe} from "@angular/common";
-import {MatButton} from "@angular/material/button";
-import {MatProgressBar} from "@angular/material/progress-bar";
+import { Component, EventEmitter, inject } from '@angular/core';
+import { MatDialogActions, MatDialogContent, MatDialogRef, MatDialogTitle } from '@angular/material/dialog';
+import { Observable } from 'rxjs';
+import { AsyncPipe } from '@angular/common';
+import { MatButton } from '@angular/material/button';
+import { MatProgressBar } from '@angular/material/progress-bar';
+import { FileUploadProgressService } from '@crczp/utils';
 
 /**
  * Dialog window component of training instance data upload
@@ -20,11 +20,12 @@ import {MatProgressBar} from "@angular/material/progress-bar";
         MatDialogActions,
         MatProgressBar,
         MatDialogContent,
-        MatDialogTitle
-    ]
+        MatDialogTitle,
+    ],
 })
 export class InstanceUploadDialogComponent {
-    dialogRef = inject<MatDialogRef<InstanceUploadDialogComponent>>(MatDialogRef);
+    dialogRef =
+        inject<MatDialogRef<InstanceUploadDialogComponent>>(MatDialogRef);
     selectedFile: File;
     uploadInProgress$: Observable<boolean>;
     onUpload$ = new EventEmitter<File>();

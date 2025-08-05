@@ -2,7 +2,10 @@ import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { MicroserviceOverviewComponent } from '@crczp/user-and-group-agenda/microservice-overview';
 import { UserAndGroupApiModule } from '@crczp/user-and-group-api';
-import { ValidRouterConfig } from '@crczp/routing-commons';
+import {
+    UserAndGroupResolverHelperService,
+    ValidRouterConfig,
+} from '@crczp/routing-commons';
 import { canDeactivateMicroservice } from '@crczp/user-and-group-agenda/microservice-registration';
 
 const routes: ValidRouterConfig<'microservice'> = [
@@ -29,6 +32,7 @@ const routes: ValidRouterConfig<'microservice'> = [
  */
 @NgModule({
     imports: [RouterModule.forChild(routes), UserAndGroupApiModule],
+    providers: [UserAndGroupResolverHelperService],
     exports: [RouterModule],
 })
 export class MicroserviceRoutingModule {}

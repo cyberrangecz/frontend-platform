@@ -1,5 +1,5 @@
-<h2>{{ (resources | async) ? (resources | async).projectName : '&nbsp;' }}</h2>
-<div class="center wh-100">
+<div class="center wh-100 vflex">
+    <h2 class="center center-line">{{ (resources | async) ? (resources | async).projectName : '...' }}</h2>
     <div class="resources">
         @for (resource of displayedResources; track resource; let i = $index) {
             <crczp-quota-pie-chart

@@ -1,10 +1,4 @@
-import {
-    ChangeDetectionStrategy,
-    Component,
-    Input,
-    OnChanges,
-    SimpleChanges,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { QuotaPieChartComponent } from './quota-pie-chart/quota-pie-chart.component';
 import { Resources } from '@crczp/sandbox-model';
 import { Observable } from 'rxjs';
@@ -17,13 +11,9 @@ import { AsyncPipe } from '@angular/common';
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [QuotaPieChartComponent, AsyncPipe],
 })
-export class QuotasComponent implements OnChanges {
+export class QuotasComponent {
     @Input() resources: Observable<Resources>;
     displayedResources = ['instances', 'vcpu', 'ram', 'port', 'network'];
     resourceColors = ['#3D54AF', '#a91e62', '#0ebfb7', '#e56c1b', '#7f007e'];
     protected readonly Resources = Resources;
-
-    ngOnChanges(changes: SimpleChanges) {
-        console.log('changes', changes);
-    }
 }

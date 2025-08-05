@@ -1,7 +1,7 @@
-import {OffsetPaginatedElementsService} from '@sentinel/common';
-import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
-import {TrainingDefinition, TrainingDefinitionStateEnum} from '@crczp/training-model';
-import {Observable} from 'rxjs';
+import { OffsetPaginatedElementsService } from '@sentinel/common';
+import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
+import { TrainingDefinition, TrainingDefinitionStateEnum } from '@crczp/training-model';
+import { Observable } from 'rxjs';
 
 /**
  * A layer between a component and an API service. Implement a concrete service by extending this class.
@@ -29,7 +29,7 @@ export abstract class TrainingDefinitionService extends OffsetPaginatedElementsS
      */
     abstract getAll(
         pagination: OffsetPaginationEvent,
-        filter: string,
+        filter: string
     ): Observable<PaginatedResource<TrainingDefinition>>;
 
     /**
@@ -64,6 +64,6 @@ export abstract class TrainingDefinitionService extends OffsetPaginatedElementsS
      */
     abstract changeState(
         trainingDefinition: TrainingDefinition,
-        newState: TrainingDefinitionStateEnum,
+        newState: TrainingDefinitionStateEnum
     ): Observable<any>;
 }

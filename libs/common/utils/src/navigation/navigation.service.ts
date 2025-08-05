@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { NavigationExtras, Router } from '@angular/router';
-import { ErrorHandlerService } from '../error-handling/error-handler.service';
+import { ErrorHandlerService } from '../service/error-handling/error-handler.service';
 import { catchError, from, Observable, of, switchMap } from 'rxjs';
 import { map } from 'rxjs/operators';
 

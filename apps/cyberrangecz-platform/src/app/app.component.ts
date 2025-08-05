@@ -1,8 +1,8 @@
 import { AfterViewInit, Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
-import { SentinelAuthService, User } from '@sentinel/auth';
+import { SentinelAuthService } from '@sentinel/auth';
 import { AgendaContainer } from '@sentinel/layout';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { NavConfigFactory } from './utils/nav-config-factory';
 import { PortalDynamicEnvironment } from './portal-dynamic-environment';
@@ -21,21 +21,17 @@ import { Utils } from '@crczp/utils';
     standalone: false,
 })
 export class AppComponent implements OnInit, AfterViewInit {
-    isLoading$ = new BehaviorSubject(false);
-    activeUser$: Observable<User | undefined>;
     title$: Observable<string>;
     subtitle$: Observable<string>;
     agendaContainers$: Observable<AgendaContainer[]>;
     notificationRoute: ValidPath = 'notifications';
     version = '';
-
+    protected readonly loadingService = inject(LoadingService);
+    protected readonly authService = inject(SentinelAuthService);
     private readonly router = inject(Router);
     private readonly activatedRoute = inject(ActivatedRoute);
-    private readonly loadingService = inject(LoadingService);
-    private readonly authService = inject(SentinelAuthService);
 
     ngOnInit(): void {
-        this.activeUser$ = this.authService.activeUser$;
         this.title$ = this.getTitleFromRouter();
         this.subtitle$ = this.getSubtitleFromRouter();
         this.agendaContainers$ = this.authService.activeUser$.pipe(

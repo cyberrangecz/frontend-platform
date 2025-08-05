@@ -12,8 +12,7 @@ import { EMPTY, Observable } from 'rxjs';
 import { map, switchMap, take, tap } from 'rxjs/operators';
 import { SelectablePaginatedService, UserFilter } from '@crczp/user-and-group-agenda/internal';
 import { UsersUploadDialogComponent } from '../components/upload-dialog/users-upload-dialog.component';
-import { FileUploadProgressService } from './file-upload/file-upload-progress.service';
-import { ErrorHandlerService, NotificationService, PortalConfig } from '@crczp/utils';
+import { ErrorHandlerService, FileUploadProgressService, NotificationService, PortalConfig } from '@crczp/utils';
 
 /**
  * Basic implementation of a layer between a component and an API service.

@@ -1,16 +1,18 @@
-import { Injectable, inject } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 
-import {BehaviorSubject, Observable, of, switchMap, take, tap} from 'rxjs';
-import {MatDialog} from '@angular/material/dialog';
-import {InstanceSimulatorApiService} from './instance-simulator-api.service';
-import {InstanceUploadDialogComponent} from '../../components/instance-upload-dialog/instance-upload-dialog.component';
-import {Phase, TrainingPhase} from '@crczp/training-model';
-import {InstanceModelSimulator} from '../../model/instance/instance-model-simulator';
-import {saveAs} from 'file-saver';
-import {SankeyData} from '../../model/sankey/sankey-data';
-import {FileUploadProgressService} from './file-upload-progress.service';
-import {SimulatorState, SimulatorStateEventTypeEnum} from "../../model/instance/simulator-state";
-
+import { BehaviorSubject, Observable, of, switchMap, take, tap } from 'rxjs';
+import { MatDialog } from '@angular/material/dialog';
+import { InstanceSimulatorApiService } from './instance-simulator-api.service';
+import { InstanceUploadDialogComponent } from '../../components/instance-upload-dialog/instance-upload-dialog.component';
+import { Phase, TrainingPhase } from '@crczp/training-model';
+import { InstanceModelSimulator } from '../../model/instance/instance-model-simulator';
+import { saveAs } from 'file-saver';
+import { SankeyData } from '../../model/sankey/sankey-data';
+import {
+    SimulatorState,
+    SimulatorStateEventTypeEnum,
+} from '../../model/instance/simulator-state';
+import { FileUploadProgressService } from '@crczp/utils';
 
 @Injectable()
 export class InstanceSimulatorService {
@@ -20,13 +22,18 @@ export class InstanceSimulatorService {
 
     private readonly EXPORT_FILE_NAME = 'adaptive-training-definition.json';
 
-    private uploadedInstanceDataSubject$: BehaviorSubject<InstanceModelSimulator> = new BehaviorSubject(null);
-    uploadedInstanceData$: Observable<InstanceModelSimulator> = this.uploadedInstanceDataSubject$.asObservable();
+    private uploadedInstanceDataSubject$: BehaviorSubject<InstanceModelSimulator> =
+        new BehaviorSubject(null);
+    uploadedInstanceData$: Observable<InstanceModelSimulator> =
+        this.uploadedInstanceDataSubject$.asObservable();
 
-    private actionsDisabledSubject$: BehaviorSubject<boolean> = new BehaviorSubject(true);
-    actionsDisabled$: Observable<boolean> = this.actionsDisabledSubject$.asObservable();
+    private actionsDisabledSubject$: BehaviorSubject<boolean> =
+        new BehaviorSubject(true);
+    actionsDisabled$: Observable<boolean> =
+        this.actionsDisabledSubject$.asObservable();
 
-    private stateSubject$: BehaviorSubject<SimulatorState> = new BehaviorSubject(null);
+    private stateSubject$: BehaviorSubject<SimulatorState> =
+        new BehaviorSubject(null);
     state$: Observable<SimulatorState> = this.stateSubject$.asObservable();
 
     /**
@@ -43,8 +50,8 @@ export class InstanceSimulatorService {
                     this.stateSubject$.next(
                         new SimulatorState(
                             'Training instance data were uploaded',
-                            SimulatorStateEventTypeEnum.NOTIFICATION_EVENT,
-                        ),
+                            SimulatorStateEventTypeEnum.NOTIFICATION_EVENT
+                        )
                     );
                     this.fileUploadProgressService.finish();
                     this.uploadedInstanceDataSubject$.next(data);
@@ -55,10 +62,14 @@ export class InstanceSimulatorService {
                     this.fileUploadProgressService.finish();
                     dialogRef.close();
                     this.stateSubject$.next(
-                        new SimulatorState('Uploading training instance data', SimulatorStateEventTypeEnum.ERROR_EVENT, err),
+                        new SimulatorState(
+                            'Uploading training instance data',
+                            SimulatorStateEventTypeEnum.ERROR_EVENT,
+                            err
+                        )
                     );
-                },
-            ),
+                }
+            )
         );
     }
 
@@ -66,9 +77,17 @@ export class InstanceSimulatorService {
      * Exports edited training definition as JSON file to local files
      */
     export(): Observable<boolean> {
-        const blob = new Blob([JSON.stringify(this.uploadedInstanceDataSubject$.getValue().trainingDefinition)], {
-            type: 'application/json',
-        });
+        const blob = new Blob(
+            [
+                JSON.stringify(
+                    this.uploadedInstanceDataSubject$.getValue()
+                        .trainingDefinition
+                ),
+            ],
+            {
+                type: 'application/json',
+            }
+        );
         saveAs(blob, this.EXPORT_FILE_NAME);
         return of(true);
     }
@@ -79,21 +98,28 @@ export class InstanceSimulatorService {
      * @return data for sankey diagram visualization
      */
     generate(): Observable<SankeyData> {
-        return this.api.generate(this.uploadedInstanceDataSubject$.getValue()).pipe(
-            take(1),
-            tap(
-                (data) => {
-                    const value = this.uploadedInstanceDataSubject$.getValue();
-                    value.sankeyData = data;
-                    this.uploadedInstanceDataSubject$.next(value);
-                },
-                (err) => {
-                    this.stateSubject$.next(
-                        new SimulatorState('Generating training visualization', SimulatorStateEventTypeEnum.ERROR_EVENT, err),
-                    );
-                },
-            ),
-        );
+        return this.api
+            .generate(this.uploadedInstanceDataSubject$.getValue())
+            .pipe(
+                take(1),
+                tap(
+                    (data) => {
+                        const value =
+                            this.uploadedInstanceDataSubject$.getValue();
+                        value.sankeyData = data;
+                        this.uploadedInstanceDataSubject$.next(value);
+                    },
+                    (err) => {
+                        this.stateSubject$.next(
+                            new SimulatorState(
+                                'Generating training visualization',
+                                SimulatorStateEventTypeEnum.ERROR_EVENT,
+                                err
+                            )
+                        );
+                    }
+                )
+            );
     }
 
     /**
@@ -101,9 +127,11 @@ export class InstanceSimulatorService {
      * @param updatedPhase
      */
     updatePhase(updatedPhase: TrainingPhase): void {
-        const phases = this.uploadedInstanceDataSubject$.getValue().trainingDefinition.levels as Phase[];
+        const phases = this.uploadedInstanceDataSubject$.getValue()
+            .trainingDefinition.levels as Phase[];
         const instanceData = this.uploadedInstanceDataSubject$.getValue();
-        instanceData.trainingDefinition.levels[phases.indexOf(updatedPhase)] = updatedPhase;
+        instanceData.trainingDefinition.levels[phases.indexOf(updatedPhase)] =
+            updatedPhase;
         this.uploadedInstanceDataSubject$.next(instanceData);
     }
 

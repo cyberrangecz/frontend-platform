@@ -8,7 +8,25 @@
     padding: 0.5rem;
 }
 
+.center-line {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+    max-width: 1250px;
+}
 
-mat-card {
-    padding: 16px;
+.center-line::before,
+.center-line::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid #ccc;
+}
+
+.center-line:not(:empty)::before {
+    margin-right: 1rem;
+}
+
+.center-line:not(:empty)::after {
+    margin-left: 1rem;
 }

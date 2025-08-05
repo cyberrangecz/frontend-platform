@@ -1,14 +1,13 @@
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import {
-    UserBreadcrumbResolverService,
-    UserOverviewComponent,
-    UserResolverService,
-    UserTitleResolverService,
-} from '@crczp/user-and-group-agenda/user-overview';
+import { UserOverviewComponent } from '@crczp/user-and-group-agenda/user-overview';
 import { User } from '@crczp/user-and-group-model';
 import { UserAndGroupApiModule } from '@crczp/user-and-group-api';
-import { ValidRouterConfig } from '@crczp/routing-commons';
+import {
+    Routing,
+    UserAndGroupResolverHelperService,
+    ValidRouterConfig,
+} from '@crczp/routing-commons';
 
 const routes: ValidRouterConfig<'user'> = [
     {
@@ -22,9 +21,8 @@ const routes: ValidRouterConfig<'user'> = [
                 (m) => m.UserDetailComponent
             ),
         resolve: {
-            [User.name]: UserResolverService,
-            breadcrumb: UserBreadcrumbResolverService,
-            title: UserTitleResolverService,
+            [User.name]: Routing.Resolvers.User.resolveUser,
+            title: Routing.Resolvers.User.resolveUserTitle,
         },
     },
 ];
@@ -34,6 +32,7 @@ const routes: ValidRouterConfig<'user'> = [
  */
 @NgModule({
     imports: [RouterModule.forChild(routes), UserAndGroupApiModule],
+    providers: [UserAndGroupResolverHelperService],
     exports: [RouterModule],
 })
 export class UserRoutingModule {}

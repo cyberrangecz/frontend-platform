@@ -8,7 +8,7 @@ import { RunningTrainingRunService } from './running-training-run.service';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ErrorHandlerService } from '@crczp/utils';
 import { Routing } from '@crczp/routing-commons';
-import { LoadingDialogComponent, LoadingDialogConfig } from '@crczp/components';
+import { LoadingDialogComponent, LoadingDialogOptions } from '@crczp/components';
 
 /**
  * Main service for running training training. Holds levels and its state. Handles user general training run user actions and events.
@@ -164,7 +164,7 @@ export class RunningTrainingRunConcreteService extends RunningTrainingRunService
 
     private displayLoadingDialog(): MatDialogRef<LoadingDialogComponent> {
         return this.dialog.open(LoadingDialogComponent, {
-            data: new LoadingDialogConfig(
+            data: new LoadingDialogOptions(
                 'Processing training data for visualization',
                 `Please wait while your training data are being processed`
             ),

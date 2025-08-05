@@ -32,7 +32,7 @@
         "guacamole-common-js": "^1.5.0",
         "moment": "^2.30.1",
         "moment-mini": "^2.29.4",
-        "ngx-file-drop": "^16.0.0",
+        "ngx-file-drag-drop": "^11.0.0",
         "rxjs": "~7.8.0",
         "vis-data": "^8.0.1",
         "vis-network": "^10.0.1",
@@ -116,6 +116,13 @@
         "ngx-indexed-db": {
             "@angular/common": "^20.0.0",
             "@angular/core": "^20.0.0"
+        },
+        "ngx-file-drag-drop": {
+            "@angular/cdk": "^20.0.0",
+            "@angular/common": "^20.0.0",
+            "@angular/core": "^20.0.0",
+            "@angular/platform-browser": "^20.0.0",
+            "@angular/material": "^20.0.0"
         }
     },
     "nx": {

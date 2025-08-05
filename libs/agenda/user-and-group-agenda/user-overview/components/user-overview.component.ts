@@ -1,39 +1,20 @@
-import {
-    ChangeDetectionStrategy,
-    Component,
-    DestroyRef,
-    inject,
-    Input,
-    OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, Input, OnInit } from '@angular/core';
 import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import {
     SentinelControlItem,
     SentinelControlItemSignal,
-    SentinelControlsComponent,
+    SentinelControlsComponent
 } from '@sentinel/components/controls';
 import { User } from '@crczp/user-and-group-model';
-import {
-    SentinelTable,
-    SentinelTableComponent,
-    TableActionEvent,
-    TableLoadEvent,
-} from '@sentinel/components/table';
+import { SentinelTable, SentinelTableComponent, TableActionEvent, TableLoadEvent } from '@sentinel/components/table';
 import { defer, Observable, of } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { UserTable } from '../model/user-table';
 import { DeleteControlItem } from '@crczp/user-and-group-agenda/internal';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { UserResolverService } from '../services/resolvers/user-resolver.service';
-import { UserTitleResolverService } from '../services/resolvers/user-title-resolver.service';
-import { UserBreadcrumbResolverService } from '../services/resolvers/user-breadcrumb-resolver.service';
-import { FileUploadProgressService } from '../services/file-upload/file-upload-progress.service';
 import { UserOverviewService } from '../services/user-overview.service';
 import { AsyncPipe } from '@angular/common';
-import {
-    PaginationStorageService,
-    providePaginationStorageService,
-} from '@crczp/utils';
+import { FileUploadProgressService, PaginationStorageService, providePaginationStorageService } from '@crczp/utils';
 
 /**
  * Main smart component of user overview page
@@ -45,9 +26,6 @@ import {
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [AsyncPipe, SentinelTableComponent, SentinelControlsComponent],
     providers: [
-        UserResolverService,
-        UserTitleResolverService,
-        UserBreadcrumbResolverService,
         providePaginationStorageService(UserOverviewComponent),
         FileUploadProgressService,
         UserOverviewService,

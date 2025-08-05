@@ -1,7 +1,7 @@
-import {Component, EventEmitter, inject} from '@angular/core';
-import {MatDialogRef, MatDialogTitle} from '@angular/material/dialog';
-import {Observable} from 'rxjs';
-import {FileUploadProgressService} from '../../services/file-upload/file-upload-progress.service';
+import { Component, EventEmitter, inject } from '@angular/core';
+import { MatDialogRef, MatDialogTitle } from '@angular/material/dialog';
+import { Observable } from 'rxjs';
+import { FileUploadProgressService } from '@crczp/utils';
 
 /**
  * Component of users upload dialog window
@@ -10,10 +10,7 @@ import {FileUploadProgressService} from '../../services/file-upload/file-upload-
     selector: 'crczp-users-upload-dialog',
     templateUrl: './users-upload-dialog.component.html',
     styleUrls: ['./users-upload-dialog.component.css'],
-    imports: [
-        MatDialogTitle,
-
-    ]
+    imports: [MatDialogTitle],
 })
 export class UsersUploadDialogComponent {
     dialogRef = inject<MatDialogRef<UsersUploadDialogComponent>>(MatDialogRef);

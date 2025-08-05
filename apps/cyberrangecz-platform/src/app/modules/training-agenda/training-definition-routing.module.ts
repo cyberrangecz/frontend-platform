@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { TrainingDefinitionOverviewComponent } from '@crczp/training-agenda/definition-overview';
 import { SandboxApiModule } from '@crczp/sandbox-api';
 import { TrainingApiModule } from '@crczp/training-api';
 import { TrainingDefinition } from '@crczp/training-model';
@@ -10,11 +9,12 @@ import {
     ValidRouterConfig,
 } from '@crczp/routing-commons';
 import { canDeactivateTrainingDefinition } from '@crczp/training-agenda/definition-edit';
+import { LinearTrainingDefinitionOverviewComponent } from '@crczp/training-agenda/definition-overview';
 
 const routes: ValidRouterConfig<'linear-definition'> = [
     {
         path: '',
-        component: TrainingDefinitionOverviewComponent,
+        component: LinearTrainingDefinitionOverviewComponent,
     },
     {
         path: 'create',

@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { AdaptiveDefinitionOverviewComponent } from '@crczp/training-agenda/adaptive-definition-overview';
 import { SandboxApiModule } from '@crczp/sandbox-api';
 import { TrainingApiModule } from '@crczp/training-api';
 import { TrainingDefinition } from '@crczp/training-model';
@@ -10,11 +9,12 @@ import {
     ValidRouterConfig,
 } from '@crczp/routing-commons';
 import { canDeactivateAdaptiveDefinition } from '@crczp/training-agenda/adaptive-definition-edit';
+import { AdaptiveTrainingDefinitionOverviewComponent } from '@crczp/training-agenda/definition-overview';
 
 const routes: ValidRouterConfig<'adaptive-definition'> = [
     {
         path: '',
-        component: AdaptiveDefinitionOverviewComponent,
+        component: AdaptiveTrainingDefinitionOverviewComponent,
     },
     {
         path: 'create',

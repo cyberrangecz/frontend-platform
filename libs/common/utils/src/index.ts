@@ -6,12 +6,13 @@ import { DocumentUtils } from './utils/functions/document-utils';
 export * from './rxjs/unique';
 export * from './rxjs/tresholdBufferPipe';
 export * from './utils/classes/loading-tracker';
-export * from './error-handling/error-handler.service';
-export * from './error-handling/notification.service';
+export * from './service/error-handling/error-handler.service';
+export * from './service/error-handling/notification.service';
 export * from './pipes/title-case-except.pipe';
 export * from './service/synchronization/divider-position/persistent-divider-position-synchronizer.service';
 export * from './service/synchronization/divider-position/divider-position-synchronizer.service';
 export * from './service/pagination/pagination-storage.service';
+export * from './service/progress/file-upload-progress.service';
 export * from './types/config';
 export * from './types/sentinel-auth-config.zod';
 export {

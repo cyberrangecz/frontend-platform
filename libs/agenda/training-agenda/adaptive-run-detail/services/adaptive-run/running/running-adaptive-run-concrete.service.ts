@@ -13,7 +13,10 @@ import { switchMap, tap } from 'rxjs/operators';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ErrorHandlerService } from '@crczp/utils';
 import { Routing } from '@crczp/routing-commons';
-import { LoadingDialogComponent, LoadingDialogConfig } from '@crczp/components';
+import {
+    LoadingDialogComponent,
+    LoadingDialogOptions,
+} from '@crczp/components';
 
 @Injectable()
 export class RunningAdaptiveRunConcreteService extends RunningAdaptiveRunService {
@@ -195,7 +198,7 @@ export class RunningAdaptiveRunConcreteService extends RunningAdaptiveRunService
 
     private displayDialogToNextTask(): MatDialogRef<LoadingDialogComponent> {
         return this.dialog.open(LoadingDialogComponent, {
-            data: new LoadingDialogConfig(
+            data: new LoadingDialogOptions(
                 'Choosing a suitable task for you',
                 `Please wait while your next task is being prepared`
             ),
@@ -204,7 +207,7 @@ export class RunningAdaptiveRunConcreteService extends RunningAdaptiveRunService
 
     private displayLoadingDialog(): MatDialogRef<LoadingDialogComponent> {
         return this.dialog.open(LoadingDialogComponent, {
-            data: new LoadingDialogConfig(
+            data: new LoadingDialogOptions(
                 'Processing training data for visualization',
                 `Please wait while your training data are being processed`
             ),

@@ -4,7 +4,11 @@ import { canDeactivateGroup } from '@crczp/user-and-group-agenda/group-edit';
 import { Group } from '@crczp/user-and-group-model';
 import { GroupOverviewComponent } from '@crczp/user-and-group-agenda/group-overview';
 import { UserAndGroupApiModule } from '@crczp/user-and-group-api';
-import { Routing, ValidRouterConfig } from '@crczp/routing-commons';
+import {
+    Routing,
+    UserAndGroupResolverHelperService,
+    ValidRouterConfig,
+} from '@crczp/routing-commons';
 
 const routes: ValidRouterConfig<'group'> = [
     {
@@ -56,6 +60,7 @@ const routes: ValidRouterConfig<'group'> = [
  */
 @NgModule({
     imports: [RouterModule.forChild(routes), UserAndGroupApiModule],
+    providers: [UserAndGroupResolverHelperService],
     exports: [RouterModule],
 })
 export class GroupRoutingModule {}
