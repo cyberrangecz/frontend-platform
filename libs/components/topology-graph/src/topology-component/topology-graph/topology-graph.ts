@@ -114,9 +114,9 @@ export class TopologyGraph implements AfterViewInit, OnChanges {
 
         const visEdges = new DataSet(
             this.links.map((link) => ({
-                id: link.id,
-                from: link.source.name,
-                to: link.target.name,
+                id: link.nodeA.name + link.nodeB.name,
+                from: link.nodeA.name,
+                to: link.nodeB.name,
             }))
         );
 

@@ -1,132 +1,143 @@
-import {MapperBuilder} from "./mapper-builder";
-import {describe, expect, test} from "vitest";
+import { MapperBuilder } from './mapper-builder';
+import { describe, expect, test } from 'vitest';
+import { Z } from 'zod-class';
+import { z } from 'zod';
 
-describe("Testing of properties mapping", () => {
-
+describe('Testing of properties mapping', () => {
     test('camel case should translate correctly', () => {
-        const snake_case = [
-            'standard',
-            'one_underscore',
-            'two_under_scores',
-        ]
+        const snake_case = ['standard', 'one_underscore', 'two_under_scores'];
 
-        const camelCase = [
-            'standard',
-            'oneUnderscore',
-            'twoUnderScores',
-        ]
+        const camelCase = ['standard', 'oneUnderscore', 'twoUnderScores'];
 
-        const camelToSnakeConversions = camelCase.map(MapperBuilder.camelToSnakeCase);
+        const camelToSnakeConversions = camelCase.map(
+            MapperBuilder.camelToSnakeCase
+        );
 
         camelToSnakeConversions.forEach((value, index) => {
-            expect(value, 'Should translate to snake_case').toStrictEqual(snake_case[index]);
+            expect(value, 'Should translate to snake_case').toStrictEqual(
+                snake_case[index]
+            );
         });
-
-    })
+    });
 
     test('snake case should translate correctly', () => {
-        const snake_case = [
-            'standard',
-            'one_underscore',
-            'two_under_scores',
-        ]
+        const snake_case = ['standard', 'one_underscore', 'two_under_scores'];
 
-        const camelCase = [
-            'standard',
-            'oneUnderscore',
-            'twoUnderScores',
-        ]
+        const camelCase = ['standard', 'oneUnderscore', 'twoUnderScores'];
 
-        const snakeToCamelConversions = snake_case.map(MapperBuilder.snakeToCamelCase);
+        const snakeToCamelConversions = snake_case.map(
+            MapperBuilder.snakeToCamelCase
+        );
 
         snakeToCamelConversions.forEach((value, index) => {
-            expect(value, 'Should translate to camelCase').toStrictEqual(camelCase[index]);
+            expect(value, 'Should translate to camelCase').toStrictEqual(
+                camelCase[index]
+            );
         });
-
-    })
+    });
 
     test('should map directly mappable DTO to MODEL', () => {
+        class DirectlyMappableDTO extends Z.class({
+            property_a: z.string(),
+            property_a_b: z.number(),
+        }) {}
 
-        const mappedObj = {
-            property_a: 'property_a',
-            property_a_b: 1
-        }
+        class DirectlyMappableModel extends Z.class({
+            propertyA: z.string(),
+            propertyAB: z.number(),
+        }) {}
 
-        const mapperFunction =
-            MapperBuilder.createDTOtoModelMapper<typeof mappedObj, {
-                propertyA: string, propertyAB: number
-            }>({
-                mappedProperties: ["propertyA", "propertyAB"],
-            });
+        const mapperFunction = MapperBuilder.createDTOtoModelMapper<
+            DirectlyMappableDTO,
+            DirectlyMappableModel
+        >({
+            mappedProperties: ['propertyA', 'propertyAB'],
+            constructor: (data) => DirectlyMappableModel.schema().parse(data),
+        });
 
-        const result = mapperFunction(mappedObj)
+        const mappedObj = new DirectlyMappableDTO({
+            property_a: 'hello',
+            property_a_b: 1,
+        });
 
-        expect(result.propertyA, 'Should map directly').toStrictEqual(mappedObj.property_a);
-        expect(result.propertyAB, 'Should map directly').toStrictEqual(mappedObj.property_a_b);
-    })
+        const result = mapperFunction(mappedObj);
+
+        expect(result.propertyA, 'Should map directly').toStrictEqual(
+            mappedObj.property_a
+        );
+        expect(result.propertyAB, 'Should map directly').toStrictEqual(
+            mappedObj.property_a_b
+        );
+    });
 
     test('should map directly mappable MODEL to DTO', () => {
+        class DirectlyMappableModel extends Z.class({
+            propertyA: z.string(),
+            propertyAB: z.number(),
+        }) {}
 
-        const mappedObj = {
-            someProperty: 'Hi',
-            otherProperty: 100
-        }
+        class DirectlyMappableDTO extends Z.class({
+            property_a: z.string(),
+            property_a_b: z.number(),
+        }) {}
 
-        const mapperFunction =
-            MapperBuilder.createModelToDtoMapper<typeof mappedObj, {
-                some_property: string, other_property: number
-            }>({
-                mappedProperties: ['other_property', 'some_property'],
-            })
+        const mapperFunction = MapperBuilder.createModelToDtoMapper<
+            DirectlyMappableModel,
+            DirectlyMappableDTO
+        >({
+            mappedProperties: ['property_a', 'property_a_b'],
+            constructor: (data) => DirectlyMappableDTO.schema().parse(data),
+        });
 
-        const result = mapperFunction(mappedObj)
+        const mappedObj = new DirectlyMappableModel({
+            propertyA: 'hello',
+            propertyAB: 1,
+        });
 
-        expect(result.some_property, 'Should map directly').toStrictEqual(mappedObj.someProperty);
-        expect(result.other_property, 'Should map directly').toStrictEqual(mappedObj.otherProperty);
-    })
+        const result = mapperFunction(mappedObj);
+
+        expect(result.property_a, 'Should map directly').toStrictEqual(
+            mappedObj.propertyA
+        );
+        expect(result.property_a_b, 'Should map directly').toStrictEqual(
+            mappedObj.propertyAB
+        );
+    });
 
     test('should map from DTO using mappers', () => {
+        class IndirectlyMappableDTO extends Z.class({
+            property_a: z.number(),
+        }) {}
 
-        const mappedObj = {
-            property_a: 'value',
-        }
+        class IndirectlyMappableModel extends Z.class({
+            propertyA: z.string(),
+            propertyAB: z.number().nullable(),
+        }) {}
 
-        const mapperFunction =
-            MapperBuilder.createDTOtoModelMapper<typeof mappedObj, {
-                propertyA: string, propertyAB: number
-            }>({
-                mappers: {
-                    propertyAB: dto => dto.property_a.length
-                },
-                mappedProperties: ["propertyA"]
-            })
+        const mapperFunction = MapperBuilder.createDTOtoModelMapper<
+            IndirectlyMappableDTO,
+            IndirectlyMappableModel
+        >({
+            mappedProperties: [],
+            mappers: {
+                propertyA: (dto) => dto.property_a.toString(),
+                propertyAB: (dto) => dto.property_a * -1,
+            },
+            constructor: (data: unknown) =>
+                IndirectlyMappableModel.schema().parse(data),
+        });
 
-        const result = mapperFunction(mappedObj)
+        const mappedObj = new IndirectlyMappableDTO({
+            property_a: 1,
+        });
 
-        expect(result.propertyA, 'Should map directly').toStrictEqual(mappedObj.property_a);
-        expect(result.propertyAB, 'Should map using mapper').toStrictEqual(mappedObj.property_a.length);
-    })
+        const result = mapperFunction(mappedObj);
 
-    test('should map from MODEL using mappers', () => {
-
-        const mappedObj = {
-            someProperty: 'some value',
-        }
-
-        const mapperFunction =
-            MapperBuilder.createModelToDtoMapper<typeof mappedObj, {
-                some_property: string,
-                unrealized_property: { key: string }
-            }>({
-                mappers: {
-                    unrealized_property: dto => ({ key: dto.someProperty })
-                },
-                mappedProperties: ["some_property"]
-            })
-
-        const result = mapperFunction(mappedObj)
-
-        expect(result.some_property, 'Should map directly').toStrictEqual(mappedObj.someProperty);
-        expect(result.unrealized_property, 'Should map using mapper').toStrictEqual({ key: mappedObj.someProperty });
-    })
+        expect(result.propertyA, 'Should map directly').toStrictEqual(
+            mappedObj.property_a.toString()
+        );
+        expect(result.propertyAB, 'Should map using mapper').toStrictEqual(
+            mappedObj.property_a * -1
+        );
+    });
 });

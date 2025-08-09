@@ -9,3 +9,4 @@ export * from './api/request/cleanup/cleanup-requests.api.service';
 export * from './api/sandbox-allocation-units/sandbox-allocation-units-api.service';
 export * from './api/resources/resources-api.service';
 export * from './api/vm-images/vm-images-api.service';
+export * from './api/topology/topology-api.service';

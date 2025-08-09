@@ -1,8 +1,0 @@
-{
-    "name": "@crczp/topology-graph-model",
-    "peerDependencies": {
-        "@angular/common": "*",
-        "@angular/core": "*"
-    },
-    "sideEffects": false
-}

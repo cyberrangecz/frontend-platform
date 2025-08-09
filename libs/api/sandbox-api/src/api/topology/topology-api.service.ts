@@ -1,11 +1,9 @@
 import { inject, Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, EMPTY, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
 import { PortalConfig } from '@crczp/utils';
-import { withCache } from '@ngneat/cashew';
-import { TopologyGraphMapper } from '../../mappers/topology/topology-mapper.service';
-import { GraphNode, GraphNodeLink, SandboxConsole } from '@crczp/sandbox-model';
+import { EMPTY, Observable } from 'rxjs';
+import { Topology } from '@crczp/sandbox-model';
+import { CRCZPHttpService } from '@crczp/api-common';
+import { topologyMapper } from '../../mappers/topology/topology-mapper';
 import { TopologyDTO } from '../../dto/topology/topology-dto.model';
 
 /**
@@ -14,27 +12,19 @@ import { TopologyDTO } from '../../dto/topology/topology-dto.model';
  * by D3 and it would cause problems. This way we can remain hierarchical structure inside model and
  * implement functions needed for visualization  in our own way.
  */
-
 @Injectable()
 export class TopologyApi {
-    private readonly http = inject(HttpClient);
+    private readonly httpService = inject(CRCZPHttpService);
     private settings = inject(PortalConfig);
 
-    private consolesSubject$: BehaviorSubject<SandboxConsole[]> =
-        new BehaviorSubject([]);
-    consoles$: Observable<SandboxConsole[]> =
-        this.consolesSubject$.asObservable();
-
-    getTopologyBySandboxInstanceId(
-        sandboxUuid: string
-    ): Observable<{ nodes: GraphNode[]; links: GraphNodeLink[] }> {
+    getTopologyBySandboxInstanceId(sandboxUuid: string): Observable<Topology> {
         const url = `${this.settings.basePaths.sandbox}/sandboxes/${sandboxUuid}/topology`;
         return this.getTopology(url);
     }
 
     getTopologyBySandboxDefinitionId(
         sandboxDefinitionsId: number
-    ): Observable<{ nodes: GraphNode[]; links: GraphNodeLink[] }> {
+    ): Observable<Topology> {
         const url = `${this.settings.basePaths.sandbox}/definitions/${sandboxDefinitionsId}/topology`;
         return this.getTopology(url);
     }
@@ -55,20 +45,10 @@ export class TopologyApi {
      * @returns {Observable<{nodes: GraphNode[], links: Link[]}>} Observable of topology model
      * Caller needs to subscribe for it.
      */
-    private getTopology(
-        url: string
-    ): Observable<{ nodes: GraphNode[]; links: GraphNodeLink[] }> {
-        return this.http
-            .get<TopologyDTO>(url, {
-                context: withCache({
-                    storage: 'localStorage',
-                    ttl: 7.2e6, // 2h
-                }),
-            })
-            .pipe(
-                map((response) =>
-                    TopologyGraphMapper.mapTopologyFromDTO(response)
-                )
-            );
+    private getTopology(url: string): Observable<Topology> {
+        return this.httpService
+            .get<TopologyDTO>(url, 'Fetching Topology')
+            .withReceiveMapper(topologyMapper)
+            .execute();
     }
 }

@@ -34,12 +34,7 @@ export { VMConsole } from './sandbox-instance/vm-console';
 export { VMInfo } from './sandbox-instance/vm-info';
 
 // TOPOLOGY ELEMENTS
-export { TopologyLink } from './sandbox-instance/sandbox-topology-elements/topology-link';
-export { TopologyPort } from './sandbox-instance/sandbox-topology-elements/topology-port';
-export { TopologySwitch } from './sandbox-instance/sandbox-topology-elements/topology-switch';
-export { TopologyRouter } from './sandbox-instance/sandbox-topology-elements/topology-router';
-export { TopologyHost } from './sandbox-instance/sandbox-topology-elements/topology-host';
-export { Topology } from './sandbox-instance/topology';
+export * from './topology-graph/topology';
 
 // ENUMS
 export { RequestStageState } from './enums/request-stage-state.enum';
@@ -55,13 +50,4 @@ export { Quota } from './resources/quota';
 export { VirtualImage } from './vm-images/virtual-image';
 export { OwnerSpecified } from './vm-images/owner-specified';
 
-export * from './topology-graph/nodes/graph-node';
-export * from './topology-graph/nodes/switch-node';
-export * from './topology-graph/nodes/router-node';
-export * from './topology-graph/nodes/host-node';
-export * from './topology-graph/nodes/special-node';
-export * from './topology-graph/links/graph-node-link';
-export * from './topology-graph/enums/graph-node-type';
-export * from './topology-graph/links/node-port';
-export * from './topology-graph/enums/link-type-enum';
 export * from './topology-graph/sandbox-console';

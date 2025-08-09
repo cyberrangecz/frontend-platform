@@ -4,7 +4,7 @@ import {
     SentinelNotification,
     SentinelNotificationResult,
     SentinelNotificationService,
-    SentinelNotificationTypeEnum,
+    SentinelNotificationTypeEnum
 } from '@sentinel/layout/notification';
 import { Observable, of, Subject } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
@@ -34,11 +34,6 @@ export class ErrorHandlerService implements ErrorHandler {
         );
     }
 
-    /**
-     * Handles navigation errors and displays appropriate notifications
-     * @param error the navigation error
-     * @param url the url that caused the navigation error
-     */
     emitNavigationError(error: any, url?: string): Observable<boolean> {
         const notification: SentinelNotification = {
             type: SentinelNotificationTypeEnum.Error,
@@ -50,19 +45,9 @@ export class ErrorHandlerService implements ErrorHandler {
             ],
         };
 
-        return this.notificationService
-            .emit(notification)
-            .pipe(
-                map((result) => result === SentinelNotificationResult.CONFIRMED)
-            );
+        return this.safeEmit(this.notificationService, 'emit', notification);
     }
 
-    /**
-     * Handles various error types from different servers and displays alert with user-friendly message
-     * @param err http error
-     * @param action name of the action button displayed in the notification
-     * @param operation description of an operation which caused the error
-     */
     emitAPIError(
         err: HttpErrorResponse,
         operation: string,
@@ -75,6 +60,7 @@ export class ErrorHandlerService implements ErrorHandler {
         if (action !== undefined) {
             notification.action = action;
         }
+
         if (
             err === null ||
             err === undefined ||
@@ -88,15 +74,13 @@ export class ErrorHandlerService implements ErrorHandler {
                 msg.toString(),
             ];
             this.checkForClockSyncErr(err, notification);
-            return this.notificationService
-                .emit(notification)
-                .pipe(
-                    map(
-                        (result) =>
-                            result === SentinelNotificationResult.CONFIRMED
-                    )
-                );
+            return this.safeEmit(
+                this.notificationService,
+                'emit',
+                notification
+            );
         }
+
         if (
             err.url?.startsWith(this.config.basePaths.linearTraining) ||
             err.url?.startsWith(this.config.basePaths.adaptiveTraining)
@@ -110,18 +94,13 @@ export class ErrorHandlerService implements ErrorHandler {
             this.setPythonApiErrorToNotification(err, notification);
             notification.source = 'Sandbox Agenda';
         } else {
-            // UNKNOWN API
             notification.additionalInfo = [
                 'Failed with unsupported error message. Please report the following message to developers',
                 err?.message?.toString(),
             ];
         }
 
-        return this.notificationService
-            .emit(notification)
-            .pipe(
-                map((result) => result === SentinelNotificationResult.CONFIRMED)
-            );
+        return this.safeEmit(this.notificationService, 'emit', notification);
     }
 
     emitFrontendErrorNotification(
@@ -129,16 +108,32 @@ export class ErrorHandlerService implements ErrorHandler {
         source?: string
     ): Observable<boolean> {
         console.error(`${source || 'Error'}: ${message}`);
-        if (!this.notificationService?.emit) return of(false);
-        return this.notificationService
-            .emit({
-                type: SentinelNotificationTypeEnum.Error,
-                title: source || 'Error',
-                additionalInfo: [message],
-            })
-            .pipe(
-                map((result) => result === SentinelNotificationResult.CONFIRMED)
+        return this.safeEmit(this.notificationService, 'emit', {
+            type: SentinelNotificationTypeEnum.Error,
+            title: source || 'Error',
+            additionalInfo: [message],
+        });
+    }
+
+    /**
+     * Safely invokes a method that should return Observable<SentinelNotificationResult>.
+     * Falls back to `of(false)` if the method is missing or throws.
+     */
+    private safeEmit(
+        service: any,
+        method: string,
+        payload: SentinelNotification
+    ): Observable<boolean> {
+        if (typeof service?.[method] !== 'function') {
+            return of(false);
+        }
+        try {
+            return service[method](payload).pipe(
+                map((r: any) => r === SentinelNotificationResult.CONFIRMED)
             );
+        } catch {
+            return of(false);
+        }
     }
 
     private setupNavigationErrorHandling(): void {
@@ -151,7 +146,6 @@ export class ErrorHandlerService implements ErrorHandler {
             )
             .subscribe((errorEvent: NavigationError) => {
                 this.navigationErrorSubject.next(errorEvent);
-
                 this.emitNavigationError(errorEvent.error, errorEvent.url);
             });
     }
@@ -168,24 +162,17 @@ export class ErrorHandlerService implements ErrorHandler {
         notification: SentinelNotification
     ) {
         if (err.error.detail) {
-            // PYTHON API
             notification.additionalInfo = [err.error.detail];
         } else if (err.error.non_field_errors) {
-            // PYTHON API
             notification.additionalInfo = [err.error.non_field_errors];
         }
     }
 
-    /**
-     * A check for one specific type of error message - an out-of-sync clock. In this case, the user will be notified about the issue.
-     * @param err a HttpErrorResponse in general, but in some cases can be a string with a simple error message
-     * @param notification SentinelNotification template object
-     */
     private checkForClockSyncErr(
         err: HttpErrorResponse | string,
         notification: SentinelNotification
     ) {
-        if (err == 'Token has expired') {
+        if (err === 'Token has expired') {
             notification.source = err;
             notification.additionalInfo = [
                 'Failed due to an expired authentication. Please, make sure your local date and time is correct.',
