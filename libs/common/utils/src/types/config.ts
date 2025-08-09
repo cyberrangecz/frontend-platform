@@ -81,22 +81,6 @@ export class PortalConfig extends Z.class({
             .transform(removeTrailingSlash),
     }),
 
-    guacamoleCredentials: z
-        .object({
-            username: z
-                .string({
-                    required_error: 'Guacamole username field is required',
-                })
-                .nonempty('No guacamole username provided'),
-            password: z
-                .string({
-                    required_error: 'Guacamole password field is required',
-                })
-                .nonempty('No guacamole password provided'),
-        })
-        .optional()
-        .describe('Optional Guacamole credentials'),
-
     authConfig: sentinelAuthConfigSchema.describe(
         'Sentinel authentication config'
     ),

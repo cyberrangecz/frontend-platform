@@ -14,10 +14,6 @@
         "mitre": "https://172.19.0.22/mitre-technique-service/api/v1",
         "guacamole": "https://172.19.0.22/guacamole"
     },
-    "guacamoleCredentials": {
-        "username": "-",
-        "password": "-"
-    },
     "roleMapping": {
         "uagAdmin": "ROLE_USER_AND_GROUP_ADMINISTRATOR",
         "trainingDesigner": "ROLE_TRAINING_DESIGNER",
