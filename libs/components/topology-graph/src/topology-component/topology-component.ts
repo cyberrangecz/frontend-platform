@@ -4,8 +4,8 @@ import { MatTab, MatTabGroup, MatTabLabel } from '@angular/material/tabs';
 import { TopologyGraph } from './topology-graph/topology-graph';
 import { MatTooltip } from '@angular/material/tooltip';
 import { ConsoleTab } from '../model/model';
-import { GraphNode, GraphNodeLink } from '@crczp/sandbox-model';
 import { ConsoleView } from '../console/console-view.component';
+import { Topology } from '@crczp/sandbox-model';
 
 @Component({
     selector: 'crczp-topology',
@@ -22,15 +22,22 @@ import { ConsoleView } from '../console/console-view.component';
     styleUrl: './topology-component.scss',
 })
 export class TopologyComponent {
-    @Input({ required: true }) nodes: GraphNode[];
-    @Input({ required: true }) links: GraphNodeLink[];
+    @Input({ required: true }) topology: Topology;
 
     selectedIndex = signal(0);
 
     protected tabs = signal<ConsoleTab[]>([]);
 
-    handleOpenConsole($event: ConsoleTab) {
+    handleOpenConsole($event: ConsoleTab): void {
         this.tabs.update((tabs) => [...tabs, $event]);
         this.selectedIndex.set(this.tabs().length - 1);
+    }
+
+    trackTab(index: number, tab: ConsoleTab): string {
+        return tab.ip + '_' + index;
+    }
+
+    closeTab(index: number): void {
+        this.tabs.update((tabs) => tabs.filter((_, i) => i !== index));
     }
 }

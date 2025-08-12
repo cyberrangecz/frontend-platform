@@ -1,14 +1,12 @@
-<div #networkContainer style="width: 100%; height: 600px;"></div>
-<crczp-minimap
-    [fadeOutDuration]="this.minimapFadeOutDuration"
-    [maxSize]="this.minimapMaxSize"
-    [network]="this.network"
-    [parentContainer]="this.networkContainer"
-    [percentSize]="this.minimapScale"
-    class="minimap"
-/>
+<div #networkContainer style="width: 100%; height: 800px;"></div>
+@if (!!network) {
+    <crczp-minimap
+        [network]="this.network"
+        [parentContainer]="this.networkContainer"
+        class="minimap"
+    />
+}
 
 <crczp-context-menu
-    (itemSelected)="handleOpenConsole($event)"
     [network]="this.network"
 />

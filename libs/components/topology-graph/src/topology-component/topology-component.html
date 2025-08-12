@@ -8,29 +8,22 @@
         <mat-tab label="Topology">
             <crczp-topology-graph
                 (openConsole)="handleOpenConsole($event)"
-                [links]="links"
-                [nodes]="nodes"
+                [topology]="topology"
             />
         </mat-tab>
-        @for (tab of tabs(); let i = $index; track $index) {
+        <ng-container *ngFor="let tab of tabs(); let i = index; trackBy: trackTab">
             <mat-tab [matTooltip]="tab.ip">
                 <ng-template mat-tab-label>
                     <span class="tab-label">
                         {{ tab.title }}
                         <span class="tab-ip">{{ tab.ip }}</span>
-                        <button>
-                            x
-                        </button>
+                        <button (click)="closeTab(i)">x</button>
                     </span>
                 </ng-template>
 
                 <crczp-console-view
-                    [sandboxUUID]="''"
-                    [machineIP]="''"
                 />
             </mat-tab>
-        }
+        </ng-container>
     </mat-tab-group>
 </div>
-
-

@@ -3,73 +3,85 @@ import {
     Component,
     ElementRef,
     EventEmitter,
+    inject,
     Input,
     OnChanges,
     Output,
     SimpleChanges,
-    ViewChild,
+    ViewChild
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { GraphNode, GraphNodeLink } from '@crczp/sandbox-model';
 import { ConsoleTab } from '../../model/model';
-import { Network, Options } from 'vis-network';
-import { DataSet } from 'vis-data';
+import { Edge, Network, Options } from 'vis-network';
 import { Minimap } from '../minimap/minimap';
-import { ContextMenu, ContextMenuItem } from '../context-menu/context-menu';
+import { ContextMenu } from '../context-menu/context-menu';
+import { Topology } from '@crczp/sandbox-model';
+import { TopologyGraphNode } from '../topology-vis-types';
+import { TopologyVisualizationMapperService } from '../services/topology-visualization-mapper-service';
+import { TopologyNodeSvgService } from '../services/topology-svg-generator.service';
 
 @Component({
     selector: 'crczp-topology-graph',
     standalone: true,
     imports: [CommonModule, Minimap, ContextMenu],
+    providers: [TopologyNodeSvgService, TopologyVisualizationMapperService],
     templateUrl: './topology-graph.html',
     styleUrl: './topology-graph.scss',
 })
-export class TopologyGraph implements AfterViewInit, OnChanges {
+export class TopologyGraph implements OnChanges, AfterViewInit {
     @Output() openConsole = new EventEmitter<ConsoleTab>();
-    @Input({ required: true }) nodes: GraphNode[] = [];
-    @Input({ required: true }) links: GraphNodeLink[] = [];
-    @Input() minimapEnabled = true;
-    @Input() viewportMargin = 200;
-    @Input() minimapMaxSize = 200;
-    @Input() minimapScale = 1;
-    @Input() minimapFadeOutDuration = 500;
-    @Input() consoles: any[] = [];
-    @Input() minZoom = 0.4;
-    @Input() maxZoom = 2;
 
+    @Input({ required: true }) topology: Topology;
     @ViewChild('networkContainer', { static: false })
     networkContainer: ElementRef;
     network: Network;
 
-    ngAfterViewInit(): void {
-        this.renderNetwork();
-    }
+    private readonly mapperService = inject(TopologyVisualizationMapperService);
+
+    private nodes: TopologyGraphNode[];
+    private links: Edge[];
 
     ngOnChanges(changes: SimpleChanges): void {
-        if (changes['nodes'] || changes['links']) {
-            this.renderNetwork();
+        if (changes['topology']) {
+            this.mapperService
+                .mapTopologyToTopologyVisualization(this.topology)
+                .subscribe(
+                    ({ nodes, links }) => {
+                        this.nodes = nodes;
+                        this.links = links;
+                        this.instantiateNetwork();
+                    },
+                    (_err) => {},
+                    () => {
+                        console.log('completed render');
+                    }
+                );
         }
     }
 
-    handleOpenConsole(nodeName: ContextMenuItem): void {
-        console.log(nodeName);
+    ngAfterViewInit() {
+        this.instantiateNetwork();
     }
 
     private enforceViewportBounds(): void {
-        const viewPosition = this.network.getViewPosition(); // {x, y}
+        if (!this.network || this.nodes.length === 0) return;
+
+        const viewPosition = this.network.getViewPosition();
         const scale = this.network.getScale();
 
         const allNodePositions = this.nodes.map(
-            (node) => this.network.getPositions([node.name])[node.name]
+            (node) => this.network.getPositions([node.id])[node.id]
         );
+
+        if (allNodePositions.some((pos) => !pos)) return;
 
         const xs = allNodePositions.map((pos) => pos.x);
         const ys = allNodePositions.map((pos) => pos.y);
 
-        const minX = Math.min(...xs) - this.viewportMargin;
-        const maxX = Math.max(...xs) + this.viewportMargin;
-        const minY = Math.min(...ys) - this.viewportMargin;
-        const maxY = Math.max(...ys) + this.viewportMargin;
+        const minX = Math.min(...xs) - 200;
+        const maxX = Math.max(...xs) + 200;
+        const minY = Math.min(...ys) - 200;
+        const maxY = Math.max(...ys) + 200;
 
         const boundedX = Math.max(minX, Math.min(viewPosition.x, maxX));
         const boundedY = Math.max(minY, Math.min(viewPosition.y, maxY));
@@ -87,76 +99,80 @@ export class TopologyGraph implements AfterViewInit, OnChanges {
     }
 
     private enforceZoomLimits(): void {
+        if (!this.network) return;
+
         const scale = this.network.getScale();
 
-        if (scale < this.minZoom || scale > this.maxZoom) {
+        if (scale < 0.1 || scale > 2) {
             const viewPosition = this.network.getViewPosition();
             this.network.moveTo({
                 position: viewPosition,
-                scale: Math.max(this.minZoom, Math.min(scale, this.maxZoom)),
+                scale: Math.max(0.1, Math.min(scale, 2)),
                 animation: false,
             });
         }
     }
 
-    private renderNetwork(): void {
-        if (!this.networkContainer) return;
-
-        const visNodes = new DataSet(
-            this.nodes.map((node) => ({
-                id: node.name,
-                shape: 'image',
-                image: `/assets/topology-graph/${node.nodeType}.svg`,
-                label: node.name,
-                size: 30,
-            }))
-        );
-
-        const visEdges = new DataSet(
-            this.links.map((link) => ({
-                id: link.nodeA.name + link.nodeB.name,
-                from: link.nodeA.name,
-                to: link.nodeB.name,
-            }))
-        );
+    private instantiateNetwork(): void {
+        if (!this.networkContainer || !this.nodes || !this.links) {
+            return;
+        }
 
         const data = {
-            nodes: visNodes,
-            edges: visEdges,
+            nodes: this.nodes,
+            edges: this.links,
         };
 
         const options: Options = {
             edges: {
                 color: '#002776',
-                smooth: false,
+                smooth: {
+                    enabled: true,
+                    type: 'continuous',
+                    roundness: 0.2,
+                },
+                width: 2,
+                selectionWidth: 4,
             },
             physics: {
                 barnesHut: {
-                    centralGravity: 0.5,
-                    gravitationalConstant: -10000,
+                    centralGravity: 0.3,
+                    gravitationalConstant: -2000,
                     springConstant: 0.2,
-                    theta: 0.2,
+                    springLength: 300,
+                    theta: 0.4,
                     damping: 0.2,
                 },
                 stabilization: {
-                    iterations: 2500,
+                    iterations: 100,
                 },
+                solver: 'barnesHut',
+                adaptiveTimestep: true,
+            },
+            interaction: {
+                hover: true,
+                selectConnectedEdges: false,
+                tooltipDelay: 200,
+            },
+            layout: {
+                improvedLayout: true,
+                clusterThreshold: 150,
             },
         };
-
         this.network = new Network(
             this.networkContainer.nativeElement,
             data,
             options
         );
-
-        this.network.on('dragEnd', () => {
-            this.enforceViewportBounds();
-        });
-
-        this.network.on('zoom', () => {
-            this.enforceZoomLimits();
-            this.enforceViewportBounds();
-        });
+        //
+        // // Event handlers
+        // this.network.on('dragEnd', () => {
+        //     this.enforceViewportBounds();
+        // });
+        //
+        // this.network.on('zoom', () => {
+        //     this.enforceZoomLimits();
+        //     this.enforceViewportBounds();
+        // });
     }
 }

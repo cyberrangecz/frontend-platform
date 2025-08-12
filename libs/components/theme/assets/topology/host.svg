@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+    height="120"
+    version="1.1"
+    viewBox="0 0 120 120"
+    width="120"
+    xmlns="http://www.w3.org/2000/svg">
+    <g>
+        <!-- Server unit 1 -->
+        <rect
+            height="18"
+            rx="4"
+            ry="4"
+            style="fill:#2c3e50;stroke:#34495e;stroke-width:2"
+            width="80"
+            x="20"
+            y="25" />
+
+        <!-- Server unit 2 -->
+        <rect
+            height="18"
+            rx="4"
+            ry="4"
+            style="fill:#2c3e50;stroke:#34495e;stroke-width:2"
+            width="80"
+            x="20"
+            y="48" />
+
+        <!-- Server unit 3 -->
+        <rect
+            height="18"
+            rx="4"
+            ry="4"
+            style="fill:#2c3e50;stroke:#34495e;stroke-width:2"
+            width="80"
+            x="20"
+            y="71" />
+
+        <!-- Power/status LEDs for each unit -->
+        <circle cx="25" cy="34" r="2" style="fill:#27ae60" />
+        <circle cx="31" cy="34" r="2" style="fill:#f39c12" />
+
+        <circle cx="25" cy="57" r="2" style="fill:#27ae60" />
+        <circle cx="31" cy="57" r="2" style="fill:#27ae60" />
+
+        <circle cx="25" cy="80" r="2" style="fill:#27ae60" />
+        <circle cx="31" cy="80" r="2" style="fill:#e74c3c" />
+
+        <!-- Drive bays/vents -->
+        <rect height="3" rx="1" style="fill:#1a252f" width="40" x="40" y="32" />
+        <rect height="3" rx="1" style="fill:#1a252f" width="40" x="40" y="37" />
+
+        <rect height="3" rx="1" style="fill:#1a252f" width="40" x="40" y="55" />
+        <rect height="3" rx="1" style="fill:#1a252f" width="40" x="40" y="60" />
+
+        <rect height="3" rx="1" style="fill:#1a252f" width="40" x="40" y="78" />
+        <rect height="3" rx="1" style="fill:#1a252f" width="40" x="40" y="83" />
+
+        <!-- Network ports -->
+        <rect height="3" rx="0.5" style="fill:#1a252f" width="4" x="84" y="32" />
+        <rect height="3" rx="0.5" style="fill:#1a252f" width="4" x="89" y="32" />
+        <rect height="3" rx="0.5" style="fill:#1a252f" width="4" x="94" y="32" />
+
+        <rect height="3" rx="0.5" style="fill:#1a252f" width="4" x="84" y="55" />
+        <rect height="3" rx="0.5" style="fill:#1a252f" width="4" x="89" y="55" />
+        <rect height="3" rx="0.5" style="fill:#1a252f" width="4" x="94" y="55" />
+
+        <rect height="3" rx="0.5" style="fill:#1a252f" width="4" x="84" y="78" />
+        <rect height="3" rx="0.5" style="fill:#1a252f" width="4" x="89" y="78" />
+        <rect height="3" rx="0.5" style="fill:#1a252f" width="4" x="94" y="78" />
+    </g>
+</svg>

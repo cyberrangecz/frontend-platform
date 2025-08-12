@@ -1,5 +1,5 @@
-import {VMInfo, VMStatus} from '@crczp/sandbox-model';
-import {VMInfoDTO} from '../../dto/sandbox-instance/vm-info-dto';
+import { VMInfo, VMStatus } from '@crczp/sandbox-model';
+import { VMInfoDTO } from '../../dto/sandbox-instance/vm-info-dto';
 
 export class VMInfoMapper {
     static fromDTO(dto: VMInfoDTO): VMInfo {
@@ -23,6 +23,8 @@ export class VMInfoMapper {
                 return VMStatus.REBOOT;
             case 'SUSPENDED':
                 return VMStatus.SUSPENDED;
+            default:
+                return VMStatus.UNKNOWN;
         }
     }
 }

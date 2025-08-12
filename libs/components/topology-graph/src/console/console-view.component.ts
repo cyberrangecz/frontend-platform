@@ -1,7 +1,6 @@
 import {
     Component,
     ElementRef,
-    Input,
     OnDestroy,
     OnInit,
     ViewChild,
@@ -16,9 +15,6 @@ import Guacamole from 'guacamole-common-js';
     styleUrl: './console-view.component.scss',
 })
 export class ConsoleView implements OnInit, OnDestroy {
-    @Input({ required: true }) sandboxUUID: string;
-    @Input({ required: true }) machineIP: string;
-
     @ViewChild('guacContainer', { static: true })
     guacContainer!: ElementRef;
     private guacClient: Guacamole.Client | null = null;

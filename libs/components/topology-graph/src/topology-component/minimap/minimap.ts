@@ -1,11 +1,4 @@
-import {
-    Component,
-    ElementRef,
-    Input,
-    OnChanges,
-    signal,
-    ViewChild,
-} from '@angular/core';
+import { Component, ElementRef, Input, OnChanges, signal, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Network } from 'vis-network';
 import { Subject, takeUntil, timer } from 'rxjs';
@@ -19,12 +12,11 @@ import { Subject, takeUntil, timer } from 'rxjs';
 export class Minimap implements OnChanges {
     @Input({ required: true }) network: Network;
     @Input({ required: true }) parentContainer: ElementRef<HTMLDivElement>;
-    @Input() percentSize = 1;
-    @Input() maxSize = 500;
-    @Input() fadeOutDuration = 500;
     dragging = signal(false);
     cancelDragDisable = new Subject<void>();
-
+    private readonly PERCENT_SIZE = 1;
+    private readonly MAX_SIZE = 500;
+    private readonly FADEOUT_DURATION = 500;
     @ViewChild('minimapCanvas', { static: true })
     private minimapCanvasRef!: ElementRef<HTMLCanvasElement>;
 
@@ -48,7 +40,7 @@ export class Minimap implements OnChanges {
         this.network.on('zoom', () => {
             this.cancelDragDisable.next();
             this.dragging.set(true);
-            timer(this.fadeOutDuration)
+            timer(this.FADEOUT_DURATION)
                 .pipe(takeUntil(this.cancelDragDisable))
                 .subscribe(() => {
                     this.dragging.set(false);
@@ -56,7 +48,7 @@ export class Minimap implements OnChanges {
         });
 
         this.network.on('dragEnd', () => {
-            timer(this.fadeOutDuration)
+            timer(this.FADEOUT_DURATION)
                 .pipe(takeUntil(this.cancelDragDisable))
                 .subscribe(() => {
                     this.dragging.set(false); // Triggers fade-out
@@ -75,12 +67,12 @@ export class Minimap implements OnChanges {
 
         const containerRatio = container.offsetWidth / container.offsetHeight;
         const maxWidth = Math.min(
-            canvas.width * this.percentSize,
-            this.maxSize
+            canvas.width * this.PERCENT_SIZE,
+            this.MAX_SIZE
         );
         const maxHeight = Math.min(
-            canvas.height * this.percentSize,
-            this.maxSize
+            canvas.height * this.PERCENT_SIZE,
+            this.MAX_SIZE
         );
 
         if (containerRatio >= 2) {

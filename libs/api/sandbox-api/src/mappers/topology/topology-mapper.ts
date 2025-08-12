@@ -14,7 +14,7 @@ const hostMapper = MapperBuilder.createDTOtoModelMapper<HostNodeDTO, HostNode>({
 });
 
 const subnetMapper = MapperBuilder.createDTOtoModelMapper<SubnetDTO, Subnet>({
-    mappedProperties: ['name', 'mask'],
+    mappedProperties: ['name', 'cidr'],
     mappers: {
         hosts: (dto) => dto.hosts.map((host) => hostMapper(host)),
     },

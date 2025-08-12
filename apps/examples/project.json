@@ -39,7 +39,7 @@
                     {
                         "glob": "**/*",
                         "input": "dist/libs/components/theme/assets/",
-                        "output": "./assets"
+                        "output": "./assets/"
                     }
                 ],
                 "styles": [

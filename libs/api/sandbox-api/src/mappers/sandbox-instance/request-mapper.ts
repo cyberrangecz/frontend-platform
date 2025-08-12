@@ -1,5 +1,5 @@
-import {AllocationRequest, CleanupRequest, Request, RequestStageState} from '@crczp/sandbox-model';
-import {RequestDTO} from '../../dto/sandbox-instance/request-dto';
+import { AllocationRequest, CleanupRequest, Request, RequestStageState } from '@crczp/sandbox-model';
+import { RequestDTO } from '../../dto/sandbox-instance/request-dto';
 
 /**
  * @dynamic
@@ -22,7 +22,7 @@ export class RequestMapper {
     }
 
     static fromCleanupDTO(dto: RequestDTO): CleanupRequest {
-        if (!dto) return;
+        if (!dto) return null;
         const request = new CleanupRequest();
         this.setGeneralAttributes(request, dto);
         return request;
@@ -54,7 +54,7 @@ export class RequestMapper {
             case 'IN_QUEUE':
                 return RequestStageState.IN_QUEUE;
             default:
-                return;
+                throw new Error(`Unknown stage ${stage}`);
         }
     }
 }
