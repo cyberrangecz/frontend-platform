@@ -25,19 +25,19 @@ export class TopologyExample {
                     this.createSubnet(
                         'Subnet 1 - NY',
                         '255.255.255.0',
-                        1,
+                        10,
                         '192.168.1'
                     ),
                     this.createSubnet(
                         'Subnet 2 - NY',
                         '255.255.255.0',
-                        2,
+                        10,
                         '192.168.2'
                     ),
                     this.createSubnet(
                         'Subnet 3 - NY',
                         '255.255.255.0',
-                        3,
+                        10,
                         '192.168.3'
                     ),
                 ],
@@ -58,7 +58,7 @@ export class TopologyExample {
                     this.createSubnet(
                         'Subnet 2 - LA',
                         '255.255.255.0',
-                        1,
+                        16,
                         '192.169.2'
                     ),
                 ],
@@ -88,13 +88,13 @@ export class TopologyExample {
                     this.createSubnet(
                         'Subnet 1 - Cloud',
                         '255.255.255.0',
-                        2,
+                        5,
                         '192.171.1'
                     ),
                     this.createSubnet(
                         'Subnet 2 - Cloud',
                         '255.255.255.0',
-                        2,
+                        10,
                         '192.171.2'
                     ),
                     this.createSubnet(
@@ -106,7 +106,7 @@ export class TopologyExample {
                     this.createSubnet(
                         'Subnet 4 - Cloud',
                         '255.255.255.0',
-                        2,
+                        20,
                         '192.171.4'
                     ),
                 ],
@@ -121,7 +121,7 @@ export class TopologyExample {
                     this.createSubnet(
                         'Subnet 1 - Experimental',
                         '255.255.255.0',
-                        1,
+                        10,
                         '192.172.1'
                     ),
                     this.createSubnet(
@@ -156,7 +156,7 @@ export class TopologyExample {
     ): Subnet {
         return {
             name,
-            cidr: mask,
+            mask,
             hosts: this.createHostNodes(numHosts, baseIp),
         };
     }

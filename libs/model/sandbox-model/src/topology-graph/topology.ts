@@ -13,7 +13,7 @@ export class HostNode extends ConnectableNode.extend({
 
 export class Subnet extends Z.class({
     name: z.string(),
-    cidr: z.string(),
+    mask: z.string(),
     hosts: HostNode.schema().array(),
 }) {}
 

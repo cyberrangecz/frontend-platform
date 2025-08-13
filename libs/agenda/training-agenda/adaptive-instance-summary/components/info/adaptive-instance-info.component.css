@@ -25,11 +25,9 @@ mat-icon {
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
-    border: solid;
     border-radius: 20%;
     background-color: lavender;
-    border-width: 10px;
-    border-color: lavender;
+    border: 10px solid lavender;
     color: darkslategray;
 }
 

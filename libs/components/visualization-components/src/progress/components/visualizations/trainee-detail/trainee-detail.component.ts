@@ -1,5 +1,5 @@
-import { AfterViewInit, Component, EventEmitter, Input, OnChanges, Output, inject } from '@angular/core';
-import {take} from 'rxjs/operators';
+import { AfterViewInit, Component, EventEmitter, inject, Input, OnChanges, Output } from '@angular/core';
+import { take } from 'rxjs/operators';
 import {
     CommandLineEntry,
     HintTakenEvent,
@@ -13,32 +13,29 @@ import {
     WrongAnswerData,
     WrongAnswerEvent
 } from '@crczp/visualization-model';
-import {D3, D3Service} from '../../../../common/d3-service/d3-service';
-import {PROGRESS_CONFIG} from '../../../progress-config';
-import {AbstractLevelTypeEnum} from '@crczp/training-model';
-import {MatDivider} from '@angular/material/divider';
-import {MatTooltipModule} from '@angular/material/tooltip';
+import { D3, D3Service } from '../../../../common/d3-service/d3-service';
+import { PROGRESS_CONFIG } from '../../../progress-config';
+import { AbstractLevelTypeEnum } from '@crczp/training-model';
+import { MatDivider } from '@angular/material/divider';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
-import {ProgressVisualizationsDataService} from '../../../services/progress-visualizations-data.service';
+import { ProgressVisualizationsDataService } from '../../../services/progress-visualizations-data.service';
+import { NgOptimizedImage } from '@angular/common';
 
 @Component({
     selector: 'crczp-trainee-detail',
     templateUrl: './trainee-detail.component.html',
     styleUrls: ['./trainee-detail.component.css'],
-    imports: [
-    MatDivider,
-    MatTooltipModule
-]
+    imports: [MatDivider, MatTooltipModule, NgOptimizedImage],
 })
 export class TraineeDetailComponent implements OnChanges, AfterViewInit {
-    private visualizationDataService = inject(ProgressVisualizationsDataService);
-
     @Input() trainee: ProgressTraineeInfo;
     @Input() visualizationData: ProgressVisualizationData;
     @Input() trainingInstanceId: number;
-
     @Output() hideDetail = new EventEmitter();
-
+    private visualizationDataService = inject(
+        ProgressVisualizationsDataService
+    );
     private readonly d3: D3;
 
     constructor() {
@@ -60,7 +57,9 @@ export class TraineeDetailComponent implements OnChanges, AfterViewInit {
     }
 
     getCurrentLevel(): ProgressLevelInfo {
-        return this.visualizationData.levels.find((level) => level.id == this.getCurrentTraineeLevel()?.id);
+        return this.visualizationData.levels.find(
+            (level) => level.id == this.getCurrentTraineeLevel()?.id
+        );
     }
 
     getCurrentTraineeLevel(): ProgressLevelVisualizationData {
@@ -70,15 +69,21 @@ export class TraineeDetailComponent implements OnChanges, AfterViewInit {
     }
 
     getHints(): ProgressHint[] {
-        return this.getCurrentLevel().hints.sort((a, b) => a.title.localeCompare(b.title));
+        return this.getCurrentLevel().hints.sort((a, b) =>
+            a.title.localeCompare(b.title)
+        );
     }
 
     getHintsUsed(): number {
-        return this.getCurrentTraineeLevel().hintsTaken?.length ? this.getCurrentTraineeLevel().hintsTaken.length : 0;
+        return this.getCurrentTraineeLevel().hintsTaken?.length
+            ? this.getCurrentTraineeLevel().hintsTaken.length
+            : 0;
     }
 
     hintUsed(hint: ProgressHint): boolean {
-        return !!this.getCurrentTraineeLevel().hintsTaken?.find((h) => h == hint.id);
+        return !!this.getCurrentTraineeLevel().hintsTaken?.find(
+            (h) => h == hint.id
+        );
     }
 
     getLevelsTimePlan(): number[] {
@@ -92,12 +97,18 @@ export class TraineeDetailComponent implements OnChanges, AfterViewInit {
         if (currentLevel.id != levelId) {
             return 'lightgray';
         }
-        const minutesInLevel = (this.visualizationData.currentTime - this.getCurrentTraineeLevel().startTime) / 60;
+        const minutesInLevel =
+            (this.visualizationData.currentTime -
+                this.getCurrentTraineeLevel().startTime) /
+            60;
         if (minutesInLevel < currentLevel.estimatedDuration) {
             return 'green';
         }
 
-        if (minutesInLevel > currentLevel.estimatedDuration && minutesInLevel < currentLevel.estimatedDuration * 1.5) {
+        if (
+            minutesInLevel > currentLevel.estimatedDuration &&
+            minutesInLevel < currentLevel.estimatedDuration * 1.5
+        ) {
             return 'orange';
         }
 
@@ -113,20 +124,29 @@ export class TraineeDetailComponent implements OnChanges, AfterViewInit {
             .events.filter((event) => event instanceof WrongAnswerEvent)
             .forEach((event) => {
                 const index = wrongAnswerData.findIndex(
-                    (data) => data.value == (event as WrongAnswerEvent).answerContent
+                    (data) =>
+                        data.value == (event as WrongAnswerEvent).answerContent
                 );
                 if (index != -1) {
                     wrongAnswerData[index].timesUsed++;
-                    const wrongAnswerLastTime = Math.ceil((this.visualizationData.currentTime - event.timestamp) / 60);
+                    const wrongAnswerLastTime = Math.ceil(
+                        (this.visualizationData.currentTime - event.timestamp) /
+                            60
+                    );
                     wrongAnswerData[index].lastUsed =
                         wrongAnswerLastTime == 1
                             ? wrongAnswerLastTime + ' minute ago'
                             : wrongAnswerLastTime + ' minutes ago';
                 } else {
                     const wrongAnswerDataEntry = new WrongAnswerData();
-                    wrongAnswerDataEntry.value = (event as WrongAnswerEvent).answerContent;
+                    wrongAnswerDataEntry.value = (
+                        event as WrongAnswerEvent
+                    ).answerContent;
                     wrongAnswerDataEntry.timesUsed = 1;
-                    const wrongAnswerLastTime = Math.ceil((this.visualizationData.currentTime - event.timestamp) / 60);
+                    const wrongAnswerLastTime = Math.ceil(
+                        (this.visualizationData.currentTime - event.timestamp) /
+                            60
+                    );
                     wrongAnswerDataEntry.lastUsed =
                         wrongAnswerLastTime == 1
                             ? wrongAnswerLastTime + ' minute ago'
@@ -141,8 +161,12 @@ export class TraineeDetailComponent implements OnChanges, AfterViewInit {
         const hintTakenTime = this.getCurrentTraineeLevel()
             .events.filter((event) => event instanceof HintTakenEvent)
             .find((event: HintTakenEvent) => event.hintId == hint.id).timestamp;
-        const hintTakenMinutes = Math.ceil((this.visualizationData.currentTime - hintTakenTime) / 60);
-        return hintTakenMinutes == 1 ? hintTakenMinutes + ' minute ago' : hintTakenMinutes + ' minutes ago';
+        const hintTakenMinutes = Math.ceil(
+            (this.visualizationData.currentTime - hintTakenTime) / 60
+        );
+        return hintTakenMinutes == 1
+            ? hintTakenMinutes + ' minute ago'
+            : hintTakenMinutes + ' minutes ago';
     }
 
     getLowerLevelData(levelId: number): string {
@@ -156,10 +180,21 @@ export class TraineeDetailComponent implements OnChanges, AfterViewInit {
     getUpperLevelData(levelId: number): string {
         const currentLevel = this.getCurrentLevel();
         if (currentLevel.id == levelId) {
-            let res = this.timeDifference(this.visualizationData.currentTime, this.getCurrentTraineeLevel().startTime);
-            const minutesInLevel = (this.visualizationData.currentTime - this.getCurrentTraineeLevel().startTime) / 60;
-            if (Math.floor(minutesInLevel) > currentLevel.estimatedDuration && currentLevel.estimatedDuration != 0) {
-                res += ` (~ ${Math.floor(minutesInLevel - currentLevel.estimatedDuration)} minutes behind)`;
+            let res = this.timeDifference(
+                this.visualizationData.currentTime,
+                this.getCurrentTraineeLevel().startTime
+            );
+            const minutesInLevel =
+                (this.visualizationData.currentTime -
+                    this.getCurrentTraineeLevel().startTime) /
+                60;
+            if (
+                Math.floor(minutesInLevel) > currentLevel.estimatedDuration &&
+                currentLevel.estimatedDuration != 0
+            ) {
+                res += ` (~ ${Math.floor(
+                    minutesInLevel - currentLevel.estimatedDuration
+                )} minutes behind)`;
             }
             return res;
         }
@@ -177,7 +212,9 @@ export class TraineeDetailComponent implements OnChanges, AfterViewInit {
 
         const secondsDifference = Math.floor(difference);
 
-        return `${this.pad(hoursDifference)}:${this.pad(minutesDifference)}:${this.pad(secondsDifference)}`;
+        return `${this.pad(hoursDifference)}:${this.pad(
+            minutesDifference
+        )}:${this.pad(secondsDifference)}`;
     }
 
     pad(num: number): string {
@@ -195,7 +232,8 @@ export class TraineeDetailComponent implements OnChanges, AfterViewInit {
         const data = this.visualizationData.levels.map((level) => {
             const data = new TrainingTimeOverviewData();
             data.start = sum;
-            sum += level.estimatedDuration > 0 ? level.estimatedDuration * 60 : 60;
+            sum +=
+                level.estimatedDuration > 0 ? level.estimatedDuration * 60 : 60;
             data.end = sum;
             data.levelId = level.id;
             return data;
@@ -231,7 +269,9 @@ export class TraineeDetailComponent implements OnChanges, AfterViewInit {
             .attr('y', 20)
             .attr('rx', 3)
             .attr('ry', 3)
-            .attr('fill', (d: TrainingTimeOverviewData) => this.getLevelColor(d.levelId));
+            .attr('fill', (d: TrainingTimeOverviewData) =>
+                this.getLevelColor(d.levelId)
+            );
 
         //append upper text
         bar.append('text')
@@ -259,7 +299,10 @@ export class TraineeDetailComponent implements OnChanges, AfterViewInit {
             return;
         }
 
-        const offset = (this.visualizationData.currentTime - this.getCurrentTraineeLevel().startTime) * 0.05;
+        const offset =
+            (this.visualizationData.currentTime -
+                this.getCurrentTraineeLevel().startTime) *
+            0.05;
         const startTime = this.getCurrentTraineeLevel().startTime;
         const currentTime = this.visualizationData.currentTime;
 
@@ -284,7 +327,12 @@ export class TraineeDetailComponent implements OnChanges, AfterViewInit {
         // Add scales to axis
         const x_axis = this.d3
             .axisBottom(scale)
-            .tickFormat((d) => this.timeDifference(d.valueOf(), this.visualizationData.startTime));
+            .tickFormat((d) =>
+                this.timeDifference(
+                    d.valueOf(),
+                    this.visualizationData.startTime
+                )
+            );
 
         //Append timeline
         levelTimeline
@@ -307,7 +355,17 @@ export class TraineeDetailComponent implements OnChanges, AfterViewInit {
             .append('path')
             .attr('class', 'event')
             .attr('d', (d) => d.icon)
-            .attr('transform', (d) => 'translate(' + scale(d.timestamp) + ',' + height / 2.4 + ') scale(' + 1 + ')')
+            .attr(
+                'transform',
+                (d) =>
+                    'translate(' +
+                    scale(d.timestamp) +
+                    ',' +
+                    height / 2.4 +
+                    ') scale(' +
+                    1 +
+                    ')'
+            )
             .attr('fill', 'lightgrey');
 
         //append events line
@@ -315,7 +373,14 @@ export class TraineeDetailComponent implements OnChanges, AfterViewInit {
             .append('line')
             .attr(
                 'transform',
-                (d) => 'translate(' + (scale(d.timestamp) + 8) + ',' + height / 2.4 + ') scale(' + 1 + ')'
+                (d) =>
+                    'translate(' +
+                    (scale(d.timestamp) + 8) +
+                    ',' +
+                    height / 2.4 +
+                    ') scale(' +
+                    1 +
+                    ')'
             )
             .attr('y1', (_, i) => {
                 return i % 2 ? 16 : 0;
@@ -332,7 +397,14 @@ export class TraineeDetailComponent implements OnChanges, AfterViewInit {
             .append('text')
             .attr(
                 'transform',
-                (d) => 'translate(' + (scale(d.timestamp) + 8) + ',' + height / 2.4 + ') scale(' + 1 + ')'
+                (d) =>
+                    'translate(' +
+                    (scale(d.timestamp) + 8) +
+                    ',' +
+                    height / 2.4 +
+                    ') scale(' +
+                    1 +
+                    ')'
             )
             .attr('y', () => {
                 position++;
@@ -350,9 +422,10 @@ export class TraineeDetailComponent implements OnChanges, AfterViewInit {
             return;
         }
 
-        const traineeTrainingRunId = this.visualizationData.traineeProgress.find(
-            (trainee) => trainee.userRefId == this.trainee.userRefId
-        ).trainingRunId;
+        const traineeTrainingRunId =
+            this.visualizationData.traineeProgress.find(
+                (trainee) => trainee.userRefId == this.trainee.userRefId
+            ).trainingRunId;
 
         this.visualizationDataService
             .getCommandLineData(this.trainingInstanceId, traineeTrainingRunId)
@@ -360,17 +433,24 @@ export class TraineeDetailComponent implements OnChanges, AfterViewInit {
             .subscribe((commands: CommandLineEntry[]) => {
                 this.d3.select('.command-timeline').html('');
 
-                const offset = (this.visualizationData.currentTime - this.getCurrentTraineeLevel().startTime) * 0.05;
+                const offset =
+                    (this.visualizationData.currentTime -
+                        this.getCurrentTraineeLevel().startTime) *
+                    0.05;
                 const startTime = this.getCurrentTraineeLevel().startTime;
                 const currentTime = this.visualizationData.currentTime;
 
-                const commandsForLevel = commands.filter((command) => command.timestamp >= startTime - offset);
+                const commandsForLevel = commands.filter(
+                    (command) => command.timestamp >= startTime - offset
+                );
 
                 const width = '100%';
                 const height = 100;
 
                 const el = document.getElementsByClassName('command-timeline');
-                const rect = el[0] ? el[0].getBoundingClientRect() : { width: 0 };
+                const rect = el[0]
+                    ? el[0].getBoundingClientRect()
+                    : { width: 0 };
 
                 let sumTime = startTime;
                 const data = [];
@@ -379,12 +459,17 @@ export class TraineeDetailComponent implements OnChanges, AfterViewInit {
                 const period = 30; // commands are groupped every 30 seconds
                 while (sumTime <= currentTime) {
                     const commandsUsed = commandsForLevel.filter(
-                        (command) => command.timestamp >= sumTime && command.timestamp <= sumTime + period
+                        (command) =>
+                            command.timestamp >= sumTime &&
+                            command.timestamp <= sumTime + period
                     ).length;
-                    data.push({ timestamp: sumTime, commandsUsed: commandsUsed });
+                    data.push({
+                        timestamp: sumTime,
+                        commandsUsed: commandsUsed,
+                    });
                     data.push({
                         timestamp: sumTime + period,
-                        commandsUsed: commandsUsed
+                        commandsUsed: commandsUsed,
                     });
                     sumTime += period;
                 }
@@ -412,9 +497,9 @@ export class TraineeDetailComponent implements OnChanges, AfterViewInit {
                     .scaleLinear()
                     .domain([
                         0,
-                        this.d3.max(data, function(d) {
+                        this.d3.max(data, function (d) {
                             return d.commandsUsed;
-                        })
+                        }),
                     ])
                     .range([height, 0]);
 
@@ -450,20 +535,27 @@ export class TraineeDetailComponent implements OnChanges, AfterViewInit {
         const currentLevel = this.getCurrentLevel();
         const levelStarted = new LevelTimelineData();
         levelStarted.icon = PROGRESS_CONFIG.eventProps.eventShapes['hint'];
-        levelStarted.value = 'Started ProgressLevelInfo ' + (currentLevel.order + 1);
+        levelStarted.value =
+            'Started ProgressLevelInfo ' + (currentLevel.order + 1);
         levelStarted.timestamp = this.getCurrentTraineeLevel().startTime;
         levelStarted.color = 'black';
         data.push(levelStarted);
         this.getCurrentTraineeLevel()
-            .events.filter((event) => event instanceof HintTakenEvent || event instanceof WrongAnswerEvent)
+            .events.filter(
+                (event) =>
+                    event instanceof HintTakenEvent ||
+                    event instanceof WrongAnswerEvent
+            )
             .forEach((event) => {
                 const eventTimelineData = new LevelTimelineData();
-                eventTimelineData.icon = PROGRESS_CONFIG.eventProps.eventShapes[event.type];
+                eventTimelineData.icon =
+                    PROGRESS_CONFIG.eventProps.eventShapes[event.type];
                 eventTimelineData.value =
                     event instanceof HintTakenEvent
                         ? (event as HintTakenEvent).hintTitle
                         : (event as WrongAnswerEvent).answerContent;
-                eventTimelineData.color = event instanceof HintTakenEvent ? 'black' : 'red';
+                eventTimelineData.color =
+                    event instanceof HintTakenEvent ? 'black' : 'red';
                 eventTimelineData.timestamp = event.timestamp;
                 data.push(eventTimelineData);
             });
@@ -471,7 +563,9 @@ export class TraineeDetailComponent implements OnChanges, AfterViewInit {
     }
 
     isTrainingLevel(): boolean {
-        return this.getCurrentLevel()?.levelType == AbstractLevelTypeEnum.Training;
+        return (
+            this.getCurrentLevel()?.levelType == AbstractLevelTypeEnum.Training
+        );
     }
 
     onResize(): void {

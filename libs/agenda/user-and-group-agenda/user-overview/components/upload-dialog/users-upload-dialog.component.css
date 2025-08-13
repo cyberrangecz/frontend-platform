@@ -42,7 +42,6 @@ mat-progress-bar {
     margin: 5px 0;
     display: flex;
     flex-direction: column;
-    text-align: bottom;
     align-items: center;
     justify-items: center;
     border: 1px solid #d8d8d8;

@@ -10,7 +10,7 @@ export class HostNodeDTO extends Z.class({
 
 export class SubnetDTO extends Z.class({
     name: z.string(),
-    cidr: z.string(),
+    mask: z.string(),
     hosts: z.array(HostNodeDTO.schema()),
 }) {}
 
