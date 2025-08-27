@@ -14,7 +14,7 @@ import { MatButton } from '@angular/material/button';
 import { FloatingAnswerFormComponent } from '../subcomponents/answer-floating-form/floating-answer-form.component';
 import { SentinelMarkdownViewComponent } from '@sentinel/components/markdown-view';
 import { TopologyWrapperComponent } from '../subcomponents/topology-wrapper/topology-wrapper.component';
-import { SplitContainerComponent } from '@crczp/components';
+import { SandboxLevelSplitPanel } from '@crczp/components';
 import { DividerPositionSynchronizerService } from '@crczp/utils';
 
 @Component({
@@ -23,7 +23,7 @@ import { DividerPositionSynchronizerService } from '@crczp/utils';
     styleUrl: './generic-sandbox-level.component.css',
     imports: [
         AsyncPipe,
-        SplitContainerComponent,
+        SandboxLevelSplitPanel,
         NgTemplateOutlet,
         MatButton,
         FloatingAnswerFormComponent,

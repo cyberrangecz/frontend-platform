@@ -1,0 +1,45 @@
+<div class="container">
+    <div #levelContentElement class="level-content {{isStepperDisplayed ?
+      'content-height-with-stepper' :
+      'content-height-without-stepper'}}">
+        <div #left class="left-panel round-scrollbar">
+            {{ levelContent }}
+        </div>
+
+        <div #right class="right-panel">
+            <button (click)="isCollapsed.set(!isCollapsed())" class="collapse-button" mat-fab>
+                <mat-icon>
+                    {{ isCollapsed() ? 'chevron_left' : 'chevron_right' }}
+                </mat-icon>
+            </button>
+            <crczp-topology-wrapper
+                (getAccessFile)="getAccessFile.emit($event)"
+                (sentinelResize)="onRightPanelResize($event)"
+                [loading]="isLoading"
+                [sandboxDefinitionId]="sandboxDefinitionId"
+                [sandboxInstanceId]="sandboxInstanceId"
+                class="wh-100 overflow-hidden"
+            />
+        </div>
+    </div>
+    @if ((isLoading | async) === false) {
+        @if ((isCorrectAnswerSubmitted$ | async) || isBacktracked) {
+            <button
+                class="next-button"
+                mat-raised-button
+                (click)="next.emit()">
+                {{ isLast && !isBacktracked ? "Finish" : "Next" }}
+            </button>
+        } @else {
+            <crczp-floating-answer-form
+                (answerSubmit)="answerSubmitted.emit($event)"
+                [buttonLabel]="isLast ? 'Finish' : 'Submit'"
+            >
+                @if (hints) {
+                    <ng-container [ngTemplateOutlet]="hints" />
+                }
+            </crczp-floating-answer-form>
+        }
+    }
+</div>
+

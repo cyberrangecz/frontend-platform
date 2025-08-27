@@ -1,146 +1,124 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TopologyComponent } from '@crczp/topology-graph';
 import { SentinelLayout1Component } from '@sentinel/layout/layout1';
 import { TopologyApi } from '@crczp/sandbox-api';
-import { HostNode, Subnet, Topology } from '@crczp/sandbox-model';
+import { HostNode, RouterNode, Subnet, Topology } from '@crczp/sandbox-model';
+import { FormsModule } from '@angular/forms';
 
 @Component({
     selector: 'crczp-topology-example',
-    imports: [CommonModule, TopologyComponent, SentinelLayout1Component],
+    imports: [
+        CommonModule,
+        TopologyComponent,
+        SentinelLayout1Component,
+        FormsModule,
+    ],
     templateUrl: './topology-example.html',
     styleUrl: './topology-example.scss',
     providers: [TopologyApi],
 })
-export class TopologyExample {
-    //GPT generated example topology
-    readonly exampleTopology: Topology = {
-        routers: [
-            // Router 1 - New York Data Center
-            {
-                name: 'Router 1 - New York',
+export class TopologyExample implements OnInit {
+    topology!: Topology;
+
+    topologyScale = 5;
+    prevScale = -1;
+
+    ngOnInit(): void {
+        // this.generateRandomTopology();
+
+        const host = {
+            name: 'Laptop',
+            ip: '192.168.10.45',
+            osType: 'windows',
+            guiAccess: true,
+        };
+
+        const subnet = {
+            name: 'LAN',
+            cidr: '192.168.10.0/24',
+            hosts: [host],
+        };
+
+        const exampleRouter = {
+            name: 'Home router',
+            osType: 'linux',
+            guiAccess: true,
+            subnets: [subnet],
+        };
+
+        this.topology = {
+            routers: [exampleRouter],
+        };
+    }
+
+    generateRandomTopology(): void {
+        if (this.prevScale === this.topologyScale) {
+            return;
+        }
+        const scale = this.topologyScale;
+
+        const numRouters =
+            Math.floor(Math.random() * Math.max(2, Math.round(scale / 2))) + 1;
+
+        const routers: RouterNode[] = [];
+
+        for (let r = 0; r < numRouters; r++) {
+            const numSubnets =
+                Math.floor(
+                    Math.random() * Math.max(2, Math.round(scale / 1.5))
+                ) + 1;
+
+            const subnets: Subnet[] = [];
+
+            for (let s = 0; s < numSubnets; s++) {
+                const numHosts =
+                    Math.floor(
+                        Math.random() * Math.max(4, Math.round(scale * 1.5))
+                    ) + 1;
+
+                const subnetId = (r + 1) * 100 + (s + 1);
+                const baseIp = `192.${Math.floor(subnetId / 100)}.${
+                    subnetId % 100
+                }`;
+
+                subnets.push(
+                    this.createSubnet(
+                        `Router ${r + 1} Subnet ${s + 1}`,
+                        '255.255.255.0/24',
+                        numHosts,
+                        baseIp
+                    )
+                );
+            }
+
+            routers.push({
+                name: `Router ${r + 1}`,
                 osType: 'linux',
                 guiAccess: true,
-                subnets: [
-                    this.createSubnet(
-                        'Subnet 1 - NY',
-                        '255.255.255.0',
-                        10,
-                        '192.168.1'
-                    ),
-                    this.createSubnet(
-                        'Subnet 2 - NY',
-                        '255.255.255.0',
-                        10,
-                        '192.168.2'
-                    ),
-                    this.createSubnet(
-                        'Subnet 3 - NY',
-                        '255.255.255.0',
-                        10,
-                        '192.168.3'
-                    ),
-                ],
-            },
+                subnets: subnets,
+            });
+        }
 
-            // Router 2 - Los Angeles Data Center
-            {
-                name: 'Router 2 - Los Angeles',
-                osType: 'linux',
-                guiAccess: true,
-                subnets: [
-                    this.createSubnet(
-                        'Subnet 1 - LA',
-                        '255.255.255.0',
-                        4,
-                        '192.169.1'
-                    ),
-                    this.createSubnet(
-                        'Subnet 2 - LA',
-                        '255.255.255.0',
-                        16,
-                        '192.169.2'
-                    ),
-                ],
-            },
+        this.topology = {
+            routers: routers,
+        };
+    }
 
-            // Router 3 - Branch Office
-            {
-                name: 'Router 3 - Branch Office',
-                osType: 'linux',
-                guiAccess: true,
-                subnets: [
-                    this.createSubnet(
-                        'Subnet 1 - Branch',
-                        '255.255.255.0',
-                        3,
-                        '192.170.1'
-                    ),
-                ],
-            },
+    onSliderChange(): void {
+        this.generateRandomTopology();
+    }
 
-            // Router 4 - Cloud Service
-            {
-                name: 'Router 4 - Cloud Service',
-                osType: 'linux',
-                guiAccess: true,
-                subnets: [
-                    this.createSubnet(
-                        'Subnet 1 - Cloud',
-                        '255.255.255.0',
-                        5,
-                        '192.171.1'
-                    ),
-                    this.createSubnet(
-                        'Subnet 2 - Cloud',
-                        '255.255.255.0',
-                        10,
-                        '192.171.2'
-                    ),
-                    this.createSubnet(
-                        'Subnet 3 - Cloud',
-                        '255.255.255.0',
-                        2,
-                        '192.171.3'
-                    ),
-                    this.createSubnet(
-                        'Subnet 4 - Cloud',
-                        '255.255.255.0',
-                        20,
-                        '192.171.4'
-                    ),
-                ],
-            },
-
-            // Router 5 - Experimental Network
-            {
-                name: 'Router 5 - Experimental Network',
-                osType: 'Linux',
-                guiAccess: true,
-                subnets: [
-                    this.createSubnet(
-                        'Subnet 1 - Experimental',
-                        '255.255.255.0',
-                        10,
-                        '192.172.1'
-                    ),
-                    this.createSubnet(
-                        'Subnet 2 - Experimental',
-                        '255.255.255.0',
-                        2,
-                        '192.172.2'
-                    ),
-                ],
-            },
-        ],
-    };
-
-    private createHostNodes(num: number, baseIp: string): HostNode[] {
+    private createHostNodes(
+        num: number,
+        baseIp: string,
+        subnet: string
+    ): HostNode[] {
         const hosts: HostNode[] = [];
         for (let i = 0; i < num; i++) {
             hosts.push({
-                name: `host-${baseIp}-${i}`,
-                osType: 'Linux', // Example OS type
+                name: `${subnet} host: ${i + 1}`,
+                osType: 'Linux',
                 guiAccess: true,
                 ip: `${baseIp}.${i + 1}`,
             });
@@ -156,8 +134,8 @@ export class TopologyExample {
     ): Subnet {
         return {
             name,
-            mask,
-            hosts: this.createHostNodes(numHosts, baseIp),
+            cidr: mask,
+            hosts: this.createHostNodes(numHosts, baseIp, name),
         };
     }
 }

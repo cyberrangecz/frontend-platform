@@ -1,8 +1,7 @@
-import {ExtendedMatchingItems, FreeFormQuestion, MultipleChoiceQuestion, Question} from '@crczp/training-model';
-import {StepItem, StepStateEnum} from '@sentinel/components/stepper';
+import { ExtendedMatchingItems, FreeFormQuestion, MultipleChoiceQuestion, Question } from '@crczp/training-model';
+import { StepItem, StepStateEnum } from '@sentinel/components/stepper';
 
 export class QuestionStepperAdapter implements StepItem {
-    private _question: Question;
     id: number;
     title: string;
     required: boolean;
@@ -19,6 +18,8 @@ export class QuestionStepperAdapter implements StepItem {
         this.required = question.required;
         this.icon = QuestionStepperAdapter.iconType(question);
     }
+
+    private _question: Question;
 
     get question(): Question {
         return this._question;
@@ -43,5 +44,6 @@ export class QuestionStepperAdapter implements StepItem {
         } else if (question instanceof MultipleChoiceQuestion) {
             return 'check_circle';
         }
+        return 'help';
     }
 }

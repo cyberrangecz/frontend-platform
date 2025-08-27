@@ -1,4 +1,12 @@
-import { AfterViewInit, Component, EventEmitter, inject, Input, OnChanges, Output } from '@angular/core';
+import {
+    AfterViewInit,
+    Component,
+    EventEmitter,
+    inject,
+    Input,
+    OnChanges,
+    Output,
+} from '@angular/core';
 import { take } from 'rxjs/operators';
 import {
     CommandLineEntry,
@@ -11,7 +19,7 @@ import {
     ProgressVisualizationData,
     TrainingTimeOverviewData,
     WrongAnswerData,
-    WrongAnswerEvent
+    WrongAnswerEvent,
 } from '@crczp/visualization-model';
 import { D3, D3Service } from '../../../../common/d3-service/d3-service';
 import { PROGRESS_CONFIG } from '../../../progress-config';
@@ -20,13 +28,12 @@ import { MatDivider } from '@angular/material/divider';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { ProgressVisualizationsDataService } from '../../../services/progress-visualizations-data.service';
-import { NgOptimizedImage } from '@angular/common';
 
 @Component({
     selector: 'crczp-trainee-detail',
     templateUrl: './trainee-detail.component.html',
     styleUrls: ['./trainee-detail.component.css'],
-    imports: [MatDivider, MatTooltipModule, NgOptimizedImage],
+    imports: [MatDivider, MatTooltipModule],
 })
 export class TraineeDetailComponent implements OnChanges, AfterViewInit {
     @Input() trainee: ProgressTraineeInfo;

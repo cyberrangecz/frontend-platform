@@ -1,4 +1,38 @@
-.toplogy-wrapper {
-    border: 2px solid var(--neutral-20);
-    border-radius: 1rem;
+.toplogy-tabs-wrapper {
+    box-shadow: -1px 1px 3px var(--neutral-70);
+    border-radius: 1rem 0 0 1rem;
+    position: relative;
+    overflow: hidden;
+    transition: visibility 0.3s ease, opacity 0.3s ease;
+}
+
+.topology-tabs-wrapper--collapsed {
+    z-index: -1;
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.topology-graph-wrapper {
+    overflow: hidden;
+}
+
+.draggable-bar {
+    position: absolute;
+    left: -3px;
+    top: 44px;
+    height: calc(100% - 52px);
+    width: 6px;
+    background-color: transparent;
+    cursor: col-resize;
+    z-index: 1000;
+}
+
+.tab-label {
+    user-select: none;
+    overflow: hidden;
+}
+
+.mat-tab-group {
+    overflow: hidden;
 }

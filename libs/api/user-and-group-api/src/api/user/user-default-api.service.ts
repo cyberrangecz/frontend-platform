@@ -1,13 +1,7 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import {
-    ResponseHeaderContentDispositionReader,
-    SentinelParamsMerger,
-} from '@sentinel/common';
-import {
-    OffsetPaginationEvent,
-    PaginatedResource,
-} from '@sentinel/common/pagination';
+import { ResponseHeaderContentDispositionReader, SentinelParamsMerger } from '@sentinel/common';
+import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
 import { SentinelFilter } from '@sentinel/common/filter';
 import { User, UserRole } from '@crczp/user-and-group-model';
 import { fromEvent, mergeMap, Observable } from 'rxjs';
@@ -17,12 +11,7 @@ import { UserAndGroupUserDTO } from '../../DTO/user/user-dto.model';
 import { RoleMapper } from '../../mappers/role-mapper';
 import { UserMapper } from '../../mappers/user.mapper';
 import { UserApi } from './user-api.service';
-import {
-    BlobFileSaver,
-    handleJsonError,
-    JavaPaginatedResource,
-    ParamsBuilder,
-} from '@crczp/api-common';
+import { BlobFileSaver, handleJsonError, JavaPaginatedResource, ParamsBuilder } from '@crczp/api-common';
 import { PortalConfig } from '@crczp/utils';
 
 /**

@@ -27,7 +27,7 @@ export function mapTopologyToTopologyVisualization(topology: Topology): {
             id: `internet-${router.name}`,
             from: 'internet',
             to: router.name,
-            length: 1000,
+            length: 400,
         });
 
         /* Subnets & hosts */
@@ -38,14 +38,14 @@ export function mapTopologyToTopologyVisualization(topology: Topology): {
                 id: subnetId,
                 name: subnet.name,
                 nodeType: 'SUBNET',
-                ip: subnet.mask, // hijack ip slot for mask
+                ip: subnet.cidr,
             });
 
             links.push({
                 id: `${router.name}-${subnetId}`,
                 from: router.name,
                 to: subnetId,
-                length: 900,
+                length: 500,
             });
 
             subnet.hosts.forEach((host) => {

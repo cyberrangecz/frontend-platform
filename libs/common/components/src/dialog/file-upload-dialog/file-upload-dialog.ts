@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
     MAT_DIALOG_DATA,
@@ -34,7 +34,7 @@ export interface FileUploadDialogConfig {
     templateUrl: './file-upload-dialog.html',
     styleUrl: './file-upload-dialog.scss',
 })
-export class FileUploadDialog implements OnInit {
+export class FileUploadDialog {
     protected fileFormControl = new FormControl<File[]>([]);
     protected dialogRef =
         inject<MatDialogRef<FileUploadDialog, File | File[] | null>>(
@@ -51,12 +51,6 @@ export class FileUploadDialog implements OnInit {
 
     onValueChange(files: File[]) {
         this.filesUploaded.set(files.length > 0);
-    }
-
-    ngOnInit() {
-        this.fileFormControl.valueChanges.subscribe((value) => {
-            console.log(value);
-        });
     }
 
     clear() {

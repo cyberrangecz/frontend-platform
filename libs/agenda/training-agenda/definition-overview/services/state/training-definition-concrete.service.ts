@@ -191,7 +191,6 @@ export class TrainingDefinitionConcreteService extends TrainingDefinitionService
             take(1),
             filter((value) => value !== undefined && value !== null),
             tap(() => this.fileUploadProgressService.start()),
-            tap((value) => console.log('result', value)),
             switchMap((file) => this.api.upload(file as File)),
             tap(
                 () => {

@@ -12,35 +12,52 @@ export class TrainingInstanceFormGroup {
         this.formGroup = new UntypedFormGroup(
             {
                 startTime: new UntypedFormControl(trainingInstance.startTime),
-                endTime: new UntypedFormControl(trainingInstance.endTime, [Validators.required, this.dateValidator]),
-                title: new UntypedFormControl(trainingInstance.title, [SentinelValidators.noWhitespace]),
-                trainingDefinition: new UntypedFormControl(trainingInstance.trainingDefinition, [Validators.required]),
-                accessTokenPrefix: new UntypedFormControl(this.getTokenPrefix(trainingInstance.accessToken), [
+                endTime: new UntypedFormControl(trainingInstance.endTime, [
+                    Validators.required,
+                    this.dateValidator,
+                ]),
+                title: new UntypedFormControl(trainingInstance.title, [
                     SentinelValidators.noWhitespace,
                 ]),
-                localEnvironment: new UntypedFormControl(trainingInstance.localEnvironment),
+                trainingDefinition: new UntypedFormControl(
+                    trainingInstance.trainingDefinition,
+                    [Validators.required]
+                ),
+                accessTokenPrefix: new UntypedFormControl(
+                    this.getTokenPrefix(trainingInstance.accessToken),
+                    [SentinelValidators.noWhitespace]
+                ),
+                localEnvironment: new UntypedFormControl(
+                    trainingInstance.localEnvironment
+                ),
                 backwardMode: new UntypedFormControl(false),
-                showStepperBar: new UntypedFormControl(trainingInstance.showStepperBar),
+                showStepperBar: new UntypedFormControl(
+                    trainingInstance.showStepperBar
+                ),
                 poolId: new UntypedFormControl(trainingInstance.poolId),
-                sandboxDefinitionId: new UntypedFormControl(trainingInstance.sandboxDefinitionId),
+                sandboxDefinitionId: new UntypedFormControl(
+                    trainingInstance.sandboxDefinitionId
+                ),
             },
             {
                 validators: [this.dateSequenceValidator, this.sandboxValidator],
-            },
+            }
         );
 
         this.formGroup.get('localEnvironment').valueChanges.subscribe(() => {
             this.onLocalEnvironmentChange();
         });
 
-        this.formGroup.get('showStepperBar').valueChanges.subscribe((stepperbarEnabled) => {
-            if (stepperbarEnabled) {
-                this.formGroup.get('backwardMode').enable();
-            } else {
-                this.formGroup.get('backwardMode').setValue(false);
-                this.formGroup.get('backwardMode').disable();
-            }
-        });
+        this.formGroup
+            .get('showStepperBar')
+            .valueChanges.subscribe((stepperbarEnabled) => {
+                if (stepperbarEnabled) {
+                    this.formGroup.get('backwardMode').enable();
+                } else {
+                    this.formGroup.get('backwardMode').setValue(false);
+                    this.formGroup.get('backwardMode').disable();
+                }
+            });
     }
 
     disable(): void {
@@ -57,9 +74,38 @@ export class TrainingInstanceFormGroup {
         }
     }
 
-    private dateSequenceValidator: ValidatorFn = (control: UntypedFormGroup): ValidationErrors | null => {
+    /**
+     * Sets values from training instance to individual inputs
+     * @param trainingInstance training instance which values should be set to inputs
+     */
+    setValuesToTrainingInstance(trainingInstance: TrainingInstance): void {
+        trainingInstance.startTime = this.formGroup.get('startTime').value;
+        trainingInstance.endTime = this.formGroup.get('endTime').value;
+        trainingInstance.title = this.formGroup.get('title').value;
+        trainingInstance.trainingDefinition =
+            this.formGroup.get('trainingDefinition').value;
+        trainingInstance.accessToken = this.formGroup
+            .get('accessTokenPrefix')
+            .value?.trim();
+        trainingInstance.localEnvironment =
+            this.formGroup.get('localEnvironment').value;
+        trainingInstance.backwardMode =
+            this.formGroup.get('backwardMode').value;
+        trainingInstance.sandboxDefinitionId = this.formGroup.get(
+            'sandboxDefinitionId'
+        ).value;
+        trainingInstance.poolId = this.formGroup.get('poolId').value;
+        trainingInstance.showStepperBar =
+            this.formGroup.get('showStepperBar').value;
+    }
+
+    private dateSequenceValidator: ValidatorFn = (
+        control: UntypedFormGroup
+    ): ValidationErrors | null => {
         let error = null;
-        const startTime = control.get('startTime').value ? control.get('startTime').value : Date.now();
+        const startTime = control.get('startTime').value
+            ? control.get('startTime').value
+            : Date.now();
         const endTime = control.get('endTime').value;
         if (startTime && endTime && startTime.valueOf() > endTime.valueOf()) {
             error = { c: true };
@@ -67,7 +113,9 @@ export class TrainingInstanceFormGroup {
         return error ? error : null;
     };
 
-    private dateValidator: ValidatorFn = (control: UntypedFormControl): ValidationErrors | null => {
+    private dateValidator: ValidatorFn = (
+        control: UntypedFormControl
+    ): ValidationErrors | null => {
         let error = null;
         if (control.value && control.value.valueOf() < Date.now()) {
             error = { dateInPast: true };
@@ -80,30 +128,21 @@ export class TrainingInstanceFormGroup {
      * Verifies if either pool or sandbox definition is selected respectively to local environment
      * @param control form control to be validated
      */
-    private sandboxValidator: ValidatorFn = (control: UntypedFormGroup): ValidationErrors | null => {
+    private sandboxValidator: ValidatorFn = (
+        control: UntypedFormGroup
+    ): ValidationErrors | null => {
         const localEnvironment = control.get('localEnvironment').value;
         if (localEnvironment) {
-            return control.get('sandboxDefinitionId').value ? null : { sandboxDefinitionRequired: true };
+            return control.get('sandboxDefinitionId').value
+                ? null
+                : { sandboxDefinitionRequired: true };
         }
-        return control.get('poolId').value || control.get('sandboxDefinitionId').value ? null : { poolRequired: true };
-    };
 
-    /**
-     * Sets values from training instance to individual inputs
-     * @param trainingInstance training instance which values should be set to inputs
-     */
-    setValuesToTrainingInstance(trainingInstance: TrainingInstance): void {
-        trainingInstance.startTime = this.formGroup.get('startTime').value;
-        trainingInstance.endTime = this.formGroup.get('endTime').value;
-        trainingInstance.title = this.formGroup.get('title').value;
-        trainingInstance.trainingDefinition = this.formGroup.get('trainingDefinition').value;
-        trainingInstance.accessToken = this.formGroup.get('accessTokenPrefix').value?.trim();
-        trainingInstance.localEnvironment = this.formGroup.get('localEnvironment').value;
-        trainingInstance.backwardMode = this.formGroup.get('backwardMode').value;
-        trainingInstance.sandboxDefinitionId = this.formGroup.get('sandboxDefinitionId').value;
-        trainingInstance.poolId = this.formGroup.get('poolId').value;
-        trainingInstance.showStepperBar = this.formGroup.get('showStepperBar').value;
-    }
+        return control.get('poolId').value ||
+            control.get('sandboxDefinitionId').value
+            ? null
+            : { poolRequired: true };
+    };
 
     private onLocalEnvironmentChange(): void {
         this.formGroup.get('sandboxDefinitionId').setValue(null);

@@ -4,7 +4,7 @@ import {
     SentinelNotification,
     SentinelNotificationResult,
     SentinelNotificationService,
-    SentinelNotificationTypeEnum
+    SentinelNotificationTypeEnum,
 } from '@sentinel/layout/notification';
 import { Observable, of, Subject } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
@@ -104,14 +104,14 @@ export class ErrorHandlerService implements ErrorHandler {
     }
 
     emitFrontendErrorNotification(
-        message: string,
+        content: string,
         source?: string
     ): Observable<boolean> {
-        console.error(`${source || 'Error'}: ${message}`);
+        console.error(`${source || 'Error'}: ${content}`);
         return this.safeEmit(this.notificationService, 'emit', {
             type: SentinelNotificationTypeEnum.Error,
             title: source || 'Error',
-            additionalInfo: [message],
+            additionalInfo: [content],
         });
     }
 

@@ -1,14 +1,14 @@
 import { Route } from '@angular/router';
-import { TopologyExample } from './topology/topology-example';
+import { RunExample } from './run/run-example';
 
 export const appRoutes: Route[] = [
     {
-        path: 'topology',
-        component: TopologyExample,
+        path: 'test',
+        component: RunExample,
     },
     {
         path: '',
         pathMatch: 'full',
-        redirectTo: 'topology',
+        redirectTo: 'test',
     },
 ];

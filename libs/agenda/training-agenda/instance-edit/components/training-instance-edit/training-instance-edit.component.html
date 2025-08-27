@@ -16,7 +16,6 @@
 
         <div class="panel-wrapper">
             <div class="half-panel">
-
                 <mat-form-field
                     [owlDateTimeTrigger]="startTimePicker"
                     appearance="outline"
@@ -52,7 +51,13 @@
                     hintLabel="Trainees cannot access training runs after end time expires"
                 >
                     <mat-label>End Time</mat-label>
-                    <input [owlDateTime]="endTimePicker" matInput placeholder="Date Time" />
+                    <input
+                        [min]="startTime.value || now"
+                        [owlDateTime]="endTimePicker"
+                        formControlName="endTime"
+                        matInput
+                        placeholder="End Time"
+                    />
                     <span [owlDateTimeTrigger]="endTimePicker"><i class="fa fa-calendar"></i></span>
                     <owl-date-time
                         #endTimePicker

@@ -1,9 +1,9 @@
 import { DestroyRef, inject, Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, startWith } from 'rxjs';
-import { DividerPositionSynchronizerService } from './divider-position-synchronizer.service';
+import { TopologySplitViewSynchronizerService } from './topology-split-view-synchronizer.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { filter } from 'rxjs/operators';
-import { unique } from '../../../rxjs/unique';
+import { unique } from '@crczp/utils';
 
 @Injectable({
     providedIn: 'root',
@@ -14,7 +14,7 @@ import { unique } from '../../../rxjs/unique';
  * Adds the ability to save and load the divider position from the local storage
  * making the position persistent between page reloads
  */
-export class PersistentDividerPositionSynchronizerService extends DividerPositionSynchronizerService {
+export class PersistentDividerPositionSynchronizerService extends TopologySplitViewSynchronizerService {
     private readonly localStorageKey = 'dividerPosition';
 
     private splitViewDimensionsSubject = new BehaviorSubject(
@@ -32,7 +32,7 @@ export class PersistentDividerPositionSynchronizerService extends DividerPositio
      *
      * @param percentPosition - the new position of the divider in range (0, 1)
      */
-    public emitDividerChange(percentPosition: number): void {
+    public emitDividerRatioChange(percentPosition: number): void {
         this.saveDividerPosition(percentPosition);
         this.splitViewDimensionsSubject.next(percentPosition);
     }

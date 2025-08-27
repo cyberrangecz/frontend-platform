@@ -11,26 +11,16 @@ export class CommonTrainingInstanceSnapshotService {
         new BehaviorSubject(undefined);
     private instanceValidSubject$ = new BehaviorSubject<boolean>(true);
     public instanceValid$ = this.instanceValidSubject$.asObservable();
-    private saveDisabledSubject$ = new BehaviorSubject<boolean>(true);
 
     constructor() {
         this.saveDisabled$ = combineLatest([
             this.isLoading$,
-            this.saveDisabledSubject$.asObservable(),
-        ]).pipe(map(([loading, invalid]) => loading || invalid));
+            this.instanceValid$,
+        ]).pipe(map(([loading, valid]) => loading || !valid));
     }
 
     public setValid(valid: boolean): void {
         this.instanceValidSubject$.next(valid);
-        this.checkInstanceValidity();
-    }
-
-    public checkInstanceValidity(): void {
-        this.saveDisabledSubject$.next(
-            !this.instanceValidSubject$.value ||
-                (!this.editedSnapshot.localEnvironment &&
-                    !this.editedSnapshot.poolId)
-        );
     }
 
     public setLoading(loading: boolean): void {
@@ -65,7 +55,6 @@ export class CommonTrainingInstanceSnapshotService {
         }
         this.editedSnapshot.sandboxDefinitionId = sandboxDefinitionId;
         this.editedSnapshot.poolId = null;
-        this.checkInstanceValidity();
     }
 
     /**
@@ -86,6 +75,5 @@ export class CommonTrainingInstanceSnapshotService {
     public poolSelectionChange(poolId: number): void {
         this.editedSnapshot.poolId = poolId;
         this.editedSnapshot.sandboxDefinitionId = null;
-        this.checkInstanceValidity();
     }
 }

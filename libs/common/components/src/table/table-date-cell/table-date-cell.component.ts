@@ -56,7 +56,7 @@ export class TableDateCellComponent
         this.onResize();
     }
 
-    @HostListener('window:resize', ['$event'])
+    @HostListener('window:resize')
     onResize(): void {
         if (this.isLoading) {
             this.isWideEnough.set(false);

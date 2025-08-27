@@ -1,15 +1,23 @@
 import { inject, Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
+import {
+    HttpClient,
+    HttpErrorResponse,
+    HttpHeaders,
+    HttpParams,
+} from '@angular/common/http';
 
 import { ErrorHandlerService } from '@crczp/utils';
 
-import { OffsetPagination, PaginatedResource } from '@sentinel/common/pagination';
+import {
+    OffsetPagination,
+    PaginatedResource,
+} from '@sentinel/common/pagination';
 
 import {
     DjangoOffsetPaginationDTO,
     DjangoResourceDTO,
     JavaOffsetPaginationDTO,
-    JavaPaginatedResource
+    JavaPaginatedResource,
 } from './pagination/pagination-types';
 
 import { PaginationMapper } from './pagination/pagination-mapper';

@@ -1,6 +1,6 @@
 @if (this.sandboxInstanceId) {
     <div class="topology-container">
-
+        <crczp-topology [topology]="topology" />
     </div>
     <button
         mat-raised-button
@@ -11,13 +11,8 @@
         Get SSH Config
     </button>
 } @else {
-    <div class="topology-placeholder">
-        <h3 class="placeholder-message">*Topology not available</h3>
-        <img
-            draggable="false"
-            src="assets/training-agenda/topology-placeholder.png"
-            alt="Topology placeholder"
-            class="topology-placeholder__image"
-        />
+    <div class="topology-error">
+        <h3 class="topology-error__message">Topology not available</h3>
     </div>
 }
+

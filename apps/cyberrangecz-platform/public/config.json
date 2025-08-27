@@ -1,5 +1,5 @@
 {
-    "enableLocalMode": false,
+    "enableLocalMode": true,
     "defaultPageSize": 15,
     "polling": {
         "pollingPeriodShort": 3000,

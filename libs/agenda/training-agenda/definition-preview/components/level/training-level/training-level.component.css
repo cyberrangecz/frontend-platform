@@ -20,11 +20,11 @@ crczp-topology-graph {
     border: 1px solid gainsboro;
 }
 
-.topology-placeholder {
+.topology-error {
     border: 1px solid gainsboro;
 }
 
-.topology-placeholder-image{
+.topology-placeholder-image {
     width: 100%;
     aspect-ratio: 1;
 }

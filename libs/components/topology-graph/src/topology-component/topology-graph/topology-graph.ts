@@ -4,23 +4,25 @@ import {
     ElementRef,
     EventEmitter,
     inject,
-    Input,
-    OnChanges,
+    input,
     Output,
-    SimpleChanges,
     ViewChild,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ConsoleTab } from '../../model/model';
-import { Edge, Network, Node, Options } from 'vis-network';
+import { Edge, Network, Node } from 'vis-network';
 import { DataSet } from 'vis-data';
 import { Minimap } from '../minimap/minimap';
 import { ContextMenu } from '../context-menu/context-menu';
-import { catchError, combineLatest, EMPTY, map, of, tap } from 'rxjs';
-import { TopologyNodeSvgService } from '../services/topology-svg-generator.service';
+import { catchError, combineLatest, EMPTY, map, of } from 'rxjs';
+import { TopologyNodeSvgService } from './services/topology-svg-generator.service';
 import { ErrorHandlerService } from '@crczp/utils';
 import { Topology } from '@crczp/sandbox-model';
 import { mapTopologyToTopologyVisualization } from './topology-visualization-utils';
+import { TOPOLOGY_CONFIG } from './topology-graph-config';
+import { FormsModule } from '@angular/forms';
+import { toObservable } from '@angular/core/rxjs-interop';
+import { TopologySplitViewSynchronizerService } from '../divider-position/topology-split-view-synchronizer.service';
 
 export type GraphNodeType = 'INTERNET' | 'ROUTER' | 'HOST' | 'SUBNET';
 
@@ -48,16 +50,17 @@ export type TopologyGraphLink = {
 @Component({
     selector: 'crczp-topology-graph',
     standalone: true,
-    imports: [CommonModule, Minimap, ContextMenu],
+    imports: [CommonModule, Minimap, ContextMenu, FormsModule],
     templateUrl: './topology-graph.html',
     styleUrl: './topology-graph.scss',
 })
-export class TopologyGraph implements OnChanges, AfterViewInit {
+export class TopologyGraph implements AfterViewInit {
     @Output() openConsole = new EventEmitter<ConsoleTab>();
 
-    @Input({ required: true }) topology: Topology;
+    topology = input.required<Topology>();
+    height = input.required<number>();
     @ViewChild('networkContainer', { static: false })
-    networkContainer: ElementRef;
+    networkContainer: ElementRef<HTMLDivElement>;
     network: Network;
 
     private nodes: TopologyGraphNode[];
@@ -65,42 +68,61 @@ export class TopologyGraph implements OnChanges, AfterViewInit {
 
     private readonly svgService = inject(TopologyNodeSvgService);
     private readonly errorHandlerService = inject(ErrorHandlerService);
+    private readonly topologySynchronizerService = inject(
+        TopologySplitViewSynchronizerService
+    );
 
     private nodeSubnetParentsDict: Record<string, string> = {};
 
-    ngOnChanges(changes: SimpleChanges): void {
-        if (changes['topology']) {
-            const visualizationData = mapTopologyToTopologyVisualization(
-                this.topology
-            );
-            this.nodes = visualizationData.nodes;
-            this.links = visualizationData.links;
-            this.nodeSubnetParentsDict = {};
-            this.topology.routers
-                .flatMap((router) => router.subnets)
-                .forEach((subnet) => {
-                    subnet.hosts.forEach((host) => {
-                        this.nodeSubnetParentsDict[host.name] = subnet.name;
-                    });
-                });
-            this.renderNetwork();
-        }
+    constructor() {
+        toObservable(this.topology).subscribe((topology) =>
+            this.handleTopologyChange(topology)
+        );
+
+        combineLatest([
+            this.topologySynchronizerService.topologyWidth$,
+            toObservable(this.height),
+        ]).subscribe(([width, height]) =>
+            this.handleDimensionsChange(width, height)
+        );
     }
 
     ngAfterViewInit() {
         this.renderNetwork();
     }
 
+    private handleDimensionsChange(width: number, height: number) {
+        if (!this.networkContainer) return;
+        this.networkContainer.nativeElement.style.width = `${width}px`;
+        this.networkContainer.nativeElement.style.height = `${height}px`;
+    }
+
+    private handleTopologyChange(newTopology: Topology) {
+        const visualizationData =
+            mapTopologyToTopologyVisualization(newTopology);
+        this.nodes = visualizationData.nodes;
+        this.links = visualizationData.links;
+        this.nodeSubnetParentsDict = {};
+        newTopology.routers
+            .flatMap((router) => router.subnets)
+            .forEach((subnet) => {
+                subnet.hosts.forEach((host) => {
+                    this.nodeSubnetParentsDict[host.name] = subnet.name;
+                });
+            });
+        this.renderNetwork();
+    }
+
     private getNodeSize(nodeType: GraphNodeType): number {
         switch (nodeType) {
             case 'INTERNET':
-                return 120;
+                return 250;
             case 'ROUTER':
                 return 110;
             case 'HOST':
                 return 100;
             case 'SUBNET':
-                return 200;
+                return 175;
             default:
                 return 100;
         }
@@ -111,11 +133,11 @@ export class TopologyGraph implements OnChanges, AfterViewInit {
             case 'INTERNET':
                 return 30;
             case 'ROUTER':
-                return 1;
+                return 5;
             case 'HOST':
-                return 4;
+                return 15;
             case 'SUBNET':
-                return 6;
+                return 5;
             default:
                 return 1;
         }
@@ -172,6 +194,7 @@ export class TopologyGraph implements OnChanges, AfterViewInit {
     }
 
     private renderNetwork(): void {
+        let idx = 0;
         const svgObservables = this.nodes.map((node) => {
             if (node.nodeType === 'SUBNET') {
                 return of({
@@ -180,9 +203,26 @@ export class TopologyGraph implements OnChanges, AfterViewInit {
                     shape: 'image',
                     image: this.svgService.generateSubnetSvg(
                         node.name,
-                        node.ip
+                        node.ip,
+                        idx++
                     ),
                     size: this.getNodeSize('SUBNET'),
+                });
+            }
+            if (node.nodeType === 'INTERNET') {
+                return of({
+                    id: node.id,
+                    mass: this.getNodeMass('INTERNET'),
+                    shape: 'image',
+                    x: 0,
+                    y: 0,
+                    fixed: {
+                        x: true,
+                        y: true,
+                    },
+
+                    image: this.svgService.INTERNET_SVG,
+                    size: this.getNodeSize('INTERNET'),
                 });
             }
             return this.svgService
@@ -214,20 +254,17 @@ export class TopologyGraph implements OnChanges, AfterViewInit {
 
         combineLatest(svgObservables)
             .pipe(
-                tap(() => console.log('combineLatest completed')),
                 catchError((err) => {
                     console.error('combineLatest error:', err);
                     return of([]);
                 })
             )
             .subscribe((visNodes) => {
-                console.log('svg created, nodes:', visNodes.length);
                 this.instantiateNetwork(visNodes);
             });
     }
 
     private instantiateNetwork(mappedNodes: Node[]): void {
-        console.log('instantiate network');
         if (!this.networkContainer) {
             return;
         }
@@ -244,7 +281,6 @@ export class TopologyGraph implements OnChanges, AfterViewInit {
                             highlight: '#0066cc',
                             hover: '#0066cc',
                         },
-                        width: 2,
                         length: link.length,
                         smooth: {
                             type: 'continuous',
@@ -259,45 +295,14 @@ export class TopologyGraph implements OnChanges, AfterViewInit {
             edges: visEdges,
         };
 
-        const options: Options = {
-            edges: {
-                color: '#002776',
-                smooth: {
-                    enabled: true,
-                    type: 'continuous',
-                    roundness: 0.2,
-                },
-                width: 2,
-                selectionWidth: 4,
-            },
-            physics: {
-                barnesHut: {
-                    centralGravity: 0.3,
-                    gravitationalConstant: -9000,
-                    springConstant: 0.2,
-                    springLength: 300,
-                    theta: 0.4,
-                    damping: 0.2,
-                },
-                stabilization: {
-                    iterations: 500,
-                },
-                solver: 'barnesHut',
-            },
-            interaction: {
-                hover: true,
-                selectConnectedEdges: false,
-                tooltipDelay: 200,
-            },
-            layout: {
-                improvedLayout: true,
-                clusterThreshold: 150,
-            },
-        };
+        const options = TOPOLOGY_CONFIG.GRAPH;
+        options.physics.stabilization.iterations =
+            1000 + this.nodes.length * 10;
+
         this.network = new Network(
             this.networkContainer.nativeElement,
             data,
-            options
+            TOPOLOGY_CONFIG.GRAPH
         );
 
         // Event handlers
@@ -305,10 +310,10 @@ export class TopologyGraph implements OnChanges, AfterViewInit {
             this.enforceViewportBounds();
         });
 
-        this.network.on('zoom', () => {
-            this.enforceZoomLimits();
-            this.enforceViewportBounds();
-        });
+        // this.network.on('zoom', () => {
+        //     this.enforceZoomLimits();
+        //     this.enforceViewportBounds();
+        // });
 
         this.network.on('doubleClick', (event) => {
             if (event.nodes.length > 0) {

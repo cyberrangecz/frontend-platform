@@ -5,5 +5,5 @@ export * from './table/table-date-cell/table-date-cell.component';
 export * from './table/table-date-cell/table-date-cell-sync.service';
 export * from './table/table-state-cell/table-state-cell.component';
 export * from './table/table-countdown/table-countdown.component';
-export * from './split-container/split-container.component';
+export * from '../../../../apps/examples/src/app/run/sandbox-interaction-level/generic-sandbox-level/split-container/sandbox-level-split-panel.component';
 export * from './logo-spinner/logo-spinner.component';

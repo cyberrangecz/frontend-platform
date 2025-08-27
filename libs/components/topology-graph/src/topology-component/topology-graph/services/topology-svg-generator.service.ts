@@ -3,6 +3,9 @@ import { HttpClient } from '@angular/common/http';
 import { map, Observable, skipWhile } from 'rxjs';
 import { withCache } from '@ngneat/cashew';
 import { LoadingTracker } from '@crczp/utils';
+import { TOPOLOGY_CONFIG } from '../topology-graph-config';
+
+const CONFIG = TOPOLOGY_CONFIG.SVG;
 
 const ICON_PATHS = {
     LINUX: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linux/linux-original.svg',
@@ -29,63 +32,6 @@ function getIconSize(key: keyof typeof ICON_PATHS) {
             return 32;
     }
 }
-
-const CONFIG = {
-    // Dimensions
-    NODE_MIN_WIDTH: 150,
-    NODE_MAX_WIDTH: 320,
-    // NODE_MAIN_CARD_HEIGHT is now calculated dynamically
-    MAIN_CARD_BOTTOM_PADDING: 8, // Padding below the label inside the card
-    CARD_RX: 20,
-
-    SUBNET_MIN_RADIUS: 100,
-
-    INDICATOR: {
-        SIZE: 24,
-        BACKDROP_SIZE: 32,
-        MARGIN: 24,
-        BACKDROP_RADIUS: 12,
-        BACKDROP_FILL: {
-            CONSOLE: '#F0FFF4',
-            LINUX: '#fff4d1',
-            WINDOWS: '#d8f8f5',
-        },
-        BACKDROP_STROKE: {
-            CONSOLE: '#9AE6B4',
-            LINUX: '#fffa94',
-            WINDOWS: '#43c7f9',
-        },
-    },
-
-    // Positioning
-    HEADER_PADDING: 2,
-    ICON_SIZE: 64,
-    LABEL_TOP_MARGIN: 10,
-    LABEL_SIDE_PADDING: 20,
-
-    // Fonts
-    LABEL_FONT_SIZE: 18,
-    LABEL_FONT_FAMILY: "'Inter', sans-serif",
-    IP_TOP_MARGIN: 6,
-    IP_COLOR: '#718096',
-
-    // Colors & Styles
-    ACCENT_COLOR: '#4299e1',
-    COLORS: {
-        primary: {
-            main: '#4299e1',
-            bg: '#EDF2F7',
-            text: '#2D3748',
-            border: '#CBD5E0',
-        },
-        secondary: {
-            main: '#48bb78',
-            bg: '#F0FFF4',
-            text: '#2F855A',
-            border: '#9AE6B4',
-        },
-    },
-};
 
 type IndicatorData = {
     uri: string;
@@ -132,6 +78,93 @@ export class TopologyNodeSvgService {
             );
     }
 
+    public get INTERNET_SVG(): string {
+        const internetIconUri = this.getPreloadedIcon('INTERNET');
+
+        const radius = 128;
+
+        const svgSize = radius * 2;
+        const centerX = svgSize / 2;
+        const centerY = svgSize / 2;
+
+        const svgContent = `
+            <svg width="${svgSize}" height="${svgSize}" viewBox="0 0 ${svgSize} ${svgSize}" xmlns="http://www.w3.org/2000/svg">
+
+                    <defs>
+                       <radialGradient id="internet-border"
+                    cx="50  %" cy="50%" r="50%"
+                    gradientUnits="objectBoundingBox"
+                    gradientTransform="scale(0.98)">
+                    <stop offset="69%"  stop-color="#ffffff" stop-opacity="0.99"/>
+                    <stop offset="70%"  stop-color="${
+                        CONFIG.COLORS.PRIMARY.BORDER
+                    }" stop-opacity="0.9"/>
+                    <stop offset="74%" stop-color="${
+                        CONFIG.COLORS.PRIMARY.BORDER
+                    }" stop-opacity="0.4"/>
+                    <stop offset="80%" stop-color="${
+                        CONFIG.COLORS.PRIMARY.BORDER
+                    }" stop-opacity="0"/>
+                </radialGradient>
+
+                <!-- Gentle backdrop gradient for text -->
+                <radialGradient id="text-backdrop"
+                    cx="50%" cy="50%" r="60%"
+                    gradientUnits="objectBoundingBox">
+                    <stop offset="70%"  stop-color="#ffffff" stop-opacity="0.4"/>
+                    <stop offset="80%" stop-color="#ffffff" stop-opacity="0.1"/>
+                    <stop offset="95%" stop-color="#ffffff" stop-opacity="0"/>
+                </radialGradient>
+
+                <!-- Filter for subtle shadow -->
+                <filter id="gentle-shadow" x="-50%" y="-50%" width="200%" height="200%">
+                    <feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#000000" flood-opacity="0.1"/>
+                </filter>
+                    </defs>
+
+                <circle
+                    cx="${centerX}"
+                    cy="${centerY}"
+                    r="${radius}"
+                    fill="url(#internet-border)"
+                />
+
+                <image href="${internetIconUri}"
+                   x="${centerX - CONFIG.ICON_SIZE.INTERNET / 2 - 2.5}"
+                   y="${centerY - CONFIG.ICON_SIZE.INTERNET / 2 - 2.5}"
+                   width="${CONFIG.ICON_SIZE.INTERNET}"
+                   height="${CONFIG.ICON_SIZE.INTERNET}"
+                   opacity="0.3"
+                   />
+
+            <rect
+                x="${centerX - 75}"
+                y="${centerY - 25}"
+                width="150"
+                height="50"
+                rx="16"
+                ry="20"
+                fill="url(#text-backdrop)"
+                filter="url(#gentle-shadow)"
+            />
+
+            <g clip-path="url(#label-clip-path)">
+                <text x="${centerX}" y="${centerY + 10}"
+                      font-family="${CONFIG.FONT.FAMILY}"
+                      font-size="34px"
+                      font-weight="800"
+                      fill="${CONFIG.COLORS.PRIMARY.TEXT}"
+                      text-anchor="middle"
+                      text-rendering="optimizeSpeed"
+                      >
+                    Internet
+                </text>
+            </g>
+            </svg>`.trim();
+
+        return `data:image/svg+xml;base64,${btoa(svgContent)}`;
+    }
+
     public generateNodeSvg(
         label: string,
         deviceType: 'ROUTER' | 'HOST' | 'INTERNET',
@@ -168,19 +201,18 @@ export class TopologyNodeSvgService {
         );
     }
 
-    public generateSubnetSvg(name: string, cidr: string): string {
+    public generateSubnetSvg(name: string, cidr: string, idx: number): string {
         // Font configurations - name is bold, cidr is regular but 2 sizes larger
-        const nameFont = `700 ${CONFIG.LABEL_FONT_SIZE}px ${CONFIG.LABEL_FONT_FAMILY}`;
-        const cidrFont = `500 ${CONFIG.LABEL_FONT_SIZE}px ${CONFIG.LABEL_FONT_FAMILY}`;
+        const nameFont = `700 ${CONFIG.FONT.SIZE}px ${CONFIG.FONT.FAMILY}`;
+        const cidrFont = `500 ${CONFIG.FONT.SIZE}px ${CONFIG.FONT.FAMILY}`;
 
         // Measure text dimensions
         const nameWidth = this.measureTextWidth(name, nameFont);
-        const cidrWidth = this.measureTextWidth(cidr, cidrFont);
+        const cidrWidth = this.measureTextWidth(cidr, cidrFont) + 10;
 
         // Calculate required dimensions
         const maxTextWidth = Math.max(nameWidth, cidrWidth);
-        const totalTextHeight =
-            CONFIG.LABEL_FONT_SIZE + CONFIG.LABEL_FONT_SIZE + 16; // 16px gap between texts
+        const totalTextHeight = CONFIG.FONT.SIZE * 2 + 16; // 16px gap between texts
 
         // Calculate circle radius with padding (ensure circle is big enough for content)
         const horizontalRadius = maxTextWidth / 2 + 24; // 24px horizontal padding
@@ -188,7 +220,7 @@ export class TopologyNodeSvgService {
         const radius = Math.max(
             horizontalRadius,
             verticalRadius,
-            CONFIG.SUBNET_MIN_RADIUS
+            CONFIG.SUBNET.MIN_RADIUS
         );
 
         // SVG dimensions with small border margin
@@ -198,25 +230,32 @@ export class TopologyNodeSvgService {
 
         // Text positions - name above center, cidr below center
         const nameY = centerY - 8;
-        const cidrY = centerY + 14;
+        const cidrY = centerY + CONFIG.CARD.PADDING.LABEL_ROW * 2;
 
-        const circleFill = 'rgba(255, 255, 255, 0.95)';
+        const brightness = Math.random() * 200;
+
+        const fill = `rgba(${40 + brightness}, ${140 + brightness},${
+            230 + brightness
+        }, 0.95)`;
 
         const svgContent = `
                 <svg width="${svgSize}" height="${svgSize}" viewBox="0 0 ${svgSize} ${svgSize}" xmlns="http://www.w3.org/2000/svg">
+
+                        <defs>
+                          ${this.buildSubnetBorderDefinition(idx)}
+                        </defs>\`;
+
                     <circle
                         cx="${centerX}"
                         cy="${centerY}"
                         r="${radius}"
-                        fill="${circleFill}"
-                        stroke="white"
-                        stroke-width="1.5"
+                        fill="url(#subnet-border${idx})"
                     />
                     <text
                         x="${centerX}"
                         y="${nameY}"
-                        font-family="${CONFIG.LABEL_FONT_FAMILY}"
-                        font-size="${CONFIG.LABEL_FONT_SIZE}px"
+                        font-family="${CONFIG.FONT.FAMILY}"
+                        font-size="${CONFIG.FONT.SIZE}px"
                         font-weight="700"
                         fill="#1a202c"
                         text-anchor="middle"
@@ -227,12 +266,12 @@ export class TopologyNodeSvgService {
                     <text
                         x="${centerX}"
                         y="${cidrY}"
-                        font-family="${CONFIG.LABEL_FONT_FAMILY}"
-                        font-size="${CONFIG.LABEL_FONT_SIZE}px"
-                        font-weight="400"
-                        fill="#4a5568"
+                        font-family="${CONFIG.FONT.FAMILY}"
+                        font-size="${CONFIG.FONT.SIZE}px"
+                        font-weight="500"
+                        fill="${CONFIG.FONT.SECONDARY_COLOR}"
                         text-anchor="middle"
-                        dominant-baseline="middle"
+                        letter-spacing="0.025em"
                     >
                         ${this.escapeXml(cidr)}
                     </text>
@@ -240,6 +279,9 @@ export class TopologyNodeSvgService {
 
         return `data:image/svg+xml;base64,${btoa(svgContent)}`;
     }
+
+    private readonly utf8ToBase64 = (str: string): string =>
+        btoa(unescape(encodeURIComponent(str)));
 
     private getPreloadedIcon(key: keyof typeof ICON_PATHS): string {
         return this.preloadedIconUris.get(key);
@@ -253,6 +295,8 @@ export class TopologyNodeSvgService {
             this.textMeasureContext = context;
         }
         this.textMeasureContext.font = font;
+        this.textMeasureContext.imageSmoothingEnabled = false;
+        this.textMeasureContext.textRendering = 'optimizeSpeed';
         return this.textMeasureContext.measureText(text).width;
     }
 
@@ -275,29 +319,29 @@ export class TopologyNodeSvgService {
         ip: string | null
     ): string {
         // --- Step 1: Independently calculate required widths ---
-        const labelFont = `600 ${CONFIG.LABEL_FONT_SIZE}px ${CONFIG.LABEL_FONT_FAMILY}`;
+        const labelFont = `600 ${CONFIG.FONT.SIZE}px ${CONFIG.FONT.FAMILY}`;
         const mainCardContentWidth =
             this.measureTextWidth(label, labelFont) +
-            CONFIG.LABEL_SIDE_PADDING * 2;
+            CONFIG.CARD.PADDING.LABEL_SIDE * 2;
 
         // --- Step 2: Determine final SVG width, clamping it within bounds ---
         const dynamicWidth = Math.max(
-            CONFIG.NODE_MIN_WIDTH,
-            Math.min(mainCardContentWidth, CONFIG.NODE_MAX_WIDTH)
+            CONFIG.CARD.MIN_WIDTH,
+            Math.min(mainCardContentWidth, CONFIG.CARD.MAX_WIDTH)
         );
 
         // --- Step 3: Calculate Heights (now includes IP if present) ---
         const baseHeight =
-            CONFIG.HEADER_PADDING +
-            CONFIG.ICON_SIZE +
-            CONFIG.LABEL_TOP_MARGIN +
-            CONFIG.LABEL_FONT_SIZE +
-            CONFIG.MAIN_CARD_BOTTOM_PADDING;
+            CONFIG.CARD.PADDING.HEADER +
+            CONFIG.ICON_SIZE.MAIN +
+            CONFIG.CARD.PADDING.LABEL_TOP +
+            CONFIG.FONT.SIZE +
+            CONFIG.CARD.PADDING.BOTTOM;
 
         const ipHeight = ip
-            ? CONFIG.IP_TOP_MARGIN +
-              CONFIG.LABEL_FONT_SIZE +
-              CONFIG.MAIN_CARD_BOTTOM_PADDING
+            ? CONFIG.CARD.PADDING.LABEL_ROW +
+              CONFIG.FONT.SIZE +
+              CONFIG.CARD.PADDING.BOTTOM
             : 0;
         const totalHeight = baseHeight + ipHeight;
 
@@ -320,27 +364,35 @@ export class TopologyNodeSvgService {
     </svg>`;
     }
 
+    private buildSubnetBorderDefinition(idx: number): string {
+        const colour = CONFIG.SUBNET.COLORS[idx % CONFIG.SUBNET.COLORS.length];
+
+        return `
+    <radialGradient id="subnet-border${idx}"
+                    cx="50%" cy="50%" r="50%"
+                    gradientUnits="objectBoundingBox"
+                    gradientTransform="scale(0.98)">
+      <stop offset="80%"   stop-color="#ffffff" stop-opacity="0.99"/>
+      <stop offset="82%" stop-color="${colour}"  stop-opacity="0.50"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>`;
+    }
+
     private buildSvgDefinitions(width: number): string {
-        const iconY = CONFIG.HEADER_PADDING + 8;
+        const iconY = CONFIG.CARD.PADDING.HEADER + 8;
         const labelBaselineY =
-            iconY + CONFIG.ICON_SIZE + CONFIG.LABEL_TOP_MARGIN;
-        const clipRectY = labelBaselineY - CONFIG.LABEL_FONT_SIZE;
+            iconY + CONFIG.ICON_SIZE.MAIN + CONFIG.CARD.PADDING.LABEL_TOP;
+        const clipRectY = labelBaselineY - CONFIG.FONT.SIZE;
         const clipRectHeight =
-            CONFIG.LABEL_FONT_SIZE * 3 +
-            CONFIG.IP_TOP_MARGIN +
-            CONFIG.LABEL_FONT_SIZE;
-        const textClipPathX = CONFIG.LABEL_SIDE_PADDING / 2;
-        const textClipPathWidth = width - CONFIG.LABEL_SIDE_PADDING;
+            CONFIG.FONT.SIZE * 4 + CONFIG.CARD.PADDING.LABEL_ROW;
+        const textClipPathX = CONFIG.CARD.PADDING.LABEL_SIDE / 2;
+        const textClipPathWidth = width - CONFIG.CARD.PADDING.LABEL_SIDE;
 
         return `
          <defs>
             <clipPath id="label-clip-path">
                 <rect x="${textClipPathX}" y="${clipRectY}" width="${textClipPathWidth}" height="${clipRectHeight}" />
             </clipPath>
-                    <clipPath id="label-clip-path">
-                    <rect x="${textClipPathX}" y="${clipRectY}" width="${textClipPathWidth}" height="${clipRectHeight}" />
-                </clipPath>
-
 
             <linearGradient id="main-bg" x1="0%" y1="0%" x2="100%" y2="100%">
                  <stop offset="0%" style="stop-color:#ffffff;"/>
@@ -349,29 +401,29 @@ export class TopologyNodeSvgService {
 
             <linearGradient id="footer-glow-gradient" x1="0%" x2="100%">
                 <stop offset="0%" stop-color="${
-                    CONFIG.ACCENT_COLOR
+                    CONFIG.COLORS.PRIMARY.MAIN
                 }" stop-opacity="0"/>
                 <stop offset="50%" stop-color="${
-                    CONFIG.ACCENT_COLOR
+                    CONFIG.COLORS.PRIMARY.MAIN
                 }" stop-opacity="0.8"/>
                 <stop offset="100%" stop-color="${
-                    CONFIG.ACCENT_COLOR
+                    CONFIG.COLORS.PRIMARY.MAIN
                 }" stop-opacity="0"/>
             </linearGradient>
 
             <linearGradient id="indicator-primary" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="${CONFIG.COLORS.primary.main}" />
+                <stop offset="0%" stop-color="${CONFIG.COLORS.PRIMARY.MAIN}" />
                 <stop offset="100%" stop-color="${this.chroma(
-                    CONFIG.COLORS.primary.main
+                    CONFIG.COLORS.PRIMARY.MAIN
                 ).darken(0.5)}" />
             </linearGradient>
 
             <linearGradient id="indicator-secondary" x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stop-color="${
-                    CONFIG.COLORS.secondary.main
+                    CONFIG.COLORS.SECONDARY.MAIN
                 }" />
                 <stop offset="100%" stop-color="${this.chroma(
-                    CONFIG.COLORS.secondary.main
+                    CONFIG.COLORS.SECONDARY.MAIN
                 ).darken(0.5)}" />
             </linearGradient>
          </defs>`;
@@ -380,8 +432,8 @@ export class TopologyNodeSvgService {
     private buildMainCard(height: number, width: number): string {
         return `<rect x="1" y="1" width="${width - 2}" height="${
             height - 2
-        }" rx="${CONFIG.CARD_RX}" ry="${
-            CONFIG.CARD_RX
+        }" rx="${CONFIG.CARD.RADIUS}" ry="${
+            CONFIG.CARD.RADIUS
         }" fill="url(#main-bg)" stroke="rgba(226, 232, 240, 0.8)" stroke-width="1.5"/>`;
     }
 
@@ -415,9 +467,10 @@ export class TopologyNodeSvgService {
         ip: string | null = null // Add IP parameter
     ): string {
         const centerX = width / 2;
-        const iconY = CONFIG.HEADER_PADDING + 8;
-        const labelY = iconY + CONFIG.ICON_SIZE + CONFIG.LABEL_TOP_MARGIN;
-        const ipY = labelY + CONFIG.IP_TOP_MARGIN + CONFIG.LABEL_FONT_SIZE;
+        const iconY = CONFIG.CARD.PADDING.HEADER + 8;
+        const labelY =
+            iconY + CONFIG.ICON_SIZE.MAIN + CONFIG.CARD.PADDING.LABEL_TOP;
+        const ipY = labelY + CONFIG.CARD.PADDING.LABEL_ROW + CONFIG.FONT.SIZE;
 
         const consoleIndicatorMarkup = consoleIndicatorData
             ? `<g transform="translate(${width - CONFIG.INDICATOR.MARGIN}, ${
@@ -433,48 +486,44 @@ export class TopologyNodeSvgService {
 
         // Stylish IP address markup - only if IP is present
         const ipMarkup = ip
-            ? `
-        <g clip-path="url(#label-clip-path)">
-            <text
-                x="${centerX}"
-                y="${ipY}"
-                font-family="${CONFIG.LABEL_FONT_FAMILY}"
-                font-size="${CONFIG.LABEL_FONT_SIZE}px"
-                font-weight="400"
-                fill="${CONFIG.IP_COLOR}"
-                text-anchor="middle"
-                letter-spacing="0.025em"
-                opacity="0.9"
-            >
-                ${this.escapeXml(ip)}
-            </text>
-        </g>
-    `
+            ? `<g clip-path="url(#label-clip-path)">
+                    <text
+                        x="${centerX}"
+                        y="${ipY}"
+                        font-family="${CONFIG.FONT.FAMILY}"
+                        font-size="${CONFIG.FONT.SIZE}px"
+                        font-weight="500"
+                        fill="${CONFIG.FONT.SECONDARY_COLOR}"
+                        text-anchor="middle"
+                        letter-spacing="0.025em"
+                        text-rendering="optimizeSpeed"
+                    >
+                        ${this.escapeXml(ip)}
+                    </text>
+                </g>`
             : '';
 
-        return `
-    <g>
-        <!-- Main Icon -->
-        <image href="${mainIconDataUri}" x="${
-            centerX - CONFIG.ICON_SIZE / 2
-        }" y="${iconY}" height="${CONFIG.ICON_SIZE}" width="${
-            CONFIG.ICON_SIZE
+        return `<g>
+            <!-- Main Icon -->
+            <image href="${mainIconDataUri}" x="${
+            centerX - CONFIG.ICON_SIZE.MAIN / 2
+        }" y="${iconY}" height="${CONFIG.ICON_SIZE.MAIN}" width="${
+            CONFIG.ICON_SIZE.MAIN
         }"/>
-    </g>
-    <g clip-path="url(#label-clip-path)">
-         <!-- Main Label -->
-         <text x="${centerX}" y="${labelY}" font-family="${
-            CONFIG.LABEL_FONT_FAMILY
+        </g>
+        <g clip-path="url(#label-clip-path)">
+            <!-- Main Label -->
+            <text x="${centerX}" y="${labelY}" font-family="${
+            CONFIG.FONT.FAMILY
         }" font-size="${
-            CONFIG.LABEL_FONT_SIZE
-        }px" font-weight="600" fill="#1a202c" text-anchor="middle" letter-spacing="-0.01em">
+            CONFIG.FONT.SIZE
+        }px" font-weight="600" fill="#1a202c" text-anchor="middle" letter-spacing="-0.01em" text-rendering="optimizeSpeed">
             ${this.escapeXml(label)}
-        </text>
-    </g>
-    ${ipMarkup}
-    ${osIndicatorMarkup}
-    ${consoleIndicatorMarkup}
-`;
+            </text>
+        </g>
+        ${ipMarkup}
+        ${osIndicatorMarkup}
+        ${consoleIndicatorMarkup}`;
     }
 
     private escapeXml(unsafe: string): string {
