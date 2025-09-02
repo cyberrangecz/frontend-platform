@@ -2,25 +2,52 @@
     <div #levelContentElement class="level-content {{isStepperDisplayed ?
       'content-height-with-stepper' :
       'content-height-without-stepper'}}">
-        <div #left class="left-panel round-scrollbar">
-            {{ levelContent }}
-        </div>
+        @if (window.innerWidth > 1400) {
+            @if (!(isCollapsed())) {
+                <div #left class="left-panel round-scrollbar">
+                    {{ levelContent }}
+                </div>
 
-        <div #right class="right-panel">
-            <button (click)="isCollapsed.set(!isCollapsed())" class="collapse-button" mat-fab>
-                <mat-icon>
-                    {{ isCollapsed() ? 'chevron_left' : 'chevron_right' }}
-                </mat-icon>
-            </button>
-            <crczp-topology-wrapper
-                (getAccessFile)="getAccessFile.emit($event)"
-                (sentinelResize)="onRightPanelResize($event)"
-                [loading]="isLoading"
-                [sandboxDefinitionId]="sandboxDefinitionId"
-                [sandboxInstanceId]="sandboxInstanceId"
-                class="wh-100 overflow-hidden"
-            />
-        </div>
+                <div #right class="right-panel">
+                    <button (click)="isCollapsed.set(!isCollapsed())" class="collapse-button">
+                        <mat-icon>
+                            chevron_right
+                        </mat-icon>
+                    </button>
+                    <crczp-topology-wrapper
+                        (getAccessFile)="getAccessFile.emit($event)"
+                        [loading]="isLoading"
+                        [sandboxDefinitionId]="sandboxDefinitionId"
+                        [sandboxInstanceId]="sandboxInstanceId"
+                        class="wh-100 overflow-hidden"
+                    />
+                </div>
+            } @else {
+                <div #left class="left-panel--full round-scrollbar">
+                    {{ levelContent }}
+                </div>
+                <button (click)="isCollapsed.set(!isCollapsed())" class="collapse-button collapse-button--collapsed">
+                    <mat-icon>
+                        chevron_left
+                    </mat-icon>
+                </button>
+            }
+        } @else {
+            <div #left class="left-panel round-scrollbar">
+                {{ levelContent }}
+            </div>
+
+            <div #right class="right-panel">
+                <crczp-topology-wrapper
+                    (getAccessFile)="getAccessFile.emit($event)"
+                    [loading]="isLoading"
+                    [sandboxDefinitionId]="sandboxDefinitionId"
+                    [sandboxInstanceId]="sandboxInstanceId"
+                    class="wh-100 overflow-hidden"
+                />
+            </div>
+        }
+
     </div>
     @if ((isLoading | async) === false) {
         @if ((isCorrectAnswerSubmitted$ | async) || isBacktracked) {

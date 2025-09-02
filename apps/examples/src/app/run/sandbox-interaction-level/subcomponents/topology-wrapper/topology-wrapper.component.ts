@@ -73,7 +73,7 @@ export class TopologyWrapperComponent implements OnInit {
 
                 subnets.push(
                     this.createSubnet(
-                        `Router ${r + 1} Subnet ${s + 1}`,
+                        `${r + 1} Subnet ${s + 1}`,
                         '255.255.255.0/24',
                         numHosts,
                         baseIp
@@ -83,7 +83,7 @@ export class TopologyWrapperComponent implements OnInit {
 
             routers.push({
                 name: `Router ${r + 1}`,
-                osType: 'linux',
+                osType: 'windows',
                 guiAccess: true,
                 subnets: subnets,
             });
@@ -102,8 +102,8 @@ export class TopologyWrapperComponent implements OnInit {
         const hosts: HostNode[] = [];
         for (let i = 0; i < num; i++) {
             hosts.push({
-                name: `${subnet} host: ${i + 1}`,
-                osType: 'Linux',
+                name: `${subnet} ${i + 1}`,
+                osType: 'LINUX',
                 guiAccess: true,
                 ip: `${baseIp}.${i + 1}`,
             });

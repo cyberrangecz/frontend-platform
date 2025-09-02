@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, Subject } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 
 @Injectable({
     providedIn: 'root',
@@ -10,11 +10,11 @@ export abstract class TopologySplitViewSynchronizerService {
      * Observable emitting position changes
      */
     public drag$: Observable<number> = this.dragSubject.asObservable();
-    private isCollapsedSubject = new Subject<boolean>();
+    private isCollapsedSubject = new BehaviorSubject<boolean>(false);
     /**
      * Observable emitting external signals to collapse one side of the split panel
      */
-    public collapseTopology$ = this.isCollapsedSubject.asObservable();
+    public topologyCollapsed$ = this.isCollapsedSubject.asObservable();
     private topologyWidthSubject = new Subject<number>();
     public topologyWidth$ = this.topologyWidthSubject.asObservable();
 

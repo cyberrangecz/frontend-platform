@@ -1,11 +1,19 @@
 .minimap-overlay {
     pointer-events: none;
-    background: transparent;
+    background: var(--neutral-98);
     z-index: 10;
     opacity: 0;
     transition: opacity 0.3s ease;
+    border-radius: 8px;
+    border: solid color-mix(in srgb, black 10%, transparent);
 }
 
 .minimap-overlay.visible {
     opacity: 1;
+}
+
+@media screen and (max-width: 1400px) {
+    .minimap-overlay.visible {
+        opacity: 0.5;
+    }
 }

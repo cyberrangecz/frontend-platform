@@ -8,6 +8,8 @@ import { ConsoleView } from '../console/console-view.component';
 import { Topology } from '@crczp/sandbox-model';
 import { ResizeEvent, SentinelResizeDirective } from '@sentinel/common/resize';
 import { TopologySplitViewSynchronizerService } from './divider-position/topology-split-view-synchronizer.service';
+import { TopologyNodeSvgService } from './topology-graph/services/topology-svg-generator.service';
+import { TopologyIconsService } from './topology-graph/services/topology-icons.service';
 
 @Component({
     selector: 'crczp-topology',
@@ -21,6 +23,7 @@ import { TopologySplitViewSynchronizerService } from './divider-position/topolog
         MatTabLabel,
         SentinelResizeDirective,
     ],
+    providers: [TopologyIconsService, TopologyNodeSvgService],
     templateUrl: './topology-component.html',
     styleUrl: './topology-component.scss',
 })
@@ -32,9 +35,10 @@ export class TopologyComponent {
     synchronizerService = inject(TopologySplitViewSynchronizerService);
     collapsed = false;
     protected tabs = signal<ConsoleTab[]>([]);
+    protected readonly window = window;
 
     constructor() {
-        this.synchronizerService.collapseTopology$.subscribe(
+        this.synchronizerService.topologyCollapsed$.subscribe(
             (collapsed) => (this.collapsed = collapsed)
         );
     }

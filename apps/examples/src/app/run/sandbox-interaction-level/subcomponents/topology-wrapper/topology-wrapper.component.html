@@ -1,12 +1,12 @@
 <div
-    class="topology-container {{(synchronizerService.collapseTopology$ | async) ? 'topology-container--collapsed':''}}">
+    class="topology-container {{(synchronizerService.topologyCollapsed$ | async) ? 'topology-container--collapsed':''}}">
     <crczp-topology
         [topology]="topology"
         class="wh-100"
     />
 </div>
 
-@if ((synchronizerService.collapseTopology$ | async)) {
+@if ((synchronizerService.topologyCollapsed$ | async)) {
     <button
         (click)="this.getAccessFile.emit()"
         [disabled]="loading | async"

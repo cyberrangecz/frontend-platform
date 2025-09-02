@@ -6,6 +6,7 @@ import {
     inject,
     input,
     Output,
+    signal,
     ViewChild,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -31,8 +32,9 @@ export type TopologyGraphNode = {
     name: string;
     nodeType: GraphNodeType;
     ip?: string;
-    osType?: string;
+    osType?: 'LINUX' | 'WINDOWS';
     guiAccess?: boolean;
+    subnetColor?: string;
     subnets?: Array<{
         name: string;
         mask: string;
@@ -59,19 +61,19 @@ export class TopologyGraph implements AfterViewInit {
 
     topology = input.required<Topology>();
     height = input.required<number>();
+    loading = input<boolean>(false);
+    stabilized = signal(false);
+    resized = signal(true);
     @ViewChild('networkContainer', { static: false })
     networkContainer: ElementRef<HTMLDivElement>;
     network: Network;
-
-    private nodes: TopologyGraphNode[];
-    private links: TopologyGraphLink[];
-
+    protected nodes: TopologyGraphNode[];
+    protected links: TopologyGraphLink[];
     private readonly svgService = inject(TopologyNodeSvgService);
     private readonly errorHandlerService = inject(ErrorHandlerService);
     private readonly topologySynchronizerService = inject(
         TopologySplitViewSynchronizerService
     );
-
     private nodeSubnetParentsDict: Record<string, string> = {};
 
     constructor() {
@@ -92,6 +94,20 @@ export class TopologyGraph implements AfterViewInit {
     }
 
     private handleDimensionsChange(width: number, height: number) {
+        if (!this.networkContainer) return;
+        this.resized.set(false);
+        const scaleChange =
+            this.networkContainer.nativeElement.offsetWidth / width;
+        const zoomAdjustment = scaleChange <= 0 ? 1 : scaleChange;
+
+        const scale = this.network.getScale();
+        const viewPosition = this.network.getViewPosition();
+        this.network.moveTo({
+            position: viewPosition,
+            scale: scale * zoomAdjustment,
+            animation: false,
+        });
+
         if (!this.networkContainer) return;
         this.networkContainer.nativeElement.style.width = `${width}px`;
         this.networkContainer.nativeElement.style.height = `${height}px`;
@@ -120,9 +136,9 @@ export class TopologyGraph implements AfterViewInit {
             case 'ROUTER':
                 return 110;
             case 'HOST':
-                return 100;
+                return 110;
             case 'SUBNET':
-                return 175;
+                return 220;
             default:
                 return 100;
         }
@@ -143,28 +159,40 @@ export class TopologyGraph implements AfterViewInit {
         }
     }
 
+    private getPositionExtremes(): [number, number, number, number] {
+        if (!this.network || this.nodes.length === 0) return [0, 0, 0, 0];
+
+        const allNodePositions = this.nodes.map(
+            (node) => this.network.getPositions([node.id])[node.id]
+        );
+
+        const xs = allNodePositions.map((pos) => pos.x);
+        const ys = allNodePositions.map((pos) => pos.y);
+
+        return [
+            Math.min(...xs),
+            Math.max(...xs),
+            Math.min(...ys),
+            Math.max(...ys),
+        ];
+    }
+
     private enforceViewportBounds(): void {
         if (!this.network || this.nodes.length === 0) return;
 
         const viewPosition = this.network.getViewPosition();
         const scale = this.network.getScale();
 
-        const allNodePositions = this.nodes.map(
-            (node) => this.network.getPositions([node.id])[node.id]
+        const [minX, maxX, minY, maxY] = this.getPositionExtremes();
+
+        const boundedX = Math.max(
+            minX - 200,
+            Math.min(viewPosition.x, maxX + 200)
         );
-
-        if (allNodePositions.some((pos) => !pos)) return;
-
-        const xs = allNodePositions.map((pos) => pos.x);
-        const ys = allNodePositions.map((pos) => pos.y);
-
-        const minX = Math.min(...xs) - 200;
-        const maxX = Math.max(...xs) + 200;
-        const minY = Math.min(...ys) - 200;
-        const maxY = Math.max(...ys) + 200;
-
-        const boundedX = Math.max(minX, Math.min(viewPosition.x, maxX));
-        const boundedY = Math.max(minY, Math.min(viewPosition.y, maxY));
+        const boundedY = Math.max(
+            minY - 200,
+            Math.min(viewPosition.y, maxY + 200)
+        );
 
         if (boundedX !== viewPosition.x || boundedY !== viewPosition.y) {
             this.network.moveTo({
@@ -194,7 +222,6 @@ export class TopologyGraph implements AfterViewInit {
     }
 
     private renderNetwork(): void {
-        let idx = 0;
         const svgObservables = this.nodes.map((node) => {
             if (node.nodeType === 'SUBNET') {
                 return of({
@@ -204,7 +231,7 @@ export class TopologyGraph implements AfterViewInit {
                     image: this.svgService.generateSubnetSvg(
                         node.name,
                         node.ip,
-                        idx++
+                        node.subnetColor
                     ),
                     size: this.getNodeSize('SUBNET'),
                 });
@@ -229,7 +256,7 @@ export class TopologyGraph implements AfterViewInit {
                 .generateNodeSvg(
                     node.name,
                     node.nodeType,
-                    node.osType === 'linux' ? 'LINUX' : 'WINDOWS',
+                    node.osType,
                     node.ip,
                     node.guiAccess
                 )
@@ -304,6 +331,14 @@ export class TopologyGraph implements AfterViewInit {
             data,
             TOPOLOGY_CONFIG.GRAPH
         );
+
+        this.network.on('stabilized', () => {
+            this.stabilized.set(true);
+        });
+
+        this.network.on('afterDrawing', () => {
+            this.resized.set(true);
+        });
 
         // Event handlers
         this.network.on('dragEnd', () => {

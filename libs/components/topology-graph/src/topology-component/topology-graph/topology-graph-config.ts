@@ -3,27 +3,43 @@ import { Options } from 'vis-network';
 const svg_config = {
     CARD: {
         MIN_WIDTH: 150,
-        MAX_WIDTH: 320,
         RADIUS: 20,
         PADDING: {
             HEADER: 2,
-            BOTTOM: 8,
+            BOTTOM: 0,
             LABEL_SIDE: 20,
-            LABEL_TOP: 10,
-            LABEL_ROW: 10,
+            LABEL_TOP: 18,
+            LABEL_ROW: 4,
         },
     },
 
     ICON_SIZE: {
-        WINDOWS: 20,
-        LINUX: 24,
-        CONSOLE: 24,
+        WINDOWS: 28,
+        LINUX: 32,
+        CONSOLE: 28,
         MAIN: 64,
         INTERNET: 192,
     },
 
     FONT: {
-        SIZE: 18,
+        SIZE: {
+            INTERNET: {
+                NAME: 32,
+                IP: 28,
+            },
+            HOST: {
+                NAME: 32,
+                IP: 28,
+            },
+            SUBNET: {
+                NAME: 32,
+                IP: 28,
+            },
+            ROUTER: {
+                NAME: 32,
+                IP: 28,
+            },
+        },
         FAMILY: "'Inter', sans-serif",
         PRIMARY_COLOR: '#1c1e2a',
         SECONDARY_COLOR: '#353549',
@@ -93,7 +109,7 @@ const graph_config: Options = {
     },
 
     physics: {
-        minVelocity: 0.5,
+        minVelocity: 0.75,
         barnesHut: {
             centralGravity: 0.3,
             gravitationalConstant: -9000,

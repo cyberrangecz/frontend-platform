@@ -1,9 +1,13 @@
-<div #networkContainer style="width: 100em; height: 100em;">
+<div #networkContainer
+     class="{{stabilized() && resized() ?  'graph-stabilized' :  'graph-hidden'}}"
+     style="width: 100em; height: 100em;">
 </div>
-@if (!!network) {
+@if (!!network && nodes.length > 15) {
     <crczp-minimap
         [network]="this.network"
         [parentContainer]="this.networkContainer"
+        [nodes]="nodes"
+        [edges]="links"
         class="minimap"
     />
 }

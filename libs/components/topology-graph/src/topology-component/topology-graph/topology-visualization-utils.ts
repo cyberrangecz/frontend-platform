@@ -1,5 +1,6 @@
 import { Topology } from '@crczp/sandbox-model';
 import { TopologyGraphLink, TopologyGraphNode } from './topology-graph';
+import { TOPOLOGY_CONFIG } from './topology-graph-config';
 
 export function mapTopologyToTopologyVisualization(topology: Topology): {
     nodes: TopologyGraphNode[];
@@ -8,21 +9,20 @@ export function mapTopologyToTopologyVisualization(topology: Topology): {
     const nodes: TopologyGraphNode[] = [];
     const links: TopologyGraphLink[] = [];
 
+    let subnetOrd = 0;
+
     /* Internet node */
     nodes.push({ id: 'internet', name: 'Internet', nodeType: 'INTERNET' });
 
-    /* Build topology upward: router → subnets → hosts */
     topology.routers.forEach((router) => {
-        /* Router node */
         nodes.push({
             id: router.name,
             name: router.name,
             nodeType: 'ROUTER',
-            osType: router.osType,
+            osType: mapOsType(router.osType),
             guiAccess: router.guiAccess,
         });
 
-        /* Router → Internet */
         links.push({
             id: `internet-${router.name}`,
             from: 'internet',
@@ -30,15 +30,17 @@ export function mapTopologyToTopologyVisualization(topology: Topology): {
             length: 400,
         });
 
-        /* Subnets & hosts */
         router.subnets.forEach((subnet) => {
             const subnetId = `subnet-${router.name}-${subnet.name}`;
-            /* Subnet node (leaf of router, root of hosts) */
             nodes.push({
                 id: subnetId,
                 name: subnet.name,
                 nodeType: 'SUBNET',
                 ip: subnet.cidr,
+                subnetColor:
+                    TOPOLOGY_CONFIG.SVG.SUBNET.COLORS[
+                        subnetOrd++ % TOPOLOGY_CONFIG.SVG.SUBNET.COLORS.length
+                    ],
             });
 
             links.push({
@@ -54,7 +56,7 @@ export function mapTopologyToTopologyVisualization(topology: Topology): {
                     name: host.name,
                     nodeType: 'HOST',
                     ip: host.ip,
-                    osType: host.osType,
+                    osType: mapOsType(host.osType),
                     guiAccess: host.guiAccess,
                 });
 
@@ -69,4 +71,8 @@ export function mapTopologyToTopologyVisualization(topology: Topology): {
     });
 
     return { nodes, links };
+}
+
+function mapOsType(osType: string) {
+    return osType.toLowerCase() === 'linux' ? 'LINUX' : 'WINDOWS';
 }

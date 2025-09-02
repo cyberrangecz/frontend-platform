@@ -1,9 +1,9 @@
 .toplogy-tabs-wrapper {
-    box-shadow: -1px 1px 3px var(--neutral-70);
+    box-shadow: -2px 2px 2px var(--neutral-70);
     border-radius: 1rem 0 0 1rem;
     position: relative;
-    overflow: hidden;
     transition: visibility 0.3s ease, opacity 0.3s ease;
+    overflow: hidden;
 }
 
 .topology-tabs-wrapper--collapsed {
@@ -13,26 +13,37 @@
     pointer-events: none;
 }
 
-.topology-graph-wrapper {
-    overflow: hidden;
-}
 
 .draggable-bar {
     position: absolute;
-    left: -3px;
-    top: 44px;
-    height: calc(100% - 52px);
+    left: 0;
+    top: 48px;
+    height: calc(100% - 30px);
     width: 6px;
-    background-color: transparent;
     cursor: col-resize;
-    z-index: 1000;
+    z-index: 1002;
+    --gradient-color: color-mix(in srgb, var(--primary-60) 20%, var(--neutral-98));
+    background: linear-gradient(90deg, var(--gradient-color) 50%, var(--neutral-98) 100%);
+
+    &:active, &:hover {
+        background: var(--primary-40);
+        box-shadow: 0 0 3px var(--primary-40);
+    }
 }
+
 
 .tab-label {
     user-select: none;
     overflow: hidden;
 }
 
-.mat-tab-group {
-    overflow: hidden;
+::ng-deep .mat-mdc-tab-body-content {
+    overflow: hidden !important;
+}
+
+@media screen and (max-width: 1400px) {
+    .toplogy-tabs-wrapper {
+        border-radius: 1rem;
+        box-shadow: 0 2px 4px var(--neutral-70);
+    }
 }

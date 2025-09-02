@@ -10,23 +10,20 @@ import {
     Output,
     signal,
     TemplateRef,
-    ViewChild
+    ViewChild,
 } from '@angular/core';
-import {
-    AnswerFormHintsComponent
-} from '../subcomponents/answer-floating-form/answer-form-hints/answer-form-hints.component';
+import { AnswerFormHintsComponent } from '../subcomponents/answer-floating-form/answer-form-hints/answer-form-hints.component';
 import { Observable, of } from 'rxjs';
 import { AsyncPipe, NgTemplateOutlet } from '@angular/common';
-import { MatButton, MatFabButton } from '@angular/material/button';
+import { MatButton } from '@angular/material/button';
 import { FloatingAnswerFormComponent } from '../subcomponents/answer-floating-form/floating-answer-form.component';
 import { TopologyWrapperComponent } from '../subcomponents/topology-wrapper/topology-wrapper.component';
 import { TopologySplitViewSynchronizerService } from '@crczp/topology-graph';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { thresholdBuffer } from '@crczp/utils';
 import { sum } from 'd3';
 import { map } from 'rxjs/operators';
 import { MatIcon } from '@angular/material/icon';
-import { ResizeEvent, SentinelResizeDirective } from '@sentinel/common/resize';
 
 @Component({
     selector: 'crczp-generic-sandbox-level',
@@ -38,9 +35,7 @@ import { ResizeEvent, SentinelResizeDirective } from '@sentinel/common/resize';
         MatButton,
         FloatingAnswerFormComponent,
         TopologyWrapperComponent,
-        MatFabButton,
         MatIcon,
-        SentinelResizeDirective,
     ],
 })
 export class GenericSandboxLevelComponent implements AfterViewInit {
@@ -76,23 +71,28 @@ export class GenericSandboxLevelComponent implements AfterViewInit {
     protected readonly window = window;
     private readonly destroyRef = inject(DestroyRef);
 
+    constructor() {
+        toObservable(this.isCollapsed).subscribe((collapsed) => {
+            this.updateTopologyWidth();
+            //   this.dividerPositionSynchronizer.emitCollapsed(collapsed);
+        });
+    }
+
     ngAfterViewInit(): void {
-        this.setPanelRatio(
-            this.dividerPositionSynchronizer.getDividerPosition() ||
-                this.DEFAULT_RATIO
-        );
         this.setupDividerPositionListener();
         this.setupDragListener();
         this.setupCollapseListener();
+        this.onResize();
     }
 
-    @HostListener('window:resize', ['$event'])
-    onResize(event: any): void {
+    @HostListener('window:resize')
+    onResize(): void {
         if (
             this.DISABLE_AT_WINDOW_WIDTH &&
-            event.target.innerWidth < this.DISABLE_AT_WINDOW_WIDTH
+            window.innerWidth < this.DISABLE_AT_WINDOW_WIDTH
         ) {
             this.unsetPanelWidths();
+            this.updateTopologyWidth();
         } else {
             this.setPanelRatio(
                 this.dividerPositionSynchronizer.getDividerPosition() ||
@@ -101,39 +101,20 @@ export class GenericSandboxLevelComponent implements AfterViewInit {
         }
     }
 
-    onRightPanelResize($event: ResizeEvent) {
-        this.dividerPositionSynchronizer.emitTopologyWidthChange(
-            $event.width - 24
-        );
-    }
-
     private calculateRatio(sliderDelta: number): number {
         const leftWidth = this.leftPanel.nativeElement.offsetWidth;
         const rightWidth = this.rightPanel.nativeElement.offsetWidth;
         const totalWidth = leftWidth + rightWidth;
 
-        console.log(
-            'prev ratio',
-            this.dividerPositionSynchronizer.getDividerPosition()
-        );
-        console.log('full width', totalWidth);
-        console.log('left width', leftWidth);
-        console.log('right width', rightWidth);
-        console.log('delta', sliderDelta);
-
-        // Calculate new left panel width
         const newLeftWidth = leftWidth + sliderDelta;
 
-        // Calculate the new ratio
         const ratio = newLeftWidth / totalWidth;
 
-        // Apply bounds checking
         const minRatio = this.LEFT_PANEL_MIN_WIDTH;
         const maxRatio = 1 - this.RIGHT_PANEL_MIN_WIDTH;
 
         const boundedRatio = Math.max(minRatio, Math.min(ratio, maxRatio));
 
-        console.log('new ratio', boundedRatio);
         return boundedRatio;
     }
 
@@ -141,19 +122,20 @@ export class GenericSandboxLevelComponent implements AfterViewInit {
         if (this.isCollapsed() || !this.leftPanel || !this.rightPanel) return;
 
         // Ensure ratio is within bounds
-        const boundedRatio = Math.max(
+        const newRatioBounded = Math.max(
             this.LEFT_PANEL_MIN_WIDTH,
             Math.min(ratio, 1 - this.RIGHT_PANEL_MIN_WIDTH)
         );
 
-        this.leftPanel.nativeElement.style.width = `${boundedRatio * 100}%`;
+        this.leftPanel.nativeElement.style.width = `${newRatioBounded * 100}%`;
         this.rightPanel.nativeElement.style.width = `${
-            (1 - boundedRatio) * 100
+            (1 - newRatioBounded) * 100
         }%`;
 
-        // Ensure box-sizing is set
         this.leftPanel.nativeElement.style.boxSizing = 'border-box';
         this.rightPanel.nativeElement.style.boxSizing = 'border-box';
+
+        this.updateTopologyWidth();
     }
 
     private unsetPanelWidths(): void {
@@ -190,7 +172,7 @@ export class GenericSandboxLevelComponent implements AfterViewInit {
     }
 
     private setupCollapseListener(): void {
-        this.dividerPositionSynchronizer.collapseTopology$
+        this.dividerPositionSynchronizer.topologyCollapsed$
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe((collapse) => {
                 this.isCollapsed.set(collapse);
@@ -205,5 +187,16 @@ export class GenericSandboxLevelComponent implements AfterViewInit {
                     this.unsetPanelWidths();
                 }
             });
+    }
+
+    private updateTopologyWidth() {
+        requestAnimationFrame(() => {
+            if (this.rightPanel) {
+                this.dividerPositionSynchronizer.emitTopologyWidthChange(
+                    this.rightPanel.nativeElement.offsetWidth -
+                        (window.innerWidth > 1400 ? 24 : 0)
+                );
+            }
+        });
     }
 }

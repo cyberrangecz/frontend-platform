@@ -6,67 +6,74 @@
     width="120"
     xmlns="http://www.w3.org/2000/svg">
     <g>
-        <!-- Server unit 1 -->
+
+
+        <!-- Monitor Stand -->
         <rect
-            height="18"
-            rx="4"
-            ry="4"
-            style="fill:#2c3e50;stroke:#34495e;stroke-width:2"
+            height="15"
+            style="fill:#566667;stroke:#23313f;stroke-width:2"
+            width="20"
+            x="50"
+            y="80" />
+
+        <!-- Monitor Stand -->
+        <rect
+            height="5"
+            style="fill:#344149;stroke:#23313f;stroke-width:1"
+            width="50"
+            x="35"
+            y="94" />
+
+
+        <!-- Monitor Display (rounded rectangle) -->
+        <rect
+            height="60"
+            rx="8"
+            ry="8"
+            style="fill:#344149;stroke:#23313f;stroke-width:3"
             width="80"
             x="20"
-            y="25" />
+            y="20" />
 
-        <!-- Server unit 2 -->
+        <!-- Monitor Screen -->
         <rect
-            height="18"
+            height="44"
             rx="4"
             ry="4"
-            style="fill:#2c3e50;stroke:#34495e;stroke-width:2"
-            width="80"
-            x="20"
-            y="48" />
+            style="fill:#d7d9db;stroke:#23313f;stroke-width:1"
+            width="68"
+            x="26"
+            y="26" />
 
-        <!-- Server unit 3 -->
+
+        <!-- Power Button (bottom of display) -->
+        <circle
+            cx="93"
+            cy="74"
+            r="3"
+            style="fill:#15ff00;stroke:#23313f;stroke-width:1" />
+
+        <!-- Screen content (optional monitor indicator) -->
         <rect
-            height="18"
-            rx="4"
-            ry="4"
-            style="fill:#2c3e50;stroke:#34495e;stroke-width:2"
-            width="80"
-            x="20"
-            y="71" />
-
-        <!-- Power/status LEDs for each unit -->
-        <circle cx="25" cy="34" r="2" style="fill:#27ae60" />
-        <circle cx="31" cy="34" r="2" style="fill:#f39c12" />
-
-        <circle cx="25" cy="57" r="2" style="fill:#27ae60" />
-        <circle cx="31" cy="57" r="2" style="fill:#27ae60" />
-
-        <circle cx="25" cy="80" r="2" style="fill:#27ae60" />
-        <circle cx="31" cy="80" r="2" style="fill:#e74c3c" />
-
-        <!-- Drive bays/vents -->
-        <rect height="3" rx="1" style="fill:#1a252f" width="40" x="40" y="32" />
-        <rect height="3" rx="1" style="fill:#1a252f" width="40" x="40" y="37" />
-
-        <rect height="3" rx="1" style="fill:#1a252f" width="40" x="40" y="55" />
-        <rect height="3" rx="1" style="fill:#1a252f" width="40" x="40" y="60" />
-
-        <rect height="3" rx="1" style="fill:#1a252f" width="40" x="40" y="78" />
-        <rect height="3" rx="1" style="fill:#1a252f" width="40" x="40" y="83" />
-
-        <!-- Network ports -->
-        <rect height="3" rx="0.5" style="fill:#1a252f" width="4" x="84" y="32" />
-        <rect height="3" rx="0.5" style="fill:#1a252f" width="4" x="89" y="32" />
-        <rect height="3" rx="0.5" style="fill:#1a252f" width="4" x="94" y="32" />
-
-        <rect height="3" rx="0.5" style="fill:#1a252f" width="4" x="84" y="55" />
-        <rect height="3" rx="0.5" style="fill:#1a252f" width="4" x="89" y="55" />
-        <rect height="3" rx="0.5" style="fill:#1a252f" width="4" x="94" y="55" />
-
-        <rect height="3" rx="0.5" style="fill:#1a252f" width="4" x="84" y="78" />
-        <rect height="3" rx="0.5" style="fill:#1a252f" width="4" x="89" y="78" />
-        <rect height="3" rx="0.5" style="fill:#1a252f" width="4" x="94" y="78" />
+            height="4"
+            rx="1"
+            style="fill:#2472a6"
+            width="40"
+            x="40"
+            y="38" />
+        <rect
+            height="4"
+            rx="1"
+            style="fill:#2472a6"
+            width="30"
+            x="40"
+            y="46" />
+        <rect
+            height="4"
+            rx="1"
+            style="fill:#2472a6"
+            width="35"
+            x="40"
+            y="54" />
     </g>
 </svg>
