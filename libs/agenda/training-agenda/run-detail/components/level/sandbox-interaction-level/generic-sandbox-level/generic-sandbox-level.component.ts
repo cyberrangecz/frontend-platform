@@ -14,8 +14,6 @@ import { MatButton } from '@angular/material/button';
 import { FloatingAnswerFormComponent } from '../subcomponents/answer-floating-form/floating-answer-form.component';
 import { SentinelMarkdownViewComponent } from '@sentinel/components/markdown-view';
 import { TopologyWrapperComponent } from '../subcomponents/topology-wrapper/topology-wrapper.component';
-import { SandboxLevelSplitPanel } from '@crczp/components';
-import { DividerPositionSynchronizerService } from '@crczp/utils';
 
 @Component({
     selector: 'crczp-generic-sandbox-level',
@@ -23,7 +21,6 @@ import { DividerPositionSynchronizerService } from '@crczp/utils';
     styleUrl: './generic-sandbox-level.component.css',
     imports: [
         AsyncPipe,
-        SandboxLevelSplitPanel,
         NgTemplateOutlet,
         MatButton,
         FloatingAnswerFormComponent,
@@ -48,8 +45,6 @@ export class GenericSandboxLevelComponent {
     @Output() next: EventEmitter<void> = new EventEmitter();
     @Output() answerSubmitted: EventEmitter<string> = new EventEmitter();
     destroyRef = inject(DestroyRef);
-    protected dividerPositionSynchronizer = inject(
-        DividerPositionSynchronizerService
-    );
+
     protected readonly window = window;
 }

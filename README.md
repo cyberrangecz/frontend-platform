@@ -1,81 +1,90 @@
-# Crczp
+> WORK IN PROGRESS - Parts of this codebase are still in development and as such, this version serves only as a preview
 
-<a alt="Nx logo" href="https://nx.dev" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="45"></a>
 
-✨ Your new, shiny [Nx workspace](https://nx.dev) is almost ready ✨.
+# CyberRangeᶜᶻ Platform
 
-[Learn more about this workspace setup and its capabilities](https://nx.dev/getting-started/tutorials/angular-monorepo-tutorial?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects) or run `npx nx graph` to visually explore what was created. Now, let's get you up to speed!
+Nx monorepo containing the CyberRangeCZ Platform frontend.
 
-## Finish your CI setup
+## Prerequisites
 
-[Click here to finish setting up your workspace!](https://cloud.nx.app/connect/7nYwk7JMmb)
+- You need to have access to Sentinel package repository to pull the Sentinel dependencies.
+  Then, you need to set up the @sentinel scope to point to that registry. You can do this by
+  adding following lines to your .npmrc file:
 
-## Run tasks
+    ```
+    @sentinel:registry=https://gitlab.ics.muni.cz/api/v4/projects/2396/packages/npm/
+    //gitlab.ics.muni.cz/api/v4/projects/2396/packages/npm/:_authToken=<YOUR_AUTH_TOKEN>
+    ```
 
-To run the dev server for your app, use:
+  where `<YOUR_AUTH_TOKEN>` is a Gitlab access token with `read_registry` scope and `api` score of a user with access
+  to [Sentinel package repository](https://gitlab.ics.muni.cz/sentinel/sentinel-artifact-repository)
 
-```sh
-npx nx serve cyberrangecz-platform
+- To run the application, Node version >=20.19.0 is required.
+
+## Running the app locally against the CyberRangeᶜᶻ Platform backend
+
+1. Configure and run the [Helm deployment](https://github.com/cyberrangecz/devops-helm). Make sure to use `development: true` for Keycloak configuration in `vagrant-values.yaml`. This will add `https://localhost:4200` to the OIDC redirect URIs.
+    - in case, you need to override CORS, edit it in the (Helm deployment file)[https://github.com/cyberrangecz/devops-helm/blob/master/helm/crczp-head/values.yaml]using corsWhitelist
+2. Run `npm install`
+3. Run `nx serve cyberrangecz-platform --ssl`
+4. Open `https://localhost:4200` in your browser. The app will automatically reload if you change any of the source files. App will be using self-signed certificate, so you need to accept it in your browser.
+
+## Deployment
+
+To build the Docker image without uploading, run `docker build .`
+
+To build and push Docker image to an existing [Helm deployment](https://github.com/cyberrangecz/devops-helm), you can use the [deployment push script](./push.sh):
+```bash
+./push.sh -u <SSH user> -h <host address> -k <path to SSH identity file> Dockerfile 
 ```
+This script builds the Docker image, uploads it to the host over ssh and modifies the Kubernetes deployment to replace the current running version of the image. 
 
-To create a production bundle:
+## Applications
 
-```sh
-npx nx build cyberrangecz-platform
-```
+- [cyberrangecz-platform](./apps/cyberrangecz-platform/README.md) - Main platform application
+- [cyberrangecz-platform-e2e](./apps/cyberrangecz-platform-e2e/README.md) - End-to-end tests for the main platform
 
-To see all available targets to run for a project, run:
+## Libraries
 
-```sh
-npx nx show project cyberrangecz-platform
-```
+### Agenda
 
-These targets are either [inferred automatically](https://nx.dev/concepts/inferred-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) or defined in the `project.json` or `package.json` files.
+Agendas utilise other libraries to provide the individual pages of the application relevant to their scope.
 
-[More about running tasks in the docs &raquo;](https://nx.dev/features/run-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+- [sandbox-agenda](./libs/agenda/sandbox-agenda/README.md) - Sandbox agenda management
+- [training-agenda](./libs/agenda/training-agenda/README.md) - Training agenda management
+- [user-and-group-agenda](./libs/agenda/user-and-group-agenda/README.md) - User and group agenda management
 
-## Add new projects
+### API
 
-While you could add new projects to your workspace manually, you might want to leverage [Nx plugins](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) and their [code generation](https://nx.dev/features/generate-code?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) feature.
+Api libraries provide abstraction layer over REST API calls via simple function calls.
 
-Use the plugin's generator to create new projects.
+- [api-common](./libs/api/api-common/README.md) - Common API utilities
+- [sandbox-api](./libs/api/sandbox-api/README.md) - Sandbox API client
+- [training-api](./libs/api/training-api/README.md) - Training API client
+- [user-and-group-api](./libs/api/user-and-group-api/README.md) - User and group API client
+- [visualization-api](./libs/api/visualization-api/README.md) - Visualization API client
 
-To generate a new application, use:
+### Utils
 
-```sh
-npx nx g @nx/angular:app demo
-```
+Small utility functions, classes, services and components.
 
-To generate a new library, use:
+- [components](./libs/utils/components/README.md) - Shared utility UI components
+- [routing](./libs/utils/routing/README.md) - Common routing utilities
+- [misc](./libs/utils/misc/README.md) - Various small pieces of code
 
-```sh
-npx nx g @nx/angular:resolvers mylib
-```
+### Components
 
-You can use `npx nx list` to get a list of installed plugins. Then, run `npx nx list <plugin-name>` to learn about more specific capabilities of a particular plugin. Alternatively, [install Nx Console](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) to browse plugins and generators in your IDE.
+Larger self-contained components.
 
-[Learn more about Nx plugins &raquo;](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) | [Browse the plugin registry &raquo;](https://nx.dev/plugin-registry?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+- [adaptive-instance-simulator](./libs/components/adaptive-instance-simulator/README.md) - Adaptive instance simulation components
+- [topology-graph](./libs/components/topology-graph/README.md) - Topology graph components
+- [visualization-components](./libs/components/visualization-components/README.md) - Visualization components
 
-[Learn more about Nx on CI](https://nx.dev/ci/intro/ci-with-nx#ready-get-started-with-your-provider?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+### Model
 
-## Install Nx Console
+Key type definitions for objects received from the API.
 
-Nx Console is an editor extension that enriches your developer experience. It lets you run tasks, generate code, and improves code autocompletion in your IDE. It is available for VSCode and IntelliJ.
-
-[Install Nx Console &raquo;](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Useful links
-
-Learn more:
-
-- [Learn more about this workspace setup](https://nx.dev/getting-started/tutorials/angular-monorepo-tutorial?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects)
-- [Learn about Nx on CI](https://nx.dev/ci/intro/ci-with-nx?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Releasing Packages with Nx release](https://nx.dev/features/manage-releases?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [What are Nx plugins?](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-And join the Nx community:
-
-- [Discord](https://go.nx.dev/community)
-- [Follow us on X](https://twitter.com/nxdevtools) or [LinkedIn](https://www.linkedin.com/company/nrwl)
-- [Our Youtube channel](https://www.youtube.com/@nxdevtools)
-- [Our blog](https://nx.dev/blog?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+- [sandbox-model](./libs/model/sandbox-model/README.md) - Sandbox data models
+- [training-model](./libs/model/training-model/README.md) - Training data models
+- [user-and-group-model](./libs/model/user-and-group-model/README.md) - User and group data models
+- [visualization-model](./libs/model/visualization-model/README.md) - Visualization data models

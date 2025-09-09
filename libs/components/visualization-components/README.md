@@ -1,7 +1,3 @@
-# visualization-components
+# CyberRangeᶜᶻ Platform Visualization Components
 
-This library was generated with [Nx](https://nx.dev).
-
-## Running unit tests
-
-Run `nx test visualization-components` to execute the unit tests.
+This library contains Angular components for displaying various visualizations, including assessment results, clustering charts (line, radar, scatter plot), command timelines and graphs, progress visualizations, walkthroughs, statistical visualizations, and dashboard components.

@@ -1,3 +1,4 @@
-# training-model
+# CyberRangeᶜᶻ Platform Training Model
 
-This library was generated with [Nx](https://nx.dev).
+This library contains the frontend model of [Training service](https://github.com/cyberrangecz/backend-training).
+

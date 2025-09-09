@@ -1,0 +1,19 @@
+{
+    "name": "routing-commons",
+    "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+    "sourceRoot": "libs/utils/routing/src",
+    "projectType": "library",
+    "tags": [],
+    "targets": {
+        "build": {
+            "executor": "@nx/js:tsc",
+            "outputs": ["{options.outputPath}"],
+            "options": {
+                "outputPath": "dist/libs/utils/routing",
+                "main": "libs/utils/routing/src/index.ts",
+                "tsConfig": "libs/utils/routing/tsconfig.lib.json",
+                "assets": ["libs/utils/routing/*.md"]
+            }
+        }
+    }
+}

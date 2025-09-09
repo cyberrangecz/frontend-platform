@@ -14,8 +14,8 @@
                 "libs/components/adaptive-instance-simulator/src/index.ts"
             ],
             "@crczp/api-common": ["libs/api/api-common/src/index.ts"],
-            "@crczp/components": ["libs/common/components/src/index.ts"],
-            "@crczp/routing-commons": ["libs/common/routing/src/index.ts"],
+            "@crczp/components": ["libs/utils/components/src/index.ts"],
+            "@crczp/routing-commons": ["libs/utils/routing/src/index.ts"],
             "@crczp/sandbox-agenda": [
                 "libs/agenda/sandbox-agenda/src/index.ts"
             ],
@@ -206,7 +206,7 @@
             "@crczp/user-and-group-model": [
                 "libs/model/user-and-group-model/src/index.ts"
             ],
-            "@crczp/utils": ["libs/common/utils/src/index.ts"],
+            "@crczp/utils": ["libs/utils/misc/src/index.ts"],
             "@crczp/visualization-api": [
                 "libs/api/visualization-api/src/index.ts"
             ],

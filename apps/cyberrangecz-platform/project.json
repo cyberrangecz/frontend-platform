@@ -34,12 +34,12 @@
                     },
                     {
                         "glob": "**/*",
-                        "input": "dist/libs/components/theme/assets/",
+                        "input": "dist/libs/utils/theme/assets/",
                         "output": "/assets/"
                     }
                 ],
                 "styles": [
-                    "dist/libs/components/theme/theme/apply-all.scss",
+                    "dist/libs/utils/theme/theme/apply-all.scss",
                     "apps/cyberrangecz-platform/src/styles.scss"
                 ],
                 "scripts": []

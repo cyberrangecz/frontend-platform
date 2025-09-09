@@ -1,0 +1,54 @@
+{
+    "name": "theme",
+    "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+    "sourceRoot": "libs/utils/theme/src",
+    "prefix": "lib",
+    "projectType": "library",
+    "tags": [],
+    "targets": {
+        "build": {
+            "executor": "@nx/js:tsc",
+            "outputs": [
+                "{workspaceRoot}/dist/{projectRoot}"
+            ],
+            "options": {
+                "main": "libs/utils/theme/dummy.ts",
+                "project": "libs/utils/theme/ng-package.json",
+                "outputPath": "dist/libs/utils/theme",
+                "assets": [
+                    {
+                        "input": "./libs/utils/theme/assets",
+                        "glob": "**/!(*.ts)",
+                        "output": "./assets"
+                    },
+                    {
+                        "input": "./libs/utils/theme/theming",
+                        "glob": "**/!(*.ts)",
+                        "output": "./theme"
+                    }
+                ]
+            },
+            "configurations": {
+                "production": {
+                    "tsConfig": "libs/utils/theme/tsconfig.lib.prod.json"
+                },
+                "development": {
+                    "tsConfig": "libs/utils/theme/tsconfig.lib.json"
+                }
+            },
+            "defaultConfiguration": "production"
+        },
+        "test": {
+            "executor": "@nx/vite:test",
+            "outputs": [
+                "{options.reportsDirectory}"
+            ],
+            "options": {
+                "reportsDirectory": "../../../coverage/libs/utils/theme"
+            }
+        },
+        "lint": {
+            "executor": "@nx/eslint:lint"
+        }
+    }
+}

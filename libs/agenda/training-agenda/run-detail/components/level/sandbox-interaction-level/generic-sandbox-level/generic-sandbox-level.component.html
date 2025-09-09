@@ -3,18 +3,10 @@
       'content-height-with-stepper' :
       'content-height-without-stepper'}}">
         @if (window.innerWidth > 1400) {
-            <crczp-split-container
-                class="split-container"
-                [leftPanelContent]="leftPanelContent"
-                [rightPanelContent]="rightPanelContent"
-                [leftPanelMinWidth]="'20%'"
-                [rightPanelMinWidth]="'20%'"
-                [defaultRatio]="0.6"
-                [dividerPositionSynchronizer]="dividerPositionSynchronizer"
-            />
+            <!--TODO finish topology implementation-->
         } @else {
-            <ng-container [ngTemplateOutlet]="leftPanelContent"/>
-            <ng-container [ngTemplateOutlet]="rightPanelContent"/>
+            <ng-container [ngTemplateOutlet]="leftPanelContent" />
+            <ng-container [ngTemplateOutlet]="rightPanelContent" />
         }
     </div>
     @if ((isLoading | async) === false) {
@@ -31,7 +23,7 @@
                 [buttonLabel]="isLast ? 'Finish' : 'Submit'"
             >
                 @if (hints) {
-                    <ng-container [ngTemplateOutlet]="hints"/>
+                    <ng-container [ngTemplateOutlet]="hints" />
                 }
             </crczp-floating-answer-form>
         }
@@ -40,13 +32,13 @@
 
 <ng-template #leftPanelContent>
     <div class="left-panel round-scrollbar">
-        <sentinel-markdown-view [markdown]="levelContent"/>
+        <sentinel-markdown-view [markdown]="levelContent" />
         @if (displayedHintsContent$ | async) {
-            <sentinel-markdown-view [markdown]="displayedHintsContent$ | async"/>
+            <sentinel-markdown-view [markdown]="displayedHintsContent$ | async" />
         }
         @if (displayedSolutionContent$ | async) {
             <h2><span class="solution-color"> Solution: </span></h2>
-            <sentinel-markdown-view [markdown]="displayedSolutionContent$ | async"/>
+            <sentinel-markdown-view [markdown]="displayedSolutionContent$ | async" />
         }
     </div>
 </ng-template>

@@ -1,3 +1,3 @@
-# sandbox-model
+# CyberRangeᶜᶻ Platform Sandbox Model
 
-This library was generated with [Nx](https://nx.dev).
+This library contains the frontend model of [Sandbox service](https://github.com/cyberrangecz/backend-sandbox-service).

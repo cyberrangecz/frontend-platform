@@ -1,7 +1,3 @@
-# visualization-api
+# CyberRangeᶜᶻ Platform Visualization API
 
-This library was generated with [Nx](https://nx.dev).
-
-## Running unit tests
-
-Run `nx test visualization-api` to execute the unit tests.
+This library groups all APIs for graphical visualizations, providing services for assessment, clustering, command graphs, progress visualization, statistics, walkthroughs, and adaptive transitions related to training instances and other visualization data.

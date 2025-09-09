@@ -1,7 +1,3 @@
-# topology-graph
+# CyberRangeᶜᶻ Platform Topology
 
-This library was generated with [Nx](https://nx.dev).
-
-## Running unit tests
-
-Run `nx test topology-graph` to execute the unit tests.
+This component wraps the functionality of visualizing the network topology of a sandbox definition and establishing connections to sandboxes. 

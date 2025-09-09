@@ -1,7 +1,3 @@
-# visualization-model
+# CyberRangeᶜᶻ Platform Visualization Model
 
-This library was generated with [Nx](https://nx.dev).
-
-## Building
-
-Run `nx build visualization-model` to build the library.
+This library contains the API type definitions for visualization data.

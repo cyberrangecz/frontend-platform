@@ -13,10 +13,6 @@ import { TrainingLevelComponent } from './sandbox-interaction-level/training-lev
 import { InfoLevelComponent } from './info-level/info-level.component';
 import { AccessLevelComponent } from './sandbox-interaction-level/access-level/access-level.component';
 import { MatTooltip } from '@angular/material/tooltip';
-import {
-    DividerPositionSynchronizerService,
-    PersistentDividerPositionSynchronizerService,
-} from '@crczp/utils';
 
 export const markdownParserConfig = {
     markedOptions: {
@@ -48,12 +44,6 @@ export const markdownParserConfig = {
         InfoLevelComponent,
         AccessLevelComponent,
         MatTooltip,
-    ],
-    providers: [
-        {
-            provide: DividerPositionSynchronizerService,
-            useClass: PersistentDividerPositionSynchronizerService,
-        },
     ],
 })
 export class AbstractLevelComponent {
