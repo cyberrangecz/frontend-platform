@@ -1,6 +1,5 @@
 > WORK IN PROGRESS - Parts of this codebase are still in development and as such, this version serves only as a preview
 
-
 # CyberRangeᶜᶻ Platform
 
 Nx monorepo containing the CyberRangeCZ Platform frontend.
@@ -24,7 +23,7 @@ Nx monorepo containing the CyberRangeCZ Platform frontend.
 ## Running the app locally against the CyberRangeᶜᶻ Platform backend
 
 1. Configure and run the [Helm deployment](https://github.com/cyberrangecz/devops-helm). Make sure to use `development: true` for Keycloak configuration in `vagrant-values.yaml`. This will add `https://localhost:4200` to the OIDC redirect URIs.
-    - in case, you need to override CORS, edit it in the (Helm deployment file)[https://github.com/cyberrangecz/devops-helm/blob/master/helm/crczp-head/values.yaml]using corsWhitelist
+    - in case, you need to override CORS, edit it in the [Helm deployment file](https://github.com/cyberrangecz/devops-helm/blob/master/helm/crczp-head/values.yaml) using corsWhitelist
 2. Run `npm install`
 3. Run `nx serve cyberrangecz-platform --ssl`
 4. Open `https://localhost:4200` in your browser. The app will automatically reload if you change any of the source files. App will be using self-signed certificate, so you need to accept it in your browser.
@@ -34,10 +33,12 @@ Nx monorepo containing the CyberRangeCZ Platform frontend.
 To build the Docker image without uploading, run `docker build .`
 
 To build and push Docker image to an existing [Helm deployment](https://github.com/cyberrangecz/devops-helm), you can use the [deployment push script](./push.sh):
+
 ```bash
 ./push.sh -u <SSH user> -h <host address> -k <path to SSH identity file> Dockerfile 
 ```
-This script builds the Docker image, uploads it to the host over ssh and modifies the Kubernetes deployment to replace the current running version of the image. 
+
+This script builds the Docker image, uploads it to the host over ssh and modifies the Kubernetes deployment to replace the current running version of the image.
 
 ## Applications
 
