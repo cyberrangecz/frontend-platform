@@ -6,7 +6,7 @@ import {
     PaginatedResource,
 } from '@sentinel/common/pagination';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, take } from 'rxjs/operators';
 import { inject, Injectable } from '@angular/core';
 import { StagesDetailPollRegistry } from './stages-detail-poll-registry.service';
 import { PortalConfig } from '@crczp/utils';
@@ -29,6 +29,7 @@ export class CloudResourcesService extends StageDetailService {
         return this.api
             .getCloudResources(stage.requestId, requestedPagination)
             .pipe(
+                take(1),
                 map((paginatedResources) => {
                     const formattedResources = paginatedResources.elements.map(
                         (resource) =>

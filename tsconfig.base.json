@@ -49,8 +49,8 @@
             "@crczp/sandbox-agenda/sandbox-images": [
                 "libs/agenda/sandbox-agenda/sandbox-images/index.ts"
             ],
-            "@crczp/sandbox-agenda/topology": [
-                "libs/agenda/sandbox-agenda/topology/index.ts"
+            "@crczp/sandbox-agenda/sandbox-topology": [
+                "libs/agenda/sandbox-agenda/sandbox-topology/index.ts"
             ],
             "@crczp/sandbox-api": ["libs/api/sandbox-api/src/index.ts"],
             "@crczp/sandbox-model": ["libs/model/sandbox-model/src/index.ts"],

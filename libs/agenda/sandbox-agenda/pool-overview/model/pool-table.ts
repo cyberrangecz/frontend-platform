@@ -23,43 +23,44 @@ import { Routing } from '@crczp/routing-commons';
 export class PoolTable extends ExpandableSentinelTable<
     PoolRowAdapter,
     PoolExpandDetailComponent,
-    null
+    null,
+    string
 > {
     constructor(
         data: PaginatedResource<Pool>,
         resources: Observable<Resources>,
         abstractPoolService: AbstractPoolService,
-        sandboxInstanceService: SandboxInstanceService
+        sandboxInstanceService: SandboxInstanceService,
     ) {
         const rows = data.elements.map((element) =>
             PoolTable.createRow(
                 element,
                 resources,
                 abstractPoolService,
-                sandboxInstanceService
-            )
+                sandboxInstanceService,
+            ),
         );
         const columns = [
-            new Column('title', 'Title', true, 'id'),
-            new Column(
+            new Column<string>('title', 'Title', true, 'id'),
+            new Column<string>(
                 'createdByName',
                 'Created by',
                 true,
-                'created_by__username'
+                'created_by__username',
             ),
-            new Column(
+            new Column<string>(
                 'sandboxDefinitionNameAndRevision',
                 'Sandbox definition (revision)',
                 true,
-                'definition__name'
+                'definition__name',
             ),
-            new Column('comment', 'Notes and comments', false),
-            new Column('lockState', 'State', true, 'lock'),
-            new Column('usedAndMaxSize', 'Size', true, 'max_size'),
-            new Column(
+            new Column<string>('comment', 'Notes and comments', false),
+            new Column<string>('lockState', 'State', true, 'lock'),
+            new Column<string>('usedAndMaxSize', 'Size', true, 'max_size'),
+            new Column<string>(
                 'resourcesUtilization',
                 'Instances / VCPUs / RAM / ports / network utilization',
-                false
+                false,
             ),
         ];
         const expand = new RowExpand(PoolExpandDetailComponent, null);
@@ -71,7 +72,7 @@ export class PoolTable extends ExpandableSentinelTable<
         pool: Pool,
         resources: Observable<Resources>,
         abstractPoolService: AbstractPoolService,
-        sandboxInstanceService: SandboxInstanceService
+        sandboxInstanceService: SandboxInstanceService,
     ): Row<PoolRowAdapter> {
         const rowAdapter = pool as PoolRowAdapter;
         rowAdapter.title = `Pool ${rowAdapter.id}`;
@@ -96,12 +97,12 @@ export class PoolTable extends ExpandableSentinelTable<
             this.createActions(
                 pool,
                 abstractPoolService,
-                sandboxInstanceService
-            )
+                sandboxInstanceService,
+            ),
         );
         row.addLink(
             'title',
-            Routing.RouteBuilder.pool.poolId(rowAdapter.id).build()
+            Routing.RouteBuilder.pool.poolId(rowAdapter.id).build(),
         );
         return row;
     }
@@ -109,13 +110,13 @@ export class PoolTable extends ExpandableSentinelTable<
     private static createActions(
         pool: Pool,
         abstractPoolService: AbstractPoolService,
-        sandboxInstanceService: SandboxInstanceService
+        sandboxInstanceService: SandboxInstanceService,
     ): RowAction[] {
         return [
             new EditAction(
                 'Edit Pool',
                 of(false),
-                defer(() => abstractPoolService.updatePool(pool))
+                defer(() => abstractPoolService.updatePool(pool)),
             ),
             new RowAction(
                 'allocate_all',
@@ -127,9 +128,9 @@ export class PoolTable extends ExpandableSentinelTable<
                 defer(() =>
                     sandboxInstanceService.allocateSpecified(
                         pool.id,
-                        pool.maxSize - pool.usedSize
-                    )
-                )
+                        pool.maxSize - pool.usedSize,
+                    ),
+                ),
             ),
             new RowAction(
                 'allocate_one',
@@ -138,12 +139,12 @@ export class PoolTable extends ExpandableSentinelTable<
                 'primary',
                 'Allocate one sandbox',
                 of(pool.isFull()),
-                defer(() => abstractPoolService.allocate(pool, 1))
+                defer(() => abstractPoolService.allocate(pool, 1)),
             ),
             new DeleteAction(
                 'Delete Pool',
                 of(pool.lockState == 'locked'),
-                defer(() => abstractPoolService.delete(pool))
+                defer(() => abstractPoolService.delete(pool)),
             ),
             this.createLockAction(pool, abstractPoolService),
             new RowAction(
@@ -153,14 +154,14 @@ export class PoolTable extends ExpandableSentinelTable<
                 'primary',
                 '',
                 of(false),
-                defer(() => abstractPoolService.getSshAccess(pool.id))
+                defer(() => abstractPoolService.getSshAccess(pool.id)),
             ),
         ];
     }
 
     private static createAllocationTooltip(
         maxSandboxSize: number,
-        usedSandboxSize: number
+        usedSandboxSize: number,
     ): string {
         if (maxSandboxSize - usedSandboxSize == 1) {
             if (maxSandboxSize == 1) return 'Allocate sandbox immediately';
@@ -170,7 +171,7 @@ export class PoolTable extends ExpandableSentinelTable<
 
     private static createLockAction(
         pool: Pool,
-        service: AbstractPoolService
+        service: AbstractPoolService,
     ): RowAction {
         if (pool.isLocked()) {
             return new RowAction(
@@ -180,7 +181,7 @@ export class PoolTable extends ExpandableSentinelTable<
                 'primary',
                 'Unlock pool',
                 of(false),
-                defer(() => service.unlock(pool))
+                defer(() => service.unlock(pool)),
             );
         } else {
             return new RowAction(
@@ -190,7 +191,7 @@ export class PoolTable extends ExpandableSentinelTable<
                 'primary',
                 'Lock pool',
                 of(false),
-                defer(() => service.lock(pool))
+                defer(() => service.lock(pool)),
             );
         }
     }

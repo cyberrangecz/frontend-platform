@@ -1,12 +1,12 @@
-import {ActivatedRoute} from '@angular/router';
-import {Pool, Request, RequestStage} from '@crczp/sandbox-model';
-import {exhaustMap, Observable} from 'rxjs';
-import {map, switchMap, tap} from 'rxjs/operators';
-import {RequestStagesService} from '../../services/state/request-stages.service';
-import {StageAdapter} from '../../model/adapters/stage-adapter';
-import {StagesDetailPollRegistry} from '../../services/state/detail/stages-detail-poll-registry.service';
-import {DestroyRef, inject} from '@angular/core';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import { ActivatedRoute } from '@angular/router';
+import { Request, RequestStage } from '@crczp/sandbox-model';
+import { exhaustMap, Observable } from 'rxjs';
+import { map, switchMap, tap } from 'rxjs/operators';
+import { RequestStagesService } from '../../services/state/request-stages.service';
+import { StageAdapter } from '../../model/adapters/stage-adapter';
+import { StagesDetailPollRegistry } from '../../services/state/detail/stages-detail-poll-registry.service';
+import { DestroyRef, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 /**
  * Smart component for pool request detail page
@@ -17,13 +17,14 @@ export abstract class RequestDetailComponent {
     isLoading$: Observable<boolean>;
     fragment: string;
     destroyRef = inject(DestroyRef);
-
+    protected revisionString = signal<string | null>(null);
+    protected readonly window = window;
     private request: Request;
 
     protected constructor(
         protected activeRoute: ActivatedRoute,
         protected requestStagesService: RequestStagesService,
-        protected stageDetailRegistry?: StagesDetailPollRegistry,
+        protected stageDetailRegistry?: StagesDetailPollRegistry
     ) {
         this.activeRoute.fragment.subscribe((fragment) => {
             this.fragment = fragment;
@@ -49,7 +50,7 @@ export abstract class RequestDetailComponent {
 
     onStageDetailPanelChange(
         opened: boolean,
-        stage: RequestStage, //, order: number
+        stage: RequestStage //, order: number
     ): void {
         if (opened) {
             // TODO scroll to view
@@ -68,15 +69,17 @@ export abstract class RequestDetailComponent {
                             stage.isExpanded = fragment === `stage-${index}`;
                         });
                         return stages;
-                    }),
+                    })
                 );
             }),
             exhaustMap(() => this.activeRoute.data),
             tap((data) => {
-                this.request = data[Pool.name];
+                this.request = data[Request.name];
             }),
-            switchMap((data) => this.requestStagesService.getAll(data[Pool.name])),
-            takeUntilDestroyed(this.destroyRef),
+            switchMap((data) =>
+                this.requestStagesService.getAll(data[Request.name])
+            ),
+            takeUntilDestroyed(this.destroyRef)
         );
         this.hasError$ = this.requestStagesService.hasError$;
         this.isLoading$ = this.requestStagesService.isLoading$;

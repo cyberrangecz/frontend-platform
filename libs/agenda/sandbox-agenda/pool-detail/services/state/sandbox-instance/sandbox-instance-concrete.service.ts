@@ -355,7 +355,7 @@ export class SandboxInstanceConcreteService extends SandboxInstanceService {
             case 2:
                 path = Routing.RouteBuilder.pool
                     .poolId(poolId)
-                    .sandbox_instance.sandboxInstanceId(sandboxId)
+                    .sandbox_instance.requestId(sandboxId)
                     .build();
                 break;
             default:

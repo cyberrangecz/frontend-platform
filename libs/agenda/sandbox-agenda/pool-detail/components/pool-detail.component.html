@@ -1,8 +1,7 @@
 <mat-card appearance="outlined">
     <h3>Sandbox Instances</h3>
     <sentinel-controls (itemClicked)="onControlsAction($event)" [controls]="controls"/>
-    <sentinel-table (rowAction)="onTableAction($event)"
-                    (tableLoad)="onLoadEvent($event)"
+    <sentinel-table                    (tableLoad)="onLoadEvent($event)"
                     [data]="instances$ | async"
                     [defaultSortDirection]="DEFAULT_SORT_DIRECTION"
                     [defaultSortName]="DEFAULT_SORT_COLUMN"

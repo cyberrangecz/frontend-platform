@@ -48,16 +48,16 @@ import {
 export class SandboxDefinitionOverviewComponent implements OnInit {
     @Input() paginationId = 'crczp-sandbox-definition-overview';
     controls: SentinelControlItem[];
-    sandboxDefinitions$: Observable<SentinelTable<SandboxDefinition>>;
+    sandboxDefinitions$: Observable<SentinelTable<SandboxDefinition, string>>;
     hasError$: Observable<boolean>;
     destroyRef = inject(DestroyRef);
     private sandboxDefinitionService = inject(SandboxDefinitionOverviewService);
     private paginationService = inject(PaginationStorageService);
-    private lastLoadEvent: TableLoadEvent;
+    private lastLoadEvent: TableLoadEvent<string>;
 
     ngOnInit(): void {
         this.controls = SandboxDefinitionOverviewControls.create(
-            this.sandboxDefinitionService
+            this.sandboxDefinitionService,
         );
         this.initTable();
     }
@@ -66,7 +66,7 @@ export class SandboxDefinitionOverviewComponent implements OnInit {
      * Refreshes table with new data
      * @param event to load data
      */
-    onLoadEvent(event: TableLoadEvent): void {
+    onLoadEvent(event: TableLoadEvent<string>): void {
         this.paginationService.savePageSize(event.pagination.size);
         this.sandboxDefinitionService
             .getAll(event.pagination)
@@ -95,14 +95,14 @@ export class SandboxDefinitionOverviewComponent implements OnInit {
                 (resource) =>
                     new SandboxDefinitionTable(
                         resource,
-                        this.sandboxDefinitionService
-                    )
-            )
+                        this.sandboxDefinitionService,
+                    ),
+            ),
         );
         this.lastLoadEvent = {
             pagination: new OffsetPaginationEvent(
                 0,
-                this.paginationService.loadPageSize()
+                this.paginationService.loadPageSize(),
             ),
         };
         this.onLoadEvent(this.lastLoadEvent);

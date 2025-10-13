@@ -86,8 +86,10 @@ export class PoolEditComponent implements OnInit {
             .pipe(
                 tap((data) => {
                     this.pool =
-                        data.pool === undefined ? new Pool() : data.pool;
-                    this.poolEditService.set(data.pool);
+                        data[Pool.name] === undefined
+                            ? new Pool()
+                            : data[Pool.name];
+                    this.poolEditService.set(data[Pool.name]);
                 }),
                 switchMap(() => this.poolEditService.editMode$),
                 tap((editMode) => {

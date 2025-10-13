@@ -1,15 +1,14 @@
-import {PaginatedResource, PaginationBaseEvent} from '@sentinel/common/pagination';
-import {BehaviorSubject, Observable} from 'rxjs';
-import {Pool} from '@crczp/sandbox-model';
+import { PaginatedResource, PaginationBaseEvent } from '@sentinel/common/pagination';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { Pool } from '@crczp/sandbox-model';
 
 export abstract class AbstractPoolService {
-    protected poolsHasErrorSubject$: BehaviorSubject<boolean> = new BehaviorSubject(false);
-
-    poolsHasError$: Observable<boolean> = this.poolsHasErrorSubject$.asObservable();
-
-    protected poolsSubject$: BehaviorSubject<PaginatedResource<Pool>>;
-
     pools$: Observable<PaginatedResource<Pool>>;
+    protected poolsHasErrorSubject$: BehaviorSubject<boolean> =
+        new BehaviorSubject(false);
+    poolsHasError$: Observable<boolean> =
+        this.poolsHasErrorSubject$.asObservable();
+    protected poolsSubject$: BehaviorSubject<PaginatedResource<Pool>>;
 
     /**
      * Gets all pools with passed pagination.

@@ -7,7 +7,7 @@ import {
     PaginatedResource,
 } from '@sentinel/common/pagination';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, take } from 'rxjs/operators';
 import { StagesDetailPollRegistry } from './stages-detail-poll-registry.service';
 import { PortalConfig } from '@crczp/utils';
 
@@ -33,6 +33,7 @@ export class TerraformOutputsService extends StageDetailService {
         return this.api
             .getTerraformOutputs(stage.requestId, requestedPagination)
             .pipe(
+                take(1),
                 map((paginatedResources) => {
                     const formattedEvents = paginatedResources.elements.map(
                         (event) => `${event.content}`

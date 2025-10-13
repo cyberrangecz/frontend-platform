@@ -5,7 +5,7 @@
 <div class="mat-typography">
     <div class="sandbox-select-container">
         <h1 mat-dialog-title>Select Sandbox Definition</h1>
-        <mat-divider/>
+        <mat-divider />
         <div mat-dialog-content>
             <h3>
                 Sandbox Definitions
@@ -17,9 +17,9 @@
                            [pageSize]="PAGE_SIZE"
                            [resource]="definitions$ | async"
                            [selected]="selected"
-                           mode="radio"
-                           noDataMessage="No sandbox definitions">
-                <ng-container [sentinelListElement]="sentinelListElementTemplate"/>
+                           [sortState]="'id'"
+                           mode="radio" noDataMessage="No sandbox definitions">
+                <ng-container [sentinelListElement]="sentinelListElementTemplate" />
             </sentinel-list>
         </div>
         <div mat-dialog-actions>

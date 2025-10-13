@@ -1,13 +1,13 @@
 <div class="stages">
-  @for (stage of stages; track stage; let order = $index) {
-    <div>
-      <div matRipple [matRippleCentered]='true' class="stage-container" [ngClass]="stageIconResolver(stage)"
-        [matTooltip]="stage">
-        <mat-icon (click)="stageSelect(stage, order)" class="material-icons-outlined">{{
-          stageIconResolver(stage)
-          }}
-        </mat-icon>
-      </div>
-    </div>
-  }
+    @for (stage of stages; let order = $index; track $index) {
+        <div>
+            <div matRipple [matRippleCentered]='true' class="stage-container" [ngClass]="stageIconResolver(stage)"
+                 [matTooltip]="stage">
+                <mat-icon (click)="stageSelect(stage, order)" class="material-icons-outlined">{{
+                        stageIconResolver(stage)
+                    }}
+                </mat-icon>
+            </div>
+        </div>
+    }
 </div>

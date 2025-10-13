@@ -8,7 +8,8 @@ import {
     MatExpansionPanelTitle
 } from '@angular/material/expansion';
 import { RequestStageHeaderComponent } from './header/request-stage-header.component';
-import { RequestStageDetailComponent } from './detail/request-stage-detail.component';
+import { AllocationStageDetailComponent } from './detail/allocation-stage-detail.component';
+import { SentinelButtonWithIconComponent } from '@sentinel/components/button-with-icon';
 
 /**
  * Component of request stage basic info
@@ -25,15 +26,18 @@ import { RequestStageDetailComponent } from './detail/request-stage-detail.compo
         MatExpansionPanel,
         RequestStageHeaderComponent,
         MatExpansionPanelHeader,
-        RequestStageDetailComponent,
         MatCardTitle,
         MatExpansionPanelTitle,
-        MatExpansionPanelContent
-    ]
+        MatExpansionPanelContent,
+        AllocationStageDetailComponent,
+        SentinelButtonWithIconComponent,
+    ],
 })
 export class RequestStageComponent {
     @Input() stage: StageAdapter;
-    @Output() stageDetailPanelChange: EventEmitter<boolean> = new EventEmitter<boolean>();
+    @Output() stageDetailPanelChange: EventEmitter<boolean> =
+        new EventEmitter<boolean>();
+    protected readonly window = window;
 
     onPanelStateChange(opened: boolean): void {
         this.stageDetailPanelChange.emit(opened);

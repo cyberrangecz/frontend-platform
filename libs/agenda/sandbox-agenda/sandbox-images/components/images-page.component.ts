@@ -45,7 +45,7 @@ import {
 })
 export class ImagesPageComponent implements OnInit {
     @Input() paginationId = 'crczp-resources-page';
-    images$: Observable<SentinelTable<VirtualImage>>;
+    images$: Observable<SentinelTable<VirtualImage, string>>;
     imagesTableHasError$: Observable<boolean>;
     isLoadingImages$: Observable<boolean>;
     guiAccess = false;
@@ -67,7 +67,7 @@ export class ImagesPageComponent implements OnInit {
         this.initTable();
     }
 
-    onTableLoadEvent(loadEvent: TableLoadEvent): void {
+    onTableLoadEvent(loadEvent: TableLoadEvent<string>): void {
         this.paginationService.savePageSize(loadEvent.pagination.size);
         this.lastFilter = loadEvent.filter;
         this.getAvailableImages(loadEvent.pagination, true, loadEvent.filter);
@@ -78,7 +78,7 @@ export class ImagesPageComponent implements OnInit {
         this.getAvailableImages(
             this.getInitialPaginationEvent(),
             true,
-            this.lastFilter
+            this.lastFilter,
         );
     }
 
@@ -87,22 +87,22 @@ export class ImagesPageComponent implements OnInit {
         this.getAvailableImages(
             this.getInitialPaginationEvent(),
             true,
-            this.lastFilter
+            this.lastFilter,
         );
     }
 
-    initialTableLoadEvent(loadEvent: TableLoadEvent): void {
+    initialTableLoadEvent(loadEvent: TableLoadEvent<string>): void {
         this.paginationService.savePageSize(loadEvent.pagination.size);
         this.getAvailableImages(loadEvent.pagination, false);
     }
 
     private initTable(): void {
-        const initialLoadEvent: TableLoadEvent = {
+        const initialLoadEvent: TableLoadEvent<string> = {
             pagination: this.getInitialPaginationEvent(),
         };
 
         this.images$ = this.vmImagesService.resource$.pipe(
-            map((resource) => new VirtualImagesTable(resource))
+            map((resource) => new VirtualImagesTable(resource)),
         );
         this.imagesTableHasError$ = this.vmImagesService.hasError$;
         this.initialTableLoadEvent(initialLoadEvent);
@@ -111,7 +111,7 @@ export class ImagesPageComponent implements OnInit {
     private getAvailableImages(
         pagination: PaginationBaseEvent,
         cached: boolean,
-        filter?: string
+        filter?: string,
     ): void {
         this.vmImagesService
             .getAvailableImages(
@@ -119,7 +119,7 @@ export class ImagesPageComponent implements OnInit {
                 this.crczpImages,
                 this.guiAccess,
                 cached,
-                filter
+                filter,
             )
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe();
@@ -128,7 +128,7 @@ export class ImagesPageComponent implements OnInit {
     private getInitialPaginationEvent(): OffsetPaginationEvent {
         return new OffsetPaginationEvent(
             0,
-            this.paginationService.loadPageSize()
+            this.paginationService.loadPageSize(),
         );
     }
 }

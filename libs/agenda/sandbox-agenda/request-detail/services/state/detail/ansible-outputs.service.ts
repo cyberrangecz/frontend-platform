@@ -9,6 +9,7 @@ import { AllocationRequestsApi } from '@crczp/sandbox-api';
 import { inject, Injectable } from '@angular/core';
 import { StagesDetailPollRegistry } from './stages-detail-poll-registry.service';
 import { PortalConfig } from '@crczp/utils';
+import { take } from 'rxjs/operators';
 
 @Injectable()
 export class AnsibleOutputsService extends StageDetailService {
@@ -26,15 +27,16 @@ export class AnsibleOutputsService extends StageDetailService {
         requestedPagination: OffsetPaginationEvent
     ): Observable<PaginatedResource<string>> {
         if (stage.type === RequestStageType.NETWORKING_ANSIBLE_ALLOCATION) {
-            return this.api.getNetworkingAnsibleOutputs(
-                stage.requestId,
-                requestedPagination
-            );
+            return this.api
+                .getNetworkingAnsibleOutputs(
+                    stage.requestId,
+                    requestedPagination
+                )
+                .pipe(take(1));
         } else if (stage.type === RequestStageType.USER_ANSIBLE_ALLOCATION) {
-            return this.api.getUserAnsibleOutputs(
-                stage.requestId,
-                requestedPagination
-            );
+            return this.api
+                .getUserAnsibleOutputs(stage.requestId, requestedPagination)
+                .pipe(take(1));
         }
     }
 }

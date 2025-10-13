@@ -114,6 +114,7 @@ SentinelBootstrapper.bootstrapApplication('assets/config.json', AppComponent, {
         {
             provide: HTTP_INTERCEPTORS,
             useClass: UnauthorizedInterceptor,
+            multi: true,
         },
         provideHttpClient(
             withInterceptorsFromDi(),

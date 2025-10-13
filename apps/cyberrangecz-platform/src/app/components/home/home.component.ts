@@ -61,6 +61,7 @@ export class HomeComponent implements OnInit {
                 label: 'Participate',
                 displayed: RoleResolver.isTrainingTrainee(this.roles),
                 children: [],
+                icon: 'play_circle',
             },
             {
                 agendas: this.createDesignButtons(),
@@ -69,6 +70,7 @@ export class HomeComponent implements OnInit {
                     RoleResolver.isTrainingDesigner(this.roles) ||
                     RoleResolver.isSandboxDesigner(this.roles),
                 children: [],
+                icon: 'design_services',
             },
             {
                 agendas: this.createOrganizeButtons(),
@@ -77,12 +79,14 @@ export class HomeComponent implements OnInit {
                     RoleResolver.isTrainingOrganizer(this.roles) ||
                     RoleResolver.isSandboxOrganizer(this.roles),
                 children: [],
+                icon: 'event',
             },
             {
                 agendas: this.createManageButtons(),
                 label: 'Manage',
                 displayed: RoleResolver.isUserAndGroupAdmin(this.roles),
                 children: [],
+                icon: 'manage_accounts',
             },
         ];
     }
@@ -94,7 +98,7 @@ export class HomeComponent implements OnInit {
                 !RoleResolver.isTrainingTrainee(this.roles),
                 'run',
                 'Training Run lets you start or resume a training session or view the results of a completed training.',
-                'games'
+                'games',
             ),
         ];
     }
@@ -106,7 +110,7 @@ export class HomeComponent implements OnInit {
                 !RoleResolver.isSandboxDesigner(this.roles),
                 'sandbox-definition',
                 'In the Sandbox Definition agenda, you can manage sandbox definitions—descriptions of virtual networks and computers that can be instantiated in isolated sandboxes.',
-                'event_note'
+                'event_note',
             ),
             new AgendaPortalLink(
                 'Training Definition',
@@ -117,7 +121,7 @@ export class HomeComponent implements OnInit {
                 HomeComponent.createExpandedControlButtons([
                     'adaptive-definition',
                     'linear-definition',
-                ])
+                ]),
             ),
         ];
     }
@@ -129,14 +133,14 @@ export class HomeComponent implements OnInit {
                 !RoleResolver.isSandboxOrganizer(this.roles),
                 'pool',
                 'As an instructor, you can create pools of sandboxes—the basic organizational units for instantiating sandbox definitions.',
-                'subscriptions'
+                'subscriptions',
             ),
             new AgendaPortalLink(
                 'Images',
                 !RoleResolver.isSandboxOrganizer(this.roles),
                 'sandbox-image',
                 'In the Images agenda, you can view available cloud images.',
-                'donut_large'
+                'donut_large',
             ),
             new AgendaPortalLink(
                 'Training Instance',
@@ -147,7 +151,7 @@ export class HomeComponent implements OnInit {
                 HomeComponent.createExpandedControlButtons([
                     'adaptive-instance',
                     'linear-instance',
-                ])
+                ]),
             ),
         ];
     }
@@ -160,21 +164,21 @@ export class HomeComponent implements OnInit {
                 disabled,
                 'group',
                 'In Groups, you can manage groups and grant access rights to their members.',
-                'group'
+                'group',
             ),
             new AgendaPortalLink(
                 'Users',
                 disabled,
                 'user',
                 'The Users agenda lets you assign users to existing groups.',
-                'person'
+                'person',
             ),
             new AgendaPortalLink(
                 'Microservices',
                 disabled,
                 'microservice',
                 'You can also manage the microservices that provide the CyberRangeᶜᶻ Platform’s functionality. Make sure you understand the implications before making any changes.',
-                'account_tree'
+                'account_tree',
             ),
         ];
     }

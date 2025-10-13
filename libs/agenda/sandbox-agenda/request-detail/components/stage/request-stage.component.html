@@ -1,22 +1,33 @@
 <mat-card appearance="outlined">
     <mat-card-header>
-        <img [src]="stage?.logoSrc" alt="stage logo" mat-card-avatar>
-        <mat-card-title>{{ stage?.title }}</mat-card-title>
+        <div class="w-100 hflex ai-c jc-s">
+            <img [src]="stage?.logoSrc" alt="stage logo" class="stage-logo">
+            <mat-card-title>{{ stage?.title }}</mat-card-title>
+        </div>
+        @if (window.innerWidth > 3000) {
+            <sentinel-button-with-icon
+                [icon]="'zoom_out_map'"
+            >
+            </sentinel-button-with-icon>
+        }
     </mat-card-header>
     <mat-card-content>
-        <crczp-request-stage-header [stage]="stage" />
+        <crczp-request-stage-header [stage]="stage" class="m-2rem-l" />
         @if (stage?.hasDetail) {
-            <mat-expansion-panel (closed)="onPanelStateChange(false)"
-                                 (opened)="onPanelStateChange(true)"
-                                 [disabled]="stage?.detailDisabled"
-                                 [expanded]="stage.isExpanded"
-                                 class="mat-elevation-z1">
+            <mat-expansion-panel
+                (closed)="onPanelStateChange(false)"
+                (opened)="onPanelStateChange(true)"
+                [disabled]="stage?.detailDisabled"
+                [expanded]="stage.isExpanded || window.innerWidth > 3000"
+                [hideToggle]="stage?.detailDisabled"
+                class="mat-elevation-z1 stage-expansion-panel remove-mat-expansion-panel-padding">
                 <mat-expansion-panel-header>
                     <mat-panel-title>Stage detail</mat-panel-title>
                 </mat-expansion-panel-header>
                 <ng-template matExpansionPanelContent>
-                    <crczp-request-stage-detail [stage]="stage">
-                    </crczp-request-stage-detail>
+                    <crczp-allocation-stage-detail
+                        [height]="'500px'"
+                        [stage]="stage" />
                 </ng-template>
             </mat-expansion-panel>
         }

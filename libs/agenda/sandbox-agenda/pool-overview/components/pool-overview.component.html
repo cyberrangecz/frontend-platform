@@ -1,6 +1,5 @@
 <sentinel-controls (itemClicked)="onControls($event)" [controls]="controls" />
 <sentinel-table
-    (rowAction)="onPoolAction($event)"
     (tableLoad)="onLoadEvent($event)"
     [data]="pools$ | async"
     [defaultSortDirection]="DEFAULT_SORT_DIRECTION"

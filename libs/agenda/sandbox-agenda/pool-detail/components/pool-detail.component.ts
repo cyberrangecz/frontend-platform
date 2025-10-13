@@ -33,6 +33,12 @@ import { StageOverviewComponent } from './stage-overview/stage-overview.componen
 import { AsyncPipe } from '@angular/common';
 import { PaginationStorageService, PollingService, providePaginationStorageService } from '@crczp/utils';
 import { EditableCommentComponent } from '@crczp/sandbox-agenda/internal';
+import {
+    SandboxAllocationUnitsService
+} from '../services/state/sandbox-allocation-unit/sandbox-allocation-units.service';
+import {
+    SandboxAllocationUnitsConcreteService
+} from '../services/state/sandbox-allocation-unit/sandbox-allocation-units-concrete.service';
 
 /**
  * Smart component of pool detail page
@@ -51,6 +57,10 @@ import { EditableCommentComponent } from '@crczp/sandbox-agenda/internal';
         {
             provide: CleanupRequestsService,
             useClass: CleanupRequestsConcreteService,
+        },
+        {
+            provide: SandboxAllocationUnitsService,
+            useClass: SandboxAllocationUnitsConcreteService,
         },
         {
             provide: SandboxInstanceService,
@@ -96,14 +106,14 @@ export class PoolDetailComponent implements OnInit, AfterViewInit {
      * Gets new data for sandbox instance overview table
      * @param loadEvent load event emitted from sandbox instances table
      */
-    onLoadEvent(loadEvent: TableLoadEvent): void {
+    onLoadEvent(loadEvent: TableLoadEvent<string>): void {
         this.paginationService.savePageSize(loadEvent.pagination.size);
         if (this.subscription) {
             this.subscription.unsubscribe();
         }
         this.subscription = this.sandboxInstanceService
             .getAllUnits(this.pool.id, loadEvent.pagination)
-            .pipe(takeUntilDestroyed(this.destroyRef))
+            .pipe(takeUntilDestroyed(this.destroyRef), take(1))
             .subscribe();
     }
 
@@ -130,7 +140,7 @@ export class PoolDetailComponent implements OnInit, AfterViewInit {
             .navigateToStage(
                 this.pool.id,
                 selectedStage.unitId,
-                selectedStage.order
+                selectedStage.order,
             )
             .pipe(take(1))
             .subscribe();
@@ -156,10 +166,10 @@ export class PoolDetailComponent implements OnInit, AfterViewInit {
     }
 
     private initTables() {
-        const initialLoadEvent: TableLoadEvent = {
+        const initialLoadEvent: TableLoadEvent<string> = {
             pagination: new OffsetPaginationEvent(
                 0,
-                this.paginationService.loadPageSize()
+                this.paginationService.loadPageSize(),
             ),
         };
         this.activeRoute.data
@@ -172,16 +182,16 @@ export class PoolDetailComponent implements OnInit, AfterViewInit {
         this.instances$ = this.sandboxInstanceService.allocationUnits$.pipe(
             map((resource) => {
                 const data = resource.elements.map(
-                    (allocationUnit) => new AbstractSandbox(allocationUnit)
+                    (allocationUnit) => new AbstractSandbox(allocationUnit),
                 );
                 return new PoolDetailTable(
                     new PaginatedResource<AbstractSandbox>(
                         data,
-                        resource.pagination
+                        resource.pagination,
                     ),
-                    this.sandboxInstanceService
+                    this.sandboxInstanceService,
                 );
-            })
+            }),
         );
     }
 
@@ -191,14 +201,14 @@ export class PoolDetailComponent implements OnInit, AfterViewInit {
                 this.controls = PoolDetailControls.create(
                     this.pool,
                     resource.elements.map(
-                        (allocationUnit) => new AbstractSandbox(allocationUnit)
+                        (allocationUnit) => new AbstractSandbox(allocationUnit),
                     ),
-                    this.sandboxInstanceService
+                    this.sandboxInstanceService,
                 );
                 return resource.elements.map(
-                    (allocationUnit) => new AbstractSandbox(allocationUnit)
+                    (allocationUnit) => new AbstractSandbox(allocationUnit),
                 );
-            })
+            }),
         );
         sandboxes$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
     }

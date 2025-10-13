@@ -82,7 +82,7 @@ import { PaginationStorageService, PollingService, providePaginationStorageServi
 })
 export class PoolOverviewComponent implements OnInit {
     @Input() paginationId = 'crczp-sandbox-pool-overview';
-    pools$: Observable<SentinelTable<Pool>>;
+    pools$: Observable<SentinelTable<Pool, string>>;
     hasError$: Observable<boolean>;
     resources$: Observable<Resources>;
     controls: SentinelControlItem[] = [];
@@ -108,7 +108,7 @@ export class PoolOverviewComponent implements OnInit {
      * Gets new data for pool overview table
      * @param loadEvent load data event from table component
      */
-    onLoadEvent(loadEvent: TableLoadEvent): void {
+    onLoadEvent(loadEvent: TableLoadEvent<string>): void {
         this.paginationService.savePageSize(loadEvent.pagination.size);
         this.abstractPoolService
             .getAll(loadEvent.pagination)
@@ -146,10 +146,10 @@ export class PoolOverviewComponent implements OnInit {
     }
 
     private initTable() {
-        const initialLoadEvent: TableLoadEvent = {
+        const initialLoadEvent: TableLoadEvent<string> = {
             pagination: new OffsetPaginationEvent(
                 0,
-                this.paginationService.loadPageSize()
+                this.paginationService.loadPageSize(),
             ),
         };
         this.pools$ = this.abstractPoolService.pools$.pipe(
@@ -159,9 +159,9 @@ export class PoolOverviewComponent implements OnInit {
                         resource,
                         this.resources$,
                         this.abstractPoolService,
-                        this.sandboxInstanceService
-                    )
-            )
+                        this.sandboxInstanceService,
+                    ),
+            ),
         );
         this.hasError$ = this.abstractPoolService.poolsHasError$;
         this.onLoadEvent(initialLoadEvent);
@@ -174,7 +174,7 @@ export class PoolOverviewComponent implements OnInit {
                 'Create',
                 'primary',
                 of(false),
-                defer(() => this.abstractPoolService.create())
+                defer(() => this.abstractPoolService.create()),
             ),
         ];
     }

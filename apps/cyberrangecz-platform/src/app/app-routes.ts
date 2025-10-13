@@ -2,7 +2,7 @@ import { HomeComponent } from './components/home/home.component';
 import { LoginComponent } from './components/login/login.component';
 import {
     sentinelAuthGuard,
-    sentinelAuthGuardWithLoading,
+    sentinelAuthGuardWithLogin,
     sentinelNegativeAuthGuard,
 } from '@sentinel/auth';
 import { RoleService } from './services/role.service';
@@ -78,7 +78,7 @@ export const APP_ROUTES: ValidRouterConfig<''> = [
         path: 'pool',
         loadChildren: () =>
             import('./modules/sandbox-agenda/pool-routing.module').then(
-                (m) => m.PoolRoutingModule
+                (m) => m.PoolRoutingModule,
             ),
         // canActivate: [RoleGuards.sandboxOrganizerGuard],
         data: {
@@ -118,7 +118,7 @@ export const APP_ROUTES: ValidRouterConfig<''> = [
         path: 'mitre-techniques',
         loadChildren: () =>
             import('./modules/training-agenda/mitre-routing.module').then(
-                (m) => m.TrainingRunRoutingModule
+                (m) => m.TrainingRunRoutingModule,
             ),
         // canActivate: [RoleGuards.trainingTraineeGuard],
         data: {
@@ -133,7 +133,7 @@ export const APP_ROUTES: ValidRouterConfig<''> = [
         path: 'mitre-techniques',
         loadChildren: () =>
             import('./modules/training-agenda/mitre-routing.module').then(
-                (m) => m.TrainingRunRoutingModule
+                (m) => m.TrainingRunRoutingModule,
             ),
         // canActivate: [RoleGuards.trainingDesignerGuard],
         data: {
@@ -147,7 +147,7 @@ export const APP_ROUTES: ValidRouterConfig<''> = [
         path: 'user',
         loadChildren: () =>
             import('./modules/user-and-group-agenda/user-routing.module').then(
-                (m) => m.UserRoutingModule
+                (m) => m.UserRoutingModule,
             ),
         // canActivate: [RoleGuards.uagAdminGuard],
         data: {
@@ -160,7 +160,7 @@ export const APP_ROUTES: ValidRouterConfig<''> = [
         path: 'group',
         loadChildren: () =>
             import('./modules/user-and-group-agenda/group-routing.module').then(
-                (m) => m.GroupRoutingModule
+                (m) => m.GroupRoutingModule,
             ),
         // canActivate: [RoleGuards.uagAdminGuard],
         data: {
@@ -187,7 +187,7 @@ export const APP_ROUTES: ValidRouterConfig<''> = [
         canActivate: [sentinelAuthGuard],
         loadChildren: () =>
             import('./modules/notifications/notifications-routing.module').then(
-                (m) => m.NotificationsRoutingModule
+                (m) => m.NotificationsRoutingModule,
             ),
         data: {
             breadcrumb: 'Notifications',
@@ -202,7 +202,7 @@ export const APP_ROUTES: ValidRouterConfig<''> = [
     {
         path: 'home',
         component: HomeComponent,
-        canActivate: [sentinelAuthGuardWithLoading],
+        canActivate: [sentinelAuthGuardWithLogin],
     },
     {
         path: 'logout',

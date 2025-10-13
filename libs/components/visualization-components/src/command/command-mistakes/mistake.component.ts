@@ -1,18 +1,25 @@
-import {Component, inject, Input, OnInit} from '@angular/core';
-import {CommandMistakeService} from './command-mistake.service';
-import {map, take, tap} from 'rxjs/operators';
-import {SentinelTable, SentinelTableComponent, TableActionEvent,} from '@sentinel/components/table';
-import {BehaviorSubject, Observable} from 'rxjs';
+import { Component, inject, Input, OnInit } from '@angular/core';
+import { CommandMistakeService } from './command-mistake.service';
+import { map, take, tap } from 'rxjs/operators';
+import {
+    SentinelTable,
+    SentinelTableComponent,
+} from '@sentinel/components/table';
+import { BehaviorSubject, Observable } from 'rxjs';
 import {
     SentinelResourceSelectorComponent,
     SentinelResourceSelectorMapping,
 } from '@sentinel/components/resource-selector';
-import {AggregatedCommands, CommandResourceSelect, mistakeTypes,} from '@crczp/visualization-model';
-import {MatSlideToggleModule} from '@angular/material/slide-toggle';
-import {AsyncPipe} from '@angular/common';
-import {MatButtonModule} from '@angular/material/button';
-import {CommandTable} from './command-table';
-import {CommandCorrectnessApi,} from '@crczp/visualization-api';
+import {
+    AggregatedCommands,
+    CommandResourceSelect,
+    mistakeTypes,
+} from '@crczp/visualization-model';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { AsyncPipe } from '@angular/common';
+import { MatButtonModule } from '@angular/material/button';
+import { CommandTable } from './command-table';
+import { CommandCorrectnessApi } from '@crczp/visualization-api';
 
 @Component({
     selector: 'crczp-mistake',
@@ -25,19 +32,17 @@ import {CommandCorrectnessApi,} from '@crczp/visualization-api';
         AsyncPipe,
         MatButtonModule,
     ],
-    providers: [
-        CommandCorrectnessApi,
-        CommandMistakeService,
-    ],
+    providers: [CommandCorrectnessApi, CommandMistakeService],
 })
 export class MistakeComponent implements OnInit {
-
     readonly INIT_SORT_NAME = 'lastEdited';
     readonly INIT_SORT_DIR = 'desc';
     @Input() trainingInstanceId: number;
     @Input() trainingRunId: number;
 
-    aggregatedWrongCommands$: Observable<SentinelTable<AggregatedCommands>>;
+    aggregatedWrongCommands$: Observable<
+        SentinelTable<AggregatedCommands, string>
+    >;
     hasError$: Observable<boolean>;
     isLoading$: Observable<boolean>;
     traineesDropdownList: CommandResourceSelect[] = [];
@@ -73,14 +78,6 @@ export class MistakeComponent implements OnInit {
         }
     }
 
-    /**
-     * Resolves type of action and call appropriate handler
-     * @param event action event emitted by table component
-     */
-    onTableAction(event: TableActionEvent<AggregatedCommands>): void {
-        event.action.result$.pipe(take(1)).subscribe();
-    }
-
     onMistakeSelect(event): void {
         this.commandService.setSelectedMistakeTypes(event);
     }
@@ -108,7 +105,7 @@ export class MistakeComponent implements OnInit {
                 this.correct,
                 this.commandService
                     .getSelectedMistakeTypes()
-                    .map((mistake) => mistake.title)
+                    .map((mistake) => mistake.title),
             )
             .pipe(take(1))
             .subscribe();
@@ -124,7 +121,7 @@ export class MistakeComponent implements OnInit {
                 this.correct,
                 this.commandService
                     .getSelectedMistakeTypes()
-                    .map((mistake) => mistake.title)
+                    .map((mistake) => mistake.title),
             )
             .pipe(take(1))
             .subscribe();
@@ -135,7 +132,7 @@ export class MistakeComponent implements OnInit {
         this.isLoading$ = this.commandService.isLoading$;
         this.aggregatedWrongCommands$ =
             this.commandService.aggregatedCommands$.pipe(
-                map((resource) => new CommandTable(resource))
+                map((resource) => new CommandTable(resource)),
             );
     }
 
@@ -159,7 +156,7 @@ export class MistakeComponent implements OnInit {
                             };
                         });
                     }),
-                    take(1)
+                    take(1),
                 )
                 .subscribe();
         }

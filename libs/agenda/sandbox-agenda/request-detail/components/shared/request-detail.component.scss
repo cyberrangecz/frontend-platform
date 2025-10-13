@@ -2,3 +2,50 @@
     color: #f44336;
     text-align: center;
 }
+
+.stages-content {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+
+    @media (min-width: 3000px) {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        min-height: 0;
+        min-width: 0;
+
+        &.stage-1 {
+            grid-template-columns: 1fr 50px 50px;
+
+            > :nth-child(2):hover,
+            > :nth-child(3):hover {
+                width: 55px;
+                transition: width 0.3s;
+            }
+        }
+        &.stage-2 {
+            grid-template-columns: 50px 1fr 50px;
+
+            > :nth-child(1):hover,
+            > :nth-child(3):hover {
+                width: 55px;
+                transition: width 0.3s;
+            }
+        }
+        &.stage-3 {
+            grid-template-columns: 50px 50px 1fr;
+
+            > :nth-child(1):hover,
+            > :nth-child(2):hover {
+                width: 55px;
+                transition: width 0.3s;
+            }
+        }
+    }
+}
+
+
+.stages-content > * {
+    min-height: 0;
+    min-width: 0;
+    overflow: hidden;
+}
