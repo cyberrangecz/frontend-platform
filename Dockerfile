@@ -1,5 +1,5 @@
 FROM node:20-bookworm-slim AS builder
-ARG PROD=false
+ARG PROD=true
 
 RUN npm add --global nx
 
