@@ -16,7 +16,7 @@ import {
     SentinelControlsComponent
 } from '@sentinel/components/controls';
 import { Group, UserRole } from '@crczp/user-and-group-model';
-import { SentinelTable, SentinelTableComponent, TableActionEvent, TableLoadEvent } from '@sentinel/components/table';
+import { SentinelTable, SentinelTableComponent, TableLoadEvent } from '@sentinel/components/table';
 import {
     SentinelResourceSelectorComponent,
     SentinelResourceSelectorMapping
@@ -88,7 +88,7 @@ export class GroupRoleAssignComponent implements OnChanges {
     /**
      * Data for assigned roles table component
      */
-    assignedRoles$: Observable<SentinelTable<UserRole>>;
+    assignedRoles$: Observable<SentinelTable<UserRole, string>>;
     /**
      * True if getting data for table component is in progress, false otherwise
      */
@@ -134,8 +134,9 @@ export class GroupRoleAssignComponent implements OnChanges {
             .getAvailableToAssign(this.resource.id, filterValue)
             .pipe(
                 map(
-                    (resource: PaginatedResource<UserRole>) => resource.elements
-                )
+                    (resource: PaginatedResource<UserRole>) =>
+                        resource.elements,
+                ),
             );
     }
 
@@ -147,24 +148,16 @@ export class GroupRoleAssignComponent implements OnChanges {
         this.roleAssignService.setSelectedRolesToAssign(selected);
     }
 
-    onAssignedRolesLoad(event: TableLoadEvent): void {
+    onAssignedRolesLoad(event: TableLoadEvent<string>): void {
         this.paginationService.savePageSize(event.pagination.size);
         this.roleAssignService
             .getAssigned(
                 this.resource.id,
                 event.pagination as OffsetPaginationEvent,
-                event.filter
+                event.filter,
             )
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe();
-    }
-
-    /**
-     * Resolves type of action and calls appropriate handler
-     * @param event action emitted from assigned roles table component
-     */
-    onAssignedRolesTableAction(event: TableActionEvent<UserRole>): void {
-        event.action.result$.pipe(take(1)).subscribe();
     }
 
     /**
@@ -191,9 +184,9 @@ export class GroupRoleAssignComponent implements OnChanges {
                     new GroupRolesTable(
                         resource,
                         this.resource.id,
-                        this.roleAssignService
-                    )
-            )
+                        this.roleAssignService,
+                    ),
+            ),
         );
         this.assignedRolesHasError$ = this.roleAssignService.hasError$;
         this.isLoadingAssignedRoles$ =
@@ -203,7 +196,7 @@ export class GroupRoleAssignComponent implements OnChanges {
                 0,
                 this.paginationService.loadPageSize(),
                 this.ROLES_OF_GROUP_INIT_SORT_NAME,
-                this.ROLES_OF_GROUP_INIT_SORT_DIR
+                this.ROLES_OF_GROUP_INIT_SORT_DIR,
             ),
         };
         this.onAssignedRolesLoad(initialLoadEvent);
@@ -218,9 +211,9 @@ export class GroupRoleAssignComponent implements OnChanges {
                         selection.length,
                         defer(() =>
                             this.roleAssignService.unassignSelected(
-                                this.resource.id
-                            )
-                        )
+                                this.resource.id,
+                            ),
+                        ),
                     ),
                 ];
             });
@@ -228,15 +221,15 @@ export class GroupRoleAssignComponent implements OnChanges {
 
     private initRolesToAssignControls() {
         const disabled$ = this.roleAssignService.selectedRolesToAssign$.pipe(
-            map((selection) => selection.length <= 0)
+            map((selection) => selection.length <= 0),
         );
         this.rolesToAssignControls = [
             new SaveControlItem(
                 'Add',
                 disabled$,
                 defer(() =>
-                    this.roleAssignService.assignSelected(this.resource.id)
-                )
+                    this.roleAssignService.assignSelected(this.resource.id),
+                ),
             ),
         ];
     }
@@ -245,7 +238,7 @@ export class GroupRoleAssignComponent implements OnChanges {
         this.roleAssignService.selectedRolesToAssign$
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe((selection) =>
-                this.hasUnsavedChanges.emit(selection.length > 0)
+                this.hasUnsavedChanges.emit(selection.length > 0),
             );
     }
 }

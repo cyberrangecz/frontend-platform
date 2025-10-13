@@ -57,10 +57,10 @@ export class GroupDetailComponent implements OnInit {
     readonly INIT_ROLES_SORT_NAME = 'roleType';
     readonly INIT_SORT_DIR = 'asc';
     group: Group;
-    roles$: Observable<SentinelTable<UserRole>>;
+    roles$: Observable<SentinelTable<UserRole, string>>;
     rolesTableHasError$: Observable<boolean>;
     isLoadingRoles$: Observable<boolean>;
-    members$: Observable<SentinelTable<User>>;
+    members$: Observable<SentinelTable<User, string>>;
     membersTableHasError$: Observable<boolean>;
     isLoadingMembers$: Observable<boolean>;
     destroyRef = inject(DestroyRef);
@@ -77,13 +77,13 @@ export class GroupDetailComponent implements OnInit {
      * Gets new data for group detail roles table
      * @param loadEvent load event emitted from roles detail table
      */
-    onRolesLoadEvent(loadEvent: TableLoadEvent): void {
+    onRolesLoadEvent(loadEvent: TableLoadEvent<string>): void {
         this.paginationService.savePageSize(loadEvent.pagination.size);
         this.rolesDetailService
             .getAssigned(
                 this.group.id,
                 loadEvent.pagination as OffsetPaginationEvent,
-                loadEvent.filter
+                loadEvent.filter,
             )
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe();
@@ -93,13 +93,13 @@ export class GroupDetailComponent implements OnInit {
      * Gets new data for group detail members table
      * @param loadEvent load event emitted from mmebers detail table
      */
-    onMembersLoadEvent(loadEvent: TableLoadEvent): void {
+    onMembersLoadEvent(loadEvent: TableLoadEvent<string>): void {
         this.paginationService.savePageSize(loadEvent.pagination.size);
         this.membersDetailService
             .getAssigned(
                 this.group.id,
                 loadEvent.pagination as OffsetPaginationEvent,
-                loadEvent.filter
+                loadEvent.filter,
             )
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe();
@@ -116,16 +116,16 @@ export class GroupDetailComponent implements OnInit {
     }
 
     private initMembersTable() {
-        const initialLoadEvent: TableLoadEvent = {
+        const initialLoadEvent: TableLoadEvent<string> = {
             pagination: new OffsetPaginationEvent(
                 0,
                 this.paginationService.loadPageSize(),
                 this.INIT_MEMBERS_SORT_NAME,
-                this.INIT_SORT_DIR
+                this.INIT_SORT_DIR,
             ),
         };
         this.members$ = this.membersDetailService.assignedUsers$.pipe(
-            map((resource) => new MembersDetailTable(resource))
+            map((resource) => new MembersDetailTable(resource)),
         );
         this.membersTableHasError$ = this.membersDetailService.hasError$;
         this.isLoadingMembers$ = this.membersDetailService.isLoadingAssigned$;
@@ -133,16 +133,16 @@ export class GroupDetailComponent implements OnInit {
     }
 
     private initRolesTable() {
-        const initialLoadEvent: TableLoadEvent = {
+        const initialLoadEvent: TableLoadEvent<string> = {
             pagination: new OffsetPaginationEvent(
                 0,
                 this.paginationService.loadPageSize(),
                 this.INIT_ROLES_SORT_NAME,
-                this.INIT_SORT_DIR
+                this.INIT_SORT_DIR,
             ),
         };
         this.roles$ = this.rolesDetailService.assignedRoles$.pipe(
-            map((resource) => new RolesDetailTable(resource))
+            map((resource) => new RolesDetailTable(resource)),
         );
         this.rolesTableHasError$ = this.rolesDetailService.hasError$;
         this.isLoadingRoles$ = this.rolesDetailService.isLoadingAssigned$;

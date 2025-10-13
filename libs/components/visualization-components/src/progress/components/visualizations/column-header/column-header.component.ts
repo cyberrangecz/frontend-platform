@@ -5,7 +5,6 @@ import {
     Output,
     ViewEncapsulation,
 } from '@angular/core';
-import { PROGRESS_CONFIG } from '../../../progress-config';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -16,8 +15,6 @@ import { CommonModule } from '@angular/common';
     imports: [CommonModule],
 })
 export class ColumnHeaderComponent {
-    public assetsRoot: string = PROGRESS_CONFIG.assetsRoot;
-
     @Input() sortType: string;
     @Input() label: string;
     @Input() selectedSortType: string;

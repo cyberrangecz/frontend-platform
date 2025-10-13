@@ -10,7 +10,6 @@ import {
     SentinelRowDirective,
     SentinelTable,
     SentinelTableComponent,
-    TableActionEvent,
     TableLoadEvent
 } from '@sentinel/components/table';
 import { Observable } from 'rxjs';
@@ -51,7 +50,7 @@ export class CommonTrainingDefinitionOverviewComponent implements OnInit {
     readonly INIT_SORT_NAME = 'lastEdited';
     readonly INIT_SORT_DIR = 'desc';
 
-    trainingDefinitions$: Observable<SentinelTable<TrainingDefinition>>;
+    trainingDefinitions$: Observable<SentinelTable<TrainingDefinition, string>>;
     hasError$: Observable<boolean>;
     isLoading$: Observable<boolean>;
     topControls: SentinelControlItem[] = [];
@@ -62,11 +61,11 @@ export class CommonTrainingDefinitionOverviewComponent implements OnInit {
 
     ngOnInit(): void {
         this.topControls = TrainingDefinitionOverviewControls.createTopControls(
-            this.trainingDefinitionService
+            this.trainingDefinitionService,
         );
         this.bottomControls =
             TrainingDefinitionOverviewControls.createBottomControls(
-                this.trainingDefinitionService
+                this.trainingDefinitionService,
             );
         this.initTable();
     }
@@ -75,7 +74,7 @@ export class CommonTrainingDefinitionOverviewComponent implements OnInit {
      * Gets new data for table
      * @param loadEvent event emitted by table component to get new data
      */
-    onLoadEvent(loadEvent: TableLoadEvent): void {
+    onLoadEvent(loadEvent: TableLoadEvent<string>): void {
         this.paginationService.savePageSize(loadEvent.pagination.size);
         this.trainingDefinitionService
             .getAll(
@@ -83,9 +82,9 @@ export class CommonTrainingDefinitionOverviewComponent implements OnInit {
                     0,
                     loadEvent.pagination.size,
                     loadEvent.pagination.sort,
-                    loadEvent.pagination.sortDir
+                    loadEvent.pagination.sortDir,
                 ),
-                loadEvent.filter
+                loadEvent.filter,
             )
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe();
@@ -97,14 +96,6 @@ export class CommonTrainingDefinitionOverviewComponent implements OnInit {
      */
     onControlsAction(control: SentinelControlItemSignal): void {
         control.result$.pipe(take(1)).subscribe();
-    }
-
-    /**
-     * Resolves type of emitted event and calls appropriate handler
-     * @param event action event emitted from table component
-     */
-    onTableAction(event: TableActionEvent<TrainingDefinition>): void {
-        event.action.result$.pipe(take(1)).subscribe();
     }
 
     stateToIcon(value: TrainingDefinitionStateEnum): string {
@@ -127,15 +118,15 @@ export class CommonTrainingDefinitionOverviewComponent implements OnInit {
                     (resource) =>
                         new TrainingDefinitionTable(
                             resource,
-                            this.trainingDefinitionService
-                        )
-                )
+                            this.trainingDefinitionService,
+                        ),
+                ),
             );
         const initialPagination = new OffsetPaginationEvent(
             0,
             this.paginationService.loadPageSize(),
             this.INIT_SORT_NAME,
-            this.INIT_SORT_DIR
+            this.INIT_SORT_DIR,
         );
         this.onLoadEvent({ pagination: initialPagination });
     }

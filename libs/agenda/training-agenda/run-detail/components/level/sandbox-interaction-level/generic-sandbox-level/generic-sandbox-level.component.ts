@@ -5,15 +5,16 @@ import {
     inject,
     Input,
     Output,
-    TemplateRef,
+    TemplateRef
 } from '@angular/core';
-import { AnswerFormHintsComponent } from '../subcomponents/answer-floating-form/answer-form-hints/answer-form-hints.component';
+import {
+    AnswerFormHintsComponent
+} from '../subcomponents/answer-floating-form/answer-form-hints/answer-form-hints.component';
 import { Observable, of } from 'rxjs';
 import { AsyncPipe, NgTemplateOutlet } from '@angular/common';
 import { MatButton } from '@angular/material/button';
 import { FloatingAnswerFormComponent } from '../subcomponents/answer-floating-form/floating-answer-form.component';
 import { SentinelMarkdownViewComponent } from '@sentinel/components/markdown-view';
-import { TopologyWrapperComponent } from '../subcomponents/topology-wrapper/topology-wrapper.component';
 
 @Component({
     selector: 'crczp-generic-sandbox-level',
@@ -24,9 +25,8 @@ import { TopologyWrapperComponent } from '../subcomponents/topology-wrapper/topo
         NgTemplateOutlet,
         MatButton,
         FloatingAnswerFormComponent,
-        SentinelMarkdownViewComponent,
-        TopologyWrapperComponent,
-    ],
+        SentinelMarkdownViewComponent
+    ]
 })
 export class GenericSandboxLevelComponent {
     @Input({ required: true }) levelContent: string;

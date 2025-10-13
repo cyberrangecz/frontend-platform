@@ -119,9 +119,21 @@ export const DEFINED_ROUTES = {
         VAR_poolId: {
             edit: {},
             ['EXCL_sandbox-instance']: {
-                VAR_sandboxInstanceId: {
-                    cleanup: {},
+                EXCL_VAR_sandboxInstanceId: {
                     topology: {},
+                },
+                VAR_requestId: {
+                    cleanup: {},
+                },
+            },
+        },
+    },
+
+    console: {
+        ['EXCL_sandbox-instance']: {
+            EXCL_VAR_sandboxInstanceId: {
+                EXCL_console: {
+                    VAR_nodeId: {},
                 },
             },
         },

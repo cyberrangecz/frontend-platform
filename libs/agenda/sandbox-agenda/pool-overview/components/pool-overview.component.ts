@@ -10,7 +10,6 @@ import {
     SentinelRowDirective,
     SentinelTable,
     SentinelTableComponent,
-    TableActionEvent,
     TableLoadEvent
 } from '@sentinel/components/table';
 import { defer, Observable, of } from 'rxjs';
@@ -114,14 +113,6 @@ export class PoolOverviewComponent implements OnInit {
             .getAll(loadEvent.pagination)
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe();
-    }
-
-    /**
-     * Resolves type of action and calls appropriate handler
-     * @param event action event emitted from pool overview table
-     */
-    onPoolAction(event: TableActionEvent<Pool>): void {
-        event.action.result$.pipe(take(1)).subscribe();
     }
 
     onControls(controlItem: SentinelControlItemSignal): void {

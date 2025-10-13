@@ -21,7 +21,7 @@ import {
 } from './pagination/pagination-types';
 
 import { PaginationMapper } from './pagination/pagination-mapper';
-import { catchError, EMPTY, map, Observable, switchMap } from 'rxjs';
+import { catchError, EMPTY, map, Observable, switchMap, take } from 'rxjs';
 import { handleJsonError } from './validation/json-error-converter';
 
 type Backend = 'java' | 'python';
@@ -131,12 +131,12 @@ export class CRCZPHttpService {
         );
     }
 
-    private pipeError<T>(verb: string, operation?: string) {
+    private pipeError<T>(operation?: string) {
         return (src: Observable<T>) =>
             src.pipe(
                 catchError((err: HttpErrorResponse) =>
                     this.errorHandler
-                        .emitAPIError(err, verb, operation)
+                        .emitAPIError(err, operation)
                         .pipe(switchMap(() => EMPTY as Observable<T>))
                 )
             );
@@ -154,7 +154,6 @@ abstract class BaseRequestBuilder<TRecv, TOut = TRecv> {
     constructor(
         protected readonly http: HttpClient,
         protected readonly errorPipe: <T>(
-            verb: string,
             operation?: string
         ) => (src: Observable<T>) => Observable<T>,
         protected readonly method: BodylessVerb | BodyVerb,
@@ -263,7 +262,7 @@ abstract class BaseRequestBuilder<TRecv, TOut = TRecv> {
     /**
      * Execute the configured request and return an Observable of the output type.
      */
-    abstract execute(): Observable<TOut>;
+    public abstract execute(): Observable<TOut>;
 
     protected mapPaginatedOrReceive(piped$: Observable<any>) {
         if (this.pagination && this.options.responseType === 'json') {
@@ -344,7 +343,7 @@ class BodylessRequestBuilder<TRecv, TOut = TRecv> extends BaseRequestBuilder<
 
         const normalized$ = request$.pipe(handleJsonError());
         const mapped$ = this.mapPaginatedOrReceive(normalized$);
-        return mapped$.pipe(this.errorPipe(this.method, this.opName));
+        return mapped$.pipe(take(1), this.errorPipe(this.opName));
     }
 }
 
@@ -424,7 +423,7 @@ class BodyRequestBuilder<TSend, TRecv, TOut = TRecv> extends BaseRequestBuilder<
 
         const normalized$ = request$.pipe(handleJsonError());
         const mapped$ = this.mapPaginatedOrReceive(normalized$);
-        return mapped$.pipe(this.errorPipe(this.method, this.opName));
+        return mapped$.pipe(take(1), this.errorPipe(this.opName));
     }
 
     private mapSend(body?: TSend): unknown {

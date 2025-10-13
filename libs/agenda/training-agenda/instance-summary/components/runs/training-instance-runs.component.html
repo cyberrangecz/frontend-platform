@@ -1,10 +1,9 @@
 @if (trainingRuns.rows.length) {
     <sentinel-table
-        [data]="trainingRuns"
-        [hasError]="hasError"
-        (rowAction)="onTableAction($event)"
         (rowClick)="onTableRowExpand($event)"
         (tableLoad)="onTableLoadEvent($event)"
+        [data]="trainingRuns"
+        [hasError]="hasError"
     >
     </sentinel-table>
 } @else {

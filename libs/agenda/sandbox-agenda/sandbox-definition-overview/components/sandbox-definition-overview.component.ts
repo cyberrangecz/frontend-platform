@@ -9,7 +9,6 @@ import { SandboxDefinition } from '@crczp/sandbox-model';
 import {
     SentinelTable,
     SentinelTableComponent,
-    TableActionEvent,
     TableLoadEvent,
 } from '@sentinel/components/table';
 import { Observable } from 'rxjs';
@@ -72,14 +71,6 @@ export class SandboxDefinitionOverviewComponent implements OnInit {
             .getAll(event.pagination)
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe();
-    }
-
-    /**
-     * Resolves correct action based on received event and performs it
-     * @param event table action event emitted by child table component
-     */
-    onTableAction(event: TableActionEvent<SandboxDefinition>): void {
-        event.action.result$.pipe(take(1)).subscribe();
     }
 
     /**

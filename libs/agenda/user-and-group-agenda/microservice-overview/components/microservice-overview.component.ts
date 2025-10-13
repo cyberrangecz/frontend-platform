@@ -15,7 +15,6 @@ import { defer, Observable, of } from 'rxjs';
 import {
     SentinelTable,
     SentinelTableComponent,
-    TableActionEvent,
     TableLoadEvent,
 } from '@sentinel/components/table';
 import {
@@ -51,7 +50,7 @@ export class MicroserviceOverviewComponent implements OnInit {
     /**
      * Data for microservices table component
      */
-    microservices$: Observable<SentinelTable<Microservice>>;
+    microservices$: Observable<SentinelTable<Microservice, string>>;
     /**
      * True if error was thrown while getting data for microservies table, false otherwise
      */
@@ -62,16 +61,16 @@ export class MicroserviceOverviewComponent implements OnInit {
     private paginationService = inject(PaginationStorageService);
 
     ngOnInit(): void {
-        const initialLoadEvent: TableLoadEvent = {
+        const initialLoadEvent: TableLoadEvent<string> = {
             pagination: new OffsetPaginationEvent(
                 0,
                 this.paginationService.loadPageSize(),
                 this.INIT_SORT_NAME,
-                this.INIT_SORT_DIR
+                this.INIT_SORT_DIR,
             ),
         };
         this.microservices$ = this.microserviceService.resource$.pipe(
-            map((microservices) => new MicroserviceTable(microservices))
+            map((microservices) => new MicroserviceTable(microservices)),
         );
         this.microservicesHasError$ = this.microserviceService.hasError$;
         this.microserviceService.selected$
@@ -88,7 +87,7 @@ export class MicroserviceOverviewComponent implements OnInit {
      * Clears selected microservices and calls service to get new data for microservices table
      * @param event event emitted from table component
      */
-    onTableLoadEvent(event: TableLoadEvent): void {
+    onTableLoadEvent(event: TableLoadEvent<string>): void {
         this.paginationService.savePageSize(event.pagination.size);
         this.microserviceService
             .getAll(event.pagination as OffsetPaginationEvent, event.filter)
@@ -96,20 +95,12 @@ export class MicroserviceOverviewComponent implements OnInit {
             .subscribe();
     }
 
-    /**
-     * Resolves type of action call appropriate handler
-     * @param event action event emitted by table component
-     */
-    onTableAction(event: TableActionEvent<Microservice>): void {
-        event.action.result$.pipe(take(1)).subscribe();
-    }
-
     private initControls() {
         this.controls = [
             new RegisterControlItem(
                 'Register',
                 of(false),
-                defer(() => this.microserviceService.register())
+                defer(() => this.microserviceService.register()),
             ),
         ];
     }

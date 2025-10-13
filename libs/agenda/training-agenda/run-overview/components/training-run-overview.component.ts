@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import { AccessedTrainingRun, TrainingTypeEnum } from '@crczp/training-model';
-import { SentinelTable, SentinelTableComponent, TableActionEvent, TableLoadEvent } from '@sentinel/components/table';
+import { SentinelTable, SentinelTableComponent, TableLoadEvent } from '@sentinel/components/table';
 import { Observable } from 'rxjs';
-import { map, take } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { AccessedTrainingRunTable } from '../model/accessed-training-run-table';
 import { AccessedTrainingRunService } from '../services/state/accessed-training-run.service';
 import {
@@ -53,7 +53,7 @@ import {
     ],
 })
 export class TrainingRunOverviewComponent implements OnInit {
-    trainingRuns$: Observable<SentinelTable<AccessedTrainingRun>>;
+    trainingRuns$: Observable<SentinelTable<AccessedTrainingRun, string>>;
     hasError$: Observable<boolean>;
     isLoading = false;
     controls: SentinelControlItem[];
@@ -65,7 +65,7 @@ export class TrainingRunOverviewComponent implements OnInit {
         const trainingRunOverviewService = this.trainingRunOverviewService;
 
         this.controls = AccessedTrainingRunControls.create(
-            trainingRunOverviewService
+            trainingRunOverviewService,
         );
     }
 
@@ -84,28 +84,20 @@ export class TrainingRunOverviewComponent implements OnInit {
                 accessToken,
                 this.isAdaptiveToken(accessToken)
                     ? TrainingTypeEnum.ADAPTIVE
-                    : TrainingTypeEnum.LINEAR
+                    : TrainingTypeEnum.LINEAR,
             )
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe(() => (this.isLoading = false));
     }
 
     /**
-     * Resolves type of table action and handles it
-     * @param event table action event
-     */
-    onTableAction(event: TableActionEvent<AccessedTrainingRun>): void {
-        event.action.result$.pipe(take(1)).subscribe();
-    }
-
-    /**
      * Loads training run data for the table component
      */
-    loadAccessedTrainingRuns(loadEvent: TableLoadEvent): void {
+    loadAccessedTrainingRuns(loadEvent: TableLoadEvent<string>): void {
         this.trainingRunOverviewService
             .getAll(
                 new OffsetPaginationEvent(0, 0, '', 'asc'),
-                loadEvent.filter
+                loadEvent.filter,
             )
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe();
@@ -116,12 +108,12 @@ export class TrainingRunOverviewComponent implements OnInit {
     }
 
     private initTable() {
-        const initialLoadEvent: TableLoadEvent = {
+        const initialLoadEvent: TableLoadEvent<string> = {
             pagination: new OffsetPaginationEvent(
                 0,
                 this.settings.defaultPageSize,
                 '',
-                'asc'
+                'asc',
             ),
         };
 
@@ -130,9 +122,9 @@ export class TrainingRunOverviewComponent implements OnInit {
                 (resource) =>
                     new AccessedTrainingRunTable(
                         resource,
-                        this.trainingRunOverviewService
-                    )
-            )
+                        this.trainingRunOverviewService,
+                    ),
+            ),
         );
         this.hasError$ = this.trainingRunOverviewService.hasError$;
         this.loadAccessedTrainingRuns(initialLoadEvent);

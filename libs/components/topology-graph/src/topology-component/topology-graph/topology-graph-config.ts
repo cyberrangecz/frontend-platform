@@ -109,14 +109,13 @@ const graph_config: Options = {
     },
 
     physics: {
-        minVelocity: 0.75,
+        minVelocity: 1,
         barnesHut: {
             centralGravity: 0.3,
             gravitationalConstant: -9000,
             springConstant: 0.25,
             springLength: 300,
-            damping: 0.95,
-            avoidOverlap: 0.95,
+            damping: 0.99,
         },
         stabilization: {
             iterations: 1000,

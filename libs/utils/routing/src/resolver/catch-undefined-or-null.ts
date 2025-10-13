@@ -11,12 +11,12 @@ export function catchUndefinedOrNull<T>(
                     if (value !== null && value !== undefined) {
                         subscriber.next(value);
                     } else {
-                        console.warn(
-                            `Object ${testedObject} is undefined or null`
-                        );
                         redirect().subscribe({
                             error: (err) => subscriber.error(err),
                         });
+                        throw new Error(
+                            `Object ${testedObject} is undefined or null, cannot proceed. Redirecting...`
+                        );
                     }
                 },
                 error: (err) => subscriber.error(err),

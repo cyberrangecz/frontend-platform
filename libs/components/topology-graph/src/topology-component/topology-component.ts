@@ -1,15 +1,28 @@
-import { Component, inject, Input, signal } from '@angular/core';
+import {
+    AfterViewInit,
+    Component,
+    ElementRef,
+    inject,
+    input,
+    signal,
+    ViewChild,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatTab, MatTabGroup, MatTabLabel } from '@angular/material/tabs';
-import { TopologyGraph } from './topology-graph/topology-graph';
+import {
+    OpenConsoleEvent,
+    TopologyGraph,
+} from './topology-graph/topology-graph';
 import { MatTooltip } from '@angular/material/tooltip';
-import { ConsoleTab } from '../model/model';
 import { ConsoleView } from '../console/console-view.component';
 import { Topology } from '@crczp/sandbox-model';
-import { ResizeEvent, SentinelResizeDirective } from '@sentinel/common/resize';
-import { TopologySplitViewSynchronizerService } from './divider-position/topology-split-view-synchronizer.service';
+import { SentinelResizeDirective } from '@sentinel/common/resize';
+import { TopologySynchronizerService } from './divider-position/topology-synchronizer.service';
 import { TopologyNodeSvgService } from './topology-graph/services/topology-svg-generator.service';
 import { TopologyIconsService } from './topology-graph/services/topology-icons.service';
+import { MatIcon } from '@angular/material/icon';
+import { Routing } from '@crczp/routing-commons';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'crczp-topology',
@@ -22,19 +35,26 @@ import { TopologyIconsService } from './topology-graph/services/topology-icons.s
         ConsoleView,
         MatTabLabel,
         SentinelResizeDirective,
+        MatIcon,
     ],
     providers: [TopologyIconsService, TopologyNodeSvgService],
     templateUrl: './topology-component.html',
     styleUrl: './topology-component.scss',
 })
-export class TopologyComponent {
-    @Input({ required: true }) topology: Topology;
+export class TopologyComponent implements AfterViewInit {
+    topology = input.required<Topology>();
+    sandboxUuid = input<string>(undefined);
+    standalone = input<boolean>(false);
 
     selectedIndex = signal(0);
-    topologyHeight = signal(500);
-    synchronizerService = inject(TopologySplitViewSynchronizerService);
+    synchronizerService = inject(TopologySynchronizerService);
+    router = inject(Router);
+
     collapsed = false;
-    protected tabs = signal<ConsoleTab[]>([]);
+
+    @ViewChild('topologyTabsDiv') topologyTabsDiv: ElementRef<HTMLDivElement>;
+
+    protected tabs = signal<OpenConsoleEvent[]>([]);
     protected readonly window = window;
 
     constructor() {
@@ -43,22 +63,31 @@ export class TopologyComponent {
         );
     }
 
-    handleOpenConsole($event: ConsoleTab): void {
-        this.tabs.update((tabs) => [...tabs, $event]);
-        this.selectedIndex.set(this.tabs().length - 1);
+    handleOpenConsole($event: OpenConsoleEvent): void {
+        if (!this.sandboxUuid()) {
+            console.warn(
+                'TopologyComponent: sandboxUuid is not set, cannot open console'
+            );
+            return;
+        }
+        if ($event.inNewWindow) {
+            this.openConsoleInNewWindow($event.nodeId, $event.inGui);
+        } else {
+            this.tabs.update((tabs) => [...tabs, $event]);
+            this.selectedIndex.set(this.tabs().length);
+        }
     }
 
-    trackTab(index: number, tab: ConsoleTab): string {
-        return tab.ip + '_' + index;
+    trackTab(index: number, tab: OpenConsoleEvent): string {
+        return tab.nodeId + '_' + index;
+    }
+
+    ngAfterViewInit(): void {
+        this.updateTopologyDimensions();
     }
 
     closeTab(index: number): void {
         this.tabs.update((tabs) => tabs.filter((_, i) => i !== index));
-    }
-
-    onResize($event: ResizeEvent) {
-        if (this.collapsed) return;
-        this.topologyHeight.set($event.height);
     }
 
     mouseDown(event: MouseEvent): void {
@@ -75,5 +104,38 @@ export class TopologyComponent {
         document.addEventListener('mousemove', mouseMove);
         event.preventDefault();
         event.stopPropagation();
+    }
+
+    updateTopologyDimensions() {
+        if (this.collapsed) return;
+        if (this.topologyTabsDiv) {
+            this.synchronizerService.emitTopologyWidthChange(
+                this.topologyTabsDiv.nativeElement.clientWidth
+            );
+            this.synchronizerService.emitTopologyHeightChange(
+                this.topologyTabsDiv.nativeElement.clientHeight
+            );
+        }
+    }
+
+    private openConsoleInNewWindow(nodeId: string, inGui: boolean): void {
+        const url = this.router.serializeUrl(
+            this.router.createUrlTree(
+                [
+                    Routing.RouteBuilder.console.sandbox_instance
+                        .sandboxInstanceId(this.sandboxUuid())
+                        .console.nodeId(nodeId)
+                        .build(),
+                ],
+                {
+                    queryParams: {
+                        inGui,
+                        hideSidebar: true,
+                    },
+                }
+            )
+        );
+        console.info('Opening console in new window:', url);
+        window.open(url, '_blank');
     }
 }

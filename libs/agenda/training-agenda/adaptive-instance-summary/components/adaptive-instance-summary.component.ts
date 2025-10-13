@@ -5,7 +5,7 @@ import { TrainingInstance, TrainingRun } from '@crczp/training-model';
 import { Observable } from 'rxjs';
 import { map, switchMap, take, tap } from 'rxjs/operators';
 import { AdaptiveInstanceSummaryService } from '../services/state/summary/adaptive-instance-summary.service';
-import { SentinelTable, TableActionEvent, TableLoadEvent } from '@sentinel/components/table';
+import { SentinelTable, TableLoadEvent } from '@sentinel/components/table';
 import { AdaptiveRunService } from '../services/state/runs/adaptive-run.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
@@ -46,7 +46,7 @@ import { Routing } from '@crczp/routing-commons';
 export class AdaptiveInstanceSummaryComponent implements OnInit {
     @Input() paginationId = 'adaptive-instance-summary';
     trainingInstance$: Observable<TrainingInstance>;
-    adaptiveRuns$: Observable<SentinelTable<TrainingRun>>;
+    adaptiveRuns$: Observable<SentinelTable<TrainingRun, string>>;
     adaptiveRunsHasError$: Observable<boolean>;
     hasStarted$: Observable<boolean>;
     trainingInstanceAccessTokenLink: string;
@@ -56,7 +56,7 @@ export class AdaptiveInstanceSummaryComponent implements OnInit {
     destroyRef = inject(DestroyRef);
     private activeRoute = inject(ActivatedRoute);
     private adaptiveInstanceSummaryService = inject(
-        AdaptiveInstanceSummaryService
+        AdaptiveInstanceSummaryService,
     );
     private paginationService = inject(PaginationStorageService);
     private adaptiveRunService = inject(AdaptiveRunService);
@@ -67,24 +67,16 @@ export class AdaptiveInstanceSummaryComponent implements OnInit {
             map((data) => data[TrainingInstance.name] || null),
             tap((ti) => {
                 this.initSummaryComponent(ti);
-            })
+            }),
         );
         this.initAdaptiveRunsComponent();
-    }
-
-    /**
-     * Resolves type of action and calls handler
-     * @param event action event emitted from table
-     */
-    onTrainingRunTableAction(event: TableActionEvent<TrainingRun>): void {
-        event.action.result$.pipe(take(1)).subscribe();
     }
 
     /**
      * Calls service to get new data for table
      * @param event reload data event emitted from table
      */
-    onTrainingRunTableLoadEvent(event: TableLoadEvent): void {
+    onTrainingRunTableLoadEvent(event: TableLoadEvent<string>): void {
         this.paginationService.savePageSize(event.pagination.size);
         this.trainingInstance$
             .pipe(
@@ -95,11 +87,11 @@ export class AdaptiveInstanceSummaryComponent implements OnInit {
                             0,
                             event.pagination.size,
                             event.pagination.sort,
-                            event.pagination.sortDir
-                        )
-                    )
+                            event.pagination.sortDir,
+                        ),
+                    ),
                 ),
-                takeUntilDestroyed(this.destroyRef)
+                takeUntilDestroyed(this.destroyRef),
             )
             .subscribe();
     }
@@ -136,19 +128,19 @@ export class AdaptiveInstanceSummaryComponent implements OnInit {
             0,
             this.paginationService.loadPageSize(),
             '',
-            'asc'
+            'asc',
         );
         this.trainingInstance$
             .pipe(
                 take(1),
                 switchMap((ti) =>
-                    this.adaptiveRunService.getAll(ti.id, initialPagination)
-                )
+                    this.adaptiveRunService.getAll(ti.id, initialPagination),
+                ),
             )
             .subscribe();
         this.adaptiveRuns$ = this.adaptiveRunService.resource$.pipe(
             takeUntilDestroyed(this.destroyRef),
-            map((resource) => new AdaptiveRunTable(resource))
+            map((resource) => new AdaptiveRunTable(resource)),
         );
         this.adaptiveRunsHasError$ = this.adaptiveRunService.hasError$;
     }

@@ -52,16 +52,15 @@
         <mat-card-title> Members of group {{ resource.name }}</mat-card-title>
     </mat-card-header>
     <mat-card-content>
-        <sentinel-table (rowAction)="onAssignedUsersTableAction($event)"
-                        (rowSelection)="onAssignedUsersSelection($event)"
-                        (tableLoad)="onAssignedLoadEvent($event)"
-                        [data]="assignedUsers$ | async"
-                        [defaultSortDirection]="MEMBERS_OF_GROUP_INIT_SORT_DIR"
-                        [defaultSortName]="MEMBERS_OF_GROUP_INIT_SORT_NAME"
-                        [elevation]="0"
-                        [hasError]="assignedUsersHasError$ | async"
-                        [isLoading]="isLoadingAssignedUsers$ | async">
-        </sentinel-table>
+        <sentinel-table
+            (rowSelection)="onAssignedUsersSelection($event)"
+            (tableLoad)="onAssignedLoadEvent($event)"
+            [data]="assignedUsers$ | async"
+            [defaultSortDirection]="MEMBERS_OF_GROUP_INIT_SORT_DIR"
+            [defaultSortName]="MEMBERS_OF_GROUP_INIT_SORT_NAME"
+            [elevation]="0"
+            [hasError]="assignedUsersHasError$ | async"
+            [isLoading]="isLoadingAssignedUsers$ | async" />
     </mat-card-content>
 </mat-card>
 

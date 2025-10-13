@@ -1,26 +1,12 @@
 import { inject, Injectable } from '@angular/core';
 import { ErrorHandlerService } from '@crczp/utils';
-import {
-    ActivatedRouteSnapshot,
-    Router,
-    RouterStateSnapshot,
-} from '@angular/router';
-import {
-    AllocationRequestsApi,
-    CleanupRequestsApi,
-    PoolApi,
-    SandboxDefinitionApi,
-} from '@crczp/sandbox-api';
+import { ActivatedRouteSnapshot, Router, RouterStateSnapshot } from '@angular/router';
+import { AllocationRequestsApi, CleanupRequestsApi, PoolApi, SandboxDefinitionApi } from '@crczp/sandbox-api';
 import { Routing } from '../../routing-namespace';
 import { Observable, of } from 'rxjs';
 import { RoutingUtils } from '../../utils';
-import { catchError, map, take } from 'rxjs/operators';
-import {
-    AllocationRequest,
-    CleanupRequest,
-    Pool,
-    SandboxDefinition,
-} from '@crczp/sandbox-model';
+import { catchError, take } from 'rxjs/operators';
+import { AllocationRequest, CleanupRequest, Pool, SandboxDefinition } from '@crczp/sandbox-model';
 import { CommonResolverHelperService } from '../common-resolver-helper-service';
 
 @Injectable({
@@ -69,9 +55,8 @@ export class SandboxResolverHelperService extends CommonResolverHelperService {
     public getPool(route: ActivatedRouteSnapshot): Observable<Pool | null> {
         const poolId = this.extractPoolId(route);
         if (!poolId) {
-            return this.emitFrontendError('No pool id found in route').pipe(
-                map(() => null)
-            );
+            this.emitFrontendError('No pool id found in route');
+            return of(null);
         }
         return this.poolApi.getPool(+poolId).pipe(
             take(1),
@@ -87,9 +72,8 @@ export class SandboxResolverHelperService extends CommonResolverHelperService {
     ): Observable<SandboxDefinition | null> {
         const definitionId = this.extractDefinitionId(route);
         if (!definitionId) {
-            return this.emitFrontendError('No group id found in route').pipe(
-                map(() => null)
-            );
+            this.emitFrontendError('No group id found in route');
+            return of(null);
         }
 
         return this.definitionApi.get(+definitionId).pipe(
@@ -111,9 +95,8 @@ export class SandboxResolverHelperService extends CommonResolverHelperService {
             : this.allocationApi;
 
         if (!sandboxRequestId) {
-            return this.emitFrontendError(
-                'No allocation request id found in route'
-            ).pipe(map(() => null));
+            this.emitFrontendError('No allocation request id found in route');
+            return of(null);
         }
         return api.get(+sandboxRequestId).pipe(take(1));
     }
@@ -135,7 +118,7 @@ export class SandboxResolverHelperService extends CommonResolverHelperService {
         route: ActivatedRouteSnapshot
     ): number | null {
         const sandboxRequestId = RoutingUtils.extractVariable(
-            'sandboxInstanceId',
+            'requestId',
             route
         );
         return sandboxRequestId && !isNaN(+sandboxRequestId)

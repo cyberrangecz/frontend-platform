@@ -10,24 +10,37 @@ import { Routing } from '@crczp/routing-commons';
 /**
  * @dynamic
  */
-export class TrainingInstanceTable extends SentinelTable<TrainingInstanceRowAdapter> {
+export class TrainingInstanceTable extends SentinelTable<
+    TrainingInstanceRowAdapter,
+    string
+> {
     constructor(
         resource: PaginatedResource<TrainingInstance>,
-        service: TrainingInstanceOverviewService
+        service: TrainingInstanceOverviewService,
     ) {
         const columns = [
-            new Column('title', 'Title', true),
-            new Column('startTime', 'Start Time', true, 'startTime'),
-            new Column('endTime', 'End Time', true, 'endTime'),
-            new Column('expiresIn', 'Expires In', false, 'expiresIn'),
-            new Column('tdTitle', 'Training Definition', true, 'tdTitle'),
-            new Column('lastEditBy', 'Last Edit By', false),
-            new Column('poolTitle', 'Pool', true, 'poolId'),
-            new Column('poolSize', 'Pool Size', false),
-            new Column('accessToken', 'Access Token', true, 'accessToken'),
+            new Column<string>('title', 'Title', true),
+            new Column<string>('startTime', 'Start Time', true, 'startTime'),
+            new Column<string>('endTime', 'End Time', true, 'endTime'),
+            new Column<string>('expiresIn', 'Expires In', false, 'expiresIn'),
+            new Column<string>(
+                'tdTitle',
+                'Training Definition',
+                true,
+                'tdTitle',
+            ),
+            new Column<string>('lastEditBy', 'Last Edit By', false),
+            new Column<string>('poolTitle', 'Pool', true, 'poolId'),
+            new Column<string>('poolSize', 'Pool Size', false),
+            new Column<string>(
+                'accessToken',
+                'Access Token',
+                true,
+                'accessToken',
+            ),
         ];
         const rows = resource.elements.map((element) =>
-            TrainingInstanceTable.createRow(element, service)
+            TrainingInstanceTable.createRow(element, service),
         );
         super(rows, columns);
         this.pagination = resource.pagination;
@@ -38,7 +51,7 @@ export class TrainingInstanceTable extends SentinelTable<TrainingInstanceRowAdap
 
     private static createRow(
         ti: TrainingInstance,
-        service: TrainingInstanceOverviewService
+        service: TrainingInstanceOverviewService,
     ): Row<TrainingInstanceRowAdapter> {
         const adapter = ti as TrainingInstanceRowAdapter;
         adapter.tdTitle = adapter.trainingDefinition.title;
@@ -55,13 +68,13 @@ export class TrainingInstanceTable extends SentinelTable<TrainingInstanceRowAdap
             'title',
             Routing.RouteBuilder.linear_instance
                 .instanceId(ti.id)
-                .detail.build()
+                .detail.build(),
         );
         row.addLink(
             'tdTitle',
             Routing.RouteBuilder.linear_definition
                 .definitionId(ti.trainingDefinition.id)
-                .build()
+                .build(),
         );
         if (ti.hasPool()) {
             row.element.poolSize = combineLatest([
@@ -70,7 +83,7 @@ export class TrainingInstanceTable extends SentinelTable<TrainingInstanceRowAdap
             ]);
             row.addLink(
                 'poolTitle',
-                Routing.RouteBuilder.pool.poolId(ti.poolId).build()
+                Routing.RouteBuilder.pool.poolId(ti.poolId).build(),
             );
         } else {
             row.element.poolSize = of(['-', '']);
@@ -80,18 +93,18 @@ export class TrainingInstanceTable extends SentinelTable<TrainingInstanceRowAdap
 
     private static createActions(
         ti: TrainingInstance,
-        service: TrainingInstanceOverviewService
+        service: TrainingInstanceOverviewService,
     ): RowAction[] {
         return [
             new EditAction(
                 'Edit training instance',
                 of(false),
-                defer(() => service.edit(ti.id))
+                defer(() => service.edit(ti.id)),
             ),
             new DeleteAction(
                 'Delete training instance',
                 of(false),
-                defer(() => service.delete(ti))
+                defer(() => service.delete(ti)),
             ),
             new RowAction(
                 'get_data',
@@ -100,7 +113,7 @@ export class TrainingInstanceTable extends SentinelTable<TrainingInstanceRowAdap
                 'primary',
                 'Download ZIP file containing all training instance data',
                 of(false),
-                defer(() => service.download(ti.id))
+                defer(() => service.download(ti.id)),
             ),
             new RowAction(
                 'get_ssh_configs',
@@ -110,9 +123,9 @@ export class TrainingInstanceTable extends SentinelTable<TrainingInstanceRowAdap
                 'Download management SSH configs',
                 service.poolExists(ti.poolId).pipe(
                     startWith(false),
-                    map((exists) => !exists)
+                    map((exists) => !exists),
                 ),
-                defer(() => service.getSshAccess(ti.poolId))
+                defer(() => service.getSshAccess(ti.poolId)),
             ),
             new RowAction(
                 'training_runs',
@@ -121,7 +134,7 @@ export class TrainingInstanceTable extends SentinelTable<TrainingInstanceRowAdap
                 'primary',
                 'Manage training runs',
                 of(false),
-                defer(() => service.runs(ti.id))
+                defer(() => service.runs(ti.id)),
             ),
             new RowAction(
                 'display_token',
@@ -130,7 +143,7 @@ export class TrainingInstanceTable extends SentinelTable<TrainingInstanceRowAdap
                 'primary',
                 'Display page containing access token',
                 of(false),
-                defer(() => service.token(ti.id))
+                defer(() => service.token(ti.id)),
             ),
             new RowAction(
                 'progress',
@@ -139,7 +152,7 @@ export class TrainingInstanceTable extends SentinelTable<TrainingInstanceRowAdap
                 'primary',
                 'Show progress of training runs',
                 of(!ti.hasStarted()),
-                defer(() => service.progress(ti.id))
+                defer(() => service.progress(ti.id)),
             ),
             new RowAction(
                 'results',
@@ -148,7 +161,7 @@ export class TrainingInstanceTable extends SentinelTable<TrainingInstanceRowAdap
                 'primary',
                 'Show results of training runs',
                 of(!ti.hasStarted()),
-                defer(() => service.results(ti.id))
+                defer(() => service.results(ti.id)),
             ),
         ];
     }

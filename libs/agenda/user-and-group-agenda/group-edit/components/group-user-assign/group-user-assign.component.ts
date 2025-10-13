@@ -16,7 +16,7 @@ import {
     SentinelControlsComponent
 } from '@sentinel/components/controls';
 import { Group, User } from '@crczp/user-and-group-model';
-import { SentinelTable, SentinelTableComponent, TableActionEvent, TableLoadEvent } from '@sentinel/components/table';
+import { SentinelTable, SentinelTableComponent, TableLoadEvent } from '@sentinel/components/table';
 import {
     SentinelResourceSelectorComponent,
     SentinelResourceSelectorMapping
@@ -91,7 +91,7 @@ export class GroupUserAssignComponent implements OnChanges {
     /**
      * Data for table component of already assigned users
      */
-    assignedUsers$: Observable<SentinelTable<User>>;
+    assignedUsers$: Observable<SentinelTable<User, string>>;
     /**
      * True if error was thrown while getting data for assigned users table component, false otherwise
      */
@@ -180,24 +180,16 @@ export class GroupUserAssignComponent implements OnChanges {
     }
 
     /**
-     * Resolves type of action and calls appropriate handler
-     * @param event action event emitted from assigned users table component
-     */
-    onAssignedUsersTableAction(event: TableActionEvent<User>): void {
-        event.action.result$.pipe(take(1)).subscribe();
-    }
-
-    /**
      * Calls service to get data for assigned users table
      * @param loadEvent event to load new data emitted by assigned users table component
      */
-    onAssignedLoadEvent(loadEvent: TableLoadEvent): void {
+    onAssignedLoadEvent(loadEvent: TableLoadEvent<string>): void {
         this.paginationService.savePageSize(loadEvent.pagination.size);
         this.userAssignService
             .getAssigned(
                 this.resource.id,
                 loadEvent.pagination as OffsetPaginationEvent,
-                loadEvent.filter
+                loadEvent.filter,
             )
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe();
@@ -222,8 +214,8 @@ export class GroupUserAssignComponent implements OnChanges {
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe((selections) =>
                 this.hasUnsavedChanges.emit(
-                    selections.some((selection) => selection.length > 0)
-                )
+                    selections.some((selection) => selection.length > 0),
+                ),
             );
     }
 
@@ -236,9 +228,9 @@ export class GroupUserAssignComponent implements OnChanges {
                         selection.length,
                         defer(() =>
                             this.userAssignService.unassignSelected(
-                                this.resource.id
-                            )
-                        )
+                                this.resource.id,
+                            ),
+                        ),
                     ),
                 ];
             });
@@ -251,8 +243,8 @@ export class GroupUserAssignComponent implements OnChanges {
         ]).pipe(
             map(
                 (selections) =>
-                    selections[0].length <= 0 && selections[1].length <= 0
-            )
+                    selections[0].length <= 0 && selections[1].length <= 0,
+            ),
         );
 
         this.assignUsersControls = [
@@ -260,19 +252,19 @@ export class GroupUserAssignComponent implements OnChanges {
                 'Add',
                 disabled$,
                 defer(() =>
-                    this.userAssignService.assignSelected(this.resource.id)
-                )
+                    this.userAssignService.assignSelected(this.resource.id),
+                ),
             ),
         ];
     }
 
     private initTable() {
-        const initialLoadEvent: TableLoadEvent = {
+        const initialLoadEvent: TableLoadEvent<string> = {
             pagination: new OffsetPaginationEvent(
                 0,
                 this.paginationService.loadPageSize(),
                 this.MEMBERS_OF_GROUP_INIT_SORT_NAME,
-                this.MEMBERS_OF_GROUP_INIT_SORT_DIR
+                this.MEMBERS_OF_GROUP_INIT_SORT_DIR,
             ),
         };
         this.assignedUsers$ = this.userAssignService.assignedUsers$.pipe(
@@ -281,9 +273,9 @@ export class GroupUserAssignComponent implements OnChanges {
                     new GroupMemberTable(
                         paginatedUsers,
                         this.resource.id,
-                        this.userAssignService
-                    )
-            )
+                        this.userAssignService,
+                    ),
+            ),
         );
         this.assignedUsersHasError$ = this.userAssignService.hasError$;
         this.isLoadingAssignedUsers$ =

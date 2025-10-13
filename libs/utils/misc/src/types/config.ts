@@ -26,62 +26,58 @@ export class PortalConfig extends Z.class({
         .describe('Enable local mode if true'),
 
     defaultPageSize: z
-        .number({ required_error: 'Default page size field is required' })
+        .number('Default page size field is required')
         .gt(0, 'Page size must be greater than 0'),
     roleMapping: RoleMapping.schema(),
 
     polling: z.object({
         pollingPeriodShort: z
-            .number({
-                required_error: 'Short polling period field is required',
-            })
+            .number('Short polling period field is required')
             .gt(0, 'Polling period short must be greater than 0'),
 
         pollingPeriodLong: z
-            .number({ required_error: 'Long polling period field is required' })
+            .number('Long polling period field is required')
             .gt(0, 'Polling period long must be greater than 0'),
 
         retryCount: z
-            .number({ required_error: 'Retry count field is required' })
+            .number('Retry count field is required')
             .int('Retry count must be an integer')
             .nonnegative('Retry count must be a non-negative integer'),
     }),
 
     basePaths: z.object({
         linearTraining: z
-            .string({ required_error: 'Linear training API path is required' })
+            .string('Linear training API path is required')
             .nonempty('No linear training api path provided')
             .transform(removeTrailingSlash),
 
         adaptiveTraining: z
-            .string({
-                required_error: 'Adaptive training API path is required',
-            })
+            .string('Adaptive training API path is required')
             .nonempty('No adaptive training api path provided')
             .transform(removeTrailingSlash),
 
         guacamole: z
-            .string({ required_error: 'Guacamole path is required' })
+            .string('Guacamole path is required')
             .nonempty('No guacamole path provided')
             .transform(removeTrailingSlash),
 
         mitre: z
-            .string({ required_error: 'Mitre API path is required' })
+            .string('Mitre API path is required')
             .nonempty('No mitre api path provided')
             .transform(removeTrailingSlash),
 
         userAndGroup: z
-            .string({ required_error: 'User and group API path is required' })
+            .string('User and group API path is required')
             .nonempty('No user and group api path provided')
             .transform(removeTrailingSlash),
 
         sandbox: z
-            .string({ required_error: 'Sandbox API path is required' })
+            .string('Sandbox API path is required')
             .nonempty('No sandbox api path provided')
             .transform(removeTrailingSlash),
     }),
 
     authConfig: sentinelAuthConfigSchema.describe(
-        'Sentinel authentication config'
+        'Sentinel authentication config',
     ),
 }) {}

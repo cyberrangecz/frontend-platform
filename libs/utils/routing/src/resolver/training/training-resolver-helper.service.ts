@@ -16,7 +16,7 @@ import {
     TrainingRun,
     TrainingTypeEnum,
 } from '@crczp/training-model';
-import { catchError, map, take } from 'rxjs/operators';
+import { catchError, take } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
 import { Routing } from '../../routing-namespace';
 import { RoutingUtils } from '../../utils';
@@ -76,9 +76,8 @@ export class TrainingResolverHelperService extends CommonResolverHelperService {
 
         const definitionId = this.extractDefinitionId(route);
         if (!definitionId) {
-            return this.emitFrontendError(
-                'No definition id found in route'
-            ).pipe(map(() => null));
+            this.emitFrontendError('No definition id found in route');
+            return of(null);
         }
 
         return api.get(definitionId, false).pipe(
@@ -101,9 +100,8 @@ export class TrainingResolverHelperService extends CommonResolverHelperService {
 
         const instanceId = this.extractInstanceId(route);
         if (!instanceId) {
-            return this.emitFrontendError('No instance id found in route').pipe(
-                map(() => null)
-            );
+            this.emitFrontendError('No instance id found in route');
+            return of(null);
         }
 
         return api.get(instanceId).pipe(
@@ -160,9 +158,8 @@ export class TrainingResolverHelperService extends CommonResolverHelperService {
 
         const runId = this.extractRunId(route);
         if (!runId) {
-            return this.emitFrontendError('No run id found in route').pipe(
-                map(() => null)
-            );
+            this.emitFrontendError('No run id found in route');
+            return of(null);
         }
 
         return api.get(runId).pipe(

@@ -1,6 +1,6 @@
 import { DestroyRef, inject, Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, startWith } from 'rxjs';
-import { TopologySplitViewSynchronizerService } from './topology-split-view-synchronizer.service';
+import { TopologySynchronizerService } from './topology-synchronizer.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { filter } from 'rxjs/operators';
 import { unique } from '@crczp/utils';
@@ -14,7 +14,7 @@ import { unique } from '@crczp/utils';
  * Adds the ability to save and load the divider position from the local storage
  * making the position persistent between page reloads
  */
-export class PersistentDividerPositionSynchronizerService extends TopologySplitViewSynchronizerService {
+export class PersistentDividerPositionSynchronizerService extends TopologySynchronizerService {
     private readonly localStorageKey = 'dividerPosition';
 
     private splitViewDimensionsSubject = new BehaviorSubject(

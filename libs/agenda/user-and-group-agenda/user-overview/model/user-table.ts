@@ -9,21 +9,21 @@ import { Routing } from '@crczp/routing-commons';
 /**
  * Class creating data source for user table
  */
-export class UserTable extends SentinelTable<User> {
+export class UserTable extends SentinelTable<User, string> {
     constructor(
         resource: PaginatedResource<User>,
-        service: UserOverviewService
+        service: UserOverviewService,
     ) {
         const rows = resource.elements.map((element) =>
-            UserTable.createRow(element, service)
+            UserTable.createRow(element, service),
         );
 
         const columns = [
-            new Column('id', 'id', true),
-            new Column('name', 'name', true, 'familyName,givenName'),
-            new Column('login', 'login', true, 'sub'),
-            new Column('issuer', 'issuer', true, 'iss'),
-            new Column('mail', 'email', true, 'mail'),
+            new Column<string>('id', 'id', true, 'id'),
+            new Column<string>('name', 'name', true, 'familyName,givenName'),
+            new Column<string>('login', 'login', true, 'sub'),
+            new Column<string>('issuer', 'issuer', true, 'iss'),
+            new Column<string>('mail', 'email', true, 'mail'),
         ];
         super(rows, columns);
         this.pagination = resource.pagination;
@@ -36,7 +36,7 @@ export class UserTable extends SentinelTable<User> {
         const row = new Row(user, [UserTable.createActions(user, service)]);
         row.addLink(
             'name',
-            Routing.RouteBuilder.user.userId(user.id.toString()).build()
+            Routing.RouteBuilder.user.userId(user.id.toString()).build(),
         );
         return row;
     }
@@ -44,7 +44,7 @@ export class UserTable extends SentinelTable<User> {
     private static createActions(user: User, service: UserOverviewService) {
         return new UserDeleteAction(
             of(false),
-            defer(() => service.delete(user))
+            defer(() => service.delete(user)),
         );
     }
 }

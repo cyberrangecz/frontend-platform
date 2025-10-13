@@ -17,8 +17,7 @@
             [resourceMapping]="roleMapping"
             [resources]="roles$ | async"
             [selected]="selectedRolesToAssign$ | async"
-            searchPlaceholder="Search roles by name">
-        </sentinel-resource-selector>
+            searchPlaceholder="Search roles by name" />
     </mat-card-content>
 </mat-card>
 
@@ -34,15 +33,14 @@
         <mat-card-title> Roles of group {{ resource?.name }}</mat-card-title>
     </mat-card-header>
     <mat-card-content>
-        <sentinel-table (rowAction)="onAssignedRolesTableAction($event)"
-                        (rowSelection)="onAssignedRolesSelection($event)"
-                        (tableLoad)="onAssignedRolesLoad($event)"
-                        [data]="assignedRoles$ | async"
-                        [defaultSortDirection]="ROLES_OF_GROUP_INIT_SORT_DIR"
-                        [defaultSortName]="ROLES_OF_GROUP_INIT_SORT_NAME"
-                        [elevation]="0"
-                        [hasError]="assignedRolesHasError$ | async"
-                        [isLoading]="isLoadingAssignedRoles$ | async">
-        </sentinel-table>
+        <sentinel-table
+            (rowSelection)="onAssignedRolesSelection($event)"
+            (tableLoad)="onAssignedRolesLoad($event)"
+            [data]="assignedRoles$ | async"
+            [defaultSortDirection]="ROLES_OF_GROUP_INIT_SORT_DIR"
+            [defaultSortName]="ROLES_OF_GROUP_INIT_SORT_NAME"
+            [elevation]="0"
+            [hasError]="assignedRolesHasError$ | async"
+            [isLoading]="isLoadingAssignedRoles$ | async" />
     </mat-card-content>
 </mat-card>

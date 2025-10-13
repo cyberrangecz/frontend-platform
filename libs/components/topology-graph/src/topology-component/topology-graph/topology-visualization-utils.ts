@@ -19,7 +19,7 @@ export function mapTopologyToTopologyVisualization(topology: Topology): {
             id: router.name,
             name: router.name,
             nodeType: 'ROUTER',
-            osType: mapOsType(router.osType),
+            osType: router.osType,
             guiAccess: router.guiAccess,
         });
 
@@ -56,7 +56,7 @@ export function mapTopologyToTopologyVisualization(topology: Topology): {
                     name: host.name,
                     nodeType: 'HOST',
                     ip: host.ip,
-                    osType: mapOsType(host.osType),
+                    osType: host.osType,
                     guiAccess: host.guiAccess,
                 });
 
@@ -71,8 +71,4 @@ export function mapTopologyToTopologyVisualization(topology: Topology): {
     });
 
     return { nodes, links };
-}
-
-function mapOsType(osType: string) {
-    return osType.toLowerCase() === 'linux' ? 'LINUX' : 'WINDOWS';
 }

@@ -1,10 +1,15 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { BehaviorSubject, combineLatest, map, Observable, Subject } from 'rxjs';
+import { ResizeEvent } from '@sentinel/common/resize';
 
+/**
+ * Service to allow controlling the properties of topology component
+ * from the outside
+ */
 @Injectable({
     providedIn: 'root',
 })
-export abstract class TopologySplitViewSynchronizerService {
+export abstract class TopologySynchronizerService {
     private dragSubject = new Subject<number>();
     /**
      * Observable emitting position changes
@@ -16,7 +21,11 @@ export abstract class TopologySplitViewSynchronizerService {
      */
     public topologyCollapsed$ = this.isCollapsedSubject.asObservable();
     private topologyWidthSubject = new Subject<number>();
-    public topologyWidth$ = this.topologyWidthSubject.asObservable();
+    private topologyHeightSubject = new Subject<number>();
+    public topologyDimensions$ = combineLatest([
+        this.topologyWidthSubject.asObservable(),
+        this.topologyHeightSubject.asObservable(),
+    ]).pipe(map(([width, height]) => ({ width, height } as ResizeEvent)));
 
     /**
      * Notify everyone that the divider position has changed
@@ -53,6 +62,14 @@ export abstract class TopologySplitViewSynchronizerService {
      */
     public emitTopologyWidthChange(width: number) {
         this.topologyWidthSubject.next(width);
+    }
+
+    /**
+     * Emits a new value indicating a change in the topology height.
+     * @param {number} height - The new height value to emit.
+     */
+    public emitTopologyHeightChange(height: number) {
+        this.topologyHeightSubject.next(height);
     }
 
     /**

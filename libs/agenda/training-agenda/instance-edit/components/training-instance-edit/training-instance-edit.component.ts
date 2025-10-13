@@ -376,10 +376,6 @@ export class TrainingInstanceEditComponent implements OnChanges, AfterViewInit {
             this.trainingInstance
         );
 
-        console.log(
-            'End time',
-            this.trainingInstanceFormGroup.formGroup.get('endTime').value
-        );
         this.edited.emit(
             new TrainingInstanceChangeEvent(
                 this.trainingInstance,

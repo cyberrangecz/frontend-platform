@@ -15,7 +15,10 @@ import {
     GraphNodeType,
     TopologyGraphNode,
 } from '../topology-graph/topology-graph';
-import { TopologyIconsService } from '../topology-graph/services/topology-icons.service';
+import {
+    TopologyIcon,
+    TopologyIconsService,
+} from '../topology-graph/services/topology-icons.service';
 
 @Component({
     selector: 'crczp-minimap',
@@ -216,10 +219,10 @@ export class Minimap implements OnChanges, OnInit {
             } else {
                 const img = new Image();
                 img.src = this.topologyIconsService.getPreloadedIcon(
-                    node.osType
+                    node.osType.toUpperCase() as TopologyIcon
                 );
                 ctx.drawImage(
-                    node.osType === 'WINDOWS'
+                    node.osType === 'windows'
                         ? this.windowsImage
                         : this.linuxImage,
                     x - (this.NODE_SIZES[node.nodeType] * minimapNodesZoom) / 2,
@@ -245,24 +248,5 @@ export class Minimap implements OnChanges, OnInit {
         ctx.roundRect(rectX, rectY, rectW, rectH, cornerRadius);
         ctx.closePath();
         ctx.stroke();
-    }
-
-    private getNodeColour(node: TopologyGraphNode): string {
-        switch (node.nodeType) {
-            case 'INTERNET':
-                return '#81858c';
-            case 'SUBNET':
-                return '#ffffff';
-            case 'HOST':
-            case 'ROUTER': {
-                if (!node.osType) {
-                    return '#aa8d8d';
-                }
-                if (node.osType === 'LINUX') {
-                    return '#ffed00';
-                }
-                return '#0db2ff';
-            }
-        }
     }
 }

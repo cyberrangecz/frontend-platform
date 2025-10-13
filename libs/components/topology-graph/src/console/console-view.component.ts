@@ -1,36 +1,46 @@
 import {
     Component,
     ElementRef,
+    inject,
+    input,
     OnDestroy,
     OnInit,
+    signal,
     ViewChild,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import Guacamole from 'guacamole-common-js';
+import { OAuthService } from 'angular-oauth2-oidc';
+import { GuacamoleStatus } from './status/guacamole-status';
+
+export type ConnectionParams = {
+    sandboxUuid: string;
+    nodeName: string;
+    withGui: boolean;
+};
 
 @Component({
     selector: 'crczp-console-view',
-    imports: [CommonModule],
+    imports: [CommonModule, GuacamoleStatus],
     templateUrl: './console-view.component.html',
     styleUrl: './console-view.component.scss',
 })
 export class ConsoleView implements OnInit, OnDestroy {
     @ViewChild('guacContainer', { static: true })
     guacContainer!: ElementRef;
+
+    connectionParams = input.required<ConnectionParams>();
+
+    tunnelStateCode = signal<number>(-1);
+    clientStateCode = signal<number>(-1);
+
+    private readonly authService = inject(OAuthService);
     private guacClient: Guacamole.Client | null = null;
 
-    /**
-     * Lifecycle hook: Called once, after the component is initialized.
-     * Initiates the Guacamole session.
-     */
     ngOnInit(): void {
         this.connectGuacamole();
     }
 
-    /**
-     * Lifecycle hook: Called once, before the component is destroyed.
-     * Ensures the Guacamole client is disconnected to prevent memory leaks.
-     */
     ngOnDestroy(): void {
         if (this.guacClient) {
             console.log('Disconnecting Guacamole client...');
@@ -39,15 +49,18 @@ export class ConsoleView implements OnInit, OnDestroy {
         }
     }
 
-    /**
-     * Connects to the Guacamole server using the provided authentication token.
-     * @param authToken The authentication token obtained from the server.
-     * @returns An Observable that completes when the connection attempt is made.
-     */
     private connectGuacamole() {
         const tunnel = new Guacamole.WebSocketTunnel(
-            '/guacamole/websocket-tunnel'
+            'wss://devel.platform.cyberrange.cz/guacamole/api/v1/websocket/guacamole'
         );
+
+        // Add tunnel error handler BEFORE creating client
+        tunnel.onerror = (error) => {
+            console.error('Tunnel error:', error);
+        };
+
+        tunnel.onstatechange = (state) => this.tunnelStateCode.set(state);
+
         this.guacClient = new Guacamole.Client(tunnel);
 
         const keyboard = new Guacamole.Keyboard(document);
@@ -58,19 +71,35 @@ export class ConsoleView implements OnInit, OnDestroy {
             this.guacClient?.sendKeyEvent(0, keysym);
         };
 
-        const display = this.guacClient.getDisplay().getElement();
-        this.guacContainer.nativeElement.appendChild(display);
-
-        this.guacClient.onstatechange = (state) => {
-            console.log('Guacamole client state changed:', state);
-        };
+        this.guacClient.onstatechange = (state) =>
+            this.clientStateCode.set(state);
 
         this.guacClient.onerror = (error) => {
             console.error('Guacamole client error:', error);
         };
 
-        const connectParams = '';
+        const display = this.guacClient.getDisplay().getElement();
+        this.guacContainer.nativeElement.appendChild(display);
 
-        this.guacClient.connect(connectParams);
+        this.guacClient.connect(this.buildConnectionParams());
+    }
+
+    private buildConnectionParams(): string {
+        let params = '';
+
+        const appendParam = (key: string, value: string) => {
+            params += `${encodeURIComponent(key)}=${encodeURIComponent(
+                value
+            )}&`;
+        };
+
+        appendParam('authToken', this.authService.getAccessToken() || '');
+        appendParam('sandboxUuid', this.connectionParams().sandboxUuid);
+        appendParam('nodeName', this.connectionParams().nodeName);
+        appendParam(
+            'withGui',
+            this.connectionParams().withGui ? 'true' : 'false'
+        );
+        return params;
     }
 }

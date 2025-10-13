@@ -5,7 +5,6 @@ import {
     SentinelRowDirective,
     SentinelTable,
     SentinelTableComponent,
-    TableActionEvent,
     TableLoadEvent
 } from '@sentinel/components/table';
 import { map, take } from 'rxjs/operators';
@@ -54,7 +53,7 @@ export class CheatingDetectionOverviewComponent implements OnInit {
     readonly INIT_SORT_NAME = 'lastEdited';
     readonly INIT_SORT_DIR = 'asc';
     trainingInstance$: Observable<TrainingInstance>;
-    cheatingDetections$: Observable<SentinelTable<CheatingDetection>>;
+    cheatingDetections$: Observable<SentinelTable<CheatingDetection, string>>;
     hasError$: Observable<boolean>;
     isLoading$: Observable<boolean>;
     topControls: SentinelControlItem[] = [];
@@ -67,14 +66,14 @@ export class CheatingDetectionOverviewComponent implements OnInit {
     ngOnInit(): void {
         this.trainingInstance$ = this.activeRoute.data.pipe(
             takeUntilDestroyed(this.destroyRef),
-            map((data) => data[TrainingInstance.name] || null)
+            map((data) => data[TrainingInstance.name] || null),
         );
         this.trainingInstance$.subscribe((instance) => {
             this.trainingInstanceId = instance.id;
         });
         this.topControls = CheatingDetectionOverviewControls.createTopControls(
             this.cheatingDetectionService,
-            this.trainingInstanceId
+            this.trainingInstanceId,
         );
         this.initTable();
     }
@@ -83,7 +82,7 @@ export class CheatingDetectionOverviewComponent implements OnInit {
      * Gets new data for table
      * @param loadEvent event emitted by table component to get new data
      */
-    onLoadEvent(loadEvent: TableLoadEvent): void {
+    onLoadEvent(loadEvent: TableLoadEvent<string>): void {
         this.paginationService.savePageSize(loadEvent.pagination.size);
         this.cheatingDetectionService
             .getAll(
@@ -92,8 +91,8 @@ export class CheatingDetectionOverviewComponent implements OnInit {
                     0,
                     loadEvent.pagination.size,
                     loadEvent.pagination.sort,
-                    loadEvent.pagination.sortDir
-                )
+                    loadEvent.pagination.sortDir,
+                ),
             )
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe();
@@ -107,14 +106,6 @@ export class CheatingDetectionOverviewComponent implements OnInit {
         control.result$.pipe(take(1)).subscribe();
     }
 
-    /**
-     * Resolves type of emitted event and calls appropriate handler
-     * @param event action event emitted from table component
-     */
-    onTableAction(event: TableActionEvent<CheatingDetection>): void {
-        event.action.result$.pipe(take(1)).subscribe();
-    }
-
     private initTable() {
         this.hasError$ = this.cheatingDetectionService.hasError$;
         this.isLoading$ = this.cheatingDetectionService.isLoading$;
@@ -123,15 +114,15 @@ export class CheatingDetectionOverviewComponent implements OnInit {
                 (resource) =>
                     new CheatingDetectionTable(
                         resource,
-                        this.cheatingDetectionService
-                    )
-            )
+                        this.cheatingDetectionService,
+                    ),
+            ),
         );
         const initialPagination = new OffsetPaginationEvent(
             0,
             this.paginationService.loadPageSize(),
             this.INIT_SORT_NAME,
-            this.INIT_SORT_DIR
+            this.INIT_SORT_DIR,
         );
         this.onLoadEvent({ pagination: initialPagination });
     }

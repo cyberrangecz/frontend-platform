@@ -1,35 +1,30 @@
-import { CleanupRequestsApi } from './cleanup-requests.api.service';
-import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import {
     CleanupRequest,
     NetworkingAnsibleCleanupStage,
     TerraformCleanupStage,
-    UserAnsibleCleanupStage,
+    UserAnsibleCleanupStage
 } from '@crczp/sandbox-model';
-import { HttpClient } from '@angular/common/http';
-import { RequestDTO } from '../../../dto/sandbox-instance/request-dto';
 import { map } from 'rxjs/operators';
-import { RequestMapper } from '../../../mappers/sandbox-instance/request-mapper';
-import { TerraformCleanupStageDTO } from '../../../dto/sandbox-instance/stages/terraform-cleanup-stage-dto';
-import { RequestStageMapper } from '../../../mappers/sandbox-instance/request-stage-mapper';
-import { AnsibleCleanupStageDTO } from '../../../dto/sandbox-instance/stages/ansible-cleanup-stage-dto';
+import { RequestStageMapper } from '../../mappers/sandbox-instance/request-stage-mapper';
+import { TerraformCleanupStageDTO } from '../../dto/sandbox-instance/stages/terraform-cleanup-stage-dto';
+import { RequestMapper } from '../../mappers/sandbox-instance/request-mapper';
+import { inject, Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { PortalConfig } from '@crczp/utils';
+import { RequestDTO } from '../../dto/sandbox-instance/request-dto';
+import { AnsibleCleanupStageDTO } from '../../dto/sandbox-instance/stages/ansible-cleanup-stage-dto';
 
 /**
- * Default implementation of service abstracting http communication with cleanup requests endpoints.
+ * Service abstracting http communication with cleanup requests endpoints.
  */
 @Injectable()
-export class CleanupRequestsDefaultApi extends CleanupRequestsApi {
+export class CleanupRequestsApi {
     private readonly http = inject(HttpClient);
 
     private readonly apiUrl =
         inject(PortalConfig).basePaths.sandbox + '/cleanup-requests';
     private readonly stagesUriExtension = 'stages';
-
-    constructor() {
-        super();
-    }
 
     /**
      * Sends http request to get cleanup request

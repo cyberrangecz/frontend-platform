@@ -8,18 +8,26 @@ import { Utils } from '@crczp/utils';
 /**
  * @dynamic
  */
-export class AdaptiveRunTable extends SentinelTable<AdaptiveRunRowAdapter> {
+export class AdaptiveRunTable extends SentinelTable<
+    AdaptiveRunRowAdapter,
+    string
+> {
     constructor(resource: PaginatedResource<TrainingRun>) {
         const columns = [
-            new Column('playerName', 'player', false),
-            new Column('startTimeFormatted', 'start time', true, 'startTime'),
-            new Column('endTimeFormatted', 'end time', true, 'endTime'),
-            new Column('state', 'run state', true, 'state'),
-            new Column('duration', 'duration', false),
-            new Column('sandboxInstanceId', 'sandbox id', false),
+            new Column<string>('playerName', 'player', false),
+            new Column<string>(
+                'startTimeFormatted',
+                'start time',
+                true,
+                'startTime',
+            ),
+            new Column<string>('endTimeFormatted', 'end time', true, 'endTime'),
+            new Column<string>('state', 'run state', true, 'state'),
+            new Column<string>('duration', 'duration', false),
+            new Column<string>('sandboxInstanceId', 'sandbox id', false),
         ];
         const rows = resource.elements.map((element) =>
-            AdaptiveRunTable.createRow(element)
+            AdaptiveRunTable.createRow(element),
         );
         super(rows, columns);
         this.pagination = resource.pagination;
@@ -35,7 +43,7 @@ export class AdaptiveRunTable extends SentinelTable<AdaptiveRunRowAdapter> {
             adapter.endTimeFormatted = `${datePipe.transform(adapter.endTime)}`;
             adapter.duration = Utils.Date.timeBetweenDatesSimple(
                 adapter.startTime,
-                adapter.endTime
+                adapter.endTime,
             );
         } else {
             adapter.endTimeFormatted = '-';

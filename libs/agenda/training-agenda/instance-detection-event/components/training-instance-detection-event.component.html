@@ -1,6 +1,5 @@
 <div>
     <sentinel-table
-        (rowAction)="onTableAction($event)"
         (tableLoad)="onLoadEvent($event)"
         [data]="detectionEvents$ | async"
         [defaultSortDirection]="INIT_SORT_DIR"

@@ -52,7 +52,11 @@ const authConfigSchema = z.object({
     preserveRequestedRoute: z.boolean().optional(),
     disableIdTokenTimer: z.boolean().optional(),
     checkOrigin: z.boolean().optional(),
-    openUri: z.function().args(z.string()).returns(z.void()).optional(),
+    openUri: z
+        .function({
+            input: z.tuple([z.string()]),
+        })
+        .optional(),
 });
 
 const sentinelAuthProviderConfigSchema = z.object({

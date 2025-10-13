@@ -63,7 +63,7 @@ export class TrainingInstanceOverviewComponent {
     @Input() paginationId = 'training-instance-overview';
     readonly INITIAL_SORT_NAME = 'startTime';
     readonly INITIAL_SORT_DIR = 'desc';
-    instances$: Observable<SentinelTable<TrainingInstance>>;
+    instances$: Observable<SentinelTable<TrainingInstance, string>>;
     hasError$: Observable<boolean>;
     destroyRef = inject(DestroyRef);
     controls: SentinelControlItem[];
@@ -80,7 +80,7 @@ export class TrainingInstanceOverviewComponent {
         control.result$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
     }
 
-    onInstancesLoadEvent(loadEvent: TableLoadEvent): void {
+    onInstancesLoadEvent(loadEvent: TableLoadEvent<string>): void {
         this.paginationService.savePageSize(loadEvent.pagination.size);
         this.service
             .getAll(
@@ -88,9 +88,9 @@ export class TrainingInstanceOverviewComponent {
                     0,
                     loadEvent.pagination.size,
                     loadEvent.pagination.sort,
-                    loadEvent.pagination.sortDir
+                    loadEvent.pagination.sortDir,
                 ),
-                loadEvent.filter
+                loadEvent.filter,
             )
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe();
@@ -103,14 +103,14 @@ export class TrainingInstanceOverviewComponent {
     onCopyToken(): void {
         this.notificationService.emit(
             'success',
-            'Access token has been copied'
+            'Access token has been copied',
         );
     }
 
     getAccessTokenTooltip(
         freeSandboxes: string,
         localEnvironment: boolean,
-        poolSize: string
+        poolSize: string,
     ) {
         if (!localEnvironment) {
             if (freeSandboxes === '') {
@@ -126,19 +126,19 @@ export class TrainingInstanceOverviewComponent {
     }
 
     private initTable() {
-        const initLoadEvent: TableLoadEvent = {
+        const initLoadEvent: TableLoadEvent<string> = {
             pagination: new OffsetPaginationEvent(
                 0,
                 this.paginationService.loadPageSize(),
                 this.INITIAL_SORT_NAME,
-                this.INITIAL_SORT_DIR
+                this.INITIAL_SORT_DIR,
             ),
         };
         this.instances$ = this.service.resource$.pipe(
             map(
                 (instances) =>
-                    new TrainingInstanceTable(instances, this.service)
-            )
+                    new TrainingInstanceTable(instances, this.service),
+            ),
         );
         this.hasError$ = this.service.hasError$;
         this.onInstancesLoadEvent(initLoadEvent);

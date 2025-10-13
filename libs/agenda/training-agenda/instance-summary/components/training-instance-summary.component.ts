@@ -5,7 +5,7 @@ import { TrainingInstance, TrainingRun } from '@crczp/training-model';
 import { Observable } from 'rxjs';
 import { map, switchMap, take, tap } from 'rxjs/operators';
 import { TrainingInstanceSummaryService } from '../services/state/summary/training-instance-summary.service';
-import { SentinelTable, TableActionEvent, TableLoadEvent } from '@sentinel/components/table';
+import { SentinelTable, TableLoadEvent } from '@sentinel/components/table';
 import { TrainingRunService } from '../services/state/runs/training-run.service';
 import { TrainingRunTable } from '../model/training-run-table';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -47,7 +47,7 @@ export class TrainingInstanceSummaryComponent implements OnInit {
     @Input() paginationId = 'training-instance-summary';
     trainingInstance$: Observable<TrainingInstance>;
     hasStarted$: Observable<boolean>;
-    trainingRuns$: Observable<SentinelTable<TrainingRun>>;
+    trainingRuns$: Observable<SentinelTable<TrainingRun, string>>;
     trainingRunsHasError$: Observable<boolean>;
     trainingInstanceAccessTokenLink: string;
     trainingInstancePoolIdLink: string;
@@ -55,7 +55,7 @@ export class TrainingInstanceSummaryComponent implements OnInit {
     destroyRef = inject(DestroyRef);
     private activeRoute = inject(ActivatedRoute);
     private trainingInstanceSummaryService = inject(
-        TrainingInstanceSummaryService
+        TrainingInstanceSummaryService,
     );
     private notificationService = inject(NotificationService);
     private paginationService = inject(PaginationStorageService);
@@ -66,24 +66,16 @@ export class TrainingInstanceSummaryComponent implements OnInit {
             map((data) => data[TrainingInstance.name] || null),
             tap((ti) => {
                 this.initSummaryComponent(ti);
-            })
+            }),
         );
         this.initTrainingRunsComponent();
-    }
-
-    /**
-     * Resolves type of action and calls handler
-     * @param event action event emitted from table
-     */
-    onTrainingRunTableAction(event: TableActionEvent<TrainingRun>): void {
-        event.action.result$.pipe(take(1)).subscribe();
     }
 
     /**
      * Calls service to get new data for table
      * @param event reload data event emitted from table
      */
-    onTrainingRunTableLoadEvent(event: TableLoadEvent): void {
+    onTrainingRunTableLoadEvent(event: TableLoadEvent<string>): void {
         this.paginationService.savePageSize(event.pagination.size);
         this.trainingInstance$
             .pipe(
@@ -94,11 +86,11 @@ export class TrainingInstanceSummaryComponent implements OnInit {
                             0,
                             event.pagination.size,
                             event.pagination.sort,
-                            event.pagination.sortDir
-                        )
-                    )
+                            event.pagination.sortDir,
+                        ),
+                    ),
                 ),
-                takeUntilDestroyed(this.destroyRef)
+                takeUntilDestroyed(this.destroyRef),
             )
             .subscribe();
     }
@@ -131,7 +123,7 @@ export class TrainingInstanceSummaryComponent implements OnInit {
         this.trainingInstance$
             .pipe(
                 switchMap((ti) => this.trainingRunService.exportScore(ti.id)),
-                take(1)
+                take(1),
             )
             .subscribe();
     }
@@ -155,19 +147,19 @@ export class TrainingInstanceSummaryComponent implements OnInit {
             0,
             this.paginationService.loadPageSize(),
             '',
-            'asc'
+            'asc',
         );
         this.trainingInstance$
             .pipe(
                 take(1),
                 switchMap((ti) =>
-                    this.trainingRunService.getAll(ti.id, initialPagination)
-                )
+                    this.trainingRunService.getAll(ti.id, initialPagination),
+                ),
             )
             .subscribe();
         this.trainingRuns$ = this.trainingRunService.resource$.pipe(
             takeUntilDestroyed(this.destroyRef),
-            map((resource) => new TrainingRunTable(resource))
+            map((resource) => new TrainingRunTable(resource)),
         );
         this.trainingRunsHasError$ = this.trainingRunService.hasError$;
     }

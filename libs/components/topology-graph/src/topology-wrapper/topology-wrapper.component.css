@@ -20,9 +20,8 @@
     height: 100%;
     aspect-ratio: 1;
     display: flex;
-    flex-direction: column;
+    align-items: center;
     justify-content: center;
-    align-items: flex-start;
 }
 
 .topology-placeholder__image {

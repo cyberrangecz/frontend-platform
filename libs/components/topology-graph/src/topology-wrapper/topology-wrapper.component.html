@@ -1,0 +1,30 @@
+@if (this.topology()) {
+    <div class="topology-container">
+        @if (this.topologyLoading() || this.levelLoading()) {
+            <span>{{ this.topologyLoading() + ' ' + this.levelLoading() }}</span>
+            <crczp-logo-spinner />
+        } @else {
+            <crczp-topology
+                class="wh-100"
+                [topology]="topology()"
+                [standalone]="standalone()"
+                [sandboxUuid]="getSandboxId()"
+            />
+        }
+    </div>
+    @if ('sandboxId' in this.id()) {
+        <button
+            mat-raised-button
+            [disabled]="this.topologyLoading()"
+            (click)="this.getAccessFile.emit()"
+            matTooltip="Download config for SSH client"
+            class="ssh-button">
+            Get SSH Config
+        </button>
+    }
+} @else {
+    <div class="topology-error">
+        <h3 class="topology-error__message">Topology not available</h3>
+    </div>
+}
+

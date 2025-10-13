@@ -1,10 +1,9 @@
-<sentinel-controls [controls]="controls" (itemClicked)="onControlsAction($event)"/>
+<sentinel-controls (itemClicked)="onControlsAction($event)" [controls]="controls" />
 <sentinel-table
-    [defaultSortName]="INIT_SORT_NAME"
-    [defaultSortDirection]="INIT_SORT_DIR"
-    [data]="microservices$ | async"
-    [hasError]="microservicesHasError$ | async"
     (tableLoad)="onTableLoadEvent($event)"
-    (rowAction)="onTableAction($event)"
+    [data]="microservices$ | async"
+    [defaultSortDirection]="INIT_SORT_DIR"
+    [defaultSortName]="INIT_SORT_NAME"
+    [hasError]="microservicesHasError$ | async"
 >
 </sentinel-table>

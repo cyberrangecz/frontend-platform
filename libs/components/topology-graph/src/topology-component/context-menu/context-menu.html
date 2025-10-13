@@ -1,14 +1,18 @@
-@if (visible) {
+@if (visible()) {
     <div
         #contextMenu
         class="context-menu"
-        [style.left.px]="position.x"
-        [style.top.px]="position.y"
+        [style.left.px]="position().x"
+        [style.top.px]="position().y"
     >
         <ul>
-            @for (item of items; track item) {
+            @for (item of menuData(); track item.label) {
                 <li (click)="item.action(); hideContextMenu()">
                     <span class="label">{{ item.label }}</span>
+                </li>
+            } @empty {
+                <li (click)="hideContextMenu()">
+                    <span class="label">No actions available</span>
                 </li>
             }
         </ul>

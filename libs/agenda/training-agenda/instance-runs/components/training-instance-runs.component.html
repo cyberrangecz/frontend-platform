@@ -1,13 +1,12 @@
 @if (trainingInstance$ | async; as trainingInstance) {
-  <div>
-    <mat-card appearance="outlined">
-      <crczp-training-run-overview
-        [trainingRuns]="trainingRuns$ | async"
-        [hasError]="trainingRunsHasError$ | async"
-        [isLoading]="loadingTrainingRuns$ | async"
-        (tableAction)="onTrainingRunsTableAction($event)"
-        (TableLoadEvent)="onTrainingRunsLoadEvent($event)"
-        />
-    </mat-card>
-  </div>
+    <div>
+        <mat-card appearance="outlined">
+            <crczp-training-run-overview
+                (TableLoadEvent)="onTrainingRunsLoadEvent($event)"
+                [hasError]="trainingRunsHasError$ | async"
+                [isLoading]="loadingTrainingRuns$ | async"
+                [trainingRuns]="trainingRuns$ | async"
+            />
+        </mat-card>
+    </div>
 }

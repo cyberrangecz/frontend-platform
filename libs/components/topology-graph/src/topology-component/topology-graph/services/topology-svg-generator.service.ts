@@ -1,8 +1,9 @@
 import { inject, Injectable } from '@angular/core';
 import { map, Observable, skipWhile } from 'rxjs';
 import { TOPOLOGY_CONFIG } from '../topology-graph-config';
-import { TopologyIconsService } from './topology-icons.service';
+import { TopologyIcon, TopologyIconsService } from './topology-icons.service';
 import { GraphNodeType } from '../topology-graph';
+import { OsType } from '@crczp/sandbox-model';
 
 const CONFIG = TOPOLOGY_CONFIG.SVG;
 
@@ -107,7 +108,7 @@ export class TopologyNodeSvgService {
     public generateNodeSvg(
         label: string,
         deviceType: 'ROUTER' | 'HOST' | 'INTERNET',
-        osType: 'LINUX' | 'WINDOWS',
+        osType: OsType,
         ip: string,
         consoleAccess: boolean
     ): Observable<string> {
@@ -130,7 +131,7 @@ export class TopologyNodeSvgService {
                         : null,
                     deviceType !== 'INTERNET'
                         ? {
-                              uri: this.iconsService.getPreloadedIcon(osType),
+                              uri: this.iconsService.getPreloadedIcon(osType.toUpperCase() as TopologyIcon),
                               fillColor: CONFIG.INDICATOR.BACKDROP_FILL[osType],
                               strokeColor:
                                   CONFIG.INDICATOR.BACKDROP_STROKE[osType],
@@ -238,9 +239,17 @@ export class TopologyNodeSvgService {
         const labelFont = `600 ${this.getFontSize(nodeType, 'NAME')}px ${
             CONFIG.FONT.FAMILY
         }`;
-        const mainCardContentWidth =
+        const ipFont = `500 ${this.getFontSize(nodeType, 'IP')}px ${
+            CONFIG.FONT.FAMILY
+        }`;
+        const mainCardContentWidth = Math.max(
+            ip
+                ? this.measureTextWidth(ip, ipFont) +
+                      CONFIG.CARD.PADDING.LABEL_SIDE * 2
+                : 0,
             this.measureTextWidth(label, labelFont) +
-            CONFIG.CARD.PADDING.LABEL_SIDE * 2;
+                CONFIG.CARD.PADDING.LABEL_SIDE * 2
+        );
 
         const dynamicWidth = Math.max(
             CONFIG.CARD.MIN_WIDTH,

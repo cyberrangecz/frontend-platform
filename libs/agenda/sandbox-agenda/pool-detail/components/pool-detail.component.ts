@@ -7,12 +7,7 @@ import {
     SentinelControlsComponent
 } from '@sentinel/components/controls';
 import { Pool, RequestStageState, SandboxAllocationUnit } from '@crczp/sandbox-model';
-import {
-    SentinelRowDirective,
-    SentinelTableComponent,
-    TableActionEvent,
-    TableLoadEvent
-} from '@sentinel/components/table';
+import { SentinelRowDirective, SentinelTableComponent, TableLoadEvent } from '@sentinel/components/table';
 import { Observable, Subscription } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { AllocationRequestsService } from '../services/state/request/allocation/requests/allocation-requests.service';
@@ -119,14 +114,6 @@ export class PoolDetailComponent implements OnInit, AfterViewInit {
 
     onControlsAction(control: SentinelControlItemSignal): void {
         control.result$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
-    }
-
-    /**
-     * Subscribes to result of a table action event
-     * @param event action event emitted from table component
-     */
-    onTableAction(event: TableActionEvent<any>): void {
-        event.action.result$.pipe(take(1)).subscribe();
     }
 
     onStageAction(selectedStage: SelectedStage): void {

@@ -21,7 +21,7 @@ import { take } from 'rxjs/operators';
 export class TrainingRunInfoComponent implements OnInit {
     @HostBinding('style.width') width = '100%';
     @Input() data: TrainingRun;
-    info: SentinelTable<TrainingRunInfo>;
+    info: SentinelTable<TrainingRunInfo, string>;
     hasError = false;
     private trainingRunService = inject(TrainingRunService);
 
@@ -31,7 +31,7 @@ export class TrainingRunInfoComponent implements OnInit {
                 this.info = new TrainingInfoTable(res);
                 this.hasError = false;
             },
-            () => (this.hasError = true)
+            () => (this.hasError = true),
         );
     }
 

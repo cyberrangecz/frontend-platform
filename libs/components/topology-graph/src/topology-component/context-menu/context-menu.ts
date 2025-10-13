@@ -1,13 +1,10 @@
 import {
     Component,
-    ElementRef,
-    EventEmitter,
     HostListener,
-    Input,
+    input,
     OnChanges,
-    Output,
+    signal,
     SimpleChanges,
-    ViewChild,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Network } from 'vis-network';
@@ -24,63 +21,54 @@ export interface ContextMenuItem {
     styleUrl: './context-menu.scss',
 })
 export class ContextMenu implements OnChanges {
-    @Input({ required: true }) network!: Network;
-    @Input() items: ContextMenuItem[] = [];
-    @Output() itemSelected = new EventEmitter<ContextMenuItem>();
+    network = input.required<Network>();
 
-    @ViewChild('contextMenu', { static: false })
-    contextMenuRef!: ElementRef<HTMLDivElement>;
+    createContextMenu =
+        input.required<(nodeId: string | number) => ContextMenuItem[]>();
 
-    visible = false;
-    position = { x: 0, y: 0 };
-    targetNode: string | number | null = null;
+    menuData = signal<ContextMenuItem[]>([]);
+    visible = signal<boolean>(false);
+    position = signal<{ x: number; y: number }>({ x: 0, y: 0 });
 
     ngOnChanges(changes: SimpleChanges): void {
-        if (changes['network'] && this.network) {
+        if (changes['network'] && this.network()) {
             this.registerEvents();
-        }
-        if (this.items.length === 0) {
-            this.items = [
-                {
-                    label: 'No actions available',
-                    action: () => {
-                        console.log('action');
-                    },
-                },
-            ];
         }
     }
 
     hideContextMenu(): void {
-        this.visible = false;
-        this.targetNode = null;
+        this.visible.set(false);
     }
 
     @HostListener('document:click')
     onOutsideClick(): void {
-        if (this.visible) {
+        if (this.visible()) {
             this.hideContextMenu();
         }
     }
 
     private registerEvents(): void {
-        this.network.on('oncontext', (params: any) => {
+        this.network().on('oncontext', (params: any) => {
             params.event.preventDefault();
 
             const pointer = params.pointer.DOM;
-            const nodeId = this.network.getNodeAt(pointer);
+            const nodeId = this.network().getNodeAt(pointer);
 
             if (nodeId != null) {
-                this.targetNode = nodeId;
-                this.showContextMenu(pointer.x, pointer.y);
+                this.showContextMenu(nodeId, pointer.x, pointer.y);
             } else {
                 this.hideContextMenu();
             }
         });
     }
 
-    private showContextMenu(x: number, y: number): void {
-        this.position = { x, y };
-        this.visible = true;
+    private showContextMenu(
+        nodeId: string | number,
+        x: number,
+        y: number
+    ): void {
+        this.menuData.set(this.createContextMenu()(nodeId));
+        this.position.set({ x, y });
+        this.visible.set(true);
     }
 }
