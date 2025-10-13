@@ -1,0 +1,25 @@
+<crczp-generic-sandbox-level
+    (answerSubmitted)="onAnswerSubmitted($event)"
+    (getAccessFile)="onAccessFileRequested()"
+    (next)="onNext()"
+    [displayedSolutionContent$]="displayedSolutionContent$"
+    [hints]="hintsRow"
+    [isBacktracked]="isBacktracked"
+    [isCorrectAnswerSubmitted$]="isCorrectAnswerSubmitted$"
+    [isLast]="isLast"
+    [isLoading]="isLoading$"
+    [isStepperDisplayed]="isStepperDisplayed"
+
+    [levelContent]="phase.currentTask.content"
+    [sandboxDefinitionId]="sandboxDefinitionId"
+    [sandboxInstanceId]="sandboxInstanceId"
+/>
+
+<ng-template #hintsRow>
+    <crczp-answer-form-hints
+        (solutionRevealed)="revealSolution()"
+        [hintsButtons$]="of([])"
+        [isLoading$]="isLoading$"
+        [isSolutionRevealed$]="isSolutionRevealed$"
+    />
+</ng-template>

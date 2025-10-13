@@ -1,0 +1,6 @@
+@import "../level-summary-common.css";
+
+.questions-container {
+    display: flex;
+    flex-direction: column;
+}

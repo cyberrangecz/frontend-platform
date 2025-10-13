@@ -1,0 +1,40 @@
+<svg>
+    <text
+        (click)="userSelected()"
+        [attr.y]="5 + yCoordinate"
+        [matTooltip]="userData.user.name"
+        style="cursor: pointer"
+        x="-50"
+    >
+        {{ userData.user.id }}
+    </text>
+</svg>
+@for (userEvent of userData.events.slice(1); track userEvent; let myIndex = $index) {
+    <svg>
+        <g
+            event-connector
+            (click)="userSelected()"
+            (tooltipShownChanged)="triggerTooltipShownChanged($event)"
+            [isSelected]="isUserSelected"
+            [startX]="getXCoordinate(myIndex)"
+            [endX]="getXCoordinate(myIndex + 1)"
+            [startY]="getYCoordinate(myIndex)"
+            [endY]="getYCoordinate(myIndex + 1)"
+            [commands]="userData.events[myIndex + 1].commands"
+            [maxYPosition]="maxYPosition"
+        />
+    </svg>
+}
+@for (userEvent of userData.events; track userEvent; let myIndex = $index) {
+    <svg>
+        <g
+            player-event
+            [userEvent]="userEvent"
+            (click)="userSelected()"
+            [isSelected]="isUserSelected"
+            [xPosition]="getXCoordinate(myIndex)"
+            [yPosition]="getYCoordinate(myIndex)"
+            [maxYPosition]="maxYPosition"
+        />
+    </svg>
+}

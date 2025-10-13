@@ -1,0 +1,25 @@
+<h4>
+  <span>{{ question.order + 1 }}. </span>
+  <mat-icon class="question-type" [inline]=true matTooltip="Rating Form Question"> star_half</mat-icon>
+  <span> {{ question.text }}</span>
+</h4>
+<div class="data-field">
+  <div class="key-field">Choices:</div>
+  <div class="choices">
+    @for (choice of question.choices; track choice) {
+      <div>
+        <div>{{ choice.text }}</div>
+        @if (questionnaireType === QuestionnaireTypeEnum.Adaptive) {
+          <div class="correct-choice">
+            @if (choice.correct) {
+              <mat-icon [inline]="true">done</mat-icon>
+            }
+            @if (!choice.correct) {
+              <mat-icon [inline]="true">close</mat-icon>
+            }
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>

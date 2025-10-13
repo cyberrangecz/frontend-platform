@@ -1,0 +1,29 @@
+<mat-expansion-panel class="mat-elevation-z0 panel-align">
+    <mat-expansion-panel-header>
+        <mat-panel-title>
+            <h3>
+                <mat-icon class="level-type" [inline]="true" matTooltip="Access Phase"> settings</mat-icon>
+                <span> {{ phase.order + 1 }}.</span>
+                <span> {{ phase.title }}</span>
+            </h3>
+        </mat-panel-title>
+    </mat-expansion-panel-header>
+    <div class="data-field">
+        <div class="key-field">Local Content:</div>
+        <div class="data-field">
+            {{ phase.localContent }}
+        </div>
+    </div>
+    <div class="data-field">
+        <div class="key-field">Cloud Content:</div>
+        <div class="data-field">
+            {{ phase.cloudContent }}
+        </div>
+    </div>
+    <div class="data-field">
+        <div class="key-field">Passkey:</div>
+        <div class="data-field">
+            {{ phase.passkey }}
+        </div>
+    </div>
+</mat-expansion-panel>

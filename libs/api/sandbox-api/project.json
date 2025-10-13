@@ -1,0 +1,50 @@
+{
+    "name": "sandbox-api",
+    "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+    "sourceRoot": "libs/api/sandbox-api/src",
+    "prefix": "lib",
+    "projectType": "library",
+    "release": {
+        "version": {
+            "generatorOptions": {
+                "packageRoot": "dist/{projectRoot}",
+                "currentVersionResolver": "git-tag",
+                "fallbackCurrentVersionResolver": "disk"
+            }
+        }
+    },
+    "tags": [],
+    "targets": {
+        "build": {
+            "executor": "@nx/angular:package",
+            "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
+            "options": {
+                "project": "libs/api/sandbox-api/ng-package.json"
+            },
+            "configurations": {
+                "production": {
+                    "tsConfig": "libs/api/sandbox-api/tsconfig.lib.prod.json"
+                },
+                "development": {
+                    "tsConfig": "libs/api/sandbox-api/tsconfig.lib.json"
+                }
+            },
+            "defaultConfiguration": "production"
+        },
+        "nx-release-publish": {
+            "options": {
+                "packageRoot": "dist/{projectRoot}"
+            }
+        },
+        "test": {
+            "executor": "@nx/vite:test",
+            "outputs": ["{options.reportsDirectory}"],
+            "options": {
+                "reportsDirectory": "../../../coverage/libs/api/sandbox-api"
+            }
+        },
+        "lint": {
+            "executor": "@nx/eslint:lint"
+        }
+    }
+}

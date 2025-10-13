@@ -1,0 +1,25 @@
+<ng-container>
+    <!-- the line chart is available for every graph type (it can be hidden in the form of a button) -->
+    <crczp-viz-clustering-line-chart
+            [visualizationData]="lineData$"
+            [elbowNumClusters]="elbowNumClusters"
+            [includeInButtonToggle]="true"
+            (viewOpen)="toggleView($event)"
+            (insufficientData)="insufficientData($event)"
+    />
+
+    <crczp-viz-clustering-scatter-plot
+            [ngClass]="{'invisible-clusters' : selectedFeature === 2}"
+            [visualizationData]="visualizationData$"
+            [numOfClusters]="numOfClusters"
+            [isStandalone]="isStandalone"
+            [selectedFeature]="selectedFeature"
+    />
+
+    <crczp-viz-clustering-radar-chart
+            [ngClass]="{'invisible-clusters' : selectedFeature !== 2}"
+            [numOfClusters]="numOfClusters"
+            [visualizationData]="radarChartData$"
+            [isStandalone]="isStandalone">
+    </crczp-viz-clustering-radar-chart>
+</ng-container>

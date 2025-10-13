@@ -1,0 +1,67 @@
+<div class="overall-time-container">
+    <crczp-viz-hurdling-overview-progress-bar
+        [visualizationData]="visualizationData">
+    </crczp-viz-hurdling-overview-progress-bar>
+</div>
+
+<div [style.display]="traineeDetailId ? 'none' : 'block'" class="trainee-grid-container trainee-selection">
+    <crczp-viz-hurdling-trainee-selection
+        (filteredTraineesChange)="setFilteredTrainees($event)"
+        (highlightTraineeChange)="setHighlightedTrainee($event)"
+        [filteredTrainees]="filteredTrainees"
+        [selectedTraineeView]="selectedTraineeView"
+        [visualizationData]="visualizationData">
+    </crczp-viz-hurdling-trainee-selection>
+</div>
+
+<div class="level-grid-container">
+    <crczp-viz-hurdling-level-list
+        (filteredTrainees)="setFilteredTrainees($event)"
+        [visualizationData]="visualizationData">
+    </crczp-viz-hurdling-level-list>
+</div>
+
+@if (traineeDetailId) {
+    <div class="trainee-detail-container">
+        <crczp-trainee-detail
+            [trainee]=getTraineeData(traineeDetailId)
+            [visualizationData]="visualizationData"
+            [trainingInstanceId]="trainingInstanceId"
+            (hideDetail)="onTraineeDetailChange()" />
+    </div>
+}
+
+<div [style.display]="traineeDetailId ? 'none' : 'block'" class="visualization-container">
+    <div class="progress-header">
+        <crczp-viz-hurdling-column-header
+            (sortEmitter)="onSortValueChange('name', $event.sortReverse)"
+            [label]="'Trainee'"
+            [selectedSortReverse]="sortReverse"
+            [selectedSortType]="sortType"
+            [sortType]="'name'"
+            class="header trainee-name-header" />
+
+        <span class="header ctf-progress-header-column"
+              id="progress-elapsed-time"
+              matTooltip="Elapsed time">
+      {{ getTimeString(visualizationData.currentTime - visualizationData.startTime) }}
+    </span>
+
+        <crczp-viz-hurdling-column-header
+            (sortEmitter)="onSortValueChange('time', $event.sortReverse)"
+            [label]="'Time'"
+            [selectedSortReverse]="sortReverse"
+            [selectedSortType]="sortType"
+            [sortType]="'time'"
+            class="header trainee-time-header"
+            matTooltip="Training times of individual trainees (hh:mm:ss)" />
+    </div>
+    <div (window:resize)="onResize()"
+         class="progress-container"></div>
+</div>
+
+<div class="legend-container">
+    <crczp-viz-hurdling-legend
+        (zoomResetChange)="onZoomReset()"
+        [selectedViewValue]="view" />
+</div>

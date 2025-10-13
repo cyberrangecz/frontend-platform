@@ -1,0 +1,43 @@
+{
+    "name": "user-and-group-agenda",
+    "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+    "sourceRoot": "libs/agenda/user-and-group-agenda/src/public",
+    "prefix": "lib",
+    "projectType": "library",
+    "tags": [],
+    "implicitDependencies": [
+        "theme"
+    ],
+    "targets": {
+        "build": {
+            "executor": "@nx/angular:ng-packagr-lite",
+            "outputs": [
+                "{workspaceRoot}/dist/{projectRoot}"
+            ],
+            "options": {
+                "project": "libs/agenda/user-and-group-agenda/ng-package.json"
+            },
+            "configurations": {
+                "production": {
+                    "tsConfig": "libs/agenda/user-and-group-agenda/tsconfig.lib.prod.json"
+                },
+                "development": {
+                    "tsConfig": "libs/agenda/user-and-group-agenda/tsconfig.lib.json"
+                }
+            },
+            "defaultConfiguration": "production"
+        },
+        "test": {
+            "executor": "@nx/vite:test",
+            "outputs": [
+                "{options.reportsDirectory}"
+            ],
+            "options": {
+                "reportsDirectory": "../../../coverage/libs/agenda/user-and-group-agenda"
+            }
+        },
+        "lint": {
+            "executor": "@nx/eslint:lint"
+        }
+    }
+}

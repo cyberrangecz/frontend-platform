@@ -1,0 +1,77 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    align-content: center;
+}
+
+.content {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    width: 60%;
+}
+
+.questions {
+    margin-top: 60px;
+    display: flex;
+    flex-direction: column;
+}
+
+.rfq-question {
+    display: flex;
+    flex-direction: row;
+    margin-top: 20px;
+}
+
+.rfq-question div {
+    width: auto;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    margin-right: 50px;
+}
+
+.rfq-answer {
+    display: block;
+    align-items: center;
+}
+
+.mcq-question div {
+    display: flex;
+    flex-direction: row;
+}
+
+.mcq-question mat-checkbox {
+    margin-right: 20px;
+}
+
+#max-length-ffq-answer {
+    color: #999999;
+}
+
+/* (100vw - 100%) is used to account for scrollbar */
+.controls {
+    position: fixed;
+    bottom: 0;
+    left: 140px;
+    z-index: 10;
+    width: calc(100vw - (100vw - 100%) - 16px - 140px);
+    padding: 8px;
+}
+
+.controls-container {
+    display: flex;
+    width: 80%;
+    flex-direction: row-reverse;
+}
+
+@media screen and (max-width: 1500px) {
+    .content {
+        width: 90%;
+    }
+}
+
+sentinel-markdown-view {
+    color: #3f51b5;
+}

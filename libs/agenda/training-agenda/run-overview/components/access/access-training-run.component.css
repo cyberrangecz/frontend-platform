@@ -1,0 +1,23 @@
+mat-card-content {
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+    padding: 16px;
+}
+
+mat-card {
+    padding: 16px;
+}
+
+.pin-form {
+    width: 12rem;
+}
+
+.prefix-form {
+    min-width: 15rem;
+}
+
+.divider {
+    margin: 5px;
+    font-size: x-large;
+}

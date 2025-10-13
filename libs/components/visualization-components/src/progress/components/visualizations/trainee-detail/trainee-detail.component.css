@@ -1,0 +1,116 @@
+.hint-used {
+    opacity: 20%;
+    margin-right: 5%;
+    text-align: center;
+}
+
+.hint-available {
+    margin-right: 5%;
+    text-align: center;
+}
+
+.hints-container {
+    margin-top: 2%;
+}
+
+.hints-list {
+    display: flex;
+    margin-top: 2%;
+}
+
+.used-time {
+    font-size: 12px;
+}
+
+.trainee-overview {
+    display: flex;
+    margin-top: 1%;
+    margin-bottom: 2%;
+}
+
+.trainee-overview-details {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    flex-grow: 100;
+}
+
+.trainee-header {
+    padding: 2% 3%;
+}
+
+.navigation-header {
+    padding: 0 0 1% 0
+}
+
+.circle {
+    border-radius: 50%;
+    box-shadow: 0 0 3px #000000;
+    display: flex;
+    margin-right: 2%;
+}
+
+.trainee-avatar {
+    width: 100px;
+    transform: scale(0.6, 0.6);
+}
+
+.answer-container {
+    margin-top: 2%;
+    display: flex;
+}
+
+.answer-list {
+    display: flex;
+    flex-grow: 100;
+}
+
+.wrong-answer {
+    margin-right: 4%;
+    text-align: center;
+}
+
+.wrong-answer-title {
+    color: red;
+}
+
+.correct-answer {
+    margin-right: 3%;
+    text-align: center;
+}
+
+.correct-answer-title {
+    color: green;
+}
+
+.answer-divider {
+    margin-right: 3%;
+}
+
+.level-timeline-container {
+    margin-top: 2%;
+}
+
+.level-timeline {
+    display: flex;
+}
+
+.command-timeline-container {
+    margin-top: 2%;
+}
+
+.command-timeline {
+    display: flex;
+}
+
+.overview-button {
+    cursor: pointer;
+    color: #3f51b5;
+}
+
+.events path {
+    transform-origin: 0% 0%;
+    width: 10px;
+    height: 10px;
+    stroke-width: 1px;
+}

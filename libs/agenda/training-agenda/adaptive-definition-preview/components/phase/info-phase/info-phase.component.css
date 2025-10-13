@@ -1,0 +1,58 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    align-content: center;
+}
+
+.content {
+    margin-top: 10px;
+    display: flex;
+    width: 60%;
+}
+
+sentinel-markdown-view {
+    background-color: transparent;
+}
+
+markdown {
+    width: 100%;
+    background-color: transparent;
+}
+
+markdown ::ng-deep img {
+    max-width: 100%;
+    display: block;
+    margin: 0 auto;
+}
+
+markdown ::ng-deep pre {
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+}
+
+/* (100vw - 100%) is used to account for scrollbar */
+.controls {
+    position: fixed;
+    bottom: 0;
+    left: 140px;
+    z-index: 10;
+    width: calc(100vw - (100vw - 100%) - 16px - 140px);
+    padding: 8px;
+}
+
+.controls-container {
+    display: flex;
+    width: 80%;
+    flex-direction: row-reverse;
+}
+
+@media screen and (max-width: 800px) {
+    .content {
+        width: 90%;
+    }
+
+    markdown > img {
+        max-width: 700px;
+    }
+}

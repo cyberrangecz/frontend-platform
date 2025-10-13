@@ -1,0 +1,143 @@
+<div>
+    <form [formGroup]="questionnaireFormGroup.formGroup">
+        <!-- TITLE filed -->
+        <mat-form-field
+            (keydown.enter)="$event.preventDefault()"
+            appearance="outline"
+        >
+            <mat-label>Title</mat-label>
+            <input
+                formControlName="title"
+                matInput
+                placeholder="Title"
+                required
+            />
+            @if (title.value) {
+                <button
+                    (click)="title.setValue('')"
+                    aria-label="Clear"
+                    mat-icon-button
+                    matSuffix
+                >
+                    <mat-icon>close</mat-icon>
+                </button>
+            }
+            @if (title.hasError('required')) {
+                <mat-error>Title cannot be empty</mat-error>
+            }
+        </mat-form-field>
+
+        <!-- QUESTIONS component -->
+        <crczp-adaptive-questions-overview (deleteRelationChange)="removeQuestionFromRelations($event)"
+                                           (questionsChange)="onQuestionsChanged($event)"
+                                           [questionnaireOrder]="phase.order"
+                                           [questionnaireType]="phase.questionnaireType"
+                                           [questions]="phase.questions">
+        </crczp-adaptive-questions-overview>
+
+        @if (phase.questionnaireType === questionnaireTypes.Adaptive) {
+            <div>
+                <mat-divider/>
+                <mat-expansion-panel>
+                    <mat-expansion-panel-header>
+                        <mat-panel-title>Question-Phase Relations</mat-panel-title>
+                    </mat-expansion-panel-header>
+                    <ng-template matExpansionPanelContent>
+                        <div formArrayName="phaseRelations">
+                            @for (_ of phaseRelations.controls; track _; let k = $index) {
+                                <div [formGroupName]="k">
+                                    <mat-divider class='bold-mat-divider'/>
+                                    <div class="question-container">
+                                        <h1>{{ getTrainingPhaseTitle(phaseRelations.at(k).value.phaseId) }}</h1>
+                                        <div class="question-options">
+                                            <button [matMenuTriggerFor]="menu" color="primary"
+                                                    mat-flat-button matTooltip="Only saved questions can be added">
+                                                <span>Add Question</span>
+                                                <mat-icon inline="true">arrow_drop_down</mat-icon>
+                                            </button>
+                                            <mat-menu #menu="matMenu">
+                                                @if (getValidQuestionMenuItems(k).length > 0) {
+                                                    <div>
+                                                        @for (
+                                                            question of getValidQuestionMenuItems(k); track question) {
+                                                            <button (click)="onQuestionAddedToRelation(k, question.id)"
+                                                                    mat-menu-item>
+                                                                <mat-icon> {{ getQuestionIconById(question.id) }}</mat-icon>
+                                                                <span> {{ question.text }} </span>
+                                                            </button>
+                                                        }
+                                                    </div>
+                                                } @else {
+                                                    <p class="empty-menu-text"> No questions available </p>
+                                                }
+                                            </mat-menu>
+                                            <button (click)="deleteRelation(k)" color="warn" mat-flat-button>Remove
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <mat-divider/>
+                                    <div class="relation-fields">
+                                        <div>
+                                            <p>Questions: </p>
+                                            @for (qId of phaseRelations.at(k).value.questionIds; track qId) {
+                                                <div>
+                                                    <div class="question-in-relation">
+                                                        <mat-icon
+                                                            style="vertical-align: sub"> {{ getQuestionIconById(qId) }}
+                                                        </mat-icon>
+                                                        <span> {{ qId }}: {{ getQuestionTitleById(qId) }}</span>
+                                                        <button (click)="onQuestionRemovedFromRelation(k, qId)"
+                                                                aria-label="Delete option" color="warn"
+                                                                mat-icon-button matSuffix
+                                                                matTooltip="Delete option">
+                                                            <mat-icon>remove_circle</mat-icon>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            }
+                                        </div>
+                                        <div class="relation-options">
+                                            <mat-form-field
+                                                appearance="outline"
+                                            >
+                                                <mat-label>Success Rate Percentage</mat-label>
+                                                <input
+                                                    formControlName="successRate"
+                                                    matInput
+                                                    placeholder="Success Rate"
+                                                    required
+                                                    type="number"
+                                                />
+                                                <mat-error>Success Rate must be in range of 0 - 100</mat-error>
+                                            </mat-form-field>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            <div class="relation-options">
+                                <button [matMenuTriggerFor]="menu" color="primary" mat-flat-button>
+                                    <span>Add Relation</span>
+                                    <mat-icon inline="true">arrow_drop_down</mat-icon>
+                                </button>
+                                <mat-menu #menu="matMenu">
+                                    @if (phaseRelationMenuItems.length > 0) {
+                                        <div>
+                                            @for (item of phaseRelationMenuItems; track item) {
+                                                <button (click)="onRelationCreated(item)"
+                                                        mat-menu-item>
+                                                    {{ item.title }}
+                                                </button>
+                                            }
+                                        </div>
+                                    } @else {
+                                        <p class="empty-menu-text">No phases available</p>
+                                    }
+                                </mat-menu>
+                            </div>
+                        </div>
+                    </ng-template>
+                </mat-expansion-panel>
+            </div>
+        }
+    </form>
+</div>

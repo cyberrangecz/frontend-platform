@@ -1,0 +1,20 @@
+
+.owl-dt-container {
+    margin-top: 14px;
+    margin-left: -15px;
+    border-radius: 0.75rem;
+    background-color: var(--neutral-98);
+}
+
+.owl-dt-control-button-content {
+    border-radius: 0 0 0.75rem 0.75rem;
+}
+
+.owl-dt-timer-input {
+    background-color: var(--neutral-98);
+}
+
+.owl-dt-control-arrow-button:hover {
+    background-color: rgba(0, 0, 0, .12);
+    border-radius: 50%;
+}

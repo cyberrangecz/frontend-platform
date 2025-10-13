@@ -1,0 +1,30 @@
+<div>
+  <div class="question-container">
+    <!-- TITLE field-->
+    <div class='question-text'>
+      <sentinel-markdown-editor
+        [content]="question.text"
+        [sentinel-markdown-file-upload]="false"
+        />
+    </div>
+  </div>
+  <h2>Options:</h2>
+  <div>
+    @for (choice of question.choices; track choice; let i = $index) {
+      <div>
+        <!-- CHOICES field -->
+        @if (questionnaireType === questionnaireTypes.Adaptive) {
+          <mat-checkbox
+            [checked]="choice.correct"
+            [disabled]="true"
+            class="option-checkbox"
+            matTooltip="Correct"/>
+        }
+        <mat-form-field appearance="outline">
+          <mat-label>Option {{ i + 1 }}</mat-label>
+          <input [disabled]="true" [value]="choice.text" matInput placeholder="Option Text"/>
+        </mat-form-field>
+      </div>
+    }
+  </div>
+</div>

@@ -1,0 +1,29 @@
+<mat-card appearance="outlined">
+    <mat-card-header>
+        <mat-card-title>
+            <h3>Question {{ index + 1 }}: {{ question.text }}</h3>
+        </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+        @switch (question.questionType) {
+            @case (questionTypes.MCQ) {
+                <crczp-adaptive-multiple-choice-question-edit
+                    [questionnaireType]="questionnaireType"
+                    [question]="question">
+                </crczp-adaptive-multiple-choice-question-edit>
+            }
+            @case (questionTypes.FFQ) {
+                <crczp-adaptive-free-form-question-edit
+                    [questionnaireType]="questionnaireType"
+                    [question]="question">
+                </crczp-adaptive-free-form-question-edit>
+            }
+            @case (questionTypes.RFQ) {
+                <crczp-rating-form-question-edit
+                    [questionnaireType]="questionnaireType"
+                    [question]="question">
+                </crczp-rating-form-question-edit>
+            }
+        }
+    </mat-card-content>
+</mat-card>

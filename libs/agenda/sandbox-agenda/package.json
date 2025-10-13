@@ -1,0 +1,23 @@
+{
+    "name": "@crczp/sandbox-agenda",
+    "peerDependencies": {
+        "@angular/common": "*",
+        "@angular/core": "*",
+        "@angular/forms": "*",
+        "@angular/material": "*",
+        "rxjs": "*",
+        "@angular/router": "*",
+        "@sentinel/components": "*",
+        "@sentinel/common": "*",
+        "@crczp/sandbox-api": "*",
+        "@crczp/sandbox-model": "*",
+        "@crczp/utils": "*",
+        "@crczp/routing-commons": "*",
+        "d3": "*",
+        "echarts": "*",
+        "vite": "*",
+        "@analogjs/vite-plugin-angular": "*",
+        "@nx/vite": "*"
+    },
+    "sideEffects": false
+}

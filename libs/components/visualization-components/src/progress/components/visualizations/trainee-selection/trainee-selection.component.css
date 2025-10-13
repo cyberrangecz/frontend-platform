@@ -1,0 +1,142 @@
+.vis-participant-grid {
+    margin: 20px auto 40px;
+    text-align: center;
+    box-sizing: initial;
+}
+
+.mat-grid-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.participant-tile .mat-figure {
+    position: relative;
+    padding: 10px;
+    align-content: center;
+}
+
+.participant-tile svg {
+    height: 40px;
+    width: 40px;
+    transform: translate(4px, 7px);
+}
+
+.participant-tile-container {
+    align-self: normal;
+}
+
+.participant-avatar {
+    height: 35px;
+    width: 35px;
+    margin: 3px;
+}
+
+.pointer {
+    cursor: pointer;
+}
+
+.not-active {
+    opacity: 20%;
+    cursor: default;
+}
+
+.selected {
+    border-radius: 50%;
+    box-shadow: 0 0 3px #000000;
+}
+
+.unselected {
+    height: inherit;
+}
+
+.participant-name {
+    /*font-size: 14px;*/
+}
+
+.displayed-indicator {
+    margin-bottom: 1%;
+}
+
+.trainee-container {
+    width: 43px;
+    height: 43px;
+    margin: 6px auto;
+    padding: 5px;
+    background: var(--neutral-100);
+}
+
+.trainee-avatar-container {
+    /*position: absolute;*/
+    top: 0;
+    left: 0;
+    margin: 0 auto;
+}
+
+.not-active-text {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: x-large;
+    cursor: default;
+}
+
+.warning {
+    position: absolute;
+    transform: translate(0, -85px);
+    display: flex;
+    font-size: 25px;
+    font-weight: 800;
+    text-shadow: -2px -2px 0 #fff, 2px -2px 0 #fff, -2px 2px 0 #fff, 2px 2px 0 #fff;
+    color: red;
+    cursor: pointer;
+}
+
+.overlap {
+    position: absolute;
+    top: 20%;
+    left: 0;
+    width: 100%;
+    height: 25%;
+    font-size: 1vw;
+}
+
+
+::ng-deep .trainee-selection-warning {
+    white-space: pre-line !important;
+}
+
+.viz-hurdling-trainee-tooltip {
+    visibility: hidden;
+    transition: visibility 0s, opacity 0.1s linear;
+    position: absolute;
+    font-family: Roboto, Arial, sans-serif;
+    font-weight: 400;
+    font-size: 10px;
+    color: white;
+    z-index: 1;
+    text-align: center;
+    padding: 5px 10px;
+    background: #5b5c5e;
+    border: 0px;
+    border-radius: 3px;
+    opacity: 0;
+    white-space: pre-line;
+    pointer-events: none;
+}
+
+.trainee-selector {
+    padding: 0;
+    color: rgb(48, 61, 136);
+}
+
+.unselected-name, .faded {
+    opacity: 30%;
+}
+
+
+@media screen and (min-width: 1780px) {
+    .participant-name {
+        font-size: inherit;
+    }
+}

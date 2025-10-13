@@ -1,0 +1,14 @@
+@if ((trainingDefinition$ | async); as trainingDefinition) {
+    <div>
+        <mat-card appearance="outlined" class="overview-container">
+            <mat-card-content>
+                <crczp-training-definition-info [trainingDefinition]="trainingDefinition"/>
+            </mat-card-content>
+        </mat-card>
+        <mat-card appearance="outlined">
+            <mat-card-content class="levels-container">
+                <crczp-training-definition-levels [levels]="$any(trainingDefinition.levels)"/>
+            </mat-card-content>
+        </mat-card>
+    </div>
+}

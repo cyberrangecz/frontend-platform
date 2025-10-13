@@ -1,0 +1,87 @@
+<mat-card appearance="outlined">
+    <mat-card-header class="card-title">
+        <mat-card-title>
+            @if (editMode) {
+                Edit Sandbox Pool
+            }
+            @if (!editMode) {
+                Create Sandbox Pool
+            }
+        </mat-card-title>
+
+        <sentinel-controls (itemClicked)="onControlsAction($event)" [controls]="controls" />
+    </mat-card-header>
+
+    <mat-card-content>
+        <mat-divider />
+        <form [formGroup]="poolFormGroup.formGroup">
+            <div class="form-content">
+                <div class="form-column">
+                    <!-- POOL SIZE field -->
+                    <mat-form-field [hintLabel]="editMode ? '' : 'Pool of sandboxes that can be allocated'"
+                                    appearance="outline"
+                                    class="multi-line-hint">
+                        <mat-label>Sandbox Pool Size</mat-label>
+                        <input formControlName="poolSize" matInput min="1"
+                               placeholder="Sandbox pool size" required type="number">
+                        @if (poolSize.hasError('min')) {
+                            <mat-error>
+                                Pool size must be number larger than {{ getMinimumPoolSize() }}
+                                {{ editMode ? '(amount of currently allocated sandboxes)' : '' }}
+                            </mat-error>
+                        }
+                        @if (poolSize.hasError('required')) {
+                            <mat-error>This field is required</mat-error>
+                        }
+                    </mat-form-field>
+
+
+                    <!-- SANDBOX DEFINITION field-->
+                    <sentinel-resource-selector
+                        (fetch)="onSandboxDefinitionFilter($event)"
+                        (singleSelectionChange)="sandboxDefinition.setValue($event);this.poolFormGroup.formGroup.markAsDirty();"
+                        [appearance]="'outline'"
+                        [disabled]="editMode"
+                        [formGroupName]="'sandboxDefinition'"
+                        [multiSelection]="false"
+                        [required]="true"
+                        [resources]="filteredSandboxDefinitions$ | async"
+                        [singleSelected]="sandboxDefinition.value"
+                        class="sandbox-definition-selector"
+                        label="Sandbox Definition"
+                        noResultsLabel="No Sandbox Definitions"
+                        searchPlaceholder="Search Sandbox Definitions">
+                        <ng-container [sentinelSelectorSelectedElement]="sandboxDefinitionTemplate" />
+                        <ng-container [sentinelSelectorElement]="sandboxDefinitionTemplate" />
+                    </sentinel-resource-selector>
+
+                    <!-- POOL NOTIFICATION field -->
+                    <mat-checkbox
+                        class="notify-build"
+                        formControlName="notifyBuild"
+                        matTooltip="Sends e-mails to the user who triggers the allocation">
+                        Send e-mail notifications upon build progression
+                    </mat-checkbox>
+                </div>
+
+                <div class="form-column">
+                    <!-- COMMENT field -->
+                    <mat-form-field appearance="outline" hintLabel="A description/info regarding your pool">
+                        <mat-label>Comment</mat-label>
+                        <textarea class="comment"
+                                  formControlName="comment"
+                                  matInput maxlength="256"
+                                  placeholder="Pool comment"
+                                  type="text">
+            </textarea>
+                    </mat-form-field>
+                </div>
+            </div>
+        </form>
+    </mat-card-content>
+</mat-card>
+
+<ng-template #sandboxDefinitionTemplate let-resource>
+    {{ sandboxDefinitionToDisplayString(resource) }}
+</ng-template>
+

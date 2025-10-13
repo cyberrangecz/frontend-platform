@@ -1,0 +1,37 @@
+<h4>
+    <span>{{ question.order + 1 }}. </span>
+    <mat-icon [inline]="true" class="question-type" matTooltip="Multiple Choice Question"> check_circle</mat-icon>
+    <span> {{ question.title }}</span>
+</h4>
+@if (isTest) {
+    <div>
+        <div class="data-field">
+            <div class="key-field">Points:</div>
+            <div>{{ question.score }}</div>
+        </div>
+        <div class="data-field">
+            <div class="key-field">Penalty:</div>
+            <div>{{ question.penalty }}</div>
+        </div>
+    </div>
+}
+<div class="data-field">
+    <div class="key-field">Choices:</div>
+    <div class="choices">
+        @for (choice of question.choices; track choice) {
+            <div>
+                <div>{{ choice.text }}</div>
+                @if (isTest) {
+                    <div class="correct-choice">
+                        @if (choice.correct) {
+                            <mat-icon [inline]="true">done</mat-icon>
+                        }
+                        @if (!choice.correct) {
+                            <mat-icon [inline]="true">close</mat-icon>
+                        }
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,37 @@
+<div id="combinedDiagramPlaceholder">
+    <mat-card>
+        <!-- Contains the title of the chart,
+          which can be set manually when calling this component -->
+        <mat-card-title/>
+        <mat-divider/>
+        <!-- Contains the chart -->
+        <mat-card-content>
+            <mat-grid-list cols="12" rowHeight="100%">
+                <!-- Represents the left y axis -->
+                <mat-grid-tile colspan="1" rowspan="1" id="leftAxisPlaceholder">
+                    <svg id="leftAxisSvg"></svg>
+                </mat-grid-tile>
+                <!-- Contains the main chart -->
+                <mat-grid-tile
+                    colspan="7"
+                    rowspan="1"
+                    id="combinedDiagramChartPlaceholder"
+                >
+                    <svg id="combinedDiagramChartSvg"></svg>
+                </mat-grid-tile>
+                <!-- Represents the right y axis -->
+                <mat-grid-tile colspan="1" rowspan="1" id="rightAxisPlaceholder">
+                    <svg id="rightAxisSvg"></svg>
+                </mat-grid-tile>
+                <!-- Contains the legend for the combined chart -->
+                <mat-grid-tile
+                    colspan="3"
+                    rowspan="1"
+                    id="combinedDiagramLegendPlaceholder"
+                >
+                    <svg id="combinedDiagramLegendSvg"></svg>
+                </mat-grid-tile>
+            </mat-grid-list>
+        </mat-card-content>
+    </mat-card>
+</div>

@@ -1,0 +1,123 @@
+.content-container {
+    display: flex;
+    justify-content: flex-start;
+    padding-top: 10px;
+}
+
+tr td:last-child {
+    padding-left: 25px;
+}
+
+.select-trainee {
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+}
+
+.legend {
+    display: flex;
+    flex-direction: column;
+    width: 400px;
+}
+
+.right-panel {
+    width: calc(100% - 400px);
+}
+
+.trainee-graph {
+    text-align: center;
+    overflow: hidden;
+    height: 65vh;
+    background-color: white;
+    border: 1px solid black;
+    border-radius: 5px;
+}
+
+h1 {
+    text-align: center;
+}
+
+h2 {
+    margin-top: 30vh;
+    text-align: center;
+    color: red;
+}
+
+button {
+    margin-bottom: 10px;
+}
+
+mat-list {
+    display: flex;
+    flex-direction: row;
+}
+
+.info-container {
+    display: flex;
+    justify-content: center;
+}
+
+.node,
+.start-node,
+.mandatory-node,
+.error-node,
+.command-node,
+.unfulfilled-node {
+    stroke: #000000;
+    stroke-width: 1;
+}
+
+.start-node {
+    fill: #e0bbe4;
+    transform-origin: center;
+    transform: scale(1, 0.5) rotate(45deg);
+}
+
+.mandatory-node {
+    fill: #2ca02c;
+}
+
+.error-node {
+    fill: #e45045;
+}
+
+.command-node {
+    fill: #ffde2e;
+}
+
+.unfulfilled-node {
+    fill: #e0bbe4;
+}
+
+:host::ng-deep.trainee-graph svg {
+    cursor: move;
+    height: 100%;
+    width: 100%;
+}
+
+:host {
+    width: 100%;
+}
+
+.resource-info {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.resource-title {
+    font-size: 16px;
+}
+
+.resource-subtitle {
+    font-size: 14px;
+}
+
+.mat-select-panel mat-option.mat-option {
+    height: unset;
+}
+
+.mat-option-text.mat-option-text {
+    white-space: normal;
+}

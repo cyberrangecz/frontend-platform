@@ -1,0 +1,31 @@
+.container {
+    margin: auto auto;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    align-self: center;
+}
+
+.header {
+    height: 20%;
+}
+
+h1 {
+    font-size: 3vw;
+    margin: 10vh 0;
+}
+
+h2 {
+    font-size: 2vw;
+}
+
+h1.access-token {
+    font-weight: bolder;
+    color: #3f51b5;
+    font-size: 8vw;
+}

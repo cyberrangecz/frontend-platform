@@ -1,0 +1,17 @@
+{
+    "name": "@crczp/sandbox-api",
+    "peerDependencies": {
+        "@angular/common": "*",
+        "@angular/core": "*",
+        "@sentinel/common": "*",
+        "@crczp/sandbox-model": "*",
+        "rxjs": "*",
+        "@crczp/api-common": "*",
+        "@crczp/utils": "*",
+        "@ngneat/cashew": "*",
+        "vite": "*",
+        "@analogjs/vite-plugin-angular": "*",
+        "@nx/vite": "*"
+    },
+    "sideEffects": false
+}

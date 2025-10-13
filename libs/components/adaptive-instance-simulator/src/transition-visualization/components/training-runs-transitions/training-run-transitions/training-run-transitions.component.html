@@ -1,0 +1,14 @@
+<svg>
+    <g [color]="color" [playerTransitions]="playerTransitions" [xScale]="xScale" [yScale]="yScale"
+       training-run-path/>
+</svg>
+<svg>
+    <g
+        (taskPreviewEvent)="onTaskPreviewChange($event)"
+        [color]="color"
+        [playerTransitions]="playerTransitions"
+        [xScale]="xScale"
+        [yScale]="yScale"
+        training-run-path-nodes
+    />
+</svg>

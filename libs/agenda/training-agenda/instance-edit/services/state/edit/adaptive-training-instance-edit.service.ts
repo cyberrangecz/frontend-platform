@@ -1,0 +1,27 @@
+import { inject, Injectable } from '@angular/core';
+import { CommonTrainingInstanceEditService } from './common-training-instance-edit.service';
+import { AdaptiveTrainingDefinitionApi, AdaptiveTrainingInstanceApi } from '@crczp/training-api';
+import { PoolApi, SandboxDefinitionApi } from '@crczp/sandbox-api';
+import { Router } from '@angular/router';
+import { ErrorHandlerService, NotificationService, PortalConfig } from '@crczp/utils';
+import { Routing } from '@crczp/routing-commons';
+
+@Injectable()
+export class AdaptiveTrainingInstanceEditService extends CommonTrainingInstanceEditService {
+    constructor() {
+        super(
+            inject(AdaptiveTrainingInstanceApi),
+            inject(AdaptiveTrainingDefinitionApi),
+            inject(PoolApi),
+            inject(SandboxDefinitionApi),
+            inject(Router),
+            inject(ErrorHandlerService),
+            inject(NotificationService),
+            inject(PortalConfig),
+            (id: number) =>
+                Routing.RouteBuilder.adaptive_instance
+                    .instanceId(id)
+                    .edit.build()
+        );
+    }
+}

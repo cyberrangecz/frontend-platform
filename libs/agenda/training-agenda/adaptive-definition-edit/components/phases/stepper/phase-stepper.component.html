@@ -1,0 +1,7 @@
+<sentinel-stepper (indexSelected)="activeStepChanged($event)"
+                  (selectedStepSwapped)="activeStepChanged($event)"
+                  (stepSwapped)="swapPhases($event)"
+                  [activeIndex]="activeStep"
+                  [selectable]="true"
+                  [stepperItems]="phaseStepper"/>
+

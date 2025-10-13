@@ -1,0 +1,20 @@
+/* Make markdown consistent across browsers */
+
+sentinel-markdown-view {
+    background-color: transparent;
+}
+
+markdown ::ng-deep img {
+    max-width: 100%;
+    display: block;
+    margin: 0 auto;
+}
+
+markdown ::ng-deep pre {
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+}
+
+markdown ::ng-deep {
+    background-color: transparent;
+}

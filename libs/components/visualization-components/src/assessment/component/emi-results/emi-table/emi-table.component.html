@@ -1,0 +1,44 @@
+<table mat-table [dataSource]="dataSource" class="table">
+  <!-- Options Column -->
+  <ng-container matColumnDef="option">
+    <th mat-header-cell *matHeaderCellDef>Options</th>
+    <td mat-cell *matCellDef="let data"
+            [ngClass]="{
+          'correct': isTest && data.isCorrect,
+          'incorrect': isTest && !data.isCorrect
+          }">
+      {{ data.option }}
+    </td>
+  </ng-container>
+
+  <!-- Sum Column -->
+  <ng-container matColumnDef="sum">
+    <th mat-header-cell class="sum" *matHeaderCellDef>Sum</th>
+    <td mat-cell class="sum" *matCellDef="let data">{{ data.answeredCount }}</td>
+  </ng-container>
+
+  <!-- Percentage Column -->
+  <ng-container matColumnDef="percentage">
+    <th mat-header-cell class="percentage" *matHeaderCellDef>Percentage</th>
+    <td mat-cell class="percentage" *matCellDef="let data">{{ data.answeredPercentage | number: '1.0-1' }}%</td>
+  </ng-container>
+
+  <!-- Answer Column -->
+  <ng-container matColumnDef="answers">
+    <th mat-header-cell class="answers" *matHeaderCellDef>Answer</th>
+    <td mat-cell class="answers" *matCellDef="let data">
+      <div class="player-answers">
+        @for (participant of data.participants; track participant) {
+          <span class="player-answer"
+            [ngClass]="{'selected': participant.isHighlighted}"
+            [matTooltip]="participant.fullName"
+            (click)="onHighlight(participant, $event)">
+          </span>
+        }
+      </div>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>

@@ -1,0 +1,161 @@
+@use "@angular/material" as mat;
+
+
+.simple-button-wrapper {
+    border-radius: 0.75rem;
+}
+
+.simple-button-wrapper:hover {
+    box-shadow: 0 0 12px 4px var(--primary-70);
+}
+
+.simple-button {
+    height: 85px;
+    border-radius: 12px;
+    width: 120px;
+}
+
+.dropdown-button {
+    position: relative;
+    background: var(--neutral-98);
+    border-radius: 0.75rem;
+    border: none;
+    @include mat.elevation(2);
+    z-index: 10;
+}
+
+.dropdown-button:hover {
+    background: var(--primary-95);
+    border-radius: 0.75rem 0.75rem 0 0;
+}
+
+mat-icon {
+    font-size: 35px !important;
+    color: var(--primary-40);
+}
+
+.mat-icon {
+    height: 35px;
+    width: 35px;
+    margin: 0;
+    padding: 0;
+}
+
+.portal-item-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.portal-item-container h3 {
+    display: flex;
+    justify-content: center;
+    padding-top: 10px;
+}
+
+.button-highlight {
+    box-shadow: 0 0 12px 4px var(--primary-70);
+}
+
+.expanded-menu-item-wrapper {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    bottom: calc(-100% - 25px);
+    left: 0;
+    width: 120px;
+    background-color: var(--primary-95);
+    overflow: visible;
+    z-index: 0;
+    box-shadow: 0 14px 12px 4px var(--primary-70);
+    animation: rollDown 0.1s ease-out;
+}
+
+@keyframes rollDown {
+    from {
+        transform: translateY(-20px);
+    }
+    to {
+        transform: translateY(0);
+    }
+}
+
+
+.expanded-menu-item {
+    flex-wrap: nowrap;
+    width: 120px;
+    display: flex;
+    height: 60px;
+    align-items: center;
+    justify-content: left;
+    gap: 0.5rem;
+    border-radius: 0;
+    padding: 0.25rem 0 0.25rem 0.75rem;
+    background-color: var(--primary-95);
+    border: none;
+    border-top: solid 1px var(--primary-50);
+    font-weight: 525;
+    font-size: 0.875rem;
+    z-index: 5;
+}
+
+.expanded-menu-item:hover {
+    background-color: var(--primary-98);
+    animation: activateButton 0.1s ease-out;
+    scale: 1.05;
+    border-radius: 0.5rem;
+    border: solid 1px var(--primary-50);
+    z-index: 100;
+    cursor: pointer;
+}
+
+@keyframes activateButton {
+    from {
+        transform: scale(1);
+        border-radius: 0;
+    }
+    to {
+        transform: scale(1.05);
+        border-radius: 0.5rem;
+    }
+}
+
+.agenda-link-label {
+    text-align: center;
+}
+
+
+.dropdown-icon-band {
+    pointer-events: none;
+    position: absolute;
+    overflow: visible;
+    bottom: 0;
+    left: 0;
+    height: 0.75rem;
+    width: 120px;
+    border-radius: 0 0 0.75rem 0.75rem;
+    background-color: var(--primary-40);
+    z-index: 1;
+}
+
+.dropdown-icon-band--extended {
+    bottom: -0.75rem;
+}
+
+.dash {
+    pointer-events: none;
+    margin-top: 2px;
+    width: 2rem;
+    height: 0.25rem;
+    border-radius: 0.75rem;
+    background-color: var(--neutral-100);
+}
+
+.arrow-icon {
+    font-size: 20px;
+    color: var(--neutral-100);
+}
+

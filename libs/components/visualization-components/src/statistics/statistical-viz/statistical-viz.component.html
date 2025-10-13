@@ -1,0 +1,78 @@
+<mat-sidenav-container>
+  <mat-sidenav-content>
+    <mat-expansion-panel [expanded]="true">
+      <!-- FILTERS SELECTION  -->
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <b>Visualization filters</b>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <div class="col-12" id="filterDiv">
+        <crczp-filter
+          [initialTrainingInstance]="trainingInstanceId"
+          [trainingInstances]="trainingInstanceStatistics$ | async"
+          (detailView)="detailView($event)"
+          (filterChange)="filterChange($event)"/>
+      </div>
+    </mat-expansion-panel>
+    <mat-sidenav-content class="dashboard-container">
+      @if ((filteredTrainingInstanceStatistics$ | async); as filteredTrainingInstanceStatistics) {
+        <div class="dashboard-container"
+          >
+          <div class="col-6" id="combinedDiv">
+            <crczp-combined-diagram
+              [trainingInstanceStatistics]="filteredTrainingInstanceStatistics"
+              [highlightedInstances]="highlightedTrainingInstance$ | async"
+              (highlightInstance)="highlightChange($event)"
+              />
+          </div>
+          <div class="col-6" id="scatterplotDiv">
+            <crczp-scatterplot
+              [trainingInstanceStatistics]="filteredTrainingInstanceStatistics"
+              [highlightedInstances]="highlightedTrainingInstance$ | async"
+              [highlightedParticipants]="highlightedParticipants$ | async"
+              (highlightInstance)="highlightChange($event)"
+              >
+            </crczp-scatterplot>
+          </div>
+          <div class="col-6" id="barchartDiv">
+            <crczp-barchart
+              [trainingInstanceStatistics]="filteredTrainingInstanceStatistics"
+              [highlightedInstances]="highlightedTrainingInstance$ | async"
+              (highlightInstance)="highlightChange($event)"
+              (selectedLevelId)="selectedLevel($event)"
+              />
+          </div>
+          <div class="col-6" id="bubblechartDiv">
+            <crczp-bubblechart
+              [trainingInstanceStatistics]="filteredTrainingInstanceStatistics"
+              [selectedLevel]="selectedLevel$ | async"
+              (highlightInstances)="highlightChange($event)"
+              (highlightParticipants)="highlightParticipants($event)"
+              />
+          </div>
+          <div class="col-6" id="clusteringDiv">
+            <crczp-viz-statistical-clustering-wrapper
+              [trainingInstanceStatistics]="filteredTrainingInstanceStatistics"
+              [selectedLevel]="trainingInstanceId"
+              />
+          </div>
+          <div class="col-6" id="scatterClusterDiv">
+            <crczp-scatter-clusters-wrapper
+              [trainingDefinitionId]="trainingDefinitionId"
+              [trainingInstanceStatistics]="filteredTrainingInstanceStatistics"
+              [level]="selectedLevel$ | async"
+              />
+          </div>
+          <div class="col-12" id="radarchartDiv">
+            <crczp-radar-chart-wrapper
+              [trainingDefinitionId]="trainingDefinitionId"
+              [trainingInstanceStatistics]="filteredTrainingInstanceStatistics"
+              [level]="selectedLevel$ | async"
+              />
+          </div>
+        </div>
+      }
+    </mat-sidenav-content>
+  </mat-sidenav-content>
+</mat-sidenav-container>

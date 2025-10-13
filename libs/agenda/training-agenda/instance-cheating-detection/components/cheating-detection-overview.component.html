@@ -1,0 +1,19 @@
+<div>
+    <sentinel-controls [controls]="topControls" (itemClicked)="onControlsAction($event)"/>
+    <sentinel-table [defaultSortDirection]="INIT_SORT_DIR"
+                    [defaultSortName]="INIT_SORT_NAME"
+                    [data]="cheatingDetections$ | async"
+                    [hasError]="hasError$ | async"
+                    [isLoading]="isLoading$ | async"
+                    [displayedActionsCount]="4"
+                    (tableLoad)="onLoadEvent($event)"
+                    (rowAction)="onTableAction($event)">
+        <ng-container *sentinelRow="'stages'; template: stagesTemplate"/>
+    </sentinel-table>
+
+    <ng-template #stagesTemplate let-row>
+        <crczp-stage-overview [stages]="row.element.stages"
+                             [unitId]="row.element.unitId">
+        </crczp-stage-overview>
+    </ng-template>
+</div>

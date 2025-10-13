@@ -1,0 +1,28 @@
+<div class="phase">
+  <form [formGroup]="phaseConfigFormGroup.formGroup" class="content">
+    <!-- TITLE filed -->
+    <mat-form-field appearance="outline"
+      (keydown.enter)="$event.preventDefault()">
+      <mat-label>Title</mat-label>
+      <input matInput placeholder="Title" formControlName="title" required>
+      @if (title) {
+        <button matSuffix mat-icon-button
+          aria-label="Clear" (click)="title.setValue('');">
+          <mat-icon>close</mat-icon>
+        </button>
+      }
+      @if (title.hasError('required')) {
+        <mat-error>Title cannot be empty</mat-error>
+      }
+    </mat-form-field>
+
+    <!-- CONTENT filed -->
+    <h3>Content</h3>
+    <sentinel-markdown-editor [sentinel-markdown-file-upload]="false"
+      (contentChange)="this.content.setValue($event);"
+      [content]="content.value"/>
+    @if (content.hasError('required')) {
+      <mat-error>Content cannot be empty</mat-error>
+    }
+  </form>
+</div>

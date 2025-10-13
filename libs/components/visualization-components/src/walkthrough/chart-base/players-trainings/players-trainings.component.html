@@ -1,0 +1,26 @@
+@for (userData of usersData; track userData; let myIndex = $index) {
+    <svg>
+        <g
+            player-training
+            [userData]="userData"
+            [isUserSelected]="isUserSelected(userData)"
+            (userSelectedEvent)="setUserSelected(userData)"
+            (tooltipShownChanged)="tooltipShownChanged($event)"
+            [userIndex]="myIndex"
+            [yCoordinate]="absolutePositionService.getStartYPositionOfUser(myIndex)"
+            [axesCount]="getAxesCount()"
+            [maxYPosition]="absolutePositionService.getMaxYPositionOfUser(myIndex, usersData.length)"
+        />
+    </svg>
+}
+@if (tooltip && tooltip.visible) {
+    <svg>
+        <g
+            commands-tooltip
+            [xPosition]="tooltip.x"
+            [yPosition]="tooltip.y"
+            [commands]="tooltip.commands"
+            [visible]="tooltip.visible"
+        />
+    </svg>
+}

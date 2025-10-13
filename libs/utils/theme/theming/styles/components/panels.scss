@@ -1,0 +1,38 @@
+mat-expansion-panel.mat-expansion-panel {
+    padding: 1rem 0;
+    margin-bottom: 1.5rem;
+    border-radius: 24px;
+}
+
+mat-panel-title.mat-expansion-panel-header-title {
+    // same style as mat card
+    line-height: var(--mat-card-title-text-line-height, var(--mat-app-title-large-line-height));
+    font-size: var(--mat-card-title-text-size, var(--mat-app-title-large-size));
+    letter-spacing: var(--mat-card-title-text-tracking, var(--mat-app-title-large-tracking));
+    font-weight: var(--mat-card-title-text-weight, var(--mat-app-title-large-weight));
+
+    margin-bottom: 0;
+}
+
+mat-panel-description.mat-expansion-panel-header-description {
+    // same style as mat card
+    color: var(--mat-card-subtitle-text-color, var(--mat-app-on-surface));
+    line-height: var(--mat-card-subtitle-text-line-height, var(--mat-app-title-medium-line-height));
+    font-size: var(--mat-card-subtitle-text-size, var(--mat-app-title-medium-size));
+    letter-spacing: var(--mat-card-subtitle-text-tracking, var(--mat-app-title-medium-tracking));
+    font-weight: var(--mat-card-subtitle-text-weight, var(--mat-app-title-medium-weight));
+}
+
+mat-expansion-panel-header.mat-expansion-panel-header {
+    padding: 0.75rem 2rem;
+    margin: -1rem 0;
+    font-size: 1.25rem;
+}
+
+div.mat-expansion-panel-body {
+    padding-top: 1.25rem;
+}
+
+mat-card.mat-mdc-card {
+    background-color: var(--primary-98);
+}

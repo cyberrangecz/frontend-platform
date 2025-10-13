@@ -1,0 +1,8 @@
+@switch (stageComponentToDisplay) {
+    @case (stageComponents.ANSIBLE_ALLOCATION) {
+        <crczp-ansible-allocation-stage-detail [stage]="$any(stage)"/>
+    }
+    @case (stageComponents.TERRAFORM_ALLOCATION) {
+        <crczp-terraform-allocation-stage-detail [stage]="$any(stage)"/>
+    }
+}

@@ -1,0 +1,15 @@
+<crczp-generic-sandbox-level
+    (answerSubmitted)="onAnswerSubmitted($event)"
+    (getAccessFile)="onAccessFileRequested()"
+    (next)="onNext()"
+    [displayedSolutionContent$]="of()"
+    [isBacktracked]="isBacktracked"
+    [isCorrectAnswerSubmitted$]="isCorrectPasskeySubmitted$"
+    [isLast]="isLast"
+    [isLoading]="isLoading$"
+    [isStepperDisplayed]="isStepperDisplayed"
+
+    [levelContent]="localEnvironment ? phase?.localContent : phase?.cloudContent"
+    [sandboxDefinitionId]="sandboxDefinitionId"
+    [sandboxInstanceId]="sandboxInstanceId"
+/>

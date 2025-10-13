@@ -1,0 +1,36 @@
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import {
+    AccessPhaseTask,
+    InfoPhaseTask,
+    QuestionnairePhaseTaskVisuazlization,
+    TrainingPhaseTask,
+    TransitionTask,
+} from '@crczp/visualization-model';
+import { AbstractPhaseTypeEnum } from '@crczp/training-model';
+
+@Component({
+    selector: 'crczp-task-preview',
+    templateUrl: './task-preview.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class TaskPreviewComponent {
+    @Input() task?: TransitionTask;
+    @Input() localEnvironment?: boolean;
+
+    AbstractTaskTypeEnum = AbstractPhaseTypeEnum;
+
+    taskTypeResolver(task: TransitionTask | undefined) {
+        switch (true) {
+            case task instanceof InfoPhaseTask:
+                return AbstractPhaseTypeEnum.Info;
+            case task instanceof TrainingPhaseTask:
+                return AbstractPhaseTypeEnum.Training;
+            case task instanceof QuestionnairePhaseTaskVisuazlization:
+                return AbstractPhaseTypeEnum.Questionnaire;
+            case task instanceof AccessPhaseTask:
+                return AbstractPhaseTypeEnum.Access;
+            default:
+                return '';
+        }
+    }
+}

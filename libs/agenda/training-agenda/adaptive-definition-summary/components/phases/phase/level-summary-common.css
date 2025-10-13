@@ -1,0 +1,45 @@
+.panel-align {
+    margin: 1rem 0 !important;
+}
+
+h3 {
+    margin: 0;
+    place-self: center;
+}
+
+.key-field {
+    color: gray;
+    margin-right: 6px;
+    margin-left: 10px;
+}
+
+.data-field {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 0.25rem;
+}
+
+.markdown-data {
+    flex-direction: column;
+}
+
+.markdown-data sentinel-markdown-view {
+    margin-left: 1rem;
+}
+
+h4 {
+    margin: 0;
+}
+
+.level-type {
+    vertical-align: bottom;
+}
+
+mat-icon {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}

@@ -1,0 +1,11 @@
+<div class="transition-container">
+  <h2>Trainee Pathway Simulation</h2>
+  @if ((transitionData && transitionData.trainingRunsData.length > 0)) {
+    <div>
+      <crczp-adaptive-transition-visualization
+        [transitionData]="transitionData"/>
+    </div>
+  } @else {
+    <p>*Click Generate to start generation of trainee path.</p>
+  }
+</div>

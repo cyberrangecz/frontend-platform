@@ -1,0 +1,12 @@
+<div class="list" (click)="clear()">
+    @for(answer of question.answers; track answer){
+        <div>
+            <h3 class="row-title">{{ answer.text }}</h3>
+            <crczp-emi-results-table
+                [tableData]="tableAdapters[$index]"
+                [isTest]="isTest"
+                (highlighted)="highlighted($event)">
+            </crczp-emi-results-table>
+        </div>
+    }
+</div>

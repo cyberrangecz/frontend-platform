@@ -1,0 +1,25 @@
+@import "../../../level-summary-common.css";
+
+.question-matrix-header-container {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+}
+
+.inner-td {
+    text-align: center;
+}
+
+.choices {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+}
+
+.correct-choice {
+    text-align: center;
+}
+
+.question-type {
+    vertical-align: bottom;
+}

@@ -1,0 +1,145 @@
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
+import { AccessedTrainingRun, TrainingTypeEnum } from '@crczp/training-model';
+import { SentinelTable, SentinelTableComponent, TableActionEvent, TableLoadEvent } from '@sentinel/components/table';
+import { Observable } from 'rxjs';
+import { map, take } from 'rxjs/operators';
+import { AccessedTrainingRunTable } from '../model/accessed-training-run-table';
+import { AccessedTrainingRunService } from '../services/state/accessed-training-run.service';
+import {
+    SentinelControlItem,
+    SentinelControlItemSignal,
+    SentinelControlsComponent
+} from '@sentinel/components/controls';
+import { AccessedTrainingRunControls } from '../model/accessed-training-run-controls';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { PortalConfig } from '@crczp/utils';
+import { AsyncPipe } from '@angular/common';
+import { AccessTrainingRunComponent } from './access/access-training-run.component';
+
+import { RunningTrainingRunConcreteService, RunningTrainingRunService } from '@crczp/training-agenda/run-detail';
+import {
+    RunningAdaptiveRunConcreteService,
+    RunningAdaptiveRunService
+} from '@crczp/training-agenda/adaptive-run-detail';
+
+/**
+ * Main smart component of the trainee overview.
+ */
+@Component({
+    selector: 'crczp-trainee-overview',
+    templateUrl: './training-run-overview.component.html',
+    styleUrls: ['./training-run-overview.component.css'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        AsyncPipe,
+        AccessTrainingRunComponent,
+        SentinelControlsComponent,
+        SentinelTableComponent,
+    ],
+    providers: [
+        {
+            provide: RunningTrainingRunService,
+            useClass: RunningTrainingRunConcreteService,
+        },
+        {
+            provide: RunningAdaptiveRunService,
+            useClass: RunningAdaptiveRunConcreteService,
+        },
+        {
+            provide: AccessedTrainingRunService,
+            useClass: AccessedTrainingRunService,
+        },
+    ],
+})
+export class TrainingRunOverviewComponent implements OnInit {
+    trainingRuns$: Observable<SentinelTable<AccessedTrainingRun>>;
+    hasError$: Observable<boolean>;
+    isLoading = false;
+    controls: SentinelControlItem[];
+    destroyRef = inject(DestroyRef);
+    private trainingRunOverviewService = inject(AccessedTrainingRunService);
+    private settings = inject(PortalConfig);
+
+    constructor() {
+        const trainingRunOverviewService = this.trainingRunOverviewService;
+
+        this.controls = AccessedTrainingRunControls.create(
+            trainingRunOverviewService
+        );
+    }
+
+    ngOnInit(): void {
+        this.initTable();
+    }
+
+    /**
+     * According to PIN number calls service to access training run or adaptive run.
+     * @param accessToken token to access the training run or adaptive run
+     */
+    access(accessToken: string): void {
+        this.isLoading = true;
+        this.trainingRunOverviewService
+            .toAccessRun(
+                accessToken,
+                this.isAdaptiveToken(accessToken)
+                    ? TrainingTypeEnum.ADAPTIVE
+                    : TrainingTypeEnum.LINEAR
+            )
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe(() => (this.isLoading = false));
+    }
+
+    /**
+     * Resolves type of table action and handles it
+     * @param event table action event
+     */
+    onTableAction(event: TableActionEvent<AccessedTrainingRun>): void {
+        event.action.result$.pipe(take(1)).subscribe();
+    }
+
+    /**
+     * Loads training run data for the table component
+     */
+    loadAccessedTrainingRuns(loadEvent: TableLoadEvent): void {
+        this.trainingRunOverviewService
+            .getAll(
+                new OffsetPaginationEvent(0, 0, '', 'asc'),
+                loadEvent.filter
+            )
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe();
+    }
+
+    onControlsAction(control: SentinelControlItemSignal): void {
+        control.result$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
+    }
+
+    private initTable() {
+        const initialLoadEvent: TableLoadEvent = {
+            pagination: new OffsetPaginationEvent(
+                0,
+                this.settings.defaultPageSize,
+                '',
+                'asc'
+            ),
+        };
+
+        this.trainingRuns$ = this.trainingRunOverviewService.resource$.pipe(
+            map(
+                (resource) =>
+                    new AccessedTrainingRunTable(
+                        resource,
+                        this.trainingRunOverviewService
+                    )
+            )
+        );
+        this.hasError$ = this.trainingRunOverviewService.hasError$;
+        this.loadAccessedTrainingRuns(initialLoadEvent);
+    }
+
+    private isAdaptiveToken(accessToken: string): boolean {
+        const re = new RegExp(/^[5-9].+$/);
+        return re.test(accessToken.split('-')[1]);
+    }
+}

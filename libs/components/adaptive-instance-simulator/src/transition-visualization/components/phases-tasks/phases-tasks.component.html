@@ -1,0 +1,11 @@
+@for (phase of phases; track trackByPhaseId(phase)) {
+    <svg>
+        <g
+            phase-tasks
+            [phase]="phase"
+            [xScale]="xScale"
+            [yScale]="yScale"
+            (taskPreviewEvent)="onTaskPreviewChange($event)"
+        />
+    </svg>
+}

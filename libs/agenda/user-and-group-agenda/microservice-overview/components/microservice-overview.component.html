@@ -1,0 +1,10 @@
+<sentinel-controls [controls]="controls" (itemClicked)="onControlsAction($event)"/>
+<sentinel-table
+    [defaultSortName]="INIT_SORT_NAME"
+    [defaultSortDirection]="INIT_SORT_DIR"
+    [data]="microservices$ | async"
+    [hasError]="microservicesHasError$ | async"
+    (tableLoad)="onTableLoadEvent($event)"
+    (rowAction)="onTableAction($event)"
+>
+</sentinel-table>

@@ -1,0 +1,19 @@
+<div class="content">
+
+    <div>
+        <div class="checkbox-images">
+            <mat-checkbox (change)="osImagesToggled()">Only custom images</mat-checkbox>
+            <mat-checkbox (change)="guiAccessToggled()">Only GUI access</mat-checkbox>
+        </div>
+        <sentinel-table
+            [defaultSortName]="DEFAULT_SORT_COLUMN"
+            [defaultSortDirection]="DEFAULT_SORT_DIRECTION"
+            [data]="images$ | async"
+            [isLoading]="isLoadingImages$ | async"
+            [hasError]="imagesTableHasError$ | async"
+            (tableLoad)="onTableLoadEvent($event)"
+        >
+        </sentinel-table>
+    </div>
+
+</div>

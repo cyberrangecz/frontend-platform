@@ -1,0 +1,78 @@
+/* header */
+.ctf-progress-header-column, span.ctf-progress-header-column {
+    display: inline-block;
+    white-space: nowrap;
+    padding-right: 12px;
+    position: relative;
+    color: #2f2f2f;
+    text-decoration: none;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.ctf-progress-header-column:hover, .ctf-progress-header-column:active {
+    cursor: pointer;
+}
+
+.ctf-progress-header-arrow {
+    position: absolute;
+    right: -3px;
+    display: block;
+    width: 0;
+    height: 0;
+    border-style: solid;
+}
+
+.ctf-progress-header-arrow-up {
+    top: 3px;
+    border-width: 0 6px 6px 6px;
+    border-color: transparent transparent #c4c4c4 transparent;
+}
+
+.ctf-progress-header-arrow-up.ctf-progress-header-arrow-active {
+    border-color: transparent transparent #5c75a7 transparent;
+}
+
+.ctf-progress-header-arrow-down {
+    top: 11px;
+    border-width: 6px 6px 0 6px;
+    border-color: #c4c4c4 transparent transparent transparent;
+}
+
+.ctf-progress-header-arrow-down.ctf-progress-header-arrow-active {
+    border-color: #5c75a7 transparent transparent transparent;
+}
+
+.ctf-progress-header-levels {
+    overflow: hidden;
+    position: relative;
+    height: 1.8em;
+}
+
+.ctf-progress-header-levels .ctf-progress-header-column {
+    position: absolute;
+    bottom: 0;
+}
+
+.ctf-progress-header #sort-name {
+    left: 0;
+    width: 130px;
+    text-align: right;
+}
+
+.ctf-progress-header #sort-time {
+    left: 0;
+    padding-left: 50px;
+}
+
+@media (max-width: 1000px) {
+    .ctf-progress-header-levels .ctf-progress-header-column {
+        transform: translateX(-50%);
+        margin-right: -11px;
+        position: absolute;
+    }
+}

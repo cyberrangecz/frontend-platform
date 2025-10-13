@@ -1,0 +1,81 @@
+#scatterClustersPlaceholder {
+    box-sizing: border-box;
+    display: inline-block;
+    padding: 0.5vw;
+    width: 100%;
+}
+
+mat-card {
+    width: calc(100% - 32px);
+    height: 100%;
+    padding-top: calc(5px + 0.5vw);
+    padding-bottom: calc(5px + 0.5vw);
+}
+
+mat-card-title {
+    padding: calc(5px + 0.2vw);
+    margin-bottom: calc(2px + 0.2vw);
+    font-size: calc(8px + 0.5vw) !important;
+    overflow-y: visible;
+}
+
+mat-card-content {
+    height: 90%;
+    margin-top: 15px;
+}
+
+::ng-deep #scatterClustersPlaceholder .mat-grid-tile-content {
+    display: initial !important;
+}
+
+mat-radio-button {
+    padding-right: calc(5px + 0.4vw);
+}
+
+.scatter-clusters-input {
+    float: left;
+    margin-top: 10px;
+}
+
+::ng-deep #scatterClustersPlaceholder crczp-viz-clustering-line-chart .mat-button-base {
+    margin: 10px 0px 0px 10px;
+}
+
+.chart-info-button {
+    justify-content: center;
+    border: none;
+    margin-left: 90%;
+    border-bottom-left-radius: 50%;
+    border-bottom-right-radius: 50%;
+}
+
+.chart-info-button mat-icon {
+    color: #3f51b5;
+    background: white;
+    border-radius: 100%;
+}
+
+#scatterClustersPlaceholder mat-grid-list {
+    top: -24px;
+    pointer-events: none;
+}
+
+#scatterClustersPlaceholder mat-grid-tile {
+    top: -24px;
+    pointer-events: initial;
+}
+
+.cluster-no-data-message {
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 33%;
+    justify-content: center;
+    cursor: default;
+}
+
+/** line chart **/
+
+::ng-deep #scatterClustersSvgPlaceholder .main-clustering-line-div text {
+    font-size: 20px;
+}

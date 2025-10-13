@@ -1,0 +1,21 @@
+.chart-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 200px;
+}
+
+.pie-chart {
+    width: 200px;
+    height: 200px;
+}
+
+.center-text {
+    text-align: center !important;
+}
+
+.usage-text {
+    @extend .center-text;
+    margin-bottom: 0 !important;
+    padding: 0 !important;
+}

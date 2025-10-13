@@ -1,0 +1,231 @@
+{
+    "compileOnSave": false,
+    "compilerOptions": {
+        "baseUrl": ".",
+        "declaration": false,
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "importHelpers": true,
+        "lib": ["es2020", "dom"],
+        "module": "esnext",
+        "moduleResolution": "node",
+        "paths": {
+            "@crczp/adaptive-instance-simulator": [
+                "libs/components/adaptive-instance-simulator/src/index.ts"
+            ],
+            "@crczp/api-common": ["libs/api/api-common/src/index.ts"],
+            "@crczp/components": ["libs/utils/components/src/index.ts"],
+            "@crczp/routing-commons": ["libs/utils/routing/src/index.ts"],
+            "@crczp/sandbox-agenda": [
+                "libs/agenda/sandbox-agenda/src/index.ts"
+            ],
+            "@crczp/sandbox-agenda/assets": [
+                "libs/agenda/sandbox-agenda/assets/index.ts"
+            ],
+            "@crczp/sandbox-agenda/internal": [
+                "libs/agenda/sandbox-agenda/internal/index.ts"
+            ],
+            "@crczp/sandbox-agenda/pool-detail": [
+                "libs/agenda/sandbox-agenda/pool-detail/index.ts"
+            ],
+            "@crczp/sandbox-agenda/pool-edit": [
+                "libs/agenda/sandbox-agenda/pool-edit/index.ts"
+            ],
+            "@crczp/sandbox-agenda/pool-overview": [
+                "libs/agenda/sandbox-agenda/pool-overview/index.ts"
+            ],
+            "@crczp/sandbox-agenda/request-detail": [
+                "libs/agenda/sandbox-agenda/request-detail/index.ts"
+            ],
+            "@crczp/sandbox-agenda/resolvers": [
+                "libs/agenda/sandbox-agenda/resolvers/index.ts"
+            ],
+            "@crczp/sandbox-agenda/sandbox-definition-edit": [
+                "libs/agenda/sandbox-agenda/sandbox-definition-edit/index.ts"
+            ],
+            "@crczp/sandbox-agenda/sandbox-definition-overview": [
+                "libs/agenda/sandbox-agenda/sandbox-definition-overview/index.ts"
+            ],
+            "@crczp/sandbox-agenda/sandbox-images": [
+                "libs/agenda/sandbox-agenda/sandbox-images/index.ts"
+            ],
+            "@crczp/sandbox-agenda/topology": [
+                "libs/agenda/sandbox-agenda/topology/index.ts"
+            ],
+            "@crczp/sandbox-api": ["libs/api/sandbox-api/src/index.ts"],
+            "@crczp/sandbox-model": ["libs/model/sandbox-model/src/index.ts"],
+            "@crczp/topology-graph": [
+                "libs/components/topology-graph/src/index.ts"
+            ],
+            "@crczp/topology-graph-model": [
+                "libs/model/topology-graph-model/src/index.ts"
+            ],
+            "@crczp/training-agenda": [
+                "libs/agenda/training-agenda/src/index.ts"
+            ],
+            "@crczp/training-agenda/adaptive-definition-edit": [
+                "libs/agenda/training-agenda/adaptive-definition-edit/index.ts"
+            ],
+            "@crczp/training-agenda/adaptive-definition-overview": [
+                "libs/agenda/training-agenda/adaptive-definition-overview/index.ts"
+            ],
+            "@crczp/training-agenda/adaptive-definition-preview": [
+                "libs/agenda/training-agenda/adaptive-definition-preview/index.ts"
+            ],
+            "@crczp/training-agenda/adaptive-definition-simulator": [
+                "libs/agenda/training-agenda/adaptive-definition-simulator/index.ts"
+            ],
+            "@crczp/training-agenda/adaptive-definition-summary": [
+                "libs/agenda/training-agenda/adaptive-definition-summary/index.ts"
+            ],
+            "@crczp/training-agenda/adaptive-instance-edit": [
+                "libs/agenda/training-agenda/adaptive-instance-edit/index.ts"
+            ],
+            "@crczp/training-agenda/adaptive-instance-overview": [
+                "libs/agenda/training-agenda/adaptive-instance-overview/index.ts"
+            ],
+            "@crczp/training-agenda/adaptive-instance-progress": [
+                "libs/agenda/training-agenda/adaptive-instance-progress/index.ts"
+            ],
+            "@crczp/training-agenda/adaptive-instance-results": [
+                "libs/agenda/training-agenda/adaptive-instance-results/index.ts"
+            ],
+            "@crczp/training-agenda/adaptive-instance-runs": [
+                "libs/agenda/training-agenda/adaptive-instance-runs/index.ts"
+            ],
+            "@crczp/training-agenda/adaptive-instance-summary": [
+                "libs/agenda/training-agenda/adaptive-instance-summary/index.ts"
+            ],
+            "@crczp/training-agenda/adaptive-run-detail": [
+                "libs/agenda/training-agenda/adaptive-run-detail/index.ts"
+            ],
+            "@crczp/training-agenda/adaptive-run-results": [
+                "libs/agenda/training-agenda/adaptive-run-results/index.ts"
+            ],
+            "@crczp/training-agenda/definition-detail": [
+                "libs/agenda/training-agenda/definition-detail/index.ts"
+            ],
+            "@crczp/training-agenda/definition-edit": [
+                "libs/agenda/training-agenda/definition-edit/index.ts"
+            ],
+            "@crczp/training-agenda/definition-overview": [
+                "libs/agenda/training-agenda/definition-overview/index.ts"
+            ],
+            "@crczp/training-agenda/definition-preview": [
+                "libs/agenda/training-agenda/definition-preview/index.ts"
+            ],
+            "@crczp/training-agenda/definition-summary": [
+                "libs/agenda/training-agenda/definition-summary/index.ts"
+            ],
+            "@crczp/training-agenda/instance-access-token": [
+                "libs/agenda/training-agenda/instance-access-token/index.ts"
+            ],
+            "@crczp/training-agenda/instance-cheating-detection": [
+                "libs/agenda/training-agenda/instance-cheating-detection/index.ts"
+            ],
+            "@crczp/training-agenda/instance-cheating-detection-edit": [
+                "libs/agenda/training-agenda/instance-cheating-detection-edit/index.ts"
+            ],
+            "@crczp/training-agenda/instance-detection-event": [
+                "libs/agenda/training-agenda/instance-detection-event/index.ts"
+            ],
+            "@crczp/training-agenda/instance-detection-event-detail": [
+                "libs/agenda/training-agenda/instance-detection-event-detail/index.ts"
+            ],
+            "@crczp/training-agenda/instance-edit": [
+                "libs/agenda/training-agenda/instance-edit/index.ts"
+            ],
+            "@crczp/training-agenda/instance-overview": [
+                "libs/agenda/training-agenda/instance-overview/index.ts"
+            ],
+            "@crczp/training-agenda/instance-progress": [
+                "libs/agenda/training-agenda/instance-progress/index.ts"
+            ],
+            "@crczp/training-agenda/instance-results": [
+                "libs/agenda/training-agenda/instance-results/index.ts"
+            ],
+            "@crczp/training-agenda/instance-runs": [
+                "libs/agenda/training-agenda/instance-runs/index.ts"
+            ],
+            "@crczp/training-agenda/instance-summary": [
+                "libs/agenda/training-agenda/instance-summary/index.ts"
+            ],
+            "@crczp/training-agenda/internal": [
+                "libs/agenda/training-agenda/internal/index.ts"
+            ],
+            "@crczp/training-agenda/mitre-techniques": [
+                "libs/agenda/training-agenda/mitre-techniques/index.ts"
+            ],
+            "@crczp/training-agenda/public": [
+                "libs/agenda/training-agenda/public/index.ts"
+            ],
+            "@crczp/training-agenda/resolvers": [
+                "libs/agenda/training-agenda/resolvers/index.ts"
+            ],
+            "@crczp/training-agenda/run-detail": [
+                "libs/agenda/training-agenda/run-detail/index.ts"
+            ],
+            "@crczp/training-agenda/run-overview": [
+                "libs/agenda/training-agenda/run-overview/index.ts"
+            ],
+            "@crczp/training-agenda/run-results": [
+                "libs/agenda/training-agenda/run-results/index.ts"
+            ],
+            "@crczp/training-api": ["libs/api/training-api/src/index.ts"],
+            "@crczp/training-model": ["libs/model/training-model/src/index.ts"],
+            "@crczp/user-and-group-agenda": [
+                "libs/agenda/user-and-group-agenda/src/index.ts"
+            ],
+            "@crczp/user-and-group-agenda/group-detail": [
+                "libs/agenda/user-and-group-agenda/group-detail/index.ts"
+            ],
+            "@crczp/user-and-group-agenda/group-edit": [
+                "libs/agenda/user-and-group-agenda/group-edit/index.ts"
+            ],
+            "@crczp/user-and-group-agenda/group-overview": [
+                "libs/agenda/user-and-group-agenda/group-overview/index.ts"
+            ],
+            "@crczp/user-and-group-agenda/internal": [
+                "libs/agenda/user-and-group-agenda/internal/index.ts"
+            ],
+            "@crczp/user-and-group-agenda/microservice-overview": [
+                "libs/agenda/user-and-group-agenda/microservice-overview/index.ts"
+            ],
+            "@crczp/user-and-group-agenda/microservice-registration": [
+                "libs/agenda/user-and-group-agenda/microservice-registration/index.ts"
+            ],
+            "@crczp/user-and-group-agenda/user-detail": [
+                "libs/agenda/user-and-group-agenda/user-detail/index.ts"
+            ],
+            "@crczp/user-and-group-agenda/user-overview": [
+                "libs/agenda/user-and-group-agenda/user-overview/index.ts"
+            ],
+            "@crczp/user-and-group-api": [
+                "libs/api/user-and-group-api/src/index.ts"
+            ],
+            "@crczp/user-and-group-model": [
+                "libs/model/user-and-group-model/src/index.ts"
+            ],
+            "@crczp/utils": ["libs/utils/misc/src/index.ts"],
+            "@crczp/visualization-api": [
+                "libs/api/visualization-api/src/index.ts"
+            ],
+            "@crczp/visualization-api/command-visualization-api": [
+                "libs/api/visualization-api/command-visualization-api/src/index.ts"
+            ],
+            "@crczp/visualization-components": [
+                "libs/components/visualization-components/src/index.ts"
+            ],
+            "@crczp/visualization-model": [
+                "libs/model/visualization-model/src/index.ts"
+            ],
+            "@crczp/visualization/api": ["lib/api/walkthrough-api/src/index.ts"]
+        },
+        "rootDir": ".",
+        "skipDefaultLibCheck": true,
+        "skipLibCheck": true,
+        "sourceMap": true,
+        "target": "es2015"
+    },
+    "exclude": ["node_modules", "tmp"]
+}

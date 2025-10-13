@@ -1,0 +1,18 @@
+{
+    "name": "@crczp/visualization-api",
+    "peerDependencies": {
+        "@angular/common": "*",
+        "@angular/core": "*",
+        "rxjs": "*",
+        "@crczp/visualization-model": "*",
+        "@crczp/training-api": "*",
+        "@crczp/training-model": "*",
+        "@crczp/utils": "*",
+        "@sentinel/common": "*",
+        "@crczp/api-common": "*",
+        "vite": "*",
+        "@analogjs/vite-plugin-angular": "*",
+        "@nx/vite": "*"
+    },
+    "sideEffects": false
+}

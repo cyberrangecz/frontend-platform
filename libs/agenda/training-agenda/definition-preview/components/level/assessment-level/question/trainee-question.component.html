@@ -1,0 +1,9 @@
+@if (isFfq) {
+    <crczp-trainee-free-form-question [question]="$any(question)" [index]="index"/>
+}
+@if (isMcq) {
+    <crczp-trainee-multiple-choice-question [question]="$any(question)" [index]="index"/>
+}
+@if (isEmi) {
+    <crczp-trainee-extended-matching-items [question]="$any(question)" [index]="index"/>
+}

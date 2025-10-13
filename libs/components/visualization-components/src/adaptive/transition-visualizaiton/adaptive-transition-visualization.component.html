@@ -1,0 +1,7 @@
+@if ((data$ | async) !== null) {
+  <div class="container">
+    <crczp-adaptive-transition-visualization-wrapper
+      [data]="data$ | async"
+      />
+  </div>
+}

@@ -1,0 +1,21 @@
+{
+    "name": "@crczp/user-and-group-agenda",
+    "peerDependencies": {
+        "@angular/common": "*",
+        "@angular/core": "*",
+        "@angular/router": "*",
+        "@crczp/user-and-group-model": "*",
+        "@sentinel/common": "*",
+        "rxjs": "*",
+        "@sentinel/components": "*",
+        "@angular/material": "*",
+        "@crczp/user-and-group-api": "*",
+        "@crczp/utils": "*",
+        "@angular/forms": "*",
+        "@crczp/routing-commons": "*",
+        "vite": "*",
+        "@analogjs/vite-plugin-angular": "*",
+        "@nx/vite": "*"
+    },
+    "sideEffects": false
+}

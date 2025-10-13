@@ -1,0 +1,217 @@
+<div class="content">
+  <form [formGroup]="phaseConfigFormGroup.formGroup">
+    <div class="panel-wrapper">
+      <div class="left-panel">
+        <h2 class="center-text">Decision Matrix</h2>
+        <table formArrayName="decisionMatrix">
+          <tr class="row-header">
+            <td class="center-text" matTooltip="Questionnaire Answered">
+              <div class="matrix-content">
+                <p>Questionnaire</p>
+                <p>Answered</p>
+              </div>
+            </td>
+            <td class="center-text" matTooltip="Completed in Time">
+              <div class="matrix-content">
+                <p>Completed</p>
+                <p>in Time</p>
+              </div>
+            </td>
+            <td class="center-text" matTooltip="Keyword Used">
+              <div class="matrix-content">
+                <p>Keyword</p>
+                <p>Used</p>
+              </div>
+            </td>
+            <td class="center-text" matTooltip="Solution Displayed">
+              <div class="matrix-content">
+                <p>Solution</p>
+                <p>Displayed</p>
+              </div>
+            </td>
+            <td class="center-text" matTooltip="Submitted Answers">
+              <div class="matrix-content">
+                <p>Submitted</p>
+                <p>Answers</p>
+              </div>
+            </td>
+            <td class="center-text">
+              <div class="matrix-content">
+                <p>Related</p>
+                <p>Phase</p>
+              </div>
+            </td>
+          </tr>
+          @for (rowGroup of decisionMatrixRows.controls; track rowGroup; let i = $index) {
+            <tr [formGroupName]="i">
+              <td class="center-text">
+                <mat-form-field appearance="fill" class="matrix-field">
+                  <input formControlName="questionnaireAnswered" matInput required type="number">
+                  @if (rowGroup.get('questionnaireAnswered').hasError('required')) {
+                    <mat-error>Empty
+                    </mat-error>
+                  }
+                  @if (rowGroup.get('questionnaireAnswered').hasError('min')) {
+                    <mat-error>Negative
+                    </mat-error>
+                  }
+                </mat-form-field>
+              </td>
+              <td class="center-text">
+                <mat-form-field appearance="fill" class="matrix-field">
+                  <input formControlName="completedInTime" matInput placeholder=0 required type="number">
+                  @if (rowGroup.get('completedInTime').hasError('required')) {
+                    <mat-error>Empty
+                    </mat-error>
+                  }
+                  @if (rowGroup.get('completedInTime').hasError('min')) {
+                    <mat-error>Negative</mat-error>
+                  }
+                </mat-form-field>
+              </td>
+              <td class="center-text">
+                <mat-form-field appearance="fill" class="matrix-field">
+                  <input formControlName="keywordUsed" matInput placeholder=0 required type="number">
+                  @if (rowGroup.get('keywordUsed').hasError('required')) {
+                    <mat-error>Empty</mat-error>
+                  }
+                  @if (rowGroup.get('keywordUsed').hasError('min')) {
+                    <mat-error>Negative</mat-error>
+                  }
+                </mat-form-field>
+              </td>
+              <td class="center-text">
+                <mat-form-field appearance="fill" class="matrix-field">
+                  <input formControlName="solutionDisplayed" matInput placeholder=0 required
+                    type="number">
+                  @if (rowGroup.get('solutionDisplayed').hasError('required')) {
+                    <mat-error>Empty
+                    </mat-error>
+                  }
+                  @if (rowGroup.get('solutionDisplayed').hasError('min')) {
+                    <mat-error>Negative
+                    </mat-error>
+                  }
+                </mat-form-field>
+              </td>
+              <td class="center-text">
+                <mat-form-field appearance="fill" class="matrix-field">
+                  <input formControlName="wrongAnswers" matInput placeholder=0 required type="number">
+                  @if (rowGroup.get('wrongAnswers').hasError('required')) {
+                    <mat-error>Empty</mat-error>
+                  }
+                  @if (rowGroup.get('wrongAnswers').hasError('min')) {
+                    <mat-error>Negative</mat-error>
+                  }
+                </mat-form-field>
+              </td>
+              <td class="left-align-text">
+                <div class="related-phase-text">
+                  @if (i < decisionMatrixRows.controls.length - 1) {
+                    <span>
+                      {{ presentTrainingPhases[i].order + 1 }}. {{ presentTrainingPhases[i].title }}
+                    </span>
+                  }
+                  @if (i === decisionMatrixRows.controls.length - 1) {
+                    <span> {{ phase.order + 1 }}
+                    . {{ title.value }} </span>
+                  }
+                </div>
+              </td>
+            </tr>
+          }
+        </table>
+      </div>
+      <div class="right-panel">
+        <!-- TITLE filed -->
+        <mat-form-field
+          appearance="outline">
+          <mat-label>Title</mat-label>
+          <input
+            [disabled]="true"
+            [value]="phase.title"
+            matInput
+            placeholder="Title"
+            />
+          @if (title.value) {
+            <button
+              (click)="title.setValue('')"
+              aria-label="Clear"
+              mat-icon-button
+              matSuffix
+              >
+              <mat-icon>close</mat-icon>
+            </button>
+          }
+          @if (title.hasError('required')) {
+            <mat-error>Title cannot be empty</mat-error>
+          }
+        </mat-form-field>
+        <mat-form-field
+          appearance="outline"
+          >
+          <mat-label>Allowed Wrong Answer Limit (Default 10)</mat-label>
+          <input
+            formControlName="allowedWrongAnswers"
+            matInput
+            min="0"
+            placeholder="Allowed Wrong Answer Limit"
+            required
+            type="number"
+            />
+          @if (allowedWrongAnswers.hasError('required')) {
+            <mat-error>Allowed Wrong Answers cannot be empty
+            </mat-error>
+          }
+          @if (allowedWrongAnswers.hasError('min')) {
+            <mat-error>Allowed Wrong Answers cannot be negative
+            </mat-error>
+          }
+
+        </mat-form-field>
+
+        <mat-form-field
+          appearance="outline"
+          >
+          <mat-label>Allowed Commands Limit (Default 10)</mat-label>
+          <input
+            formControlName="allowedCommands"
+            matInput
+            min="0"
+            placeholder="Allowed Commands Limit"
+            required
+            type="number"
+            />
+          @if (allowedCommands.hasError('required')) {
+            <mat-error>Allowed Commands cannot be empty</mat-error>
+          }
+          @if (allowedCommands.hasError('min')) {
+            <mat-error>Allowed Commands cannot be negative</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field
+          appearance="outline"
+          >
+          <mat-label>Estimated Duration (Default 10)</mat-label>
+          <input
+            formControlName="estimatedDuration"
+            matInput
+            min="0"
+            placeholder="Estimated Duration"
+            required
+            type="number"
+            />
+          @if (allowedCommands.hasError('required')) {
+            <mat-error>Estimated Duration cannot be empty
+            </mat-error>
+          }
+          @if (allowedCommands.hasError('min')) {
+            <mat-error>Estimated Duration cannot be negative</mat-error>
+          }
+        </mat-form-field>
+      </div>
+    </div>
+    <crczp-tasks-overview [tasks]="phase.tasks"/>
+  </form>
+</div>

@@ -1,0 +1,46 @@
+<div
+    (sentinelResize)="onResize($event)" [class.mat-elevation-z2]="true"
+    class="toplogy-tabs-wrapper wh-100 {{(synchronizerService.topologyCollapsed$ | async)  ? 'topology-tabs-wrapper--collapsed': ''}}">
+    @if (!(synchronizerService.topologyCollapsed$ | async) && (window.innerWidth) > 1400) {
+        <div (mousedown)="mouseDown($event)" class="draggable-bar"></div>
+    }
+    <mat-tab-group
+        [(selectedIndex)]="selectedIndex"
+        [animationDuration]="0.2"
+        [mat-stretch-tabs]="false"
+        [preserveContent]="true"
+        class="wh-100"
+    >
+        <mat-tab
+            class="wh-100"
+        >
+            <ng-template mat-tab-label>
+              <span class="tab-label">
+                  Topology
+              </span>
+            </ng-template>
+            <div class="wh-100 overflow-hidden">
+                <crczp-topology-graph
+                    [height]="topologyHeight() - 49"
+                    [topology]="topology" />
+            </div>
+
+        </mat-tab>
+        @for (tab of tabs(); track tab.title) {
+            <ng-container>
+                <mat-tab [matTooltip]="tab.ip">
+                    <ng-template mat-tab-label>
+                      <span class="tab-label">
+                          {{ tab.title }}
+                          <span class="tab-ip">{{ tab.ip }}</span>
+                          <button (click)="closeTab($index)">x</button>
+                      </span>
+                    </ng-template>
+
+                    <crczp-console-view
+                    />
+                </mat-tab>
+            </ng-container>
+        }
+    </mat-tab-group>
+</div>

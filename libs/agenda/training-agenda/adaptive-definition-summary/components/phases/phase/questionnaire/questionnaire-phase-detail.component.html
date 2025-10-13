@@ -1,0 +1,39 @@
+<mat-expansion-panel class="mat-elevation-z0 panel-align">
+  <mat-expansion-panel-header>
+    <mat-panel-title>
+      <h3>
+        <mat-icon
+          class="level-type"
+          [inline]="true"
+          [matTooltip]="(isAdaptive() ? 'Adaptive' : 'General') + ' Questionnaire Phase'"
+          >
+          {{ isAdaptive() ? 'help_center' : 'help' }}
+        </mat-icon>
+        <span> {{ phase.order + 1 }}.</span>
+        <span> {{ phase.title }}</span>
+      </h3>
+    </mat-panel-title>
+  </mat-expansion-panel-header>
+
+  <div class="data-field">
+    <div class="key-field">Number of Questions:</div>
+    <div class="value-field">
+      {{ phase.questions.length }}
+    </div>
+  </div>
+  <div class="card-content">
+    <div class="data-field">
+      <div class="key-field">Questions:</div>
+      <div class="questions-container">
+        @for (question of phase.questions; track question) {
+          <div class="question-container">
+            <crczp-question-detail
+              [question]="question"
+              [questionnaireType]="phase.questionnaireType"
+              />
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</mat-expansion-panel>

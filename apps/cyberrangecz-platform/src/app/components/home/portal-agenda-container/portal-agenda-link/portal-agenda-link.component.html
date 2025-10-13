@@ -1,0 +1,55 @@
+@if (!portalAgendaLink.disabled) {
+    <div class="portal-item-container">
+        @if (portalAgendaLink.menu) {
+            <div class="simple-button-wrapper" (mouseenter)="menuExpanded.set(true)"
+                 (mouseleave)="menuExpanded.set(false)"
+            >
+                <button
+                    class="simple-button dropdown-button b-40-f f-100-f"
+
+                    [ngClass]="{'button-highlight' : (elevation === portalAgendaLink.label + ' button')}"
+                    (mouseenter)="setElevation(portalAgendaLink.label)"
+                    (mouseleave)="setElevation('')"
+                >
+                    <mat-icon>{{ portalAgendaLink.icon }}</mat-icon>
+
+                    @if (menuExpanded()) {
+                        <div class="expanded-menu-item-wrapper">
+                            @for (expandedControl of portalAgendaLink.menu; track expandedControl) {
+                                <button
+                                    class="expanded-menu-item"
+                                    (click)="setRoute(expandedControl.path)">
+                                    <mat-icon>{{ expandedControl?.icon }}</mat-icon>
+                                    <span>{{ expandedControl?.label }}</span>
+                                </button>
+                            }
+                            <div class="dropdown-icon-band dropdown-icon-band--extended center">
+                                <div class="dropdown-icon-band-cutout"></div>
+                                <div class="dash"></div>
+                            </div>
+                        </div>
+
+                    } @else {
+                        <div class="dropdown-icon-band center">
+                            <div class="dropdown-icon-band-cutout"></div>
+                            <div class="dash"></div>
+                        </div>
+                    }
+                </button>
+            </div>
+        } @else {
+            <div class="simple-button-wrapper">
+                <button
+                    mat-raised-button
+                    class="simple-button b-40-f f-100-f"
+                    [ngClass]="{'button-highlight' : (elevation === portalAgendaLink.label + ' button')}"
+                    (mouseenter)="setElevation(portalAgendaLink.label)"
+                    (mouseleave)="setElevation('')"
+                    (click)="setRoute(portalAgendaLink.path)">
+                    <mat-icon>{{ portalAgendaLink.icon }}</mat-icon>
+                </button>
+            </div>
+        }
+        <h3 class="agenda-link-label">{{ portalAgendaLink.label }}</h3>
+    </div>
+}

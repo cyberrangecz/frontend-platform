@@ -1,0 +1,121 @@
+{
+    "name": "cyberrangecz-platform",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
+    "projectType": "application",
+    "prefix": "app",
+    "sourceRoot": "apps/cyberrangecz-platform/src",
+    "tags": [],
+    "implicitDependencies": [
+        "theme"
+    ],
+    "targets": {
+        "build": {
+            "executor": "@angular-devkit/build-angular:application",
+            "outputs": [
+                "{options.outputPath}"
+            ],
+            "dependsOn": [
+                "theme:build"
+            ],
+            "options": {
+                "outputPath": "dist/apps/cyberrangecz-platform",
+                "index": "apps/cyberrangecz-platform/src/index.html",
+                "browser": "apps/cyberrangecz-platform/src/main.ts",
+                "polyfills": [
+                    "zone.js"
+                ],
+                "tsConfig": "apps/cyberrangecz-platform/tsconfig.app.json",
+                "inlineStyleLanguage": "scss",
+                "assets": [
+                    {
+                        "glob": "**/*",
+                        "input": "apps/cyberrangecz-platform/public",
+                        "output": "./assets"
+                    },
+                    {
+                        "glob": "**/*",
+                        "input": "dist/libs/utils/theme/assets/",
+                        "output": "/assets/"
+                    }
+                ],
+                "styles": [
+                    "dist/libs/utils/theme/theme/apply-all.scss",
+                    "apps/cyberrangecz-platform/src/styles.scss"
+                ],
+                "scripts": []
+            },
+            "configurations": {
+                "production": {
+                    "budgets": [
+                        {
+                            "type": "initial",
+                            "maximumWarning": "1500kb",
+                            "maximumError": "2mb"
+                        },
+                        {
+                            "type": "anyComponentStyle",
+                            "maximumWarning": "4kb",
+                            "maximumError": "8kb"
+                        }
+                    ],
+                    "outputHashing": "all"
+                },
+                "development": {
+                    "optimization": false,
+                    "extractLicenses": false,
+                    "sourceMap": true,
+                    "fileReplacements": [
+                        {
+                            "replace": "apps/cyberrangecz-platform/src/environments/environment.ts",
+                            "with": "apps/cyberrangecz-platform/src/environments/environment.development.ts"
+                        }
+                    ]
+                }
+            },
+            "defaultConfiguration": "production"
+        },
+        "serve": {
+            "dependsOn": [
+                "theme:build"
+            ],
+            "executor": "@angular-devkit/build-angular:dev-server",
+            "configurations": {
+                "production": {
+                    "buildTarget": "cyberrangecz-platform:build:production"
+                },
+                "development": {
+                    "buildTarget": "cyberrangecz-platform:build:development",
+                    "ssl": true
+                }
+            },
+            "defaultConfiguration": "development"
+        },
+        "extract-i18n": {
+            "executor": "@angular-devkit/build-angular:extract-i18n",
+            "options": {
+                "buildTarget": "cyberrangecz-platform:build"
+            }
+        },
+        "lint": {
+            "executor": "@nx/eslint:lint"
+        },
+        "test": {
+            "executor": "@nx/vite:test",
+            "outputs": [
+                "{options.reportsDirectory}"
+            ],
+            "options": {
+                "reportsDirectory": "../../coverage/apps/cyberrangecz-platform"
+            }
+        },
+        "serve-static": {
+            "executor": "@nx/web:file-server",
+            "options": {
+                "buildTarget": "cyberrangecz-platform:build",
+                "port": 4200,
+                "staticFilePath": "dist/apps/cyberrangecz-platform/browser",
+                "spa": true
+            }
+        }
+    }
+}

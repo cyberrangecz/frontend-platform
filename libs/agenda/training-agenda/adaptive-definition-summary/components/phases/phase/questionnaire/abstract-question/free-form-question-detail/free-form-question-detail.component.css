@@ -1,0 +1,9 @@
+@import "../../../level-summary-common.css";
+
+.correct-choice {
+    text-align: center;
+}
+
+.question-type {
+    vertical-align: bottom;
+}

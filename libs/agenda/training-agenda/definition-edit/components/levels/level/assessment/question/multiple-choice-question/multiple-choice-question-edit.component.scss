@@ -1,0 +1,85 @@
+/* TODO(mdc-migration): The following rule targets internal classes of checkbox that may no longer apply for the MDC version. */
+mat-checkbox {
+    margin: 0 10px;
+}
+
+.choice mat-form-field {
+    width: 30%;
+}
+
+.choices-content {
+    padding-top: 10px;
+    padding-left: 10px;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+}
+
+.inline-input {
+    display: flex;
+    flex-direction: row;
+    align-content: space-between;
+    margin-bottom: 10px;
+}
+
+.inline-input > * {
+    flex-grow: 1;
+    margin-right: 10px;
+}
+
+
+.answer mat-form-field {
+    width: 70%;
+}
+
+.warn {
+    color: #f44336;
+}
+
+.right-panel mat-form-field {
+    width: 100%;
+}
+
+.right-panel > * {
+    margin-bottom: 10px;
+}
+
+button.clear-answers {
+    width: 120px;
+    margin-bottom: 10px;
+}
+
+mat-divider {
+    margin: 0 20px;
+}
+
+p.note {
+    text-align: right;
+}
+
+
+@media screen and (max-width: 850px) {
+    .content {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .right-panel {
+        margin-top: 20px;
+        align-items: flex-start;
+        align-content: flex-start;
+    }
+
+    mat-form-field {
+        width: 80%;
+    }
+}
+
+.question-text {
+    display: flex;
+    flex-direction: column;
+    width: calc(100% - 10px);
+    margin-bottom: 10px;
+}

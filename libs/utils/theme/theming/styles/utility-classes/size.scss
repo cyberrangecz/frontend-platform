@@ -1,0 +1,57 @@
+@use "./common" as common;
+@use "sass:math";
+
+.wh-100 {
+    width: 100%;
+    height: 100%;
+}
+
+@for $i from 1 through 10 {
+    $size: calc($i * 10 / 100);
+    $size-name: calc($i * 10);
+
+    .w-#{$size-name} {
+        width: math.percentage($size);
+    }
+
+    .h-#{$size-name} {
+        height: math.percentage($size);
+    }
+}
+
+@for $i from 1 through 3 {
+    $size: calc($i * 25 / 100);
+    $size-name: calc($i * 25);
+
+    .w-#{$size-name} {
+        width: math.percentage($size);
+    }
+
+    .h-#{$size-name} {
+        height: math.percentage($size);
+    }
+}
+
+@for $i from 1 through 16 {
+    $size: calc($i / 4);
+
+    .w-#{common.decimal-to-name($size)}rem {
+        width: #{$size}rem;
+    }
+
+    .h-#{common.decimal-to-name($size)}rem {
+        height: #{$size}rem;
+    }
+}
+
+.mw-1920 {
+    max-width: 1920px;
+}
+
+.mw-1280 {
+    max-width: 1280px;
+}
+
+.hide {
+    display: none;
+}

@@ -1,0 +1,13 @@
+.add-content {
+    display: flex;
+    flex-direction: row;
+    margin: 10px 0 40px 0;
+}
+
+.add-content > mat-card {
+    width: 100%;
+}
+
+.add-content > mat-card:first-child {
+    margin-right: 10px;
+}

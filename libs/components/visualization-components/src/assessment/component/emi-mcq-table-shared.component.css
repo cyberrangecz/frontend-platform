@@ -1,0 +1,61 @@
+.table {
+    width: 100%;
+    border: 1px solid var(--neutral-70);
+    padding: 1rem;
+    border-radius: 1rem;
+}
+
+.correct {
+    color: green;
+}
+
+.incorrect {
+    color: red;
+}
+
+th.answers, td.answers {
+    width: 70%;
+}
+
+th.percentage, td.percentage {
+    width: 10%;
+}
+
+th.sum, td.sum {
+    width: 10%;
+    margin-right: 5px;
+}
+
+.player-answers {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+}
+
+.player-answer {
+    display: block;
+    background: #3e5888;
+    width: 15px;
+    height: 15px;
+    border-radius: 10px;
+    margin-left: 3px;
+    cursor: pointer;
+}
+
+.player-answer:hover {
+    border: 2px solid #ffb834;
+}
+
+.player-answer.selected {
+    background: #ffb834;
+    width: 17px;
+    height: 17px;
+    border-radius: 13px;
+}
+
+.player-answer.selected:hover {
+    width: 15px;
+    height: 15px;
+    border-radius: 10px;
+    border: 2px solid #3e5888;
+}

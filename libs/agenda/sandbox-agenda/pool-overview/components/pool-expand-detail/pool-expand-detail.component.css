@@ -1,0 +1,38 @@
+.block-content {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+::ng-deep .mat-mdc-row.detail-row {
+    background-color: #f5f5f5;
+}
+
+.block-content {
+    margin-left: 10px;
+    margin-top: 15px;
+}
+
+.pool-expand-grid .mat-grid-tile {
+    overflow: auto;
+}
+
+::ng-deep .block-content .mat-grid-tile-content {
+    align-items: normal;
+    justify-content: normal;
+    display: block;
+}
+
+.block-content span {
+    text-align: end;
+    margin-right: 10px;
+    width: 120px;
+    float: left;
+}
+
+.resource-heading {
+    float: left;
+}
+
+.resource-content {
+    display: grid;
+}

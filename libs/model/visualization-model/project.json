@@ -1,0 +1,20 @@
+{
+    "name": "visualization-model",
+    "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+    "sourceRoot": "libs/model/visualization-model/src",
+    "projectType": "library",
+    "tags": [],
+    "targets": {
+        "build": {
+            "executor": "@nx/esbuild:esbuild",
+            "outputs": ["{options.outputPath}"],
+            "options": {
+                "outputPath": "dist/libs/model/visualization-model",
+                "main": "libs/model/visualization-model/src/index.ts",
+                "tsConfig": "libs/model/visualization-model/tsconfig.lib.json",
+                "assets": ["libs/model/visualization-model/*.md"],
+                "format": ["cjs"]
+            }
+        }
+    }
+}

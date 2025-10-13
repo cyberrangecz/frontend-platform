@@ -1,0 +1,14 @@
+@switch (level.type) {
+    @case (levelTypes.Training) {
+        <crczp-training-level-detail [level]="$any(level)"/>
+    }
+    @case (levelTypes.Info) {
+        <crczp-info-level-detail [level]="$any(level)"/>
+    }
+    @case (levelTypes.Access) {
+        <crczp-access-level-detail [level]="$any(level)"/>
+    }
+    @case (levelTypes.Assessment) {
+        <crczp-assessment-level-detail [level]="$any(level)"/>
+    }
+}

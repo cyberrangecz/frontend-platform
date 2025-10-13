@@ -1,0 +1,50 @@
+<form [formGroup]="ratingFormFormGroup.questionFormGroup">
+  <div class="question-container">
+    <!-- TITLE field-->
+    <div class='question-text'>
+      <sentinel-markdown-editor
+        [sentinel-markdown-file-upload]="false"
+        (contentChange)="title.setValue($event)"
+        [content]="title.value"
+        />
+      @if (title.hasError('whitespace')) {
+        <mat-error>Question text cannot be empty</mat-error>
+      }
+    </div>
+  </div>
+  <h2>Rating Levels:</h2>
+  <div class="rating-form-choices" formArrayName="choices">
+    @for (choiceGroup of choices.controls; track choiceGroup; let i = $index) {
+      <div class="rating-level" [formGroupName]="i">
+        @if (questionnaireType === questionnaireTypes.Adaptive) {
+          <mat-checkbox
+            class="option-checkbox"
+            matTooltip="Correct"
+            formControlName="correct"/>
+        }
+        <mat-form-field appearance="outline" class="rating-level-node">
+          <mat-label>Level {{ i + 1 }}</mat-label>
+          <input matInput placeholder="Level Text" formControlName="text" required/>
+          @if (choiceGroup.get('text').hasError('required')) {
+            <mat-error>Level text cannot be empty</mat-error>
+          }
+        </mat-form-field>
+      </div>
+    }
+  </div>
+</form>
+<div class="rating-level-field">
+  <div class="question-fields">
+    <mat-form-field appearance="outline">
+      <mat-label>Rating Level</mat-label>
+      <mat-select [(ngModel)]="selectedRatingLevel">
+        @for (number of ratingLevelOptions; track number) {
+          <mat-option [value]="number"
+            (click)="ratingLevelChanged(number)">
+            {{ number }}
+          </mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  </div>
+</div>

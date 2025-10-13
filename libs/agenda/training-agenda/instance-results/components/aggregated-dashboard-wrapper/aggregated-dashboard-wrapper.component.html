@@ -1,0 +1,8 @@
+@if ((trainingInstance$ | async); as trainingInstance) {
+    <div class="container">
+        <crczp-statistical-visualization
+            [trainingInstanceId]="trainingInstance.id"
+            [trainingDefinitionId]="trainingInstance?.trainingDefinition?.id"
+            (openDetailView)="redirectToDetailView($event)"/>
+    </div>
+}

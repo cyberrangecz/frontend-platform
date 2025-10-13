@@ -1,0 +1,78 @@
+.content-container {
+    display: flex;
+    justify-content: flex-start;
+    padding-top: 10px;
+}
+
+.reference-graph {
+    background-color: white;
+    text-align: center;
+    overflow: hidden;
+    height: 65vh;
+    border: 1px solid black;
+    border-radius: 5px;
+}
+
+.legend {
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+}
+
+tr td:last-child {
+    padding-left: 25px;
+}
+
+h1 {
+    text-align: center;
+}
+
+h2 {
+    margin-top: 30vh;
+    text-align: center;
+    color: red;
+}
+
+mat-list {
+    display: flex;
+    flex-direction: row;
+}
+
+.right-panel {
+    width: calc(100% - 300px);
+}
+
+.info-container {
+    display: flex;
+    justify-content: center;
+}
+
+.node,
+.green-node,
+.gray-node,
+.blue-node {
+    stroke: #000000;
+    stroke-width: 1;
+}
+
+.green-node {
+    fill: #00ff00;
+}
+
+.gray-node {
+    fill: #c0c0c0;
+}
+
+.blue-node {
+    fill: #81d4fa;
+}
+
+:host::ng-deep.reference-graph svg {
+    cursor: move;
+    height: 100%;
+    width: 100%;
+}
+
+:host {
+    width: 100%;
+}

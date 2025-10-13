@@ -1,0 +1,17 @@
+{
+    "name": "@crczp/theme",
+    "peerDependencies": {
+        "vite": "*",
+        "@analogjs/vite-plugin-angular": "*",
+        "@nx/vite": "*"
+    },
+    "sideEffects": false,
+    "files": [
+        "assets",
+        "theming"
+    ],
+    "exports": {
+        "./assets/*": "./assets/*",
+        "./theming/*": "./theming/*"
+    }
+}

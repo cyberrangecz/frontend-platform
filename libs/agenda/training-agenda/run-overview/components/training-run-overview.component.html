@@ -1,0 +1,14 @@
+<div class="content">
+    <crczp-access-training-run [isLoading]="isLoading" (accessToken)="access($event)"/>
+    <div class="table-container">
+        <sentinel-controls [controls]="controls" [titlecased]="false"
+                           (itemClicked)="onControlsAction($event)"/>
+        <sentinel-table
+            [data]="trainingRuns$ | async"
+            [hasError]="hasError$ | async"
+            (tableLoad)="loadAccessedTrainingRuns($event)"
+            (rowAction)="onTableAction($event)"
+        >
+        </sentinel-table>
+    </div>
+</div>

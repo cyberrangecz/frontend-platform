@@ -1,0 +1,57 @@
+<div class="phase-header">
+    <h1
+        class="phase-title"
+    >{{ phase?.title }}</h1>
+    @if (startTime) {
+        <crczp-training-timer
+            matTooltipPosition="above"
+            matTooltip="Time since the start of the run"
+            class="timer" [startTime]="startTime"/>
+    }
+</div>
+@switch (phase?.type) {
+    @case (phaseTypes.Questionnaire) {
+        <crczp-questionnaire-phase
+            [phase]="$any(phase)"
+            [isBacktracked]="isBacktracked"
+            [isLast]=isLast
+            [isPhaseAnswered]="isPhaseAnswered"
+            (next)="onNext()">
+        </crczp-questionnaire-phase>
+    }
+    @case (phaseTypes.Training) {
+        <crczp-training-phase
+            [phase]="$any(phase)"
+            [isLast]=isLast
+            [isBacktracked]="isBacktracked"
+            [isStepperDisplayed]="isStepperDisplayed"
+            [sandboxInstanceId]="sandboxInstanceId"
+            [sandboxDefinitionId]="sandboxDefinitionId"
+            [isPhaseAnswered]="isPhaseAnswered"
+            (next)="onNext()">
+        </crczp-training-phase>
+    }
+    @case (phaseTypes.Info) {
+        <crczp-info-phase
+            [phase]="$any(phase)"
+            [isLast]="isLast"
+            [isBacktracked]="isBacktracked"
+            (next)="onNext()">
+        </crczp-info-phase>
+    }
+    @case (phaseTypes.Access) {
+        <crczp-access-phase
+            [phase]="$any(phase)"
+            [isLast]=isLast
+            [isBacktracked]="isBacktracked"
+            [isStepperDisplayed]="isStepperDisplayed"
+            [sandboxInstanceId]="sandboxInstanceId"
+            [sandboxDefinitionId]="sandboxDefinitionId"
+            [localEnvironment]="localEnvironment"
+            [isPhaseAnswered]="isPhaseAnswered"
+            (next)="onNext()">
+        </crczp-access-phase>
+    }
+}
+
+

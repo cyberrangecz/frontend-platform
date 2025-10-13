@@ -1,0 +1,24 @@
+.center-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.topology-content {
+    display: flex;
+    flex-direction: row;
+    width: 80%;
+    height: 50dvh;
+    min-width: 50dvh;
+    min-height: 200px;
+    max-height: calc(100vh - 14rem);
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    resize: both;
+}
+
+.topology-graph {
+    width: 100%;
+    height: 100%;
+}

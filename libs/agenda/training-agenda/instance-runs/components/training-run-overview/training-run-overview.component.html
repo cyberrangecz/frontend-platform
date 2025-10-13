@@ -1,0 +1,37 @@
+<sentinel-table
+    (rowAction)="onTableAction($event)"
+    (tableLoad)="onTableLoadEvent($event)"
+    [data]="trainingRuns"
+    [hasError]="hasError"
+    [isLoading]="isLoading"
+>
+    <ng-container *sentinelRow="'eventLogging'; template: eventLogging"/>
+    <ng-container *sentinelRow="'commandLogging'; template: commandLogging"/>
+</sentinel-table>
+
+
+<ng-template #eventLogging let-row>
+    @if (row.element.eventLogging) {
+        <div class="stages">
+            <div matRipple [matRippleCentered]='true' class="stage-container"
+                 [matTooltip]="'Trainees events are logged'">
+                <mat-icon class="material-icons-outlined workingState">check</mat-icon>
+            </div>
+        </div>
+    } @else {
+        <mat-icon class="warning" [matTooltip]="'No training events logged yet.'">warning</mat-icon>
+    }
+</ng-template>
+
+<ng-template #commandLogging let-row>
+    @if (row.element.commandLogging) {
+        <div class="stages">
+            <div matRipple [matRippleCentered]='true' class="stage-container"
+                 [matTooltip]="'Trainees commands are logged'">
+                <mat-icon class="material-icons-outlined workingState">check</mat-icon>
+            </div>
+        </div>
+    } @else {
+        <mat-icon class="warning" [matTooltip]="'No training commands logged yet.'">warning</mat-icon>
+    }
+</ng-template>

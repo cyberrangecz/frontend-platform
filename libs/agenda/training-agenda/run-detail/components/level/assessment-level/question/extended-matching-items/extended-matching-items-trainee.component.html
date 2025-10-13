@@ -1,0 +1,41 @@
+<div class="content">
+  <!--TITLE-->
+  <h2>
+    <sentinel-markdown-view [markdown]="'Question ' + index.toString() + ':'"/>
+    <sentinel-markdown-view [markdown]="question.title"/>
+  </h2>
+  @if (question.required && !isBacktracked) {
+    <p class="required-note">Answer required</p>
+  }
+
+  <!--RADIO TABLE-->
+  <table>
+    <!-- TABLE HEADER-->
+    <tr>
+      <th></th>
+      @for (option of question.extendedMatchingOptions; track option) {
+        <th>{{ option.text }}</th>
+      }
+    </tr>
+
+    <!-- TABLE BODY-->
+    @for (statement of question.extendedMatchingStatements; track statement; let i = $index) {
+      <tr
+        [ngClass]="{ inner: !isBacktracked }"
+        >
+        <td>{{ statement.text }}</td>
+        <mat-radio-group [disabled]="isBacktracked">
+          @for (option of question.extendedMatchingOptions; track option; let j = $index) {
+            <td>
+              <mat-radio-button
+                [value]="{ x: i, y: j }"
+                [checked]="statement.correctOptionOrder === j"
+                (change)="onAnswerChanged(i, j)"
+                />
+            </td>
+          }
+        </mat-radio-group>
+      </tr>
+    }
+  </table>
+</div>

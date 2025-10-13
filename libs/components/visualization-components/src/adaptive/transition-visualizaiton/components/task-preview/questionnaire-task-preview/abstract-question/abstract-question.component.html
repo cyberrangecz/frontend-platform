@@ -1,0 +1,21 @@
+@if (question.questionType === QuestionTypeEnum.FFQ) {
+  <crczp-free-form-question-detail
+    [question]="question"
+    [questionnaireType]="questionnaireType"
+    >
+  </crczp-free-form-question-detail>
+}
+@if (question.questionType === QuestionTypeEnum.MCQ) {
+  <crczp-multiple-choice-question-detail
+    [question]="question"
+    [questionnaireType]="questionnaireType"
+    >
+  </crczp-multiple-choice-question-detail>
+}
+@if (question.questionType === QuestionTypeEnum.RFQ) {
+  <crczp-rating-form-question-detail
+    [question]="question"
+    [questionnaireType]="questionnaireType"
+    >
+  </crczp-rating-form-question-detail>
+}

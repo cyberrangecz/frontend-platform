@@ -1,0 +1,19 @@
+
+mat-card {
+    padding: 16px;
+    margin: 20px 0;
+}
+
+.required {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+mat-card-header {
+    align-items: baseline;
+}
+
+.spacer {
+    flex: 1 0 auto;
+}

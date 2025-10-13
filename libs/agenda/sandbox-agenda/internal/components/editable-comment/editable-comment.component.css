@@ -1,0 +1,64 @@
+.comment-container{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: stretch;
+    align-items: center;
+}
+
+.comment-form {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.comment-save-button {
+    display: flex;
+    box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.2);
+    border-radius: 0 1rem 1rem 0;
+}
+
+.comment-save-button .mat-mdc-focus-indicator {
+    height: 100%;
+}
+
+.edit-comment-container .mat-mdc-form-field {
+    display: block;
+    float: left;
+    width: 100%;
+}
+
+@media screen and (min-width: 2560px) {
+    .edit-comment-container .mat-mdc-form-field {
+        width: 80%;
+    }
+}
+
+
+::ng-deep .edit-comment-container .mat-mdc-text-field-wrapper {
+    padding-left: 0.5rem;
+    border-radius: 1rem 0 0 1rem;
+    padding-right: 0.5rem;
+}
+
+.edit-comment-container input {
+    text-overflow: ellipsis;
+}
+
+::ng-deep .readonly.edit-comment-container .mat-mdc-text-field-wrapper:not(:hover) {
+    background: rgb(255, 255, 255, 0) !important;
+}
+
+::ng-deep .readonly.edit-comment-container .mat-mdc-form-field-focus-overlay {
+    opacity: 0 !important;
+}
+
+::ng-deep .mdc-line-ripple::after {
+    border-bottom-width: 0 !important;
+}
+
+::ng-deep .edit-comment-container .mdc-line-ripple {
+    display: none;
+}
+

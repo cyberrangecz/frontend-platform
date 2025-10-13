@@ -1,0 +1,58 @@
+<div id="scatterClustersPlaceholder">
+    <mat-card>
+        <mat-card-title>Two Clusterable Features Comparison <span [innerHTML]=levelTitle></span></mat-card-title>
+        <mat-divider />
+        <button aria-label="Info" class="chart-info-button" mat-icon-button matTooltip="{{info}}">
+            <mat-icon>help</mat-icon>
+        </button>
+        <!-- Contains the chart -->
+        <mat-card-content>
+            <mat-grid-list [rowHeight]="cardHeight + 'px'" cols="12">
+                <mat-grid-tile colspan="12" id="scatterClustersSvgPlaceholder" rowspan="1">
+
+                    <span id="radioButtonText">Select features: </span>
+                    <mat-radio-group aria-label="Select features comparison">
+                        <mat-radio-button
+                            (change)="onRadioChange(1)"
+                            [checked]="plotFeatures === 1"
+                            class="radio-wf"
+                            value="1">
+                            Wrong flags per time played
+                        </mat-radio-button>
+                        <mat-radio-button
+                            (change)="onRadioChange(0)"
+                            [checked]="plotFeatures === 0"
+                            class="radio-ts"
+                            value="2">
+                            Time spent after using a hint
+                        </mat-radio-button>
+                    </mat-radio-group>
+                    <mat-form-field appearance="fill" class="scatter-clusters-input">
+                        <mat-label>Number of clusters:</mat-label>
+                        <input (change)="clusterChange($event)"
+                               [value]="numOfClusters.toString()"
+                               class="scatter-input-field"
+                               matInput
+                               min="1"
+                               type="number">
+                    </mat-form-field>
+
+                    <crczp-clustering-visualization (chartIsHidden)="hideChart($event)"
+                                                    (viewOpen)="toggleView()"
+                                                    [attr.class]="'clustering-feature-' + plotFeatures"
+                                                    [level]="+level"
+                                                    [numOfClusters]="numOfClusters"
+                                                    [selectedComponent]="0"
+                                                    [selectedFeature]="plotFeatures"
+                                                    [trainingDefinitionId]="trainingDefinitionId"
+                                                    [trainingInstanceIds]="trainingInstanceIds">
+                    </crczp-clustering-visualization>
+
+                    <p class="cluster-no-data-message">No data available for the current view</p>
+                </mat-grid-tile>
+            </mat-grid-list>
+        </mat-card-content>
+    </mat-card>
+
+    <template id="scatter-template"></template>
+</div>

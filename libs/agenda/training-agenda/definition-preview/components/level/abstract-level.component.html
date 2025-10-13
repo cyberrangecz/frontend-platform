@@ -1,0 +1,15 @@
+<h1>{{ level?.title }}</h1>
+@switch (level?.type) {
+    @case (levelTypes.Assessment) {
+        <crczp-assessment-level [level]="$any(level)"/>
+    }
+    @case (levelTypes.Training) {
+        <crczp-training-level [level]="$any(level)"/>
+    }
+    @case (levelTypes.Info) {
+        <crczp-info-level [level]="$any(level)"/>
+    }
+    @case (levelTypes.Access) {
+        <crczp-access-level [level]="$any(level)"/>
+    }
+}

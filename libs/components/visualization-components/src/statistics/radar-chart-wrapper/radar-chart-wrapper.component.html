@@ -1,0 +1,36 @@
+<div id="radarchartPlaceholder">
+    <mat-card>
+        <mat-card-title>Behavior Correlation Chart <span [innerHTML]=levelTitle></span></mat-card-title>
+        <mat-divider />
+        <button aria-label="Info" class="chart-info-button" mat-icon-button matTooltip="{{info}}">
+            <mat-icon>help</mat-icon>
+        </button>
+        <!-- Contains the chart -->
+        <mat-card-content>
+            <mat-grid-list [rowHeight]="cardHeight + 'px'" cols="12">
+                <mat-grid-tile colspan="11" id="radarchartSvgPlaceholder" rowspan="1">
+                    <mat-form-field appearance="fill" class="radar-cluster-input">
+                        <mat-label>Number of clusters:</mat-label>
+                        <input (change)="clusterChange($event)"
+                               [value]="numOfClusters.toString()"
+                               class="radar-input-field"
+                               matInput
+                               min="1"
+                               type="number">
+                    </mat-form-field>
+
+                    <crczp-clustering-visualization
+                        (chartIsHidden)="hideChart($event)"
+                        (viewOpen)="toggleView()"
+                        [level]="level"
+                        [numOfClusters]="numOfClusters"
+                        [selectedComponent]="2"
+                        [selectedFeature]="2"
+                        [trainingDefinitionId]="trainingDefinitionId"
+                        [trainingInstanceIds]="trainingInstanceIds" />
+                </mat-grid-tile>
+            </mat-grid-list>
+        </mat-card-content>
+    </mat-card>
+
+</div>

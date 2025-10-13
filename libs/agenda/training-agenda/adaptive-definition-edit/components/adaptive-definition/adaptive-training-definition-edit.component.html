@@ -1,0 +1,73 @@
+<div class="content">
+  <form [formGroup]="trainingDefinitionEditFormGroup.formGroup">
+    <div class="form-container">
+      <div class="left-col">
+        <!-- TITLE field-->
+        <mat-form-field appearance="outline"
+          (keydown.enter)="$event.preventDefault()">
+          <mat-label>Title</mat-label>
+          <input matInput placeholder="Title" formControlName="title" required>
+          @if (title.value) {
+            <button matSuffix mat-icon-button
+                            aria-label="Clear" (click)="title.setValue('');
+            title.markAsDirty();">
+              <mat-icon>close</mat-icon>
+            </button>
+          }
+          @if (title.hasError('whitespace')) {
+            <mat-error>Title cannot be empty</mat-error>
+          }
+        </mat-form-field>
+
+
+        <!-- DESCRIPTION field-->
+        <mat-form-field appearance="outline"
+          (keydown.enter)="$event.preventDefault()">
+          <mat-label>Description</mat-label>
+          <textarea class="description" maxlength="2048"
+            matInput placeholder="Description"
+          formControlName="description"></textarea>
+          @if (description.value) {
+            <button matSuffix mat-icon-button
+                            aria-label="Clear" (click)="description.setValue('');
+            description.markAsDirty();">
+              <mat-icon>close</mat-icon>
+            </button>
+          }
+        </mat-form-field>
+
+        <!-- DEFAULT CONTENT checkbox-->
+        @if (!trainingDefinition.id) {
+          <div>
+            <div class="form-line-content">
+              <mat-checkbox
+                matTooltip="When active, predefined phases will be created when definition is saved."
+                labelPosition="after"
+                formControlName="defaultContent"
+                (change)="checkboxTouched()">
+                Create predefined phases
+              </mat-checkbox>
+            </div>
+          </div>
+        }
+
+      </div>
+
+      <div class="right-col">
+        <!-- PREREQUISITES field-->
+        <sentinel-free-form (itemsChange)="prerequisitesChange($event)"
+          [required]="false" [hasHeader]="true" [formPlaceholder]="'Note'"
+          [formName]="'Notes for instructors'"
+          [formData]="prerequisites">
+        </sentinel-free-form>
+
+        <!-- OUTCOMES field-->
+        <sentinel-free-form (itemsChange)="outcomesChange($event)"
+          [required]="false" [hasHeader]="true" [formPlaceholder]="'Outcome'"
+          [formName]="'Learning outcomes'"
+          [formData]="outcomes">
+        </sentinel-free-form>
+      </div>
+    </div>
+  </form>
+</div>

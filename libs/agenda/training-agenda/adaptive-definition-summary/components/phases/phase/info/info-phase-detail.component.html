@@ -1,0 +1,12 @@
+<mat-expansion-panel class="mat-elevation-z0 panel-align">
+    <mat-expansion-panel-header>
+        <mat-panel-title>
+            <h3>
+                <mat-icon class="level-type" [inline]="true" matTooltip="Info Phase"> info</mat-icon>
+                <span> {{ phase.order + 1 }}.</span>
+                <span> {{ phase.title }}</span>
+            </h3>
+        </mat-panel-title>
+    </mat-expansion-panel-header>
+    <sentinel-markdown-view [markdown]="phase.content"/>
+</mat-expansion-panel>

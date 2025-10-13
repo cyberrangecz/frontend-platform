@@ -1,0 +1,65 @@
+{
+    "enableLocalMode": true,
+    "defaultPageSize": 15,
+    "polling": {
+        "pollingPeriodShort": 3000,
+        "pollingPeriodLong": 5000,
+        "retryCount": 3
+    },
+    "basePaths": {
+        "linearTraining": "https://172.19.0.22/training/api/v1",
+        "adaptiveTraining": "https://172.19.0.22/adaptive-training/api/v1",
+        "sandbox": "https://172.19.0.22/sandbox-service/api/v1",
+        "userAndGroup": "https://172.19.0.22/user-and-group/api/v1",
+        "mitre": "https://172.19.0.22/mitre-technique-service/api/v1",
+        "guacamole": "https://172.19.0.22/guacamole"
+    },
+    "guacamoleCredentials": {
+        "username": "-",
+        "password": "-"
+    },
+    "roleMapping": {
+        "uagAdmin": "ROLE_USER_AND_GROUP_ADMINISTRATOR",
+        "trainingDesigner": "ROLE_TRAINING_DESIGNER",
+        "trainingOrganizer": "ROLE_TRAINING_ORGANIZER",
+        "adaptiveTrainingDesigner": "ROLE_ADAPTIVE_TRAINING_DESIGNER",
+        "adaptiveTrainingOrganizer": "ROLE_ADAPTIVE_TRAINING_ORGANIZER",
+        "trainingTrainee": "ROLE_TRAINING_TRAINEE",
+        "sandboxDesigner": "ROLE_SANDBOX-SERVICE_DESIGNER",
+        "sandboxOrganizer": "ROLE_SANDBOX-SERVICE_ORGANIZER"
+    },
+    "authConfig": {
+        "guardMainPageRedirect": "home",
+        "guardLoginPageRedirect": "login",
+        "interceptorAllowedUrls": [
+            "https://172.19.0.22",
+            "https://172.19.0.22/user-and-group/api/v1"
+        ],
+        "authorizationStrategyConfig": {
+            "authorizationUrl": "https://172.19.0.22/user-and-group/api/v1/users/info"
+        },
+        "navigateToRequestedRoutePostLogin": true,
+        "providers": [
+            {
+                "label": "Login with local Keycloak",
+                "textColor": "white",
+                "backgroundColor": "#002776",
+                "oidcConfig": {
+                    "requireHttps": true,
+                    "issuer": "https://172.19.0.22/keycloak/realms/CRCZP",
+                    "clientId": "CRCZP-client",
+                    "redirectUri": "https://localhost:4200",
+                    "scope": "openid email profile offline_access",
+                    "logoutUrl": "https://172.19.0.22/keycloak/realms/CRCZP/protocol/openid-connect/logout",
+                    "postLogoutRedirectUri": "https://localhost:4200/logout-confirmed",
+                    "silentRefreshRedirectUri": "https://172.19.0.22:443/silent-refresh.html",
+                    "clearHashAfterLogin": true,
+                    "strictDiscoveryDocumentValidation": false,
+                    "skipIssuerCheck": true,
+                    "responseType": "code",
+                    "oidc": true
+                }
+            }
+        ]
+    }
+}

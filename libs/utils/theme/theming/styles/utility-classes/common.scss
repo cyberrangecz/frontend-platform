@@ -1,0 +1,11 @@
+@use "sass:math";
+@use "sass:string";
+
+@function decimal-to-name($decimal) {
+    $integer: math.floor($decimal);
+    $fraction: string.slice(#{$decimal}, 3);
+    @if $fraction == '' {
+        @return $integer;
+    }
+    @return $integer + '-' + $fraction;
+}

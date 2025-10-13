@@ -1,0 +1,42 @@
+<form [formGroup]="freeFormQuestionFormGroup.questionFormGroup">
+  <div class="question-container">
+    <!-- TITLE field-->
+    <div class='question-text'>
+      <sentinel-markdown-editor
+        [sentinel-markdown-file-upload]="false"
+        (contentChange)="title.setValue($event)"
+        [content]="title.value"
+        />
+      @if (title.hasError('whitespace')) {
+        <mat-error>Question text cannot be empty</mat-error>
+      }
+    </div>
+  </div>
+
+  @if (questionnaireType === questionnaireTypes.Adaptive) {
+    <div>
+      <!-- CHOICES field -->
+      <h2>Answers:</h2>
+      <div formArrayName="choices">
+        @for (choicesGroup of choices.controls; track choicesGroup; let i = $index) {
+          <div [formGroupName]="i">
+            <mat-form-field appearance="outline">
+              <mat-label>Answer {{ i + 1 }}</mat-label>
+              <input matInput placeholder="Answer text" formControlName="text" required/>
+              @if (choicesGroup.get('text').hasError('required')) {
+                <mat-error>Answer text cannot be empty
+                </mat-error>
+              }
+            </mat-form-field>
+            <button matSuffix mat-icon-button aria-label="Delete option"
+              color="warn" matTooltip="Delete option"
+              (click)="deleteOption(i)">
+              <mat-icon>remove_circle</mat-icon>
+            </button>
+          </div>
+        }
+        <button (click)="addOption()" mat-button color="primary">Add Answer</button>
+      </div>
+    </div>
+  }
+</form>

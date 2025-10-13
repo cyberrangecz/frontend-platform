@@ -1,0 +1,37 @@
+<div class="content">
+    <!--TITLE-->
+    <h2>
+        <sentinel-markdown-view [markdown]="'Question ' + index.toString() + ':'"/>
+        <sentinel-markdown-view [markdown]="question.title"/>
+    </h2>
+    @if (question.required) {
+        <p class="required-note">Answer required</p>
+    }
+
+    <!--RADIO TABLE-->
+    <table>
+        <!-- TABLE HEADER-->
+        <tr>
+            <th></th>
+            @for (option of question.extendedMatchingOptions; track option) {
+                <th>{{ option.text }}</th>
+            }
+        </tr>
+
+        <!-- TABLE BODY-->
+        @for (statement of question.extendedMatchingStatements; track statement; let i = $index) {
+            <tr
+                class="inner"
+            >
+                <td>{{ statement.text }}</td>
+                <mat-radio-group>
+                    @for (option of question.extendedMatchingOptions; track option; let j = $index) {
+                        <td>
+                            <mat-radio-button [value]="{ x: i, y: j }"/>
+                        </td>
+                    }
+                </mat-radio-group>
+            </tr>
+        }
+    </table>
+</div>

@@ -1,0 +1,20 @@
+{
+    "name": "@crczp/user-and-group-api",
+    "peerDependencies": {
+        "@angular/common": "*",
+        "@angular/core": "*",
+        "@sentinel/common": "*",
+        "@crczp/user-and-group-model": "*",
+        "rxjs": "*",
+        "@crczp/api-common": "*",
+        "@crczp/utils": "*",
+        "vite": "*",
+        "@analogjs/vite-plugin-angular": "*",
+        "@nx/vite": "*"
+    },
+    "sideEffects": false,
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/cyberrangecz/frontend-user-and-group-api.git"
+    }
+}

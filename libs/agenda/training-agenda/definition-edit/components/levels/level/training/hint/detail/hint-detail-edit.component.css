@@ -1,0 +1,58 @@
+div .hint {
+    display: flex;
+    flex-direction: column;
+}
+
+div .header {
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+    margin-top: 20px;
+}
+
+div .content {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+h3 {
+    flex-grow: 1;
+}
+
+div .title {
+    flex-grow: 6;
+    margin: 0 20px;
+}
+
+div .penalty {
+    flex-grow: 1;
+}
+
+mat-form-field {
+    width: 100%;
+}
+
+sentinel-markdown-editor {
+    margin-bottom: 20px;
+    height: 30vh;
+}
+
+@media screen and (max-width: 800px) {
+    div .header {
+        flex-direction: column;
+    }
+
+    div .title {
+        width: 100%;
+        margin: 0;
+    }
+
+    div .penalty {
+        width: 100%;
+    }
+}
+
+.delete-button {
+    float: right;
+}

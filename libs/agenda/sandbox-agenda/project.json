@@ -1,0 +1,43 @@
+{
+    "name": "sandbox-agenda",
+    "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+    "sourceRoot": "libs/agenda/sandbox-agenda",
+    "prefix": "crczp",
+    "projectType": "library",
+    "tags": [],
+    "implicitDependencies": [
+        "theme"
+    ],
+    "targets": {
+        "build": {
+            "executor": "@nx/angular:ng-packagr-lite",
+            "outputs": [
+                "{workspaceRoot}/dist/{projectRoot}"
+            ],
+            "options": {
+                "project": "libs/agenda/sandbox-agenda/ng-package.json"
+            },
+            "configurations": {
+                "production": {
+                    "tsConfig": "libs/agenda/sandbox-agenda/tsconfig.lib.prod.json"
+                },
+                "development": {
+                    "tsConfig": "libs/agenda/sandbox-agenda/tsconfig.lib.json"
+                }
+            },
+            "defaultConfiguration": "production"
+        },
+        "test": {
+            "executor": "@nx/vite:test",
+            "outputs": [
+                "{options.reportsDirectory}"
+            ],
+            "options": {
+                "reportsDirectory": "../../../coverage/libs/agenda/sandbox-agenda"
+            }
+        },
+        "lint": {
+            "executor": "@nx/eslint:lint"
+        }
+    }
+}

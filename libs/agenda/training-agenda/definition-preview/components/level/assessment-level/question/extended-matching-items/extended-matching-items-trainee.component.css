@@ -1,0 +1,46 @@
+h2 {
+    color: #4355b7;
+    margin: 0;
+}
+
+p.required-note {
+    color: #949494;
+}
+
+table {
+    margin-top: 10px;
+    max-width: 100%;
+    overflow-x: auto;
+    align-items: center;
+    align-content: center;
+}
+
+tr {
+    display: flex;
+    min-height: 60px;
+    flex-direction: row;
+    align-items: center;
+    align-content: center;
+    border-bottom: 1px solid #ddd;
+}
+
+tr:last-child {
+    border-bottom: 0;
+}
+
+tr.inner:hover {
+    background-color: gainsboro;
+}
+
+td, th {
+    padding: 0;
+    width: 130px;
+    text-align: center;
+    align-items: center;
+    align-content: center;
+    word-break: break-word;
+}
+
+sentinel-markdown-view {
+    color: #3f51b5;
+}

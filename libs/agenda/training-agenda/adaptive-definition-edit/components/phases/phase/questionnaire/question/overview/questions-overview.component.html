@@ -1,0 +1,46 @@
+<mat-expansion-panel>
+  <mat-expansion-panel-header>
+    <mat-panel-title>Questions</mat-panel-title>
+    <mat-panel-description>
+      @if (questions && questions.length > 0) {
+        <span>
+          This phase contains {{ questions?.length }} question(s)
+        </span>
+      } @else {
+        <span>This phase contains no questions.</span>
+      }
+      @if (questionsHasError) {
+        <div class="panel-description-error">
+          <mat-icon color="warn">error_outline</mat-icon>
+          <mat-error>There are errors in some questions</mat-error>
+        </div>
+      }
+    </mat-panel-description>
+  </mat-expansion-panel-header>
+  <sentinel-controls [controls]="controls" (itemClicked)="onControlAction($event)"/>
+
+  <ng-template matExpansionPanelContent>
+    <div>
+      @if (questions && questions.length > 0) {
+        <div>
+          <mat-divider/>
+          <sentinel-stepper [selectable]="true"
+            [stepperItems]="stepperQuestions"
+            [activeIndex]="selectedStep"
+            (stepSwapped)="onOrderUpdate()"
+            (indexSelected)="onActiveQuestionChanged($event)"
+            (selectedStepSwapped)="onActiveQuestionChanged($event)">
+          </sentinel-stepper>
+          <mat-divider id="stepper-divider"/>
+          <crczp-adaptive-question-edit [question]="stepperQuestions.items[selectedStep].question"
+            [questionnaireType]="questionnaireType"
+            [index]="selectedStep"
+            (questionChange)="onQuestionChanged($event)">
+          </crczp-adaptive-question-edit>
+        </div>
+      } @else {
+        <h3>Start by clicking on Add Question button</h3>
+      }
+    </div>
+  </ng-template>
+</mat-expansion-panel>

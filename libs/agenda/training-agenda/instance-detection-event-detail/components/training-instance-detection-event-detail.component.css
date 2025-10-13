@@ -1,0 +1,86 @@
+.content {
+    display: block;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 100px;
+    margin-top: 100px;
+}
+
+.content > * {
+    width: 100%;
+}
+
+h1 {
+    text-align: center;
+    margin-top: 5vw;
+}
+
+.icon-panel-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    margin-bottom: 100px;
+}
+
+.data-field {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-grow: 1;
+    flex-basis: 0;
+    text-align: center;
+    margin-top: 30px;
+}
+
+mat-icon {
+    font-size: 36px;
+    height: 36px;
+    width: 36px;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    border-radius: 20%;
+    background-color: lavender;
+    border: 10px solid lavender;
+    color: darkslategray;
+}
+
+.icon-label {
+    font-weight: bold;
+    margin-top: 4px;
+    color: darkslategray;
+}
+
+.value-field {
+    font-size: larger;
+}
+
+.header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.forbidden-commands-table {
+    margin-top: 50px;
+}
+
+.timeline-component {
+    margin-top: 50px;
+}
+
+.definition-title {
+    font-size: inherit;
+}
+
+.link-button {
+    padding: 0;
+    line-height: normal;
+}
+
+::ng-deep .mat-mdc-dialog-container .mdc-dialog__surface {
+    padding: 8px;
+}

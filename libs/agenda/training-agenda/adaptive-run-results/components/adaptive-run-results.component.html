@@ -1,0 +1,8 @@
+@if (trainingRun$ | async) {
+  <mat-card appearance="outlined">
+    <crczp-adaptive-transition-visualization
+      [trainingRunId]="(trainingRun$ | async).id"
+      [progress]="false"
+      />
+  </mat-card>
+}

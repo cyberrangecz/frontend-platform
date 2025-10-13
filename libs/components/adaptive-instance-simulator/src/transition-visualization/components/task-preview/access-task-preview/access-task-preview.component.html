@@ -1,0 +1,6 @@
+@if (!localEnvironment) {
+  <sentinel-markdown-view [markdown]="task?.cloudContent" />
+}
+@if (localEnvironment) {
+  <sentinel-markdown-view [markdown]="task?.localContent" />
+}

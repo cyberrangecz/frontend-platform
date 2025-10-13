@@ -1,0 +1,25 @@
+.token-button {
+    padding: 0;
+}
+
+.warn {
+    color: #F44336;
+}
+
+.access-token-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.access-token-container mat-icon {
+    margin-left: 5px;
+}
+
+.access-token-container mat-icon.warning {
+    color: orange;
+}
+
+::ng-deep .mat-mdc-dialog-container .mdc-dialog__surface {
+    padding: 8px;
+}

@@ -1,0 +1,9 @@
+@if (trainingRuns.rows.length) {
+    <sentinel-table
+        [data]="trainingRuns"
+        [hasError]="hasError"
+        (rowAction)="onTableAction($event)"
+        (tableLoad)="onTableLoadEvent($event)"/>
+} @else {
+    There are no training runs yet.
+}

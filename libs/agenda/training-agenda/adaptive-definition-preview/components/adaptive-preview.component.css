@@ -1,0 +1,27 @@
+.header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 10px;
+    justify-content: flex-end;
+}
+
+.training-run-stepper {
+    width: 100%;
+}
+
+.message {
+    color: #999999;
+}
+
+
+@media screen and (max-width: 1400px) {
+    .header {
+        flex-wrap: wrap;
+    }
+}
+
+::ng-deep .mat-mdc-dialog-container .mdc-dialog__surface {
+    padding: 8px;
+}

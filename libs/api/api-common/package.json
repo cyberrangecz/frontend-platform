@@ -1,0 +1,14 @@
+{
+    "name": "@crczp/api-common",
+    "peerDependencies": {
+        "@angular/common": "*",
+        "@angular/core": "*",
+        "file-saver": "*",
+        "@sentinel/common": "*",
+        "rxjs": "*",
+        "vite": "*",
+        "@analogjs/vite-plugin-angular": "*",
+        "@nx/vite": "*"
+    },
+    "sideEffects": false
+}

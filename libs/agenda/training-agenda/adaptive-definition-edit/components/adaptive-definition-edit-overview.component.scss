@@ -1,0 +1,48 @@
+.mat-expansion-panel-header-title,
+.mat-expansion-panel-header-description {
+    flex-basis: 0;
+}
+
+.mat-expansion-panel-header-description {
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.panel-description-error mat-icon {
+    margin-right: 5px;
+}
+
+.panel-description-error {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-right: 10px;
+}
+
+.phases-header {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    width: 100%;
+    margin-top: 35px;
+}
+
+.phases-info {
+    color: rgba(0, 0, 0, .54);
+}
+
+.spacer {
+    flex: 1 1 0;
+}
+
+mat-divider {
+    margin: 10px 0;
+}
+
+mat-expansion-panel {
+    margin: 10px 0;
+}
+
+::ng-deep .mat-mdc-dialog-container .mdc-dialog__surface {
+    padding: 8px;
+}

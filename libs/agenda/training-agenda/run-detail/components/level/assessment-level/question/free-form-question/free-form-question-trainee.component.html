@@ -1,0 +1,24 @@
+<div class="content">
+  <!--TITLE-->
+  <h2>
+    <sentinel-markdown-view [markdown]="'Question ' + index.toString() + ':'"/>
+    <sentinel-markdown-view [markdown]="question.title"/>
+  </h2>
+  @if (question.required && !isBacktracked) {
+    <p class="required-note">Answer required</p>
+  }
+
+  <!-- ANSWER field-->
+  <mat-form-field appearance="outline"
+    (keydown.enter)="$event.preventDefault()">
+    <mat-label>Answer</mat-label>
+    <input matInput [disabled]="isBacktracked" placeholder="Answer" [(ngModel)]="answer"
+      [required]="question.required" (keyup)="onChange()">
+    @if (answer && !isBacktracked) {
+      <button matSuffix mat-icon-button
+        aria-label="Clear" (click)="answer=''; onChange()">
+        <mat-icon>close</mat-icon>
+      </button>
+    }
+  </mat-form-field>
+</div>

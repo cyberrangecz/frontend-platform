@@ -1,0 +1,15 @@
+<h1>{{ phase?.title }}</h1>
+@switch (phase?.type) {
+    @case (phaseTypes.Questionnaire) {
+        <crczp-questionnaire-phase [phase]="$any(phase)"/>
+    }
+    @case (phaseTypes.Training) {
+        <crczp-training-phase [phase]="$any(phase)"/>
+    }
+    @case (phaseTypes.Info) {
+        <crczp-info-phase [phase]="$any(phase)"/>
+    }
+    @case (phaseTypes.Access) {
+        <crczp-access-phase [phase]="$any(phase)"/>
+    }
+}

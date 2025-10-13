@@ -1,0 +1,22 @@
+@switch (phase.type) {
+    @case (phaseTypes.Info) {
+        <crczp-info-phase-configuration
+            [phase]="asInfoPhase(phase)">
+        </crczp-info-phase-configuration>
+    }
+    @case (phaseTypes.Training) {
+        <crczp-training-phase-configuration
+            [phase]="asTrainingPhase(phase)"
+            [presentTrainingPhases]="presentTrainingPhases"
+            (phaseChange)="onPhaseChange($event)"
+            (isMatrixValid)="onValidityChange($event)">
+        </crczp-training-phase-configuration>
+    }
+    @case (phaseTypes.Questionnaire) {
+        <crczp-questionnaire-phase-configuration
+            [phase]="asQuestionnairePhase(phase)"
+            [presentTrainingPhases]="presentTrainingPhases">
+        </crczp-questionnaire-phase-configuration>
+
+    }
+}

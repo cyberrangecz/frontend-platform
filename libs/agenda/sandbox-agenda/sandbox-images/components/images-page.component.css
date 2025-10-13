@@ -1,0 +1,19 @@
+.content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.content > * {
+    margin-bottom: 100px;
+    width: 100%;
+}
+
+.checkbox-images {
+    float: right;
+    display: grid;
+}
+
+h1 {
+    text-align: center;
+}

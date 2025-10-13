@@ -1,0 +1,22 @@
+<div class="content">
+  <!-- TITLE-->
+  <h2>
+    <sentinel-markdown-view [markdown]="'Question ' + index.toString() + ':'"/>
+    <sentinel-markdown-view [markdown]="question.title"/>
+  </h2>
+  @if (question.required && !isBacktracked) {
+    <p class="required-note">Answer required</p>
+  }
+
+  <!-- OPTIONS -->
+  <div class="checkboxes">
+    @for (option of question.choices; track option; let i = $index) {
+      <mat-checkbox
+        [checked]="checkedAsAnswered(option)"
+        [disabled]="isBacktracked"
+        (change)="onAnswerChanged($event, option.text)">
+        {{ option.text }}
+      </mat-checkbox>
+    }
+  </div>
+</div>

@@ -1,0 +1,36 @@
+{
+    "name": "components",
+    "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+    "sourceRoot": "libs/utils/components/src",
+    "prefix": "crczp",
+    "projectType": "library",
+    "tags": [],
+    "targets": {
+        "build": {
+            "executor": "@nx/angular:ng-packagr-lite",
+            "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
+            "options": {
+                "project": "libs/utils/components/ng-package.json"
+            },
+            "configurations": {
+                "production": {
+                    "tsConfig": "libs/utils/components/tsconfig.lib.prod.json"
+                },
+                "development": {
+                    "tsConfig": "libs/utils/components/tsconfig.lib.json"
+                }
+            },
+            "defaultConfiguration": "production"
+        },
+        "test": {
+            "executor": "@nx/vite:test",
+            "outputs": ["{options.reportsDirectory}"],
+            "options": {
+                "reportsDirectory": "../../../coverage/libs/utils/components"
+            }
+        },
+        "lint": {
+            "executor": "@nx/eslint:lint"
+        }
+    }
+}

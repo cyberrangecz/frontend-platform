@@ -1,0 +1,17 @@
+
+.minimap {
+    position: absolute;
+    top: 4px;
+    right: 8px;
+    width: 150px;
+    height: 150px;
+}
+
+.graph-stabilized {
+    transition: opacity 0.3s ease-in;
+}
+
+.graph-hidden {
+    opacity: 0;
+}
+

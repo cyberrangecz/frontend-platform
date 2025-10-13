@@ -1,0 +1,119 @@
+@import "../../next-level-button/next-level-button.css";
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    align-content: center;
+}
+
+.level-content {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: row;
+    width: 90%;
+    max-width: 90%;
+    padding: 0 2rem 0 2rem;
+    height: fit-content;
+}
+
+.content-height-with-stepper {
+    max-height: calc(100vh - 28rem);
+    height: calc(100vh - 28rem);
+}
+
+.content-height-without-stepper {
+    max-height: calc(100vh - 28rem + 90px);
+    height: calc(100vh - 28rem + 90px);
+}
+
+.split-container {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 100%;
+}
+
+/* Text */
+.left-panel {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    scroll-behavior: smooth;
+    margin-left: 3rem;
+    padding-right: 1rem;
+    width: 100%;
+    height: 100%;
+}
+
+
+/* Topology */
+.right-panel {
+    min-height: 275px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: flex-start;
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.topology-wrapper{
+    width: 100%;
+    height: 100%;
+}
+
+
+/* Breakpoint for wrapping avatar */
+@media screen and (max-width: 1400px) {
+    .level-content {
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 2rem;
+        margin-bottom: 10rem;
+        height: auto;
+    }
+
+    .content-height-with-stepper, .content-height-without-stepper {
+        max-height: unset;
+    }
+
+    .left-panel {
+        padding: 0;
+        margin: 0;
+    }
+
+    .right-panel {
+        aspect-ratio: 1.25;
+    }
+}
+
+@media screen and (max-width: 1000px) {
+    .right-panel {
+        aspect-ratio: 1;
+    }
+}
+
+
+/* Breakpoint based on sentinel layout (when navbar is hidden) */
+@media (max-width: 748px ) {
+
+    .level-content {
+        padding: 0;
+        margin: 0 0 10rem 0;
+        width: 100%;
+    }
+
+    .left-panel {
+        padding: 0;
+        margin: 0;
+    }
+
+    .right-panel {
+        padding: 0;
+        margin: 0;
+        aspect-ratio: 0.75;
+    }
+}

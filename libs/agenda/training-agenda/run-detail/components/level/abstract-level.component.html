@@ -1,0 +1,52 @@
+<div class="level-header">
+    <h1
+        class="level-title"
+    >{{ level?.title }}</h1>
+    @if (startTime) {
+        <crczp-training-timer
+            [startTime]="startTime"
+            class="timer" matTooltip="Time since the start of the run" matTooltipPosition="above"/>
+    }
+</div>
+@if (level?.type; as type) {
+    @switch (type) {
+        @case (levelTypes.Assessment) {
+            <crczp-assessment-level
+                [level]="$any(level)"
+                [isLevelAnswered]="isLevelAnswered"
+                [isBacktracked]="isBacktracked"
+                [isLast]="isLast"
+                (next)="onNext()"/>
+        }
+        @case (levelTypes.Training) {
+            <crczp-training-level
+                [level]="$any(level)"
+                [isLast]="isLast"
+                [isLevelAnswered]="isLevelAnswered"
+                [isBacktracked]="isBacktracked"
+                [isStepperDisplayed]="isStepperDisplayed"
+                [sandboxInstanceId]="sandboxInstanceId"
+                [sandboxDefinitionId]="sandboxDefinitionId"
+                (next)="onNext()"/>
+        }
+        @case (levelTypes.Info) {
+            <crczp-info-level
+                [level]="$any(level)"
+                [isBacktracked]="isBacktracked"
+                [isLast]="isLast"
+                (next)="onNext()"/>
+        }
+        @case (levelTypes.Access) {
+            <crczp-access-level
+                [level]="$any(level)"
+                [isBacktracked]="isBacktracked"
+                [isStepperDisplayed]="isStepperDisplayed"
+                [sandboxInstanceId]="sandboxInstanceId"
+                [sandboxDefinitionId]="sandboxDefinitionId"
+                [localEnvironment]="localEnvironment"
+                [isLast]="isLast"
+                [isLevelAnswered]="isLevelAnswered"
+                (next)="onNext()"/>
+        }
+    }
+}

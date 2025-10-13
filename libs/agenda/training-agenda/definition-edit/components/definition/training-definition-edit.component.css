@@ -1,0 +1,59 @@
+.form-container {
+    display: flex;
+    flex-direction: row;
+}
+
+.left-col {
+    display: flex;
+    width: 50%;
+    flex-direction: column;
+    padding: 20px;
+}
+
+.right-col {
+    display: flex;
+    width: 50%;
+    padding: 20px;
+    flex-direction: column;
+}
+
+.spacer {
+    flex: 1 1 0;
+}
+
+.description {
+    max-height: 226px;
+}
+
+@media screen and (max-width: 900px) {
+    .form-container {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .left-col, .right-col {
+        width: 90%;
+    }
+}
+
+.alert-warning {
+    padding: 5px;
+    margin-top: 5px;
+    border: 2px solid #ffeeba;
+    border-radius: 5px;
+    color: #c58108;
+    background-color: #fff3cd;
+}
+
+.alert-warning-center {
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    flex-direction: column;
+}
+
+.checkboxes-container {
+    display: flex;
+    justify-content: flex-start;
+    flex-direction: column;
+}

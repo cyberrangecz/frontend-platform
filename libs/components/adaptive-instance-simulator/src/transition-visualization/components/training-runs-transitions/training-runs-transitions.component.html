@@ -1,0 +1,16 @@
+@for (playerData of playersTransitions; track trackByTrainingRunId(playerData); let i = $index) {
+    <svg class="trainee-{{ playerData.trainee.id }}-transitions">
+        <g>
+            <svg>
+                <g
+                    training-run-transitions
+                    [playerTransitions]="playerData"
+                    [xScale]="xScale"
+                    [yScale]="yScale"
+                    [color]="colorScale(String(i))"
+                    (taskPreviewEvent)="onTaskPreviewChange($event)"
+                />
+            </svg>
+        </g>
+    </svg>
+}

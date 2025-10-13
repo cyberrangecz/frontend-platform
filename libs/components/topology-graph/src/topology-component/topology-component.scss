@@ -1,0 +1,49 @@
+.toplogy-tabs-wrapper {
+    box-shadow: -2px 2px 2px var(--neutral-70);
+    border-radius: 1rem 0 0 1rem;
+    position: relative;
+    transition: visibility 0.3s ease, opacity 0.3s ease;
+    overflow: hidden;
+}
+
+.topology-tabs-wrapper--collapsed {
+    z-index: -1;
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+}
+
+
+.draggable-bar {
+    position: absolute;
+    left: 0;
+    top: 48px;
+    height: calc(100% - 30px);
+    width: 6px;
+    cursor: col-resize;
+    z-index: 1002;
+    --gradient-color: color-mix(in srgb, var(--primary-60) 20%, var(--neutral-98));
+    background: linear-gradient(90deg, var(--gradient-color) 50%, var(--neutral-98) 100%);
+
+    &:active, &:hover {
+        background: var(--primary-40);
+        box-shadow: 0 0 3px var(--primary-40);
+    }
+}
+
+
+.tab-label {
+    user-select: none;
+    overflow: hidden;
+}
+
+::ng-deep .mat-mdc-tab-body-content {
+    overflow: hidden !important;
+}
+
+@media screen and (max-width: 1400px) {
+    .toplogy-tabs-wrapper {
+        border-radius: 1rem;
+        box-shadow: 0 2px 4px var(--neutral-70);
+    }
+}

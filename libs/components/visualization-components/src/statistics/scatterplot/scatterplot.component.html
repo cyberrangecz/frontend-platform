@@ -1,0 +1,57 @@
+<div id="scatterplotPlaceholder">
+    <mat-card>
+        <!-- Contains the title of the chart,
+          which can be set manually when calling this component -->
+        <mat-card-title/>
+        <mat-divider/>
+        <!-- Contains the chart -->
+        <mat-card-content>
+            <mat-grid-list cols="12" rowHeight="5%">
+                <!-- Enables to set the property, that should be
+                    visualized by the color scheme -->
+                <mat-grid-tile colspan="12" rowspan="2" style="float: right;">
+                    <mat-radio-group>
+                        <span id="radioButtonText">Colors represent:</span>
+                        <mat-radio-button
+                            value="score"
+                            [checked]="zScaleValue === 'score'"
+                            (change)="onRadioChange('score')"
+                        >
+                            Achieved scores
+                        </mat-radio-button>
+                        <mat-radio-button
+                            value="time"
+                            [checked]="zScaleValue === 'time'"
+                            (change)="onRadioChange('time')"
+                        >
+                            Game times
+                        </mat-radio-button>
+                        <mat-radio-button
+                            value="hint"
+                            [checked]="zScaleValue === 'hint'"
+                            (change)="onRadioChange('hint')"
+                        >
+                            Hints taken
+                        </mat-radio-button>
+                    </mat-radio-group>
+                </mat-grid-tile>
+                <!-- Contains the scatterplot -->
+                <mat-grid-tile
+                    colspan="10"
+                    rowspan="17"
+                    id="scatterplotChartPlaceholder"
+                >
+                    <svg id="scatterplotSvg"></svg>
+                </mat-grid-tile>
+                <!-- Contains the legend for the chart -->
+                <mat-grid-tile
+                    colspan="2"
+                    rowspan="17"
+                    id="scatterplotLegendPlaceholder"
+                >
+                    <svg id="scatterplotLegendSvg"></svg>
+                </mat-grid-tile>
+            </mat-grid-list>
+        </mat-card-content>
+    </mat-card>
+</div>

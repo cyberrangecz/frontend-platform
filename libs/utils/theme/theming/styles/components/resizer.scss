@@ -1,0 +1,11 @@
+/*
+ * Apply 'highlighted-resizer' to any component
+ * you want to have blue gradient highly visible handle
+ * You might need to override border radius to
+ * fit parent radius
+ */
+.highlighted-resizer::-webkit-resizer {
+    background: radial-gradient(circle at 100% 100%, var(--primary-50) 25%, transparent 75%);
+    border-radius: 0 0 0.75rem 0;
+    overflow: hidden;
+}

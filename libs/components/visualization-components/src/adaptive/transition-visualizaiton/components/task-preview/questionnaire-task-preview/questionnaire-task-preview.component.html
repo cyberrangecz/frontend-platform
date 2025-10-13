@@ -1,0 +1,8 @@
+@for (question of task?.questions; track question) {
+  <div class="question-container">
+    <crczp-question-detail
+      [question]="question"
+      [questionnaireType]="task?.questionnaireType"
+      />
+  </div>
+}

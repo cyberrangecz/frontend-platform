@@ -1,0 +1,23 @@
+@if (phases?.length > 0) {
+  <div class="header">
+    <!-- PHASE STEPPER -->
+    <div class="training-run-stepper">
+      <h3 class="message">
+        *Use stepper to navigate between levels.
+      </h3>
+      <sentinel-stepper
+        [draggable]="false"
+        [selectable]="true"
+        (indexSelected)="activeStepChanged($event)"
+        [stepperItems]="stepper"
+        [activeIndex]="stepper.activePhaseIndex"
+        >
+      </sentinel-stepper>
+    </div>
+  </div>
+  <!-- CONTENT OF ACTIVE LEVEL -->
+  <crczp-abstract-phase [phase]="activePhase"/>
+} @else {
+  <h3 class="message">There are no phases in this training definition</h3>
+}
+

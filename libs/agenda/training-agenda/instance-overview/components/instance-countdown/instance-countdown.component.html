@@ -1,0 +1,11 @@
+<div class="wrapper-div">
+    <span class="monospace-font">
+        {{this.getNumberPart()}}
+    </span>
+    @if(expired()){
+        <mat-icon class="expiry-icon">block</mat-icon>
+    }
+    <span>
+        {{this.getStringPart()}}
+    </span>
+</div>

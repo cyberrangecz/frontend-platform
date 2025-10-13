@@ -1,0 +1,25 @@
+<sentinel-controls (itemClicked)="onControls($event)" [controls]="controls" />
+<sentinel-table
+    (rowAction)="onPoolAction($event)"
+    (tableLoad)="onLoadEvent($event)"
+    [data]="pools$ | async"
+    [defaultSortDirection]="DEFAULT_SORT_DIRECTION"
+    [defaultSortName]="DEFAULT_SORT_COLUMN"
+    [displayedActionsCount]="8"
+    [hasError]="hasError$ | async"
+    [titlecasedActions]=false
+    [titlecasedColumnHeaders]=false>
+    <ng-container *sentinelRow="'lockState'; template: lockState" />
+    <ng-container *sentinelRow="'comment'; template: comment" />
+</sentinel-table>
+<ng-template #lockState let-row>
+    <crczp-table-state-cell [toIcon]="lockStateToIcon" [value]="row.element.lockState" />
+</ng-template>
+
+<ng-template #comment let-row>
+    <crczp-editable-comment (commentChanged)="updatePoolComment(row.element,$event)" [value]="row.element.comment" />
+</ng-template>
+
+<br>
+
+<crczp-quotas [resources]="resources$" />

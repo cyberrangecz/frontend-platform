@@ -1,0 +1,83 @@
+#radarchartPlaceholder {
+    box-sizing: border-box;
+    display: inline-block;
+    padding: 0.5vw;
+    width: 100%;
+}
+
+#radarchartPlaceholder mat-card {
+    width: calc(100% - 32px);
+    height: 100%;
+    padding-top: calc(5px + 0.5vw);
+    padding-bottom: calc(5px + 0.5vw);
+}
+
+#radarchartPlaceholder mat-card-title {
+    padding: calc(5px + 0.2vw);
+    margin-bottom: calc(2px + 0.2vw);
+    font-size: calc(8px + 0.5vw) !important;
+    overflow-y: visible;
+}
+
+::ng-deep #radarchartPlaceholder .mat-grid-tile-content {
+    display: initial !important;
+}
+
+.radar-cluster-input {
+    float: left;
+    margin-top: 10px;
+}
+
+::ng-deep #radarchartPlaceholder crczp-viz-clustering-line-chart .mat-button-base {
+    margin: 10px 0px 0px 10px;
+}
+
+#radarchartPlaceholder mat-grid-list {
+    top: -24px;
+    pointer-events: none;
+}
+
+#radarchartPlaceholder mat-grid-tile {
+    top: -24px;
+    pointer-events: initial;
+    height: 20vw;
+}
+
+#radarchartPlaceholder mat-card-content {
+    height: 90%;
+}
+
+::ng-deep #radar-chart {
+    float: left;
+    height: 100%;
+    clear: both;
+}
+
+.chart-info-button {
+    justify-content: center;
+    border: none;
+    margin-left: 96%;
+    border-bottom-left-radius: 50%;
+    border-bottom-right-radius: 50%;
+}
+
+.chart-info-button mat-icon {
+    color: #3f51b5;
+    background: white;
+    border-radius: 100%;
+}
+
+/** line chart **/
+
+::ng-deep #radarchartPlaceholder .main-clustering-line-div svg {
+    height: 20vw;
+}
+
+::ng-deep #radarchartPlaceholder .main-clustering-line-div text {
+    font-size: 20px;
+}
+
+/*
+::ng-deep #radarchartPlaceholder .main-clustering-line-div div:nth-child(2) {
+  /*display: inline-block !important;*/
+/*}*/

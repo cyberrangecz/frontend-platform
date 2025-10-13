@@ -1,0 +1,65 @@
+<h2>{{ trainingDefinition?.title }}</h2>
+<div>{{ trainingDefinition?.description }}</div>
+<div class="icon-panel-container">
+  <div class="data-field">
+    <mat-icon> format_list_numbered</mat-icon>
+    <div class="icon-label">Number of Levels</div>
+    <div class="value-field">{{ trainingDefinition?.levels.length }}</div>
+  </div>
+  <div class="data-field">
+    <mat-icon> pending_actions</mat-icon>
+    <div class="icon-label">Last Edited</div>
+    <div class="value-field">{{ trainingDefinition?.lastEditTimeFormatted }}</div>
+  </div>
+  <div class="data-field">
+    <mat-icon> schedule</mat-icon>
+    <div class="icon-label">Estimated Duration</div>
+    <div class="value-field">{{ trainingDefinition?.estimatedDuration }}</div>
+  </div>
+  <div class="data-field">
+    <mat-icon> outbox</mat-icon>
+    <div class="icon-label">State</div>
+    <div class="value-field">{{ trainingDefinition.state }}</div>
+  </div>
+</div>
+
+<mat-expansion-panel class="mat-elevation-z0">
+  <mat-expansion-panel-header>
+    <mat-panel-title>
+      <h3>
+        Notes
+      </h3>
+    </mat-panel-title>
+  </mat-expansion-panel-header>
+
+  <div class="expansion-content">
+    <div class="expansion-data-field">
+      <div class="key-field">Instructor notes</div>
+      @if (trainingDefinition?.prerequisites.length > 0) {
+        <div>
+          @for (prerequisity of trainingDefinition?.prerequisites; track prerequisity) {
+            <div>
+              {{ prerequisity }}
+            </div>
+          }
+        </div>
+      } @else {
+        There are no notes
+      }
+    </div>
+    <div class="expansion-data-field">
+      <div class="key-field">Learning outcomes</div>
+      @if (trainingDefinition?.outcomes.length > 0) {
+        <div>
+          @for (outcome of trainingDefinition?.outcomes; track outcome) {
+            <div>
+              {{ outcome }}
+            </div>
+          }
+        </div>
+      } @else {
+        There are no outcomes
+      }
+    </div>
+  </div>
+</mat-expansion-panel>

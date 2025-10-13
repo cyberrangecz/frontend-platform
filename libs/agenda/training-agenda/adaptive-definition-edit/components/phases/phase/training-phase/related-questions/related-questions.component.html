@@ -1,0 +1,29 @@
+<mat-expansion-panel>
+  <mat-expansion-panel-header>
+    <mat-panel-title>
+      Related Questions
+    </mat-panel-title>
+  </mat-expansion-panel-header>
+  @if (relatedQuestions.length !== 0) {
+    <div>
+      @for (question of relatedQuestions; track question) {
+        <div class='question-in-relation'>
+          @switch (question.questionType) {
+            @case (questionTypes.RFQ) {
+              <mat-icon style="vertical-align: middle">star_half</mat-icon>
+            }
+            @case (questionTypes.FFQ) {
+              <mat-icon style="vertical-align: middle">edit</mat-icon>
+            }
+            @case (questionTypes.MCQ) {
+              <mat-icon style="vertical-align: middle">check_circle_outline</mat-icon>
+            }
+          }
+          <span> {{ question.id }}: {{ question.text }}</span>
+        </div>
+      }
+    </div>
+  } @else {
+    <h3>There are no Related Questions</h3>
+  }
+</mat-expansion-panel>

@@ -1,0 +1,53 @@
+import {
+    ChangeDetectionStrategy,
+    Component,
+    ElementRef,
+    inject,
+    Input,
+    OnChanges,
+} from '@angular/core';
+import * as d3 from 'd3';
+import { AdaptiveVisualizationPhase } from '../../../../model/phase/adaptive-visualization-phase';
+
+@Component({
+    // eslint-disable-next-line @angular-eslint/component-selector
+    selector: 'g[y-axis-left]',
+    templateUrl: './y-axis-left.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class YAxisLeftComponent implements OnChanges {
+    @Input() phases!: AdaptiveVisualizationPhase[];
+
+    @Input() yScale!: d3.ScalePoint<number>;
+
+    private g: any;
+
+    constructor() {
+        const element = inject(ElementRef);
+
+        this.g = d3.select(element.nativeElement);
+    }
+
+    ngOnChanges(): void {
+        this.drawYAxis();
+        this.styleLeftYAxis();
+    }
+
+    private drawYAxis() {
+        const axisGenerator = d3
+            .axisLeft(this.yScale)
+            .tickFormat((taskId) => `AdaptiveRunVisualization ${taskId + 1}`);
+        // add y axis
+        this.g.attr('id', 'y-axis').attr('class', 'axis').call(axisGenerator);
+    }
+
+    private styleLeftYAxis() {
+        this.g
+            .selectAll('g')
+            .selectAll('line')
+            .attr('stroke', 'lightgrey')
+            .attr('stroke-opacity', 0.7);
+        this.g.selectAll('path').attr('stroke-width', 0);
+        this.g.selectAll('text').style('font-size', 'larger');
+    }
+}

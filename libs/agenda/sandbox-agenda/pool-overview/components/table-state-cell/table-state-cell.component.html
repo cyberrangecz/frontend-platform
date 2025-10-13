@@ -1,0 +1,15 @@
+<div class="hflex wrapper-div">
+    @if (textDisplay === 'before' && toString(value)) {
+        {{toString(value)}}
+    }
+    @if (toIcon(value)) {
+        <mat-icon
+            [color]="color"
+            matTooltip="{{textDisplay === 'hidden' ? toString(value) : null}}"
+            matTooltipPosition="after"
+        >{{toIcon(value)}}</mat-icon>
+    }
+    @if (textDisplay === 'after' && toString(value)) {
+        {{toString(value)}}
+    }
+</div>

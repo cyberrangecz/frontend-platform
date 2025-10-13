@@ -1,0 +1,25 @@
+@import "../../../level-summary-common.css";
+
+.value-field {
+    display: flex;
+    flex-direction: column;
+}
+
+.choice {
+    display: flex;
+    flex-direction: row;
+}
+
+.correct-choice {
+    text-align: center;
+}
+
+.choices {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+}
+
+.question-type {
+    vertical-align: bottom;
+}

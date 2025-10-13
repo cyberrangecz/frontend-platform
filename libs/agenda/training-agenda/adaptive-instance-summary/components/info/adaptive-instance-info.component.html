@@ -1,0 +1,52 @@
+<div class="header">
+    <div>
+        <h2>{{ trainingInstance?.title }}</h2>
+        <h3>
+            of Adaptive Training Definition:
+            <button [routerLink]="adaptiveDefinitionLink" class="link-button definition-title" color="primary"
+                    mat-button>
+                {{ trainingDefinition?.title }}
+            </button>
+        </h3>
+        <p>{{ trainingDefinition.description }}</p>
+    </div>
+    <sentinel-controls (itemClicked)="onInfoControlAction($event)" [controls]="infoControls"/>
+</div>
+<div class="icon-panel-container">
+    <div class="data-field">
+        <mat-icon class="material-icons-round"> hourglass_top</mat-icon>
+        <div class="icon-label">Start Time</div>
+        <div class="value-field">{{ trainingInstance.startTime | date }}</div>
+    </div>
+    <div class="data-field">
+        <mat-icon class="material-icons-round"> hourglass_bottom</mat-icon>
+        <div class="icon-label">End Time</div>
+        <div class="value-field">{{ trainingInstance.endTime | date }}</div>
+    </div>
+    <div class="data-field">
+        <mat-icon class="material-icons-round"> view_comfy</mat-icon>
+        <div class="icon-label">Assigned Pool</div>
+        @if (trainingInstance.hasPool()) {
+            <button
+                mat-button
+                color="primary"
+                class="value-field link-button"
+                [routerLink]="poolIdLink"
+            >
+                Pool {{ trainingInstance.poolId }}
+            </button>
+        } @else {
+            <span class="value-field">No assigned pool</span>
+        }
+
+    </div>
+    <div class="data-field">
+        <mat-icon class="material-icons-outlined">pin</mat-icon>
+        <div class="icon-label">Access Token</div>
+        <button (click)="onCopyToken()" [cdkCopyToClipboard]="trainingInstance.accessToken" class="value-field link-button" color="primary"
+                mat-button
+                matTooltip="Click to copy access token">
+            {{ trainingInstance.accessToken }}
+        </button>
+    </div>
+</div>

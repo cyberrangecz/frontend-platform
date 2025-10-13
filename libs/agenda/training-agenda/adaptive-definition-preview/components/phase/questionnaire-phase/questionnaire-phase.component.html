@@ -1,0 +1,46 @@
+<div class="container">
+  <div class="content">
+    @for (question of phase.questions; track question; let i = $index) {
+      <div class="questions">
+        <h2>
+          <sentinel-markdown-view [markdown]="'Question ' + (i+1).toString() + ':'"/>
+          <sentinel-markdown-view [markdown]="question.text"/>
+        </h2>
+        @switch (question.questionType) {
+          @case (questionTypes.FFQ) {
+            <div class="question">
+              <mat-form-field appearance="outline">
+                <mat-label>
+                  Answer
+                </mat-label>
+                <input [maxLength]="1023" matInput>
+              </mat-form-field>
+            </div>
+          }
+          @case (questionTypes.MCQ) {
+            <div class="mcq-question">
+              @for (choice of question.choices; track choice) {
+                <div>
+                  <mat-checkbox/>
+                  <p>{{ choice.text }}</p>
+                </div>
+              }
+            </div>
+          }
+          @case (questionTypes.RFQ) {
+            <div class="rfq-question">
+              @for (choice of question.choices; track choice) {
+                <div class="rfq-answer">
+                  <mat-checkbox
+                    />
+                  <p>{{ choice.text }}</p>
+                </div>
+              }
+            </div>
+          }
+        }
+      </div>
+    }
+  </div>
+</div>
+

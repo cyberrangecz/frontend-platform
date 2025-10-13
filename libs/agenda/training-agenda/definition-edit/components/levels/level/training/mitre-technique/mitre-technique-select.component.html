@@ -1,0 +1,56 @@
+<mat-expansion-panel>
+    <mat-expansion-panel-header>
+        <mat-panel-title> MITRE ATT&CK Techniques</mat-panel-title>
+        <mat-panel-description>
+            @if (mitreTechniques.length > 0) {
+                <span>
+          This level contains {{ mitreTechniques.length }} techniques(s)</span
+                >
+            } @else {
+                <span>This level has no techniques</span>
+            }
+        </mat-panel-description>
+    </mat-expansion-panel-header>
+    <mat-form-field appearance="outline" class="chip-list">
+        <mat-label>Techniques</mat-label>
+        <mat-chip-grid #chipList [formControl]="chipListCtrl">
+            @for (mitreTechnique of mitreTechniques; track mitreTechnique) {
+                <mat-chip-row
+                    (removed)="remove(mitreTechnique)"
+                    class="mat-chip-selected"
+                >
+                    {{ mitreTechnique.techniqueKey }}
+                    <button matChipRemove>
+                        <mat-icon>cancel</mat-icon>
+                    </button>
+                </mat-chip-row>
+            }
+            <input
+                #techniqueInput
+                (input)="onInput($event)"
+                (matChipInputTokenEnd)="add($event)"
+                (paste)="paste($event)"
+                [matAutocomplete]="auto"
+                [matChipInputAddOnBlur]="true"
+                [matChipInputFor]="chipList"
+                [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                matInput
+                placeholder="New technique..."
+            />
+        </mat-chip-grid>
+        <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
+            @for (mitreTechnique of filteredTechniquesList; track mitreTechnique) {
+                <mat-option [value]="mitreTechnique">
+                    {{ mitreTechnique.techniqueKey }} - {{ mitreTechnique.techniqueName }}
+                </mat-option>
+            }
+        </mat-autocomplete>
+        <mat-hint
+        >Techniques must be in format: &#60;TACTIC_ID.TECHNIQUE_ID&#62;. Ids of tactics and techniques can be found on
+            https://attack.mitre.org/matrices/enterprise/
+        </mat-hint>
+        @if (chipListCtrl.hasError('wrongFormat')) {
+            <mat-error> Wrong format!</mat-error>
+        }
+    </mat-form-field>
+</mat-expansion-panel>

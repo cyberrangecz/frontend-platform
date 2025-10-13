@@ -1,0 +1,29 @@
+<h3>
+  <span>{{ question.order + 1 }}. </span>
+  <span> {{ question.text }}</span>
+</h3>
+<div class="data-field">
+  <div class="choices">
+    @for (choice of question.choices; track choice; let isLast = $last) {
+      <div class="choice">
+        <div>
+          <div>{{ choice.text }}</div>
+          @if (questionnaireType === QuestionnaireTypeEnum.Adaptive && choice.correct !== null) {
+            <div class="correct-choice"
+              >
+              @if (choice.correct) {
+                <mat-icon [inline]="true" style="color: green">done</mat-icon>
+              }
+              @if (!choice.correct) {
+                <mat-icon [inline]="true" style="color: red">close</mat-icon>
+              }
+            </div>
+          }
+        </div>
+        @if (!isLast) {
+          <mat-divider class="choice-divider" inset="true" vertical="true" />
+        }
+      </div>
+    }
+  </div>
+</div>

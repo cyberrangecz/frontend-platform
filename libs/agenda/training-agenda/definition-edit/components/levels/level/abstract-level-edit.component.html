@@ -1,0 +1,24 @@
+@switch (level.type) {
+    @case (levelTypes.Training) {
+        <crczp-training-level-edit
+            [level]="$any(level)"
+            [mitreTechniquesList]="mitreTechniquesList"
+            (levelChange)="onLevelChange($event)"/>
+    }
+    @case (levelTypes.Access) {
+        <crczp-access-level-configuration
+            [level]="$any(level)"
+            (levelChange)="onLevelChange($event)">
+        </crczp-access-level-configuration>
+    }
+    @case (levelTypes.Info) {
+        <crczp-info-level-configuration
+            [level]="$any(level)"
+            (levelChange)="onLevelChange($event)"/>
+    }
+    @case (levelTypes.Assessment) {
+        <crczp-assessment-level-configuration
+            [level]="$any(level)"
+            (levelChange)="onLevelChange($event)"/>
+    }
+}

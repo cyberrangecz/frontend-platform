@@ -1,0 +1,53 @@
+<mat-card appearance="outlined">
+    <mat-card-header>
+        <mat-card-title>
+            <h3>Question {{ index + 1 }}:</h3>
+            <h3>
+                <sentinel-markdown-view [markdown]="question.title"/>
+            </h3>
+        </mat-card-title>
+        <span class="spacer"></span>
+        <div class="required">
+            <mat-checkbox (change)="questionChanged(question)"
+                          [(ngModel)]="question.required"
+                          [checked]="isTest"
+                          [disabled]="isTest"
+                          class="mat-typography">
+                Required
+            </mat-checkbox>
+        </div>
+    </mat-card-header>
+    <mat-card-content>
+        @switch (true) {
+            @case (isMcq) {
+                <crczp-multiple-choice-question-edit
+                    (questionChange)="questionChanged($event)"
+                    [question]="$any(question)"
+                    [required]="question.required"
+                    [isTest]="isTest">
+                </crczp-multiple-choice-question-edit>
+            }
+            @case (isFfq) {
+                <crczp-free-form-question-edit
+                    (questionChange)="questionChanged($event)"
+                    [question]="$any(question)"
+                    [required]="question.required"
+                    [isTest]="isTest">
+                </crczp-free-form-question-edit>
+            }
+            @case (isEmi) {
+                <crczp-extended-matching-items
+                    (questionChange)="questionChanged($event)"
+                    [question]="$any(question)"
+                    [required]="question.required"
+                    [isTest]="isTest">
+                </crczp-extended-matching-items>
+            }
+        }
+    </mat-card-content>
+    <mat-card-actions align="end">
+        <button (click)="onDelete(index)" color="warn" mat-flat-button>Delete</button>
+    </mat-card-actions>
+</mat-card>
+
+

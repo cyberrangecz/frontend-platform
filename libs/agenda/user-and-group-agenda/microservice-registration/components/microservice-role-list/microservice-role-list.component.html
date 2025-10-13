@@ -1,0 +1,10 @@
+<div class="controls">
+  <button
+    (click)="addRole()"
+    mat-flat-button
+  >Add role</button>
+</div>
+@for (role of roles; track role; let i = $index) {
+  <crczp-microservice-role (roleChange)="onRoleChange($event, i)"
+    (delete)="deleteRole(i)" [role]="role"/>
+}

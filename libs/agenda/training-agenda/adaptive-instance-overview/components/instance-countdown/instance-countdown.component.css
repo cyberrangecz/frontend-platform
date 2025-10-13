@@ -1,0 +1,15 @@
+.wrapper-div {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.expiry-icon {
+    margin-right: 0.5rem;
+}
+
+.monospace-font {
+    font-family: "Mono", monospace;
+    font-weight: 500;
+}

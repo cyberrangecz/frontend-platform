@@ -1,0 +1,59 @@
+.content {
+    display: flex;
+    flex-direction: column;
+    margin: 20px;
+}
+
+sentinel-markdown-editor {
+    height: 40vh;
+}
+
+@media screen and (max-width: 800px) {
+    div .content {
+        width: 100%;
+    }
+}
+
+.passkey-field {
+    width: 350px;
+}
+
+.field-heading-container h3 {
+    margin-top: 16px;
+}
+
+.field-heading-container {
+    display: flex;
+    align-items: center;
+}
+
+.field-heading-container mat-icon {
+    transform: scale(0.7);
+    vertical-align: middle;
+}
+
+.local-content-info {
+    border: 1px solid #e0e0e0;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    overflow: hidden
+}
+
+.local-content-info-head {
+    display: flex;
+    padding: 10px;
+    background-color: #3f51b5;
+    color: white;
+}
+
+.local-content-info-head h4 {
+    margin-left: 10px;
+    margin-bottom: 0;
+}
+
+.local-content-info-content {
+    padding: 10px 10px 0 10px;
+}
+
+
+
