@@ -7,12 +7,12 @@
         "retryCount": 3
     },
     "basePaths": {
-        "linearTraining": "https://devel.platform.cyberrange.cz/training/api/v1",
-        "adaptiveTraining": "https://devel.platform.cyberrange.cz/adaptive-training/api/v1",
-        "sandbox": "https://devel.platform.cyberrange.cz/sandbox-service/api/v1",
-        "userAndGroup": "https://devel.platform.cyberrange.cz/user-and-group/api/v1",
-        "mitre": "https://devel.platform.cyberrange.cz/mitre-technique-service/api/v1",
-        "guacamole": "https://devel.platform.cyberrange.cz/guacamole/api/v1"
+        "linearTraining": "https://172.19.0.22/training/api/v1",
+        "adaptiveTraining": "https://172.19.0.22/adaptive-training/api/v1",
+        "sandbox": "https://172.19.0.22/sandbox-service/api/v1",
+        "userAndGroup": "https://172.19.0.22/user-and-group/api/v1",
+        "mitre": "https://172.19.0.22/mitre-technique-service/api/v1",
+        "guacamole": "https://172.19.0.22/guacamole"
     },
     "roleMapping": {
         "uagAdmin": "ROLE_USER_AND_GROUP_ADMINISTRATOR",
@@ -29,28 +29,26 @@
         "guardLoginPageRedirect": "login",
         "interceptorAllowedUrls": [
             "https://172.19.0.22",
-            "https://172.19.0.22/user-and-group/api/v1",
-            "https://devel.platform.cyberrange.cz",
-            "https://devel.platform.cyberrange.cz/user-and-group/api/v1"
+            "https://172.19.0.22/user-and-group/api/v1"
         ],
         "authorizationStrategyConfig": {
-            "authorizationUrl": "https://devel.platform.cyberrange.cz/user-and-group/api/v1/users/info"
+            "authorizationUrl": "https://172.19.0.22/user-and-group/api/v1/users/info"
         },
         "navigateToRequestedRoutePostLogin": true,
         "providers": [
             {
-                "label": "Login with local Keycloack",
+                "label": "Login with local Keycloak",
                 "textColor": "white",
                 "backgroundColor": "#002776",
                 "oidcConfig": {
                     "requireHttps": true,
-                    "issuer": "https://devel.platform.cyberrange.cz/keycloak/realms/CRCZP",
-                    "clientId": "CRCZP-Client",
+                    "issuer": "https://172.19.0.22/keycloak/realms/CRCZP",
+                    "clientId": "CRCZP-client",
                     "redirectUri": "https://localhost:4200",
                     "scope": "openid email profile offline_access",
-                    "logoutUrl": "https://devel.platform.cyberrange.cz/keycloak/realms//CRCZP/protocol/openid-connect/logout",
-                    "postLogoutRedirectUri": "https://devel.platform.cyberrange.cz/logout-confirmed",
-                    "silentRefreshRedirectUri": "https://devel.platform.cyberrange.cz/silent-refresh.html",
+                    "logoutUrl": "https://172.19.0.22/keycloak/realms/CRCZP/protocol/openid-connect/logout",
+                    "postLogoutRedirectUri": "https://localhost:4200/logout-confirmed",
+                    "silentRefreshRedirectUri": "https://172.19.0.22:443/silent-refresh.html",
                     "clearHashAfterLogin": true,
                     "strictDiscoveryDocumentValidation": false,
                     "skipIssuerCheck": true,
