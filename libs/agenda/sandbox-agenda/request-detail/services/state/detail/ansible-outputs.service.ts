@@ -1,6 +1,6 @@
 import { StageDetailService } from './stage-detail.service';
 import { RequestStage, RequestStageType } from '@crczp/sandbox-model';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import { Observable } from 'rxjs';
 import {
     AllocationOutputSort,
@@ -10,6 +10,7 @@ import { inject, Injectable } from '@angular/core';
 import { StagesDetailPollRegistry } from './stages-detail-poll-registry.service';
 import { PortalConfig } from '@crczp/utils';
 import { take } from 'rxjs/operators';
+import { OffsetPaginatedResource } from '@crczp/api-common';
 
 @Injectable()
 export class AnsibleOutputsService extends StageDetailService {
@@ -25,7 +26,7 @@ export class AnsibleOutputsService extends StageDetailService {
     protected callApiToGetStageDetail(
         stage: RequestStage,
         requestedPagination: OffsetPaginationEvent<AllocationOutputSort>,
-    ): Observable<PaginatedResource<string>> {
+    ): Observable<OffsetPaginatedResource<string>> {
         if (stage.type === RequestStageType.NETWORKING_ANSIBLE_ALLOCATION) {
             return this.api
                 .getNetworkingAnsibleOutputs(

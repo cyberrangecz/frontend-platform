@@ -1,10 +1,10 @@
 import { DatePipe } from '@angular/common';
-import { PaginatedResource } from '@sentinel/common/pagination';
 import { Column, DeleteAction, Row, RowAction, SentinelTable } from '@sentinel/components/table';
 import { CheatingDetection, CheatingDetectionStateEnum } from '@crczp/training-model';
 import { CheatingDetectionRowAdapter } from './cheating-detection-row-adapter';
 import { CheatingDetectionService } from '../services/cheating-detection.service';
 import { defer, of } from 'rxjs';
+import { OffsetPaginatedResource } from '@crczp/api-common';
 
 /**
  * Helper class transforming paginated resource to class for common table component
@@ -15,7 +15,7 @@ export class CheatingDetectionTable extends SentinelTable<
     string
 > {
     constructor(
-        resource: PaginatedResource<CheatingDetection>,
+        resource: OffsetPaginatedResource<CheatingDetection>,
         service: CheatingDetectionService,
     ) {
         const columns = [

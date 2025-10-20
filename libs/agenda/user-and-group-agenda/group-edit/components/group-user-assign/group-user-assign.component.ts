@@ -9,19 +9,15 @@ import {
     Output,
     SimpleChanges
 } from '@angular/core';
-import {
-    SentinelControlItem,
-    SentinelControlItemSignal,
-    SentinelControlsComponent
-} from '@sentinel/components/controls';
+import { SentinelControlItem, SentinelControlsComponent } from '@sentinel/components/controls';
 import { Group, User } from '@crczp/user-and-group-model';
 import { SentinelTable, SentinelTableComponent, TableLoadEvent } from '@sentinel/components/table';
 import {
     SentinelResourceSelectorComponent,
     SentinelResourceSelectorMapping
 } from '@sentinel/components/resource-selector';
-import { combineLatest, defer, Observable } from 'rxjs';
-import { map, take } from 'rxjs/operators';
+import { combineLatest, defer, Observable, of } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { GroupMemberTable } from '../../model/table/group-member-table';
 import { DeleteControlItem, SaveControlItem } from '@crczp/user-and-group-agenda/internal';
 import { UserAssignService } from '../../services/state/user-assign.service';
@@ -68,7 +64,6 @@ export class GroupUserAssignComponent implements OnChanges {
     /**
      * Pagination id for saving and restoring pagination size
      */
-    @Input() paginationId = 'crczp-group-user-assign';
     /**
      * Event emitter of unsaved changes
      */
@@ -76,19 +71,27 @@ export class GroupUserAssignComponent implements OnChanges {
     /**
      * Users available to assign
      */
-    users$: Observable<User[]>;
+    users$: Observable<User[]> = of();
     /**
      * Mapping of user model attributes to selector component
      */
-    userMapping: SentinelResourceSelectorMapping;
+    userMapping: SentinelResourceSelectorMapping = {
+        id: 'id',
+        title: 'name',
+        subtitle: 'login',
+        icon: 'picture',
+    };
     /**
      * Groups available to import (assign its users to edited group-overview)
      */
-    groups$: Observable<Group[]>;
+    groups$: Observable<Group[]> = of();
     /**
      * Mapping of group-overview model attribute to selector component
      */
-    groupMapping: SentinelResourceSelectorMapping;
+    groupMapping: SentinelResourceSelectorMapping = {
+        id: 'id',
+        title: 'name',
+    };
     /**
      * Data for table component of already assigned users
      */
@@ -101,30 +104,17 @@ export class GroupUserAssignComponent implements OnChanges {
      * True if data loading for table component is in progress, false otherwise
      */
     isLoadingAssignedUsers$: Observable<boolean>;
-    selectedUsersToAssign$: Observable<User[]>;
-    selectedGroupsToImport$: Observable<Group[]>;
-    assignUsersControls: SentinelControlItem[];
-    assignedUsersControls: SentinelControlItem[];
+    selectedUsersToAssign$: Observable<User[]> = of();
+    selectedGroupsToImport$: Observable<Group[]> = of();
+    assignUsersControls: SentinelControlItem[] = [];
+    assignedUsersControls: SentinelControlItem[] = [];
     destroyRef = inject(DestroyRef);
     private readonly initialUserPagination = createPaginationEvent<UserSort>({
-        sort: 'full_name',
+        sort: 'fullName',
         sortDir: 'asc',
     });
     private userAssignService = inject(UserAssignService);
     private paginationService = inject(PaginationStorageService);
-
-    constructor() {
-        this.userMapping = {
-            id: 'id',
-            title: 'name',
-            subtitle: 'login',
-            icon: 'picture',
-        };
-        this.groupMapping = {
-            id: 'id',
-            title: 'name',
-        };
-    }
 
     ngOnChanges(changes: SimpleChanges): void {
         if (
@@ -132,12 +122,14 @@ export class GroupUserAssignComponent implements OnChanges {
             this.resource &&
             this.resource.id !== undefined
         ) {
+            console.log(
+                'Initializing UserAssignComponent for resource:',
+                this.resource,
+            );
             this.init();
+        } else {
+            console.log('Resource is ', this.resource);
         }
-    }
-
-    onControlAction(controlItem: SentinelControlItemSignal): void {
-        controlItem.result$.pipe(take(1)).subscribe();
     }
 
     /**
@@ -145,6 +137,7 @@ export class GroupUserAssignComponent implements OnChanges {
      * @param users selected users to assign
      */
     onUserToAssignSelection(users: User[]): void {
+        console.log('Selected users to assign:', users);
         this.userAssignService.setSelectedUsersToAssign(users);
     }
 
@@ -169,6 +162,8 @@ export class GroupUserAssignComponent implements OnChanges {
      * @param filterValue search value
      */
     searchUsers(filterValue: string): void {
+        console.log('Searching users with filter:', filterValue);
+
         this.users$ = this.userAssignService
             .getUsersToAssign(this.resource.id, filterValue)
             .pipe(map((resource) => resource.elements));
@@ -193,7 +188,7 @@ export class GroupUserAssignComponent implements OnChanges {
         this.userAssignService
             .getAssigned(
                 this.resource.id,
-                PaginationMapper.fromPaginationEvent(loadEvent.pagination),
+                PaginationMapper.toOffsetPaginationEvent(loadEvent.pagination),
                 loadEvent.filter,
             )
             .pipe(takeUntilDestroyed(this.destroyRef))
@@ -202,9 +197,13 @@ export class GroupUserAssignComponent implements OnChanges {
 
     private init() {
         this.selectedUsersToAssign$ =
-            this.userAssignService.selectedUsersToAssign$;
+            this.userAssignService.selectedUsersToAssign$.pipe(
+                map((users) => users ?? []),
+            );
         this.selectedGroupsToImport$ =
-            this.userAssignService.selectedGroupsToImport$;
+            this.userAssignService.selectedGroupsToImport$.pipe(
+                map((groups) => groups ?? []),
+            );
         this.initTable();
         this.initAssignUsersControls();
         this.initAssignedUsersControls();
@@ -219,7 +218,9 @@ export class GroupUserAssignComponent implements OnChanges {
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe((selections) =>
                 this.hasUnsavedChanges.emit(
-                    selections.some((selection) => selection.length > 0),
+                    selections.some(
+                        (selection) => selection && selection.length > 0,
+                    ),
                 ),
             );
     }

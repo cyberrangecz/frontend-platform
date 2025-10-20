@@ -1,11 +1,11 @@
 import { inject, Injectable } from '@angular/core';
 import { GroupApi, RoleSort } from '@crczp/user-and-group-api';
 import { UserRole } from '@crczp/user-and-group-model';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { ErrorHandlerService } from '@crczp/utils';
-import { createInfinitePaginatedResource, QueryParam } from '@crczp/api-common';
+import { createInfinitePaginatedResource, OffsetPaginatedResource, QueryParam } from '@crczp/api-common';
 
 /**
  * Basic implementation of a layer between a component and an API service.
@@ -16,7 +16,7 @@ export class RolesDetailService {
     /**
      * List of roles already assigned to the resource
      */
-    assignedRoles$: Observable<PaginatedResource<UserRole>>;
+    assignedRoles$: Observable<OffsetPaginatedResource<UserRole>> = of();
     protected hasErrorSubject$: BehaviorSubject<boolean> = new BehaviorSubject(
         false,
     );
@@ -33,7 +33,7 @@ export class RolesDetailService {
     private api = inject(GroupApi);
     private errorHandler = inject(ErrorHandlerService);
     private assignedRolesSubject$: BehaviorSubject<
-        PaginatedResource<UserRole>
+        OffsetPaginatedResource<UserRole>
     > = new BehaviorSubject(createInfinitePaginatedResource());
 
     /**
@@ -46,7 +46,7 @@ export class RolesDetailService {
         resourceId: number,
         pagination: OffsetPaginationEvent<RoleSort>,
         filterValue: string = null,
-    ): Observable<PaginatedResource<UserRole>> {
+    ): Observable<OffsetPaginatedResource<UserRole>> {
         const filter = filterValue
             ? [new QueryParam('roleType', filterValue)]
             : [];

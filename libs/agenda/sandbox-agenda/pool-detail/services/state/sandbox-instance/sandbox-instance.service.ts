@@ -7,9 +7,9 @@ import {
     SentinelConfirmationDialogConfig,
     SentinelDialogResultEnum
 } from '@sentinel/components/dialogs';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import {
-    AllocationUnitSort,
+    AllocationRequestSort,
     PoolApi,
     SandboxAllocationUnitsApi,
     SandboxInstanceApi,
@@ -28,6 +28,7 @@ import {
 import {
     AllocateVariableSandboxesDialogComponent
 } from '../../../components/allocate-variable-sandboxes/allocate-variable-sandboxes-dialog.component';
+import { OffsetPaginatedResource } from '@crczp/api-common';
 
 /**
  * Basic implementation of a layer between a component and an API service.
@@ -39,7 +40,7 @@ export class SandboxInstanceService extends OffsetPaginatedElementsPollingServic
     SandboxInstanceSort
 > {
     public allocationUnits$: Observable<
-        PaginatedResource<SandboxAllocationUnit>
+        OffsetPaginatedResource<SandboxAllocationUnit>
     >;
 
     private sandboxApi = inject(SandboxInstanceApi);
@@ -69,7 +70,7 @@ export class SandboxInstanceService extends OffsetPaginatedElementsPollingServic
     getAllSandboxes(
         poolId: number,
         pagination: OffsetPaginationEvent<SandboxInstanceSort>,
-    ): Observable<PaginatedResource<SandboxInstance>> {
+    ): Observable<OffsetPaginatedResource<SandboxInstance>> {
         this.onManualResourceRefresh(pagination, poolId);
         return this.sandboxApi.getSandboxes(poolId, pagination).pipe(
             tap(
@@ -88,8 +89,8 @@ export class SandboxInstanceService extends OffsetPaginatedElementsPollingServic
      */
     getAllUnits(
         poolId: number,
-        pagination: OffsetPaginationEvent<AllocationUnitSort>,
-    ): Observable<PaginatedResource<SandboxAllocationUnit>> {
+        pagination: OffsetPaginationEvent<AllocationRequestSort>,
+    ): Observable<OffsetPaginatedResource<SandboxAllocationUnit>> {
         this.lastPoolId = poolId;
         return this.allocationUnitsService.getAll(poolId, pagination);
     }
@@ -117,7 +118,7 @@ export class SandboxInstanceService extends OffsetPaginatedElementsPollingServic
      */
     allocate(
         poolId: number,
-    ): Observable<PaginatedResource<SandboxAllocationUnit>> {
+    ): Observable<OffsetPaginatedResource<SandboxAllocationUnit>> {
         return this.poolApi.allocateSandboxes(poolId).pipe(
             tap(
                 () =>
@@ -136,7 +137,7 @@ export class SandboxInstanceService extends OffsetPaginatedElementsPollingServic
                 return this.getAllUnits(
                     this.lastPoolId,
                     this
-                        .lastPagination as OffsetPaginationEvent<AllocationUnitSort>,
+                        .lastPagination as OffsetPaginationEvent<AllocationRequestSort>,
                 );
             }),
         );
@@ -151,7 +152,7 @@ export class SandboxInstanceService extends OffsetPaginatedElementsPollingServic
     allocateSpecified(
         poolId: number,
         total: number,
-    ): Observable<PaginatedResource<SandboxAllocationUnit>> {
+    ): Observable<OffsetPaginatedResource<SandboxAllocationUnit>> {
         if (total == 1) {
             return this.allocate(poolId);
         }
@@ -178,7 +179,7 @@ export class SandboxInstanceService extends OffsetPaginatedElementsPollingServic
                                   return this.getAllUnits(
                                       this.lastPoolId,
                                       this
-                                          .lastPagination as OffsetPaginationEvent<AllocationUnitSort>,
+                                          .lastPagination as OffsetPaginationEvent<AllocationRequestSort>,
                                   );
                               }),
                           )
@@ -209,7 +210,7 @@ export class SandboxInstanceService extends OffsetPaginatedElementsPollingServic
                 this.getAllUnits(
                     this.lastPoolId,
                     this
-                        .lastPagination as OffsetPaginationEvent<AllocationUnitSort>,
+                        .lastPagination as OffsetPaginationEvent<AllocationRequestSort>,
                 ),
             ),
         );
@@ -237,7 +238,7 @@ export class SandboxInstanceService extends OffsetPaginatedElementsPollingServic
      */
     lock(
         allocationUnitId: number,
-    ): Observable<PaginatedResource<SandboxAllocationUnit>> {
+    ): Observable<OffsetPaginatedResource<SandboxAllocationUnit>> {
         return this.sandboxApi.lockSandbox(allocationUnitId).pipe(
             tap(
                 () =>
@@ -255,7 +256,7 @@ export class SandboxInstanceService extends OffsetPaginatedElementsPollingServic
                 this.getAllUnits(
                     this.lastPoolId,
                     this
-                        .lastPagination as OffsetPaginationEvent<AllocationUnitSort>,
+                        .lastPagination as OffsetPaginationEvent<AllocationRequestSort>,
                 ),
             ),
         );
@@ -306,7 +307,7 @@ export class SandboxInstanceService extends OffsetPaginatedElementsPollingServic
                     this.getAllUnits(
                         this.lastPoolId,
                         this
-                            .lastPagination as OffsetPaginationEvent<AllocationUnitSort>,
+                            .lastPagination as OffsetPaginationEvent<AllocationRequestSort>,
                     ),
                 ),
             );
@@ -325,7 +326,7 @@ export class SandboxInstanceService extends OffsetPaginatedElementsPollingServic
                     this.getAllUnits(
                         this.lastPoolId,
                         this
-                            .lastPagination as OffsetPaginationEvent<AllocationUnitSort>,
+                            .lastPagination as OffsetPaginationEvent<AllocationRequestSort>,
                     ),
                 ),
             );
@@ -344,7 +345,7 @@ export class SandboxInstanceService extends OffsetPaginatedElementsPollingServic
                     this.getAllUnits(
                         this.lastPoolId,
                         this
-                            .lastPagination as OffsetPaginationEvent<AllocationUnitSort>,
+                            .lastPagination as OffsetPaginationEvent<AllocationRequestSort>,
                     ),
                 ),
             );
@@ -372,7 +373,7 @@ export class SandboxInstanceService extends OffsetPaginatedElementsPollingServic
                 this.getAllUnits(
                     this.lastPoolId,
                     this
-                        .lastPagination as OffsetPaginationEvent<AllocationUnitSort>,
+                        .lastPagination as OffsetPaginationEvent<AllocationRequestSort>,
                 ),
             ),
         );
@@ -439,7 +440,7 @@ export class SandboxInstanceService extends OffsetPaginatedElementsPollingServic
     }
 
     protected refreshResource(): Observable<
-        PaginatedResource<SandboxInstance>
+        OffsetPaginatedResource<SandboxInstance>
     > {
         this.hasErrorSubject$.next(false);
         return this.sandboxApi
@@ -481,7 +482,7 @@ export class SandboxInstanceService extends OffsetPaginatedElementsPollingServic
 
     private callApiToUnlock(
         allocationUnitId: number,
-    ): Observable<PaginatedResource<SandboxAllocationUnit>> {
+    ): Observable<OffsetPaginatedResource<SandboxAllocationUnit>> {
         return this.sandboxApi.unlockSandbox(allocationUnitId).pipe(
             tap(
                 () =>
@@ -499,7 +500,7 @@ export class SandboxInstanceService extends OffsetPaginatedElementsPollingServic
                 this.getAllUnits(
                     this.lastPoolId,
                     this
-                        .lastPagination as OffsetPaginationEvent<AllocationUnitSort>,
+                        .lastPagination as OffsetPaginationEvent<AllocationRequestSort>,
                 ),
             ),
         );
@@ -507,7 +508,7 @@ export class SandboxInstanceService extends OffsetPaginatedElementsPollingServic
 
     private callApiToDelete(
         sandboxInstance: SandboxInstance,
-    ): Observable<PaginatedResource<SandboxAllocationUnit>> {
+    ): Observable<OffsetPaginatedResource<SandboxAllocationUnit>> {
         return this.sandboxAllocationUnitsApi
             .createCleanupRequest(sandboxInstance.allocationUnitId)
             .pipe(
@@ -527,7 +528,7 @@ export class SandboxInstanceService extends OffsetPaginatedElementsPollingServic
                     this.getAllUnits(
                         this.lastPoolId,
                         this
-                            .lastPagination as OffsetPaginationEvent<AllocationUnitSort>,
+                            .lastPagination as OffsetPaginationEvent<AllocationRequestSort>,
                     ),
                 ),
             );

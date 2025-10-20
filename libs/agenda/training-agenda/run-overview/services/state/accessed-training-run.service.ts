@@ -4,18 +4,24 @@ import { AccessedTrainingRunSort, AdaptiveRunApi, LinearRunApi } from '@crczp/tr
 import { AccessedTrainingRun, TrainingTypeEnum } from '@crczp/training-model';
 import { BehaviorSubject, from, Observable } from 'rxjs';
 import { concatMap, map, tap } from 'rxjs/operators';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
-import { OffsetPaginatedElementsService } from '@sentinel/common';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import { ErrorHandlerService, PortalConfig } from '@crczp/utils';
 import { Routing } from '@crczp/routing-commons';
-import { QueryParam } from '@crczp/api-common';
+import { CrczpOffsetElementsPaginatedService, OffsetPaginatedResource, QueryParam } from '@crczp/api-common';
 
 /**
  * Basic implementation of layer between component and API service.
  */
 @Injectable()
-export class AccessedTrainingRunService extends OffsetPaginatedElementsService<AccessedTrainingRun> {
+export class AccessedTrainingRunService extends CrczpOffsetElementsPaginatedService<AccessedTrainingRun> {
     public hasErrorSubject$ = new BehaviorSubject<boolean>(false);
+    override resource$ = this.resourceSubject$
+        .asObservable()
+        .pipe(
+            map((elements) =>
+                OffsetPaginatedResource.fromPaginatedElements(elements),
+            ),
+        );
     private trainingApi = inject(LinearRunApi);
     private adaptiveApi = inject(AdaptiveRunApi);
     private router = inject(Router);
@@ -33,7 +39,7 @@ export class AccessedTrainingRunService extends OffsetPaginatedElementsService<A
     getAll(
         pagination: OffsetPaginationEvent<AccessedTrainingRunSort>,
         filter: string,
-    ): Observable<PaginatedResource<AccessedTrainingRun>> {
+    ): Observable<OffsetPaginatedResource<AccessedTrainingRun>> {
         this.hasErrorSubject$.next(false);
         const filters = filter ? [new QueryParam('title', filter)] : [];
         pagination.size = Number.MAX_SAFE_INTEGER;
@@ -90,8 +96,8 @@ export class AccessedTrainingRunService extends OffsetPaginatedElementsService<A
 
     private getAllAdaptive(
         pagination: OffsetPaginationEvent<AccessedTrainingRunSort>,
-        trainingRuns: PaginatedResource<AccessedTrainingRun>,
-    ): Observable<PaginatedResource<AccessedTrainingRun>> {
+        trainingRuns: OffsetPaginatedResource<AccessedTrainingRun>,
+    ): Observable<OffsetPaginatedResource<AccessedTrainingRun>> {
         return this.adaptiveApi.getAccessed(pagination).pipe(
             map(
                 (adaptiveRuns) => {

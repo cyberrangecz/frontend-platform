@@ -4,14 +4,164 @@
     <meta charset="utf-8">
     <title>CyberRangeᶜᶻ Platform</title>
     <base href="/">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/themes/prism.min.css" rel="stylesheet" />
-    <link rel="icon" type="image/x-icon" href="/assets/icon/favicon.ico">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Lekton:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="/assets/icon/favicon.ico" rel="icon" type="image/x-icon">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Lekton:ital,wght@0,400;0,700;1,400&display=swap"
+        rel="stylesheet">
     <script src="https://unpkg.com/@hpcc-js/wasm/dist/graphviz.umd.js" type="javascript/worker"></script>
+    <style>
+
+        .loading-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Inter', sans-serif;
+            z-index: 9999;
+        }
+
+        .loading-logo {
+            font-size: 3rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 2rem;
+            font-family: "Inter", sans-serif;
+            height: 200px;
+            z-index: 999;
+        }
+
+        /* HTML: <div class="loader"></div> */
+        .loader {
+            width: fit-content;
+            font-weight: bold;
+            font-family: monospace;
+            font-size: 30px;
+            background: linear-gradient(135deg, #0000 calc(50% - 0.5em), #000 0 calc(50% + 0.5em), #0000 0) right/300% 100%;
+            animation: l22 2s infinite;
+            border-radius: 1rem;
+            z-index: 999;
+        }
+
+        .loader::before {
+            content: "Loading...";
+            color: #0000;
+            padding: 0 5px;
+            background: inherit;
+            background-image: linear-gradient(135deg, #000 calc(50% - 0.5em), #fff 0 calc(50% + 0.5em), #000 0);
+            -webkit-background-clip: text;
+            background-clip: text;
+            z-index: 999;
+        }
+
+        @keyframes l22 {
+            100% {
+                background-position: left
+            }
+        }
+
+        .sidebar {
+            position: absolute;
+            left: 0;
+            width: 140px;
+            height: 100%;
+            background: linear-gradient(147deg, #03031f 0%, #141f64 250%);
+            animation: sidebarPulse 2.5s infinite;
+        }
+
+        @keyframes sidebarPulse {
+            0% {
+                background: linear-gradient(147deg, #03031f 0%, #141f64 100%);
+            }
+            100% {
+                background: linear-gradient(512deg, #03031f 0%, #141f64 100%);
+            }
+        }
+
+        .toolbar-top {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: calc(100% - 140px);
+            height: 50px;
+            background: linear-gradient(90deg, #4045ea 0%, #6a7cff 100%);
+            box-shadow: 0 3px 5px -1px #0003, 0 6px 10px #00000024, 0 1px 18px #0000001f;
+            overflow: visible;
+            animation: toolbarTopAnim 2.5s infinite alternate;
+        }
+
+        @keyframes toolbarTopAnim {
+            0% {
+                background: linear-gradient(90deg, #4045ea 0%, #6a7cff 100%);
+            }
+            100% {
+                background: linear-gradient(270deg, #6a7cff 0%, #4045ea 100%);
+            }
+        }
+
+        .toolbar-bottom {
+            position: absolute;
+            top: 50px;
+            right: 0;
+            width: calc(100% - 140px);
+            height: 40px;
+            background: linear-gradient(90deg, #4045ea 0%, #6a7cff 100%);
+            overflow: visible;
+            animation: toolbarBottomAnim 2.5s infinite;
+        }
+
+        @keyframes toolbarBottomAnim {
+            0% {
+                background: linear-gradient(90deg, #4045ea 0%, #7a86ea 100%);
+            }
+            100% {
+                background: linear-gradient(270deg, #7a86ea 0%, #4045ea 100%);
+            }
+        }
+
+        .layout-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: visible;
+            animation: fadeIn 0.5s ease-in-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+    </style>
 </head>
 <body>
-<crczp-app-root class="mat-typography"></crczp-app-root>
+<crczp-app-root class="mat-typography">
+    <div class="loading-container">
+        <div class="loading-alignment">
+            <img alt="CyberRangeᶜᶻ Platform" class="loading-logo" src="./assets/logo/logo-black.svg" />
+            <div class="loader-container">
+                <div class="loader"></div>
+            </div>
+        </div>
+        <div class="layout-overlay">
+            <div class="sidebar"></div>
+            <div class="toolbar-bottom"></div>
+            <div class="toolbar-top"></div>
+        </div>
+    </div>
+</crczp-app-root>
 </body>
 </html>

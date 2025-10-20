@@ -1,10 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { SentinelParamsMerger } from '@sentinel/common';
-import {
-    OffsetPaginationEvent,
-    PaginatedResource,
-} from '@sentinel/common/pagination';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { DetectionEventMapper } from '../mappers/detection-event/detection-event-mapper';
@@ -37,6 +34,7 @@ import { ForbiddenCommandsDetectionEventMapper } from '../mappers/detection-even
 import { DetectedForbiddenCommandMapper } from '../mappers/detection-event/detected-forbidden-command-mapper';
 import {
     JavaPaginatedResource,
+    OffsetPaginatedResource,
     PaginationMapper,
     ParamsBuilder,
     QueryParam,
@@ -70,7 +68,7 @@ export class DetectionEventApi {
         cheatingDetectionId: number,
         trainingInstanceId: number,
         filters: QueryParam[] = [],
-    ): Observable<PaginatedResource<AbstractDetectionEvent>> {
+    ): Observable<OffsetPaginatedResource<AbstractDetectionEvent>> {
         const params = SentinelParamsMerger.merge([
             new HttpParams().append(
                 'trainingInstanceId',
@@ -89,7 +87,7 @@ export class DetectionEventApi {
             .pipe(
                 map(
                     (response) =>
-                        new PaginatedResource<AbstractDetectionEvent>(
+                        new OffsetPaginatedResource<AbstractDetectionEvent>(
                             DetectionEventMapper.fromDTOs(response.content),
                             PaginationMapper.fromDjangoDTO(response.pagination),
                         ),
@@ -105,7 +103,7 @@ export class DetectionEventApi {
     getAllForbiddenCommandsOfEvent(
         pagination: OffsetPaginationEvent<DetectedForbiddenCommandSort>,
         eventId: number,
-    ): Observable<PaginatedResource<DetectedForbiddenCommand>> {
+    ): Observable<OffsetPaginatedResource<DetectedForbiddenCommand>> {
         const params = SentinelParamsMerger.merge([
             new HttpParams().append('eventId', eventId.toString()),
             ParamsBuilder.javaPaginationParams(pagination),
@@ -120,7 +118,7 @@ export class DetectionEventApi {
             .pipe(
                 map(
                     (response) =>
-                        new PaginatedResource<DetectedForbiddenCommand>(
+                        new OffsetPaginatedResource<DetectedForbiddenCommand>(
                             DetectedForbiddenCommandMapper.fromDTOs(
                                 response.content,
                             ),
@@ -138,7 +136,7 @@ export class DetectionEventApi {
     getAllParticipants(
         pagination: OffsetPaginationEvent<DetectionEventParticipantSort>,
         eventId: number,
-    ): Observable<PaginatedResource<DetectionEventParticipant>> {
+    ): Observable<OffsetPaginatedResource<DetectionEventParticipant>> {
         const params = SentinelParamsMerger.merge([
             new HttpParams().append('eventId', eventId.toString()),
             ParamsBuilder.javaPaginationParams(pagination),
@@ -153,7 +151,7 @@ export class DetectionEventApi {
             .pipe(
                 map(
                     (response) =>
-                        new PaginatedResource<DetectionEventParticipant>(
+                        new OffsetPaginatedResource<DetectionEventParticipant>(
                             DetectionEventParticipantMapper.fromDTOs(
                                 response.content,
                             ),

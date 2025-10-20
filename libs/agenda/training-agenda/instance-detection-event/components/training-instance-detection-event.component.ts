@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, Input, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import { Observable } from 'rxjs';
 import { SentinelTable, SentinelTableComponent, TableLoadEvent } from '@sentinel/components/table';
@@ -31,7 +31,6 @@ import { PaginationStorageService, providePaginationStorageService } from '@crcz
     ],
 })
 export class TrainingInstanceDetectionEventComponent implements OnInit {
-    @Input() paginationId = 'training-instance-detection-event';
     readonly INIT_SORT_NAME = 'levelId';
     readonly INIT_SORT_DIR = 'asc';
     cheatingDetectionId: number;

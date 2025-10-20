@@ -1,7 +1,7 @@
 <div class="content">
     <crczp-access-training-run (accessToken)="access($event)" [isLoading]="isLoading" />
     <div class="table-container">
-        <sentinel-controls (itemClicked)="onControlsAction($event)" [controls]="controls"
+        <sentinel-controls [controls]="controls"
                            [titlecased]="false" />
         <sentinel-table
             (tableLoad)="loadAccessedTrainingRuns($event)"

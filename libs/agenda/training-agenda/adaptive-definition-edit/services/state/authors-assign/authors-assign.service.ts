@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { OffsetPaginationEvent, PaginatedResource, PaginationBase } from '@sentinel/common/pagination';
+import { OffsetPaginationEvent, PaginationBase } from '@sentinel/common/pagination';
 import { UserApi, UserRefSort } from '@crczp/training-api';
 import { Designer } from '@crczp/training-model';
 import { SentinelUserAssignService } from '@sentinel/components/user-assign';
@@ -7,7 +7,12 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
 import { UserNameFilters } from '@crczp/training-agenda/internal';
 import { ErrorHandlerService } from '@crczp/utils';
-import { createPaginatedResource, createPaginationEvent, PaginationMapper } from '@crczp/api-common';
+import {
+    createPaginatedResource,
+    createPaginationEvent,
+    OffsetPaginatedResource,
+    PaginationMapper
+} from '@crczp/api-common';
 
 /**
  * Designer/Author implementation of UserAssignService from user assign library.
@@ -19,16 +24,17 @@ export class AuthorsAssignService extends SentinelUserAssignService {
     private errorHandler = inject(ErrorHandlerService);
 
     private lastAssignedPagination = createPaginationEvent<UserRefSort>({
-        sort: 'family_name',
+        sort: 'givenName',
         sortDir: 'asc',
     });
     private lastAssignedFilter: string;
-    private assignedUsersSubject: BehaviorSubject<PaginatedResource<Designer>> =
-        new BehaviorSubject(createPaginatedResource<Designer>());
+    private assignedUsersSubject: BehaviorSubject<
+        OffsetPaginatedResource<Designer>
+    > = new BehaviorSubject(createPaginatedResource<Designer>());
     /**
      * Currently assigned users (authors)
      */
-    assignedUsers$: Observable<PaginatedResource<Designer>> =
+    assignedUsers$: Observable<OffsetPaginatedResource<Designer>> =
         this.assignedUsersSubject.asObservable();
 
     /***
@@ -83,9 +89,9 @@ export class AuthorsAssignService extends SentinelUserAssignService {
         resourceId: number,
         pagination: PaginationBase<any>,
         filter: string = null,
-    ): Observable<PaginatedResource<Designer>> {
+    ): Observable<OffsetPaginatedResource<Designer>> {
         this.clearSelectedAssignedUsers();
-        this.lastAssignedPagination = PaginationMapper.fromPaginationEvent(
+        this.lastAssignedPagination = PaginationMapper.toOffsetPaginationEvent(
             pagination,
         ) as OffsetPaginationEvent<UserRefSort>;
         this.lastAssignedFilter = filter;
@@ -121,7 +127,7 @@ export class AuthorsAssignService extends SentinelUserAssignService {
     getAvailableToAssign(
         resourceId: number,
         filter: string = null,
-    ): Observable<PaginatedResource<Designer>> {
+    ): Observable<OffsetPaginatedResource<Designer>> {
         return this.userApi
             .getDesignersNotInTD(
                 resourceId,

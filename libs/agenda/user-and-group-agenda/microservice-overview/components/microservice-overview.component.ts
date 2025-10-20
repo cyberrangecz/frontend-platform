@@ -8,7 +8,6 @@ import {
     Component,
     DestroyRef,
     inject,
-    Input,
     OnInit,
 } from '@angular/core';
 import { defer, Observable, of } from 'rxjs';
@@ -19,10 +18,9 @@ import {
 } from '@sentinel/components/table';
 import {
     SentinelControlItem,
-    SentinelControlItemSignal,
     SentinelControlsComponent,
 } from '@sentinel/components/controls';
-import { map, take } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AsyncPipe } from '@angular/common';
 import {
@@ -46,7 +44,6 @@ import { MicroserviceSort } from '@crczp/user-and-group-api';
     ],
 })
 export class MicroserviceOverviewComponent implements OnInit {
-    @Input() paginationId = 'crczp-microservice-overview';
     readonly INIT_SORT_NAME = 'name';
     readonly INIT_SORT_DIR = 'asc';
     /**
@@ -77,10 +74,6 @@ export class MicroserviceOverviewComponent implements OnInit {
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe(() => this.initControls());
         this.onTableLoadEvent(initialLoadEvent);
-    }
-
-    onControlsAction(controlItem: SentinelControlItemSignal): void {
-        controlItem.result$.pipe(take(1)).subscribe();
     }
 
     /**

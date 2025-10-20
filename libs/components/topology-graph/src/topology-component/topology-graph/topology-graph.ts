@@ -32,6 +32,7 @@ export type TopologyGraphNode = {
     ip?: string;
     osType?: OsType;
     guiAccess?: boolean;
+    accessible?: boolean;
     subnetColor?: string;
     subnets?: Array<{
         name: string;
@@ -77,18 +78,21 @@ export class TopologyGraph implements AfterViewInit {
     private readonly svgService = inject(TopologyNodeSvgService);
     private readonly errorHandlerService = inject(ErrorHandlerService);
     private readonly topologySynchronizerService = inject(
-        TopologySynchronizerService
+        TopologySynchronizerService,
     );
     private nodeNamesDict: { [key: string]: TopologyGraphNode } = {};
 
     constructor() {
         toObservable(this.topology).subscribe((topology) =>
-            this.handleTopologyChange(topology)
+            this.handleTopologyChange(topology),
         );
 
         this.topologySynchronizerService.topologyDimensions$.subscribe(
             (dimensions) =>
-                this.handleDimensionsChange(dimensions.width, dimensions.height)
+                this.handleDimensionsChange(
+                    dimensions.width,
+                    dimensions.height,
+                ),
         );
     }
 
@@ -124,7 +128,7 @@ export class TopologyGraph implements AfterViewInit {
                           },
                       },
                   ]
-                : []
+                : [],
         );
     }
 
@@ -153,12 +157,13 @@ export class TopologyGraph implements AfterViewInit {
     }
 
     private handleTopologyChange(newTopology: Topology) {
+        console.log('TopologyGraph: topology changed', newTopology);
         const visualizationData =
             mapTopologyToTopologyVisualization(newTopology);
         this.nodes = visualizationData.nodes;
         this.nodeNamesDict = this.nodes.reduce(
             (acc, node) => ({ ...acc, [node.id]: node }),
-            {}
+            {},
         );
         this.links = visualizationData.links;
         this.renderNetwork();
@@ -198,7 +203,7 @@ export class TopologyGraph implements AfterViewInit {
         if (!this.network || this.nodes.length === 0) return [0, 0, 0, 0];
 
         const allNodePositions = this.nodes.map(
-            (node) => this.network.getPositions([node.id])[node.id]
+            (node) => this.network.getPositions([node.id])[node.id],
         );
 
         const xs = allNodePositions.map((pos) => pos.x);
@@ -222,11 +227,11 @@ export class TopologyGraph implements AfterViewInit {
 
         const boundedX = Math.max(
             minX - 200,
-            Math.min(viewPosition.x, maxX + 200)
+            Math.min(viewPosition.x, maxX + 200),
         );
         const boundedY = Math.max(
             minY - 200,
-            Math.min(viewPosition.y, maxY + 200)
+            Math.min(viewPosition.y, maxY + 200),
         );
 
         if (boundedX !== viewPosition.x || boundedY !== viewPosition.y) {
@@ -266,7 +271,7 @@ export class TopologyGraph implements AfterViewInit {
                     image: this.svgService.generateSubnetSvg(
                         node.name,
                         node.ip,
-                        node.subnetColor
+                        node.subnetColor,
                     ),
                     size: this.getNodeSize('SUBNET'),
                 });
@@ -293,7 +298,8 @@ export class TopologyGraph implements AfterViewInit {
                     node.nodeType,
                     node.osType,
                     node.ip,
-                    node.guiAccess
+                    node.accessible,
+                    node.guiAccess,
                 )
                 .pipe(
                     map((svgDataUri) => ({
@@ -306,11 +312,11 @@ export class TopologyGraph implements AfterViewInit {
                     catchError((err) => {
                         this.errorHandlerService.emitFrontendErrorNotification(
                             'Could not create node SVG',
-                            'Topology graph'
+                            'Topology graph',
                         );
                         console.error(err);
                         return EMPTY; // This will skip failed nodes entirely
-                    })
+                    }),
                 );
         });
 
@@ -319,7 +325,7 @@ export class TopologyGraph implements AfterViewInit {
                 catchError((err) => {
                     console.error('combineLatest error:', err);
                     return of([]);
-                })
+                }),
             )
             .subscribe((visNodes) => {
                 this.instantiateNetwork(visNodes);
@@ -348,8 +354,8 @@ export class TopologyGraph implements AfterViewInit {
                             type: 'continuous',
                             roundness: 0.2,
                         },
-                    } as Edge)
-            )
+                    }) as Edge,
+            ),
         );
 
         const data = {
@@ -364,7 +370,7 @@ export class TopologyGraph implements AfterViewInit {
         this.network = new Network(
             this.networkContainer.nativeElement,
             data,
-            TOPOLOGY_CONFIG.GRAPH
+            TOPOLOGY_CONFIG.GRAPH,
         );
 
         this.network.on('stabilized', () => {
@@ -395,11 +401,11 @@ export class TopologyGraph implements AfterViewInit {
     private emitConsoleEvent(
         topologyNode: TopologyGraphNode,
         inGui: boolean,
-        inNewWindow
+        inNewWindow,
     ) {
         if (!topologyNode.guiAccess && inGui) {
             throw new Error(
-                'Requested GUI connection on node with no GUI access'
+                'Requested GUI connection on node with no GUI access',
             );
         }
         this.openConsole.emit({

@@ -1,12 +1,17 @@
 import { inject, Injectable } from '@angular/core';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import { GroupApi, RoleApi, RoleSort } from '@crczp/user-and-group-api';
 import { UserRole } from '@crczp/user-and-group-model';
 import { BehaviorSubject, forkJoin, Observable, of } from 'rxjs';
 import { catchError, switchMap, tap } from 'rxjs/operators';
 import { RoleFilter } from '@crczp/user-and-group-agenda/internal';
 import { ErrorHandlerService } from '@crczp/utils';
-import { createInfinitePaginatedResource, createInfinitePaginationEvent, QueryParam } from '@crczp/api-common';
+import {
+    createInfinitePaginatedResource,
+    createInfinitePaginationEvent,
+    OffsetPaginatedResource,
+    QueryParam
+} from '@crczp/api-common';
 
 /**
  * Basic implementation of a layer between a component and an API service.
@@ -39,12 +44,12 @@ export class RoleAssignService {
     private roleApi = inject(RoleApi);
     private errorHandler = inject(ErrorHandlerService);
     private assignedRolesSubject$: BehaviorSubject<
-        PaginatedResource<UserRole>
+        OffsetPaginatedResource<UserRole>
     > = new BehaviorSubject(createInfinitePaginatedResource());
     /**
      * Subscribe to receive assigned roles
      */
-    assignedRoles$: Observable<PaginatedResource<UserRole>> =
+    assignedRoles$: Observable<OffsetPaginatedResource<UserRole>> =
         this.assignedRolesSubject$.asObservable();
     private lastPagination: OffsetPaginationEvent<RoleSort>;
     private lastFilter: string;
@@ -74,12 +79,12 @@ export class RoleAssignService {
     getAvailableToAssign(
         resourceId: number,
         filterValue: string = null,
-    ): Observable<PaginatedResource<UserRole>> {
+    ): Observable<OffsetPaginatedResource<UserRole>> {
         const filter = filterValue ? [new RoleFilter(filterValue)] : [];
         return this.roleApi
             .getRolesNotInGroup(
                 resourceId,
-                createInfinitePaginationEvent('full_name'),
+                createInfinitePaginationEvent('fullName'),
                 filter,
             )
             .pipe(
@@ -100,7 +105,7 @@ export class RoleAssignService {
         resourceId: number,
         pagination: OffsetPaginationEvent<RoleSort>,
         filterValue: string = null,
-    ): Observable<PaginatedResource<UserRole>> {
+    ): Observable<OffsetPaginatedResource<UserRole>> {
         this.lastPagination = pagination;
         this.lastFilter = filterValue;
         const filter = filterValue

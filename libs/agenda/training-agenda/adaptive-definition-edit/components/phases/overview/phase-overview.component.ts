@@ -8,12 +8,12 @@ import {
     OnChanges,
     OnInit,
     Output,
-    SimpleChanges,
+    SimpleChanges
 } from '@angular/core';
-import {MatDialog} from '@angular/material/dialog';
-import {SentinelControlItem, SentinelControlItemSignal, SentinelControlsComponent} from '@sentinel/components/controls';
-import {Observable} from 'rxjs';
-import {map, tap} from 'rxjs/operators';
+import { MatDialog } from '@angular/material/dialog';
+import { SentinelControlItem, SentinelControlsComponent } from '@sentinel/components/controls';
+import { Observable } from 'rxjs';
+import { map, tap } from 'rxjs/operators';
 import {
     AdaptiveQuestion,
     MitreTechnique,
@@ -22,17 +22,17 @@ import {
     QuestionnairePhase,
     QuestionnaireTypeEnum,
     TrainingDefinition,
-    TrainingPhase,
+    TrainingPhase
 } from '@crczp/training-model';
-import {PhaseStepperAdapter} from '@crczp/training-agenda/internal';
-import {PhaseEditService} from '../../../services/state/phase/phase-edit.service';
-import {PhaseMoveEvent} from '../../../model/events/phase-move-event';
-import {PhaseOverviewControls} from '../../../model/adapters/phase-overview-controls';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {MatDivider} from "@angular/material/divider";
-import {PhaseStepperComponent} from "../stepper/phase-stepper.component";
-import {AbstractPhaseEditComponent} from "../phase/abstract-phase-edit.component";
-import {AsyncPipe} from "@angular/common";
+import { PhaseStepperAdapter } from '@crczp/training-agenda/internal';
+import { PhaseEditService } from '../../../services/state/phase/phase-edit.service';
+import { PhaseMoveEvent } from '../../../model/events/phase-move-event';
+import { PhaseOverviewControls } from '../../../model/adapters/phase-overview-controls';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { MatDivider } from '@angular/material/divider';
+import { PhaseStepperComponent } from '../stepper/phase-stepper.component';
+import { AbstractPhaseEditComponent } from '../phase/abstract-phase-edit.component';
+import { AsyncPipe } from '@angular/common';
 
 /**
  * Smart component for phases stepper and phases edit components
@@ -47,8 +47,8 @@ import {AsyncPipe} from "@angular/common";
         MatDivider,
         PhaseStepperComponent,
         AbstractPhaseEditComponent,
-        AsyncPipe
-    ]
+        AsyncPipe,
+    ],
 })
 export class PhaseOverviewComponent implements OnInit, OnChanges {
     @Output() unsavedPhases: EventEmitter<Phase[]> = new EventEmitter();
@@ -57,13 +57,16 @@ export class PhaseOverviewComponent implements OnInit, OnChanges {
     @Input() mitreTechniquesList: MitreTechnique[];
     activeStep$: Observable<number>;
     stepperPhases$: Observable<PhaseStepperAdapter[]>;
-    controls: (SentinelControlItem)[];
+    controls: SentinelControlItem[];
     phaseMovingInProgress: boolean;
     updateMatrix$: Observable<boolean>;
     updateQuestionsFlag$: Observable<boolean>;
     presentTrainingPhases$: Observable<TrainingPhase[]>;
     phaseRelations: PhaseRelation[] = [];
-    questions: Map<number, AdaptiveQuestion> = new Map<number, AdaptiveQuestion>();
+    questions: Map<number, AdaptiveQuestion> = new Map<
+        number,
+        AdaptiveQuestion
+    >();
     destroyRef = inject(DestroyRef);
     private dialog = inject(MatDialog);
     private phaseService = inject(PhaseEditService);
@@ -71,8 +74,12 @@ export class PhaseOverviewComponent implements OnInit, OnChanges {
     ngOnInit(): void {
         this.activeStep$ = this.phaseService.activeStep$;
         this.stepperPhases$ = this.phaseService.phases$.pipe(
-            map((phases) => phases.map((phase) => new PhaseStepperAdapter(phase))),
-            tap(() => this.phasesCount.emit(this.phaseService.getPhasesCount())),
+            map((phases) =>
+                phases.map((phase) => new PhaseStepperAdapter(phase)),
+            ),
+            tap(() =>
+                this.phasesCount.emit(this.phaseService.getPhasesCount()),
+            ),
         );
 
         this.updateMatrix$ = this.phaseService.updateMatrix$;
@@ -81,16 +88,23 @@ export class PhaseOverviewComponent implements OnInit, OnChanges {
 
         this.phaseService.unsavedPhases$
             .pipe(takeUntilDestroyed(this.destroyRef))
-            .subscribe((unsavedLevels) => this.unsavedPhases.emit(unsavedLevels));
+            .subscribe((unsavedLevels) =>
+                this.unsavedPhases.emit(unsavedLevels),
+            );
         this.initControl();
     }
 
     ngOnChanges(changes: SimpleChanges): void {
         if ('trainingDefinition' in changes) {
-            this.phaseService.set(this.trainingDefinition.id, this.trainingDefinition.levels as Phase[]);
+            this.phaseService.set(
+                this.trainingDefinition.id,
+                this.trainingDefinition.levels as Phase[],
+            );
             this.phaseService.phases$
                 .pipe(takeUntilDestroyed(this.destroyRef))
-                .subscribe((phases) => this.updateQuestionsAndPhaseRelations(phases));
+                .subscribe((phases) =>
+                    this.updateQuestionsAndPhaseRelations(phases),
+                );
         }
     }
 
@@ -102,17 +116,16 @@ export class PhaseOverviewComponent implements OnInit, OnChanges {
         this.phaseService.setActivePhase(phaseIndex);
     }
 
-    onControlAction(control: SentinelControlItemSignal): void {
-        control.result$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
-    }
-
     /**
      * Call service to move phases from original position to a new one
      * @param event event of phases move
      */
     onPhaseMoved(event: PhaseMoveEvent): void {
         this.phaseMovingInProgress = true;
-        this.phaseService.move(event.stepperState.previousIndex, event.stepperState.currentIndex);
+        this.phaseService.move(
+            event.stepperState.previousIndex,
+            event.stepperState.currentIndex,
+        );
         this.phaseMovingInProgress = false;
     }
 
@@ -121,8 +134,13 @@ export class PhaseOverviewComponent implements OnInit, OnChanges {
     }
 
     private initControl(): void {
-        const deleteDisabled$ = this.phaseService.phases$.pipe(map((phases) => phases.length <= 0));
-        this.controls = PhaseOverviewControls.create(this.phaseService, deleteDisabled$);
+        const deleteDisabled$ = this.phaseService.phases$.pipe(
+            map((phases) => phases.length <= 0),
+        );
+        this.controls = PhaseOverviewControls.create(
+            this.phaseService,
+            deleteDisabled$,
+        );
     }
 
     private updateQuestionsAndPhaseRelations(phases: Phase[]) {
@@ -132,11 +150,16 @@ export class PhaseOverviewComponent implements OnInit, OnChanges {
             .filter(
                 (phase) =>
                     phase instanceof QuestionnairePhase &&
-                    (phase as QuestionnairePhase).questionnaireType === QuestionnaireTypeEnum.Adaptive,
+                    (phase as QuestionnairePhase).questionnaireType ===
+                        QuestionnaireTypeEnum.Adaptive,
             )
             .forEach((phase) => {
-                newPhaseRelations.push(...(phase as QuestionnairePhase).phaseRelations);
-                (phase as QuestionnairePhase).questions.forEach((question) => newQuestions.set(question.id, question));
+                newPhaseRelations.push(
+                    ...(phase as QuestionnairePhase).phaseRelations,
+                );
+                (phase as QuestionnairePhase).questions.forEach((question) =>
+                    newQuestions.set(question.id, question),
+                );
             });
         this.phaseRelations = newPhaseRelations;
         this.questions = newQuestions;

@@ -1,8 +1,8 @@
-import { PaginatedResource } from '@sentinel/common/pagination';
 import { Column, Row, SentinelTable } from '@sentinel/components/table';
 import { DetectionEventParticipant } from '@crczp/training-model';
 import { DetectionEventParticipantRowAdapter } from './detection-event-participant-row-adapter';
 import { DatePipe } from '@angular/common';
+import { OffsetPaginatedResource } from '@crczp/api-common';
 
 /**
  * @dynamic
@@ -11,7 +11,7 @@ export class DetectionEventParticipantTable extends SentinelTable<
     DetectionEventParticipantRowAdapter,
     string
 > {
-    constructor(resource: PaginatedResource<DetectionEventParticipant>) {
+    constructor(resource: OffsetPaginatedResource<DetectionEventParticipant>) {
         const columns = [
             new Column<string>('participantName', 'name', false),
             new Column<string>('occurredAtFormatted', 'occurred at', false),

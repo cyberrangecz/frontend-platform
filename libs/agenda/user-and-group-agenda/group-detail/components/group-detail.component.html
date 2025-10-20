@@ -9,82 +9,42 @@
 
     <div class="right-panel">
         <div class="icon-container">
-            <mat-icon matTooltip="Users" class="icon">people_outline</mat-icon>
+            <mat-icon class="icon" matTooltip="Users">people_outline</mat-icon>
             <div class="icon-text">{{ group.members.length }}</div>
         </div>
         <div class="icon-container">
-            <mat-icon matTooltip="Roles" class="icon">admin_panel_settings</mat-icon>
+            <mat-icon class="icon" matTooltip="Roles">admin_panel_settings</mat-icon>
             <div class="icon-text">{{ group.roles.length }}</div>
         </div>
     </div>
-    <!-- <div class="data-field">
-      <div class="key-field">
-        Name
-      </div>
-      <div class="value-field">
-        {{ group.name }}
-      </div>
-    </div>
-    <div class="data-field">
-      <div class="key-field">
-        Expiration Date
-      </div>
-      <div class="value-field">
-        {{ group.expirationDate ? (group.expirationDate | sentinelDateTimeFormat) : '-' }}
-      </div>
-    </div>
-    <div class="data-field">
-      <div class="key-field">
-        Description
-      </div>
-      <div class="value-field">
-        {{ group.description }}
-      </div>
-    </div>
-    <div class="data-field">
-      <div class="key-field">
-        Roles Count
-      </div>
-      <div class="value-field">
-        {{ group.roles.length }}
-      </div>
-    </div>
-    <div class="data-field">
-      <div class="key-field">
-        Members Count
-      </div>
-      <div class="value-field">
-        {{ group.name.length }}
-      </div>
-    </div>-->
 </mat-card>
 <mat-card appearance="outlined" class="members-card">
     <sentinel-table
-        [defaultSortName]="INIT_MEMBERS_SORT_NAME"
-        [defaultSortDirection]="INIT_SORT_DIR"
+        (tableLoad)="onMembersLoadEvent($event)"
         [data]="members$ | async"
+        [defaultSortDirection]="INIT_SORT_DIR"
+        [defaultSortName]="INIT_MEMBERS_SORT_NAME"
+        [elevation]="0"
         [hasError]="membersTableHasError$ | async"
         [isLoading]="isLoadingMembers$ | async"
-        [elevation]="0"
-        (tableLoad)="onMembersLoadEvent($event)"
     >
-        <ng-container *sentinelRow="'picture'; template: userPicture"/>
+        <ng-container *sentinelRow="'picture'; template: userPicture" />
     </sentinel-table>
 </mat-card>
 <mat-card appearance="outlined" class="roles-card">
     <sentinel-table
-        [defaultSortName]="INIT_ROLES_SORT_NAME"
-        [defaultSortDirection]="INIT_SORT_DIR"
+        (tableLoad)="onRolesLoadEvent($event)"
         [data]="roles$ | async"
+        [defaultSortDirection]="INIT_SORT_DIR"
+        [defaultSortName]="INIT_ROLES_SORT_NAME"
+        [elevation]="0"
         [hasError]="rolesTableHasError$ | async"
         [isLoading]="isLoadingRoles$ | async"
-        [elevation]="0"
-        (tableLoad)="onRolesLoadEvent($event)"
     >
     </sentinel-table>
 </mat-card>
 
 
 <ng-template #userPicture let-row>
-    <img class="user-picture" src="{{'data:image/png;base64,'+row.element.picture}}" [alt]="row.element.name"/>
+    <img [alt]="row.element.name" class="user-picture" src="{{'data:image/png;base64,'+row.element.picture}}" />
 </ng-template>

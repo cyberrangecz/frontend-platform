@@ -1,9 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import {
-    OffsetPaginationEvent,
-    PaginatedResource,
-} from '@sentinel/common/pagination';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import { PoolApi } from '@crczp/sandbox-api';
 import {
     LinearTrainingInstanceApi,
@@ -25,11 +22,14 @@ import {
     PortalConfig,
 } from '@crczp/utils';
 import { Routing } from '@crczp/routing-commons';
-import { OffsetPaginatedElementsService } from '@sentinel/common';
-import { createInfinitePaginationEvent } from '@crczp/api-common';
+import {
+    CrczpOffsetElementsPaginatedService,
+    createInfinitePaginationEvent,
+    OffsetPaginatedResource,
+} from '@crczp/api-common';
 
 @Injectable()
-export class TrainingInstanceOverviewService extends OffsetPaginatedElementsService<TrainingInstance> {
+export class TrainingInstanceOverviewService extends CrczpOffsetElementsPaginatedService<TrainingInstance> {
     private trainingInstanceApi = inject(LinearTrainingInstanceApi);
     private dialog = inject(MatDialog);
     private poolApi = inject(PoolApi);
@@ -47,7 +47,7 @@ export class TrainingInstanceOverviewService extends OffsetPaginatedElementsServ
     getAll(
         pagination: OffsetPaginationEvent<TrainingInstanceSort>,
         filter: string = null,
-    ): Observable<PaginatedResource<TrainingInstance>> {
+    ): Observable<OffsetPaginatedResource<TrainingInstance>> {
         this.lastPagination = pagination;
         this.lastFilter = filter;
         this.hasErrorSubject$.next(false);
@@ -240,7 +240,7 @@ export class TrainingInstanceOverviewService extends OffsetPaginatedElementsServ
 
     private callApiToDelete(
         trainingInstance: TrainingInstance,
-    ): Observable<PaginatedResource<TrainingInstance>> {
+    ): Observable<OffsetPaginatedResource<TrainingInstance>> {
         return this.trainingInstanceApi.delete(trainingInstance.id).pipe(
             tap(() =>
                 this.notificationService.emit(

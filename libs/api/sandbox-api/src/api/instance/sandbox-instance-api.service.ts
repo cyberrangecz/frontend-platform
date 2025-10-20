@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { ResponseHeaderContentDispositionReader } from '@sentinel/common';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import { Lock, SandboxInstance, SandboxKeyPair, VMConsole, VMInfo, VMStatus } from '@crczp/sandbox-model';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -14,7 +14,14 @@ import { LockMapper } from '../../mappers/sandbox-instance/lock-mapper';
 import { SandboxKeyPairMapper } from '../../mappers/sandbox-instance/sandbox-key-pair-mapper';
 import { VMConsoleMapper } from '../../mappers/sandbox-instance/vm-console-mapper';
 import { VMInfoMapper } from '../../mappers/sandbox-instance/vm-info-mapper';
-import { BlobFileSaver, DjangoResourceDTO, handleJsonError, PaginationMapper, ParamsBuilder } from '@crczp/api-common';
+import {
+    BlobFileSaver,
+    DjangoResourceDTO,
+    handleJsonError,
+    OffsetPaginatedResource,
+    PaginationMapper,
+    ParamsBuilder
+} from '@crczp/api-common';
 import { PortalConfig } from '@crczp/utils';
 import { PoolLockSort, SandboxInstanceSort } from '../sorts';
 
@@ -48,7 +55,7 @@ export class SandboxInstanceApi {
     getSandboxes(
         poolId: number,
         pagination: OffsetPaginationEvent<SandboxInstanceSort>,
-    ): Observable<PaginatedResource<SandboxInstance>> {
+    ): Observable<OffsetPaginatedResource<SandboxInstance>> {
         return this.http
             .get<DjangoResourceDTO<SandboxInstanceDTO>>(
                 `${this.poolsEndpointUri}/${poolId}/${this.sandboxInstancesUriExtension}`,
@@ -59,7 +66,7 @@ export class SandboxInstanceApi {
             .pipe(
                 map(
                     (response) =>
-                        new PaginatedResource<SandboxInstance>(
+                        new OffsetPaginatedResource<SandboxInstance>(
                             SandboxInstanceMapper.fromDTOs(response.results),
                             PaginationMapper.fromDjangoDTO(response),
                         ),
@@ -122,7 +129,7 @@ export class SandboxInstanceApi {
     getSandboxLocks(
         sandboxId: number,
         pagination: OffsetPaginationEvent<PoolLockSort>,
-    ): Observable<PaginatedResource<Lock>> {
+    ): Observable<OffsetPaginatedResource<Lock>> {
         return this.http
             .get<DjangoResourceDTO<LockDTO>>(
                 `${this.unitsEndpointUri}/${sandboxId}/${this.locksUriExtension}`,
@@ -133,7 +140,7 @@ export class SandboxInstanceApi {
             .pipe(
                 map(
                     (response) =>
-                        new PaginatedResource<Lock>(
+                        new OffsetPaginatedResource<Lock>(
                             LockMapper.fromDTOs(response.results),
                             PaginationMapper.fromDjangoDTO(response),
                         ),

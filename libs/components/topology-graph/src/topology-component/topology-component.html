@@ -10,7 +10,7 @@
     }
     <mat-tab-group
         [(selectedIndex)]="selectedIndex"
-        [animationDuration]="0.2"
+        [animationDuration]="0"
         [mat-stretch-tabs]="false"
         [preserveContent]="true"
         class="wh-100 no-scroll-tabs"
@@ -29,11 +29,11 @@
             />
 
         </mat-tab>
-        @for (tab of tabs(); track tab.nodeId) {
+        @for (tab of tabs(); track tab) {
             <ng-container>
                 <mat-tab [matTooltip]="tab.nodeId">
                     <ng-template mat-tab-label>
-                      <span class="tab-label">
+                      <span (auxclick)="handleTabClick($event, $index)" class="tab-label">
                           <span class="tab-ip">{{ tab.nodeId }}</span>
                           <button (click)="closeTab($index)" class="close-tab-button">
                                 <mat-icon class="close-icon">close</mat-icon>

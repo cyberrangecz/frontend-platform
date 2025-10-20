@@ -1,5 +1,5 @@
 <div class="content">
-    <sentinel-controls (itemClicked)="onControlAction($event)" [controls]="controls" />
+    <sentinel-controls [controls]="controls" />
     <sentinel-table
         (tableLoad)="onInstancesLoadEvent($event)"
         [data]="instances$ | async"
@@ -44,12 +44,12 @@
             @if (!row.element.localEnvironment && poolSize[0] === '-') {
                 <mat-icon color="warn">error</mat-icon>
             } @else if (!row.element.localEnvironment && poolSize[1] === '0') {
-            <mat-icon class="warning">warning</mat-icon>
-        }
+                <mat-icon class="warning">warning</mat-icon>
+            }
         </div>
     } @else {
-    <crczp-logo-spinner />
-}
+        <crczp-logo-spinner />
+    }
 </ng-template>
 
 <ng-template #poolSize let-row>
@@ -65,18 +65,19 @@
                     }
                 </div>
             } @else {
-            @if (row.element.poolTitle !== 'Local') {
-                <mat-icon [matTooltip]="'Given pool does not exist.'"
-                          class="warn">warning
-                </mat-icon>
+                @if (row.element.poolTitle !== 'Local') {
+                    <mat-icon [matTooltip]="'Given pool does not exist.'"
+                              class="warn">warning
+                    </mat-icon>
+                }
             }
-        } @if (row.element.poolTitle === 'Local') {
-            <div>
-                <span>{{ poolSize[0] }}</span>
-            </div>
-        }
+            @if (row.element.poolTitle === 'Local') {
+                <div>
+                    <span>{{ poolSize[0] }}</span>
+                </div>
+            }
         </div>
     } @else {
-    <crczp-logo-spinner />
-}
+        <crczp-logo-spinner />
+    }
 </ng-template>

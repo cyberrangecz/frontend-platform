@@ -1,13 +1,11 @@
 import { inject, Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import {
-    OffsetPaginationEvent,
-    PaginatedResource,
-} from '@sentinel/common/pagination';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import { switchMap } from 'rxjs/operators';
 import { Pool } from '@crczp/sandbox-model';
 import { PoolOverviewService } from '../../state/pool-overview.service';
 import { PoolSort } from '@crczp/sandbox-api';
+import { OffsetPaginatedResource } from '@crczp/api-common';
 
 @Injectable()
 export class PoolService {
@@ -16,7 +14,7 @@ export class PoolService {
     poolsHasError$: Observable<boolean> =
         this.poolsHasErrorSubject$.asObservable();
     private poolOverviewService = inject(PoolOverviewService);
-    pools$: Observable<PaginatedResource<Pool>> =
+    pools$: Observable<OffsetPaginatedResource<Pool>> =
         this.poolOverviewService.resource$;
     private lastPagination: OffsetPaginationEvent<PoolSort>;
 

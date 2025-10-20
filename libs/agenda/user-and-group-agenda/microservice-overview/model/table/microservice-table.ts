@@ -1,13 +1,13 @@
 import { Column, Row, SentinelTable } from '@sentinel/components/table';
-import { PaginatedResource } from '@sentinel/common/pagination';
 import { Microservice } from '@crczp/user-and-group-model';
+import { OffsetPaginatedResource } from '@crczp/api-common';
 
 /**
  * @dynamic
  * Class creating data source for microservice-overview table
  */
 export class MicroserviceTable extends SentinelTable<Microservice, string> {
-    constructor(resource: PaginatedResource<Microservice>) {
+    constructor(resource: OffsetPaginatedResource<Microservice>) {
         const rows = resource.elements.map((element) =>
             MicroserviceTable.createRow(element),
         );

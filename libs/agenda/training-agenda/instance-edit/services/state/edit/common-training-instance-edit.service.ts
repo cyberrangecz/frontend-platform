@@ -3,7 +3,7 @@ import { PoolApi, PoolSort, SandboxDefinitionApi, SandboxDefinitionSort } from '
 import { TrainingDefinitionInfo, TrainingInstance } from '@crczp/training-model';
 import { BehaviorSubject, concat, forkJoin, from, Observable, timer } from 'rxjs';
 import { filter, map, switchMap, tap } from 'rxjs/operators';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import { Pool, SandboxDefinition } from '@crczp/sandbox-model';
 import { ErrorHandlerService, LoadingTracker, NotificationService, PortalConfig } from '@crczp/utils';
 import {
@@ -14,7 +14,7 @@ import {
     TrainingDefinitionSort
 } from '@crczp/training-api';
 import { CommonTrainingInstanceSnapshotService } from './common-training-instance-snapshot.service';
-import { createPaginatedResource, QueryParam } from '@crczp/api-common';
+import { createPaginatedResource, OffsetPaginatedResource, QueryParam } from '@crczp/api-common';
 
 /**
  * Basic implementation of layer between component and API service.
@@ -39,26 +39,26 @@ export abstract class CommonTrainingInstanceEditService extends CommonTrainingIn
         Number.MAX_SAFE_INTEGER,
     );
     protected releasedTrainingDefinitionsSubject: BehaviorSubject<
-        PaginatedResource<TrainingDefinitionInfo>
+        OffsetPaginatedResource<TrainingDefinitionInfo>
     > = new BehaviorSubject(this.EMPTY_RESOURCE);
     public releasedTrainingDefinitions$: Observable<
-        PaginatedResource<TrainingDefinitionInfo>
+        OffsetPaginatedResource<TrainingDefinitionInfo>
     > = this.releasedTrainingDefinitionsSubject.asObservable();
     protected unreleasedTrainingDefinitionsSubject: BehaviorSubject<
-        PaginatedResource<TrainingDefinitionInfo>
+        OffsetPaginatedResource<TrainingDefinitionInfo>
     > = new BehaviorSubject(this.EMPTY_RESOURCE);
     public unreleasedTrainingDefinitions$: Observable<
-        PaginatedResource<TrainingDefinitionInfo>
+        OffsetPaginatedResource<TrainingDefinitionInfo>
     > = this.unreleasedTrainingDefinitionsSubject.asObservable();
-    protected poolsSubject$: BehaviorSubject<PaginatedResource<Pool>> =
+    protected poolsSubject$: BehaviorSubject<OffsetPaginatedResource<Pool>> =
         new BehaviorSubject(this.EMPTY_RESOURCE);
-    public pools$: Observable<PaginatedResource<Pool>> =
+    public pools$: Observable<OffsetPaginatedResource<Pool>> =
         this.poolsSubject$.asObservable();
     protected sandboxDefinitionsSubject$: BehaviorSubject<
-        PaginatedResource<SandboxDefinition>
+        OffsetPaginatedResource<SandboxDefinition>
     > = new BehaviorSubject(this.EMPTY_RESOURCE);
     public sandboxDefinitions$: Observable<
-        PaginatedResource<SandboxDefinition>
+        OffsetPaginatedResource<SandboxDefinition>
     > = this.sandboxDefinitionsSubject$.asObservable();
 
     private loadingTracker = new LoadingTracker();
@@ -107,7 +107,7 @@ export abstract class CommonTrainingInstanceEditService extends CommonTrainingIn
     public getAllTrainingDefinitions(
         offsetPaginationEvent: OffsetPaginationEvent<TrainingDefinitionSort>,
         stateFilter: string,
-    ): Observable<PaginatedResource<TrainingDefinitionInfo>> {
+    ): Observable<OffsetPaginatedResource<TrainingDefinitionInfo>> {
         return this.trainingDefinitionApi
             .getAllForOrganizer(offsetPaginationEvent, [
                 new QueryParam('state', stateFilter),
@@ -136,7 +136,7 @@ export abstract class CommonTrainingInstanceEditService extends CommonTrainingIn
 
     public getAllPools(
         offsetPaginationEvent: OffsetPaginationEvent<PoolSort>,
-    ): Observable<PaginatedResource<Pool>> {
+    ): Observable<OffsetPaginatedResource<Pool>> {
         return this.poolApi.getPools(offsetPaginationEvent).pipe(
             tap(
                 (pools) => {
@@ -153,7 +153,7 @@ export abstract class CommonTrainingInstanceEditService extends CommonTrainingIn
 
     public getAllSandboxDefinitions(
         offsetPaginationEvent: OffsetPaginationEvent<SandboxDefinitionSort>,
-    ): Observable<PaginatedResource<SandboxDefinition>> {
+    ): Observable<OffsetPaginatedResource<SandboxDefinition>> {
         return this.sandboxDefinitionApi.getAll(offsetPaginationEvent).pipe(
             tap(
                 (sandboxDefinitions) => {
@@ -228,7 +228,7 @@ export abstract class CommonTrainingInstanceEditService extends CommonTrainingIn
             sortDir: 'asc',
         };
 
-        const observables: Observable<PaginatedResource<any>>[] = [
+        const observables: Observable<OffsetPaginatedResource<any>>[] = [
             this.getAllTrainingDefinitions(definitionPagination, 'RELEASED'),
             this.getAllTrainingDefinitions(definitionPagination, 'UNRELEASED'),
             this.getAllPools(poolPagination),

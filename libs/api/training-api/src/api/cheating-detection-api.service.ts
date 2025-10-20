@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { ResponseHeaderContentDispositionReader } from '@sentinel/common';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import { CheatingDetection } from '@crczp/training-model';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -11,6 +11,7 @@ import {
     BlobFileSaver,
     handleJsonError,
     JavaPaginatedResource,
+    OffsetPaginatedResource,
     PaginationMapper,
     ParamsBuilder
 } from '@crczp/api-common';
@@ -35,7 +36,7 @@ export class CheatingDetectionApi {
     getAll(
         pagination: OffsetPaginationEvent<CheatingDetectionSort>,
         trainingInstanceId: number,
-    ): Observable<PaginatedResource<CheatingDetection>> {
+    ): Observable<OffsetPaginatedResource<CheatingDetection>> {
         const params = ParamsBuilder.javaPaginationParams(pagination);
         return this.http
             .get<JavaPaginatedResource<CheatingDetectionDTO>>(
@@ -47,7 +48,7 @@ export class CheatingDetectionApi {
             .pipe(
                 map(
                     (response) =>
-                        new PaginatedResource<CheatingDetection>(
+                        new OffsetPaginatedResource<CheatingDetection>(
                             CheatingDetectionMapper.fromDTOs(response.content),
                             PaginationMapper.fromJavaDTO(response.pagination),
                         ),

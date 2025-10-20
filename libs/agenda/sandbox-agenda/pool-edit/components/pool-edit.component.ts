@@ -1,11 +1,7 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit } from '@angular/core';
-import {
-    SentinelControlItem,
-    SentinelControlItemSignal,
-    SentinelControlsComponent
-} from '@sentinel/components/controls';
+import { SentinelControlItem, SentinelControlsComponent } from '@sentinel/components/controls';
 import { BehaviorSubject, combineLatest, defer, Observable, switchMap, tap } from 'rxjs';
-import { map, take } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { PoolEditService } from '../services/pool-edit.service';
 import { PoolFormGroup } from './pool-form-group';
 import { AbstractControl, ReactiveFormsModule } from '@angular/forms';
@@ -131,10 +127,6 @@ export class PoolEditComponent implements OnInit {
             .getAll(createInfinitePaginationEvent('name'))
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe();
-    }
-
-    onControlsAction(control: SentinelControlItemSignal): void {
-        control.result$.pipe(take(1)).subscribe();
     }
 
     initControls(isEditMode: boolean): void {

@@ -1,4 +1,4 @@
-<sentinel-controls (itemClicked)="onControlAction($event)" [controls]="assignUsersControls"
+<sentinel-controls [controls]="assignUsersControls"
                    class="to-assign-controls" />
 <div class="add-content">
     <mat-card appearance="outlined">
@@ -30,19 +30,19 @@
             <mat-card-subtitle>Import users from already existing groups</mat-card-subtitle>
         </mat-card-header>
         <mat-card-content>
-            <sentinel-resource-selector (fetch)="searchGroups($event)"
-                                        (selectionChange)="onGroupToImportSelection($event)"
-                                        [resourceMapping]="groupMapping"
-                                        [resources]="groups$ | async"
-                                        [selected]="selectedGroupsToImport$ | async"
-                                        class="group-selector"
-                                        searchPlaceholder="Search groups by name">
-            </sentinel-resource-selector>
+            <!--            <sentinel-resource-selector (fetch)="searchGroups($event)"-->
+            <!--                                        (selectionChange)="onGroupToImportSelection($event)"-->
+            <!--                                        [resourceMapping]="groupMapping"-->
+            <!--                                        [resources]="groups$ | async"-->
+            <!--                                        [selected]="selectedGroupsToImport$ | async"-->
+            <!--                                        class="group-selector"-->
+            <!--                                        searchPlaceholder="Search groups by name">-->
+            <!--            </sentinel-resource-selector>-->
         </mat-card-content>
     </mat-card>
 </div>
 
-<sentinel-controls (itemClicked)="onControlAction($event)" [controls]="assignedUsersControls"
+<sentinel-controls [controls]="assignedUsersControls"
                    class="assigned-controls" />
 <mat-card appearance="outlined">
     <mat-card-header>

@@ -1,7 +1,4 @@
-import {
-    OffsetPaginationEvent,
-    PaginatedResource,
-} from '@sentinel/common/pagination';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import {
     AccessLevel,
     AssessmentLevel,
@@ -13,7 +10,7 @@ import {
     TrainingLevel,
 } from '@crczp/training-model';
 import { Observable } from 'rxjs';
-import { QueryParam } from '@crczp/api-common';
+import { OffsetPaginatedResource, QueryParam } from '@crczp/api-common';
 import { TrainingDefinitionSort } from '../sorts';
 
 export abstract class LinearTrainingDefinitionApi {
@@ -25,7 +22,7 @@ export abstract class LinearTrainingDefinitionApi {
     abstract getAll(
         pagination: OffsetPaginationEvent<TrainingDefinitionSort>,
         filters?: QueryParam[],
-    ): Observable<PaginatedResource<TrainingDefinition>>;
+    ): Observable<OffsetPaginatedResource<TrainingDefinition>>;
 
     /**
      * Sends http request to retrieve all training instances on specified page of a pagination for organizer (different access rights)
@@ -35,7 +32,7 @@ export abstract class LinearTrainingDefinitionApi {
     abstract getAllForOrganizer(
         pagination: OffsetPaginationEvent<TrainingDefinitionSort>,
         filters?: QueryParam[],
-    ): Observable<PaginatedResource<TrainingDefinitionInfo>>;
+    ): Observable<OffsetPaginatedResource<TrainingDefinitionInfo>>;
 
     /**
      * Sends http request to retrieve training definition by its id
@@ -195,5 +192,5 @@ export abstract class LinearTrainingDefinitionApi {
         sandboxDefId: number,
         pagination: OffsetPaginationEvent<TrainingDefinitionSort>,
         filters?: QueryParam[],
-    ): Observable<PaginatedResource<TrainingDefinition>>;
+    ): Observable<OffsetPaginatedResource<TrainingDefinition>>;
 }

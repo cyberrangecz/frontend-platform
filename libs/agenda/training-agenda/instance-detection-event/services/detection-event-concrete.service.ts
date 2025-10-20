@@ -1,21 +1,21 @@
 import { inject, Injectable } from '@angular/core';
-import { DetectionEventApi } from '@crczp/training-api';
+import { AbstractDetectionEventSort, DetectionEventApi } from '@crczp/training-api';
 import { Router } from '@angular/router';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import { from, Observable } from 'rxjs';
 import { AbstractDetectionEvent } from '@crczp/training-model';
 import { tap } from 'rxjs/operators';
 import { DetectionEventFilter } from '../model/detection-event-filter';
 import { PortalConfig } from '@crczp/utils';
 import { Routing } from '@crczp/routing-commons';
-import { OffsetPaginatedElementsService } from '@sentinel/common';
+import { CrczpOffsetElementsPaginatedService, OffsetPaginatedResource } from '@crczp/api-common';
 
 /**
  * Basic implementation of a layer between a component and an API services.
  * Can get cheating detections and perform various operations to modify them
  */
 @Injectable()
-export class DetectionEventConcreteService extends OffsetPaginatedElementsService<AbstractDetectionEvent> {
+export class DetectionEventConcreteService extends CrczpOffsetElementsPaginatedService<AbstractDetectionEvent> {
     private api = inject(DetectionEventApi);
     private router = inject(Router);
 
@@ -35,7 +35,7 @@ export class DetectionEventConcreteService extends OffsetPaginatedElementsServic
         trainingInstanceId: number,
         pagination: OffsetPaginationEvent<AbstractDetectionEventSort>,
         filter: string = null,
-    ): Observable<PaginatedResource<AbstractDetectionEvent>> {
+    ): Observable<OffsetPaginatedResource<AbstractDetectionEvent>> {
         const filters = filter ? [new DetectionEventFilter(filter)] : [];
         return this.api
             .getAll(

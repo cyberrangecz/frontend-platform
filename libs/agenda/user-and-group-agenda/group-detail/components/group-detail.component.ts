@@ -1,15 +1,18 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, Input, OnInit } from '@angular/core';
+import {
+    ChangeDetectionStrategy,
+    Component,
+    DestroyRef,
+    inject,
+    OnInit,
+} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Group, User, UserRole } from '@crczp/user-and-group-model';
-import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
-import { MembersDetailTable } from '../model/members-detail-table';
-import { RolesDetailTable } from '../model/roles-detail-table';
 import {
     SentinelRowDirective,
     SentinelTable,
     SentinelTableComponent,
-    TableLoadEvent
+    TableLoadEvent,
 } from '@sentinel/components/table';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatCardModule } from '@angular/material/card';
@@ -18,9 +21,16 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MembersDetailService } from '../services/members-detail.service';
 import { RolesDetailService } from '../services/roles-detail.service';
 import { CommonModule } from '@angular/common';
-import { PaginationStorageService, providePaginationStorageService } from '@crczp/utils';
+import {
+    PaginationStorageService,
+    providePaginationStorageService,
+} from '@crczp/utils';
 import { createPaginationEvent, PaginationMapper } from '@crczp/api-common';
 import { RoleSort, UserSort } from '@crczp/user-and-group-api';
+import { SortDir } from '@sentinel/common/pagination';
+import { map } from 'rxjs/operators';
+import { MembersDetailTable } from '../model/members-detail-table';
+import { RolesDetailTable } from '../model/roles-detail-table';
 
 @Component({
     selector: 'crczp-group-detail',
@@ -42,11 +52,9 @@ import { RoleSort, UserSort } from '@crczp/user-and-group-api';
     ],
 })
 export class GroupDetailComponent implements OnInit {
-    @Input() paginationId = 'crczp-group-detail';
-    @Input() defaultPaginationSize = 10;
-    readonly INIT_MEMBERS_SORT_NAME = 'name';
-    readonly INIT_ROLES_SORT_NAME = 'roleType';
-    readonly INIT_SORT_DIR = 'asc';
+    readonly INIT_MEMBERS_SORT_NAME: UserSort = 'fullName';
+    readonly INIT_ROLES_SORT_NAME: RoleSort = 'roleType';
+    readonly INIT_SORT_DIR: SortDir = 'asc';
     group: Group;
     roles$: Observable<SentinelTable<UserRole, string>>;
     rolesTableHasError$: Observable<boolean>;
@@ -61,11 +69,11 @@ export class GroupDetailComponent implements OnInit {
     private paginationService = inject(PaginationStorageService);
 
     private readonly initialRolePagination = createPaginationEvent<RoleSort>({
-        sort: 'role_type',
+        sort: 'roleType',
         sortDir: 'asc',
     });
     private initialUserPagination = createPaginationEvent<UserSort>({
-        sort: 'full_name',
+        sort: 'fullName',
         sortDir: this.INIT_SORT_DIR,
     });
 
@@ -82,7 +90,7 @@ export class GroupDetailComponent implements OnInit {
         this.rolesDetailService
             .getAssigned(
                 this.group.id,
-                PaginationMapper.fromPaginationEvent(loadEvent.pagination),
+                PaginationMapper.toOffsetPaginationEvent(loadEvent.pagination),
                 loadEvent.filter,
             )
             .pipe(takeUntilDestroyed(this.destroyRef))
@@ -98,7 +106,7 @@ export class GroupDetailComponent implements OnInit {
         this.membersDetailService
             .getAssigned(
                 this.group.id,
-                PaginationMapper.fromPaginationEvent(loadEvent.pagination),
+                PaginationMapper.toOffsetPaginationEvent(loadEvent.pagination),
                 loadEvent.filter,
             )
             .pipe(takeUntilDestroyed(this.destroyRef))

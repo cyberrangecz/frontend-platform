@@ -5,7 +5,7 @@ import {
     SentinelConfirmationDialogConfig,
     SentinelDialogResultEnum
 } from '@sentinel/components/dialogs';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import { SandboxAllocationUnitsApi, SandboxInstanceApi } from '@crczp/sandbox-api';
 import { SandboxInstance } from '@crczp/sandbox-model';
 import { AdaptiveRunApi, AdaptiveTrainingInstanceApi, TrainingRunSort } from '@crczp/training-api';
@@ -14,6 +14,7 @@ import { EMPTY, Observable, of } from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
 import { AdaptiveRunService } from './adaptive-run.service';
 import { ErrorHandlerService, NotificationService, PortalConfig } from '@crczp/utils';
+import { OffsetPaginatedResource } from '@crczp/api-common';
 
 /**
  * Basic implementation of layer between component and API service.
@@ -45,7 +46,7 @@ export class AdaptiveRunConcreteService extends AdaptiveRunService {
     getAll(
         trainingInstanceId: number,
         pagination: OffsetPaginationEvent<TrainingRunSort>,
-    ): Observable<PaginatedResource<TrainingRun>> {
+    ): Observable<OffsetPaginatedResource<TrainingRun>> {
         this.onManualResourceRefresh(pagination, trainingInstanceId);
         return this.adaptiveInstanceApi
             .getAssociatedTrainingRuns(trainingInstanceId, pagination)
@@ -80,7 +81,9 @@ export class AdaptiveRunConcreteService extends AdaptiveRunService {
         );
     }
 
-    protected refreshResource(): Observable<PaginatedResource<TrainingRun>> {
+    protected refreshResource(): Observable<
+        OffsetPaginatedResource<TrainingRun>
+    > {
         this.hasErrorSubject$.next(false);
         return this.adaptiveInstanceApi
             .getAssociatedTrainingRuns(

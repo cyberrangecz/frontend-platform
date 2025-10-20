@@ -38,7 +38,20 @@ export class PaginationMapper {
         };
     }
 
-    public static fromPaginationEvent<T>(
+    static fromArray<T>(items: T[], pageSize: number): OffsetPagination {
+        const totalElements = items.length;
+        const totalPages = Math.ceil(totalElements / pageSize);
+
+        return {
+            page: 0,
+            size: pageSize,
+            totalPages: totalPages,
+            totalElements: totalElements,
+            numberOfElements: Math.min(pageSize, totalElements),
+        };
+    }
+
+    public static toOffsetPaginationEvent<T>(
         pagination: PaginationEvent<T>,
         page?: number,
     ): OffsetPaginationEvent<T> {

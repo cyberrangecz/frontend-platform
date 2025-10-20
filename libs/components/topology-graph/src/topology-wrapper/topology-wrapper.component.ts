@@ -14,6 +14,8 @@ import { Topology } from '@crczp/sandbox-model';
 import { TopologyApi } from '@crczp/sandbox-api';
 import { ErrorHandlerService } from '@crczp/utils';
 import { LogoSpinnerComponent } from '@crczp/components';
+import { MatIcon } from '@angular/material/icon';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 export type TopologySource = { instanceId: string } | { definitionId: number };
 
@@ -21,7 +23,13 @@ export type TopologySource = { instanceId: string } | { definitionId: number };
     selector: 'crczp-topology-wrapper',
     templateUrl: './topology-wrapper.component.html',
     styleUrl: './topology-wrapper.component.css',
-    imports: [MatButton, MatTooltip, TopologyComponent, LogoSpinnerComponent],
+    imports: [
+        MatButton,
+        MatTooltip,
+        TopologyComponent,
+        LogoSpinnerComponent,
+        MatIcon,
+    ],
 })
 export class TopologyWrapperComponent implements OnInit {
     id = input.required<TopologySource>();
@@ -42,18 +50,18 @@ export class TopologyWrapperComponent implements OnInit {
         const topologyObservable =
             'instanceId' in this.id()
                 ? this.api.getTopologyBySandboxInstanceId(
-                      this.id()['instanceId']
+                      this.id()['instanceId'],
                   )
                 : this.api.getTopologyBySandboxDefinitionId(
-                      this.id()['definitionId']
+                      this.id()['definitionId'],
                   );
 
-        topologyObservable.subscribe({
+        topologyObservable.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
             next: (topology) => this.topology.set(topology),
             error: (error) => {
                 this.errorService.emitFrontendErrorNotification(
                     "Topology component couldn't be loaded. See console for more details.",
-                    'Topology component'
+                    'Topology component',
                 );
                 console.error(error);
             },

@@ -1,10 +1,7 @@
-import {
-    OffsetPaginationEvent,
-    PaginatedResource,
-    SortDir,
-} from '@sentinel/common/pagination';
+import { OffsetPaginationEvent, SortDir } from '@sentinel/common/pagination';
 import { inject } from '@angular/core';
 import { PortalConfig } from '@crczp/utils';
+import { OffsetPaginatedResource } from './offset-paginated-resource';
 
 export type InitPaginationOptions<Sort> = {
     sort?: Sort;
@@ -68,7 +65,7 @@ export function createPaginationEvent<Sort>(
 export function createPaginatedResource<T>(
     initialSize?: number,
     config?: PortalConfig,
-): PaginatedResource<T> {
+): OffsetPaginatedResource<T> {
     const initialSizeNonNull = initialSize
         ? initialSize
         : config
@@ -80,6 +77,8 @@ export function createPaginatedResource<T>(
             size: initialSizeNonNull,
             numberOfElements: 0,
             totalElements: 0,
+            page: 0,
+            totalPages: 0,
         },
     };
 }
@@ -118,6 +117,8 @@ export function createInfinitePaginationEvent<Sort>(
  * @returns initialized empty `PaginatedResource<T>` with `size` set to
  * `Number.MAX_SAFE_INTEGER`
  */
-export function createInfinitePaginatedResource<T>(): PaginatedResource<T> {
+export function createInfinitePaginatedResource<
+    T,
+>(): OffsetPaginatedResource<T> {
     return createPaginatedResource<T>(Number.MAX_SAFE_INTEGER);
 }

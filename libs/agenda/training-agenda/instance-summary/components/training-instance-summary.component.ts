@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { TrainingInstance } from '@crczp/training-model';
 import { Observable } from 'rxjs';
@@ -44,7 +44,6 @@ import { TrainingRunSort } from '@crczp/training-api';
     ],
 })
 export class TrainingInstanceSummaryComponent implements OnInit {
-    @Input() paginationId = 'training-instance-summary';
     trainingInstance$: Observable<TrainingInstance>;
     hasStarted$: Observable<boolean>;
     trainingRuns$: Observable<TrainingRunTable>;
@@ -63,7 +62,7 @@ export class TrainingInstanceSummaryComponent implements OnInit {
 
     private readonly initialRunPagination =
         createPaginationEvent<TrainingRunSort>({
-            sort: 'end_time',
+            sort: 'endTime',
             sortDir: 'desc',
         });
 
@@ -88,7 +87,9 @@ export class TrainingInstanceSummaryComponent implements OnInit {
                 switchMap((ti) =>
                     this.trainingRunService.getAll(
                         ti.id,
-                        PaginationMapper.fromPaginationEvent(event.pagination),
+                        PaginationMapper.toOffsetPaginationEvent(
+                            event.pagination,
+                        ),
                     ),
                 ),
                 takeUntilDestroyed(this.destroyRef),

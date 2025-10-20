@@ -16,7 +16,6 @@ import {
 import { TrainingInstance } from '@crczp/training-model';
 import {
     SentinelControlItem,
-    SentinelControlItemSignal,
     SentinelControlsComponent,
 } from '@sentinel/components/controls';
 import { map, take } from 'rxjs/operators';
@@ -90,17 +89,13 @@ export class AdaptiveInstanceOverviewComponent implements OnInit {
         this.initTable();
     }
 
-    onControlAction(control: SentinelControlItemSignal): void {
-        control.result$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
-    }
-
     onInstancesLoadEvent(
         loadEvent: TableLoadEvent<TrainingInstanceSort>,
     ): void {
         this.paginationService.savePageSize(loadEvent.pagination.size);
         this.service
             .getAll(
-                PaginationMapper.fromPaginationEvent(loadEvent.pagination),
+                PaginationMapper.toOffsetPaginationEvent(loadEvent.pagination),
                 loadEvent.filter,
             )
             .pipe(takeUntilDestroyed(this.destroyRef))

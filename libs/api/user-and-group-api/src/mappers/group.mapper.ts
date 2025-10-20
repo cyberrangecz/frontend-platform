@@ -1,12 +1,11 @@
-import {PaginatedResource} from '@sentinel/common/pagination';
-import {Group} from '@crczp/user-and-group-model';
-import {GroupDTO} from '../DTO/group/group-dto.model';
-import {CreateGroupDTO} from '../DTO/group/new-group-dto.model';
-import {UpdateGroupDTO} from '../DTO/group/update-group-dto.model';
-import {AddUsersToGroupDTO} from '../DTO/user/add-user-to-group-dto.model';
-import {RoleMapper} from './role-mapper';
-import {UserMapper} from './user.mapper';
-import {JavaPaginatedResource, PaginationMapper} from '@crczp/api-common';
+import { Group } from '@crczp/user-and-group-model';
+import { GroupDTO } from '../DTO/group/group-dto.model';
+import { CreateGroupDTO } from '../DTO/group/new-group-dto.model';
+import { UpdateGroupDTO } from '../DTO/group/update-group-dto.model';
+import { AddUsersToGroupDTO } from '../DTO/user/add-user-to-group-dto.model';
+import { RoleMapper } from './role-mapper';
+import { UserMapper } from './user.mapper';
+import { JavaPaginatedResource, OffsetPaginatedResource, PaginationMapper } from '@crczp/api-common';
 
 /**
  * Maps internal model to group DTOs and other way
@@ -17,9 +16,13 @@ export class GroupMapper {
      * Maps paginated group dto to internal model
      * @param restResource paginated group dto
      */
-    static mapPaginatedGroupDTOsToGroups(restResource: JavaPaginatedResource<GroupDTO>): PaginatedResource<Group> {
-        return new PaginatedResource<Group>(
-            restResource.content.map((groupDTO) => this.mapGroupDTOToGroup(groupDTO)),
+    static mapPaginatedGroupDTOsToGroups(
+        restResource: JavaPaginatedResource<GroupDTO>,
+    ): OffsetPaginatedResource<Group> {
+        return new OffsetPaginatedResource<Group>(
+            restResource.content.map((groupDTO) =>
+                this.mapGroupDTOToGroup(groupDTO),
+            ),
             PaginationMapper.fromJavaDTO(restResource.pagination),
         );
     }
@@ -47,7 +50,10 @@ export class GroupMapper {
      * @param group group to be mapped
      * @param groupsToImportFromId ids of groups for import of users
      */
-    static mapGroupToCreateGroupDTO(group: Group, groupsToImportFromId: number[]): CreateGroupDTO {
+    static mapGroupToCreateGroupDTO(
+        group: Group,
+        groupsToImportFromId: number[],
+    ): CreateGroupDTO {
         const result = new CreateGroupDTO();
         result.name = group.name;
         result.description = group.description;
@@ -79,7 +85,10 @@ export class GroupMapper {
      * @param userIds ids of users to add
      * @param groupIds ids of groups to import
      */
-    static createAddUsersToGroupDTO(userIds: number[], groupIds: number[]): AddUsersToGroupDTO {
+    static createAddUsersToGroupDTO(
+        userIds: number[],
+        groupIds: number[],
+    ): AddUsersToGroupDTO {
         const result = new AddUsersToGroupDTO();
         result.ids_of_users_to_be_add = userIds;
         result.ids_of_groups_of_imported_users = groupIds;

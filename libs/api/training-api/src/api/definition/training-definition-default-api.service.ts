@@ -5,11 +5,12 @@ import {
     BlobFileSaver,
     handleJsonError,
     JavaPaginatedResource,
+    OffsetPaginatedResource,
     PaginationMapper,
     ParamsBuilder,
     QueryParam
 } from '@crczp/api-common';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import {
     AccessLevel,
     AssessmentLevel,
@@ -67,7 +68,7 @@ export class TrainingDefinitionDefaultApi extends LinearTrainingDefinitionApi {
     getAll(
         pagination: OffsetPaginationEvent<TrainingDefinitionSort>,
         filters: QueryParam[] = [],
-    ): Observable<PaginatedResource<TrainingDefinition>> {
+    ): Observable<OffsetPaginatedResource<TrainingDefinition>> {
         const params = SentinelParamsMerger.merge([
             ParamsBuilder.javaPaginationParams(pagination),
             ParamsBuilder.queryParams(filters),
@@ -79,7 +80,7 @@ export class TrainingDefinitionDefaultApi extends LinearTrainingDefinitionApi {
             .pipe(
                 map(
                     (response) =>
-                        new PaginatedResource(
+                        new OffsetPaginatedResource(
                             TrainingDefinitionMapper.fromDTOs(
                                 response.content,
                                 false,
@@ -98,7 +99,7 @@ export class TrainingDefinitionDefaultApi extends LinearTrainingDefinitionApi {
     getAllForOrganizer(
         pagination: OffsetPaginationEvent<TrainingDefinitionSort>,
         filters: QueryParam[] = [],
-    ): Observable<PaginatedResource<TrainingDefinitionInfo>> {
+    ): Observable<OffsetPaginatedResource<TrainingDefinitionInfo>> {
         const params = SentinelParamsMerger.merge([
             ParamsBuilder.javaPaginationParams(pagination),
             ParamsBuilder.queryParams(filters),
@@ -110,7 +111,7 @@ export class TrainingDefinitionDefaultApi extends LinearTrainingDefinitionApi {
             .pipe(
                 map(
                     (response) =>
-                        new PaginatedResource(
+                        new OffsetPaginatedResource(
                             TrainingDefinitionInfoMapper.fromDTOs(
                                 response.content,
                             ),
@@ -441,7 +442,7 @@ export class TrainingDefinitionDefaultApi extends LinearTrainingDefinitionApi {
         sandboxDefId: number,
         pagination: OffsetPaginationEvent<TrainingDefinitionSort>,
         filters: QueryParam[] = [],
-    ): Observable<PaginatedResource<TrainingDefinition>> {
+    ): Observable<OffsetPaginatedResource<TrainingDefinition>> {
         const params = SentinelParamsMerger.merge([
             ParamsBuilder.javaPaginationParams(pagination),
             ParamsBuilder.queryParams(filters),
@@ -453,7 +454,7 @@ export class TrainingDefinitionDefaultApi extends LinearTrainingDefinitionApi {
             .pipe(
                 map(
                     (response) =>
-                        new PaginatedResource(
+                        new OffsetPaginatedResource(
                             TrainingDefinitionMapper.fromDTOs(
                                 response.content,
                                 false,

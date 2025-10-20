@@ -1,10 +1,11 @@
 import { DatePipe } from '@angular/common';
-import { PaginatedResource } from '@sentinel/common/pagination';
 import { TrainingRun, TrainingRunStateEnum } from '@crczp/training-model';
 import { Column, ExpandableSentinelTable, Row, RowExpand } from '@sentinel/components/table';
 import { TrainingRunRowAdapter } from './training-run-row-adapter';
 import { TrainingRunInfoComponent } from '../components/runs/detail/training-run-info.component';
 import { Utils } from '@crczp/utils';
+import { TrainingRunSort } from '@crczp/training-api';
+import { OffsetPaginatedResource } from '@crczp/api-common';
 
 /**
  * @dynamic
@@ -13,21 +14,31 @@ export class TrainingRunTable extends ExpandableSentinelTable<
     TrainingRun,
     TrainingRunInfoComponent,
     null,
-    string
+    TrainingRunSort
 > {
-    constructor(resource: PaginatedResource<TrainingRun>) {
+    constructor(resource: OffsetPaginatedResource<TrainingRun>) {
         const columns = [
-            new Column<string>('playerName', 'player', true, 'participantRef'),
-            new Column<string>(
+            new Column<TrainingRunSort>(
+                'playerName',
+                'player',
+                true,
+                'participantRef',
+            ),
+            new Column<TrainingRunSort>(
                 'startTimeFormatted',
                 'start time',
                 true,
                 'startTime',
             ),
-            new Column<string>('endTimeFormatted', 'end time', true, 'endTime'),
-            new Column<string>('state', 'run state', true, 'state'),
-            new Column<string>('duration', 'duration', false),
-            new Column<string>(
+            new Column<TrainingRunSort>(
+                'endTimeFormatted',
+                'end time',
+                true,
+                'endTime',
+            ),
+            new Column<TrainingRunSort>('state', 'run state', true, 'state'),
+            new Column<TrainingRunSort>('duration', 'duration', false),
+            new Column<TrainingRunSort>(
                 'sandboxInstanceAllocationId',
                 'sandbox id',
                 false,

@@ -31,14 +31,12 @@ import {
     BlobFileSaver,
     handleJsonError,
     JavaPaginatedResource,
+    OffsetPaginatedResource,
     PaginationMapper,
     ParamsBuilder,
     QueryParam,
 } from '@crczp/api-common';
-import {
-    OffsetPaginationEvent,
-    PaginatedResource,
-} from '@sentinel/common/pagination';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import { TrainingDefinitionMapper } from '../../mappers/training-definition/training-definition-mapper';
 import { TrainingDefinitionDTO } from '../../dto/training-definition/training-definition-dto';
 import { TrainingDefinitionInfoMapper } from '../../mappers/training-definition/training-definition-info-mapper';
@@ -158,7 +156,7 @@ export class AdaptiveDefinitionDefaultApiService extends AdaptiveTrainingDefinit
     getAll(
         pagination: OffsetPaginationEvent<TrainingDefinitionSort>,
         filters?: QueryParam[],
-    ): Observable<PaginatedResource<TrainingDefinition>> {
+    ): Observable<OffsetPaginatedResource<TrainingDefinition>> {
         const params = SentinelParamsMerger.merge([
             ParamsBuilder.javaPaginationParams(pagination),
             ParamsBuilder.queryParams(filters),
@@ -170,7 +168,7 @@ export class AdaptiveDefinitionDefaultApiService extends AdaptiveTrainingDefinit
             .pipe(
                 map(
                     (response) =>
-                        new PaginatedResource(
+                        new OffsetPaginatedResource(
                             TrainingDefinitionMapper.fromDTOs(
                                 response.content,
                                 false,
@@ -184,7 +182,7 @@ export class AdaptiveDefinitionDefaultApiService extends AdaptiveTrainingDefinit
     getAllForOrganizer(
         pagination: OffsetPaginationEvent<TrainingDefinitionSort>,
         filters?: QueryParam[],
-    ): Observable<PaginatedResource<TrainingDefinitionInfo>> {
+    ): Observable<OffsetPaginatedResource<TrainingDefinitionInfo>> {
         const params = SentinelParamsMerger.merge([
             ParamsBuilder.javaPaginationParams(pagination),
             ParamsBuilder.queryParams(filters),
@@ -196,7 +194,7 @@ export class AdaptiveDefinitionDefaultApiService extends AdaptiveTrainingDefinit
             .pipe(
                 map(
                     (response) =>
-                        new PaginatedResource(
+                        new OffsetPaginatedResource(
                             TrainingDefinitionInfoMapper.fromDTOs(
                                 response.content,
                             ),

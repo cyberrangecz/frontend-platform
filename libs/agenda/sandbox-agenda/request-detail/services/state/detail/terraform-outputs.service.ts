@@ -5,14 +5,12 @@ import {
     AllocationRequestsApi,
 } from '@crczp/sandbox-api';
 import { RequestStage } from '@crczp/sandbox-model';
-import {
-    OffsetPaginationEvent,
-    PaginatedResource,
-} from '@sentinel/common/pagination';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import { Observable } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { StagesDetailPollRegistry } from './stages-detail-poll-registry.service';
 import { PortalConfig } from '@crczp/utils';
+import { OffsetPaginatedResource } from '@crczp/api-common';
 
 @Injectable()
 export class TerraformOutputsService extends StageDetailService {
@@ -32,7 +30,7 @@ export class TerraformOutputsService extends StageDetailService {
     protected callApiToGetStageDetail(
         stage: RequestStage,
         requestedPagination: OffsetPaginationEvent<AllocationOutputSort>,
-    ): Observable<PaginatedResource<string>> {
+    ): Observable<OffsetPaginatedResource<string>> {
         return this.api
             .getTerraformOutputs(stage.requestId, requestedPagination)
             .pipe(
@@ -41,7 +39,7 @@ export class TerraformOutputsService extends StageDetailService {
                     const formattedEvents = paginatedResources.elements.map(
                         (event) => `${event.content}`,
                     );
-                    return new PaginatedResource<string>(
+                    return new OffsetPaginatedResource<string>(
                         formattedEvents,
                         paginatedResources.pagination,
                     );

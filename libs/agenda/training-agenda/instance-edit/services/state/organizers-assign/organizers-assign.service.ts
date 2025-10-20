@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { OffsetPaginationEvent, PaginatedResource, PaginationBase } from '@sentinel/common/pagination';
+import { OffsetPaginationEvent, PaginationBase } from '@sentinel/common/pagination';
 import { UserApi, UserRefSort } from '@crczp/training-api';
 import { Organizer } from '@crczp/training-model';
 import { SentinelUserAssignService } from '@sentinel/components/user-assign';
@@ -7,7 +7,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
 import { UserNameFilters } from '@crczp/training-agenda/internal';
 import { ErrorHandlerService } from '@crczp/utils';
-import { createPaginatedResource } from '@crczp/api-common';
+import { createPaginatedResource, OffsetPaginatedResource } from '@crczp/api-common';
 
 /**
  * Organizer implementation of UserAssignService from user assign library.
@@ -21,12 +21,12 @@ export class OrganizersAssignService extends SentinelUserAssignService {
     private lastAssignedPagination: OffsetPaginationEvent<UserRefSort>;
     private lastAssignedFilter: string;
     private assignedUsersSubject: BehaviorSubject<
-        PaginatedResource<Organizer>
+        OffsetPaginatedResource<Organizer>
     > = new BehaviorSubject(createPaginatedResource());
     /**
      * Currently assigned users (organizers)
      */
-    assignedUsers$: Observable<PaginatedResource<Organizer>> =
+    assignedUsers$: Observable<OffsetPaginatedResource<Organizer>> =
         this.assignedUsersSubject.asObservable();
 
     /***
@@ -56,12 +56,12 @@ export class OrganizersAssignService extends SentinelUserAssignService {
         resourceId: number,
         pagination: PaginationBase<string>,
         filter?: string,
-    ): Observable<PaginatedResource<Organizer>> {
+    ): Observable<OffsetPaginatedResource<Organizer>> {
         this.clearSelectedAssignedUsers();
         this.lastAssignedPagination = {
             ...pagination,
             page: 0,
-            sort: 'family_name',
+            sort: 'givenName',
         };
         this.lastAssignedFilter = filter;
         this.hasErrorSubject$.next(false);
@@ -99,14 +99,14 @@ export class OrganizersAssignService extends SentinelUserAssignService {
     getAvailableToAssign(
         resourceId: number,
         filter: string = null,
-    ): Observable<PaginatedResource<Organizer>> {
+    ): Observable<OffsetPaginatedResource<Organizer>> {
         return this.userApi
             .getOrganizersNotInTI(
                 resourceId,
                 {
                     page: 0,
                     size: Number.MAX_SAFE_INTEGER,
-                    sort: 'family_name',
+                    sort: 'givenName',
                     sortDir: 'asc',
                 },
                 false,

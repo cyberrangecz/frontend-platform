@@ -1,7 +1,7 @@
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import { TrainingInstance, TrainingRun } from '@crczp/training-model';
 import { Observable } from 'rxjs';
-import { QueryParam } from '@crczp/api-common';
+import { OffsetPaginatedResource, QueryParam } from '@crczp/api-common';
 import { TrainingInstanceSort, TrainingRunSort } from '../sorts';
 
 export abstract class AdaptiveTrainingInstanceApi {
@@ -13,7 +13,7 @@ export abstract class AdaptiveTrainingInstanceApi {
     abstract getAll(
         pagination: OffsetPaginationEvent<TrainingInstanceSort>,
         filters?: QueryParam[],
-    ): Observable<PaginatedResource<TrainingInstance>>;
+    ): Observable<OffsetPaginatedResource<TrainingInstance>>;
 
     /**
      * Sends http request to retrieves training instance by id
@@ -35,7 +35,7 @@ export abstract class AdaptiveTrainingInstanceApi {
     abstract getAssociatedTrainingRuns(
         trainingInstanceId: number,
         pagination: OffsetPaginationEvent<TrainingRunSort>,
-    ): Observable<PaginatedResource<TrainingRun>>;
+    ): Observable<OffsetPaginatedResource<TrainingRun>>;
 
     /**
      * Sends http request to create new training instance

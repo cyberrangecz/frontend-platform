@@ -1,11 +1,9 @@
 import { OffsetPaginatedElementsPollingService } from '@sentinel/common';
-import {
-    OffsetPaginationEvent,
-    PaginatedResource,
-} from '@sentinel/common/pagination';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import { Request } from '@crczp/sandbox-model';
 import { Observable } from 'rxjs';
 import { AllocationRequestSort } from '@crczp/sandbox-api';
+import { OffsetPaginatedResource } from '@crczp/api-common';
 
 /**
  * A layer between a component and an API service. Implement a concrete service by extending this class.
@@ -27,7 +25,7 @@ export abstract class RequestsService extends OffsetPaginatedElementsPollingServ
     abstract getAll(
         poolId: number,
         pagination: OffsetPaginationEvent<AllocationRequestSort>,
-    ): Observable<PaginatedResource<Request>>;
+    ): Observable<OffsetPaginatedResource<Request>>;
 
     abstract cancel(request: Request): Observable<any>;
 

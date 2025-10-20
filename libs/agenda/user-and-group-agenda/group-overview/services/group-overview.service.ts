@@ -6,7 +6,7 @@ import {
     SentinelConfirmationDialogConfig,
     SentinelDialogResultEnum
 } from '@sentinel/components/dialogs';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import { GroupApi, GroupSort } from '@crczp/user-and-group-api';
 import { Group } from '@crczp/user-and-group-model';
 import { EMPTY, Observable, of } from 'rxjs';
@@ -14,6 +14,7 @@ import { map, switchMap, tap } from 'rxjs/operators';
 import { GroupFilter, SelectablePaginatedService } from '@crczp/user-and-group-agenda/internal';
 import { ErrorHandlerService, NotificationService, PortalConfig } from '@crczp/utils';
 import { Routing } from '@crczp/routing-commons';
+import { OffsetPaginatedResource } from '@crczp/api-common';
 
 /**
  * Basic implementation of a layer between a component and an API service.
@@ -43,7 +44,7 @@ export class GroupOverviewService extends SelectablePaginatedService<Group> {
     getAll(
         pagination: OffsetPaginationEvent<GroupSort>,
         filter: string = null,
-    ): Observable<PaginatedResource<Group>> {
+    ): Observable<OffsetPaginatedResource<Group>> {
         this.lastPagination = pagination;
         this.lastFilter = filter;
         this.clearSelection();
@@ -120,7 +121,7 @@ export class GroupOverviewService extends SelectablePaginatedService<Group> {
 
     private callApiToDelete(
         groups: Group[],
-    ): Observable<PaginatedResource<Group>> {
+    ): Observable<OffsetPaginatedResource<Group>> {
         const ids = groups.map((group) => group.id);
         return this.api.deleteMultiple(ids).pipe(
             tap(

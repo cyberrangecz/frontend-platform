@@ -2,14 +2,12 @@ import { Observable } from 'rxjs';
 import { VirtualImage } from '@crczp/sandbox-model';
 import {
     DjangoResourceDTO,
+    OffsetPaginatedResource,
     PaginationMapper,
     ParamsBuilder,
-    QueryParam,
+    QueryParam
 } from '@crczp/api-common';
-import {
-    OffsetPaginationEvent,
-    PaginatedResource,
-} from '@sentinel/common/pagination';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import { map } from 'rxjs/operators';
 import { VirtualImagesMapper } from '../../mappers/vm-images/virtual-images-mapper';
 import { VirtualImageDTO } from '../../dto/vm-images/virtual-image-d-t-o';
@@ -43,7 +41,7 @@ export class VMImagesApi {
         onlyGuiAccess = false,
         cached = false,
         filters?: QueryParam[],
-    ): Observable<PaginatedResource<VirtualImage>> {
+    ): Observable<OffsetPaginatedResource<VirtualImage>> {
         const params = SentinelParamsMerger.merge([
             ParamsBuilder.djangoPaginationParams(pagination),
             ParamsBuilder.queryParams(filters),
@@ -59,7 +57,7 @@ export class VMImagesApi {
             .pipe(
                 map(
                     (response) =>
-                        new PaginatedResource<VirtualImage>(
+                        new OffsetPaginatedResource<VirtualImage>(
                             VirtualImagesMapper.fromDTOs(response.results),
                             PaginationMapper.fromDjangoDTO(response),
                         ),

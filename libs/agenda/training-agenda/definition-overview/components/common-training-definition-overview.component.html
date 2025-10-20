@@ -1,4 +1,4 @@
-<sentinel-controls (itemClicked)="onControlsAction($event)" [controls]="topControls" />
+<sentinel-controls [controls]="topControls" />
 <sentinel-table
     (tableLoad)="onLoadEvent($event)"
     [data]="trainingDefinitions$ | async"
@@ -35,6 +35,6 @@
 </sentinel-table>
 
 <div class="bottom-controls">
-    <sentinel-controls (itemClicked)="onControlsAction($event)" [controls]="bottomControls"
+    <sentinel-controls [controls]="bottomControls"
                        [titlecased]="false" />
 </div>

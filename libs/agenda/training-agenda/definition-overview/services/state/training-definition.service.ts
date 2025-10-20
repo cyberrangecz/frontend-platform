@@ -5,7 +5,7 @@ import {
     SentinelConfirmationDialogConfig,
     SentinelDialogResultEnum
 } from '@sentinel/components/dialogs';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import { TrainingDefinition, TrainingDefinitionStateEnum, TrainingTypeEnum } from '@crczp/training-model';
 import { EMPTY, from, Observable } from 'rxjs';
 import { filter, map, switchMap, take, tap } from 'rxjs/operators';
@@ -23,17 +23,16 @@ import { FileUploadDialog } from '@crczp/components';
 import {
     AdaptiveTrainingDefinitionApi,
     LinearTrainingDefinitionApi,
-    TrainingDefinitionSort,
+    TrainingDefinitionSort
 } from '@crczp/training-api';
-import { QueryParam } from '@crczp/api-common';
-import { OffsetPaginatedElementsService } from '@sentinel/common';
+import { CrczpOffsetElementsPaginatedService, OffsetPaginatedResource, QueryParam } from '@crczp/api-common';
 
 /**
  * Basic implementation of a layer between a component and an API service.
  * Can get training definitions and perform various operations to modify them
  */
 @Injectable()
-export class TrainingDefinitionService extends OffsetPaginatedElementsService<TrainingDefinition> {
+export class TrainingDefinitionService extends CrczpOffsetElementsPaginatedService<TrainingDefinition> {
     private trainingType: TrainingTypeEnum = inject(Injection.TrainingType);
     private api =
         this.trainingType === TrainingTypeEnum.LINEAR
@@ -70,7 +69,7 @@ export class TrainingDefinitionService extends OffsetPaginatedElementsService<Tr
     getAll(
         pagination: OffsetPaginationEvent<TrainingDefinitionSort>,
         filter: string,
-    ): Observable<PaginatedResource<TrainingDefinition>> {
+    ): Observable<OffsetPaginatedResource<TrainingDefinition>> {
         this.lastPagination = pagination;
         this.lastFilters = filter;
         const filters = filter ? [new QueryParam('title', filter)] : [];
@@ -120,7 +119,7 @@ export class TrainingDefinitionService extends OffsetPaginatedElementsService<Tr
      */
     delete(
         trainingDefinition: TrainingDefinition,
-    ): Observable<PaginatedResource<TrainingDefinition>> {
+    ): Observable<OffsetPaginatedResource<TrainingDefinition>> {
         return this.displayDialogToDelete(trainingDefinition).pipe(
             switchMap((result) =>
                 result === SentinelDialogResultEnum.CONFIRMED
@@ -137,7 +136,7 @@ export class TrainingDefinitionService extends OffsetPaginatedElementsService<Tr
      */
     clone(
         trainingDefinition: TrainingDefinition,
-    ): Observable<PaginatedResource<TrainingDefinition>> {
+    ): Observable<OffsetPaginatedResource<TrainingDefinition>> {
         return this.displayCloneDialog(trainingDefinition).pipe(
             switchMap((title) =>
                 title !== undefined
@@ -186,7 +185,7 @@ export class TrainingDefinitionService extends OffsetPaginatedElementsService<Tr
      * Creates a new training definition by uploading a training definition description JSON file.
      * Informs about the result and updates list of training definitions or handles an error
      */
-    upload(): Observable<PaginatedResource<TrainingDefinition>> {
+    upload(): Observable<OffsetPaginatedResource<TrainingDefinition>> {
         const dialogRef = FileUploadDialog.open(this.dialog, {
             title: 'Upload Training definition',
             mode: 'single',
@@ -227,7 +226,7 @@ export class TrainingDefinitionService extends OffsetPaginatedElementsService<Tr
     private callApiToGetAll(
         pagination: OffsetPaginationEvent<TrainingDefinitionSort>,
         filters: QueryParam[],
-    ): Observable<PaginatedResource<TrainingDefinition>> {
+    ): Observable<OffsetPaginatedResource<TrainingDefinition>> {
         return this.api.getAll(pagination, filters).pipe(
             tap(
                 (paginatedTrainings) => {
@@ -265,7 +264,7 @@ export class TrainingDefinitionService extends OffsetPaginatedElementsService<Tr
 
     private callApiToDelete(
         trainingDefinition: TrainingDefinition,
-    ): Observable<PaginatedResource<TrainingDefinition>> {
+    ): Observable<OffsetPaginatedResource<TrainingDefinition>> {
         return this.api.delete(trainingDefinition.id).pipe(
             tap(
                 () =>
@@ -301,7 +300,7 @@ export class TrainingDefinitionService extends OffsetPaginatedElementsService<Tr
     private callApiToClone(
         trainingDefinition: TrainingDefinition,
         title: string,
-    ): Observable<PaginatedResource<TrainingDefinition>> {
+    ): Observable<OffsetPaginatedResource<TrainingDefinition>> {
         return this.api.clone(trainingDefinition.id, title).pipe(
             tap(
                 () =>

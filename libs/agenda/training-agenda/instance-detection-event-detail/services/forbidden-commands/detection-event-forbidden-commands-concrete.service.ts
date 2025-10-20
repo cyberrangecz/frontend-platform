@@ -1,11 +1,12 @@
 import { inject, Injectable } from '@angular/core';
-import { DetectionEventApi } from '@crczp/training-api';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
+import { DetectedForbiddenCommandSort, DetectionEventApi } from '@crczp/training-api';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import { Observable } from 'rxjs';
 import { DetectedForbiddenCommand } from '@crczp/training-model';
 import { tap } from 'rxjs/operators';
 import { DetectionEventForbiddenCommandsService } from './detection-event-forbidden-commands.service';
 import { PortalConfig } from '@crczp/utils';
+import { OffsetPaginatedResource } from '@crczp/api-common';
 
 /**
  * Basic implementation of a layer between a component and an API services.
@@ -28,7 +29,7 @@ export class DetectionEventForbiddenCommandsConcreteService extends DetectionEve
     public getAll(
         detectionEventId: number,
         pagination: OffsetPaginationEvent<DetectedForbiddenCommandSort>,
-    ): Observable<PaginatedResource<DetectedForbiddenCommand>> {
+    ): Observable<OffsetPaginatedResource<DetectedForbiddenCommand>> {
         return this.api
             .getAllForbiddenCommandsOfEvent(pagination, detectionEventId)
             .pipe(

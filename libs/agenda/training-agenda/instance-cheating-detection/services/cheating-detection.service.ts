@@ -4,30 +4,23 @@ import { Router } from '@angular/router';
 import {
     SentinelConfirmationDialogComponent,
     SentinelConfirmationDialogConfig,
-    SentinelDialogResultEnum,
+    SentinelDialogResultEnum
 } from '@sentinel/components/dialogs';
-import {
-    OffsetPaginationEvent,
-    PaginatedResource,
-} from '@sentinel/common/pagination';
-import { CheatingDetectionApi } from '@crczp/training-api';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
+import { CheatingDetectionApi, CheatingDetectionSort } from '@crczp/training-api';
 import { CheatingDetection } from '@crczp/training-model';
 import { EMPTY, from, Observable } from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
-import {
-    ErrorHandlerService,
-    NotificationService,
-    PortalConfig,
-} from '@crczp/utils';
+import { ErrorHandlerService, NotificationService, PortalConfig } from '@crczp/utils';
 import { Routing } from '@crczp/routing-commons';
-import { OffsetPaginatedElementsService } from '@sentinel/common';
+import { CrczpOffsetElementsPaginatedService, OffsetPaginatedResource } from '@crczp/api-common';
 
 /**
  * Basic implementation of a layer between a component and an API services.
  * Can get cheating detections and perform various operations to modify them
  */
 @Injectable()
-export class CheatingDetectionService extends OffsetPaginatedElementsService<CheatingDetection> {
+export class CheatingDetectionService extends CrczpOffsetElementsPaginatedService<CheatingDetection> {
     private api = inject(CheatingDetectionApi);
     private dialog = inject(MatDialog);
     private router = inject(Router);
@@ -48,7 +41,7 @@ export class CheatingDetectionService extends OffsetPaginatedElementsService<Che
     getAll(
         trainingInstanceId: number,
         pagination: OffsetPaginationEvent<CheatingDetectionSort>,
-    ): Observable<PaginatedResource<CheatingDetection>> {
+    ): Observable<OffsetPaginatedResource<CheatingDetection>> {
         return this.api.getAll(pagination, trainingInstanceId).pipe(
             tap(
                 (detections) => {
@@ -193,7 +186,7 @@ export class CheatingDetectionService extends OffsetPaginatedElementsService<Che
     private callApiToDelete(
         cheatingDetectionId: number,
         trainingInstanceId: number,
-    ): Observable<PaginatedResource<CheatingDetection>> {
+    ): Observable<OffsetPaginatedResource<CheatingDetection>> {
         return this.api.delete(cheatingDetectionId, trainingInstanceId).pipe(
             tap(
                 () =>

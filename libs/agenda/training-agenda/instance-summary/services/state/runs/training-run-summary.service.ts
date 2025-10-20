@@ -1,18 +1,18 @@
 import { inject, Injectable } from '@angular/core';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import { LinearRunApi, LinearTrainingInstanceApi, TrainingRunSort } from '@crczp/training-api';
 import { TrainingRun, TrainingRunInfo } from '@crczp/training-model';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { ErrorHandlerService, PortalConfig } from '@crczp/utils';
-import { OffsetPaginatedElementsService } from '@sentinel/common';
+import { CrczpOffsetElementsPaginatedService, OffsetPaginatedResource } from '@crczp/api-common';
 
 /**
  * Basic implementation of layer between component and API service.
  * Can manually get training runs and poll in regular intervals.
  */
 @Injectable()
-export class TrainingRunSummaryService extends OffsetPaginatedElementsService<TrainingRun> {
+export class TrainingRunSummaryService extends CrczpOffsetElementsPaginatedService<TrainingRun> {
     private trainingInstanceApi = inject(LinearTrainingInstanceApi);
     private trainingRunApi = inject(LinearRunApi);
     private errorHandler = inject(ErrorHandlerService);
@@ -29,7 +29,7 @@ export class TrainingRunSummaryService extends OffsetPaginatedElementsService<Tr
     getAll(
         trainingInstanceId: number,
         pagination: OffsetPaginationEvent<TrainingRunSort>,
-    ): Observable<PaginatedResource<TrainingRun>> {
+    ): Observable<OffsetPaginatedResource<TrainingRun>> {
         return this.trainingInstanceApi
             .getAssociatedTrainingRuns(trainingInstanceId, pagination)
             .pipe(

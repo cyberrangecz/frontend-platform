@@ -3,13 +3,16 @@ import { tap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { inject, Injectable } from '@angular/core';
 import { VirtualImage } from '@crczp/sandbox-model';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import { ErrorHandlerService, PortalConfig } from '@crczp/utils';
-import { QueryParam } from '@crczp/api-common';
-import { OffsetPaginatedElementsService } from '@sentinel/common';
+import {
+    CrczpOffsetElementsPaginatedService,
+    OffsetPaginatedResource,
+    QueryParam,
+} from '@crczp/api-common';
 
 @Injectable()
-export class VMImagesService extends OffsetPaginatedElementsService<VirtualImage> {
+export class VMImagesService extends CrczpOffsetElementsPaginatedService<VirtualImage> {
     private vmImagesApi = inject(VMImagesApi);
     private errorHandler = inject(ErrorHandlerService);
 
@@ -32,7 +35,7 @@ export class VMImagesService extends OffsetPaginatedElementsService<VirtualImage
         onlyGuiAccess?: boolean,
         cached?: boolean,
         filter?: string,
-    ): Observable<PaginatedResource<VirtualImage>> {
+    ): Observable<OffsetPaginatedResource<VirtualImage>> {
         this.isLoadingSubject$.next(true);
         const filters = filter ? [new QueryParam('name', filter)] : [];
         return this.vmImagesApi

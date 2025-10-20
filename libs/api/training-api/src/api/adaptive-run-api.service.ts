@@ -1,8 +1,14 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { SentinelParamsMerger } from '@sentinel/common';
-import { JavaPaginatedResource, PaginationMapper, ParamsBuilder, QueryParam } from '@crczp/api-common';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
+import {
+    JavaPaginatedResource,
+    OffsetPaginatedResource,
+    PaginationMapper,
+    ParamsBuilder,
+    QueryParam,
+} from '@crczp/api-common';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import { Observable } from 'rxjs';
 import {
     AccessedTrainingRun,
@@ -10,7 +16,7 @@ import {
     Phase,
     PhaseAnswerCheck,
     QuestionAnswer,
-    TrainingRun
+    TrainingRun,
 } from '@crczp/training-model';
 import { map } from 'rxjs/operators';
 import { TrainingRunDTO } from '../dto/training-run/training-run-dto';
@@ -37,7 +43,7 @@ export class AdaptiveRunApi {
     getAll(
         pagination: OffsetPaginationEvent<TrainingRunSort>,
         filters: QueryParam[] = [],
-    ): Observable<PaginatedResource<TrainingRun>> {
+    ): Observable<OffsetPaginatedResource<TrainingRun>> {
         const params = SentinelParamsMerger.merge([
             ParamsBuilder.javaPaginationParams(pagination),
             ParamsBuilder.queryParams(filters),
@@ -47,7 +53,7 @@ export class AdaptiveRunApi {
             .pipe(
                 map(
                     (response) =>
-                        new PaginatedResource<TrainingRun>(
+                        new OffsetPaginatedResource<TrainingRun>(
                             AdaptiveRunMapper.fromDTOs(response.content),
                             PaginationMapper.fromJavaDTO(response.pagination),
                         ),
@@ -71,7 +77,7 @@ export class AdaptiveRunApi {
      */
     getAccessed(
         pagination: OffsetPaginationEvent<AccessedTrainingRunSort>,
-    ): Observable<PaginatedResource<AccessedTrainingRun>> {
+    ): Observable<OffsetPaginatedResource<AccessedTrainingRun>> {
         return this.http
             .get<JavaPaginatedResource<TrainingRunDTO>>(
                 `${this.apiUrl}/accessible`,
@@ -82,7 +88,7 @@ export class AdaptiveRunApi {
             .pipe(
                 map(
                     (response) =>
-                        new PaginatedResource<AccessedTrainingRun>(
+                        new OffsetPaginatedResource<AccessedTrainingRun>(
                             AccessedAdaptiveRunMapper.fromDTOs(
                                 response.content,
                             ),

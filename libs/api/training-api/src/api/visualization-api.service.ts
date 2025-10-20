@@ -3,14 +3,12 @@ import { inject, Injectable } from '@angular/core';
 import { SentinelParamsMerger } from '@sentinel/common';
 import {
     JavaPaginatedResource,
+    OffsetPaginatedResource,
     PaginationMapper,
     ParamsBuilder,
     QueryParam,
 } from '@crczp/api-common';
-import {
-    OffsetPaginationEvent,
-    PaginatedResource,
-} from '@sentinel/common/pagination';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import { TrainingUser, VisualizationInfo } from '@crczp/training-model';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -76,7 +74,7 @@ export class VisualizationApi {
         usersIds: number[],
         pagination: OffsetPaginationEvent<UserRefSort>,
         filters: QueryParam[] = [],
-    ): Observable<PaginatedResource<TrainingUser>> {
+    ): Observable<OffsetPaginatedResource<TrainingUser>> {
         const idsParam = new HttpParams().set('ids', usersIds.toString());
         const params = SentinelParamsMerger.merge([
             ParamsBuilder.javaPaginationParams(pagination),
@@ -89,7 +87,7 @@ export class VisualizationApi {
             })
             .pipe(
                 map((resp) => {
-                    return new PaginatedResource<TrainingUser>(
+                    return new OffsetPaginatedResource<TrainingUser>(
                         UserMapper.fromDTOs(resp.content),
                         PaginationMapper.fromJavaDTO(resp.pagination),
                     );

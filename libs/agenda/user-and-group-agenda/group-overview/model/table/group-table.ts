@@ -1,4 +1,3 @@
-import { PaginatedResource } from '@sentinel/common/pagination';
 import { Group } from '@crczp/user-and-group-model';
 import { Column, Row, RowAction, SentinelTable } from '@sentinel/components/table';
 import { defer, of } from 'rxjs';
@@ -7,6 +6,7 @@ import { GroupDeleteAction } from './group-delete-action';
 import { GroupEditAction } from './group-edit-action';
 import { GroupRowAdapter } from './group-row-adapter';
 import { Routing } from '@crczp/routing-commons';
+import { OffsetPaginatedResource } from '@crczp/api-common';
 
 /**
  * @dynamic
@@ -14,7 +14,7 @@ import { Routing } from '@crczp/routing-commons';
  */
 export class GroupTable extends SentinelTable<GroupRowAdapter, string> {
     constructor(
-        resource: PaginatedResource<Group>,
+        resource: OffsetPaginatedResource<Group>,
         service: GroupOverviewService,
     ) {
         const rows = resource.elements.map((element) =>

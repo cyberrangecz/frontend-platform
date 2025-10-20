@@ -1,22 +1,40 @@
-<sentinel-layout1 (login)="onLogin()"
-                  (logout)="onLogout()"
-                  [agendaContainers]="agendaContainers$ | async"
-                  [displayNotificationsIcon]="true"
-                  [isLoading]="loadingService.isLoading$ | async"
-                  [notificationsRoute]="notificationRoute"
-                  [user]="authService.activeUser$ | async"
-                  [version]="version"
-                  logoSrc="./assets/logo/logo.svg">
-    <div role="toolbar">
-        @if (authService.activeUser$ | async) {
-            <span class="username">{{ (authService.activeUser$ | async).nameWithAcademicTitles }}</span>
+@if (!hideSidebar()) {
+    <sentinel-layout1 (login)="onLogin()"
+                      (logout)="onLogout()"
+                      [agendaContainers]="agendaContainers$ | async"
+                      [displayNotificationsIcon]="true"
+                      [isLoading]="loadingService.isLoading$ | async"
+                      [notificationsRoute]="notificationRoute"
+                      [user]="authService.activeUser$ | async"
+                      [version]="version"
+                      logoSrc="./assets/logo/logo.svg">
+        <div role="toolbar">
+            @if (authService.activeUser$ | async) {
+                <span class="username">{{ (authService.activeUser$ | async).nameWithAcademicTitles }}</span>
+            }
+        </div>
+        @if (title$ | async; as title) {
+            <h1>{{ title }}</h1>
         }
-    </div>
-    @if (title$ | async; as title) {
-        <h1>{{ title }}</h1>
-    }
-    @if (subtitle$ | async; as subtitle) {
-        <p class="subtitle">{{ subtitle }}</p>
-    }
+        @if (subtitle$ | async; as subtitle) {
+            <p class="subtitle">{{ subtitle }}</p>
+        }
+
+        <router-outlet />
+    </sentinel-layout1>
+} @else {
+    <sentinel-toolbar
+        (login)="onLogin()"
+        (logout)="onLogout()"
+        [displayNotifications]="true"
+        [notificationsRoute]="notificationRoute"
+        [user]="authService.activeUser$ | async">
+        <div role="toolbar">
+            @if (authService.activeUser$ | async) {
+                <span class="username">{{ (authService.activeUser$ | async).nameWithAcademicTitles }}</span>
+            }
+        </div>
+    </sentinel-toolbar>
+
     <router-outlet />
-</sentinel-layout1>
+}

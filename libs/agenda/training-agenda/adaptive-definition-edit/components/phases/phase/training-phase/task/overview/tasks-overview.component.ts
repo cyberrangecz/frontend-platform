@@ -72,9 +72,6 @@ export class TasksOverviewComponent implements OnInit {
         this.phaseService.setActiveTask(index);
     }
 
-    onControlAction(control: SentinelControlItemSignal): void {
-        control.result$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
-    }
 
     onTaskMoved(event: PhaseMoveEvent): void {
         this.phaseService.moveTasks(event.stepperState.previousIndex, event.stepperState.currentIndex);

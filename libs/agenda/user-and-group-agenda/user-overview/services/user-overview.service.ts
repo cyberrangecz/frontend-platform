@@ -5,7 +5,7 @@ import {
     SentinelConfirmationDialogConfig,
     SentinelDialogResultEnum
 } from '@sentinel/components/dialogs';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import { UserApi, UserSort } from '@crczp/user-and-group-api';
 import { User } from '@crczp/user-and-group-model';
 import { EMPTY, Observable } from 'rxjs';
@@ -13,6 +13,7 @@ import { map, switchMap, take, tap } from 'rxjs/operators';
 import { SelectablePaginatedService, UserFilter } from '@crczp/user-and-group-agenda/internal';
 import { UsersUploadDialogComponent } from '../components/upload-dialog/users-upload-dialog.component';
 import { ErrorHandlerService, FileUploadProgressService, NotificationService, PortalConfig } from '@crczp/utils';
+import { OffsetPaginatedResource } from '@crczp/api-common';
 
 /**
  * Basic implementation of a layer between a component and an API service.
@@ -42,7 +43,7 @@ export class UserOverviewService extends SelectablePaginatedService<User> {
     getAll(
         pagination?: OffsetPaginationEvent<UserSort>,
         filterValue: string = null,
-    ): Observable<PaginatedResource<User>> {
+    ): Observable<OffsetPaginatedResource<User>> {
         this.lastPagination = pagination;
         this.lastFilter = filterValue;
         const filters = filterValue ? [new UserFilter(filterValue)] : [];

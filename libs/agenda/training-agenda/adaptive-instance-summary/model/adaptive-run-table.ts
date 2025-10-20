@@ -1,10 +1,10 @@
-import { PaginatedResource } from '@sentinel/common/pagination';
 import { DatePipe } from '@angular/common';
 import { TrainingRun, TrainingRunStateEnum } from '@crczp/training-model';
 import { Column, Row, SentinelTable } from '@sentinel/components/table';
 import { AdaptiveRunRowAdapter } from './adaptive-run-row-adapter';
 import { Utils } from '@crczp/utils';
 import { TrainingRunSort } from '@crczp/training-api';
+import { OffsetPaginatedResource } from '@crczp/api-common';
 
 /**
  * @dynamic
@@ -13,20 +13,20 @@ export class AdaptiveRunTable extends SentinelTable<
     AdaptiveRunRowAdapter,
     TrainingRunSort
 > {
-    constructor(resource: PaginatedResource<TrainingRun>) {
+    constructor(resource: OffsetPaginatedResource<TrainingRun>) {
         const columns = [
             new Column<TrainingRunSort>('playerName', 'player', false),
             new Column<TrainingRunSort>(
                 'startTimeFormatted',
                 'start time',
                 true,
-                'start_time',
+                'startTime',
             ),
             new Column<TrainingRunSort>(
                 'endTimeFormatted',
                 'end time',
                 true,
-                'end_time',
+                'endTime',
             ),
             new Column<TrainingRunSort>('state', 'run state', true, 'state'),
             new Column<TrainingRunSort>('duration', 'duration', false),

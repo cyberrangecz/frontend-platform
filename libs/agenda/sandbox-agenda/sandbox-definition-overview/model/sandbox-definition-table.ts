@@ -1,4 +1,3 @@
-import { PaginatedResource } from '@sentinel/common/pagination';
 import { SandboxDefinition } from '@crczp/sandbox-model';
 import { Column, DeleteAction, ExpandableSentinelTable, Row, RowAction, RowExpand } from '@sentinel/components/table';
 import { defer, of } from 'rxjs';
@@ -7,6 +6,8 @@ import {
 } from '../components/sandbox-definition-detail/sandbox-definition-detail.component';
 import { SandboxDefinitionOverviewService } from '@crczp/sandbox-agenda/internal';
 import { SandboxDefinitionRowAdapter } from './sandbox-definition-row-adapter';
+import { SandboxDefinitionSort } from '@crczp/sandbox-api';
+import { OffsetPaginatedResource } from '@crczp/api-common';
 
 /**
  * Helper class transforming paginated resource to class for common table component
@@ -15,16 +16,25 @@ export class SandboxDefinitionTable extends ExpandableSentinelTable<
     SandboxDefinition,
     SandboxDefinitionDetailComponent,
     null,
-    string
+    SandboxDefinitionSort
 > {
     constructor(
-        resource: PaginatedResource<SandboxDefinition>,
+        resource: OffsetPaginatedResource<SandboxDefinition>,
         service: SandboxDefinitionOverviewService,
     ) {
         const columns = [
-            new Column<string>('id', 'id', false),
-            new Column<string>('titleWithRevision', 'title', false),
-            new Column<string>('createdByName', 'Created by', false),
+            new Column<SandboxDefinitionSort>('id', 'id', true, 'id'),
+            new Column<SandboxDefinitionSort>(
+                'titleWithRevision',
+                'title',
+                true,
+                'name',
+            ),
+            new Column<SandboxDefinitionSort>(
+                'createdByName',
+                'Created by',
+                false,
+            ),
         ];
         const rows = resource.elements.map((element) =>
             SandboxDefinitionTable.createRow(element, service),

@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { SentinelParamsMerger } from '@sentinel/common';
-import { JavaPaginatedResource, ParamsBuilder, QueryParam } from '@crczp/api-common';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
+import { JavaPaginatedResource, OffsetPaginatedResource, ParamsBuilder, QueryParam } from '@crczp/api-common';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import { Group, UserRole } from '@crczp/user-and-group-model';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -33,7 +33,7 @@ export class GroupApi {
     getAll(
         pagination: OffsetPaginationEvent<GroupSort>,
         filter: QueryParam[] = [],
-    ): Observable<PaginatedResource<Group>> {
+    ): Observable<OffsetPaginatedResource<Group>> {
         const params = SentinelParamsMerger.merge([
             ParamsBuilder.javaPaginationParams(pagination),
             ParamsBuilder.queryParams(filter),
@@ -147,7 +147,7 @@ export class GroupApi {
         groupId: number,
         pagination: OffsetPaginationEvent<RoleSort>,
         filter: QueryParam[] = [],
-    ): Observable<PaginatedResource<UserRole>> {
+    ): Observable<OffsetPaginatedResource<UserRole>> {
         const params = SentinelParamsMerger.merge([
             ParamsBuilder.javaPaginationParams(pagination),
             ParamsBuilder.queryParams(filter),

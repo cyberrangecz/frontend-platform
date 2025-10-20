@@ -1,7 +1,4 @@
-import {
-    OffsetPaginationEvent,
-    PaginatedResource,
-} from '@sentinel/common/pagination';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import { Observable } from 'rxjs';
 import {
     AccessPhase,
@@ -14,19 +11,19 @@ import {
     TrainingDefinitionStateEnum,
     TrainingPhase,
 } from '@crczp/training-model';
-import { QueryParam } from '@crczp/api-common';
+import { OffsetPaginatedResource, QueryParam } from '@crczp/api-common';
 import { TrainingDefinitionSort } from '../sorts';
 
 export abstract class AdaptiveTrainingDefinitionApi {
     abstract getAll(
         pagination: OffsetPaginationEvent<TrainingDefinitionSort>,
         filters?: QueryParam[],
-    ): Observable<PaginatedResource<TrainingDefinition>>;
+    ): Observable<OffsetPaginatedResource<TrainingDefinition>>;
 
     abstract getAllForOrganizer(
         pagination: OffsetPaginationEvent<TrainingDefinitionSort>,
         filters?: QueryParam[],
-    ): Observable<PaginatedResource<TrainingDefinitionInfo>>;
+    ): Observable<OffsetPaginatedResource<TrainingDefinitionInfo>>;
 
     abstract get(
         id: number,

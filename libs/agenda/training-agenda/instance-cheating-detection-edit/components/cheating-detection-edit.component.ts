@@ -12,12 +12,8 @@ import { CheatingDetectionEditFormGroup } from './cheating-detection-edit-form-g
 import { CheatingDetectionEditService } from '../services/cheating-detection-edit.service';
 import { ActivatedRoute } from '@angular/router';
 import { CheatingDetection, TrainingInstance } from '@crczp/training-model';
-import {
-    SentinelControlItem,
-    SentinelControlItemSignal,
-    SentinelControlsComponent
-} from '@sentinel/components/controls';
-import { map, take } from 'rxjs/operators';
+import { SentinelControlItem, SentinelControlsComponent } from '@sentinel/components/controls';
+import { map } from 'rxjs/operators';
 import { defer, Observable, of } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
@@ -80,7 +76,7 @@ export class CheatingDetectionEditComponent {
     constructor() {
         this.trainingInstance$ = this.activeRoute.data.pipe(
             takeUntilDestroyed(this.destroyRef),
-            map((data) => data[TrainingInstance.name] || null)
+            map((data) => data[TrainingInstance.name] || null),
         );
         this.trainingInstance$.subscribe((instance) => {
             this.trainingInstanceId = instance.id;
@@ -89,7 +85,7 @@ export class CheatingDetectionEditComponent {
         this.cheatingDetectionEditFormGroup =
             new CheatingDetectionEditFormGroup(
                 this.cheatingDetection,
-                this.trainingInstanceId
+                this.trainingInstanceId,
             );
         this.initControls(this.editService);
         this.cheatingDetectionEditFormGroup.formGroup.valueChanges
@@ -99,24 +95,20 @@ export class CheatingDetectionEditComponent {
 
     get forbiddenCommandsMethod(): AbstractControl {
         return this.cheatingDetectionEditFormGroup.formGroup.get(
-            'forbiddenCommandsDetection'
+            'forbiddenCommandsDetection',
         );
     }
 
     get forbiddenCommands(): UntypedFormArray {
         return this.cheatingDetectionEditFormGroup.formGroup.get(
-            'forbiddenCommands'
+            'forbiddenCommands',
         ) as UntypedFormArray;
     }
 
     get timeProximityMethod(): AbstractControl {
         return this.cheatingDetectionEditFormGroup.formGroup.get(
-            'timeProximityDetection'
+            'timeProximityDetection',
         );
-    }
-
-    onControlsAction(control: SentinelControlItemSignal): void {
-        control.result$.pipe(take(1)).subscribe();
     }
 
     ifNotAPG() {
@@ -132,7 +124,7 @@ export class CheatingDetectionEditComponent {
         this.forbiddenCommands.controls
             .slice(index)
             .forEach((choice) =>
-                choice.get('order').setValue(choice.get('order').value - 1)
+                choice.get('order').setValue(choice.get('order').value - 1),
             );
         this.forbiddenCommandsChanged();
     }
@@ -146,9 +138,9 @@ export class CheatingDetectionEditComponent {
                 ]),
                 type: new UntypedFormControl('', [Validators.required]),
                 cheatingDetectionId: new UntypedFormControl(
-                    this.cheatingDetection.id
+                    this.cheatingDetection.id,
                 ),
-            })
+            }),
         );
         this.forbiddenCommandsChanged();
     }
@@ -176,9 +168,9 @@ export class CheatingDetectionEditComponent {
                 defer(() =>
                     editService.create(
                         this.cheatingDetectionEditFormGroup.createCheatingDetection(),
-                        this.trainingInstanceId
-                    )
-                )
+                        this.trainingInstanceId,
+                    ),
+                ),
             ),
         ];
     }

@@ -1,5 +1,5 @@
 <div>
-    <sentinel-controls (itemClicked)="onControlsAction($event)" [controls]="topControls" />
+    <sentinel-controls [controls]="topControls" />
     <sentinel-table (tableLoad)="onLoadEvent($event)"
                     [data]="cheatingDetections$ | async"
                     [defaultSortDirection]="INIT_SORT_DIR"

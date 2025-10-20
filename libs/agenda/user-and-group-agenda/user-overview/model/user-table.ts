@@ -1,17 +1,17 @@
-import { PaginatedResource } from '@sentinel/common/pagination';
 import { User } from '@crczp/user-and-group-model';
 import { Column, Row, SentinelTable } from '@sentinel/components/table';
 import { defer, of } from 'rxjs';
 import { UserDeleteAction } from '@crczp/user-and-group-agenda/internal';
 import { UserOverviewService } from '../services/user-overview.service';
 import { Routing } from '@crczp/routing-commons';
+import { OffsetPaginatedResource } from '@crczp/api-common';
 
 /**
  * Class creating data source for user table
  */
 export class UserTable extends SentinelTable<User, string> {
     constructor(
-        resource: PaginatedResource<User>,
+        resource: OffsetPaginatedResource<User>,
         service: UserOverviewService,
     ) {
         const rows = resource.elements.map((element) =>

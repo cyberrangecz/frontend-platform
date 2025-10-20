@@ -6,13 +6,14 @@ import {
     SentinelConfirmationDialogConfig,
     SentinelDialogResultEnum
 } from '@sentinel/components/dialogs';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import { AllocationRequestsApi, AllocationRequestSort, PoolApi, SandboxAllocationUnitsApi } from '@crczp/sandbox-api';
 import { Request } from '@crczp/sandbox-model';
 import { EMPTY, Observable } from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
 import { AllocationRequestsService } from './allocation-requests.service';
 import { ErrorHandlerService, NotificationService, PortalConfig } from '@crczp/utils';
+import { OffsetPaginatedResource } from '@crczp/api-common';
 
 /**
  * Basic implementation of a layer between a component and an API service.
@@ -42,7 +43,7 @@ export class AllocationRequestsConcreteService extends AllocationRequestsService
     getAll(
         poolId: number,
         pagination: OffsetPaginationEvent<AllocationRequestSort>,
-    ): Observable<PaginatedResource<Request>> {
+    ): Observable<OffsetPaginatedResource<Request>> {
         this.onManualResourceRefresh(pagination, poolId);
         return this.poolApi.getAllocationRequests(poolId, pagination).pipe(
             tap(
@@ -102,7 +103,7 @@ export class AllocationRequestsConcreteService extends AllocationRequestsService
     /**
      * Repeats last get all request for polling purposes
      */
-    protected refreshResource(): Observable<PaginatedResource<Request>> {
+    protected refreshResource(): Observable<OffsetPaginatedResource<Request>> {
         this.hasErrorSubject$.next(false);
         return this.poolApi
             .getAllocationRequests(this.lastPoolId, this.lastPagination)

@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { ResponseHeaderContentDispositionReader } from '@sentinel/common';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import {
     AllocationRequest,
     CleanupRequest,
@@ -29,7 +29,14 @@ import { SandboxAllocationUnitMapper } from '../../mappers/sandbox-instance/sand
 import { SandboxInstanceMapper } from '../../mappers/sandbox-instance/sandbox-instance-mapper';
 import { RequestDTO } from '../../dto/sandbox-instance/request-dto';
 import { RequestMapper } from '../../mappers/sandbox-instance/request-mapper';
-import { BlobFileSaver, DjangoResourceDTO, handleJsonError, PaginationMapper, ParamsBuilder } from '@crczp/api-common';
+import {
+    BlobFileSaver,
+    DjangoResourceDTO,
+    handleJsonError,
+    OffsetPaginatedResource,
+    PaginationMapper,
+    ParamsBuilder
+} from '@crczp/api-common';
 import { PortalConfig } from '@crczp/utils';
 import { AllocationRequestSort, PoolSort, SandboxDefinitionSort } from '../sorts';
 
@@ -54,7 +61,7 @@ export class PoolApi {
      */
     getPools(
         pagination: OffsetPaginationEvent<PoolSort>,
-    ): Observable<PaginatedResource<Pool>> {
+    ): Observable<OffsetPaginatedResource<Pool>> {
         return this.http
             .get<DjangoResourceDTO<PoolDTO>>(this.apiUrl, {
                 params: ParamsBuilder.djangoPaginationParams(pagination),
@@ -62,7 +69,7 @@ export class PoolApi {
             .pipe(
                 map(
                     (response) =>
-                        new PaginatedResource<Pool>(
+                        new OffsetPaginatedResource<Pool>(
                             PoolMapper.fromDTOs(response.results),
                             PaginationMapper.fromDjangoDTO(response),
                         ),
@@ -141,7 +148,7 @@ export class PoolApi {
     getAllocationRequests(
         poolId: number,
         pagination: OffsetPaginationEvent<AllocationRequestSort>,
-    ): Observable<PaginatedResource<AllocationRequest>> {
+    ): Observable<OffsetPaginatedResource<AllocationRequest>> {
         return this.http
             .get<DjangoResourceDTO<RequestDTO>>(
                 `${this.apiUrl}/${poolId}/${this.allocationRequestUriExtension}`,
@@ -152,7 +159,7 @@ export class PoolApi {
             .pipe(
                 map(
                     (response) =>
-                        new PaginatedResource<Request>(
+                        new OffsetPaginatedResource<Request>(
                             RequestMapper.fromAllocationDTOs(response.results),
                             PaginationMapper.fromDjangoDTO(response),
                         ),
@@ -168,7 +175,7 @@ export class PoolApi {
     getCleanupRequests(
         poolId: number,
         pagination: OffsetPaginationEvent<AllocationRequestSort>,
-    ): Observable<PaginatedResource<CleanupRequest>> {
+    ): Observable<OffsetPaginatedResource<CleanupRequest>> {
         return this.http
             .get<DjangoResourceDTO<RequestDTO>>(
                 `${this.apiUrl}/${poolId}/${this.cleanupRequestUriExtension}`,
@@ -179,7 +186,7 @@ export class PoolApi {
             .pipe(
                 map(
                     (response) =>
-                        new PaginatedResource<Request>(
+                        new OffsetPaginatedResource<Request>(
                             RequestMapper.fromCleanupDTOs(response.results),
                             PaginationMapper.fromDjangoDTO(response),
                         ),
@@ -224,7 +231,7 @@ export class PoolApi {
     getDefinition(
         poolId: number,
         pagination?: OffsetPaginationEvent<SandboxDefinitionSort>,
-    ): Observable<PaginatedResource<SandboxDefinition>> {
+    ): Observable<OffsetPaginatedResource<SandboxDefinition>> {
         return this.http
             .get<DjangoResourceDTO<SandboxDefinitionDTO>>(
                 `${this.apiUrl}/${poolId}/definition`,
@@ -235,7 +242,7 @@ export class PoolApi {
             .pipe(
                 map(
                     (response) =>
-                        new PaginatedResource<SandboxDefinition>(
+                        new OffsetPaginatedResource<SandboxDefinition>(
                             SandboxDefinitionMapper.fromDTOs(response.results),
                             PaginationMapper.fromDjangoDTO(response),
                         ),
@@ -259,7 +266,7 @@ export class PoolApi {
      * Sends http request to get locks for pool
      * @param poolId id of a pool
      */
-    getPoolsLocks(poolId: number): Observable<PaginatedResource<Lock>> {
+    getPoolsLocks(poolId: number): Observable<OffsetPaginatedResource<Lock>> {
         return this.http
             .get<
                 DjangoResourceDTO<LockDTO>
@@ -267,7 +274,7 @@ export class PoolApi {
             .pipe(
                 map(
                     (response) =>
-                        new PaginatedResource<Lock>(
+                        new OffsetPaginatedResource<Lock>(
                             LockMapper.fromDTOs(response.results),
                             PaginationMapper.fromDjangoDTO(response),
                         ),
@@ -296,7 +303,7 @@ export class PoolApi {
     getPoolsSandboxAllocationUnits(
         poolId: number,
         pagination?: OffsetPaginationEvent<string>,
-    ): Observable<PaginatedResource<SandboxAllocationUnit>> {
+    ): Observable<OffsetPaginatedResource<SandboxAllocationUnit>> {
         if (pagination && pagination.sort) {
             pagination.sort = pagination.sort.replace('allocation_unit__', '');
         }
@@ -310,7 +317,7 @@ export class PoolApi {
             .pipe(
                 map(
                     (response) =>
-                        new PaginatedResource<SandboxAllocationUnit>(
+                        new OffsetPaginatedResource<SandboxAllocationUnit>(
                             SandboxAllocationUnitMapper.fromDTOs(
                                 response.results,
                             ),
@@ -372,7 +379,7 @@ export class PoolApi {
     getPoolsSandboxes(
         poolId: number,
         pagination?: OffsetPaginationEvent<string>,
-    ): Observable<PaginatedResource<SandboxInstance>> {
+    ): Observable<OffsetPaginatedResource<SandboxInstance>> {
         if (
             pagination &&
             pagination.sort &&
@@ -390,7 +397,7 @@ export class PoolApi {
             .pipe(
                 map(
                     (response) =>
-                        new PaginatedResource<SandboxInstance>(
+                        new OffsetPaginatedResource<SandboxInstance>(
                             SandboxInstanceMapper.fromDTOs(response.results),
                             PaginationMapper.fromDjangoDTO(response),
                         ),

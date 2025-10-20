@@ -1,4 +1,4 @@
-import {STEPPER_GLOBAL_OPTIONS} from '@angular/cdk/stepper';
+import { STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper';
 import {
     ChangeDetectionStrategy,
     Component,
@@ -9,30 +9,30 @@ import {
     OnChanges,
     OnInit,
     Output,
-    SimpleChanges,
+    SimpleChanges
 } from '@angular/core';
-import {MatDialog} from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import {
     SentinelConfirmationDialogComponent,
     SentinelConfirmationDialogConfig,
-    SentinelDialogResultEnum,
+    SentinelDialogResultEnum
 } from '@sentinel/components/dialogs';
-import {SentinelControlItem, SentinelControlItemSignal, SentinelControlsComponent} from '@sentinel/components/controls';
-import {Hint} from '@crczp/training-model';
-import {SentinelStepper, SentinelStepperComponent, StepStateEnum} from '@sentinel/components/stepper';
-import {BehaviorSubject, defer, EMPTY, Observable, of} from 'rxjs';
-import {HintStepperAdapter} from '../../../../../../model/adapters/hint-stepper-adapter';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {MatDivider} from "@angular/material/divider";
-import {HintDetailEditComponent} from "../detail/hint-detail-edit.component";
+import { SentinelControlItem, SentinelControlsComponent } from '@sentinel/components/controls';
+import { Hint } from '@crczp/training-model';
+import { SentinelStepper, SentinelStepperComponent, StepStateEnum } from '@sentinel/components/stepper';
+import { BehaviorSubject, defer, EMPTY, Observable, of } from 'rxjs';
+import { HintStepperAdapter } from '../../../../../../model/adapters/hint-stepper-adapter';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { MatDivider } from '@angular/material/divider';
+import { HintDetailEditComponent } from '../detail/hint-detail-edit.component';
 import {
     MatExpansionPanel,
     MatExpansionPanelDescription,
     MatExpansionPanelHeader,
     MatExpansionPanelTitle
-} from "@angular/material/expansion";
-import {MatIcon} from "@angular/material/icon";
-import {MatError} from "@angular/material/input";
+} from '@angular/material/expansion';
+import { MatIcon } from '@angular/material/icon';
+import { MatError } from '@angular/material/input';
 
 /**
  * Main hint edit component. Contains stepper to navigate through existing hints and controls to create new hints
@@ -45,7 +45,7 @@ import {MatError} from "@angular/material/input";
     providers: [
         {
             provide: STEPPER_GLOBAL_OPTIONS,
-            useValue: {showError: true},
+            useValue: { showError: true },
         },
     ],
     imports: [
@@ -58,8 +58,8 @@ import {MatError} from "@angular/material/input";
         MatExpansionPanelDescription,
         MatExpansionPanelHeader,
         MatExpansionPanel,
-        MatExpansionPanelTitle
-    ]
+        MatExpansionPanelTitle,
+    ],
 })
 export class HintsOverviewComponent implements OnInit, OnChanges {
     dialog = inject(MatDialog);
@@ -71,10 +71,11 @@ export class HintsOverviewComponent implements OnInit, OnChanges {
     hintsHasErrors: boolean;
     penaltySum: number;
     selectedStep: number;
-    stepperHints: SentinelStepper<HintStepperAdapter> = {items: []};
+    stepperHints: SentinelStepper<HintStepperAdapter> = { items: [] };
     controls: SentinelControlItem[];
     destroyRef = inject(DestroyRef);
-    private deleteDisabledSubject$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+    private deleteDisabledSubject$: BehaviorSubject<boolean> =
+        new BehaviorSubject(false);
 
     ngOnInit(): void {
         this.selectedStep = 0;
@@ -87,17 +88,16 @@ export class HintsOverviewComponent implements OnInit, OnChanges {
         }
         if ('hints' in changes) {
             this.deleteDisabledSubject$.next(this.hints.length <= 0);
-            this.stepperHints.items = this.hints.map((hint) => new HintStepperAdapter(hint));
+            this.stepperHints.items = this.hints.map(
+                (hint) => new HintStepperAdapter(hint),
+            );
             this.setInitialHintPenaltySum();
             this.calculateHasError();
         }
         if (this.stepperHints.items.length > 0) {
-            this.stepperHints.items[this.selectedStep].state = StepStateEnum.ACTIVE;
+            this.stepperHints.items[this.selectedStep].state =
+                StepStateEnum.ACTIVE;
         }
-    }
-
-    onControlAction(control: SentinelControlItemSignal): void {
-        control.result$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
     }
 
     /**
@@ -105,7 +105,8 @@ export class HintsOverviewComponent implements OnInit, OnChanges {
      */
     addHint(): Observable<void> {
         if (this.stepperHints.items.length >= 1) {
-            this.stepperHints.items[this.selectedStep].state = StepStateEnum.SELECTABLE;
+            this.stepperHints.items[this.selectedStep].state =
+                StepStateEnum.SELECTABLE;
         }
         const hint = new Hint();
         hint.title = 'New hint';
@@ -126,14 +127,17 @@ export class HintsOverviewComponent implements OnInit, OnChanges {
     deleteActiveHint(): Observable<void> {
         const hint = this.stepperHints.items[this.selectedStep];
         const index = this.selectedStep;
-        const dialogRef = this.dialog.open(SentinelConfirmationDialogComponent, {
-            data: new SentinelConfirmationDialogConfig(
-                'Delete Hint',
-                `Do you want to delete hint "${hint.title}"?`,
-                'Cancel',
-                'Delete',
-            ),
-        });
+        const dialogRef = this.dialog.open(
+            SentinelConfirmationDialogComponent,
+            {
+                data: new SentinelConfirmationDialogConfig(
+                    'Delete Hint',
+                    `Do you want to delete hint "${hint.title}"?`,
+                    'Cancel',
+                    'Delete',
+                ),
+            },
+        );
 
         dialogRef
             .afterClosed()
@@ -154,7 +158,8 @@ export class HintsOverviewComponent implements OnInit, OnChanges {
      */
     onActiveHintChanged(index: number): void {
         if (index !== this.selectedStep && this.stepperHints.items.length > 0) {
-            this.stepperHints.items[this.selectedStep].state = StepStateEnum.SELECTABLE;
+            this.stepperHints.items[this.selectedStep].state =
+                StepStateEnum.SELECTABLE;
             this.selectedStep = index;
         }
     }
@@ -193,7 +198,8 @@ export class HintsOverviewComponent implements OnInit, OnChanges {
         }
         this.onActiveHintChanged(this.stepperHints.items.length - 1);
         if (this.stepperHints.items.length > 0) {
-            this.stepperHints.items[this.stepperHints.items.length - 1].state = StepStateEnum.ACTIVE;
+            this.stepperHints.items[this.stepperHints.items.length - 1].state =
+                StepStateEnum.ACTIVE;
         }
     }
 

@@ -1,35 +1,16 @@
-import {
-    ChangeDetectionStrategy,
-    Component,
-    DestroyRef,
-    inject,
-    Input,
-    OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { OffsetPaginationEvent } from '@sentinel/common/pagination';
-import {
-    SentinelControlItem,
-    SentinelControlItemSignal,
-    SentinelControlsComponent,
-} from '@sentinel/components/controls';
+import { SentinelControlItem, SentinelControlsComponent } from '@sentinel/components/controls';
 import { User } from '@crczp/user-and-group-model';
-import {
-    SentinelTable,
-    SentinelTableComponent,
-    TableLoadEvent,
-} from '@sentinel/components/table';
+import { SentinelTable, SentinelTableComponent, TableLoadEvent } from '@sentinel/components/table';
 import { defer, Observable, of } from 'rxjs';
-import { map, take } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { UserTable } from '../model/user-table';
 import { DeleteControlItem } from '@crczp/user-and-group-agenda/internal';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { UserOverviewService } from '../services/user-overview.service';
 import { AsyncPipe } from '@angular/common';
-import {
-    FileUploadProgressService,
-    PaginationStorageService,
-    providePaginationStorageService,
-} from '@crczp/utils';
+import { PaginationStorageService, providePaginationStorageService } from '@crczp/utils';
 import { createPaginationEvent } from '@crczp/api-common';
 import { UserSort } from '@crczp/user-and-group-api';
 
@@ -44,12 +25,10 @@ import { UserSort } from '@crczp/user-and-group-api';
     imports: [AsyncPipe, SentinelTableComponent, SentinelControlsComponent],
     providers: [
         providePaginationStorageService(UserOverviewComponent),
-        FileUploadProgressService,
         UserOverviewService,
     ],
 })
 export class UserOverviewComponent implements OnInit {
-    @Input() paginationId = 'crczp-user-overview';
     readonly INIT_SORT_NAME = 'familyName';
     readonly INIT_SORT_DIR = 'asc';
     destroyRef = inject(DestroyRef);
@@ -94,10 +73,6 @@ export class UserOverviewComponent implements OnInit {
             )
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe();
-    }
-
-    onControlsAction(controlItem: SentinelControlItemSignal): void {
-        controlItem.result$.pipe(take(1)).subscribe();
     }
 
     /**

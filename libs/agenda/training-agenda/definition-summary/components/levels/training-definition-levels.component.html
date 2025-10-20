@@ -18,13 +18,13 @@
             <div class="level-count"> {{ getAssessmentLevels()?.length }}</div>
         </div>
     </div>
-    <sentinel-controls (itemClicked)="onControlsAction($event)" [controls]="controls"/>
+    <sentinel-controls [controls]="controls" />
 </div>
 <mat-accordion class="example-headers-align" multi="always">
     @for (level of levels; track level.id) {
-        <crczp-level-detail [level]="level"/>
+        <crczp-level-detail [level]="level" />
         @if (!$last) {
-            <mat-divider/>
+            <mat-divider />
         }
     }
 </mat-accordion>

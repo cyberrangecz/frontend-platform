@@ -21,6 +21,8 @@ export function mapTopologyToTopologyVisualization(topology: Topology): {
             nodeType: 'ROUTER',
             osType: router.osType,
             guiAccess: router.guiAccess,
+            ip: router.ip,
+            accessible: router.isAccessible,
         });
 
         links.push({
@@ -37,6 +39,7 @@ export function mapTopologyToTopologyVisualization(topology: Topology): {
                 name: subnet.name,
                 nodeType: 'SUBNET',
                 ip: subnet.cidr,
+                accessible: false,
                 subnetColor:
                     TOPOLOGY_CONFIG.SVG.SUBNET.COLORS[
                         subnetOrd++ % TOPOLOGY_CONFIG.SVG.SUBNET.COLORS.length
@@ -58,6 +61,7 @@ export function mapTopologyToTopologyVisualization(topology: Topology): {
                     ip: host.ip,
                     osType: host.osType,
                     guiAccess: host.guiAccess,
+                    accessible: host.isAccessible,
                 });
 
                 links.push({

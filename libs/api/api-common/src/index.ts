@@ -9,3 +9,7 @@ export * from './params/query-param';
 export * from './validation/errors';
 export * from './validation/json-error-converter';
 export * from './validation/presence-validator';
+export * from './pagination/offset-paginated-resource';
+export * from './pagination/crczp-offset-elements-paginated-service-';
+
+export { SnakeToCamelCase, CamelToSnakeCase } from './mapper/mapper-types';

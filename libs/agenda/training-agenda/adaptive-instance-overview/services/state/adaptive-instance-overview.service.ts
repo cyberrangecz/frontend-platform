@@ -1,9 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import {
-    OffsetPaginationEvent,
-    PaginatedResource,
-} from '@sentinel/common/pagination';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import { PoolApi } from '@crczp/sandbox-api';
 import {
     AdaptiveTrainingInstanceApi,
@@ -25,10 +22,13 @@ import {
     PortalConfig,
 } from '@crczp/utils';
 import { Routing } from '@crczp/routing-commons';
-import { OffsetPaginatedElementsService } from '@sentinel/common';
+import {
+    CrczpOffsetElementsPaginatedService,
+    OffsetPaginatedResource,
+} from '@crczp/api-common';
 
 @Injectable()
-export class AdaptiveInstanceOverviewService extends OffsetPaginatedElementsService<TrainingInstance> {
+export class AdaptiveInstanceOverviewService extends CrczpOffsetElementsPaginatedService<TrainingInstance> {
     private adaptiveInstanceApi = inject(AdaptiveTrainingInstanceApi);
     private dialog = inject(MatDialog);
     private poolApi = inject(PoolApi);
@@ -46,7 +46,7 @@ export class AdaptiveInstanceOverviewService extends OffsetPaginatedElementsServ
     getAll(
         pagination: OffsetPaginationEvent<TrainingInstanceSort>,
         filter: string = null,
-    ): Observable<PaginatedResource<TrainingInstance>> {
+    ): Observable<OffsetPaginatedResource<TrainingInstance>> {
         this.lastPagination = pagination;
         this.lastFilters = filter;
         this.hasErrorSubject$.next(false);
@@ -101,7 +101,7 @@ export class AdaptiveInstanceOverviewService extends OffsetPaginatedElementsServ
 
     delete(
         trainingInstance: TrainingInstance,
-    ): Observable<PaginatedResource<TrainingInstance>> {
+    ): Observable<OffsetPaginatedResource<TrainingInstance>> {
         return this.displayDialogToDelete(trainingInstance).pipe(
             switchMap((result) =>
                 result === SentinelDialogResultEnum.CONFIRMED
@@ -258,7 +258,7 @@ export class AdaptiveInstanceOverviewService extends OffsetPaginatedElementsServ
 
     private callApiToDelete(
         trainingInstance: TrainingInstance,
-    ): Observable<PaginatedResource<TrainingInstance>> {
+    ): Observable<OffsetPaginatedResource<TrainingInstance>> {
         return this.adaptiveInstanceApi.delete(trainingInstance.id).pipe(
             tap(() =>
                 this.notificationService.emit(

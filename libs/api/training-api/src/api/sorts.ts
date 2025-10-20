@@ -7,13 +7,26 @@ import { DetectedForbiddenCommandDTO } from '../dto/detection-event/detected-for
 import { DetectionEventParticipantDTO } from '../dto/detection-event/detection-event-participant-dto';
 import { AccessedTrainingRunDTO } from '../dto/training-run/accessed-training-run-dto';
 import { DetectionEventDTO } from '../dto/detection-event/detection-event-dto';
+import { SnakeToCamelCase } from '@crczp/api-common';
 
-export type TrainingInstanceSort = keyof TrainingInstanceDTO;
-export type TrainingDefinitionSort = keyof TrainingDefinitionDTO;
-export type TrainingRunSort = keyof TrainingRunDTO;
-export type AccessedTrainingRunSort = keyof AccessedTrainingRunDTO;
-export type UserRefSort = keyof UserRefDTO;
-export type CheatingDetectionSort = keyof CheatingDetectionDTO;
-export type AbstractDetectionEventSort = keyof DetectionEventDTO;
-export type DetectedForbiddenCommandSort = keyof DetectedForbiddenCommandDTO;
-export type DetectionEventParticipantSort = keyof DetectionEventParticipantDTO;
+export type TrainingInstanceSort = SnakeToCamelCase<keyof TrainingInstanceDTO>;
+export type TrainingDefinitionSort = SnakeToCamelCase<
+    keyof TrainingDefinitionDTO
+>;
+export type TrainingRunSort = SnakeToCamelCase<keyof TrainingRunDTO>;
+export type AccessedTrainingRunSort = SnakeToCamelCase<
+    keyof AccessedTrainingRunDTO
+>;
+export type UserRefSort = SnakeToCamelCase<keyof UserRefDTO>;
+export type CheatingDetectionSort = SnakeToCamelCase<
+    keyof CheatingDetectionDTO
+>;
+export type AbstractDetectionEventSort = SnakeToCamelCase<
+    keyof DetectionEventDTO
+>;
+export type DetectedForbiddenCommandSort = SnakeToCamelCase<
+    keyof DetectedForbiddenCommandDTO
+>;
+export type DetectionEventParticipantSort = SnakeToCamelCase<
+    keyof DetectionEventParticipantDTO
+>;

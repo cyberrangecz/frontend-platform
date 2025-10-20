@@ -1,10 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { SentinelParamsMerger } from '@sentinel/common';
-import {
-    OffsetPaginationEvent,
-    PaginatedResource,
-} from '@sentinel/common/pagination';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import { User, UserRole } from '@crczp/user-and-group-model';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -12,11 +9,7 @@ import { RoleDTO } from '../DTO/role/role-dto';
 import { UserAndGroupUserDTO } from '../DTO/user/user-dto.model';
 import { RoleMapper } from '../mappers/role-mapper';
 import { UserMapper } from '../mappers/user.mapper';
-import {
-    JavaPaginatedResource,
-    ParamsBuilder,
-    QueryParam,
-} from '@crczp/api-common';
+import { JavaPaginatedResource, OffsetPaginatedResource, ParamsBuilder, QueryParam } from '@crczp/api-common';
 import { PortalConfig } from '@crczp/utils';
 import { UserSort } from './sort';
 
@@ -38,7 +31,7 @@ export class RoleApi {
     getAll(
         pagination: OffsetPaginationEvent<UserSort>,
         filters: QueryParam[] = [],
-    ): Observable<PaginatedResource<UserRole>> {
+    ): Observable<OffsetPaginatedResource<UserRole>> {
         const params = SentinelParamsMerger.merge([
             ParamsBuilder.javaPaginationParams(pagination),
             ParamsBuilder.queryParams(filters),
@@ -58,7 +51,7 @@ export class RoleApi {
         groupId: number,
         pagination: OffsetPaginationEvent<UserSort>,
         filters?: QueryParam[],
-    ): Observable<PaginatedResource<UserRole>> {
+    ): Observable<OffsetPaginatedResource<UserRole>> {
         const params = SentinelParamsMerger.merge([
             ParamsBuilder.javaPaginationParams(pagination),
             ParamsBuilder.queryParams(filters),
@@ -90,7 +83,7 @@ export class RoleApi {
         id: number,
         pagination: OffsetPaginationEvent<UserSort>,
         filters?: QueryParam[],
-    ): Observable<PaginatedResource<User>> {
+    ): Observable<OffsetPaginatedResource<User>> {
         const params = SentinelParamsMerger.merge([
             ParamsBuilder.javaPaginationParams(pagination),
             ParamsBuilder.queryParams(filters),
@@ -115,7 +108,7 @@ export class RoleApi {
         type: string,
         pagination: OffsetPaginationEvent<UserSort>,
         filters?: QueryParam[],
-    ): Observable<PaginatedResource<User>> {
+    ): Observable<OffsetPaginatedResource<User>> {
         const typeParam = new HttpParams().set('roleType', type);
         const params = SentinelParamsMerger.merge([
             ParamsBuilder.javaPaginationParams(pagination),
@@ -144,7 +137,7 @@ export class RoleApi {
         ids: number[],
         pagination: OffsetPaginationEvent<UserSort>,
         filters?: QueryParam[],
-    ): Observable<PaginatedResource<User>> {
+    ): Observable<OffsetPaginatedResource<User>> {
         const idParams = new HttpParams().set('ids', ids.toString());
         const typeParam = new HttpParams().set('roleType', type);
         const params = SentinelParamsMerger.merge([

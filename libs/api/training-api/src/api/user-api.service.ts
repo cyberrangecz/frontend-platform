@@ -1,8 +1,14 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { SentinelParamsMerger } from '@sentinel/common';
-import { JavaPaginatedResource, PaginationMapper, ParamsBuilder, QueryParam } from '@crczp/api-common';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
+import {
+    JavaPaginatedResource,
+    OffsetPaginatedResource,
+    PaginationMapper,
+    ParamsBuilder,
+    QueryParam
+} from '@crczp/api-common';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import { BetaTester, Designer, Organizer, TrainingUser } from '@crczp/training-model';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -56,7 +62,7 @@ export class UserApi {
         pagination: OffsetPaginationEvent<UserRefSort>,
         adaptive: boolean,
         filters: QueryParam[] = [],
-    ): Observable<PaginatedResource<Organizer>> {
+    ): Observable<OffsetPaginatedResource<Organizer>> {
         const params = SentinelParamsMerger.merge([
             ParamsBuilder.javaPaginationParams(pagination),
             ParamsBuilder.queryParams(filters),
@@ -80,7 +86,7 @@ export class UserApi {
         pagination: OffsetPaginationEvent<UserRefSort>,
         adaptive: boolean,
         filters: QueryParam[] = [],
-    ): Observable<PaginatedResource<Designer>> {
+    ): Observable<OffsetPaginatedResource<Designer>> {
         const params = SentinelParamsMerger.merge([
             ParamsBuilder.javaPaginationParams(pagination),
             ParamsBuilder.queryParams(filters),
@@ -104,7 +110,7 @@ export class UserApi {
         pagination: OffsetPaginationEvent<UserRefSort>,
         adaptive: boolean,
         filters: QueryParam[] = [],
-    ): Observable<PaginatedResource<Designer>> {
+    ): Observable<OffsetPaginatedResource<Designer>> {
         const params = SentinelParamsMerger.merge([
             ParamsBuilder.javaPaginationParams(pagination),
             ParamsBuilder.queryParams(filters),
@@ -128,7 +134,7 @@ export class UserApi {
         pagination: OffsetPaginationEvent<UserRefSort>,
         adaptive: boolean,
         filters: QueryParam[] = [],
-    ): Observable<PaginatedResource<Organizer>> {
+    ): Observable<OffsetPaginatedResource<Organizer>> {
         const params = SentinelParamsMerger.merge([
             ParamsBuilder.javaPaginationParams(pagination),
             ParamsBuilder.queryParams(filters),
@@ -208,7 +214,7 @@ export class UserApi {
         pagination: OffsetPaginationEvent<UserRefSort>,
         adaptive: boolean,
         filters: QueryParam[] = [],
-    ): Observable<PaginatedResource<BetaTester>> {
+    ): Observable<OffsetPaginatedResource<BetaTester>> {
         const params = SentinelParamsMerger.merge([
             ParamsBuilder.javaPaginationParams(pagination),
             ParamsBuilder.queryParams(filters),
@@ -232,7 +238,7 @@ export class UserApi {
         pagination: OffsetPaginationEvent<UserRefSort>,
         adaptive: boolean,
         filters: QueryParam[] = [],
-    ): Observable<PaginatedResource<Designer>> {
+    ): Observable<OffsetPaginatedResource<Designer>> {
         const params = SentinelParamsMerger.merge([
             ParamsBuilder.javaPaginationParams(pagination),
             ParamsBuilder.queryParams(filters),
@@ -256,7 +262,7 @@ export class UserApi {
         pagination: OffsetPaginationEvent<UserRefSort>,
         adaptive: boolean,
         filters: QueryParam[] = [],
-    ): Observable<PaginatedResource<Organizer>> {
+    ): Observable<OffsetPaginatedResource<Organizer>> {
         const params = SentinelParamsMerger.merge([
             ParamsBuilder.javaPaginationParams(pagination),
             ParamsBuilder.queryParams(filters),
@@ -282,8 +288,8 @@ export class UserApi {
 
     private paginatedUsersFromDTO(
         dto: JavaPaginatedResource<UserRefDTO>,
-    ): PaginatedResource<TrainingUser> {
-        return new PaginatedResource<TrainingUser>(
+    ): OffsetPaginatedResource<TrainingUser> {
+        return new OffsetPaginatedResource<TrainingUser>(
             UserMapper.fromDTOs(dto.content),
             PaginationMapper.fromJavaDTO(dto.pagination),
         );

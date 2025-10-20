@@ -1,4 +1,3 @@
-import { PaginatedResource } from '@sentinel/common/pagination';
 import { TrainingInstance } from '@crczp/training-model';
 import { Column, DeleteAction, EditAction, Row, RowAction, SentinelTable } from '@sentinel/components/table';
 import { combineLatest, defer, of, startWith } from 'rxjs';
@@ -6,33 +5,53 @@ import { TrainingInstanceOverviewService } from '../../services/state/training-i
 import { TrainingInstanceRowAdapter } from './training-instance-row-adapter';
 import { map } from 'rxjs/operators';
 import { Routing } from '@crczp/routing-commons';
+import { TrainingInstanceSort } from '@crczp/training-api';
+import { OffsetPaginatedResource } from '@crczp/api-common';
 
 /**
  * @dynamic
  */
 export class TrainingInstanceTable extends SentinelTable<
     TrainingInstanceRowAdapter,
-    string
+    TrainingInstanceSort
 > {
     constructor(
-        resource: PaginatedResource<TrainingInstance>,
+        resource: OffsetPaginatedResource<TrainingInstance>,
         service: TrainingInstanceOverviewService,
     ) {
         const columns = [
-            new Column<string>('title', 'Title', true),
-            new Column<string>('startTime', 'Start Time', true, 'startTime'),
-            new Column<string>('endTime', 'End Time', true, 'endTime'),
-            new Column<string>('expiresIn', 'Expires In', false, 'expiresIn'),
-            new Column<string>(
+            new Column<TrainingInstanceSort>('title', 'Title', true),
+            new Column<TrainingInstanceSort>(
+                'startTime',
+                'Start Time',
+                true,
+                'startTime',
+            ),
+            new Column<TrainingInstanceSort>(
+                'endTime',
+                'End Time',
+                true,
+                'endTime',
+            ),
+            new Column<TrainingInstanceSort>('expiresIn', 'Expires In', false),
+            new Column<TrainingInstanceSort>(
                 'tdTitle',
                 'Training Definition',
-                true,
-                'tdTitle',
+                false,
             ),
-            new Column<string>('lastEditBy', 'Last Edit By', false),
-            new Column<string>('poolTitle', 'Pool', true, 'poolId'),
-            new Column<string>('poolSize', 'Pool Size', false),
-            new Column<string>(
+            new Column<TrainingInstanceSort>(
+                'lastEditBy',
+                'Last Edit By',
+                false,
+            ),
+            new Column<TrainingInstanceSort>(
+                'poolTitle',
+                'Pool',
+                true,
+                'poolId',
+            ),
+            new Column<TrainingInstanceSort>('poolSize', 'Pool Size', false),
+            new Column<TrainingInstanceSort>(
                 'accessToken',
                 'Access Token',
                 true,

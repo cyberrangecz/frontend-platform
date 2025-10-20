@@ -1,4 +1,3 @@
-import { PaginatedResource } from '@sentinel/common/pagination';
 import { TrainingDefinition, TrainingDefinitionStateEnum } from '@crczp/training-model';
 import {
     Column,
@@ -14,6 +13,7 @@ import { TrainingDefinitionService } from '../services/state/training-definition
 import { TrainingDefinitionRowAdapter } from './training-definition-row-adapter';
 import { Routing } from '@crczp/routing-commons';
 import { Utils } from '@crczp/utils';
+import { OffsetPaginatedResource } from '@crczp/api-common';
 
 /**
  * Helper class transforming paginated resource to class for common table component
@@ -24,7 +24,7 @@ export class TrainingDefinitionTable extends SentinelTable<
     string
 > {
     constructor(
-        resource: PaginatedResource<TrainingDefinition>,
+        resource: OffsetPaginatedResource<TrainingDefinition>,
         service: TrainingDefinitionService,
     ) {
         const columns = [

@@ -1,30 +1,35 @@
-@if (this.topology()) {
-    <div class="topology-container">
-        @if (this.topologyLoading() || this.levelLoading()) {
-            <span>{{ this.topologyLoading() + ' ' + this.levelLoading() }}</span>
-            <crczp-logo-spinner />
-        } @else {
-            <crczp-topology
-                class="wh-100"
-                [topology]="topology()"
-                [standalone]="standalone()"
-                [sandboxUuid]="getSandboxId()"
-            />
-        }
+@if (this.topologyLoading() || this.levelLoading()) {
+    <div class="hflex center wh-100 mock-tabs-container">
+        <crczp-logo-spinner
+            class="logo-spinner"
+        />
     </div>
-    @if ('sandboxId' in this.id()) {
-        <button
-            mat-raised-button
-            [disabled]="this.topologyLoading()"
-            (click)="this.getAccessFile.emit()"
-            matTooltip="Download config for SSH client"
-            class="ssh-button">
-            Get SSH Config
-        </button>
-    }
 } @else {
-    <div class="topology-error">
-        <h3 class="topology-error__message">Topology not available</h3>
-    </div>
+    @if (this.topology()) {
+        <div class="topology-container">
+            <crczp-topology
+                [sandboxUuid]="getSandboxId()"
+                [standalone]="standalone()"
+                [topology]="topology()"
+                class="wh-100"
+            />
+        </div>
+        @if ('sandboxId' in this.id()) {
+            <button
+                (click)="this.getAccessFile.emit()"
+                [disabled]="this.topologyLoading()"
+                class="ssh-button"
+                mat-raised-button
+                matTooltip="Download config for SSH client">
+                Get SSH Config
+            </button>
+        }
+    } @else {
+        <div class="hflex center wh-100 mock-tabs-container">
+            <mat-icon class="topology-error__icon" color="error">warning</mat-icon>
+            <span class="topology-error__message">Topology unavailable</span>
+        </div>
+    }
 }
+
 

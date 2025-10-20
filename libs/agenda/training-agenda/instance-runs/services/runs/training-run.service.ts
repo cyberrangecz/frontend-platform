@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import { LinearRunApi, LinearTrainingInstanceApi, TrainingRunSort } from '@crczp/training-api';
 import { TrainingRun } from '@crczp/training-model';
 import { EMPTY, Observable, of } from 'rxjs';
@@ -14,6 +14,7 @@ import {
 import { SandboxInstance } from '@crczp/sandbox-model';
 import { ErrorHandlerService, NotificationService, PortalConfig } from '@crczp/utils';
 import { OffsetPaginatedElementsPollingService } from '@sentinel/common';
+import { OffsetPaginatedResource } from '@crczp/api-common';
 
 /**
  * Basic implementation of layer between component and API service.
@@ -48,7 +49,7 @@ export class TrainingRunService extends OffsetPaginatedElementsPollingService<
     getAll(
         trainingInstanceId: number,
         pagination: OffsetPaginationEvent<TrainingRunSort>,
-    ): Observable<PaginatedResource<TrainingRun>> {
+    ): Observable<OffsetPaginatedResource<TrainingRun>> {
         this.onManualResourceRefresh(pagination, trainingInstanceId);
         return this.trainingInstanceApi
             .getAssociatedTrainingRuns(trainingInstanceId, pagination)
@@ -83,7 +84,9 @@ export class TrainingRunService extends OffsetPaginatedElementsPollingService<
         );
     }
 
-    protected refreshResource(): Observable<PaginatedResource<TrainingRun>> {
+    protected refreshResource(): Observable<
+        OffsetPaginatedResource<TrainingRun>
+    > {
         this.hasErrorSubject$.next(false);
         return this.trainingInstanceApi
             .getAssociatedTrainingRuns(

@@ -1,6 +1,6 @@
-<sentinel-controls (itemClicked)="onControlAction($event)"
-                   [controls]="rolesToAssignControls"
-                   class="to-assign-controls">
+<sentinel-controls
+    [controls]="rolesToAssignControls"
+    class="to-assign-controls">
 </sentinel-controls>
 <mat-card appearance="outlined">
     <mat-card-header>
@@ -21,9 +21,9 @@
     </mat-card-content>
 </mat-card>
 
-<sentinel-controls (itemClicked)="onControlAction($event)"
-                   [controls]="assignedRolesControls"
-                   class="assigned-controls">
+<sentinel-controls
+    [controls]="assignedRolesControls"
+    class="assigned-controls">
 </sentinel-controls>
 <mat-card appearance="outlined">
     <mat-card-header>

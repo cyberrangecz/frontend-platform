@@ -1,4 +1,3 @@
-import { PaginatedResource } from '@sentinel/common/pagination';
 import { Pool, Resources } from '@crczp/sandbox-model';
 import {
     Column,
@@ -15,6 +14,8 @@ import { SandboxInstanceService } from '@crczp/sandbox-agenda/pool-detail';
 import { PoolExpandDetailComponent } from '../components/pool-expand-detail/pool-expand-detail.component';
 import { Routing } from '@crczp/routing-commons';
 import { PoolService } from '../services/abstract-pool/abstract-sandbox/pool.service';
+import { PoolSort } from '@crczp/sandbox-api';
+import { OffsetPaginatedResource } from '@crczp/api-common';
 
 /**
  * Helper class transforming paginated resource to class for common table component
@@ -24,10 +25,10 @@ export class PoolTable extends ExpandableSentinelTable<
     PoolRowAdapter,
     PoolExpandDetailComponent,
     null,
-    string
+    PoolSort
 > {
     constructor(
-        data: PaginatedResource<Pool>,
+        data: OffsetPaginatedResource<Pool>,
         resources: Observable<Resources>,
         poolService: PoolService,
         sandboxInstanceService: SandboxInstanceService,
@@ -41,23 +42,23 @@ export class PoolTable extends ExpandableSentinelTable<
             ),
         );
         const columns = [
-            new Column<string>('title', 'Title', true, 'id'),
-            new Column<string>(
+            new Column<PoolSort>('title', 'Title', true, 'id'),
+            new Column<PoolSort>(
                 'createdByName',
                 'Created by',
                 true,
-                'created_by__username',
+                'created_by',
             ),
-            new Column<string>(
+            new Column<PoolSort>(
                 'sandboxDefinitionNameAndRevision',
                 'Sandbox definition (revision)',
                 true,
-                'definition__name',
+                'definition',
             ),
-            new Column<string>('comment', 'Notes and comments', false),
-            new Column<string>('lockState', 'State', true, 'lock'),
-            new Column<string>('usedAndMaxSize', 'Size', true, 'max_size'),
-            new Column<string>(
+            new Column<PoolSort>('comment', 'Notes and comments', false),
+            new Column<PoolSort>('lockState', 'State', true, 'lock'),
+            new Column<PoolSort>('usedAndMaxSize', 'Size', true, 'max_size'),
+            new Column<PoolSort>(
                 'resourcesUtilization',
                 'Instances / VCPUs / RAM / ports / network utilization',
                 false,

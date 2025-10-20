@@ -1,9 +1,8 @@
-import {PaginatedResource} from '@sentinel/common/pagination';
-import {User} from '@crczp/user-and-group-model';
-import {UserAndGroupUserDTO} from '../DTO/user/user-dto.model';
-import {UserForGroupsDTO} from '../DTO/user/user-for-groups-dto.model';
-import {RoleMapper} from './role-mapper';
-import {JavaPaginatedResource, PaginationMapper} from '@crczp/api-common';
+import { User } from '@crczp/user-and-group-model';
+import { UserAndGroupUserDTO } from '../DTO/user/user-dto.model';
+import { UserForGroupsDTO } from '../DTO/user/user-for-groups-dto.model';
+import { RoleMapper } from './role-mapper';
+import { JavaPaginatedResource, OffsetPaginatedResource, PaginationMapper } from '@crczp/api-common';
 
 /**
  * Service to map internal model to dtos and other way
@@ -13,21 +12,28 @@ export class UserMapper {
      * Maps user dtos to internal model
      * @param restResource user dtos
      */
-    static mapUserDTOsToUsers(restResource: JavaPaginatedResource<UserAndGroupUserDTO>): PaginatedResource<User> {
-        const result = new PaginatedResource<User>(
-            restResource.content.map((userDTO) => this.mapUserDTOToUser(userDTO)),
+    static mapUserDTOsToUsers(
+        restResource: JavaPaginatedResource<UserAndGroupUserDTO>,
+    ): OffsetPaginatedResource<User> {
+        return new OffsetPaginatedResource<User>(
+            restResource.content.map((userDTO) =>
+                this.mapUserDTOToUser(userDTO),
+            ),
             PaginationMapper.fromJavaDTO(restResource.pagination),
         );
-        return result;
     }
 
     /**
      * Maps user dtos fro groups to internal model
      * @param userForGroupsDTOs user dtos
      */
-    static mapUserForGroupsDTOsToUsers(userForGroupsDTOs: UserForGroupsDTO[]): User[] {
+    static mapUserForGroupsDTOsToUsers(
+        userForGroupsDTOs: UserForGroupsDTO[],
+    ): User[] {
         if (userForGroupsDTOs) {
-            return userForGroupsDTOs.map((userDTO) => this.mapUserForGroupsDTOToUser(userDTO));
+            return userForGroupsDTOs.map((userDTO) =>
+                this.mapUserForGroupsDTOToUser(userDTO),
+            );
         } else {
             return [];
         }

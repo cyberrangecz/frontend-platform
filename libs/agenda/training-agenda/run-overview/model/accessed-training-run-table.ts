@@ -1,9 +1,9 @@
-import { PaginatedResource } from '@sentinel/common/pagination';
 import { AccessedTrainingRun, TraineeAccessTrainingRunActionEnum } from '@crczp/training-model';
 import { Column, Row, RowAction, SentinelTable } from '@sentinel/components/table';
 import { defer, of } from 'rxjs';
 import { AccessedTrainingRunService } from '../services/state/accessed-training-run.service';
 import { AccessedTrainingRunRowAdapter } from './accessed-training-run-row-adapter';
+import { OffsetPaginatedResource } from '@crczp/api-common';
 
 /**
  * Helper class transforming paginated resource to class for common table component
@@ -14,7 +14,7 @@ export class AccessedTrainingRunTable extends SentinelTable<
     string
 > {
     constructor(
-        resource: PaginatedResource<AccessedTrainingRun>,
+        resource: OffsetPaginatedResource<AccessedTrainingRun>,
         service: AccessedTrainingRunService,
     ) {
         const columns = [

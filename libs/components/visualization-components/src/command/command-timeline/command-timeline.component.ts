@@ -48,7 +48,7 @@ export class CommandTimelineComponent implements OnInit {
         this.selectedTrainingRunSubject$.asObservable();
 
     private readonly initPagination = createPaginationEvent<TrainingRunSort>({
-        sort: 'start_time',
+        sort: 'startTime',
         sortDir: 'asc',
     });
 

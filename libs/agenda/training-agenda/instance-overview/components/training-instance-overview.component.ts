@@ -1,9 +1,5 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, Input } from '@angular/core';
-import {
-    SentinelControlItem,
-    SentinelControlItemSignal,
-    SentinelControlsComponent
-} from '@sentinel/components/controls';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
+import { SentinelControlItem, SentinelControlsComponent } from '@sentinel/components/controls';
 import { TrainingInstance } from '@crczp/training-model';
 import {
     SentinelRowDirective,
@@ -59,7 +55,6 @@ import { TrainingInstanceSort } from '@crczp/training-api';
     ],
 })
 export class TrainingInstanceOverviewComponent {
-    @Input() paginationId = 'training-instance-overview';
     readonly INITIAL_SORT_NAME = 'startTime';
     readonly INITIAL_SORT_DIR = 'desc';
     instances$: Observable<SentinelTable<TrainingInstance, string>>;
@@ -80,17 +75,13 @@ export class TrainingInstanceOverviewComponent {
         this.initTable();
     }
 
-    onControlAction(control: SentinelControlItemSignal): void {
-        control.result$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
-    }
-
     onInstancesLoadEvent(
         loadEvent: TableLoadEvent<TrainingInstanceSort>,
     ): void {
         this.paginationService.savePageSize(loadEvent.pagination.size);
         this.service
             .getAll(
-                PaginationMapper.fromPaginationEvent(loadEvent.pagination),
+                PaginationMapper.toOffsetPaginationEvent(loadEvent.pagination),
                 loadEvent.filter,
             )
             .pipe(takeUntilDestroyed(this.destroyRef))

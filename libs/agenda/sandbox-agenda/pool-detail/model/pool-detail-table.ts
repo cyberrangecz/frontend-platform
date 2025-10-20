@@ -1,6 +1,5 @@
 import { CleanupRequest, SandboxInstance } from '@crczp/sandbox-model';
 import { Column, DeleteAction, Row, RowAction, SentinelTable } from '@sentinel/components/table';
-import { PaginatedResource } from '@sentinel/common/pagination';
 import { defer, of } from 'rxjs';
 import { PoolDetailRowAdapter } from './pool-detail-row-adapter';
 import { CleanupRequestsService } from '../services/state/request/cleanup/cleanup-requests.service';
@@ -8,41 +7,32 @@ import { AbstractSandbox } from './abstract-sandbox';
 import { SandboxInstanceService } from '../services/state/sandbox-instance/sandbox-instance.service';
 import { DatePipe } from '@angular/common';
 import { Routing } from '@crczp/routing-commons';
+import { AllocationRequestSort } from '@crczp/sandbox-api';
+import { OffsetPaginatedResource } from '@crczp/api-common';
 
 /**
  * @dynamic
  */
 export class PoolDetailTable extends SentinelTable<
     PoolDetailRowAdapter,
-    string
+    AllocationRequestSort
 > {
     constructor(
-        resource: PaginatedResource<AbstractSandbox>,
+        resource: OffsetPaginatedResource<AbstractSandbox>,
         sandboxInstanceService: SandboxInstanceService,
     ) {
         const columns = [
-            new Column<string>('name', 'name', true, 'id'),
-            new Column<string>(
+            new Column<AllocationRequestSort>('name', 'name', true, 'id'),
+            new Column<AllocationRequestSort>(
                 'comment',
                 'notes and comments',
                 false,
-                'comment',
             ),
-            new Column<string>('lock', 'lock', false),
-            new Column<string>(
-                'created',
-                'created',
-                true,
-                'allocation_request__created',
-            ),
-            new Column<string>(
-                'createdBy',
-                'created by',
-                true,
-                'created_by__first_name',
-            ),
-            new Column<string>('state', 'state', false),
-            new Column<string>('stages', 'stages', false),
+            new Column<AllocationRequestSort>('lock', 'lock', false),
+            new Column<AllocationRequestSort>('created', 'created', false),
+            new Column<AllocationRequestSort>('createdBy', 'created by', false),
+            new Column<AllocationRequestSort>('state', 'state', false),
+            new Column<AllocationRequestSort>('stages', 'stages', false),
         ];
         const rows = resource.elements.map((element) =>
             PoolDetailTable.createRow(element, sandboxInstanceService),

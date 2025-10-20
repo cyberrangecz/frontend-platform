@@ -1,13 +1,7 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import {
-    ResponseHeaderContentDispositionReader,
-    SentinelParamsMerger,
-} from '@sentinel/common';
-import {
-    OffsetPaginationEvent,
-    PaginatedResource,
-} from '@sentinel/common/pagination';
+import { ResponseHeaderContentDispositionReader, SentinelParamsMerger } from '@sentinel/common';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import { User, UserRole } from '@crczp/user-and-group-model';
 import { fromEvent, mergeMap, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -19,8 +13,9 @@ import {
     BlobFileSaver,
     handleJsonError,
     JavaPaginatedResource,
+    OffsetPaginatedResource,
     ParamsBuilder,
-    QueryParam,
+    QueryParam
 } from '@crczp/api-common';
 import { PortalConfig } from '@crczp/utils';
 import { UserSort } from './sort';
@@ -43,7 +38,7 @@ export class UserApi {
     getAll(
         pagination: OffsetPaginationEvent<UserSort>,
         filter: QueryParam[] = [],
-    ): Observable<PaginatedResource<User>> {
+    ): Observable<OffsetPaginatedResource<User>> {
         const params = SentinelParamsMerger.merge([
             ParamsBuilder.javaPaginationParams(pagination),
             ParamsBuilder.queryParams(filter),
@@ -85,7 +80,7 @@ export class UserApi {
         groupId: number,
         pagination: OffsetPaginationEvent<UserSort>,
         filters: QueryParam[] = [],
-    ): Observable<PaginatedResource<User>> {
+    ): Observable<OffsetPaginatedResource<User>> {
         const params = SentinelParamsMerger.merge([
             ParamsBuilder.javaPaginationParams(pagination),
             ParamsBuilder.queryParams(filters),
@@ -107,7 +102,7 @@ export class UserApi {
         groupIds: number[],
         pagination: OffsetPaginationEvent<UserSort>,
         filters: QueryParam[] = [],
-    ): Observable<PaginatedResource<User>> {
+    ): Observable<OffsetPaginatedResource<User>> {
         const idParams = new HttpParams().set('ids', groupIds.toString());
         const params = SentinelParamsMerger.merge([
             ParamsBuilder.javaPaginationParams(pagination),
@@ -136,7 +131,9 @@ export class UserApi {
      * Sends http request to get roles for given user id
      * @param userId id of user to delete
      */
-    getUserRoles(userId: number): Observable<PaginatedResource<UserRole>> {
+    getUserRoles(
+        userId: number,
+    ): Observable<OffsetPaginatedResource<UserRole>> {
         return this.http
             .get<JavaPaginatedResource<RoleDTO>>(`${this.apiUrl}/${userId}`)
             .pipe(map((resp) => RoleMapper.mapPaginatedRolesDTOtoRoles(resp)));
@@ -146,7 +143,7 @@ export class UserApi {
      * Sends http request to get multiplle users by their ids
      * @param userIds id of users to get
      */
-    getUsersByIds(userIds: number): Observable<PaginatedResource<User>> {
+    getUsersByIds(userIds: number): Observable<OffsetPaginatedResource<User>> {
         const idParams = new HttpParams().set('ids', userIds.toString());
         return this.http
             .get<JavaPaginatedResource<UserAndGroupUserDTO>>(

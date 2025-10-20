@@ -1,8 +1,8 @@
-import { PaginatedResource } from '@sentinel/common/pagination';
 import { Column, Row, SentinelTable } from '@sentinel/components/table';
 import { DetectedForbiddenCommand, DetectedForbiddenCommandTypeEnum } from '@crczp/training-model';
 import { DatePipe } from '@angular/common';
 import { DetectionEventForbiddenCommandsRowAdapter } from './detection-event-forbidden-commands-row-adapter';
+import { OffsetPaginatedResource } from '@crczp/api-common';
 
 /**
  * @dynamic
@@ -11,7 +11,7 @@ export class DetectionEventForbiddenCommandsTable extends SentinelTable<
     DetectionEventForbiddenCommandsRowAdapter,
     string
 > {
-    constructor(resource: PaginatedResource<DetectedForbiddenCommand>) {
+    constructor(resource: OffsetPaginatedResource<DetectedForbiddenCommand>) {
         const columns = [
             new Column<string>('command', 'command', false),
             new Column<string>('typeFormatted', 'type', false),

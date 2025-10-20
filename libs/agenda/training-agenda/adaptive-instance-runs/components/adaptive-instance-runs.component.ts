@@ -12,7 +12,7 @@ import { AdaptiveRunOverviewComponent } from './training-run-overview/adaptive-r
 import { MatCard } from '@angular/material/card';
 import { AsyncPipe } from '@angular/common';
 import { AdaptiveRunConcreteService } from '../services/runs/adaptive-run-concrete.service';
-import { createPaginationEvent } from '@crczp/api-common';
+import { createPaginationEvent, OffsetPaginatedResource } from '@crczp/api-common';
 import { TrainingRunSort } from '@crczp/training-api';
 
 /**
@@ -43,7 +43,7 @@ export class AdaptiveInstanceRunsComponent implements OnInit {
 
     private readonly initialRunsPagination =
         createPaginationEvent<TrainingRunSort>({
-            sort: 'start_time',
+            sort: 'startTime',
             sortDir: 'desc',
         });
 
@@ -74,7 +74,7 @@ export class AdaptiveInstanceRunsComponent implements OnInit {
             takeUntilDestroyed(this.destroyRef),
             map((resource) => {
                 return new AdaptiveRunTable(
-                    resource,
+                    OffsetPaginatedResource.fromPaginatedElements(resource),
                     this.adaptiveRunService,
                     this.trainingInstance,
                 );

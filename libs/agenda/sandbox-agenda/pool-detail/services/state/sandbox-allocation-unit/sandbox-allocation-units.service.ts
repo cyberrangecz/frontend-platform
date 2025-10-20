@@ -1,10 +1,8 @@
-import {
-    OffsetPaginationEvent,
-    PaginatedResource,
-} from '@sentinel/common/pagination';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { SandboxAllocationUnit } from '@crczp/sandbox-model';
-import { AllocationUnitSort } from '@crczp/sandbox-api';
+import { AllocationRequestSort } from '@crczp/sandbox-api';
+import { OffsetPaginatedResource } from '@crczp/api-common';
 
 export abstract class SandboxAllocationUnitsService {
     /**
@@ -12,12 +10,12 @@ export abstract class SandboxAllocationUnitsService {
      * Client should subscribe to the observable
      * @contract must be updated every time new data are received
      */
-    units$: Observable<PaginatedResource<SandboxAllocationUnit>>;
+    units$: Observable<OffsetPaginatedResource<SandboxAllocationUnit>>;
     /**
      * @contract Needs to be updated in onManualResourceRefresh method
      * Last pagination used when requesting new data
      */
-    protected lastPagination: OffsetPaginationEvent<AllocationUnitSort>;
+    protected lastPagination: OffsetPaginationEvent<AllocationRequestSort>;
     /**
      * True if server returned error response on the latest request, false otherwise
      * Change internally in extending service. Client should subscribe to the observable
@@ -36,7 +34,7 @@ export abstract class SandboxAllocationUnitsService {
      * @contract must be updated every time new data are received
      */
     protected unitsSubject$: BehaviorSubject<
-        PaginatedResource<SandboxAllocationUnit>
+        OffsetPaginatedResource<SandboxAllocationUnit>
     >;
 
     /**
@@ -46,8 +44,8 @@ export abstract class SandboxAllocationUnitsService {
      */
     abstract getAll(
         poolId: number,
-        pagination: OffsetPaginationEvent<AllocationUnitSort>,
-    ): Observable<PaginatedResource<SandboxAllocationUnit>>;
+        pagination: OffsetPaginationEvent<AllocationRequestSort>,
+    ): Observable<OffsetPaginatedResource<SandboxAllocationUnit>>;
 
     /**
      * Update an existing allocation unit.
@@ -84,5 +82,5 @@ export abstract class SandboxAllocationUnitsService {
      */
     protected abstract initSubject(
         pageSize: number,
-    ): PaginatedResource<SandboxAllocationUnit>;
+    ): OffsetPaginatedResource<SandboxAllocationUnit>;
 }

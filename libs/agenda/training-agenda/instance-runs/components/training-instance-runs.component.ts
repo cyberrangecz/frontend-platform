@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { TrainingInstance } from '@crczp/training-model';
 import { TableLoadEvent } from '@sentinel/components/table';
@@ -11,7 +11,7 @@ import { MatCard } from '@angular/material/card';
 import { TrainingRunOverviewComponent } from './training-run-overview/training-run-overview.component';
 import { AsyncPipe } from '@angular/common';
 import { PaginationStorageService, providePaginationStorageService } from '@crczp/utils';
-import { createPaginationEvent, PaginationMapper } from '@crczp/api-common';
+import { createPaginationEvent, OffsetPaginatedResource, PaginationMapper } from '@crczp/api-common';
 import { TrainingRunSort } from '@crczp/training-api';
 
 /**
@@ -29,7 +29,6 @@ import { TrainingRunSort } from '@crczp/training-api';
     imports: [MatCard, TrainingRunOverviewComponent, AsyncPipe],
 })
 export class TrainingInstanceRunsComponent implements OnInit {
-    @Input() paginationId = 'training-instance-runs';
     trainingInstance$: Observable<TrainingInstance>;
     trainingRuns$: Observable<TrainingRunTable>;
     trainingRunsHasError$: Observable<boolean>;
@@ -42,7 +41,7 @@ export class TrainingInstanceRunsComponent implements OnInit {
 
     private readonly initialRunPagination =
         createPaginationEvent<TrainingRunSort>({
-            sort: 'end_time',
+            sort: 'endTime',
             sortDir: 'desc',
         });
 
@@ -61,7 +60,7 @@ export class TrainingInstanceRunsComponent implements OnInit {
         this.trainingRunService
             .getAll(
                 this.trainingInstance.id,
-                PaginationMapper.fromPaginationEvent(loadEvent.pagination),
+                PaginationMapper.toOffsetPaginationEvent(loadEvent.pagination),
             )
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe();
@@ -84,7 +83,7 @@ export class TrainingInstanceRunsComponent implements OnInit {
             takeUntilDestroyed(this.destroyRef),
             map((resource) => {
                 return new TrainingRunTable(
-                    resource,
+                    OffsetPaginatedResource.fromPaginatedElements(resource),
                     this.trainingRunService,
                     this.trainingInstance,
                 );

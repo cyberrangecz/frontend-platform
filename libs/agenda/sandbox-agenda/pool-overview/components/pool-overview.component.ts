@@ -1,13 +1,9 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, Input, OnInit } from '@angular/core';
-import {
-    SentinelControlItem,
-    SentinelControlItemSignal,
-    SentinelControlsComponent
-} from '@sentinel/components/controls';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { SentinelControlItem, SentinelControlsComponent } from '@sentinel/components/controls';
 import { Pool, Resources } from '@crczp/sandbox-model';
 import { SentinelRowDirective, SentinelTableComponent, TableLoadEvent } from '@sentinel/components/table';
 import { defer, Observable, of } from 'rxjs';
-import { map, take } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { PoolTable } from '../model/pool-table';
 
 import {
@@ -25,12 +21,12 @@ import {
 import { PoolOverviewService } from '../services/state/pool-overview.service';
 import { PoolService } from '../services/abstract-pool/abstract-sandbox/pool.service';
 import { SandboxResourcesConcreteService } from '../services/resources/sandbox-resources-concrete.service';
-import { TableStateCellComponent } from './table-state-cell/table-state-cell.component';
 import { QuotasComponent } from './quotas/quotas.component';
 import { AsyncPipe } from '@angular/common';
 import { PaginationStorageService, PollingService, providePaginationStorageService } from '@crczp/utils';
 import { createPaginationEvent, PaginationMapper } from '@crczp/api-common';
 import { PoolSort } from '@crczp/sandbox-api';
+import { TableStateCellComponent } from './table-state-cell/table-state-cell.component';
 
 /**
  * Smart component of sandbox pool overview page
@@ -43,11 +39,11 @@ import { PoolSort } from '@crczp/sandbox-api';
     imports: [
         SentinelControlsComponent,
         SentinelTableComponent,
-        TableStateCellComponent,
         EditableCommentComponent,
         QuotasComponent,
         AsyncPipe,
         SentinelRowDirective,
+        TableStateCellComponent,
     ],
     providers: [
         PollingService,
@@ -73,7 +69,6 @@ import { PoolSort } from '@crczp/sandbox-api';
     ],
 })
 export class PoolOverviewComponent implements OnInit {
-    @Input() paginationId = 'crczp-sandbox-pool-overview';
     pools$: Observable<PoolTable>;
     hasError$: Observable<boolean>;
     resources$: Observable<Resources>;
@@ -107,13 +102,11 @@ export class PoolOverviewComponent implements OnInit {
     onLoadEvent(loadEvent: TableLoadEvent<PoolSort>): void {
         this.paginationService.savePageSize(loadEvent.pagination.size);
         this.abstractPoolService
-            .getAll(PaginationMapper.fromPaginationEvent(loadEvent.pagination))
+            .getAll(
+                PaginationMapper.toOffsetPaginationEvent(loadEvent.pagination),
+            )
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe();
-    }
-
-    onControls(controlItem: SentinelControlItemSignal): void {
-        controlItem.result$.pipe(take(1)).subscribe();
     }
 
     updatePoolComment(pool: Pool, newComment: string) {

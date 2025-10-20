@@ -1,8 +1,14 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { SentinelParamsMerger } from '@sentinel/common';
-import { JavaPaginatedResource, PaginationMapper, ParamsBuilder, QueryParam } from '@crczp/api-common';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
+import {
+    JavaPaginatedResource,
+    OffsetPaginatedResource,
+    PaginationMapper,
+    ParamsBuilder,
+    QueryParam
+} from '@crczp/api-common';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import {
     AccessedTrainingRun,
     AccessTrainingRunInfo,
@@ -56,7 +62,7 @@ export class TrainingRunDefaultApi extends LinearRunApi {
     getAll(
         pagination: OffsetPaginationEvent<TrainingRunSort>,
         filters: QueryParam[] = [],
-    ): Observable<PaginatedResource<TrainingRun>> {
+    ): Observable<OffsetPaginatedResource<TrainingRun>> {
         const params = SentinelParamsMerger.merge([
             ParamsBuilder.javaPaginationParams(pagination),
             ParamsBuilder.queryParams(filters),
@@ -66,7 +72,7 @@ export class TrainingRunDefaultApi extends LinearRunApi {
             .pipe(
                 map(
                     (response) =>
-                        new PaginatedResource<TrainingRun>(
+                        new OffsetPaginatedResource<TrainingRun>(
                             TrainingRunMapper.fromDTOs(response.content),
                             PaginationMapper.fromJavaDTO(response.pagination),
                         ),
@@ -92,7 +98,7 @@ export class TrainingRunDefaultApi extends LinearRunApi {
     getAccessed(
         pagination: OffsetPaginationEvent<AccessedTrainingRunSort>,
         filters: QueryParam[] = [],
-    ): Observable<PaginatedResource<AccessedTrainingRun>> {
+    ): Observable<OffsetPaginatedResource<AccessedTrainingRun>> {
         const params = SentinelParamsMerger.merge([
             ParamsBuilder.javaPaginationParams(pagination),
             ParamsBuilder.queryParams(filters),
@@ -105,7 +111,7 @@ export class TrainingRunDefaultApi extends LinearRunApi {
             .pipe(
                 map(
                     (response) =>
-                        new PaginatedResource<AccessedTrainingRun>(
+                        new OffsetPaginatedResource<AccessedTrainingRun>(
                             AccessedTrainingRunMapper.fromDTOs(
                                 response.content,
                             ),

@@ -10,7 +10,7 @@
         </h3>
         <p>{{ trainingDefinition.description }}</p>
     </div>
-    <sentinel-controls (itemClicked)="onInfoControlAction($event)" [controls]="infoControls"/>
+    <sentinel-controls [controls]="infoControls" />
 </div>
 <div class="icon-panel-container">
     <div class="data-field">
@@ -28,10 +28,10 @@
         <div class="icon-label">Assigned Pool</div>
         @if (trainingInstance.hasPool()) {
             <button
-                mat-button
-                color="primary"
-                class="value-field link-button"
                 [routerLink]="poolIdLink"
+                class="value-field link-button"
+                color="primary"
+                mat-button
             >
                 Pool {{ trainingInstance.poolId }}
             </button>
@@ -43,7 +43,8 @@
     <div class="data-field">
         <mat-icon class="material-icons-outlined">pin</mat-icon>
         <div class="icon-label">Access Token</div>
-        <button (click)="onCopyToken()" [cdkCopyToClipboard]="trainingInstance.accessToken" class="value-field link-button" color="primary"
+        <button (click)="onCopyToken()" [cdkCopyToClipboard]="trainingInstance.accessToken"
+                class="value-field link-button" color="primary"
                 mat-button
                 matTooltip="Click to copy access token">
             {{ trainingInstance.accessToken }}

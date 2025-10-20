@@ -16,8 +16,8 @@
 
     </mat-expansion-panel-header>
     <ng-template matExpansionPanelContent>
-        <sentinel-controls (itemClicked)="onControlsAction($event)"
-                           [controls]="controls">
+        <sentinel-controls
+            [controls]="controls">
         </sentinel-controls>
         <mat-divider />
         <!-- EDIT TRAINING DEFINITION -->
@@ -65,12 +65,12 @@
         <ng-template matExpansionPanelContent>
             @if (editMode$ | async) {
                 <sentinel-user-assign
-                    resourceMatIcon="list_alt"
-                    [resource]="trainingDefinition$ | async"
-                    [defaultPaginationSize]="defaultPaginationSize"
                     (hasUnsavedChanges)="onAuthorsChanged($event)"
-                    toAssignTitle="Designers"
-                    assigneesTitle="Designers">
+                    [defaultPaginationSize]="defaultPaginationSize"
+                    [resource]="trainingDefinition$ | async"
+                    assigneesTitle="Designers"
+                    resourceMatIcon="list_alt"
+                    toAssignTitle="Designers">
                 </sentinel-user-assign>
             }
         </ng-template>

@@ -1,12 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
-import {
-    AllocationRequestSort,
-    CleanupRequestsApi,
-    PoolApi,
-    SandboxAllocationUnitsApi,
-} from '@crczp/sandbox-api';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
+import { AllocationRequestSort, CleanupRequestsApi, PoolApi, SandboxAllocationUnitsApi } from '@crczp/sandbox-api';
 import { CleanupRequest, Request } from '@crczp/sandbox-model';
 import { EMPTY, Observable } from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
@@ -18,6 +13,7 @@ import {
 } from '@sentinel/components/dialogs';
 import { MatDialog } from '@angular/material/dialog';
 import { ErrorHandlerService, NotificationService, PortalConfig } from '@crczp/utils';
+import { OffsetPaginatedResource } from '@crczp/api-common';
 
 /**
  * Basic implementation of a layer between a component and an API service.
@@ -48,7 +44,7 @@ export class CleanupRequestsConcreteService extends RequestsService {
     getAll(
         poolId: number,
         pagination: OffsetPaginationEvent<AllocationRequestSort>,
-    ): Observable<PaginatedResource<Request>> {
+    ): Observable<OffsetPaginatedResource<Request>> {
         this.onManualResourceRefresh(pagination, poolId);
         return this.poolApi.getCleanupRequests(poolId, pagination).pipe(
             tap(
@@ -106,7 +102,7 @@ export class CleanupRequestsConcreteService extends RequestsService {
     /**
      * Repeats last get all request for polling purposes
      */
-    protected refreshResource(): Observable<PaginatedResource<Request>> {
+    protected refreshResource(): Observable<OffsetPaginatedResource<Request>> {
         this.hasErrorSubject$.next(false);
         return this.poolApi
             .getCleanupRequests(this.lastPoolId, this.lastPagination)

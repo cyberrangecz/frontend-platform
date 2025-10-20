@@ -1,34 +1,21 @@
 import { Component, DestroyRef, inject, OnInit } from '@angular/core';
-import {
-    SentinelControlItem,
-    SentinelControlItemSignal,
-    SentinelControlsComponent,
-} from '@sentinel/components/controls';
-import {
-    TrainingDefinition,
-    TrainingDefinitionStateEnum,
-} from '@crczp/training-model';
+import { SentinelControlItem, SentinelControlsComponent } from '@sentinel/components/controls';
+import { TrainingDefinition, TrainingDefinitionStateEnum } from '@crczp/training-model';
 import {
     SentinelRowDirective,
     SentinelTable,
     SentinelTableComponent,
-    TableLoadEvent,
+    TableLoadEvent
 } from '@sentinel/components/table';
 import { Observable } from 'rxjs';
-import { map, take } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { TrainingDefinitionOverviewControls } from '../model/training-definition-overview-controls';
 import { TrainingDefinitionTable } from '../model/training-definition-table';
 import { TrainingDefinitionService } from '../services/state/training-definition.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AsyncPipe } from '@angular/common';
-import {
-    TableDateCellComponent,
-    TableStateCellComponent,
-} from '@crczp/components';
-import {
-    FileUploadProgressService,
-    PaginationStorageService,
-} from '@crczp/utils';
+import { TableDateCellComponent, TableStateCellComponent } from '@crczp/components';
+import { FileUploadProgressService, PaginationStorageService } from '@crczp/utils';
 import { createPaginationEvent, PaginationMapper } from '@crczp/api-common';
 import { TrainingDefinitionSort } from '@crczp/training-api';
 
@@ -87,7 +74,7 @@ export class CommonTrainingDefinitionOverviewComponent implements OnInit {
         this.paginationService.savePageSize(loadEvent.pagination.size);
         this.trainingDefinitionService
             .getAll(
-                PaginationMapper.fromPaginationEvent(loadEvent.pagination),
+                PaginationMapper.toOffsetPaginationEvent(loadEvent.pagination),
                 loadEvent.filter,
             )
             .pipe(takeUntilDestroyed(this.destroyRef))
@@ -98,9 +85,6 @@ export class CommonTrainingDefinitionOverviewComponent implements OnInit {
      * Resolves controls action and calls appropriate handler
      * @param control selected control emitted by controls component
      */
-    onControlsAction(control: SentinelControlItemSignal): void {
-        control.result$.pipe(take(1)).subscribe();
-    }
 
     stateToIcon(value: TrainingDefinitionStateEnum): string {
         switch (value) {

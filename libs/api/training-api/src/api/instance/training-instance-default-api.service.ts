@@ -5,11 +5,12 @@ import {
     BlobFileSaver,
     handleJsonError,
     JavaPaginatedResource,
+    OffsetPaginatedResource,
     PaginationMapper,
     ParamsBuilder,
     QueryParam
 } from '@crczp/api-common';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import { TrainingInstance, TrainingRun } from '@crczp/training-model';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -51,7 +52,7 @@ export class TrainingInstanceDefaultApi extends LinearTrainingInstanceApi {
     getAll(
         pagination: OffsetPaginationEvent<TrainingInstanceSort>,
         filters: QueryParam[] = [],
-    ): Observable<PaginatedResource<TrainingInstance>> {
+    ): Observable<OffsetPaginatedResource<TrainingInstance>> {
         const params = SentinelParamsMerger.merge([
             ParamsBuilder.javaPaginationParams(pagination),
             ParamsBuilder.queryParams(filters),
@@ -63,7 +64,7 @@ export class TrainingInstanceDefaultApi extends LinearTrainingInstanceApi {
             .pipe(
                 map(
                     (response) =>
-                        new PaginatedResource<TrainingInstance>(
+                        new OffsetPaginatedResource<TrainingInstance>(
                             TrainingInstanceMapper.fromDTOs(response.content),
                             PaginationMapper.fromJavaDTO(response.pagination),
                         ),
@@ -105,7 +106,7 @@ export class TrainingInstanceDefaultApi extends LinearTrainingInstanceApi {
     getAssociatedTrainingRuns(
         trainingInstanceId: number,
         pagination: OffsetPaginationEvent<TrainingRunSort>,
-    ): Observable<PaginatedResource<TrainingRun>> {
+    ): Observable<OffsetPaginatedResource<TrainingRun>> {
         const params = ParamsBuilder.javaPaginationParams(pagination);
         return this.http
             .get<
@@ -114,7 +115,7 @@ export class TrainingInstanceDefaultApi extends LinearTrainingInstanceApi {
             .pipe(
                 map(
                     (response) =>
-                        new PaginatedResource(
+                        new OffsetPaginatedResource(
                             TrainingRunMapper.fromDTOs(response.content),
                             PaginationMapper.fromJavaDTO(response.pagination),
                         ),

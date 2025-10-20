@@ -110,45 +110,52 @@ export class TopologyNodeSvgService {
         deviceType: 'ROUTER' | 'HOST' | 'INTERNET',
         osType: OsType,
         ip: string,
-        consoleAccess: boolean
+        accessible: boolean,
+        hasGuiAccess: boolean,
     ): Observable<string> {
+        const accessTypeKey =
+            accessible && hasGuiAccess ? 'GUI' : accessible ? 'CONSOLE' : null;
         return this.iconsService.isLoading$.pipe(
             skipWhile((loading) => loading),
             map(() => {
                 const svgString = this.buildNodeSvg(
                     label,
                     this.iconsService.getPreloadedIcon(deviceType),
-
-                    consoleAccess && deviceType !== 'INTERNET'
+                    accessible && deviceType !== 'INTERNET'
                         ? {
                               uri: this.iconsService.getPreloadedIcon(
-                                  'CONSOLE'
+                                  accessTypeKey,
                               ),
-                              fillColor: CONFIG.INDICATOR.BACKDROP_FILL.CONSOLE,
+                              fillColor:
+                                  CONFIG.INDICATOR.BACKDROP_FILL[accessTypeKey],
                               strokeColor:
-                                  CONFIG.INDICATOR.BACKDROP_STROKE.CONSOLE,
+                                  CONFIG.INDICATOR.BACKDROP_STROKE[
+                                      accessTypeKey
+                                  ],
                           }
                         : null,
                     deviceType !== 'INTERNET'
                         ? {
-                              uri: this.iconsService.getPreloadedIcon(osType.toUpperCase() as TopologyIcon),
+                              uri: this.iconsService.getPreloadedIcon(
+                                  osType.toUpperCase() as TopologyIcon,
+                              ),
                               fillColor: CONFIG.INDICATOR.BACKDROP_FILL[osType],
                               strokeColor:
                                   CONFIG.INDICATOR.BACKDROP_STROKE[osType],
                           }
                         : null,
                     deviceType,
-                    ip
+                    ip,
                 );
                 return `data:image/svg+xml;base64,${btoa(svgString)}`;
-            })
+            }),
         );
     }
 
     public generateSubnetSvg(
         name: string,
         cidr: string,
-        colour: string
+        colour: string,
     ): string {
         const nameFont = `700 ${CONFIG.FONT.SIZE.SUBNET.NAME}px ${CONFIG.FONT.FAMILY}`;
         const cidrFont = `500 ${CONFIG.FONT.SIZE.SUBNET.IP}px ${CONFIG.FONT.FAMILY}`;
@@ -163,7 +170,7 @@ export class TopologyNodeSvgService {
 
         const svgSize = radius * 2 + 4;
         const centerX = svgSize / 2;
-        const centerY = svgSize / 2 - 16;
+        const centerY = svgSize / 2;
 
         const nameY = centerY - 8;
         const cidrY =
@@ -173,7 +180,6 @@ export class TopologyNodeSvgService {
 
         const svgContent = `
                 <svg width="${svgSize}" height="${svgSize}" xmlns="http://www.w3.org/2000/svg">
-
                         <defs>
                           ${this.buildSubnetBorderDefinition(colour)}
                         </defs>\`;
@@ -234,7 +240,7 @@ export class TopologyNodeSvgService {
         consoleIndicatorData: IndicatorData | null,
         osIndicatorData: IndicatorData | null,
         nodeType: GraphNodeType,
-        ip: string | null
+        ip: string | null,
     ): string {
         const labelFont = `600 ${this.getFontSize(nodeType, 'NAME')}px ${
             CONFIG.FONT.FAMILY
@@ -248,12 +254,12 @@ export class TopologyNodeSvgService {
                       CONFIG.CARD.PADDING.LABEL_SIDE * 2
                 : 0,
             this.measureTextWidth(label, labelFont) +
-                CONFIG.CARD.PADDING.LABEL_SIDE * 2
+                CONFIG.CARD.PADDING.LABEL_SIDE * 2,
         );
 
         const dynamicWidth = Math.max(
             CONFIG.CARD.MIN_WIDTH,
-            mainCardContentWidth
+            mainCardContentWidth,
         );
 
         const baseHeight =
@@ -279,7 +285,7 @@ export class TopologyNodeSvgService {
             label,
             dynamicWidth,
             nodeType,
-            ip
+            ip,
         );
 
         return `
@@ -295,15 +301,15 @@ export class TopologyNodeSvgService {
                     cx="50%" cy="50%" r="50%"
                     gradientUnits="objectBoundingBox"
                     gradientTransform="scale(0.98)">
-      <stop offset="80%"   stop-color="#ffffff" stop-opacity="0.99"/>
-      <stop offset="82%" stop-color="${colour}"  stop-opacity="0.50"/>
-      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="85%"   stop-color="#ffffff" stop-opacity="0.99"/>
+      <stop offset="89%" stop-color="${colour}"  stop-opacity="0.40"/>
+      <stop offset="94%" stop-color="#ffffff" stop-opacity="0"/>
     </radialGradient>`;
     }
 
     private buildSvgDefinitions(
         width: number,
-        nodeType: GraphNodeType
+        nodeType: GraphNodeType,
     ): string {
         const iconY = CONFIG.CARD.PADDING.HEADER + 8;
         const labelBaselineY =
@@ -341,7 +347,7 @@ export class TopologyNodeSvgService {
             <linearGradient id="indicator-primary" x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stop-color="${CONFIG.COLORS.PRIMARY.MAIN}" />
                 <stop offset="100%" stop-color="${this.chroma(
-                    CONFIG.COLORS.PRIMARY.MAIN
+                    CONFIG.COLORS.PRIMARY.MAIN,
                 ).darken(0.5)}" />
             </linearGradient>
 
@@ -350,7 +356,7 @@ export class TopologyNodeSvgService {
                     CONFIG.COLORS.SECONDARY.MAIN
                 }" />
                 <stop offset="100%" stop-color="${this.chroma(
-                    CONFIG.COLORS.SECONDARY.MAIN
+                    CONFIG.COLORS.SECONDARY.MAIN,
                 ).darken(0.5)}" />
             </linearGradient>
          </defs>`;
@@ -392,7 +398,7 @@ export class TopologyNodeSvgService {
         label: string,
         width: number,
         nodeType: GraphNodeType,
-        ip: string | null = null
+        ip: string | null = null,
     ): string {
         const centerX = width / 2;
         const iconY = CONFIG.CARD.PADDING.HEADER;
@@ -402,6 +408,8 @@ export class TopologyNodeSvgService {
             labelY +
             CONFIG.CARD.PADDING.LABEL_ROW +
             this.getFontSize(nodeType, 'IP');
+
+        console.log(consoleIndicatorData);
 
         const consoleIndicatorMarkup = consoleIndicatorData
             ? `<g transform="translate(${width - CONFIG.INDICATOR.MARGIN}, ${
@@ -441,19 +449,19 @@ export class TopologyNodeSvgService {
         return `<g>
             <!-- Main Icon -->
             <image href="${mainIconDataUri}" x="${
-            centerX - CONFIG.ICON_SIZE.MAIN / 2
-        }" y="${iconY}" height="${CONFIG.ICON_SIZE.MAIN}" width="${
-            CONFIG.ICON_SIZE.MAIN
-        }"/>
+                centerX - CONFIG.ICON_SIZE.MAIN / 2
+            }" y="${iconY}" height="${CONFIG.ICON_SIZE.MAIN}" width="${
+                CONFIG.ICON_SIZE.MAIN
+            }"/>
         </g>
         <g clip-path="url(#label-clip-path)">
             <!-- Main Label -->
             <text x="${centerX}" y="${labelY}" font-family="${
-            CONFIG.FONT.FAMILY
-        }" font-size="${this.getFontSize(
-            nodeType,
-            'NAME'
-        )}px" font-weight="600" fill="#1a202c" text-anchor="middle" text-rendering="optimizeLegibility">
+                CONFIG.FONT.FAMILY
+            }" font-size="${this.getFontSize(
+                nodeType,
+                'NAME',
+            )}px" font-weight="600" fill="#1a202c" text-anchor="middle" text-rendering="optimizeLegibility">
             ${this.escapeXml(label)}
             </text>
         </g>
@@ -472,7 +480,7 @@ export class TopologyNodeSvgService {
                     '&': '&amp;',
                     "'": '&apos;',
                     '"': '&quot;',
-                }[c] || c)
+                })[c] || c,
         );
     }
 

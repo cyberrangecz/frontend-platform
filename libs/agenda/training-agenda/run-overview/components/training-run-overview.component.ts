@@ -5,11 +5,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { AccessedTrainingRunTable } from '../model/accessed-training-run-table';
 import { AccessedTrainingRunService } from '../services/state/accessed-training-run.service';
-import {
-    SentinelControlItem,
-    SentinelControlItemSignal,
-    SentinelControlsComponent
-} from '@sentinel/components/controls';
+import { SentinelControlItem, SentinelControlsComponent } from '@sentinel/components/controls';
 import { AccessedTrainingRunControls } from '../model/accessed-training-run-controls';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AsyncPipe } from '@angular/common';
@@ -62,7 +58,7 @@ export class TrainingRunOverviewComponent implements OnInit {
 
     private readonly initialRunPagination =
         createPaginationEvent<AccessedTrainingRunSort>({
-            sort: 'training_instance_end_date',
+            sort: 'trainingInstanceEndDate',
             sortDir: 'desc',
         });
 
@@ -103,15 +99,11 @@ export class TrainingRunOverviewComponent implements OnInit {
     ): void {
         this.trainingRunOverviewService
             .getAll(
-                PaginationMapper.fromPaginationEvent(loadEvent.pagination),
+                PaginationMapper.toOffsetPaginationEvent(loadEvent.pagination),
                 loadEvent.filter,
             )
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe();
-    }
-
-    onControlsAction(control: SentinelControlItemSignal): void {
-        control.result$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
     }
 
     private initTable() {

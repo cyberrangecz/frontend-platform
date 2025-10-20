@@ -22,14 +22,14 @@
             <div class="phase-count"> {{ getGeneralQuestionnaires()?.length }}</div>
         </div>
     </div>
-    <sentinel-controls (itemClicked)="onControlsAction($event)" [controls]="controls"/>
+    <sentinel-controls [controls]="controls" />
 </div>
 <mat-accordion class="example-headers-align" multi="true">
     @for (phase of phases; track phase; let isLast = $last) {
         <div>
-            <crczp-phase-detail [phase]="phase"/>
+            <crczp-phase-detail [phase]="phase" />
             @if (!isLast) {
-                <mat-divider/>
+                <mat-divider />
             }
         </div>
     }

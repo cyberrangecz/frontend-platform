@@ -1,12 +1,12 @@
 import { User } from '@crczp/user-and-group-model';
-import { PaginatedResource } from '@sentinel/common/pagination';
 import { Column, Row, SentinelTable } from '@sentinel/components/table';
+import { OffsetPaginatedResource, PaginationMapper } from '@crczp/api-common';
 
 /**
  * @dynamic
  */
 export class MembersDetailTable extends SentinelTable<User, string> {
-    constructor(resource: PaginatedResource<User>) {
+    constructor(resource: OffsetPaginatedResource<User>) {
         const columns = [
             new Column<string>('picture', 'picture', false),
             new Column<string>('name', 'name', true, 'familyName'),
@@ -19,7 +19,7 @@ export class MembersDetailTable extends SentinelTable<User, string> {
         super(rows, columns);
         this.filterable = true;
         this.filterLabel = 'Filter by name';
-        this.pagination = resource.pagination;
+        this.pagination = PaginationMapper.fromArray(resource.elements, 20);
     }
 
     private static createRow(user: User): Row<User> {

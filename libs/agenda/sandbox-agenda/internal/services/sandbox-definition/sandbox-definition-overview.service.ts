@@ -1,18 +1,15 @@
-import { OffsetPaginatedElementsService } from '@sentinel/common';
-import {
-    OffsetPaginationEvent,
-    PaginatedResource,
-} from '@sentinel/common/pagination';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import { SandboxDefinition } from '@crczp/sandbox-model';
 import { Observable } from 'rxjs';
 import { SandboxDefinitionSort } from '@crczp/sandbox-api';
+import { CrczpOffsetElementsPaginatedService, OffsetPaginatedResource } from '@crczp/api-common';
 
 /**
  * A layer between a component and an API service. Implement a concrete service by extending this class.
  * Provide a concrete class in Angular Module. For more info see https://angular.io/guide/dependency-injection-providers.
  * You can use get methods to get paginated sandbox definitions and other operations to modify data.
  */
-export abstract class SandboxDefinitionOverviewService extends OffsetPaginatedElementsService<SandboxDefinition> {
+export abstract class SandboxDefinitionOverviewService extends CrczpOffsetElementsPaginatedService<SandboxDefinition> {
     protected constructor(pageSize: number) {
         super(pageSize);
     }
@@ -22,7 +19,7 @@ export abstract class SandboxDefinitionOverviewService extends OffsetPaginatedEl
      */
     abstract getAll(
         pagination: OffsetPaginationEvent<SandboxDefinitionSort>,
-    ): Observable<PaginatedResource<SandboxDefinition>>;
+    ): Observable<OffsetPaginatedResource<SandboxDefinition>>;
 
     /**
      * Deletes sandbox definition by given id
@@ -30,7 +27,7 @@ export abstract class SandboxDefinitionOverviewService extends OffsetPaginatedEl
      */
     abstract delete(
         sandboxDefinition: SandboxDefinition,
-    ): Observable<PaginatedResource<SandboxDefinition>>;
+    ): Observable<OffsetPaginatedResource<SandboxDefinition>>;
 
     /**
      * Creates a  new sandbox definition

@@ -1,8 +1,8 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { SentinelParamsMerger } from '@sentinel/common';
-import { JavaPaginatedResource, ParamsBuilder, QueryParam } from '@crczp/api-common';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
+import { JavaPaginatedResource, OffsetPaginatedResource, ParamsBuilder, QueryParam } from '@crczp/api-common';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import { Microservice } from '@crczp/user-and-group-model';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -46,7 +46,7 @@ export class MicroserviceApi {
     getAll(
         pagination: OffsetPaginationEvent<MicroserviceSort>,
         filter?: QueryParam[],
-    ): Observable<PaginatedResource<Microservice>> {
+    ): Observable<OffsetPaginatedResource<Microservice>> {
         const params = SentinelParamsMerger.merge([
             ParamsBuilder.javaPaginationParams(pagination),
             ParamsBuilder.queryParams(filter),

@@ -8,10 +8,7 @@ import {
 
 import { ErrorHandlerService } from '@crczp/utils';
 
-import {
-    OffsetPagination,
-    PaginatedResource,
-} from '@sentinel/common/pagination';
+import { OffsetPagination } from '@sentinel/common/pagination';
 
 import {
     DjangoOffsetPaginationDTO,
@@ -23,6 +20,7 @@ import {
 import { PaginationMapper } from './pagination/pagination-mapper';
 import { catchError, EMPTY, map, Observable, switchMap, take } from 'rxjs';
 import { handleJsonError } from './validation/json-error-converter';
+import { OffsetPaginatedResource } from './pagination/offset-paginated-resource';
 
 type Backend = 'java' | 'python';
 type BodylessVerb = 'GET' | 'DELETE';
@@ -67,7 +65,7 @@ export class CRCZPHttpService {
             this.pipeError.bind(this),
             'GET',
             url,
-            operation
+            operation,
         );
     }
 
@@ -82,7 +80,7 @@ export class CRCZPHttpService {
             this.pipeError.bind(this),
             'DELETE',
             url,
-            operation
+            operation,
         );
     }
 
@@ -97,7 +95,7 @@ export class CRCZPHttpService {
             this.pipeError.bind(this),
             'POST',
             url,
-            operation
+            operation,
         );
     }
 
@@ -112,7 +110,7 @@ export class CRCZPHttpService {
             this.pipeError.bind(this),
             'PUT',
             url,
-            operation
+            operation,
         );
     }
 
@@ -127,7 +125,7 @@ export class CRCZPHttpService {
             this.pipeError.bind(this),
             'PATCH',
             url,
-            operation
+            operation,
         );
     }
 
@@ -137,8 +135,8 @@ export class CRCZPHttpService {
                 catchError((err: HttpErrorResponse) =>
                     this.errorHandler
                         .emitAPIError(err, operation)
-                        .pipe(switchMap(() => EMPTY as Observable<T>))
-                )
+                        .pipe(switchMap(() => EMPTY as Observable<T>)),
+                ),
             );
     }
 }
@@ -154,11 +152,11 @@ abstract class BaseRequestBuilder<TRecv, TOut = TRecv> {
     constructor(
         protected readonly http: HttpClient,
         protected readonly errorPipe: <T>(
-            operation?: string
+            operation?: string,
         ) => (src: Observable<T>) => Observable<T>,
         protected readonly method: BodylessVerb | BodyVerb,
         protected readonly url: string,
-        protected readonly opName: string
+        protected readonly opName: string,
     ) {}
 
     /**
@@ -255,7 +253,7 @@ abstract class BaseRequestBuilder<TRecv, TOut = TRecv> {
         this.pagination = backend;
         return this as unknown as BaseRequestBuilder<
             PaginatedEnvelope<any>,
-            PaginatedResource<any>
+            OffsetPaginatedResource<any>
         >;
     }
 
@@ -274,11 +272,11 @@ abstract class BaseRequestBuilder<TRecv, TOut = TRecv> {
                         'content' in response
                             ? (response.content as DTO[])
                             : 'results' in response
-                            ? (response.results as DTO[])
-                            : [];
+                              ? (response.results as DTO[])
+                              : [];
 
                     const mapItem = (this.receiveMapper ?? ((x: any) => x)) as (
-                        x: DTO
+                        x: DTO,
                     ) => any;
                     const elements = rawDtos.map(mapItem);
 
@@ -293,8 +291,8 @@ abstract class BaseRequestBuilder<TRecv, TOut = TRecv> {
                         pagination = PaginationMapper.fromDjangoDTO(p);
                     }
 
-                    return new PaginatedResource(elements, pagination);
-                })
+                    return new OffsetPaginatedResource(elements, pagination);
+                }),
             );
         } else if (this.receiveMapper) {
             return piped$.pipe(map(this.receiveMapper));
@@ -314,11 +312,11 @@ class BodylessRequestBuilder<TRecv, TOut = TRecv> extends BaseRequestBuilder<
         http: HttpClient,
         errorPipe: <T>(
             verb: string,
-            operation?: string
+            operation?: string,
         ) => (src: Observable<T>) => Observable<T>,
         method: BodylessVerb,
         url: string,
-        operation: string
+        operation: string,
     ) {
         super(http, errorPipe, method, url, operation);
     }
@@ -361,11 +359,11 @@ class BodyRequestBuilder<TSend, TRecv, TOut = TRecv> extends BaseRequestBuilder<
         http: HttpClient,
         errorPipe: <T>(
             verb: string,
-            operation?: string
+            operation?: string,
         ) => (src: Observable<T>) => Observable<T>,
         method: BodyVerb,
         url: string,
-        operation: string
+        operation: string,
     ) {
         super(http, errorPipe, method, url, operation);
     }
@@ -400,21 +398,21 @@ class BodyRequestBuilder<TSend, TRecv, TOut = TRecv> extends BaseRequestBuilder<
                 request$ = this.http.post<TRecv>(
                     this.url,
                     this.mapSend(this.body),
-                    opts
+                    opts,
                 );
                 break;
             case 'PUT':
                 request$ = this.http.put<TRecv>(
                     this.url,
                     this.mapSend(this.body),
-                    opts
+                    opts,
                 );
                 break;
             case 'PATCH':
                 request$ = this.http.patch<TRecv>(
                     this.url,
                     this.mapSend(this.body),
-                    opts
+                    opts,
                 );
                 break;
             default:
@@ -442,7 +440,7 @@ type PaginatedEnvelope<T> =
       };
 
 function coerceParams(
-    obj: Record<string, any>
+    obj: Record<string, any>,
 ): Record<string, string | string[]> {
     const out: Record<string, string | string[]> = {};
     Object.entries(obj ?? {}).forEach(([k, v]) => {

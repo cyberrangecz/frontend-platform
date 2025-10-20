@@ -1,4 +1,4 @@
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import {
     AllocationRequest,
     CloudResource,
@@ -10,7 +10,7 @@ import {
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { RequestStageMapper } from '../../mappers/sandbox-instance/request-stage-mapper';
-import { DjangoResourceDTO, PaginationMapper, ParamsBuilder } from '@crczp/api-common';
+import { DjangoResourceDTO, OffsetPaginatedResource, PaginationMapper, ParamsBuilder } from '@crczp/api-common';
 import { AnsibleAllocationStageDTO } from '../../dto/sandbox-instance/stages/ansible-allocation-stage-dto';
 import { TerraformAllocationStageDTO } from '../../dto/sandbox-instance/stages/terraform-allocation-stage-dto';
 import { RequestMapper } from '../../mappers/sandbox-instance/request-mapper';
@@ -78,7 +78,7 @@ export class AllocationRequestsApi {
     getNetworkingAnsibleOutputs(
         requestId: number,
         pagination: OffsetPaginationEvent<AllocationOutputSort>,
-    ): Observable<PaginatedResource<string>> {
+    ): Observable<OffsetPaginatedResource<string>> {
         return this.http
             .get<DjangoResourceDTO<AnsibleAllocationOutputDTO>>(
                 `${this.apiUrl}/${requestId}/${this.stagesUriExtension}/networking-ansible/outputs`,
@@ -89,7 +89,7 @@ export class AllocationRequestsApi {
             .pipe(
                 map(
                     (resp) =>
-                        new PaginatedResource<string>(
+                        new OffsetPaginatedResource<string>(
                             RequestStageMapper.fromAnsibleAllocationOutputDTOs(
                                 resp.results,
                             ),
@@ -125,7 +125,7 @@ export class AllocationRequestsApi {
     getUserAnsibleOutputs(
         requestId: number,
         pagination: OffsetPaginationEvent<AllocationOutputSort>,
-    ): Observable<PaginatedResource<string>> {
+    ): Observable<OffsetPaginatedResource<string>> {
         return this.http
             .get<DjangoResourceDTO<AnsibleAllocationOutputDTO>>(
                 `${this.apiUrl}/${requestId}/${this.stagesUriExtension}/user-ansible/outputs`,
@@ -136,7 +136,7 @@ export class AllocationRequestsApi {
             .pipe(
                 map(
                     (resp) =>
-                        new PaginatedResource<string>(
+                        new OffsetPaginatedResource<string>(
                             RequestStageMapper.fromAnsibleAllocationOutputDTOs(
                                 resp.results,
                             ),
@@ -170,7 +170,7 @@ export class AllocationRequestsApi {
     getCloudResources(
         requestId: number,
         pagination: OffsetPaginationEvent<ResourceUsageSort>,
-    ): Observable<PaginatedResource<CloudResource>> {
+    ): Observable<OffsetPaginatedResource<CloudResource>> {
         return this.http
             .get<DjangoResourceDTO<CloudResourceDTO>>(
                 `${this.apiUrl}/${requestId}/${this.stagesUriExtension}/openstack/resources`,
@@ -181,7 +181,7 @@ export class AllocationRequestsApi {
             .pipe(
                 map(
                     (response) =>
-                        new PaginatedResource<CloudResource>(
+                        new OffsetPaginatedResource<CloudResource>(
                             RequestStageMapper.fromCloudResourceDTOs(
                                 response.results,
                             ),
@@ -199,7 +199,7 @@ export class AllocationRequestsApi {
     getTerraformOutputs(
         requestId: number,
         pagination: OffsetPaginationEvent<AllocationOutputSort>,
-    ): Observable<PaginatedResource<TerraformOutput>> {
+    ): Observable<OffsetPaginatedResource<TerraformOutput>> {
         return this.http
             .get<DjangoResourceDTO<TerraformOutputDTO>>(
                 `${this.apiUrl}/${requestId}/${this.stagesUriExtension}/terraform/outputs`,
@@ -210,7 +210,7 @@ export class AllocationRequestsApi {
             .pipe(
                 map(
                     (response) =>
-                        new PaginatedResource<TerraformOutput>(
+                        new OffsetPaginatedResource<TerraformOutput>(
                             RequestStageMapper.fromTerraformOutputDTOs(
                                 response.results,
                             ),

@@ -13,6 +13,7 @@ export class TopologyIconsService {
         LINUX_NO_BG: '/assets/topology/skill-icons--linux-light--no-bg.svg',
         WINDOWS_NO_BG: '/assets/topology/skill-icons--windows-light--no-bg.svg',
         CONSOLE: '/assets/topology/console.svg',
+        GUI: '/assets/topology/gui.svg',
         ROUTER: '/assets/topology/router.svg',
         HOST: '/assets/topology/host.svg',
         INTERNET: '/assets/topology/internet.svg',
@@ -34,16 +35,16 @@ export class TopologyIconsService {
                                 storage: 'localStorage',
                                 ttl: 7.2e6,
                             }),
-                        })
+                        }),
                     )
                     .subscribe((res) =>
                         this.preloadedIconUris.set(
                             key,
                             `data:image/svg+xml;base64,${btoa(
-                                this.processIcon(res, 64)
-                            )}`
-                        )
-                    )
+                                this.processIcon(res, 64),
+                            )}`,
+                        ),
+                    ),
             );
     }
 
@@ -58,7 +59,7 @@ export class TopologyIconsService {
     private processIcon(rawIconSvg: string, size: number): string {
         const svgDoc = this.domParser.parseFromString(
             rawIconSvg,
-            'image/svg+xml'
+            'image/svg+xml',
         );
         const svgElement = svgDoc.documentElement;
         svgElement.setAttribute('width', size.toString());

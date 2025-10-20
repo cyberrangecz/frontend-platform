@@ -1,7 +1,4 @@
-import {
-    OffsetPaginationEvent,
-    PaginatedResource,
-} from '@sentinel/common/pagination';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import {
     AccessedTrainingRun,
     AccessTrainingRunInfo,
@@ -13,7 +10,7 @@ import {
     TrainingRunInfo,
 } from '@crczp/training-model';
 import { Observable } from 'rxjs';
-import { QueryParam } from '@crczp/api-common';
+import { OffsetPaginatedResource, QueryParam } from '@crczp/api-common';
 import { AccessedTrainingRunSort, TrainingRunSort } from '../sorts';
 
 export abstract class LinearRunApi {
@@ -25,7 +22,7 @@ export abstract class LinearRunApi {
     abstract getAll(
         pagination: OffsetPaginationEvent<TrainingRunSort>,
         filters?: QueryParam[],
-    ): Observable<PaginatedResource<TrainingRun>>;
+    ): Observable<OffsetPaginatedResource<TrainingRun>>;
 
     /**
      * Sends http request to retrieve training run by id
@@ -41,7 +38,7 @@ export abstract class LinearRunApi {
     abstract getAccessed(
         pagination: OffsetPaginationEvent<AccessedTrainingRunSort>,
         filters?: QueryParam[],
-    ): Observable<PaginatedResource<AccessedTrainingRun>>;
+    ): Observable<OffsetPaginatedResource<AccessedTrainingRun>>;
 
     /**
      * Sends http request to retrieve info about training run by id

@@ -1,9 +1,9 @@
 import { inject, Injectable } from '@angular/core';
 import { SandboxAllocationUnitsService } from './sandbox-allocation-units.service';
 import { BehaviorSubject, combineLatestWith, EMPTY, Observable } from 'rxjs';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import {
-    AllocationUnitSort,
+    AllocationRequestSort,
     PoolApi,
     SandboxAllocationUnitsApi,
 } from '@crczp/sandbox-api';
@@ -13,10 +13,19 @@ import { HttpErrorResponse } from '@angular/common/http';
 import {
     SentinelConfirmationDialogComponent,
     SentinelConfirmationDialogConfig,
-    SentinelDialogResultEnum
+    SentinelDialogResultEnum,
 } from '@sentinel/components/dialogs';
 import { MatDialog } from '@angular/material/dialog';
-import { ErrorHandlerService, NotificationService, PollingService, PortalConfig } from '@crczp/utils';
+import {
+    ErrorHandlerService,
+    NotificationService,
+    PollingService,
+    PortalConfig,
+} from '@crczp/utils';
+import {
+    createPaginatedResource,
+    OffsetPaginatedResource,
+} from '@crczp/api-common';
 
 @Injectable()
 export class SandboxAllocationUnitsConcreteService extends SandboxAllocationUnitsService {
@@ -48,12 +57,12 @@ export class SandboxAllocationUnitsConcreteService extends SandboxAllocationUnit
      */
     getAll(
         poolId: number,
-        pagination: OffsetPaginationEvent<AllocationUnitSort>,
-    ): Observable<PaginatedResource<SandboxAllocationUnit>> {
+        pagination: OffsetPaginationEvent<AllocationRequestSort>,
+    ): Observable<OffsetPaginatedResource<SandboxAllocationUnit>> {
         this.lastPagination = pagination;
         this.lastPoolId = poolId;
         const observable$: Observable<
-            PaginatedResource<SandboxAllocationUnit>
+            OffsetPaginatedResource<SandboxAllocationUnit>
         > = this.poolApi
             .getPoolsSandboxAllocationUnits(poolId, pagination)
             .pipe(
@@ -163,12 +172,8 @@ export class SandboxAllocationUnitsConcreteService extends SandboxAllocationUnit
      */
     protected initSubject(
         pageSize: number,
-    ): PaginatedResource<SandboxAllocationUnit> {
-        return new PaginatedResource([], {
-            size: pageSize,
-            totalElements: 0,
-            numberOfElements: 0,
-        });
+    ): OffsetPaginatedResource<SandboxAllocationUnit> {
+        return createPaginatedResource(pageSize);
     }
 
     private displayConfirmationDialog(

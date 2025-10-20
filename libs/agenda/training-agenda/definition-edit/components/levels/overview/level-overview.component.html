@@ -1,29 +1,29 @@
 @if (trainingDefinition.id) {
-  <div>
-    <sentinel-controls [controls]="controls" (itemClicked)="onControlAction($event)"/>
-    <mat-divider/>
-    @if ((stepperLevels | async).length > 0) {
-      <div>
-        <crczp-levels-stepper
-          [activeStep]="activeStep$ | async"
-          [levels]="stepperLevels | async"
-          [movingInProgress]="levelMovingInProgress"
-          (levelMove)="onLevelMoved($event)"
-          (activeStepChange)="onActiveLevelChange($event)"
-          >
-        </crczp-levels-stepper>
-        <mat-divider/>
-        <crczp-level-edit
-          [level]="(stepperLevels | async)[activeStep$ | async].level"
-          [mitreTechniquesList]="mitreTechniquesList"
-          (levelChange)="onActiveLevelChanged($event)"
-          />
-      </div>
-    } @else {
-      <h3>Start by clicking on Add button</h3>
-    }
-  </div>
+    <div>
+        <sentinel-controls [controls]="controls" />
+        <mat-divider />
+        @if ((stepperLevels | async).length > 0) {
+            <div>
+                <crczp-levels-stepper
+                    (activeStepChange)="onActiveLevelChange($event)"
+                    (levelMove)="onLevelMoved($event)"
+                    [activeStep]="activeStep$ | async"
+                    [levels]="stepperLevels | async"
+                    [movingInProgress]="levelMovingInProgress"
+                >
+                </crczp-levels-stepper>
+                <mat-divider />
+                <crczp-level-edit
+                    (levelChange)="onActiveLevelChanged($event)"
+                    [level]="(stepperLevels | async)[activeStep$ | async].level"
+                    [mitreTechniquesList]="mitreTechniquesList"
+                />
+            </div>
+        } @else {
+            <h3>Start by clicking on Add button</h3>
+        }
+    </div>
 } @else {
-  <h3>To add levels, fill in and save the basic information about the training definition.</h3>
+    <h3>To add levels, fill in and save the basic information about the training definition.</h3>
 }
 

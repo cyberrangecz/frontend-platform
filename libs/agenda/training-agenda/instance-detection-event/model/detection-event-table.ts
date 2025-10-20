@@ -1,10 +1,10 @@
 import { DatePipe } from '@angular/common';
-import { PaginatedResource } from '@sentinel/common/pagination';
 import { Column, Row, RowAction, SentinelTable } from '@sentinel/components/table';
 import { AbstractDetectionEvent, AbstractDetectionEventTypeEnum } from '@crczp/training-model';
 import { DetectionEventRowAdapter } from './detection-event-row-adapter';
 import { defer, of } from 'rxjs';
 import { DetectionEventService } from '../services/detection-event.service';
+import { OffsetPaginatedResource } from '@crczp/api-common';
 
 /**
  * Helper class transforming paginated resource to class for common table component
@@ -15,7 +15,7 @@ export class DetectionEventTable extends SentinelTable<
     string
 > {
     constructor(
-        resource: PaginatedResource<AbstractDetectionEvent>,
+        resource: OffsetPaginatedResource<AbstractDetectionEvent>,
         service: DetectionEventService,
     ) {
         const columns = [

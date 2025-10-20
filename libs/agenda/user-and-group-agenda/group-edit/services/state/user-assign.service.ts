@@ -1,12 +1,16 @@
 import { inject, Injectable } from '@angular/core';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import { GroupApi, UserApi, UserSort } from '@crczp/user-and-group-api';
 import { Group, User } from '@crczp/user-and-group-model';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
 import { GroupFilter, UserFilter } from '@crczp/user-and-group-agenda/internal';
 import { ErrorHandlerService } from '@crczp/utils';
-import { createInfinitePaginatedResource, createInfinitePaginationEvent } from '@crczp/api-common';
+import {
+    createInfinitePaginatedResource,
+    createInfinitePaginationEvent,
+    OffsetPaginatedResource
+} from '@crczp/api-common';
 
 /**
  * Basic implementation of a layer between a component and an API service.
@@ -28,23 +32,24 @@ export class UserAssignService {
     isLoadingAssigned$: Observable<boolean> =
         this.isLoadingAssignedSubject$.asObservable();
     protected selectedUsersToAssignSubject$: BehaviorSubject<User[]> =
-        new BehaviorSubject([]);
+        new BehaviorSubject<User[]>([]);
     selectedUsersToAssign$: Observable<User[]> =
         this.selectedUsersToAssignSubject$.asObservable();
     protected selectedAssignedUsersSubject$: BehaviorSubject<User[]> =
-        new BehaviorSubject([]);
+        new BehaviorSubject<User[]>([]);
     selectedAssignedUsers$: Observable<User[]> =
         this.selectedAssignedUsersSubject$.asObservable();
     protected selectedGroupsToImportSubject$: BehaviorSubject<Group[]> =
-        new BehaviorSubject([]);
+        new BehaviorSubject<Group[]>([]);
     selectedGroupsToImport$: Observable<Group[]> =
         this.selectedGroupsToImportSubject$.asObservable();
     private api = inject(GroupApi);
     private userApi = inject(UserApi);
     private errorHandler = inject(ErrorHandlerService);
-    private assignedUsersSubject$: BehaviorSubject<PaginatedResource<User>> =
-        new BehaviorSubject(createInfinitePaginatedResource());
-    assignedUsers$: Observable<PaginatedResource<User>> =
+    private assignedUsersSubject$: BehaviorSubject<
+        OffsetPaginatedResource<User>
+    > = new BehaviorSubject(createInfinitePaginatedResource());
+    assignedUsers$: Observable<OffsetPaginatedResource<User>> =
         this.assignedUsersSubject$.asObservable();
 
     private lastAssignedPagination: OffsetPaginationEvent<UserSort>;
@@ -82,11 +87,11 @@ export class UserAssignService {
     getUsersToAssign(
         resourceId: number,
         filterValue: string,
-    ): Observable<PaginatedResource<User>> {
+    ): Observable<OffsetPaginatedResource<User>> {
         return this.userApi
             .getUsersNotInGroup(
                 resourceId,
-                createInfinitePaginationEvent('full_name'),
+                createInfinitePaginationEvent('fullName'),
                 [new UserFilter(filterValue)],
             )
             .pipe(
@@ -103,7 +108,7 @@ export class UserAssignService {
      */
     getGroupsToImport(
         filterValue: string,
-    ): Observable<PaginatedResource<Group>> {
+    ): Observable<OffsetPaginatedResource<Group>> {
         return this.api
             .getAll(createInfinitePaginationEvent('name'), [
                 new GroupFilter(filterValue),
@@ -126,7 +131,7 @@ export class UserAssignService {
         resourceId: number,
         pagination: OffsetPaginationEvent<UserSort>,
         filterValue: string = null,
-    ): Observable<PaginatedResource<User>> {
+    ): Observable<OffsetPaginatedResource<User>> {
         this.clearSelectedAssignedUsers();
         const filter = filterValue ? [new UserFilter(filterValue)] : [];
         this.lastAssignedPagination = pagination;

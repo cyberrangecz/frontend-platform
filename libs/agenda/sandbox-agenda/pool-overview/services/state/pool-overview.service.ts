@@ -6,21 +6,21 @@ import {
     SentinelConfirmationDialogConfig,
     SentinelDialogResultEnum
 } from '@sentinel/components/dialogs';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import { PoolApi, PoolSort } from '@crczp/sandbox-api';
 import { Pool } from '@crczp/sandbox-model';
 import { EMPTY, from, Observable } from 'rxjs';
 import { catchError, switchMap, tap } from 'rxjs/operators';
 import { ErrorHandlerService, NotificationService, PortalConfig } from '@crczp/utils';
 import { Routing } from '@crczp/routing-commons';
-import { OffsetPaginatedElementsService } from '@sentinel/common';
+import { CrczpOffsetElementsPaginatedService, OffsetPaginatedResource } from '@crczp/api-common';
 
 /**
  * Basic implementation of a layer between a component and an API service.
  * Can manually get pools and perform various operations to modify them.
  */
 @Injectable()
-export class PoolOverviewService extends OffsetPaginatedElementsService<Pool> {
+export class PoolOverviewService extends CrczpOffsetElementsPaginatedService<Pool> {
     private poolApi = inject(PoolApi);
     private dialog = inject(MatDialog);
     private router = inject(Router);
@@ -39,7 +39,7 @@ export class PoolOverviewService extends OffsetPaginatedElementsService<Pool> {
      */
     getAll(
         pagination: OffsetPaginationEvent<PoolSort>,
-    ): Observable<PaginatedResource<Pool>> {
+    ): Observable<OffsetPaginatedResource<Pool>> {
         this.lastPagination = pagination;
         this.hasErrorSubject$.next(false);
         return this.poolApi.getPools(pagination).pipe(

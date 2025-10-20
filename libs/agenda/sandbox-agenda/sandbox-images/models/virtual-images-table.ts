@@ -5,32 +5,33 @@ import {
     Row,
     RowExpand,
 } from '@sentinel/components/table';
-import { PaginatedResource } from '@sentinel/common/pagination';
 import { VirtualImage } from '@crczp/sandbox-model';
 import { VMImageDetailComponent } from '../components/vm-image-detail/vm-image-detail.component';
 import { formatDate } from '@angular/common';
+import { VmImageSort } from '@crczp/sandbox-api';
+import { OffsetPaginatedResource } from '@crczp/api-common';
 
 export class VirtualImagesTable extends ExpandableSentinelTable<
     VMImagesRowAdapter,
     VMImageDetailComponent,
     null,
-    string
+    VmImageSort
 > {
-    constructor(resource: PaginatedResource<VirtualImage>) {
+    constructor(resource: OffsetPaginatedResource<VirtualImage>) {
         const rows = resource.elements.map((element) =>
             VirtualImagesTable.createRow(element),
         );
         const columns = [
-            new Column<string>('name', 'name', true, 'name'),
-            new Column<string>('defaultUser', 'default user', false),
-            new Column<string>(
+            new Column<VmImageSort>('name', 'name', true, 'name'),
+            new Column<VmImageSort>('defaultUser', 'default user', false),
+            new Column<VmImageSort>(
                 'updatedAtFormatted',
                 'updated at',
                 true,
                 'updated_at',
             ),
-            new Column<string>('guiAccessFormatted', 'GUI access', false),
-            new Column<string>('sizeFormatted', 'size (GB)', false),
+            new Column<VmImageSort>('guiAccessFormatted', 'GUI access', false),
+            new Column<VmImageSort>('sizeFormatted', 'size (GB)', false),
         ];
         const expand = new RowExpand(VMImageDetailComponent, null);
         super(rows, columns, expand);

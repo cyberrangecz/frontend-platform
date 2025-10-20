@@ -1,4 +1,4 @@
-<sentinel-controls (itemClicked)="onControls($event)" [controls]="controls" />
+<sentinel-controls [controls]="controls" />
 <sentinel-table
     (tableLoad)="onLoadEvent($event)"
     [data]="pools$ | async"
@@ -6,13 +6,13 @@
     [defaultSortName]="DEFAULT_SORT_COLUMN"
     [displayedActionsCount]="8"
     [hasError]="hasError$ | async"
-    [titlecasedActions]=false
-    [titlecasedColumnHeaders]=false>
+    [titlecasedActions]="false"
+    [titlecasedColumnHeaders]="false">
     <ng-container *sentinelRow="'lockState'; template: lockState" />
     <ng-container *sentinelRow="'comment'; template: comment" />
 </sentinel-table>
 <ng-template #lockState let-row>
-    <crczp-table-state-cell [toIcon]="lockStateToIcon" [value]="row.element.lockState" />
+    <crczp-pool-table-state-cell [toIcon]="lockStateToIcon" [value]="row.element.lockState" />
 </ng-template>
 
 <ng-template #comment let-row>

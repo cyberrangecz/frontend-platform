@@ -1,48 +1,48 @@
 <mat-expansion-panel>
-  <mat-expansion-panel-header>
-    <mat-panel-title>
-      Questions
-    </mat-panel-title>
-    <mat-panel-description>
-      @if (questions && questions.length > 0) {
-        <span>
+    <mat-expansion-panel-header>
+        <mat-panel-title>
+            Questions
+        </mat-panel-title>
+        <mat-panel-description>
+            @if (questions && questions.length > 0) {
+                <span>
           This level contains {{ questions?.length }} question(s)
         </span>
-      } @else {
-        <span>This level contains no questions.</span>
-      }
-      @if (questionsHasError && isTest) {
-        <div class="panel-description-error">
-          <mat-icon color="warn">error_outline</mat-icon>
-          <mat-error>There are errors in some questions</mat-error>
+            } @else {
+                <span>This level contains no questions.</span>
+            }
+            @if (questionsHasError && isTest) {
+                <div class="panel-description-error">
+                    <mat-icon color="warn">error_outline</mat-icon>
+                    <mat-error>There are errors in some questions</mat-error>
+                </div>
+            }
+        </mat-panel-description>
+    </mat-expansion-panel-header>
+    <sentinel-controls [controls]="controls"
+    >
+    </sentinel-controls>
+    @if (questions && questions.length > 0) {
+        <div>
+            <mat-divider />
+            <sentinel-stepper (indexSelected)="onActiveQuestionChanged($event)"
+                              (selectedStepSwapped)="onActiveQuestionChanged($event)"
+                              (stepSwapped)="onOrderUpdate()"
+                              [activeIndex]="selectedStep"
+                              [selectable]="true"
+                              [stepperItems]="stepperQuestions">
+            </sentinel-stepper>
+            <mat-divider />
+            <!-- QUESTIONS -->
+            <crczp-question-edit
+                (delete)="onDelete()"
+                (questionChange)="onQuestionChanged($event)"
+                [index]="selectedStep"
+                [isTest]="isTest"
+                [question]="stepperQuestions.items[selectedStep].question">
+            </crczp-question-edit>
         </div>
-      }
-    </mat-panel-description>
-  </mat-expansion-panel-header>
-  <sentinel-controls [controls]="controls"
-    (itemClicked)="onControlAction($event)">
-  </sentinel-controls>
-  @if (questions && questions.length > 0) {
-    <div>
-      <mat-divider/>
-      <sentinel-stepper [selectable]="true"
-        [stepperItems]="stepperQuestions"
-        [activeIndex]="selectedStep"
-        (stepSwapped)="onOrderUpdate()"
-        (indexSelected)="onActiveQuestionChanged($event)"
-        (selectedStepSwapped)="onActiveQuestionChanged($event)">
-      </sentinel-stepper>
-      <mat-divider/>
-      <!-- QUESTIONS -->
-      <crczp-question-edit
-        (questionChange)="onQuestionChanged($event)"
-        (delete)="onDelete()"
-        [question]="stepperQuestions.items[selectedStep].question"
-        [index]="selectedStep"
-        [isTest]="isTest">
-      </crczp-question-edit>
-    </div>
-  } @else {
-    <h3>Start by clicking on Add button</h3>
-  }
+    } @else {
+        <h3>Start by clicking on Add button</h3>
+    }
 </mat-expansion-panel>

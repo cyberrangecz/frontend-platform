@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { OffsetPaginatedElementsPollingService } from '@sentinel/common';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import { TrainingRun } from '@crczp/training-model';
 import { Observable } from 'rxjs';
 import { TrainingRunSort } from '@crczp/training-api';
+import { OffsetPaginatedResource } from '@crczp/api-common';
 
 /**
  * Layer between component and API service. Implement concrete service by extending this class.
@@ -26,7 +27,7 @@ export abstract class AdaptiveRunService extends OffsetPaginatedElementsPollingS
     abstract getAll(
         trainingInstanceId: number,
         pagination: OffsetPaginationEvent<TrainingRunSort>,
-    ): Observable<PaginatedResource<TrainingRun>>;
+    ): Observable<OffsetPaginatedResource<TrainingRun>>;
 
     /**
      * Deletes sandbox and run itself

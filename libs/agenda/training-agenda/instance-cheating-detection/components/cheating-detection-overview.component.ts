@@ -1,4 +1,4 @@
-import { Component, DestroyRef, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
+import { Component, DestroyRef, EventEmitter, inject, OnInit, Output } from '@angular/core';
 import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import { Observable } from 'rxjs';
 import {
@@ -7,17 +7,13 @@ import {
     SentinelTableComponent,
     TableLoadEvent
 } from '@sentinel/components/table';
-import { map, take } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { CheatingDetectionOverviewControls } from '../model/cheating-detection-overview-controls';
 import { CheatingDetectionService } from '../services/cheating-detection.service';
 import { CheatingDetectionTable } from '../model/cheating-detection-table';
 import { ActivatedRoute } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import {
-    SentinelControlItem,
-    SentinelControlItemSignal,
-    SentinelControlsComponent
-} from '@sentinel/components/controls';
+import { SentinelControlItem, SentinelControlsComponent } from '@sentinel/components/controls';
 import { AsyncPipe } from '@angular/common';
 import { StageOverviewComponent } from './stage-overview/stage-overview.component';
 import { PaginationStorageService, providePaginationStorageService } from '@crczp/utils';
@@ -46,7 +42,6 @@ import { CheatingDetection, TrainingInstance } from '@crczp/training-model';
     ],
 })
 export class CheatingDetectionOverviewComponent implements OnInit {
-    @Input() paginationId = 'cheating-detection-overview';
     @Output() showCheatingDetectionCreate: EventEmitter<boolean> =
         new EventEmitter();
     readonly INIT_SORT_NAME = 'lastEdited';
@@ -95,14 +90,6 @@ export class CheatingDetectionOverviewComponent implements OnInit {
             )
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe();
-    }
-
-    /**
-     * Resolves controls action and calls appropriate handler
-     * @param control selected control emitted by controls component
-     */
-    onControlsAction(control: SentinelControlItemSignal): void {
-        control.result$.pipe(take(1)).subscribe();
     }
 
     private initTable() {

@@ -1,20 +1,44 @@
-import { PoolDTO } from '../dto/sandbox-instance/pool-dto';
-import { SandboxDefinitionDTO } from '../dto/sandbox-definition/sandbox-definition-dto';
-import { SandboxInstanceDTO } from '../dto/sandbox-instance/sandbox-instance-dto';
-import { RequestDTO } from '../dto/sandbox-instance/request-dto';
-import { SandboxAllocationUnitDTO } from '../dto/sandbox-instance/sandbox-allocation-unit-dto';
-import { CloudResourceDTO } from '../dto/sandbox-instance/stages/cloud-resource-dto';
 import { VirtualImageDTO } from '../dto/vm-images/virtual-image-d-t-o';
-import { LockDTO } from '../dto/sandbox-instance/lock-dto';
-import { SandboxDefinitionRefDTO } from '../dto/sandbox-definition/sandbox-definition-ref-dto';
 
-export type PoolSort = keyof PoolDTO;
-export type SandboxDefinitionSort = keyof SandboxDefinitionDTO;
-export type SandboxDefinitionRefSort = keyof SandboxDefinitionRefDTO;
-export type SandboxInstanceSort = keyof SandboxInstanceDTO;
-export type AllocationRequestSort = keyof RequestDTO;
-export type AllocationUnitSort = keyof SandboxAllocationUnitDTO;
-export type ResourceUsageSort = keyof CloudResourceDTO;
+export type PoolSort =
+    | 'allocation_units'
+    | 'comment'
+    | 'created_by'
+    | 'created_by_id'
+    | 'definition'
+    | 'definition_id'
+    | 'id'
+    | 'lock'
+    | 'management_certificate'
+    | 'max_size'
+    | 'private_management_key'
+    | 'public_management_key'
+    | 'rev'
+    | 'rev_sha'
+    | 'sandboxrequestgroup'
+    | 'send_emails'
+    | 'size'
+    | 'uuid'
+    | 'visible';
+export type SandboxDefinitionSort =
+    | 'created_by'
+    | 'created_by_id'
+    | 'id'
+    | 'name'
+    | 'pool'
+    | 'rev'
+    | 'url';
+export type SandboxDefinitionRefSort = never; // TODO: define when needed
+export type SandboxInstanceSort =
+    | 'allocation_unit'
+    | 'allocation_unit_id'
+    | 'id'
+    | 'lock'
+    | 'private_user_key'
+    | 'public_user_key'
+    | 'ready';
+export type AllocationRequestSort = 'id';
+export type ResourceUsageSort = never; // TODO: define when needed
 export type VmImageSort = keyof VirtualImageDTO;
-export type PoolLockSort = keyof LockDTO;
+export type PoolLockSort = never; // TODO: define when needed
 export type AllocationOutputSort = 'content';

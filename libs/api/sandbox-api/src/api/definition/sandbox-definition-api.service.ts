@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import { SandboxDefinition, SandboxDefinitionRef } from '@crczp/sandbox-model';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -8,7 +8,7 @@ import { SandboxDefinitionDTO } from '../../dto/sandbox-definition/sandbox-defin
 import { SandboxDefinitionRefDTO } from '../../dto/sandbox-definition/sandbox-definition-ref-dto';
 import { SandboxDefinitionMapper } from '../../mappers/sandbox-definition/sandbox-definition-mapper';
 import { SandboxDefinitionRefMapper } from '../../mappers/sandbox-definition/sandbox-definition-ref-mapper';
-import { DjangoResourceDTO, PaginationMapper, ParamsBuilder } from '@crczp/api-common';
+import { DjangoResourceDTO, OffsetPaginatedResource, PaginationMapper, ParamsBuilder } from '@crczp/api-common';
 import { PortalConfig } from '@crczp/utils';
 import { SandboxDefinitionRefSort, SandboxDefinitionSort } from '../sorts';
 
@@ -27,7 +27,7 @@ export class SandboxDefinitionApi {
      */
     getAll(
         pagination?: OffsetPaginationEvent<SandboxDefinitionSort>,
-    ): Observable<PaginatedResource<SandboxDefinition>> {
+    ): Observable<OffsetPaginatedResource<SandboxDefinition>> {
         return this.http
             .get<DjangoResourceDTO<SandboxDefinitionDTO>>(this.apiUrl, {
                 headers: this.createDefaultHeaders(),
@@ -36,7 +36,7 @@ export class SandboxDefinitionApi {
             .pipe(
                 map(
                     (response) =>
-                        new PaginatedResource<SandboxDefinition>(
+                        new OffsetPaginatedResource<SandboxDefinition>(
                             SandboxDefinitionMapper.fromDTOs(response.results),
                             PaginationMapper.fromDjangoDTO(response),
                         ),
@@ -86,7 +86,7 @@ export class SandboxDefinitionApi {
     getRefs(
         id: number,
         pagination?: OffsetPaginationEvent<SandboxDefinitionRefSort>,
-    ): Observable<PaginatedResource<SandboxDefinitionRef>> {
+    ): Observable<OffsetPaginatedResource<SandboxDefinitionRef>> {
         return this.http
             .get<DjangoResourceDTO<SandboxDefinitionRefDTO>>(
                 `${this.apiUrl}/${id}/refs`,
@@ -98,7 +98,7 @@ export class SandboxDefinitionApi {
             .pipe(
                 map(
                     (response) =>
-                        new PaginatedResource<SandboxDefinitionRef>(
+                        new OffsetPaginatedResource<SandboxDefinitionRef>(
                             SandboxDefinitionRefMapper.fromDTOs(
                                 response.results,
                             ),

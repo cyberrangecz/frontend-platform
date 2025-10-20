@@ -84,12 +84,14 @@ const svg_config = {
         MARGIN: 24,
         BACKDROP_RADIUS: 12,
         BACKDROP_FILL: {
-            CONSOLE: '#F0FFF4',
+            CONSOLE: '#e1fbe8',
+            GUI: '#cdefff',
             LINUX: '#fff4d1',
             WINDOWS: '#d8f8f5',
         },
         BACKDROP_STROKE: {
             CONSOLE: '#9AE6B4',
+            GUI: '#6896d3',
             LINUX: '#fffa94',
             WINDOWS: '#43c7f9',
         },

@@ -1,12 +1,10 @@
 import { merge, Observable, takeUntil } from 'rxjs';
 import { OffsetPaginatedElementsPollingService } from '@sentinel/common';
-import {
-    OffsetPaginationEvent,
-    PaginatedResource,
-} from '@sentinel/common/pagination';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import { RequestStage } from '@crczp/sandbox-model';
-import { filter, tap } from 'rxjs/operators';
+import { filter, map, tap } from 'rxjs/operators';
 import { StagesDetailPollRegistry } from './stages-detail-poll-registry.service';
+import { OffsetPaginatedResource } from '@crczp/api-common';
 
 export abstract class StageDetailService extends OffsetPaginatedElementsPollingService<string> {
     private lastStage: RequestStage;
@@ -26,7 +24,7 @@ export abstract class StageDetailService extends OffsetPaginatedElementsPollingS
     getAll(
         stage: RequestStage,
         requestedPagination: OffsetPaginationEvent<string>,
-    ): Observable<PaginatedResource<string>> {
+    ): Observable<OffsetPaginatedResource<string>> {
         this.onManualResourceRefresh(requestedPagination, stage);
         return this.callApiToGetStageDetail(stage, requestedPagination).pipe(
             tap(
@@ -36,11 +34,16 @@ export abstract class StageDetailService extends OffsetPaginatedElementsPollingS
         );
     }
 
-    protected pollUntilFound(): Observable<PaginatedResource<string>> {
+    protected pollUntilFound(): Observable<OffsetPaginatedResource<string>> {
         const shouldBePolled$ = this.pollRegistry.polledStageIds$.pipe(
             filter((polledIds) => polledIds.includes(this.lastStage.id)),
         );
-        return super.createPoll().pipe(takeUntil(shouldBePolled$));
+        return super.createPoll().pipe(
+            takeUntil(shouldBePolled$),
+            map((resources) =>
+                OffsetPaginatedResource.fromPaginatedElements(resources),
+            ),
+        );
     }
 
     protected onManualResourceRefresh(
@@ -51,7 +54,7 @@ export abstract class StageDetailService extends OffsetPaginatedElementsPollingS
         this.lastStage = params[0];
     }
 
-    protected refreshResource(): Observable<PaginatedResource<string>> {
+    protected refreshResource(): Observable<OffsetPaginatedResource<string>> {
         this.hasErrorSubject$.next(false);
         return this.callApiToGetStageDetail(
             this.lastStage,
@@ -66,5 +69,5 @@ export abstract class StageDetailService extends OffsetPaginatedElementsPollingS
     protected abstract callApiToGetStageDetail(
         stage: RequestStage,
         requestedPagination: OffsetPaginationEvent<string>,
-    ): Observable<PaginatedResource<string>>;
+    ): Observable<OffsetPaginatedResource<string>>;
 }

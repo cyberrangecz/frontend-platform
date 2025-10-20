@@ -4,7 +4,6 @@ import {
     Component,
     DestroyRef,
     inject,
-    Input,
     OnInit,
 } from '@angular/core';
 import { Observable } from 'rxjs';
@@ -40,7 +39,6 @@ import { VmImageSort } from '@crczp/sandbox-api';
     ],
 })
 export class ImagesPageComponent implements OnInit {
-    @Input() paginationId = 'crczp-resources-page';
     images$: Observable<VirtualImagesTable>;
     imagesTableHasError$: Observable<boolean>;
     isLoadingImages$: Observable<boolean>;
@@ -72,7 +70,7 @@ export class ImagesPageComponent implements OnInit {
         this.paginationService.savePageSize(loadEvent.pagination.size);
         this.lastFilter = loadEvent.filter;
         this.getAvailableImages(
-            PaginationMapper.fromPaginationEvent(loadEvent.pagination),
+            PaginationMapper.toOffsetPaginationEvent(loadEvent.pagination),
             true,
             loadEvent.filter,
         );
@@ -99,7 +97,7 @@ export class ImagesPageComponent implements OnInit {
     initialTableLoadEvent(loadEvent: TableLoadEvent<VmImageSort>): void {
         this.paginationService.savePageSize(loadEvent.pagination.size);
         this.getAvailableImages(
-            PaginationMapper.fromPaginationEvent(loadEvent.pagination),
+            PaginationMapper.toOffsetPaginationEvent(loadEvent.pagination),
             false,
         );
     }

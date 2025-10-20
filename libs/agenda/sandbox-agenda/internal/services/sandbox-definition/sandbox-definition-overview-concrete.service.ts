@@ -6,17 +6,15 @@ import {
     SentinelConfirmationDialogConfig,
     SentinelDialogResultEnum
 } from '@sentinel/components/dialogs';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
-import {
-    SandboxDefinitionApi,
-    SandboxDefinitionSort,
-} from '@crczp/sandbox-api';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
+import { SandboxDefinitionApi, SandboxDefinitionSort } from '@crczp/sandbox-api';
 import { SandboxDefinition } from '@crczp/sandbox-model';
 import { EMPTY, from, Observable, of } from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
 import { SandboxDefinitionOverviewService } from './sandbox-definition-overview.service';
 import { ErrorHandlerService, NotificationService, PortalConfig } from '@crczp/utils';
 import { Routing } from '@crczp/routing-commons';
+import { OffsetPaginatedResource } from '@crczp/api-common';
 
 /**
  * Basic implementation of a layer between a component and an API service.
@@ -42,7 +40,7 @@ export class SandboxDefinitionOverviewConcreteService extends SandboxDefinitionO
      */
     getAll(
         pagination: OffsetPaginationEvent<SandboxDefinitionSort>,
-    ): Observable<PaginatedResource<SandboxDefinition>> {
+    ): Observable<OffsetPaginatedResource<SandboxDefinition>> {
         this.hasErrorSubject$.next(false);
         this.lastPagination = pagination;
         return this.api.getAll(pagination).pipe(
@@ -75,7 +73,7 @@ export class SandboxDefinitionOverviewConcreteService extends SandboxDefinitionO
      */
     delete(
         sandboxDefinition: SandboxDefinition,
-    ): Observable<PaginatedResource<SandboxDefinition>> {
+    ): Observable<OffsetPaginatedResource<SandboxDefinition>> {
         return this.displayDialogToDelete(sandboxDefinition).pipe(
             switchMap((result) =>
                 result === SentinelDialogResultEnum.CONFIRMED
@@ -114,7 +112,7 @@ export class SandboxDefinitionOverviewConcreteService extends SandboxDefinitionO
 
     private callApiToDelete(
         sandboxDefinition: SandboxDefinition,
-    ): Observable<PaginatedResource<SandboxDefinition>> {
+    ): Observable<OffsetPaginatedResource<SandboxDefinition>> {
         return this.api.delete(sandboxDefinition.id).pipe(
             tap(
                 () =>
