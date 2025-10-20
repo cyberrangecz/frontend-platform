@@ -11,10 +11,10 @@ import {
 } from '@sentinel/components/table';
 import { defer, Observable, of } from 'rxjs';
 import { PoolRowAdapter } from './pool-row-adapter';
-import { AbstractPoolService } from '../services/abstract-pool/abstract-sandbox/abstract-pool.service';
 import { SandboxInstanceService } from '@crczp/sandbox-agenda/pool-detail';
 import { PoolExpandDetailComponent } from '../components/pool-expand-detail/pool-expand-detail.component';
 import { Routing } from '@crczp/routing-commons';
+import { PoolService } from '../services/abstract-pool/abstract-sandbox/pool.service';
 
 /**
  * Helper class transforming paginated resource to class for common table component
@@ -29,14 +29,14 @@ export class PoolTable extends ExpandableSentinelTable<
     constructor(
         data: PaginatedResource<Pool>,
         resources: Observable<Resources>,
-        abstractPoolService: AbstractPoolService,
+        poolService: PoolService,
         sandboxInstanceService: SandboxInstanceService,
     ) {
         const rows = data.elements.map((element) =>
             PoolTable.createRow(
                 element,
                 resources,
-                abstractPoolService,
+                poolService,
                 sandboxInstanceService,
             ),
         );
@@ -71,7 +71,7 @@ export class PoolTable extends ExpandableSentinelTable<
     private static createRow(
         pool: Pool,
         resources: Observable<Resources>,
-        abstractPoolService: AbstractPoolService,
+        poolService: PoolService,
         sandboxInstanceService: SandboxInstanceService,
     ): Row<PoolRowAdapter> {
         const rowAdapter = pool as PoolRowAdapter;
@@ -94,11 +94,7 @@ export class PoolTable extends ExpandableSentinelTable<
 
         const row = new Row(
             rowAdapter,
-            this.createActions(
-                pool,
-                abstractPoolService,
-                sandboxInstanceService,
-            ),
+            this.createActions(pool, poolService, sandboxInstanceService),
         );
         row.addLink(
             'title',
@@ -109,7 +105,7 @@ export class PoolTable extends ExpandableSentinelTable<
 
     private static createActions(
         pool: Pool,
-        abstractPoolService: AbstractPoolService,
+        abstractPoolService: PoolService,
         sandboxInstanceService: SandboxInstanceService,
     ): RowAction[] {
         return [
@@ -171,7 +167,7 @@ export class PoolTable extends ExpandableSentinelTable<
 
     private static createLockAction(
         pool: Pool,
-        service: AbstractPoolService,
+        service: PoolService,
     ): RowAction {
         if (pool.isLocked()) {
             return new RowAction(

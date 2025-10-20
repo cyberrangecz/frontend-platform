@@ -1,19 +1,20 @@
 import { Router } from '@angular/router';
-import { PoolApi, SandboxDefinitionApi } from '@crczp/sandbox-api';
+import { PoolApi, PoolSort, SandboxDefinitionApi, SandboxDefinitionSort } from '@crczp/sandbox-api';
 import { TrainingDefinitionInfo, TrainingInstance } from '@crczp/training-model';
 import { BehaviorSubject, concat, forkJoin, from, Observable, timer } from 'rxjs';
 import { filter, map, switchMap, tap } from 'rxjs/operators';
-import { OffsetPagination, OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
+import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
 import { Pool, SandboxDefinition } from '@crczp/sandbox-model';
-import { SentinelFilter } from '@sentinel/common/filter';
 import { ErrorHandlerService, LoadingTracker, NotificationService, PortalConfig } from '@crczp/utils';
 import {
     AdaptiveTrainingDefinitionApi,
     AdaptiveTrainingInstanceApi,
     LinearTrainingDefinitionApi,
-    LinearTrainingInstanceApi
+    LinearTrainingInstanceApi,
+    TrainingDefinitionSort
 } from '@crczp/training-api';
 import { CommonTrainingInstanceSnapshotService } from './common-training-instance-snapshot.service';
+import { createPaginatedResource, QueryParam } from '@crczp/api-common';
 
 /**
  * Basic implementation of layer between component and API service.
@@ -30,13 +31,12 @@ export abstract class CommonTrainingInstanceEditService extends CommonTrainingIn
             .pipe(filter((ti) => ti !== undefined && ti !== null));
 
     protected editModeSubject$: BehaviorSubject<boolean> = new BehaviorSubject(
-        false
+        false,
     );
     editMode$: Observable<boolean> = this.editModeSubject$.asObservable();
 
-    private readonly EMPTY_RESOURCE = new PaginatedResource(
-        [],
-        new OffsetPagination(0, 0, 999, 0, 0)
+    private readonly EMPTY_RESOURCE = createPaginatedResource<any>(
+        Number.MAX_SAFE_INTEGER,
     );
     protected releasedTrainingDefinitionsSubject: BehaviorSubject<
         PaginatedResource<TrainingDefinitionInfo>
@@ -76,15 +76,15 @@ export abstract class CommonTrainingInstanceEditService extends CommonTrainingIn
         private errorHandler: ErrorHandlerService,
         private notificationService: NotificationService,
         private config: PortalConfig,
-        private buildInstanceEditUrl: (id: number) => string
+        private buildInstanceEditUrl: (id: number) => string,
     ) {
         super();
         this.loadingTracker.isLoading$.subscribe((loading) =>
-            super.setLoading(loading)
+            super.setLoading(loading),
         );
         this.hasStarted$ = timer(1).pipe(
             switchMap(() => this.trainingInstance$),
-            map((ti) => ti?.hasStarted())
+            map((ti) => ti?.hasStarted()),
         );
     }
 
@@ -97,45 +97,45 @@ export abstract class CommonTrainingInstanceEditService extends CommonTrainingIn
         } else {
             return this.create().pipe(
                 switchMap((id) =>
-                    from(this.router.navigate([this.buildInstanceEditUrl(id)]))
+                    from(this.router.navigate([this.buildInstanceEditUrl(id)])),
                 ),
-                map(() => void 0)
+                map(() => void 0),
             );
         }
     }
 
     public getAllTrainingDefinitions(
-        offsetPaginationEvent: OffsetPaginationEvent,
-        stateFilter: string
+        offsetPaginationEvent: OffsetPaginationEvent<TrainingDefinitionSort>,
+        stateFilter: string,
     ): Observable<PaginatedResource<TrainingDefinitionInfo>> {
         return this.trainingDefinitionApi
             .getAllForOrganizer(offsetPaginationEvent, [
-                new SentinelFilter('state', stateFilter),
+                new QueryParam('state', stateFilter),
             ])
             .pipe(
                 tap(
                     (definitions) => {
                         if (stateFilter === 'RELEASED') {
                             this.releasedTrainingDefinitionsSubject.next(
-                                definitions
+                                definitions,
                             );
                         } else {
                             this.unreleasedTrainingDefinitionsSubject.next(
-                                definitions
+                                definitions,
                             );
                         }
                     },
                     (err) =>
                         this.errorHandler.emitAPIError(
                             err,
-                            'Fetching available training definitions'
-                        )
-                )
+                            'Fetching available training definitions',
+                        ),
+                ),
             );
     }
 
     public getAllPools(
-        offsetPaginationEvent: OffsetPaginationEvent
+        offsetPaginationEvent: OffsetPaginationEvent<PoolSort>,
     ): Observable<PaginatedResource<Pool>> {
         return this.poolApi.getPools(offsetPaginationEvent).pipe(
             tap(
@@ -145,14 +145,14 @@ export abstract class CommonTrainingInstanceEditService extends CommonTrainingIn
                 (err) =>
                     this.errorHandler.emitAPIError(
                         err,
-                        'Fetching available pools'
-                    )
-            )
+                        'Fetching available pools',
+                    ),
+            ),
         );
     }
 
     public getAllSandboxDefinitions(
-        offsetPaginationEvent: OffsetPaginationEvent
+        offsetPaginationEvent: OffsetPaginationEvent<SandboxDefinitionSort>,
     ): Observable<PaginatedResource<SandboxDefinition>> {
         return this.sandboxDefinitionApi.getAll(offsetPaginationEvent).pipe(
             tap(
@@ -162,9 +162,9 @@ export abstract class CommonTrainingInstanceEditService extends CommonTrainingIn
                 (err) =>
                     this.errorHandler.emitAPIError(
                         err,
-                        'Fetching available sandbox definitions'
-                    )
-            )
+                        'Fetching available sandbox definitions',
+                    ),
+            ),
         );
     }
 
@@ -189,17 +189,17 @@ export abstract class CommonTrainingInstanceEditService extends CommonTrainingIn
                     () => {
                         this.notificationService.emit(
                             'success',
-                            'Training instance was created'
+                            'Training instance was created',
                         );
                         this.onSaved();
                     },
                     (err) =>
                         this.errorHandler.emitAPIError(
                             err,
-                            'Creating training instance'
-                        )
-                )
-            )
+                            'Creating training instance',
+                        ),
+                ),
+            ),
         );
     }
 
@@ -207,7 +207,38 @@ export abstract class CommonTrainingInstanceEditService extends CommonTrainingIn
         if (!this.editedSnapshot) {
             this.editedSnapshot = this.trainingInstanceSubject$.getValue();
         }
-        const pagination = new OffsetPaginationEvent(0, 10, '', 'asc');
+        const definitionPagination: OffsetPaginationEvent<TrainingDefinitionSort> =
+            {
+                size: Number.MAX_SAFE_INTEGER,
+                page: 0,
+                sort: 'title',
+                sortDir: 'asc',
+            };
+        const sandboxDefinitionPagination: OffsetPaginationEvent<SandboxDefinitionSort> =
+            {
+                size: Number.MAX_SAFE_INTEGER,
+                page: 0,
+                sort: 'name',
+                sortDir: 'asc',
+            };
+        const poolPagination: OffsetPaginationEvent<PoolSort> = {
+            size: Number.MAX_SAFE_INTEGER,
+            page: 0,
+            sort: 'id',
+            sortDir: 'asc',
+        };
+
+        const observables: Observable<PaginatedResource<any>>[] = [
+            this.getAllTrainingDefinitions(definitionPagination, 'RELEASED'),
+            this.getAllTrainingDefinitions(definitionPagination, 'UNRELEASED'),
+            this.getAllPools(poolPagination),
+        ];
+        if (this.config.enableLocalMode) {
+            observables.push(
+                this.getAllSandboxDefinitions(sandboxDefinitionPagination),
+            );
+        }
+
         return this.loadingTracker.trackRequest(() =>
             concat([
                 this.trainingInstanceApi.update(this.editedSnapshot).pipe(
@@ -215,25 +246,20 @@ export abstract class CommonTrainingInstanceEditService extends CommonTrainingIn
                         () => {
                             this.notificationService.emit(
                                 'success',
-                                'Training instance was successfully saved'
+                                'Training instance was successfully saved',
                             );
                             this.onSaved();
                         },
                         (err) => {
                             this.errorHandler.emitAPIError(
                                 err,
-                                'Editing training instance'
+                                'Editing training instance',
                             );
-                        }
-                    )
+                        },
+                    ),
                 ),
-                forkJoin([
-                    this.getAllTrainingDefinitions(pagination, 'RELEASED'),
-                    this.getAllTrainingDefinitions(pagination, 'UNRELEASED'),
-                    this.getAllPools(pagination),
-                    this.getAllSandboxDefinitions(pagination),
-                ]),
-            ]).pipe(map(() => void 0))
+                forkJoin(observables),
+            ]).pipe(map(() => void 0)),
         );
     }
 

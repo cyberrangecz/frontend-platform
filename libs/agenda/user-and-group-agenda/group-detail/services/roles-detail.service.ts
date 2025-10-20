@@ -1,11 +1,11 @@
 import { inject, Injectable } from '@angular/core';
-import { GroupApi } from '@crczp/user-and-group-api';
+import { GroupApi, RoleSort } from '@crczp/user-and-group-api';
 import { UserRole } from '@crczp/user-and-group-model';
-import { SentinelFilter } from '@sentinel/common/filter';
-import { OffsetPagination, OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
+import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { ErrorHandlerService } from '@crczp/utils';
+import { createInfinitePaginatedResource, QueryParam } from '@crczp/api-common';
 
 /**
  * Basic implementation of a layer between a component and an API service.
@@ -18,7 +18,7 @@ export class RolesDetailService {
      */
     assignedRoles$: Observable<PaginatedResource<UserRole>>;
     protected hasErrorSubject$: BehaviorSubject<boolean> = new BehaviorSubject(
-        false
+        false,
     );
     /**
      * True if error was returned from API, false otherwise
@@ -34,7 +34,7 @@ export class RolesDetailService {
     private errorHandler = inject(ErrorHandlerService);
     private assignedRolesSubject$: BehaviorSubject<
         PaginatedResource<UserRole>
-    > = new BehaviorSubject(this.initSubject());
+    > = new BehaviorSubject(createInfinitePaginatedResource());
 
     /**
      * Gets roles assigned to a resource, updates related observables or handles error
@@ -44,11 +44,11 @@ export class RolesDetailService {
      */
     getAssigned(
         resourceId: number,
-        pagination: OffsetPaginationEvent,
-        filterValue: string = null
+        pagination: OffsetPaginationEvent<RoleSort>,
+        filterValue: string = null,
     ): Observable<PaginatedResource<UserRole>> {
         const filter = filterValue
-            ? [new SentinelFilter('roleType', filterValue)]
+            ? [new QueryParam('roleType', filterValue)]
             : [];
         this.hasErrorSubject$.next(false);
         this.isLoadingAssignedSubject$.next(true);
@@ -61,16 +61,12 @@ export class RolesDetailService {
                 (err) => {
                     this.errorHandler.emitAPIError(
                         err,
-                        'Fetching roles of group-overview'
+                        'Fetching roles of group-overview',
                     );
                     this.isLoadingAssignedSubject$.next(false);
                     this.hasErrorSubject$.next(true);
-                }
-            )
+                },
+            ),
         );
-    }
-
-    private initSubject(): PaginatedResource<UserRole> {
-        return new PaginatedResource([], new OffsetPagination(0, 0, 10, 0, 0));
     }
 }

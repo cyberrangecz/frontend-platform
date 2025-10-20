@@ -10,3 +10,6 @@ export * from './api/sandbox-allocation-units/sandbox-allocation-units-api.servi
 export * from './api/resources/resources-api.service';
 export * from './api/vm-images/vm-images-api.service';
 export * from './api/topology/topology-api.service';
+
+// Sorts
+export * from './api/sorts';

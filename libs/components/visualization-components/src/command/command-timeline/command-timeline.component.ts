@@ -1,17 +1,18 @@
-import {Component, inject, Input, OnInit} from '@angular/core';
-import {FormsModule, UntypedFormBuilder} from '@angular/forms';
-import {TimelineCommandService} from './timeline-command.service';
-import {BehaviorSubject, Observable} from 'rxjs';
-import {take} from 'rxjs/operators';
-import {OffsetPaginationEvent} from '@sentinel/common/pagination';
-import {CommandApi, TimelineCommandApi,} from '@crczp/visualization-api';
-import {CommonModule} from '@angular/common';
-import {MatButtonModule} from '@angular/material/button';
-import {MatFormFieldModule} from '@angular/material/form-field';
-import {MatSelectModule} from '@angular/material/select';
-import {MglTimelineModule} from 'angular-mgl-timeline';
-import {DetectedForbiddenCommand, TrainingRun} from '@crczp/training-model';
-import {VisualizationCommand} from '@crczp/visualization-model';
+import { Component, inject, Input, OnInit } from '@angular/core';
+import { FormsModule, UntypedFormBuilder } from '@angular/forms';
+import { TimelineCommandService } from './timeline-command.service';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { take } from 'rxjs/operators';
+import { CommandApi, TimelineCommandApi } from '@crczp/visualization-api';
+import { CommonModule } from '@angular/common';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { MglTimelineModule } from 'angular-mgl-timeline';
+import { DetectedForbiddenCommand, TrainingRun } from '@crczp/training-model';
+import { VisualizationCommand } from '@crczp/visualization-model';
+import { createPaginationEvent } from '@crczp/api-common';
+import { TrainingRunSort } from '@crczp/training-api';
 
 @Component({
     selector: 'crczp-timeline',
@@ -26,11 +27,7 @@ import {VisualizationCommand} from '@crczp/visualization-model';
         MatSelectModule,
         MglTimelineModule,
     ],
-    providers: [
-        CommandApi,
-        TimelineCommandApi,
-        TimelineCommandService,
-    ],
+    providers: [CommandApi, TimelineCommandApi, TimelineCommandService],
 })
 export class CommandTimelineComponent implements OnInit {
     fb = inject(UntypedFormBuilder);
@@ -50,13 +47,12 @@ export class CommandTimelineComponent implements OnInit {
     selectedTrainingRun$: Observable<number> =
         this.selectedTrainingRunSubject$.asObservable();
 
+    private readonly initPagination = createPaginationEvent<TrainingRunSort>({
+        sort: 'start_time',
+        sortDir: 'asc',
+    });
+
     ngOnInit(): void {
-        const initialPagination = new OffsetPaginationEvent(
-            0,
-            Number.MAX_SAFE_INTEGER,
-            '',
-            'asc'
-        );
         this.commands$ = this.timelineCommandService.commands$;
         this.trainingRuns$ = this.timelineCommandService.trainingRuns$;
         this.selectedTrainingRun$ =
@@ -68,7 +64,7 @@ export class CommandTimelineComponent implements OnInit {
                 .getCommandsByTrainingRun(
                     this.trainingRunId,
                     this.isStandalone,
-                    this.isAdaptive
+                    this.isAdaptive,
                 )
                 .pipe(take(1))
                 .subscribe();
@@ -78,7 +74,7 @@ export class CommandTimelineComponent implements OnInit {
                     this.trainingInstanceId,
                     this.isStandalone,
                     this.isAdaptive,
-                    initialPagination
+                    this.initPagination,
                 )
                 .pipe(take(1))
                 .subscribe();
@@ -100,7 +96,7 @@ export class CommandTimelineComponent implements OnInit {
             .getCommandsByTrainingRun(
                 this.timelineCommandService.getSelectedTrainee(),
                 this.isStandalone,
-                this.isAdaptive
+                this.isAdaptive,
             )
             .pipe(take(1))
             .subscribe();

@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
-import { AdaptiveTrainingInstanceApi } from '@crczp/training-api';
+import { AdaptiveTrainingInstanceApi, TrainingRunSort } from '@crczp/training-api';
 import { TrainingRun } from '@crczp/training-model';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
@@ -26,7 +26,7 @@ export class AdaptiveRunConcreteService extends AdaptiveRunService {
      */
     getAll(
         trainingInstanceId: number,
-        pagination: OffsetPaginationEvent
+        pagination: OffsetPaginationEvent<TrainingRunSort>,
     ): Observable<PaginatedResource<TrainingRun>> {
         return this.adaptiveInstanceApi
             .getAssociatedTrainingRuns(trainingInstanceId, pagination)
@@ -35,8 +35,8 @@ export class AdaptiveRunConcreteService extends AdaptiveRunService {
                     (runs) => {
                         this.resourceSubject$.next(runs);
                     },
-                    () => this.onGetAllError()
-                )
+                    () => this.onGetAllError(),
+                ),
             );
     }
 

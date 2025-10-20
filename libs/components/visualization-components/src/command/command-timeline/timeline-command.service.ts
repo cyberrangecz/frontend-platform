@@ -1,28 +1,37 @@
-import { Injectable, inject } from '@angular/core';
-import {BehaviorSubject, Observable} from 'rxjs';
-import {tap} from 'rxjs/operators';
-import {DetectedForbiddenCommand, TrainingRun} from '@crczp/training-model';
-import {OffsetPaginationEvent} from '@sentinel/common/pagination';
-import {VisualizationCommand} from '@crczp/visualization-model';
-import {CommandApi, TimelineCommandApi} from '@crczp/visualization-api';
+import { inject, Injectable } from '@angular/core';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
+import { DetectedForbiddenCommand, TrainingRun } from '@crczp/training-model';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
+import { VisualizationCommand } from '@crczp/visualization-model';
+import { CommandApi, TimelineCommandApi } from '@crczp/visualization-api';
+import { TrainingRunSort } from '@crczp/training-api';
 
 @Injectable()
 export class TimelineCommandService {
     private timelineCommandApiService = inject(TimelineCommandApi);
     private commandApiConcreteService = inject(CommandApi);
 
+    private commandsSubject$: BehaviorSubject<VisualizationCommand[]> =
+        new BehaviorSubject([]);
+    commands$: Observable<VisualizationCommand[]> =
+        this.commandsSubject$.asObservable();
 
-    private commandsSubject$: BehaviorSubject<VisualizationCommand[]> = new BehaviorSubject([]);
-    commands$: Observable<VisualizationCommand[]> = this.commandsSubject$.asObservable();
+    private trainingRunsSubject$: BehaviorSubject<TrainingRun[]> =
+        new BehaviorSubject([]);
+    trainingRuns$: Observable<TrainingRun[]> =
+        this.trainingRunsSubject$.asObservable();
 
-    private trainingRunsSubject$: BehaviorSubject<TrainingRun[]> = new BehaviorSubject([]);
-    trainingRuns$: Observable<TrainingRun[]> = this.trainingRunsSubject$.asObservable();
+    private selectedTrainingRunSubject$: BehaviorSubject<number> =
+        new BehaviorSubject(null);
+    selectedTrainingRun$: Observable<number> =
+        this.selectedTrainingRunSubject$.asObservable();
 
-    private selectedTrainingRunSubject$: BehaviorSubject<number> = new BehaviorSubject(null);
-    selectedTrainingRun$: Observable<number> = this.selectedTrainingRunSubject$.asObservable();
-
-    private forbiddenCommandsSubject$: BehaviorSubject<DetectedForbiddenCommand[]> = new BehaviorSubject([]);
-    forbiddenCommands$: Observable<DetectedForbiddenCommand[]> = this.forbiddenCommandsSubject$.asObservable();
+    private forbiddenCommandsSubject$: BehaviorSubject<
+        DetectedForbiddenCommand[]
+    > = new BehaviorSubject([]);
+    forbiddenCommands$: Observable<DetectedForbiddenCommand[]> =
+        this.forbiddenCommandsSubject$.asObservable();
 
     /**
      * Retrieves all commands for given sandbox id.
@@ -30,11 +39,23 @@ export class TimelineCommandService {
      * @param isStandalone based on this parameter the method picks the appropriate endpoint
      * @param isAdaptive set to true if the endpoint should use adaptive training service
      */
-    getCommandsByTrainingRun(runId: number, isStandalone: boolean, isAdaptive: boolean): Observable<VisualizationCommand[]> {
+    getCommandsByTrainingRun(
+        runId: number,
+        isStandalone: boolean,
+        isAdaptive: boolean,
+    ): Observable<VisualizationCommand[]> {
         const commands$ = isStandalone
-            ? this.commandApiConcreteService.getCommandsByTrainingRun(runId, isAdaptive)
-            : this.timelineCommandApiService.getCommandsByTrainingRun(runId, isAdaptive);
-        return commands$.pipe(tap((commands) => this.commandsSubject$.next(commands)));
+            ? this.commandApiConcreteService.getCommandsByTrainingRun(
+                  runId,
+                  isAdaptive,
+              )
+            : this.timelineCommandApiService.getCommandsByTrainingRun(
+                  runId,
+                  isAdaptive,
+              );
+        return commands$.pipe(
+            tap((commands) => this.commandsSubject$.next(commands)),
+        );
     }
 
     /**
@@ -48,12 +69,20 @@ export class TimelineCommandService {
         instanceId: number,
         isStandalone: boolean,
         isAdaptive: boolean,
-        pagination?: OffsetPaginationEvent,
+        pagination?: OffsetPaginationEvent<TrainingRunSort>,
     ): Observable<TrainingRun[]> {
         const trainees$ = isStandalone
-            ? this.commandApiConcreteService.getTrainingRunsOfTrainingInstance(instanceId, isAdaptive, pagination)
-            : this.timelineCommandApiService.getTrainingRunsOfVisualization(instanceId);
-        return trainees$.pipe(tap((runs) => this.trainingRunsSubject$.next(runs)));
+            ? this.commandApiConcreteService.getTrainingRunsOfTrainingInstance(
+                  instanceId,
+                  isAdaptive,
+                  pagination,
+              )
+            : this.timelineCommandApiService.getTrainingRunsOfVisualization(
+                  instanceId,
+              );
+        return trainees$.pipe(
+            tap((runs) => this.trainingRunsSubject$.next(runs)),
+        );
     }
 
     /**
@@ -75,8 +104,15 @@ export class TimelineCommandService {
      * Retrieves all detectedForbiddenCommands of a detection event
      * @param eventId the event id
      */
-    getForbiddenCommandsOfDetectionEvent(eventId: number): Observable<DetectedForbiddenCommand[]> {
-        const forbiddenCommands = this.timelineCommandApiService.getForbiddenCommandsOfDetectionEvent(eventId);
-        return forbiddenCommands.pipe(tap((commands) => this.forbiddenCommandsSubject$.next(commands)));
+    getForbiddenCommandsOfDetectionEvent(
+        eventId: number,
+    ): Observable<DetectedForbiddenCommand[]> {
+        const forbiddenCommands =
+            this.timelineCommandApiService.getForbiddenCommandsOfDetectionEvent(
+                eventId,
+            );
+        return forbiddenCommands.pipe(
+            tap((commands) => this.forbiddenCommandsSubject$.next(commands)),
+        );
     }
 }

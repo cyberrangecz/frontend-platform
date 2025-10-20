@@ -20,6 +20,8 @@ import { AnsibleStageAdapter } from '../../../model/adapters/ansible-stage-adapt
 import { RequestStageType } from '@crczp/sandbox-model';
 import { CodeViewerWrapper } from '@crczp/components';
 import { CodeEditor } from '@acrodata/code-editor';
+import { createInfinitePaginationEvent } from '@crczp/api-common';
+import { AllocationOutputSort } from '@crczp/sandbox-api';
 
 @Component({
     selector: 'crczp-allocation-stage-detail',
@@ -29,7 +31,6 @@ import { CodeEditor } from '@acrodata/code-editor';
     imports: [AsyncPipe, CodeViewerWrapper, CodeEditor],
 })
 export class AllocationStageDetailComponent implements OnChanges {
-    readonly PAGE_SIZE = Number.MAX_SAFE_INTEGER;
     stage = input.required<StageAdapter>();
     height = input<CSSStyleDeclaration['height']>('100%');
     outputs$: Observable<string>;
@@ -57,28 +58,24 @@ export class AllocationStageDetailComponent implements OnChanges {
     }
 
     init(): void {
-        const initialPagination = new OffsetPaginationEvent(
-            0,
-            this.PAGE_SIZE,
-            '',
-            'asc'
-        );
-        this.onFetchEvents(initialPagination);
+        this.onFetchEvents(createInfinitePaginationEvent('content'));
 
         this.outputs$ = this.outputsService.resource$.pipe(
             takeUntilDestroyed(this.destroyRef),
-            map((resource) => resource.elements.map((e) => e).join('\n'))
+            map((resource) => resource.elements.map((e) => e).join('\n')),
         );
         this.hasOutputs$ = this.outputs$.pipe(map((text) => text.length > 0));
         this.isLoading$ = this.outputsService.isLoading$.pipe(
-            takeUntilDestroyed(this.destroyRef)
+            takeUntilDestroyed(this.destroyRef),
         );
         this.hasError$ = this.outputsService.hasError$.pipe(
-            takeUntilDestroyed(this.destroyRef)
+            takeUntilDestroyed(this.destroyRef),
         );
     }
 
-    onFetchEvents(requestedPagination: OffsetPaginationEvent): void {
+    onFetchEvents(
+        requestedPagination: OffsetPaginationEvent<AllocationOutputSort>,
+    ): void {
         this.outputsService
             .getAll(this.stage(), requestedPagination)
             .pipe(takeUntilDestroyed(this.destroyRef))

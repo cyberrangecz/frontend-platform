@@ -1,11 +1,12 @@
 import { inject, Injectable } from '@angular/core';
-import { OffsetPagination, OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
-import { UserApi } from '@crczp/user-and-group-api';
+import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
+import { UserApi, UserSort } from '@crczp/user-and-group-api';
 import { User } from '@crczp/user-and-group-model';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { ErrorHandlerService, PortalConfig } from '@crczp/utils';
 import { UserFilter } from '@crczp/user-and-group-agenda/internal';
+import { createInfinitePaginatedResource } from '@crczp/api-common';
 
 /**
  * Basic implementation of a layer between a component and an API service.
@@ -14,7 +15,7 @@ import { UserFilter } from '@crczp/user-and-group-agenda/internal';
 @Injectable()
 export class MembersDetailService {
     protected hasErrorSubject$: BehaviorSubject<boolean> = new BehaviorSubject(
-        false
+        false,
     );
     /**
      * True if error was returned from API, false otherwise
@@ -29,7 +30,7 @@ export class MembersDetailService {
     private userApi = inject(UserApi);
     private errorHandler = inject(ErrorHandlerService);
     private assignedUsersSubject$: BehaviorSubject<PaginatedResource<User>> =
-        new BehaviorSubject(this.initSubject());
+        new BehaviorSubject(createInfinitePaginatedResource());
     /**
      * Subscribe to receive assigned users
      */
@@ -52,8 +53,8 @@ export class MembersDetailService {
      */
     getAssigned(
         resourceId: number,
-        pagination: OffsetPaginationEvent,
-        filterValue: string = null
+        pagination: OffsetPaginationEvent<UserSort>,
+        filterValue: string = null,
     ): Observable<PaginatedResource<User>> {
         const filter = filterValue ? [new UserFilter(filterValue)] : [];
         this.hasErrorSubject$.next(false);
@@ -70,15 +71,8 @@ export class MembersDetailService {
                         this.errorHandler.emitAPIError(err, 'Fetching users');
                         this.isLoadingAssignedSubject$.next(false);
                         this.hasErrorSubject$.next(true);
-                    }
-                )
+                    },
+                ),
             );
-    }
-
-    private initSubject() {
-        return new PaginatedResource(
-            [],
-            new OffsetPagination(0, 0, this.defaultPaginationSize, 0, 0)
-        );
     }
 }

@@ -1,12 +1,23 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, Input, OnInit } from '@angular/core';
+import {
+    ChangeDetectionStrategy,
+    Component,
+    DestroyRef,
+    inject,
+    Input,
+    OnInit,
+} from '@angular/core';
 import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import {
     SentinelControlItem,
     SentinelControlItemSignal,
-    SentinelControlsComponent
+    SentinelControlsComponent,
 } from '@sentinel/components/controls';
 import { User } from '@crczp/user-and-group-model';
-import { SentinelTable, SentinelTableComponent, TableLoadEvent } from '@sentinel/components/table';
+import {
+    SentinelTable,
+    SentinelTableComponent,
+    TableLoadEvent,
+} from '@sentinel/components/table';
 import { defer, Observable, of } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { UserTable } from '../model/user-table';
@@ -14,7 +25,13 @@ import { DeleteControlItem } from '@crczp/user-and-group-agenda/internal';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { UserOverviewService } from '../services/user-overview.service';
 import { AsyncPipe } from '@angular/common';
-import { FileUploadProgressService, PaginationStorageService, providePaginationStorageService } from '@crczp/utils';
+import {
+    FileUploadProgressService,
+    PaginationStorageService,
+    providePaginationStorageService,
+} from '@crczp/utils';
+import { createPaginationEvent } from '@crczp/api-common';
+import { UserSort } from '@crczp/user-and-group-api';
 
 /**
  * Main smart component of user overview page
@@ -48,14 +65,11 @@ export class UserOverviewComponent implements OnInit {
     private userService = inject(UserOverviewService);
     private paginationService = inject(PaginationStorageService);
 
+    private readonly initPagination = createPaginationEvent<UserSort>({});
+
     ngOnInit(): void {
         const initialLoadEvent: TableLoadEvent<string> = {
-            pagination: new OffsetPaginationEvent(
-                0,
-                this.paginationService.loadPageSize(),
-                this.INIT_SORT_NAME,
-                this.INIT_SORT_DIR,
-            ),
+            pagination: this.initPagination,
         };
         this.users$ = this.userService.resource$.pipe(
             map((groups) => new UserTable(groups, this.userService)),
@@ -74,7 +88,10 @@ export class UserOverviewComponent implements OnInit {
     onLoadEvent(event: TableLoadEvent<string>): void {
         this.paginationService.savePageSize(event.pagination.size);
         this.userService
-            .getAll(event.pagination as OffsetPaginationEvent, event.filter)
+            .getAll(
+                event.pagination as OffsetPaginationEvent<UserSort>,
+                event.filter,
+            )
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe();
     }

@@ -1,12 +1,13 @@
 import { inject, Injectable } from '@angular/core';
-import { OffsetPagination, OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
-import { UserApi } from '@crczp/training-api';
+import { OffsetPaginationEvent, PaginatedResource, PaginationBase } from '@sentinel/common/pagination';
+import { UserApi, UserRefSort } from '@crczp/training-api';
 import { Organizer } from '@crczp/training-model';
 import { SentinelUserAssignService } from '@sentinel/components/user-assign';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
 import { UserNameFilters } from '@crczp/training-agenda/internal';
-import { ErrorHandlerService, PortalConfig } from '@crczp/utils';
+import { ErrorHandlerService } from '@crczp/utils';
+import { createPaginatedResource } from '@crczp/api-common';
 
 /**
  * Organizer implementation of UserAssignService from user assign library.
@@ -16,13 +17,12 @@ import { ErrorHandlerService, PortalConfig } from '@crczp/utils';
 export class OrganizersAssignService extends SentinelUserAssignService {
     private userApi = inject(UserApi);
     private errorHandler = inject(ErrorHandlerService);
-    private settings = inject(PortalConfig);
 
-    private lastAssignedPagination: OffsetPaginationEvent;
+    private lastAssignedPagination: OffsetPaginationEvent<UserRefSort>;
     private lastAssignedFilter: string;
     private assignedUsersSubject: BehaviorSubject<
         PaginatedResource<Organizer>
-    > = new BehaviorSubject(this.initSubject());
+    > = new BehaviorSubject(createPaginatedResource());
     /**
      * Currently assigned users (organizers)
      */
@@ -54,20 +54,24 @@ export class OrganizersAssignService extends SentinelUserAssignService {
      */
     getAssigned(
         resourceId: number,
-        pagination: OffsetPaginationEvent,
-        filter: string = null
+        pagination: PaginationBase<string>,
+        filter?: string,
     ): Observable<PaginatedResource<Organizer>> {
         this.clearSelectedAssignedUsers();
-        this.lastAssignedPagination = pagination;
+        this.lastAssignedPagination = {
+            ...pagination,
+            page: 0,
+            sort: 'family_name',
+        };
         this.lastAssignedFilter = filter;
         this.hasErrorSubject$.next(false);
         this.isLoadingAssignedSubject.next(true);
         return this.userApi
             .getOrganizers(
                 resourceId,
-                pagination,
+                this.lastAssignedPagination,
                 false,
-                UserNameFilters.create(filter)
+                UserNameFilters.create(filter),
             )
             .pipe(
                 tap(
@@ -78,12 +82,12 @@ export class OrganizersAssignService extends SentinelUserAssignService {
                     (err) => {
                         this.errorHandler.emitAPIError(
                             err,
-                            'Fetching organizers'
+                            'Fetching organizers',
                         );
                         this.isLoadingAssignedSubject.next(false);
                         this.hasErrorSubject$.next(true);
-                    }
-                )
+                    },
+                ),
             );
     }
 
@@ -94,29 +98,28 @@ export class OrganizersAssignService extends SentinelUserAssignService {
      */
     getAvailableToAssign(
         resourceId: number,
-        filter: string = null
+        filter: string = null,
     ): Observable<PaginatedResource<Organizer>> {
-        const paginationSize = 25;
         return this.userApi
             .getOrganizersNotInTI(
                 resourceId,
-                new OffsetPaginationEvent(
-                    0,
-                    paginationSize,
-                    'familyName',
-                    'asc'
-                ),
+                {
+                    page: 0,
+                    size: Number.MAX_SAFE_INTEGER,
+                    sort: 'family_name',
+                    sortDir: 'asc',
+                },
                 false,
-                UserNameFilters.create(filter)
+                UserNameFilters.create(filter),
             )
             .pipe(
                 tap({
                     error: (err) =>
                         this.errorHandler.emitAPIError(
                             err,
-                            'Fetching organizers'
+                            'Fetching organizers',
                         ),
-                })
+                }),
             );
     }
 
@@ -147,43 +150,35 @@ export class OrganizersAssignService extends SentinelUserAssignService {
     update(
         resourceId: number,
         additions: Organizer[],
-        removals: Organizer[]
+        removals: Organizer[],
     ): Observable<any> {
         return this.userApi
             .updateOrganizers(
                 resourceId,
                 additions.map((user) => user.id),
                 false,
-                removals.map((user) => user.id)
+                removals.map((user) => user.id),
             )
             .pipe(
                 tap({
                     error: (err) =>
                         this.errorHandler.emitAPIError(
                             err,
-                            'Updating organizers'
+                            'Updating organizers',
                         ),
                 }),
                 switchMap(() =>
                     this.getAssigned(
                         resourceId,
                         this.lastAssignedPagination,
-                        this.lastAssignedFilter
-                    )
-                )
+                        this.lastAssignedFilter,
+                    ),
+                ),
             );
     }
-
-    private initSubject(): PaginatedResource<Organizer> {
-        return new PaginatedResource(
-            [],
-            new OffsetPagination(0, 0, this.settings.defaultPageSize, 0, 0)
-        );
-    }
-
     private callApiToAssign(
         resourceId: number,
-        userIds: number[]
+        userIds: number[],
     ): Observable<any> {
         return this.userApi
             .updateOrganizers(resourceId, userIds, false, [])
@@ -193,22 +188,22 @@ export class OrganizersAssignService extends SentinelUserAssignService {
                     (err) =>
                         this.errorHandler.emitAPIError(
                             err,
-                            'Assigning organizers to training instance'
-                        )
+                            'Assigning organizers to training instance',
+                        ),
                 ),
                 switchMap(() =>
                     this.getAssigned(
                         resourceId,
                         this.lastAssignedPagination,
-                        this.lastAssignedFilter
-                    )
-                )
+                        this.lastAssignedFilter,
+                    ),
+                ),
             );
     }
 
     private callApiToUnassign(
         resourceId: number,
-        userIds: number[]
+        userIds: number[],
     ): Observable<any> {
         return this.userApi
             .updateOrganizers(resourceId, [], false, userIds)
@@ -218,16 +213,16 @@ export class OrganizersAssignService extends SentinelUserAssignService {
                     (err) =>
                         this.errorHandler.emitAPIError(
                             err,
-                            'Deleting organizers from training instance'
-                        )
+                            'Deleting organizers from training instance',
+                        ),
                 ),
                 switchMap(() =>
                     this.getAssigned(
                         resourceId,
                         this.lastAssignedPagination,
-                        this.lastAssignedFilter
-                    )
-                )
+                        this.lastAssignedFilter,
+                    ),
+                ),
             );
     }
 }

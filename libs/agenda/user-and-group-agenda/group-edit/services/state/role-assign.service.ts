@@ -1,12 +1,12 @@
 import { inject, Injectable } from '@angular/core';
-import { SentinelFilter } from '@sentinel/common/filter';
-import { OffsetPagination, OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
-import { GroupApi, RoleApi } from '@crczp/user-and-group-api';
+import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
+import { GroupApi, RoleApi, RoleSort } from '@crczp/user-and-group-api';
 import { UserRole } from '@crczp/user-and-group-model';
 import { BehaviorSubject, forkJoin, Observable, of } from 'rxjs';
 import { catchError, switchMap, tap } from 'rxjs/operators';
 import { RoleFilter } from '@crczp/user-and-group-agenda/internal';
 import { ErrorHandlerService } from '@crczp/utils';
+import { createInfinitePaginatedResource, createInfinitePaginationEvent, QueryParam } from '@crczp/api-common';
 
 /**
  * Basic implementation of a layer between a component and an API service.
@@ -15,7 +15,7 @@ import { ErrorHandlerService } from '@crczp/utils';
 @Injectable()
 export class RoleAssignService {
     protected hasErrorSubject$: BehaviorSubject<boolean> = new BehaviorSubject(
-        false
+        false,
     );
     /**
      * True if error was returned from API, false otherwise
@@ -40,13 +40,13 @@ export class RoleAssignService {
     private errorHandler = inject(ErrorHandlerService);
     private assignedRolesSubject$: BehaviorSubject<
         PaginatedResource<UserRole>
-    > = new BehaviorSubject(this.initSubject());
+    > = new BehaviorSubject(createInfinitePaginatedResource());
     /**
      * Subscribe to receive assigned roles
      */
     assignedRoles$: Observable<PaginatedResource<UserRole>> =
         this.assignedRolesSubject$.asObservable();
-    private lastPagination: OffsetPaginationEvent;
+    private lastPagination: OffsetPaginationEvent<RoleSort>;
     private lastFilter: string;
 
     setSelectedRolesToAssign(roles: UserRole[]): void {
@@ -73,23 +73,20 @@ export class RoleAssignService {
      */
     getAvailableToAssign(
         resourceId: number,
-        filterValue: string = null
+        filterValue: string = null,
     ): Observable<PaginatedResource<UserRole>> {
         const filter = filterValue ? [new RoleFilter(filterValue)] : [];
-        const paginationSize = 25;
-        const pagination = new OffsetPaginationEvent(
-            0,
-            paginationSize,
-            'roleType',
-            'asc'
-        );
         return this.roleApi
-            .getRolesNotInGroup(resourceId, pagination, filter)
+            .getRolesNotInGroup(
+                resourceId,
+                createInfinitePaginationEvent('full_name'),
+                filter,
+            )
             .pipe(
                 tap({
                     error: (err) =>
                         this.errorHandler.emitAPIError(err, 'Fetching roles'),
-                })
+                }),
             );
     }
 
@@ -101,13 +98,13 @@ export class RoleAssignService {
      */
     getAssigned(
         resourceId: number,
-        pagination: OffsetPaginationEvent,
-        filterValue: string = null
+        pagination: OffsetPaginationEvent<RoleSort>,
+        filterValue: string = null,
     ): Observable<PaginatedResource<UserRole>> {
         this.lastPagination = pagination;
         this.lastFilter = filterValue;
         const filter = filterValue
-            ? [new SentinelFilter('roleType', filterValue)]
+            ? [new QueryParam('roleType', filterValue)]
             : [];
         this.clearSelectedAssignedRoles();
         this.hasErrorSubject$.next(false);
@@ -121,12 +118,12 @@ export class RoleAssignService {
                 (err) => {
                     this.errorHandler.emitAPIError(
                         err,
-                        'Fetching roles of group-overview'
+                        'Fetching roles of group-overview',
                     );
                     this.isLoadingAssignedSubject$.next(false);
                     this.hasErrorSubject$.next(true);
-                }
-            )
+                },
+            ),
         );
     }
 
@@ -167,17 +164,17 @@ export class RoleAssignService {
     private callApiToAssign(resourceId: number, roleIds: number[]) {
         this.clearSelectedRolesToAssign();
         return forkJoin(
-            roleIds.map((id) => this.api.assignRole(resourceId, id))
+            roleIds.map((id) => this.api.assignRole(resourceId, id)),
         ).pipe(
             catchError(() => of('failed')),
             tap((results: any[]) => {
                 const failedRequests = results.filter(
-                    (result) => result === 'failed'
+                    (result) => result === 'failed',
                 );
                 if (failedRequests.length > 1) {
                     this.errorHandler.emitAPIError(
                         undefined,
-                        'Assigning some roles failed'
+                        'Assigning some roles failed',
                     );
                 }
             }),
@@ -185,26 +182,26 @@ export class RoleAssignService {
                 this.getAssigned(
                     resourceId,
                     this.lastPagination,
-                    this.lastFilter
-                )
-            )
+                    this.lastFilter,
+                ),
+            ),
         );
     }
 
     private callApiToUnassign(resourceId: number, roleIds: number[]) {
         this.clearSelectedAssignedRoles();
         return forkJoin(
-            roleIds.map((id) => this.api.removeRole(resourceId, id))
+            roleIds.map((id) => this.api.removeRole(resourceId, id)),
         ).pipe(
             catchError(() => of('failed')),
             tap((results: any[]) => {
                 const failedRequests = results.filter(
-                    (result) => result === 'failed'
+                    (result) => result === 'failed',
                 );
                 if (failedRequests.length > 1) {
                     this.errorHandler.emitAPIError(
                         undefined,
-                        'Assigning some roles failed'
+                        'Assigning some roles failed',
                     );
                 }
             }),
@@ -212,13 +209,9 @@ export class RoleAssignService {
                 this.getAssigned(
                     resourceId,
                     this.lastPagination,
-                    this.lastFilter
-                )
-            )
+                    this.lastFilter,
+                ),
+            ),
         );
-    }
-
-    private initSubject(): PaginatedResource<UserRole> {
-        return new PaginatedResource([], new OffsetPagination(0, 0, 10, 0, 0));
     }
 }

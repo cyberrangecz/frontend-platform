@@ -6,7 +6,7 @@ import {
     SentinelDialogResultEnum
 } from '@sentinel/components/dialogs';
 import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
-import { UserApi } from '@crczp/user-and-group-api';
+import { UserApi, UserSort } from '@crczp/user-and-group-api';
 import { User } from '@crczp/user-and-group-model';
 import { EMPTY, Observable } from 'rxjs';
 import { map, switchMap, take, tap } from 'rxjs/operators';
@@ -27,7 +27,7 @@ export class UserOverviewService extends SelectablePaginatedService<User> {
     private fileUploadProgressService = inject(FileUploadProgressService);
     private errorHandler = inject(ErrorHandlerService);
 
-    private lastPagination: OffsetPaginationEvent;
+    private lastPagination: OffsetPaginationEvent<UserSort>;
     private lastFilter: string;
 
     constructor() {
@@ -40,8 +40,8 @@ export class UserOverviewService extends SelectablePaginatedService<User> {
      * @param filterValue filter to be applied on resources
      */
     getAll(
-        pagination?: OffsetPaginationEvent,
-        filterValue: string = null
+        pagination?: OffsetPaginationEvent<UserSort>,
+        filterValue: string = null,
     ): Observable<PaginatedResource<User>> {
         this.lastPagination = pagination;
         this.lastFilter = filterValue;
@@ -56,8 +56,8 @@ export class UserOverviewService extends SelectablePaginatedService<User> {
                 (err) => {
                     this.errorHandler.emitAPIError(err, 'Fetching users');
                     this.hasErrorSubject$.next(true);
-                }
-            )
+                },
+            ),
         );
     }
 
@@ -73,11 +73,11 @@ export class UserOverviewService extends SelectablePaginatedService<User> {
                 (err) => {
                     this.errorHandler.emitAPIError(
                         err,
-                        `Fetching user with id: ${userId}`
+                        `Fetching user with id: ${userId}`,
                     );
                     this.hasErrorSubject$.next(true);
-                }
-            )
+                },
+            ),
         );
     }
 
@@ -88,8 +88,8 @@ export class UserOverviewService extends SelectablePaginatedService<User> {
     delete(user: User): Observable<any> {
         return this.displayConfirmationDialog([user]).pipe(
             switchMap((result) =>
-                result ? this.callApiToDelete([user]) : EMPTY
-            )
+                result ? this.callApiToDelete([user]) : EMPTY,
+            ),
         );
     }
 
@@ -97,8 +97,8 @@ export class UserOverviewService extends SelectablePaginatedService<User> {
         const users = this.selectedSubject$.getValue();
         return this.displayConfirmationDialog(users).pipe(
             switchMap((result) =>
-                result ? this.callApiToDelete(users) : EMPTY
-            )
+                result ? this.callApiToDelete(users) : EMPTY,
+            ),
         );
     }
 
@@ -111,9 +111,9 @@ export class UserOverviewService extends SelectablePaginatedService<User> {
                 error: (err) =>
                     this.errorHandler.emitAPIError(
                         err,
-                        'Downloading OIDC users info'
+                        'Downloading OIDC users info',
                     ),
-            })
+            }),
         );
     }
 
@@ -130,7 +130,7 @@ export class UserOverviewService extends SelectablePaginatedService<User> {
                 () => {
                     this.notificationService.emit(
                         'success',
-                        'Users were imported'
+                        'Users were imported',
                     );
                     this.fileUploadProgressService.finish();
                     dialogRef.close();
@@ -138,9 +138,9 @@ export class UserOverviewService extends SelectablePaginatedService<User> {
                 (err) => {
                     this.fileUploadProgressService.finish();
                     this.errorHandler.emitAPIError(err, 'Importing users');
-                }
+                },
             ),
-            switchMap(() => this.getAll(this.lastPagination, this.lastFilter))
+            switchMap(() => this.getAll(this.lastPagination, this.lastFilter)),
         );
     }
 
@@ -154,17 +154,17 @@ export class UserOverviewService extends SelectablePaginatedService<User> {
             title,
             content,
             'Cancel',
-            'Delete'
+            'Delete',
         );
 
         const dialogRef = this.dialog.open(
             SentinelConfirmationDialogComponent,
-            { data: dialogData }
+            { data: dialogData },
         );
         return dialogRef
             .afterClosed()
             .pipe(
-                map((result) => result === SentinelDialogResultEnum.CONFIRMED)
+                map((result) => result === SentinelDialogResultEnum.CONFIRMED),
             );
     }
 
@@ -176,15 +176,15 @@ export class UserOverviewService extends SelectablePaginatedService<User> {
                     this.clearSelection();
                     this.notificationService.emit(
                         'success',
-                        'Selected users were deleted'
+                        'Selected users were deleted',
                     );
                 },
                 (err) => {
                     this.errorHandler.emitAPIError(err, 'Deleting user');
                     this.hasErrorSubject$.next(true);
-                }
+                },
             ),
-            switchMap(() => this.getAll(this.lastPagination, this.lastFilter))
+            switchMap(() => this.getAll(this.lastPagination, this.lastFilter)),
         );
     }
 }

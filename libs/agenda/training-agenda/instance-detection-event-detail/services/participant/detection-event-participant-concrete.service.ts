@@ -1,9 +1,6 @@
 import { inject, Injectable } from '@angular/core';
-import { DetectionEventApi } from '@crczp/training-api';
-import {
-    OffsetPaginationEvent,
-    PaginatedResource,
-} from '@sentinel/common/pagination';
+import { DetectionEventApi, DetectionEventParticipantSort } from '@crczp/training-api';
+import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
 import { Observable } from 'rxjs';
 import { DetectionEventParticipant } from '@crczp/training-model';
 import { tap } from 'rxjs/operators';
@@ -29,15 +26,15 @@ export class DetectionEventParticipantConcreteService extends DetectionEventPart
      */
     public getAll(
         detectionEventId: number,
-        pagination: OffsetPaginationEvent
+        pagination: OffsetPaginationEvent<DetectionEventParticipantSort>,
     ): Observable<PaginatedResource<DetectionEventParticipant>> {
         return this.api.getAllParticipants(pagination, detectionEventId).pipe(
             tap(
                 (detections) => {
                     this.resourceSubject$.next(detections);
                 },
-                () => this.onGetAllError()
-            )
+                () => this.onGetAllError(),
+            ),
         );
     }
 

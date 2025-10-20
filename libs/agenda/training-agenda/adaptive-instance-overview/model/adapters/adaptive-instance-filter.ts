@@ -1,6 +1,6 @@
-import {SentinelFilter} from '@sentinel/common/filter';
+import { QueryParam } from '@crczp/api-common';
 
-export class AdaptiveInstanceFilter extends SentinelFilter {
+export class AdaptiveInstanceFilter extends QueryParam {
     constructor(value: string) {
         super('title', value);
     }

@@ -11,6 +11,7 @@ import {
     SentinelTableComponent,
     TableLoadEvent,
 } from '@sentinel/components/table';
+import { TrainingRunSort } from '@crczp/training-api';
 
 @Component({
     selector: 'crczp-training-instance-runs',
@@ -20,10 +21,10 @@ import {
     imports: [SentinelTableComponent],
 })
 export class TrainingInstanceRunsComponent {
-    @Input() trainingRuns: SentinelTable<TrainingRun, string>;
+    @Input() trainingRuns: SentinelTable<TrainingRun, TrainingRunSort>;
     @Input() hasError: boolean;
 
-    @Output() TableLoadEvent: EventEmitter<TableLoadEvent<string>> =
+    @Output() TableLoadEvent: EventEmitter<TableLoadEvent<TrainingRunSort>> =
         new EventEmitter();
     @Output() rowExpanded: EventEmitter<number> = new EventEmitter();
 
@@ -35,7 +36,7 @@ export class TrainingInstanceRunsComponent {
      * Emits load table vent
      * @param event reload data event emitted from table
      */
-    onTableLoadEvent(event: TableLoadEvent<string>): void {
+    onTableLoadEvent(event: TableLoadEvent<TrainingRunSort>): void {
         this.TableLoadEvent.emit(event);
     }
 }

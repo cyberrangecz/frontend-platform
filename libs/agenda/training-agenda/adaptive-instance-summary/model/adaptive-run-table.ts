@@ -4,27 +4,37 @@ import { TrainingRun, TrainingRunStateEnum } from '@crczp/training-model';
 import { Column, Row, SentinelTable } from '@sentinel/components/table';
 import { AdaptiveRunRowAdapter } from './adaptive-run-row-adapter';
 import { Utils } from '@crczp/utils';
+import { TrainingRunSort } from '@crczp/training-api';
 
 /**
  * @dynamic
  */
 export class AdaptiveRunTable extends SentinelTable<
     AdaptiveRunRowAdapter,
-    string
+    TrainingRunSort
 > {
     constructor(resource: PaginatedResource<TrainingRun>) {
         const columns = [
-            new Column<string>('playerName', 'player', false),
-            new Column<string>(
+            new Column<TrainingRunSort>('playerName', 'player', false),
+            new Column<TrainingRunSort>(
                 'startTimeFormatted',
                 'start time',
                 true,
-                'startTime',
+                'start_time',
             ),
-            new Column<string>('endTimeFormatted', 'end time', true, 'endTime'),
-            new Column<string>('state', 'run state', true, 'state'),
-            new Column<string>('duration', 'duration', false),
-            new Column<string>('sandboxInstanceId', 'sandbox id', false),
+            new Column<TrainingRunSort>(
+                'endTimeFormatted',
+                'end time',
+                true,
+                'end_time',
+            ),
+            new Column<TrainingRunSort>('state', 'run state', true, 'state'),
+            new Column<TrainingRunSort>('duration', 'duration', false),
+            new Column<TrainingRunSort>(
+                'sandboxInstanceId',
+                'sandbox id',
+                false,
+            ),
         ];
         const rows = resource.elements.map((element) =>
             AdaptiveRunTable.createRow(element),

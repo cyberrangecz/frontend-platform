@@ -1,27 +1,22 @@
 import { inject, Injectable } from '@angular/core';
 import { SandboxAllocationUnitsService } from './sandbox-allocation-units.service';
 import { BehaviorSubject, combineLatestWith, EMPTY, Observable } from 'rxjs';
+import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
 import {
-    OffsetPagination,
-    OffsetPaginationEvent,
-    PaginatedResource,
-} from '@sentinel/common/pagination';
-import { PoolApi, SandboxAllocationUnitsApi } from '@crczp/sandbox-api';
+    AllocationUnitSort,
+    PoolApi,
+    SandboxAllocationUnitsApi,
+} from '@crczp/sandbox-api';
 import { SandboxAllocationUnit } from '@crczp/sandbox-model';
 import { map, switchMap, tap } from 'rxjs/operators';
 import { HttpErrorResponse } from '@angular/common/http';
 import {
     SentinelConfirmationDialogComponent,
     SentinelConfirmationDialogConfig,
-    SentinelDialogResultEnum,
+    SentinelDialogResultEnum
 } from '@sentinel/components/dialogs';
 import { MatDialog } from '@angular/material/dialog';
-import {
-    ErrorHandlerService,
-    NotificationService,
-    PollingService,
-    PortalConfig,
-} from '@crczp/utils';
+import { ErrorHandlerService, NotificationService, PollingService, PortalConfig } from '@crczp/utils';
 
 @Injectable()
 export class SandboxAllocationUnitsConcreteService extends SandboxAllocationUnitsService {
@@ -53,7 +48,7 @@ export class SandboxAllocationUnitsConcreteService extends SandboxAllocationUnit
      */
     getAll(
         poolId: number,
-        pagination: OffsetPaginationEvent
+        pagination: OffsetPaginationEvent<AllocationUnitSort>,
     ): Observable<PaginatedResource<SandboxAllocationUnit>> {
         this.lastPagination = pagination;
         this.lastPoolId = poolId;
@@ -63,32 +58,32 @@ export class SandboxAllocationUnitsConcreteService extends SandboxAllocationUnit
             .getPoolsSandboxAllocationUnits(poolId, pagination)
             .pipe(
                 combineLatestWith(
-                    this.poolApi.getPoolsSandboxes(poolId, pagination)
+                    this.poolApi.getPoolsSandboxes(poolId, pagination),
                 ),
                 map(([units, sandboxes]) => {
                     units.elements.map((unit) => {
                         const uuid = sandboxes.elements.find(
-                            (sandbox) => sandbox.allocationUnitId === unit.id
+                            (sandbox) => sandbox.allocationUnitId === unit.id,
                         );
                         unit.sandboxUuid = uuid ? uuid.id : '';
                     });
                     return units;
                 }),
                 tap((paginatedRequests) =>
-                    this.unitsSubject$.next(paginatedRequests)
-                )
+                    this.unitsSubject$.next(paginatedRequests),
+                ),
             );
         return this.resourcePollingService
             .startPolling(
                 observable$,
                 this.poolPollingPeriod,
-                this.retryAttempts
+                this.retryAttempts,
             )
             .pipe(
                 tap(
                     (_) => _,
-                    (err) => this.onGetAllError(err)
-                )
+                    (err) => this.onGetAllError(err),
+                ),
             );
     }
 
@@ -102,14 +97,14 @@ export class SandboxAllocationUnitsConcreteService extends SandboxAllocationUnit
                 () =>
                     this.notificationService.emit(
                         'success',
-                        `Sandbox ${unit.id} updated`
+                        `Sandbox ${unit.id} updated`,
                     ),
                 (err) =>
                     this.errorHandler.emitAPIError(
                         err,
-                        `Updating sandbox ${unit.id}`
-                    )
-            )
+                        `Updating sandbox ${unit.id}`,
+                    ),
+            ),
         );
     }
 
@@ -123,8 +118,8 @@ export class SandboxAllocationUnitsConcreteService extends SandboxAllocationUnit
             switchMap((result) =>
                 result === SentinelDialogResultEnum.CONFIRMED
                     ? this.callApiToCleanupMultiple(poolId, force)
-                    : EMPTY
-            )
+                    : EMPTY,
+            ),
         );
     }
 
@@ -138,8 +133,8 @@ export class SandboxAllocationUnitsConcreteService extends SandboxAllocationUnit
             switchMap((result) =>
                 result === SentinelDialogResultEnum.CONFIRMED
                     ? this.callApiToCleanupFailed(poolId, force)
-                    : EMPTY
-            )
+                    : EMPTY,
+            ),
         );
     }
 
@@ -152,13 +147,13 @@ export class SandboxAllocationUnitsConcreteService extends SandboxAllocationUnit
         return this.displayConfirmationDialog(
             poolId,
             'Create',
-            'unlocked '
+            'unlocked ',
         ).pipe(
             switchMap((result) =>
                 result === SentinelDialogResultEnum.CONFIRMED
                     ? this.callApiToCleanupUnlocked(poolId, force)
-                    : EMPTY
-            )
+                    : EMPTY,
+            ),
         );
     }
 
@@ -167,18 +162,19 @@ export class SandboxAllocationUnitsConcreteService extends SandboxAllocationUnit
      * @param pageSize size of a page for pagination
      */
     protected initSubject(
-        pageSize: number
+        pageSize: number,
     ): PaginatedResource<SandboxAllocationUnit> {
-        return new PaginatedResource(
-            [],
-            new OffsetPagination(0, 0, pageSize, 0, 0)
-        );
+        return new PaginatedResource([], {
+            size: pageSize,
+            totalElements: 0,
+            numberOfElements: 0,
+        });
     }
 
     private displayConfirmationDialog(
         poolId: number,
         title: string,
-        specifier: string
+        specifier: string,
     ): Observable<SentinelDialogResultEnum> {
         const dialogRef = this.dialog.open(
             SentinelConfirmationDialogComponent,
@@ -187,9 +183,9 @@ export class SandboxAllocationUnitsConcreteService extends SandboxAllocationUnit
                     `${title} Cleanup Request`,
                     `Do you want to delete all ${specifier}sandboxes for pool ${poolId}?`,
                     'Cancel',
-                    'Delete'
+                    'Delete',
                 ),
-            }
+            },
         );
         return dialogRef.afterClosed();
     }
@@ -202,21 +198,21 @@ export class SandboxAllocationUnitsConcreteService extends SandboxAllocationUnit
     private callApiToCleanupMultiple(poolId: number, force: boolean): any {
         return this.handleApiRequests(
             this.poolApi.createMultipleCleanupRequests(poolId, force),
-            poolId
+            poolId,
         );
     }
 
     private callApiToCleanupFailed(poolId: number, force: boolean): any {
         return this.handleApiRequests(
             this.poolApi.createFailedCleanupRequests(poolId, force),
-            poolId
+            poolId,
         );
     }
 
     private callApiToCleanupUnlocked(poolId: number, force: boolean): any {
         return this.handleApiRequests(
             this.poolApi.createUnlockedCleanupRequests(poolId, force),
-            poolId
+            poolId,
         );
     }
 
@@ -226,15 +222,15 @@ export class SandboxAllocationUnitsConcreteService extends SandboxAllocationUnit
                 next: () =>
                     this.notificationService.emit(
                         'success',
-                        `Cleanup request for pool ${poolId}`
+                        `Cleanup request for pool ${poolId}`,
                     ),
                 error: (err) =>
                     this.errorHandler.emitAPIError(
                         err,
-                        `Creating cleanup request for pool ${poolId}`
+                        `Creating cleanup request for pool ${poolId}`,
                     ),
             }),
-            switchMap(() => this.getAll(this.lastPoolId, this.lastPagination))
+            switchMap(() => this.getAll(this.lastPoolId, this.lastPagination)),
         );
     }
 }

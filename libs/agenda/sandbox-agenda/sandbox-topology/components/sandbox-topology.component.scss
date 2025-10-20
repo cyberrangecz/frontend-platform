@@ -1,0 +1,14 @@
+$bottom-margin: 18rem;
+
+.topology-content {
+    width: 100%;
+    min-width: 50dvh;
+    min-height: 200px;
+    height: calc(100dvh - $bottom-margin);
+    max-height: calc(100dvh - $bottom-margin);
+}
+
+.topology-component {
+    width: 80%;
+    height: 100%;
+}

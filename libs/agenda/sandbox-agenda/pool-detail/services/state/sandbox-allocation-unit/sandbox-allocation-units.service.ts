@@ -1,39 +1,43 @@
-import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
-import {BehaviorSubject, Observable} from 'rxjs';
-import {SandboxAllocationUnit} from '@crczp/sandbox-model';
+import {
+    OffsetPaginationEvent,
+    PaginatedResource,
+} from '@sentinel/common/pagination';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { SandboxAllocationUnit } from '@crczp/sandbox-model';
+import { AllocationUnitSort } from '@crczp/sandbox-api';
 
 export abstract class SandboxAllocationUnitsService {
-    /**
-     * @contract Needs to be updated in onManualResourceRefresh method
-     * Last pagination used when requesting new data
-     */
-    protected lastPagination: OffsetPaginationEvent;
-
-    /**
-     * True if server returned error response on the latest request, false otherwise
-     * Change internally in extending service. Client should subscribe to the observable
-     */
-    protected hasErrorSubject$: BehaviorSubject<boolean> = new BehaviorSubject(false);
-
-    /**
-     * True if server returned error response on the latest request, false otherwise
-     * @contract must be updated every time new data are received
-     */
-    hasError$: Observable<boolean> = this.hasErrorSubject$.asObservable();
-
-    /**
-     * Paginated resource containing pagination info and retrieved elements of SandboxAllocationUnit type.
-     * Client should subscribe to the observable
-     * @contract must be updated every time new data are received
-     */
-    protected unitsSubject$: BehaviorSubject<PaginatedResource<SandboxAllocationUnit>>;
-
     /**
      * Paginated resource containing pagination info and retrieved elements of SandboxAllocationUnit type.
      * Client should subscribe to the observable
      * @contract must be updated every time new data are received
      */
     units$: Observable<PaginatedResource<SandboxAllocationUnit>>;
+    /**
+     * @contract Needs to be updated in onManualResourceRefresh method
+     * Last pagination used when requesting new data
+     */
+    protected lastPagination: OffsetPaginationEvent<AllocationUnitSort>;
+    /**
+     * True if server returned error response on the latest request, false otherwise
+     * Change internally in extending service. Client should subscribe to the observable
+     */
+    protected hasErrorSubject$: BehaviorSubject<boolean> = new BehaviorSubject(
+        false,
+    );
+    /**
+     * True if server returned error response on the latest request, false otherwise
+     * @contract must be updated every time new data are received
+     */
+    hasError$: Observable<boolean> = this.hasErrorSubject$.asObservable();
+    /**
+     * Paginated resource containing pagination info and retrieved elements of SandboxAllocationUnit type.
+     * Client should subscribe to the observable
+     * @contract must be updated every time new data are received
+     */
+    protected unitsSubject$: BehaviorSubject<
+        PaginatedResource<SandboxAllocationUnit>
+    >;
 
     /**
      * Gets all sandbox allocation units for pool with passed pagination and updates related observables or handles an error
@@ -42,14 +46,16 @@ export abstract class SandboxAllocationUnitsService {
      */
     abstract getAll(
         poolId: number,
-        pagination: OffsetPaginationEvent,
+        pagination: OffsetPaginationEvent<AllocationUnitSort>,
     ): Observable<PaginatedResource<SandboxAllocationUnit>>;
 
     /**
      * Update an existing allocation unit.
      * @param unit a sandbox allocation unit to update
      */
-    abstract update(unit: SandboxAllocationUnit): Observable<SandboxAllocationUnit>;
+    abstract update(
+        unit: SandboxAllocationUnit,
+    ): Observable<SandboxAllocationUnit>;
 
     /**
      * Starts cleanup requests for all allocation units in a given pool specified by @poolId.
@@ -76,5 +82,7 @@ export abstract class SandboxAllocationUnitsService {
      * Initializes default resources with given pageSize
      * @param pageSize size of a page for pagination
      */
-    protected abstract initSubject(pageSize: number): PaginatedResource<SandboxAllocationUnit>;
+    protected abstract initSubject(
+        pageSize: number,
+    ): PaginatedResource<SandboxAllocationUnit>;
 }

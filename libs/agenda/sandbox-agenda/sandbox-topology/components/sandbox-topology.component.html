@@ -1,0 +1,12 @@
+<div class="center topology-content">
+    @if (idData()) {
+        <crczp-topology-wrapper
+            [id]="idData()"
+            [standalone]="true"
+            class="center topology-component highlighted-resizer"
+        />
+    } @else {
+        <crczp-logo-spinner />
+    }
+
+</div>

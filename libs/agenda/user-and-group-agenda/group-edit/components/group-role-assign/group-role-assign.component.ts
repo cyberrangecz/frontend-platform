@@ -9,7 +9,7 @@ import {
     Output,
     SimpleChanges
 } from '@angular/core';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
+import { PaginatedResource, SortDir } from '@sentinel/common/pagination';
 import {
     SentinelControlItem,
     SentinelControlItemSignal,
@@ -31,6 +31,8 @@ import { MatIcon } from '@angular/material/icon';
 import { AsyncPipe } from '@angular/common';
 import { RoleAssignService } from '../../services/state/role-assign.service';
 import { PaginationStorageService, providePaginationStorageService } from '@crczp/utils';
+import { createPaginationEvent, PaginationMapper } from '@crczp/api-common';
+import { RoleSort } from '@crczp/user-and-group-api';
 
 /**
  * Component for role assignment to edited group-overview
@@ -59,8 +61,8 @@ import { PaginationStorageService, providePaginationStorageService } from '@crcz
     ],
 })
 export class GroupRoleAssignComponent implements OnChanges {
-    readonly ROLES_OF_GROUP_INIT_SORT_NAME = 'roleType';
-    readonly ROLES_OF_GROUP_INIT_SORT_DIR = 'asc';
+    readonly ROLES_OF_GROUP_INIT_SORT_NAME: RoleSort = 'role_type';
+    readonly ROLES_OF_GROUP_INIT_SORT_DIR: SortDir = 'asc';
     /**
      * Edited group-overview to assign roles to
      */
@@ -102,6 +104,11 @@ export class GroupRoleAssignComponent implements OnChanges {
     destroyRef = inject(DestroyRef);
     private roleAssignService = inject(RoleAssignService);
     private paginationService = inject(PaginationStorageService);
+
+    private readonly initialRolesPagination = createPaginationEvent<RoleSort>({
+        sort: 'role_type',
+        sortDir: 'asc',
+    });
 
     constructor() {
         this.roleMapping = {
@@ -148,12 +155,12 @@ export class GroupRoleAssignComponent implements OnChanges {
         this.roleAssignService.setSelectedRolesToAssign(selected);
     }
 
-    onAssignedRolesLoad(event: TableLoadEvent<string>): void {
+    onAssignedRolesLoad(event: TableLoadEvent<RoleSort>): void {
         this.paginationService.savePageSize(event.pagination.size);
         this.roleAssignService
             .getAssigned(
                 this.resource.id,
-                event.pagination as OffsetPaginationEvent,
+                PaginationMapper.fromPaginationEvent(event.pagination),
                 event.filter,
             )
             .pipe(takeUntilDestroyed(this.destroyRef))
@@ -192,12 +199,7 @@ export class GroupRoleAssignComponent implements OnChanges {
         this.isLoadingAssignedRoles$ =
             this.roleAssignService.isLoadingAssigned$;
         const initialLoadEvent = {
-            pagination: new OffsetPaginationEvent(
-                0,
-                this.paginationService.loadPageSize(),
-                this.ROLES_OF_GROUP_INIT_SORT_NAME,
-                this.ROLES_OF_GROUP_INIT_SORT_DIR,
-            ),
+            pagination: this.initialRolesPagination,
         };
         this.onAssignedRolesLoad(initialLoadEvent);
     }

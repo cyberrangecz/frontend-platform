@@ -1,6 +1,9 @@
 import { inject, Injectable } from '@angular/core';
 import { StageDetailService } from './stage-detail.service';
-import { AllocationRequestsApi } from '@crczp/sandbox-api';
+import {
+    AllocationOutputSort,
+    AllocationRequestsApi,
+} from '@crczp/sandbox-api';
 import { RequestStage } from '@crczp/sandbox-model';
 import {
     OffsetPaginationEvent,
@@ -22,13 +25,13 @@ export class TerraformOutputsService extends StageDetailService {
         super(
             pollRegistry,
             Number.MAX_SAFE_INTEGER,
-            settings.polling.pollingPeriodShort
+            settings.polling.pollingPeriodShort,
         );
     }
 
     protected callApiToGetStageDetail(
         stage: RequestStage,
-        requestedPagination: OffsetPaginationEvent
+        requestedPagination: OffsetPaginationEvent<AllocationOutputSort>,
     ): Observable<PaginatedResource<string>> {
         return this.api
             .getTerraformOutputs(stage.requestId, requestedPagination)
@@ -36,13 +39,13 @@ export class TerraformOutputsService extends StageDetailService {
                 take(1),
                 map((paginatedResources) => {
                     const formattedEvents = paginatedResources.elements.map(
-                        (event) => `${event.content}`
+                        (event) => `${event.content}`,
                     );
                     return new PaginatedResource<string>(
                         formattedEvents,
-                        paginatedResources.pagination
+                        paginatedResources.pagination,
                     );
-                })
+                }),
             );
     }
 }

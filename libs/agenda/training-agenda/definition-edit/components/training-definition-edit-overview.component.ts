@@ -21,7 +21,6 @@ import { LevelEditConcreteService } from '../services/state/level/level-edit-con
 import { MitreTechniquesService } from '../services/state/mitre-techniques/mitre-techniques.service';
 import { MitreTechniquesConcreteService } from '../services/state/mitre-techniques/mitre-techniques-concrete.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import {
     MatExpansionPanel,
     MatExpansionPanelContent,
@@ -35,6 +34,7 @@ import { MatDivider } from '@angular/material/divider';
 import { TrainingDefinitionEditComponent } from './definition/training-definition-edit.component';
 import { LevelOverviewComponent } from './levels/overview/level-overview.component';
 import { AsyncPipe } from '@angular/common';
+import { createInfinitePaginationEvent } from '@crczp/api-common';
 
 /**
  * Main smart component of training definition edit/new page.
@@ -98,7 +98,7 @@ export class TrainingDefinitionEditOverviewComponent implements OnInit {
 
         this.trainingDefinition$ = this.editService.trainingDefinition$;
         this.tdTitle$ = this.editService.trainingDefinition$.pipe(
-            map((td) => td.title)
+            map((td) => td.title),
         );
         this.saveDisabled$ = this.editService.saveDisabled$;
         this.mitreTechniques$ = this.mitreTechniquesService.mitreTechniques$;
@@ -115,7 +115,7 @@ export class TrainingDefinitionEditOverviewComponent implements OnInit {
         this.activeRoute.data
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe((data) =>
-                this.editService.set(data[TrainingDefinition.name] || null)
+                this.editService.set(data[TrainingDefinition.name] || null),
             );
         this.editMode$ = this.editService.editMode$.pipe(
             tap(
@@ -124,9 +124,9 @@ export class TrainingDefinitionEditOverviewComponent implements OnInit {
                         this.editService,
                         this.saveDisabled$,
                         this.levelSaveDisabled$,
-                        valid$
-                    ))
-            )
+                        valid$,
+                    )),
+            ),
         );
     }
 
@@ -139,16 +139,16 @@ export class TrainingDefinitionEditOverviewComponent implements OnInit {
                 takeUntilDestroyed(this.destroyRef),
                 filter(
                     (trainingDefinition) =>
-                        !!trainingDefinition && !!trainingDefinition.id
-                )
+                        !!trainingDefinition && !!trainingDefinition.id,
+                ),
             )
             .subscribe((trainingDefinition) =>
                 this.authorsAssignService
                     .getAssigned(
                         trainingDefinition.id,
-                        new OffsetPaginationEvent(0, this.defaultPaginationSize)
+                        createInfinitePaginationEvent('familyName'),
                     )
-                    .subscribe()
+                    .subscribe(),
             );
     }
 

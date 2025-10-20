@@ -20,7 +20,6 @@ import {
 } from '@sentinel/components/controls';
 import { AsyncPipe } from '@angular/common';
 import { StageOverviewComponent } from './stage-overview/stage-overview.component';
-import { CheatingDetectionConcreteService } from '../services/cheating-detection-concrete.service';
 import { PaginationStorageService, providePaginationStorageService } from '@crczp/utils';
 import { CheatingDetection, TrainingInstance } from '@crczp/training-model';
 
@@ -41,7 +40,7 @@ import { CheatingDetection, TrainingInstance } from '@crczp/training-model';
     providers: [
         {
             provide: CheatingDetectionService,
-            useClass: CheatingDetectionConcreteService,
+            useClass: CheatingDetectionService,
         },
         providePaginationStorageService(CheatingDetectionOverviewComponent),
     ],

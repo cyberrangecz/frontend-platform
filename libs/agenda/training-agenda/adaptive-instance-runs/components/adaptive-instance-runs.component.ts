@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import { TrainingInstance, TrainingRun } from '@crczp/training-model';
 import { SentinelTable } from '@sentinel/components/table';
 import { Observable } from 'rxjs';
@@ -13,6 +12,8 @@ import { AdaptiveRunOverviewComponent } from './training-run-overview/adaptive-r
 import { MatCard } from '@angular/material/card';
 import { AsyncPipe } from '@angular/common';
 import { AdaptiveRunConcreteService } from '../services/runs/adaptive-run-concrete.service';
+import { createPaginationEvent } from '@crczp/api-common';
+import { TrainingRunSort } from '@crczp/training-api';
 
 /**
  * Smart component of training instance runs
@@ -40,6 +41,12 @@ export class AdaptiveInstanceRunsComponent implements OnInit {
     private adaptiveRunService = inject(AdaptiveRunService);
     private trainingInstance: TrainingInstance;
 
+    private readonly initialRunsPagination =
+        createPaginationEvent<TrainingRunSort>({
+            sort: 'start_time',
+            sortDir: 'desc',
+        });
+
     ngOnInit(): void {
         this.trainingInstance$ = this.activeRoute.data.pipe(
             map((data) => data[TrainingInstance.name] || null),
@@ -52,17 +59,14 @@ export class AdaptiveInstanceRunsComponent implements OnInit {
     }
 
     private initRunsOverviewComponent() {
-        const initialPagination = new OffsetPaginationEvent(
-            0,
-            this.defaultPageSize,
-            '',
-            'asc',
-        );
         this.trainingInstance$
             .pipe(
                 take(1),
                 switchMap((ti) =>
-                    this.adaptiveRunService.getAll(ti.id, initialPagination),
+                    this.adaptiveRunService.getAll(
+                        ti.id,
+                        this.initialRunsPagination,
+                    ),
                 ),
             )
             .subscribe();

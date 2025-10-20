@@ -1,5 +1,7 @@
-import {SentinelFilter} from '@sentinel/common/filter';
-import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
+import {
+    OffsetPaginationEvent,
+    PaginatedResource,
+} from '@sentinel/common/pagination';
 import {
     AccessLevel,
     AssessmentLevel,
@@ -10,7 +12,9 @@ import {
     TrainingDefinitionStateEnum,
     TrainingLevel,
 } from '@crczp/training-model';
-import {Observable} from 'rxjs';
+import { Observable } from 'rxjs';
+import { QueryParam } from '@crczp/api-common';
+import { TrainingDefinitionSort } from '../sorts';
 
 export abstract class LinearTrainingDefinitionApi {
     /**
@@ -19,8 +23,8 @@ export abstract class LinearTrainingDefinitionApi {
      * @param filters filters to be applied on result
      */
     abstract getAll(
-        pagination: OffsetPaginationEvent,
-        filters?: SentinelFilter[],
+        pagination: OffsetPaginationEvent<TrainingDefinitionSort>,
+        filters?: QueryParam[],
     ): Observable<PaginatedResource<TrainingDefinition>>;
 
     /**
@@ -29,8 +33,8 @@ export abstract class LinearTrainingDefinitionApi {
      * @param filters filters to be applied on result
      */
     abstract getAllForOrganizer(
-        pagination: OffsetPaginationEvent,
-        filters?: SentinelFilter[],
+        pagination: OffsetPaginationEvent<TrainingDefinitionSort>,
+        filters?: QueryParam[],
     ): Observable<PaginatedResource<TrainingDefinitionInfo>>;
 
     /**
@@ -38,14 +42,20 @@ export abstract class LinearTrainingDefinitionApi {
      * @param id id of training definition
      * @param withLevels true if training definition should be mapped with levels, false otherwise
      */
-    abstract get(id: number, withLevels?: boolean): Observable<TrainingDefinition>;
+    abstract get(
+        id: number,
+        withLevels?: boolean,
+    ): Observable<TrainingDefinition>;
 
     /**
      * Sends http request to change state of a training definition
      * @param trainingDefinitionId id of a training definition which state should be changed
      * @param newState new state to be set
      */
-    abstract changeState(trainingDefinitionId: number, newState: TrainingDefinitionStateEnum): Observable<any>;
+    abstract changeState(
+        trainingDefinitionId: number,
+        newState: TrainingDefinitionStateEnum,
+    ): Observable<any>;
 
     /**
      * Sends http request to retrieve level by id
@@ -89,25 +99,33 @@ export abstract class LinearTrainingDefinitionApi {
      * Sends http request to create new training definition
      * @param trainingDefinition training definition which should be created
      */
-    abstract create(trainingDefinition: TrainingDefinition): Observable<TrainingDefinition>;
+    abstract create(
+        trainingDefinition: TrainingDefinition,
+    ): Observable<TrainingDefinition>;
 
     /**
      * Sends http request to create new assessment level associated with training definition
      * @param trainingDefinitionId id of training definition which should be associated with the new level
      */
-    abstract createAssessmentLevel(trainingDefinitionId: number): Observable<AssessmentLevel>;
+    abstract createAssessmentLevel(
+        trainingDefinitionId: number,
+    ): Observable<AssessmentLevel>;
 
     /**
      * Sends http request to create new training level associated with training definition
      * @param trainingDefinitionId id of training definition which should be associated with the new level
      */
-    abstract createTrainingLevel(trainingDefinitionId: number): Observable<TrainingLevel>;
+    abstract createTrainingLevel(
+        trainingDefinitionId: number,
+    ): Observable<TrainingLevel>;
 
     /**
      * Sends http request to create new access level associated with training definition
      * @param trainingDefinitionId id of training definition which should be associated with the new level
      */
-    abstract createAccessLevel(trainingDefinitionId: number): Observable<AccessLevel>;
+    abstract createAccessLevel(
+        trainingDefinitionId: number,
+    ): Observable<AccessLevel>;
 
     /**
      * Sends http request to create new info level associated with training definition
@@ -120,14 +138,20 @@ export abstract class LinearTrainingDefinitionApi {
      * @param trainingDefinitionId id of training definition associated with the level which should be deleted
      * @param levelId id of level which should be deleted
      */
-    abstract deleteLevel(trainingDefinitionId: number, levelId: number): Observable<Level[]>;
+    abstract deleteLevel(
+        trainingDefinitionId: number,
+        levelId: number,
+    ): Observable<Level[]>;
 
     /**
      * Sends http request to update training definition levels
      * @param trainingDefinitionId id of training definition associated with the levels
      * @param levels training levels which should be updated
      */
-    abstract updateTrainingDefinitionLevels(trainingDefinitionId: number, levels: Level[]): Observable<any>;
+    abstract updateTrainingDefinitionLevels(
+        trainingDefinitionId: number,
+        levels: Level[],
+    ): Observable<any>;
 
     /**
      * Sends http request to move level to new position (change order)
@@ -135,7 +159,11 @@ export abstract class LinearTrainingDefinitionApi {
      * @param levelId id of a level which should be moved
      * @param toPosition index of new position of a level
      */
-    abstract moveLevelTo(trainingDefinitionId: number, levelId: number, toPosition: number): Observable<Level[]>;
+    abstract moveLevelTo(
+        trainingDefinitionId: number,
+        levelId: number,
+        toPosition: number,
+    ): Observable<Level[]>;
 
     /**
      * Sends http request to swap level with another level
@@ -143,13 +171,19 @@ export abstract class LinearTrainingDefinitionApi {
      * @param levelIdFrom id of a first level which should be swaped
      * @param levelIdTo id of a second level which should be swaped
      */
-    abstract swapLevelWith(trainingDefinitionId: number, levelIdFrom: number, levelIdTo: number): Observable<Level[]>;
+    abstract swapLevelWith(
+        trainingDefinitionId: number,
+        levelIdFrom: number,
+        levelIdTo: number,
+    ): Observable<Level[]>;
 
     /**
      * Sends http request to determine whether given training definition has reference solution
      * @param trainingDefinitionId training definition id
      */
-    abstract hasReferenceSolution(trainingDefinitionId: number): Observable<boolean>;
+    abstract hasReferenceSolution(
+        trainingDefinitionId: number,
+    ): Observable<boolean>;
 
     /**
      * Sends http request to retrieve all training definitions with given sandbox definition id
@@ -159,7 +193,7 @@ export abstract class LinearTrainingDefinitionApi {
      */
     abstract geTrainingDefinition(
         sandboxDefId: number,
-        pagination: OffsetPaginationEvent,
-        filters?: SentinelFilter[],
+        pagination: OffsetPaginationEvent<TrainingDefinitionSort>,
+        filters?: QueryParam[],
     ): Observable<PaginatedResource<TrainingDefinition>>;
 }

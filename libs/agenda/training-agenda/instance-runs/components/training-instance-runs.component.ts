@@ -1,8 +1,7 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, Input, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { OffsetPaginationEvent } from '@sentinel/common/pagination';
-import { TrainingInstance, TrainingRun } from '@crczp/training-model';
-import { SentinelTable, TableLoadEvent } from '@sentinel/components/table';
+import { TrainingInstance } from '@crczp/training-model';
+import { TableLoadEvent } from '@sentinel/components/table';
 import { Observable } from 'rxjs';
 import { map, switchMap, take, tap } from 'rxjs/operators';
 import { TrainingRunTable } from '../model/training-run-table';
@@ -11,8 +10,9 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatCard } from '@angular/material/card';
 import { TrainingRunOverviewComponent } from './training-run-overview/training-run-overview.component';
 import { AsyncPipe } from '@angular/common';
-import { TrainingRunConcreteService } from '../services/runs/training-run-concrete.service';
 import { PaginationStorageService, providePaginationStorageService } from '@crczp/utils';
+import { createPaginationEvent, PaginationMapper } from '@crczp/api-common';
+import { TrainingRunSort } from '@crczp/training-api';
 
 /**
  * Smart component of training instance runs
@@ -23,7 +23,7 @@ import { PaginationStorageService, providePaginationStorageService } from '@crcz
     styleUrls: ['./training-instance-runs.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [
-        { provide: TrainingRunService, useClass: TrainingRunConcreteService },
+        { provide: TrainingRunService, useClass: TrainingRunService },
         providePaginationStorageService(TrainingInstanceRunsComponent),
     ],
     imports: [MatCard, TrainingRunOverviewComponent, AsyncPipe],
@@ -31,7 +31,7 @@ import { PaginationStorageService, providePaginationStorageService } from '@crcz
 export class TrainingInstanceRunsComponent implements OnInit {
     @Input() paginationId = 'training-instance-runs';
     trainingInstance$: Observable<TrainingInstance>;
-    trainingRuns$: Observable<SentinelTable<TrainingRun, string>>;
+    trainingRuns$: Observable<TrainingRunTable>;
     trainingRunsHasError$: Observable<boolean>;
     loadingTrainingRuns$: Observable<boolean>;
     destroyRef = inject(DestroyRef);
@@ -39,6 +39,12 @@ export class TrainingInstanceRunsComponent implements OnInit {
     private paginationService = inject(PaginationStorageService);
     private trainingRunService = inject(TrainingRunService);
     private trainingInstance: TrainingInstance;
+
+    private readonly initialRunPagination =
+        createPaginationEvent<TrainingRunSort>({
+            sort: 'end_time',
+            sortDir: 'desc',
+        });
 
     ngOnInit(): void {
         this.trainingInstance$ = this.activeRoute.data.pipe(
@@ -50,35 +56,26 @@ export class TrainingInstanceRunsComponent implements OnInit {
         this.initRunsOverviewComponent();
     }
 
-    onTrainingRunsLoadEvent(loadEvent: TableLoadEvent<string>): void {
+    onTrainingRunsLoadEvent(loadEvent: TableLoadEvent<TrainingRunSort>): void {
         this.paginationService.savePageSize(loadEvent.pagination.size);
         this.trainingRunService
             .getAll(
                 this.trainingInstance.id,
-                new OffsetPaginationEvent(
-                    0,
-                    loadEvent.pagination.size,
-                    '',
-                    'asc',
-                ),
+                PaginationMapper.fromPaginationEvent(loadEvent.pagination),
             )
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe();
     }
 
     private initRunsOverviewComponent() {
-        const initialPagination = new OffsetPaginationEvent(
-            0,
-            this.paginationService.loadPageSize(),
-            '',
-            'asc',
-        );
-
         this.trainingInstance$
             .pipe(
                 take(1),
                 switchMap((ti) =>
-                    this.trainingRunService.getAll(ti.id, initialPagination),
+                    this.trainingRunService.getAll(
+                        ti.id,
+                        this.initialRunPagination,
+                    ),
                 ),
             )
             .subscribe();

@@ -1,10 +1,7 @@
 import { StageDetailService } from './stage-detail.service';
-import { AllocationRequestsApi } from '@crczp/sandbox-api';
+import { AllocationRequestsApi, ResourceUsageSort } from '@crczp/sandbox-api';
 import { RequestStage } from '@crczp/sandbox-model';
-import {
-    OffsetPaginationEvent,
-    PaginatedResource,
-} from '@sentinel/common/pagination';
+import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
 import { Observable } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { inject, Injectable } from '@angular/core';
@@ -24,7 +21,7 @@ export class CloudResourcesService extends StageDetailService {
 
     protected callApiToGetStageDetail(
         stage: RequestStage,
-        requestedPagination: OffsetPaginationEvent
+        requestedPagination: OffsetPaginationEvent<ResourceUsageSort>,
     ): Observable<PaginatedResource<string>> {
         return this.api
             .getCloudResources(stage.requestId, requestedPagination)
@@ -33,13 +30,13 @@ export class CloudResourcesService extends StageDetailService {
                 map((paginatedResources) => {
                     const formattedResources = paginatedResources.elements.map(
                         (resource) =>
-                            `${resource.name} ${resource.type} ${resource.status}`
+                            `${resource.name} ${resource.type} ${resource.status}`,
                     );
                     return new PaginatedResource<string>(
                         formattedResources,
-                        paginatedResources.pagination
+                        paginatedResources.pagination,
                     );
-                })
+                }),
             );
     }
 }

@@ -1,13 +1,7 @@
-import {
-    MicroserviceFilter,
-    SelectablePaginatedService,
-} from '@crczp/user-and-group-agenda/internal';
+import { MicroserviceFilter, SelectablePaginatedService } from '@crczp/user-and-group-agenda/internal';
 import { inject, Injectable } from '@angular/core';
-import {
-    OffsetPaginationEvent,
-    PaginatedResource,
-} from '@sentinel/common/pagination';
-import { MicroserviceApi } from '@crczp/user-and-group-api';
+import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
+import { MicroserviceApi, MicroserviceSort } from '@crczp/user-and-group-api';
 import { Router } from '@angular/router';
 import { Microservice } from '@crczp/user-and-group-model';
 import { Observable, of } from 'rxjs';
@@ -31,8 +25,8 @@ export class MicroserviceOverviewService extends SelectablePaginatedService<Micr
      * @param filter filter to be applied on microservices
      */
     getAll(
-        pagination: OffsetPaginationEvent,
-        filter: string = null
+        pagination: OffsetPaginationEvent<MicroserviceSort>,
+        filter: string = null,
     ): Observable<PaginatedResource<Microservice>> {
         this.clearSelection();
         const filters = filter ? [new MicroserviceFilter(filter)] : [];
@@ -45,11 +39,11 @@ export class MicroserviceOverviewService extends SelectablePaginatedService<Micr
                 (err) => {
                     this.errorHandler.emitAPIError(
                         err,
-                        'Fetching microservices'
+                        'Fetching microservices',
                     );
                     this.hasErrorSubject$.next(true);
-                }
-            )
+                },
+            ),
         );
     }
 

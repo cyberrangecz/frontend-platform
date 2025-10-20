@@ -1,7 +1,11 @@
-import {OffsetPaginatedElementsService} from '@sentinel/common';
-import {PaginatedResource, PaginationBaseEvent} from '@sentinel/common/pagination';
-import {SandboxDefinition} from '@crczp/sandbox-model';
-import {Observable} from 'rxjs';
+import { OffsetPaginatedElementsService } from '@sentinel/common';
+import {
+    OffsetPaginationEvent,
+    PaginatedResource,
+} from '@sentinel/common/pagination';
+import { SandboxDefinition } from '@crczp/sandbox-model';
+import { Observable } from 'rxjs';
+import { SandboxDefinitionSort } from '@crczp/sandbox-api';
 
 /**
  * A layer between a component and an API service. Implement a concrete service by extending this class.
@@ -16,18 +20,24 @@ export abstract class SandboxDefinitionOverviewService extends OffsetPaginatedEl
     /**
      * @param pagination requested pagination
      */
-    abstract getAll(pagination: PaginationBaseEvent): Observable<PaginatedResource<SandboxDefinition>>;
+    abstract getAll(
+        pagination: OffsetPaginationEvent<SandboxDefinitionSort>,
+    ): Observable<PaginatedResource<SandboxDefinition>>;
 
     /**
      * Deletes sandbox definition by given id
      * @param sandboxDefinition sandbox definition to delete
      */
-    abstract delete(sandboxDefinition: SandboxDefinition): Observable<PaginatedResource<SandboxDefinition>>;
+    abstract delete(
+        sandboxDefinition: SandboxDefinition,
+    ): Observable<PaginatedResource<SandboxDefinition>>;
 
     /**
      * Creates a  new sandbox definition
      */
     abstract create(): Observable<any>;
 
-    abstract showTopology(sandboxDefinition: SandboxDefinition): Observable<any>;
+    abstract showTopology(
+        sandboxDefinition: SandboxDefinition,
+    ): Observable<any>;
 }

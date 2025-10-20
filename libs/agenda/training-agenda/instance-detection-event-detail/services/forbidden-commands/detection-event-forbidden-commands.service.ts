@@ -1,7 +1,11 @@
-import {OffsetPaginatedElementsService} from '@sentinel/common';
-import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
-import {DetectedForbiddenCommand} from '@crczp/training-model';
-import {Observable} from 'rxjs';
+import { OffsetPaginatedElementsService } from '@sentinel/common';
+import {
+    OffsetPaginationEvent,
+    PaginatedResource,
+} from '@sentinel/common/pagination';
+import { DetectedForbiddenCommand } from '@crczp/training-model';
+import { Observable } from 'rxjs';
+import { DetectedForbiddenCommandSort } from '@crczp/training-api';
 
 /**
  * A layer between a component and an API services. Implement a concrete services by extending this class.
@@ -18,6 +22,6 @@ export abstract class DetectionEventForbiddenCommandsService extends OffsetPagin
      */
     abstract getAll(
         detectionEventId: number,
-        pagination: OffsetPaginationEvent,
+        pagination: OffsetPaginationEvent<DetectedForbiddenCommandSort>,
     ): Observable<PaginatedResource<DetectedForbiddenCommand>>;
 }

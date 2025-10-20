@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { PortalConfig } from '@crczp/utils';
-import { EMPTY, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 import { Topology } from '@crczp/sandbox-model';
 import { CRCZPHttpService } from '@crczp/api-common';
 import { topologyMapper } from '../../mappers/topology/topology-mapper';
@@ -17,27 +17,24 @@ export class TopologyApi {
     private readonly httpService = inject(CRCZPHttpService);
     private settings = inject(PortalConfig);
 
+    /**
+     * Retrieves topology by sandbox instance id
+     * @param {string} sandboxUuid
+     */
     getTopologyBySandboxInstanceId(sandboxUuid: string): Observable<Topology> {
         const url = `${this.settings.basePaths.sandbox}/sandboxes/${sandboxUuid}/topology`;
         return this.getTopology(url);
     }
 
+    /**
+     * Retrieves topology by sandbox definition id
+     * @param {number} sandboxDefinitionsId id of sandbox definition
+     */
     getTopologyBySandboxDefinitionId(
         sandboxDefinitionsId: number
     ): Observable<Topology> {
         const url = `${this.settings.basePaths.sandbox}/definitions/${sandboxDefinitionsId}/topology`;
         return this.getTopology(url);
-    }
-
-    /**
-     * Sends http request to authenticate user in guacamole and create Guacamole quick connection to the remote host
-     * @param sandboxUuid id of sandbox in which the vm exists
-     * @param vmIp ip address of the vm to remotely access
-     * @param vmOsType vm's OS type of the host node
-     * @param userInterface type of the user interface which should be used to open remote connection
-     */
-    establishGuacamoleConnection(): Observable<string> {
-        return EMPTY;
     }
 
     /**

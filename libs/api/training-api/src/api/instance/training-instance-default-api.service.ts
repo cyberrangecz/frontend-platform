@@ -1,7 +1,14 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { ResponseHeaderContentDispositionReader, SentinelParamsMerger } from '@sentinel/common';
-import { SentinelFilter } from '@sentinel/common/filter';
+import {
+    BlobFileSaver,
+    handleJsonError,
+    JavaPaginatedResource,
+    PaginationMapper,
+    ParamsBuilder,
+    QueryParam
+} from '@crczp/api-common';
 import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
 import { TrainingInstance, TrainingRun } from '@crczp/training-model';
 import { Observable } from 'rxjs';
@@ -11,15 +18,9 @@ import { TrainingInstanceDTO } from '../../dto/training-instance/training-instan
 import { TrainingInstanceMapper } from '../../mappers/training-instance/training-instance-mapper';
 import { TrainingRunMapper } from '../../mappers/training-run/training-run-mapper';
 import { LinearTrainingInstanceApi } from './training-instance-api.service';
-import {
-    BlobFileSaver,
-    handleJsonError,
-    JavaPaginatedResource,
-    PaginationMapper,
-    ParamsBuilder
-} from '@crczp/api-common';
 import { TrainingRunDTO } from '../../dto/training-run/training-run-dto';
 import { PortalConfig } from '@crczp/utils';
+import { TrainingInstanceSort, TrainingRunSort } from '../sorts';
 
 /**
  * Default implementation of service abstracting http communication with training instance endpoints.
@@ -48,26 +49,25 @@ export class TrainingInstanceDefaultApi extends LinearTrainingInstanceApi {
      * @param filters filters to be applied on resources
      */
     getAll(
-        pagination: OffsetPaginationEvent,
-        filters: SentinelFilter[] = []
+        pagination: OffsetPaginationEvent<TrainingInstanceSort>,
+        filters: QueryParam[] = [],
     ): Observable<PaginatedResource<TrainingInstance>> {
         const params = SentinelParamsMerger.merge([
             ParamsBuilder.javaPaginationParams(pagination),
-            ParamsBuilder.filterParams(filters),
+            ParamsBuilder.queryParams(filters),
         ]);
         return this.http
-            .get<JavaPaginatedResource<TrainingInstanceDTO>>(
-                this.trainingInstancesEndpointUri,
-                { params }
-            )
+            .get<
+                JavaPaginatedResource<TrainingInstanceDTO>
+            >(this.trainingInstancesEndpointUri, { params })
             .pipe(
                 map(
                     (response) =>
                         new PaginatedResource<TrainingInstance>(
                             TrainingInstanceMapper.fromDTOs(response.content),
-                            PaginationMapper.fromJavaDTO(response.pagination)
-                        )
-                )
+                            PaginationMapper.fromJavaDTO(response.pagination),
+                        ),
+                ),
             );
     }
 
@@ -78,7 +78,7 @@ export class TrainingInstanceDefaultApi extends LinearTrainingInstanceApi {
     get(id: number): Observable<TrainingInstance> {
         return this.http
             .get<TrainingInstanceDTO>(
-                `${this.trainingInstancesEndpointUri}/${id}`
+                `${this.trainingInstancesEndpointUri}/${id}`,
             )
             .pipe(map((response) => TrainingInstanceMapper.fromDTO(response)));
     }
@@ -104,22 +104,21 @@ export class TrainingInstanceDefaultApi extends LinearTrainingInstanceApi {
      */
     getAssociatedTrainingRuns(
         trainingInstanceId: number,
-        pagination: OffsetPaginationEvent
+        pagination: OffsetPaginationEvent<TrainingRunSort>,
     ): Observable<PaginatedResource<TrainingRun>> {
         const params = ParamsBuilder.javaPaginationParams(pagination);
         return this.http
-            .get<JavaPaginatedResource<TrainingRunDTO>>(
-                `${this.trainingInstancesEndpointUri}/${trainingInstanceId}/${this.trainingRunsUriExtension}`,
-                { params }
-            )
+            .get<
+                JavaPaginatedResource<TrainingRunDTO>
+            >(`${this.trainingInstancesEndpointUri}/${trainingInstanceId}/${this.trainingRunsUriExtension}`, { params })
             .pipe(
                 map(
                     (response) =>
                         new PaginatedResource(
                             TrainingRunMapper.fromDTOs(response.content),
-                            PaginationMapper.fromJavaDTO(response.pagination)
-                        )
-                )
+                            PaginationMapper.fromJavaDTO(response.pagination),
+                        ),
+                ),
             );
     }
 
@@ -131,7 +130,7 @@ export class TrainingInstanceDefaultApi extends LinearTrainingInstanceApi {
         return this.http
             .post<TrainingInstanceDTO>(
                 this.trainingInstancesEndpointUri,
-                TrainingInstanceMapper.toCreateDTO(trainingInstance)
+                TrainingInstanceMapper.toCreateDTO(trainingInstance),
             )
             .pipe(map((response) => TrainingInstanceMapper.fromDTO(response)));
     }
@@ -147,7 +146,7 @@ export class TrainingInstanceDefaultApi extends LinearTrainingInstanceApi {
                 TrainingInstanceMapper.toUpdateDTO(trainingInstance),
                 {
                     responseType: 'text',
-                }
+                },
             )
             .pipe(handleJsonError());
     }
@@ -161,7 +160,7 @@ export class TrainingInstanceDefaultApi extends LinearTrainingInstanceApi {
         const params = new HttpParams().append('forceDelete', force.toString());
         return this.http.delete<any>(
             `${this.trainingInstancesEndpointUri}/${trainingInstanceId}`,
-            { params }
+            { params },
         );
     }
 
@@ -179,7 +178,7 @@ export class TrainingInstanceDefaultApi extends LinearTrainingInstanceApi {
                     responseType: 'blob',
                     observe: 'response',
                     headers,
-                }
+                },
             )
             .pipe(
                 handleJsonError(),
@@ -188,25 +187,25 @@ export class TrainingInstanceDefaultApi extends LinearTrainingInstanceApi {
                         resp.body,
                         ResponseHeaderContentDispositionReader.getFilenameFromResponse(
                             resp,
-                            'archived-training-instance.zip'
-                        )
+                            'archived-training-instance.zip',
+                        ),
                     );
                     return true;
-                })
+                }),
             );
     }
 
     assignPool(trainingInstanceId: number, poolId: number): Observable<any> {
         return this.http.patch(
             `${this.trainingInstancesEndpointUri}/${trainingInstanceId}/assign-pool`,
-            new TrainingInstanceAssignPoolDTO(poolId)
+            new TrainingInstanceAssignPoolDTO(poolId),
         );
     }
 
     unassignPool(trainingInstanceId: number): Observable<any> {
         return this.http.patch(
             `${this.trainingInstancesEndpointUri}/${trainingInstanceId}/unassign-pool`,
-            {}
+            {},
         );
     }
 
@@ -220,7 +219,7 @@ export class TrainingInstanceDefaultApi extends LinearTrainingInstanceApi {
                     responseType: 'blob',
                     observe: 'response',
                     headers,
-                }
+                },
             )
             .pipe(
                 handleJsonError(),
@@ -229,11 +228,11 @@ export class TrainingInstanceDefaultApi extends LinearTrainingInstanceApi {
                         resp.body,
                         ResponseHeaderContentDispositionReader.getFilenameFromResponse(
                             resp,
-                            'training-instance-scores.csv'
-                        )
+                            'training-instance-scores.csv',
+                        ),
                     );
                     return true;
-                })
+                }),
             );
     }
 }

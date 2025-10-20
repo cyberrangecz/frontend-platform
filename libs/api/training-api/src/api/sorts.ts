@@ -1,0 +1,19 @@
+import { TrainingInstanceDTO } from '../dto/training-instance/training-instance-dto';
+import { TrainingDefinitionDTO } from '../dto/training-definition/training-definition-dto';
+import { TrainingRunDTO } from '../dto/training-run/training-run-dto';
+import { UserRefDTO } from '../dto/user/user-ref-dto';
+import { CheatingDetectionDTO } from '../dto/cheating-detection/cheating-detection-dto';
+import { DetectedForbiddenCommandDTO } from '../dto/detection-event/detected-forbidden-command-dto';
+import { DetectionEventParticipantDTO } from '../dto/detection-event/detection-event-participant-dto';
+import { AccessedTrainingRunDTO } from '../dto/training-run/accessed-training-run-dto';
+import { DetectionEventDTO } from '../dto/detection-event/detection-event-dto';
+
+export type TrainingInstanceSort = keyof TrainingInstanceDTO;
+export type TrainingDefinitionSort = keyof TrainingDefinitionDTO;
+export type TrainingRunSort = keyof TrainingRunDTO;
+export type AccessedTrainingRunSort = keyof AccessedTrainingRunDTO;
+export type UserRefSort = keyof UserRefDTO;
+export type CheatingDetectionSort = keyof CheatingDetectionDTO;
+export type AbstractDetectionEventSort = keyof DetectionEventDTO;
+export type DetectedForbiddenCommandSort = keyof DetectedForbiddenCommandDTO;
+export type DetectionEventParticipantSort = keyof DetectionEventParticipantDTO;

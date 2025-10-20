@@ -14,14 +14,15 @@ import { TopologyApi } from './api/topology/topology-api.service';
     declarations: [],
     imports: [CommonModule],
     providers: [
-        {provide: SandboxInstanceApi, useClass: SandboxInstanceDefaultApi},
-        {provide: SandboxDefinitionApi, useClass: SandboxDefinitionDefaultApi},
-        {provide: PoolApi, useClass: PoolDefaultApi},
-        {provide: AllocationRequestsApi, useClass: AllocationRequestsDefaultApi},
-        {provide: CleanupRequestsApi, useClass: CleanupRequestsDefaultApi},
-        {provide: SandboxAllocationUnitsApi, useClass: SandboxAllocationUnitsDefaultApi},
-        {provide: ResourcesApi, useClass: ResourceDefaultApi},
-        {provide: VMImagesApi, useClass: VMImagesDefaultApi},
+        SandboxInstanceApi,
+        SandboxDefinitionApi,
+        PoolApi,
+        AllocationRequestsApi,
+        CleanupRequestsApi,
+        SandboxAllocationUnitsApi,
+        ResourcesApi,
+        VMImagesApi,
+        TopologyApi,
     ],
 })
 export class SandboxApiModule {

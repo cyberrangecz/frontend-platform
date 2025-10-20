@@ -1,15 +1,23 @@
 import { Observable } from 'rxjs';
 import { VirtualImage } from '@crczp/sandbox-model';
-import { SentinelFilter } from '@sentinel/common/filter';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
-import { DjangoResourceDTO, PaginationMapper, ParamsBuilder } from '@crczp/api-common';
+import {
+    DjangoResourceDTO,
+    PaginationMapper,
+    ParamsBuilder,
+    QueryParam,
+} from '@crczp/api-common';
+import {
+    OffsetPaginationEvent,
+    PaginatedResource,
+} from '@sentinel/common/pagination';
 import { map } from 'rxjs/operators';
 import { VirtualImagesMapper } from '../../mappers/vm-images/virtual-images-mapper';
-import { VirtualImagesDTO } from '../../dto/vm-images/virtual-images-dto';
+import { VirtualImageDTO } from '../../dto/vm-images/virtual-image-d-t-o';
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { PortalConfig } from '@crczp/utils';
 import { SentinelParamsMerger } from '@sentinel/common';
+import { VmImageSort } from '../sorts';
 
 /**
  * Service abstracting http communication with vm images endpoints.
@@ -30,22 +38,22 @@ export class VMImagesApi {
      * @param filters list of sentinel filters to filter results
      */
     getAvailableImages(
-        pagination: OffsetPaginationEvent,
+        pagination: OffsetPaginationEvent<VmImageSort>,
         onlyCrczpImages = false,
         onlyGuiAccess = false,
         cached = false,
-        filters?: SentinelFilter[]
+        filters?: QueryParam[],
     ): Observable<PaginatedResource<VirtualImage>> {
         const params = SentinelParamsMerger.merge([
             ParamsBuilder.djangoPaginationParams(pagination),
-            ParamsBuilder.filterParams(filters),
+            ParamsBuilder.queryParams(filters),
         ])
             .append('onlyCustom', onlyCrczpImages)
             .append('GUI', onlyGuiAccess)
             .append('cached', cached);
 
         return this.http
-            .get<DjangoResourceDTO<VirtualImagesDTO>>(this.apiUrl, {
+            .get<DjangoResourceDTO<VirtualImageDTO>>(this.apiUrl, {
                 params: params,
             })
             .pipe(
@@ -53,9 +61,9 @@ export class VMImagesApi {
                     (response) =>
                         new PaginatedResource<VirtualImage>(
                             VirtualImagesMapper.fromDTOs(response.results),
-                            PaginationMapper.fromDjangoDTO(response)
-                        )
-                )
+                            PaginationMapper.fromDjangoDTO(response),
+                        ),
+                ),
             );
     }
 }

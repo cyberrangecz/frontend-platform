@@ -31,6 +31,7 @@ import { RequestDTO } from '../../dto/sandbox-instance/request-dto';
 import { RequestMapper } from '../../mappers/sandbox-instance/request-mapper';
 import { BlobFileSaver, DjangoResourceDTO, handleJsonError, PaginationMapper, ParamsBuilder } from '@crczp/api-common';
 import { PortalConfig } from '@crczp/utils';
+import { AllocationRequestSort, PoolSort, SandboxDefinitionSort } from '../sorts';
 
 /**
  * Service abstracting http communication with pools endpoints.
@@ -52,7 +53,7 @@ export class PoolApi {
      * @param pagination requested pagination
      */
     getPools(
-        pagination: OffsetPaginationEvent
+        pagination: OffsetPaginationEvent<PoolSort>,
     ): Observable<PaginatedResource<Pool>> {
         return this.http
             .get<DjangoResourceDTO<PoolDTO>>(this.apiUrl, {
@@ -63,9 +64,9 @@ export class PoolApi {
                     (response) =>
                         new PaginatedResource<Pool>(
                             PoolMapper.fromDTOs(response.results),
-                            PaginationMapper.fromDjangoDTO(response)
-                        )
-                )
+                            PaginationMapper.fromDjangoDTO(response),
+                        ),
+                ),
             );
     }
 
@@ -99,7 +100,7 @@ export class PoolApi {
      */
     clearPool(poolId: number): Observable<any> {
         return this.http.delete(
-            `${this.apiUrl}/${poolId}/${this.sandboxAllocationUnitsUriExtension}`
+            `${this.apiUrl}/${poolId}/${this.sandboxAllocationUnitsUriExtension}`,
         );
     }
 
@@ -128,7 +129,7 @@ export class PoolApi {
             null,
             {
                 params,
-            }
+            },
         );
     }
 
@@ -139,23 +140,23 @@ export class PoolApi {
      */
     getAllocationRequests(
         poolId: number,
-        pagination: OffsetPaginationEvent
+        pagination: OffsetPaginationEvent<AllocationRequestSort>,
     ): Observable<PaginatedResource<AllocationRequest>> {
         return this.http
             .get<DjangoResourceDTO<RequestDTO>>(
                 `${this.apiUrl}/${poolId}/${this.allocationRequestUriExtension}`,
                 {
                     params: ParamsBuilder.djangoPaginationParams(pagination),
-                }
+                },
             )
             .pipe(
                 map(
                     (response) =>
                         new PaginatedResource<Request>(
                             RequestMapper.fromAllocationDTOs(response.results),
-                            PaginationMapper.fromDjangoDTO(response)
-                        )
-                )
+                            PaginationMapper.fromDjangoDTO(response),
+                        ),
+                ),
             );
     }
 
@@ -166,23 +167,23 @@ export class PoolApi {
      */
     getCleanupRequests(
         poolId: number,
-        pagination: OffsetPaginationEvent
+        pagination: OffsetPaginationEvent<AllocationRequestSort>,
     ): Observable<PaginatedResource<CleanupRequest>> {
         return this.http
             .get<DjangoResourceDTO<RequestDTO>>(
                 `${this.apiUrl}/${poolId}/${this.cleanupRequestUriExtension}`,
                 {
                     params: ParamsBuilder.djangoPaginationParams(pagination),
-                }
+                },
             )
             .pipe(
                 map(
                     (response) =>
                         new PaginatedResource<Request>(
                             RequestMapper.fromCleanupDTOs(response.results),
-                            PaginationMapper.fromDjangoDTO(response)
-                        )
-                )
+                            PaginationMapper.fromDjangoDTO(response),
+                        ),
+                ),
             );
     }
 
@@ -199,7 +200,7 @@ export class PoolApi {
         return this.http
             .post<LockDTO>(
                 `${this.apiUrl}/${poolId}/${this.locksUriExtension}`,
-                body
+                body,
             )
             .pipe(map((response) => LockMapper.fromDTO(response)));
     }
@@ -211,7 +212,7 @@ export class PoolApi {
      */
     unlockPool(poolId: number, lockId: number): Observable<any> {
         return this.http.delete(
-            `${this.apiUrl}/${poolId}/${this.locksUriExtension}/${lockId}`
+            `${this.apiUrl}/${poolId}/${this.locksUriExtension}/${lockId}`,
         );
     }
 
@@ -222,23 +223,23 @@ export class PoolApi {
      */
     getDefinition(
         poolId: number,
-        pagination?: OffsetPaginationEvent
+        pagination?: OffsetPaginationEvent<SandboxDefinitionSort>,
     ): Observable<PaginatedResource<SandboxDefinition>> {
         return this.http
             .get<DjangoResourceDTO<SandboxDefinitionDTO>>(
                 `${this.apiUrl}/${poolId}/definition`,
                 {
                     params: ParamsBuilder.djangoPaginationParams(pagination),
-                }
+                },
             )
             .pipe(
                 map(
                     (response) =>
                         new PaginatedResource<SandboxDefinition>(
                             SandboxDefinitionMapper.fromDTOs(response.results),
-                            PaginationMapper.fromDjangoDTO(response)
-                        )
-                )
+                            PaginationMapper.fromDjangoDTO(response),
+                        ),
+                ),
             );
     }
 
@@ -249,7 +250,7 @@ export class PoolApi {
     getSandboxKeyPair(poolId: number): Observable<SandboxKeyPair> {
         return this.http
             .get<SandboxKeyPairDTO>(
-                `${this.apiUrl}/${poolId}/key-pairs/management`
+                `${this.apiUrl}/${poolId}/key-pairs/management`,
             )
             .pipe(map((response) => SandboxKeyPairMapper.fromDTO(response)));
     }
@@ -260,17 +261,17 @@ export class PoolApi {
      */
     getPoolsLocks(poolId: number): Observable<PaginatedResource<Lock>> {
         return this.http
-            .get<DjangoResourceDTO<LockDTO>>(
-                `${this.apiUrl}/${poolId}/${this.locksUriExtension}`
-            )
+            .get<
+                DjangoResourceDTO<LockDTO>
+            >(`${this.apiUrl}/${poolId}/${this.locksUriExtension}`)
             .pipe(
                 map(
                     (response) =>
                         new PaginatedResource<Lock>(
                             LockMapper.fromDTOs(response.results),
-                            PaginationMapper.fromDjangoDTO(response)
-                        )
-                )
+                            PaginationMapper.fromDjangoDTO(response),
+                        ),
+                ),
             );
     }
 
@@ -282,7 +283,7 @@ export class PoolApi {
     getPoolsSpecificLock(poolId: number, lockId: number): Observable<Lock> {
         return this.http
             .get<LockDTO>(
-                `${this.apiUrl}/${poolId}/${this.locksUriExtension}/${lockId}`
+                `${this.apiUrl}/${poolId}/${this.locksUriExtension}/${lockId}`,
             )
             .pipe(map((response) => LockMapper.fromDTO(response)));
     }
@@ -294,7 +295,7 @@ export class PoolApi {
      */
     getPoolsSandboxAllocationUnits(
         poolId: number,
-        pagination?: OffsetPaginationEvent
+        pagination?: OffsetPaginationEvent<string>,
     ): Observable<PaginatedResource<SandboxAllocationUnit>> {
         if (pagination && pagination.sort) {
             pagination.sort = pagination.sort.replace('allocation_unit__', '');
@@ -304,18 +305,18 @@ export class PoolApi {
                 `${this.apiUrl}/${poolId}/${this.sandboxAllocationUnitsUriExtension}`,
                 {
                     params: ParamsBuilder.djangoPaginationParams(pagination),
-                }
+                },
             )
             .pipe(
                 map(
                     (response) =>
                         new PaginatedResource<SandboxAllocationUnit>(
                             SandboxAllocationUnitMapper.fromDTOs(
-                                response.results
+                                response.results,
                             ),
-                            PaginationMapper.fromDjangoDTO(response)
-                        )
-                )
+                            PaginationMapper.fromDjangoDTO(response),
+                        ),
+                ),
             );
     }
 
@@ -326,11 +327,11 @@ export class PoolApi {
      */
     getSandboxAndLockIt(
         poolId: number,
-        trainingAccessToken: string
+        trainingAccessToken: string,
     ): Observable<SandboxInstance> {
         return this.http
             .get<SandboxInstanceDTO>(
-                `${this.apiUrl}/${poolId}/${this.sandboxInstancesUriExtension}/get-and-lock/${trainingAccessToken}`
+                `${this.apiUrl}/${poolId}/${this.sandboxInstancesUriExtension}/get-and-lock/${trainingAccessToken}`,
             )
             .pipe(map((response) => SandboxInstanceMapper.fromDTO(response)));
     }
@@ -355,11 +356,11 @@ export class PoolApi {
                         resp.body,
                         ResponseHeaderContentDispositionReader.getFilenameFromResponse(
                             resp,
-                            'management-ssh-access.zip'
-                        )
+                            'management-ssh-access.zip',
+                        ),
                     );
                     return true;
-                })
+                }),
             );
     }
 
@@ -370,30 +371,30 @@ export class PoolApi {
      */
     getPoolsSandboxes(
         poolId: number,
-        pagination?: OffsetPaginationEvent
+        pagination?: OffsetPaginationEvent<string>,
     ): Observable<PaginatedResource<SandboxInstance>> {
         if (
             pagination &&
             pagination.sort &&
             !pagination.sort.startsWith('allocation_unit')
         ) {
-            pagination.sort = `allocation_unit__${pagination.sort}`;
+            pagination.sort = `allocation_unit_${pagination.sort}`;
         }
         return this.http
             .get<DjangoResourceDTO<SandboxInstanceDTO>>(
                 `${this.apiUrl}/${poolId}/sandboxes`,
                 {
                     params: ParamsBuilder.djangoPaginationParams(pagination),
-                }
+                },
             )
             .pipe(
                 map(
                     (response) =>
                         new PaginatedResource<SandboxInstance>(
                             SandboxInstanceMapper.fromDTOs(response.results),
-                            PaginationMapper.fromDjangoDTO(response)
-                        )
-                )
+                            PaginationMapper.fromDjangoDTO(response),
+                        ),
+                ),
             );
     }
 
@@ -404,13 +405,13 @@ export class PoolApi {
      */
     createMultipleCleanupRequests(
         poolId: number,
-        force = false
+        force = false,
     ): Observable<any> {
         const params = new HttpParams().append('force', force.toString());
         return this.http.post(
             `${this.apiUrl}/${poolId}/cleanup-requests`,
             {},
-            { params }
+            { params },
         );
     }
 
@@ -421,13 +422,13 @@ export class PoolApi {
      */
     createUnlockedCleanupRequests(
         poolId: number,
-        force = false
+        force = false,
     ): Observable<any> {
         const params = new HttpParams().append('force', force.toString());
         return this.http.post(
             `${this.apiUrl}/${poolId}/cleanup-unlocked`,
             {},
-            { params }
+            { params },
         );
     }
 
@@ -438,13 +439,13 @@ export class PoolApi {
      */
     createFailedCleanupRequests(
         poolId: number,
-        force = false
+        force = false,
     ): Observable<any> {
         const params = new HttpParams().append('force', force.toString());
         return this.http.post(
             `${this.apiUrl}/${poolId}/cleanup-failed`,
             {},
-            { params }
+            { params },
         );
     }
 

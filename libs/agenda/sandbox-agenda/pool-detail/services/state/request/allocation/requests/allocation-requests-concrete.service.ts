@@ -7,7 +7,7 @@ import {
     SentinelDialogResultEnum
 } from '@sentinel/components/dialogs';
 import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
-import { AllocationRequestsApi, PoolApi, SandboxAllocationUnitsApi } from '@crczp/sandbox-api';
+import { AllocationRequestsApi, AllocationRequestSort, PoolApi, SandboxAllocationUnitsApi } from '@crczp/sandbox-api';
 import { Request } from '@crczp/sandbox-model';
 import { EMPTY, Observable } from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
@@ -41,15 +41,15 @@ export class AllocationRequestsConcreteService extends AllocationRequestsService
      */
     getAll(
         poolId: number,
-        pagination: OffsetPaginationEvent
+        pagination: OffsetPaginationEvent<AllocationRequestSort>,
     ): Observable<PaginatedResource<Request>> {
         this.onManualResourceRefresh(pagination, poolId);
         return this.poolApi.getAllocationRequests(poolId, pagination).pipe(
             tap(
                 (paginatedRequests) =>
                     this.resourceSubject$.next(paginatedRequests),
-                (err) => this.onGetAllError(err)
-            )
+                (err) => this.onGetAllError(err),
+            ),
         );
     }
 
@@ -62,13 +62,13 @@ export class AllocationRequestsConcreteService extends AllocationRequestsService
             request,
             'Cancel',
             'No',
-            'Yes'
+            'Yes',
         ).pipe(
             switchMap((result) =>
                 result === SentinelDialogResultEnum.CONFIRMED
                     ? this.callApiToCancel(request)
-                    : EMPTY
-            )
+                    : EMPTY,
+            ),
         );
     }
 
@@ -81,18 +81,18 @@ export class AllocationRequestsConcreteService extends AllocationRequestsService
             request,
             'Delete',
             'Cancel',
-            'Delete'
+            'Delete',
         ).pipe(
             switchMap((result) =>
                 result === SentinelDialogResultEnum.CONFIRMED
                     ? this.callApiToDelete(request)
-                    : EMPTY
-            )
+                    : EMPTY,
+            ),
         );
     }
 
     protected onManualResourceRefresh(
-        pagination: OffsetPaginationEvent,
+        pagination: OffsetPaginationEvent<AllocationRequestSort>,
         ...params: any[]
     ): void {
         super.onManualResourceRefresh(pagination, ...params);
@@ -113,7 +113,7 @@ export class AllocationRequestsConcreteService extends AllocationRequestsService
         request: Request,
         action: string,
         cancelLabel: string,
-        confirmLabel: string
+        confirmLabel: string,
     ): Observable<SentinelDialogResultEnum> {
         const dialogRef = this.dialog.open(
             SentinelConfirmationDialogComponent,
@@ -124,9 +124,9 @@ export class AllocationRequestsConcreteService extends AllocationRequestsService
                         request.id
                     }"?`,
                     cancelLabel,
-                    confirmLabel
+                    confirmLabel,
                 ),
-            }
+            },
         );
         return dialogRef.afterClosed();
     }
@@ -137,15 +137,21 @@ export class AllocationRequestsConcreteService extends AllocationRequestsService
                 () =>
                     this.notificationService.emit(
                         'success',
-                        `Created cleanup request`
+                        `Created cleanup request`,
                     ),
                 (err) =>
                     this.errorHandler.emitAPIError(
                         err,
-                        'Creating cleanup request'
-                    )
+                        'Creating cleanup request',
+                    ),
             ),
-            switchMap(() => this.getAll(this.lastPoolId, this.lastPagination))
+            switchMap(() =>
+                this.getAll(
+                    this.lastPoolId,
+                    this
+                        .lastPagination as OffsetPaginationEvent<AllocationRequestSort>,
+                ),
+            ),
         );
     }
 
@@ -155,15 +161,21 @@ export class AllocationRequestsConcreteService extends AllocationRequestsService
                 () =>
                     this.notificationService.emit(
                         'success',
-                        `Allocation request ${request.id} cancelled`
+                        `Allocation request ${request.id} cancelled`,
                     ),
                 (err) =>
                     this.errorHandler.emitAPIError(
                         err,
-                        'Cancelling allocation request ' + request.id
-                    )
+                        'Cancelling allocation request ' + request.id,
+                    ),
             ),
-            switchMap(() => this.getAll(this.lastPoolId, this.lastPagination))
+            switchMap(() =>
+                this.getAll(
+                    this.lastPoolId,
+                    this
+                        .lastPagination as OffsetPaginationEvent<AllocationRequestSort>,
+                ),
+            ),
         );
     }
 

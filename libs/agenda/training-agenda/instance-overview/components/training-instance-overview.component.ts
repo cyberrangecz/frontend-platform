@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, Input } from '@angular/core';
-import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import {
     SentinelControlItem,
     SentinelControlItemSignal,
@@ -10,11 +9,10 @@ import {
     SentinelRowDirective,
     SentinelTable,
     SentinelTableComponent,
-    TableActionEvent,
     TableLoadEvent
 } from '@sentinel/components/table';
 import { Observable } from 'rxjs';
-import { map, take } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { TrainingInstanceOverviewControls } from '../model/adapters/training-instance-overview-controls';
 import { TrainingInstanceTable } from '../model/adapters/training-instance-table';
 import { TrainingInstanceOverviewService } from '../services/state/training-instance-overview.service';
@@ -25,9 +23,10 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { CdkCopyToClipboard } from '@angular/cdk/clipboard';
-import { TrainingInstanceOverviewConcreteService } from '../services/state/training-instance-overview-concrete.service';
 import { LogoSpinnerComponent, TableDateCellComponent } from '@crczp/components';
 import { NotificationService, PaginationStorageService, providePaginationStorageService } from '@crczp/utils';
+import { createPaginationEvent, PaginationMapper } from '@crczp/api-common';
+import { TrainingInstanceSort } from '@crczp/training-api';
 
 /**
  * Main component of organizer overview.
@@ -55,7 +54,7 @@ import { NotificationService, PaginationStorageService, providePaginationStorage
         providePaginationStorageService(TrainingInstanceOverviewComponent),
         {
             provide: TrainingInstanceOverviewService,
-            useClass: TrainingInstanceOverviewConcreteService,
+            useClass: TrainingInstanceOverviewService,
         },
     ],
 })
@@ -71,6 +70,11 @@ export class TrainingInstanceOverviewComponent {
     private paginationService = inject(PaginationStorageService);
     private notificationService = inject(NotificationService);
 
+    private readonly initialInstancePagination =
+        createPaginationEvent<TrainingInstanceSort>({
+            sort: 'id',
+        });
+
     constructor() {
         this.controls = TrainingInstanceOverviewControls.create(this.service);
         this.initTable();
@@ -80,24 +84,17 @@ export class TrainingInstanceOverviewComponent {
         control.result$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
     }
 
-    onInstancesLoadEvent(loadEvent: TableLoadEvent<string>): void {
+    onInstancesLoadEvent(
+        loadEvent: TableLoadEvent<TrainingInstanceSort>,
+    ): void {
         this.paginationService.savePageSize(loadEvent.pagination.size);
         this.service
             .getAll(
-                new OffsetPaginationEvent(
-                    0,
-                    loadEvent.pagination.size,
-                    loadEvent.pagination.sort,
-                    loadEvent.pagination.sortDir,
-                ),
+                PaginationMapper.fromPaginationEvent(loadEvent.pagination),
                 loadEvent.filter,
             )
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe();
-    }
-
-    onInstanceAction(event: TableActionEvent<any>): void {
-        event.action.result$.pipe(take(1)).subscribe();
     }
 
     onCopyToken(): void {
@@ -126,13 +123,8 @@ export class TrainingInstanceOverviewComponent {
     }
 
     private initTable() {
-        const initLoadEvent: TableLoadEvent<string> = {
-            pagination: new OffsetPaginationEvent(
-                0,
-                this.paginationService.loadPageSize(),
-                this.INITIAL_SORT_NAME,
-                this.INITIAL_SORT_DIR,
-            ),
+        const initLoadEvent: TableLoadEvent<TrainingInstanceSort> = {
+            pagination: this.initialInstancePagination,
         };
         this.instances$ = this.service.resource$.pipe(
             map(

@@ -1,9 +1,4 @@
 import { map } from 'rxjs/operators';
-import { VirtualImage } from '@crczp/sandbox-model';
-import {
-    OffsetPaginationEvent,
-    PaginationBaseEvent,
-} from '@sentinel/common/pagination';
 import {
     ChangeDetectionStrategy,
     Component,
@@ -14,20 +9,21 @@ import {
 } from '@angular/core';
 import { Observable } from 'rxjs';
 import {
-    SentinelTable,
     SentinelTableComponent,
     TableLoadEvent,
 } from '@sentinel/components/table';
-import { VMImagesService } from '../services/vm-images.service';
 import { VirtualImagesTable } from '../models/virtual-images-table';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { VMImagesConcreteService } from '../services/vm-images-concrete.service';
+import { VMImagesService } from '../services/v-m-images.service';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { AsyncPipe } from '@angular/common';
 import {
     PaginationStorageService,
     providePaginationStorageService,
 } from '@crczp/utils';
+import { createPaginationEvent, PaginationMapper } from '@crczp/api-common';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
+import { VmImageSort } from '@crczp/sandbox-api';
 
 @Component({
     selector: 'crczp-images-page',
@@ -38,14 +34,14 @@ import {
     providers: [
         {
             provide: VMImagesService,
-            useClass: VMImagesConcreteService,
+            useClass: VMImagesService,
         },
         providePaginationStorageService(ImagesPageComponent),
     ],
 })
 export class ImagesPageComponent implements OnInit {
     @Input() paginationId = 'crczp-resources-page';
-    images$: Observable<SentinelTable<VirtualImage, string>>;
+    images$: Observable<VirtualImagesTable>;
     imagesTableHasError$: Observable<boolean>;
     isLoadingImages$: Observable<boolean>;
     guiAccess = false;
@@ -57,6 +53,11 @@ export class ImagesPageComponent implements OnInit {
     private paginationService = inject(PaginationStorageService);
     private lastFilter: string;
 
+    private readonly initialImagesPagination =
+        createPaginationEvent<VmImageSort>({
+            sort: this.DEFAULT_SORT_COLUMN,
+        });
+
     constructor() {
         const vmImagesService = this.vmImagesService;
 
@@ -67,16 +68,20 @@ export class ImagesPageComponent implements OnInit {
         this.initTable();
     }
 
-    onTableLoadEvent(loadEvent: TableLoadEvent<string>): void {
+    onTableLoadEvent(loadEvent: TableLoadEvent<VmImageSort>): void {
         this.paginationService.savePageSize(loadEvent.pagination.size);
         this.lastFilter = loadEvent.filter;
-        this.getAvailableImages(loadEvent.pagination, true, loadEvent.filter);
+        this.getAvailableImages(
+            PaginationMapper.fromPaginationEvent(loadEvent.pagination),
+            true,
+            loadEvent.filter,
+        );
     }
 
     osImagesToggled(): void {
         this.crczpImages = !this.crczpImages;
         this.getAvailableImages(
-            this.getInitialPaginationEvent(),
+            this.initialImagesPagination,
             true,
             this.lastFilter,
         );
@@ -85,20 +90,23 @@ export class ImagesPageComponent implements OnInit {
     guiAccessToggled(): void {
         this.guiAccess = !this.guiAccess;
         this.getAvailableImages(
-            this.getInitialPaginationEvent(),
+            this.initialImagesPagination,
             true,
             this.lastFilter,
         );
     }
 
-    initialTableLoadEvent(loadEvent: TableLoadEvent<string>): void {
+    initialTableLoadEvent(loadEvent: TableLoadEvent<VmImageSort>): void {
         this.paginationService.savePageSize(loadEvent.pagination.size);
-        this.getAvailableImages(loadEvent.pagination, false);
+        this.getAvailableImages(
+            PaginationMapper.fromPaginationEvent(loadEvent.pagination),
+            false,
+        );
     }
 
     private initTable(): void {
-        const initialLoadEvent: TableLoadEvent<string> = {
-            pagination: this.getInitialPaginationEvent(),
+        const initialLoadEvent: TableLoadEvent<VmImageSort> = {
+            pagination: this.initialImagesPagination,
         };
 
         this.images$ = this.vmImagesService.resource$.pipe(
@@ -109,7 +117,7 @@ export class ImagesPageComponent implements OnInit {
     }
 
     private getAvailableImages(
-        pagination: PaginationBaseEvent,
+        pagination: OffsetPaginationEvent<VmImageSort>,
         cached: boolean,
         filter?: string,
     ): void {
@@ -123,12 +131,5 @@ export class ImagesPageComponent implements OnInit {
             )
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe();
-    }
-
-    private getInitialPaginationEvent(): OffsetPaginationEvent {
-        return new OffsetPaginationEvent(
-            0,
-            this.paginationService.loadPageSize(),
-        );
     }
 }

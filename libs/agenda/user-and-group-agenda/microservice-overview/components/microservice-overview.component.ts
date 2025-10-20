@@ -29,6 +29,8 @@ import {
     PaginationStorageService,
     providePaginationStorageService,
 } from '@crczp/utils';
+import { createPaginationEvent } from '@crczp/api-common';
+import { MicroserviceSort } from '@crczp/user-and-group-api';
 
 @Component({
     selector: 'crczp-microservice-overview',
@@ -59,15 +61,13 @@ export class MicroserviceOverviewComponent implements OnInit {
     destroyRef = inject(DestroyRef);
     private microserviceService = inject(MicroserviceOverviewService);
     private paginationService = inject(PaginationStorageService);
+    private readonly initPagination = createPaginationEvent<MicroserviceSort>(
+        {},
+    );
 
     ngOnInit(): void {
         const initialLoadEvent: TableLoadEvent<string> = {
-            pagination: new OffsetPaginationEvent(
-                0,
-                this.paginationService.loadPageSize(),
-                this.INIT_SORT_NAME,
-                this.INIT_SORT_DIR,
-            ),
+            pagination: this.initPagination,
         };
         this.microservices$ = this.microserviceService.resource$.pipe(
             map((microservices) => new MicroserviceTable(microservices)),
@@ -90,7 +90,10 @@ export class MicroserviceOverviewComponent implements OnInit {
     onTableLoadEvent(event: TableLoadEvent<string>): void {
         this.paginationService.savePageSize(event.pagination.size);
         this.microserviceService
-            .getAll(event.pagination as OffsetPaginationEvent, event.filter)
+            .getAll(
+                event.pagination as OffsetPaginationEvent<MicroserviceSort>,
+                event.filter,
+            )
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe();
     }

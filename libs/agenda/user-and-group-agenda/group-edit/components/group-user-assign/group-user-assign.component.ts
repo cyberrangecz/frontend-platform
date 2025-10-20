@@ -9,7 +9,6 @@ import {
     Output,
     SimpleChanges
 } from '@angular/core';
-import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import {
     SentinelControlItem,
     SentinelControlItemSignal,
@@ -31,6 +30,8 @@ import { MatCard, MatCardContent, MatCardHeader, MatCardSubtitle, MatCardTitle }
 import { MatIcon } from '@angular/material/icon';
 import { AsyncPipe } from '@angular/common';
 import { PaginationStorageService, providePaginationStorageService } from '@crczp/utils';
+import { createPaginationEvent, PaginationMapper } from '@crczp/api-common';
+import { UserSort } from '@crczp/user-and-group-api';
 
 /**
  * Component for user assignment to groups
@@ -105,6 +106,10 @@ export class GroupUserAssignComponent implements OnChanges {
     assignUsersControls: SentinelControlItem[];
     assignedUsersControls: SentinelControlItem[];
     destroyRef = inject(DestroyRef);
+    private readonly initialUserPagination = createPaginationEvent<UserSort>({
+        sort: 'full_name',
+        sortDir: 'asc',
+    });
     private userAssignService = inject(UserAssignService);
     private paginationService = inject(PaginationStorageService);
 
@@ -183,12 +188,12 @@ export class GroupUserAssignComponent implements OnChanges {
      * Calls service to get data for assigned users table
      * @param loadEvent event to load new data emitted by assigned users table component
      */
-    onAssignedLoadEvent(loadEvent: TableLoadEvent<string>): void {
+    onAssignedLoadEvent(loadEvent: TableLoadEvent<UserSort>): void {
         this.paginationService.savePageSize(loadEvent.pagination.size);
         this.userAssignService
             .getAssigned(
                 this.resource.id,
-                loadEvent.pagination as OffsetPaginationEvent,
+                PaginationMapper.fromPaginationEvent(loadEvent.pagination),
                 loadEvent.filter,
             )
             .pipe(takeUntilDestroyed(this.destroyRef))
@@ -259,13 +264,8 @@ export class GroupUserAssignComponent implements OnChanges {
     }
 
     private initTable() {
-        const initialLoadEvent: TableLoadEvent<string> = {
-            pagination: new OffsetPaginationEvent(
-                0,
-                this.paginationService.loadPageSize(),
-                this.MEMBERS_OF_GROUP_INIT_SORT_NAME,
-                this.MEMBERS_OF_GROUP_INIT_SORT_DIR,
-            ),
+        const initialLoadEvent: TableLoadEvent<UserSort> = {
+            pagination: this.initialUserPagination,
         };
         this.assignedUsers$ = this.userAssignService.assignedUsers$.pipe(
             map(

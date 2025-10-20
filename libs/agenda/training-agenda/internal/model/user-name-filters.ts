@@ -1,10 +1,10 @@
-import { SentinelFilter } from '@sentinel/common/filter';
+import { QueryParam } from '@crczp/api-common';
 
 /**
  * Creates filters from user name filter value
  */
 export class UserNameFilters {
-    static create(filterValue: string): SentinelFilter[] {
+    static create(filterValue: string): QueryParam[] {
         if (
             !filterValue ||
             filterValue === '' ||
@@ -14,12 +14,12 @@ export class UserNameFilters {
         }
         const split = filterValue.split(' ');
         if (split.length === 1) {
-            return [new SentinelFilter('familyName', split[0])];
+            return [new QueryParam('familyName', split[0])];
         }
         if (split.length > 1) {
             return [
-                new SentinelFilter('givenName', split[0]),
-                new SentinelFilter('familyName', split[1]),
+                new QueryParam('givenName', split[0]),
+                new QueryParam('familyName', split[1]),
             ];
         }
         return [];

@@ -8,7 +8,7 @@ import {
 import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
 import { SandboxAllocationUnitsApi, SandboxInstanceApi } from '@crczp/sandbox-api';
 import { SandboxInstance } from '@crczp/sandbox-model';
-import { AdaptiveRunApi, AdaptiveTrainingInstanceApi } from '@crczp/training-api';
+import { AdaptiveRunApi, AdaptiveTrainingInstanceApi, TrainingRunSort } from '@crczp/training-api';
 import { TrainingRun } from '@crczp/training-model';
 import { EMPTY, Observable, of } from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
@@ -44,7 +44,7 @@ export class AdaptiveRunConcreteService extends AdaptiveRunService {
      */
     getAll(
         trainingInstanceId: number,
-        pagination: OffsetPaginationEvent
+        pagination: OffsetPaginationEvent<TrainingRunSort>,
     ): Observable<PaginatedResource<TrainingRun>> {
         this.onManualResourceRefresh(pagination, trainingInstanceId);
         return this.adaptiveInstanceApi
@@ -52,31 +52,31 @@ export class AdaptiveRunConcreteService extends AdaptiveRunService {
             .pipe(
                 tap(
                     (runs) => this.resourceSubject$.next(runs),
-                    () => this.onGetAllError()
-                )
+                    () => this.onGetAllError(),
+                ),
             );
     }
 
     delete(
         trainingRun: TrainingRun,
-        localEnvironment: boolean
+        localEnvironment: boolean,
     ): Observable<any> {
         return this.displayDeleteSandboxDialog(trainingRun).pipe(
             switchMap((result) =>
                 result === SentinelDialogResultEnum.CONFIRMED
                     ? of(result)
-                    : EMPTY
+                    : EMPTY,
             ),
             switchMap(() => this.callApiToDeleteRun(trainingRun)),
             switchMap(() =>
-                this.getAll(this.lastTrainingInstanceId, this.lastPagination)
+                this.getAll(this.lastTrainingInstanceId, this.lastPagination),
             ),
             switchMap(() => {
                 if (localEnvironment) {
                     return of();
                 }
                 return this.callApiToDeleteSandbox(trainingRun);
-            })
+            }),
         );
     }
 
@@ -85,13 +85,13 @@ export class AdaptiveRunConcreteService extends AdaptiveRunService {
         return this.adaptiveInstanceApi
             .getAssociatedTrainingRuns(
                 this.lastTrainingInstanceId,
-                this.lastPagination
+                this.lastPagination,
             )
             .pipe(tap({ error: () => this.onGetAllError() }));
     }
 
     protected onManualResourceRefresh(
-        pagination: OffsetPaginationEvent,
+        pagination: OffsetPaginationEvent<TrainingRunSort>,
         ...params: any[]
     ): void {
         super.onManualResourceRefresh(pagination, ...params);
@@ -99,7 +99,7 @@ export class AdaptiveRunConcreteService extends AdaptiveRunService {
     }
 
     private displayDeleteSandboxDialog(
-        trainingRun: TrainingRun
+        trainingRun: TrainingRun,
     ): Observable<SentinelDialogResultEnum> {
         const dialogRef = this.dialog.open(
             SentinelConfirmationDialogComponent,
@@ -108,9 +108,9 @@ export class AdaptiveRunConcreteService extends AdaptiveRunService {
                     'Delete Sandbox Instance',
                     `Do you want to delete sandbox instance and training run of player "${trainingRun?.player?.name}"?`,
                     'Cancel',
-                    'Delete'
+                    'Delete',
                 ),
-            }
+            },
         );
         return dialogRef.afterClosed();
     }
@@ -120,25 +120,25 @@ export class AdaptiveRunConcreteService extends AdaptiveRunService {
         return this.sandboxApi.getSandbox(trainingRun.sandboxInstanceId).pipe(
             tap((sandbox) => (sandboxToDelete = sandbox)),
             switchMap(() =>
-                this.sandboxApi.unlockSandbox(sandboxToDelete.allocationUnitId)
+                this.sandboxApi.unlockSandbox(sandboxToDelete.allocationUnitId),
             ),
             switchMap(() =>
                 this.sauApi.createCleanupRequest(
-                    sandboxToDelete.allocationUnitId
-                )
+                    sandboxToDelete.allocationUnitId,
+                ),
             ),
             tap(
                 () =>
                     this.notificationService.emit(
                         'success',
-                        'Deleting of sandbox instance started'
+                        'Deleting of sandbox instance started',
                     ),
                 (err) =>
                     this.errorHandler.emitAPIError(
                         err,
-                        'Deleting sandbox instance'
-                    )
-            )
+                        'Deleting sandbox instance',
+                    ),
+            ),
         );
     }
 
@@ -148,11 +148,14 @@ export class AdaptiveRunConcreteService extends AdaptiveRunService {
                 () =>
                     this.notificationService.emit(
                         'success',
-                        'Deleting of training run started'
+                        'Deleting of training run started',
                     ),
                 (err) =>
-                    this.errorHandler.emitAPIError(err, 'Deleting training run')
-            )
+                    this.errorHandler.emitAPIError(
+                        err,
+                        'Deleting training run',
+                    ),
+            ),
         );
     }
 

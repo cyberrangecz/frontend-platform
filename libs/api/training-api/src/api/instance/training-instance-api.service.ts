@@ -1,7 +1,8 @@
-import {SentinelFilter} from '@sentinel/common/filter';
-import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
-import {TrainingInstance, TrainingRun} from '@crczp/training-model';
-import {Observable} from 'rxjs';
+import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
+import { TrainingInstance, TrainingRun } from '@crczp/training-model';
+import { Observable } from 'rxjs';
+import { QueryParam } from '@crczp/api-common';
+import { TrainingInstanceSort, TrainingRunSort } from '../sorts';
 
 export abstract class LinearTrainingInstanceApi {
     /**
@@ -10,8 +11,8 @@ export abstract class LinearTrainingInstanceApi {
      * @param filters filters to be applied on resources
      */
     abstract getAll(
-        pagination: OffsetPaginationEvent,
-        filters?: SentinelFilter[],
+        pagination: OffsetPaginationEvent<TrainingInstanceSort>,
+        filters?: QueryParam[],
     ): Observable<PaginatedResource<TrainingInstance>>;
 
     /**
@@ -33,14 +34,16 @@ export abstract class LinearTrainingInstanceApi {
      */
     abstract getAssociatedTrainingRuns(
         trainingInstanceId: number,
-        pagination: OffsetPaginationEvent,
+        pagination: OffsetPaginationEvent<TrainingRunSort>,
     ): Observable<PaginatedResource<TrainingRun>>;
 
     /**
      * Sends http request to create new training instance
      * @param trainingInstance training instance which should be created
      */
-    abstract create(trainingInstance: TrainingInstance): Observable<TrainingInstance>;
+    abstract create(
+        trainingInstance: TrainingInstance,
+    ): Observable<TrainingInstance>;
 
     /**
      * Sends http request to update training instance
@@ -53,7 +56,10 @@ export abstract class LinearTrainingInstanceApi {
      * @param trainingInstanceId id of training instance which should be deleted
      * @param force true if delete should be forced, false otherwise
      */
-    abstract delete(trainingInstanceId: number, force?: boolean): Observable<any>;
+    abstract delete(
+        trainingInstanceId: number,
+        force?: boolean,
+    ): Observable<any>;
 
     /**
      * Sends http request to archive (download) training instance
@@ -66,7 +72,10 @@ export abstract class LinearTrainingInstanceApi {
      * @param trainingInstanceId id of a training instance to associate with pool
      * @param poolId id of a pool to assign to training instance
      */
-    abstract assignPool(trainingInstanceId: number, poolId: number): Observable<any>;
+    abstract assignPool(
+        trainingInstanceId: number,
+        poolId: number,
+    ): Observable<any>;
 
     /**
      * Sends http request to remove association with pool

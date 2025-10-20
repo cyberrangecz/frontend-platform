@@ -5,6 +5,7 @@ export class HostNodeDTO extends Z.class({
     name: z.string(),
     os_type: z.string(),
     gui_access: z.boolean(),
+    is_accessible: z.boolean(),
     ip: z.string(),
 }) {}
 
@@ -14,10 +15,7 @@ export class SubnetDTO extends Z.class({
     hosts: z.array(HostNodeDTO.schema()),
 }) {}
 
-export class RouterNodeDTO extends Z.class({
-    name: z.string(),
-    os_type: z.string(),
-    gui_access: z.boolean(),
+export class RouterNodeDTO extends HostNodeDTO.extend({
     subnets: z.array(SubnetDTO.schema()),
 }) {}
 

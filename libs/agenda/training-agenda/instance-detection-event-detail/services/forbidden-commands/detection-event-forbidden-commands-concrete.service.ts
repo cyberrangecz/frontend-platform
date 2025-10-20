@@ -1,9 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { DetectionEventApi } from '@crczp/training-api';
-import {
-    OffsetPaginationEvent,
-    PaginatedResource,
-} from '@sentinel/common/pagination';
+import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
 import { Observable } from 'rxjs';
 import { DetectedForbiddenCommand } from '@crczp/training-model';
 import { tap } from 'rxjs/operators';
@@ -30,7 +27,7 @@ export class DetectionEventForbiddenCommandsConcreteService extends DetectionEve
      */
     public getAll(
         detectionEventId: number,
-        pagination: OffsetPaginationEvent
+        pagination: OffsetPaginationEvent<DetectedForbiddenCommandSort>,
     ): Observable<PaginatedResource<DetectedForbiddenCommand>> {
         return this.api
             .getAllForbiddenCommandsOfEvent(pagination, detectionEventId)
@@ -39,8 +36,8 @@ export class DetectionEventForbiddenCommandsConcreteService extends DetectionEve
                     (commands) => {
                         this.resourceSubject$.next(commands);
                     },
-                    () => this.onGetAllError()
-                )
+                    () => this.onGetAllError(),
+                ),
             );
     }
 

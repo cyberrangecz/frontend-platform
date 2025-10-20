@@ -1,10 +1,8 @@
-import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import {
     ChangeDetectionStrategy,
     Component,
     DestroyRef,
     inject,
-    Input,
     OnInit,
 } from '@angular/core';
 import { Observable } from 'rxjs';
@@ -31,7 +29,6 @@ import { CdkCopyToClipboard } from '@angular/cdk/clipboard';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { AdaptiveInstanceOverviewConcreteService } from '../services/state/adaptive-instance-overview-concrete.service';
 import {
     LogoSpinnerComponent,
     TableCountdownComponent,
@@ -42,6 +39,8 @@ import {
     PaginationStorageService,
     providePaginationStorageService,
 } from '@crczp/utils';
+import { createPaginationEvent, PaginationMapper } from '@crczp/api-common';
+import { TrainingInstanceSort } from '@crczp/training-api';
 
 @Component({
     selector: 'crczp-adaptive-instance-overview',
@@ -66,12 +65,11 @@ import {
         providePaginationStorageService(AdaptiveInstanceOverviewComponent),
         {
             provide: AdaptiveInstanceOverviewService,
-            useClass: AdaptiveInstanceOverviewConcreteService,
+            useClass: AdaptiveInstanceOverviewService,
         },
     ],
 })
 export class AdaptiveInstanceOverviewComponent implements OnInit {
-    @Input() paginationId = 'adaptive-instance-overview';
     readonly INITIAL_SORT_NAME = 'startTime';
     readonly INITIAL_SORT_DIR = 'desc';
     instances$: Observable<SentinelTable<TrainingInstance, string>>;
@@ -82,6 +80,11 @@ export class AdaptiveInstanceOverviewComponent implements OnInit {
     private paginationService = inject(PaginationStorageService);
     private notificationService = inject(NotificationService);
 
+    private readonly initialPagination =
+        createPaginationEvent<TrainingInstanceSort>({
+            sort: 'id',
+        });
+
     ngOnInit(): void {
         this.controls = AdaptiveInstanceOverviewControls.create(this.service);
         this.initTable();
@@ -91,16 +94,13 @@ export class AdaptiveInstanceOverviewComponent implements OnInit {
         control.result$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
     }
 
-    onInstancesLoadEvent(loadEvent: TableLoadEvent<string>): void {
+    onInstancesLoadEvent(
+        loadEvent: TableLoadEvent<TrainingInstanceSort>,
+    ): void {
         this.paginationService.savePageSize(loadEvent.pagination.size);
         this.service
             .getAll(
-                new OffsetPaginationEvent(
-                    0,
-                    loadEvent.pagination.size,
-                    loadEvent.pagination.sort,
-                    loadEvent.pagination.sortDir,
-                ),
+                PaginationMapper.fromPaginationEvent(loadEvent.pagination),
                 loadEvent.filter,
             )
             .pipe(takeUntilDestroyed(this.destroyRef))
@@ -137,14 +137,6 @@ export class AdaptiveInstanceOverviewComponent implements OnInit {
     }
 
     private initTable() {
-        const initLoadEvent: TableLoadEvent<string> = {
-            pagination: new OffsetPaginationEvent(
-                0,
-                this.paginationService.loadPageSize(),
-                this.INITIAL_SORT_NAME,
-                this.INITIAL_SORT_DIR,
-            ),
-        };
         this.instances$ = this.service.resource$.pipe(
             map(
                 (instances) =>
@@ -152,6 +144,6 @@ export class AdaptiveInstanceOverviewComponent implements OnInit {
             ),
         );
         this.hasError$ = this.service.hasError$;
-        this.onInstancesLoadEvent(initLoadEvent);
+        this.onInstancesLoadEvent({ pagination: this.initialPagination });
     }
 }

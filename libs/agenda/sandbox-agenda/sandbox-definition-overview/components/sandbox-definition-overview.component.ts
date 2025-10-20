@@ -1,5 +1,4 @@
 import { Component, DestroyRef, inject, Input, OnInit } from '@angular/core';
-import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import {
     SentinelControlItem,
     SentinelControlItemSignal,
@@ -25,6 +24,8 @@ import {
     PaginationStorageService,
     providePaginationStorageService,
 } from '@crczp/utils';
+import { createPaginationEvent, PaginationMapper } from '@crczp/api-common';
+import { SandboxDefinitionSort } from '@crczp/sandbox-api';
 
 @Component({
     selector: 'crczp-sandbox-definition-overview',
@@ -52,7 +53,11 @@ export class SandboxDefinitionOverviewComponent implements OnInit {
     destroyRef = inject(DestroyRef);
     private sandboxDefinitionService = inject(SandboxDefinitionOverviewService);
     private paginationService = inject(PaginationStorageService);
-    private lastLoadEvent: TableLoadEvent<string>;
+    private lastLoadEvent: TableLoadEvent<SandboxDefinitionSort> = {
+        pagination: createPaginationEvent({
+            sort: 'name',
+        }),
+    };
 
     ngOnInit(): void {
         this.controls = SandboxDefinitionOverviewControls.create(
@@ -65,10 +70,10 @@ export class SandboxDefinitionOverviewComponent implements OnInit {
      * Refreshes table with new data
      * @param event to load data
      */
-    onLoadEvent(event: TableLoadEvent<string>): void {
+    onLoadEvent(event: TableLoadEvent<SandboxDefinitionSort>): void {
         this.paginationService.savePageSize(event.pagination.size);
         this.sandboxDefinitionService
-            .getAll(event.pagination)
+            .getAll(PaginationMapper.fromPaginationEvent(event.pagination))
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe();
     }
@@ -90,12 +95,6 @@ export class SandboxDefinitionOverviewComponent implements OnInit {
                     ),
             ),
         );
-        this.lastLoadEvent = {
-            pagination: new OffsetPaginationEvent(
-                0,
-                this.paginationService.loadPageSize(),
-            ),
-        };
         this.onLoadEvent(this.lastLoadEvent);
         this.hasError$ = this.sandboxDefinitionService.hasError$;
     }

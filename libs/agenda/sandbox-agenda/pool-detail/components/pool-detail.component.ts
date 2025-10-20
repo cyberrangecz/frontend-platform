@@ -1,6 +1,7 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, DestroyRef, inject, Input, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
+import { PaginatedResource } from '@sentinel/common/pagination';
+import { createPaginationEvent, PaginationMapper } from '@crczp/api-common';
 import {
     SentinelControlItem,
     SentinelControlItemSignal,
@@ -12,13 +13,11 @@ import { Observable, Subscription } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { AllocationRequestsService } from '../services/state/request/allocation/requests/allocation-requests.service';
 import { CleanupRequestsService } from '../services/state/request/cleanup/cleanup-requests.service';
-import { SandboxInstanceService } from '../services/state/sandbox-instance/sandbox-instance.service';
 import { PoolDetailControls } from './pool-detail-controls';
 import {
     AllocationRequestsConcreteService
 } from '../services/state/request/allocation/requests/allocation-requests-concrete.service';
 import { CleanupRequestsConcreteService } from '../services/state/request/cleanup/cleanup-requests-concrete.service';
-import { SandboxInstanceConcreteService } from '../services/state/sandbox-instance/sandbox-instance-concrete.service';
 import { PoolDetailTable } from '../model/pool-detail-table';
 import { AbstractSandbox } from '../model/abstract-sandbox';
 import { SelectedStage } from '../model/selected-stage';
@@ -34,6 +33,8 @@ import {
 import {
     SandboxAllocationUnitsConcreteService
 } from '../services/state/sandbox-allocation-unit/sandbox-allocation-units-concrete.service';
+import { SandboxInstanceService } from '../services/state/sandbox-instance/sandbox-instance.service';
+import { AllocationUnitSort } from '@crczp/sandbox-api';
 
 /**
  * Smart component of pool detail page
@@ -57,10 +58,7 @@ import {
             provide: SandboxAllocationUnitsService,
             useClass: SandboxAllocationUnitsConcreteService,
         },
-        {
-            provide: SandboxInstanceService,
-            useClass: SandboxInstanceConcreteService,
-        },
+        SandboxInstanceService,
         providePaginationStorageService(PoolDetailComponent),
     ],
     imports: [
@@ -87,6 +85,9 @@ export class PoolDetailComponent implements OnInit, AfterViewInit {
     private paginationService = inject(PaginationStorageService);
     private activeRoute = inject(ActivatedRoute);
     private subscription: Subscription;
+    private readonly initPagination = createPaginationEvent<AllocationUnitSort>(
+        {},
+    );
 
     ngOnInit(): void {
         this.initTables();
@@ -101,13 +102,16 @@ export class PoolDetailComponent implements OnInit, AfterViewInit {
      * Gets new data for sandbox instance overview table
      * @param loadEvent load event emitted from sandbox instances table
      */
-    onLoadEvent(loadEvent: TableLoadEvent<string>): void {
+    onLoadEvent(loadEvent: TableLoadEvent<AllocationUnitSort>): void {
         this.paginationService.savePageSize(loadEvent.pagination.size);
         if (this.subscription) {
             this.subscription.unsubscribe();
         }
         this.subscription = this.sandboxInstanceService
-            .getAllUnits(this.pool.id, loadEvent.pagination)
+            .getAllUnits(
+                this.pool.id,
+                PaginationMapper.fromPaginationEvent(loadEvent.pagination),
+            )
             .pipe(takeUntilDestroyed(this.destroyRef), take(1))
             .subscribe();
     }
@@ -153,11 +157,8 @@ export class PoolDetailComponent implements OnInit, AfterViewInit {
     }
 
     private initTables() {
-        const initialLoadEvent: TableLoadEvent<string> = {
-            pagination: new OffsetPaginationEvent(
-                0,
-                this.paginationService.loadPageSize(),
-            ),
+        const initialLoadEvent: TableLoadEvent<AllocationUnitSort> = {
+            pagination: this.initPagination,
         };
         this.activeRoute.data
             .pipe(takeUntilDestroyed(this.destroyRef))
