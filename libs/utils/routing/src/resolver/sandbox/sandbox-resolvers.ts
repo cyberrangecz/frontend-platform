@@ -1,5 +1,5 @@
 import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { inject } from '@angular/core';
 import { RoutingUtils } from '../../utils';
 import { map } from 'rxjs/operators';
@@ -12,7 +12,7 @@ export function resolveSandbox(
     state: RouterStateSnapshot
 ): Observable<never | AllocationRequest | CleanupRequest> {
     const service = inject(SandboxResolverHelperService);
-    const sandboxId = RoutingUtils.extractVariable('sandboxInstanceId', route);
+    const sandboxId = RoutingUtils.extractVariable('requestId', route);
 
     function redirectToPool() {
         const poolId = RoutingUtils.extractVariable('poolId', route);
@@ -35,9 +35,12 @@ export function resolveSandboxBreadcrumb(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
 ): Observable<string> {
+    if (RoutingUtils.containsSubroute('topology', state)) {
+        return of('Topology');
+    }
     const service = inject(SandboxResolverHelperService);
     const requestType = RoutingUtils.containsSubroute(
-        ':poolId/sandbox-instance/:sandboxInstanceId/cleanup',
+        ':poolId/sandbox-instance/:requestId/cleanup',
         state
     )
         ? 'Allocation Request'

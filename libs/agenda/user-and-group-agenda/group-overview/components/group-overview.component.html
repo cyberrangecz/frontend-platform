@@ -1,11 +1,10 @@
-<sentinel-controls [controls]="controls" (itemClicked)="onControlsAction($event)">
+<sentinel-controls [controls]="controls">
 </sentinel-controls>
 <sentinel-table
-    [defaultSortName]="INIT_SORT_NAME"
-    [defaultSortDirection]="INIT_SORT_DIR"
-    [data]="groups$ | async"
-    [hasError]="groupsHasError$ | async"
+    (rowSelection)="onGroupSelected($event)"
     (tableLoad)="onTableLoadEvent($event)"
-    (rowAction)="onTableAction($event)"
-    (rowSelection)="onGroupSelected($event)">
+    [data]="groups$ | async"
+    [defaultSortDirection]="INIT_SORT_DIR"
+    [defaultSortName]="INIT_SORT_NAME"
+    [hasError]="groupsHasError$ | async">
 </sentinel-table>

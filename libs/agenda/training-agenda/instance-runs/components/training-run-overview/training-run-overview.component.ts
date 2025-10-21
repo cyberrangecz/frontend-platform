@@ -1,15 +1,10 @@
-import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@angular/core';
-import {TrainingRun} from '@crczp/training-model';
-import {
-    SentinelRowDirective,
-    SentinelTable,
-    SentinelTableComponent,
-    TableActionEvent,
-    TableLoadEvent
-} from '@sentinel/components/table';
-import {MatRipple} from "@angular/material/core";
-import {MatIcon} from "@angular/material/icon";
-import {MatTooltip} from "@angular/material/tooltip";
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { SentinelRowDirective, SentinelTableComponent, TableLoadEvent } from '@sentinel/components/table';
+import { MatRipple } from '@angular/material/core';
+import { MatIcon } from '@angular/material/icon';
+import { MatTooltip } from '@angular/material/tooltip';
+import { TrainingRunTable } from '../../model/training-run-table';
+import { TrainingRunSort } from '@crczp/training-api';
 
 /**
  * Component displaying training runs and its state in real time.
@@ -24,30 +19,22 @@ import {MatTooltip} from "@angular/material/tooltip";
         MatRipple,
         MatIcon,
         SentinelRowDirective,
-        MatTooltip
-    ]
+        MatTooltip,
+    ],
 })
 export class TrainingRunOverviewComponent {
-    @Input() trainingRuns: SentinelTable<TrainingRun>;
+    @Input() trainingRuns: TrainingRunTable;
     @Input() hasError: boolean;
     @Input() isLoading: boolean;
 
-    @Output() tableAction: EventEmitter<TableActionEvent<TrainingRun>> = new EventEmitter();
-    @Output() TableLoadEvent: EventEmitter<TableLoadEvent> = new EventEmitter();
-
-    /**
-     * Emits table action event
-     * @param event action event emitted from table
-     */
-    onTableAction(event: TableActionEvent<TrainingRun>): void {
-        this.tableAction.emit(event);
-    }
+    @Output() TableLoadEvent: EventEmitter<TableLoadEvent<TrainingRunSort>> =
+        new EventEmitter();
 
     /**
      * Emits load table vent
      * @param event reload data event emitted from table
      */
-    onTableLoadEvent(event: TableLoadEvent): void {
+    onTableLoadEvent(event: TableLoadEvent<TrainingRunSort>): void {
         this.TableLoadEvent.emit(event);
     }
 }

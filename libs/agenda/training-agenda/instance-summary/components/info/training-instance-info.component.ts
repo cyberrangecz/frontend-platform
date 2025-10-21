@@ -8,20 +8,19 @@ import {
     OnChanges,
     OnInit,
     Output,
-    SimpleChanges,
+    SimpleChanges
 } from '@angular/core';
-import {TrainingDefinition, TrainingInstance} from '@crczp/training-model';
-import {Observable} from 'rxjs';
-import {SentinelControlItem, SentinelControlItemSignal, SentinelControlsComponent} from '@sentinel/components/controls';
-import {map} from 'rxjs/operators';
-import {TrainingInstanceInfoControls} from '../../model/training-instance-info-controls';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {DatePipe} from "@angular/common";
-import {RouterLink} from "@angular/router";
-import {MatButton} from "@angular/material/button";
-import {MatIcon} from "@angular/material/icon";
-import {MatTooltip} from "@angular/material/tooltip";
-import {CdkCopyToClipboard} from "@angular/cdk/clipboard";
+import { TrainingDefinition, TrainingInstance } from '@crczp/training-model';
+import { Observable } from 'rxjs';
+import { SentinelControlItem, SentinelControlsComponent } from '@sentinel/components/controls';
+import { map } from 'rxjs/operators';
+import { TrainingInstanceInfoControls } from '../../model/training-instance-info-controls';
+import { DatePipe } from '@angular/common';
+import { RouterLink } from '@angular/router';
+import { MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatTooltip } from '@angular/material/tooltip';
+import { CdkCopyToClipboard } from '@angular/cdk/clipboard';
 
 /**
  * Component for displaying basic info about selected training instance.
@@ -38,8 +37,8 @@ import {CdkCopyToClipboard} from "@angular/cdk/clipboard";
         MatIcon,
         MatButton,
         MatTooltip,
-        CdkCopyToClipboard
-    ]
+        CdkCopyToClipboard,
+    ],
 })
 export class TrainingInstanceInfoComponent implements OnInit, OnChanges {
     @Input() trainingInstance: TrainingInstance;
@@ -67,10 +66,6 @@ export class TrainingInstanceInfoComponent implements OnInit, OnChanges {
         if ('trainingInstance' in changes && this.trainingInstance) {
             this.trainingDefinition = this.trainingInstance.trainingDefinition;
         }
-    }
-
-    onInfoControlAction(control: SentinelControlItemSignal): void {
-        control.result$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
     }
 
     onCopyToken(): void {

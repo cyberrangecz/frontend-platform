@@ -1,11 +1,16 @@
 import { inject, Injectable } from '@angular/core';
-import { OffsetPagination, OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
-import { GroupApi, UserApi } from '@crczp/user-and-group-api';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
+import { GroupApi, UserApi, UserSort } from '@crczp/user-and-group-api';
 import { Group, User } from '@crczp/user-and-group-model';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
 import { GroupFilter, UserFilter } from '@crczp/user-and-group-agenda/internal';
-import { ErrorHandlerService, PortalConfig } from '@crczp/utils';
+import { ErrorHandlerService } from '@crczp/utils';
+import {
+    createInfinitePaginatedResource,
+    createInfinitePaginationEvent,
+    OffsetPaginatedResource
+} from '@crczp/api-common';
 
 /**
  * Basic implementation of a layer between a component and an API service.
@@ -14,7 +19,7 @@ import { ErrorHandlerService, PortalConfig } from '@crczp/utils';
 @Injectable()
 export class UserAssignService {
     protected hasErrorSubject$: BehaviorSubject<boolean> = new BehaviorSubject(
-        false
+        false,
     );
     /**
      * True if error was returned from API, false otherwise
@@ -27,34 +32,28 @@ export class UserAssignService {
     isLoadingAssigned$: Observable<boolean> =
         this.isLoadingAssignedSubject$.asObservable();
     protected selectedUsersToAssignSubject$: BehaviorSubject<User[]> =
-        new BehaviorSubject([]);
+        new BehaviorSubject<User[]>([]);
     selectedUsersToAssign$: Observable<User[]> =
         this.selectedUsersToAssignSubject$.asObservable();
     protected selectedAssignedUsersSubject$: BehaviorSubject<User[]> =
-        new BehaviorSubject([]);
+        new BehaviorSubject<User[]>([]);
     selectedAssignedUsers$: Observable<User[]> =
         this.selectedAssignedUsersSubject$.asObservable();
     protected selectedGroupsToImportSubject$: BehaviorSubject<Group[]> =
-        new BehaviorSubject([]);
+        new BehaviorSubject<Group[]>([]);
     selectedGroupsToImport$: Observable<Group[]> =
         this.selectedGroupsToImportSubject$.asObservable();
     private api = inject(GroupApi);
     private userApi = inject(UserApi);
     private errorHandler = inject(ErrorHandlerService);
-    private assignedUsersSubject$: BehaviorSubject<PaginatedResource<User>> =
-        new BehaviorSubject(this.initSubject());
-    assignedUsers$: Observable<PaginatedResource<User>> =
+    private assignedUsersSubject$: BehaviorSubject<
+        OffsetPaginatedResource<User>
+    > = new BehaviorSubject(createInfinitePaginatedResource());
+    assignedUsers$: Observable<OffsetPaginatedResource<User>> =
         this.assignedUsersSubject$.asObservable();
 
-    private readonly defaultPaginationSize: number;
-    private lastAssignedPagination: OffsetPaginationEvent;
+    private lastAssignedPagination: OffsetPaginationEvent<UserSort>;
     private lastAssignedFilter: string;
-
-    constructor() {
-        const settings = inject(PortalConfig);
-
-        this.defaultPaginationSize = settings.defaultPageSize;
-    }
 
     setSelectedUsersToAssign(users: User[]): void {
         this.selectedUsersToAssignSubject$.next(users);
@@ -87,20 +86,19 @@ export class UserAssignService {
      */
     getUsersToAssign(
         resourceId: number,
-        filterValue: string
-    ): Observable<PaginatedResource<User>> {
-        const pageSize = 100;
+        filterValue: string,
+    ): Observable<OffsetPaginatedResource<User>> {
         return this.userApi
             .getUsersNotInGroup(
                 resourceId,
-                new OffsetPaginationEvent(0, pageSize, 'fullName', 'asc'),
-                [new UserFilter(filterValue)]
+                createInfinitePaginationEvent('fullName'),
+                [new UserFilter(filterValue)],
             )
             .pipe(
                 tap({
                     error: (err) =>
                         this.errorHandler.emitAPIError(err, 'Fetching users'),
-                })
+                }),
             );
     }
 
@@ -109,18 +107,17 @@ export class UserAssignService {
      * @param filterValue filter to be applied on groups
      */
     getGroupsToImport(
-        filterValue: string
-    ): Observable<PaginatedResource<Group>> {
-        const pageSize = 50;
+        filterValue: string,
+    ): Observable<OffsetPaginatedResource<Group>> {
         return this.api
-            .getAll(new OffsetPaginationEvent(0, pageSize, 'name', 'asc'), [
+            .getAll(createInfinitePaginationEvent('name'), [
                 new GroupFilter(filterValue),
             ])
             .pipe(
                 tap({
                     error: (err) =>
                         this.errorHandler.emitAPIError(err, 'Fetching groups'),
-                })
+                }),
             );
     }
 
@@ -132,9 +129,9 @@ export class UserAssignService {
      */
     getAssigned(
         resourceId: number,
-        pagination: OffsetPaginationEvent,
-        filterValue: string = null
-    ): Observable<PaginatedResource<User>> {
+        pagination: OffsetPaginationEvent<UserSort>,
+        filterValue: string = null,
+    ): Observable<OffsetPaginatedResource<User>> {
         this.clearSelectedAssignedUsers();
         const filter = filterValue ? [new UserFilter(filterValue)] : [];
         this.lastAssignedPagination = pagination;
@@ -153,8 +150,8 @@ export class UserAssignService {
                         this.errorHandler.emitAPIError(err, 'Fetching users');
                         this.isLoadingAssignedSubject$.next(false);
                         this.hasErrorSubject$.next(true);
-                    }
-                )
+                    },
+                ),
             );
     }
 
@@ -175,7 +172,7 @@ export class UserAssignService {
     assign(
         resourceId: number,
         users: User[],
-        groups?: Group[]
+        groups?: Group[],
     ): Observable<any> {
         const userIds = users.map((user) => user.id);
         const groupIds = groups.map((group) => group.id);
@@ -199,17 +196,10 @@ export class UserAssignService {
         return this.callApiToUnassign(resourceId, userIds);
     }
 
-    private initSubject() {
-        return new PaginatedResource(
-            [],
-            new OffsetPagination(0, 0, this.defaultPaginationSize, 0, 0)
-        );
-    }
-
     private callApiToAssign(
         resourceId: number,
         userIds: number[],
-        groupIds: number[]
+        groupIds: number[],
     ) {
         return this.api.addUsersToGroup(resourceId, userIds, groupIds).pipe(
             tap(
@@ -217,15 +207,15 @@ export class UserAssignService {
                     this.clearSelectedUsersToAssign();
                     this.clearSelectedGroupsToImport();
                 },
-                (err) => this.errorHandler.emitAPIError(err, 'Adding users')
+                (err) => this.errorHandler.emitAPIError(err, 'Adding users'),
             ),
             switchMap(() =>
                 this.getAssigned(
                     resourceId,
                     this.lastAssignedPagination,
-                    this.lastAssignedFilter
-                )
-            )
+                    this.lastAssignedFilter,
+                ),
+            ),
         );
     }
 
@@ -233,15 +223,15 @@ export class UserAssignService {
         return this.api.removeUsersFromGroup(resourceId, userIds).pipe(
             tap(
                 () => this.clearSelectedAssignedUsers(),
-                (err) => this.errorHandler.emitAPIError(err, 'Removing users')
+                (err) => this.errorHandler.emitAPIError(err, 'Removing users'),
             ),
             switchMap(() =>
                 this.getAssigned(
                     resourceId,
                     this.lastAssignedPagination,
-                    this.lastAssignedFilter
-                )
-            )
+                    this.lastAssignedFilter,
+                ),
+            ),
         );
     }
 }

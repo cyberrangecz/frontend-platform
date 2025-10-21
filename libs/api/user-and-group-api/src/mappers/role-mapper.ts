@@ -1,7 +1,6 @@
-import {PaginatedResource} from '@sentinel/common/pagination';
-import {UserRole} from '@crczp/user-and-group-model';
-import {RoleDTO} from '../DTO/role/role-dto';
-import {JavaPaginatedResource, PaginationMapper} from '@crczp/api-common';
+import { UserRole } from '@crczp/user-and-group-model';
+import { RoleDTO } from '../DTO/role/role-dto';
+import { JavaPaginatedResource, OffsetPaginatedResource, PaginationMapper } from '@crczp/api-common';
 
 /**
  * @dynamic
@@ -11,10 +10,12 @@ export class RoleMapper {
      * Maps roles DTOs to internal model
      * @param resource roles dto
      */
-    static mapPaginatedRolesDTOtoRoles(resource: JavaPaginatedResource<RoleDTO>): PaginatedResource<UserRole> {
+    static mapPaginatedRolesDTOtoRoles(
+        resource: JavaPaginatedResource<RoleDTO>,
+    ): OffsetPaginatedResource<UserRole> {
         const content = this.mapRoleDTOsToRoles(resource.content);
         const pagination = PaginationMapper.fromJavaDTO(resource.pagination);
-        return new PaginatedResource(content, pagination);
+        return new OffsetPaginatedResource(content, pagination);
     }
 
     static mapRoleDTOsToRoles(roleDtos: RoleDTO[]): UserRole[] {

@@ -6,14 +6,15 @@ import {
     SentinelConfirmationDialogConfig,
     SentinelDialogResultEnum
 } from '@sentinel/components/dialogs';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
-import { SandboxDefinitionApi } from '@crczp/sandbox-api';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
+import { SandboxDefinitionApi, SandboxDefinitionSort } from '@crczp/sandbox-api';
 import { SandboxDefinition } from '@crczp/sandbox-model';
 import { EMPTY, from, Observable, of } from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
 import { SandboxDefinitionOverviewService } from './sandbox-definition-overview.service';
 import { ErrorHandlerService, NotificationService, PortalConfig } from '@crczp/utils';
 import { Routing } from '@crczp/routing-commons';
+import { OffsetPaginatedResource } from '@crczp/api-common';
 
 /**
  * Basic implementation of a layer between a component and an API service.
@@ -27,7 +28,7 @@ export class SandboxDefinitionOverviewConcreteService extends SandboxDefinitionO
     private notificationService = inject(NotificationService);
     private errorHandler = inject(ErrorHandlerService);
 
-    private lastPagination: OffsetPaginationEvent;
+    private lastPagination: OffsetPaginationEvent<SandboxDefinitionSort>;
 
     constructor() {
         super(inject(PortalConfig).defaultPageSize);
@@ -38,8 +39,8 @@ export class SandboxDefinitionOverviewConcreteService extends SandboxDefinitionO
      * @param pagination requested pagination
      */
     getAll(
-        pagination: OffsetPaginationEvent
-    ): Observable<PaginatedResource<SandboxDefinition>> {
+        pagination: OffsetPaginationEvent<SandboxDefinitionSort>,
+    ): Observable<OffsetPaginatedResource<SandboxDefinition>> {
         this.hasErrorSubject$.next(false);
         this.lastPagination = pagination;
         return this.api.getAll(pagination).pipe(
@@ -50,11 +51,11 @@ export class SandboxDefinitionOverviewConcreteService extends SandboxDefinitionO
                 (err) => {
                     this.errorHandler.emitAPIError(
                         err,
-                        'Fetching sandbox definitions'
+                        'Fetching sandbox definitions',
                     );
                     this.hasErrorSubject$.next(true);
-                }
-            )
+                },
+            ),
         );
     }
 
@@ -62,7 +63,7 @@ export class SandboxDefinitionOverviewConcreteService extends SandboxDefinitionO
         return of(
             this.router.navigate([
                 Routing.RouteBuilder.sandbox_definition.create.build(),
-            ])
+            ]),
         );
     }
 
@@ -71,14 +72,14 @@ export class SandboxDefinitionOverviewConcreteService extends SandboxDefinitionO
      * @param sandboxDefinition sandbox definition to be deleted
      */
     delete(
-        sandboxDefinition: SandboxDefinition
-    ): Observable<PaginatedResource<SandboxDefinition>> {
+        sandboxDefinition: SandboxDefinition,
+    ): Observable<OffsetPaginatedResource<SandboxDefinition>> {
         return this.displayDialogToDelete(sandboxDefinition).pipe(
             switchMap((result) =>
                 result === SentinelDialogResultEnum.CONFIRMED
                     ? this.callApiToDelete(sandboxDefinition)
-                    : EMPTY
-            )
+                    : EMPTY,
+            ),
         );
     }
 
@@ -88,12 +89,12 @@ export class SandboxDefinitionOverviewConcreteService extends SandboxDefinitionO
                 Routing.RouteBuilder.sandbox_definition
                     .definitionId(sandboxDefinition.id)
                     .topology.build(),
-            ])
+            ]),
         );
     }
 
     private displayDialogToDelete(
-        sandboxDefinition: SandboxDefinition
+        sandboxDefinition: SandboxDefinition,
     ): Observable<SentinelDialogResultEnum> {
         const dialogRef = this.dialog.open(
             SentinelConfirmationDialogComponent,
@@ -102,30 +103,30 @@ export class SandboxDefinitionOverviewConcreteService extends SandboxDefinitionO
                     'Delete Sandbox Definition',
                     `Do you want to delete sandbox definition "${sandboxDefinition.title}"?`,
                     'Cancel',
-                    'Delete'
+                    'Delete',
                 ),
-            }
+            },
         );
         return dialogRef.afterClosed();
     }
 
     private callApiToDelete(
-        sandboxDefinition: SandboxDefinition
-    ): Observable<PaginatedResource<SandboxDefinition>> {
+        sandboxDefinition: SandboxDefinition,
+    ): Observable<OffsetPaginatedResource<SandboxDefinition>> {
         return this.api.delete(sandboxDefinition.id).pipe(
             tap(
                 () =>
                     this.notificationService.emit(
                         'success',
-                        'Sandbox definition was successfully deleted'
+                        'Sandbox definition was successfully deleted',
                     ),
                 (err) =>
                     this.errorHandler.emitAPIError(
                         err,
-                        'Removing sandbox definition'
-                    )
+                        'Removing sandbox definition',
+                    ),
             ),
-            switchMap(() => this.getAll(this.lastPagination))
+            switchMap(() => this.getAll(this.lastPagination)),
         );
     }
 }

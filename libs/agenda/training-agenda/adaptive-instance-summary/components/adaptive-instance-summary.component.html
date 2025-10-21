@@ -1,25 +1,24 @@
 @if (trainingInstance$ | async; as trainingInstance) {
-  <div>
-    <mat-card appearance="outlined">
-      <crczp-training-instance-info
-        [accessTokenLink]="trainingInstanceAccessTokenLink"
-        [poolIdLink]="trainingInstancePoolIdLink"
-        [adaptiveDefinitionLink]="adaptiveDefinitionLink"
-        [trainingInstance]="trainingInstance"
-        [hasStarted$]="hasStarted$"
-        (showProgress)="onShowProgress()"
-        (showNotification)="onShowNotification($event)"
-        >
-      </crczp-training-instance-info>
-    </mat-card>
-    <mat-card appearance="outlined">
-      <crczp-adaptive-instance-runs
-        [trainingRuns]="adaptiveRuns$ | async"
-        [hasError]="adaptiveRunsHasError$ | async"
-        (tableAction)="onTrainingRunTableAction($event)"
-        (TableLoadEvent)="onTrainingRunTableLoadEvent($event)"
-        >
-      </crczp-adaptive-instance-runs>
-    </mat-card>
-  </div>
+    <div>
+        <mat-card appearance="outlined">
+            <crczp-training-instance-info
+                (showNotification)="onShowNotification($event)"
+                (showProgress)="onShowProgress()"
+                [accessTokenLink]="trainingInstanceAccessTokenLink"
+                [adaptiveDefinitionLink]="adaptiveDefinitionLink"
+                [hasStarted$]="hasStarted$"
+                [poolIdLink]="trainingInstancePoolIdLink"
+                [trainingInstance]="trainingInstance"
+            >
+            </crczp-training-instance-info>
+        </mat-card>
+        <mat-card appearance="outlined">
+            <crczp-adaptive-instance-runs
+                (TableLoadEvent)="onTrainingRunTableLoadEvent($event)"
+                [hasError]="adaptiveRunsHasError$ | async"
+                [trainingRuns]="adaptiveRuns$ | async"
+            >
+            </crczp-adaptive-instance-runs>
+        </mat-card>
+    </div>
 }

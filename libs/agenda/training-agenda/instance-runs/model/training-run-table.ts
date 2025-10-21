@@ -1,39 +1,42 @@
 import { DatePipe } from '@angular/common';
-import { PaginatedResource } from '@sentinel/common/pagination';
 import { TrainingInstance, TrainingRun, TrainingRunStateEnum } from '@crczp/training-model';
 import { Column, DeleteAction, Row, RowAction, SentinelTable } from '@sentinel/components/table';
 import { defer, of } from 'rxjs';
 import { TrainingRunService } from '../services/runs/training-run.service';
 import { TrainingRunRowAdapter } from './training-run-row-adapter';
 import { Utils } from '@crczp/utils';
+import { OffsetPaginatedResource } from '@crczp/api-common';
 
 /**
  * Helper class transforming paginated resource to class for common table component
  * @dynamic
  */
-export class TrainingRunTable extends SentinelTable<TrainingRunRowAdapter> {
+export class TrainingRunTable extends SentinelTable<
+    TrainingRunRowAdapter,
+    string
+> {
     constructor(
-        resource: PaginatedResource<TrainingRun>,
+        resource: OffsetPaginatedResource<TrainingRun>,
         service: TrainingRunService,
-        trainingInstance: TrainingInstance
+        trainingInstance: TrainingInstance,
     ) {
         const columns = [
-            new Column('playerName', 'player', false),
-            new Column('startTimeFormatted', 'start time', false),
-            new Column('endTimeFormatted', 'end time', false),
-            new Column('state', 'run state', false),
-            new Column('duration', 'duration', false),
-            new Column('sandboxInstanceId', 'sandbox id', false),
-            new Column('playerEmail', 'email', false),
-            new Column('eventLogging', 'event logging', false),
-            new Column('commandLogging', 'command logging', false),
+            new Column<string>('playerName', 'player', false),
+            new Column<string>('startTimeFormatted', 'start time', false),
+            new Column<string>('endTimeFormatted', 'end time', false),
+            new Column<string>('state', 'run state', false),
+            new Column<string>('duration', 'duration', false),
+            new Column<string>('sandboxInstanceId', 'sandbox id', false),
+            new Column<string>('playerEmail', 'email', false),
+            new Column<string>('eventLogging', 'event logging', false),
+            new Column<string>('commandLogging', 'command logging', false),
         ];
         const rows = resource.elements.map((element) => {
             element.trainingInstanceId = trainingInstance.id;
             return TrainingRunTable.createRow(
                 element,
                 service,
-                trainingInstance
+                trainingInstance,
             );
         });
         super(rows, columns);
@@ -45,7 +48,7 @@ export class TrainingRunTable extends SentinelTable<TrainingRunRowAdapter> {
     private static createRow(
         element: TrainingRun,
         service: TrainingRunService,
-        instance: TrainingInstance
+        instance: TrainingInstance,
     ): Row<TrainingRunRowAdapter> {
         const datePipe = new DatePipe('en-EN');
         const adapter = element as TrainingRunRowAdapter;
@@ -56,7 +59,7 @@ export class TrainingRunTable extends SentinelTable<TrainingRunRowAdapter> {
             adapter.endTimeFormatted = `${datePipe.transform(adapter.endTime)}`;
             adapter.duration = Utils.Date.timeBetweenDatesSimple(
                 adapter.startTime,
-                adapter.endTime
+                adapter.endTime,
             );
         } else {
             adapter.endTimeFormatted = '-';
@@ -68,13 +71,13 @@ export class TrainingRunTable extends SentinelTable<TrainingRunRowAdapter> {
     private static createActions(
         element: TrainingRun,
         service: TrainingRunService,
-        instance: TrainingInstance
+        instance: TrainingInstance,
     ): RowAction[] {
         return [
             new DeleteAction(
                 'Delete training run with sandbox',
                 of(false),
-                defer(() => service.delete(element, instance.localEnvironment))
+                defer(() => service.delete(element, instance.localEnvironment)),
             ),
         ];
     }

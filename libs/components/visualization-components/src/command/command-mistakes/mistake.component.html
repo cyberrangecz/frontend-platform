@@ -1,53 +1,46 @@
 <div class="mistake-container">
-  <div class="button-container">
-    <mat-slide-toggle (change)="onCommandTypeSelect($event)">
-      {{ correct ? 'Correct' : 'Wrong' }} commands
-    </mat-slide-toggle>
-  </div>
-  <div class="selection-container">
-    @if (!trainingRunId) {
-      <sentinel-resource-selector
-        searchPlaceholder="Search by Trainee"
-        [resources]="traineesDropdownList"
-        [resourceMapping]="resourcesMapping"
-        [selected]="selectedTrainingRuns$ | async"
-        (selectionChange)="onTraineeSelect($event)"
+    <div class="button-container">
+        <mat-slide-toggle (change)="onCommandTypeSelect($event)">
+            {{ correct ? 'Correct' : 'Wrong' }} commands
+        </mat-slide-toggle>
+    </div>
+    <div class="selection-container">
+        @if (!trainingRunId) {
+            <sentinel-resource-selector
+                (selectionChange)="onTraineeSelect($event)"
+                [resourceMapping]="resourcesMapping"
+                [resources]="traineesDropdownList"
+                [selected]="selectedTrainingRuns$ | async"
+                searchPlaceholder="Search by Trainee"
+            >
+            </sentinel-resource-selector>
+        } @if (!correct) {
+        <sentinel-resource-selector
+            (selectionChange)="onMistakeSelect($event)"
+            [resourceMapping]="resourcesMapping"
+            [resources]="mistakesResources"
+            [selected]="selectedMistakeTypes$ | async"
+            searchPlaceholder="Search by Type"
         >
-      </sentinel-resource-selector>
-    }
-
-    @if (!correct) {
-      <sentinel-resource-selector
-        searchPlaceholder="Search by Type"
-        [resources]="mistakesResources"
-        [resourceMapping]="resourcesMapping"
-        [selected]="selectedMistakeTypes$ | async"
-        (selectionChange)="onMistakeSelect($event)"
-        >
-      </sentinel-resource-selector>
-    }
-
-    @if (!trainingRunId || !correct) {
-      <button
-        mat-raised-button
-        color="primary"
-        (click)="sendRequest()"
+        </sentinel-resource-selector>
+    } @if (!trainingRunId || !correct) {
+        <button
+            (click)="sendRequest()"
             [disabled]="
                 (trainingRunId === undefined && (selectedTrainingRuns$ | async).length === 0) ||
                 ((selectedMistakeTypes$ | async).length === 0 && !correct)
             "
+            color="primary"
+            mat-raised-button
         >
-        Filter
-      </button>
+            Filter
+        </button>
     }
-  </div>
-  <sentinel-table
-    [defaultSortDirection]="INIT_SORT_DIR"
-    [defaultSortName]="INIT_SORT_NAME"
-    [data]="aggregatedWrongCommands$ | async"
-    [hasError]="hasError$ | async"
-    [isLoading]="isLoading$ | async"
-    (rowAction)="onTableAction($event)"
-    >
-  </sentinel-table>
+    </div>
+    <sentinel-table
+        [data]="aggregatedWrongCommands$ | async"
+        [defaultSortDirection]="INIT_SORT_DIR"
+        [defaultSortName]="INIT_SORT_NAME"
+        [hasError]="hasError$ | async"
+        [isLoading]="isLoading$ | async" />
 </div>

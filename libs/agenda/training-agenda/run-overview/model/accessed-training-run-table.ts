@@ -1,28 +1,35 @@
-import { PaginatedResource } from '@sentinel/common/pagination';
 import { AccessedTrainingRun, TraineeAccessTrainingRunActionEnum } from '@crczp/training-model';
 import { Column, Row, RowAction, SentinelTable } from '@sentinel/components/table';
 import { defer, of } from 'rxjs';
 import { AccessedTrainingRunService } from '../services/state/accessed-training-run.service';
 import { AccessedTrainingRunRowAdapter } from './accessed-training-run-row-adapter';
+import { OffsetPaginatedResource } from '@crczp/api-common';
 
 /**
  * Helper class transforming paginated resource to class for common table component
  * @dynamic
  */
-export class AccessedTrainingRunTable extends SentinelTable<AccessedTrainingRunRowAdapter> {
+export class AccessedTrainingRunTable extends SentinelTable<
+    AccessedTrainingRunRowAdapter,
+    string
+> {
     constructor(
-        resource: PaginatedResource<AccessedTrainingRun>,
-        service: AccessedTrainingRunService
+        resource: OffsetPaginatedResource<AccessedTrainingRun>,
+        service: AccessedTrainingRunService,
     ) {
         const columns = [
-            new Column('trainingInstanceTitle', 'title', false),
-            new Column('trainingInstanceFormattedDuration', 'Time slot', false),
-            new Column('completedLevels', 'Completed Levels', false),
+            new Column<string>('trainingInstanceTitle', 'title', false),
+            new Column<string>(
+                'trainingInstanceFormattedDuration',
+                'Time slot',
+                false,
+            ),
+            new Column<string>('completedLevels', 'Completed Levels', false),
         ];
 
         const sortByInstanceDateAndState = (
             a: AccessedTrainingRun,
-            b: AccessedTrainingRun
+            b: AccessedTrainingRun,
         ): number => {
             if (a.action !== b.action) {
                 return a.action === TraineeAccessTrainingRunActionEnum.Resume
@@ -38,7 +45,7 @@ export class AccessedTrainingRunTable extends SentinelTable<AccessedTrainingRunR
         const rows = resource.elements
             .sort(sortByInstanceDateAndState)
             .map((element) =>
-                AccessedTrainingRunTable.createRow(element, service)
+                AccessedTrainingRunTable.createRow(element, service),
             );
         super(rows, columns);
         this.pagination = resource.pagination;
@@ -48,7 +55,7 @@ export class AccessedTrainingRunTable extends SentinelTable<AccessedTrainingRunR
 
     private static createRow(
         accessedTrainingRun: AccessedTrainingRun,
-        service: AccessedTrainingRunService
+        service: AccessedTrainingRunService,
     ): Row<AccessedTrainingRunRowAdapter> {
         const adapter = accessedTrainingRun as AccessedTrainingRunRowAdapter;
         return new Row(adapter, this.createActions(adapter, service));
@@ -56,7 +63,7 @@ export class AccessedTrainingRunTable extends SentinelTable<AccessedTrainingRunR
 
     private static createActions(
         trainingRun: AccessedTrainingRun,
-        service: AccessedTrainingRunService
+        service: AccessedTrainingRunService,
     ): RowAction[] {
         return [
             new RowAction(
@@ -67,14 +74,14 @@ export class AccessedTrainingRunTable extends SentinelTable<AccessedTrainingRunR
                 'Resume training run',
                 of(
                     trainingRun.action !==
-                        TraineeAccessTrainingRunActionEnum.Resume
+                        TraineeAccessTrainingRunActionEnum.Resume,
                 ),
                 defer(() =>
                     service.toResumeRun(
                         trainingRun.trainingRunId,
-                        trainingRun.type
-                    )
-                )
+                        trainingRun.type,
+                    ),
+                ),
             ),
             new RowAction(
                 'results',
@@ -84,14 +91,14 @@ export class AccessedTrainingRunTable extends SentinelTable<AccessedTrainingRunR
                 'Access Results',
                 of(
                     trainingRun.action !==
-                        TraineeAccessTrainingRunActionEnum.Results
+                        TraineeAccessTrainingRunActionEnum.Results,
                 ),
                 defer(() =>
                     service.toRunResults(
                         trainingRun.trainingRunId,
-                        trainingRun.type
-                    )
-                )
+                        trainingRun.type,
+                    ),
+                ),
             ),
         ];
     }

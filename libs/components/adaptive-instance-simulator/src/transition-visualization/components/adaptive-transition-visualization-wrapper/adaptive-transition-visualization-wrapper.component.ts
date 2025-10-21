@@ -1,18 +1,25 @@
-import {Component, ElementRef, HostListener, Input, OnInit, ViewChild} from '@angular/core';
+import {
+    Component,
+    ElementRef,
+    HostListener,
+    Input,
+    OnInit,
+    ViewChild,
+} from '@angular/core';
 import * as d3 from 'd3';
-import {AdaptiveVisualizationTask} from '../../model/phase/adaptiveVisualizationTask';
-import {AdaptiveVisualizationPhase} from '../../model/phase/adaptive-visualization-phase';
-import {TransitionGraphVisualizationData} from '../../model/transition-graph-visualization-data';
-import {BehaviorSubject} from 'rxjs';
-import {PlayersTransitionsComponent} from "../training-runs-transitions/training-runs-transitions.component";
-import {PhasesTasksComponent} from "../phases-tasks/phases-tasks.component";
-import {ChartBaseComponent} from "../chart-base/chart-base.component";
-import {MatDivider} from "@angular/material/divider";
-import {TaskPreviewComponent} from "../task-preview/task-preview.component";
-import {AsyncPipe} from "@angular/common";
-import {MatIcon} from "@angular/material/icon";
-import {MatIconButton} from "@angular/material/button";
-import {RunVisualizationPathNode} from "@crczp/visualization-model";
+import { AdaptiveVisualizationTask } from '../../model/phase/adaptiveVisualizationTask';
+import { AdaptiveVisualizationPhase } from '../../model/phase/adaptive-visualization-phase';
+import { TransitionGraphVisualizationData } from '../../model/transition-graph-visualization-data';
+import { BehaviorSubject } from 'rxjs';
+import { PlayersTransitionsComponent } from '../training-runs-transitions/training-runs-transitions.component';
+import { PhasesTasksComponent } from '../phases-tasks/phases-tasks.component';
+import { ChartBaseComponent } from '../chart-base/chart-base.component';
+import { MatDivider } from '@angular/material/divider';
+import { TaskPreviewComponent } from '../task-preview/task-preview.component';
+import { AsyncPipe } from '@angular/common';
+import { MatIcon } from '@angular/material/icon';
+import { MatIconButton } from '@angular/material/button';
+import { RunVisualizationPathNode } from '@crczp/visualization-model';
 
 @Component({
     selector: 'crczp-adaptive-transition-visualization-wrapper',
@@ -26,16 +33,18 @@ import {RunVisualizationPathNode} from "@crczp/visualization-model";
         MatIcon,
         TaskPreviewComponent,
         MatIconButton,
-        AsyncPipe
-    ]
+        AsyncPipe,
+    ],
 })
 export class AdaptiveTransitionVisualizationWrapperComponent implements OnInit {
     @Input() data!: TransitionGraphVisualizationData;
-    margin = {left: 80, right: 20, top: 20, bottom: 20};
+    margin = { left: 80, right: 20, top: 20, bottom: 20 };
     xScale!: d3.ScalePoint<number>;
     yScale!: d3.ScalePoint<number>;
     colorScale!: d3.ScaleOrdinal<string, string>;
-    taskPreview$ = new BehaviorSubject<AdaptiveVisualizationTask | undefined>(undefined);
+    taskPreview$ = new BehaviorSubject<AdaptiveVisualizationTask | undefined>(
+        undefined,
+    );
     colors = [
         '#556b2f',
         '#8b4513',
@@ -78,8 +87,7 @@ export class AdaptiveTransitionVisualizationWrapperComponent implements OnInit {
         '#ffc0cb',
         '#696969',
     ];
-    @ViewChild('chart', {static: true}) private chartContainer?: ElementRef;
-    private contentGroup: any;
+    @ViewChild('chart', { static: true }) private chartContainer?: ElementRef;
 
     @HostListener('window:resize', ['$event'])
     onResize() {
@@ -91,11 +99,19 @@ export class AdaptiveTransitionVisualizationWrapperComponent implements OnInit {
     }
 
     innerWidth(): number {
-        return this.chartContainer?.nativeElement.clientWidth - this.margin.left - this.margin.right;
+        return (
+            this.chartContainer?.nativeElement.clientWidth -
+            this.margin.left -
+            this.margin.right
+        );
     }
 
     innerHeight(): number {
-        return this.chartContainer?.nativeElement.clientHeight - this.margin.top - this.margin.bottom;
+        return (
+            this.chartContainer?.nativeElement.clientHeight -
+            this.margin.top -
+            this.margin.bottom
+        );
     }
 
     getMarginTransform(): string {
@@ -104,8 +120,14 @@ export class AdaptiveTransitionVisualizationWrapperComponent implements OnInit {
 
     onTaskPreviewChange(node: RunVisualizationPathNode | null) {
         const taskToPreview = this.data.phases
-            .find((phase: AdaptiveVisualizationPhase) => phase.order === node?.phaseOrder)
-            ?.tasks.find((task: AdaptiveVisualizationTask) => task.order === node?.taskOrder);
+            .find(
+                (phase: AdaptiveVisualizationPhase) =>
+                    phase.order === node?.phaseOrder,
+            )
+            ?.tasks.find(
+                (task: AdaptiveVisualizationTask) =>
+                    task.order === node?.taskOrder,
+            );
         this.taskPreview$.next(taskToPreview);
     }
 
@@ -125,7 +147,10 @@ export class AdaptiveTransitionVisualizationWrapperComponent implements OnInit {
 
     private initYScale() {
         this.yScale = d3.scalePoint();
-        this.yScale.domain(this.getYDomain(this.data.phases)).range([this.innerHeight(), 0]).padding(0.5);
+        this.yScale
+            .domain(this.getYDomain(this.data.phases))
+            .range([this.innerHeight(), 0])
+            .padding(0.5);
     }
 
     private initColorScale() {
@@ -135,7 +160,12 @@ export class AdaptiveTransitionVisualizationWrapperComponent implements OnInit {
 
     private getYDomain(phases: AdaptiveVisualizationPhase[]): number[] {
         return [...phases]
-            .sort((a: AdaptiveVisualizationPhase, b: AdaptiveVisualizationPhase) => b.tasks.length - a.tasks.length)[0]
+            .sort(
+                (
+                    a: AdaptiveVisualizationPhase,
+                    b: AdaptiveVisualizationPhase,
+                ) => b.tasks.length - a.tasks.length,
+            )[0]
             .tasks.map((task: AdaptiveVisualizationTask) => task.order)
             .reverse();
     }

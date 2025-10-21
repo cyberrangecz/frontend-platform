@@ -1,12 +1,13 @@
-import {Component, Input, OnChanges, SimpleChanges} from '@angular/core';
-import {ExtendedMatchingItems, FreeFormQuestion, MultipleChoiceQuestion, Question} from '@crczp/training-model';
-import {FreeFormQuestionDetailComponent} from "./free-form-question-detail/free-form-question-detail.component";
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import {
-    MultipleChoiceQuestionDetailComponent
-} from "./multiple-choice-question-detail/multiple-choice-question-detail.component";
-import {
-    ExtendedMatchingQuestionDetailComponent
-} from "./extended-matching-question-detail/extended-matching-question-detail.component";
+    ExtendedMatchingItems,
+    FreeFormQuestion,
+    MultipleChoiceQuestion,
+    Question,
+} from '@crczp/training-model';
+import { FreeFormQuestionDetailComponent } from './free-form-question-detail/free-form-question-detail.component';
+import { MultipleChoiceQuestionDetailComponent } from './multiple-choice-question-detail/multiple-choice-question-detail.component';
+import { ExtendedMatchingQuestionDetailComponent } from './extended-matching-question-detail/extended-matching-question-detail.component';
 
 @Component({
     selector: 'crczp-question-detail',
@@ -15,8 +16,8 @@ import {
     imports: [
         FreeFormQuestionDetailComponent,
         MultipleChoiceQuestionDetailComponent,
-        ExtendedMatchingQuestionDetailComponent
-    ]
+        ExtendedMatchingQuestionDetailComponent,
+    ],
 })
 export class AbstractQuestionComponent implements OnChanges {
     @Input() question: Question;
@@ -25,10 +26,6 @@ export class AbstractQuestionComponent implements OnChanges {
     isFfq = false;
     isMcq = false;
     isEmi = false;
-
-    freeFormQuestion = FreeFormQuestion;
-    multipleChoiceQuestion = MultipleChoiceQuestion;
-    extendedMatchingItems = ExtendedMatchingItems;
 
     ngOnChanges(changes: SimpleChanges): void {
         if ('question' in changes) {

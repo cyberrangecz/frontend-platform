@@ -1,15 +1,16 @@
 import { inject, Injectable } from '@angular/core';
 import { StageDetailService } from './stage-detail.service';
-import { AllocationRequestsApi } from '@crczp/sandbox-api';
-import { RequestStage } from '@crczp/sandbox-model';
 import {
-    OffsetPaginationEvent,
-    PaginatedResource,
-} from '@sentinel/common/pagination';
+    AllocationOutputSort,
+    AllocationRequestsApi,
+} from '@crczp/sandbox-api';
+import { RequestStage } from '@crczp/sandbox-model';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, take } from 'rxjs/operators';
 import { StagesDetailPollRegistry } from './stages-detail-poll-registry.service';
 import { PortalConfig } from '@crczp/utils';
+import { OffsetPaginatedResource } from '@crczp/api-common';
 
 @Injectable()
 export class TerraformOutputsService extends StageDetailService {
@@ -22,26 +23,27 @@ export class TerraformOutputsService extends StageDetailService {
         super(
             pollRegistry,
             Number.MAX_SAFE_INTEGER,
-            settings.polling.pollingPeriodShort
+            settings.polling.pollingPeriodShort,
         );
     }
 
     protected callApiToGetStageDetail(
         stage: RequestStage,
-        requestedPagination: OffsetPaginationEvent
-    ): Observable<PaginatedResource<string>> {
+        requestedPagination: OffsetPaginationEvent<AllocationOutputSort>,
+    ): Observable<OffsetPaginatedResource<string>> {
         return this.api
             .getTerraformOutputs(stage.requestId, requestedPagination)
             .pipe(
+                take(1),
                 map((paginatedResources) => {
                     const formattedEvents = paginatedResources.elements.map(
-                        (event) => `${event.content}`
+                        (event) => `${event.content}`,
                     );
-                    return new PaginatedResource<string>(
+                    return new OffsetPaginatedResource<string>(
                         formattedEvents,
-                        paginatedResources.pagination
+                        paginatedResources.pagination,
                     );
-                })
+                }),
             );
     }
 }

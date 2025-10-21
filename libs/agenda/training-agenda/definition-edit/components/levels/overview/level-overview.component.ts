@@ -8,21 +8,21 @@ import {
     OnChanges,
     OnInit,
     Output,
-    SimpleChanges,
+    SimpleChanges
 } from '@angular/core';
-import {Level, MitreTechnique, TrainingDefinition} from '@crczp/training-model';
-import {Observable} from 'rxjs';
-import {map, tap} from 'rxjs/operators';
-import {LevelOverviewControls} from '../../../model/adapters/level-overview-controls';
-import {LevelStepperAdapter} from '@crczp/training-agenda/internal';
-import {LevelMoveEvent} from '../../../model/events/level-move-event';
-import {LevelEditService} from '../../../services/state/level/level-edit.service';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {SentinelControlItem, SentinelControlItemSignal, SentinelControlsComponent} from "@sentinel/components/controls";
-import {AsyncPipe} from "@angular/common";
-import {MatDivider} from "@angular/material/divider";
-import {TrainingLevelStepperComponent} from "../stepper/training-level-stepper.component";
-import {AbstractLevelEditComponent} from "../level/abstract-level-edit.component";
+import { Level, MitreTechnique, TrainingDefinition } from '@crczp/training-model';
+import { Observable } from 'rxjs';
+import { map, tap } from 'rxjs/operators';
+import { LevelOverviewControls } from '../../../model/adapters/level-overview-controls';
+import { LevelStepperAdapter } from '@crczp/training-agenda/internal';
+import { LevelMoveEvent } from '../../../model/events/level-move-event';
+import { LevelEditService } from '../../../services/state/level/level-edit.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { SentinelControlItem, SentinelControlsComponent } from '@sentinel/components/controls';
+import { AsyncPipe } from '@angular/common';
+import { MatDivider } from '@angular/material/divider';
+import { TrainingLevelStepperComponent } from '../stepper/training-level-stepper.component';
+import { AbstractLevelEditComponent } from '../level/abstract-level-edit.component';
 
 /**
  * Smart component for level stepper and level edit components
@@ -37,8 +37,8 @@ import {AbstractLevelEditComponent} from "../level/abstract-level-edit.component
         SentinelControlsComponent,
         MatDivider,
         TrainingLevelStepperComponent,
-        AbstractLevelEditComponent
-    ]
+        AbstractLevelEditComponent,
+    ],
 })
 export class LevelOverviewComponent implements OnInit, OnChanges {
     @Output() unsavedLevels: EventEmitter<Level[]> = new EventEmitter();
@@ -56,19 +56,28 @@ export class LevelOverviewComponent implements OnInit, OnChanges {
     ngOnInit(): void {
         this.activeStep$ = this.levelService.activeStep$;
         this.stepperLevels = this.levelService.levels$.pipe(
-            map((levels) => levels.map((level) => new LevelStepperAdapter(level))),
-            tap(() => this.levelsCount.emit(this.levelService.getLevelsCount())),
+            map((levels) =>
+                levels.map((level) => new LevelStepperAdapter(level)),
+            ),
+            tap(() =>
+                this.levelsCount.emit(this.levelService.getLevelsCount()),
+            ),
         );
 
         this.levelService.unsavedLevels$
             .pipe(takeUntilDestroyed(this.destroyRef))
-            .subscribe((unsavedLevels) => this.unsavedLevels.emit(unsavedLevels));
+            .subscribe((unsavedLevels) =>
+                this.unsavedLevels.emit(unsavedLevels),
+            );
         this.initControl();
     }
 
     ngOnChanges(changes: SimpleChanges): void {
         if ('trainingDefinition' in changes) {
-            this.levelService.set(this.trainingDefinition.id, this.trainingDefinition.levels as Level[]);
+            this.levelService.set(
+                this.trainingDefinition.id,
+                this.trainingDefinition.levels as Level[],
+            );
         }
     }
 
@@ -80,10 +89,6 @@ export class LevelOverviewComponent implements OnInit, OnChanges {
         this.levelService.setActiveLevel(levelIndex);
     }
 
-    onControlAction(control: SentinelControlItemSignal): void {
-        control.result$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
-    }
-
     /**
      * Call service to move level from original position to a new one
      * @param event event of level move
@@ -91,7 +96,10 @@ export class LevelOverviewComponent implements OnInit, OnChanges {
     onLevelMoved(event: LevelMoveEvent): void {
         this.levelMovingInProgress = true;
         this.levelService
-            .move(event.stepperState.previousIndex, event.stepperState.currentIndex)
+            .move(
+                event.stepperState.previousIndex,
+                event.stepperState.currentIndex,
+            )
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe(
                 () => {
@@ -110,7 +118,13 @@ export class LevelOverviewComponent implements OnInit, OnChanges {
     }
 
     private initControl() {
-        const deleteDisabled$ = this.levelService.levels$.pipe(map((levels) => levels.length <= 0));
-        this.controls = LevelOverviewControls.create(this.levelService, this.editMode, deleteDisabled$);
+        const deleteDisabled$ = this.levelService.levels$.pipe(
+            map((levels) => levels.length <= 0),
+        );
+        this.controls = LevelOverviewControls.create(
+            this.levelService,
+            this.editMode,
+            deleteDisabled$,
+        );
     }
 }

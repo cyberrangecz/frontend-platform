@@ -10,8 +10,5 @@ export * from './services/training-run/level/assessment/training-run-assessment-
 export * from './services/training-run/level/training/training-run-training-level-concrete.service';
 export * from './services/training-run/level/training/training-run-training-level.service';
 export * from './components/level/sandbox-interaction-level/generic-sandbox-level/generic-sandbox-level.component';
-export *
-    from './components/level/sandbox-interaction-level/subcomponents/answer-floating-form/floating-answer-form.component';
-export *
-    from './components/level/sandbox-interaction-level/subcomponents/answer-floating-form/answer-form-hints/answer-form-hints.component';
-export * from './components/level/sandbox-interaction-level/subcomponents/topology-wrapper/topology-wrapper.component';
+export * from './components/level/sandbox-interaction-level/subcomponents/answer-floating-form/floating-answer-form.component';
+export * from './components/level/sandbox-interaction-level/subcomponents/answer-floating-form/answer-form-hints/answer-form-hints.component';

@@ -19,7 +19,7 @@
         </mat-panel-title>
     </mat-expansion-panel-header>
     <ng-template matExpansionPanelContent>
-        <sentinel-controls (itemClicked)="onControlsAction($event)" [controls]="controls">
+        <sentinel-controls [controls]="controls">
         </sentinel-controls>
         <mat-divider />
         <crczp-training-instance-edit
@@ -55,12 +55,12 @@
         </mat-expansion-panel-header>
         <ng-template matExpansionPanelContent>
             <sentinel-user-assign
-                resourceMatIcon="event_available"
                 (hasUnsavedChanges)="onOrganizersChanged($event)"
-                [resource]="trainingInstance$ | async"
                 [defaultPaginationSize]="PAGE_SIZE"
-                toAssignTitle="Organizers"
-                assigneesTitle="Organizers">
+                [resource]="trainingInstance$ | async"
+                assigneesTitle="Organizers"
+                resourceMatIcon="event_available"
+                toAssignTitle="Organizers">
             </sentinel-user-assign>
         </ng-template>
     </mat-expansion-panel>

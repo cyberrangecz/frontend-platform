@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, HostListener, inject, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import {
     SentinelControlItem,
     SentinelControlItemSignal,
@@ -27,6 +26,9 @@ import { MatError } from '@angular/material/input';
 import { TrainingInstanceEditComponent } from './training-instance-edit/training-instance-edit.component';
 import { MatDivider } from '@angular/material/divider';
 import { CommonTrainingInstanceEditService } from '../services/state/edit/common-training-instance-edit.service';
+import { createInfinitePaginationEvent, createPaginationEvent } from '@crczp/api-common';
+import { PoolSort, SandboxDefinitionSort } from '@crczp/sandbox-api';
+import { TrainingDefinitionSort, TrainingInstanceSort } from '@crczp/training-api';
 
 /**
  * Main component of training instance edit/create page. Serves mainly as a smart component wrapper
@@ -63,17 +65,21 @@ export class TrainingInstanceEditOverviewComponent implements OnInit {
     protected sandboxDefinitions$: Observable<SandboxDefinition[]>;
     protected hasStarted$: Observable<boolean>;
     protected readonly canDeactivateOrganizers = new BehaviorSubject<boolean>(
-        true
+        true,
     );
     protected readonly canDeactivateTIEdit = new BehaviorSubject<boolean>(true);
     private readonly instanceValid$: Observable<boolean>;
-    private defaultPaginationSize: number;
     private destroyRef = inject(DestroyRef);
     private readonly activeRoute = inject(ActivatedRoute);
     private readonly editService = inject(CommonTrainingInstanceEditService);
     private readonly organizersAssignService = inject(
-        SentinelUserAssignService
+        SentinelUserAssignService,
     );
+    private trainingInstancePagination =
+        createPaginationEvent<TrainingInstanceSort>({
+            sort: 'id',
+            sortDir: 'asc',
+        });
 
     constructor() {
         this.trainingInstance$ = this.editService.trainingInstance$;
@@ -83,29 +89,29 @@ export class TrainingInstanceEditOverviewComponent implements OnInit {
             this.editService.saveDisabled$;
         this.editMode$ = this.editService.editMode$;
         this.tiTitle$ = this.editService.trainingInstance$.pipe(
-            map((ti) => ti.title)
+            map((ti) => ti.title),
         );
         this.activeRoute.data
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe((data) =>
-                this.editService.set(data[TrainingInstance.name] || null)
+                this.editService.set(data[TrainingInstance.name] || null),
             );
 
         this.trainingDefinitions$ =
             this.editService.releasedTrainingDefinitions$.pipe(
                 combineLatestWith(
-                    this.editService.unreleasedTrainingDefinitions$
+                    this.editService.unreleasedTrainingDefinitions$,
                 ),
                 map(([released, unreleased]) => [
                     ...released.elements,
                     ...unreleased.elements,
-                ])
+                ]),
             );
         this.pools$ = this.editService.pools$.pipe(
-            map((pools) => pools.elements)
+            map((pools) => pools.elements),
         );
         this.sandboxDefinitions$ = this.editService.sandboxDefinitions$.pipe(
-            map((definitions) => definitions.elements)
+            map((definitions) => definitions.elements),
         );
         this.refreshTrainingDefinitions();
         this.refreshPools();
@@ -113,7 +119,7 @@ export class TrainingInstanceEditOverviewComponent implements OnInit {
         this.controls = TrainingInstanceEditControls.create(
             this.editService,
             saveDisabled$,
-            this.instanceValid$
+            this.instanceValid$,
         );
     }
 
@@ -126,16 +132,16 @@ export class TrainingInstanceEditOverviewComponent implements OnInit {
                 takeUntilDestroyed(this.destroyRef),
                 filter(
                     (trainingInstance) =>
-                        !!trainingInstance && !!trainingInstance.id
-                )
+                        !!trainingInstance && !!trainingInstance.id,
+                ),
             )
             .subscribe((trainingInstance) =>
                 this.organizersAssignService
                     .getAssigned(
                         trainingInstance.id,
-                        new OffsetPaginationEvent(0, this.defaultPaginationSize)
+                        createInfinitePaginationEvent('familyName'),
                     )
-                    .subscribe()
+                    .subscribe(),
             );
     }
 
@@ -176,12 +182,8 @@ export class TrainingInstanceEditOverviewComponent implements OnInit {
     }
 
     private refreshTrainingDefinitions() {
-        const pagination = new OffsetPaginationEvent(
-            0,
-            this.PAGE_SIZE,
-            '',
-            'asc'
-        );
+        const pagination =
+            createInfinitePaginationEvent<TrainingDefinitionSort>('title');
         this.editService
             .getAllTrainingDefinitions(pagination, 'RELEASED')
             .pipe(take(1))
@@ -193,24 +195,17 @@ export class TrainingInstanceEditOverviewComponent implements OnInit {
     }
 
     private refreshPools() {
-        const pagination = new OffsetPaginationEvent(
-            0,
-            this.PAGE_SIZE,
-            '',
-            'asc'
-        );
-        this.editService.getAllPools(pagination).pipe(take(1)).subscribe();
+        this.editService
+            .getAllPools(createInfinitePaginationEvent<PoolSort>('id'))
+            .pipe(take(1))
+            .subscribe();
     }
 
     private refreshSandboxDefinitions() {
-        const pagination = new OffsetPaginationEvent(
-            0,
-            this.PAGE_SIZE,
-            '',
-            'asc'
-        );
         this.editService
-            .getAllSandboxDefinitions(pagination)
+            .getAllSandboxDefinitions(
+                createInfinitePaginationEvent<SandboxDefinitionSort>('name'),
+            )
             .pipe(take(1))
             .subscribe();
     }

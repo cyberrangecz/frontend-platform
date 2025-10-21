@@ -84,12 +84,14 @@ const svg_config = {
         MARGIN: 24,
         BACKDROP_RADIUS: 12,
         BACKDROP_FILL: {
-            CONSOLE: '#F0FFF4',
+            CONSOLE: '#e1fbe8',
+            GUI: '#cdefff',
             LINUX: '#fff4d1',
             WINDOWS: '#d8f8f5',
         },
         BACKDROP_STROKE: {
             CONSOLE: '#9AE6B4',
+            GUI: '#6896d3',
             LINUX: '#fffa94',
             WINDOWS: '#43c7f9',
         },
@@ -109,14 +111,13 @@ const graph_config: Options = {
     },
 
     physics: {
-        minVelocity: 0.75,
+        minVelocity: 1,
         barnesHut: {
             centralGravity: 0.3,
             gravitationalConstant: -9000,
             springConstant: 0.25,
             springLength: 300,
-            damping: 0.95,
-            avoidOverlap: 0.95,
+            damping: 0.99,
         },
         stabilization: {
             iterations: 1000,

@@ -19,7 +19,7 @@ const routes: ValidRouterConfig<'group'> = [
         path: 'create',
         loadComponent: () =>
             import('@crczp/user-and-group-agenda/group-edit').then(
-                (m) => m.GroupEditComponent
+                (m) => m.GroupEditOverviewComponent
             ),
         resolve: {
             [Group.name]: Routing.Resolvers.Group.resolveGroup,
@@ -32,7 +32,7 @@ const routes: ValidRouterConfig<'group'> = [
         path: ':groupId/edit',
         loadComponent: () =>
             import('@crczp/user-and-group-agenda/group-edit').then(
-                (m) => m.GroupEditComponent
+                (m) => m.GroupEditOverviewComponent
             ),
         resolve: {
             [Group.name]: Routing.Resolvers.Group.resolveGroup,
@@ -44,8 +44,8 @@ const routes: ValidRouterConfig<'group'> = [
     {
         path: ':groupId',
         loadComponent: () =>
-            import('@crczp/user-and-group-agenda/group-edit').then(
-                (m) => m.GroupUserAssignComponent
+            import('@crczp/user-and-group-agenda/group-detail').then(
+                (m) => m.GroupDetailComponent
             ),
         resolve: {
             [Group.name]: Routing.Resolvers.Group.resolveGroup,

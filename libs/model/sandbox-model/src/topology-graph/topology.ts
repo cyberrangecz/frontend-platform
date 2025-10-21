@@ -1,26 +1,32 @@
 import { Z } from 'zod-class';
 import { z } from 'zod';
 
-class ConnectableNode extends Z.class({
-    name: z.string(),
-    osType: z.string(),
-    guiAccess: z.boolean(),
-}) {}
+const osType = z.enum(['linux', 'windows']);
 
-export class HostNode extends ConnectableNode.extend({
+export type OsType = z.infer<typeof osType>;
+
+export function parseOsType(input: string | undefined): z.infer<typeof osType> {
+    return osType.parse(input);
+}
+
+export class HostNode extends Z.class({
+    name: z.string(),
+    osType: osType,
+    guiAccess: z.boolean(),
+    isAccessible: z.boolean(),
     ip: z.string(),
 }) {}
 
 export class Subnet extends Z.class({
     name: z.string(),
     cidr: z.string(),
-    hosts: HostNode.schema().array(),
+    hosts: z.array(z.lazy(() => HostNode.schema())),
 }) {}
 
-export class RouterNode extends ConnectableNode.extend({
-    subnets: Subnet.schema().array(),
+export class RouterNode extends HostNode.extend({
+    subnets: z.array(z.lazy(() => Subnet.schema())),
 }) {}
 
 export class Topology extends Z.class({
-    routers: RouterNode.schema().array(),
+    routers: z.array(z.lazy(() => RouterNode.schema())),
 }) {}

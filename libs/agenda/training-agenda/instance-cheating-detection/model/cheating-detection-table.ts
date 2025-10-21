@@ -1,30 +1,33 @@
 import { DatePipe } from '@angular/common';
-import { PaginatedResource } from '@sentinel/common/pagination';
 import { Column, DeleteAction, Row, RowAction, SentinelTable } from '@sentinel/components/table';
 import { CheatingDetection, CheatingDetectionStateEnum } from '@crczp/training-model';
 import { CheatingDetectionRowAdapter } from './cheating-detection-row-adapter';
 import { CheatingDetectionService } from '../services/cheating-detection.service';
 import { defer, of } from 'rxjs';
+import { OffsetPaginatedResource } from '@crczp/api-common';
 
 /**
  * Helper class transforming paginated resource to class for common table component
  * @dynamic
  */
-export class CheatingDetectionTable extends SentinelTable<CheatingDetectionRowAdapter> {
+export class CheatingDetectionTable extends SentinelTable<
+    CheatingDetectionRowAdapter,
+    string
+> {
     constructor(
-        resource: PaginatedResource<CheatingDetection>,
-        service: CheatingDetectionService
+        resource: OffsetPaginatedResource<CheatingDetection>,
+        service: CheatingDetectionService,
     ) {
         const columns = [
-            new Column('id', 'id', false),
-            new Column('executeTimeFormatted', 'executed at', false),
-            new Column('executedBy', 'executed by', false),
-            new Column('currentState', 'state', false),
-            new Column('resultsFormatted', 'results', false),
-            new Column('stages', 'stages', false),
+            new Column<string>('id', 'id', false),
+            new Column<string>('executeTimeFormatted', 'executed at', false),
+            new Column<string>('executedBy', 'executed by', false),
+            new Column<string>('currentState', 'state', false),
+            new Column<string>('resultsFormatted', 'results', false),
+            new Column<string>('stages', 'stages', false),
         ];
         const rows = resource.elements.map((element) =>
-            CheatingDetectionTable.createRow(element, service)
+            CheatingDetectionTable.createRow(element, service),
         );
         super(rows, columns);
         this.pagination = resource.pagination;
@@ -33,7 +36,7 @@ export class CheatingDetectionTable extends SentinelTable<CheatingDetectionRowAd
 
     private static createRow(
         element: CheatingDetection,
-        service: CheatingDetectionService
+        service: CheatingDetectionService,
     ): Row<CheatingDetectionRowAdapter> {
         const datePipe = new DatePipe('en-EN');
         const adapter = element as CheatingDetectionRowAdapter;
@@ -43,7 +46,7 @@ export class CheatingDetectionTable extends SentinelTable<CheatingDetectionRowAd
                 ? adapter.results.toString()
                 : null;
         adapter.executeTimeFormatted = `${datePipe.transform(
-            adapter.executeTime
+            adapter.executeTime,
         )}`;
         adapter.stages = this.requestStageResolver(element);
         return new Row(adapter, this.createActions(element, service));
@@ -51,14 +54,14 @@ export class CheatingDetectionTable extends SentinelTable<CheatingDetectionRowAd
 
     private static createActions(
         cd: CheatingDetection,
-        service: CheatingDetectionService
+        service: CheatingDetectionService,
     ): RowAction[] {
         return [...this.createStateActions(cd, service)];
     }
 
     private static createStateActions(
         cd: CheatingDetection,
-        service: CheatingDetectionService
+        service: CheatingDetectionService,
     ): RowAction[] {
         switch (cd.currentState) {
             case CheatingDetectionStateEnum.Finished:
@@ -73,9 +76,9 @@ export class CheatingDetectionTable extends SentinelTable<CheatingDetectionRowAd
                         defer(() =>
                             service.toDetectionEventsOfCheatingDetection(
                                 cd.trainingInstanceId,
-                                cd.id
-                            )
-                        )
+                                cd.id,
+                            ),
+                        ),
                     ),
                     new RowAction(
                         'archive',
@@ -84,7 +87,7 @@ export class CheatingDetectionTable extends SentinelTable<CheatingDetectionRowAd
                         'primary',
                         'Download ZIP file containing all cheating detection data',
                         of(false),
-                        defer(() => service.download(cd.id))
+                        defer(() => service.download(cd.id)),
                     ),
                     new RowAction(
                         'runAgain',
@@ -93,14 +96,16 @@ export class CheatingDetectionTable extends SentinelTable<CheatingDetectionRowAd
                         'primary',
                         'Rerun Cheating Detection',
                         of(false),
-                        defer(() => service.rerun(cd.id, cd.trainingInstanceId))
+                        defer(() =>
+                            service.rerun(cd.id, cd.trainingInstanceId),
+                        ),
                     ),
                     new DeleteAction(
                         'Delete cheating detection',
                         of(false),
                         defer(() =>
-                            service.delete(cd.id, cd.trainingInstanceId)
-                        )
+                            service.delete(cd.id, cd.trainingInstanceId),
+                        ),
                     ),
                 ];
             default:

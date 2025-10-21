@@ -1,9 +1,9 @@
-import { Component, DestroyRef, inject, Input, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import { Observable } from 'rxjs';
-import { SentinelTable, SentinelTableComponent, TableActionEvent, TableLoadEvent } from '@sentinel/components/table';
+import { SentinelTable, SentinelTableComponent, TableLoadEvent } from '@sentinel/components/table';
 import { AbstractDetectionEvent, TrainingInstance } from '@crczp/training-model';
-import { map, take } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { DetectionEventTable } from '../model/detection-event-table';
 import { DetectionEventService } from '../services/detection-event.service';
 import { ActivatedRoute } from '@angular/router';
@@ -22,7 +22,7 @@ import { PaginationStorageService, providePaginationStorageService } from '@crcz
     imports: [AsyncPipe, SentinelTableComponent],
     providers: [
         providePaginationStorageService(
-            TrainingInstanceDetectionEventComponent
+            TrainingInstanceDetectionEventComponent,
         ),
         {
             provide: DetectionEventService,
@@ -31,11 +31,10 @@ import { PaginationStorageService, providePaginationStorageService } from '@crcz
     ],
 })
 export class TrainingInstanceDetectionEventComponent implements OnInit {
-    @Input() paginationId = 'training-instance-detection-event';
     readonly INIT_SORT_NAME = 'levelId';
     readonly INIT_SORT_DIR = 'asc';
     cheatingDetectionId: number;
-    detectionEvents$: Observable<SentinelTable<AbstractDetectionEvent>>;
+    detectionEvents$: Observable<SentinelTable<AbstractDetectionEvent, string>>;
     hasError$: Observable<boolean>;
     isLoading$: Observable<boolean>;
     trainingInstanceId: number;
@@ -59,7 +58,7 @@ export class TrainingInstanceDetectionEventComponent implements OnInit {
      * Gets new data for table
      * @param loadEvent event emitted by table component to get new data
      */
-    onLoadEvent(loadEvent: TableLoadEvent): void {
+    onLoadEvent(loadEvent: TableLoadEvent<string>): void {
         this.paginationService.savePageSize(loadEvent.pagination.size);
         this.detectionEventService
             .getAll(
@@ -69,20 +68,12 @@ export class TrainingInstanceDetectionEventComponent implements OnInit {
                     0,
                     loadEvent.pagination.size,
                     loadEvent.pagination.sort,
-                    loadEvent.pagination.sortDir
+                    loadEvent.pagination.sortDir,
                 ),
-                loadEvent.filter
+                loadEvent.filter,
             )
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe();
-    }
-
-    /**
-     * Resolves type of emitted event and calls appropriate handler
-     * @param event action event emitted from table component
-     */
-    onTableAction(event: TableActionEvent<AbstractDetectionEvent>): void {
-        event.action.result$.pipe(take(1)).subscribe();
     }
 
     private initTable() {
@@ -93,15 +84,15 @@ export class TrainingInstanceDetectionEventComponent implements OnInit {
                 (resource) =>
                     new DetectionEventTable(
                         resource,
-                        this.detectionEventService
-                    )
-            )
+                        this.detectionEventService,
+                    ),
+            ),
         );
         const initialPagination = new OffsetPaginationEvent(
             0,
             this.paginationService.loadPageSize(),
             this.INIT_SORT_NAME,
-            this.INIT_SORT_DIR
+            this.INIT_SORT_DIR,
         );
         this.onLoadEvent({ pagination: initialPagination });
     }

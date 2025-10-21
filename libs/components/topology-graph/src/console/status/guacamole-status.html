@@ -1,0 +1,5 @@
+<div class="status-wrapper {{is_ok() ? 'status-wrapper--auto-hide' : ''}}">
+    <div [style.background-color]="stateColor()"
+         class="status-indicator"></div>
+    <span class="status-text">{{ stateText() }}</span>
+</div>

@@ -1,18 +1,26 @@
-<div class="spinner-container">
-    <div class="perspective">
-        <div class="scene">
-            <div class="plane xy">
-                <div class="intersection"></div>
-            </div>
-            <div class="plane xz">
-                <div class="intersection"></div>
-            </div>
-            <div class="plane yz">
-                <div class="intersection"></div>
+<div
+    (sentinelResize)="onSpinnerResize($event)"
+    class="wh-100 resize-div"
+>
+    <div
+        [style.transform]="'scale(' + spinnerScale() + ')'"
+        class="spinner-container"
+    >
+        <div class="perspective">
+            <div class="scene">
+                <div class="plane xy">
+                    <div class="intersection"></div>
+                </div>
+                <div class="plane xz">
+                    <div class="intersection"></div>
+                </div>
+                <div class="plane yz">
+                    <div class="intersection"></div>
+                </div>
             </div>
         </div>
+        <div class="line x"></div>
+        <div class="line y"></div>
+        <div class="line z"></div>
     </div>
-    <div class="line x"></div>
-    <div class="line y"></div>
-    <div class="line z"></div>
 </div>

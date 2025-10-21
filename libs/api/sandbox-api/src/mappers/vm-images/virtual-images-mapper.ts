@@ -1,17 +1,17 @@
 /**
  * @dynamic
  */
-import {VirtualImage} from '@crczp/sandbox-model';
-import {VirtualImagesDTO} from '../../dto/vm-images/virtual-images-dto';
-import {OwnerSpecifiedMapper} from './owner-specified-mapper';
+import { VirtualImage } from '@crczp/sandbox-model';
+import { VirtualImageDTO } from '../../dto/vm-images/virtual-image-d-t-o';
+import { OwnerSpecifiedMapper } from './owner-specified-mapper';
 
 export class VirtualImagesMapper {
-    static fromDTOs(dtos: VirtualImagesDTO[]): VirtualImage[] {
+    static fromDTOs(dtos: VirtualImageDTO[]): VirtualImage[] {
         const result = dtos.map((dto) => VirtualImagesMapper.fromDTO(dto));
         return result;
     }
 
-    static fromDTO(dto: VirtualImagesDTO): VirtualImage {
+    static fromDTO(dto: VirtualImageDTO): VirtualImage {
         const resources = new VirtualImage();
         resources.osDistro = dto.os_distro;
         resources.osType = dto.os_type;
@@ -27,7 +27,9 @@ export class VirtualImagesMapper {
         resources.updatedAt = dto.updated_at;
         resources.tags = dto.tags;
         resources.defaultUser = dto.default_user;
-        resources.ownerSpecified = OwnerSpecifiedMapper.fromDTO(dto.owner_specified);
+        resources.ownerSpecified = OwnerSpecifiedMapper.fromDTO(
+            dto.owner_specified,
+        );
         return resources;
     }
 }

@@ -34,11 +34,9 @@ type PathSuffixes<
     AllPaths extends string,
     Prefix extends string
 > = AllPaths extends unknown
-    ? TrimLeadingSlash<AllPaths> extends infer Trimmed
+    ? TrimLeadingSlash<AllPaths> extends infer Trimmed extends string
         ? Prefix extends ''
-            ? Trimmed extends `${infer First}/${string}`
-                ? First
-                : Trimmed
+            ? Trimmed
             : Trimmed extends `${Prefix}/${infer Suffix}`
             ? Suffix
             : Trimmed extends Prefix

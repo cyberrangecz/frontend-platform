@@ -1,19 +1,14 @@
-import { Component, DestroyRef, inject, Input, OnInit } from '@angular/core';
-import { OffsetPaginationEvent } from '@sentinel/common/pagination';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import {
     SentinelControlItem,
-    SentinelControlItemSignal,
     SentinelControlsComponent,
 } from '@sentinel/components/controls';
-import { SandboxDefinition } from '@crczp/sandbox-model';
 import {
-    SentinelTable,
     SentinelTableComponent,
-    TableActionEvent,
     TableLoadEvent,
 } from '@sentinel/components/table';
 import { Observable } from 'rxjs';
-import { map, take } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { SandboxDefinitionTable } from '../model/sandbox-definition-table';
 import {
     SandboxDefinitionOverviewConcreteService,
@@ -26,6 +21,8 @@ import {
     PaginationStorageService,
     providePaginationStorageService,
 } from '@crczp/utils';
+import { createPaginationEvent, PaginationMapper } from '@crczp/api-common';
+import { SandboxDefinitionSort } from '@crczp/sandbox-api';
 
 @Component({
     selector: 'crczp-sandbox-definition-overview',
@@ -46,18 +43,21 @@ import {
  * table with all sandbox definitions and possible actions on sandbox definition.
  */
 export class SandboxDefinitionOverviewComponent implements OnInit {
-    @Input() paginationId = 'crczp-sandbox-definition-overview';
     controls: SentinelControlItem[];
-    sandboxDefinitions$: Observable<SentinelTable<SandboxDefinition>>;
+    sandboxDefinitions$: Observable<SandboxDefinitionTable>;
     hasError$: Observable<boolean>;
     destroyRef = inject(DestroyRef);
     private sandboxDefinitionService = inject(SandboxDefinitionOverviewService);
     private paginationService = inject(PaginationStorageService);
-    private lastLoadEvent: TableLoadEvent;
+    private lastLoadEvent: TableLoadEvent<SandboxDefinitionSort> = {
+        pagination: createPaginationEvent({
+            sort: 'name',
+        }),
+    };
 
     ngOnInit(): void {
         this.controls = SandboxDefinitionOverviewControls.create(
-            this.sandboxDefinitionService
+            this.sandboxDefinitionService,
         );
         this.initTable();
     }
@@ -66,27 +66,12 @@ export class SandboxDefinitionOverviewComponent implements OnInit {
      * Refreshes table with new data
      * @param event to load data
      */
-    onLoadEvent(event: TableLoadEvent): void {
+    onLoadEvent(event: TableLoadEvent<SandboxDefinitionSort>): void {
         this.paginationService.savePageSize(event.pagination.size);
         this.sandboxDefinitionService
-            .getAll(event.pagination)
+            .getAll(PaginationMapper.toOffsetPaginationEvent(event.pagination))
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe();
-    }
-
-    /**
-     * Resolves correct action based on received event and performs it
-     * @param event table action event emitted by child table component
-     */
-    onTableAction(event: TableActionEvent<SandboxDefinition>): void {
-        event.action.result$.pipe(take(1)).subscribe();
-    }
-
-    /**
-     * Navigates to create sandbox definition page
-     */
-    onControlsActions(control: SentinelControlItemSignal): void {
-        control.result$.pipe(take(1)).subscribe();
     }
 
     private initTable() {
@@ -95,16 +80,10 @@ export class SandboxDefinitionOverviewComponent implements OnInit {
                 (resource) =>
                     new SandboxDefinitionTable(
                         resource,
-                        this.sandboxDefinitionService
-                    )
-            )
-        );
-        this.lastLoadEvent = {
-            pagination: new OffsetPaginationEvent(
-                0,
-                this.paginationService.loadPageSize()
+                        this.sandboxDefinitionService,
+                    ),
             ),
-        };
+        );
         this.onLoadEvent(this.lastLoadEvent);
         this.hasError$ = this.sandboxDefinitionService.hasError$;
     }

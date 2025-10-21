@@ -48,7 +48,7 @@ import { PaginationStorageService, providePaginationStorageService } from '@crcz
     styleUrls: ['./training-instance-detection-event-detail.component.css'],
     providers: [
         providePaginationStorageService(
-            TrainingInstanceDetectionEventDetailComponent
+            TrainingInstanceDetectionEventDetailComponent,
         ),
         {
             provide: DetectionEventService,
@@ -78,7 +78,6 @@ import { PaginationStorageService, providePaginationStorageService } from '@crcz
 })
 export class TrainingInstanceDetectionEventDetailComponent implements OnInit {
     @Input() event: AbstractDetectionEvent;
-    @Input() paginationId = 'crczp-training-instance-detection-event-detail';
     readonly INIT_SORT_NAME = 'lastEdited';
     readonly INIT_SORT_DIR = 'asc';
     participantTableHasError$: Observable<boolean>;
@@ -86,8 +85,10 @@ export class TrainingInstanceDetectionEventDetailComponent implements OnInit {
     forbiddenCommandsTableHasError$: Observable<boolean>;
     forbiddenCommandsTableIsLoading$: Observable<boolean>;
     detectionEvent$: Observable<AbstractDetectionEvent>;
-    participants$: Observable<SentinelTable<DetectionEventParticipant>>;
-    forbiddenCommands$: Observable<SentinelTable<DetectedForbiddenCommand>>;
+    participants$: Observable<SentinelTable<DetectionEventParticipant, string>>;
+    forbiddenCommands$: Observable<
+        SentinelTable<DetectedForbiddenCommand, string>
+    >;
     answerSimilarityEvent$: Observable<AnswerSimilarityDetectionEvent>;
     locationSimilarityEvent$: Observable<LocationSimilarityDetectionEvent>;
     timeProximityEvent$: Observable<TimeProximityDetectionEvent>;
@@ -101,17 +102,17 @@ export class TrainingInstanceDetectionEventDetailComponent implements OnInit {
     destroyRef = inject(DestroyRef);
     private detectionEventService = inject(DetectionEventService);
     private detectionEventParticipantService = inject(
-        DetectionEventParticipantService
+        DetectionEventParticipantService,
     );
     private detectionEventForbiddenCommandsService = inject(
-        DetectionEventForbiddenCommandsService
+        DetectionEventForbiddenCommandsService,
     );
     private paginationService = inject(PaginationStorageService);
     private activeRoute = inject(ActivatedRoute);
 
     ngOnInit(): void {
         this.eventId = Number(
-            this.activeRoute.snapshot.paramMap.get('eventId')
+            this.activeRoute.snapshot.paramMap.get('eventId'),
         );
         this.detectionEvent$ = this.detectionEventService.get(this.eventId);
         this.detectionEvent$.subscribe((event) => {
@@ -129,42 +130,42 @@ export class TrainingInstanceDetectionEventDetailComponent implements OnInit {
                 this.eventTypeFormatted = 'Answer similarity';
                 this.answerSimilarityEvent$ =
                     this.detectionEventService.getAnswerSimilarityEventById(
-                        this.eventId
+                        this.eventId,
                     );
                 break;
             case AbstractDetectionEventTypeEnum.Location_similarity:
                 this.eventTypeFormatted = 'Location similarity';
                 this.locationSimilarityEvent$ =
                     this.detectionEventService.getLocationSimilarityEventById(
-                        this.eventId
+                        this.eventId,
                     );
                 break;
             case AbstractDetectionEventTypeEnum.Time_proximity:
                 this.eventTypeFormatted = 'Time proximity';
                 this.timeProximityEvent$ =
                     this.detectionEventService.getTimeProximityEventById(
-                        this.eventId
+                        this.eventId,
                     );
                 break;
             case AbstractDetectionEventTypeEnum.Minimal_solve_time:
                 this.eventTypeFormatted = 'Minimal solve time';
                 this.minimalSolveTimeEvent$ =
                     this.detectionEventService.getMinimalSolveTimeEventById(
-                        this.eventId
+                        this.eventId,
                     );
                 break;
             case AbstractDetectionEventTypeEnum.No_commands:
                 this.eventTypeFormatted = 'No commands';
                 this.noCommandsEvent$ =
                     this.detectionEventService.getNoCommandsEventById(
-                        this.eventId
+                        this.eventId,
                     );
                 break;
             case AbstractDetectionEventTypeEnum.Forbidden_commands:
                 this.eventTypeFormatted = 'Forbidden commands';
                 this.forbiddenCommandsEvent$ =
                     this.detectionEventService.getForbiddenCommandsEventById(
-                        this.eventId
+                        this.eventId,
                     );
                 break;
             default:
@@ -182,13 +183,13 @@ export class TrainingInstanceDetectionEventDetailComponent implements OnInit {
      * @param event action event emitted from table component
      */
     onParticipantTableAction(
-        event: TableActionEvent<DetectionEventParticipant>
+        event: TableActionEvent<DetectionEventParticipant>,
     ): void {
         event.action.result$.pipe(take(1)).subscribe();
     }
 
     onForbiddenCommandTableAction(
-        event: TableActionEvent<DetectedForbiddenCommand>
+        event: TableActionEvent<DetectedForbiddenCommand>,
     ): void {
         event.action.result$.pipe(take(1)).subscribe();
     }
@@ -204,7 +205,7 @@ export class TrainingInstanceDetectionEventDetailComponent implements OnInit {
      * Gets new data for table
      * @param loadEvent event emitted by table component to get new data
      */
-    onLoadEventParticipants(loadEvent: TableLoadEvent): void {
+    onLoadEventParticipants(loadEvent: TableLoadEvent<string>): void {
         this.paginationService.savePageSize(loadEvent.pagination.size);
         this.detectionEventParticipantService
             .getAll(
@@ -213,14 +214,14 @@ export class TrainingInstanceDetectionEventDetailComponent implements OnInit {
                     0,
                     loadEvent.pagination.size,
                     loadEvent.pagination.sort,
-                    loadEvent.pagination.sortDir
-                )
+                    loadEvent.pagination.sortDir,
+                ),
             )
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe();
     }
 
-    onLoadEventForbiddenCommands(loadEvent: TableLoadEvent): void {
+    onLoadEventForbiddenCommands(loadEvent: TableLoadEvent<string>): void {
         this.paginationService.savePageSize(loadEvent.pagination.size);
         this.detectionEventForbiddenCommandsService
             .getAll(
@@ -229,8 +230,8 @@ export class TrainingInstanceDetectionEventDetailComponent implements OnInit {
                     0,
                     loadEvent.pagination.size,
                     loadEvent.pagination.sort,
-                    loadEvent.pagination.sortDir
-                )
+                    loadEvent.pagination.sortDir,
+                ),
             )
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe();
@@ -243,13 +244,13 @@ export class TrainingInstanceDetectionEventDetailComponent implements OnInit {
             this.detectionEventParticipantService.isLoading$;
         this.participants$ =
             this.detectionEventParticipantService.resource$.pipe(
-                map((resource) => new DetectionEventParticipantTable(resource))
+                map((resource) => new DetectionEventParticipantTable(resource)),
             );
         const initialPagination = new OffsetPaginationEvent(
             0,
             this.paginationService.loadPageSize(),
             this.INIT_SORT_NAME,
-            this.INIT_SORT_DIR
+            this.INIT_SORT_DIR,
         );
         this.onLoadEventParticipants({ pagination: initialPagination });
     }
@@ -263,14 +264,14 @@ export class TrainingInstanceDetectionEventDetailComponent implements OnInit {
             this.detectionEventForbiddenCommandsService.resource$.pipe(
                 map(
                     (resource) =>
-                        new DetectionEventForbiddenCommandsTable(resource)
-                )
+                        new DetectionEventForbiddenCommandsTable(resource),
+                ),
             );
         const initialPagination = new OffsetPaginationEvent(
             0,
             this.paginationService.loadPageSize(),
             this.INIT_SORT_NAME,
-            this.INIT_SORT_DIR
+            this.INIT_SORT_DIR,
         );
         this.onLoadEventForbiddenCommands({ pagination: initialPagination });
     }

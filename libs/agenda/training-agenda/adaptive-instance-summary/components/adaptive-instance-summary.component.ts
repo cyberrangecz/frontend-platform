@@ -1,11 +1,10 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { OffsetPaginationEvent } from '@sentinel/common/pagination';
-import { TrainingInstance, TrainingRun } from '@crczp/training-model';
+import { TrainingInstance } from '@crczp/training-model';
 import { Observable } from 'rxjs';
 import { map, switchMap, take, tap } from 'rxjs/operators';
 import { AdaptiveInstanceSummaryService } from '../services/state/summary/adaptive-instance-summary.service';
-import { SentinelTable, TableActionEvent, TableLoadEvent } from '@sentinel/components/table';
+import { TableLoadEvent } from '@sentinel/components/table';
 import { AdaptiveRunService } from '../services/state/runs/adaptive-run.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
@@ -19,6 +18,8 @@ import { AsyncPipe } from '@angular/common';
 import { AdaptiveRunTable } from '../model/adaptive-run-table';
 import { NotificationService, PaginationStorageService, providePaginationStorageService } from '@crczp/utils';
 import { Routing } from '@crczp/routing-commons';
+import { createPaginationEvent, PaginationMapper } from '@crczp/api-common';
+import { TrainingRunSort } from '@crczp/training-api';
 
 /**
  * Smart component of adaptive instance summary
@@ -44,9 +45,8 @@ import { Routing } from '@crczp/routing-commons';
     ],
 })
 export class AdaptiveInstanceSummaryComponent implements OnInit {
-    @Input() paginationId = 'adaptive-instance-summary';
     trainingInstance$: Observable<TrainingInstance>;
-    adaptiveRuns$: Observable<SentinelTable<TrainingRun>>;
+    adaptiveRuns$: Observable<AdaptiveRunTable>;
     adaptiveRunsHasError$: Observable<boolean>;
     hasStarted$: Observable<boolean>;
     trainingInstanceAccessTokenLink: string;
@@ -56,50 +56,44 @@ export class AdaptiveInstanceSummaryComponent implements OnInit {
     destroyRef = inject(DestroyRef);
     private activeRoute = inject(ActivatedRoute);
     private adaptiveInstanceSummaryService = inject(
-        AdaptiveInstanceSummaryService
+        AdaptiveInstanceSummaryService,
     );
     private paginationService = inject(PaginationStorageService);
     private adaptiveRunService = inject(AdaptiveRunService);
     private notificationService = inject(NotificationService);
+
+    private readonly trainingRunPagination =
+        createPaginationEvent<TrainingRunSort>({
+            sort: 'startTime',
+        });
 
     ngOnInit(): void {
         this.trainingInstance$ = this.activeRoute.data.pipe(
             map((data) => data[TrainingInstance.name] || null),
             tap((ti) => {
                 this.initSummaryComponent(ti);
-            })
+            }),
         );
         this.initAdaptiveRunsComponent();
-    }
-
-    /**
-     * Resolves type of action and calls handler
-     * @param event action event emitted from table
-     */
-    onTrainingRunTableAction(event: TableActionEvent<TrainingRun>): void {
-        event.action.result$.pipe(take(1)).subscribe();
     }
 
     /**
      * Calls service to get new data for table
      * @param event reload data event emitted from table
      */
-    onTrainingRunTableLoadEvent(event: TableLoadEvent): void {
+    onTrainingRunTableLoadEvent(event: TableLoadEvent<TrainingRunSort>): void {
         this.paginationService.savePageSize(event.pagination.size);
         this.trainingInstance$
             .pipe(
                 switchMap((ti) =>
                     this.adaptiveRunService.getAll(
                         ti.id,
-                        new OffsetPaginationEvent(
-                            0,
-                            event.pagination.size,
-                            event.pagination.sort,
-                            event.pagination.sortDir
-                        )
-                    )
+                        PaginationMapper.toOffsetPaginationEvent(
+                            event.pagination,
+                        ),
+                    ),
                 ),
-                takeUntilDestroyed(this.destroyRef)
+                takeUntilDestroyed(this.destroyRef),
             )
             .subscribe();
     }
@@ -132,23 +126,20 @@ export class AdaptiveInstanceSummaryComponent implements OnInit {
     }
 
     private initAdaptiveRunsComponent() {
-        const initialPagination = new OffsetPaginationEvent(
-            0,
-            this.paginationService.loadPageSize(),
-            '',
-            'asc'
-        );
         this.trainingInstance$
             .pipe(
                 take(1),
                 switchMap((ti) =>
-                    this.adaptiveRunService.getAll(ti.id, initialPagination)
-                )
+                    this.adaptiveRunService.getAll(
+                        ti.id,
+                        this.trainingRunPagination,
+                    ),
+                ),
             )
             .subscribe();
         this.adaptiveRuns$ = this.adaptiveRunService.resource$.pipe(
             takeUntilDestroyed(this.destroyRef),
-            map((resource) => new AdaptiveRunTable(resource))
+            map((resource) => new AdaptiveRunTable(resource)),
         );
         this.adaptiveRunsHasError$ = this.adaptiveRunService.hasError$;
     }

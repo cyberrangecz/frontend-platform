@@ -1,9 +1,10 @@
-import {merge, Observable} from 'rxjs';
-import {OffsetPaginatedElementsPollingService} from '@sentinel/common';
-import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
-import {RequestStage} from '@crczp/sandbox-model';
-import {filter, map, shareReplay, switchMap, tap} from 'rxjs/operators';
-import {StagesDetailPollRegistry} from './stages-detail-poll-registry.service';
+import { merge, Observable, takeUntil } from 'rxjs';
+import { OffsetPaginatedElementsPollingService } from '@sentinel/common';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
+import { RequestStage } from '@crczp/sandbox-model';
+import { filter, map, tap } from 'rxjs/operators';
+import { StagesDetailPollRegistry } from './stages-detail-poll-registry.service';
+import { OffsetPaginatedResource } from '@crczp/api-common';
 
 export abstract class StageDetailService extends OffsetPaginatedElementsPollingService<string> {
     private lastStage: RequestStage;
@@ -14,10 +15,16 @@ export abstract class StageDetailService extends OffsetPaginatedElementsPollingS
         pollingPeriod: number,
     ) {
         super(pageSize, pollingPeriod);
-        this.resource$ = merge(this.resourceSubject$.asObservable(), this.createStoppablePoll(pollingPeriod));
+        this.resource$ = merge(
+            this.resourceSubject$.asObservable(),
+            this.pollUntilFound(),
+        );
     }
 
-    getAll(stage: RequestStage, requestedPagination: OffsetPaginationEvent): Observable<PaginatedResource<string>> {
+    getAll(
+        stage: RequestStage,
+        requestedPagination: OffsetPaginationEvent<string>,
+    ): Observable<OffsetPaginatedResource<string>> {
         this.onManualResourceRefresh(requestedPagination, stage);
         return this.callApiToGetStageDetail(stage, requestedPagination).pipe(
             tap(
@@ -27,27 +34,32 @@ export abstract class StageDetailService extends OffsetPaginatedElementsPollingS
         );
     }
 
-    protected createStoppablePoll(pollingPeriod: number): Observable<PaginatedResource<string>> {
+    protected pollUntilFound(): Observable<OffsetPaginatedResource<string>> {
         const shouldBePolled$ = this.pollRegistry.polledStageIds$.pipe(
-            map((polledIds) => polledIds.includes(this.lastStage.id)),
+            filter((polledIds) => polledIds.includes(this.lastStage.id)),
         );
-        return shouldBePolled$.pipe(
-            filter((shouldBePolled) => shouldBePolled),
-            switchMap(() => this.refreshResource()),
-            shareReplay(Number.POSITIVE_INFINITY, pollingPeriod),
+        return super.createPoll().pipe(
+            takeUntil(shouldBePolled$),
+            map((resources) =>
+                OffsetPaginatedResource.fromPaginatedElements(resources),
+            ),
         );
     }
 
-    protected onManualResourceRefresh(pagination: OffsetPaginationEvent, ...params: any[]): void {
+    protected onManualResourceRefresh(
+        pagination: OffsetPaginationEvent<string>,
+        ...params: any[]
+    ): void {
         super.onManualResourceRefresh(pagination, ...params);
         this.lastStage = params[0];
     }
 
-    protected refreshResource(): Observable<PaginatedResource<string>> {
+    protected refreshResource(): Observable<OffsetPaginatedResource<string>> {
         this.hasErrorSubject$.next(false);
-        return this.callApiToGetStageDetail(this.lastStage, this.lastPagination).pipe(
-            tap({ error: () => this.onGetAllError() }),
-        );
+        return this.callApiToGetStageDetail(
+            this.lastStage,
+            this.lastPagination,
+        ).pipe(tap({ error: () => this.onGetAllError() }));
     }
 
     protected onGetAllError(): void {
@@ -56,6 +68,6 @@ export abstract class StageDetailService extends OffsetPaginatedElementsPollingS
 
     protected abstract callApiToGetStageDetail(
         stage: RequestStage,
-        requestedPagination: OffsetPaginationEvent,
-    ): Observable<PaginatedResource<string>>;
+        requestedPagination: OffsetPaginationEvent<string>,
+    ): Observable<OffsetPaginatedResource<string>>;
 }

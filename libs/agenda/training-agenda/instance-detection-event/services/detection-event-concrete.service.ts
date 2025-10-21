@@ -1,21 +1,21 @@
 import { inject, Injectable } from '@angular/core';
-import { DetectionEventApi } from '@crczp/training-api';
+import { AbstractDetectionEventSort, DetectionEventApi } from '@crczp/training-api';
 import { Router } from '@angular/router';
-import { DetectionEventService } from './detection-event.service';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import { from, Observable } from 'rxjs';
 import { AbstractDetectionEvent } from '@crczp/training-model';
 import { tap } from 'rxjs/operators';
 import { DetectionEventFilter } from '../model/detection-event-filter';
 import { PortalConfig } from '@crczp/utils';
 import { Routing } from '@crczp/routing-commons';
+import { CrczpOffsetElementsPaginatedService, OffsetPaginatedResource } from '@crczp/api-common';
 
 /**
  * Basic implementation of a layer between a component and an API services.
  * Can get cheating detections and perform various operations to modify them
  */
 @Injectable()
-export class DetectionEventConcreteService extends DetectionEventService {
+export class DetectionEventConcreteService extends CrczpOffsetElementsPaginatedService<AbstractDetectionEvent> {
     private api = inject(DetectionEventApi);
     private router = inject(Router);
 
@@ -33,24 +33,24 @@ export class DetectionEventConcreteService extends DetectionEventService {
     public getAll(
         cheatingDetectionId: number,
         trainingInstanceId: number,
-        pagination: OffsetPaginationEvent,
-        filter: string = null
-    ): Observable<PaginatedResource<AbstractDetectionEvent>> {
+        pagination: OffsetPaginationEvent<AbstractDetectionEventSort>,
+        filter: string = null,
+    ): Observable<OffsetPaginatedResource<AbstractDetectionEvent>> {
         const filters = filter ? [new DetectionEventFilter(filter)] : [];
         return this.api
             .getAll(
                 pagination,
                 cheatingDetectionId,
                 trainingInstanceId,
-                filters
+                filters,
             )
             .pipe(
                 tap(
                     (events) => {
                         this.resourceSubject$.next(events);
                     },
-                    () => this.onGetAllError()
-                )
+                    () => this.onGetAllError(),
+                ),
             );
     }
 
@@ -63,7 +63,7 @@ export class DetectionEventConcreteService extends DetectionEventService {
     toDetectionEventDetail(
         trainingInstanceId: number,
         cheatingDetectionId: number,
-        detectionEventId: number
+        detectionEventId: number,
     ): Observable<any> {
         return from(
             this.router.navigate([
@@ -72,7 +72,7 @@ export class DetectionEventConcreteService extends DetectionEventService {
                     .cheating_detection.detectionId(cheatingDetectionId)
                     .event.eventId(detectionEventId)
                     .build(),
-            ])
+            ]),
         );
     }
 

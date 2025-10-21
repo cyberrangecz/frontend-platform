@@ -1,10 +1,11 @@
 import { DatePipe } from '@angular/common';
-import { PaginatedResource } from '@sentinel/common/pagination';
 import { TrainingRun, TrainingRunStateEnum } from '@crczp/training-model';
 import { Column, ExpandableSentinelTable, Row, RowExpand } from '@sentinel/components/table';
 import { TrainingRunRowAdapter } from './training-run-row-adapter';
 import { TrainingRunInfoComponent } from '../components/runs/detail/training-run-info.component';
 import { Utils } from '@crczp/utils';
+import { TrainingRunSort } from '@crczp/training-api';
+import { OffsetPaginatedResource } from '@crczp/api-common';
 
 /**
  * @dynamic
@@ -12,23 +13,43 @@ import { Utils } from '@crczp/utils';
 export class TrainingRunTable extends ExpandableSentinelTable<
     TrainingRun,
     TrainingRunInfoComponent,
-    null
+    null,
+    TrainingRunSort
 > {
-    constructor(resource: PaginatedResource<TrainingRun>) {
+    constructor(resource: OffsetPaginatedResource<TrainingRun>) {
         const columns = [
-            new Column('playerName', 'player', true, 'participantRef'),
-            new Column('startTimeFormatted', 'start time', true, 'startTime'),
-            new Column('endTimeFormatted', 'end time', true, 'endTime'),
-            new Column('state', 'run state', true, 'state'),
-            new Column('duration', 'duration', false),
-            new Column('sandboxInstanceAllocationId', 'sandbox id', false),
+            new Column<TrainingRunSort>(
+                'playerName',
+                'player',
+                true,
+                'participantRef',
+            ),
+            new Column<TrainingRunSort>(
+                'startTimeFormatted',
+                'start time',
+                true,
+                'startTime',
+            ),
+            new Column<TrainingRunSort>(
+                'endTimeFormatted',
+                'end time',
+                true,
+                'endTime',
+            ),
+            new Column<TrainingRunSort>('state', 'run state', true, 'state'),
+            new Column<TrainingRunSort>('duration', 'duration', false),
+            new Column<TrainingRunSort>(
+                'sandboxInstanceAllocationId',
+                'sandbox id',
+                false,
+            ),
             /**
              * DISABLED FOR THE 23.03 release
              */
-            // new Column('hasDetectionEvents', 'has detection events', false),
+            // new Column<string>('hasDetectionEvents', 'has detection events', false),
         ];
         const rows = resource.elements.map((element) =>
-            TrainingRunTable.createRow(element)
+            TrainingRunTable.createRow(element),
         );
         const expand = new RowExpand(TrainingRunInfoComponent, null);
         super(rows, columns, expand);
@@ -45,7 +66,7 @@ export class TrainingRunTable extends ExpandableSentinelTable<
             adapter.endTimeFormatted = `${datePipe.transform(adapter.endTime)}`;
             adapter.duration = Utils.Date.timeBetweenDatesSimple(
                 adapter.startTime,
-                adapter.endTime
+                adapter.endTime,
             );
         } else {
             adapter.endTimeFormatted = '-';

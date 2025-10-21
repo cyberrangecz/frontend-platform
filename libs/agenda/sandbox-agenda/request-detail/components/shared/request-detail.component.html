@@ -2,25 +2,36 @@
     @if (hasError$ | async) {
         <mat-card appearance="outlined" class="error">
             <span>We had some trouble loading the data.</span>
-            <button mat-icon-button (click)="reloadStages()" color="primary">
+            <button (click)="reloadStages()" color="primary" mat-icon-button>
                 <mat-icon>refresh</mat-icon>
             </button>
         </mat-card>
     }
     @if (stages?.length > 0) {
         @for (stage of stages.values(); track trackByFn(i, stage); let i = $index) {
-            @if ((fragment && 'stage-' + i === fragment) || !fragment) {
-                <crczp-request-stage
-                    id="{{ 'stage-' + i }}"
-                    [stage]="stage"
-                    (stageDetailPanelChange)="onStageDetailPanelChange($event, stage)"
-                >
-                </crczp-request-stage>
+            @if (window.innerWidth < 3000 && fragment) {
+                <div class="stages-content-single">
+                    @if ((fragment && 'stage-' + i === fragment) || !fragment) {
+                        <crczp-request-stage
+                            (stageDetailPanelChange)="onStageDetailPanelChange($event, stage)"
+                            [stage]="stage"
+                            id="{{ 'stage-' + i }}"
+                        />
+                    }
+                </div>
+            } @else {
+                <div class="stages-content {{'stages-content.' + fragment}}">
+                    <crczp-request-stage
+                        (stageDetailPanelChange)="onStageDetailPanelChange($event, stage)"
+                        c[stage]="stage"
+                        id="{{ 'stage-' + i }}"
+                    />
+                </div>
             }
         }
-    } @else {
-        @if ((isLoading$ | async) === false) {
-            <h2>Request has no stages</h2>
-        }
+    }
+} @else {
+    @if ((isLoading$ | async) === false) {
+        <h2>Request has no stages</h2>
     }
 }

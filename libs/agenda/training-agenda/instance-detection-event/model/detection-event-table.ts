@@ -1,29 +1,40 @@
 import { DatePipe } from '@angular/common';
-import { PaginatedResource } from '@sentinel/common/pagination';
 import { Column, Row, RowAction, SentinelTable } from '@sentinel/components/table';
 import { AbstractDetectionEvent, AbstractDetectionEventTypeEnum } from '@crczp/training-model';
 import { DetectionEventRowAdapter } from './detection-event-row-adapter';
 import { defer, of } from 'rxjs';
 import { DetectionEventService } from '../services/detection-event.service';
+import { OffsetPaginatedResource } from '@crczp/api-common';
 
 /**
  * Helper class transforming paginated resource to class for common table component
  * @dynamic
  */
-export class DetectionEventTable extends SentinelTable<DetectionEventRowAdapter> {
+export class DetectionEventTable extends SentinelTable<
+    DetectionEventRowAdapter,
+    string
+> {
     constructor(
-        resource: PaginatedResource<AbstractDetectionEvent>,
-        service: DetectionEventService
+        resource: OffsetPaginatedResource<AbstractDetectionEvent>,
+        service: DetectionEventService,
     ) {
         const columns = [
-            new Column('levelTitle', 'level title', true, 'levelTitle'),
-            new Column('levelId', 'level id', true, 'levelId'),
-            new Column('participantCount', 'number of participants', false),
-            new Column('participants', 'participants', false),
-            new Column('detectionEventTypeFormatted', 'detection type', false),
+            new Column<string>('levelTitle', 'level title', true, 'levelTitle'),
+            new Column<string>('levelId', 'level id', true, 'levelId'),
+            new Column<string>(
+                'participantCount',
+                'number of participants',
+                false,
+            ),
+            new Column<string>('participants', 'participants', false),
+            new Column<string>(
+                'detectionEventTypeFormatted',
+                'detection type',
+                false,
+            ),
         ];
         const rows = resource.elements.map((element) =>
-            DetectionEventTable.createRow(element, service)
+            DetectionEventTable.createRow(element, service),
         );
         super(rows, columns);
         this.pagination = resource.pagination;
@@ -32,22 +43,22 @@ export class DetectionEventTable extends SentinelTable<DetectionEventRowAdapter>
 
     private static createRow(
         element: AbstractDetectionEvent,
-        service: DetectionEventService
+        service: DetectionEventService,
     ): Row<DetectionEventRowAdapter> {
         const datePipe = new DatePipe('en-EN');
         const adapter = element as DetectionEventRowAdapter;
 
         adapter.detectedAtFormatted = `${datePipe.transform(
-            adapter.detectedAt
+            adapter.detectedAt,
         )}`;
         adapter.detectionEventTypeFormatted = this.evaluateEventTypeString(
-            adapter.detectionEventType
+            adapter.detectionEventType,
         );
         return new Row(adapter, this.createActions(element, service));
     }
 
     private static evaluateEventTypeString(
-        type: AbstractDetectionEventTypeEnum
+        type: AbstractDetectionEventTypeEnum,
     ): string {
         switch (type) {
             case AbstractDetectionEventTypeEnum.Answer_similarity:
@@ -69,14 +80,14 @@ export class DetectionEventTable extends SentinelTable<DetectionEventRowAdapter>
 
     private static createActions(
         de: AbstractDetectionEvent,
-        service: DetectionEventService
+        service: DetectionEventService,
     ): RowAction[] {
         return [...this.createStateActions(de, service)];
     }
 
     private static createStateActions(
         de: AbstractDetectionEvent,
-        service: DetectionEventService
+        service: DetectionEventService,
     ): RowAction[] {
         return [
             new RowAction(
@@ -90,9 +101,9 @@ export class DetectionEventTable extends SentinelTable<DetectionEventRowAdapter>
                     service.toDetectionEventDetail(
                         de.trainingInstanceId,
                         de.cheatingDetectionId,
-                        de.id
-                    )
-                )
+                        de.id,
+                    ),
+                ),
             ),
         ];
     }

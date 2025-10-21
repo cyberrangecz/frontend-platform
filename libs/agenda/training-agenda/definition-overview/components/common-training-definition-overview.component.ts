@@ -1,28 +1,23 @@
 import { Component, DestroyRef, inject, OnInit } from '@angular/core';
-import { OffsetPaginationEvent } from '@sentinel/common/pagination';
-import {
-    SentinelControlItem,
-    SentinelControlItemSignal,
-    SentinelControlsComponent
-} from '@sentinel/components/controls';
+import { SentinelControlItem, SentinelControlsComponent } from '@sentinel/components/controls';
 import { TrainingDefinition, TrainingDefinitionStateEnum } from '@crczp/training-model';
 import {
     SentinelRowDirective,
     SentinelTable,
     SentinelTableComponent,
-    TableActionEvent,
     TableLoadEvent
 } from '@sentinel/components/table';
 import { Observable } from 'rxjs';
-import { map, take } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { TrainingDefinitionOverviewControls } from '../model/training-definition-overview-controls';
 import { TrainingDefinitionTable } from '../model/training-definition-table';
 import { TrainingDefinitionService } from '../services/state/training-definition.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { TrainingDefinitionConcreteService } from '../services/state/training-definition-concrete.service';
 import { AsyncPipe } from '@angular/common';
 import { TableDateCellComponent, TableStateCellComponent } from '@crczp/components';
 import { FileUploadProgressService, PaginationStorageService } from '@crczp/utils';
+import { createPaginationEvent, PaginationMapper } from '@crczp/api-common';
+import { TrainingDefinitionSort } from '@crczp/training-api';
 
 /**
  * Main smart component of training definition overview
@@ -43,7 +38,7 @@ import { FileUploadProgressService, PaginationStorageService } from '@crczp/util
         FileUploadProgressService,
         {
             provide: TrainingDefinitionService,
-            useClass: TrainingDefinitionConcreteService,
+            useClass: TrainingDefinitionService,
         },
     ],
 })
@@ -51,7 +46,7 @@ export class CommonTrainingDefinitionOverviewComponent implements OnInit {
     readonly INIT_SORT_NAME = 'lastEdited';
     readonly INIT_SORT_DIR = 'desc';
 
-    trainingDefinitions$: Observable<SentinelTable<TrainingDefinition>>;
+    trainingDefinitions$: Observable<SentinelTable<TrainingDefinition, string>>;
     hasError$: Observable<boolean>;
     isLoading$: Observable<boolean>;
     topControls: SentinelControlItem[] = [];
@@ -62,11 +57,11 @@ export class CommonTrainingDefinitionOverviewComponent implements OnInit {
 
     ngOnInit(): void {
         this.topControls = TrainingDefinitionOverviewControls.createTopControls(
-            this.trainingDefinitionService
+            this.trainingDefinitionService,
         );
         this.bottomControls =
             TrainingDefinitionOverviewControls.createBottomControls(
-                this.trainingDefinitionService
+                this.trainingDefinitionService,
             );
         this.initTable();
     }
@@ -75,17 +70,12 @@ export class CommonTrainingDefinitionOverviewComponent implements OnInit {
      * Gets new data for table
      * @param loadEvent event emitted by table component to get new data
      */
-    onLoadEvent(loadEvent: TableLoadEvent): void {
+    onLoadEvent(loadEvent: TableLoadEvent<TrainingDefinitionSort>): void {
         this.paginationService.savePageSize(loadEvent.pagination.size);
         this.trainingDefinitionService
             .getAll(
-                new OffsetPaginationEvent(
-                    0,
-                    loadEvent.pagination.size,
-                    loadEvent.pagination.sort,
-                    loadEvent.pagination.sortDir
-                ),
-                loadEvent.filter
+                PaginationMapper.toOffsetPaginationEvent(loadEvent.pagination),
+                loadEvent.filter,
             )
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe();
@@ -95,17 +85,6 @@ export class CommonTrainingDefinitionOverviewComponent implements OnInit {
      * Resolves controls action and calls appropriate handler
      * @param control selected control emitted by controls component
      */
-    onControlsAction(control: SentinelControlItemSignal): void {
-        control.result$.pipe(take(1)).subscribe();
-    }
-
-    /**
-     * Resolves type of emitted event and calls appropriate handler
-     * @param event action event emitted from table component
-     */
-    onTableAction(event: TableActionEvent<TrainingDefinition>): void {
-        event.action.result$.pipe(take(1)).subscribe();
-    }
 
     stateToIcon(value: TrainingDefinitionStateEnum): string {
         switch (value) {
@@ -127,16 +106,15 @@ export class CommonTrainingDefinitionOverviewComponent implements OnInit {
                     (resource) =>
                         new TrainingDefinitionTable(
                             resource,
-                            this.trainingDefinitionService
-                        )
-                )
+                            this.trainingDefinitionService,
+                        ),
+                ),
             );
-        const initialPagination = new OffsetPaginationEvent(
-            0,
-            this.paginationService.loadPageSize(),
-            this.INIT_SORT_NAME,
-            this.INIT_SORT_DIR
-        );
-        this.onLoadEvent({ pagination: initialPagination });
+        this.onLoadEvent({
+            pagination: createPaginationEvent({
+                sort: 'id',
+                pageSize: this.paginationService.loadPageSize(),
+            }),
+        });
     }
 }

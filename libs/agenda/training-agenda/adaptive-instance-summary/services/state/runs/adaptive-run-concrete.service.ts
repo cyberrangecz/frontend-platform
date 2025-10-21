@@ -1,11 +1,12 @@
 import { inject, Injectable } from '@angular/core';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
-import { AdaptiveTrainingInstanceApi } from '@crczp/training-api';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
+import { AdaptiveTrainingInstanceApi, TrainingRunSort } from '@crczp/training-api';
 import { TrainingRun } from '@crczp/training-model';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { AdaptiveRunService } from './adaptive-run.service';
 import { PortalConfig } from '@crczp/utils';
+import { OffsetPaginatedResource } from '@crczp/api-common';
 
 /**
  * Basic implementation of layer between component and API service.
@@ -26,8 +27,8 @@ export class AdaptiveRunConcreteService extends AdaptiveRunService {
      */
     getAll(
         trainingInstanceId: number,
-        pagination: OffsetPaginationEvent
-    ): Observable<PaginatedResource<TrainingRun>> {
+        pagination: OffsetPaginationEvent<TrainingRunSort>,
+    ): Observable<OffsetPaginatedResource<TrainingRun>> {
         return this.adaptiveInstanceApi
             .getAssociatedTrainingRuns(trainingInstanceId, pagination)
             .pipe(
@@ -35,8 +36,8 @@ export class AdaptiveRunConcreteService extends AdaptiveRunService {
                     (runs) => {
                         this.resourceSubject$.next(runs);
                     },
-                    () => this.onGetAllError()
-                )
+                    () => this.onGetAllError(),
+                ),
             );
     }
 

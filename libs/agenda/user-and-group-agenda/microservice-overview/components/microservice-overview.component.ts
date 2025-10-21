@@ -8,28 +8,27 @@ import {
     Component,
     DestroyRef,
     inject,
-    Input,
     OnInit,
 } from '@angular/core';
 import { defer, Observable, of } from 'rxjs';
 import {
     SentinelTable,
     SentinelTableComponent,
-    TableActionEvent,
     TableLoadEvent,
 } from '@sentinel/components/table';
 import {
     SentinelControlItem,
-    SentinelControlItemSignal,
     SentinelControlsComponent,
 } from '@sentinel/components/controls';
-import { map, take } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AsyncPipe } from '@angular/common';
 import {
     PaginationStorageService,
     providePaginationStorageService,
 } from '@crczp/utils';
+import { createPaginationEvent } from '@crczp/api-common';
+import { MicroserviceSort } from '@crczp/user-and-group-api';
 
 @Component({
     selector: 'crczp-microservice-overview',
@@ -45,13 +44,12 @@ import {
     ],
 })
 export class MicroserviceOverviewComponent implements OnInit {
-    @Input() paginationId = 'crczp-microservice-overview';
     readonly INIT_SORT_NAME = 'name';
     readonly INIT_SORT_DIR = 'asc';
     /**
      * Data for microservices table component
      */
-    microservices$: Observable<SentinelTable<Microservice>>;
+    microservices$: Observable<SentinelTable<Microservice, string>>;
     /**
      * True if error was thrown while getting data for microservies table, false otherwise
      */
@@ -60,18 +58,16 @@ export class MicroserviceOverviewComponent implements OnInit {
     destroyRef = inject(DestroyRef);
     private microserviceService = inject(MicroserviceOverviewService);
     private paginationService = inject(PaginationStorageService);
+    private readonly initPagination = createPaginationEvent<MicroserviceSort>(
+        {},
+    );
 
     ngOnInit(): void {
-        const initialLoadEvent: TableLoadEvent = {
-            pagination: new OffsetPaginationEvent(
-                0,
-                this.paginationService.loadPageSize(),
-                this.INIT_SORT_NAME,
-                this.INIT_SORT_DIR
-            ),
+        const initialLoadEvent: TableLoadEvent<string> = {
+            pagination: this.initPagination,
         };
         this.microservices$ = this.microserviceService.resource$.pipe(
-            map((microservices) => new MicroserviceTable(microservices))
+            map((microservices) => new MicroserviceTable(microservices)),
         );
         this.microservicesHasError$ = this.microserviceService.hasError$;
         this.microserviceService.selected$
@@ -80,28 +76,19 @@ export class MicroserviceOverviewComponent implements OnInit {
         this.onTableLoadEvent(initialLoadEvent);
     }
 
-    onControlsAction(controlItem: SentinelControlItemSignal): void {
-        controlItem.result$.pipe(take(1)).subscribe();
-    }
-
     /**
      * Clears selected microservices and calls service to get new data for microservices table
      * @param event event emitted from table component
      */
-    onTableLoadEvent(event: TableLoadEvent): void {
+    onTableLoadEvent(event: TableLoadEvent<string>): void {
         this.paginationService.savePageSize(event.pagination.size);
         this.microserviceService
-            .getAll(event.pagination as OffsetPaginationEvent, event.filter)
+            .getAll(
+                event.pagination as OffsetPaginationEvent<MicroserviceSort>,
+                event.filter,
+            )
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe();
-    }
-
-    /**
-     * Resolves type of action call appropriate handler
-     * @param event action event emitted by table component
-     */
-    onTableAction(event: TableActionEvent<Microservice>): void {
-        event.action.result$.pipe(take(1)).subscribe();
     }
 
     private initControls() {
@@ -109,7 +96,7 @@ export class MicroserviceOverviewComponent implements OnInit {
             new RegisterControlItem(
                 'Register',
                 of(false),
-                defer(() => this.microserviceService.register())
+                defer(() => this.microserviceService.register()),
             ),
         ];
     }

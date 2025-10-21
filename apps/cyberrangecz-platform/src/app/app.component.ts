@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, inject, OnInit } from '@angular/core';
+import { AfterViewInit, Component, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { SentinelAuthService } from '@sentinel/auth';
 import { AgendaContainer } from '@sentinel/layout';
@@ -14,6 +14,7 @@ import { ValidPath } from '@crczp/routing-commons';
 import { Utils } from '@crczp/utils';
 import { CommonModule } from '@angular/common';
 import { SentinelLayout1Component } from '@sentinel/layout/layout1';
+import { ToolbarComponent } from '@sentinel/layout/common-components';
 
 /**
  * Main component serving as wrapper for layout and router outlet
@@ -23,7 +24,12 @@ import { SentinelLayout1Component } from '@sentinel/layout/layout1';
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.scss'],
     standalone: true,
-    imports: [CommonModule, RouterOutlet, SentinelLayout1Component],
+    imports: [
+        CommonModule,
+        RouterOutlet,
+        SentinelLayout1Component,
+        ToolbarComponent,
+    ],
 })
 export class AppComponent implements OnInit, AfterViewInit {
     title$: Observable<string>;
@@ -31,10 +37,18 @@ export class AppComponent implements OnInit, AfterViewInit {
     agendaContainers$: Observable<AgendaContainer[]>;
     notificationRoute: ValidPath = 'notifications';
     version = '';
+    hideSidebar = signal<boolean>(false);
     protected readonly loadingService = inject(LoadingService);
     protected readonly authService = inject(SentinelAuthService);
     private readonly router = inject(Router);
     private readonly activatedRoute = inject(ActivatedRoute);
+
+    constructor() {
+        this.activatedRoute.queryParams.subscribe((params) => {
+            console.log(params);
+            this.hideSidebar.set(params['hideSidebar'] === 'true');
+        });
+    }
 
     ngOnInit(): void {
         this.title$ = this.getTitleFromRouter();
@@ -42,8 +56,8 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.agendaContainers$ = this.authService.activeUser$.pipe(
             filter((user) => user != null),
             map((user) =>
-                Utils.NavBar.buildNav(NavConfigFactory.buildNavConfig(user))
-            )
+                Utils.NavBar.buildNav(NavConfigFactory.buildNavConfig(user)),
+            ),
         );
 
         this.version =
@@ -76,7 +90,7 @@ export class AppComponent implements OnInit, AfterViewInit {
             }),
             filter((route) => route.outlet === 'primary'),
             map((route) => route.snapshot),
-            map((snapshot) => snapshot.data['title'])
+            map((snapshot) => snapshot.data['title']),
         );
     }
 
@@ -92,7 +106,7 @@ export class AppComponent implements OnInit, AfterViewInit {
             }),
             filter((route) => route.outlet === 'primary'),
             map((route) => route.snapshot),
-            map((snapshot) => snapshot.data['subtitle'])
+            map((snapshot) => snapshot.data['subtitle']),
         );
     }
 }

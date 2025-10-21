@@ -9,8 +9,12 @@ import {
     Output,
     SimpleChanges,
 } from '@angular/core';
-import {QuestionnairePhaseEditFormGroup} from './questionnaire-phase-edit-form-group';
-import {AbstractControl, ReactiveFormsModule, UntypedFormArray} from '@angular/forms';
+import { QuestionnairePhaseEditFormGroup } from './questionnaire-phase-edit-form-group';
+import {
+    AbstractControl,
+    ReactiveFormsModule,
+    UntypedFormArray,
+} from '@angular/forms';
 import {
     AdaptiveQuestion,
     Phase,
@@ -20,21 +24,27 @@ import {
     QuestionTypeEnum,
     TrainingPhase,
 } from '@crczp/training-model';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {QuestionsOverviewComponent} from "./question/overview/questions-overview.component";
-import {MatIcon} from "@angular/material/icon";
-import {MatError, MatFormField, MatInput, MatLabel, MatSuffix} from "@angular/material/input";
-import {MatDivider} from "@angular/material/divider";
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { QuestionsOverviewComponent } from './question/overview/questions-overview.component';
+import { MatIcon } from '@angular/material/icon';
+import {
+    MatError,
+    MatFormField,
+    MatInput,
+    MatLabel,
+    MatSuffix,
+} from '@angular/material/input';
+import { MatDivider } from '@angular/material/divider';
 import {
     MatExpansionPanel,
     MatExpansionPanelContent,
     MatExpansionPanelHeader,
-    MatExpansionPanelTitle
-} from "@angular/material/expansion";
+    MatExpansionPanelTitle,
+} from '@angular/material/expansion';
 
-import {MatMenu, MatMenuItem, MatMenuTrigger} from "@angular/material/menu";
-import {MatTooltip} from "@angular/material/tooltip";
-import {MatButton, MatIconButton} from "@angular/material/button";
+import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
+import { MatTooltip } from '@angular/material/tooltip';
+import { MatButton, MatIconButton } from '@angular/material/button';
 
 @Component({
     selector: 'crczp-questionnaire-phase-configuration',
@@ -60,12 +70,13 @@ import {MatButton, MatIconButton} from "@angular/material/button";
         MatLabel,
         MatIconButton,
         MatSuffix,
-        MatInput
-    ]
+        MatInput,
+    ],
 })
 export class QuestionnairePhaseEditComponent implements OnChanges {
     @Input() phase: QuestionnairePhase;
-    @Output() phaseChange: EventEmitter<QuestionnairePhase> = new EventEmitter();
+    @Output() phaseChange: EventEmitter<QuestionnairePhase> =
+        new EventEmitter();
     @Input() updateQuestionsFlag: boolean;
     @Input() presentTrainingPhases: TrainingPhase[];
 
@@ -78,11 +89,15 @@ export class QuestionnairePhaseEditComponent implements OnChanges {
     }
 
     get questions(): UntypedFormArray {
-        return this.questionnaireFormGroup.formGroup.get('questions') as UntypedFormArray;
+        return this.questionnaireFormGroup.formGroup.get(
+            'questions',
+        ) as UntypedFormArray;
     }
 
     get phaseRelations(): UntypedFormArray {
-        return this.questionnaireFormGroup.formGroup.get('phaseRelations') as UntypedFormArray;
+        return this.questionnaireFormGroup.formGroup.get(
+            'phaseRelations',
+        ) as UntypedFormArray;
     }
 
     get phaseRelationMenuItems(): Phase[] {
@@ -93,7 +108,9 @@ export class QuestionnairePhaseEditComponent implements OnChanges {
 
     ngOnChanges(changes: SimpleChanges): void {
         if ('phase' in changes || 'updateQuestionsFlag' in changes) {
-            this.questionnaireFormGroup = new QuestionnairePhaseEditFormGroup(this.phase);
+            this.questionnaireFormGroup = new QuestionnairePhaseEditFormGroup(
+                this.phase,
+            );
             this.phase.questions.forEach((question) => {
                 this.updateQuestionRelations(this.phase, question);
                 this.validateQuestion(question);
@@ -122,14 +139,15 @@ export class QuestionnairePhaseEditComponent implements OnChanges {
     }
 
     getTrainingPhaseTitle(id: number): string {
-        let result = '';
-        result = this.presentTrainingPhases.find((phase) => phase.id === id).title;
-        return result;
+        return this.presentTrainingPhases.find((phase) => phase.id === id)
+            .title;
     }
 
     deleteRelation(relationIndex: number): void {
         this.phase.phaseRelations.splice(relationIndex, 1);
-        this.phase.phaseRelations.forEach((relation, index) => (relation.order = index));
+        this.phase.phaseRelations.forEach(
+            (relation, index) => (relation.order = index),
+        );
         this.updateForm();
     }
 
@@ -139,11 +157,15 @@ export class QuestionnairePhaseEditComponent implements OnChanges {
     }
 
     getQuestionTitleById(qId: number): string {
-        return this.phase.questions.find((question) => question.id === qId).text;
+        return this.phase.questions.find((question) => question.id === qId)
+            .text;
     }
 
     getQuestionIconById(qId: number): string {
-        switch (this.phase.questions.find((question) => question.id === qId).questionType) {
+        switch (
+            this.phase.questions.find((question) => question.id === qId)
+                .questionType
+        ) {
             case QuestionTypeEnum.RFQ:
                 return 'star_half';
             case QuestionTypeEnum.MCQ:
@@ -154,18 +176,24 @@ export class QuestionnairePhaseEditComponent implements OnChanges {
     }
 
     getValidQuestionMenuItems(relationIndex: number): AdaptiveQuestion[] {
-        let questionsWithIds = this.phase.questions.filter((q) => q.id !== undefined && q.id !== null);
+        let questionsWithIds = this.phase.questions.filter(
+            (q) => q.id !== undefined && q.id !== null,
+        );
         this.phase.phaseRelations[relationIndex].questionIds.forEach((id) => {
-            questionsWithIds = questionsWithIds.filter((question) => question.id !== id);
+            questionsWithIds = questionsWithIds.filter(
+                (question) => question.id !== id,
+            );
         });
         return questionsWithIds;
     }
 
     onQuestionRemovedFromRelation(relationIndex: number, qId: number): void {
-        this.phase.phaseRelations[relationIndex].questionIds = this.phase.phaseRelations[
-            relationIndex
-            ].questionIds.filter((id) => id !== qId);
-        this.phase.questions.find((question) => question.id === qId).relations--;
+        this.phase.phaseRelations[relationIndex].questionIds =
+            this.phase.phaseRelations[relationIndex].questionIds.filter(
+                (id) => id !== qId,
+            );
+        this.phase.questions.find((question) => question.id === qId)
+            .relations--;
         this.phase.questions = [].concat(this.phase.questions); // trigger change
         this.updateForm();
     }
@@ -182,7 +210,9 @@ export class QuestionnairePhaseEditComponent implements OnChanges {
 
     removeQuestionFromRelations(qId: number): void {
         this.phase.phaseRelations.forEach((relation) => {
-            relation.questionIds = relation.questionIds.filter((id) => id !== qId);
+            relation.questionIds = relation.questionIds.filter(
+                (id) => id !== qId,
+            );
         });
     }
 
@@ -190,18 +220,28 @@ export class QuestionnairePhaseEditComponent implements OnChanges {
         question.valid = !!question.text && question.choices.length > 0;
     }
 
-    private updateQuestionRelations(phase: QuestionnairePhase, question: AdaptiveQuestion): void {
+    private updateQuestionRelations(
+        phase: QuestionnairePhase,
+        question: AdaptiveQuestion,
+    ): void {
         question.relations = phase.phaseRelations.reduce((acc, relation) => {
-            return acc + relation.questionIds.filter((id) => id === question.id).length;
+            return (
+                acc +
+                relation.questionIds.filter((id) => id === question.id).length
+            );
         }, 0);
     }
 
     private updateForm() {
         this.phaseChange.emit(this.phase);
-        this.questionnaireFormGroup = new QuestionnairePhaseEditFormGroup(this.phase);
-        this.questionnaireFormGroup.formGroup.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
-            this.questionnaireFormGroup.setToPhase(this.phase);
-            this.phaseChange.emit(this.phase);
-        });
+        this.questionnaireFormGroup = new QuestionnairePhaseEditFormGroup(
+            this.phase,
+        );
+        this.questionnaireFormGroup.formGroup.valueChanges
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe(() => {
+                this.questionnaireFormGroup.setToPhase(this.phase);
+                this.phaseChange.emit(this.phase);
+            });
     }
 }

@@ -1,27 +1,14 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, Input, OnInit } from '@angular/core';
-import { OffsetPaginationEvent } from '@sentinel/common/pagination';
-import {
-    SentinelControlItem,
-    SentinelControlItemSignal,
-    SentinelControlsComponent
-} from '@sentinel/components/controls';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { SentinelControlItem, SentinelControlsComponent } from '@sentinel/components/controls';
 import { Pool, Resources } from '@crczp/sandbox-model';
-import {
-    SentinelRowDirective,
-    SentinelTable,
-    SentinelTableComponent,
-    TableActionEvent,
-    TableLoadEvent
-} from '@sentinel/components/table';
+import { SentinelRowDirective, SentinelTableComponent, TableLoadEvent } from '@sentinel/components/table';
 import { defer, Observable, of } from 'rxjs';
-import { map, take } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { PoolTable } from '../model/pool-table';
 
-import { AbstractPoolService } from '../services/abstract-pool/abstract-sandbox/abstract-pool.service';
 import {
     SandboxAllocationUnitsConcreteService,
     SandboxAllocationUnitsService,
-    SandboxInstanceConcreteService,
     SandboxInstanceService
 } from '@crczp/sandbox-agenda/pool-detail';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -31,14 +18,15 @@ import {
     SandboxDefinitionOverviewConcreteService,
     SandboxDefinitionOverviewService
 } from '@crczp/sandbox-agenda/internal';
-import { PoolOverviewService } from '../services/state/pool-overview/pool-overview.service';
-import { PoolOverviewConcreteService } from '../services/state/pool-overview/pool-overview-concrete.service';
-import { AbstractPoolConcreteService } from '../services/abstract-pool/abstract-sandbox/abstract-pool-concrete.service';
+import { PoolOverviewService } from '../services/state/pool-overview.service';
+import { PoolService } from '../services/abstract-pool/abstract-sandbox/pool.service';
 import { SandboxResourcesConcreteService } from '../services/resources/sandbox-resources-concrete.service';
-import { TableStateCellComponent } from './table-state-cell/table-state-cell.component';
 import { QuotasComponent } from './quotas/quotas.component';
 import { AsyncPipe } from '@angular/common';
 import { PaginationStorageService, PollingService, providePaginationStorageService } from '@crczp/utils';
+import { createPaginationEvent, PaginationMapper } from '@crczp/api-common';
+import { PoolSort } from '@crczp/sandbox-api';
+import { TableStateCellComponent } from './table-state-cell/table-state-cell.component';
 
 /**
  * Smart component of sandbox pool overview page
@@ -51,24 +39,24 @@ import { PaginationStorageService, PollingService, providePaginationStorageServi
     imports: [
         SentinelControlsComponent,
         SentinelTableComponent,
-        TableStateCellComponent,
         EditableCommentComponent,
         QuotasComponent,
         AsyncPipe,
         SentinelRowDirective,
+        TableStateCellComponent,
     ],
     providers: [
         PollingService,
-        { provide: PoolOverviewService, useClass: PoolOverviewConcreteService },
+        { provide: PoolOverviewService, useClass: PoolOverviewService },
         {
             provide: SandboxInstanceService,
-            useClass: SandboxInstanceConcreteService,
+            useClass: SandboxInstanceService,
         },
         {
             provide: SandboxAllocationUnitsService,
             useClass: SandboxAllocationUnitsConcreteService,
         },
-        { provide: AbstractPoolService, useClass: AbstractPoolConcreteService },
+        PoolService,
         {
             provide: SandboxDefinitionOverviewService,
             useClass: SandboxDefinitionOverviewConcreteService,
@@ -81,8 +69,7 @@ import { PaginationStorageService, PollingService, providePaginationStorageServi
     ],
 })
 export class PoolOverviewComponent implements OnInit {
-    @Input() paginationId = 'crczp-sandbox-pool-overview';
-    pools$: Observable<SentinelTable<Pool>>;
+    pools$: Observable<PoolTable>;
     hasError$: Observable<boolean>;
     resources$: Observable<Resources>;
     controls: SentinelControlItem[] = [];
@@ -90,9 +77,13 @@ export class PoolOverviewComponent implements OnInit {
     readonly DEFAULT_SORT_COLUMN = 'id';
     readonly DEFAULT_SORT_DIRECTION = 'asc';
     private sandboxResourcesService = inject(SandboxResourcesService);
-    private abstractPoolService = inject(AbstractPoolService);
+    private abstractPoolService = inject(PoolService);
     private sandboxInstanceService = inject(SandboxInstanceService);
     private paginationService = inject(PaginationStorageService);
+
+    private readonly initialPoolPagination = createPaginationEvent<PoolSort>({
+        sort: this.DEFAULT_SORT_COLUMN,
+    });
 
     constructor() {
         this.resources$ = this.sandboxResourcesService.resources$;
@@ -108,24 +99,14 @@ export class PoolOverviewComponent implements OnInit {
      * Gets new data for pool overview table
      * @param loadEvent load data event from table component
      */
-    onLoadEvent(loadEvent: TableLoadEvent): void {
+    onLoadEvent(loadEvent: TableLoadEvent<PoolSort>): void {
         this.paginationService.savePageSize(loadEvent.pagination.size);
         this.abstractPoolService
-            .getAll(loadEvent.pagination)
+            .getAll(
+                PaginationMapper.toOffsetPaginationEvent(loadEvent.pagination),
+            )
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe();
-    }
-
-    /**
-     * Resolves type of action and calls appropriate handler
-     * @param event action event emitted from pool overview table
-     */
-    onPoolAction(event: TableActionEvent<Pool>): void {
-        event.action.result$.pipe(take(1)).subscribe();
-    }
-
-    onControls(controlItem: SentinelControlItemSignal): void {
-        controlItem.result$.pipe(take(1)).subscribe();
     }
 
     updatePoolComment(pool: Pool, newComment: string) {
@@ -146,11 +127,8 @@ export class PoolOverviewComponent implements OnInit {
     }
 
     private initTable() {
-        const initialLoadEvent: TableLoadEvent = {
-            pagination: new OffsetPaginationEvent(
-                0,
-                this.paginationService.loadPageSize()
-            ),
+        const initialLoadEvent: TableLoadEvent<PoolSort> = {
+            pagination: this.initialPoolPagination,
         };
         this.pools$ = this.abstractPoolService.pools$.pipe(
             map(
@@ -159,9 +137,9 @@ export class PoolOverviewComponent implements OnInit {
                         resource,
                         this.resources$,
                         this.abstractPoolService,
-                        this.sandboxInstanceService
-                    )
-            )
+                        this.sandboxInstanceService,
+                    ),
+            ),
         );
         this.hasError$ = this.abstractPoolService.poolsHasError$;
         this.onLoadEvent(initialLoadEvent);
@@ -174,7 +152,7 @@ export class PoolOverviewComponent implements OnInit {
                 'Create',
                 'primary',
                 of(false),
-                defer(() => this.abstractPoolService.create())
+                defer(() => this.abstractPoolService.create()),
             ),
         ];
     }

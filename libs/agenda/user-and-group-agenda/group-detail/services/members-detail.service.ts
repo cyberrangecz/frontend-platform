@@ -1,11 +1,12 @@
 import { inject, Injectable } from '@angular/core';
-import { OffsetPagination, OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
-import { UserApi } from '@crczp/user-and-group-api';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
+import { UserApi, UserSort } from '@crczp/user-and-group-api';
 import { User } from '@crczp/user-and-group-model';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { ErrorHandlerService, PortalConfig } from '@crczp/utils';
+import { ErrorHandlerService } from '@crczp/utils';
 import { UserFilter } from '@crczp/user-and-group-agenda/internal';
+import { createInfinitePaginatedResource, OffsetPaginatedResource } from '@crczp/api-common';
 
 /**
  * Basic implementation of a layer between a component and an API service.
@@ -14,7 +15,7 @@ import { UserFilter } from '@crczp/user-and-group-agenda/internal';
 @Injectable()
 export class MembersDetailService {
     protected hasErrorSubject$: BehaviorSubject<boolean> = new BehaviorSubject(
-        false
+        false,
     );
     /**
      * True if error was returned from API, false otherwise
@@ -28,21 +29,14 @@ export class MembersDetailService {
         this.isLoadingAssignedSubject$.asObservable();
     private userApi = inject(UserApi);
     private errorHandler = inject(ErrorHandlerService);
-    private assignedUsersSubject$: BehaviorSubject<PaginatedResource<User>> =
-        new BehaviorSubject(this.initSubject());
+    private assignedUsersSubject$: BehaviorSubject<
+        OffsetPaginatedResource<User>
+    > = new BehaviorSubject(createInfinitePaginatedResource());
     /**
      * Subscribe to receive assigned users
      */
-    assignedUsers$: Observable<PaginatedResource<User>> =
+    assignedUsers$: Observable<OffsetPaginatedResource<User>> =
         this.assignedUsersSubject$.asObservable();
-
-    private readonly defaultPaginationSize: number;
-
-    constructor() {
-        const settings = inject(PortalConfig);
-
-        this.defaultPaginationSize = settings.defaultPageSize;
-    }
 
     /**
      * Gets users assigned to a resource with passed pagination and updates related observables or handles an error
@@ -52,9 +46,9 @@ export class MembersDetailService {
      */
     getAssigned(
         resourceId: number,
-        pagination: OffsetPaginationEvent,
-        filterValue: string = null
-    ): Observable<PaginatedResource<User>> {
+        pagination: OffsetPaginationEvent<UserSort>,
+        filterValue: string = null,
+    ): Observable<OffsetPaginatedResource<User>> {
         const filter = filterValue ? [new UserFilter(filterValue)] : [];
         this.hasErrorSubject$.next(false);
         this.isLoadingAssignedSubject$.next(true);
@@ -70,15 +64,8 @@ export class MembersDetailService {
                         this.errorHandler.emitAPIError(err, 'Fetching users');
                         this.isLoadingAssignedSubject$.next(false);
                         this.hasErrorSubject$.next(true);
-                    }
-                )
+                    },
+                ),
             );
-    }
-
-    private initSubject() {
-        return new PaginatedResource(
-            [],
-            new OffsetPagination(0, 0, this.defaultPaginationSize, 0, 0)
-        );
     }
 }

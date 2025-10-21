@@ -1,39 +1,17 @@
-import {
-    ChangeDetectionStrategy,
-    Component,
-    DestroyRef,
-    inject,
-    Input,
-    OnInit,
-} from '@angular/core';
-import { OffsetPaginationEvent } from '@sentinel/common/pagination';
-import {
-    SentinelControlItem,
-    SentinelControlItemSignal,
-    SentinelControlsComponent,
-} from '@sentinel/components/controls';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { SentinelControlItem, SentinelControlsComponent } from '@sentinel/components/controls';
 import { Group } from '@crczp/user-and-group-model';
-import {
-    SentinelTable,
-    SentinelTableComponent,
-    TableActionEvent,
-    TableLoadEvent,
-} from '@sentinel/components/table';
+import { SentinelTable, SentinelTableComponent, TableLoadEvent } from '@sentinel/components/table';
 import { defer, Observable, of } from 'rxjs';
-import { map, take } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { GroupTable } from '../model/table/group-table';
-import {
-    DeleteControlItem,
-    SaveControlItem,
-} from '@crczp/user-and-group-agenda/internal';
+import { DeleteControlItem, SaveControlItem } from '@crczp/user-and-group-agenda/internal';
 import { GroupOverviewService } from '../services/group-overview.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { GroupOverviewConcreteService } from '../services/group-overview.concrete.service';
 import { AsyncPipe } from '@angular/common';
-import {
-    PaginationStorageService,
-    providePaginationStorageService,
-} from '@crczp/utils';
+import { PaginationStorageService, providePaginationStorageService } from '@crczp/utils';
+import { createPaginationEvent, PaginationMapper } from '@crczp/api-common';
+import { GroupSort } from '@crczp/user-and-group-api';
 
 /**
  * Main smart component of group-overview overview page
@@ -46,19 +24,18 @@ import {
         providePaginationStorageService(GroupOverviewComponent),
         {
             provide: GroupOverviewService,
-            useClass: GroupOverviewConcreteService,
+            useClass: GroupOverviewService,
         },
     ],
     imports: [SentinelTableComponent, SentinelControlsComponent, AsyncPipe],
 })
 export class GroupOverviewComponent implements OnInit {
-    @Input() paginationId = 'crczp-group-overview';
     readonly INIT_SORT_NAME = 'name';
     readonly INIT_SORT_DIR = 'asc';
     /**
      * Data for groups table component
      */
-    groups$: Observable<SentinelTable<Group>>;
+    groups$: Observable<SentinelTable<Group, string>>;
     /**
      * True if error was thrown while getting data for groups table, false otherwise
      */
@@ -67,18 +44,14 @@ export class GroupOverviewComponent implements OnInit {
     destroyRef = inject(DestroyRef);
     private groupService = inject(GroupOverviewService);
     private paginationService = inject(PaginationStorageService);
+    private readonly initPagination = createPaginationEvent<GroupSort>({});
 
     ngOnInit(): void {
-        const initialLoadEvent: TableLoadEvent = {
-            pagination: new OffsetPaginationEvent(
-                0,
-                this.paginationService.loadPageSize(),
-                this.INIT_SORT_NAME,
-                this.INIT_SORT_DIR
-            ),
+        const initialLoadEvent: TableLoadEvent<GroupSort> = {
+            pagination: this.initPagination,
         };
         this.groups$ = this.groupService.resource$.pipe(
-            map((groups) => new GroupTable(groups, this.groupService))
+            map((groups) => new GroupTable(groups, this.groupService)),
         );
         this.groupsHasError$ = this.groupService.hasError$;
         this.groupService.selected$
@@ -87,28 +60,19 @@ export class GroupOverviewComponent implements OnInit {
         this.onTableLoadEvent(initialLoadEvent);
     }
 
-    onControlsAction(controlItem: SentinelControlItemSignal): void {
-        controlItem.result$.pipe(take(1)).subscribe();
-    }
-
     /**
      * Clears selected groups and calls service to get new data for groups table
      * @param event event emitted from table component
      */
-    onTableLoadEvent(event: TableLoadEvent): void {
+    onTableLoadEvent(event: TableLoadEvent<GroupSort>): void {
         this.paginationService.savePageSize(event.pagination.size);
         this.groupService
-            .getAll(event.pagination, event.filter)
+            .getAll(
+                PaginationMapper.toOffsetPaginationEvent(event.pagination),
+                event.filter,
+            )
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe();
-    }
-
-    /**
-     * Resolves type of action call appropriate handler
-     * @param event action event emitted by table component
-     */
-    onTableAction(event: TableActionEvent<Group>): void {
-        event.action.result$.pipe(take(1)).subscribe();
     }
 
     /**
@@ -123,12 +87,12 @@ export class GroupOverviewComponent implements OnInit {
         this.controls = [
             new DeleteControlItem(
                 selectedLength,
-                defer(() => this.groupService.deleteSelected())
+                defer(() => this.groupService.deleteSelected()),
             ),
             new SaveControlItem(
                 'Create',
                 of(false),
-                defer(() => this.groupService.create())
+                defer(() => this.groupService.create()),
             ),
         ];
     }

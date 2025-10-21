@@ -8,37 +8,36 @@ import {
     OnChanges,
     OnInit,
     Output,
-    SimpleChanges,
+    SimpleChanges
 } from '@angular/core';
-import {MatDialog} from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import {
     SentinelConfirmationDialogComponent,
     SentinelConfirmationDialogConfig,
-    SentinelDialogResultEnum,
+    SentinelDialogResultEnum
 } from '@sentinel/components/dialogs';
 import {
     SentinelControlItem,
-    SentinelControlItemSignal,
     SentinelControlMenuItem,
     SentinelControlsComponent,
-    SentinelExpandableControlItem,
+    SentinelExpandableControlItem
 } from '@sentinel/components/controls';
-import {ExtendedMatchingItems, FreeFormQuestion, MultipleChoiceQuestion, Question} from '@crczp/training-model';
-import {defer, EMPTY, Observable, of} from 'rxjs';
-import {QuestionChangeEvent} from '../../../../../../model/events/question-change-event';
-import {SentinelStepper, SentinelStepperComponent, StepStateEnum} from '@sentinel/components/stepper';
-import {QuestionStepperAdapter} from '@crczp/training-agenda/internal';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import { ExtendedMatchingItems, FreeFormQuestion, MultipleChoiceQuestion, Question } from '@crczp/training-model';
+import { defer, EMPTY, Observable, of } from 'rxjs';
+import { QuestionChangeEvent } from '../../../../../../model/events/question-change-event';
+import { SentinelStepper, SentinelStepperComponent, StepStateEnum } from '@sentinel/components/stepper';
+import { QuestionStepperAdapter } from '@crczp/training-agenda/internal';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
     MatExpansionPanel,
     MatExpansionPanelDescription,
     MatExpansionPanelHeader,
     MatExpansionPanelTitle
-} from "@angular/material/expansion";
-import {MatDivider} from "@angular/material/divider";
-import {MatIcon} from "@angular/material/icon";
-import {MatError} from "@angular/material/input";
-import {QuestionEditComponent} from "../detail/question-edit.component";
+} from '@angular/material/expansion';
+import { MatDivider } from '@angular/material/divider';
+import { MatIcon } from '@angular/material/icon';
+import { MatError } from '@angular/material/input';
+import { QuestionEditComponent } from '../detail/question-edit.component';
 
 /**
  * Wrapper component for questions inside the assessment level
@@ -58,8 +57,8 @@ import {QuestionEditComponent} from "../detail/question-edit.component";
         SentinelControlsComponent,
         SentinelStepperComponent,
         MatDivider,
-        QuestionEditComponent
-    ]
+        QuestionEditComponent,
+    ],
 })
 export class QuestionsOverviewComponent implements OnInit, OnChanges {
     dialog = inject(MatDialog);
@@ -71,7 +70,7 @@ export class QuestionsOverviewComponent implements OnInit, OnChanges {
     @Output() questionsChange: EventEmitter<Question[]> = new EventEmitter();
 
     questionsHasError: boolean;
-    stepperQuestions: SentinelStepper<QuestionStepperAdapter> = {items: []};
+    stepperQuestions: SentinelStepper<QuestionStepperAdapter> = { items: [] };
     selectedStep: number;
     controls: SentinelControlItem[];
     questionChanged: boolean;
@@ -85,7 +84,8 @@ export class QuestionsOverviewComponent implements OnInit, OnChanges {
     ngOnChanges(changes: SimpleChanges): void {
         if (
             changes['assessmentOrder'] &&
-            changes['assessmentOrder'].previousValue !== changes['assessmentOrder'].currentValue
+            changes['assessmentOrder'].previousValue !==
+                changes['assessmentOrder'].currentValue
         ) {
             this.selectedStep = 0;
         }
@@ -93,7 +93,9 @@ export class QuestionsOverviewComponent implements OnInit, OnChanges {
             this.selectedStep = 0;
         }
         if ('questions' in changes && this.questions) {
-            this.stepperQuestions.items = this.questions.map((question) => new QuestionStepperAdapter(question));
+            this.stepperQuestions.items = this.questions.map(
+                (question) => new QuestionStepperAdapter(question),
+            );
             this.calculateHasError();
         }
         if ('isTest' in changes) {
@@ -111,12 +113,9 @@ export class QuestionsOverviewComponent implements OnInit, OnChanges {
             }
         }
         if (this.stepperQuestions.items.length > 0) {
-            this.stepperQuestions.items[this.selectedStep].state = StepStateEnum.ACTIVE;
+            this.stepperQuestions.items[this.selectedStep].state =
+                StepStateEnum.ACTIVE;
         }
-    }
-
-    onControlAction(control: SentinelControlItemSignal): void {
-        control.result$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
     }
 
     /**
@@ -134,8 +133,12 @@ export class QuestionsOverviewComponent implements OnInit, OnChanges {
      * @param index index of active question
      */
     onActiveQuestionChanged(index: number): void {
-        if (index !== this.selectedStep && this.stepperQuestions.items.length > 0) {
-            this.stepperQuestions.items[this.selectedStep].state = StepStateEnum.SELECTABLE;
+        if (
+            index !== this.selectedStep &&
+            this.stepperQuestions.items.length > 0
+        ) {
+            this.stepperQuestions.items[this.selectedStep].state =
+                StepStateEnum.SELECTABLE;
             this.selectedStep = index;
         }
     }
@@ -145,7 +148,8 @@ export class QuestionsOverviewComponent implements OnInit, OnChanges {
      */
     addFFQ(): Observable<void> {
         if (this.stepperQuestions.items.length >= 1) {
-            this.stepperQuestions.items[this.selectedStep].state = StepStateEnum.SELECTABLE;
+            this.stepperQuestions.items[this.selectedStep].state =
+                StepStateEnum.SELECTABLE;
         }
         const newFfq = new FreeFormQuestion('New Free Form Question');
         newFfq.required = this.isTest;
@@ -168,9 +172,12 @@ export class QuestionsOverviewComponent implements OnInit, OnChanges {
      */
     addMCQ(): Observable<void> {
         if (this.stepperQuestions.items.length >= 1) {
-            this.stepperQuestions.items[this.selectedStep].state = StepStateEnum.SELECTABLE;
+            this.stepperQuestions.items[this.selectedStep].state =
+                StepStateEnum.SELECTABLE;
         }
-        const newMcq = new MultipleChoiceQuestion('New Multiple Choice Question');
+        const newMcq = new MultipleChoiceQuestion(
+            'New Multiple Choice Question',
+        );
         newMcq.choices.push({
             id: null,
             correct: false,
@@ -197,7 +204,8 @@ export class QuestionsOverviewComponent implements OnInit, OnChanges {
      */
     addEMI(): Observable<void> {
         if (this.stepperQuestions.items.length >= 1) {
-            this.stepperQuestions.items[this.selectedStep].state = StepStateEnum.SELECTABLE;
+            this.stepperQuestions.items[this.selectedStep].state =
+                StepStateEnum.SELECTABLE;
         }
         const newEmi = new ExtendedMatchingItems('New Extended Matching Items');
         newEmi.required = this.isTest;
@@ -238,23 +246,29 @@ export class QuestionsOverviewComponent implements OnInit, OnChanges {
     onQuestionChanged(event: QuestionChangeEvent = null): void {
         this.calculateHasError();
         if (event && event.question) {
-            this.stepperQuestions.items[this.selectedStep].question = event.question;
+            this.stepperQuestions.items[this.selectedStep].question =
+                event.question;
         }
-        this.questionsChange.emit(this.stepperQuestions.items.map((item) => item.question));
+        this.questionsChange.emit(
+            this.stepperQuestions.items.map((item) => item.question),
+        );
     }
 
     /**
      * Displays confirmation dialog, on confirmation, deletes question on given index
      */
     onDelete(): void {
-        const dialogRef = this.dialog.open(SentinelConfirmationDialogComponent, {
-            data: new SentinelConfirmationDialogConfig(
-                'Delete question',
-                `Do you want to delete question "${this.stepperQuestions.items[this.selectedStep].title}"?`,
-                'Cancel',
-                'Delete',
-            ),
-        });
+        const dialogRef = this.dialog.open(
+            SentinelConfirmationDialogComponent,
+            {
+                data: new SentinelConfirmationDialogConfig(
+                    'Delete question',
+                    `Do you want to delete question "${this.stepperQuestions.items[this.selectedStep].title}"?`,
+                    'Cancel',
+                    'Delete',
+                ),
+            },
+        );
 
         dialogRef
             .afterClosed()
@@ -280,42 +294,52 @@ export class QuestionsOverviewComponent implements OnInit, OnChanges {
         }
         this.onActiveQuestionChanged(this.stepperQuestions.items.length - 1);
         if (this.stepperQuestions.items.length > 0) {
-            this.stepperQuestions.items[this.stepperQuestions.items.length - 1].state = StepStateEnum.ACTIVE;
+            this.stepperQuestions.items[
+                this.stepperQuestions.items.length - 1
+            ].state = StepStateEnum.ACTIVE;
         }
     }
 
     private calculateHasError() {
-        this.questionsHasError = this.stepperQuestions.items.some((question) => !question.valid);
+        this.questionsHasError = this.stepperQuestions.items.some(
+            (question) => !question.valid,
+        );
     }
 
     private initControls() {
         this.controls = [
-            new SentinelExpandableControlItem('add', 'Add', 'primary', of(false), [
-                new SentinelControlMenuItem(
-                    'ffq',
-                    'Free Form Question',
-                    'primary',
-                    of(false),
-                    defer(() => this.addFFQ()),
-                    'help_outline',
-                ),
-                new SentinelControlMenuItem(
-                    'mcq',
-                    'Multiple Choice Question',
-                    'primary',
-                    of(false),
-                    defer(() => this.addMCQ()),
-                    'check_circle',
-                ),
-                new SentinelControlMenuItem(
-                    'emi',
-                    'Extended Matching Items Questions',
-                    'primary',
-                    of(false),
-                    defer(() => this.addEMI()),
-                    'list_alt',
-                ),
-            ]),
+            new SentinelExpandableControlItem(
+                'add',
+                'Add',
+                'primary',
+                of(false),
+                [
+                    new SentinelControlMenuItem(
+                        'ffq',
+                        'Free Form Question',
+                        'primary',
+                        of(false),
+                        defer(() => this.addFFQ()),
+                        'help_outline',
+                    ),
+                    new SentinelControlMenuItem(
+                        'mcq',
+                        'Multiple Choice Question',
+                        'primary',
+                        of(false),
+                        defer(() => this.addMCQ()),
+                        'check_circle',
+                    ),
+                    new SentinelControlMenuItem(
+                        'emi',
+                        'Extended Matching Items Questions',
+                        'primary',
+                        of(false),
+                        defer(() => this.addEMI()),
+                        'list_alt',
+                    ),
+                ],
+            ),
         ];
     }
 }

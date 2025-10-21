@@ -1,1 +1,12 @@
-<div #guacContainer></div>
+<div
+    [ngStyle]="getCursorStyle() !== undefined ? {cursor: getCursorStyle()} : {}"
+    class="guacamole-wrapper wh-100"
+>
+    <div #guacContainer></div>
+
+    <crczp-guacamole-status
+        [clientStateCode]="clientStateCode()"
+        [tunnelStateCode]="tunnelStateCode()" />
+</div>
+
+

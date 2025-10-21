@@ -1,25 +1,43 @@
-import { PaginatedResource } from '@sentinel/common/pagination';
 import { DatePipe } from '@angular/common';
 import { TrainingRun, TrainingRunStateEnum } from '@crczp/training-model';
 import { Column, Row, SentinelTable } from '@sentinel/components/table';
 import { AdaptiveRunRowAdapter } from './adaptive-run-row-adapter';
 import { Utils } from '@crczp/utils';
+import { TrainingRunSort } from '@crczp/training-api';
+import { OffsetPaginatedResource } from '@crczp/api-common';
 
 /**
  * @dynamic
  */
-export class AdaptiveRunTable extends SentinelTable<AdaptiveRunRowAdapter> {
-    constructor(resource: PaginatedResource<TrainingRun>) {
+export class AdaptiveRunTable extends SentinelTable<
+    AdaptiveRunRowAdapter,
+    TrainingRunSort
+> {
+    constructor(resource: OffsetPaginatedResource<TrainingRun>) {
         const columns = [
-            new Column('playerName', 'player', false),
-            new Column('startTimeFormatted', 'start time', true, 'startTime'),
-            new Column('endTimeFormatted', 'end time', true, 'endTime'),
-            new Column('state', 'run state', true, 'state'),
-            new Column('duration', 'duration', false),
-            new Column('sandboxInstanceId', 'sandbox id', false),
+            new Column<TrainingRunSort>('playerName', 'player', false),
+            new Column<TrainingRunSort>(
+                'startTimeFormatted',
+                'start time',
+                true,
+                'startTime',
+            ),
+            new Column<TrainingRunSort>(
+                'endTimeFormatted',
+                'end time',
+                true,
+                'endTime',
+            ),
+            new Column<TrainingRunSort>('state', 'run state', true, 'state'),
+            new Column<TrainingRunSort>('duration', 'duration', false),
+            new Column<TrainingRunSort>(
+                'sandboxInstanceId',
+                'sandbox id',
+                false,
+            ),
         ];
         const rows = resource.elements.map((element) =>
-            AdaptiveRunTable.createRow(element)
+            AdaptiveRunTable.createRow(element),
         );
         super(rows, columns);
         this.pagination = resource.pagination;
@@ -35,7 +53,7 @@ export class AdaptiveRunTable extends SentinelTable<AdaptiveRunRowAdapter> {
             adapter.endTimeFormatted = `${datePipe.transform(adapter.endTime)}`;
             adapter.duration = Utils.Date.timeBetweenDatesSimple(
                 adapter.startTime,
-                adapter.endTime
+                adapter.endTime,
             );
         } else {
             adapter.endTimeFormatted = '-';

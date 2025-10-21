@@ -28,7 +28,7 @@ const routes: ValidRouterConfig<'sandbox-definition'> = [
     {
         path: ':definitionId/topology',
         loadComponent: () =>
-            import('@crczp/sandbox-agenda/topology').then(
+            import('@crczp/sandbox-agenda/sandbox-topology').then(
                 (m) => m.SandboxTopologyComponent
             ),
         resolve: {

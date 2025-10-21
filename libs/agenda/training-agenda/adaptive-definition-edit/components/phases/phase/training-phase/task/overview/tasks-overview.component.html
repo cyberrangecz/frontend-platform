@@ -17,10 +17,10 @@
         </mat-panel-description>
     </mat-expansion-panel-header>
 
-    <sentinel-controls (itemClicked)="onControlAction($event)"
-                       [controls]="controls">
+    <sentinel-controls
+        [controls]="controls">
     </sentinel-controls>
-    <mat-divider/>
+    <mat-divider />
 
     @if ((stepperTasks | async).length > 0) {
         <div>
@@ -29,7 +29,7 @@
                                 [activeStep]="activeStep$ | async"
                                 [tasks]="stepperTasks | async">
             </crczp-task-stepper>
-            <mat-divider/>
+            <mat-divider />
             <!--    <ng-template>AdaptiveRunVisualization {{ selectedStep + 1 }}</ng-template>-->
             <div class="step-content">
                 <crczp-task-configuration (taskChange)="onTaskChanged($event)"

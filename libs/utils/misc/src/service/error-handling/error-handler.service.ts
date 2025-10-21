@@ -29,9 +29,10 @@ export class ErrorHandlerService implements ErrorHandler {
 
     handleError(error: any) {
         this.emitFrontendErrorNotification(
-            error?.toString() || 'Unknown error',
-            'ErrorHandler'
+            error ? error : 'Unknown error',
+            'Error Handler'
         );
+        throw error;
     }
 
     emitNavigationError(error: any, url?: string): Observable<boolean> {
@@ -50,16 +51,14 @@ export class ErrorHandlerService implements ErrorHandler {
 
     emitAPIError(
         err: HttpErrorResponse,
-        operation: string,
-        action?: string
+        operation: string
     ): Observable<boolean> {
         const notification: SentinelNotification = {
             type: SentinelNotificationTypeEnum.Error,
             title: operation,
         };
-        if (action !== undefined) {
-            notification.action = action;
-        }
+
+        console.error(err);
 
         if (
             err === null ||
@@ -104,14 +103,13 @@ export class ErrorHandlerService implements ErrorHandler {
     }
 
     emitFrontendErrorNotification(
-        content: string,
+        error: string,
         source?: string
     ): Observable<boolean> {
-        console.error(`${source || 'Error'}: ${content}`);
         return this.safeEmit(this.notificationService, 'emit', {
             type: SentinelNotificationTypeEnum.Error,
             title: source || 'Error',
-            additionalInfo: [content],
+            additionalInfo: [error],
         });
     }
 

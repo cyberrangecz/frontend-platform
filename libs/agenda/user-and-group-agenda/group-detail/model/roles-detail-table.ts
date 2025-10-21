@@ -1,18 +1,30 @@
-import {PaginatedResource} from '@sentinel/common/pagination';
-import {UserRole} from '@crczp/user-and-group-model';
-import {Column, ExpandableSentinelTable, Row, RowExpand} from '@sentinel/components/table';
-import {RoleExpandComponent} from '../components/role-expand/role-expand.component';
+import { UserRole } from '@crczp/user-and-group-model';
+import { Column, ExpandableSentinelTable, Row, RowExpand } from '@sentinel/components/table';
+import { RoleExpandComponent } from '../components/role-expand/role-expand.component';
+import { RoleSort } from '@crczp/user-and-group-api';
+import { OffsetPaginatedResource } from '@crczp/api-common';
 
 /**
  * @dynamic
  */
-export class RolesDetailTable extends ExpandableSentinelTable<UserRole, RoleExpandComponent, null> {
-    constructor(resource: PaginatedResource<UserRole>) {
+export class RolesDetailTable extends ExpandableSentinelTable<
+    UserRole,
+    RoleExpandComponent,
+    null,
+    RoleSort
+> {
+    constructor(resource: OffsetPaginatedResource<UserRole>) {
         const columns = [
-            new Column('roleType', 'role type', true, 'roleType'),
-            new Column('microserviceName', 'microservice name', false),
+            new Column<RoleSort>('roleType', 'role type', true, 'roleType'),
+            new Column<RoleSort>(
+                'microserviceName',
+                'microservice name',
+                false,
+            ),
         ];
-        const rows = resource.elements.map((element) => RolesDetailTable.createRow(element));
+        const rows = resource.elements.map((element) =>
+            RolesDetailTable.createRow(element),
+        );
         const expand = new RowExpand(RoleExpandComponent, null);
         super(rows, columns, expand);
         this.filterable = true;

@@ -2,28 +2,26 @@ import {
     AfterViewInit,
     Component,
     ElementRef,
-    EventEmitter,
     inject,
     input,
-    Output,
+    output,
     signal,
     ViewChild,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ConsoleTab } from '../../model/model';
 import { Edge, Network, Node } from 'vis-network';
 import { DataSet } from 'vis-data';
 import { Minimap } from '../minimap/minimap';
-import { ContextMenu } from '../context-menu/context-menu';
+import { ContextMenu, ContextMenuItem } from '../context-menu/context-menu';
 import { catchError, combineLatest, EMPTY, map, of } from 'rxjs';
 import { TopologyNodeSvgService } from './services/topology-svg-generator.service';
 import { ErrorHandlerService } from '@crczp/utils';
-import { Topology } from '@crczp/sandbox-model';
+import { OsType, Topology } from '@crczp/sandbox-model';
 import { mapTopologyToTopologyVisualization } from './topology-visualization-utils';
 import { TOPOLOGY_CONFIG } from './topology-graph-config';
 import { FormsModule } from '@angular/forms';
 import { toObservable } from '@angular/core/rxjs-interop';
-import { TopologySplitViewSynchronizerService } from '../divider-position/topology-split-view-synchronizer.service';
+import { TopologySynchronizerService } from '../divider-position/topology-synchronizer.service';
 
 export type GraphNodeType = 'INTERNET' | 'ROUTER' | 'HOST' | 'SUBNET';
 
@@ -32,8 +30,9 @@ export type TopologyGraphNode = {
     name: string;
     nodeType: GraphNodeType;
     ip?: string;
-    osType?: 'LINUX' | 'WINDOWS';
+    osType?: OsType;
     guiAccess?: boolean;
+    accessible?: boolean;
     subnetColor?: string;
     subnets?: Array<{
         name: string;
@@ -49,6 +48,13 @@ export type TopologyGraphLink = {
     length: number;
 };
 
+export type OpenConsoleEvent = {
+    nodeId: string;
+    inNewWindow: boolean;
+    inGui: boolean;
+    osType: OsType;
+};
+
 @Component({
     selector: 'crczp-topology-graph',
     standalone: true,
@@ -57,13 +63,13 @@ export type TopologyGraphLink = {
     styleUrl: './topology-graph.scss',
 })
 export class TopologyGraph implements AfterViewInit {
-    @Output() openConsole = new EventEmitter<ConsoleTab>();
+    openConsole = output<OpenConsoleEvent>();
 
     topology = input.required<Topology>();
-    height = input.required<number>();
     loading = input<boolean>(false);
     stabilized = signal(false);
     resized = signal(true);
+
     @ViewChild('networkContainer', { static: false })
     networkContainer: ElementRef<HTMLDivElement>;
     network: Network;
@@ -72,20 +78,57 @@ export class TopologyGraph implements AfterViewInit {
     private readonly svgService = inject(TopologyNodeSvgService);
     private readonly errorHandlerService = inject(ErrorHandlerService);
     private readonly topologySynchronizerService = inject(
-        TopologySplitViewSynchronizerService
+        TopologySynchronizerService,
     );
-    private nodeSubnetParentsDict: Record<string, string> = {};
+    private nodeNamesDict: { [key: string]: TopologyGraphNode } = {};
 
     constructor() {
         toObservable(this.topology).subscribe((topology) =>
-            this.handleTopologyChange(topology)
+            this.handleTopologyChange(topology),
         );
 
-        combineLatest([
-            this.topologySynchronizerService.topologyWidth$,
-            toObservable(this.height),
-        ]).subscribe(([width, height]) =>
-            this.handleDimensionsChange(width, height)
+        this.topologySynchronizerService.topologyDimensions$.subscribe(
+            (dimensions) =>
+                this.handleDimensionsChange(
+                    dimensions.width,
+                    dimensions.height,
+                ),
+        );
+    }
+
+    createContextMenu(nodeId: string | number): ContextMenuItem[] {
+        const node = this.nodeNamesDict[nodeId];
+        if (node.nodeType === 'INTERNET' || node.nodeType === 'SUBNET') {
+            return [];
+        }
+        return [
+            {
+                label: 'Open Console',
+                action: () => this.emitConsoleEvent(node, false, false),
+            },
+            {
+                label: 'Open Console in new Window',
+                action: () => {
+                    this.emitConsoleEvent(node, false, true);
+                },
+            },
+        ].concat(
+            node.guiAccess
+                ? [
+                      {
+                          label: 'Open GUI',
+                          action: () => {
+                              this.emitConsoleEvent(node, true, false);
+                          },
+                      },
+                      {
+                          label: 'Open GUI in new Window',
+                          action: () => {
+                              this.emitConsoleEvent(node, true, true);
+                          },
+                      },
+                  ]
+                : [],
         );
     }
 
@@ -94,7 +137,7 @@ export class TopologyGraph implements AfterViewInit {
     }
 
     private handleDimensionsChange(width: number, height: number) {
-        if (!this.networkContainer) return;
+        if (!this.networkContainer || !this.network) return;
         this.resized.set(false);
         const scaleChange =
             this.networkContainer.nativeElement.offsetWidth / width;
@@ -114,18 +157,15 @@ export class TopologyGraph implements AfterViewInit {
     }
 
     private handleTopologyChange(newTopology: Topology) {
+        console.log('TopologyGraph: topology changed', newTopology);
         const visualizationData =
             mapTopologyToTopologyVisualization(newTopology);
         this.nodes = visualizationData.nodes;
+        this.nodeNamesDict = this.nodes.reduce(
+            (acc, node) => ({ ...acc, [node.id]: node }),
+            {},
+        );
         this.links = visualizationData.links;
-        this.nodeSubnetParentsDict = {};
-        newTopology.routers
-            .flatMap((router) => router.subnets)
-            .forEach((subnet) => {
-                subnet.hosts.forEach((host) => {
-                    this.nodeSubnetParentsDict[host.name] = subnet.name;
-                });
-            });
         this.renderNetwork();
     }
 
@@ -163,7 +203,7 @@ export class TopologyGraph implements AfterViewInit {
         if (!this.network || this.nodes.length === 0) return [0, 0, 0, 0];
 
         const allNodePositions = this.nodes.map(
-            (node) => this.network.getPositions([node.id])[node.id]
+            (node) => this.network.getPositions([node.id])[node.id],
         );
 
         const xs = allNodePositions.map((pos) => pos.x);
@@ -187,11 +227,11 @@ export class TopologyGraph implements AfterViewInit {
 
         const boundedX = Math.max(
             minX - 200,
-            Math.min(viewPosition.x, maxX + 200)
+            Math.min(viewPosition.x, maxX + 200),
         );
         const boundedY = Math.max(
             minY - 200,
-            Math.min(viewPosition.y, maxY + 200)
+            Math.min(viewPosition.y, maxY + 200),
         );
 
         if (boundedX !== viewPosition.x || boundedY !== viewPosition.y) {
@@ -231,7 +271,7 @@ export class TopologyGraph implements AfterViewInit {
                     image: this.svgService.generateSubnetSvg(
                         node.name,
                         node.ip,
-                        node.subnetColor
+                        node.subnetColor,
                     ),
                     size: this.getNodeSize('SUBNET'),
                 });
@@ -258,7 +298,8 @@ export class TopologyGraph implements AfterViewInit {
                     node.nodeType,
                     node.osType,
                     node.ip,
-                    node.guiAccess
+                    node.accessible,
+                    node.guiAccess,
                 )
                 .pipe(
                     map((svgDataUri) => ({
@@ -271,11 +312,11 @@ export class TopologyGraph implements AfterViewInit {
                     catchError((err) => {
                         this.errorHandlerService.emitFrontendErrorNotification(
                             'Could not create node SVG',
-                            'Topology graph'
+                            'Topology graph',
                         );
                         console.error(err);
                         return EMPTY; // This will skip failed nodes entirely
-                    })
+                    }),
                 );
         });
 
@@ -284,7 +325,7 @@ export class TopologyGraph implements AfterViewInit {
                 catchError((err) => {
                     console.error('combineLatest error:', err);
                     return of([]);
-                })
+                }),
             )
             .subscribe((visNodes) => {
                 this.instantiateNetwork(visNodes);
@@ -313,8 +354,8 @@ export class TopologyGraph implements AfterViewInit {
                             type: 'continuous',
                             roundness: 0.2,
                         },
-                    } as Edge)
-            )
+                    }) as Edge,
+            ),
         );
 
         const data = {
@@ -329,7 +370,7 @@ export class TopologyGraph implements AfterViewInit {
         this.network = new Network(
             this.networkContainer.nativeElement,
             data,
-            TOPOLOGY_CONFIG.GRAPH
+            TOPOLOGY_CONFIG.GRAPH,
         );
 
         this.network.on('stabilized', () => {
@@ -352,20 +393,26 @@ export class TopologyGraph implements AfterViewInit {
 
         this.network.on('doubleClick', (event) => {
             if (event.nodes.length > 0) {
-                const nodeId = event.nodes[0];
-                const node = this.nodes.find((n) => n.id === nodeId);
-                if (
-                    node &&
-                    (node.nodeType === 'HOST' || node.nodeType === 'ROUTER') &&
-                    node.guiAccess &&
-                    node.ip
-                ) {
-                    this.openConsole.emit({
-                        ip: node.ip,
-                        title: node.name,
-                    });
-                }
+                this.emitConsoleEvent(event.nodes[0], false, false);
             }
+        });
+    }
+
+    private emitConsoleEvent(
+        topologyNode: TopologyGraphNode,
+        inGui: boolean,
+        inNewWindow,
+    ) {
+        if (!topologyNode.guiAccess && inGui) {
+            throw new Error(
+                'Requested GUI connection on node with no GUI access',
+            );
+        }
+        this.openConsole.emit({
+            nodeId: topologyNode.id,
+            osType: topologyNode.osType,
+            inNewWindow,
+            inGui,
         });
     }
 }

@@ -1,21 +1,27 @@
 import { inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { AdaptiveRunApi, LinearRunApi } from '@crczp/training-api';
+import { AccessedTrainingRunSort, AdaptiveRunApi, LinearRunApi } from '@crczp/training-api';
 import { AccessedTrainingRun, TrainingTypeEnum } from '@crczp/training-model';
 import { BehaviorSubject, from, Observable } from 'rxjs';
 import { concatMap, map, tap } from 'rxjs/operators';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
-import { SentinelFilter } from '@sentinel/common/filter';
-import { OffsetPaginatedElementsService } from '@sentinel/common';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import { ErrorHandlerService, PortalConfig } from '@crczp/utils';
 import { Routing } from '@crczp/routing-commons';
+import { CrczpOffsetElementsPaginatedService, OffsetPaginatedResource, QueryParam } from '@crczp/api-common';
 
 /**
  * Basic implementation of layer between component and API service.
  */
 @Injectable()
-export class AccessedTrainingRunService extends OffsetPaginatedElementsService<AccessedTrainingRun> {
+export class AccessedTrainingRunService extends CrczpOffsetElementsPaginatedService<AccessedTrainingRun> {
     public hasErrorSubject$ = new BehaviorSubject<boolean>(false);
+    override resource$ = this.resourceSubject$
+        .asObservable()
+        .pipe(
+            map((elements) =>
+                OffsetPaginatedResource.fromPaginatedElements(elements),
+            ),
+        );
     private trainingApi = inject(LinearRunApi);
     private adaptiveApi = inject(AdaptiveRunApi);
     private router = inject(Router);
@@ -31,15 +37,15 @@ export class AccessedTrainingRunService extends OffsetPaginatedElementsService<A
      * @param filter filters to be applied on resources
      */
     getAll(
-        pagination: OffsetPaginationEvent,
-        filter: string
-    ): Observable<PaginatedResource<AccessedTrainingRun>> {
+        pagination: OffsetPaginationEvent<AccessedTrainingRunSort>,
+        filter: string,
+    ): Observable<OffsetPaginatedResource<AccessedTrainingRun>> {
         this.hasErrorSubject$.next(false);
-        const filters = filter ? [new SentinelFilter('title', filter)] : [];
+        const filters = filter ? [new QueryParam('title', filter)] : [];
         pagination.size = Number.MAX_SAFE_INTEGER;
         return this.trainingApi.getAccessed(pagination, filters).pipe(
             concatMap((trainingRuns) =>
-                this.getAllAdaptive(pagination, trainingRuns)
+                this.getAllAdaptive(pagination, trainingRuns),
             ),
             tap(
                 (runs) => {
@@ -48,11 +54,11 @@ export class AccessedTrainingRunService extends OffsetPaginatedElementsService<A
                 (err) => {
                     this.errorHandler.emitAPIError(
                         err,
-                        'Fetching training runs'
+                        'Fetching training runs',
                     );
                     this.hasErrorSubject$.next(true);
-                }
-            )
+                },
+            ),
         );
     }
 
@@ -60,7 +66,7 @@ export class AccessedTrainingRunService extends OffsetPaginatedElementsService<A
         return from(
             this.router.navigate([
                 Routing.RouteBuilder.run[type].runId(id).resume.build(),
-            ])
+            ]),
         );
     }
 
@@ -68,7 +74,7 @@ export class AccessedTrainingRunService extends OffsetPaginatedElementsService<A
         return from(
             this.router.navigate([
                 Routing.RouteBuilder.run[type].runToken(token).access.build(),
-            ])
+            ]),
         );
     }
 
@@ -76,7 +82,7 @@ export class AccessedTrainingRunService extends OffsetPaginatedElementsService<A
         return from(
             this.router.navigate([
                 Routing.RouteBuilder.run[type].runId(id).results.build(),
-            ])
+            ]),
         );
     }
 
@@ -84,14 +90,14 @@ export class AccessedTrainingRunService extends OffsetPaginatedElementsService<A
         return from(
             this.router.navigate([
                 Routing.RouteBuilder.mitre_techniques.build(),
-            ])
+            ]),
         );
     }
 
     private getAllAdaptive(
-        pagination: OffsetPaginationEvent,
-        trainingRuns: PaginatedResource<AccessedTrainingRun>
-    ): Observable<PaginatedResource<AccessedTrainingRun>> {
+        pagination: OffsetPaginationEvent<AccessedTrainingRunSort>,
+        trainingRuns: OffsetPaginatedResource<AccessedTrainingRun>,
+    ): Observable<OffsetPaginatedResource<AccessedTrainingRun>> {
         return this.adaptiveApi.getAccessed(pagination).pipe(
             map(
                 (adaptiveRuns) => {
@@ -104,11 +110,11 @@ export class AccessedTrainingRunService extends OffsetPaginatedElementsService<A
                 (err) => {
                     this.errorHandler.emitAPIError(
                         err,
-                        'Fetching adaptive runs'
+                        'Fetching adaptive runs',
                     );
                     this.hasErrorSubject$.next(true);
-                }
-            )
+                },
+            ),
         );
     }
 }

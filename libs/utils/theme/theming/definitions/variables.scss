@@ -1,5 +1,6 @@
 @use '@angular/material/index' as mat;
 @use 'theme-definition' as theme;
+@use 'sass:map';
 
 /// A mixin to generate CSS variables for specific theme colors and shades.
 /// @param $prefix - The prefix for the generated CSS variable (e.g., "primary", "accent").
@@ -22,9 +23,38 @@
     }
 }
 
+@mixin addColor($prefix, $shade, $color) {
+    :root {
+        --#{$prefix}-#{$shade}: #{$color};
+    }
+}
+
 $shades: (0, 10, 20, 25, 30, 35, 40, 50, 60, 70, 80, 90, 95, 98, 99, 100);
 $prefixes: ('primary', 'secondary', 'tertiary', 'neutral', 'neutral-variant', 'error');
 
 @each $prefix in $prefixes {
     @include generateColors($prefix, theme.$theme, $shades);
+}
+
+$warning-palette: (
+    0: #000000,
+    10: #3b2f00,
+    20: #605000,
+    25: #736400,
+    30: #847600,
+    35: #967900,
+    40: #a98700,
+    50: #c39a00,
+    60: #e0ac00,
+    70: #ffbf00,
+    80: #ffcd4d,
+    90: #ffe082,
+    95: #fff1b8,
+    98: #fffbdb,
+    99: #fffded,
+    100: #ffffff,
+);
+@each $shade in $shades {
+    $color: map.get($warning-palette, $shade);
+    @include addColor('warning', $shade, $color);
 }

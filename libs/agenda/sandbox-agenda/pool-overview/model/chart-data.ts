@@ -3,7 +3,11 @@ export class ChartData {
     free: number;
 
     constructor(used: number, free: number) {
-        this.used = used;
-        this.free = free;
+        this.used = this.roundToTwoDecimalPlaces(used);
+        this.free = this.roundToTwoDecimalPlaces(free);
+    }
+
+    private roundToTwoDecimalPlaces(value: number): number {
+        return Math.round(value * 100) / 100;
     }
 }

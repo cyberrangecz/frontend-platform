@@ -9,20 +9,15 @@ import {
     Output,
     SimpleChanges
 } from '@angular/core';
-import { OffsetPaginationEvent } from '@sentinel/common/pagination';
-import {
-    SentinelControlItem,
-    SentinelControlItemSignal,
-    SentinelControlsComponent
-} from '@sentinel/components/controls';
+import { SentinelControlItem, SentinelControlsComponent } from '@sentinel/components/controls';
 import { Group, User } from '@crczp/user-and-group-model';
-import { SentinelTable, SentinelTableComponent, TableActionEvent, TableLoadEvent } from '@sentinel/components/table';
+import { SentinelTable, SentinelTableComponent, TableLoadEvent } from '@sentinel/components/table';
 import {
     SentinelResourceSelectorComponent,
     SentinelResourceSelectorMapping
 } from '@sentinel/components/resource-selector';
-import { combineLatest, defer, Observable } from 'rxjs';
-import { map, take } from 'rxjs/operators';
+import { combineLatest, defer, Observable, of } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { GroupMemberTable } from '../../model/table/group-member-table';
 import { DeleteControlItem, SaveControlItem } from '@crczp/user-and-group-agenda/internal';
 import { UserAssignService } from '../../services/state/user-assign.service';
@@ -31,6 +26,8 @@ import { MatCard, MatCardContent, MatCardHeader, MatCardSubtitle, MatCardTitle }
 import { MatIcon } from '@angular/material/icon';
 import { AsyncPipe } from '@angular/common';
 import { PaginationStorageService, providePaginationStorageService } from '@crczp/utils';
+import { createPaginationEvent, PaginationMapper } from '@crczp/api-common';
+import { UserSort } from '@crczp/user-and-group-api';
 
 /**
  * Component for user assignment to groups
@@ -67,7 +64,6 @@ export class GroupUserAssignComponent implements OnChanges {
     /**
      * Pagination id for saving and restoring pagination size
      */
-    @Input() paginationId = 'crczp-group-user-assign';
     /**
      * Event emitter of unsaved changes
      */
@@ -75,23 +71,31 @@ export class GroupUserAssignComponent implements OnChanges {
     /**
      * Users available to assign
      */
-    users$: Observable<User[]>;
+    users$: Observable<User[]> = of();
     /**
      * Mapping of user model attributes to selector component
      */
-    userMapping: SentinelResourceSelectorMapping;
+    userMapping: SentinelResourceSelectorMapping = {
+        id: 'id',
+        title: 'name',
+        subtitle: 'login',
+        icon: 'picture',
+    };
     /**
      * Groups available to import (assign its users to edited group-overview)
      */
-    groups$: Observable<Group[]>;
+    groups$: Observable<Group[]> = of();
     /**
      * Mapping of group-overview model attribute to selector component
      */
-    groupMapping: SentinelResourceSelectorMapping;
+    groupMapping: SentinelResourceSelectorMapping = {
+        id: 'id',
+        title: 'name',
+    };
     /**
      * Data for table component of already assigned users
      */
-    assignedUsers$: Observable<SentinelTable<User>>;
+    assignedUsers$: Observable<SentinelTable<User, string>>;
     /**
      * True if error was thrown while getting data for assigned users table component, false otherwise
      */
@@ -100,26 +104,17 @@ export class GroupUserAssignComponent implements OnChanges {
      * True if data loading for table component is in progress, false otherwise
      */
     isLoadingAssignedUsers$: Observable<boolean>;
-    selectedUsersToAssign$: Observable<User[]>;
-    selectedGroupsToImport$: Observable<Group[]>;
-    assignUsersControls: SentinelControlItem[];
-    assignedUsersControls: SentinelControlItem[];
+    selectedUsersToAssign$: Observable<User[]> = of();
+    selectedGroupsToImport$: Observable<Group[]> = of();
+    assignUsersControls: SentinelControlItem[] = [];
+    assignedUsersControls: SentinelControlItem[] = [];
     destroyRef = inject(DestroyRef);
+    private readonly initialUserPagination = createPaginationEvent<UserSort>({
+        sort: 'fullName',
+        sortDir: 'asc',
+    });
     private userAssignService = inject(UserAssignService);
     private paginationService = inject(PaginationStorageService);
-
-    constructor() {
-        this.userMapping = {
-            id: 'id',
-            title: 'name',
-            subtitle: 'login',
-            icon: 'picture',
-        };
-        this.groupMapping = {
-            id: 'id',
-            title: 'name',
-        };
-    }
 
     ngOnChanges(changes: SimpleChanges): void {
         if (
@@ -127,12 +122,14 @@ export class GroupUserAssignComponent implements OnChanges {
             this.resource &&
             this.resource.id !== undefined
         ) {
+            console.log(
+                'Initializing UserAssignComponent for resource:',
+                this.resource,
+            );
             this.init();
+        } else {
+            console.log('Resource is ', this.resource);
         }
-    }
-
-    onControlAction(controlItem: SentinelControlItemSignal): void {
-        controlItem.result$.pipe(take(1)).subscribe();
     }
 
     /**
@@ -140,6 +137,7 @@ export class GroupUserAssignComponent implements OnChanges {
      * @param users selected users to assign
      */
     onUserToAssignSelection(users: User[]): void {
+        console.log('Selected users to assign:', users);
         this.userAssignService.setSelectedUsersToAssign(users);
     }
 
@@ -164,6 +162,8 @@ export class GroupUserAssignComponent implements OnChanges {
      * @param filterValue search value
      */
     searchUsers(filterValue: string): void {
+        console.log('Searching users with filter:', filterValue);
+
         this.users$ = this.userAssignService
             .getUsersToAssign(this.resource.id, filterValue)
             .pipe(map((resource) => resource.elements));
@@ -180,24 +180,16 @@ export class GroupUserAssignComponent implements OnChanges {
     }
 
     /**
-     * Resolves type of action and calls appropriate handler
-     * @param event action event emitted from assigned users table component
-     */
-    onAssignedUsersTableAction(event: TableActionEvent<User>): void {
-        event.action.result$.pipe(take(1)).subscribe();
-    }
-
-    /**
      * Calls service to get data for assigned users table
      * @param loadEvent event to load new data emitted by assigned users table component
      */
-    onAssignedLoadEvent(loadEvent: TableLoadEvent): void {
+    onAssignedLoadEvent(loadEvent: TableLoadEvent<UserSort>): void {
         this.paginationService.savePageSize(loadEvent.pagination.size);
         this.userAssignService
             .getAssigned(
                 this.resource.id,
-                loadEvent.pagination as OffsetPaginationEvent,
-                loadEvent.filter
+                PaginationMapper.toOffsetPaginationEvent(loadEvent.pagination),
+                loadEvent.filter,
             )
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe();
@@ -205,9 +197,13 @@ export class GroupUserAssignComponent implements OnChanges {
 
     private init() {
         this.selectedUsersToAssign$ =
-            this.userAssignService.selectedUsersToAssign$;
+            this.userAssignService.selectedUsersToAssign$.pipe(
+                map((users) => users ?? []),
+            );
         this.selectedGroupsToImport$ =
-            this.userAssignService.selectedGroupsToImport$;
+            this.userAssignService.selectedGroupsToImport$.pipe(
+                map((groups) => groups ?? []),
+            );
         this.initTable();
         this.initAssignUsersControls();
         this.initAssignedUsersControls();
@@ -222,8 +218,10 @@ export class GroupUserAssignComponent implements OnChanges {
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe((selections) =>
                 this.hasUnsavedChanges.emit(
-                    selections.some((selection) => selection.length > 0)
-                )
+                    selections.some(
+                        (selection) => selection && selection.length > 0,
+                    ),
+                ),
             );
     }
 
@@ -236,9 +234,9 @@ export class GroupUserAssignComponent implements OnChanges {
                         selection.length,
                         defer(() =>
                             this.userAssignService.unassignSelected(
-                                this.resource.id
-                            )
-                        )
+                                this.resource.id,
+                            ),
+                        ),
                     ),
                 ];
             });
@@ -251,8 +249,8 @@ export class GroupUserAssignComponent implements OnChanges {
         ]).pipe(
             map(
                 (selections) =>
-                    selections[0].length <= 0 && selections[1].length <= 0
-            )
+                    selections[0].length <= 0 && selections[1].length <= 0,
+            ),
         );
 
         this.assignUsersControls = [
@@ -260,20 +258,15 @@ export class GroupUserAssignComponent implements OnChanges {
                 'Add',
                 disabled$,
                 defer(() =>
-                    this.userAssignService.assignSelected(this.resource.id)
-                )
+                    this.userAssignService.assignSelected(this.resource.id),
+                ),
             ),
         ];
     }
 
     private initTable() {
-        const initialLoadEvent: TableLoadEvent = {
-            pagination: new OffsetPaginationEvent(
-                0,
-                this.paginationService.loadPageSize(),
-                this.MEMBERS_OF_GROUP_INIT_SORT_NAME,
-                this.MEMBERS_OF_GROUP_INIT_SORT_DIR
-            ),
+        const initialLoadEvent: TableLoadEvent<UserSort> = {
+            pagination: this.initialUserPagination,
         };
         this.assignedUsers$ = this.userAssignService.assignedUsers$.pipe(
             map(
@@ -281,9 +274,9 @@ export class GroupUserAssignComponent implements OnChanges {
                     new GroupMemberTable(
                         paginatedUsers,
                         this.resource.id,
-                        this.userAssignService
-                    )
-            )
+                        this.userAssignService,
+                    ),
+            ),
         );
         this.assignedUsersHasError$ = this.userAssignService.hasError$;
         this.isLoadingAssignedUsers$ =

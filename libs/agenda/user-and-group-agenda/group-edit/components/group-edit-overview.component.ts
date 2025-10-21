@@ -9,12 +9,11 @@ import {
 import { ActivatedRoute } from '@angular/router';
 import {
     SentinelControlItem,
-    SentinelControlItemSignal,
     SentinelControlsComponent,
 } from '@sentinel/components/controls';
 import { Group } from '@crczp/user-and-group-model';
 import { defer, Observable, of } from 'rxjs';
-import { take, tap } from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
 import { SaveControlItem } from '@crczp/user-and-group-agenda/internal';
 import { GroupChangedEvent } from '../model/group-changed-event';
 import { GroupEditService } from '../services/state/group-edit.service';
@@ -70,7 +69,7 @@ export class GroupEditOverviewComponent {
     constructor() {
         this.group$ = this.editService.group$;
         this.editMode$ = this.editService.editMode$.pipe(
-            tap((editMode) => this.initControls(editMode))
+            tap((editMode) => this.initControls(editMode)),
         );
         this.activeRoute.data
             .pipe(takeUntilDestroyed(this.destroyRef))
@@ -86,10 +85,6 @@ export class GroupEditOverviewComponent {
             this.canDeactivateMembers &&
             this.canDeactivateRoles
         );
-    }
-
-    onControlAction(controlItem: SentinelControlItemSignal): void {
-        controlItem.result$.pipe(take(1)).subscribe();
     }
 
     onGroupChanged(groupEvent: GroupChangedEvent): void {
@@ -112,8 +107,8 @@ export class GroupEditOverviewComponent {
             defer(() =>
                 this.editService
                     .save()
-                    .pipe(tap(() => (this.canDeactivateGroupEdit = true)))
-            )
+                    .pipe(tap(() => (this.canDeactivateGroupEdit = true))),
+            ),
         );
         if (isEditMode) {
             this.controls = [saveItem];
@@ -125,8 +120,8 @@ export class GroupEditOverviewComponent {
                 defer(() =>
                     this.editService
                         .createAndEdit()
-                        .pipe(tap(() => (this.canDeactivateGroupEdit = true)))
-                )
+                        .pipe(tap(() => (this.canDeactivateGroupEdit = true))),
+                ),
             );
             saveAndStayItem.id = 'save_and_stay';
             this.controls = [saveItem, saveAndStayItem];

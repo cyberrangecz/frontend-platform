@@ -20,7 +20,6 @@ import { PhaseEditConcreteService } from '../services/state/phase/phase-edit-con
 import { MitreTechniquesService } from '../services/state/mitre-techniques/mitre-techniques.service';
 import { MitreTechniquesConcreteService } from '../services/state/mitre-techniques/mitre-techniques-concrete.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import { SentinelUserAssignComponent, SentinelUserAssignService } from '@sentinel/components/user-assign';
 import {
     MatExpansionPanel,
@@ -39,6 +38,7 @@ import {
     AdaptiveTrainingDefinitionEditComponent
 } from './adaptive-definition/adaptive-training-definition-edit.component';
 import { PortalConfig, providePaginationStorageService } from '@crczp/utils';
+import { createInfinitePaginationEvent } from '@crczp/api-common';
 
 /**
  * Main smart component of training definition edit/new page.
@@ -60,7 +60,7 @@ import { PortalConfig, providePaginationStorageService } from '@crczp/utils';
             useClass: MitreTechniquesConcreteService,
         },
         providePaginationStorageService(
-            AdaptiveDefinitionEditOverviewComponent
+            AdaptiveDefinitionEditOverviewComponent,
         ),
     ],
     imports: [
@@ -105,7 +105,7 @@ export class AdaptiveDefinitionEditOverviewComponent implements OnInit {
     constructor() {
         this.trainingDefinition$ = this.editService.trainingDefinition$;
         this.tdTitle$ = this.editService.trainingDefinition$.pipe(
-            map((td) => td.title)
+            map((td) => td.title),
         );
         this.definitionSaveDisabled$ = this.editService.saveDisabled$;
         this.phasesSaveDisabled$ = this.phaseEditService.saveDisabled$;
@@ -113,7 +113,7 @@ export class AdaptiveDefinitionEditOverviewComponent implements OnInit {
         this.phases$ = this.phaseEditService.phases$;
         this.trainingPhasesCount$ =
             this.phaseEditService.presentTrainingPhases$.pipe(
-                map((phases) => phases.length)
+                map((phases) => phases.length),
             );
         this.mitreTechniquesService
             .getAll()
@@ -121,12 +121,12 @@ export class AdaptiveDefinitionEditOverviewComponent implements OnInit {
             .subscribe();
         const valid$: Observable<boolean> = combineLatest(
             this.editService.definitionValid$,
-            this.phaseEditService.phasesValid$
+            this.phaseEditService.phasesValid$,
         ).pipe(map((valid) => valid[0] && valid[1]));
         this.activeRoute.data
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe((data) =>
-                this.editService.set(data[TrainingDefinition.name] || null)
+                this.editService.set(data[TrainingDefinition.name] || null),
             );
         this.editMode$ = this.editService.editMode$.pipe(
             tap(
@@ -135,9 +135,9 @@ export class AdaptiveDefinitionEditOverviewComponent implements OnInit {
                         this.editService,
                         this.definitionSaveDisabled$,
                         this.phasesSaveDisabled$,
-                        valid$
-                    ))
-            )
+                        valid$,
+                    )),
+            ),
         );
     }
 
@@ -150,16 +150,16 @@ export class AdaptiveDefinitionEditOverviewComponent implements OnInit {
                 takeUntilDestroyed(this.destroyRef),
                 filter(
                     (trainingDefinition) =>
-                        !!trainingDefinition && !!trainingDefinition.id
-                )
+                        !!trainingDefinition && !!trainingDefinition.id,
+                ),
             )
             .subscribe((trainingDefinition) =>
                 this.authorsAssignService
                     .getAssigned(
                         trainingDefinition.id,
-                        new OffsetPaginationEvent(0, this.defaultPaginationSize)
+                        createInfinitePaginationEvent('familyName'),
                     )
-                    .subscribe()
+                    .subscribe(),
             );
     }
 

@@ -1,14 +1,12 @@
 import { inject, Injectable } from '@angular/core';
-import { DetectionEventApi } from '@crczp/training-api';
-import {
-    OffsetPaginationEvent,
-    PaginatedResource,
-} from '@sentinel/common/pagination';
+import { DetectionEventApi, DetectionEventParticipantSort } from '@crczp/training-api';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import { Observable } from 'rxjs';
 import { DetectionEventParticipant } from '@crczp/training-model';
 import { tap } from 'rxjs/operators';
 import { DetectionEventParticipantService } from './detection-event-participant.service';
 import { PortalConfig } from '@crczp/utils';
+import { OffsetPaginatedResource } from '@crczp/api-common';
 
 /**
  * Basic implementation of a layer between a component and an API services.
@@ -29,15 +27,15 @@ export class DetectionEventParticipantConcreteService extends DetectionEventPart
      */
     public getAll(
         detectionEventId: number,
-        pagination: OffsetPaginationEvent
-    ): Observable<PaginatedResource<DetectionEventParticipant>> {
+        pagination: OffsetPaginationEvent<DetectionEventParticipantSort>,
+    ): Observable<OffsetPaginatedResource<DetectionEventParticipant>> {
         return this.api.getAllParticipants(pagination, detectionEventId).pipe(
             tap(
                 (detections) => {
                     this.resourceSubject$.next(detections);
                 },
-                () => this.onGetAllError()
-            )
+                () => this.onGetAllError(),
+            ),
         );
     }
 

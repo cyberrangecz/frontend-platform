@@ -1,11 +1,7 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit } from '@angular/core';
-import {
-    SentinelControlItem,
-    SentinelControlItemSignal,
-    SentinelControlsComponent
-} from '@sentinel/components/controls';
+import { SentinelControlItem, SentinelControlsComponent } from '@sentinel/components/controls';
 import { BehaviorSubject, combineLatest, defer, Observable, switchMap, tap } from 'rxjs';
-import { map, take } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { PoolEditService } from '../services/pool-edit.service';
 import { PoolFormGroup } from './pool-form-group';
 import { AbstractControl, ReactiveFormsModule } from '@angular/forms';
@@ -17,8 +13,6 @@ import {
     SandboxDefinitionOverviewService
 } from '@crczp/sandbox-agenda/internal';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { OffsetPaginationEvent } from '@sentinel/common/pagination';
-import { PoolEditConcreteService } from '../services/pool-edit-concrete.service';
 import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
 import { MatDivider } from '@angular/material/divider';
 import {
@@ -30,6 +24,7 @@ import { AsyncPipe } from '@angular/common';
 import { MatError, MatFormField, MatInput, MatLabel } from '@angular/material/input';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatCheckbox } from '@angular/material/checkbox';
+import { createInfinitePaginationEvent } from '@crczp/api-common';
 
 /**
  * Component with form for creating pool
@@ -64,7 +59,7 @@ import { MatCheckbox } from '@angular/material/checkbox';
             provide: SandboxDefinitionOverviewService,
             useClass: SandboxDefinitionOverviewConcreteService,
         },
-        { provide: PoolEditService, useClass: PoolEditConcreteService },
+        PoolEditService,
     ],
 })
 export class PoolEditComponent implements OnInit {
@@ -86,8 +81,10 @@ export class PoolEditComponent implements OnInit {
             .pipe(
                 tap((data) => {
                     this.pool =
-                        data.pool === undefined ? new Pool() : data.pool;
-                    this.poolEditService.set(data.pool);
+                        data[Pool.name] === undefined
+                            ? new Pool()
+                            : data[Pool.name];
+                    this.poolEditService.set(data[Pool.name]);
                 }),
                 switchMap(() => this.poolEditService.editMode$),
                 tap((editMode) => {
@@ -95,7 +92,7 @@ export class PoolEditComponent implements OnInit {
                     this.initControls(editMode);
                     this.poolFormGroup = new PoolFormGroup(this.pool, editMode);
                 }),
-                switchMap(() => this.poolFormGroup.formGroup.valueChanges)
+                switchMap(() => this.poolFormGroup.formGroup.valueChanges),
             )
             .subscribe(() => this.onChanged());
 
@@ -106,10 +103,10 @@ export class PoolEditComponent implements OnInit {
             map(([definitions, filter]) =>
                 definitions.elements.filter((definition) =>
                     this.sandboxDefinitionToDisplayString(definition).includes(
-                        filter
-                    )
-                )
-            )
+                        filter,
+                    ),
+                ),
+            ),
         );
     }
 
@@ -127,15 +124,9 @@ export class PoolEditComponent implements OnInit {
 
     ngOnInit(): void {
         this.sandboxDefinitionService
-            .getAll(
-                new OffsetPaginationEvent(0, Number.MAX_SAFE_INTEGER, '', 'asc')
-            )
+            .getAll(createInfinitePaginationEvent('name'))
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe();
-    }
-
-    onControlsAction(control: SentinelControlItemSignal): void {
-        control.result$.pipe(take(1)).subscribe();
     }
 
     initControls(isEditMode: boolean): void {
@@ -145,7 +136,7 @@ export class PoolEditComponent implements OnInit {
                 isEditMode ? 'Save' : 'Create',
                 'primary',
                 this.poolEditService.saveDisabled$,
-                defer(() => this.poolEditService.save())
+                defer(() => this.poolEditService.save()),
             ),
         ];
     }
@@ -158,7 +149,7 @@ export class PoolEditComponent implements OnInit {
     }
 
     sandboxDefinitionToDisplayString(
-        sandboxDefinition?: SandboxDefinition
+        sandboxDefinition?: SandboxDefinition,
     ): string {
         if (!sandboxDefinition) {
             return '';
@@ -175,7 +166,7 @@ export class PoolEditComponent implements OnInit {
         this.canDeactivatePoolEdit = false;
         const change: PoolChangedEvent = new PoolChangedEvent(
             this.pool,
-            this.poolFormGroup.formGroup.valid
+            this.poolFormGroup.formGroup.valid,
         );
         this.poolEditService.change(change);
     }

@@ -19,8 +19,10 @@ export function mapTopologyToTopologyVisualization(topology: Topology): {
             id: router.name,
             name: router.name,
             nodeType: 'ROUTER',
-            osType: mapOsType(router.osType),
+            osType: router.osType,
             guiAccess: router.guiAccess,
+            ip: router.ip,
+            accessible: router.isAccessible,
         });
 
         links.push({
@@ -37,6 +39,7 @@ export function mapTopologyToTopologyVisualization(topology: Topology): {
                 name: subnet.name,
                 nodeType: 'SUBNET',
                 ip: subnet.cidr,
+                accessible: false,
                 subnetColor:
                     TOPOLOGY_CONFIG.SVG.SUBNET.COLORS[
                         subnetOrd++ % TOPOLOGY_CONFIG.SVG.SUBNET.COLORS.length
@@ -56,8 +59,9 @@ export function mapTopologyToTopologyVisualization(topology: Topology): {
                     name: host.name,
                     nodeType: 'HOST',
                     ip: host.ip,
-                    osType: mapOsType(host.osType),
+                    osType: host.osType,
                     guiAccess: host.guiAccess,
+                    accessible: host.isAccessible,
                 });
 
                 links.push({
@@ -71,8 +75,4 @@ export function mapTopologyToTopologyVisualization(topology: Topology): {
     });
 
     return { nodes, links };
-}
-
-function mapOsType(osType: string) {
-    return osType.toLowerCase() === 'linux' ? 'LINUX' : 'WINDOWS';
 }

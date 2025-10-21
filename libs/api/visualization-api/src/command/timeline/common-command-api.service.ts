@@ -24,10 +24,10 @@ export abstract class CommonCommandApi {
     protected readonly adaptiveInstanceEndpoint: string;
     protected readonly cheatingDetectionEndpoint: string;
 
-    constructor(
+    protected constructor(
         private http: HttpClient,
         settings: PortalConfig,
-        private endpointUri: CommandApiEndpoint
+        private endpointUri: CommandApiEndpoint,
     ) {
         const linearBasePath = settings.basePaths.linearTraining;
         const adaptiveBasePath = settings.basePaths.adaptiveTraining;
@@ -46,15 +46,15 @@ export abstract class CommonCommandApi {
      */
     getCommandsByTrainingRun(
         runId: number,
-        isAdaptive: boolean
+        isAdaptive: boolean,
     ): Observable<VisualizationCommand[]> {
         const baseUrl = isAdaptive
             ? this.adaptiveVisualizationsEndpoint
             : this.visualizationsEndpoint;
         return this.http
-            .get<CommandDTO[]>(
-                `${baseUrl}/commands/training-runs/${runId}/${this.endpointUri.toString()}`
-            )
+            .get<
+                CommandDTO[]
+            >(`${baseUrl}/commands/training-runs/${runId}/${this.endpointUri.toString()}`)
             .pipe(map((response) => CommandMapper.fromDTOs(response)));
     }
 
@@ -63,12 +63,12 @@ export abstract class CommonCommandApi {
      * @param instanceId instance ID
      */
     getTrainingRunsOfVisualization(
-        instanceId: number
+        instanceId: number,
     ): Observable<TrainingRun[]> {
         return this.http
-            .get<TrainingRunDTO[]>(
-                `${this.visualizationsEndpoint}/training-instances/${instanceId}/training-runs`
-            )
+            .get<
+                TrainingRunDTO[]
+            >(`${this.visualizationsEndpoint}/training-instances/${instanceId}/training-runs`)
             .pipe(map((response) => TrainingRunMapper.fromDTOs(response)));
     }
 
@@ -81,38 +81,36 @@ export abstract class CommonCommandApi {
     getTrainingRunsOfTrainingInstance(
         instanceId: number,
         isAdaptive: boolean,
-        pagination: OffsetPaginationEvent
+        pagination: OffsetPaginationEvent<string>,
     ): Observable<TrainingRun[]> {
         const params = ParamsBuilder.javaPaginationParams(pagination);
         const baseUrl = isAdaptive
             ? this.adaptiveInstanceEndpoint
             : this.instanceEndpoint;
         return this.http
-            .get<JavaPaginatedResource<TrainingRunDTO>>(
-                `${baseUrl}/${instanceId}/training-runs`,
-                { params }
-            )
+            .get<
+                JavaPaginatedResource<TrainingRunDTO>
+            >(`${baseUrl}/${instanceId}/training-runs`, { params })
             .pipe(
-                map((response) => TrainingRunMapper.fromDTOs(response.content))
+                map((response) => TrainingRunMapper.fromDTOs(response.content)),
             );
     }
 
     getForbiddenCommandsOfDetectionEvent(
-        detectionEventId: number
+        detectionEventId: number,
     ): Observable<DetectedForbiddenCommand[]> {
         const params = new HttpParams().append(
             'eventId',
-            detectionEventId.toString()
+            detectionEventId.toString(),
         );
         return this.http
-            .get<DetectedForbiddenCommandDTO[]>(
-                `${this.cheatingDetectionEndpoint}/detected-commands`,
-                { params }
-            )
+            .get<
+                DetectedForbiddenCommandDTO[]
+            >(`${this.cheatingDetectionEndpoint}/detected-commands`, { params })
             .pipe(
                 map((response) =>
-                    DetectedForbiddenCommandMapper.fromDTOs(response)
-                )
+                    DetectedForbiddenCommandMapper.fromDTOs(response),
+                ),
             );
     }
 }

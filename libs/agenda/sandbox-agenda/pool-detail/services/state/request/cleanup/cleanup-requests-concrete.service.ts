@@ -1,7 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { OffsetPaginationEvent, PaginatedResource } from '@sentinel/common/pagination';
-import { CleanupRequestsApi, PoolApi, SandboxAllocationUnitsApi } from '@crczp/sandbox-api';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
+import { AllocationRequestSort, CleanupRequestsApi, PoolApi, SandboxAllocationUnitsApi } from '@crczp/sandbox-api';
 import { CleanupRequest, Request } from '@crczp/sandbox-model';
 import { EMPTY, Observable } from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
@@ -13,6 +13,7 @@ import {
 } from '@sentinel/components/dialogs';
 import { MatDialog } from '@angular/material/dialog';
 import { ErrorHandlerService, NotificationService, PortalConfig } from '@crczp/utils';
+import { OffsetPaginatedResource } from '@crczp/api-common';
 
 /**
  * Basic implementation of a layer between a component and an API service.
@@ -42,15 +43,15 @@ export class CleanupRequestsConcreteService extends RequestsService {
      */
     getAll(
         poolId: number,
-        pagination: OffsetPaginationEvent
-    ): Observable<PaginatedResource<Request>> {
+        pagination: OffsetPaginationEvent<AllocationRequestSort>,
+    ): Observable<OffsetPaginatedResource<Request>> {
         this.onManualResourceRefresh(pagination, poolId);
         return this.poolApi.getCleanupRequests(poolId, pagination).pipe(
             tap(
                 (paginatedRequests) =>
                     this.resourceSubject$.next(paginatedRequests),
-                (err) => this.onGetAllError(err)
-            )
+                (err) => this.onGetAllError(err),
+            ),
         );
     }
 
@@ -60,13 +61,13 @@ export class CleanupRequestsConcreteService extends RequestsService {
             'Cancel',
             'Cancel cleanup request',
             'No',
-            'Yes'
+            'Yes',
         ).pipe(
             switchMap((result) =>
                 result === SentinelDialogResultEnum.CONFIRMED
                     ? this.callApiToCancel(request)
-                    : EMPTY
-            )
+                    : EMPTY,
+            ),
         );
     }
 
@@ -80,18 +81,18 @@ export class CleanupRequestsConcreteService extends RequestsService {
             'Delete',
             'delete cleanup',
             'Cancel',
-            'Delete'
+            'Delete',
         ).pipe(
             switchMap((result) =>
                 result === SentinelDialogResultEnum.CONFIRMED
                     ? this.callApiToDelete(request)
-                    : EMPTY
-            )
+                    : EMPTY,
+            ),
         );
     }
 
     protected onManualResourceRefresh(
-        pagination: OffsetPaginationEvent,
+        pagination: OffsetPaginationEvent<AllocationRequestSort>,
         ...params: any[]
     ): void {
         super.onManualResourceRefresh(pagination, ...params);
@@ -101,7 +102,7 @@ export class CleanupRequestsConcreteService extends RequestsService {
     /**
      * Repeats last get all request for polling purposes
      */
-    protected refreshResource(): Observable<PaginatedResource<Request>> {
+    protected refreshResource(): Observable<OffsetPaginatedResource<Request>> {
         this.hasErrorSubject$.next(false);
         return this.poolApi
             .getCleanupRequests(this.lastPoolId, this.lastPagination)
@@ -118,7 +119,7 @@ export class CleanupRequestsConcreteService extends RequestsService {
         title: string,
         action: string,
         cancelLabel: string,
-        confirmLabel: string
+        confirmLabel: string,
     ): Observable<SentinelDialogResultEnum> {
         const dialogRef = this.dialog.open(
             SentinelConfirmationDialogComponent,
@@ -127,9 +128,9 @@ export class CleanupRequestsConcreteService extends RequestsService {
                     `${title} cleanup request`,
                     `Do you want to ${action.toLowerCase()} "${request.id}"?`,
                     cancelLabel,
-                    confirmLabel
+                    confirmLabel,
                 ),
-            }
+            },
         );
         return dialogRef.afterClosed();
     }
@@ -140,15 +141,21 @@ export class CleanupRequestsConcreteService extends RequestsService {
                 () =>
                     this.notificationService.emit(
                         'success',
-                        `Delete cleanup request`
+                        `Delete cleanup request`,
                     ),
                 (err) =>
                     this.errorHandler.emitAPIError(
                         err,
-                        'Deleting cleanup request'
-                    )
+                        'Deleting cleanup request',
+                    ),
             ),
-            switchMap(() => this.getAll(this.lastPoolId, this.lastPagination))
+            switchMap(() =>
+                this.getAll(
+                    this.lastPoolId,
+                    this
+                        .lastPagination as OffsetPaginationEvent<AllocationRequestSort>,
+                ),
+            ),
         );
     }
 
@@ -158,15 +165,21 @@ export class CleanupRequestsConcreteService extends RequestsService {
                 () =>
                     this.notificationService.emit(
                         'success',
-                        `Cleanup request ${request.id} cancelled`
+                        `Cleanup request ${request.id} cancelled`,
                     ),
                 (err) =>
                     this.errorHandler.emitAPIError(
                         err,
-                        'Cancelling cleanup request ' + request.id
-                    )
+                        'Cancelling cleanup request ' + request.id,
+                    ),
             ),
-            switchMap(() => this.getAll(this.lastPoolId, this.lastPagination))
+            switchMap(() =>
+                this.getAll(
+                    this.lastPoolId,
+                    this
+                        .lastPagination as OffsetPaginationEvent<AllocationRequestSort>,
+                ),
+            ),
         );
     }
 }

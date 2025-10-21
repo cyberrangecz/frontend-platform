@@ -1,34 +1,45 @@
-import {SentinelFilter} from '@sentinel/common/filter';
-import {HttpParams} from '@angular/common/http';
-import {OffsetPaginationEvent} from '@sentinel/common/pagination';
+import { HttpParams } from '@angular/common/http';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
+import { QueryParam } from './query-param';
 
 export class ParamsBuilder {
     /**
      * Transforms filters to http params in server supported format
      * @param filters filters to transform into http params
      */
-    static filterParams(filters?: SentinelFilter[]): HttpParams {
+    static queryParams(filters?: QueryParam[]): HttpParams {
         let params = new HttpParams();
-        if (!filters) { return params; }
-        filters.forEach((filter) => (params = params.set(filter.paramName, filter.value)));
+        if (!filters) {
+            return params;
+        }
+        filters.forEach(
+            (filter) =>
+                (params = params.set(filter.name, filter.value.toString())),
+        );
         return params;
     }
-
 
     /**
      * Transforms requested pagination object to http params in trainings microservice format (JAVA API)
      * @param pagination requested pagination
      */
-    static javaPaginationParams(pagination: OffsetPaginationEvent): HttpParams {
+    static javaPaginationParams<T extends Record<string, never>>(
+        pagination: OffsetPaginationEvent<Extract<keyof T, string>>,
+    ): HttpParams {
         if (pagination) {
             if (pagination.sort) {
-                const sort = pagination.sort + ',' + (pagination.sortDir ? pagination.sortDir : 'asc');
+                const sort =
+                    pagination.sort +
+                    ',' +
+                    (pagination.sortDir ? pagination.sortDir : 'asc');
                 return new HttpParams()
                     .set('page', pagination.page.toString())
                     .set('size', pagination.size.toString())
                     .set('sort', sort);
             } else {
-                return new HttpParams().set('page', pagination.page.toString()).set('size', pagination.size.toString());
+                return new HttpParams()
+                    .set('page', pagination.page.toString())
+                    .set('size', pagination.size.toString());
             }
         }
         return new HttpParams().set('page', '0').set('size', '10');
@@ -38,7 +49,9 @@ export class ParamsBuilder {
      * Transforms requested pagination object to http params in sandbox microservice format (PYTHON API)
      * @param pagination requested pagination
      */
-    static djangoPaginationParams(pagination: OffsetPaginationEvent): HttpParams {
+    static djangoPaginationParams<T extends Record<string, never>>(
+        pagination: OffsetPaginationEvent<Extract<keyof T, string>>,
+    ): HttpParams {
         if (pagination) {
             if (pagination.sort) {
                 return new HttpParams()

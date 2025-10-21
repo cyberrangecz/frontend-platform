@@ -5,12 +5,20 @@ import {
     SubnetDTO,
     TopologyDTO,
 } from '../../dto/topology/topology-dto.model';
-import { HostNode, RouterNode, Subnet, Topology } from '@crczp/sandbox-model';
+import {
+    HostNode,
+    parseOsType,
+    RouterNode,
+    Subnet,
+    Topology,
+} from '@crczp/sandbox-model';
 
 const hostMapper = MapperBuilder.createDTOtoModelMapper<HostNodeDTO, HostNode>({
-    mappedProperties: ['name', 'ip', 'osType', 'guiAccess'],
-    mappers: {},
-    constructor: HostNode.schema().parse,
+    mappedProperties: ['name', 'ip', 'guiAccess', 'isAccessible'],
+    mappers: {
+        osType: (dto) => parseOsType(dto.os_type),
+    },
+    constructor: (data) => HostNode.schema().parse(data),
 });
 
 const subnetMapper = MapperBuilder.createDTOtoModelMapper<SubnetDTO, Subnet>({
@@ -18,18 +26,19 @@ const subnetMapper = MapperBuilder.createDTOtoModelMapper<SubnetDTO, Subnet>({
     mappers: {
         hosts: (dto) => dto.hosts.map((host) => hostMapper(host)),
     },
-    constructor: Subnet.schema().parse,
+    constructor: (data) => Subnet.schema().parse(data),
 });
 
 const routerMapper = MapperBuilder.createDTOtoModelMapper<
     RouterNodeDTO,
     RouterNode
 >({
-    mappedProperties: ['name', 'guiAccess', 'osType'],
+    mappedProperties: ['name', 'ip', 'guiAccess', 'isAccessible'],
     mappers: {
         subnets: (dto) => dto.subnets.map((subnet) => subnetMapper(subnet)),
+        osType: (dto) => parseOsType(dto.os_type),
     },
-    constructor: RouterNode.schema().parse,
+    constructor: (data) => RouterNode.schema().parse(data),
 });
 
 export const topologyMapper = MapperBuilder.createDTOtoModelMapper<
@@ -40,5 +49,5 @@ export const topologyMapper = MapperBuilder.createDTOtoModelMapper<
     mappers: {
         routers: (dto) => dto.routers.map((router) => routerMapper(router)),
     },
-    constructor: Topology.schema().parse,
+    constructor: (data) => Topology.schema().parse(data),
 });

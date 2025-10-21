@@ -1,7 +1,7 @@
-<sentinel-controls [controls]="controls" (itemClicked)="onControlsActions($event)"/>
+<sentinel-controls [controls]="controls" />
 <sentinel-table
-    [data]="sandboxDefinitions$ | async"
-    [hasError]="hasError$ | async"
     (tableLoad)="onLoadEvent($event)"
-    (rowAction)="onTableAction($event)">
+    [data]="sandboxDefinitions$ | async"
+    [defaultSortName]="'id'"
+    [hasError]="hasError$ | async">
 </sentinel-table>

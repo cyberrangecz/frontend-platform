@@ -1,7 +1,6 @@
 import { Component, HostBinding, inject, Input, OnInit } from '@angular/core';
 import { TrainingRun, TrainingRunInfo } from '@crczp/training-model';
-import { TrainingRunConcreteService } from '../../../services/state/runs/training-run-concrete.service';
-import { TrainingRunService } from '../../../services/state/runs/training-run.service';
+import { TrainingRunSummaryService } from '../../../services/state/runs/training-run-summary.service';
 import {
     SentinelTable,
     SentinelTableComponent,
@@ -13,17 +12,15 @@ import { take } from 'rxjs/operators';
     selector: 'crczp-training-run-info',
     templateUrl: './training-run-info.component.html',
     styleUrls: ['./training-run-info.component.css'],
-    providers: [
-        { provide: TrainingRunService, useClass: TrainingRunConcreteService },
-    ],
+    providers: [TrainingRunSummaryService],
     imports: [SentinelTableComponent],
 })
 export class TrainingRunInfoComponent implements OnInit {
     @HostBinding('style.width') width = '100%';
     @Input() data: TrainingRun;
-    info: SentinelTable<TrainingRunInfo>;
+    info: SentinelTable<TrainingRunInfo, string>;
     hasError = false;
-    private trainingRunService = inject(TrainingRunService);
+    private trainingRunService = inject(TrainingRunSummaryService);
 
     ngOnInit(): void {
         this.trainingRunService.getInfo(this.data.id).subscribe(
@@ -31,7 +28,7 @@ export class TrainingRunInfoComponent implements OnInit {
                 this.info = new TrainingInfoTable(res);
                 this.hasError = false;
             },
-            () => (this.hasError = true)
+            () => (this.hasError = true),
         );
     }
 

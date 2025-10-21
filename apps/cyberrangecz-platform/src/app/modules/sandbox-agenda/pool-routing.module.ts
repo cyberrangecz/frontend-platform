@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { PoolOverviewComponent } from '@crczp/sandbox-agenda/pool-overview';
-import { AllocationRequest, CleanupRequest, Pool } from '@crczp/sandbox-model';
+import { Pool } from '@crczp/sandbox-model';
 import { SandboxApiModule } from '@crczp/sandbox-api';
 import {
     Routing,
@@ -57,30 +57,30 @@ const routes: ValidRouterConfig<'pool'> = [
         },
     },
     {
-        path: ':poolId/sandbox-instance/:sandboxInstanceId',
-        loadChildren: () =>
+        path: ':poolId/sandbox-instance/:requestId',
+        loadComponent: () =>
             import('@crczp/sandbox-agenda/request-detail').then(
                 (m) => m.AllocationRequestDetailComponent
             ),
         resolve: {
             breadcrumb: Routing.Resolvers.Sandbox.resolveSandboxBreadcrumb,
             [Pool.name]: Routing.Resolvers.Pool.resolvePool,
-            [AllocationRequest.name]: Routing.Resolvers.Sandbox.resolveSandbox,
+            [Request.name]: Routing.Resolvers.Sandbox.resolveSandbox,
         },
         data: {
             title: 'Allocation Request Stages',
         },
     },
     {
-        path: ':poolId/sandbox-instance/:sandboxInstanceId/cleanup',
-        loadChildren: () =>
+        path: ':poolId/sandbox-instance/:requestId/cleanup',
+        loadComponent: () =>
             import('@crczp/sandbox-agenda/request-detail').then(
                 (m) => m.CleanupRequestDetailComponent
             ),
         resolve: {
             breadcrumb: Routing.Resolvers.Sandbox.resolveSandboxBreadcrumb,
             [Pool.name]: Routing.Resolvers.Pool.resolvePool,
-            [CleanupRequest.name]: Routing.Resolvers.Sandbox.resolveSandbox,
+            [Request.name]: Routing.Resolvers.Sandbox.resolveSandbox,
         },
         data: {
             title: 'Cleanup Request Stages',
@@ -88,13 +88,12 @@ const routes: ValidRouterConfig<'pool'> = [
     },
     {
         path: ':poolId/sandbox-instance/:sandboxInstanceId/topology',
-        loadChildren: () =>
-            import('@crczp/sandbox-agenda/topology').then(
+        loadComponent: () =>
+            import('@crczp/sandbox-agenda/sandbox-topology').then(
                 (m) => m.SandboxTopologyComponent
             ),
         resolve: {
             breadcrumb: Routing.Resolvers.Sandbox.resolveSandboxBreadcrumb,
-            [AllocationRequest.name]: Routing.Resolvers.Sandbox.resolveSandbox,
         },
         data: {
             title: 'Sandbox Topology',

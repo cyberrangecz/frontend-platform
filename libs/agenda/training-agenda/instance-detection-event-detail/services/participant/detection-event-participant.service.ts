@@ -1,7 +1,8 @@
-import {OffsetPaginatedElementsService} from '@sentinel/common';
-import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
-import {DetectionEventParticipant} from '@crczp/training-model';
-import {Observable} from 'rxjs';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
+import { DetectionEventParticipant } from '@crczp/training-model';
+import { Observable } from 'rxjs';
+import { DetectionEventParticipantSort } from '@crczp/training-api';
+import { CrczpOffsetElementsPaginatedService, OffsetPaginatedResource } from '@crczp/api-common';
 
 /**
  * A layer between a component and an API services. Implement a concrete services by extending this class.
@@ -9,7 +10,7 @@ import {Observable} from 'rxjs';
  * You can use get methods to get paginated resources and other operations to modify data.
  * Subscribe to detectionEvents$ to receive latest data updates.
  */
-export abstract class DetectionEventParticipantService extends OffsetPaginatedElementsService<DetectionEventParticipant> {
+export abstract class DetectionEventParticipantService extends CrczpOffsetElementsPaginatedService<DetectionEventParticipant> {
     /**
      * Gets all detection event participants with passed pagination and filter and updates related observables or handles an error
      * @param detectionEventId the detection event id
@@ -17,6 +18,6 @@ export abstract class DetectionEventParticipantService extends OffsetPaginatedEl
      */
     abstract getAll(
         detectionEventId: number,
-        pagination: OffsetPaginationEvent,
-    ): Observable<PaginatedResource<DetectionEventParticipant>>;
+        pagination: OffsetPaginationEvent<DetectionEventParticipantSort>,
+    ): Observable<OffsetPaginatedResource<DetectionEventParticipant>>;
 }

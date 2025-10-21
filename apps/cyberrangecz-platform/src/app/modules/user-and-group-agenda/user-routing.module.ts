@@ -8,6 +8,7 @@ import {
     UserAndGroupResolverHelperService,
     ValidRouterConfig,
 } from '@crczp/routing-commons';
+import { FileUploadProgressService } from '@crczp/utils';
 
 const routes: ValidRouterConfig<'user'> = [
     {
@@ -18,7 +19,7 @@ const routes: ValidRouterConfig<'user'> = [
         path: ':userId',
         loadComponent: () =>
             import('@crczp/user-and-group-agenda/user-detail').then(
-                (m) => m.UserDetailComponent
+                (m) => m.UserDetailComponent,
             ),
         resolve: {
             [User.name]: Routing.Resolvers.User.resolveUser,
@@ -32,7 +33,7 @@ const routes: ValidRouterConfig<'user'> = [
  */
 @NgModule({
     imports: [RouterModule.forChild(routes), UserAndGroupApiModule],
-    providers: [UserAndGroupResolverHelperService],
+    providers: [UserAndGroupResolverHelperService, FileUploadProgressService],
     exports: [RouterModule],
 })
 export class UserRoutingModule {}

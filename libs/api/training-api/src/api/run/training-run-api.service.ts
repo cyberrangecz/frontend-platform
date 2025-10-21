@@ -1,5 +1,4 @@
-import {SentinelFilter} from '@sentinel/common/filter';
-import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import {
     AccessedTrainingRun,
     AccessTrainingRunInfo,
@@ -10,7 +9,9 @@ import {
     TrainingRun,
     TrainingRunInfo,
 } from '@crczp/training-model';
-import {Observable} from 'rxjs';
+import { Observable } from 'rxjs';
+import { OffsetPaginatedResource, QueryParam } from '@crczp/api-common';
+import { AccessedTrainingRunSort, TrainingRunSort } from '../sorts';
 
 export abstract class LinearRunApi {
     /**
@@ -19,9 +20,9 @@ export abstract class LinearRunApi {
      * @param filters filters to be applied on resources
      */
     abstract getAll(
-        pagination: OffsetPaginationEvent,
-        filters?: SentinelFilter[],
-    ): Observable<PaginatedResource<TrainingRun>>;
+        pagination: OffsetPaginationEvent<TrainingRunSort>,
+        filters?: QueryParam[],
+    ): Observable<OffsetPaginatedResource<TrainingRun>>;
 
     /**
      * Sends http request to retrieve training run by id
@@ -35,9 +36,9 @@ export abstract class LinearRunApi {
      * @param filters to be applied on resources
      */
     abstract getAccessed(
-        pagination: OffsetPaginationEvent,
-        filters?: SentinelFilter[],
-    ): Observable<PaginatedResource<AccessedTrainingRun>>;
+        pagination: OffsetPaginationEvent<AccessedTrainingRunSort>,
+        filters?: QueryParam[],
+    ): Observable<OffsetPaginatedResource<AccessedTrainingRun>>;
 
     /**
      * Sends http request to retrieve info about training run by id
@@ -57,7 +58,10 @@ export abstract class LinearRunApi {
      * @param trainingRunIds ids of training runs which should be deleted
      * @param force true if delete should be forced, false otherwise
      */
-    abstract deleteMultiple(trainingRunIds: number[], force?: boolean): Observable<any>;
+    abstract deleteMultiple(
+        trainingRunIds: number[],
+        force?: boolean,
+    ): Observable<any>;
 
     /**
      * Sends http request to access training run with access token.
@@ -82,14 +86,20 @@ export abstract class LinearRunApi {
      * @param trainingRunId id of training run in which the answer should be submitted
      * @param answer a answer submitted by user
      */
-    abstract isCorrectAnswer(trainingRunId: number, answer: string): Observable<LevelAnswerCheck>;
+    abstract isCorrectAnswer(
+        trainingRunId: number,
+        answer: string,
+    ): Observable<LevelAnswerCheck>;
 
     /**
      * Sends http request to submit the passkey from access level and check its valid
      * @param trainingRunId id of training run in which the passkey should be submitted
      * @param passkey a passkey submitted by user
      */
-    abstract isCorrectPasskey(trainingRunId: number, passkey: string): Observable<boolean>;
+    abstract isCorrectPasskey(
+        trainingRunId: number,
+        passkey: string,
+    ): Observable<boolean>;
 
     /**
      * Sends http request to display hint and deduct points for it
@@ -109,7 +119,10 @@ export abstract class LinearRunApi {
      * @param trainingRunId id of the training run in which, questions should be submitted
      * @param questions questions which answers should be submitted
      */
-    abstract submitAnswers(trainingRunId: number, questions: Question[]): Observable<any>;
+    abstract submitAnswers(
+        trainingRunId: number,
+        questions: Question[],
+    ): Observable<any>;
 
     /**
      * Sends http request to finish active training run
@@ -128,5 +141,8 @@ export abstract class LinearRunApi {
      * @param trainingRunId id of a training run in which level should be accessed
      * @param levelId id of a level, which to be switched to
      */
-    abstract moveToLevel(trainingRunId: number, levelId: number): Observable<Level>;
+    abstract moveToLevel(
+        trainingRunId: number,
+        levelId: number,
+    ): Observable<Level>;
 }

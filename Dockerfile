@@ -1,4 +1,4 @@
-FROM node:20 AS builder
+FROM node:20-bookworm-slim AS builder
 ARG PROD=true
 
 RUN npm add --global nx

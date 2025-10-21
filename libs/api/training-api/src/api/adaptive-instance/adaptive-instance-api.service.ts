@@ -1,10 +1,8 @@
-import { SentinelFilter } from '@sentinel/common/filter';
-import {
-    OffsetPaginationEvent,
-    PaginatedResource,
-} from '@sentinel/common/pagination';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import { TrainingInstance, TrainingRun } from '@crczp/training-model';
 import { Observable } from 'rxjs';
+import { OffsetPaginatedResource, QueryParam } from '@crczp/api-common';
+import { TrainingInstanceSort, TrainingRunSort } from '../sorts';
 
 export abstract class AdaptiveTrainingInstanceApi {
     /**
@@ -13,9 +11,9 @@ export abstract class AdaptiveTrainingInstanceApi {
      * @param filters filters to be applied on resources
      */
     abstract getAll(
-        pagination: OffsetPaginationEvent,
-        filters?: SentinelFilter[]
-    ): Observable<PaginatedResource<TrainingInstance>>;
+        pagination: OffsetPaginationEvent<TrainingInstanceSort>,
+        filters?: QueryParam[],
+    ): Observable<OffsetPaginatedResource<TrainingInstance>>;
 
     /**
      * Sends http request to retrieves training instance by id
@@ -36,15 +34,15 @@ export abstract class AdaptiveTrainingInstanceApi {
      */
     abstract getAssociatedTrainingRuns(
         trainingInstanceId: number,
-        pagination: OffsetPaginationEvent
-    ): Observable<PaginatedResource<TrainingRun>>;
+        pagination: OffsetPaginationEvent<TrainingRunSort>,
+    ): Observable<OffsetPaginatedResource<TrainingRun>>;
 
     /**
      * Sends http request to create new training instance
      * @param trainingInstance training instance which should be created
      */
     abstract create(
-        trainingInstance: TrainingInstance
+        trainingInstance: TrainingInstance,
     ): Observable<TrainingInstance>;
 
     /**
@@ -60,7 +58,7 @@ export abstract class AdaptiveTrainingInstanceApi {
      */
     abstract delete(
         trainingInstanceId: number,
-        force?: boolean
+        force?: boolean,
     ): Observable<any>;
 
     /**
@@ -76,7 +74,7 @@ export abstract class AdaptiveTrainingInstanceApi {
      */
     abstract assignPool(
         trainingInstanceId: number,
-        poolId: number
+        poolId: number,
     ): Observable<any>;
 
     /**

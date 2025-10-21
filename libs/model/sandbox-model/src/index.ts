@@ -49,5 +49,3 @@ export { Quota } from './resources/quota';
 // VM IMAGES
 export { VirtualImage } from './vm-images/virtual-image';
 export { OwnerSpecified } from './vm-images/owner-specified';
-
-export * from './topology-graph/sandbox-console';

@@ -1,17 +1,25 @@
-import {ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit} from '@angular/core';
-import {ActivatedRoute, RouterLink, RouterLinkActive, RouterOutlet} from '@angular/router';
-import {Observable} from 'rxjs';
-import {take} from 'rxjs/operators';
-import {LinearTrainingDefinitionApi} from '@crczp/training-api';
-import {SentinelControlItemSignal} from '@sentinel/components/controls';
-import {MitreTechniquesOverviewService} from '../service/mitre-techniques.service';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {MatTabLink, MatTabNav} from "@angular/material/tabs";
-import {MatIcon} from "@angular/material/icon";
-import {TrainingRunResultsRoutingModule} from "./training-run-results-routing.module";
-import {AsyncPipe} from "@angular/common";
-import {TrainingRun} from "@crczp/training-model";
-
+import {
+    ChangeDetectionStrategy,
+    Component,
+    DestroyRef,
+    inject,
+    OnInit,
+} from '@angular/core';
+import {
+    ActivatedRoute,
+    RouterLink,
+    RouterLinkActive,
+    RouterOutlet,
+} from '@angular/router';
+import { Observable } from 'rxjs';
+import { LinearTrainingDefinitionApi } from '@crczp/training-api';
+import { MitreTechniquesOverviewService } from '../service/mitre-techniques.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { MatTabLink, MatTabNav } from '@angular/material/tabs';
+import { MatIcon } from '@angular/material/icon';
+import { TrainingRunResultsRoutingModule } from './training-run-results-routing.module';
+import { AsyncPipe } from '@angular/common';
+import { TrainingRun } from '@crczp/training-model';
 
 @Component({
     selector: 'crczp-training-run-results',
@@ -27,11 +35,9 @@ import {TrainingRun} from "@crczp/training-model";
         MatIcon,
         RouterOutlet,
         TrainingRunResultsRoutingModule,
-        AsyncPipe
+        AsyncPipe,
     ],
-    providers: [
-        MitreTechniquesOverviewService
-    ],
+    providers: [MitreTechniquesOverviewService],
 })
 /**
  * Component displaying visualization of training run results
@@ -41,18 +47,9 @@ export class TrainingRunResultsComponent implements OnInit {
     destroyRef = inject(DestroyRef);
     private activatedRoute = inject(ActivatedRoute);
     private trainingDefinitionApi = inject(LinearTrainingDefinitionApi);
-    private service = inject(MitreTechniquesOverviewService);
 
     ngOnInit(): void {
         this.loadVisualizationInfo();
-    }
-
-    /**
-     * Resolves controls action and calls appropriate handler
-     * @param control selected control emitted by controls component
-     */
-    onControlsAction(control: SentinelControlItemSignal): void {
-        control.result$.pipe(take(1)).subscribe();
     }
 
     /**
@@ -63,9 +60,10 @@ export class TrainingRunResultsComponent implements OnInit {
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe(
                 (data) =>
-                    (this.hasReferenceSolution$ = this.trainingDefinitionApi.hasReferenceSolution(
-                        data[TrainingRun.name].trainingDefinitionId,
-                    )),
+                    (this.hasReferenceSolution$ =
+                        this.trainingDefinitionApi.hasReferenceSolution(
+                            data[TrainingRun.name].trainingDefinitionId,
+                        )),
             );
     }
 }

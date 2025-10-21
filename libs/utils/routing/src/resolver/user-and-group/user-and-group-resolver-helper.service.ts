@@ -5,7 +5,7 @@ import { GroupApi, UserApi } from '@crczp/user-and-group-api';
 import { Routing } from '../../routing-namespace';
 import { Observable, of } from 'rxjs';
 import { Group, User } from '@crczp/user-and-group-model';
-import { catchError, map, take } from 'rxjs/operators';
+import { catchError, take } from 'rxjs/operators';
 import { CommonResolverHelperService } from '../common-resolver-helper-service';
 
 @Injectable({
@@ -22,9 +22,8 @@ export class UserAndGroupResolverHelperService extends CommonResolverHelperServi
     public getGroup(route: ActivatedRouteSnapshot): Observable<Group | null> {
         const id = Routing.Utils.extractVariable('groupId', route);
         if (id === null) {
-            return this.emitFrontendError('No group id found in route').pipe(
-                map(() => null)
-            );
+            this.emitFrontendError('No group id found in route');
+            return of(null);
         }
         return this.groupApi.get(+id).pipe(
             take(1),

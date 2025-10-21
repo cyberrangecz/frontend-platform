@@ -1,8 +1,10 @@
-import {Injectable} from '@angular/core';
-import {OffsetPaginatedElementsPollingService} from '@sentinel/common';
-import {OffsetPaginationEvent, PaginatedResource} from '@sentinel/common/pagination';
-import {TrainingRun} from '@crczp/training-model';
-import {Observable} from 'rxjs';
+import { Injectable } from '@angular/core';
+import { OffsetPaginatedElementsPollingService } from '@sentinel/common';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
+import { TrainingRun } from '@crczp/training-model';
+import { Observable } from 'rxjs';
+import { TrainingRunSort } from '@crczp/training-api';
+import { OffsetPaginatedResource } from '@crczp/api-common';
 
 /**
  * Layer between component and API service. Implement concrete service by extending this class.
@@ -10,7 +12,10 @@ import {Observable} from 'rxjs';
  * You can use get methods to get paginated resources and other actions to modify data.
  */
 @Injectable()
-export abstract class AdaptiveRunService extends OffsetPaginatedElementsPollingService<TrainingRun> {
+export abstract class AdaptiveRunService extends OffsetPaginatedElementsPollingService<
+    TrainingRun,
+    TrainingRunSort
+> {
     protected constructor(defaultPaginationSize: number, pollPeriod: number) {
         super(defaultPaginationSize, pollPeriod);
     }
@@ -21,13 +26,16 @@ export abstract class AdaptiveRunService extends OffsetPaginatedElementsPollingS
      */
     abstract getAll(
         trainingInstanceId: number,
-        pagination: OffsetPaginationEvent,
-    ): Observable<PaginatedResource<TrainingRun>>;
+        pagination: OffsetPaginationEvent<TrainingRunSort>,
+    ): Observable<OffsetPaginatedResource<TrainingRun>>;
 
     /**
      * Deletes sandbox and run itself
      * @param trainingRun training run whose sandbox instance should be deleted
      * @param localEnvironment indicates if for the training run a local sandbox has been used
      */
-    abstract delete(trainingRun: TrainingRun, localEnvironment: boolean): Observable<any>;
+    abstract delete(
+        trainingRun: TrainingRun,
+        localEnvironment: boolean,
+    ): Observable<any>;
 }

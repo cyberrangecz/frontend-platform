@@ -1,11 +1,18 @@
-import {Component, ElementRef, HostListener, Input, OnInit, ViewChild} from '@angular/core';
+import {
+    Component,
+    ElementRef,
+    HostListener,
+    Input,
+    OnInit,
+    ViewChild,
+} from '@angular/core';
 import * as d3 from 'd3';
-import {BehaviorSubject} from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import {
     RunVisualizationPathNode,
     TransitionPhase,
     TransitionTask,
-    TransitionVisualizationData
+    TransitionVisualizationData,
 } from '@crczp/visualization-model';
 
 @Component({
@@ -15,7 +22,7 @@ import {
 })
 export class AdaptiveTransitionVisualizationWrapperComponent implements OnInit {
     @Input() data!: TransitionVisualizationData;
-    margin = {left: 80, right: 20, top: 20, bottom: 20};
+    margin = { left: 80, right: 20, top: 20, bottom: 20 };
     xScale!: d3.ScalePoint<number>;
     yScale!: d3.ScalePoint<number>;
     colorScale!: d3.ScaleOrdinal<string, string>;
@@ -62,8 +69,7 @@ export class AdaptiveTransitionVisualizationWrapperComponent implements OnInit {
         '#ffc0cb',
         '#696969',
     ];
-    @ViewChild('chart', {static: true}) private chartContainer?: ElementRef;
-    private contentGroup: any;
+    @ViewChild('chart', { static: true }) private chartContainer?: ElementRef;
 
     @HostListener('window:resize', ['$event'])
     onResize() {
@@ -75,11 +81,19 @@ export class AdaptiveTransitionVisualizationWrapperComponent implements OnInit {
     }
 
     innerWidth(): number {
-        return this.chartContainer?.nativeElement.clientWidth - this.margin.left - this.margin.right;
+        return (
+            this.chartContainer?.nativeElement.clientWidth -
+            this.margin.left -
+            this.margin.right
+        );
     }
 
     innerHeight(): number {
-        return this.chartContainer?.nativeElement.clientHeight - this.margin.top - this.margin.bottom;
+        return (
+            this.chartContainer?.nativeElement.clientHeight -
+            this.margin.top -
+            this.margin.bottom
+        );
     }
 
     getMarginTransform(): string {
@@ -89,7 +103,9 @@ export class AdaptiveTransitionVisualizationWrapperComponent implements OnInit {
     onTaskPreviewChange(node: RunVisualizationPathNode | null) {
         const taskToPreview = this.data.phases
             .find((phase: TransitionPhase) => phase.order === node?.phaseOrder)
-            ?.tasks.find((task: TransitionTask) => task.order === node?.taskOrder);
+            ?.tasks.find(
+                (task: TransitionTask) => task.order === node?.taskOrder,
+            );
         this.taskPreview$.next(taskToPreview);
     }
 
@@ -109,7 +125,10 @@ export class AdaptiveTransitionVisualizationWrapperComponent implements OnInit {
 
     private initYScale() {
         this.yScale = d3.scalePoint();
-        this.yScale.domain(this.getYDomain(this.data.phases)).range([this.innerHeight(), 0]).padding(0.5);
+        this.yScale
+            .domain(this.getYDomain(this.data.phases))
+            .range([this.innerHeight(), 0])
+            .padding(0.5);
     }
 
     private initColorScale() {
@@ -119,7 +138,10 @@ export class AdaptiveTransitionVisualizationWrapperComponent implements OnInit {
 
     private getYDomain(phases: TransitionPhase[]): number[] {
         return [...phases]
-            .sort((a: TransitionPhase, b: TransitionPhase) => b.tasks.length - a.tasks.length)[0]
+            .sort(
+                (a: TransitionPhase, b: TransitionPhase) =>
+                    b.tasks.length - a.tasks.length,
+            )[0]
             .tasks.map((task: TransitionTask) => task.order)
             .reverse();
     }
