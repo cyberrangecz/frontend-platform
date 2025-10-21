@@ -1,0 +1,30 @@
+.content-wrapper {
+    position: relative;
+    min-width: 256px;
+    min-height: 64px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+}
+
+.controls-header {
+    position: sticky;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: var(--neutral-98);
+    z-index: 2;
+    min-height: 48px;
+}
+
+.control-button {
+    width: 40px !important;
+    height: 40px !important;
+    justify-content: center;
+    align-items: center;
+}
+
+.scrollable-content {
+    overflow: auto;
+}

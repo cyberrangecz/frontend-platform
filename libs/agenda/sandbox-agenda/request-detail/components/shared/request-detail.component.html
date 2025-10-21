@@ -23,7 +23,7 @@
                 <div class="stages-content {{'stages-content.' + fragment}}">
                     <crczp-request-stage
                         (stageDetailPanelChange)="onStageDetailPanelChange($event, stage)"
-                        c[stage]="stage"
+                        [stage]="stage"
                         id="{{ 'stage-' + i }}"
                     />
                 </div>
