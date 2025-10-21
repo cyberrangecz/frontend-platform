@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit } from '@angular/core';
-import { OffsetPaginationEvent } from '@sentinel/common/pagination';
+import { OffsetPaginationEvent, SortDir } from '@sentinel/common/pagination';
 import { SentinelControlItem, SentinelControlsComponent } from '@sentinel/components/controls';
 import { User } from '@crczp/user-and-group-model';
 import { SentinelTable, SentinelTableComponent, TableLoadEvent } from '@sentinel/components/table';
@@ -10,7 +10,7 @@ import { DeleteControlItem } from '@crczp/user-and-group-agenda/internal';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { UserOverviewService } from '../services/user-overview.service';
 import { AsyncPipe } from '@angular/common';
-import { PaginationStorageService, providePaginationStorageService } from '@crczp/utils';
+import { FileUploadProgressService, PaginationStorageService, providePaginationStorageService } from '@crczp/utils';
 import { createPaginationEvent } from '@crczp/api-common';
 import { UserSort } from '@crczp/user-and-group-api';
 
@@ -24,14 +24,16 @@ import { UserSort } from '@crczp/user-and-group-api';
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [AsyncPipe, SentinelTableComponent, SentinelControlsComponent],
     providers: [
+        FileUploadProgressService,
         providePaginationStorageService(UserOverviewComponent),
         UserOverviewService,
     ],
 })
 export class UserOverviewComponent implements OnInit {
-    readonly INIT_SORT_NAME = 'familyName';
-    readonly INIT_SORT_DIR = 'asc';
+    readonly INIT_SORT_NAME: UserSort = 'familyName';
+    readonly INIT_SORT_DIR: SortDir = 'asc';
     destroyRef = inject(DestroyRef);
+
     /**
      * Data for users table
      */
