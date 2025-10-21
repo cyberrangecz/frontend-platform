@@ -11,8 +11,8 @@ import { User } from '@crczp/user-and-group-model';
 import { EMPTY, Observable } from 'rxjs';
 import { map, switchMap, take, tap } from 'rxjs/operators';
 import { SelectablePaginatedService, UserFilter } from '@crczp/user-and-group-agenda/internal';
-import { UsersUploadDialogComponent } from '../components/upload-dialog/users-upload-dialog.component';
 import { ErrorHandlerService, FileUploadProgressService, NotificationService, PortalConfig } from '@crczp/utils';
+import { FileUploadDialog, FileUploadDialogConfig } from '@crczp/components';
 import { OffsetPaginatedResource } from '@crczp/api-common';
 
 /**
@@ -122,26 +122,40 @@ export class UserOverviewService extends SelectablePaginatedService<User> {
      * Import users
      */
     importUsers(): Observable<any> {
-        const dialogRef = this.dialog.open(UsersUploadDialogComponent);
-        return dialogRef.componentInstance.onUpload$.pipe(
+        const dialogConfig: FileUploadDialogConfig = {
+            title: 'Import Users',
+            subtitle: 'Select a file to import users',
+            fileTypeFilters: ['json', 'text'],
+            mode: 'single',
+        };
+        const dialogRef = FileUploadDialog.open(this.dialog, dialogConfig);
+        return dialogRef.afterClosed().pipe(
             take(1),
-            tap(() => this.fileUploadProgressService.start()),
-            switchMap((file) => this.api.importUsers(file)),
-            tap(
-                () => {
-                    this.notificationService.emit(
-                        'success',
-                        'Users were imported',
-                    );
-                    this.fileUploadProgressService.finish();
-                    dialogRef.close();
-                },
-                (err) => {
-                    this.fileUploadProgressService.finish();
-                    this.errorHandler.emitAPIError(err, 'Importing users');
-                },
-            ),
-            switchMap(() => this.getAll(this.lastPagination, this.lastFilter)),
+            switchMap((file: File | null) => {
+                if (!file) return EMPTY;
+                this.fileUploadProgressService.start();
+                return this.api.importUsers(file).pipe(
+                    tap(
+                        () => {
+                            this.notificationService.emit(
+                                'success',
+                                'Users were imported',
+                            );
+                            this.fileUploadProgressService.finish();
+                        },
+                        (err) => {
+                            this.fileUploadProgressService.finish();
+                            this.errorHandler.emitAPIError(
+                                err,
+                                'Importing users',
+                            );
+                        },
+                    ),
+                    switchMap(() =>
+                        this.getAll(this.lastPagination, this.lastFilter),
+                    ),
+                );
+            }),
         );
     }
 

@@ -1,19 +1,27 @@
-<h2 mat-dialog-title>{{ data.title }}</h2>
-<mat-dialog-content>
-    <ngx-file-drag-drop
-        (valueChanged)="onValueChange($event)"
-        [formControl]="fileFormControl"
-        [multiple]="isMultipleFileMode()"
-        activeBorderColor="#3F51B5"
-    >
-    </ngx-file-drag-drop>
-</mat-dialog-content>
-
-<mat-dialog-actions align="end">
-    <div class="wh-100 hflex jc-sb">
-        <button (click)="cancel()" mat-button>Cancel</button>
-        <button (click)="confirm()" [disabled]="!filesUploaded()" mat-button>
+<div class="dialog-wrapper vflex center flex-nowrap">
+    <h2 class="dialog-title"
+        mat-dialog-title
+    >{{ data.title }}</h2>
+    <mat-dialog-content class="wh-100 dialog-content">
+        <ngx-file-drag-drop
+            (valueChanged)="onValueChange($event)"
+            [formControl]="fileFormControl"
+            [multiple]="isMultipleFileMode()"
+            activeBorderColor="#3F51B5"
+            class="file-drop-zone"
+        >
+        </ngx-file-drag-drop>
+    </mat-dialog-content>
+    <div class="hflex wh-100 flex-nowrap">
+        <button (click)="cancel()"
+                class="bottom-button bottom-button--left"
+                color="warn"
+                mat-button>Cancel
+        </button>
+        <button (click)="confirm()" [disabled]="!filesUploaded()"
+                class="bottom-button bottom-button--right"
+                mat-button>
             Confirm
         </button>
     </div>
-</mat-dialog-actions>
+</div>

@@ -1,11 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {
-    MAT_DIALOG_DATA,
-    MatDialog,
-    MatDialogModule,
-    MatDialogRef,
-} from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
@@ -38,7 +33,7 @@ export class FileUploadDialog {
     protected fileFormControl = new FormControl<File[]>([]);
     protected dialogRef =
         inject<MatDialogRef<FileUploadDialog, File | File[] | null>>(
-            MatDialogRef
+            MatDialogRef,
         );
     protected data = inject(MAT_DIALOG_DATA);
     protected readonly filesUploaded = signal(false);
@@ -65,7 +60,7 @@ export class FileUploadDialog {
         this.dialogRef.close(
             this.isMultipleFileMode()
                 ? this.fileFormControl.value
-                : this.fileFormControl.value[0]
+                : this.fileFormControl.value[0],
         );
     }
 
