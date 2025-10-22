@@ -1,0 +1,30 @@
+.dialog-wrapper {
+    min-width: 400px;
+    flex-grow: 1;
+    overflow: hidden;
+}
+
+.file-drop-zone {
+    min-height: 100px;
+}
+
+.dialog-title {
+    padding-top: 1rem;
+    padding-bottom: 2rem;
+}
+
+
+.bottom-button {
+    width: 100%;
+    border-radius: 0;
+
+    &--left {
+        border-bottom-left-radius: 1rem;
+    }
+
+    &--right {
+        border-bottom-right-radius: 1rem;
+    }
+}
+
+
