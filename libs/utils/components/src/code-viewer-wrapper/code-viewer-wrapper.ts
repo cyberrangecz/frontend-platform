@@ -1,11 +1,10 @@
 import {
     AfterViewInit,
     Component,
-    ContentChild,
+    DOCUMENT,
     ElementRef,
     inject,
     input,
-    model,
     signal,
     ViewChild,
 } from '@angular/core';
@@ -16,17 +15,18 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { NotificationService } from '@crczp/utils';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { CodeEditor } from '@acrodata/code-editor';
+import { openSearchPanel } from '@codemirror/search';
 
 const BOTTOM_MARGIN = 32; // px
 
 @Component({
     selector: 'crczp-code-viewer-wrapper',
-    imports: [CommonModule, MatIcon, MatIconButton, MatTooltip],
+    imports: [CommonModule, MatIcon, MatIconButton, MatTooltip, CodeEditor],
     templateUrl: './code-viewer-wrapper.html',
     styleUrl: './code-viewer-wrapper.scss',
 })
 export class CodeViewerWrapper implements AfterViewInit {
-    @ContentChild(CodeEditor)
+    @ViewChild('codeEditor')
     codeViewer?: CodeEditor;
 
     @ViewChild('scrollContainer')
@@ -36,10 +36,18 @@ export class CodeViewerWrapper implements AfterViewInit {
     resizeableContent?: ElementRef<HTMLElement>;
 
     notificationService = inject(NotificationService);
+    document = inject(DOCUMENT);
 
     height = input<CSSStyleDeclaration['height']>('100%');
 
-    lineWrapping = model<boolean>(false);
+    value = input<string>();
+    extensions = input<any[]>([]);
+    readonly = input<boolean>(true);
+
+    appliedHeight = signal<CSSStyleDeclaration['height']>('100%');
+
+    lineWrapping = signal<boolean>(false);
+    isFullScreen = signal<boolean>(false);
     private resizeObserver?: ResizeObserver;
     private shouldScrollToBottom = signal<boolean>(false);
 
@@ -48,6 +56,11 @@ export class CodeViewerWrapper implements AfterViewInit {
             if (value) {
                 this.shouldScrollToBottom.set(false);
                 this.scrollToBottom();
+            }
+        });
+        toObservable(this.height).subscribe((height) => {
+            if (!this.isFullScreen()) {
+                this.appliedHeight.set(height);
             }
         });
     }
@@ -62,7 +75,7 @@ export class CodeViewerWrapper implements AfterViewInit {
             this.resizeObserver.observe(this.resizeableContent.nativeElement);
         } else {
             console.error(
-                'Failed to bind scroll observer, content unavailable'
+                'Failed to bind scroll observer, content unavailable',
             );
         }
     }
@@ -74,20 +87,20 @@ export class CodeViewerWrapper implements AfterViewInit {
                 () => {
                     this.notificationService.emit(
                         'success',
-                        'Contents copied to clipboard'
+                        'Contents copied to clipboard',
                     );
                 },
                 () => {
                     this.notificationService.emit(
                         'error',
-                        'Failed to copy contents to clipboard'
+                        'Failed to copy contents to clipboard',
                     );
-                }
+                },
             );
         } else {
             this.notificationService.emit(
                 'error',
-                'No code viewer available to copy from'
+                'No code viewer available to copy from',
             );
         }
     }
@@ -102,6 +115,28 @@ export class CodeViewerWrapper implements AfterViewInit {
     scrollToTop() {
         if (this.scrollContainer) {
             this.scrollContainer.nativeElement.scrollTop = 0;
+        }
+    }
+
+    openSearch() {
+        if (this.codeViewer?.view) {
+            openSearchPanel(this.codeViewer.view);
+        } else {
+            this.notificationService.emit(
+                'error',
+                'No code viewer available to search',
+            );
+        }
+    }
+
+    toggleFullscreen() {
+        this.isFullScreen.set(!this.isFullScreen());
+        if (this.isFullScreen()) {
+            this.document.body.classList.add('fullscreen-active');
+            this.appliedHeight.set('calc(100vh - 48px)');
+        } else {
+            this.document.body.classList.remove('fullscreen-active');
+            this.appliedHeight.set(this.height());
         }
     }
 

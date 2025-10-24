@@ -10,12 +10,19 @@
 
 .controls-header {
     position: sticky;
+    display: flex;
     top: 0;
     left: 0;
     width: 100%;
     background: var(--neutral-98);
     z-index: 2;
     min-height: 48px;
+    flex-wrap: nowrap;
+    padding-right: 2rem;
+
+    &--fullscreen {
+        border-bottom: 2px solid var(--primary-60);
+    }
 }
 
 .control-button {
@@ -27,4 +34,30 @@
 
 .scrollable-content {
     overflow: auto;
+}
+
+code-editor {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+.fullscreen {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100vh !important;
+    z-index: 10000 !important;
+    overflow: visible !important;
+    background: var(--neutral-98) !important;
+
+    @media (min-width: 749px) {
+        left: 140px !important;
+        width: calc(100% - 140px) !important;
+    }
+}
+
+::ng-deep body.fullscreen-active {
+    overflow: hidden !important;
 }
