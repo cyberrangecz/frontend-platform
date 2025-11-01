@@ -16,6 +16,7 @@ export * from './service/progress/file-upload-progress.service';
 export * from './service/api/polling.service';
 export * from './types/config';
 export * from './types/sentinel-auth-config.zod';
+export * from './directives/click-outside';
 export type {
     NavAgendaConfig,
     NavAgendaContainerConfig,

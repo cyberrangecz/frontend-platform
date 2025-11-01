@@ -4,64 +4,85 @@
             <div>
                 <div
                     (click)="infoExpanded.set(!infoExpanded())"
+                    (crczpClickOutside)="infoExpanded.set(false)"
                     [class.allocation-title--expanded]="infoExpanded()"
                     class="allocation-title"
                 >
-                    <img [src]="stage?.logoSrc" alt="stage logo" class="stage-logo">
-                    <h2 class="allocation-title-text">{{ stage?.title }}</h2>
+                    <img [src]="stage().logoSrc" alt="stage logo" class="stage-logo">
+                    <h2 class="allocation-title-text">{{ stage().title }}</h2>
                     <mat-icon>
                         {{ infoExpanded() ? 'expand_less' : 'expand_more' }}
                     </mat-icon>
                 </div>
                 @if (infoExpanded()) {
                     <div class="allocation-info">
-                        @if (stage.start) {
+                        @if (stage().start) {
                             <div class="hflex g-0-5rem ai-c">
-                                <mat-icon color="primary">double_arrow</mat-icon>
-                                {{ stage.start | date:'medium':'UTC' }}
+                                <mat-icon
+                                    [matTooltipPosition]="'before'"
+                                    [matTooltip]="'Start Time'"
+                                    color="primary">double_arrow
+                                </mat-icon>
+                                {{ stage().start | date:'medium':'UTC' }}
                             </div>
                         }
 
-                        @if (stage.end) {
+                        @if (stage().end) {
                             <div class="hflex g-0-5rem ai-c">
-                                <mat-icon color="warn">stop_circle</mat-icon>
-                                {{ stage.end | date:'medium':'UTC' }}
+                                <mat-icon
+                                    [matTooltipPosition]="'before'"
+                                    [matTooltip]="'End Time'"
+                                    color="warn">stop_circle
+                                </mat-icon>
+                                {{ stage().end | date:'medium':'UTC' }}
                             </div>
                         }
-                        @if (stage.start && stage.end) {
+                        @if (stage().start && stage().end) {
                             <div class="hflex g-0-5rem ai-c">
-                                <mat-icon color="accent">schedule</mat-icon>
-                                {{ getDurationText(stage.start, stage.end) }}
+                                <mat-icon
+                                    [matTooltipPosition]="'before'"
+                                    [matTooltip]="'Duration'"
+                                    color="accent">schedule
+                                </mat-icon>
+                                {{ getDurationText(stage().start, stage().end) }}
                             </div>
                         }
-                        @if (stage.rev) {
+                        @if (stage().rev) {
                             <div class="hflex g-0-5rem">
-                                <mat-icon>commit</mat-icon>
-                                {{ stage.rev }}
+                                <mat-icon
+                                    [matTooltipPosition]="'before'"
+                                    [matTooltip]="'Ansible revision'">
+                                    commit
+                                </mat-icon>
+                                {{ stage().rev }}
                             </div>
                         }
-                        @if (stage.repoUrl) {
-                            <a (click)="openRepoInNewTab($event, stage.repoUrl)"
-                               [href]="stage.repoUrl"
+                        @if (stage().repoUrl) {
+                            <a (click)="openRepoInNewTab($event, stage().repoUrl)"
+                               [href]="stage().repoUrl"
                                class="hflex g-0-5rem ai-c repo-link">
-                                <mat-icon>code</mat-icon>
-                                {{ stage.repoUrl }}
+                                <mat-icon
+                                    [matTooltipPosition]="'before'"
+                                    [matTooltip]="'Repository URL'"
+                                >code
+                                </mat-icon>
+                                {{ stage().repoUrl }}
                             </a>
                         }
                     </div>
                 }
             </div>
             <h2 class="stage-order-number">
-                {{ getOrderNumber(stage) }} / 3
+                {{ getOrderNumber(stage()) }} / 3
             </h2>
-            <crczp-request-stage-state [stageState]="stage.state" />
+            <crczp-request-stage-state [stageState]="stage().state" />
         </div>
     </mat-card-header>
     <mat-card-content>
-        @if (stage?.hasDetail) {
+        @if (stage().hasDetail) {
             <crczp-allocation-stage-detail
-                [height]="height"
-                [stage]="stage" />
+                [height]="height()"
+                [stage]="stage()" />
         }
     </mat-card-content>
 </mat-card>

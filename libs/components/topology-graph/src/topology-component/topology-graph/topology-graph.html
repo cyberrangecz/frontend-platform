@@ -13,6 +13,7 @@
 }
 
 <crczp-context-menu
+    [accessibleNodes]="this.accessibleNodes()"
     [boundingBox]="networkContainer.getBoundingClientRect()"
     [createContextMenu]="this.createContextMenu.bind(this)"
     [network]="this.network"

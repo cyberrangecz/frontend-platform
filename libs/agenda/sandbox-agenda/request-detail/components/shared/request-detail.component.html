@@ -33,7 +33,6 @@
                          (keydown.enter)="onCarouselItemClick(i)"
                          (keydown.space)="onCarouselItemClick(i)"
                          [attr.data-position]="i"
-                         [attr.tabindex]="i === 1 ? -1 : 0"
                          [class.carousel-item--hidden]="!isCarouselItemVisible(i, stageIndex)"
                          class="carousel-item">
                         <crczp-request-stage

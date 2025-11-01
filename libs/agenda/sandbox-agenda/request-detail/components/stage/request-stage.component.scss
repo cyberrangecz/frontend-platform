@@ -6,7 +6,7 @@ mat-card {
 .request-header {
     width: 100%;
     display: grid;
-    grid-template-columns: 1fr 64px 1fr 32px;
+    grid-template-columns: 1fr 64px 1fr;
     align-items: center;
 }
 
@@ -30,7 +30,7 @@ mat-card {
 
     &--expanded {
         border-radius: 2rem 2rem 0 0;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 5px 5px rgba(0, 0, 0, 0.2);
     }
 }
 
@@ -52,10 +52,10 @@ mat-card {
     flex-direction: column;
     min-width: 300px;
     padding: 2rem 1rem;
-    gap: 1rem;
+    gap: 1.5rem;
     border-radius: 0 1rem 1rem 1rem;
 
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 5px 5px rgba(0, 0, 0, 0.2);
 
     &:hover {
         cursor: default;

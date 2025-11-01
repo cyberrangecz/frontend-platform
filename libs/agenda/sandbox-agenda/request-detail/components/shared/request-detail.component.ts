@@ -1,5 +1,5 @@
 import { ActivatedRoute } from '@angular/router';
-import { Request, RequestStage, RequestStageTypeMapper } from '@crczp/sandbox-model';
+import { Request, RequestStage } from '@crczp/sandbox-model';
 import { Observable } from 'rxjs';
 import { map, switchMap, tap } from 'rxjs/operators';
 import { RequestStagesService } from '../../services/state/request-stages.service';
@@ -150,13 +150,6 @@ export abstract class RequestDetailComponent {
                 switchMap((data) =>
                     this.requestStagesService.getAll(data[Request.name]),
                 ),
-                tap((stages) => {
-                    console.log('Stages', stages);
-                    const running = stages.find((stage) => stage.isRunning());
-                    if (running) {
-                        RequestStageTypeMapper.toOrderOfExecution(running.type);
-                    }
-                }),
                 takeUntilDestroyed(this.destroyRef),
             )
             .subscribe(() =>
@@ -166,6 +159,7 @@ export abstract class RequestDetailComponent {
         this.stages$ = this.requestStagesService.stages$.pipe(
             takeUntilDestroyed(this.destroyRef),
             tap((stages) => this.updateLastCurrentStageIndex(stages)),
+            map((stages) => this.mapStagesMetadata(stages)),
         );
 
         this.hasError$ = this.requestStagesService.hasError$;
@@ -184,10 +178,25 @@ export abstract class RequestDetailComponent {
     }
 
     private updateLastCurrentStageIndex(stages: StageAdapter[]) {
-        this.currentRunningStageIndex.set(
-            stages.findIndex(
-                (stage) => !stage.hasFinished() && !stage.hasFailed(),
-            ) + 1 || stages.length,
+        this.navigateToStage(
+            stages.findIndex((stage) => !stage.hasFinished()) ||
+                stages.length - 1,
         );
+    }
+
+    private mapStagesMetadata(stages: StageAdapter[]): StageAdapter[] {
+        const repoUrl = stages.find((stage) => stage.repoUrl);
+        const ansibleRevision = stages.find(
+            (stage) => stage.rev && !stage.rev.startsWith('mtu'),
+        );
+        return stages.map((stage) => {
+            if (stage.isAnsibleStage()) {
+                stage.rev = ansibleRevision?.rev;
+            }
+            if (stage.repoUrl) {
+                stage.repoUrl = repoUrl?.repoUrl;
+            }
+            return stage;
+        });
     }
 }

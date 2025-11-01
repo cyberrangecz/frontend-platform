@@ -1,6 +1,7 @@
-import { Component, ElementRef, HostListener, input, OnChanges, signal, SimpleChanges, viewChild } from '@angular/core';
+import { Component, ElementRef, input, OnChanges, signal, SimpleChanges, viewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Network } from 'vis-network';
+import { ClickOutsideDirective } from '@crczp/utils';
 
 export interface ContextMenuItem {
     label: string;
@@ -9,13 +10,14 @@ export interface ContextMenuItem {
 
 @Component({
     selector: 'crczp-context-menu',
-    imports: [CommonModule],
+    imports: [CommonModule, ClickOutsideDirective],
     templateUrl: './context-menu.html',
     styleUrl: './context-menu.scss',
 })
 export class ContextMenu implements OnChanges {
     network = input.required<Network>();
     boundingBox = input.required<DOMRect>();
+    accessibleNodes = input.required<(string | number)[]>();
 
     createContextMenu =
         input.required<(nodeId: string | number) => ContextMenuItem[]>();
@@ -41,7 +43,6 @@ export class ContextMenu implements OnChanges {
         this.visible.set(false);
     }
 
-    @HostListener('document:click')
     onOutsideClick(): void {
         if (this.visible()) {
             this.hideContextMenu();
@@ -68,6 +69,9 @@ export class ContextMenu implements OnChanges {
         x: number,
         y: number,
     ): void {
+        if (!this.accessibleNodes().includes(nodeId)) {
+            return;
+        }
         // Use stored bounding box to prevent using expanded container dimensions
         const containerRect = this.storedBoundingBox || this.boundingBox();
 
