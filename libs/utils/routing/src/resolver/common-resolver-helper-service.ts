@@ -9,7 +9,7 @@ export class CommonResolverHelperService {
 
     constructor(
         protected errorHandler: ErrorHandlerService,
-        protected router: Router
+        protected router: Router,
     ) {
         this.emitApiError = errorHandler.emitAPIError;
         this.emitFrontendError = (error: any) => {
@@ -21,7 +21,6 @@ export class CommonResolverHelperService {
     }
 
     protected navigate(urlTree: UrlTree) {
-        console.log('Navigating to:', this.router.serializeUrl(urlTree));
         this.router
             .navigateByUrl(urlTree)
             .catch((err) => this.emitApiError(err, 'Navigating to a route'));

@@ -157,8 +157,6 @@ export class TopologyGraph implements AfterViewInit {
     }
 
     private handleTopologyChange(newTopology: Topology) {
-        console.log('TopologyGraph: topology changed', newTopology);
-
         const visualizationData =
             mapTopologyToTopologyVisualization(newTopology);
         this.nodes = visualizationData.nodes;

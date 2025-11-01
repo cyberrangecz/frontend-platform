@@ -217,8 +217,6 @@ export class ConsoleView implements AfterViewInit, OnDestroy {
         const width = container.offsetWidth - this.PADDING_NO_GUI * 2;
         const height = container.offsetHeight - this.PADDING_NO_GUI;
 
-        console.log('Container size:', width, height);
-
         if (width > 0 && height > 0) {
             this.guacClient.sendSize(width, height);
 
@@ -226,12 +224,6 @@ export class ConsoleView implements AfterViewInit, OnDestroy {
             if (display) {
                 const displayWidth = display.getWidth();
                 const displayHeight = display.getHeight();
-
-                console.log(
-                    'Remote display size:',
-                    displayWidth,
-                    displayHeight,
-                );
 
                 if (displayWidth > 0 && displayHeight > 0) {
                     const scaleX = width / displayWidth;
@@ -348,11 +340,6 @@ export class ConsoleView implements AfterViewInit, OnDestroy {
         displayElement.style.objectFit = 'contain';
 
         this.guacContainer.nativeElement.appendChild(displayElement);
-
-        console.log(
-            'Connecting to Guacamole with params:',
-            this.buildConnectionParams(),
-        );
         this.guacClient.connect(this.buildConnectionParams());
     }
 
