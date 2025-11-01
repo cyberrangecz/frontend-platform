@@ -1,13 +1,4 @@
-import {
-    AfterViewInit,
-    Component,
-    ElementRef,
-    inject,
-    input,
-    OnDestroy,
-    signal,
-    ViewChild,
-} from '@angular/core';
+import { AfterViewInit, Component, ElementRef, inject, input, OnDestroy, signal, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { OAuthService } from 'angular-oauth2-oidc';
 import { GuacamoleStatus } from './status/guacamole-status';
@@ -15,7 +6,7 @@ import {
     GuacamoleClientState,
     GuacamoleTunnelState,
     mapGuacamoleClientState,
-    mapGuacamoleTunnelState,
+    mapGuacamoleTunnelState
 } from './status/guacamoleStatusMapper';
 import Guacamole from '@dushixiang/guacamole-common-js';
 import { GuacamoleKeyCodes } from './keycodes';
@@ -52,6 +43,7 @@ export class ConsoleView implements AfterViewInit, OnDestroy {
     private resizeTimeout: number | null = null;
     private RESIZE_DEBOUNCE_MS = 50;
     private INITIAL_RESOLUTION_COEFFICIENT = 1;
+    private currentScale = signal<number>(1);
 
     ngAfterViewInit(): void {
         this.connectGuacamole();
@@ -245,9 +237,8 @@ export class ConsoleView implements AfterViewInit, OnDestroy {
                     const scaleX = width / displayWidth;
                     const scaleY = height / displayHeight;
 
-                    console.log('Applying scale:', Math.min(scaleX, scaleY));
-
-                    display.scale(Math.min(scaleX, scaleY));
+                    this.currentScale.set(Math.min(scaleX, scaleY));
+                    display.scale(this.currentScale());
                 }
             }
         }
@@ -303,7 +294,17 @@ export class ConsoleView implements AfterViewInit, OnDestroy {
         this.guacMouse.onEach(
             ['mousedown', 'mousemove', 'mouseup'],
             (e: { state: Guacamole.Mouse.State }) => {
-                this.guacClient?.sendMouseState(e.state);
+                if (this.guacClient && this.currentScale() !== 1) {
+                    // Correct for double scaling by dividing by the scale factor
+                    const correctedState = {
+                        ...e.state,
+                        x: e.state.x / this.currentScale(),
+                        y: e.state.y / this.currentScale(),
+                    };
+                    this.guacClient.sendMouseState(correctedState);
+                } else {
+                    this.guacClient?.sendMouseState(e.state);
+                }
             },
         );
 
