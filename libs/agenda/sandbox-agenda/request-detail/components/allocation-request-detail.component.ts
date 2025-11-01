@@ -1,8 +1,12 @@
-import { ChangeDetectionStrategy, Component, inject, QueryList, ViewChildren } from '@angular/core';
+import {
+    ChangeDetectionStrategy,
+    Component,
+    QueryList,
+    ViewChildren,
+} from '@angular/core';
 import { RequestStagesService } from '../services/state/request-stages.service';
 import { RequestDetailComponent } from './shared/request-detail.component';
 import { AllocationStagesConcreteService } from '../services/state/allocation-stages-concrete.service';
-import { ActivatedRoute } from '@angular/router';
 import { StagesDetailPollRegistry } from '../services/state/detail/stages-detail-poll-registry.service';
 import { RequestStageComponent } from './stage/request-stage.component';
 import { MatIcon } from '@angular/material/icon';
@@ -39,10 +43,6 @@ export class AllocationRequestDetailComponent extends RequestDetailComponent {
     requestStages: QueryList<RequestStageComponent>;
 
     constructor() {
-        const activeRoute = inject(ActivatedRoute);
-        const requestStagesService = inject(RequestStagesService);
-        const stageDetailRegistry = inject(StagesDetailPollRegistry);
-
-        super(activeRoute, requestStagesService, stageDetailRegistry);
+        super();
     }
 }

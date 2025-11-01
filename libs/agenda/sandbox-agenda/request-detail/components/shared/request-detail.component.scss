@@ -3,49 +3,167 @@
     text-align: center;
 }
 
-.stages-content {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
+::ng-deep .padded-content {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    padding-top: 40px !important;
+}
 
-    @media (min-width: 3000px) {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        min-height: 0;
-        min-width: 0;
-
-        &.stage-1 {
-            grid-template-columns: 1fr 50px 50px;
-
-            > :nth-child(2):hover,
-            > :nth-child(3):hover {
-                width: 55px;
-                transition: width 0.3s;
-            }
-        }
-        &.stage-2 {
-            grid-template-columns: 50px 1fr 50px;
-
-            > :nth-child(1):hover,
-            > :nth-child(3):hover {
-                width: 55px;
-                transition: width 0.3s;
-            }
-        }
-        &.stage-3 {
-            grid-template-columns: 50px 50px 1fr;
-
-            > :nth-child(1):hover,
-            > :nth-child(2):hover {
-                width: 55px;
-                transition: width 0.3s;
-            }
-        }
+@keyframes rotate-shadow {
+    0% {
+        box-shadow: 0 0 6px 2px var(--primary-60);
+    }
+    12.5% {
+        box-shadow: 2px 2px 6px 2px var(--primary-60);
+    }
+    25% {
+        box-shadow: 4px 0 6px 2px var(--primary-60);
+    }
+    37.5% {
+        box-shadow: 2px -2px 6px 2px var(--primary-60);
+    }
+    50% {
+        box-shadow: 0 0 6px 2px var(--primary-60);
+    }
+    62.5% {
+        box-shadow: -2px -2px 6px 2px var(--primary-60);
+    }
+    75% {
+        box-shadow: -4px 0 6px 2px var(--primary-60);
+    }
+    87.5% {
+        box-shadow: -2px 2px 6px 2px var(--primary-60);
+    }
+    100% {
+        box-shadow: 0 0 6px 2px var(--primary-60);
     }
 }
 
+.stage-indicators {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.5rem 0;
+    margin-bottom: 1rem;
+}
 
-.stages-content > * {
-    min-height: 0;
-    min-width: 0;
+.stage-indicator {
+    width: 32px;
+    aspect-ratio: 1 / 1;
+    padding: 4px;
+    border: 2px solid transparent;
+    border-radius: 50%;
+    overflow: visible;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    background: var(--neutral-98);
+
+    &:active {
+        transform: scale(0.9);
+    }
+
+    &:hover {
+        transform: scale(1.2);
+        transform-origin: center;
+        border-radius: 50%;
+    }
+
+    &--selected {
+        transform-origin: center;
+        transform: scale(1.2);
+    }
+
+    &--completed {
+        box-shadow: 0 0 6px 2px #4caf50;
+        border-radius: 50%;
+    }
+
+    &--running {
+        box-shadow: 0 0 6px 2px var(--primary-60);
+        animation: rotate-shadow 2s infinite;
+        border-radius: 50%;
+    }
+
+    &--failed {
+        box-shadow: 0 0 6px 2px #f44336;
+    }
+}
+
+.carousel-container {
+    width: 100%;
+    height: 100%;
     overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.carousel {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr 1fr;
+    width: 200%;
+    position: relative;
+    left: -50%;
+    gap: 0;
+    align-items: start;
+}
+
+.carousel-item {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 1rem;
+    position: relative;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+    min-width: 0;
+    background: transparent;
+
+    &:first-child,
+    &:last-child {
+        opacity: 0.6;
+        cursor: pointer;
+    }
+
+    &:first-child {
+        transform: scale(0.85) translateX(7.5%);
+
+        .stage-detail-panel {
+            pointer-events: none;
+        }
+    }
+
+    &:last-child {
+        transform: scale(0.85) translateX(-7.5%);
+
+        .stage-detail-panel {
+            pointer-events: none;
+        }
+    }
+
+    &:hover {
+        &:first-child {
+            transform: scale(0.9) translateX(5%);
+            opacity: 0.8;
+        }
+
+        &:last-child {
+            transform: scale(0.9) translateX(-5%);
+            opacity: 0.8;
+        }
+    }
+
+    &:nth-child(2) {
+        cursor: default;
+    }
+
+    &--hidden {
+        opacity: 0 !important;
+        visibility: hidden;
+        pointer-events: none;
+    }
+}
+
+.stage-detail-panel {
+    display: block;
 }

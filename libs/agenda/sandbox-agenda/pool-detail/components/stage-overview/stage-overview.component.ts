@@ -1,21 +1,23 @@
-import {Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
-import {RequestStageState} from '@crczp/sandbox-model';
-import {SelectedStage} from '../../model/selected-stage';
-import {MatRipple} from "@angular/material/core";
-import {MatIcon} from "@angular/material/icon";
-import {NgClass} from "@angular/common";
-import {MatTooltip} from "@angular/material/tooltip";
+import {
+    Component,
+    EventEmitter,
+    Input,
+    OnChanges,
+    Output,
+    SimpleChanges,
+} from '@angular/core';
+import { RequestStageState } from '@crczp/sandbox-model';
+import { SelectedStage } from '../../model/selected-stage';
+import { MatRipple } from '@angular/material/core';
+import { MatIcon } from '@angular/material/icon';
+import { NgClass } from '@angular/common';
+import { MatTooltip } from '@angular/material/tooltip';
 
 @Component({
     selector: 'crczp-stage-overview',
     templateUrl: './stage-overview.component.html',
     styleUrls: ['./stage-overview.component.scss'],
-    imports: [
-        MatRipple,
-        MatIcon,
-        MatTooltip,
-        NgClass
-    ]
+    imports: [MatRipple, MatIcon, MatTooltip, NgClass],
 })
 export class StageOverviewComponent implements OnChanges {
     @Input() stages: string[];
@@ -38,7 +40,7 @@ export class StageOverviewComponent implements OnChanges {
                 return 'check';
             case RequestStageState.FAILED:
                 return 'close';
-            case RequestStageState.IN_QUEUE:
+            case RequestStageState.QUEUED:
                 return 'pause';
             case RequestStageState.RETRY:
                 return 'cached';

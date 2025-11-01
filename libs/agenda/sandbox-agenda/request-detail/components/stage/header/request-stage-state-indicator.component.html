@@ -1,0 +1,20 @@
+<div class="state">
+    @switch (stageState) {
+        @case (RequestStageState.QUEUED) {
+            <mat-icon color="accent">hourglass_empty</mat-icon>
+            <h2>In Queue</h2>
+        }
+        @case (RequestStageState.FAILED) {
+            <mat-icon color="warn">error_outline</mat-icon>
+            <h2>Failed</h2>
+        }
+        @case (RequestStageState.FINISHED) {
+            <mat-icon class="success">done</mat-icon>
+            <h2>Finished</h2>
+        }
+        @case (RequestStageState.RUNNING) {
+            <mat-icon color="primary">play_arrow</mat-icon>
+            <h2>Running</h2>
+        }
+    }
+</div>

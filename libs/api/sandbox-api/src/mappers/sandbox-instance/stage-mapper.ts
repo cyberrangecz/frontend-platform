@@ -16,7 +16,7 @@ export class StageMapper {
     private static stageResolver(stage: string): RequestStageState {
         switch (stage) {
             case 'IN_QUEUE':
-                return RequestStageState.IN_QUEUE;
+                return RequestStageState.QUEUED;
             case 'RUNNING':
                 return RequestStageState.RUNNING;
             case 'FAILED':

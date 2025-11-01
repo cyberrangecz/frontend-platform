@@ -38,7 +38,10 @@ export * from './topology-graph/topology';
 
 // ENUMS
 export { RequestStageState } from './enums/request-stage-state.enum';
-export { RequestStageType } from './enums/request-stage-type.enum';
+export {
+    RequestStageType,
+    RequestStageTypeMapper,
+} from './enums/request-stage-type.enum';
 export { VMStatus } from './enums/vm-status.enum';
 
 // RESOURCES

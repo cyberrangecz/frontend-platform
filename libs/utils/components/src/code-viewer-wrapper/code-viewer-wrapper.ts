@@ -3,10 +3,11 @@ import {
     Component,
     DOCUMENT,
     ElementRef,
+    HostListener,
     inject,
     input,
     signal,
-    ViewChild,
+    ViewChild
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
@@ -47,7 +48,7 @@ export class CodeViewerWrapper implements AfterViewInit {
     appliedHeight = signal<CSSStyleDeclaration['height']>('100%');
 
     lineWrapping = signal<boolean>(false);
-    isFullScreen = signal<boolean>(false);
+    isMaximized = signal<boolean>(false);
     private resizeObserver?: ResizeObserver;
     private shouldScrollToBottom = signal<boolean>(false);
 
@@ -59,10 +60,18 @@ export class CodeViewerWrapper implements AfterViewInit {
             }
         });
         toObservable(this.height).subscribe((height) => {
-            if (!this.isFullScreen()) {
+            if (!this.isMaximized()) {
                 this.appliedHeight.set(height);
             }
         });
+    }
+
+    @HostListener('window:keydown', ['$event'])
+    handleKeyDown(event: KeyboardEvent) {
+        // esc to exit fullscreen
+        if (event.key === 'Escape' && this.isMaximized()) {
+            this.toggleFullscreen();
+        }
     }
 
     ngAfterViewInit() {
@@ -130,8 +139,8 @@ export class CodeViewerWrapper implements AfterViewInit {
     }
 
     toggleFullscreen() {
-        this.isFullScreen.set(!this.isFullScreen());
-        if (this.isFullScreen()) {
+        this.isMaximized.set(!this.isMaximized());
+        if (this.isMaximized()) {
             this.document.body.classList.add('fullscreen-active');
             this.appliedHeight.set('calc(100vh - 48px)');
         } else {

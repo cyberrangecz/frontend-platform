@@ -1,35 +1,67 @@
 <mat-card appearance="outlined">
     <mat-card-header>
-        <div class="w-100 hflex ai-c jc-s">
-            <img [src]="stage?.logoSrc" alt="stage logo" class="stage-logo">
-            <mat-card-title>{{ stage?.title }}</mat-card-title>
+        <div class="request-header">
+            <div>
+                <div
+                    (click)="infoExpanded.set(!infoExpanded())"
+                    [class.allocation-title--expanded]="infoExpanded()"
+                    class="allocation-title"
+                >
+                    <img [src]="stage?.logoSrc" alt="stage logo" class="stage-logo">
+                    <h2 class="allocation-title-text">{{ stage?.title }}</h2>
+                    <mat-icon>
+                        {{ infoExpanded() ? 'expand_less' : 'expand_more' }}
+                    </mat-icon>
+                </div>
+                @if (infoExpanded()) {
+                    <div class="allocation-info">
+                        @if (stage.start) {
+                            <div class="hflex g-0-5rem ai-c">
+                                <mat-icon color="primary">double_arrow</mat-icon>
+                                {{ stage.start | date:'medium':'UTC' }}
+                            </div>
+                        }
+
+                        @if (stage.end) {
+                            <div class="hflex g-0-5rem ai-c">
+                                <mat-icon color="warn">stop_circle</mat-icon>
+                                {{ stage.end | date:'medium':'UTC' }}
+                            </div>
+                        }
+                        @if (stage.start && stage.end) {
+                            <div class="hflex g-0-5rem ai-c">
+                                <mat-icon color="accent">schedule</mat-icon>
+                                {{ getDurationText(stage.start, stage.end) }}
+                            </div>
+                        }
+                        @if (stage.rev) {
+                            <div class="hflex g-0-5rem">
+                                <mat-icon>commit</mat-icon>
+                                {{ stage.rev }}
+                            </div>
+                        }
+                        @if (stage.repoUrl) {
+                            <a (click)="openRepoInNewTab($event, stage.repoUrl)"
+                               [href]="stage.repoUrl"
+                               class="hflex g-0-5rem ai-c repo-link">
+                                <mat-icon>code</mat-icon>
+                                {{ stage.repoUrl }}
+                            </a>
+                        }
+                    </div>
+                }
+            </div>
+            <h2 class="stage-order-number">
+                {{ getOrderNumber(stage) }} / 3
+            </h2>
+            <crczp-request-stage-state [stageState]="stage.state" />
         </div>
-        @if (window.innerWidth > 3000) {
-            <sentinel-button-with-icon
-                [icon]="'zoom_out_map'"
-            >
-            </sentinel-button-with-icon>
-        }
     </mat-card-header>
     <mat-card-content>
-        <crczp-request-stage-header [stage]="stage" class="m-2rem-l" />
         @if (stage?.hasDetail) {
-            <mat-expansion-panel
-                (closed)="onPanelStateChange(false)"
-                (opened)="onPanelStateChange(true)"
-                [disabled]="stage?.detailDisabled"
-                [expanded]="stage.isExpanded || window.innerWidth > 3000"
-                [hideToggle]="stage?.detailDisabled"
-                class="mat-elevation-z1 stage-expansion-panel remove-mat-expansion-panel-padding">
-                <mat-expansion-panel-header>
-                    <mat-panel-title>Stage detail</mat-panel-title>
-                </mat-expansion-panel-header>
-                <ng-template matExpansionPanelContent>
-                    <crczp-allocation-stage-detail
-                        [height]="'500px'"
-                        [stage]="stage" />
-                </ng-template>
-            </mat-expansion-panel>
+            <crczp-allocation-stage-detail
+                [height]="height"
+                [stage]="stage" />
         }
     </mat-card-content>
 </mat-card>

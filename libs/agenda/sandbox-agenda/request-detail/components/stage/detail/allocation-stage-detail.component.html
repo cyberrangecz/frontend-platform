@@ -1,26 +1,13 @@
-@let isAnsible = isAnsibleStage(stage());
-@let asAnsible = asAnsibleStage(stage());
-
-@if (isAnsible && asAnsible.repoUrl) {
-    <p>Repository: {{ asAnsible.repoUrl }}</p>
-}
-@if (isAnsible && asAnsible.rev) {
-    <p>Revision: {{ asAnsible.rev }}</p>
-}
 @if (outputs$ | async) {
     <crczp-code-viewer-wrapper
-        class="code-viewer-wrapper"
+        [extensions]="[search({
+            caseSensitive: false,
+        })]"
         [height]="height()"
-        (lineWrappingChange)="lineWrapping = $event"
+        [readonly]="true"
+        [value]="outputs$ | async"
+        class="code-viewer-wrapper"
     >
-        <code-editor
-            [extensions]="[search({
-                caseSensitive: false,
-            })]"
-            [lineWrapping]="lineWrapping"
-            [readonly]="true"
-            [value]="outputs$ | async"
-        />
     </crczp-code-viewer-wrapper>
 
 } @else {

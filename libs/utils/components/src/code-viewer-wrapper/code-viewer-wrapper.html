@@ -1,13 +1,13 @@
-<div [class.fullscreen]="isFullScreen()" class="content-wrapper wh-100">
-    <div [class.controls-header--fullscreen]="isFullScreen()"
+<div [class.fullscreen]="isMaximized()" class="content-wrapper wh-100">
+    <div [class.controls-header--fullscreen]="isMaximized()"
          class="controls-header">
         <button (click)="toggleFullscreen()"
                 [matTooltipPosition]="'above'"
-                [matTooltip]="isFullScreen() ? 'Exit Fullscreen' : 'Fullscreen'"
-                [style.color]="isFullScreen() ? 'crimson' : 'var(--primary-50)'"
+                [matTooltip]="isMaximized() ? 'Minimize' : 'Maximize'"
+                [style.color]="isMaximized() ? 'crimson' : 'var(--primary-50)'"
                 mat-icon-button
         >
-            <mat-icon>{{ isFullScreen() ? 'fullscreen_exit' : 'fullscreen' }}</mat-icon>
+            <mat-icon>{{ isMaximized() ? 'fullscreen_exit' : 'fullscreen' }}</mat-icon>
         </button>
         <button (click)="lineWrapping.set(!lineWrapping())"
                 [matTooltipPosition]="'above'"

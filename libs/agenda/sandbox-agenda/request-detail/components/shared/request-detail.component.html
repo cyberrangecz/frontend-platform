@@ -8,27 +8,44 @@
         </mat-card>
     }
     @if (stages?.length > 0) {
-        @for (stage of stages.values(); track trackByFn(i, stage); let i = $index) {
-            @if (window.innerWidth < 3000 && fragment) {
-                <div class="stages-content-single">
-                    @if ((fragment && 'stage-' + i === fragment) || !fragment) {
-                        <crczp-request-stage
-                            (stageDetailPanelChange)="onStageDetailPanelChange($event, stage)"
-                            [stage]="stage"
-                            id="{{ 'stage-' + i }}"
-                        />
-                    }
-                </div>
-            } @else {
-                <div class="stages-content {{'stages-content.' + fragment}}">
-                    <crczp-request-stage
-                        (stageDetailPanelChange)="onStageDetailPanelChange($event, stage)"
-                        [stage]="stage"
-                        id="{{ 'stage-' + i }}"
-                    />
-                </div>
+        <!-- Stage indicators -->
+        <div class="stage-indicators">
+            @for (stage of stages; track trackByFn(stage); let i = $index) {
+                <img
+                    (click)="navigateToStage(i)"
+                    (keydown.enter)="navigateToStage(i)"
+                    (keydown.space)="navigateToStage(i)"
+                    [class.stage-indicator--completed]="stage.hasFinished()"
+                    [class.stage-indicator--failed]="stage.hasFailed()"
+                    [class.stage-indicator--running]="stage.isRunning()"
+                    [class.stage-indicator--selected]="i === fragmentIndex()"
+                    [src]="stage?.logoSrc"
+                    alt="stage logo"
+                    class="stage-indicator" role="button"
+                    tabindex="0">
             }
-        }
+        </div>
+
+        <div class="carousel-container">
+            <div class="carousel">
+                @for (stageIndex of getCarouselOrder(); track stageIndex; let i = $index) {
+                    <div (click)="onCarouselItemClick(i);"
+                         (keydown.enter)="onCarouselItemClick(i)"
+                         (keydown.space)="onCarouselItemClick(i)"
+                         [attr.data-position]="i"
+                         [attr.tabindex]="i === 1 ? -1 : 0"
+                         [class.carousel-item--hidden]="!isCarouselItemVisible(i, stageIndex)"
+                         class="carousel-item">
+                        <crczp-request-stage
+                            [height]="'calc(100vh - 450px)'"
+                            [stage]="stages[stageIndex]"
+                            class="stage-detail-panel"
+                        />
+                    </div>
+                }
+            </div>
+        </div>
+
     }
 } @else {
     @if ((isLoading$ | async) === false) {

@@ -36,7 +36,7 @@ export class RequestMapper {
     }
 
     private static setBlankAllocationAttributes(request: Request) {
-        request.stages = this.stagesResolver([RequestStageState.IN_QUEUE]);
+        request.stages = this.stagesResolver([RequestStageState.QUEUED]);
     }
 
     private static stagesResolver(stages: string[]) {
@@ -52,7 +52,7 @@ export class RequestMapper {
             case 'FINISHED':
                 return RequestStageState.FINISHED;
             case 'IN_QUEUE':
-                return RequestStageState.IN_QUEUE;
+                return RequestStageState.QUEUED;
             default:
                 throw new Error(`Unknown stage ${stage}`);
         }

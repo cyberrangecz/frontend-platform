@@ -1,5 +1,6 @@
 <div
-    [ngStyle]="getCursorStyle() !== undefined ? {cursor: getCursorStyle()} : {}"
+    #guacWrapper
+    [ngStyle]="buildWrapperStyle()"
     class="guacamole-wrapper wh-100"
 >
     <div #guacContainer></div>
