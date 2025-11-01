@@ -128,7 +128,7 @@ export class TopologyComponent implements AfterViewInit {
                 this.topologyTabsDiv.nativeElement.clientWidth,
             );
             this.synchronizerService.emitTopologyHeightChange(
-                this.topologyTabsDiv.nativeElement.clientHeight,
+                this.topologyTabsDiv.nativeElement.clientHeight - 49,
             );
         }
     }
