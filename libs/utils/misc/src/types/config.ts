@@ -82,6 +82,6 @@ export class PortalConfig extends Z.class({
     }),
 
     authConfig: sentinelAuthConfigSchema.describe(
-        'Sentinel authentication config'
+        'Sentinel authentication config',
     ),
 }) {}

@@ -1,4 +1,13 @@
-import { AfterViewInit, Component, ElementRef, inject, input, OnDestroy, signal, ViewChild } from '@angular/core';
+import {
+    AfterViewInit,
+    Component,
+    ElementRef,
+    inject,
+    input,
+    OnDestroy,
+    signal,
+    ViewChild,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { OAuthService } from 'angular-oauth2-oidc';
 import { GuacamoleStatus } from './status/guacamole-status';
@@ -6,7 +15,7 @@ import {
     GuacamoleClientState,
     GuacamoleTunnelState,
     mapGuacamoleClientState,
-    mapGuacamoleTunnelState
+    mapGuacamoleTunnelState,
 } from './status/guacamoleStatusMapper';
 import Guacamole from '@dushixiang/guacamole-common-js';
 import { GuacamoleKeyCodes } from './keycodes';
