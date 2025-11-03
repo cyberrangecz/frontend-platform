@@ -1,25 +1,10 @@
 import { HomeComponent } from './components/home/home.component';
 import { LoginComponent } from './components/login/login.component';
-import {
-    sentinelAuthGuard,
-    sentinelAuthGuardWithLogin,
-    sentinelNegativeAuthGuard,
-} from '@sentinel/auth';
-import { RoleService } from './services/role.service';
+import { sentinelAuthGuard, sentinelAuthGuardWithLogin, sentinelNegativeAuthGuard } from '@sentinel/auth';
 import { ValidRouterConfig } from '@crczp/routing-commons';
 import { RoleGuards } from './utils/guards';
 
 export const APP_ROUTES: ValidRouterConfig<''> = [
-    {
-        path: 'login',
-        component: LoginComponent,
-        canActivate: [sentinelNegativeAuthGuard],
-    },
-    {
-        path: 'home',
-        component: HomeComponent,
-        canActivate: [sentinelAuthGuardWithLogin],
-    },
     {
         path: 'linear-definition',
         loadChildren: () =>
@@ -30,7 +15,7 @@ export const APP_ROUTES: ValidRouterConfig<''> = [
         data: {
             breadcrumb: 'Linear Training Definitions',
             title: 'Linear Training Definition Overview',
-            preloadRoleCondition: RoleService.ROLES.trainingDesigner,
+            preloadRoleCondition: 'trainingDesigner',
         },
     },
     {
@@ -43,7 +28,7 @@ export const APP_ROUTES: ValidRouterConfig<''> = [
         data: {
             breadcrumb: 'Adaptive Training Definitions',
             title: 'Adaptive Training Definition Overview',
-            preloadRoleCondition: RoleService.ROLES.adaptiveTrainingDesigner,
+            preloadRoleCondition: 'adaptiveTrainingDesigner',
         },
     },
     {
@@ -56,7 +41,7 @@ export const APP_ROUTES: ValidRouterConfig<''> = [
         data: {
             breadcrumb: 'Linear Training Instances',
             title: 'Linear Training Instance Overview',
-            preloadRoleCondition: RoleService.ROLES.trainingOrganizer,
+            preloadRoleCondition: 'trainingOrganizer',
         },
     },
     {
@@ -65,11 +50,11 @@ export const APP_ROUTES: ValidRouterConfig<''> = [
             import(
                 './modules/training-agenda/adaptive-instance-routing.module'
             ).then((m) => m.AdaptiveInstanceRoutingModule),
-        canActivate: [RoleGuards.adaptiveTrainingOrganizerGuard],
+        canActivate: [RoleGuards.adaptiveTrainingOrganiserGuard],
         data: {
             breadcrumb: 'Adaptive Training Instances',
             title: 'Adaptive Training Instance Overview',
-            preloadRoleCondition: RoleService.ROLES.adaptiveTrainingOrganizer,
+            preloadRoleCondition: 'adaptiveTrainingOrganizer',
         },
     },
     {
@@ -82,7 +67,7 @@ export const APP_ROUTES: ValidRouterConfig<''> = [
         data: {
             breadcrumb: 'Sandbox Definitions',
             title: 'Sandbox Definition Overview',
-            preloadRoleCondition: RoleService.ROLES.sandboxDesigner,
+            preloadRoleCondition: 'sandboxDesigner',
         },
     },
     {
@@ -95,7 +80,7 @@ export const APP_ROUTES: ValidRouterConfig<''> = [
         data: {
             breadcrumb: 'Pools',
             title: 'Pool Overview',
-            preloadRoleCondition: RoleService.ROLES.sandboxOrganizer,
+            preloadRoleCondition: 'sandboxOrganizer',
         },
     },
     {
@@ -108,7 +93,7 @@ export const APP_ROUTES: ValidRouterConfig<''> = [
         data: {
             breadcrumb: 'Images',
             title: 'Images Overview',
-            preloadRoleCondition: RoleService.ROLES.sandboxOrganizer,
+            preloadRoleCondition: 'sandboxOrganizer',
         },
     },
     {
@@ -121,7 +106,7 @@ export const APP_ROUTES: ValidRouterConfig<''> = [
         data: {
             breadcrumb: 'Training Runs',
             title: 'Training Run Overview',
-            preloadRoleCondition: RoleService.ROLES.trainingTrainee,
+            preloadRoleCondition: 'trainingTrainee',
         },
     },
     {
@@ -136,7 +121,7 @@ export const APP_ROUTES: ValidRouterConfig<''> = [
             title: 'MITRE ATT&CK Techniques',
             breadcrumb: 'MITRE ATT&CK Techniques',
             showSwitch: false,
-            preloadRoleCondition: RoleService.ROLES.trainingTrainee,
+            preloadRoleCondition: 'trainingTrainee',
         },
     },
     {
@@ -151,7 +136,7 @@ export const APP_ROUTES: ValidRouterConfig<''> = [
             title: 'MITRE ATT&CK Techniques',
             breadcrumb: 'MITRE ATT&CK Techniques',
             showSwitch: false,
-            preloadRoleCondition: RoleService.ROLES.trainingDesigner,
+            preloadRoleCondition: 'trainingDesigner',
         },
     },
     {
@@ -164,7 +149,7 @@ export const APP_ROUTES: ValidRouterConfig<''> = [
         data: {
             breadcrumb: 'Users',
             title: 'User Overview',
-            preloadRoleCondition: RoleService.ROLES.uagAdmin,
+            preloadRoleCondition: 'uagAdmin',
         },
     },
     {
@@ -177,7 +162,7 @@ export const APP_ROUTES: ValidRouterConfig<''> = [
         data: {
             breadcrumb: 'Groups',
             title: 'Group Overview',
-            preloadRoleCondition: RoleService.ROLES.uagAdmin,
+            preloadRoleCondition: 'uagAdmin',
         },
     },
     {
@@ -190,7 +175,7 @@ export const APP_ROUTES: ValidRouterConfig<''> = [
         data: {
             breadcrumb: 'Microservice',
             title: 'Microservice Overview',
-            preloadRoleCondition: RoleService.ROLES.uagAdmin,
+            preloadRoleCondition: 'uagAdmin',
         },
     },
     {
@@ -213,7 +198,16 @@ export const APP_ROUTES: ValidRouterConfig<''> = [
             ),
         canActivate: [sentinelAuthGuardWithLogin],
     },
-
+    {
+        path: 'login',
+        component: LoginComponent,
+        canActivate: [sentinelNegativeAuthGuard],
+    },
+    {
+        path: 'home',
+        component: HomeComponent,
+        canActivate: [sentinelAuthGuardWithLogin],
+    },
     {
         path: 'logout',
         redirectTo: 'login',

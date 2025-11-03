@@ -2,7 +2,7 @@ import { map } from 'rxjs/operators';
 import { sentinelAuthGuard } from '@sentinel/auth';
 import { inject } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivateFn, Router, RouterStateSnapshot } from '@angular/router';
-import { RoleService } from '../services/role.service';
+import { RoleKey, RoleService } from '../services/role.service';
 import { PortalDynamicEnvironment } from '../portal-dynamic-environment';
 import { from, Observable, of } from 'rxjs';
 import { ValidPath } from '@crczp/routing-commons';
@@ -12,7 +12,7 @@ import { ValidPath } from '@crczp/routing-commons';
  * @param fromResult result to be narrowed
  */
 function canActivateToObservable(
-    fromResult: boolean | Promise<boolean> | Observable<boolean>
+    fromResult: boolean | Promise<boolean> | Observable<boolean>,
 ): Observable<boolean> {
     if (fromResult instanceof Observable) {
         return fromResult;
@@ -35,7 +35,7 @@ function canActivateToObservable(
  */
 function guardBuilder(
     redirect: ValidPath,
-    permissionsPredicate: () => boolean
+    permissionsPredicate: () => boolean,
 ): CanActivateFn {
     return (_route: ActivatedRouteSnapshot, _state: RouterStateSnapshot) => {
         const router = inject(Router);
@@ -45,7 +45,7 @@ function guardBuilder(
                     return router.createUrlTree([redirect]);
                 }
                 return true;
-            })
+            }),
         );
     };
 }
@@ -59,13 +59,13 @@ function guardBuilder(
  */
 function guardBuilderForRole(
     redirect: ValidPath,
-    role: RoleKey
+    role: RoleKey,
 ): CanActivateFn {
     return (route: ActivatedRouteSnapshot, state: RouterStateSnapshot) => {
         const roleService = inject(RoleService);
         return guardBuilder(redirect, () => roleService.hasRole(role))(
             route,
-            state
+            state,
         );
     };
 }
@@ -76,7 +76,7 @@ function guardBuilderForRole(
  */
 const advancedUserGuard: CanActivateFn = (
     route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot
+    state: RouterStateSnapshot,
 ) => {
     const roleService = inject(RoleService);
     const roleMapping = PortalDynamicEnvironment.getConfig().roleMapping;
@@ -85,8 +85,8 @@ const advancedUserGuard: CanActivateFn = (
         roleService.hasAny(
             Object.values(roleMapping)
                 .map((role) => role as RoleKey)
-                .filter((role) => role !== roleMapping.trainingTrainee)
-        )
+                .filter((role) => role !== roleMapping.trainingTrainee),
+        ),
     )(route, state);
 };
 /**
@@ -96,7 +96,6 @@ const advancedUserGuard: CanActivateFn = (
 const customGuards = {
     advancedUserGuard: advancedUserGuard,
 };
-type RoleKey = keyof typeof RoleService.ROLES;
 
 type RoleGuardMap = {
     [K in RoleKey as `${K}Guard`]: CanActivateFn;
@@ -108,8 +107,15 @@ type RoleGuardMap = {
  *
  * The guards will be created in the RoleGuards namespace.
  */
-export const RoleGuards: RoleGuardMap = Object.fromEntries(
-    (Object.keys(RoleService.ROLES) as RoleKey[])
-        .map((key) => [`${key}Guard`, guardBuilderForRole('home', key)])
-        .concat(Object.entries(customGuards))
+const guardEntries: Array<[string, CanActivateFn]> = RoleService.ROLES.map(
+    (roleKey) =>
+        [`${roleKey}Guard`, guardBuilderForRole('home', roleKey)] as [
+            string,
+            CanActivateFn,
+        ],
+).concat(Object.entries(customGuards) as Array<[string, CanActivateFn]>);
+
+export const RoleGuards: RoleGuardMap = Object.assign(
+    {},
+    ...guardEntries.map(([key, value]) => ({ [key]: value })),
 ) as RoleGuardMap;

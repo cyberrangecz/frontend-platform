@@ -39,7 +39,7 @@ type NonFunctionProps<T> = Pick<T, NonFunctionKeys<T>>;
  * type Obj = { name: string; [Symbol.iterator]: () => void };
  * type Props = StringNonMethodKeys<Obj>; // { name: string }
  */
-type StringNonMethodKeys<T> = {
+export type StringNonMethodKeys<T> = {
     [K in keyof T as K extends string
         ? T[K] extends (...args: any) => any
             ? never

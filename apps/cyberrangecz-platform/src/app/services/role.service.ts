@@ -1,7 +1,16 @@
 import { inject, Injectable } from '@angular/core';
 import { SentinelAuthService } from '@sentinel/auth';
+import { PortalConfig } from '@crczp/utils';
 
-export type RoleKey = keyof typeof RoleService.ROLES;
+export type RoleKey =
+    | 'uagAdmin'
+    | 'trainingDesigner'
+    | 'trainingOrganizer'
+    | 'adaptiveTrainingDesigner'
+    | 'adaptiveTrainingOrganiser'
+    | 'trainingTrainee'
+    | 'sandboxDesigner'
+    | 'sandboxOrganizer';
 
 export type RolePredicateMap = {
     [K in RoleKey as `${K}Guard`]: () => boolean;
@@ -11,27 +20,31 @@ export type RolePredicateMap = {
     providedIn: 'root',
 })
 export class RoleService {
-    public static readonly ROLES = {
-        uagAdmin: 'ROLE_USER_AND_GROUP_ADMINISTRATOR',
-        trainingDesigner: 'ROLE_TRAINING_DESIGNER',
-        trainingOrganizer: 'ROLE_TRAINING_ORGANIZER',
-        adaptiveTrainingDesigner: 'ROLE_ADAPTIVE_TRAINING_DESIGNER',
-        adaptiveTrainingOrganizer: 'ROLE_ADAPTIVE_TRAINING_ORGANIZER',
-        trainingTrainee: 'ROLE_TRAINING_TRAINEE',
-        sandboxDesigner: 'ROLE_SANDBOX-SERVICE_DESIGNER',
-        sandboxOrganizer: 'ROLE_SANDBOX-SERVICE_ORGANIZER',
-    };
+    public static readonly ROLES: RoleKey[] = [
+        'uagAdmin',
+        'trainingDesigner',
+        'trainingOrganizer',
+        'adaptiveTrainingDesigner',
+        'adaptiveTrainingOrganiser',
+        'trainingTrainee',
+        'sandboxDesigner',
+        'sandboxOrganizer',
+    ];
+
     /**
      * Dynamically created predicates for each role
+     *
+     * Returns true if the user has the specified role
      */
     public readonly rolePredicates: RolePredicateMap = Object.fromEntries(
         (Object.keys(this) as RoleKey[]).map((key) => [
             `is${String(key).charAt(0).toUpperCase() + String(key).slice(1)}`,
             () => this.hasRole(key),
-        ])
+        ]),
     ) as RolePredicateMap;
     private readonly authService = inject(SentinelAuthService);
     private readonly rolesDict: Set<string> = new Set();
+    private readonly config = inject(PortalConfig);
 
     constructor() {
         this.authService.activeUser$.subscribe((user) => {
@@ -43,18 +56,18 @@ export class RoleService {
     }
 
     hasRole(roleKey: RoleKey) {
-        return this.rolesDict.has(RoleService.ROLES[roleKey]);
+        return this.rolesDict.has(this.config.roleMapping[roleKey]);
     }
 
     hasAny(roles: RoleKey[]) {
         return roles
-            .map((roleKey) => RoleService.ROLES[roleKey])
-            .some((role) => this.rolesDict.has(role));
+            .map((roleKey) => this.config.roleMapping[roleKey])
+            .some((role) => this.hasRole(role));
     }
 
     hasAll(roles: RoleKey[]) {
         return !roles
-            .map((roleKey) => RoleService.ROLES[roleKey])
-            .some((role) => !this.rolesDict.has(role));
+            .map((roleKey) => this.config.roleMapping[roleKey])
+            .some((role) => !this.hasRole(role));
     }
 }
