@@ -107,8 +107,15 @@ type RoleGuardMap = {
  *
  * The guards will be created in the RoleGuards namespace.
  */
-export const RoleGuards: RoleGuardMap = Object.fromEntries(
-    (Object.keys(RoleService.ROLES) as RoleKey[])
-        .map((key) => [`${key}Guard`, guardBuilderForRole('home', key)])
-        .concat(Object.entries(customGuards)),
+const guardEntries: Array<[string, CanActivateFn]> = RoleService.ROLES.map(
+    (roleKey) =>
+        [`${roleKey}Guard`, guardBuilderForRole('home', roleKey)] as [
+            string,
+            CanActivateFn,
+        ],
+).concat(Object.entries(customGuards) as Array<[string, CanActivateFn]>);
+
+export const RoleGuards: RoleGuardMap = Object.assign(
+    {},
+    ...guardEntries.map(([key, value]) => ({ [key]: value })),
 ) as RoleGuardMap;
