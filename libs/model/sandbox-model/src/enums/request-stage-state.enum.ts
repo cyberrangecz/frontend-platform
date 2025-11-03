@@ -1,5 +1,5 @@
 export enum RequestStageState {
-    IN_QUEUE = 'In Queue',
+    QUEUED = 'In Queue',
     RUNNING = 'Running',
     FAILED = 'Failed',
     RETRY = 'Retry',

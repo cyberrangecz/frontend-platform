@@ -1,18 +1,12 @@
 .guacamole-wrapper {
-    display: block;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
     position: relative;
     background: black;
     cursor: none;
-    padding: 0.75rem 0 0.75rem 0.75rem;
+    padding: 0;
     box-sizing: border-box;
     box-shadow: 0 0 5px 10px rgba(0, 0, 0, 0.5);
-}
-
-// Critical for VNC: Ensure the container has proper dimensions
-#guacContainer,
-[_ngcontent-ng-c][_nghost-ng-c] > div > div {
-    width: 100%;
-    height: 100%;
-    display: block;
-    overflow: hidden;
 }

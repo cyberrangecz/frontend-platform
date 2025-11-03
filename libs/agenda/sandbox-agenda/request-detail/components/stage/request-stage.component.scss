@@ -3,6 +3,70 @@ mat-card {
     margin: 10px;
 }
 
+.request-header {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 64px 1fr;
+    align-items: center;
+}
+
+.allocation-title {
+    padding: 0.5rem;
+    display: flex;
+    width: fit-content;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.75rem;
+    border-radius: 2rem;
+
+    &:hover {
+        background-color: var(--neutral-90);
+        cursor: pointer;
+    }
+
+    h2 {
+        text-wrap: nowrap;
+    }
+
+    &--expanded {
+        border-radius: 2rem 2rem 0 0;
+        box-shadow: 0 5px 5px rgba(0, 0, 0, 0.2);
+    }
+}
+
+
+.allocation-title-text {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding: 0;
+    margin: 0;
+}
+
+.allocation-info {
+    position: absolute;
+    background: var(--neutral-98);
+    top: 5.5rem;
+    left: 1rem;
+    z-index: 1001;
+    display: flex;
+    flex-direction: column;
+    min-width: 300px;
+    padding: 2rem 1rem;
+    gap: 1.5rem;
+    border-radius: 0 1rem 1rem 1rem;
+
+    box-shadow: 0 5px 5px rgba(0, 0, 0, 0.2);
+
+    &:hover {
+        cursor: default;
+    }
+}
+
+.stage-order-number {
+    width: 64px;
+    text-align: center;
+}
+
 .loading {
     display: flex;
     flex-direction: row;
@@ -20,7 +84,6 @@ mat-card {
 .stage-logo {
     width: 40px;
     height: 40px;
-    margin-right: 1rem;
 }
 
 .stage-expansion-panel {
@@ -40,4 +103,14 @@ mat-card-header {
 
 mat-card-header mat-card-title {
     margin: 0;
+}
+
+.repo-link {
+    text-decoration: none;
+    color: black;
+    border-radius: 0.5rem;
+
+    &:hover {
+        color: var(--primary-60);
+    }
 }

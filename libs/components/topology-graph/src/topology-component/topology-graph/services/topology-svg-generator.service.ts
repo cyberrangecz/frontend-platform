@@ -29,7 +29,6 @@ export class TopologyNodeSvgService {
 
         const svgContent = `
             <svg width="${svgSize}" height="${svgSize}" xmlns="http://www.w3.org/2000/svg">
-
                     <defs>
                        <radialGradient id="internet-border"
                     cx="50  %" cy="50%" r="50%"
@@ -408,8 +407,6 @@ export class TopologyNodeSvgService {
             labelY +
             CONFIG.CARD.PADDING.LABEL_ROW +
             this.getFontSize(nodeType, 'IP');
-
-        console.log(consoleIndicatorData);
 
         const consoleIndicatorMarkup = consoleIndicatorData
             ? `<g transform="translate(${width - CONFIG.INDICATOR.MARGIN}, ${

@@ -1,9 +1,10 @@
 @if (visible()) {
     <div
         #contextMenu
-        class="context-menu"
+        (crczpClickOutside)="onOutsideClick()"
         [style.left.px]="position().x"
         [style.top.px]="position().y"
+        class="context-menu"
     >
         <ul>
             @for (item of menuData(); track item.label) {

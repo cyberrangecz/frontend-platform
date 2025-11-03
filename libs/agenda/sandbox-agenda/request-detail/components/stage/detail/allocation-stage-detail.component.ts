@@ -16,10 +16,8 @@ import { AsyncPipe } from '@angular/common';
 import { TerraformOutputsService } from '../../../services/state/detail/terraform-outputs.service';
 import { search } from '@codemirror/search';
 import { StageAdapter } from '../../../model/adapters/stage-adapter';
-import { AnsibleStageAdapter } from '../../../model/adapters/ansible-stage-adapter';
 import { RequestStageType } from '@crczp/sandbox-model';
 import { CodeViewerWrapper } from '@crczp/components';
-import { CodeEditor } from '@acrodata/code-editor';
 import { createInfinitePaginationEvent } from '@crczp/api-common';
 import { AllocationOutputSort } from '@crczp/sandbox-api';
 
@@ -28,7 +26,7 @@ import { AllocationOutputSort } from '@crczp/sandbox-api';
     templateUrl: './allocation-stage-detail.component.html',
     styleUrls: ['./allocation-stage-detail.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [AsyncPipe, CodeViewerWrapper, CodeEditor],
+    imports: [AsyncPipe, CodeViewerWrapper],
 })
 export class AllocationStageDetailComponent implements OnChanges {
     stage = input.required<StageAdapter>();
@@ -38,7 +36,6 @@ export class AllocationStageDetailComponent implements OnChanges {
     isLoading$: Observable<boolean>;
     hasError$: Observable<boolean>;
     destroyRef = inject(DestroyRef);
-    lineWrapping = true;
     protected readonly search = search;
 
     private readonly ansibleOutputsService = inject(AnsibleOutputsService);
@@ -80,26 +77,6 @@ export class AllocationStageDetailComponent implements OnChanges {
             .getAll(this.stage(), requestedPagination)
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe();
-    }
-
-    /**
-     * Transform to AnsibleStageAdapter if the stage is of type Ansible, otherwise return null
-     * @param stage The stage to transform
-     * @returns The transformed AnsibleStageAdapter or null
-     */
-    asAnsibleStage(stage: StageAdapter): AnsibleStageAdapter | null {
-        if (this.isAnsibleStage(stage)) {
-            return stage as AnsibleStageAdapter;
-        }
-    }
-
-    /**
-     * Check if the stage is of type Ansible
-     * @param stage The stage to check
-     * @returns True if the stage is of type Ansible, false otherwise
-     */
-    isAnsibleStage(stage: StageAdapter): boolean {
-        return stage.type === RequestStageType.USER_ANSIBLE_ALLOCATION;
     }
 
     private resolveAllocationOutputsService():

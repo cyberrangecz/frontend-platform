@@ -1,8 +1,8 @@
 /**
  * Class representing request stage
  */
-import {RequestStageState} from '../../enums/request-stage-state.enum';
-import {RequestStageType} from '../../enums/request-stage-type.enum';
+import { RequestStageState } from '../../enums/request-stage-state.enum';
+import { RequestStageType } from '../../enums/request-stage-type.enum';
 
 export abstract class RequestStage {
     readonly type!: RequestStageType;
@@ -18,7 +18,7 @@ export abstract class RequestStage {
     }
 
     isInQueue(): boolean {
-        return this.state === RequestStageState.IN_QUEUE;
+        return this.state === RequestStageState.QUEUED;
     }
 
     isRunning(): boolean {
@@ -35,5 +35,21 @@ export abstract class RequestStage {
 
     hasFinished(): boolean {
         return this.state === RequestStageState.FINISHED;
+    }
+
+    isAnsibleStage(): boolean {
+        return (
+            this.type === RequestStageType.USER_ANSIBLE_ALLOCATION ||
+            this.type === RequestStageType.USER_ANSIBLE_CLEANUP ||
+            this.type === RequestStageType.NETWORKING_ANSIBLE_ALLOCATION ||
+            this.type === RequestStageType.NETWORKING_ANSIBLE_CLEANUP
+        );
+    }
+
+    isTerraformStage(): boolean {
+        return (
+            this.type === RequestStageType.TERRAFORM_CLEANUP ||
+            this.type === RequestStageType.TERRAFORM_ALLOCATION
+        );
     }
 }

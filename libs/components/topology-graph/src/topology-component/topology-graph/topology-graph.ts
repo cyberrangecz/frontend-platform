@@ -69,10 +69,10 @@ export class TopologyGraph implements AfterViewInit {
     loading = input<boolean>(false);
     stabilized = signal(false);
     resized = signal(true);
-
     @ViewChild('networkContainer', { static: false })
     networkContainer: ElementRef<HTMLDivElement>;
     network: Network;
+    protected accessibleNodes = signal<string[]>([]);
     protected nodes: TopologyGraphNode[];
     protected links: TopologyGraphLink[];
     private readonly svgService = inject(TopologyNodeSvgService);
@@ -157,10 +157,12 @@ export class TopologyGraph implements AfterViewInit {
     }
 
     private handleTopologyChange(newTopology: Topology) {
-        console.log('TopologyGraph: topology changed', newTopology);
         const visualizationData =
             mapTopologyToTopologyVisualization(newTopology);
         this.nodes = visualizationData.nodes;
+        this.accessibleNodes.set(
+            this.nodes.filter((node) => node.accessible).map((node) => node.id),
+        );
         this.nodeNamesDict = this.nodes.reduce(
             (acc, node) => ({ ...acc, [node.id]: node }),
             {},

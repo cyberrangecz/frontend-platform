@@ -122,13 +122,7 @@ export class GroupUserAssignComponent implements OnChanges {
             this.resource &&
             this.resource.id !== undefined
         ) {
-            console.log(
-                'Initializing UserAssignComponent for resource:',
-                this.resource,
-            );
             this.init();
-        } else {
-            console.log('Resource is ', this.resource);
         }
     }
 
@@ -137,7 +131,6 @@ export class GroupUserAssignComponent implements OnChanges {
      * @param users selected users to assign
      */
     onUserToAssignSelection(users: User[]): void {
-        console.log('Selected users to assign:', users);
         this.userAssignService.setSelectedUsersToAssign(users);
     }
 
@@ -162,8 +155,6 @@ export class GroupUserAssignComponent implements OnChanges {
      * @param filterValue search value
      */
     searchUsers(filterValue: string): void {
-        console.log('Searching users with filter:', filterValue);
-
         this.users$ = this.userAssignService
             .getUsersToAssign(this.resource.id, filterValue)
             .pipe(map((resource) => resource.elements));

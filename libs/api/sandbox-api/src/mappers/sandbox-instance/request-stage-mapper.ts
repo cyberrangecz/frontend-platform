@@ -8,22 +8,24 @@ import {
     TerraformCleanupStage,
     TerraformOutput,
     UserAnsibleAllocationStage,
-    UserAnsibleCleanupStage,
+    UserAnsibleCleanupStage
 } from '@crczp/sandbox-model';
-import {AnsibleAllocationOutputDTO} from '../../dto/sandbox-instance/stages/ansible-allocation-output-dto';
-import {AnsibleAllocationStageDTO} from '../../dto/sandbox-instance/stages/ansible-allocation-stage-dto';
-import {AnsibleCleanupStageDTO} from '../../dto/sandbox-instance/stages/ansible-cleanup-stage-dto';
-import {TerraformAllocationStageDTO} from '../../dto/sandbox-instance/stages/terraform-allocation-stage-dto';
-import {TerraformCleanupStageDTO} from '../../dto/sandbox-instance/stages/terraform-cleanup-stage-dto';
-import {TerraformOutputDTO} from '../../dto/sandbox-instance/stages/terraform-output-dto';
-import {CloudResourceDTO} from '../../dto/sandbox-instance/stages/cloud-resource-dto';
-import {RequestStageDTO} from '../../dto/sandbox-instance/stages/request-stage-dto';
+import { AnsibleAllocationOutputDTO } from '../../dto/sandbox-instance/stages/ansible-allocation-output-dto';
+import { AnsibleAllocationStageDTO } from '../../dto/sandbox-instance/stages/ansible-allocation-stage-dto';
+import { AnsibleCleanupStageDTO } from '../../dto/sandbox-instance/stages/ansible-cleanup-stage-dto';
+import { TerraformAllocationStageDTO } from '../../dto/sandbox-instance/stages/terraform-allocation-stage-dto';
+import { TerraformCleanupStageDTO } from '../../dto/sandbox-instance/stages/terraform-cleanup-stage-dto';
+import { TerraformOutputDTO } from '../../dto/sandbox-instance/stages/terraform-output-dto';
+import { CloudResourceDTO } from '../../dto/sandbox-instance/stages/cloud-resource-dto';
+import { RequestStageDTO } from '../../dto/sandbox-instance/stages/request-stage-dto';
 
 /**
  * @dynamic
  */
 export class RequestStageMapper {
-    static fromTerraformAllocationDTO(dto: TerraformAllocationStageDTO): TerraformAllocationStage {
+    static fromTerraformAllocationDTO(
+        dto: TerraformAllocationStageDTO,
+    ): TerraformAllocationStage {
         const stage = new TerraformAllocationStage();
         this.setGeneralAttributes(dto, stage);
         stage.status = dto.status;
@@ -31,44 +33,60 @@ export class RequestStageMapper {
         return stage;
     }
 
-    static fromTerraformCleanupDTO(dto: TerraformCleanupStageDTO): TerraformCleanupStage {
+    static fromTerraformCleanupDTO(
+        dto: TerraformCleanupStageDTO,
+    ): TerraformCleanupStage {
         const stage = new TerraformCleanupStage();
         this.setGeneralAttributes(dto, stage);
         return stage;
     }
 
-    static fromNetworkingAnsibleAllocationDTO(dto: AnsibleAllocationStageDTO): NetworkingAnsibleAllocationStage {
+    static fromNetworkingAnsibleAllocationDTO(
+        dto: AnsibleAllocationStageDTO,
+    ): NetworkingAnsibleAllocationStage {
         const stage = new NetworkingAnsibleAllocationStage();
         this.setGeneralAttributes(dto, stage);
         this.setAnsibleAllocationGeneralAttributes(dto, stage);
         return stage;
     }
 
-    static fromUserAnsibleAllocationDTO(dto: AnsibleAllocationStageDTO): UserAnsibleAllocationStage {
+    static fromUserAnsibleAllocationDTO(
+        dto: AnsibleAllocationStageDTO,
+    ): UserAnsibleAllocationStage {
         const stage = new UserAnsibleAllocationStage();
         this.setGeneralAttributes(dto, stage);
         this.setAnsibleAllocationGeneralAttributes(dto, stage);
         return stage;
     }
 
-    static fromNetworkingAnsibleCleanupDTO(dto: AnsibleCleanupStageDTO): NetworkingAnsibleCleanupStage {
+    static fromNetworkingAnsibleCleanupDTO(
+        dto: AnsibleCleanupStageDTO,
+    ): NetworkingAnsibleCleanupStage {
         const stage = new NetworkingAnsibleCleanupStage();
         this.setGeneralAttributes(dto, stage);
         return stage;
     }
 
-    static fromUserAnsibleCleanupDTO(dto: AnsibleCleanupStageDTO): UserAnsibleCleanupStage {
+    static fromUserAnsibleCleanupDTO(
+        dto: AnsibleCleanupStageDTO,
+    ): UserAnsibleCleanupStage {
         const stage = new UserAnsibleCleanupStage();
         this.setGeneralAttributes(dto, stage);
         return stage;
     }
 
-    static fromAnsibleAllocationOutputDTOs(dtos: AnsibleAllocationOutputDTO[]): string[] {
+    static fromAnsibleAllocationOutputDTOs(
+        dtos: AnsibleAllocationOutputDTO[],
+    ): string[] {
         return dtos.map((dto) => dto.content);
     }
 
-    static fromTerraformOutputDTOs(dtos: TerraformOutputDTO[]): TerraformOutput[] {
-        return dtos.map((dto) => RequestStageMapper.fromTerraformOutputDTO(dto));
+    static fromTerraformOutputDTOs(
+        dtos: TerraformOutputDTO[],
+    ): TerraformOutput[] {
+        return dtos.map((dto) =>
+            RequestStageMapper.fromTerraformOutputDTO(dto),
+        );
     }
 
     static fromTerraformOutputDTO(dto: TerraformOutputDTO): TerraformOutput {
@@ -89,7 +107,10 @@ export class RequestStageMapper {
         return result;
     }
 
-    private static setGeneralAttributes(dto: RequestStageDTO, stage: RequestStage) {
+    private static setGeneralAttributes(
+        dto: RequestStageDTO,
+        stage: RequestStage,
+    ) {
         stage.id = dto.id;
         stage.requestId = dto.request_id;
         stage.state = this.resolveStageState(dto);
@@ -115,10 +136,17 @@ export class RequestStageMapper {
         if (dto.failed) {
             return RequestStageState.FAILED;
         }
-        if ((dto.start === undefined || dto.start === null) && (dto.end === undefined || dto.end === null)) {
-            return RequestStageState.IN_QUEUE;
+        if (
+            (dto.start === undefined || dto.start === null) &&
+            (dto.end === undefined || dto.end === null)
+        ) {
+            return RequestStageState.QUEUED;
         }
-        if (dto.start !== undefined && dto.start !== null && (dto.end === undefined || dto.end === null)) {
+        if (
+            dto.start !== undefined &&
+            dto.start !== null &&
+            (dto.end === undefined || dto.end === null)
+        ) {
             return RequestStageState.RUNNING;
         }
         return RequestStageState.FINISHED;

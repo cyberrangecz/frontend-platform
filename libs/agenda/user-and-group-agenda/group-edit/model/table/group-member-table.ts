@@ -30,7 +30,6 @@ export class GroupMemberTable extends SentinelTable<User, string> {
             new Column<string>('issuer', 'issuer', true, 'iss'),
         ];
         super(rows, columns);
-        console.log('pagination', resource.pagination);
         this.pagination = PaginationMapper.fromArray(
             resource.elements,
             resource.pagination.size,

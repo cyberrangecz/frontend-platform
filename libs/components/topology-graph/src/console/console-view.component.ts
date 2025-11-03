@@ -1,23 +1,14 @@
-import {
-    Component,
-    ElementRef,
-    inject,
-    input,
-    OnDestroy,
-    OnInit,
-    signal,
-    ViewChild,
-} from '@angular/core';
+import { AfterViewInit, Component, ElementRef, inject, input, OnDestroy, signal, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import Guacamole from 'guacamole-common-js';
 import { OAuthService } from 'angular-oauth2-oidc';
 import { GuacamoleStatus } from './status/guacamole-status';
 import {
     GuacamoleClientState,
     GuacamoleTunnelState,
     mapGuacamoleClientState,
-    mapGuacamoleTunnelState,
+    mapGuacamoleTunnelState
 } from './status/guacamoleStatusMapper';
+import Guacamole from '@dushixiang/guacamole-common-js';
 import { GuacamoleKeyCodes } from './keycodes';
 
 export type ConnectionParams = {
@@ -32,15 +23,16 @@ export type ConnectionParams = {
     templateUrl: './console-view.component.html',
     styleUrl: './console-view.component.scss',
 })
-export class ConsoleView implements OnInit, OnDestroy {
+export class ConsoleView implements AfterViewInit, OnDestroy {
     @ViewChild('guacContainer', { static: true })
     guacContainer!: ElementRef;
 
+    @ViewChild('guacWrapper', { static: true })
+    guacWrapper!: ElementRef;
     connectionParams = input.required<ConnectionParams>();
-
     tunnelStateCode = signal<GuacamoleTunnelState>('INVALID');
     clientStateCode = signal<GuacamoleClientState>('INVALID');
-
+    private readonly PADDING_NO_GUI = 12;
     private readonly authService = inject(OAuthService);
     private guacClient: Guacamole.Client | null = null;
     private guacMouse: Guacamole.Mouse | null = null;
@@ -48,8 +40,12 @@ export class ConsoleView implements OnInit, OnDestroy {
     private listeners: (() => void)[] = [];
     private clipboardInterval: number | null = null;
     private lastClipboardContent = '';
+    private resizeTimeout: number | null = null;
+    private RESIZE_DEBOUNCE_MS = 50;
+    private INITIAL_RESOLUTION_COEFFICIENT = 1;
+    private currentScale = signal<number>(1);
 
-    ngOnInit(): void {
+    ngAfterViewInit(): void {
         this.connectGuacamole();
         this.setupResizeObserver();
         this.setupClipboardSync();
@@ -64,6 +60,11 @@ export class ConsoleView implements OnInit, OnDestroy {
         if (this.clipboardInterval) {
             clearInterval(this.clipboardInterval);
             this.clipboardInterval = null;
+        }
+
+        if (this.resizeTimeout) {
+            clearTimeout(this.resizeTimeout);
+            this.resizeTimeout = null;
         }
 
         if (this.guacClient) {
@@ -91,6 +92,19 @@ export class ConsoleView implements OnInit, OnDestroy {
             default:
                 return undefined;
         }
+    }
+
+    buildWrapperStyle() {
+        return {
+            ...(this.getCursorStyle() !== undefined
+                ? { cursor: this.getCursorStyle() }
+                : {}),
+            ...(!this.connectionParams().withGui
+                ? {
+                      padding: '0.75rem 0 0.75rem 0.75rem',
+                  }
+                : {}),
+        };
     }
 
     private get_keysym(
@@ -148,10 +162,7 @@ export class ConsoleView implements OnInit, OnDestroy {
     private sendClipboardToRemote(text: string): void {
         if (!this.guacClient) return;
 
-        const stream = this.guacClient.createClipboardStream(
-            'text/plain',
-            'clipboard',
-        );
+        const stream = this.guacClient.createClipboardStream('text/plain');
         const writer = new Guacamole.StringWriter(stream);
         writer.sendText(text);
         writer.sendEnd();
@@ -188,21 +199,40 @@ export class ConsoleView implements OnInit, OnDestroy {
 
     private setupResizeObserver(): void {
         this.resizeObserver = new ResizeObserver(() => {
-            this.handleResize();
+            if (this.resizeTimeout) {
+                clearTimeout(this.resizeTimeout);
+            }
+            this.resizeTimeout = window.setTimeout(() => {
+                this.handleResize();
+            }, this.RESIZE_DEBOUNCE_MS);
         });
 
-        this.resizeObserver.observe(this.guacContainer.nativeElement);
+        this.resizeObserver.observe(this.guacWrapper.nativeElement);
     }
 
     private handleResize(): void {
         if (!this.guacClient) return;
 
-        const container: HTMLDivElement = this.guacContainer.nativeElement;
-        const width = container.offsetWidth;
-        const height = container.offsetHeight;
+        const container: HTMLDivElement = this.guacWrapper.nativeElement;
+        const width = container.offsetWidth - this.PADDING_NO_GUI * 2;
+        const height = container.offsetHeight - this.PADDING_NO_GUI;
 
         if (width > 0 && height > 0) {
             this.guacClient.sendSize(width, height);
+
+            const display = this.guacClient.getDisplay();
+            if (display) {
+                const displayWidth = display.getWidth();
+                const displayHeight = display.getHeight();
+
+                if (displayWidth > 0 && displayHeight > 0) {
+                    const scaleX = width / displayWidth;
+                    const scaleY = height / displayHeight;
+
+                    this.currentScale.set(Math.min(scaleX, scaleY));
+                    display.scale(this.currentScale());
+                }
+            }
         }
     }
 
@@ -211,7 +241,6 @@ export class ConsoleView implements OnInit, OnDestroy {
             'wss://devel.platform.cyberrange.cz/guacamole/api/v1/websocket/guacamole',
         );
 
-        // Add tunnel error handler BEFORE creating client
         tunnel.onerror = (error) => {
             console.error('Tunnel error:', error);
         };
@@ -221,7 +250,6 @@ export class ConsoleView implements OnInit, OnDestroy {
 
         this.guacClient = new Guacamole.Client(tunnel);
 
-        // Setup clipboard receiver
         this.setupClipboardReceiver();
 
         const keydownHandler = (e: KeyboardEvent) => {
@@ -253,25 +281,47 @@ export class ConsoleView implements OnInit, OnDestroy {
             document.removeEventListener('keyup', keyupHandler),
         );
 
-        // Setup mouse with full event handling (movement, clicks, scrolling)
         this.guacMouse = new Guacamole.Mouse(this.guacContainer.nativeElement);
 
-        this.guacMouse.onmousedown =
-            this.guacMouse.onmouseup =
-            this.guacMouse.onmousemove =
-                (mouseState) => {
-                    this.guacClient?.sendMouseState(mouseState);
-                };
+        this.guacMouse.onEach(
+            ['mousedown', 'mousemove', 'mouseup'],
+            (e: { state: Guacamole.Mouse.State }) => {
+                if (this.guacClient && this.currentScale() !== 1) {
+                    // Correct for double scaling by dividing by the scale factor
+                    const correctedState = {
+                        ...e.state,
+                        x: e.state.x / this.currentScale(),
+                        y: e.state.y / this.currentScale(),
+                    };
+                    this.guacClient.sendMouseState(correctedState);
+                } else {
+                    this.guacClient?.sendMouseState(e.state);
+                }
+            },
+        );
 
         this.guacClient.onstatechange = (state: number) => {
             this.clientStateCode.set(mapGuacamoleClientState(state));
             if (this.clientStateCode() === 'CONNECTED') {
-                this.handleResize();
-                // Force display refresh for VNC
+                console.log(
+                    'Guacamole client connected, setting up display...',
+                );
+
                 const display = this.guacClient?.getDisplay();
                 if (display) {
+                    display.onresize = (width: number, height: number) => {
+                        console.log(
+                            'Remote display resized to:',
+                            width,
+                            height,
+                        );
+                        this.handleResize();
+                    };
+
                     display.showCursor(true);
                 }
+
+                this.handleResize();
             }
         };
 
@@ -282,19 +332,14 @@ export class ConsoleView implements OnInit, OnDestroy {
         const display = this.guacClient.getDisplay();
         const displayElement = display.getElement();
 
-        // Critical for VNC: proper canvas configuration
         displayElement.style.display = 'block';
         displayElement.style.margin = '0';
         displayElement.style.padding = '0';
         displayElement.style.width = '100%';
         displayElement.style.height = '100%';
+        displayElement.style.objectFit = 'contain';
 
         this.guacContainer.nativeElement.appendChild(displayElement);
-
-        console.log(
-            'Connecting to Guacamole with params:',
-            this.buildConnectionParams(),
-        );
         this.guacClient.connect(this.buildConnectionParams());
     }
 
@@ -307,6 +352,25 @@ export class ConsoleView implements OnInit, OnDestroy {
             )}&`;
         };
 
+        if (this.connectionParams().withGui) {
+            const wrapperWidth =
+                this.guacWrapper.nativeElement.offsetWidth || 0;
+            const wrapperHeight =
+                this.guacWrapper.nativeElement.offsetHeight || 0;
+            const browserWidth = window.innerWidth;
+
+            const avgWidth = Math.round((wrapperWidth + browserWidth) / 2);
+
+            const initialWidth = Math.round(
+                avgWidth * this.INITIAL_RESOLUTION_COEFFICIENT,
+            );
+            const initialHeight = Math.round(
+                wrapperHeight * this.INITIAL_RESOLUTION_COEFFICIENT,
+            );
+            appendParam('width', String(initialWidth));
+            appendParam('height', String(initialHeight));
+        }
+
         appendParam('authToken', this.authService.getAccessToken() || '');
         appendParam('sandboxUuid', this.connectionParams().sandboxUuid);
         appendParam('nodeName', this.connectionParams().nodeName);
@@ -314,6 +378,7 @@ export class ConsoleView implements OnInit, OnDestroy {
             'withGui',
             this.connectionParams().withGui ? 'true' : 'false',
         );
+
         return params;
     }
 }

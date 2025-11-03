@@ -12,7 +12,7 @@
     <ng-container *sentinelRow="'comment'; template: comment" />
 </sentinel-table>
 <ng-template #lockState let-row>
-    <crczp-pool-table-state-cell [toIcon]="lockStateToIcon" [value]="row.element.lockState" />
+    <crczp-table-state-cell [iconColor]="" [icon]="getPoolStateIcon(row)" [text]="row.element.lockState" />
 </ng-template>
 
 <ng-template #comment let-row>

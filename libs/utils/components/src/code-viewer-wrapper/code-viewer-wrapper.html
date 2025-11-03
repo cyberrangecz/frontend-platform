@@ -1,0 +1,56 @@
+<div [class.fullscreen]="isMaximized()" class="content-wrapper wh-100">
+    <div [class.controls-header--fullscreen]="isMaximized()"
+         class="controls-header">
+        <button (click)="toggleFullscreen()"
+                [matTooltipPosition]="'above'"
+                [matTooltip]="isMaximized() ? 'Minimize' : 'Maximize'"
+                [style.color]="isMaximized() ? 'crimson' : 'var(--primary-50)'"
+                mat-icon-button
+        >
+            <mat-icon>{{ isMaximized() ? 'fullscreen_exit' : 'fullscreen' }}</mat-icon>
+        </button>
+        <button (click)="lineWrapping.set(!lineWrapping())"
+                [matTooltipPosition]="'above'"
+                [matTooltip]="lineWrapping() ? 'Disable Line Wrap' : 'Enable Line Wrap'" mat-icon-button>
+            <mat-icon>wrap_text</mat-icon>
+        </button>
+        <button (click)="copyToClipboard()"
+                [matTooltipPosition]="'above'"
+                [matTooltip]="'Copy to Clipboard'"
+                mat-icon-button
+        >
+            <mat-icon>content_copy</mat-icon>
+        </button>
+        <button (click)="scrollToTop()"
+                [matTooltipPosition]="'above'"
+                [matTooltip]="'Scroll to Top'"
+                mat-icon-button
+        >
+            <mat-icon>keyboard_double_arrow_up</mat-icon>
+        </button>
+        <button (click)="scrollToBottom()"
+                [matTooltipPosition]="'above'"
+                [matTooltip]="'Scroll to Bottom'"
+                mat-icon-button
+        >
+            <mat-icon>keyboard_double_arrow_down</mat-icon>
+        </button>
+        <button (click)="openSearch()"
+                mat-icon-button
+        >
+            <mat-icon>search</mat-icon>
+        </button>
+    </div>
+    <div #scrollContainer
+         [style.height]="appliedHeight()"
+         class="scrollable-content round-scrollbar">
+        <div #resizeableContent>
+            <code-editor #codeEditor
+                         [extensions]="extensions()"
+                         [lineWrapping]="lineWrapping()"
+                         [readonly]="readonly()"
+                         [value]="value()"
+            ></code-editor>
+        </div>
+    </div>
+</div>

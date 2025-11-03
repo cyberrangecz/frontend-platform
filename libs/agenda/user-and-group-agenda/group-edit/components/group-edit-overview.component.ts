@@ -1,16 +1,6 @@
-import {
-    ChangeDetectionStrategy,
-    Component,
-    DestroyRef,
-    EventEmitter,
-    inject,
-    Output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, EventEmitter, inject, Output } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import {
-    SentinelControlItem,
-    SentinelControlsComponent,
-} from '@sentinel/components/controls';
+import { SentinelControlItem, SentinelControlsComponent } from '@sentinel/components/controls';
 import { Group } from '@crczp/user-and-group-model';
 import { defer, Observable, of } from 'rxjs';
 import { tap } from 'rxjs/operators';
@@ -22,7 +12,7 @@ import {
     MatExpansionPanel,
     MatExpansionPanelDescription,
     MatExpansionPanelHeader,
-    MatExpansionPanelTitle,
+    MatExpansionPanelTitle
 } from '@angular/material/expansion';
 import { GroupEditComponent } from './group-edit/group-edit.component';
 import { MatDivider } from '@angular/material/divider';
@@ -30,7 +20,6 @@ import { AsyncPipe } from '@angular/common';
 import { GroupUserAssignComponent } from './group-user-assign/group-user-assign.component';
 import { MatIcon } from '@angular/material/icon';
 import { MatError } from '@angular/material/input';
-import { GroupRoleAssignComponent } from './group-role-assign/group-role-assign.component';
 
 @Component({
     selector: 'crczp-group-edit-overview',
@@ -40,7 +29,6 @@ import { GroupRoleAssignComponent } from './group-role-assign/group-role-assign.
     imports: [
         AsyncPipe,
         GroupEditComponent,
-        GroupRoleAssignComponent,
         GroupUserAssignComponent,
         MatDivider,
         MatError,

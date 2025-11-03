@@ -173,7 +173,6 @@ export class GroupRoleAssignComponent implements OnChanges {
         this.initRolesToAssignControls();
         this.initUnsavedChangesEmitter();
         this.initTable();
-        console.log('this', this);
     }
 
     private initTable() {

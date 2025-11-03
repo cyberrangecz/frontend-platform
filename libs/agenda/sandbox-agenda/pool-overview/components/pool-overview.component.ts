@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { SentinelControlItem, SentinelControlsComponent } from '@sentinel/components/controls';
 import { Pool, Resources } from '@crczp/sandbox-model';
-import { SentinelRowDirective, SentinelTableComponent, TableLoadEvent } from '@sentinel/components/table';
+import { Row, SentinelRowDirective, SentinelTableComponent, TableLoadEvent } from '@sentinel/components/table';
 import { defer, Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { PoolTable } from '../model/pool-table';
@@ -26,7 +26,7 @@ import { AsyncPipe } from '@angular/common';
 import { PaginationStorageService, PollingService, providePaginationStorageService } from '@crczp/utils';
 import { createPaginationEvent, PaginationMapper } from '@crczp/api-common';
 import { PoolSort } from '@crczp/sandbox-api';
-import { TableStateCellComponent } from './table-state-cell/table-state-cell.component';
+import { TableStateCellComponent } from '@crczp/components';
 
 /**
  * Smart component of sandbox pool overview page
@@ -43,6 +43,7 @@ import { TableStateCellComponent } from './table-state-cell/table-state-cell.com
         QuotasComponent,
         AsyncPipe,
         SentinelRowDirective,
+        TableStateCellComponent,
         TableStateCellComponent,
     ],
     providers: [
@@ -87,6 +88,16 @@ export class PoolOverviewComponent implements OnInit {
 
     constructor() {
         this.resources$ = this.sandboxResourcesService.resources$;
+    }
+
+    getPoolStateIcon(row: Row<Pool>) {
+        const pool = row.element;
+        if (pool.lockState === 'locked') {
+            return 'lock';
+        } else if (pool.lockState === 'unlocked') {
+            return 'lock_open';
+        }
+        return null;
     }
 
     ngOnInit(): void {
