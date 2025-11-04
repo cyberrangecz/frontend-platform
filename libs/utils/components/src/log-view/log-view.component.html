@@ -21,6 +21,13 @@
         >
             <mat-icon>content_copy</mat-icon>
         </button>
+        <button (click)="openSearch();alignBottom()"
+                [matTooltipPosition]="'above'"
+                [matTooltip]="'Search in Log'"
+                mat-icon-button
+        >
+            <mat-icon>search</mat-icon>
+        </button>
         <button (click)="scrollToTop()"
                 [matTooltipPosition]="'above'"
                 [matTooltip]="'Scroll to Top'"
@@ -28,29 +35,21 @@
         >
             <mat-icon>keyboard_double_arrow_up</mat-icon>
         </button>
-        <button (click)="scrollToBottom()"
+        <button (click)="scrollToBottom();alignBottom()"
                 [matTooltipPosition]="'above'"
                 [matTooltip]="'Scroll to Bottom'"
                 mat-icon-button
         >
             <mat-icon>keyboard_double_arrow_down</mat-icon>
         </button>
-        <button (click)="openSearch()"
-                mat-icon-button
-        >
-            <mat-icon>search</mat-icon>
-        </button>
     </div>
-    <div #scrollContainer
-         [style.height]="appliedHeight()"
-         class="scrollable-content round-scrollbar">
-        <div #resizeableContent>
-            <code-editor #codeEditor
-                         [extensions]="extensions()"
-                         [lineWrapping]="lineWrapping()"
-                         [readonly]="readonly()"
-                         [value]="value()"
-            ></code-editor>
-        </div>
+    <div #codeContainer>
+        <code-editor #codeEditor
+                     [extensions]="extensions()"
+                     [lineWrapping]="lineWrapping()"
+                     [readonly]="readonly()"
+                     [style.height]="appliedHeight()"
+                     [value]="value()"
+        ></code-editor>
     </div>
 </div>

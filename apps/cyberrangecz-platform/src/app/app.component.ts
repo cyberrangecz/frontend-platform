@@ -45,7 +45,6 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     constructor() {
         this.activatedRoute.queryParams.subscribe((params) => {
-            console.log(params);
             this.hideSidebar.set(params['hideSidebar'] === 'true');
         });
     }

@@ -1,9 +1,4 @@
-import {
-    ChangeDetectionStrategy,
-    Component,
-    input,
-    signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, signal } from '@angular/core';
 import { StageAdapter } from '../../model/adapters/stage-adapter';
 import { MatCard, MatCardContent, MatCardHeader } from '@angular/material/card';
 import { RequestStageStateIndicator } from './header/request-stage-state-indicator.component';
@@ -41,7 +36,7 @@ export class RequestStageComponent {
     protected readonly window = window;
 
     getOrderNumber(stage: StageAdapter) {
-        if (!stage?.type) {
+        if (stage?.type == null) {
             return 0;
         }
         return RequestStageTypeMapper.toOrderOfExecution(stage.type) + 1;

@@ -1,14 +1,10 @@
 @if (outputs$ | async) {
-    <crczp-code-viewer-wrapper
-        [extensions]="[search({
-            caseSensitive: false,
-        })]"
+    <crczp-log-view
         [height]="height()"
         [readonly]="true"
         [value]="outputs$ | async"
         class="code-viewer-wrapper"
-    >
-    </crczp-code-viewer-wrapper>
+    />
 
 } @else {
     <ng-template>

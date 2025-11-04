@@ -17,16 +17,16 @@ import { TerraformOutputsService } from '../../../services/state/detail/terrafor
 import { search } from '@codemirror/search';
 import { StageAdapter } from '../../../model/adapters/stage-adapter';
 import { RequestStageType } from '@crczp/sandbox-model';
-import { CodeViewerWrapper } from '@crczp/components';
 import { createInfinitePaginationEvent } from '@crczp/api-common';
 import { AllocationOutputSort } from '@crczp/sandbox-api';
+import { LogView } from '@crczp/components';
 
 @Component({
     selector: 'crczp-allocation-stage-detail',
     templateUrl: './allocation-stage-detail.component.html',
     styleUrls: ['./allocation-stage-detail.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [AsyncPipe, CodeViewerWrapper],
+    imports: [AsyncPipe, LogView],
 })
 export class AllocationStageDetailComponent implements OnChanges {
     stage = input.required<StageAdapter>();

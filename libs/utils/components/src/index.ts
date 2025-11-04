@@ -6,4 +6,4 @@ export * from './table/table-date-cell/table-date-cell-sync.service';
 export * from './table/table-state-cell/table-state-cell.component';
 export * from './table/table-countdown/table-countdown.component';
 export * from './logo-spinner/logo-spinner.component';
-export * from './code-viewer-wrapper/code-viewer-wrapper';
+export * from './log-view/log-view.component';

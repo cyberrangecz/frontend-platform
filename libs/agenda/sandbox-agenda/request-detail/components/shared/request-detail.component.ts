@@ -1,11 +1,10 @@
 import { ActivatedRoute } from '@angular/router';
-import { Request, RequestStage } from '@crczp/sandbox-model';
+import { Request, RequestStage, RequestStageTypeMapper } from '@crczp/sandbox-model';
 import { Observable } from 'rxjs';
 import { map, switchMap, tap } from 'rxjs/operators';
 import { RequestStagesService } from '../../services/state/request-stages.service';
 import { StageAdapter } from '../../model/adapters/stage-adapter';
-import { StagesDetailPollRegistry } from '../../services/state/detail/stages-detail-poll-registry.service';
-import { DestroyRef, inject, signal } from '@angular/core';
+import { DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 
 /**
@@ -23,14 +22,13 @@ export abstract class RequestDetailComponent {
     private activatedRoute = inject(ActivatedRoute);
     protected fragmentIndex = toSignal(
         this.activatedRoute.fragment.pipe(
+            tap((routeFragment) => console.log({ routeFragment })),
             takeUntilDestroyed(this.destroyRef),
             map((fragment) => this.mapFragmentToIndex(fragment)),
         ),
     );
-
-    private currentRunningStageIndex = signal(0);
+    private fragmentInitialized = false;
     private requestStagesService = inject(RequestStagesService);
-    private stageDetailRegistry = inject(StagesDetailPollRegistry);
 
     protected constructor() {
         this.init();
@@ -158,7 +156,12 @@ export abstract class RequestDetailComponent {
 
         this.stages$ = this.requestStagesService.stages$.pipe(
             takeUntilDestroyed(this.destroyRef),
-            tap((stages) => this.updateLastCurrentStageIndex(stages)),
+            tap(
+                (stages) =>
+                    // No fragment was set in route, so we navigate to last running stage for convenience
+                    !this.fragmentInitialized &&
+                    this.updateLastCurrentStageIndex(stages),
+            ),
             map((stages) => this.mapStagesMetadata(stages)),
         );
 
@@ -170,18 +173,26 @@ export abstract class RequestDetailComponent {
         if (fragment) {
             const match = fragment.match(/^stage-(\d+)$/);
             if (match) {
+                this.fragmentInitialized = true;
                 return parseInt(match[1], 10) - 1;
-            } else {
-                return 0;
             }
         }
+        return 0;
     }
 
     private updateLastCurrentStageIndex(stages: StageAdapter[]) {
-        this.navigateToStage(
-            stages.findIndex((stage) => !stage.hasFinished()) ||
-                stages.length - 1,
+        const stagesByIndex = stages.sort(
+            (a, b) =>
+                RequestStageTypeMapper.toOrderOfExecution(a.type) -
+                RequestStageTypeMapper.toOrderOfExecution(b.type),
         );
+        const currentStageIndex = stagesByIndex.findIndex(
+            (stage) => !stage.hasFinished() || stage.hasFailed(),
+        );
+        if (currentStageIndex !== -1) {
+            this.fragmentInitialized = true;
+            this.navigateToStage(currentStageIndex);
+        }
     }
 
     private mapStagesMetadata(stages: StageAdapter[]): StageAdapter[] {
