@@ -58,7 +58,7 @@ export class TrainingRunOverviewComponent implements OnInit {
 
     private readonly initialRunPagination =
         createPaginationEvent<AccessedTrainingRunSort>({
-            sort: 'trainingInstanceEndDate',
+            sort: 'endTime',
             sortDir: 'desc',
         });
 

@@ -134,7 +134,6 @@ export class TopologyComponent implements AfterViewInit {
     }
 
     handleTabClick($event: PointerEvent, index: number): void {
-        console.log($event.button);
         if ($event.button === 1 /* middle click */) {
             this.closeTab(index);
             $event.preventDefault();

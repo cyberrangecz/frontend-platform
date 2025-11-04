@@ -5,7 +5,6 @@ import { UserRefDTO } from '../dto/user/user-ref-dto';
 import { CheatingDetectionDTO } from '../dto/cheating-detection/cheating-detection-dto';
 import { DetectedForbiddenCommandDTO } from '../dto/detection-event/detected-forbidden-command-dto';
 import { DetectionEventParticipantDTO } from '../dto/detection-event/detection-event-participant-dto';
-import { AccessedTrainingRunDTO } from '../dto/training-run/accessed-training-run-dto';
 import { DetectionEventDTO } from '../dto/detection-event/detection-event-dto';
 import { SnakeToCamelCase } from '@crczp/api-common';
 
@@ -14,9 +13,7 @@ export type TrainingDefinitionSort = SnakeToCamelCase<
     keyof TrainingDefinitionDTO
 >;
 export type TrainingRunSort = SnakeToCamelCase<keyof TrainingRunDTO>;
-export type AccessedTrainingRunSort = SnakeToCamelCase<
-    keyof AccessedTrainingRunDTO
->;
+export type AccessedTrainingRunSort = 'endTime' | 'startTime';
 export type UserRefSort = SnakeToCamelCase<keyof UserRefDTO>;
 export type CheatingDetectionSort = SnakeToCamelCase<
     keyof CheatingDetectionDTO

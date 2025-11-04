@@ -83,8 +83,6 @@ export class PoolDetailComponent implements OnInit, AfterViewInit {
     private readonly initAllocationRequestPagination =
         createPaginationEvent<AllocationRequestSort>({});
 
-    private pageSize = this.paginationService.loadPageSize();
-
     private readonly initSandboxPagination =
         createPaginationEvent<SandboxInstanceSort>({
             sort: 'id',
@@ -124,15 +122,16 @@ export class PoolDetailComponent implements OnInit, AfterViewInit {
                 .retryAllocate(selectedStage.unitId)
                 .pipe(take(1))
                 .subscribe();
+        } else {
+            this.sandboxInstanceService
+                .navigateToStage(
+                    this.pool.id,
+                    selectedStage.unitId,
+                    selectedStage.order,
+                )
+                .pipe(take(1))
+                .subscribe();
         }
-        this.sandboxInstanceService
-            .navigateToStage(
-                this.pool.id,
-                selectedStage.unitId,
-                selectedStage.order,
-            )
-            .pipe(take(1))
-            .subscribe();
     }
 
     /**

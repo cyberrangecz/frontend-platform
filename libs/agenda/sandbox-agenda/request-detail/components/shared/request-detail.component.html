@@ -11,7 +11,7 @@
         <!-- Stage indicators -->
         <div class="stage-indicators">
             @for (stage of stages; track trackByFn(stage); let i = $index) {
-                <img
+                <div
                     (click)="navigateToStage(i)"
                     (keydown.enter)="navigateToStage(i)"
                     (keydown.space)="navigateToStage(i)"
@@ -19,10 +19,10 @@
                     [class.stage-indicator--failed]="stage.hasFailed()"
                     [class.stage-indicator--running]="stage.isRunning()"
                     [class.stage-indicator--selected]="i === fragmentIndex()"
-                    [src]="stage?.logoSrc"
-                    alt="stage logo"
                     class="stage-indicator" role="button"
                     tabindex="0">
+                    <img [src]="stage?.logoSrc" alt="stage logo">
+                </div>
             }
         </div>
 
@@ -36,7 +36,7 @@
                          [class.carousel-item--hidden]="!isCarouselItemVisible(i, stageIndex)"
                          class="carousel-item">
                         <crczp-request-stage
-                            [height]="'calc(100vh - 450px)'"
+                            [height]="'calc(100vh - 550px)'"
                             [stage]="stages[stageIndex]"
                             class="stage-detail-panel"
                         />

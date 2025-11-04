@@ -16,7 +16,7 @@ import {
     SandboxInstanceSort
 } from '@crczp/sandbox-api';
 import { SandboxAllocationUnit, SandboxInstance } from '@crczp/sandbox-model';
-import { EMPTY, from, Observable, of } from 'rxjs';
+import { EMPTY, from, Observable } from 'rxjs';
 import { catchError, switchMap, tap } from 'rxjs/operators';
 import { SandboxAllocationUnitsService } from '../sandbox-allocation-unit/sandbox-allocation-units.service';
 import { ErrorHandlerService, NotificationService, PortalConfig } from '@crczp/utils';
@@ -390,26 +390,8 @@ export class SandboxInstanceService extends OffsetPaginatedElementsPollingServic
         sandboxId: number,
         stageOrder: number,
     ): Observable<boolean> {
-        let path;
-        switch (stageOrder) {
-            case 0:
-            case 1:
-            case 2:
-                path = Routing.RouteBuilder.pool
-                    .poolId(poolId)
-                    .sandbox_instance.requestId(sandboxId)
-                    .build();
-                break;
-            default:
-                path = '';
-        }
-        return path !== ''
-            ? from(
-                  this.router.navigate([path], {
-                      fragment: `stage-${stageOrder}`,
-                  }),
-              )
-            : of(false);
+        // TODO Cleanup request navigation
+        return this.navigateToAllocation(poolId, sandboxId, stageOrder);
     }
 
     updateComment(
@@ -446,6 +428,46 @@ export class SandboxInstanceService extends OffsetPaginatedElementsPollingServic
         return this.sandboxApi
             .getSandboxes(this.lastPoolId, this.lastPagination)
             .pipe(tap({ error: (err) => this.onGetAllError(err) }));
+    }
+
+    private navigateToAllocation(
+        poolId: number,
+        sandboxId: number,
+        stageOrder: number,
+    ): Observable<boolean> {
+        return from(
+            this.router.navigate(
+                [
+                    Routing.RouteBuilder.pool
+                        .poolId(poolId)
+                        .sandbox_instance.requestId(sandboxId)
+                        .build(),
+                ],
+                {
+                    fragment: `stage-${stageOrder + 1}`,
+                },
+            ),
+        );
+    }
+
+    private navigateToCleanup(
+        poolId: number,
+        sandboxId: number,
+        stageOrder: number,
+    ): Observable<boolean> {
+        return from(
+            this.router.navigate(
+                [
+                    Routing.RouteBuilder.pool
+                        .poolId(poolId)
+                        .sandbox_instance.requestId(sandboxId)
+                        .cleanup.build(),
+                ],
+                {
+                    fragment: `stage-${stageOrder + 1}`,
+                },
+            ),
+        );
     }
 
     private getNumberOfSandboxes(

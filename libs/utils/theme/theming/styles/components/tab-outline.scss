@@ -1,0 +1,10 @@
+@use '../../definitions/variables' as vars;
+
+*:focus {
+    outline: none;
+}
+
+*:focus-visible {
+    outline: 2px solid var(--primary-60);
+    outline-offset: 2px;
+}

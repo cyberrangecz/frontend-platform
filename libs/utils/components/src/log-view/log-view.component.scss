@@ -39,6 +39,18 @@ code-editor {
     width: 100%;
     max-width: 100%;
     overflow-x: auto;
+    border-radius: 0;
+
+    ::ng-deep {
+        .cm-editor {
+            border-radius: 0;
+            box-shadow: none;
+        }
+
+        .cm-content {
+            font-family: 'Roboto Mono', 'Courier New', monospace;
+        }
+    }
 }
 
 .fullscreen {
@@ -49,7 +61,7 @@ code-editor {
     height: 100vh !important;
     z-index: 10000 !important;
     overflow: visible !important;
-    background: var(--neutral-98) !important;
+    background: var(--neutral-99) !important;
 
     @media (min-width: 749px) {
         left: 140px !important;
