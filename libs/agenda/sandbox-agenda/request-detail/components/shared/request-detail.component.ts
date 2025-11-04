@@ -22,7 +22,6 @@ export abstract class RequestDetailComponent {
     private activatedRoute = inject(ActivatedRoute);
     protected fragmentIndex = toSignal(
         this.activatedRoute.fragment.pipe(
-            tap((routeFragment) => console.log({ routeFragment })),
             takeUntilDestroyed(this.destroyRef),
             map((fragment) => this.mapFragmentToIndex(fragment)),
         ),
