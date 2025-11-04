@@ -19,14 +19,20 @@ export const crczpCodeEditorTheme = EditorView.theme(
         '&.cm-focused .cm-cursor': {
             borderLeftColor: 'var(--primary-40)',
         },
-        '&.cm-focused .cm-selectionBackground, ::selection': {
-            backgroundColor: 'var(--primary-90)',
+        '.cm-activeLine': {
+            backgroundColor: 'rgba(75,126,255,0.05)',
         },
         '.cm-selectionBackground': {
-            backgroundColor: 'var(--primary-95)',
+            backgroundColor: 'var(--primary-85)',
         },
-        '.cm-activeLine': {
-            backgroundColor: 'var(--neutral-95)',
+        '&.cm-focused .cm-selectionBackground': {
+            backgroundColor: 'var(--primary-85)',
+        },
+        '::selection': {
+            backgroundColor: 'var(--primary-85)',
+        },
+        '&.cm-focused ::selection': {
+            backgroundColor: 'var(--primary-75)',
         },
         '.cm-gutters': {
             backgroundColor: 'var(--neutral-98)',
