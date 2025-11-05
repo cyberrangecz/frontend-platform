@@ -5,25 +5,17 @@
     "prefix": "app",
     "sourceRoot": "apps/cyberrangecz-platform/src",
     "tags": [],
-    "implicitDependencies": [
-        "theme"
-    ],
+    "implicitDependencies": ["theme"],
     "targets": {
         "build": {
             "executor": "@angular-devkit/build-angular:application",
-            "outputs": [
-                "{options.outputPath}"
-            ],
-            "dependsOn": [
-                "theme:build"
-            ],
+            "outputs": ["{options.outputPath}"],
+            "dependsOn": ["theme:build"],
             "options": {
                 "outputPath": "dist/apps/cyberrangecz-platform",
                 "index": "apps/cyberrangecz-platform/src/index.html",
                 "browser": "apps/cyberrangecz-platform/src/main.ts",
-                "polyfills": [
-                    "zone.js"
-                ],
+                "polyfills": ["zone.js"],
                 "tsConfig": "apps/cyberrangecz-platform/tsconfig.app.json",
                 "inlineStyleLanguage": "scss",
                 "assets": [
@@ -38,11 +30,8 @@
                         "output": "/assets/"
                     }
                 ],
-                "styles": [
-                    "dist/libs/utils/theme/theme/apply-all.scss",
-                    "apps/cyberrangecz-platform/src/styles.scss"
-                ],
-                "scripts": []
+                "styles": ["dist/libs/utils/theme/theme/apply-all.scss"],
+                "scripts": ["node_modules/@hpcc-js/wasm/dist/graphviz.umd.js"]
             },
             "configurations": {
                 "production": {
@@ -75,9 +64,7 @@
             "defaultConfiguration": "production"
         },
         "serve": {
-            "dependsOn": [
-                "theme:build"
-            ],
+            "dependsOn": ["theme:build"],
             "executor": "@angular-devkit/build-angular:dev-server",
             "configurations": {
                 "production": {
@@ -101,9 +88,7 @@
         },
         "test": {
             "executor": "@nx/vite:test",
-            "outputs": [
-                "{options.reportsDirectory}"
-            ],
+            "outputs": ["{options.reportsDirectory}"],
             "options": {
                 "reportsDirectory": "../../coverage/apps/cyberrangecz-platform"
             }

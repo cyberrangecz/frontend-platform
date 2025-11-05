@@ -1,6 +1,6 @@
 @use '@angular/material' as mat;
 @use '@sentinel/layout/theming' as sentinel-variables;
-@use '@sentinel/layout/sentinel-layout-theme' as layout;
+@use 'definitions/sentinel-layout-theme-no-download' as layout;
 @use '@sentinel/layout/notification-card-mixin' as sentinel-layout-notification-card;
 @use '@sentinel/layout/sidebar-mixin' as sentinel-layout-sidebar;
 @use '@sentinel/components/theming' as sentinel-components;

@@ -1,0 +1,60 @@
+@mixin font-face($family, $weight, $style, $path) {
+    @font-face {
+        font-family: $family;
+        font-style: $style;
+        font-weight: $weight;
+        font-display: swap;
+        src: url($path) format('truetype');
+    }
+}
+
+@function get-filename($base, $weight, $style) {
+    @return if($weight == 400 and $style == normal, '#{$base}-regular.ttf',
+               if($weight == 400 and $style == italic, '#{$base}-italic.ttf',
+                  if($style == normal, '#{$base}-#{$weight}.ttf', '#{$base}-#{$weight}italic.ttf')));
+}
+
+/* Inter Font Family */
+$inter-weights: 100, 200, 300, 400, 500, 600, 700, 800, 900;
+$inter-styles: normal, italic;
+
+@each $weight in $inter-weights {
+    @each $style in $inter-styles {
+        $filename: get-filename('Inter', $weight, $style);
+        @include font-face('Inter', $weight, $style, '/assets/fonts/#{$filename}');
+    }
+}
+
+/* Source Sans Pro Font Family */
+$source-sans-weights: 200, 300, 400, 500, 600, 700, 800, 900;
+$source-sans-styles: normal, italic;
+
+@each $weight in $source-sans-weights {
+    @each $style in $source-sans-styles {
+        $filename: get-filename('SourceSans3', $weight, $style);
+        @include font-face('Source Sans Pro', $weight, $style, '/assets/fonts/#{$filename}');
+    }
+}
+
+@font-face {
+    font-family: 'Material Icons';
+    font-style: normal;
+    font-weight: 400;
+    src: url(/assets/fonts/material-icons.woff2) format('woff2');
+}
+
+.material-icons {
+    font-family: 'Material Icons';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    -moz-font-feature-settings: 'liga';
+    -moz-osx-font-smoothing: grayscale;
+}

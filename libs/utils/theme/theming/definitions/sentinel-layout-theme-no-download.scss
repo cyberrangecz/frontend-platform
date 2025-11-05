@@ -3,95 +3,75 @@
 
 @mixin sentinel-layout-theme($theme) {
     @if (mat.get-theme-version($theme) == 1) {
-        --mat-sidenav-container-shape: 0;
-        --sentinel-hover-state: #{mat.get-theme-color(
-          $theme,
-          primary,
-          95
-        )};
-        --sys-display-large-size: 34px;
-        --sys-display-large-line-height: 40px;
-        --sys-display-large: 500 var(--sys-display-large-size) / var(--sys-display-large-line-height) #{vars.$sentinel-base-font};
+        & {
+            --sentinel-breadcrumbs-text-color: #ffffff;
+            --mat-sidenav-container-shape: 0;
+            --sentinel-hover-state: #{mat.get-theme-color($theme, primary, 95)};
+            --sys-display-large-size: 34px;
+            --sys-display-large-line-height: 40px;
+            --sys-display-large: 500 var(--sys-display-large-size) /
+        var(--sys-display-large-line-height)
+            #{vars.$sentinel-base-font};
 
-        --sys-display-medium-size: 24px;
-        --sys-display-medium-line-height: 32px;
-        --sys-display-medium: 400 var(--sys-display-medium-size) / var(--sys-display-medium-line-height) #{vars.$sentinel-base-font};
+            --sys-display-medium-size: 24px;
+            --sys-display-medium-line-height: 32px;
+            --sys-display-medium: 400 var(--sys-display-medium-size) /
+        var(--sys-display-medium-line-height)
+            #{vars.$sentinel-base-font};
 
-        --sys-display-small-size: 20px;
-        --sys-display-small-line-height: 32px;
-        --sys-display-small: 400 var(--sys-display-small-size) / var(--sys-display-small-line-height) #{vars.$sentinel-base-font};
+            --sys-display-small-size: 20px;
+            --sys-display-small-line-height: 32px;
+            --sys-display-small: 400 var(--sys-display-small-size) /
+        var(--sys-display-small-line-height)
+            #{vars.$sentinel-base-font};
 
-        --sys-headline-large-size: 16px;
-        --sys-headline-large-line-height: 28px;
-        --sys-headline-large: 400 var(--sys-headline-large-size) / var(--sys-headline-large-line-height) #{vars.$sentinel-base-font};
+            --sys-headline-large-size: 16px;
+            --sys-headline-large-line-height: 28px;
+            --sys-headline-large: 400 var(--sys-headline-large-size) /
+        var(--sys-headline-large-line-height)
+            #{vars.$sentinel-base-font};
 
-        --sys-headline-medium-size: 14px;
-        --sys-headline-medium-line-height: 24px;
-        --sys-headline-medium: 400 var(--sys-headline-medium-size) / var(--sys-headline-medium-line-height) #{vars.$sentinel-base-font};
+            --sys-headline-medium-size: 14px;
+            --sys-headline-medium-line-height: 24px;
+            --sys-headline-medium: 400 var(--sys-headline-medium-size) /
+        var(--sys-headline-medium-line-height)
+            #{vars.$sentinel-base-font};
 
-        --sys-headline-small-size: 13px;
-        --sys-headline-small-line-height: 22px;
-        --sys-headline-small: 400 var(--sys-headline-small-size) / var(--sys-headline-small-line-height) #{vars.$sentinel-base-font};
+            --sys-headline-small-size: 13px;
+            --sys-headline-small-line-height: 22px;
+            --sys-headline-small: 400 var(--sys-headline-small-size) /
+        var(--sys-headline-small-line-height)
+            #{vars.$sentinel-base-font};
 
-        --sys-body-large-size: 14px;
-        --sys-body-large-line-height: 20px;
-        --sys-body-large-tracking: 0;
-        --sys-body-large: 400 var(--sys-body-large-size) / var(--sys-body-large-line-height) #{vars.$sentinel-base-font};
-
+            --sys-body-large-size: 14px;
+            --sys-body-large-line-height: 20px;
+            --sys-body-large-tracking: 0;
+            --sys-body-large: 400 var(--sys-body-large-size) / var(--sys-body-large-line-height) #{vars.$sentinel-base-font};
+        }
         .mat-toolbar {
-            --mat-toolbar-container-text-color: #{mat.get-theme-color(
-          $theme,
-          primary,
-          100
-        )};
-            --mat-toolbar-container-background-color: #{mat.get-theme-color(
-          $theme,
-          primary,
-        )};
-            --mdc-icon-button-icon-color: #{mat.get-theme-color(
-          $theme,
-          primary,
-          100
-        )};
+            --mat-toolbar-container-text-color: #{mat.get-theme-color($theme, primary, 100)};
+            --mat-toolbar-container-background-color: #{mat.get-theme-color($theme, primary)};
+            --mat-icon-button-icon-color: #{mat.get-theme-color($theme, primary, 100)};
         }
         .nav-drawer.mat-drawer {
             background-color: #000000;
-            background-image: linear-gradient(147deg, #03031F 0%, #141F64 250%);
+            background-image: linear-gradient(147deg, #03031f 0%, #141f64 250%);
         }
 
         .nav-drawer {
-            a, button {
-                --mdc-text-button-label-text-color: #{mat.get-theme-color(
-          $theme,
-          primary,
-          100
-        )};
-                --mat-text-button-ripple-color: #{mat.get-theme-color(
-          $theme,
-          primary,
-          40
-        )};
+            a,
+            button {
+                --mat-button-text-label-text-color: #{mat.get-theme-color($theme, primary, 100)};
+                --mat-button-text-ripple-color: #{mat.get-theme-color($theme, primary, 40)};
             }
 
-            --mat-container-text-color: #{mat.get-theme-color(
-            $theme,
-            primary,
-            100
-          )};
-            --mdc-icon-button-icon-color: #{mat.get-theme-color(
-            $theme,
-            primary,
-            100
-          )};
+            --mat-container-text-color: #{mat.get-theme-color($theme, primary, 100)};
+            --mat-icon-button-icon-color: #{mat.get-theme-color($theme, primary, 100)};
         }
 
         sentinel-root-agenda-container .container {
             margin: 8px 0;
-            color: #{mat.get-theme-color(
-          $theme,
-          neutral-variant,
-          95
-        )};
+            color: #{mat.get-theme-color($theme, neutral-variant, 95)};
         }
 
         sentinel-agenda-element .nested {
@@ -99,25 +79,20 @@
         }
 
         sentinel-agenda-element .top-level {
-            height: var(--mdc-text-button-container-height);
+            height: var(--mat-button-text-container-height);
         }
 
         sentinel-nested-agenda-container button {
-            margin: 8px 0
+            margin: 8px 0;
         }
 
         #version {
-            color: #{mat.get-theme-color(
-          $theme,
-          primary,
-          100
-        )};
+            color: #{mat.get-theme-color($theme, primary, 100)};
         }
-    }
-    @else {
+    } @else {
         .mat-drawer {
             background-color: #000000;
-            background-image: linear-gradient(147deg, #03031F 0%, #141F64 250%);
+            background-image: linear-gradient(147deg, #03031f 0%, #141f64 250%);
 
             a.mat-mdc-button {
                 color: #ffffff;
@@ -132,8 +107,8 @@
             color: #c3c5cb;
         }
 
-        sentinel-neted-agenda-container button.mat-mdc-button {
-            margin: 8px 0
+        sentinel-nested-agenda-container button.mat-mdc-button {
+            margin: 8px 0;
         }
     }
 }
