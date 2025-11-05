@@ -4,8 +4,6 @@
 @use 'sass:map';
 @use '@angular/material/index' as mat;
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
-
 // Note: Color palettes are generated from primary: #3E43E8, secondary: #2E32AD, tertiary: #1E2173, neutral: #B2B2B8
 $_palettes: (
     primary: (
@@ -136,9 +134,6 @@ $_rest: (
 );
 $_primary: map.merge(map.get($_palettes, primary), $_rest);
 $_tertiary: map.merge(map.get($_palettes, tertiary), $_rest);
-
-/* Download the used Inter font from google fonts */
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 
 $theme: mat.define-theme(
         (
