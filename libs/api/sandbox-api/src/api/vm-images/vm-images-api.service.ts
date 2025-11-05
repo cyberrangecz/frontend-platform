@@ -16,6 +16,7 @@ import { HttpClient } from '@angular/common/http';
 import { PortalConfig } from '@crczp/utils';
 import { SentinelParamsMerger } from '@sentinel/common';
 import { VmImageSort } from '../sorts';
+import { withCache } from '@ngneat/cashew';
 
 /**
  * Service abstracting http communication with vm images endpoints.
@@ -23,6 +24,7 @@ import { VmImageSort } from '../sorts';
 @Injectable()
 export class VMImagesApi {
     private readonly http = inject(HttpClient);
+    private readonly version = inject(PortalConfig).version;
 
     private readonly apiUrl =
         inject(PortalConfig).basePaths.sandbox + '/images';
@@ -53,6 +55,20 @@ export class VMImagesApi {
         return this.http
             .get<DjangoResourceDTO<VirtualImageDTO>>(this.apiUrl, {
                 params: params,
+                ...(cached
+                    ? {
+                          context: withCache({
+                              storage: 'localStorage',
+                              ttl: 7.2e6, // 2h
+                              version: this.version,
+                              key:
+                                  'images_' +
+                                  onlyCrczpImages +
+                                  '_' +
+                                  onlyGuiAccess,
+                          }),
+                      }
+                    : {}),
             })
             .pipe(
                 map(
