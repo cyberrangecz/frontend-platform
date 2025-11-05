@@ -6,7 +6,7 @@ RUN npm add --global nx
 COPY libs /build/libs
 COPY apps/cyberrangecz-platform /build/apps/cyberrangecz-platform
 COPY *.json /build/
-COPY etc/.npmrc /build/
+COPY .npmrc /build/
 
 RUN cd /build && \
     npm i && \
