@@ -61,11 +61,6 @@ export class VMImagesApi {
                               storage: 'localStorage',
                               ttl: 7.2e6, // 2h
                               version: this.version,
-                              key:
-                                  'images_' +
-                                  onlyCrczpImages +
-                                  '_' +
-                                  onlyGuiAccess,
                           }),
                       }
                     : {}),
