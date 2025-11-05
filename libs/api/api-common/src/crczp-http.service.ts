@@ -1,12 +1,7 @@
 import { inject, Injectable } from '@angular/core';
-import {
-    HttpClient,
-    HttpErrorResponse,
-    HttpHeaders,
-    HttpParams,
-} from '@angular/common/http';
+import { HttpClient, HttpContext, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
 
-import { ErrorHandlerService } from '@crczp/utils';
+import { ErrorHandlerService, PortalConfig } from '@crczp/utils';
 
 import { OffsetPagination } from '@sentinel/common/pagination';
 
@@ -14,18 +9,35 @@ import {
     DjangoOffsetPaginationDTO,
     DjangoResourceDTO,
     JavaOffsetPaginationDTO,
-    JavaPaginatedResource,
+    JavaPaginatedResource
 } from './pagination/pagination-types';
 
 import { PaginationMapper } from './pagination/pagination-mapper';
 import { catchError, EMPTY, map, Observable, switchMap, take } from 'rxjs';
 import { handleJsonError } from './validation/json-error-converter';
 import { OffsetPaginatedResource } from './pagination/offset-paginated-resource';
+import { withCache } from '@ngneat/cashew';
 
 type Backend = 'java' | 'python';
 type BodylessVerb = 'GET' | 'DELETE';
 type BodyVerb = 'POST' | 'PUT' | 'PATCH';
 
+export type CacheTTL = `${number}s` | `${number}m` | `${number}h` | 'forever';
+
+function mapCacheTTLToMs(ttl: CacheTTL): number {
+    if (ttl === 'forever') {
+        return Number.MAX_SAFE_INTEGER;
+    }
+    if (ttl.endsWith('s')) {
+        return parseInt(ttl.slice(0, -1), 10) * 1000;
+    }
+    if (ttl.endsWith('m')) {
+        return parseInt(ttl.slice(0, -1), 10) * 60 * 1000;
+    }
+    if (ttl.endsWith('h')) {
+        return parseInt(ttl.slice(0, -1), 10) * 60 * 60 * 1000;
+    }
+}
 type BaseOptions = {
     headers?: HttpHeaders;
     params?:
@@ -41,6 +53,7 @@ type BaseOptions = {
     withCredentials?: boolean;
     responseType?: 'json' | 'text' | 'blob';
     observe?: 'body';
+    context?: HttpContext;
 };
 
 /**
@@ -53,6 +66,7 @@ export class CRCZPHttpService {
     /** Unwrapped Angular HttpClient for edge cases. */
     public readonly raw = this.http;
     private readonly errorHandler = inject(ErrorHandlerService);
+    private readonly version = inject(PortalConfig).version;
 
     /**
      * Start a GET request (no request body).
@@ -66,6 +80,7 @@ export class CRCZPHttpService {
             'GET',
             url,
             operation,
+            this.version,
         );
     }
 
@@ -81,6 +96,7 @@ export class CRCZPHttpService {
             'DELETE',
             url,
             operation,
+            this.version,
         );
     }
 
@@ -317,8 +333,44 @@ class BodylessRequestBuilder<TRecv, TOut = TRecv> extends BaseRequestBuilder<
         method: BodylessVerb,
         url: string,
         operation: string,
+        private version: string,
     ) {
         super(http, errorPipe, method, url, operation);
+    }
+
+    /**
+     * Map the response value into a desired output type.
+     * @param receive Mapper from `TRecv` to `R2`.
+     */
+    override withMapper<R2>(receive: (from: TRecv) => R2) {
+        this.receiveMapper = receive as unknown as (from: TRecv) => TOut;
+        return this as unknown as BodylessRequestBuilder<TRecv, R2>;
+    }
+
+    /**
+     * Map the response value into a desired output type.
+     * @param receive Mapper from `TRecv` to `R2`.
+     */
+    override withReceiveMapper<R2>(receive: (from: TRecv) => R2) {
+        return this.withMapper(receive);
+    }
+
+    /**
+     * Enable caching with the specified TTL (time-to-live).
+     * @param ttl Cache TTL, e.g., '30s', '5m', '2h', or 'forever'
+     * @param key Optional cache key override.
+     */
+    withCache(ttl: CacheTTL, key: string | null = null) {
+        this.options = {
+            ...this.options,
+            context: withCache({
+                storage: 'localStorage',
+                ttl: mapCacheTTLToMs(ttl),
+                version: this.version,
+                ...(key ? { key } : {}),
+            }),
+        };
+        return this;
     }
 
     /**
