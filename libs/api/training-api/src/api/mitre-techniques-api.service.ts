@@ -1,11 +1,12 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { MitreTechnique } from '@crczp/training-model';
-import { map, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 import { MitreTechniquesListDTO } from '../dto/mitre-techniques/mitre-techniques-list-dto';
 import { MitreTechniquesListMapper } from '../mappers/mitre-techniques/mitre-techniques-list-mapper';
-import { withCache } from '@ngneat/cashew';
 import { PortalConfig } from '@crczp/utils';
+import { CRCZPHttpService } from '@crczp/api-common';
+import { withCache } from '@ngneat/cashew';
 
 /**
  * Service abstracting http communication with training definition endpoints.
@@ -13,6 +14,7 @@ import { PortalConfig } from '@crczp/utils';
 @Injectable()
 export class MitreTechniquesApi {
     private readonly http = inject(HttpClient);
+    private readonly httpService = inject(CRCZPHttpService);
 
     private readonly mitreTechniquesEndpointUri: string;
     private readonly mitreTechniquesListEndpointUri: string;
@@ -34,10 +36,14 @@ export class MitreTechniquesApi {
         return this.http.get(this.mitreTechniquesEndpointUri, {
             params: params,
             responseType: 'text',
-            context: withCache({
-                storage: 'localStorage',
-                ttl: 7.2e6, // 2h
-            }),
+            ...(played
+                ? {}
+                : {
+                      context: withCache({
+                          storage: 'localStorage',
+                          ttl: 7.2e6, // 2h
+                      }),
+                  }),
         });
     }
 
@@ -45,15 +51,13 @@ export class MitreTechniquesApi {
      * Sends http request to retrieve all available mitre techniques for autocomple
      */
     getMitreTechniquesList(): Observable<MitreTechnique[]> {
-        return this.http
-            .get<MitreTechniquesListDTO>(this.mitreTechniquesListEndpointUri, {
-                context: withCache({
-                    storage: 'localStorage',
-                    ttl: 7.2e6, // 2h
-                }),
-            })
-            .pipe(
-                map((response) => MitreTechniquesListMapper.fromDTO(response)),
-            );
+        return this.httpService
+            .get<MitreTechniquesListDTO>(
+                this.mitreTechniquesListEndpointUri,
+                'Fetching MITRE Techniques List',
+            )
+            .withCache('12h')
+            .withReceiveMapper(MitreTechniquesListMapper.fromDTO)
+            .execute();
     }
 }

@@ -31,7 +31,7 @@ export class TopologyApi {
      * @param {number} sandboxDefinitionsId id of sandbox definition
      */
     getTopologyBySandboxDefinitionId(
-        sandboxDefinitionsId: number
+        sandboxDefinitionsId: number,
     ): Observable<Topology> {
         const url = `${this.settings.basePaths.sandbox}/definitions/${sandboxDefinitionsId}/topology`;
         return this.getTopology(url);
@@ -46,6 +46,7 @@ export class TopologyApi {
         return this.httpService
             .get<TopologyDTO>(url, 'Fetching Topology')
             .withReceiveMapper(topologyMapper)
+            .withCache('2h')
             .execute();
     }
 }
