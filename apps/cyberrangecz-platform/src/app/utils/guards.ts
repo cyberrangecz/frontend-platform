@@ -1,5 +1,5 @@
-import { map } from 'rxjs/operators';
-import { sentinelAuthGuard } from '@sentinel/auth';
+import { map, switchMap, tap } from 'rxjs/operators';
+import { sentinelAuthGuardWithLogin } from '@sentinel/auth';
 import { inject } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivateFn, Router, RouterStateSnapshot } from '@angular/router';
 import { RoleKey, RoleService } from '../services/role.service';
@@ -30,21 +30,42 @@ function canActivateToObservable(
  * Creates a guard that redirects to the given path if the user is not logged in
  * or does not fulfill supplied predicate.
  *
- * @param redirect path to redirect to if the user is not logged in or does not have permissions
- * @param permissionsPredicate function that returns true if the user fulfills conditions
+ * @param permissionsPredicate function that returns an observable indicating if the user fulfills conditions
+ * @param defaultPath path to redirect to if the user does not have permissions
+ * @param loginPath path to redirect to if the user is not logged in
  */
 function guardBuilder(
-    redirect: ValidPath,
-    permissionsPredicate: () => boolean,
+    permissionsPredicate: () => Observable<boolean>,
+    defaultPath: ValidPath = 'home',
+    loginPath: ValidPath = 'login',
 ): CanActivateFn {
     return (_route: ActivatedRouteSnapshot, _state: RouterStateSnapshot) => {
         const router = inject(Router);
-        return canActivateToObservable(sentinelAuthGuard()).pipe(
-            map((isLoggedIn) => {
-                if (!(isLoggedIn && permissionsPredicate())) {
-                    return router.createUrlTree([redirect]);
+        return canActivateToObservable(sentinelAuthGuardWithLogin()).pipe(
+            tap((isLoggedIn) => {
+                if (!isLoggedIn) {
+                    console.warn('You must be logged in to access this route');
                 }
-                return true;
+            }),
+            switchMap((isLoggedIn) => {
+                if (!isLoggedIn) {
+                    return of(router.createUrlTree([loginPath]));
+                }
+                return permissionsPredicate().pipe(
+                    tap((hasPermission) => {
+                        if (!hasPermission) {
+                            console.warn(
+                                'Insufficient permissions for route access',
+                            );
+                        }
+                    }),
+                    map((hasPermission) => {
+                        if (!hasPermission) {
+                            return router.createUrlTree([defaultPath]);
+                        }
+                        return true;
+                    }),
+                );
             }),
         );
     };
@@ -54,19 +75,22 @@ function guardBuilder(
  * Creates a guard that redirects to the given path if the user is not logged in
  * or does not have the specified role.
  *
- * @param redirect path to redirect to if the user is not logged in or does not have the role
  * @param role role to check for
+ * @param defaultPath path to redirect to if the user does not have permissions
+ * @param loginPath path to redirect to if the user is not logged in
  */
 function guardBuilderForRole(
-    redirect: ValidPath,
     role: RoleKey,
+    defaultPath: ValidPath = 'home',
+    loginPath: ValidPath = 'login',
 ): CanActivateFn {
     return (route: ActivatedRouteSnapshot, state: RouterStateSnapshot) => {
         const roleService = inject(RoleService);
-        return guardBuilder(redirect, () => roleService.hasRole(role))(
-            route,
-            state,
-        );
+        return guardBuilder(
+            () => roleService.hasRole$(role),
+            defaultPath,
+            loginPath,
+        )(route, state);
     };
 }
 
@@ -81,8 +105,8 @@ const advancedUserGuard: CanActivateFn = (
     const roleService = inject(RoleService);
     const roleMapping = PortalDynamicEnvironment.getConfig().roleMapping;
 
-    return guardBuilder('run', () =>
-        roleService.hasAny(
+    return guardBuilder(() =>
+        roleService.hasAny$(
             Object.values(roleMapping)
                 .map((role) => role as RoleKey)
                 .filter((role) => role !== roleMapping.trainingTrainee),
@@ -109,7 +133,7 @@ type RoleGuardMap = {
  */
 const guardEntries: Array<[string, CanActivateFn]> = RoleService.ROLES.map(
     (roleKey) =>
-        [`${roleKey}Guard`, guardBuilderForRole('home', roleKey)] as [
+        [`${roleKey}Guard`, guardBuilderForRole(roleKey)] as [
             string,
             CanActivateFn,
         ],
