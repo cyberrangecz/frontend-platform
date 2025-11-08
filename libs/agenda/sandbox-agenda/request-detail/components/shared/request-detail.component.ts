@@ -28,6 +28,7 @@ export abstract class RequestDetailComponent {
     );
     private fragmentInitialized = false;
     private requestStagesService = inject(RequestStagesService);
+    private previousStages: StageAdapter[] = [];
 
     protected constructor() {
         this.init();
@@ -155,12 +156,15 @@ export abstract class RequestDetailComponent {
 
         this.stages$ = this.requestStagesService.stages$.pipe(
             takeUntilDestroyed(this.destroyRef),
-            tap(
-                (stages) =>
-                    // No fragment was set in route, so we navigate to last running stage for convenience
-                    !this.fragmentInitialized &&
-                    this.updateLastCurrentStageIndex(stages),
-            ),
+            tap((stages) => {
+                // No fragment was set in route, so we navigate to last running stage for convenience
+                if (!this.fragmentInitialized) {
+                    this.updateLastCurrentStageIndex(stages);
+                }
+
+                this.moveToNextStageIfFinished(stages);
+                this.previousStages = [...stages];
+            }),
             map((stages) => this.mapStagesMetadata(stages)),
         );
 
@@ -191,6 +195,22 @@ export abstract class RequestDetailComponent {
         if (currentStageIndex !== -1) {
             this.fragmentInitialized = true;
             this.navigateToStage(currentStageIndex);
+        }
+    }
+
+    /**
+     * Navigate to the next stage if the current stage has just finished
+     */
+    private moveToNextStageIfFinished(stages: StageAdapter[]): void {
+        if (this.previousStages.length === 0 || this.fragmentIndex() >= 2) {
+            return;
+        }
+        const currentHasFinished =
+            stages[this.fragmentIndex() ?? 0].hasFinished() &&
+            this.previousStages[this.fragmentIndex() ?? 0].isRunning();
+
+        if (currentHasFinished) {
+            this.navigateToStage((this.fragmentIndex() ?? 0) + 1);
         }
     }
 

@@ -122,9 +122,7 @@ export const DEFINED_ROUTES = {
                 EXCL_VAR_sandboxInstanceId: {
                     topology: {},
                 },
-                VAR_requestId: {
-                    cleanup: {},
-                },
+                VAR_requestId: {},
             },
         },
     },
@@ -158,7 +156,7 @@ export const DEFINED_ROUTES = {
 type RoutesTree = { [key: string]: RoutesTree };
 
 function handleExclVar(
-    pathSegment: string
+    pathSegment: string,
 ): [excl: boolean, variable: boolean] {
     const exclVar =
         pathSegment.startsWith('EXCL_VAR_') ||
@@ -172,7 +170,7 @@ function handleExclVar(
 function generateValidRoutes(
     routes: RoutesTree,
     basePath = '',
-    output: Record<string, true> = {}
+    output: Record<string, true> = {},
 ): Record<string, true> {
     for (const key of Object.keys(routes)) {
         const [excl, variable] = handleExclVar(key);
@@ -200,7 +198,7 @@ export const VALID_ROUTES = generateValidRoutes(DEFINED_ROUTES) as {
 
 function createNavigationBuilder<
     T extends Record<string, any>,
-    P extends string = ''
+    P extends string = '',
 >(routes: T, basePath: P = '' as P): NavigationBuilder<T, P> {
     const builder: any = {};
 
@@ -214,7 +212,7 @@ function createNavigationBuilder<
             builder[safeKey] = (value: any) => {
                 const childBuilder = createNavigationBuilder(
                     routes[rawKey],
-                    `${basePath}/${value.toString()}`
+                    `${basePath}/${value.toString()}`,
                 );
                 if (!isExcluded) {
                     childBuilder.build = () =>
@@ -226,7 +224,7 @@ function createNavigationBuilder<
             const nextPath = `${basePath}/${stripped}`.replace(/\/+/, '/');
             const childBuilder = createNavigationBuilder(
                 routes[rawKey],
-                nextPath
+                nextPath,
             );
             if (!isExcluded) {
                 childBuilder.build = () => nextPath;

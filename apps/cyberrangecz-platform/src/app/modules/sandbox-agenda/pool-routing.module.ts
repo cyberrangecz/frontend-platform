@@ -18,7 +18,7 @@ const routes: ValidRouterConfig<'pool'> = [
         path: 'create',
         loadComponent: () =>
             import('@crczp/sandbox-agenda/pool-edit').then(
-                (m) => m.PoolEditComponent
+                (m) => m.PoolEditComponent,
             ),
         resolve: {
             breadcrumb: Routing.Resolvers.Pool.resolvePoolBreadcrumb,
@@ -31,7 +31,7 @@ const routes: ValidRouterConfig<'pool'> = [
         path: ':poolId/edit',
         loadComponent: () =>
             import('@crczp/sandbox-agenda/pool-edit').then(
-                (m) => m.PoolEditComponent
+                (m) => m.PoolEditComponent,
             ),
         resolve: {
             breadcrumb: Routing.Resolvers.Pool.resolvePoolBreadcrumb,
@@ -45,7 +45,7 @@ const routes: ValidRouterConfig<'pool'> = [
         path: ':poolId',
         loadComponent: () =>
             import('@crczp/sandbox-agenda/pool-detail').then(
-                (m) => m.PoolDetailComponent
+                (m) => m.PoolDetailComponent,
             ),
         resolve: {
             [Pool.name]: Routing.Resolvers.Pool.resolvePool,
@@ -60,7 +60,7 @@ const routes: ValidRouterConfig<'pool'> = [
         path: ':poolId/sandbox-instance/:requestId',
         loadComponent: () =>
             import('@crczp/sandbox-agenda/request-detail').then(
-                (m) => m.AllocationRequestDetailComponent
+                (m) => m.AllocationRequestDetailComponent,
             ),
         resolve: {
             breadcrumb: Routing.Resolvers.Sandbox.resolveSandboxBreadcrumb,
@@ -72,25 +72,10 @@ const routes: ValidRouterConfig<'pool'> = [
         },
     },
     {
-        path: ':poolId/sandbox-instance/:requestId/cleanup',
-        loadComponent: () =>
-            import('@crczp/sandbox-agenda/request-detail').then(
-                (m) => m.CleanupRequestDetailComponent
-            ),
-        resolve: {
-            breadcrumb: Routing.Resolvers.Sandbox.resolveSandboxBreadcrumb,
-            [Pool.name]: Routing.Resolvers.Pool.resolvePool,
-            [Request.name]: Routing.Resolvers.Sandbox.resolveSandbox,
-        },
-        data: {
-            title: 'Cleanup Request Stages',
-        },
-    },
-    {
         path: ':poolId/sandbox-instance/:sandboxInstanceId/topology',
         loadComponent: () =>
             import('@crczp/sandbox-agenda/sandbox-topology').then(
-                (m) => m.SandboxTopologyComponent
+                (m) => m.SandboxTopologyComponent,
             ),
         resolve: {
             breadcrumb: Routing.Resolvers.Sandbox.resolveSandboxBreadcrumb,

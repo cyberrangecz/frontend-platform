@@ -1,3 +1,5 @@
+import { AbstractSandbox } from './abstract-sandbox';
+
 export class PoolDetailRowAdapter {
     id: number;
     unitId: number;
@@ -8,4 +10,5 @@ export class PoolDetailRowAdapter {
     createdBy: string;
     state: string;
     stages: string[];
+    sandboxData: AbstractSandbox;
 }

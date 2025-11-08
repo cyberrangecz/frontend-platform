@@ -1,8 +1,9 @@
 import {
     ChangeDetectionStrategy,
     Component,
-    QueryList,
-    ViewChildren,
+    InjectionToken,
+    Injector,
+    runInInjectionContext,
 } from '@angular/core';
 import { RequestStagesService } from '../services/state/request-stages.service';
 import { RequestDetailComponent } from './shared/request-detail.component';
@@ -13,8 +14,8 @@ import { MatIcon } from '@angular/material/icon';
 import { MatCard } from '@angular/material/card';
 import { MatIconButton } from '@angular/material/button';
 import { AsyncPipe } from '@angular/common';
-import { AnsibleOutputsService } from '../services/state/detail/ansible-outputs.service';
-import { TerraformOutputsService } from '../services/state/detail/terraform-outputs.service';
+import { RequestStageType } from '@crczp/sandbox-model';
+import { OutputsService } from '../services/state/detail/outputs.service';
 
 @Component({
     selector: 'crczp-allocation-request-detail',
@@ -27,8 +28,35 @@ import { TerraformOutputsService } from '../services/state/detail/terraform-outp
             useClass: AllocationStagesConcreteService,
         },
         StagesDetailPollRegistry,
-        AnsibleOutputsService,
-        TerraformOutputsService,
+        {
+            provide: AllocationRequestDetailComponent.STAGE_LOG_SERVICES_TOKEN,
+            useFactory: (injector: Injector) => ({
+                [RequestStageType.TERRAFORM_ALLOCATION]: runInInjectionContext(
+                    injector,
+                    () =>
+                        new OutputsService(
+                            RequestStageType.TERRAFORM_ALLOCATION,
+                        ),
+                ),
+                [RequestStageType.NETWORKING_ANSIBLE_ALLOCATION]:
+                    runInInjectionContext(
+                        injector,
+                        () =>
+                            new OutputsService(
+                                RequestStageType.NETWORKING_ANSIBLE_ALLOCATION,
+                            ),
+                    ),
+                [RequestStageType.USER_ANSIBLE_ALLOCATION]:
+                    runInInjectionContext(
+                        injector,
+                        () =>
+                            new OutputsService(
+                                RequestStageType.USER_ANSIBLE_ALLOCATION,
+                            ),
+                    ),
+            }),
+            deps: [Injector],
+        },
     ],
     imports: [
         RequestStageComponent,
@@ -39,8 +67,9 @@ import { TerraformOutputsService } from '../services/state/detail/terraform-outp
     ],
 })
 export class AllocationRequestDetailComponent extends RequestDetailComponent {
-    @ViewChildren(RequestStageComponent)
-    requestStages: QueryList<RequestStageComponent>;
+    public static readonly STAGE_LOG_SERVICES_TOKEN = new InjectionToken<
+        Record<number, OutputsService>
+    >('STAGE_LOG_SERVICES_TOKEN');
 
     constructor() {
         super();

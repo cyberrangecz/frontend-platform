@@ -21,18 +21,18 @@ export class AllocationStagesConcreteService extends RequestStagesService {
     constructor() {
         const settings = inject(PortalConfig);
 
-        super(settings.polling.pollingPeriodShort);
+        super(settings.polling.pollingPeriodShort * 3);
     }
 
     protected callApiToGetStages(request: Request): Observable<StageAdapter[]> {
         return zip(
             this.api.getTerraformStage(request.id),
             this.api.getNetworkingAnsibleStage(request.id),
-            this.api.getUserAnsibleStage(request.id)
+            this.api.getUserAnsibleStage(request.id),
         ).pipe(
             map((stages) =>
-                stages.map((stage) => StageAdapterMapper.fromStage(stage))
-            )
+                stages.map((stage) => StageAdapterMapper.fromStage(stage)),
+            ),
         );
     }
 

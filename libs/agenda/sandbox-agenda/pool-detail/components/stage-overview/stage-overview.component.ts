@@ -23,6 +23,7 @@ export class StageOverviewComponent implements OnChanges {
     @Input() stages: string[];
     @Input() unitId: number;
     @Output() stageSelected: EventEmitter<SelectedStage> = new EventEmitter();
+    @Input() navigable!: boolean;
 
     ngOnChanges(changes: SimpleChanges): void {
         if (changes.stages) {

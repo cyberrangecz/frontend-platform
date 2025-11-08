@@ -6,16 +6,13 @@ import {
     RequestStageState,
     TerraformAllocationStage,
     TerraformCleanupStage,
-    TerraformOutput,
     UserAnsibleAllocationStage,
     UserAnsibleCleanupStage
 } from '@crczp/sandbox-model';
-import { AnsibleAllocationOutputDTO } from '../../dto/sandbox-instance/stages/ansible-allocation-output-dto';
 import { AnsibleAllocationStageDTO } from '../../dto/sandbox-instance/stages/ansible-allocation-stage-dto';
 import { AnsibleCleanupStageDTO } from '../../dto/sandbox-instance/stages/ansible-cleanup-stage-dto';
 import { TerraformAllocationStageDTO } from '../../dto/sandbox-instance/stages/terraform-allocation-stage-dto';
 import { TerraformCleanupStageDTO } from '../../dto/sandbox-instance/stages/terraform-cleanup-stage-dto';
-import { TerraformOutputDTO } from '../../dto/sandbox-instance/stages/terraform-output-dto';
 import { CloudResourceDTO } from '../../dto/sandbox-instance/stages/cloud-resource-dto';
 import { RequestStageDTO } from '../../dto/sandbox-instance/stages/request-stage-dto';
 
@@ -73,26 +70,6 @@ export class RequestStageMapper {
         const stage = new UserAnsibleCleanupStage();
         this.setGeneralAttributes(dto, stage);
         return stage;
-    }
-
-    static fromAnsibleAllocationOutputDTOs(
-        dtos: AnsibleAllocationOutputDTO[],
-    ): string[] {
-        return dtos.map((dto) => dto.content);
-    }
-
-    static fromTerraformOutputDTOs(
-        dtos: TerraformOutputDTO[],
-    ): TerraformOutput[] {
-        return dtos.map((dto) =>
-            RequestStageMapper.fromTerraformOutputDTO(dto),
-        );
-    }
-
-    static fromTerraformOutputDTO(dto: TerraformOutputDTO): TerraformOutput {
-        const result = new TerraformOutput();
-        result.content = dto.content;
-        return result;
     }
 
     static fromCloudResourceDTOs(dtos: CloudResource[]): CloudResource[] {

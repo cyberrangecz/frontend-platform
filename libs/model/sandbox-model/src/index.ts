@@ -27,6 +27,7 @@ export { TerraformCleanupStage } from './pool-request/stage/terraform-cleanup-st
 export { TerraformOutput } from './pool-request/stage/terraform-event';
 export { CloudResource } from './pool-request/stage/cloud-resource';
 export { RequestStage } from './pool-request/stage/request-stage';
+export { LogOutput } from './pool-request/stage/log-output';
 
 // SANDBOX INSTANCE
 export { SandboxInstance } from './sandbox-instance/sandbox-instance';
