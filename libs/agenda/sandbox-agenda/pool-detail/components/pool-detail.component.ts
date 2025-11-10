@@ -31,6 +31,7 @@ import {
 } from '../services/state/sandbox-allocation-unit/sandbox-allocation-units-concrete.service';
 import { SandboxInstanceService } from '../services/state/sandbox-instance/sandbox-instance.service';
 import { AllocationRequestSort, PoolSort, SandboxInstanceSort } from '@crczp/sandbox-api';
+import { PoolDetailRowAdapter } from '../model/pool-detail-row-adapter';
 
 /**
  * Smart component of pool detail page
@@ -116,13 +117,16 @@ export class PoolDetailComponent implements OnInit, AfterViewInit {
             .subscribe();
     }
 
-    onStageAction(selectedStage: SelectedStage): void {
+    onStageAction(
+        selectedStage: SelectedStage,
+        element: PoolDetailRowAdapter,
+    ): void {
         if (selectedStage.state === RequestStageState.RETRY) {
             this.sandboxInstanceService
                 .retryAllocate(selectedStage.unitId)
                 .pipe(take(1))
                 .subscribe();
-        } else {
+        } else if (!element.sandboxData.cleanupRunning()) {
             this.sandboxInstanceService
                 .navigateToStage(
                     this.pool.id,

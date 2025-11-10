@@ -41,4 +41,3 @@ export type AllocationRequestSort = 'id';
 export type ResourceUsageSort = never; // TODO: define when needed
 export type VmImageSort = keyof VirtualImageDTO;
 export type PoolLockSort = never; // TODO: define when needed
-export type AllocationOutputSort = 'content';

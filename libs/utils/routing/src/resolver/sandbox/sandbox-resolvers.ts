@@ -9,7 +9,7 @@ import { catchUndefinedOrNull } from '../catch-undefined-or-null';
 
 export function resolveSandbox(
     route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot
+    state: RouterStateSnapshot,
 ): Observable<never | AllocationRequest | CleanupRequest> {
     const service = inject(SandboxResolverHelperService);
     const sandboxId = RoutingUtils.extractVariable('requestId', route);
@@ -27,27 +27,22 @@ export function resolveSandbox(
     }
 
     return service
-        .getSandboxRequest(route, state)
+        .getSandboxRequest(route)
         .pipe(catchUndefinedOrNull('Sandbox', () => redirectToPool()));
 }
 
 export function resolveSandboxBreadcrumb(
     route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot
+    state: RouterStateSnapshot,
 ): Observable<string> {
     if (RoutingUtils.containsSubroute('topology', state)) {
         return of('Topology');
     }
     const service = inject(SandboxResolverHelperService);
-    const requestType = RoutingUtils.containsSubroute(
-        ':poolId/sandbox-instance/:requestId/cleanup',
-        state
-    )
-        ? 'Allocation Request'
-        : 'Cleanup Request';
+
     return service
         .getPool(route)
-        .pipe(map((pool) => `${requestType} ${pool ? pool.id : ''}`));
+        .pipe(map((pool) => `'Allocation Request' ${pool ? pool.id : ''}`));
 }
 
 export const SandboxResolvers = {

@@ -47,6 +47,7 @@ export class PoolDetailTable extends SentinelTable<
     ): Row<PoolDetailRowAdapter> {
         const rowAdapter = new PoolDetailRowAdapter();
         const dateFormatter = new DatePipe('en-US');
+        rowAdapter.sandboxData = data;
         rowAdapter.unitId = data.allocationRequest.id;
         rowAdapter.name = data.name;
         rowAdapter.comment = data.comment;
@@ -61,13 +62,15 @@ export class PoolDetailTable extends SentinelTable<
             rowAdapter,
             this.createActions(data, sandboxInstanceService),
         );
-        row.addLink(
-            'name',
-            Routing.RouteBuilder.pool
-                .poolId(data.poolId)
-                .sandbox_instance.requestId(data.allocationRequest.id)
-                .build(),
-        );
+        if (!data.cleanupRunning()) {
+            row.addLink(
+                'name',
+                Routing.RouteBuilder.pool
+                    .poolId(data.poolId)
+                    .sandbox_instance.requestId(data.allocationRequest.id)
+                    .build(),
+            );
+        }
         return row;
     }
 

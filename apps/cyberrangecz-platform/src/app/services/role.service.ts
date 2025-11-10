@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { SentinelAuthService } from '@sentinel/auth';
 import { PortalConfig } from '@crczp/utils';
 import { Observable } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 
 export type RoleKey =
     | 'uagAdmin'
@@ -95,19 +95,6 @@ export class RoleService {
      */
     hasRole$(roleKey: RoleKey): Observable<boolean> {
         return this.authService.activeUser$.pipe(
-            tap((user) => {
-                const mappedRole = this.config.roleMapping[roleKey];
-                console.group(`Role Check Debug - ${roleKey}`);
-                console.log(
-                    `Checking role ${roleKey} mapped to ${mappedRole}:`,
-                    user?.roles,
-                );
-                console.log(
-                    'Check result:',
-                    user?.roles.some((role) => role.roleType === mappedRole),
-                );
-                console.groupEnd();
-            }),
             map((user) => {
                 if (!user) {
                     return false;

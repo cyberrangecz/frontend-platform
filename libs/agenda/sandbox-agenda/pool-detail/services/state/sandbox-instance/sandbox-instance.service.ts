@@ -450,26 +450,6 @@ export class SandboxInstanceService extends OffsetPaginatedElementsPollingServic
         );
     }
 
-    private navigateToCleanup(
-        poolId: number,
-        sandboxId: number,
-        stageOrder: number,
-    ): Observable<boolean> {
-        return from(
-            this.router.navigate(
-                [
-                    Routing.RouteBuilder.pool
-                        .poolId(poolId)
-                        .sandbox_instance.requestId(sandboxId)
-                        .cleanup.build(),
-                ],
-                {
-                    fragment: `stage-${stageOrder + 1}`,
-                },
-            ),
-        );
-    }
-
     private getNumberOfSandboxes(
         maximum: number,
     ): Observable<AllocateVariableSandboxesDialogResult> {

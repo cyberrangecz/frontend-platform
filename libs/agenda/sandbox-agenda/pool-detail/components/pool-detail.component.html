@@ -14,9 +14,11 @@
 </mat-card>
 
 <ng-template #stagesTemplate let-row>
-    <crczp-stage-overview (stageSelected)="onStageAction($event)"
+    <crczp-stage-overview (stageSelected)="onStageAction($event, row.element)"
+                          [navigable]="!row.element.sandboxData.cleanupRunning()"
                           [stages]="row.element.stages"
-                          [unitId]="row.element.unitId" />
+                          [unitId]="row.element.unitId"
+    />
 </ng-template>
 
 <ng-template #comment let-row>

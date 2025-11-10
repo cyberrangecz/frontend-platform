@@ -39,7 +39,6 @@ export class GuacamoleStatus {
         clientState: GuacamoleClientState,
     ) {
         this.is_ok.set(tunnelState === 'OPEN' && clientState === 'CONNECTED');
-        console.log('tunnelState:', tunnelState, 'clientState:', clientState);
         if (tunnelState === 'OPEN') {
             switch (clientState) {
                 case 'IDLE':

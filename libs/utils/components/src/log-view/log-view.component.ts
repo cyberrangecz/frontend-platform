@@ -2,6 +2,7 @@ import {
     AfterViewInit,
     Component,
     DOCUMENT,
+    effect,
     ElementRef,
     HostListener,
     inject,
@@ -54,6 +55,8 @@ export class LogView implements AfterViewInit {
     isMaximized = signal<boolean>(false);
     private resizeObserver?: ResizeObserver;
     private shouldScrollToBottom = signal<boolean>(false);
+    private previousScrollHeight = 0;
+    private previousDistanceFromBottom = 0;
 
     constructor() {
         toObservable(this.shouldScrollToBottom).subscribe((value) => {
@@ -66,6 +69,40 @@ export class LogView implements AfterViewInit {
             if (!this.isMaximized()) {
                 this.appliedHeight.set(height);
             }
+        });
+
+        // Track value changes to maintain scroll position
+        effect(() => {
+            const _currentValue = this.value();
+
+            // On next tick after value changes, restore or adjust scroll position
+            setTimeout(() => {
+                const scrollElem = this.getScrollerElement();
+                if (!scrollElem) return;
+
+                // If user was at bottom (within margin), stay at bottom with new content
+                if (this.previousDistanceFromBottom <= BOTTOM_MARGIN) {
+                    this.scrollToBottom();
+                } else {
+                    // Calculate the amount of new content added
+                    const currentScrollHeight = scrollElem.scrollHeight;
+                    const heightDifference =
+                        currentScrollHeight - this.previousScrollHeight;
+
+                    // Adjust scrollTop by the amount of content added to maintain relative position
+                    // New scrollTop = old scrollTop + added content height
+                    const newScrollTop =
+                        scrollElem.scrollTop + heightDifference;
+                    scrollElem.scrollTop = newScrollTop;
+
+                    // Update tracked values after adjustment
+                    this.previousScrollHeight = currentScrollHeight;
+                    this.previousDistanceFromBottom =
+                        currentScrollHeight -
+                        newScrollTop -
+                        scrollElem.clientHeight;
+                }
+            }, 0);
         });
     }
 
@@ -86,6 +123,13 @@ export class LogView implements AfterViewInit {
                 return;
             }
 
+            // Initialize scroll tracking values
+            this.previousScrollHeight = scrollElem.scrollHeight;
+            this.previousDistanceFromBottom =
+                scrollElem.scrollHeight -
+                scrollElem.scrollTop -
+                scrollElem.clientHeight;
+
             let scrollPositionBeforeResize = {
                 scrollTop: scrollElem.scrollTop,
                 scrollHeight: scrollElem.scrollHeight,
@@ -98,6 +142,13 @@ export class LogView implements AfterViewInit {
                     scrollHeight: scrollElem.scrollHeight,
                     clientHeight: scrollElem.clientHeight,
                 };
+
+                // Track current scroll height and distance from bottom for content changes
+                this.previousScrollHeight = scrollElem.scrollHeight;
+                this.previousDistanceFromBottom =
+                    scrollElem.scrollHeight -
+                    scrollElem.scrollTop -
+                    scrollElem.clientHeight;
             });
 
             this.resizeObserver = new ResizeObserver((_) => {

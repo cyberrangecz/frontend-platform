@@ -26,7 +26,7 @@ export class CleanupStagesConcreteService extends RequestStagesService {
     constructor() {
         const settings = inject(PortalConfig);
 
-        super(settings.polling.pollingPeriodShort);
+        super(settings.polling.pollingPeriodShort * 3);
     }
 
     protected refreshStages(): Observable<StageAdapter[]> {
@@ -35,9 +35,9 @@ export class CleanupStagesConcreteService extends RequestStagesService {
             .pipe(
                 tap((stagesMap) =>
                     this.navigateBackIfStagesFinished(
-                        Array.from(stagesMap.values())
-                    )
-                )
+                        Array.from(stagesMap.values()),
+                    ),
+                ),
             );
     }
 
@@ -45,11 +45,11 @@ export class CleanupStagesConcreteService extends RequestStagesService {
         return zip(
             this.api.getTerraformStage(request.id),
             this.api.getNetworkingAnsibleStage(request.id),
-            this.api.getUserAnsibleStage(request.id)
+            this.api.getUserAnsibleStage(request.id),
         ).pipe(
             map((stages) =>
-                stages.map((stage) => StageAdapterMapper.fromStage(stage))
-            )
+                stages.map((stage) => StageAdapterMapper.fromStage(stage)),
+            ),
         );
     }
 
@@ -57,7 +57,7 @@ export class CleanupStagesConcreteService extends RequestStagesService {
         if (err.status === 404) {
             this.notificationService.emit(
                 'info',
-                'Cleanup request finished. All stages were removed'
+                'Cleanup request finished. All stages were removed',
             );
             this.navigateBack();
             return;
@@ -70,7 +70,7 @@ export class CleanupStagesConcreteService extends RequestStagesService {
         if (stages.every((stage) => stage.hasFinished())) {
             this.notificationService.emit(
                 'info',
-                'Cleanup request finished. All stages were removed'
+                'Cleanup request finished. All stages were removed',
             );
             this.navigateBack();
         }
@@ -80,7 +80,7 @@ export class CleanupStagesConcreteService extends RequestStagesService {
         this.route.paramMap
             .pipe(take(1))
             .subscribe(() =>
-                this.router.navigate([Routing.RouteBuilder.pool.build()])
+                this.router.navigate([Routing.RouteBuilder.pool.build()]),
             );
     }
 }

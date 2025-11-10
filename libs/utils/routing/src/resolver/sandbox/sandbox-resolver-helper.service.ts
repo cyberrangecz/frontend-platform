@@ -1,12 +1,22 @@
 import { inject, Injectable } from '@angular/core';
 import { ErrorHandlerService } from '@crczp/utils';
-import { ActivatedRouteSnapshot, Router, RouterStateSnapshot } from '@angular/router';
-import { AllocationRequestsApi, CleanupRequestsApi, PoolApi, SandboxDefinitionApi } from '@crczp/sandbox-api';
+import { ActivatedRouteSnapshot, Router } from '@angular/router';
+import {
+    AllocationRequestsApi,
+    CleanupRequestsApi,
+    PoolApi,
+    SandboxDefinitionApi,
+} from '@crczp/sandbox-api';
 import { Routing } from '../../routing-namespace';
 import { Observable, of } from 'rxjs';
 import { RoutingUtils } from '../../utils';
 import { catchError, take } from 'rxjs/operators';
-import { AllocationRequest, CleanupRequest, Pool, SandboxDefinition } from '@crczp/sandbox-model';
+import {
+    AllocationRequest,
+    CleanupRequest,
+    Pool,
+    SandboxDefinition,
+} from '@crczp/sandbox-model';
 import { CommonResolverHelperService } from '../common-resolver-helper-service';
 
 @Injectable({
@@ -24,7 +34,7 @@ export class SandboxResolverHelperService extends CommonResolverHelperService {
 
     public navigateToPoolOverview() {
         return this.navigate(
-            this.router.createUrlTree([Routing.RouteBuilder.pool.build()])
+            this.router.createUrlTree([Routing.RouteBuilder.pool.build()]),
         );
     }
 
@@ -32,7 +42,7 @@ export class SandboxResolverHelperService extends CommonResolverHelperService {
         return this.navigate(
             this.router.createUrlTree([
                 Routing.RouteBuilder.pool.poolId(poolId).build(),
-            ])
+            ]),
         );
     }
 
@@ -40,7 +50,7 @@ export class SandboxResolverHelperService extends CommonResolverHelperService {
         return this.navigate(
             this.router.createUrlTree([
                 Routing.RouteBuilder.sandbox_definition.build(),
-            ])
+            ]),
         );
     }
 
@@ -48,7 +58,7 @@ export class SandboxResolverHelperService extends CommonResolverHelperService {
         return this.navigate(
             this.router.createUrlTree([
                 Routing.RouteBuilder.pool.create.build(),
-            ])
+            ]),
         );
     }
 
@@ -63,12 +73,12 @@ export class SandboxResolverHelperService extends CommonResolverHelperService {
             catchError((err) => {
                 this.emitApiError(err, 'Resolving sandbox');
                 return of(null);
-            })
+            }),
         );
     }
 
     public getSandboxDefinition(
-        route: ActivatedRouteSnapshot
+        route: ActivatedRouteSnapshot,
     ): Observable<SandboxDefinition | null> {
         const definitionId = this.extractDefinitionId(route);
         if (!definitionId) {
@@ -81,24 +91,20 @@ export class SandboxResolverHelperService extends CommonResolverHelperService {
             catchError((err) => {
                 this.emitApiError(err, 'Resolving sandbox definition');
                 return of(null);
-            })
+            }),
         );
     }
 
     public getSandboxRequest(
         route: ActivatedRouteSnapshot,
-        state: RouterStateSnapshot
     ): Observable<AllocationRequest | CleanupRequest | null> {
         const sandboxRequestId = this.extractSandboxRequestId(route);
-        const api = RoutingUtils.containsSubroute('cleanup', state)
-            ? this.cleanupApi
-            : this.allocationApi;
 
         if (!sandboxRequestId) {
             this.emitFrontendError('No allocation request id found in route');
             return of(null);
         }
-        return api.get(+sandboxRequestId).pipe(take(1));
+        return this.allocationApi.get(+sandboxRequestId).pipe(take(1));
     }
 
     private extractPoolId(route: ActivatedRouteSnapshot): number | null {
@@ -109,17 +115,17 @@ export class SandboxResolverHelperService extends CommonResolverHelperService {
     private extractDefinitionId(route: ActivatedRouteSnapshot): number | null {
         const definitionId = RoutingUtils.extractVariable(
             'definitionId',
-            route
+            route,
         );
         return definitionId && !isNaN(+definitionId) ? +definitionId : null;
     }
 
     private extractSandboxRequestId(
-        route: ActivatedRouteSnapshot
+        route: ActivatedRouteSnapshot,
     ): number | null {
         const sandboxRequestId = RoutingUtils.extractVariable(
             'requestId',
-            route
+            route,
         );
         return sandboxRequestId && !isNaN(+sandboxRequestId)
             ? +sandboxRequestId
