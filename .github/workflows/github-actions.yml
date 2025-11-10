@@ -4,11 +4,9 @@ on:
   push:
     branches-ignore:
       - master
-      - develop
   pull_request:
     branches:
       - master
-      - develop
   workflow_dispatch:
     inputs:
       confirm_action:
@@ -25,3 +23,4 @@ jobs:
     with:
       IMAGE_NAME: "frontend-platform"
       VERSION_PATH: "package.json"
+      publish_and_tag: ${{ github.event.inputs.confirm_action }}
