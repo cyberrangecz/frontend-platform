@@ -149,7 +149,7 @@ export class PoolTable extends ExpandableSentinelTable<
                 'Get management SSH Configs',
                 'vpn_key',
                 'primary',
-                '',
+                'Download management SSH config',
                 of(false),
                 defer(() => abstractPoolService.getSshAccess(pool.id)),
             ),
