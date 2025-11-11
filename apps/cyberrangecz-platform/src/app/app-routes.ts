@@ -1,6 +1,10 @@
 import { HomeComponent } from './components/home/home.component';
 import { LoginComponent } from './components/login/login.component';
-import { sentinelAuthGuard, sentinelAuthGuardWithLogin, sentinelNegativeAuthGuard } from '@sentinel/auth';
+import {
+    sentinelAuthGuard,
+    sentinelAuthGuardWithLogin,
+    sentinelNegativeAuthGuard,
+} from '@sentinel/auth';
 import { ValidRouterConfig } from '@crczp/routing-commons';
 import { RoleGuards } from './utils/guards';
 
@@ -50,7 +54,7 @@ export const APP_ROUTES: ValidRouterConfig<''> = [
             import(
                 './modules/training-agenda/adaptive-instance-routing.module'
             ).then((m) => m.AdaptiveInstanceRoutingModule),
-        canActivate: [RoleGuards.adaptiveTrainingOrganiserGuard],
+        canActivate: [RoleGuards.adaptiveTrainingOrganizerGuard],
         data: {
             breadcrumb: 'Adaptive Training Instances',
             title: 'Adaptive Training Instance Overview',

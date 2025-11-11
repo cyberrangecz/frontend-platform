@@ -1,21 +1,13 @@
 import { inject, Injectable } from '@angular/core';
 import { SentinelAuthService } from '@sentinel/auth';
-import { PortalConfig } from '@crczp/utils';
+import { PortalConfig, RoleMapping } from '@crczp/utils';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-export type RoleKey =
-    | 'uagAdmin'
-    | 'trainingDesigner'
-    | 'trainingOrganizer'
-    | 'adaptiveTrainingDesigner'
-    | 'adaptiveTrainingOrganiser'
-    | 'trainingTrainee'
-    | 'sandboxDesigner'
-    | 'sandboxOrganizer';
+export type RoleKey = keyof RoleMapping;
 
 export type RolePredicateMap = {
-    [K in RoleKey as `${K}Guard`]: () => boolean;
+    [K in RoleKey as `is${Capitalize<K>}`]: () => boolean;
 };
 
 @Injectable({
@@ -27,11 +19,11 @@ export class RoleService {
         'trainingDesigner',
         'trainingOrganizer',
         'adaptiveTrainingDesigner',
-        'adaptiveTrainingOrganiser',
+        'adaptiveTrainingOrganizer',
         'trainingTrainee',
         'sandboxDesigner',
         'sandboxOrganizer',
-    ];
+    ] as const;
 
     /**
      * Dynamically created predicates for each role
@@ -39,7 +31,7 @@ export class RoleService {
      * Returns true if the user has the specified role
      */
     public readonly rolePredicates: RolePredicateMap = Object.fromEntries(
-        (Object.keys(this) as RoleKey[]).map((key) => [
+        RoleService.ROLES.map((key) => [
             `is${String(key).charAt(0).toUpperCase() + String(key).slice(1)}`,
             () => this.hasRole(key),
         ]),
@@ -70,9 +62,7 @@ export class RoleService {
      * @returns true if the user has any (at least one) of the roles
      */
     hasAny(roles: RoleKey[]) {
-        return roles
-            .map((roleKey) => this.config.roleMapping[roleKey])
-            .some((role) => this.hasRole(role));
+        return roles.some((roleKey) => this.hasRole(roleKey));
     }
 
     /**
@@ -80,9 +70,7 @@ export class RoleService {
      * @returns true if the user has all specified roles
      */
     hasAll(roles: RoleKey[]) {
-        return !roles
-            .map((roleKey) => this.config.roleMapping[roleKey])
-            .some((role) => !this.hasRole(role));
+        return roles.every((roleKey) => this.hasRole(roleKey));
     }
 
     /**
