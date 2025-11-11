@@ -94,13 +94,13 @@ export class TrainingInstanceEditComponent implements OnChanges, AfterViewInit {
     >([]);
     private poolSubject = new BehaviorSubject<Pool[]>([]);
     private sandboxDefinitionSubject = new BehaviorSubject<SandboxDefinition[]>(
-        []
+        [],
     );
     private trainingDefinitionSearchStringSubject = new BehaviorSubject<string>(
-        ''
+        '',
     );
     private sandboxDefinitionSearchStringSubject = new BehaviorSubject<string>(
-        ''
+        '',
     );
     private poolSearchStringSubject = new BehaviorSubject<string>('');
     private readonly destroyRef = inject(DestroyRef);
@@ -120,13 +120,13 @@ export class TrainingInstanceEditComponent implements OnChanges, AfterViewInit {
 
     get trainingDefinition(): AbstractControl {
         return this.trainingInstanceFormGroup.formGroup.get(
-            'trainingDefinition'
+            'trainingDefinition',
         );
     }
 
     get accessTokenPrefix(): AbstractControl {
         return this.trainingInstanceFormGroup.formGroup.get(
-            'accessTokenPrefix'
+            'accessTokenPrefix',
         );
     }
 
@@ -148,7 +148,7 @@ export class TrainingInstanceEditComponent implements OnChanges, AfterViewInit {
 
     get sandboxDefinitionId(): AbstractControl {
         return this.trainingInstanceFormGroup.formGroup.get(
-            'sandboxDefinitionId'
+            'sandboxDefinitionId',
         );
     }
 
@@ -157,25 +157,25 @@ export class TrainingInstanceEditComponent implements OnChanges, AfterViewInit {
             combineLatestWith(this.trainingDefinitionSearchStringSubject),
             map(([tds, search]) =>
                 tds.filter((td) =>
-                    td.title.toLowerCase().includes(search.toLowerCase())
-                )
-            )
+                    td.title.toLowerCase().includes(search.toLowerCase()),
+                ),
+            ),
         );
     }
 
     get pools$(): Observable<Pool[]> {
         return this.poolSubject.pipe(
             map((pools) =>
-                pools.filter((pool) => pool.lockState === 'unlocked')
+                pools.filter((pool) => pool.lockState === 'unlocked'),
             ),
             combineLatestWith(this.poolSearchStringSubject),
             map(([pools, search]) =>
                 pools.filter((pool) =>
                     this.poolToDisplayString(pool)
                         .toLowerCase()
-                        .includes(search.toLowerCase())
-                )
-            )
+                        .includes(search.toLowerCase()),
+                ),
+            ),
         );
     }
 
@@ -186,9 +186,9 @@ export class TrainingInstanceEditComponent implements OnChanges, AfterViewInit {
                 sds.filter((sd) =>
                     this.sandboxDefinitionToDisplayString(sd)
                         .toLowerCase()
-                        .includes(search.toLowerCase())
-                )
-            )
+                        .includes(search.toLowerCase()),
+                ),
+            ),
         );
     }
 
@@ -198,8 +198,8 @@ export class TrainingInstanceEditComponent implements OnChanges, AfterViewInit {
             .subscribe(() =>
                 this.changeValidity(
                     this.isTrainingDefinitionError(),
-                    this.trainingDefinitionSelect
-                )
+                    this.trainingDefinitionSelect,
+                ),
             );
         this.trainingInstanceFormGroup.formGroup.statusChanges
             .pipe(takeUntilDestroyed(this.destroyRef))
@@ -207,7 +207,7 @@ export class TrainingInstanceEditComponent implements OnChanges, AfterViewInit {
                 if (this.sandboxDefinitionSelect) {
                     this.changeValidity(
                         this.isSandboxDefinitionIdError(),
-                        this.sandboxDefinitionSelect
+                        this.sandboxDefinitionSelect,
                     );
                 }
                 if (this.poolSelect) {
@@ -224,7 +224,7 @@ export class TrainingInstanceEditComponent implements OnChanges, AfterViewInit {
     ngOnChanges(changes: SimpleChanges): void {
         if ('trainingDefinitions' in changes) {
             this.trainingDefinitionsSubject.next(
-                changes.trainingDefinitions.currentValue
+                changes.trainingDefinitions.currentValue,
             );
         }
         if ('pools' in changes) {
@@ -232,12 +232,12 @@ export class TrainingInstanceEditComponent implements OnChanges, AfterViewInit {
         }
         if ('sandboxDefinitions' in changes) {
             this.sandboxDefinitionSubject.next(
-                changes.sandboxDefinitions.currentValue
+                changes.sandboxDefinitions.currentValue,
             );
         }
         if ('trainingInstance' in changes) {
             this.trainingInstanceFormGroup = new TrainingInstanceFormGroup(
-                this.trainingInstance
+                this.trainingInstance,
             );
             this.setupOnFormChangedEvent();
         }
@@ -262,7 +262,7 @@ export class TrainingInstanceEditComponent implements OnChanges, AfterViewInit {
     }
 
     sandboxDefinitionToDisplayString(
-        sandboxDefinition?: SandboxDefinition
+        sandboxDefinition?: SandboxDefinition,
     ): string {
         if (!sandboxDefinition) {
             return '';
@@ -301,7 +301,7 @@ export class TrainingInstanceEditComponent implements OnChanges, AfterViewInit {
     getSelectedSandboxDefinition() {
         return (
             this.sandboxDefinitionSubject.value.find(
-                (sd) => sd.id === this.sandboxDefinitionId.value
+                (sd) => sd.id === this.sandboxDefinitionId.value,
             ) || undefined
         );
     }
@@ -309,7 +309,7 @@ export class TrainingInstanceEditComponent implements OnChanges, AfterViewInit {
     getSelectedPool() {
         return (
             this.poolSubject.value.find(
-                (pool) => pool.id === this.poolId.value
+                (pool) => pool.id === this.poolId.value,
             ) || undefined
         );
     }
@@ -327,7 +327,7 @@ export class TrainingInstanceEditComponent implements OnChanges, AfterViewInit {
     isSandboxDefinitionIdError() {
         return (
             this.trainingInstanceFormGroup.formGroup.hasError(
-                'sandboxDefinitionRequired'
+                'sandboxDefinitionRequired',
             ) && !this.sandboxDefinitionId.untouched
         );
     }
@@ -350,7 +350,7 @@ export class TrainingInstanceEditComponent implements OnChanges, AfterViewInit {
                 : 'linear_definition'
         ]
             .definitionId(id)
-            .build();
+            .detail.build();
     }
 
     private changeValidity(error: boolean, resourceSelector: ElementRef) {
@@ -373,14 +373,14 @@ export class TrainingInstanceEditComponent implements OnChanges, AfterViewInit {
 
     private onChanged() {
         this.trainingInstanceFormGroup.setValuesToTrainingInstance(
-            this.trainingInstance
+            this.trainingInstance,
         );
 
         this.edited.emit(
             new TrainingInstanceChangeEvent(
                 this.trainingInstance,
-                this.trainingInstanceFormGroup.formGroup.valid
-            )
+                this.trainingInstanceFormGroup.formGroup.valid,
+            ),
         );
     }
 }
