@@ -20,7 +20,7 @@ export const DEFINED_ROUTES = {
     ['adaptive-definition']: {
         create: {},
         simulator: {},
-        VAR_definitionId: {
+        EXCL_VAR_definitionId: {
             edit: {},
             preview: {},
             detail: {},
@@ -30,7 +30,7 @@ export const DEFINED_ROUTES = {
 
     ['linear-definition']: {
         create: {},
-        VAR_definitionId: {
+        EXCL_VAR_definitionId: {
             edit: {},
             preview: {},
             detail: {},
