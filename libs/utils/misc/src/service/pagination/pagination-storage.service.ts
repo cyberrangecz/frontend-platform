@@ -81,14 +81,10 @@ export class PaginationStorageService {
         this.registryService.cleanup();
         const registry = this.registryService.read();
         const entry = registry[this.storageKey];
-        console.log(
-            `Loaded page size for ${this.storageKey}: ${entry?.pageSize}`,
-        );
         return entry ? entry.pageSize : this.defaultPageSize;
     }
 
     savePageSize(pageSize: number): void {
-        console.log(`Saving page size ${pageSize} for ${this.storageKey}`);
         const registry = this.registryService.read();
         registry[this.storageKey] = {
             pageSize,
