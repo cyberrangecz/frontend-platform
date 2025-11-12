@@ -1,8 +1,18 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, EventEmitter, inject, Output } from '@angular/core';
+import {
+    ChangeDetectionStrategy,
+    Component,
+    DestroyRef,
+    EventEmitter,
+    inject,
+    Output,
+} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { SentinelControlItem, SentinelControlsComponent } from '@sentinel/components/controls';
+import {
+    SentinelControlItem,
+    SentinelControlsComponent,
+} from '@sentinel/components/controls';
 import { Group } from '@crczp/user-and-group-model';
-import { defer, Observable, of } from 'rxjs';
+import { defer, filter, Observable, of } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { SaveControlItem } from '@crczp/user-and-group-agenda/internal';
 import { GroupChangedEvent } from '../model/group-changed-event';
@@ -12,14 +22,15 @@ import {
     MatExpansionPanel,
     MatExpansionPanelDescription,
     MatExpansionPanelHeader,
-    MatExpansionPanelTitle
+    MatExpansionPanelTitle,
 } from '@angular/material/expansion';
 import { GroupEditComponent } from './group-edit/group-edit.component';
 import { MatDivider } from '@angular/material/divider';
 import { AsyncPipe } from '@angular/common';
-import { GroupUserAssignComponent } from './group-user-assign/group-user-assign.component';
 import { MatIcon } from '@angular/material/icon';
 import { MatError } from '@angular/material/input';
+import { GroupRoleAssignComponent } from './group-role-assign/group-role-assign.component';
+import { GroupUserAssignComponent } from './group-user-assign/group-user-assign.component';
 
 @Component({
     selector: 'crczp-group-edit-overview',
@@ -29,7 +40,6 @@ import { MatError } from '@angular/material/input';
     imports: [
         AsyncPipe,
         GroupEditComponent,
-        GroupUserAssignComponent,
         MatDivider,
         MatError,
         MatExpansionPanel,
@@ -38,25 +48,32 @@ import { MatError } from '@angular/material/input';
         MatIcon,
         SentinelControlsComponent,
         MatExpansionPanelHeader,
+        GroupRoleAssignComponent,
+        GroupUserAssignComponent,
     ],
     providers: [{ provide: GroupEditService, useClass: GroupEditService }],
 })
 export class GroupEditOverviewComponent {
     @Output() canDeactivateEvent: EventEmitter<boolean> = new EventEmitter();
-    group$: Observable<Group>;
+    group$: Observable<Group> = of();
     editMode$: Observable<boolean>;
     canDeactivateGroupEdit = true;
     canDeactivateMembers = true;
     canDeactivateRoles = true;
     controls: SentinelControlItem[];
     destroyRef = inject(DestroyRef);
+
     protected readonly of = of;
     private activeRoute = inject(ActivatedRoute);
     private editService = inject(GroupEditService);
 
     constructor() {
-        this.group$ = this.editService.group$;
+        this.group$ = this.editService.group$.pipe(
+            filter((group) => !!group),
+            takeUntilDestroyed(this.destroyRef),
+        );
         this.editMode$ = this.editService.editMode$.pipe(
+            takeUntilDestroyed(this.destroyRef),
             tap((editMode) => this.initControls(editMode)),
         );
         this.activeRoute.data

@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit } from '
 import { ActivatedRoute } from '@angular/router';
 import { TrainingInstance } from '@crczp/training-model';
 import { Observable } from 'rxjs';
-import { map, switchMap, take, tap } from 'rxjs/operators';
+import { filter, map, switchMap, take, tap } from 'rxjs/operators';
 import { AdaptiveInstanceSummaryService } from '../services/state/summary/adaptive-instance-summary.service';
 import { TableLoadEvent } from '@sentinel/components/table';
 import { AdaptiveRunService } from '../services/state/runs/adaptive-run.service';
@@ -18,7 +18,7 @@ import { AsyncPipe } from '@angular/common';
 import { AdaptiveRunTable } from '../model/adaptive-run-table';
 import { NotificationService, PaginationStorageService, providePaginationStorageService } from '@crczp/utils';
 import { Routing } from '@crczp/routing-commons';
-import { createPaginationEvent, PaginationMapper } from '@crczp/api-common';
+import { PaginationMapper } from '@crczp/api-common';
 import { TrainingRunSort } from '@crczp/training-api';
 
 /**
@@ -63,13 +63,13 @@ export class AdaptiveInstanceSummaryComponent implements OnInit {
     private notificationService = inject(NotificationService);
 
     private readonly trainingRunPagination =
-        createPaginationEvent<TrainingRunSort>({
-            sort: 'startTime',
-        });
+        this.paginationService.createPagination<TrainingRunSort>('startTime');
 
     ngOnInit(): void {
         this.trainingInstance$ = this.activeRoute.data.pipe(
-            map((data) => data[TrainingInstance.name] || null),
+            takeUntilDestroyed(this.destroyRef),
+            filter((data) => !!data[TrainingInstance.name]),
+            map((data) => data[TrainingInstance.name]),
             tap((ti) => {
                 this.initSummaryComponent(ti);
             }),
@@ -116,7 +116,7 @@ export class AdaptiveInstanceSummaryComponent implements OnInit {
             .build()}`;
         this.adaptiveDefinitionLink = `/${Routing.RouteBuilder.adaptive_definition
             .definitionId(trainingInstance.id)
-            .build()}`;
+            .detail.build()}`;
 
         //     this.navigator.toAdaptiveDefinitionDetail(
         //     trainingInstance.trainingDefinition.id,

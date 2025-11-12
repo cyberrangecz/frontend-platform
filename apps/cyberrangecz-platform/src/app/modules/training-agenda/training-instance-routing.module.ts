@@ -20,7 +20,7 @@ const routes: ValidRouterConfig<'linear-instance'> = [
         path: 'create',
         loadComponent: () =>
             import('@crczp/training-agenda/instance-edit').then(
-                (m) => m.LinearTrainingInstanceEditOverviewComponent
+                (m) => m.LinearTrainingInstanceEditOverviewComponent,
             ),
         canDeactivate: [canDeactivateTrainingInstance],
         resolve: {
@@ -35,7 +35,7 @@ const routes: ValidRouterConfig<'linear-instance'> = [
         path: ':instanceId/edit',
         loadComponent: () =>
             import('@crczp/training-agenda/instance-edit').then(
-                (m) => m.LinearTrainingInstanceEditOverviewComponent
+                (m) => m.LinearTrainingInstanceEditOverviewComponent,
             ),
         canDeactivate: [canDeactivateTrainingInstance],
         resolve: {
@@ -61,7 +61,7 @@ const routes: ValidRouterConfig<'linear-instance'> = [
         },
         loadComponent: () =>
             import('@crczp/training-agenda/instance-progress').then(
-                (m) => m.TrainingInstanceProgressComponent
+                (m) => m.TrainingInstanceProgressComponent,
             ),
     },
     {
@@ -77,14 +77,14 @@ const routes: ValidRouterConfig<'linear-instance'> = [
         },
         loadComponent: () =>
             import('@crczp/training-agenda/instance-summary').then(
-                (m) => m.TrainingInstanceSummaryComponent
+                (m) => m.TrainingInstanceSummaryComponent,
             ),
     },
     {
         path: ':instanceId/results',
         pathMatch: 'prefix',
         resolve: {
-            trainingInstance:
+            [TrainingInstance.name]:
                 Routing.Resolvers.TrainingInstance.linearInstanceResolver,
             breadcrumb:
                 Routing.Resolvers.TrainingInstance
@@ -94,13 +94,13 @@ const routes: ValidRouterConfig<'linear-instance'> = [
         },
         loadComponent: () =>
             import('@crczp/training-agenda/instance-results').then(
-                (m) => m.TrainingInstanceResultsComponent
+                (m) => m.TrainingInstanceResultsComponent,
             ),
     },
     {
         path: ':instanceId/access-token',
         resolve: {
-            trainingInstance:
+            [TrainingInstance.name]:
                 Routing.Resolvers.TrainingInstance.linearInstanceResolver,
             breadcrumb:
                 Routing.Resolvers.TrainingInstance
@@ -110,13 +110,13 @@ const routes: ValidRouterConfig<'linear-instance'> = [
         },
         loadComponent: () =>
             import('@crczp/training-agenda/instance-access-token').then(
-                (m) => m.AccessTokenDetailComponent
+                (m) => m.AccessTokenDetailComponent,
             ),
     },
     {
         path: ':instanceId/runs',
         resolve: {
-            trainingInstance:
+            [TrainingInstance.name]:
                 Routing.Resolvers.TrainingInstance.linearInstanceResolver,
             breadcrumb:
                 Routing.Resolvers.TrainingInstance
@@ -126,7 +126,7 @@ const routes: ValidRouterConfig<'linear-instance'> = [
         },
         loadComponent: () =>
             import('@crczp/training-agenda/instance-runs').then(
-                (m) => m.TrainingInstanceRunsComponent
+                (m) => m.TrainingInstanceRunsComponent,
             ),
     },
 ];

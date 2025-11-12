@@ -29,3 +29,10 @@ mat-divider {
     flex-direction: row;
     align-items: center;
 }
+
+.header-icon {
+    height: 28px;
+    width: 28px;
+    font-size: 28px;
+    margin: 4px;
+}

@@ -1,4 +1,4 @@
-import { RequestDetailComponent } from './shared/request-detail.component';
+import { RequestDetailComponent } from './request-detail.component';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RequestStagesService } from '../services/state/request-stages.service';
 import { CleanupStagesConcreteService } from '../services/state/cleanup-stages-concrete.service';
@@ -10,8 +10,8 @@ import { AsyncPipe } from '@angular/common';
 
 @Component({
     selector: 'crczp-cleanup-request-detail',
-    templateUrl: './shared/request-detail.component.html',
-    styleUrls: ['./shared/request-detail.component.scss'],
+    templateUrl: './request-detail.component.html',
+    styleUrls: ['./request-detail.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [
         {

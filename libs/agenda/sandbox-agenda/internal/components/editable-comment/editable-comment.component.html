@@ -1,29 +1,29 @@
 <div
-    class="comment-container"
     (mouseenter)='toggleEditButton(true)'
     (mouseleave)="toggleEditButton(false)"
+    class="comment-container"
 >
     <!-- COMMENT -->
     <form [formGroup]="commentFormGroup.formGroup"
-          class="wh-100 horizontal-flex jc-fs ai-c {{!editionEnabled ? 'readonly edit-comment-container' : 'edit-comment-container'}}">
+          class="wh-100 horizontal-flex jc-flex-start ai-center {{!editionEnabled ? 'readonly edit-comment-container' : 'edit-comment-container'}}">
         <mat-form-field
-            subscriptSizing="dynamic"
             (click)="toggleEdition(true)"
+            subscriptSizing="dynamic"
         >
-            <input matInput
-                   matTooltip="{{ value }}"
-                   type="text"
+            <input [readonly]="!editionEnabled"
                    formControlName="comment"
-                   [readonly]="!editionEnabled">
+                   matInput
+                   matTooltip="{{ value }}"
+                   type="text">
         </mat-form-field>
         <!-- EDIT COMMENT button -->
-        <button mat-fab
-                color="primary"
-                class="comment-save-button"
-                (click)="editionEnabled ? saveComment() : toggleEdition(true)"
-                aria-label="Edit comment"
+        <button (click)="editionEnabled ? saveComment() : toggleEdition(true)"
+                [matTooltip]="editionEnabled ? 'Save edited comment' : 'Edit comment'"
                 [style]="'opacity: ' + (editOpacity || editionEnabled ? 100 : 0)"
-                [matTooltip]="editionEnabled ? 'Save edited comment' : 'Edit comment'">
+                aria-label="Edit comment"
+                class="comment-save-button"
+                color="primary"
+                mat-fab>
             <mat-icon>{{ editionEnabled ? 'check' : 'edit' }}</mat-icon>
         </button>
     </form>

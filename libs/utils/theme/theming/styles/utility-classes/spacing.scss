@@ -2,12 +2,12 @@
 
 $gaps: [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 2.25, 2.5,2.75, 3,3.5,4,5,8,10,12,16];
 
-$positions: (
-    t: top,
-    r: right,
-    b: bottom,
-    l: left,
-);
+$positions: [
+  top,
+  right,
+  bottom,
+  left,
+];
 
 @each $size in $gaps {
     .g-#{common.decimal-to-name($size)}rem {
@@ -22,13 +22,13 @@ $positions: (
         padding: #{$size}rem;
     }
 
-    @each $key, $value in $positions {
-        .m-#{common.decimal-to-name($size)}rem-#{$key} {
-            margin-#{$value}: #{$size}rem;
+    @each $pos in $positions {
+        .m-#{common.decimal-to-name($size)}rem-#{$pos} {
+            margin-#{$pos}: #{$size}rem;
         }
 
-        .p-#{common.decimal-to-name($size)}rem-#{$key} {
-            padding-#{$value}: #{$size}rem;
+        .p-#{common.decimal-to-name($size)}rem-#{$pos} {
+            padding-#{$pos}: #{$size}rem;
         }
     }
 }

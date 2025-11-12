@@ -22,10 +22,10 @@ import { MembersDetailService } from '../services/members-detail.service';
 import { RolesDetailService } from '../services/roles-detail.service';
 import { CommonModule } from '@angular/common';
 import {
-    PaginationStorageService,
+    instantiatePaginationStorageService,
     providePaginationStorageService,
 } from '@crczp/utils';
-import { createPaginationEvent, PaginationMapper } from '@crczp/api-common';
+import { PaginationMapper } from '@crczp/api-common';
 import { RoleSort, UserSort } from '@crczp/user-and-group-api';
 import { SortDir } from '@sentinel/common/pagination';
 import { map } from 'rxjs/operators';
@@ -46,7 +46,8 @@ import { RolesDetailTable } from '../model/roles-detail-table';
         SentinelRowDirective,
     ],
     providers: [
-        providePaginationStorageService(GroupDetailComponent),
+        providePaginationStorageService(GroupDetailComponent.name + 'Members'),
+        providePaginationStorageService(GroupDetailComponent.name + 'Roles'),
         MembersDetailService,
         RolesDetailService,
     ],
@@ -66,16 +67,24 @@ export class GroupDetailComponent implements OnInit {
     private activeRoute = inject(ActivatedRoute);
     private membersDetailService = inject(MembersDetailService);
     private rolesDetailService = inject(RolesDetailService);
-    private paginationService = inject(PaginationStorageService);
+    private membersPaginationService = instantiatePaginationStorageService(
+        GroupDetailComponent.name + '_members',
+    );
 
-    private readonly initialRolePagination = createPaginationEvent<RoleSort>({
-        sort: 'roleType',
-        sortDir: 'asc',
-    });
-    private initialUserPagination = createPaginationEvent<UserSort>({
-        sort: 'fullName',
-        sortDir: this.INIT_SORT_DIR,
-    });
+    private rolesPaginationService = instantiatePaginationStorageService(
+        GroupDetailComponent.name + '_roles',
+    );
+
+    private readonly initialRolePagination =
+        this.rolesPaginationService.createPagination<RoleSort>(
+            this.INIT_ROLES_SORT_NAME,
+            this.INIT_SORT_DIR,
+        );
+    private initialUserPagination =
+        this.membersPaginationService.createPagination<UserSort>(
+            this.INIT_MEMBERS_SORT_NAME,
+            this.INIT_SORT_DIR,
+        );
 
     ngOnInit(): void {
         this.initTables();
@@ -86,7 +95,7 @@ export class GroupDetailComponent implements OnInit {
      * @param loadEvent load event emitted from roles detail table
      */
     onRolesLoadEvent(loadEvent: TableLoadEvent<RoleSort>): void {
-        this.paginationService.savePageSize(loadEvent.pagination.size);
+        this.rolesPaginationService.savePageSize(loadEvent.pagination.size);
         this.rolesDetailService
             .getAssigned(
                 this.group.id,
@@ -102,7 +111,7 @@ export class GroupDetailComponent implements OnInit {
      * @param loadEvent load event emitted from mmebers detail table
      */
     onMembersLoadEvent(loadEvent: TableLoadEvent<UserSort>): void {
-        this.paginationService.savePageSize(loadEvent.pagination.size);
+        this.membersPaginationService.savePageSize(loadEvent.pagination.size);
         this.membersDetailService
             .getAssigned(
                 this.group.id,

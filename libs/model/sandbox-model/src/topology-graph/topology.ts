@@ -14,7 +14,7 @@ export class HostNode extends Z.class({
     osType: osType,
     guiAccess: z.boolean(),
     isAccessible: z.boolean(),
-    ip: z.string(),
+    ip: z.string().nullable(),
 }) {}
 
 export class Subnet extends Z.class({

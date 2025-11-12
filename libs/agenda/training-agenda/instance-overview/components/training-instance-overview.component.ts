@@ -19,10 +19,11 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { CdkCopyToClipboard } from '@angular/cdk/clipboard';
-import { LogoSpinnerComponent, TableDateCellComponent } from '@crczp/components';
+import { TableDateCellComponent } from '@crczp/components';
 import { NotificationService, PaginationStorageService, providePaginationStorageService } from '@crczp/utils';
-import { createPaginationEvent, PaginationMapper } from '@crczp/api-common';
+import { PaginationMapper } from '@crczp/api-common';
 import { TrainingInstanceSort } from '@crczp/training-api';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
 
 /**
  * Main component of organizer overview.
@@ -44,7 +45,7 @@ import { TrainingInstanceSort } from '@crczp/training-api';
         MatIcon,
         CdkCopyToClipboard,
         NgClass,
-        LogoSpinnerComponent,
+        MatProgressSpinner,
     ],
     providers: [
         providePaginationStorageService(TrainingInstanceOverviewComponent),
@@ -66,9 +67,10 @@ export class TrainingInstanceOverviewComponent {
     private notificationService = inject(NotificationService);
 
     private readonly initialInstancePagination =
-        createPaginationEvent<TrainingInstanceSort>({
-            sort: 'id',
-        });
+        this.paginationService.createPagination<TrainingInstanceSort>(
+            this.INITIAL_SORT_NAME,
+            this.INITIAL_SORT_DIR,
+        );
 
     constructor() {
         this.controls = TrainingInstanceOverviewControls.create(this.service);

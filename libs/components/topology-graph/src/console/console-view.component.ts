@@ -319,11 +319,6 @@ export class ConsoleView implements AfterViewInit, OnDestroy {
                 const display = this.guacClient?.getDisplay();
                 if (display) {
                     display.onresize = (width: number, height: number) => {
-                        console.log(
-                            'Remote display resized to:',
-                            width,
-                            height,
-                        );
                         this.handleResize();
                     };
 

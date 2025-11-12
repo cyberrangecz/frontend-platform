@@ -84,7 +84,7 @@ export class RoleAssignService {
         return this.roleApi
             .getRolesNotInGroup(
                 resourceId,
-                createInfinitePaginationEvent('fullName'),
+                createInfinitePaginationEvent('roleType'),
                 filter,
             )
             .pipe(

@@ -10,17 +10,16 @@ import {
     Output,
     SimpleChanges
 } from '@angular/core';
-import {Group} from '@crczp/user-and-group-model';
-import {GroupChangedEvent} from '../../model/group-changed-event';
-import {GroupEditFormGroup} from './group-edit-form-group';
-import {AbstractControl, ReactiveFormsModule} from '@angular/forms';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {MatDatepicker, MatDatepickerInput, MatDatepickerToggle} from '@angular/material/datepicker';
-import {MatError, MatFormField, MatInput, MatLabel} from '@angular/material/input';
-import {MatIconButton} from '@angular/material/button';
-import {MatIcon} from '@angular/material/icon';
-import {MatTooltip} from '@angular/material/tooltip';
-
+import { Group } from '@crczp/user-and-group-model';
+import { GroupChangedEvent } from '../../model/group-changed-event';
+import { GroupEditFormGroup } from './group-edit-form-group';
+import { AbstractControl, ReactiveFormsModule } from '@angular/forms';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { MatError, MatFormField, MatInput, MatLabel } from '@angular/material/input';
+import { MatIconButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatTooltip } from '@angular/material/tooltip';
+import { OwlDateTimeModule, OwlNativeDateTimeModule } from '@danielmoncada/angular-datetime-picker';
 
 /**
  * Component for editing basic group-overview attributes
@@ -31,18 +30,17 @@ import {MatTooltip} from '@angular/material/tooltip';
     styleUrls: ['./group-edit.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
-    MatDatepickerToggle,
-    MatDatepicker,
-    MatInput,
-    MatDatepickerInput,
-    MatFormField,
-    MatIcon,
-    MatIconButton,
-    ReactiveFormsModule,
-    MatTooltip,
-    MatError,
-    MatLabel
-]
+        MatInput,
+        MatFormField,
+        MatIcon,
+        MatIconButton,
+        ReactiveFormsModule,
+        MatTooltip,
+        MatError,
+        MatLabel,
+        OwlNativeDateTimeModule,
+        OwlDateTimeModule,
+    ],
 })
 export class GroupEditComponent implements OnInit, OnChanges {
     /**
@@ -73,7 +71,9 @@ export class GroupEditComponent implements OnInit, OnChanges {
 
     ngOnInit(): void {
         const today = new Date();
-        this.tomorrow = new Date(new Date(today.setDate(today.getDate() + 1)).setHours(0, 0, 0));
+        this.tomorrow = new Date(
+            new Date(today.setDate(today.getDate() + 1)).setHours(0, 0, 0),
+        );
     }
 
     ngOnChanges(changes: SimpleChanges): void {
@@ -91,6 +91,11 @@ export class GroupEditComponent implements OnInit, OnChanges {
 
     private onChanged() {
         this.groupEditFormGroup.setValuesToGroup(this.group);
-        this.edited.emit(new GroupChangedEvent(this.group, this.groupEditFormGroup.formGroup.valid));
+        this.edited.emit(
+            new GroupChangedEvent(
+                this.group,
+                this.groupEditFormGroup.formGroup.valid,
+            ),
+        );
     }
 }

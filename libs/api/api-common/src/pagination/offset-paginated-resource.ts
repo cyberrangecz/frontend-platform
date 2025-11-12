@@ -1,5 +1,4 @@
 import { OffsetPagination, PaginatedElements, PaginatedResource } from '@sentinel/common/pagination';
-import { PaginationMapper } from './pagination-mapper';
 
 /**
  * Class enhancing PaginatedResource with OffsetPagination type
@@ -16,10 +15,7 @@ export class OffsetPaginatedResource<T> extends PaginatedResource<T> {
     ): OffsetPaginatedResource<T> {
         return new OffsetPaginatedResource<T>(
             paginatedElements.elements,
-            PaginationMapper.fromArray(
-                paginatedElements.elements,
-                paginatedElements.pagination.size,
-            ),
+            paginatedElements.pagination as OffsetPagination,
         );
     }
 }

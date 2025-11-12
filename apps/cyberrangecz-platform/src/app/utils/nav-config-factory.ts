@@ -1,7 +1,7 @@
 import { User } from '@sentinel/auth';
 import { RoleResolver } from './role-resolver';
 import { NavAgendaContainerConfig } from '@crczp/utils';
-import { ValidPath } from '@crczp/routing-commons';
+import { ValidPathPrefix } from '@crczp/routing-commons';
 
 export class NavConfigFactory {
     static buildNavConfig(user: User): NavAgendaContainerConfig[] {
@@ -14,15 +14,15 @@ export class NavConfigFactory {
                         agendas: [
                             {
                                 label: 'Adaptive',
-                                path: 'adaptive-definition' satisfies ValidPath,
+                                path: 'adaptive-definition' satisfies ValidPathPrefix,
                                 canActivate: () =>
                                     RoleResolver.isAdaptiveTrainingDesigner(
-                                        user.roles
+                                        user.roles,
                                     ),
                             },
                             {
                                 label: 'Linear',
-                                path: 'linear-definition' satisfies ValidPath,
+                                path: 'linear-definition' satisfies ValidPathPrefix,
                                 canActivate: () =>
                                     RoleResolver.isTrainingDesigner(user.roles),
                             },
@@ -33,25 +33,25 @@ export class NavConfigFactory {
                         agendas: [
                             {
                                 label: 'Adaptive',
-                                path: 'adaptive-instance' satisfies ValidPath,
+                                path: 'adaptive-instance' satisfies ValidPathPrefix,
                                 canActivate: () =>
                                     RoleResolver.isAdaptiveTrainingOrganizer(
-                                        user.roles
+                                        user.roles,
                                     ),
                             },
                             {
                                 label: 'Linear',
-                                path: 'linear-instance' satisfies ValidPath,
+                                path: 'linear-instance' satisfies ValidPathPrefix,
                                 canActivate: () =>
                                     RoleResolver.isTrainingOrganizer(
-                                        user.roles
+                                        user.roles,
                                     ),
                             },
                         ],
                     },
                     {
                         label: 'Run',
-                        path: 'run' satisfies ValidPath,
+                        path: 'run' satisfies ValidPathPrefix,
                     },
                 ],
             },
@@ -60,19 +60,19 @@ export class NavConfigFactory {
                 agendas: [
                     {
                         label: 'Definition',
-                        path: 'sandbox-definition' satisfies ValidPath,
+                        path: 'sandbox-definition' satisfies ValidPathPrefix,
                         canActivate: () =>
                             RoleResolver.isAdaptiveTrainingDesigner(user.roles),
                     },
                     {
                         label: 'Pool',
-                        path: 'pool' satisfies ValidPath,
+                        path: 'pool' satisfies ValidPathPrefix,
                         canActivate: () =>
                             RoleResolver.isTrainingOrganizer(user.roles),
                     },
                     {
                         label: 'Images',
-                        path: 'sandbox-image' satisfies ValidPath,
+                        path: 'sandbox-image' satisfies ValidPathPrefix,
                         canActivate: () =>
                             RoleResolver.isTrainingOrganizer(user.roles),
                     },
@@ -83,19 +83,19 @@ export class NavConfigFactory {
                 agendas: [
                     {
                         label: 'User',
-                        path: 'user' satisfies ValidPath,
+                        path: 'user' satisfies ValidPathPrefix,
                         canActivate: () =>
                             RoleResolver.isUserAndGroupAdmin(user.roles),
                     },
                     {
                         label: 'Group',
-                        path: 'group' satisfies ValidPath,
+                        path: 'group' satisfies ValidPathPrefix,
                         canActivate: () =>
                             RoleResolver.isUserAndGroupAdmin(user.roles),
                     },
                     {
                         label: 'Microservice',
-                        path: 'microservice' satisfies ValidPath,
+                        path: 'microservice' satisfies ValidPathPrefix,
                         canActivate: () =>
                             RoleResolver.isUserAndGroupAdmin(user.roles),
                     },

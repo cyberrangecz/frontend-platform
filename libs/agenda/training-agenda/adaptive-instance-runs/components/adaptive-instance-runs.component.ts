@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { TrainingInstance, TrainingRun } from '@crczp/training-model';
 import { SentinelTable } from '@sentinel/components/table';
 import { Observable } from 'rxjs';
-import { map, switchMap, take, tap } from 'rxjs/operators';
+import { filter, map, switchMap, take, tap } from 'rxjs/operators';
 import { AdaptiveRunTable } from '../model/adaptive-run-table';
 import { AdaptiveRunService } from '../services/runs/adaptive-run.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -49,7 +49,9 @@ export class AdaptiveInstanceRunsComponent implements OnInit {
 
     ngOnInit(): void {
         this.trainingInstance$ = this.activeRoute.data.pipe(
-            map((data) => data[TrainingInstance.name] || null),
+            takeUntilDestroyed(this.destroyRef),
+            filter((data) => !!data[TrainingInstance.name]),
+            map((data) => data[TrainingInstance.name]),
             tap((ti) => {
                 this.trainingInstance = ti;
             }),

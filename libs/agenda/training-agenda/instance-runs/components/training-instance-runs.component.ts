@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { TrainingInstance } from '@crczp/training-model';
 import { TableLoadEvent } from '@sentinel/components/table';
 import { Observable } from 'rxjs';
-import { map, switchMap, take, tap } from 'rxjs/operators';
+import { filter, map, switchMap, take, tap } from 'rxjs/operators';
 import { TrainingRunTable } from '../model/training-run-table';
 import { TrainingRunService } from '../services/runs/training-run.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -11,7 +11,7 @@ import { MatCard } from '@angular/material/card';
 import { TrainingRunOverviewComponent } from './training-run-overview/training-run-overview.component';
 import { AsyncPipe } from '@angular/common';
 import { PaginationStorageService, providePaginationStorageService } from '@crczp/utils';
-import { createPaginationEvent, OffsetPaginatedResource, PaginationMapper } from '@crczp/api-common';
+import { OffsetPaginatedResource, PaginationMapper } from '@crczp/api-common';
 import { TrainingRunSort } from '@crczp/training-api';
 
 /**
@@ -40,14 +40,15 @@ export class TrainingInstanceRunsComponent implements OnInit {
     private trainingInstance: TrainingInstance;
 
     private readonly initialRunPagination =
-        createPaginationEvent<TrainingRunSort>({
-            sort: 'endTime',
-            sortDir: 'desc',
-        });
+        this.paginationService.createPagination<TrainingRunSort>(
+            'endTime',
+            'asc',
+        );
 
     ngOnInit(): void {
         this.trainingInstance$ = this.activeRoute.data.pipe(
-            map((data) => data[TrainingInstance.name] || null),
+            filter((data) => !!data[TrainingInstance.name]),
+            map((data) => data[TrainingInstance.name]),
             tap((ti) => {
                 this.trainingInstance = ti;
             }),

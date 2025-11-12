@@ -85,13 +85,15 @@ export class AdaptiveInstanceTable extends SentinelTable<
 
         row.addLink(
             'title',
-            Routing.RouteBuilder.adaptive_instance.instanceId(ti.id).build(),
+            Routing.RouteBuilder.adaptive_instance
+                .instanceId(ti.id)
+                .detail.build(),
         );
         row.addLink(
             'tdTitle',
             Routing.RouteBuilder.adaptive_definition
                 .definitionId(adapter.trainingDefinition.id)
-                .build(),
+                .detail.build(),
         );
         if (ti.hasPool()) {
             row.element.poolSize = combineLatest([

@@ -3,9 +3,9 @@ import { SandboxAllocationUnitsService } from './sandbox-allocation-units.servic
 import { BehaviorSubject, combineLatestWith, EMPTY, Observable } from 'rxjs';
 import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import {
-    AllocationRequestSort,
     PoolApi,
     SandboxAllocationUnitsApi,
+    SandboxInstanceSort,
 } from '@crczp/sandbox-api';
 import { SandboxAllocationUnit } from '@crczp/sandbox-model';
 import { map, switchMap, tap } from 'rxjs/operators';
@@ -57,7 +57,7 @@ export class SandboxAllocationUnitsConcreteService extends SandboxAllocationUnit
      */
     getAll(
         poolId: number,
-        pagination: OffsetPaginationEvent<AllocationRequestSort>,
+        pagination: OffsetPaginationEvent<SandboxInstanceSort>,
     ): Observable<OffsetPaginatedResource<SandboxAllocationUnit>> {
         this.lastPagination = pagination;
         this.lastPoolId = poolId;

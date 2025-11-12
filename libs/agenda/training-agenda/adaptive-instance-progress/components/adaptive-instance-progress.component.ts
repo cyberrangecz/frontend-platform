@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, DestroyRef, HostListener, inject, O
 import { ActivatedRoute } from '@angular/router';
 import { TrainingInstance } from '@crczp/training-model';
 import { Observable } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { filter, map, tap } from 'rxjs/operators';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatTab, MatTabContent, MatTabGroup, MatTabLabel } from '@angular/material/tabs';
 import { CommandTimelineComponent } from '@crczp/visualization-components';
@@ -39,26 +39,27 @@ export class AdaptiveInstanceProgressComponent implements OnInit {
     onResize(event: any): void {
         this.calculateVisualizationSize(
             event.target.innerWidth,
-            event.target.innerHeight
+            event.target.innerHeight,
         );
     }
 
     ngOnInit(): void {
         this.trainingInstance$ = this.activeRoute.data.pipe(
             takeUntilDestroyed(this.destroyRef),
-            map((data) => data[TrainingInstance.name] || null),
+            filter((data) => !!data[TrainingInstance.name]),
+            map((data) => data[TrainingInstance.name]),
             tap(() =>
                 this.calculateVisualizationSize(
                     window.innerWidth,
-                    window.innerHeight
-                )
-            )
+                    window.innerHeight,
+                ),
+            ),
         );
     }
 
     private calculateVisualizationSize(
         windowWidth: number,
-        windowHeight: number
+        windowHeight: number,
     ) {
         const width = windowWidth / 2;
         const height = windowHeight / 2;

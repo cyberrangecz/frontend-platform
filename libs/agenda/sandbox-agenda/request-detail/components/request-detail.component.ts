@@ -2,8 +2,8 @@ import { ActivatedRoute } from '@angular/router';
 import { Request, RequestStage, RequestStageTypeMapper } from '@crczp/sandbox-model';
 import { Observable } from 'rxjs';
 import { map, switchMap, tap } from 'rxjs/operators';
-import { RequestStagesService } from '../../services/state/request-stages.service';
-import { StageAdapter } from '../../model/adapters/stage-adapter';
+import { RequestStagesService } from '../services/state/request-stages.service';
+import { StageAdapter } from '../model/adapters/stage-adapter';
 import { DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 
@@ -143,6 +143,7 @@ export abstract class RequestDetailComponent {
         this.activatedRoute.data
             .pipe(
                 tap((data) => {
+                    console.log('Activated route data', data);
                     this.request = data[Request.name];
                 }),
                 switchMap((data) =>

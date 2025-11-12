@@ -32,11 +32,13 @@
                 </div>
             }
             <span class="spacer"></span>
-            <mat-icon>person</mat-icon>
+            <mat-icon class="header-icon">person</mat-icon>
         </mat-panel-description>
     </mat-expansion-panel-header>
-    <crczp-group-user-assign (hasUnsavedChanges)="onUnsavedMembersChange($event)"
-                             [resource]="group$ | async" />
+    @if (editMode$ |async) {
+        <crczp-group-user-assign (hasUnsavedChanges)="onUnsavedMembersChange($event)"
+                                 [group]="group$ | async" />
+    }
 </mat-expansion-panel>
 
 <mat-expansion-panel [disabled]="(editMode$ | async) === false" [expanded]="editMode$ | async"
@@ -46,7 +48,7 @@
         <mat-panel-description>
             @if (!canDeactivateRoles) {
                 <div class="panel-description-error">
-                    <mat-icon color="warn">warning</mat-icon>
+                    <mat-icon class="header-icon" color="warn">warning</mat-icon>
                     <mat-error class="group-roles-unsaved">Changes in group roles are not saved</mat-error>
                 </div>
             }
@@ -54,6 +56,8 @@
             <mat-icon>policy</mat-icon>
         </mat-panel-description>
     </mat-expansion-panel-header>
-    <!--    <crczp-group-role-assign (hasUnsavedChanges)="onUnsavedRolesChange($event)"-->
-    <!--                             [resource]="group$ | async" />-->
+    @if (editMode$ |async) {
+        <crczp-group-role-assign (hasUnsavedChanges)="onUnsavedRolesChange($event)"
+                                 [group]="group$ | async" />
+    }
 </mat-expansion-panel>

@@ -1,14 +1,4 @@
-import {
-    ChangeDetectionStrategy,
-    Component,
-    DestroyRef,
-    EventEmitter,
-    inject,
-    Input,
-    OnChanges,
-    Output,
-    SimpleChanges
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, input, OnInit, output, signal } from '@angular/core';
 import { SentinelControlItem, SentinelControlsComponent } from '@sentinel/components/controls';
 import { Group, User } from '@crczp/user-and-group-model';
 import { SentinelTable, SentinelTableComponent, TableLoadEvent } from '@sentinel/components/table';
@@ -16,18 +6,18 @@ import {
     SentinelResourceSelectorComponent,
     SentinelResourceSelectorMapping
 } from '@sentinel/components/resource-selector';
-import { combineLatest, defer, Observable, of } from 'rxjs';
+import { combineLatest, defer, Observable, of, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { GroupMemberTable } from '../../model/table/group-member-table';
 import { DeleteControlItem, SaveControlItem } from '@crczp/user-and-group-agenda/internal';
 import { UserAssignService } from '../../services/state/user-assign.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatCard, MatCardContent, MatCardHeader, MatCardSubtitle, MatCardTitle } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
-import { AsyncPipe } from '@angular/common';
 import { PaginationStorageService, providePaginationStorageService } from '@crczp/utils';
-import { createPaginationEvent, PaginationMapper } from '@crczp/api-common';
 import { UserSort } from '@crczp/user-and-group-api';
+import { AsyncPipe } from '@angular/common';
+import { PaginationMapper } from '@crczp/api-common';
+import { GroupMemberTable } from '../../model/table/group-member-table';
 
 /**
  * Component for user assignment to groups
@@ -38,40 +28,40 @@ import { UserSort } from '@crczp/user-and-group-api';
     styleUrls: ['./group-user-assign.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
-        AsyncPipe,
         MatCard,
         MatCardContent,
         MatCardHeader,
         MatIcon,
         SentinelControlsComponent,
-        SentinelResourceSelectorComponent,
-        SentinelTableComponent,
         MatCardTitle,
         MatCardSubtitle,
+        AsyncPipe,
+        SentinelTableComponent,
+        SentinelResourceSelectorComponent,
     ],
     providers: [
         providePaginationStorageService(GroupUserAssignComponent),
         UserAssignService,
     ],
 })
-export class GroupUserAssignComponent implements OnChanges {
+export class GroupUserAssignComponent implements OnInit {
     readonly MEMBERS_OF_GROUP_INIT_SORT_NAME = 'familyName';
     readonly MEMBERS_OF_GROUP_INIT_SORT_DIR = 'asc';
     /**
      * Edited group-overview to assign to
      */
-    @Input() resource: Group;
+    group = input.required<Group>();
     /**
      * Pagination id for saving and restoring pagination size
      */
     /**
      * Event emitter of unsaved changes
      */
-    @Output() hasUnsavedChanges: EventEmitter<boolean> = new EventEmitter();
+    hasUnsavedChanges = output<boolean>();
     /**
      * Users available to assign
      */
-    users$: Observable<User[]> = of();
+    readonly users$ = new Subject<User[]>();
     /**
      * Mapping of user model attributes to selector component
      */
@@ -84,7 +74,8 @@ export class GroupUserAssignComponent implements OnChanges {
     /**
      * Groups available to import (assign its users to edited group-overview)
      */
-    groups$: Observable<Group[]> = of();
+    readonly groups = signal<Group[]>([]);
+
     /**
      * Mapping of group-overview model attribute to selector component
      */
@@ -105,25 +96,32 @@ export class GroupUserAssignComponent implements OnChanges {
      */
     isLoadingAssignedUsers$: Observable<boolean>;
     selectedUsersToAssign$: Observable<User[]> = of();
-    selectedGroupsToImport$: Observable<Group[]> = of();
+    selectedGroupsToImport = signal<Group[]>([]);
     assignUsersControls: SentinelControlItem[] = [];
     assignedUsersControls: SentinelControlItem[] = [];
     destroyRef = inject(DestroyRef);
-    private readonly initialUserPagination = createPaginationEvent<UserSort>({
-        sort: 'fullName',
-        sortDir: 'asc',
-    });
+    protected readonly of = of;
     private userAssignService = inject(UserAssignService);
     private paginationService = inject(PaginationStorageService);
+    private readonly initialUserPagination =
+        this.paginationService.createPagination<UserSort>(
+            this.MEMBERS_OF_GROUP_INIT_SORT_NAME,
+            this.MEMBERS_OF_GROUP_INIT_SORT_DIR,
+        );
 
-    ngOnChanges(changes: SimpleChanges): void {
-        if (
-            'resource' in changes &&
-            this.resource &&
-            this.resource.id !== undefined
-        ) {
-            this.init();
-        }
+    ngOnInit() {
+        this.selectedUsersToAssign$ =
+            this.userAssignService.selectedUsersToAssign$.pipe(
+                map((users) => users ?? []),
+            );
+        this.userAssignService.selectedGroupsToImport$
+            .pipe(map((groups) => groups ?? []))
+            .subscribe((groups) => this.selectedGroupsToImport.set(groups));
+
+        this.initTable();
+        this.initAssignUsersControls();
+        this.initAssignedUsersControls();
+        this.initUnsavedChangesEmitter();
     }
 
     /**
@@ -155,9 +153,10 @@ export class GroupUserAssignComponent implements OnChanges {
      * @param filterValue search value
      */
     searchUsers(filterValue: string): void {
-        this.users$ = this.userAssignService
-            .getUsersToAssign(this.resource.id, filterValue)
-            .pipe(map((resource) => resource.elements));
+        this.userAssignService
+            .getUsersToAssign(this.group().id, filterValue)
+            .pipe(map((resource) => resource.elements))
+            .subscribe((users) => this.users$.next(users));
     }
 
     /**
@@ -165,9 +164,10 @@ export class GroupUserAssignComponent implements OnChanges {
      * @param filterValue search value
      */
     searchGroups(filterValue: string): void {
-        this.groups$ = this.userAssignService
+        this.userAssignService
             .getGroupsToImport(filterValue)
-            .pipe(map((resource) => resource.elements));
+            .pipe(map((resource) => resource.elements))
+            .subscribe((groups) => this.groups.set(groups));
     }
 
     /**
@@ -178,27 +178,12 @@ export class GroupUserAssignComponent implements OnChanges {
         this.paginationService.savePageSize(loadEvent.pagination.size);
         this.userAssignService
             .getAssigned(
-                this.resource.id,
+                this.group().id,
                 PaginationMapper.toOffsetPaginationEvent(loadEvent.pagination),
                 loadEvent.filter,
             )
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe();
-    }
-
-    private init() {
-        this.selectedUsersToAssign$ =
-            this.userAssignService.selectedUsersToAssign$.pipe(
-                map((users) => users ?? []),
-            );
-        this.selectedGroupsToImport$ =
-            this.userAssignService.selectedGroupsToImport$.pipe(
-                map((groups) => groups ?? []),
-            );
-        this.initTable();
-        this.initAssignUsersControls();
-        this.initAssignedUsersControls();
-        this.initUnsavedChangesEmitter();
     }
 
     private initUnsavedChangesEmitter() {
@@ -225,7 +210,7 @@ export class GroupUserAssignComponent implements OnChanges {
                         selection.length,
                         defer(() =>
                             this.userAssignService.unassignSelected(
-                                this.resource.id,
+                                this.group().id,
                             ),
                         ),
                     ),
@@ -249,7 +234,7 @@ export class GroupUserAssignComponent implements OnChanges {
                 'Add',
                 disabled$,
                 defer(() =>
-                    this.userAssignService.assignSelected(this.resource.id),
+                    this.userAssignService.assignSelected(this.group().id),
                 ),
             ),
         ];
@@ -264,7 +249,7 @@ export class GroupUserAssignComponent implements OnChanges {
                 (paginatedUsers) =>
                     new GroupMemberTable(
                         paginatedUsers,
-                        this.resource.id,
+                        this.group().id,
                         this.userAssignService,
                     ),
             ),

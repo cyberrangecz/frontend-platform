@@ -10,12 +10,12 @@ import { catchUndefinedOrNull } from '../catch-undefined-or-null';
 function resolveInstance(
     route: ActivatedRouteSnapshot,
     service: TrainingResolverHelperService,
-    type: TrainingTypeEnum
+    type: TrainingTypeEnum,
 ) {
     return service.getInstance(route, type).pipe(
         catchUndefinedOrNull('Training instance', () => {
             return service.navigateToInstanceOverview(type);
-        })
+        }),
     );
 }
 
@@ -23,7 +23,7 @@ function resolveInstanceTitle(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot,
     service: TrainingResolverHelperService,
-    type: TrainingTypeEnum
+    type: TrainingTypeEnum,
 ): Observable<string> | string {
     if (RoutingUtils.containsSubroute('create', state)) {
         return type === TrainingTypeEnum.LINEAR
@@ -65,7 +65,7 @@ function resolveInstanceBreadcrumb(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot,
     service: TrainingResolverHelperService,
-    type: TrainingTypeEnum
+    type: TrainingTypeEnum,
 ): Observable<string> | string {
     if (RoutingUtils.containsSubroute('create', state)) {
         return 'Create';
@@ -85,60 +85,60 @@ function resolveInstanceBreadcrumb(
 export const TrainingInstanceResolvers = {
     linearInstanceResolver: (
         route: ActivatedRouteSnapshot,
-        _state: RouterStateSnapshot
+        _state: RouterStateSnapshot,
     ) =>
         resolveInstance(
             route,
             inject(TrainingResolverHelperService),
-            TrainingTypeEnum.LINEAR
+            TrainingTypeEnum.LINEAR,
         ),
     adaptiveInstanceResolver: (
         route: ActivatedRouteSnapshot,
-        _state: RouterStateSnapshot
+        _state: RouterStateSnapshot,
     ) =>
         resolveInstance(
             route,
             inject(TrainingResolverHelperService),
-            TrainingTypeEnum.ADAPTIVE
+            TrainingTypeEnum.ADAPTIVE,
         ),
     linearInstanceTitleResolver: (
         route: ActivatedRouteSnapshot,
-        state: RouterStateSnapshot
+        state: RouterStateSnapshot,
     ) =>
         resolveInstanceTitle(
             route,
             state,
             inject(TrainingResolverHelperService),
-            TrainingTypeEnum.LINEAR
+            TrainingTypeEnum.LINEAR,
         ),
     adaptiveInstanceTitleResolver: (
         route: ActivatedRouteSnapshot,
-        state: RouterStateSnapshot
+        state: RouterStateSnapshot,
     ) =>
         resolveInstanceTitle(
             route,
             state,
             inject(TrainingResolverHelperService),
-            TrainingTypeEnum.ADAPTIVE
+            TrainingTypeEnum.ADAPTIVE,
         ),
     linearInstanceBreadcrumbResolver: (
         route: ActivatedRouteSnapshot,
-        state: RouterStateSnapshot
+        state: RouterStateSnapshot,
     ) =>
         resolveInstanceBreadcrumb(
             route,
             state,
             inject(TrainingResolverHelperService),
-            TrainingTypeEnum.LINEAR
+            TrainingTypeEnum.LINEAR,
         ),
     adaptiveInstanceBreadcrumbResolver: (
         route: ActivatedRouteSnapshot,
-        state: RouterStateSnapshot
+        state: RouterStateSnapshot,
     ) =>
         resolveInstanceBreadcrumb(
             route,
             state,
             inject(TrainingResolverHelperService),
-            TrainingTypeEnum.ADAPTIVE
+            TrainingTypeEnum.ADAPTIVE,
         ),
 };

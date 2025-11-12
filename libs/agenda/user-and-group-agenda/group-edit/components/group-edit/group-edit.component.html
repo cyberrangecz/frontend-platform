@@ -1,67 +1,67 @@
 <form [formGroup]="groupEditFormGroup.formGroup">
-  <div class="content">
-    <div class="row-panel">
-      <div class="row-item">
-        <!-- NAME field> -->
-        <mat-form-field appearance="outline" class="name-form">
-          <mat-label>Name</mat-label>
-          <input matInput placeholder="Name" formControlName="name" required>
-          @if (name) {
-            <button matSuffix mat-icon-button aria-label="Clear" (click)="name.setValue('')">
-              <mat-icon>close</mat-icon>
-            </button>
-          }
-          <mat-error>Name is required</mat-error>
-        </mat-form-field>
+    <div class="content">
+        <div class="row-panel">
+            <div class="row-item">
+                <!-- NAME field> -->
+                <mat-form-field appearance="outline" class="name-form">
+                    <mat-label>Name</mat-label>
+                    <input formControlName="name" matInput placeholder="Name" required>
+                    @if (name) {
+                        <button (click)="name.setValue('')" aria-label="Clear" mat-icon-button matSuffix>
+                            <mat-icon>close</mat-icon>
+                        </button>
+                    }
+                    <mat-error>Name is required</mat-error>
+                </mat-form-field>
 
-      </div>
+            </div>
 
-      <div class="row-item">
-        <!-- EXPIRATION Date field -->
-        <div class="expiration">
-          <mat-form-field appearance="outline" class="expiration-form">
-            <mat-label>Expiration Date</mat-label>
-            @if (expirationDate.value) {
-              <button
-                matSuffix
-                mat-icon-button
-                aria-label="Clear"
-                (click)="expirationDate.setValue(null)">
-                <mat-icon>close</mat-icon>
-              </button>
-            }
-            <input matInput [min]="tomorrow" [matDatepicker]="picker" formControlName="expirationDate"
-              placeholder="Expires on">
-            <mat-datepicker #picker/>
-            <mat-datepicker-toggle matSuffix [for]="picker"/>
-          </mat-form-field>
+            <div class="row-item">
+                <!-- EXPIRATION Date field -->
+                <div class="expiration">
+                    <mat-form-field
+                        [owlDateTimeTrigger]="expirationDatePicker"
+                        appearance="outline" class="expiration-form"
+                    >
+                        <mat-label>Expiration Date</mat-label>
+                        <input
+                            [min]="tomorrow"
+                            [owlDateTime]="expirationDatePicker"
+                            formControlName="expirationDate"
+                            matInput
+                            placeholder="Expires on"
+                        />
+                        <owl-date-time
+                            #expirationDatePicker
+                        />
+                    </mat-form-field>
+                </div>
+            </div>
         </div>
-      </div>
+
     </div>
 
-  </div>
-
-  <!-- DESCRIPTION field -->
-  <mat-form-field appearance="outline" class="description-form">
-    <mat-label>Description</mat-label>
-    <textarea
-      matInput
-      maxlength="255"
-      class="description-form__texarea"
-      placeholder="Description"
-      formControlName="description"
-    required></textarea>
-    @if (description) {
-      <button
-        class="description-form__clear"
-        mat-icon-button
-        aria-label="Clear"
-        matTooltip="Clear"
-        matTooltipPosition="right"
-        (click)="description.setValue('')">
-        <mat-icon>close</mat-icon>
-      </button>
-    }
-    <mat-error>Description is required</mat-error>
-  </mat-form-field>
+    <!-- DESCRIPTION field -->
+    <mat-form-field appearance="outline" class="description-form">
+        <mat-label>Description</mat-label>
+        <textarea
+            class="description-form__texarea"
+            formControlName="description"
+            matInput
+            maxlength="255"
+            placeholder="Description"
+            required></textarea>
+        @if (description) {
+            <button
+                (click)="description.setValue('')"
+                aria-label="Clear"
+                class="description-form__clear"
+                mat-icon-button
+                matTooltip="Clear"
+                matTooltipPosition="right">
+                <mat-icon>close</mat-icon>
+            </button>
+        }
+        <mat-error>Description is required</mat-error>
+    </mat-form-field>
 </form>

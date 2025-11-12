@@ -1,13 +1,14 @@
-import {ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit} from '@angular/core';
-import {ActivatedRoute, RouterLink, RouterLinkActive, RouterOutlet} from '@angular/router';
-import {Observable} from 'rxjs';
-import {LinearTrainingDefinitionApi} from '@crczp/training-api';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {MatTabLink, MatTabNav} from "@angular/material/tabs";
-import {MatIcon} from "@angular/material/icon";
-import {WalkthroughService} from "./walkthrough-wrapper/services/walkthrough.service";
-import {TrainingInstanceResultsRoutingModule} from "./training-instance-results-routing.module";
-import {TrainingInstance} from "@crczp/training-model";
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { ActivatedRoute, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { Observable } from 'rxjs';
+import { LinearTrainingDefinitionApi } from '@crczp/training-api';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { MatTabLink, MatTabNav } from '@angular/material/tabs';
+import { MatIcon } from '@angular/material/icon';
+import { WalkthroughService } from './walkthrough-wrapper/services/walkthrough.service';
+import { TrainingInstanceResultsRoutingModule } from './training-instance-results-routing.module';
+import { TrainingInstance } from '@crczp/training-model';
+import { filter } from 'rxjs/operators';
 
 /**
  * Component displaying training instance results visualizations
@@ -24,7 +25,7 @@ import {TrainingInstance} from "@crczp/training-model";
         RouterLinkActive,
         MatIcon,
         RouterOutlet,
-        TrainingInstanceResultsRoutingModule
+        TrainingInstanceResultsRoutingModule,
     ],
     providers: [WalkthroughService],
 })
@@ -36,12 +37,16 @@ export class TrainingInstanceResultsComponent implements OnInit {
 
     ngOnInit(): void {
         this.activeRoute.data
-            .pipe(takeUntilDestroyed(this.destroyRef))
+            .pipe(
+                takeUntilDestroyed(this.destroyRef),
+                filter((data) => !!data[TrainingInstance.name]),
+            )
             .subscribe(
                 (data) =>
-                    (this.hasReferenceSolution$ = this.trainingDefinitionApi.hasReferenceSolution(
-                        data[TrainingInstance.name].trainingDefinition.id,
-                    )),
+                    (this.hasReferenceSolution$ =
+                        this.trainingDefinitionApi.hasReferenceSolution(
+                            data[TrainingInstance.name].trainingDefinition.id,
+                        )),
             );
     }
 }

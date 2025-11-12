@@ -13,7 +13,7 @@ import { CheatingDetectionEditService } from '../services/cheating-detection-edi
 import { ActivatedRoute } from '@angular/router';
 import { CheatingDetection, TrainingInstance } from '@crczp/training-model';
 import { SentinelControlItem, SentinelControlsComponent } from '@sentinel/components/controls';
-import { map } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 import { defer, Observable, of } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
@@ -76,7 +76,8 @@ export class CheatingDetectionEditComponent {
     constructor() {
         this.trainingInstance$ = this.activeRoute.data.pipe(
             takeUntilDestroyed(this.destroyRef),
-            map((data) => data[TrainingInstance.name] || null),
+            filter((data) => !!data[TrainingInstance.name]),
+            map((data) => data[TrainingInstance.name]),
         );
         this.trainingInstance$.subscribe((instance) => {
             this.trainingInstanceId = instance.id;

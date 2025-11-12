@@ -24,7 +24,6 @@ export { UserAnsibleCleanupStage } from './pool-request/stage/user-ansible-clean
 export { CleanupRequestStage } from './pool-request/stage/cleanup-request-stage';
 export { TerraformAllocationStage } from './pool-request/stage/terraform-allocation-stage';
 export { TerraformCleanupStage } from './pool-request/stage/terraform-cleanup-stage';
-export { TerraformOutput } from './pool-request/stage/terraform-event';
 export { CloudResource } from './pool-request/stage/cloud-resource';
 export { RequestStage } from './pool-request/stage/request-stage';
 export { LogOutput } from './pool-request/stage/log-output';

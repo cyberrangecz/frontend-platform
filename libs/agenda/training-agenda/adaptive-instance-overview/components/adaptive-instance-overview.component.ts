@@ -1,23 +1,14 @@
-import {
-    ChangeDetectionStrategy,
-    Component,
-    DestroyRef,
-    inject,
-    OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import {
     SentinelRowDirective,
     SentinelTable,
     SentinelTableComponent,
     TableActionEvent,
-    TableLoadEvent,
+    TableLoadEvent
 } from '@sentinel/components/table';
 import { TrainingInstance } from '@crczp/training-model';
-import {
-    SentinelControlItem,
-    SentinelControlsComponent,
-} from '@sentinel/components/controls';
+import { SentinelControlItem, SentinelControlsComponent } from '@sentinel/components/controls';
 import { map, take } from 'rxjs/operators';
 import { AdaptiveInstanceOverviewService } from '../services/state/adaptive-instance-overview.service';
 import { AdaptiveInstanceOverviewControls } from '../model/adapters/adaptive-instance-overview-controls';
@@ -28,18 +19,11 @@ import { CdkCopyToClipboard } from '@angular/cdk/clipboard';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import {
-    LogoSpinnerComponent,
-    TableCountdownComponent,
-    TableDateCellComponent,
-} from '@crczp/components';
-import {
-    NotificationService,
-    PaginationStorageService,
-    providePaginationStorageService,
-} from '@crczp/utils';
-import { createPaginationEvent, PaginationMapper } from '@crczp/api-common';
+import { TableCountdownComponent, TableDateCellComponent } from '@crczp/components';
+import { NotificationService, PaginationStorageService, providePaginationStorageService } from '@crczp/utils';
+import { PaginationMapper } from '@crczp/api-common';
 import { TrainingInstanceSort } from '@crczp/training-api';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
 
 @Component({
     selector: 'crczp-adaptive-instance-overview',
@@ -56,9 +40,9 @@ import { TrainingInstanceSort } from '@crczp/training-api';
         MatTooltip,
         MatButton,
         MatIcon,
-        LogoSpinnerComponent,
         NgClass,
         SentinelRowDirective,
+        MatProgressSpinner,
     ],
     providers: [
         providePaginationStorageService(AdaptiveInstanceOverviewComponent),
@@ -80,9 +64,10 @@ export class AdaptiveInstanceOverviewComponent implements OnInit {
     private notificationService = inject(NotificationService);
 
     private readonly initialPagination =
-        createPaginationEvent<TrainingInstanceSort>({
-            sort: 'id',
-        });
+        this.paginationService.createPagination<TrainingInstanceSort>(
+            this.INITIAL_SORT_NAME,
+            this.INITIAL_SORT_DIR,
+        );
 
     ngOnInit(): void {
         this.controls = AdaptiveInstanceOverviewControls.create(this.service);

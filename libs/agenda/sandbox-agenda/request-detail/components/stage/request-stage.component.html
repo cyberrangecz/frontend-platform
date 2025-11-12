@@ -17,7 +17,7 @@
                 @if (infoExpanded()) {
                     <div class="allocation-info">
                         @if (stage().start) {
-                            <div class="hflex g-0-5rem ai-c">
+                            <div class="hflex g-0-5rem ai-center">
                                 <mat-icon
                                     [matTooltipPosition]="'before'"
                                     [matTooltip]="'Start Time'"
@@ -28,7 +28,7 @@
                         }
 
                         @if (stage().end) {
-                            <div class="hflex g-0-5rem ai-c">
+                            <div class="hflex g-0-5rem ai-center">
                                 <mat-icon
                                     [matTooltipPosition]="'before'"
                                     [matTooltip]="'End Time'"
@@ -38,7 +38,7 @@
                             </div>
                         }
                         @if (stage().start && stage().end) {
-                            <div class="hflex g-0-5rem ai-c">
+                            <div class="hflex g-0-5rem ai-center">
                                 <mat-icon
                                     [matTooltipPosition]="'before'"
                                     [matTooltip]="'Duration'"
@@ -60,7 +60,7 @@
                         @if (stage().repoUrl) {
                             <a (click)="openRepoInNewTab($event, stage().repoUrl)"
                                [href]="stage().repoUrl"
-                               class="hflex g-0-5rem ai-c repo-link">
+                               class="hflex g-0-5rem ai-center repo-link">
                                 <mat-icon
                                     [matTooltipPosition]="'before'"
                                     [matTooltip]="'Repository URL'"

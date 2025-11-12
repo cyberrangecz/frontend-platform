@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { PoolOverviewComponent } from '@crczp/sandbox-agenda/pool-overview';
-import { Pool } from '@crczp/sandbox-model';
+import { Pool, Request } from '@crczp/sandbox-model';
 import { SandboxApiModule } from '@crczp/sandbox-api';
 import {
     Routing,

@@ -24,7 +24,7 @@ import { SandboxResourcesConcreteService } from '../services/resources/sandbox-r
 import { QuotasComponent } from './quotas/quotas.component';
 import { AsyncPipe } from '@angular/common';
 import { PaginationStorageService, PollingService, providePaginationStorageService } from '@crczp/utils';
-import { createPaginationEvent, PaginationMapper } from '@crczp/api-common';
+import { PaginationMapper } from '@crczp/api-common';
 import { PoolSort } from '@crczp/sandbox-api';
 import { TableStateCellComponent } from '@crczp/components';
 
@@ -82,9 +82,10 @@ export class PoolOverviewComponent implements OnInit {
     private sandboxInstanceService = inject(SandboxInstanceService);
     private paginationService = inject(PaginationStorageService);
 
-    private readonly initialPoolPagination = createPaginationEvent<PoolSort>({
-        sort: this.DEFAULT_SORT_COLUMN,
-    });
+    private readonly initialPoolPagination =
+        this.paginationService.createPagination<PoolSort>(
+            this.DEFAULT_SORT_COLUMN,
+        );
 
     constructor() {
         this.resources$ = this.sandboxResourcesService.resources$;

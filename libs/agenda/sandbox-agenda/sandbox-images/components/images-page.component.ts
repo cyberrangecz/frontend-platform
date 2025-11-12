@@ -20,7 +20,7 @@ import {
     PaginationStorageService,
     providePaginationStorageService,
 } from '@crczp/utils';
-import { createPaginationEvent, PaginationMapper } from '@crczp/api-common';
+import { PaginationMapper } from '@crczp/api-common';
 import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import { VmImageSort } from '@crczp/sandbox-api';
 
@@ -52,9 +52,9 @@ export class ImagesPageComponent implements OnInit {
     private lastFilter: string;
 
     private readonly initialImagesPagination =
-        createPaginationEvent<VmImageSort>({
-            sort: this.DEFAULT_SORT_COLUMN,
-        });
+        this.paginationService.createPagination<VmImageSort>(
+            this.DEFAULT_SORT_COLUMN,
+        );
 
     constructor() {
         const vmImagesService = this.vmImagesService;

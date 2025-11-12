@@ -6,7 +6,7 @@ import {
     runInInjectionContext,
 } from '@angular/core';
 import { RequestStagesService } from '../services/state/request-stages.service';
-import { RequestDetailComponent } from './shared/request-detail.component';
+import { RequestDetailComponent } from './request-detail.component';
 import { AllocationStagesConcreteService } from '../services/state/allocation-stages-concrete.service';
 import { StagesDetailPollRegistry } from '../services/state/detail/stages-detail-poll-registry.service';
 import { RequestStageComponent } from './stage/request-stage.component';
@@ -19,8 +19,8 @@ import { OutputsService } from '../services/state/detail/outputs.service';
 
 @Component({
     selector: 'crczp-allocation-request-detail',
-    templateUrl: './shared/request-detail.component.html',
-    styleUrls: ['./shared/request-detail.component.scss'],
+    templateUrl: './request-detail.component.html',
+    styleUrls: ['./request-detail.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [
         {

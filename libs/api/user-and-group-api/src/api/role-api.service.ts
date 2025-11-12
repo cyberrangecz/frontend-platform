@@ -11,7 +11,7 @@ import { RoleMapper } from '../mappers/role-mapper';
 import { UserMapper } from '../mappers/user.mapper';
 import { JavaPaginatedResource, OffsetPaginatedResource, ParamsBuilder, QueryParam } from '@crczp/api-common';
 import { PortalConfig } from '@crczp/utils';
-import { UserSort } from './sort';
+import { RoleSort, UserSort } from './sort';
 
 /**
  * Default implementation of service abstracting http communication with roles endpoint
@@ -49,7 +49,7 @@ export class RoleApi {
      */
     getRolesNotInGroup(
         groupId: number,
-        pagination: OffsetPaginationEvent<UserSort>,
+        pagination: OffsetPaginationEvent<RoleSort>,
         filters?: QueryParam[],
     ): Observable<OffsetPaginatedResource<UserRole>> {
         const params = SentinelParamsMerger.merge([

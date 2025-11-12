@@ -6,7 +6,7 @@ export class HostNodeDTO extends Z.class({
     os_type: z.string(),
     gui_access: z.boolean(),
     is_accessible: z.boolean(),
-    ip: z.string(),
+    ip: z.string().nullable(),
 }) {}
 
 export class SubnetDTO extends Z.class({

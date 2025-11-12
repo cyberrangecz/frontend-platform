@@ -3,7 +3,7 @@ import { Column, Row, SentinelTable } from '@sentinel/components/table';
 import { defer, of } from 'rxjs';
 import { UserAssignService } from '../../services/state/user-assign.service';
 import { UserDeleteAction } from '@crczp/user-and-group-agenda/internal';
-import { OffsetPaginatedResource, PaginationMapper } from '@crczp/api-common';
+import { OffsetPaginatedResource } from '@crczp/api-common';
 
 /**
  * Class creating data source for group-overview members table
@@ -30,10 +30,7 @@ export class GroupMemberTable extends SentinelTable<User, string> {
             new Column<string>('issuer', 'issuer', true, 'iss'),
         ];
         super(rows, columns);
-        this.pagination = PaginationMapper.fromArray(
-            resource.elements,
-            resource.pagination.size,
-        );
+        this.pagination = resource.pagination;
         this.filterable = true;
         this.filterLabel = 'Filter by name';
         this.selectable = true;

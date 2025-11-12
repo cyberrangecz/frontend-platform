@@ -4,11 +4,7 @@ import { AdaptiveInstanceOverviewComponent } from '@crczp/training-agenda/adapti
 import { TrainingApiModule } from '@crczp/training-api';
 import { SandboxApiModule } from '@crczp/sandbox-api';
 import { TrainingInstance } from '@crczp/training-model';
-import {
-    Routing,
-    TrainingResolverHelperService,
-    ValidRouterConfig,
-} from '@crczp/routing-commons';
+import { Routing, TrainingResolverHelperService, ValidRouterConfig } from '@crczp/routing-commons';
 import { canDeactivateTrainingInstance } from '@crczp/training-agenda/instance-edit';
 
 const routes: ValidRouterConfig<'adaptive-instance'> = [
@@ -20,7 +16,7 @@ const routes: ValidRouterConfig<'adaptive-instance'> = [
         path: 'create',
         loadComponent: () =>
             import('@crczp/training-agenda/instance-edit').then(
-                (m) => m.AdaptiveTrainingInstanceEditOverviewComponent
+                (m) => m.AdaptiveTrainingInstanceEditOverviewComponent,
             ),
         resolve: {
             breadcrumb:
@@ -35,7 +31,7 @@ const routes: ValidRouterConfig<'adaptive-instance'> = [
         path: ':instanceId/edit',
         loadComponent: () =>
             import('@crczp/training-agenda/instance-edit').then(
-                (m) => m.AdaptiveTrainingInstanceEditOverviewComponent
+                (m) => m.AdaptiveTrainingInstanceEditOverviewComponent,
             ),
         resolve: {
             [TrainingInstance.name]:
@@ -52,7 +48,7 @@ const routes: ValidRouterConfig<'adaptive-instance'> = [
         path: ':instanceId/access-token',
         loadComponent: () =>
             import('@crczp/training-agenda/instance-access-token').then(
-                (m) => m.AccessTokenDetailComponent
+                (m) => m.AccessTokenDetailComponent,
             ),
         resolve: {
             [TrainingInstance.name]:
@@ -77,13 +73,13 @@ const routes: ValidRouterConfig<'adaptive-instance'> = [
         },
         loadChildren: () =>
             import('@crczp/training-agenda/adaptive-instance-summary').then(
-                (m) => m.AdaptiveInstanceSummaryComponent
+                (m) => m.AdaptiveInstanceSummaryComponent,
             ),
     },
     {
         path: ':instanceId/results',
         resolve: {
-            trainingInstance:
+            [TrainingInstance.name]:
                 Routing.Resolvers.TrainingInstance.adaptiveInstanceResolver,
             breadcrumb:
                 Routing.Resolvers.TrainingInstance
@@ -93,13 +89,13 @@ const routes: ValidRouterConfig<'adaptive-instance'> = [
         },
         loadChildren: () =>
             import('@crczp/training-agenda/adaptive-instance-results').then(
-                (m) => m.AdaptiveInstanceResultsComponent
+                (m) => m.AdaptiveInstanceResultsComponent,
             ),
     },
     {
         path: ':instanceId/progress',
         resolve: {
-            trainingInstance:
+            [TrainingInstance.name]:
                 Routing.Resolvers.TrainingInstance.adaptiveInstanceResolver,
             breadcrumb:
                 Routing.Resolvers.TrainingInstance
@@ -109,13 +105,13 @@ const routes: ValidRouterConfig<'adaptive-instance'> = [
         },
         loadChildren: () =>
             import('@crczp/training-agenda/adaptive-instance-progress').then(
-                (m) => m.AdaptiveInstanceProgressComponent
+                (m) => m.AdaptiveInstanceProgressComponent,
             ),
     },
     {
         path: ':instanceId/runs',
         resolve: {
-            trainingInstance:
+            [TrainingInstance.name]:
                 Routing.Resolvers.TrainingInstance.adaptiveInstanceResolver,
             breadcrumb:
                 Routing.Resolvers.TrainingInstance
@@ -125,7 +121,7 @@ const routes: ValidRouterConfig<'adaptive-instance'> = [
         },
         loadChildren: () =>
             import('@crczp/training-agenda/adaptive-instance-runs').then(
-                (m) => m.AdaptiveInstanceRunsComponent
+                (m) => m.AdaptiveInstanceRunsComponent,
             ),
     },
 ];
