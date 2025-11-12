@@ -27,7 +27,7 @@ import { MatIcon } from '@angular/material/icon';
 import { AsyncPipe } from '@angular/common';
 import { RoleAssignService } from '../../services/state/role-assign.service';
 import { PaginationStorageService, providePaginationStorageService } from '@crczp/utils';
-import { createPaginationEvent, OffsetPaginatedResource, PaginationMapper } from '@crczp/api-common';
+import { OffsetPaginatedResource, PaginationMapper } from '@crczp/api-common';
 import { RoleSort } from '@crczp/user-and-group-api';
 
 /**
@@ -100,10 +100,11 @@ export class GroupRoleAssignComponent implements OnChanges {
     private roleAssignService = inject(RoleAssignService);
     private paginationService = inject(PaginationStorageService);
 
-    private readonly initialRolesPagination = createPaginationEvent<RoleSort>({
-        sort: 'roleType',
-        sortDir: 'asc',
-    });
+    private readonly initialRolesPagination =
+        this.paginationService.createPagination<RoleSort>(
+            this.ROLES_OF_GROUP_INIT_SORT_NAME,
+            this.ROLES_OF_GROUP_INIT_SORT_DIR,
+        );
 
     constructor() {
         this.roleMapping = {

@@ -11,7 +11,7 @@ import { MatCard } from '@angular/material/card';
 import { TrainingRunOverviewComponent } from './training-run-overview/training-run-overview.component';
 import { AsyncPipe } from '@angular/common';
 import { PaginationStorageService, providePaginationStorageService } from '@crczp/utils';
-import { createPaginationEvent, OffsetPaginatedResource, PaginationMapper } from '@crczp/api-common';
+import { OffsetPaginatedResource, PaginationMapper } from '@crczp/api-common';
 import { TrainingRunSort } from '@crczp/training-api';
 
 /**
@@ -40,10 +40,10 @@ export class TrainingInstanceRunsComponent implements OnInit {
     private trainingInstance: TrainingInstance;
 
     private readonly initialRunPagination =
-        createPaginationEvent<TrainingRunSort>({
-            sort: 'endTime',
-            sortDir: 'desc',
-        });
+        this.paginationService.createPagination<TrainingRunSort>(
+            'endTime',
+            'asc',
+        );
 
     ngOnInit(): void {
         this.trainingInstance$ = this.activeRoute.data.pipe(

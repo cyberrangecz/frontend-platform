@@ -10,7 +10,7 @@ import { GroupOverviewService } from '../services/group-overview.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AsyncPipe } from '@angular/common';
 import { PaginationStorageService, providePaginationStorageService } from '@crczp/utils';
-import { createPaginationEvent, PaginationMapper } from '@crczp/api-common';
+import { PaginationMapper } from '@crczp/api-common';
 import { GroupSort } from '@crczp/user-and-group-api';
 
 /**
@@ -44,7 +44,11 @@ export class GroupOverviewComponent implements OnInit {
     destroyRef = inject(DestroyRef);
     private groupService = inject(GroupOverviewService);
     private paginationService = inject(PaginationStorageService);
-    private readonly initPagination = createPaginationEvent<GroupSort>({});
+    private readonly initPagination =
+        this.paginationService.createPagination<GroupSort>(
+            this.INIT_SORT_NAME,
+            this.INIT_SORT_DIR,
+        );
 
     ngOnInit(): void {
         const initialLoadEvent: TableLoadEvent<GroupSort> = {

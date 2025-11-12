@@ -26,7 +26,7 @@ import { MatCard, MatCardContent, MatCardHeader, MatCardSubtitle, MatCardTitle }
 import { MatIcon } from '@angular/material/icon';
 import { AsyncPipe } from '@angular/common';
 import { PaginationStorageService, providePaginationStorageService } from '@crczp/utils';
-import { createPaginationEvent, PaginationMapper } from '@crczp/api-common';
+import { PaginationMapper } from '@crczp/api-common';
 import { UserSort } from '@crczp/user-and-group-api';
 
 /**
@@ -109,12 +109,13 @@ export class GroupUserAssignComponent implements OnChanges {
     assignUsersControls: SentinelControlItem[] = [];
     assignedUsersControls: SentinelControlItem[] = [];
     destroyRef = inject(DestroyRef);
-    private readonly initialUserPagination = createPaginationEvent<UserSort>({
-        sort: 'fullName',
-        sortDir: 'asc',
-    });
     private userAssignService = inject(UserAssignService);
     private paginationService = inject(PaginationStorageService);
+    private readonly initialUserPagination =
+        this.paginationService.createPagination<UserSort>(
+            this.MEMBERS_OF_GROUP_INIT_SORT_NAME,
+            this.MEMBERS_OF_GROUP_INIT_SORT_DIR,
+        );
 
     ngOnChanges(changes: SimpleChanges): void {
         if (

@@ -1,5 +1,4 @@
 import { Component, DestroyRef, EventEmitter, inject, OnInit, Output } from '@angular/core';
-import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import { Observable } from 'rxjs';
 import {
     SentinelRowDirective,
@@ -18,6 +17,8 @@ import { AsyncPipe } from '@angular/common';
 import { StageOverviewComponent } from './stage-overview/stage-overview.component';
 import { PaginationStorageService, providePaginationStorageService } from '@crczp/utils';
 import { CheatingDetection, TrainingInstance } from '@crczp/training-model';
+import { PaginationMapper } from '@crczp/api-common';
+import { CheatingDetectionSort } from '@crczp/training-api';
 
 /**
  * Main component of cheating detection.
@@ -56,6 +57,10 @@ export class CheatingDetectionOverviewComponent implements OnInit {
     private activeRoute = inject(ActivatedRoute);
     private cheatingDetectionService = inject(CheatingDetectionService);
     private paginationService = inject(PaginationStorageService);
+    private readonly initialPagination =
+        this.paginationService.createPagination<CheatingDetectionSort>(
+            this.INIT_SORT_NAME,
+        );
 
     ngOnInit(): void {
         this.trainingInstance$ = this.activeRoute.data.pipe(
@@ -76,17 +81,12 @@ export class CheatingDetectionOverviewComponent implements OnInit {
      * Gets new data for table
      * @param loadEvent event emitted by table component to get new data
      */
-    onLoadEvent(loadEvent: TableLoadEvent<string>): void {
+    onLoadEvent(loadEvent: TableLoadEvent<CheatingDetectionSort>): void {
         this.paginationService.savePageSize(loadEvent.pagination.size);
         this.cheatingDetectionService
             .getAll(
                 this.trainingInstanceId,
-                new OffsetPaginationEvent(
-                    0,
-                    loadEvent.pagination.size,
-                    loadEvent.pagination.sort,
-                    loadEvent.pagination.sortDir,
-                ),
+                PaginationMapper.toOffsetPaginationEvent(loadEvent.pagination),
             )
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe();
@@ -104,12 +104,7 @@ export class CheatingDetectionOverviewComponent implements OnInit {
                     ),
             ),
         );
-        const initialPagination = new OffsetPaginationEvent(
-            0,
-            this.paginationService.loadPageSize(),
-            this.INIT_SORT_NAME,
-            this.INIT_SORT_DIR,
-        );
+        const initialPagination = this.initialPagination;
         this.onLoadEvent({ pagination: initialPagination });
     }
 }

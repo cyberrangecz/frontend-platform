@@ -1,5 +1,4 @@
 import { Component, DestroyRef, inject, Input, OnInit } from '@angular/core';
-import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import { AsyncPipe, DatePipe } from '@angular/common';
 import {
     AbstractDetectionEvent,
@@ -38,6 +37,7 @@ import { MatDivider } from '@angular/material/divider';
 import { MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
 import { CommandTimelineComponent } from '@crczp/visualization-components';
 import { PaginationStorageService, providePaginationStorageService } from '@crczp/utils';
+import { createInfinitePaginationEvent, PaginationMapper } from '@crczp/api-common';
 
 /**
  * Main component of training instance detection event detail.
@@ -78,8 +78,6 @@ import { PaginationStorageService, providePaginationStorageService } from '@crcz
 })
 export class TrainingInstanceDetectionEventDetailComponent implements OnInit {
     @Input() event: AbstractDetectionEvent;
-    readonly INIT_SORT_NAME = 'lastEdited';
-    readonly INIT_SORT_DIR = 'asc';
     participantTableHasError$: Observable<boolean>;
     participantTableIsLoading$: Observable<boolean>;
     forbiddenCommandsTableHasError$: Observable<boolean>;
@@ -205,33 +203,23 @@ export class TrainingInstanceDetectionEventDetailComponent implements OnInit {
      * Gets new data for table
      * @param loadEvent event emitted by table component to get new data
      */
-    onLoadEventParticipants(loadEvent: TableLoadEvent<string>): void {
+    onLoadEventParticipants(loadEvent: TableLoadEvent<any>): void {
         this.paginationService.savePageSize(loadEvent.pagination.size);
         this.detectionEventParticipantService
             .getAll(
                 this.eventId,
-                new OffsetPaginationEvent(
-                    0,
-                    loadEvent.pagination.size,
-                    loadEvent.pagination.sort,
-                    loadEvent.pagination.sortDir,
-                ),
+                PaginationMapper.toOffsetPaginationEvent(loadEvent.pagination),
             )
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe();
     }
 
-    onLoadEventForbiddenCommands(loadEvent: TableLoadEvent<string>): void {
+    onLoadEventForbiddenCommands(loadEvent: TableLoadEvent<any>): void {
         this.paginationService.savePageSize(loadEvent.pagination.size);
         this.detectionEventForbiddenCommandsService
             .getAll(
                 this.eventId,
-                new OffsetPaginationEvent(
-                    0,
-                    loadEvent.pagination.size,
-                    loadEvent.pagination.sort,
-                    loadEvent.pagination.sortDir,
-                ),
+                PaginationMapper.toOffsetPaginationEvent(loadEvent.pagination),
             )
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe();
@@ -246,12 +234,7 @@ export class TrainingInstanceDetectionEventDetailComponent implements OnInit {
             this.detectionEventParticipantService.resource$.pipe(
                 map((resource) => new DetectionEventParticipantTable(resource)),
             );
-        const initialPagination = new OffsetPaginationEvent(
-            0,
-            this.paginationService.loadPageSize(),
-            this.INIT_SORT_NAME,
-            this.INIT_SORT_DIR,
-        );
+        const initialPagination = createInfinitePaginationEvent();
         this.onLoadEventParticipants({ pagination: initialPagination });
     }
 
@@ -267,12 +250,7 @@ export class TrainingInstanceDetectionEventDetailComponent implements OnInit {
                         new DetectionEventForbiddenCommandsTable(resource),
                 ),
             );
-        const initialPagination = new OffsetPaginationEvent(
-            0,
-            this.paginationService.loadPageSize(),
-            this.INIT_SORT_NAME,
-            this.INIT_SORT_DIR,
-        );
+        const initialPagination = createInfinitePaginationEvent();
         this.onLoadEventForbiddenCommands({ pagination: initialPagination });
     }
 }

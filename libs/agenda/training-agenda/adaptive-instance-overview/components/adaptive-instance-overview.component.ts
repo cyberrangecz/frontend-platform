@@ -38,7 +38,7 @@ import {
     PaginationStorageService,
     providePaginationStorageService,
 } from '@crczp/utils';
-import { createPaginationEvent, PaginationMapper } from '@crczp/api-common';
+import { PaginationMapper } from '@crczp/api-common';
 import { TrainingInstanceSort } from '@crczp/training-api';
 
 @Component({
@@ -80,9 +80,10 @@ export class AdaptiveInstanceOverviewComponent implements OnInit {
     private notificationService = inject(NotificationService);
 
     private readonly initialPagination =
-        createPaginationEvent<TrainingInstanceSort>({
-            sort: 'id',
-        });
+        this.paginationService.createPagination<TrainingInstanceSort>(
+            this.INITIAL_SORT_NAME,
+            this.INITIAL_SORT_DIR,
+        );
 
     ngOnInit(): void {
         this.controls = AdaptiveInstanceOverviewControls.create(this.service);

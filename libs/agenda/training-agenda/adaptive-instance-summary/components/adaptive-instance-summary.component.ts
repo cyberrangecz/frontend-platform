@@ -18,7 +18,7 @@ import { AsyncPipe } from '@angular/common';
 import { AdaptiveRunTable } from '../model/adaptive-run-table';
 import { NotificationService, PaginationStorageService, providePaginationStorageService } from '@crczp/utils';
 import { Routing } from '@crczp/routing-commons';
-import { createPaginationEvent, PaginationMapper } from '@crczp/api-common';
+import { PaginationMapper } from '@crczp/api-common';
 import { TrainingRunSort } from '@crczp/training-api';
 
 /**
@@ -63,9 +63,7 @@ export class AdaptiveInstanceSummaryComponent implements OnInit {
     private notificationService = inject(NotificationService);
 
     private readonly trainingRunPagination =
-        createPaginationEvent<TrainingRunSort>({
-            sort: 'startTime',
-        });
+        this.paginationService.createPagination<TrainingRunSort>('startTime');
 
     ngOnInit(): void {
         this.trainingInstance$ = this.activeRoute.data.pipe(

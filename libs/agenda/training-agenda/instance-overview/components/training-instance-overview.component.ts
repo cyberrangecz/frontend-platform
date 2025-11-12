@@ -21,7 +21,7 @@ import { MatIcon } from '@angular/material/icon';
 import { CdkCopyToClipboard } from '@angular/cdk/clipboard';
 import { LogoSpinnerComponent, TableDateCellComponent } from '@crczp/components';
 import { NotificationService, PaginationStorageService, providePaginationStorageService } from '@crczp/utils';
-import { createPaginationEvent, PaginationMapper } from '@crczp/api-common';
+import { PaginationMapper } from '@crczp/api-common';
 import { TrainingInstanceSort } from '@crczp/training-api';
 
 /**
@@ -66,9 +66,10 @@ export class TrainingInstanceOverviewComponent {
     private notificationService = inject(NotificationService);
 
     private readonly initialInstancePagination =
-        createPaginationEvent<TrainingInstanceSort>({
-            sort: 'id',
-        });
+        this.paginationService.createPagination<TrainingInstanceSort>(
+            this.INITIAL_SORT_NAME,
+            this.INITIAL_SORT_DIR,
+        );
 
     constructor() {
         this.controls = TrainingInstanceOverviewControls.create(this.service);

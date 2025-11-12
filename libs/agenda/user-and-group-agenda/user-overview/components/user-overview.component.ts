@@ -11,7 +11,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { UserOverviewService } from '../services/user-overview.service';
 import { AsyncPipe } from '@angular/common';
 import { FileUploadProgressService, PaginationStorageService, providePaginationStorageService } from '@crczp/utils';
-import { createPaginationEvent } from '@crczp/api-common';
 import { UserSort } from '@crczp/user-and-group-api';
 
 /**
@@ -46,7 +45,11 @@ export class UserOverviewComponent implements OnInit {
     private userService = inject(UserOverviewService);
     private paginationService = inject(PaginationStorageService);
 
-    private readonly initPagination = createPaginationEvent<UserSort>({});
+    private readonly initPagination =
+        this.paginationService.createPagination<UserSort>(
+            this.INIT_SORT_NAME,
+            this.INIT_SORT_DIR,
+        );
 
     ngOnInit(): void {
         const initialLoadEvent: TableLoadEvent<string> = {

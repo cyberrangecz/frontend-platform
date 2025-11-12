@@ -1,16 +1,18 @@
 import { Component, DestroyRef, inject, OnInit } from '@angular/core';
-import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import { Observable } from 'rxjs';
 import { SentinelTable, SentinelTableComponent, TableLoadEvent } from '@sentinel/components/table';
 import { AbstractDetectionEvent, TrainingInstance } from '@crczp/training-model';
 import { map } from 'rxjs/operators';
 import { DetectionEventTable } from '../model/detection-event-table';
-import { DetectionEventService } from '../services/detection-event.service';
 import { ActivatedRoute } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AsyncPipe } from '@angular/common';
 import { DetectionEventConcreteService } from '../services/detection-event-concrete.service';
 import { PaginationStorageService, providePaginationStorageService } from '@crczp/utils';
+import {
+    DetectionEventService
+} from '../../instance-detection-event-detail/services/detection-event/detection-event.service';
+import { PaginationMapper } from '@crczp/api-common';
 
 /**
  * Main component of training instance detection event.
@@ -64,12 +66,7 @@ export class TrainingInstanceDetectionEventComponent implements OnInit {
             .getAll(
                 this.cheatingDetectionId,
                 this.trainingInstanceId,
-                new OffsetPaginationEvent(
-                    0,
-                    loadEvent.pagination.size,
-                    loadEvent.pagination.sort,
-                    loadEvent.pagination.sortDir,
-                ),
+                PaginationMapper.toOffsetPaginationEvent(loadEvent.pagination),
                 loadEvent.filter,
             )
             .pipe(takeUntilDestroyed(this.destroyRef))
@@ -88,12 +85,8 @@ export class TrainingInstanceDetectionEventComponent implements OnInit {
                     ),
             ),
         );
-        const initialPagination = new OffsetPaginationEvent(
-            0,
-            this.paginationService.loadPageSize(),
-            this.INIT_SORT_NAME,
-            this.INIT_SORT_DIR,
-        );
+        const initialPagination =
+            this.paginationService.createPagination<never>();
         this.onLoadEvent({ pagination: initialPagination });
     }
 }

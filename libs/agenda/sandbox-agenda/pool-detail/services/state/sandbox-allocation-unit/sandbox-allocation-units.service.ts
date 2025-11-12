@@ -1,7 +1,7 @@
 import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { SandboxAllocationUnit } from '@crczp/sandbox-model';
-import { AllocationRequestSort } from '@crczp/sandbox-api';
+import { AllocationRequestSort, SandboxInstanceSort } from '@crczp/sandbox-api';
 import { OffsetPaginatedResource } from '@crczp/api-common';
 
 export abstract class SandboxAllocationUnitsService {
@@ -15,7 +15,7 @@ export abstract class SandboxAllocationUnitsService {
      * @contract Needs to be updated in onManualResourceRefresh method
      * Last pagination used when requesting new data
      */
-    protected lastPagination: OffsetPaginationEvent<AllocationRequestSort>;
+    protected lastPagination: OffsetPaginationEvent<SandboxInstanceSort>;
     /**
      * True if server returned error response on the latest request, false otherwise
      * Change internally in extending service. Client should subscribe to the observable

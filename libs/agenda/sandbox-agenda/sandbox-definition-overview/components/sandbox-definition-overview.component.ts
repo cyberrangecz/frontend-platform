@@ -21,7 +21,7 @@ import {
     PaginationStorageService,
     providePaginationStorageService,
 } from '@crczp/utils';
-import { createPaginationEvent, PaginationMapper } from '@crczp/api-common';
+import { PaginationMapper } from '@crczp/api-common';
 import { SandboxDefinitionSort } from '@crczp/sandbox-api';
 
 @Component({
@@ -50,9 +50,7 @@ export class SandboxDefinitionOverviewComponent implements OnInit {
     private sandboxDefinitionService = inject(SandboxDefinitionOverviewService);
     private paginationService = inject(PaginationStorageService);
     private lastLoadEvent: TableLoadEvent<SandboxDefinitionSort> = {
-        pagination: createPaginationEvent({
-            sort: 'name',
-        }),
+        pagination: this.paginationService.createPagination('name'),
     };
 
     ngOnInit(): void {

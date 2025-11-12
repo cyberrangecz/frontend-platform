@@ -2,7 +2,6 @@ import { TrainingInstanceDTO } from '../dto/training-instance/training-instance-
 import { TrainingDefinitionDTO } from '../dto/training-definition/training-definition-dto';
 import { TrainingRunDTO } from '../dto/training-run/training-run-dto';
 import { UserRefDTO } from '../dto/user/user-ref-dto';
-import { CheatingDetectionDTO } from '../dto/cheating-detection/cheating-detection-dto';
 import { DetectedForbiddenCommandDTO } from '../dto/detection-event/detected-forbidden-command-dto';
 import { DetectionEventParticipantDTO } from '../dto/detection-event/detection-event-participant-dto';
 import { DetectionEventDTO } from '../dto/detection-event/detection-event-dto';
@@ -15,9 +14,7 @@ export type TrainingDefinitionSort = SnakeToCamelCase<
 export type TrainingRunSort = SnakeToCamelCase<keyof TrainingRunDTO>;
 export type AccessedTrainingRunSort = 'endTime' | 'startTime';
 export type UserRefSort = SnakeToCamelCase<keyof UserRefDTO>;
-export type CheatingDetectionSort = SnakeToCamelCase<
-    keyof CheatingDetectionDTO
->;
+export type CheatingDetectionSort = 'lastEdited';
 export type AbstractDetectionEventSort = SnakeToCamelCase<
     keyof DetectionEventDTO
 >;

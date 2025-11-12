@@ -28,55 +28,59 @@
                         <div class="icon-label">Number of Participants</div>
                         <div class="value-field">{{ detectionEvent.participantCount }}</div>
                     </div>
-                } @if (locationSimilarityEvent$ | async; as locationSimilarityEvent) {
-                <div class="data-field">
-                    <mat-icon class="material-icons-round"> web</mat-icon>
-                    <div class="icon-label">Domain Name</div>
-                    <div class="value-field">{{ locationSimilarityEvent.dns }}</div>
-                </div>
-            } @if (locationSimilarityEvent$ | async; as locationSimilarityEvent) {
-                <div class="data-field">
-                    <mat-icon class="material-icons-round"> domain</mat-icon>
-                    <div class="icon-label">Is Address of Deployment</div>
-                    <div class="value-field">{{ locationSimilarityEvent.isAddressDeploy ? "Yes" : "No" }}</div>
-                </div>
-            } @if (timeProximityEvent$ | async; as timeProximityEvent) {
-                <div class="data-field">
-                    <mat-icon class="material-icons-round"> history</mat-icon>
-                    <div class="icon-label">Proximity Threshold</div>
-                    <div class="value-field">{{ timeProximityEvent.threshold + " seconds" }}</div>
-                </div>
-            } @if (answerSimilarityEvent$ | async; as answerSimilarityEvent) {
-                <div class="data-field">
-                    <mat-icon class="material-icons-round"> assignment_ind</mat-icon>
-                    <div class="icon-label">Answer Owner</div>
-                    <div class="value-field">{{ answerSimilarityEvent.answerOwner }}</div>
-                </div>
-            } @if (answerSimilarityEvent$ | async; as answerSimilarityEvent) {
-                <div class="data-field">
-                    <mat-icon class="material-icons-round"> done</mat-icon>
-                    <div class="icon-label">Answer</div>
-                    <div class="value-field">{{ answerSimilarityEvent.answer }}</div>
-                </div>
-            } @if (minimalSolveTimeEvent$ | async; as minimalSolveTimeEvent) {
-                <div class="data-field">
-                    <mat-icon class="material-icons-round"> pending_actions</mat-icon>
-                    <div class="icon-label">Minimal Solve Time</div>
-                    <div class="value-field">{{ minimalSolveTimeEvent.minimalSolveTime + " seconds" }}</div>
-                </div>
-            }
+                }
+                @if (locationSimilarityEvent$ | async; as locationSimilarityEvent) {
+                    <div class="data-field">
+                        <mat-icon class="material-icons-round"> web</mat-icon>
+                        <div class="icon-label">Domain Name</div>
+                        <div class="value-field">{{ locationSimilarityEvent.dns }}</div>
+                    </div>
+                }
+                @if (locationSimilarityEvent$ | async; as locationSimilarityEvent) {
+                    <div class="data-field">
+                        <mat-icon class="material-icons-round"> domain</mat-icon>
+                        <div class="icon-label">Is Address of Deployment</div>
+                        <div class="value-field">{{ locationSimilarityEvent.isAddressDeploy ? "Yes" : "No" }}</div>
+                    </div>
+                }
+                @if (timeProximityEvent$ | async; as timeProximityEvent) {
+                    <div class="data-field">
+                        <mat-icon class="material-icons-round"> history</mat-icon>
+                        <div class="icon-label">Proximity Threshold</div>
+                        <div class="value-field">{{ timeProximityEvent.threshold + " seconds" }}</div>
+                    </div>
+                }
+                @if (answerSimilarityEvent$ | async; as answerSimilarityEvent) {
+                    <div class="data-field">
+                        <mat-icon class="material-icons-round"> assignment_ind</mat-icon>
+                        <div class="icon-label">Answer Owner</div>
+                        <div class="value-field">{{ answerSimilarityEvent.answerOwner }}</div>
+                    </div>
+                }
+                @if (answerSimilarityEvent$ | async; as answerSimilarityEvent) {
+                    <div class="data-field">
+                        <mat-icon class="material-icons-round"> done</mat-icon>
+                        <div class="icon-label">Answer</div>
+                        <div class="value-field">{{ answerSimilarityEvent.answer }}</div>
+                    </div>
+                }
+                @if (minimalSolveTimeEvent$ | async; as minimalSolveTimeEvent) {
+                    <div class="data-field">
+                        <mat-icon class="material-icons-round"> pending_actions</mat-icon>
+                        <div class="icon-label">Minimal Solve Time</div>
+                        <div class="value-field">{{ minimalSolveTimeEvent.minimalSolveTime + " seconds" }}</div>
+                    </div>
+                }
             </div>
         </mat-card>
         <mat-divider />
         <div class="content">
             <h1>Participants</h1>
             <sentinel-table
-                [defaultSortDirection]="INIT_SORT_DIR"
-                [defaultSortName]="INIT_SORT_NAME"
                 [data]="participants$ | async"
+                [displayedActionsCount]="4"
                 [hasError]="participantTableHasError$ | async"
                 [isLoading]="participantTableIsLoading$ | async"
-                [displayedActionsCount]="4"
             >
             </sentinel-table>
         </div>
@@ -87,33 +91,32 @@
                         <h1>Forbidden Commands in {{ detectionEvent.levelTitle }}</h1>
                         <div class="forbidden-commands-table">
                             <sentinel-table
-                                [defaultSortDirection]="INIT_SORT_DIR"
-                                [defaultSortName]="INIT_SORT_NAME"
                                 [data]="forbiddenCommands$ | async"
+                                [displayedActionsCount]="4"
                                 [hasError]="forbiddenCommandsTableHasError$ | async"
                                 [isLoading]="forbiddenCommandsTableIsLoading$ | async"
-                                [displayedActionsCount]="4"
                             >
                             </sentinel-table>
                         </div>
                     </div>
-                } @if (detectionEvent$ | async; as detectionEvent) {
-                <div class="content">
-                    <mat-expansion-panel [expanded]="true">
-                        <mat-expansion-panel-header>
-                            <mat-panel-title>
-                                <span>Timeline</span>
-                            </mat-panel-title>
-                        </mat-expansion-panel-header>
-                        <crczp-timeline
-                            [trainingRunId]="detectionEvent.trainingRunId"
-                            [detectionEventId]="forbiddenCommandsEvent.id"
-                            [isForbidden]="true"
-                            [isStandalone]="true"
-                        />
-                    </mat-expansion-panel>
-                </div>
-            }
+                }
+                @if (detectionEvent$ | async; as detectionEvent) {
+                    <div class="content">
+                        <mat-expansion-panel [expanded]="true">
+                            <mat-expansion-panel-header>
+                                <mat-panel-title>
+                                    <span>Timeline</span>
+                                </mat-panel-title>
+                            </mat-expansion-panel-header>
+                            <crczp-timeline
+                                [detectionEventId]="forbiddenCommandsEvent.id"
+                                [isForbidden]="true"
+                                [isStandalone]="true"
+                                [trainingRunId]="detectionEvent.trainingRunId"
+                            />
+                        </mat-expansion-panel>
+                    </div>
+                }
             </div>
         }
     }

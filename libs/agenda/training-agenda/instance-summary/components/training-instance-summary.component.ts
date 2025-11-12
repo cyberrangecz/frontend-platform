@@ -17,7 +17,7 @@ import { TrainingInstanceRunsComponent } from './runs/training-instance-runs.com
 import { AsyncPipe } from '@angular/common';
 import { NotificationService, PaginationStorageService, providePaginationStorageService } from '@crczp/utils';
 import { Routing } from '@crczp/routing-commons';
-import { createPaginationEvent, PaginationMapper } from '@crczp/api-common';
+import { PaginationMapper } from '@crczp/api-common';
 import { TrainingRunSort } from '@crczp/training-api';
 
 /**
@@ -61,10 +61,10 @@ export class TrainingInstanceSummaryComponent implements OnInit {
     private trainingRunService = inject(TrainingRunSummaryService);
 
     private readonly initialRunPagination =
-        createPaginationEvent<TrainingRunSort>({
-            sort: 'endTime',
-            sortDir: 'desc',
-        });
+        this.paginationService.createPagination<TrainingRunSort>(
+            'endTime',
+            'asc',
+        );
 
     ngOnInit(): void {
         this.trainingInstance$ = this.activeRoute.data.pipe(

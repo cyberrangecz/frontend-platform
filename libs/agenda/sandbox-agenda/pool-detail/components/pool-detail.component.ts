@@ -1,7 +1,7 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { SortDir } from '@sentinel/common/pagination';
-import { createPaginationEvent, OffsetPaginatedResource, PaginationMapper } from '@crczp/api-common';
+import { OffsetPaginatedResource, PaginationMapper } from '@crczp/api-common';
 import { SentinelControlItem, SentinelControlsComponent } from '@sentinel/components/controls';
 import { Pool, RequestStageState, SandboxAllocationUnit } from '@crczp/sandbox-model';
 import { SentinelRowDirective, SentinelTableComponent, TableLoadEvent } from '@sentinel/components/table';
@@ -30,7 +30,7 @@ import {
     SandboxAllocationUnitsConcreteService
 } from '../services/state/sandbox-allocation-unit/sandbox-allocation-units-concrete.service';
 import { SandboxInstanceService } from '../services/state/sandbox-instance/sandbox-instance.service';
-import { AllocationRequestSort, PoolSort, SandboxInstanceSort } from '@crczp/sandbox-api';
+import { AllocationRequestSort, PoolSort } from '@crczp/sandbox-api';
 import { PoolDetailRowAdapter } from '../model/pool-detail-row-adapter';
 
 /**
@@ -81,14 +81,12 @@ export class PoolDetailComponent implements OnInit, AfterViewInit {
     private paginationService = inject(PaginationStorageService);
     private activeRoute = inject(ActivatedRoute);
     private subscription: Subscription;
-    private readonly initAllocationRequestPagination =
-        createPaginationEvent<AllocationRequestSort>({});
 
     private readonly initSandboxPagination =
-        createPaginationEvent<SandboxInstanceSort>({
-            sort: 'id',
-            sortDir: 'asc',
-        });
+        this.paginationService.createPagination<AllocationRequestSort>(
+            'id',
+            'asc',
+        );
 
     ngOnInit(): void {
         this.initTable();
@@ -109,10 +107,12 @@ export class PoolDetailComponent implements OnInit, AfterViewInit {
             this.subscription.unsubscribe();
         }
         this.subscription = this.sandboxInstanceService
-            .getAllUnits(
-                this.pool.id,
-                PaginationMapper.toOffsetPaginationEvent(loadEvent.pagination),
-            )
+            .getAllUnits(this.pool.id, {
+                ...PaginationMapper.toOffsetPaginationEvent(
+                    loadEvent.pagination,
+                ),
+                sort: 'id',
+            })
             .pipe(takeUntilDestroyed(this.destroyRef), take(1))
             .subscribe();
     }
@@ -159,7 +159,7 @@ export class PoolDetailComponent implements OnInit, AfterViewInit {
 
     private initTable() {
         const initialLoadEvent: TableLoadEvent<AllocationRequestSort> = {
-            pagination: this.initAllocationRequestPagination,
+            pagination: this.initSandboxPagination,
         };
         this.activeRoute.data
             .pipe(takeUntilDestroyed(this.destroyRef))

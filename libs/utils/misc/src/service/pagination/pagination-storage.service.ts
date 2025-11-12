@@ -1,6 +1,7 @@
 import { inject, Injectable, Provider, Type } from '@angular/core';
 import { duration, Duration } from 'moment-mini';
 import { PortalConfig } from '../../types/config';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 
 const PAGINATION_TTL = 30; //days
 
@@ -44,7 +45,7 @@ export class PaginationRegistryService {
 }
 
 export function providePaginationStorageService<T>(
-    storageKey: Type<T> | string
+    storageKey: Type<T> | string,
 ): Provider {
     return {
         provide: PaginationStorageService,
@@ -52,31 +53,59 @@ export function providePaginationStorageService<T>(
             new PaginationStorageService(
                 storageKey instanceof Type ? storageKey.name : storageKey,
                 inject(PaginationRegistryService),
-                inject(PortalConfig).defaultPageSize
+                inject(PortalConfig).defaultPageSize,
             ),
     };
+}
+
+export function instantiatePaginationStorageService<T>(
+    storageKey: Type<T> | string,
+): PaginationStorageService {
+    const registryService = inject(PaginationRegistryService);
+    const portalConfig = inject(PortalConfig);
+    return new PaginationStorageService(
+        storageKey instanceof Type ? storageKey.name : storageKey,
+        registryService,
+        portalConfig.defaultPageSize,
+    );
 }
 
 export class PaginationStorageService {
     constructor(
         private readonly storageKey: string,
         private readonly registryService: PaginationRegistryService,
-        private readonly defaultPageSize: number
+        private readonly defaultPageSize: number,
     ) {}
 
     loadPageSize(): number {
         this.registryService.cleanup();
         const registry = this.registryService.read();
         const entry = registry[this.storageKey];
+        console.log(
+            `Loaded page size for ${this.storageKey}: ${entry?.pageSize}`,
+        );
         return entry ? entry.pageSize : this.defaultPageSize;
     }
 
     savePageSize(pageSize: number): void {
+        console.log(`Saving page size ${pageSize} for ${this.storageKey}`);
         const registry = this.registryService.read();
         registry[this.storageKey] = {
             pageSize,
             lastUpdate: Date.now(),
         };
         this.registryService.write(registry);
+    }
+
+    createPagination<Sort>(
+        sort: Sort | undefined = undefined,
+        sortDir: 'asc' | 'desc' = 'asc',
+    ): OffsetPaginationEvent<Sort> {
+        return {
+            page: 0,
+            size: this.loadPageSize(),
+            sort,
+            sortDir,
+        };
     }
 }
