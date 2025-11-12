@@ -44,7 +44,7 @@ export class SandboxInstanceApi {
         const sandboxBasePath = inject(PortalConfig).basePaths.sandbox;
         this.poolsEndpointUri = `${sandboxBasePath}/pools`;
         this.sandboxEndpointUri = `${sandboxBasePath}/sandboxes`;
-        this.unitsEndpointUri = `${sandboxBasePath}/SandboxInstanceDefaultApi`;
+        this.unitsEndpointUri = `${sandboxBasePath}/sandbox-allocation-units`;
     }
 
     /**
