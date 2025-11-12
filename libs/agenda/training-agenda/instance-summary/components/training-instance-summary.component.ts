@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit } from '
 import { ActivatedRoute } from '@angular/router';
 import { TrainingInstance } from '@crczp/training-model';
 import { Observable } from 'rxjs';
-import { map, switchMap, take, tap } from 'rxjs/operators';
+import { filter, map, switchMap, take, tap } from 'rxjs/operators';
 import { TrainingInstanceSummaryService } from '../services/state/summary/training-instance-summary.service';
 import { TableLoadEvent } from '@sentinel/components/table';
 import { TrainingRunTable } from '../model/training-run-table';
@@ -68,7 +68,8 @@ export class TrainingInstanceSummaryComponent implements OnInit {
 
     ngOnInit(): void {
         this.trainingInstance$ = this.activeRoute.data.pipe(
-            map((data) => data[TrainingInstance.name] || null),
+            filter((data) => !!data[TrainingInstance.name]),
+            map((data) => data[TrainingInstance.name]),
             tap((ti) => {
                 this.initSummaryComponent(ti);
             }),

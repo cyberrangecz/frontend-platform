@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { TrainingInstance } from '@crczp/training-model';
 import { TableLoadEvent } from '@sentinel/components/table';
 import { Observable } from 'rxjs';
-import { map, switchMap, take, tap } from 'rxjs/operators';
+import { filter, map, switchMap, take, tap } from 'rxjs/operators';
 import { TrainingRunTable } from '../model/training-run-table';
 import { TrainingRunService } from '../services/runs/training-run.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -47,7 +47,8 @@ export class TrainingInstanceRunsComponent implements OnInit {
 
     ngOnInit(): void {
         this.trainingInstance$ = this.activeRoute.data.pipe(
-            map((data) => data[TrainingInstance.name] || null),
+            filter((data) => !!data[TrainingInstance.name]),
+            map((data) => data[TrainingInstance.name]),
             tap((ti) => {
                 this.trainingInstance = ti;
             }),

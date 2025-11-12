@@ -6,7 +6,7 @@ import {
     SentinelTableComponent,
     TableLoadEvent
 } from '@sentinel/components/table';
-import { map } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 import { CheatingDetectionOverviewControls } from '../model/cheating-detection-overview-controls';
 import { CheatingDetectionService } from '../services/cheating-detection.service';
 import { CheatingDetectionTable } from '../model/cheating-detection-table';
@@ -65,7 +65,8 @@ export class CheatingDetectionOverviewComponent implements OnInit {
     ngOnInit(): void {
         this.trainingInstance$ = this.activeRoute.data.pipe(
             takeUntilDestroyed(this.destroyRef),
-            map((data) => data[TrainingInstance.name] || null),
+            filter((data) => !!data[TrainingInstance.name]),
+            map((data) => data[TrainingInstance.name]),
         );
         this.trainingInstance$.subscribe((instance) => {
             this.trainingInstanceId = instance.id;

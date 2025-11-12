@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { TrainingInstance } from '@crczp/training-model';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AsyncPipe, TitleCasePipe } from '@angular/common';
 
@@ -20,10 +20,13 @@ export class AccessTokenDetailComponent {
     trainingInstance$: Observable<TrainingInstance>;
     private activeRoute = inject(ActivatedRoute);
 
+    private readonly destroyRef = inject(DestroyRef);
+
     constructor() {
         this.trainingInstance$ = this.activeRoute.data.pipe(
-            takeUntilDestroyed(),
-            map((data) => data[TrainingInstance.name] || null)
+            takeUntilDestroyed(this.destroyRef),
+            filter((data) => !!data[TrainingInstance.name]),
+            map((data) => data[TrainingInstance.name]),
         );
     }
 }

@@ -2,7 +2,7 @@ import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { SentinelTable, SentinelTableComponent, TableLoadEvent } from '@sentinel/components/table';
 import { AbstractDetectionEvent, TrainingInstance } from '@crczp/training-model';
-import { map } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 import { DetectionEventTable } from '../model/detection-event-table';
 import { ActivatedRoute } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -47,7 +47,10 @@ export class TrainingInstanceDetectionEventComponent implements OnInit {
 
     ngOnInit(): void {
         this.activeRoute.data
-            .pipe(takeUntilDestroyed(this.destroyRef))
+            .pipe(
+                takeUntilDestroyed(this.destroyRef),
+                filter((data) => !!data[TrainingInstance.name]),
+            )
             .subscribe((data) => {
                 this.trainingInstanceId = data[TrainingInstance.name].id;
             });
