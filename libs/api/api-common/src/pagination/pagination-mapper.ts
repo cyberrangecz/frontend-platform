@@ -53,10 +53,9 @@ export class PaginationMapper {
 
     public static toOffsetPaginationEvent<T>(
         pagination: PaginationEvent<T>,
-        page?: number,
     ): OffsetPaginationEvent<T> {
         return {
-            page: page ?? 0,
+            page: (pagination as OffsetPaginationEvent<T>).page ?? 0,
             size: pagination.size,
             sort: pagination.sort,
             sortDir: pagination.sortDir,
