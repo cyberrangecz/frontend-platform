@@ -177,6 +177,7 @@ export class GroupUserAssignComponent implements OnChanges {
      */
     onAssignedLoadEvent(loadEvent: TableLoadEvent<UserSort>): void {
         this.paginationService.savePageSize(loadEvent.pagination.size);
+        console.log('Assinged Load Event:', loadEvent);
         this.userAssignService
             .getAssigned(
                 this.resource.id,
