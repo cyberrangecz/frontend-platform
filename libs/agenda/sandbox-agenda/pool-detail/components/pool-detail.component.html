@@ -15,7 +15,7 @@
 
 <ng-template #stagesTemplate let-row>
     <crczp-stage-overview (stageSelected)="onStageAction($event, row.element)"
-                          [navigable]="!row.element.sandboxData.cleanupRunning()"
+                          [navigable]="!row.element.sandboxData.cleanupExists()"
                           [stages]="row.element.stages"
                           [unitId]="row.element.unitId"
     />
