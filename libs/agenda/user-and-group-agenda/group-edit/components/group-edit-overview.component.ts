@@ -20,6 +20,7 @@ import { AsyncPipe } from '@angular/common';
 import { GroupUserAssignComponent } from './group-user-assign/group-user-assign.component';
 import { MatIcon } from '@angular/material/icon';
 import { MatError } from '@angular/material/input';
+import { GroupRoleAssignComponent } from './group-role-assign/group-role-assign.component';
 
 @Component({
     selector: 'crczp-group-edit-overview',
@@ -38,6 +39,7 @@ import { MatError } from '@angular/material/input';
         MatIcon,
         SentinelControlsComponent,
         MatExpansionPanelHeader,
+        GroupRoleAssignComponent,
     ],
     providers: [{ provide: GroupEditService, useClass: GroupEditService }],
 })

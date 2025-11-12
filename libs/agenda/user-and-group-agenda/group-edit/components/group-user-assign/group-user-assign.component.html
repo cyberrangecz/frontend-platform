@@ -30,14 +30,14 @@
             <mat-card-subtitle>Import users from already existing groups</mat-card-subtitle>
         </mat-card-header>
         <mat-card-content>
-            <!--            <sentinel-resource-selector (fetch)="searchGroups($event)"-->
-            <!--                                        (selectionChange)="onGroupToImportSelection($event)"-->
-            <!--                                        [resourceMapping]="groupMapping"-->
-            <!--                                        [resources]="groups$ | async"-->
-            <!--                                        [selected]="selectedGroupsToImport$ | async"-->
-            <!--                                        class="group-selector"-->
-            <!--                                        searchPlaceholder="Search groups by name">-->
-            <!--            </sentinel-resource-selector>-->
+            <sentinel-resource-selector (fetch)="searchGroups($event)"
+                                        (selectionChange)="onGroupToImportSelection($event)"
+                                        [resourceMapping]="groupMapping"
+                                        [resources]="groups$ | async"
+                                        [selected]="selectedGroupsToImport$ | async"
+                                        class="group-selector"
+                                        searchPlaceholder="Search groups by name">
+            </sentinel-resource-selector>
         </mat-card-content>
     </mat-card>
 </div>
