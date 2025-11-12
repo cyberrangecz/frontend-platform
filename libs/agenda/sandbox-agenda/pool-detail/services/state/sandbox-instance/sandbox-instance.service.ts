@@ -157,10 +157,10 @@ export class SandboxInstanceService extends OffsetPaginatedElementsPollingServic
             return this.allocate(poolId);
         }
         return this.getNumberOfSandboxes(total).pipe(
-            switchMap((result) =>
-                result.result !== null
+            switchMap((response) =>
+                !!response && !!response.result
                     ? this.poolApi
-                          .allocateSandboxes(poolId, result.result)
+                          .allocateSandboxes(poolId, response.result)
                           .pipe(
                               tap(
                                   () =>
