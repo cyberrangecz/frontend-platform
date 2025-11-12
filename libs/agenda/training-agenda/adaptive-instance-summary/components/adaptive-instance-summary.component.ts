@@ -114,7 +114,7 @@ export class AdaptiveInstanceSummaryComponent implements OnInit {
             .build()}`;
         this.adaptiveDefinitionLink = `/${Routing.RouteBuilder.adaptive_definition
             .definitionId(trainingInstance.id)
-            .build()}`;
+            .detail.build()}`;
 
         //     this.navigator.toAdaptiveDefinitionDetail(
         //     trainingInstance.trainingDefinition.id,

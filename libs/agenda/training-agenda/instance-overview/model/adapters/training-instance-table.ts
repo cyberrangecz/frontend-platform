@@ -93,7 +93,7 @@ export class TrainingInstanceTable extends SentinelTable<
             'tdTitle',
             Routing.RouteBuilder.linear_definition
                 .definitionId(ti.trainingDefinition.id)
-                .build(),
+                .detail.build(),
         );
         if (ti.hasPool()) {
             row.element.poolSize = combineLatest([
