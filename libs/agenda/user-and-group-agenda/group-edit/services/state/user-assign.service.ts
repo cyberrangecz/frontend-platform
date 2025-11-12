@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import { GroupApi, UserApi, UserSort } from '@crczp/user-and-group-api';
 import { Group, User } from '@crczp/user-and-group-model';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
 import { GroupFilter, UserFilter } from '@crczp/user-and-group-agenda/internal';
 import { ErrorHandlerService } from '@crczp/utils';
@@ -162,6 +162,9 @@ export class UserAssignService {
         const groupIds = this.selectedGroupsToImportSubject$
             .getValue()
             .map((group) => group.id);
+        if (userIds.length === 0 && groupIds.length === 0) {
+            return of(void 0);
+        }
         return this.callApiToAssign(resourceId, userIds, groupIds);
     }
 
@@ -172,6 +175,9 @@ export class UserAssignService {
     ): Observable<any> {
         const userIds = users.map((user) => user.id);
         const groupIds = groups.map((group) => group.id);
+        if (userIds.length === 0 && groupIds.length === 0) {
+            return of(void 0);
+        }
         return this.callApiToAssign(resourceId, userIds, groupIds);
     }
 

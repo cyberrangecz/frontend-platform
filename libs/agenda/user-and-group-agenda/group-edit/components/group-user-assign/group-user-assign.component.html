@@ -16,8 +16,7 @@
                                         [resources]="users$ | async"
                                         [selected]="selectedUsersToAssign$ | async"
                                         class="user-selector"
-                                        searchPlaceholder="Search users by surname">
-            </sentinel-resource-selector>
+                                        searchPlaceholder="Search users by surname" />
         </mat-card-content>
     </mat-card>
 
@@ -33,11 +32,10 @@
             <sentinel-resource-selector (fetch)="searchGroups($event)"
                                         (selectionChange)="onGroupToImportSelection($event)"
                                         [resourceMapping]="groupMapping"
-                                        [resources]="groups$ | async"
-                                        [selected]="selectedGroupsToImport$ | async"
+                                        [resources]="groups()"
+                                        [selected]="selectedGroupsToImport()"
                                         class="group-selector"
-                                        searchPlaceholder="Search groups by name">
-            </sentinel-resource-selector>
+                                        searchPlaceholder="Search groups by name" />
         </mat-card-content>
     </mat-card>
 </div>
@@ -49,7 +47,7 @@
         <div mat-card-avatar>
             <mat-icon class="header-icon" color="primary">person</mat-icon>
         </div>
-        <mat-card-title> Members of group {{ resource.name }}</mat-card-title>
+        <mat-card-title> Members of group {{ group().name }}</mat-card-title>
     </mat-card-header>
     <mat-card-content class="m-1rem-top">
         <sentinel-table

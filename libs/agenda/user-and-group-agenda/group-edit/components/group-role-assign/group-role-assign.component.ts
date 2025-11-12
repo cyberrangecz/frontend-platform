@@ -1,14 +1,4 @@
-import {
-    ChangeDetectionStrategy,
-    Component,
-    DestroyRef,
-    EventEmitter,
-    inject,
-    Input,
-    OnChanges,
-    Output,
-    SimpleChanges
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, input, OnInit, output, signal } from '@angular/core';
 import { SortDir } from '@sentinel/common/pagination';
 import { SentinelControlItem, SentinelControlsComponent } from '@sentinel/components/controls';
 import { Group, UserRole } from '@crczp/user-and-group-model';
@@ -17,7 +7,7 @@ import {
     SentinelResourceSelectorComponent,
     SentinelResourceSelectorMapping
 } from '@sentinel/components/resource-selector';
-import { defer, Observable } from 'rxjs';
+import { defer, Observable, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { GroupRolesTable } from '../../model/table/group-roles-table';
 import { DeleteControlItem, SaveControlItem } from '@crczp/user-and-group-agenda/internal';
@@ -56,28 +46,32 @@ import { RoleSort } from '@crczp/user-and-group-api';
         RoleAssignService,
     ],
 })
-export class GroupRoleAssignComponent implements OnChanges {
+export class GroupRoleAssignComponent implements OnInit {
     readonly ROLES_OF_GROUP_INIT_SORT_NAME: RoleSort = 'roleType';
     readonly ROLES_OF_GROUP_INIT_SORT_DIR: SortDir = 'asc';
     /**
      * Edited group-overview to assign roles to
      */
-    @Input() resource: Group;
+    group = input.required<Group>();
     /**
      * Pagination id for saving and restoring pagination size
      */
     /**
      * Event emitter of changes state
      */
-    @Output() hasUnsavedChanges: EventEmitter<boolean> = new EventEmitter();
+    hasUnsavedChanges = output<boolean>();
     /**
      * Roles available to assign to edited group-overview
      */
-    roles$: Observable<UserRole[]>;
+    roles = signal<UserRole[]>([]);
     /**
      * Mapping of role model attributes to selector component
      */
-    roleMapping: SentinelResourceSelectorMapping;
+    roleMapping: SentinelResourceSelectorMapping = {
+        id: 'id',
+        title: 'roleType',
+        subtitle: 'microserviceName',
+    };
     /**
      * True if error was thrown while getting data for table of already assigned roles, false otherwise
      */
@@ -85,7 +79,7 @@ export class GroupRoleAssignComponent implements OnChanges {
     /**
      * Data for assigned roles table component
      */
-    assignedRoles$: Observable<SentinelTable<UserRole, string>>;
+    assignedRoles$ = new Subject<SentinelTable<UserRole, string>>();
     /**
      * True if getting data for table component is in progress, false otherwise
      */
@@ -94,8 +88,8 @@ export class GroupRoleAssignComponent implements OnChanges {
      * Selected roles available to assign to edited group-overview
      */
     selectedRolesToAssign$: Observable<UserRole[]>;
-    rolesToAssignControls: SentinelControlItem[] = [];
-    assignedRolesControls: SentinelControlItem[] = [];
+    rolesToAssignControls = signal<SentinelControlItem[]>([]);
+    assignedRolesControls = signal<SentinelControlItem[]>([]);
     destroyRef = inject(DestroyRef);
     private roleAssignService = inject(RoleAssignService);
     private paginationService = inject(PaginationStorageService);
@@ -106,22 +100,13 @@ export class GroupRoleAssignComponent implements OnChanges {
             this.ROLES_OF_GROUP_INIT_SORT_DIR,
         );
 
-    constructor() {
-        this.roleMapping = {
-            id: 'id',
-            title: 'roleType',
-            subtitle: 'microserviceName',
-        };
-    }
-
-    ngOnChanges(changes: SimpleChanges): void {
-        if (
-            'resource' in changes &&
-            this.resource &&
-            this.resource.id !== undefined
-        ) {
-            this.init();
-        }
+    ngOnInit() {
+        this.selectedRolesToAssign$ =
+            this.roleAssignService.selectedRolesToAssign$;
+        this.initAssignedRolesControls();
+        this.initRolesToAssignControls();
+        this.initUnsavedChangesEmitter();
+        this.initTable();
     }
 
     /**
@@ -129,14 +114,15 @@ export class GroupRoleAssignComponent implements OnChanges {
      * @param filterValue search value
      */
     search(filterValue: string): void {
-        this.roles$ = this.roleAssignService
-            .getAvailableToAssign(this.resource.id, filterValue)
+        this.roleAssignService
+            .getAvailableToAssign(this.group().id, filterValue)
             .pipe(
                 map(
                     (resource: OffsetPaginatedResource<UserRole>) =>
                         resource.elements,
                 ),
-            );
+            )
+            .subscribe((roles) => this.roles.set(roles));
     }
 
     /**
@@ -151,7 +137,7 @@ export class GroupRoleAssignComponent implements OnChanges {
         this.paginationService.savePageSize(event.pagination.size);
         this.roleAssignService
             .getAssigned(
-                this.resource.id,
+                this.group().id,
                 PaginationMapper.toOffsetPaginationEvent(event.pagination),
                 event.filter,
             )
@@ -167,26 +153,20 @@ export class GroupRoleAssignComponent implements OnChanges {
         this.roleAssignService.setSelectedAssignedRoles(selected);
     }
 
-    private init() {
-        this.selectedRolesToAssign$ =
-            this.roleAssignService.selectedRolesToAssign$;
-        this.initAssignedRolesControls();
-        this.initRolesToAssignControls();
-        this.initUnsavedChangesEmitter();
-        this.initTable();
-    }
-
     private initTable() {
-        this.assignedRoles$ = this.roleAssignService.assignedRoles$.pipe(
-            map(
-                (resource) =>
-                    new GroupRolesTable(
-                        resource,
-                        this.resource.id,
-                        this.roleAssignService,
-                    ),
-            ),
-        );
+        this.roleAssignService.assignedRoles$
+            .pipe(
+                map(
+                    (resource) =>
+                        new GroupRolesTable(
+                            resource,
+                            this.group().id,
+                            this.roleAssignService,
+                        ),
+                ),
+                takeUntilDestroyed(this.destroyRef),
+            )
+            .subscribe((table) => this.assignedRoles$.next(table));
         this.assignedRolesHasError$ = this.roleAssignService.hasError$;
         this.isLoadingAssignedRoles$ =
             this.roleAssignService.isLoadingAssigned$;
@@ -200,16 +180,16 @@ export class GroupRoleAssignComponent implements OnChanges {
         this.roleAssignService.selectedAssignedRoles$
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe((selection) => {
-                this.assignedRolesControls = [
+                this.assignedRolesControls.set([
                     new DeleteControlItem(
-                        selection.length,
+                        selection ? selection.length : 0,
                         defer(() =>
                             this.roleAssignService.unassignSelected(
-                                this.resource.id,
+                                this.group().id,
                             ),
                         ),
                     ),
-                ];
+                ]);
             });
     }
 
@@ -217,15 +197,15 @@ export class GroupRoleAssignComponent implements OnChanges {
         const disabled$ = this.roleAssignService.selectedRolesToAssign$.pipe(
             map((selection) => selection.length <= 0),
         );
-        this.rolesToAssignControls = [
+        this.rolesToAssignControls.set([
             new SaveControlItem(
                 'Add',
                 disabled$,
                 defer(() =>
-                    this.roleAssignService.assignSelected(this.resource.id),
+                    this.roleAssignService.assignSelected(this.group().id),
                 ),
             ),
-        ];
+        ]);
     }
 
     private initUnsavedChangesEmitter() {

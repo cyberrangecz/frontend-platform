@@ -35,8 +35,10 @@
             <mat-icon class="header-icon">person</mat-icon>
         </mat-panel-description>
     </mat-expansion-panel-header>
-    <crczp-group-user-assign (hasUnsavedChanges)="onUnsavedMembersChange($event)"
-                             [resource]="group$ | async" />
+    @if (editMode$ |async) {
+        <crczp-group-user-assign (hasUnsavedChanges)="onUnsavedMembersChange($event)"
+                                 [group]="group$ | async" />
+    }
 </mat-expansion-panel>
 
 <mat-expansion-panel [disabled]="(editMode$ | async) === false" [expanded]="editMode$ | async"
@@ -54,6 +56,8 @@
             <mat-icon>policy</mat-icon>
         </mat-panel-description>
     </mat-expansion-panel-header>
-    <crczp-group-role-assign (hasUnsavedChanges)="onUnsavedRolesChange($event)"
-                             [resource]="group$ | async" />
+    @if (editMode$ |async) {
+        <crczp-group-role-assign (hasUnsavedChanges)="onUnsavedRolesChange($event)"
+                                 [group]="group$ | async" />
+    }
 </mat-expansion-panel>
