@@ -2,14 +2,14 @@
                    class="to-assign-controls" />
 <div class="add-content">
     <mat-card appearance="outlined">
-        <mat-card-header>
+        <mat-card-header class="hflex jc-flex-start ai-center">
             <div mat-card-avatar>
-                <mat-icon color="primary">person_add</mat-icon>
+                <mat-icon class="header-icon" color="primary">person_add</mat-icon>
             </div>
             <mat-card-title>Add users</mat-card-title>
             <mat-card-subtitle>Add users individually</mat-card-subtitle>
         </mat-card-header>
-        <mat-card-content>
+        <mat-card-content class="m-1rem-top">
             <sentinel-resource-selector (fetch)="searchUsers($event)"
                                         (selectionChange)="onUserToAssignSelection($event)"
                                         [resourceMapping]="userMapping"
@@ -22,14 +22,14 @@
     </mat-card>
 
     <mat-card appearance="outlined">
-        <mat-card-header>
+        <mat-card-header class="hflex jc-flex-start ai-center">
             <div mat-card-avatar>
-                <mat-icon color="primary">group_add</mat-icon>
+                <mat-icon class="header-icon" color="primary">group_add</mat-icon>
             </div>
             <mat-card-title>Import users</mat-card-title>
             <mat-card-subtitle>Import users from already existing groups</mat-card-subtitle>
         </mat-card-header>
-        <mat-card-content>
+        <mat-card-content class="m-1rem-top">
             <sentinel-resource-selector (fetch)="searchGroups($event)"
                                         (selectionChange)="onGroupToImportSelection($event)"
                                         [resourceMapping]="groupMapping"
@@ -45,13 +45,13 @@
 <sentinel-controls [controls]="assignedUsersControls"
                    class="assigned-controls" />
 <mat-card appearance="outlined">
-    <mat-card-header>
+    <mat-card-header class="hflex jc-flex-start ai-center">
         <div mat-card-avatar>
-            <mat-icon color="primary">person</mat-icon>
+            <mat-icon class="header-icon" color="primary">person</mat-icon>
         </div>
         <mat-card-title> Members of group {{ resource.name }}</mat-card-title>
     </mat-card-header>
-    <mat-card-content>
+    <mat-card-content class="m-1rem-top">
         <sentinel-table
             (rowSelection)="onAssignedUsersSelection($event)"
             (tableLoad)="onAssignedLoadEvent($event)"

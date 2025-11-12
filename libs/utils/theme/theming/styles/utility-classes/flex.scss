@@ -20,32 +20,32 @@
     flex-wrap: nowrap;
 }
 
-$justify-content: (
-    fs: flex-start,
-    fe: flex-end,
-    c: center,
-    s: stretch,
-    sb: space-between,
-    sa: space-around,
-    se: space-evenly,
-);
+$justify-content: [
+    flex-start,
+    flex-end,
+    center,
+    stretch,
+    space-between,
+    space-around,
+    space-evenly,
+];
 
-@each $key, $value in $justify-content {
-    .jc-#{$key} {
-        justify-content: $value;
+@each $justify in $justify-content {
+    .jc-#{$justify} {
+        justify-content: $justify;
     }
 }
 
-$align-items: (
-    fs: flex-start,
-    fe: flex-end,
-    c: center,
-    b: baseline,
-    s: stretch,
-);
+$align-items: [
+    flex-start,
+    flex-end,
+    center,
+    baseline,
+    stretch,
+];
 
-@each $key, $value in $align-items {
-    .ai-#{$key} {
-        align-items: $value;
+@each $alignment in $align-items {
+    .ai-#{$alignment} {
+        align-items: $alignment;
     }
 }

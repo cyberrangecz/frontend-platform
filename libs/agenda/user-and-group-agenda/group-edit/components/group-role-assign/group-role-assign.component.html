@@ -5,12 +5,12 @@
 <mat-card appearance="outlined">
     <mat-card-header>
         <div mat-card-avatar>
-            <mat-icon color="primary">add_circle_outline</mat-icon>
+            <mat-icon class="header-icon" color="primary">add_circle_outline</mat-icon>
         </div>
         <mat-card-title>Add roles</mat-card-title>
         <mat-card-subtitle>Add roles to {{ resource?.name }} group</mat-card-subtitle>
     </mat-card-header>
-    <mat-card-content>
+    <mat-card-content class="m-1rem-top">
         <sentinel-resource-selector
             (fetch)="search($event)"
             (selectionChange)="onRolesToAssignSelection($event)"
@@ -26,13 +26,13 @@
     class="assigned-controls">
 </sentinel-controls>
 <mat-card appearance="outlined">
-    <mat-card-header>
+    <mat-card-header class="hflex ai-center">
         <div mat-card-avatar>
-            <mat-icon color="primary">policy</mat-icon>
+            <mat-icon class="header-icon" color="primary">policy</mat-icon>
         </div>
         <mat-card-title> Roles of group {{ resource?.name }}</mat-card-title>
     </mat-card-header>
-    <mat-card-content>
+    <mat-card-content class="m-1rem-top">
         <sentinel-table
             (rowSelection)="onAssignedRolesSelection($event)"
             (tableLoad)="onAssignedRolesLoad($event)"
