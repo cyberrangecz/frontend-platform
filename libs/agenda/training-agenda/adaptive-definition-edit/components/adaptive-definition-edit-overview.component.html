@@ -15,7 +15,10 @@
         </mat-panel-description>
     </mat-expansion-panel-header>
     <ng-template matExpansionPanelContent>
-        <sentinel-controls [controls]="controls" />
+        <sentinel-controls
+            (itemClicked)="onControlsAction($event)"
+            [controls]="controls"
+        />
         <mat-divider />
         <!-- EDIT ADAPTIVE TRAINING DEFINITION -->
         <crczp-adaptive-definition-edit
