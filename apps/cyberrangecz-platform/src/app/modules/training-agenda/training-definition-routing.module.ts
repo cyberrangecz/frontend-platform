@@ -33,7 +33,8 @@ const routes: ValidRouterConfig<'linear-definition'> = [
         canDeactivate: [canDeactivateTrainingDefinition],
         resolve: {
             [TrainingDefinition.name]:
-                Routing.Resolvers.TrainingDefinition.linearDefinitionResolver,
+                Routing.Resolvers.TrainingDefinition
+                    .linearDefinitionWithLevelsResolver,
             breadcrumb:
                 Routing.Resolvers.TrainingDefinition
                     .linearDefinitionBreadcrumbResolver,
@@ -52,7 +53,8 @@ const routes: ValidRouterConfig<'linear-definition'> = [
         },
         resolve: {
             [TrainingDefinition.name]:
-                Routing.Resolvers.TrainingDefinition.linearDefinitionResolver,
+                Routing.Resolvers.TrainingDefinition
+                    .linearDefinitionWithLevelsResolver,
             breadcrumb:
                 Routing.Resolvers.TrainingDefinition
                     .linearDefinitionBreadcrumbResolver,
@@ -66,7 +68,8 @@ const routes: ValidRouterConfig<'linear-definition'> = [
             ),
         resolve: {
             [TrainingDefinition.name]:
-                Routing.Resolvers.TrainingDefinition.linearDefinitionResolver,
+                Routing.Resolvers.TrainingDefinition
+                    .linearDefinitionWithLevelsResolver,
             breadcrumb:
                 Routing.Resolvers.TrainingDefinition
                     .linearDefinitionBreadcrumbResolver,

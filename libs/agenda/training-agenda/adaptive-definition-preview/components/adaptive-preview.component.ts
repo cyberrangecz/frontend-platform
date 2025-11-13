@@ -1,20 +1,17 @@
-import {Component, inject, OnInit} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
-import {Phase, TrainingDefinition} from '@crczp/training-model';
-import {PhaseStepperAdapter} from '@crczp/training-agenda/internal';
-import {AdaptivePreviewStepper} from '../model/adaptive-preview-stepper';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {AbstractPhaseComponent} from "./phase/abstract-phase.component";
-import {SentinelStepperComponent} from "@sentinel/components/stepper";
+import { Component, inject, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { Phase, TrainingDefinition } from '@crczp/training-model';
+import { PhaseStepperAdapter } from '@crczp/training-agenda/internal';
+import { AdaptivePreviewStepper } from '../model/adaptive-preview-stepper';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { AbstractPhaseComponent } from './phase/abstract-phase.component';
+import { SentinelStepperComponent } from '@sentinel/components/stepper';
 
 @Component({
     selector: 'crczp-designer-preview',
     templateUrl: './adaptive-preview.component.html',
     styleUrls: ['./adaptive-preview.component.css'],
-    imports: [
-        AbstractPhaseComponent,
-        SentinelStepperComponent
-    ]
+    imports: [AbstractPhaseComponent, SentinelStepperComponent],
 })
 export class AdaptivePreviewComponent implements OnInit {
     activePhase: Phase;
@@ -44,7 +41,9 @@ export class AdaptivePreviewComponent implements OnInit {
     }
 
     private init() {
-        const stepperAdapterPhases = this.phases.map((phase) => new PhaseStepperAdapter(phase));
+        const stepperAdapterPhases = this.phases.map(
+            (phase) => new PhaseStepperAdapter(phase),
+        );
         this.stepper = new AdaptivePreviewStepper(stepperAdapterPhases, 0);
         this.activePhase = this.phases[0];
     }
