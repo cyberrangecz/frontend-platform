@@ -20,7 +20,7 @@ const routes: ValidRouterConfig<'linear-definition'> = [
         path: 'create',
         loadComponent: () =>
             import('@crczp/training-agenda/definition-edit').then(
-                (m) => m.TrainingDefinitionEditOverviewComponent
+                (m) => m.TrainingDefinitionEditOverviewComponent,
             ),
         canDeactivate: [canDeactivateTrainingDefinition],
     },
@@ -28,15 +28,24 @@ const routes: ValidRouterConfig<'linear-definition'> = [
         path: ':definitionId/edit',
         loadComponent: () =>
             import('@crczp/training-agenda/definition-edit').then(
-                (m) => m.TrainingDefinitionEditOverviewComponent
+                (m) => m.TrainingDefinitionEditOverviewComponent,
             ),
         canDeactivate: [canDeactivateTrainingDefinition],
+        resolve: {
+            [TrainingDefinition.name]:
+                Routing.Resolvers.TrainingDefinition.linearDefinitionResolver,
+            breadcrumb:
+                Routing.Resolvers.TrainingDefinition
+                    .linearDefinitionBreadcrumbResolver,
+            title: Routing.Resolvers.TrainingDefinition
+                .linearDefinitionTitleResolver,
+        },
     },
     {
         path: ':definitionId/preview',
         loadComponent: () =>
             import('@crczp/training-agenda/definition-preview').then(
-                (m) => m.TrainingPreviewComponent
+                (m) => m.TrainingPreviewComponent,
             ),
         data: {
             title: undefined,
@@ -53,7 +62,7 @@ const routes: ValidRouterConfig<'linear-definition'> = [
         path: ':definitionId/detail',
         loadComponent: () =>
             import('@crczp/training-agenda/definition-summary').then(
-                (m) => m.TrainingDefinitionSummaryComponent
+                (m) => m.TrainingDefinitionSummaryComponent,
             ),
         resolve: {
             [TrainingDefinition.name]:
