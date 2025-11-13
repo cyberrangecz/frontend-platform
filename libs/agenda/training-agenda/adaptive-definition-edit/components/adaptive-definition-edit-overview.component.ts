@@ -107,7 +107,7 @@ export class AdaptiveDefinitionEditOverviewComponent implements OnInit {
         this.tdTitle$ = this.editService.trainingDefinition$.pipe(
             map((td) => td.title),
         );
-        this.definitionSaveDisabled$ = this.editService.saveDisabled$;
+        this.definitionSaveDisabled$ = this.editService.hasUnsavedChanges$;
         this.phasesSaveDisabled$ = this.phaseEditService.saveDisabled$;
         this.mitreTechniques$ = this.mitreTechniquesService.mitreTechniques$;
         this.phases$ = this.phaseEditService.phases$;
@@ -191,10 +191,8 @@ export class AdaptiveDefinitionEditOverviewComponent implements OnInit {
         this.canDeactivateTDEdit = false;
     }
 
-    onControlsAction(control: SentinelControlItemSignal): void {
-        control.result$
-            .pipe(takeUntilDestroyed(this.destroyRef))
-            .subscribe(() => (this.canDeactivateTDEdit = true));
+    onControlsAction(_control: SentinelControlItemSignal): void {
+        this.canDeactivateTDEdit = true;
     }
 
     /**

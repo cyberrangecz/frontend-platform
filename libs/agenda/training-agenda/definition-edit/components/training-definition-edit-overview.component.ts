@@ -114,9 +114,13 @@ export class TrainingDefinitionEditOverviewComponent implements OnInit {
         this.unsavedLevels$ = levelEditService.unsavedLevels$;
         this.activeRoute.data
             .pipe(takeUntilDestroyed(this.destroyRef))
-            .subscribe((data) =>
-                this.editService.set(data[TrainingDefinition.name] || null),
-            );
+            .subscribe((data) => {
+                console.log(
+                    'TrainingDefinitionEditOverviewComponent: route data',
+                    data,
+                );
+                this.editService.set(data[TrainingDefinition.name] || null);
+            });
         this.editMode$ = this.editService.editMode$.pipe(
             tap(
                 () =>
@@ -180,10 +184,8 @@ export class TrainingDefinitionEditOverviewComponent implements OnInit {
         this.canDeactivateTDEdit = false;
     }
 
-    onControlsAction(control: SentinelControlItemSignal): void {
-        control.result$
-            .pipe(takeUntilDestroyed(this.destroyRef))
-            .subscribe(() => (this.canDeactivateTDEdit = true));
+    onControlsAction(_control: SentinelControlItemSignal): void {
+        this.canDeactivateTDEdit = true;
     }
 
     /**
