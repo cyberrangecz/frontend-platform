@@ -18,7 +18,7 @@
             <div class="level-count"> {{ getAssessmentLevels()?.length }}</div>
         </div>
     </div>
-    <sentinel-controls [controls]="controls" />
+    <sentinel-controls (itemClicked)="onControlsAction($event)" [controls]="controls" />
 </div>
 <mat-accordion class="example-headers-align" multi="always">
     @for (level of levels; track level.id) {

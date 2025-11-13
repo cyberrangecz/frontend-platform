@@ -1,4 +1,6 @@
-<mat-expansion-panel [expanded]="true">
+<mat-expansion-panel
+    [expanded]="true"
+>
     <mat-expansion-panel-header>
         <mat-panel-title>
             <span>Linear Training Definition</span>
@@ -17,6 +19,7 @@
     </mat-expansion-panel-header>
     <ng-template matExpansionPanelContent>
         <sentinel-controls
+            (itemClicked)="onControlsAction($event)"
             [controls]="controls">
         </sentinel-controls>
         <mat-divider />
