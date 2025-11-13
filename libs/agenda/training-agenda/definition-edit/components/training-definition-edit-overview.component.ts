@@ -114,13 +114,9 @@ export class TrainingDefinitionEditOverviewComponent implements OnInit {
         this.unsavedLevels$ = levelEditService.unsavedLevels$;
         this.activeRoute.data
             .pipe(takeUntilDestroyed(this.destroyRef))
-            .subscribe((data) => {
-                console.log(
-                    'TrainingDefinitionEditOverviewComponent: route data',
-                    data,
-                );
-                this.editService.set(data[TrainingDefinition.name] || null);
-            });
+            .subscribe((data) =>
+                this.editService.set(data[TrainingDefinition.name] || null),
+            );
         this.editMode$ = this.editService.editMode$.pipe(
             tap(
                 () =>

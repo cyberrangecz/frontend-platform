@@ -62,7 +62,6 @@ export abstract class RequestStagesService {
      */
     getAll(request: Request): Observable<StageAdapter[]> {
         this.onManualResourceRefresh(request);
-        console.log('request', request);
         return this.callApiToGetStages(request).pipe(
             tap(
                 (stages) => {
@@ -86,7 +85,6 @@ export abstract class RequestStagesService {
 
     protected refreshStages(): Observable<StageAdapter[]> {
         this.hasErrorSubject$.next(false);
-        console.log('Last request', this.lastRequest);
         return this.callApiToGetStages(this.lastRequest).pipe(
             tap(
                 (stages) => {
