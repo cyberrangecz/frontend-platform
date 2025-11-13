@@ -9,7 +9,8 @@ import { catchUndefinedOrNull } from '../catch-undefined-or-null';
 
 function buildDefinitionResolver(
     service: TrainingResolverHelperService,
-    type: TrainingTypeEnum
+    type: TrainingTypeEnum,
+    includeLevels = false,
 ) {
     return (route: ActivatedRouteSnapshot, state: RouterStateSnapshot) => {
         if (RoutingUtils.containsSubroute('create', state)) {
@@ -17,21 +18,21 @@ function buildDefinitionResolver(
         }
 
         return service
-            .getDefinition(route, type)
+            .getDefinition(route, type, includeLevels)
             .pipe(
                 catchUndefinedOrNull('Training Definition', () =>
-                    service.navigateToDefinitionOverview(type)
-                )
+                    service.navigateToDefinitionOverview(type),
+                ),
             );
     };
 }
 
 function buildDefinitionTitleResolver(
     service: TrainingResolverHelperService,
-    type: TrainingTypeEnum
+    type: TrainingTypeEnum,
 ): (
     route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot
+    state: RouterStateSnapshot,
 ) => Observable<string> | string {
     return (route: ActivatedRouteSnapshot, state: RouterStateSnapshot) => {
         if (RoutingUtils.containsSubroute('create', state)) {
@@ -58,15 +59,15 @@ function buildDefinitionTitleResolver(
 
 function buildDefinitionBreadcrumbResolver(
     service: TrainingResolverHelperService,
-    type: TrainingTypeEnum
+    type: TrainingTypeEnum,
 ): (
     route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot
+    state: RouterStateSnapshot,
 ) => Observable<string> | string {
     return (route: ActivatedRouteSnapshot, state: RouterStateSnapshot) => {
         function getBreadcrumbText(
             ti: TrainingDefinition,
-            state: RouterStateSnapshot
+            state: RouterStateSnapshot,
         ): string {
             if (RoutingUtils.containsSubroute('edit', state)) {
                 return `Edit ${ti.title}`;
@@ -91,50 +92,68 @@ function buildDefinitionBreadcrumbResolver(
 export const TrainingDefinitionResolvers = {
     linearDefinitionResolver: (
         route: ActivatedRouteSnapshot,
-        state: RouterStateSnapshot
+        state: RouterStateSnapshot,
     ) =>
         buildDefinitionResolver(
             inject(TrainingResolverHelperService),
-            TrainingTypeEnum.LINEAR
+            TrainingTypeEnum.LINEAR,
+        )(route, state),
+    linearDefinitionWithLevelsResolver: (
+        route: ActivatedRouteSnapshot,
+        state: RouterStateSnapshot,
+    ) =>
+        buildDefinitionResolver(
+            inject(TrainingResolverHelperService),
+            TrainingTypeEnum.LINEAR,
+            true,
         )(route, state),
     adaptiveDefinitionResolver: (
         route: ActivatedRouteSnapshot,
-        state: RouterStateSnapshot
+        state: RouterStateSnapshot,
     ) =>
         buildDefinitionResolver(
             inject(TrainingResolverHelperService),
-            TrainingTypeEnum.ADAPTIVE
+            TrainingTypeEnum.ADAPTIVE,
+        )(route, state),
+    adaptiveDefinitionWithLevelsResolver: (
+        route: ActivatedRouteSnapshot,
+        state: RouterStateSnapshot,
+    ) =>
+        buildDefinitionResolver(
+            inject(TrainingResolverHelperService),
+            TrainingTypeEnum.ADAPTIVE,
+            true,
         )(route, state),
     linearDefinitionTitleResolver: (
         route: ActivatedRouteSnapshot,
-        state: RouterStateSnapshot
+        state: RouterStateSnapshot,
     ) =>
         buildDefinitionTitleResolver(
             inject(TrainingResolverHelperService),
-            TrainingTypeEnum.LINEAR
+            TrainingTypeEnum.LINEAR,
         )(route, state),
     adaptiveDefinitionTitleResolver: (
         route: ActivatedRouteSnapshot,
-        state: RouterStateSnapshot
+        state: RouterStateSnapshot,
     ) =>
         buildDefinitionTitleResolver(
             inject(TrainingResolverHelperService),
-            TrainingTypeEnum.ADAPTIVE
+            TrainingTypeEnum.ADAPTIVE,
         )(route, state),
     linearDefinitionBreadcrumbResolver: (
         route: ActivatedRouteSnapshot,
-        state: RouterStateSnapshot
+        state: RouterStateSnapshot,
     ) =>
         buildDefinitionBreadcrumbResolver(
             inject(TrainingResolverHelperService),
-            TrainingTypeEnum.LINEAR
+            TrainingTypeEnum.LINEAR,
         )(route, state),
     adaptiveDefinitionBreadcrumbResolver: (
         route: ActivatedRouteSnapshot,
-        state: RouterStateSnapshot
+        state: RouterStateSnapshot,
     ) =>
         buildDefinitionBreadcrumbResolver(
             inject(TrainingResolverHelperService),
-            TrainingTypeEnum.ADAPTIVE
+            TrainingTypeEnum.ADAPTIVE,
         )(route, state),
 };
