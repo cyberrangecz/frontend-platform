@@ -1,45 +1,40 @@
-import {MatDialog} from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import {
     SentinelConfirmationDialogComponent,
     SentinelConfirmationDialogConfig,
-    SentinelDialogResultEnum,
+    SentinelDialogResultEnum
 } from '@sentinel/components/dialogs';
-import {Hint, LevelAnswerCheck, PhaseAnswerCheck, TrainingLevel} from '@crczp/training-model';
-import {BehaviorSubject, Observable} from 'rxjs';
-import {RunningTrainingRunService} from '../../running/running-training-run.service';
-import {HintButton} from '@crczp/training-agenda/internal';
+import { Hint, LevelAnswerCheck, PhaseAnswerCheck, TrainingLevel } from '@crczp/training-model';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { RunningTrainingRunService } from '../../running-training-run.service';
+import { HintButton } from '@crczp/training-agenda/internal';
 import {
     SentinelNotification,
     SentinelNotificationResult,
     SentinelNotificationService,
-    SentinelNotificationTypeEnum,
+    SentinelNotificationTypeEnum
 } from '@sentinel/layout/notification';
-import {map} from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 
 export abstract class TrainingRunTrainingLevelService {
+    hints$: Observable<HintButton[]>;
+    displayedHintsContent$: Observable<string>;
+    displayedSolutionContent$: Observable<string>;
+    isSolutionRevealed$: Observable<boolean>;
+    isCorrectAnswerSubmitted$: Observable<boolean>;
+    isLoading$: Observable<boolean>;
+    protected hintsSubject$: BehaviorSubject<HintButton[]>;
+    protected displayedHintsContentSubject$: BehaviorSubject<string>;
+    protected displayedSolutionContentSubject$: BehaviorSubject<string>;
+    protected isSolutionRevealedSubject$: BehaviorSubject<boolean>;
+    protected isCorrectAnswerSubmittedSubject$: BehaviorSubject<boolean>;
+    protected isLoadingSubject$: BehaviorSubject<boolean>;
+
     protected constructor(
         protected dialog: MatDialog,
         protected notificationService: SentinelNotificationService,
         protected runningTrainingRunService: RunningTrainingRunService,
     ) {}
-
-    protected hintsSubject$: BehaviorSubject<HintButton[]>;
-    hints$: Observable<HintButton[]>;
-
-    protected displayedHintsContentSubject$: BehaviorSubject<string>;
-    displayedHintsContent$: Observable<string>;
-
-    protected displayedSolutionContentSubject$: BehaviorSubject<string>;
-    displayedSolutionContent$: Observable<string>;
-
-    protected isSolutionRevealedSubject$: BehaviorSubject<boolean>;
-    isSolutionRevealed$: Observable<boolean>;
-
-    protected isCorrectAnswerSubmittedSubject$: BehaviorSubject<boolean>;
-    isCorrectAnswerSubmitted$: Observable<boolean>;
-
-    protected isLoadingSubject$: BehaviorSubject<boolean>;
-    isLoading$: Observable<boolean>;
 
     abstract submitAnswer(answer: string): Observable<any>;
 
@@ -59,13 +54,19 @@ export abstract class TrainingRunTrainingLevelService {
         this.hintsSubject$ = new BehaviorSubject([]);
         this.hints$ = this.hintsSubject$.asObservable();
         this.displayedHintsContentSubject$ = new BehaviorSubject(undefined);
-        this.displayedHintsContent$ = this.displayedHintsContentSubject$.asObservable();
+        this.displayedHintsContent$ =
+            this.displayedHintsContentSubject$.asObservable();
         this.displayedSolutionContentSubject$ = new BehaviorSubject(undefined);
-        this.displayedSolutionContent$ = this.displayedSolutionContentSubject$.asObservable();
+        this.displayedSolutionContent$ =
+            this.displayedSolutionContentSubject$.asObservable();
         this.isSolutionRevealedSubject$ = new BehaviorSubject(false);
-        this.isSolutionRevealed$ = this.isSolutionRevealedSubject$.asObservable();
-        this.isCorrectAnswerSubmittedSubject$ = new BehaviorSubject(isLevelAnswered);
-        this.isCorrectAnswerSubmitted$ = this.isCorrectAnswerSubmittedSubject$.asObservable();
+        this.isSolutionRevealed$ =
+            this.isSolutionRevealedSubject$.asObservable();
+        this.isCorrectAnswerSubmittedSubject$ = new BehaviorSubject(
+            isLevelAnswered,
+        );
+        this.isCorrectAnswerSubmitted$ =
+            this.isCorrectAnswerSubmittedSubject$.asObservable();
         this.isLoadingSubject$ = new BehaviorSubject(false);
         this.isLoading$ = this.isLoadingSubject$.asObservable();
     }
@@ -90,7 +91,9 @@ export abstract class TrainingRunTrainingLevelService {
 
     protected onHintRevealed(hint: Hint): void {
         const hintButtons = this.hintsSubject$.getValue();
-        const hintToRevealIndex = hintButtons.findIndex((hintButton) => hintButton.hint.id === hint.id);
+        const hintToRevealIndex = hintButtons.findIndex(
+            (hintButton) => hintButton.hint.id === hint.id,
+        );
         if (hintToRevealIndex !== -1) {
             const hintToReveal = hintButtons[hintToRevealIndex];
             hintToReveal.disable();
@@ -103,7 +106,8 @@ export abstract class TrainingRunTrainingLevelService {
 
     protected addHintContent(hint: Hint, order: number): void {
         let content = this.displayedHintsContentSubject$.getValue();
-        const hintContent = '\n\n## Hint ' + order + ': ' + hint.title + '\n' + hint.content;
+        const hintContent =
+            '\n\n## Hint ' + order + ': ' + hint.title + '\n' + hint.content;
         if (content) {
             content += hintContent;
         } else {
@@ -118,7 +122,10 @@ export abstract class TrainingRunTrainingLevelService {
     }
 
     protected shouldSolutionBeRevealed(answerCheck: PhaseAnswerCheck): boolean {
-        return !this.isSolutionRevealedSubject$.getValue() && !answerCheck.hasRemainingAttempts();
+        return (
+            !this.isSolutionRevealedSubject$.getValue() &&
+            !answerCheck.hasRemainingAttempts()
+        );
     }
 
     protected onCorrectAnswerSubmitted(): Observable<any> {
@@ -126,7 +133,9 @@ export abstract class TrainingRunTrainingLevelService {
         return this.runningTrainingRunService.next();
     }
 
-    protected onWrongAnswerSubmitted(answerCheck: PhaseAnswerCheck): Observable<any> {
+    protected onWrongAnswerSubmitted(
+        answerCheck: PhaseAnswerCheck,
+    ): Observable<any> {
         if (this.shouldSolutionBeRevealed(answerCheck)) {
             this.onSolutionRevealed(answerCheck.solution);
         }
@@ -141,45 +150,73 @@ export abstract class TrainingRunTrainingLevelService {
         };
         return this.notificationService
             .emit(notification)
-            .pipe(map((result) => result === SentinelNotificationResult.CONFIRMED));
+            .pipe(
+                map(
+                    (result) => result === SentinelNotificationResult.CONFIRMED,
+                ),
+            );
     }
 
-    protected displayWrongAnswerDialog(answerCheck: LevelAnswerCheck): Observable<any> {
+    protected displayWrongAnswerDialog(
+        answerCheck: LevelAnswerCheck,
+    ): Observable<any> {
         const notification: SentinelNotification = {
             type: SentinelNotificationTypeEnum.Error,
             title: 'Incorrect passkey',
             additionalInfo: [
                 'You have submitted an incorrect answer.',
-                this.isSolutionRevealedSubject$.getValue() || answerCheck.remainingAttempts <= 0
+                this.isSolutionRevealedSubject$.getValue() ||
+                answerCheck.remainingAttempts <= 0
                     ? 'Please insert the answer according to revealed solution.'
                     : `You have ${answerCheck.remainingAttempts} remaining attempts.`,
             ],
         };
         return this.notificationService
             .emit(notification)
-            .pipe(map((result) => result === SentinelNotificationResult.CONFIRMED));
+            .pipe(
+                map(
+                    (result) => result === SentinelNotificationResult.CONFIRMED,
+                ),
+            );
     }
 
-    protected displayTakeHintDialog(hint: Hint): Observable<SentinelDialogResultEnum> {
-        const dialogRef = this.dialog.open(SentinelConfirmationDialogComponent, {
-            data: new SentinelConfirmationDialogConfig(
-                'Reveal Hint',
-                `Do you want to reveal hint "${hint.title}"?
+    protected displayTakeHintDialog(
+        hint: Hint,
+    ): Observable<SentinelDialogResultEnum> {
+        const dialogRef = this.dialog.open(
+            SentinelConfirmationDialogComponent,
+            {
+                data: new SentinelConfirmationDialogConfig(
+                    'Reveal Hint',
+                    `Do you want to reveal hint "${hint.title}"?
  It will cost you ${hint.penalty} points.`,
-                'Cancel',
-                'Reveal',
-            ),
-        });
+                    'Cancel',
+                    'Reveal',
+                ),
+            },
+        );
         return dialogRef.afterClosed();
     }
 
-    protected displayRevealSolutionDialog(solutionPenalized: boolean): Observable<SentinelDialogResultEnum> {
+    protected displayRevealSolutionDialog(
+        solutionPenalized: boolean,
+    ): Observable<SentinelDialogResultEnum> {
         let dialogMessage = 'Do you want to reveal solution of this level?';
-        dialogMessage += solutionPenalized ? '\n All your points will be subtracted.' : '';
+        dialogMessage += solutionPenalized
+            ? '\n All your points will be subtracted.'
+            : '';
 
-        const dialogRef = this.dialog.open(SentinelConfirmationDialogComponent, {
-            data: new SentinelConfirmationDialogConfig('Reveal Solution', dialogMessage, 'Cancel', 'Reveal'),
-        });
+        const dialogRef = this.dialog.open(
+            SentinelConfirmationDialogComponent,
+            {
+                data: new SentinelConfirmationDialogConfig(
+                    'Reveal Solution',
+                    dialogMessage,
+                    'Cancel',
+                    'Reveal',
+                ),
+            },
+        );
         return dialogRef.afterClosed();
     }
 }

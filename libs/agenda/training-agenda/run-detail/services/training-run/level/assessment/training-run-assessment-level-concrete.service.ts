@@ -3,7 +3,7 @@ import { LinearRunApi } from '@crczp/training-api';
 import { Question } from '@crczp/training-model';
 import { Observable } from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
-import { RunningTrainingRunService } from '../../running/running-training-run.service';
+import { RunningTrainingRunService } from '../../running-training-run.service';
 import { TrainingRunAssessmentLevelService } from './training-run-assessment-level.service';
 import { ErrorHandlerService } from '@crczp/utils';
 
@@ -24,7 +24,7 @@ export class TrainingRunAssessmentLevelConcreteService extends TrainingRunAssess
         return this.api
             .submitAnswers(
                 this.runningTrainingRunService.trainingRunId,
-                answers
+                answers,
             )
             .pipe(
                 tap(
@@ -32,10 +32,10 @@ export class TrainingRunAssessmentLevelConcreteService extends TrainingRunAssess
                     (err) =>
                         this.errorHandler.emitAPIError(
                             err,
-                            'Submitting answers'
-                        )
+                            'Submitting answers',
+                        ),
                 ),
-                switchMap(() => this.runningTrainingRunService.next())
+                switchMap(() => this.runningTrainingRunService.next()),
             );
     }
 }

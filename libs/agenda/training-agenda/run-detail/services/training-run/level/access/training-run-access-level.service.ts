@@ -1,5 +1,5 @@
 import { BehaviorSubject, Observable } from 'rxjs';
-import { RunningTrainingRunService } from '../../running/running-training-run.service';
+import { RunningTrainingRunService } from '../../running-training-run.service';
 import {
     SentinelNotification,
     SentinelNotificationResult,
@@ -16,7 +16,7 @@ export abstract class TrainingRunAccessLevelService {
 
     protected constructor(
         protected notificationService: SentinelNotificationService,
-        protected runningTrainingRunService: RunningTrainingRunService
+        protected runningTrainingRunService: RunningTrainingRunService,
     ) {}
 
     abstract submitPasskey(passkey: string): Observable<any>;
@@ -25,7 +25,7 @@ export abstract class TrainingRunAccessLevelService {
 
     init(isLevelAnswered: boolean): void {
         this.isCorrectPasskeySubmittedSubject$ = new BehaviorSubject(
-            isLevelAnswered
+            isLevelAnswered,
         );
         this.isCorrectPasskeySubmitted$ =
             this.isCorrectPasskeySubmittedSubject$.asObservable();
@@ -39,7 +39,7 @@ export abstract class TrainingRunAccessLevelService {
     }
 
     protected onWrongPasskeySubmitted(
-        text = 'The provided passkey is not correct.'
+        text = 'The provided passkey is not correct.',
     ): Observable<any> {
         const notification: SentinelNotification = {
             type: SentinelNotificationTypeEnum.Error,
@@ -49,7 +49,9 @@ export abstract class TrainingRunAccessLevelService {
         return this.notificationService
             .emit(notification)
             .pipe(
-                map((result) => result === SentinelNotificationResult.CONFIRMED)
+                map(
+                    (result) => result === SentinelNotificationResult.CONFIRMED,
+                ),
             );
     }
 }

@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { LinearRunApi } from '@crczp/training-api';
 import { Observable } from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
-import { RunningTrainingRunService } from '../../running/running-training-run.service';
+import { RunningTrainingRunService } from '../../running-training-run.service';
 import { SandboxInstanceApi } from '@crczp/sandbox-api';
 import { TrainingRunAccessLevelService } from './training-run-access-level.service';
 import { SentinelNotificationService } from '@sentinel/layout/notification';
@@ -36,10 +36,10 @@ export class TrainingRunAccessLevelConcreteService extends TrainingRunAccessLeve
                     (err) => {
                         this.errorHandler.emitAPIError(
                             err,
-                            'Access files for trainee'
+                            'Access files for trainee',
                         );
-                    }
-                )
+                    },
+                ),
             );
     }
 
@@ -55,13 +55,13 @@ export class TrainingRunAccessLevelConcreteService extends TrainingRunAccessLeve
         return this.api
             .isCorrectPasskey(
                 this.runningTrainingRunService.trainingRunId,
-                passkey
+                passkey,
             )
             .pipe(
                 switchMap((isCorrect) =>
                     isCorrect
                         ? this.onCorrectPasskeySubmitted()
-                        : this.onWrongPasskeySubmitted()
+                        : this.onWrongPasskeySubmitted(),
                 ),
                 tap(
                     () => this.isLoadingSubject$.next(false),
@@ -69,10 +69,10 @@ export class TrainingRunAccessLevelConcreteService extends TrainingRunAccessLeve
                         this.isLoadingSubject$.next(false);
                         this.errorHandler.emitAPIError(
                             err,
-                            'Submitting passkey'
+                            'Submitting passkey',
                         );
-                    }
-                )
+                    },
+                ),
             );
     }
 }

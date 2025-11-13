@@ -6,7 +6,7 @@ import { Hint, TrainingLevel } from '@crczp/training-model';
 import { EMPTY, Observable } from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
 import { TrainingRunTrainingLevelService } from './training-run-training-level.service';
-import { RunningTrainingRunService } from '../../running/running-training-run.service';
+import { RunningTrainingRunService } from '../../running-training-run.service';
 import { SandboxInstanceApi } from '@crczp/sandbox-api';
 import { SentinelNotificationService } from '@sentinel/layout/notification';
 import { ErrorHandlerService } from '@crczp/utils';
@@ -40,10 +40,10 @@ export class TrainingRunTrainingLevelConcreteService extends TrainingRunTraining
                     (err) => {
                         this.errorHandler.emitAPIError(
                             err,
-                            'Access files for trainee'
+                            'Access files for trainee',
                         );
-                    }
-                )
+                    },
+                ),
             );
     }
 
@@ -59,13 +59,13 @@ export class TrainingRunTrainingLevelConcreteService extends TrainingRunTraining
         return this.api
             .isCorrectAnswer(
                 this.runningTrainingRunService.trainingRunId,
-                answer
+                answer,
             )
             .pipe(
                 switchMap((answerCheckResult) =>
                     answerCheckResult.isCorrect
                         ? this.onCorrectAnswerSubmitted()
-                        : this.onWrongAnswerSubmitted(answerCheckResult)
+                        : this.onWrongAnswerSubmitted(answerCheckResult),
                 ),
                 tap(
                     () => this.isLoadingSubject$.next(false),
@@ -73,10 +73,10 @@ export class TrainingRunTrainingLevelConcreteService extends TrainingRunTraining
                         this.isLoadingSubject$.next(false);
                         this.errorHandler.emitAPIError(
                             err,
-                            'Submitting answer'
+                            'Submitting answer',
                         );
-                    }
-                )
+                    },
+                ),
             );
     }
 
@@ -88,10 +88,10 @@ export class TrainingRunTrainingLevelConcreteService extends TrainingRunTraining
             switchMap((result) =>
                 result === SentinelDialogResultEnum.CONFIRMED
                     ? this.callApiToRevealSolution(
-                          this.runningTrainingRunService.trainingRunId
+                          this.runningTrainingRunService.trainingRunId,
                       )
-                    : EMPTY
-            )
+                    : EMPTY,
+            ),
         );
     }
 
@@ -105,10 +105,10 @@ export class TrainingRunTrainingLevelConcreteService extends TrainingRunTraining
                 result === SentinelDialogResultEnum.CONFIRMED
                     ? this.callApiToTakeHint(
                           this.runningTrainingRunService.trainingRunId,
-                          hint
+                          hint,
                       )
-                    : EMPTY
-            )
+                    : EMPTY,
+            ),
         );
     }
 
@@ -123,14 +123,14 @@ export class TrainingRunTrainingLevelConcreteService extends TrainingRunTraining
                 (err) => {
                     this.isLoadingSubject$.next(false);
                     this.errorHandler.emitAPIError(err, 'Revealing solution');
-                }
-            )
+                },
+            ),
         );
     }
 
     private callApiToTakeHint(
         trainingRunId: number,
-        hint: Hint
+        hint: Hint,
     ): Observable<Hint> {
         this.isLoadingSubject$.next(true);
         return this.api.takeHint(trainingRunId, hint.id).pipe(
@@ -143,10 +143,10 @@ export class TrainingRunTrainingLevelConcreteService extends TrainingRunTraining
                     this.isLoadingSubject$.next(false);
                     this.errorHandler.emitAPIError(
                         err,
-                        `Taking hint "${hint.title}"`
+                        `Taking hint "${hint.title}"`,
                     );
-                }
-            )
+                },
+            ),
         );
     }
 }
