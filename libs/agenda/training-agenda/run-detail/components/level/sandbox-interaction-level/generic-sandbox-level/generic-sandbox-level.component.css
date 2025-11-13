@@ -1,20 +1,25 @@
-@import "../../next-level-button/next-level-button.css";
+@import "next-level-button.css";
 
 .container {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    align-content: center;
+    width: calc(100vw - 180px);
+    margin: 0 auto;
+    overflow: hidden;
 }
+
 
 .level-content {
     margin-top: 10px;
     display: flex;
     flex-direction: row;
-    width: 90%;
-    max-width: 90%;
-    padding: 0 2rem 0 2rem;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 100%;
     height: fit-content;
+    position: relative;
+    padding-bottom: 2px;
 }
 
 .content-height-with-stepper {
@@ -27,14 +32,14 @@
     height: calc(100vh - 28rem + 90px);
 }
 
-.split-container {
+.divider-container {
     display: flex;
     flex-direction: row;
-    width: 100%;
+    justify-content: flex-start;
+    align-items: center;
     height: 100%;
 }
 
-/* Text */
 .left-panel {
     display: flex;
     flex-direction: column;
@@ -42,31 +47,64 @@
     scroll-behavior: smooth;
     margin-left: 3rem;
     padding-right: 1rem;
+    margin-right: 0.5rem;
     width: 100%;
     height: 100%;
+    box-sizing: border-box;
+    min-width: 0;
 }
 
 
-/* Topology */
+.left-panel--full {
+    padding-left: 80px;
+    padding-right: 120px;
+    width: 90%;
+}
+
+
 .right-panel {
     min-height: 275px;
     display: flex;
-    flex-direction: column;
-    align-items: flex-end;
+    flex-direction: row;
+    align-items: center;
     justify-content: flex-start;
     position: relative;
     width: 100%;
     height: 100%;
+    box-sizing: border-box;
+    min-width: 0;
 }
 
-.topology-wrapper{
-    width: 100%;
-    height: 100%;
+
+.collapse-button {
+    height: 64px;
+    width: 24px;
+    border-radius: 1rem 0 0 1rem;
+    background: var(--neutral-98);
+    box-shadow: -2px 2px 2px var(--neutral-70);
+    padding: 0;
+    margin: 0;
+    border: none;
+}
+
+.collapse-button--collapsed {
+    position: absolute;
+    right: 0px;
+}
+
+.collapse-button:hover, .collapse-button:active, .collapse-button:focus {
+    box-shadow: -1px 1px 2px var(--neutral-70);
 }
 
 
 /* Breakpoint for wrapping avatar */
 @media screen and (max-width: 1400px) {
+
+    .container {
+        overflow: visible;
+        width: 100%;
+    }
+
     .level-content {
         flex-direction: column;
         align-items: center;
@@ -74,6 +112,7 @@
         gap: 2rem;
         margin-bottom: 10rem;
         height: auto;
+        overflow: visible;
     }
 
     .content-height-with-stepper, .content-height-without-stepper {
@@ -83,6 +122,12 @@
     .left-panel {
         padding: 0;
         margin: 0;
+    }
+
+    .left-panel--full {
+        padding-left: 80px;
+        padding-right: 120px;
+        width: 90%;
     }
 
     .right-panel {
@@ -99,16 +144,30 @@
 
 /* Breakpoint based on sentinel layout (when navbar is hidden) */
 @media (max-width: 748px ) {
+    .container {
+        padding: 0;
+        margin: 0;
+        width: 100%;
+        overflow: visible;
+    }
 
     .level-content {
         padding: 0;
         margin: 0 0 10rem 0;
         width: 100%;
+        overflow: visible;
     }
 
     .left-panel {
         padding: 0;
         margin: 0;
+        width: 100%;
+    }
+
+    .left-panel--full {
+        padding: 0;
+        margin: 0;
+        width: 100%;
     }
 
     .right-panel {
@@ -117,3 +176,4 @@
         aspect-ratio: 0.75;
     }
 }
+

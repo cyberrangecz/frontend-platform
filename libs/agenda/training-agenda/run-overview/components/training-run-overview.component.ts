@@ -11,7 +11,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AsyncPipe } from '@angular/common';
 import { AccessTrainingRunComponent } from './access/access-training-run.component';
 
-import { RunningTrainingRunConcreteService, RunningTrainingRunService } from '@crczp/training-agenda/run-detail';
+import { RunningTrainingRunService } from '@crczp/training-agenda/run-detail';
 import {
     RunningAdaptiveRunConcreteService,
     RunningAdaptiveRunService
@@ -36,7 +36,7 @@ import { AccessedTrainingRunSort } from '@crczp/training-api';
     providers: [
         {
             provide: RunningTrainingRunService,
-            useClass: RunningTrainingRunConcreteService,
+            useClass: RunningTrainingRunService,
         },
         {
             provide: RunningAdaptiveRunService,

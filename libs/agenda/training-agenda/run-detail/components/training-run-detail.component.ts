@@ -1,29 +1,28 @@
-import {AfterViewInit, ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit} from '@angular/core';
-import {Level} from '@crczp/training-model';
-import {Observable} from 'rxjs';
-import {take, tap} from 'rxjs/operators';
-import {LevelStepperAdapter} from '@crczp/training-agenda/internal';
-import {TrainingRunStepper} from '../model/training-run-stepper';
-import {SentinelUser} from '@sentinel/layout';
-import {SentinelAuthService} from '@sentinel/auth';
-import {RunningTrainingRunService} from '../services/training-run/running/running-training-run.service';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {AbstractLevelComponent} from "./level/abstract-level.component";
-import {SentinelStepperComponent} from "@sentinel/components/stepper";
-import {AsyncPipe} from "@angular/common";
-import {TrainingRunLevelsDeactivateGuard} from "../services/can-deactivate/training-run-levels-can-deactivate.service";
+import { AfterViewInit, ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { AccessTrainingRunInfo, Level } from '@crczp/training-model';
+import { Observable } from 'rxjs';
+import { take, tap } from 'rxjs/operators';
+import { LevelStepperAdapter } from '@crczp/training-agenda/internal';
+import { TrainingRunStepper } from '../model/training-run-stepper';
+import { SentinelUser } from '@sentinel/layout';
+import { SentinelAuthService } from '@sentinel/auth';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { AbstractLevelComponent } from './level/abstract-level.component';
+import { SentinelStepperComponent } from '@sentinel/components/stepper';
+import { AsyncPipe } from '@angular/common';
+import {
+    TrainingRunLevelsDeactivateGuard
+} from '../services/can-deactivate/training-run-levels-can-deactivate.service';
+import { RunningTrainingRunService } from '../services/training-run/running/running-training-run.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
     selector: 'crczp-training-run-detail',
     templateUrl: './training-run-detail.component.html',
     styleUrls: ['./training-run-detail.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [
-        AbstractLevelComponent,
-        SentinelStepperComponent,
-        AsyncPipe
-    ],
-    providers: [TrainingRunLevelsDeactivateGuard],
+    imports: [AbstractLevelComponent, SentinelStepperComponent, AsyncPipe],
+    providers: [TrainingRunLevelsDeactivateGuard, RunningTrainingRunService],
 })
 /**
  * Main component of trainees training. Displays window with current level of a training and navigation to the next.
@@ -46,14 +45,24 @@ export class TrainingRunDetailComponent implements OnInit, AfterViewInit {
     destroyRef = inject(DestroyRef);
     private trainingRunService = inject(RunningTrainingRunService);
     private auth = inject(SentinelAuthService);
+    private activatedRoute = inject(ActivatedRoute);
 
     ngOnInit(): void {
-        this.init();
+        this.activatedRoute.data.pipe(take(1)).subscribe((data) => {
+            const trainingRunInfo = data[AccessTrainingRunInfo.name];
+            if (!this.trainingRunService.isInitialized) {
+                this.trainingRunService.init(trainingRunInfo);
+            }
+            this.init();
+        });
     }
 
     ngAfterViewInit(): void {
         if (!this.localEnvironment) {
-            this.trainingRunService.loadConsoles(this.sandboxInstanceId).pipe(take(1)).subscribe();
+            this.trainingRunService
+                .loadConsoles(this.sandboxInstanceId)
+                .pipe(take(1))
+                .subscribe();
         }
     }
 
@@ -62,8 +71,15 @@ export class TrainingRunDetailComponent implements OnInit, AfterViewInit {
      * @param index of desired level
      */
     activeStepChanged(index: number): void {
-        if (this.stepper.activeLevelIndex !== index && index >= 0 && index < this.levels.length) {
-            this.trainingRunService.moveToLevel(this.levels[index].id).pipe(take(1)).subscribe();
+        if (
+            this.stepper.activeLevelIndex !== index &&
+            index >= 0 &&
+            index < this.levels.length
+        ) {
+            this.trainingRunService
+                .moveToLevel(this.levels[index].id)
+                .pipe(take(1))
+                .subscribe();
             this.stepper.onActiveLevelUpdated(index);
         }
     }
@@ -76,14 +92,18 @@ export class TrainingRunDetailComponent implements OnInit, AfterViewInit {
         this.user$ = this.auth.activeUser$;
         this.levels = this.trainingRunService.getLevels();
         this.startTime = this.trainingRunService.getStartTime();
-        this.isStepperDisplayed = this.trainingRunService.getIsStepperDisplayed();
+        this.isStepperDisplayed =
+            this.trainingRunService.getIsStepperDisplayed();
         this.sandboxInstanceId = this.trainingRunService.sandboxInstanceId;
         this.sandboxDefinitionId = this.trainingRunService.sandboxDefinitionId;
         this.localEnvironment = this.trainingRunService.localEnvironment;
         this.backwardMode = this.trainingRunService.getBackwardMode();
-        this.isCurrentLevelAnswered$ = this.trainingRunService.isCurrentLevelAnswered$;
+        this.isCurrentLevelAnswered$ =
+            this.trainingRunService.isCurrentLevelAnswered$;
         if (this.isStepperDisplayed) {
-            const stepperAdapterLevels = this.levels.map((level) => new LevelStepperAdapter(level));
+            const stepperAdapterLevels = this.levels.map(
+                (level) => new LevelStepperAdapter(level),
+            );
             this.stepper = new TrainingRunStepper(
                 stepperAdapterLevels,
                 this.trainingRunService.getActiveLevelPosition(),
@@ -94,7 +114,9 @@ export class TrainingRunDetailComponent implements OnInit, AfterViewInit {
             tap(() => {
                 this.isLast = this.trainingRunService.isLast();
                 if (this.isStepperDisplayed) {
-                    this.stepper.onActiveLevelUpdated(this.trainingRunService.getActiveLevelPosition());
+                    this.stepper.onActiveLevelUpdated(
+                        this.trainingRunService.getActiveLevelPosition(),
+                    );
                 }
             }),
         );

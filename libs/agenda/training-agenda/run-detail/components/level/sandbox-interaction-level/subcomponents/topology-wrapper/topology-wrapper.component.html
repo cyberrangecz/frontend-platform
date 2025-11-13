@@ -1,0 +1,20 @@
+<div
+    class="topology-container {{(synchronizerService.topologyCollapsed$ | async) ? 'topology-container--collapsed':''}}">
+    <crczp-topology
+        [topology]="topology"
+        class="wh-100"
+    />
+</div>
+
+@if ((synchronizerService.topologyCollapsed$ | async)) {
+    <button
+        (click)="this.getAccessFile.emit()"
+        [disabled]="loading | async"
+        class="ssh-button"
+        mat-raised-button
+        matTooltip="Download config for SSH client">
+        Get SSH Config
+    </button>
+}
+
+
