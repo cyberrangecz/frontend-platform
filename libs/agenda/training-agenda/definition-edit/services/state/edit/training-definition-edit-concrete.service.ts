@@ -47,7 +47,6 @@ export class TrainingDefinitionEditConcreteService extends TrainingDefinitionEdi
      * Saves/creates training definition based on edit mode or handles error.
      */
     save(): Observable<any> {
-        console.log('Saving training definition...');
         if (this.editModeSubject$.getValue()) {
             // checks if TD was edited if not only levels are updated
             if (this.editedSnapshot) {

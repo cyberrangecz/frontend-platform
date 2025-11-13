@@ -142,10 +142,7 @@ export abstract class RequestDetailComponent {
     private init() {
         this.activatedRoute.data
             .pipe(
-                tap((data) => {
-                    console.log('Activated route data', data);
-                    this.request = data[Request.name];
-                }),
+                tap((data) => (this.request = data[Request.name])),
                 switchMap((data) =>
                     this.requestStagesService.getAll(data[Request.name]),
                 ),
