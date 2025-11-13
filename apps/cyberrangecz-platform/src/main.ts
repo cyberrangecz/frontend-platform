@@ -57,6 +57,7 @@ import {
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { RoleService } from './app/services/role.service';
 import { APP_ROUTES } from './app/app-routes';
+import { provideSentinelMarkdownEditorConfig } from '@sentinel/components/markdown-editor';
 
 @Injectable()
 export class SentinelUagAuthorizationStrategy extends SentinelAuthorizationStrategy {
@@ -75,14 +76,14 @@ export class SentinelUagAuthorizationStrategy extends SentinelAuthorizationStrat
                 catchError((err) => {
                     this.errorHandler.emit(err, 'Authorizing to User & Group');
                     return throwError(() => err);
-                })
+                }),
             );
         } else {
             return throwError(
                 () =>
                     new Error(
-                        'Failed to read authorizationUrl from SentinelUagStrategyConfig'
-                    )
+                        'Failed to read authorizationUrl from SentinelUagStrategyConfig',
+                    ),
             );
         }
     }
@@ -123,7 +124,7 @@ SentinelBootstrapper.bootstrapApplication('assets/config.json', AppComponent, {
                 loadingInterceptor,
                 errorLogInterceptor,
                 withHttpCacheInterceptor(),
-            ])
+            ]),
         ),
         {
             provide: SentinelAuthConfig,
@@ -139,6 +140,9 @@ SentinelBootstrapper.bootstrapApplication('assets/config.json', AppComponent, {
         LoadingService,
         NotificationService,
         TokenRefreshService,
+        provideSentinelMarkdownEditorConfig({
+            markdownParser: {},
+        }),
         provideHttpCache(withLocalStorage()),
         provideRouter(APP_ROUTES),
     ],
