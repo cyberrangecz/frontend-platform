@@ -28,10 +28,6 @@ crczp-topology-graph {
     border: 1px solid gainsboro;
 }
 
-.topology-placeholder-image {
-    width: 100%;
-    aspect-ratio: 1;
-}
 
 .container {
     display: flex;
