@@ -1,4 +1,4 @@
-@import "next-level-button.css";
+@import "../../next-level-button/next-level-button.css";
 
 .container {
     display: flex;
@@ -6,6 +6,7 @@
     width: calc(100vw - 180px);
     margin: 0 auto;
     overflow: hidden;
+    position: relative;
 }
 
 
@@ -23,13 +24,13 @@
 }
 
 .content-height-with-stepper {
-    max-height: calc(100vh - 28rem);
-    height: calc(100vh - 28rem);
+    max-height: calc(100vh - 30rem);
+    height: calc(100vh - 30rem);
 }
 
 .content-height-without-stepper {
-    max-height: calc(100vh - 28rem + 90px);
-    height: calc(100vh - 28rem + 90px);
+    max-height: calc(100vh - 28rem);
+    height: calc(100vh - 28rem);
 }
 
 .divider-container {

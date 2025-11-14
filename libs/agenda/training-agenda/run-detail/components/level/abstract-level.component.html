@@ -5,48 +5,48 @@
     @if (startTime) {
         <crczp-training-timer
             [startTime]="startTime"
-            class="timer" matTooltip="Time since the start of the run" matTooltipPosition="above"/>
+            class="timer" matTooltip="Time since the start of the run" matTooltipPosition="above" />
     }
 </div>
 @if (level?.type; as type) {
     @switch (type) {
         @case (levelTypes.Assessment) {
             <crczp-assessment-level
-                [level]="$any(level)"
-                [isLevelAnswered]="isLevelAnswered"
+                (next)="onNext()"
                 [isBacktracked]="isBacktracked"
                 [isLast]="isLast"
-                (next)="onNext()"/>
+                [isLevelAnswered]="isLevelAnswered"
+                [level]="$any(level)" />
         }
         @case (levelTypes.Training) {
             <crczp-training-level
-                [level]="$any(level)"
+                (next)="onNext()"
+                [isBacktracked]="isBacktracked"
                 [isLast]="isLast"
                 [isLevelAnswered]="isLevelAnswered"
-                [isBacktracked]="isBacktracked"
                 [isStepperDisplayed]="isStepperDisplayed"
-                [sandboxInstanceId]="sandboxInstanceId"
+                [level]="$any(level)"
                 [sandboxDefinitionId]="sandboxDefinitionId"
-                (next)="onNext()"/>
+                [sandboxInstanceId]="sandboxInstanceId" />
         }
         @case (levelTypes.Info) {
             <crczp-info-level
-                [level]="$any(level)"
+                (next)="onNext()"
                 [isBacktracked]="isBacktracked"
                 [isLast]="isLast"
-                (next)="onNext()"/>
+                [level]="$any(level)" />
         }
         @case (levelTypes.Access) {
             <crczp-access-level
-                [level]="$any(level)"
+                (next)="onNext()"
                 [isBacktracked]="isBacktracked"
-                [isStepperDisplayed]="isStepperDisplayed"
-                [sandboxInstanceId]="sandboxInstanceId"
-                [sandboxDefinitionId]="sandboxDefinitionId"
-                [localEnvironment]="localEnvironment"
                 [isLast]="isLast"
                 [isLevelAnswered]="isLevelAnswered"
-                (next)="onNext()"/>
+                [isStepperDisplayed]="isStepperDisplayed"
+                [level]="$any(level)"
+                [localEnvironment]="localEnvironment"
+                [sandboxDefinitionId]="sandboxDefinitionId"
+                [sandboxInstanceId]="sandboxInstanceId" />
         }
     }
 }

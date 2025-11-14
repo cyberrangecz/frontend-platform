@@ -16,14 +16,13 @@
                     </button>
                     <crczp-topology-wrapper
                         (getAccessFile)="getAccessFile.emit($event)"
-                        [loading]="isLoading"
-                        [sandboxDefinitionId]="sandboxDefinitionId"
-                        [sandboxInstanceId]="sandboxInstanceId"
+                        [id]="{instanceId: sandboxInstanceId}"
+                        [levelLoading]="isLoading | async"
                         class="wh-100 overflow-hidden"
                     />
                 </div>
             } @else {
-                <div #left class="left-panel--full round-scrollbar">
+                <div #left class="left-panel left-panel--full round-scrollbar">
                     {{ levelContent }}
                 </div>
                 <button (click)="isCollapsed.set(!isCollapsed())" class="collapse-button collapse-button--collapsed">
@@ -40,9 +39,8 @@
             <div #right class="right-panel">
                 <crczp-topology-wrapper
                     (getAccessFile)="getAccessFile.emit($event)"
-                    [loading]="isLoading"
-                    [sandboxDefinitionId]="sandboxDefinitionId"
-                    [sandboxInstanceId]="sandboxInstanceId"
+                    [id]="{instanceId: sandboxInstanceId}"
+                    [levelLoading]="isLoading | async"
                     class="wh-100 overflow-hidden"
                 />
             </div>
@@ -52,9 +50,9 @@
     @if ((isLoading | async) === false) {
         @if ((isCorrectAnswerSubmitted$ | async) || isBacktracked) {
             <button
+                (click)="next.emit()"
                 class="next-button"
-                mat-raised-button
-                (click)="next.emit()">
+                mat-raised-button>
                 {{ isLast && !isBacktracked ? "Finish" : "Next" }}
             </button>
         } @else {

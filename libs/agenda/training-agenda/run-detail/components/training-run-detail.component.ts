@@ -21,7 +21,12 @@ import { ActivatedRoute } from '@angular/router';
     templateUrl: './training-run-detail.component.html',
     styleUrls: ['./training-run-detail.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [AbstractLevelComponent, SentinelStepperComponent, AsyncPipe],
+    imports: [
+        AbstractLevelComponent,
+        SentinelStepperComponent,
+        AsyncPipe,
+
+    ],
     providers: [TrainingRunLevelsDeactivateGuard, RunningTrainingRunService],
 })
 /**

@@ -10,15 +10,20 @@ import {
     Output,
     signal,
     TemplateRef,
-    ViewChild,
+    ViewChild
 } from '@angular/core';
-import { AnswerFormHintsComponent } from '../subcomponents/answer-floating-form/answer-form-hints/answer-form-hints.component';
+import {
+    AnswerFormHintsComponent
+} from '../subcomponents/answer-floating-form/answer-form-hints/answer-form-hints.component';
 import { Observable, of } from 'rxjs';
 import { AsyncPipe, NgTemplateOutlet } from '@angular/common';
 import { MatButton } from '@angular/material/button';
 import { FloatingAnswerFormComponent } from '../subcomponents/answer-floating-form/floating-answer-form.component';
-import { TopologyWrapperComponent } from '../subcomponents/topology-wrapper/topology-wrapper.component';
-import { TopologySplitViewSynchronizerService } from '@crczp/topology-graph';
+import {
+    PersistentDividerPositionSynchronizerService,
+    TopologySynchronizerService,
+    TopologyWrapperComponent
+} from '@crczp/topology-graph';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { thresholdBuffer } from '@crczp/utils';
 import { sum } from 'd3';
@@ -36,6 +41,14 @@ import { MatIcon } from '@angular/material/icon';
         FloatingAnswerFormComponent,
         TopologyWrapperComponent,
         MatIcon,
+        TopologyWrapperComponent,
+    ],
+    providers: [
+        {
+            provide: TopologySynchronizerService,
+            useFactory: () =>
+                new PersistentDividerPositionSynchronizerService(),
+        },
     ],
 })
 export class GenericSandboxLevelComponent implements AfterViewInit {
@@ -65,16 +78,13 @@ export class GenericSandboxLevelComponent implements AfterViewInit {
     LEFT_PANEL_MIN_WIDTH = 0.1;
     RIGHT_PANEL_MIN_WIDTH = 0.1;
     isCollapsed = signal(false);
-    protected dividerPositionSynchronizer = inject(
-        TopologySplitViewSynchronizerService
-    );
+    protected dividerPositionSynchronizer = inject(TopologySynchronizerService);
     protected readonly window = window;
     private readonly destroyRef = inject(DestroyRef);
 
     constructor() {
         toObservable(this.isCollapsed).subscribe((collapsed) => {
             this.updateTopologyWidth();
-            //   this.dividerPositionSynchronizer.emitCollapsed(collapsed);
         });
     }
 
@@ -96,7 +106,7 @@ export class GenericSandboxLevelComponent implements AfterViewInit {
         } else {
             this.setPanelRatio(
                 this.dividerPositionSynchronizer.getDividerPosition() ||
-                    this.DEFAULT_RATIO
+                    this.DEFAULT_RATIO,
             );
         }
     }
@@ -124,7 +134,7 @@ export class GenericSandboxLevelComponent implements AfterViewInit {
         // Ensure ratio is within bounds
         const newRatioBounded = Math.max(
             this.LEFT_PANEL_MIN_WIDTH,
-            Math.min(ratio, 1 - this.RIGHT_PANEL_MIN_WIDTH)
+            Math.min(ratio, 1 - this.RIGHT_PANEL_MIN_WIDTH),
         );
 
         this.leftPanel.nativeElement.style.width = `${newRatioBounded * 100}%`;
@@ -157,16 +167,16 @@ export class GenericSandboxLevelComponent implements AfterViewInit {
             .pipe(
                 thresholdBuffer(
                     (values) =>
-                        Math.abs(sum(values)) > this.DIVIDER_UPDATE_THRESHOLD
+                        Math.abs(sum(values)) > this.DIVIDER_UPDATE_THRESHOLD,
                 ),
                 map((bufferedValues) => sum(bufferedValues)),
-                takeUntilDestroyed(this.destroyRef)
+                takeUntilDestroyed(this.destroyRef),
             )
             .subscribe((movement) => {
                 console.log('Movement', movement);
                 const newRatio = this.calculateRatio(movement);
                 this.dividerPositionSynchronizer.emitDividerRatioChange(
-                    newRatio
+                    newRatio,
                 );
             });
     }
@@ -194,7 +204,7 @@ export class GenericSandboxLevelComponent implements AfterViewInit {
             if (this.rightPanel) {
                 this.dividerPositionSynchronizer.emitTopologyWidthChange(
                     this.rightPanel.nativeElement.offsetWidth -
-                        (window.innerWidth > 1400 ? 24 : 0)
+                        (window.innerWidth > 1400 ? 24 : 0),
                 );
             }
         });
