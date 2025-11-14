@@ -1,5 +1,13 @@
 .anchor-div {
     position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.center-anchor-div {
+    position: relative;
 }
 
 .answer-form {

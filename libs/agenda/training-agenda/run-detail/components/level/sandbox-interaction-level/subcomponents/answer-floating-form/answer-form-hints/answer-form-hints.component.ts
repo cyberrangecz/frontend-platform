@@ -1,25 +1,21 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
-import {Observable} from 'rxjs';
-import {HintButton} from '@crczp/training-agenda/internal';
-import {Hint} from '@crczp/training-model';
-import {AsyncPipe} from "@angular/common";
-import {MatTooltip} from "@angular/material/tooltip";
-import {MatButton} from "@angular/material/button";
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Observable } from 'rxjs';
+import { HintButton } from '@crczp/training-agenda/internal';
+import { Hint } from '@crczp/training-model';
+import { AsyncPipe } from '@angular/common';
+import { MatTooltip } from '@angular/material/tooltip';
+import { MatButton } from '@angular/material/button';
 
 @Component({
     selector: 'crczp-answer-form-hints',
     templateUrl: './answer-form-hints.component.html',
     styleUrl: './answer-form-hints.component.css',
-    imports: [
-        AsyncPipe,
-        MatTooltip,
-        MatButton
-    ]
+    imports: [AsyncPipe, MatTooltip, MatButton],
 })
 export class AnswerFormHintsComponent {
-    @Input({required: true}) isSolutionRevealed$: Observable<boolean>;
-    @Input({required: true}) hintsButtons$: Observable<HintButton[]>;
-    @Input({required: true}) isLoading$: Observable<boolean>;
+    @Input({ required: true }) isSolutionRevealed$: Observable<boolean>;
+    @Input({ required: true }) hintsButtons$: Observable<HintButton[]>;
+    @Input({ required: true }) isLoading$: Observable<boolean>;
 
     @Output() hintRevealed: EventEmitter<Hint> = new EventEmitter();
     @Output() solutionRevealed: EventEmitter<void> = new EventEmitter();

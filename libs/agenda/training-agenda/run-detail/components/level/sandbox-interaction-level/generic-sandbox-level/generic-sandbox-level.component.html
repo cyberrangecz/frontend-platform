@@ -1,20 +1,58 @@
 <div class="container">
-    <div class="level-content {{isStepperDisplayed ?
+    <div #levelContentElement class="level-content {{isStepperDisplayed ?
       'content-height-with-stepper' :
       'content-height-without-stepper'}}">
         @if (window.innerWidth > 1400) {
-            <!--TODO finish topology implementation-->
+            @if (!(isCollapsed())) {
+                <div #left class="left-panel round-scrollbar">
+                    {{ levelContent }}
+                </div>
+
+                <div #right class="right-panel">
+                    <button (click)="isCollapsed.set(!isCollapsed())" class="collapse-button">
+                        <mat-icon>
+                            chevron_right
+                        </mat-icon>
+                    </button>
+                    <crczp-topology-wrapper
+                        (getAccessFile)="getAccessFile.emit($event)"
+                        [id]="{instanceId: sandboxInstanceId}"
+                        [levelLoading]="isLoading | async"
+                        class="wh-100 overflow-hidden"
+                    />
+                </div>
+            } @else {
+                <div #left class="left-panel left-panel--full round-scrollbar">
+                    {{ levelContent }}
+                </div>
+                <button (click)="isCollapsed.set(!isCollapsed())" class="collapse-button collapse-button--collapsed">
+                    <mat-icon>
+                        chevron_left
+                    </mat-icon>
+                </button>
+            }
         } @else {
-            <ng-container [ngTemplateOutlet]="leftPanelContent" />
-            <ng-container [ngTemplateOutlet]="rightPanelContent" />
+            <div #left class="left-panel round-scrollbar">
+                {{ levelContent }}
+            </div>
+
+            <div #right class="right-panel">
+                <crczp-topology-wrapper
+                    (getAccessFile)="getAccessFile.emit($event)"
+                    [id]="{instanceId: sandboxInstanceId}"
+                    [levelLoading]="isLoading | async"
+                    class="wh-100 overflow-hidden"
+                />
+            </div>
         }
+
     </div>
     @if ((isLoading | async) === false) {
         @if ((isCorrectAnswerSubmitted$ | async) || isBacktracked) {
             <button
+                (click)="next.emit()"
                 class="next-button"
-                mat-raised-button
-                (click)="next.emit()">
+                mat-raised-button>
                 {{ isLast && !isBacktracked ? "Finish" : "Next" }}
             </button>
         } @else {
@@ -30,27 +68,3 @@
     }
 </div>
 
-<ng-template #leftPanelContent>
-    <div class="left-panel round-scrollbar">
-        <sentinel-markdown-view [markdown]="levelContent" />
-        @if (displayedHintsContent$ | async) {
-            <sentinel-markdown-view [markdown]="displayedHintsContent$ | async" />
-        }
-        @if (displayedSolutionContent$ | async) {
-            <h2><span class="solution-color"> Solution: </span></h2>
-            <sentinel-markdown-view [markdown]="displayedSolutionContent$ | async" />
-        }
-    </div>
-</ng-template>
-
-<ng-template #rightPanelContent>
-    <div class="right-panel">
-        <!--        <crczp-topology-wrapper-->
-        <!--            (getAccessFile)="getAccessFile.emit($event)"-->
-        <!--            [sandboxDefinitionId]="sandboxDefinitionId"-->
-        <!--            [sandboxInstanceId]="sandboxInstanceId"-->
-        <!--            [topologyLoading]="isLoading"-->
-        <!--            class="topology-wrapper"-->
-        <!--        />-->
-    </div>
-</ng-template>

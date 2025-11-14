@@ -20,7 +20,7 @@ const routes: ValidRouterConfig<'adaptive-definition'> = [
         path: 'create',
         loadComponent: () =>
             import('@crczp/training-agenda/adaptive-definition-edit').then(
-                (m) => m.AdaptiveDefinitionEditOverviewComponent
+                (m) => m.AdaptiveDefinitionEditOverviewComponent,
             ),
         resolve: {
             [TrainingDefinition.name]:
@@ -37,11 +37,12 @@ const routes: ValidRouterConfig<'adaptive-definition'> = [
         path: ':definitionId/edit',
         loadComponent: () =>
             import('@crczp/training-agenda/adaptive-definition-edit').then(
-                (m) => m.AdaptiveDefinitionEditOverviewComponent
+                (m) => m.AdaptiveDefinitionEditOverviewComponent,
             ),
         resolve: {
             [TrainingDefinition.name]:
-                Routing.Resolvers.TrainingDefinition.adaptiveDefinitionResolver,
+                Routing.Resolvers.TrainingDefinition
+                    .adaptiveDefinitionWithLevelsResolver,
             breadcrumb:
                 Routing.Resolvers.TrainingDefinition
                     .adaptiveDefinitionBreadcrumbResolver,
@@ -54,14 +55,15 @@ const routes: ValidRouterConfig<'adaptive-definition'> = [
         path: ':definitionId/preview',
         loadComponent: () =>
             import('@crczp/training-agenda/adaptive-definition-preview').then(
-                (m) => m.AdaptivePreviewComponent
+                (m) => m.AdaptivePreviewComponent,
             ),
         data: {
             title: undefined,
         },
         resolve: {
             [TrainingDefinition.name]:
-                Routing.Resolvers.TrainingDefinition.adaptiveDefinitionResolver,
+                Routing.Resolvers.TrainingDefinition
+                    .adaptiveDefinitionWithLevelsResolver,
             breadcrumb:
                 Routing.Resolvers.TrainingDefinition
                     .adaptiveDefinitionBreadcrumbResolver,
@@ -71,11 +73,12 @@ const routes: ValidRouterConfig<'adaptive-definition'> = [
         path: ':definitionId/detail',
         loadComponent: () =>
             import('@crczp/training-agenda/adaptive-definition-summary').then(
-                (m) => m.AdaptiveDefinitionSummaryComponent
+                (m) => m.AdaptiveDefinitionSummaryComponent,
             ),
         resolve: {
             [TrainingDefinition.name]:
-                Routing.Resolvers.TrainingDefinition.adaptiveDefinitionResolver,
+                Routing.Resolvers.TrainingDefinition
+                    .adaptiveDefinitionWithLevelsResolver,
             breadcrumb:
                 Routing.Resolvers.TrainingDefinition
                     .adaptiveDefinitionBreadcrumbResolver,
@@ -87,7 +90,7 @@ const routes: ValidRouterConfig<'adaptive-definition'> = [
         path: ':definitionId/simulator',
         loadComponent: () =>
             import('@crczp/training-agenda/adaptive-definition-simulator').then(
-                (m) => m.AdaptiveDefinitionSimulatorComponent
+                (m) => m.AdaptiveDefinitionSimulatorComponent,
             ),
         data: {
             title: 'Adaptive Model Simulating Tool',
@@ -96,6 +99,9 @@ const routes: ValidRouterConfig<'adaptive-definition'> = [
             breadcrumb:
                 Routing.Resolvers.TrainingDefinition
                     .adaptiveDefinitionBreadcrumbResolver,
+            [TrainingDefinition.name]:
+                Routing.Resolvers.TrainingDefinition
+                    .adaptiveDefinitionWithLevelsResolver,
         },
     },
 ];

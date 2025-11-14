@@ -25,10 +25,10 @@ export class AdaptiveDefinitionEditConcreteService extends AdaptiveDefinitionEdi
 
     private editedSnapshot: TrainingDefinition;
     private loadingTracker: LoadingTracker = new LoadingTracker();
-    public saveDisabled$ = combineLatest(
+    public hasUnsavedChanges$ = combineLatest([
         this.formValidSubject.asObservable(),
-        this.loadingTracker.isLoading$
-    ).pipe(map(([valid, loading]) => loading || !valid));
+        this.loadingTracker.isLoading$,
+    ]).pipe(map(([valid, loading]) => loading || !valid));
 
     /**
      * Sets training definition as currently edited
@@ -52,7 +52,7 @@ export class AdaptiveDefinitionEditConcreteService extends AdaptiveDefinitionEdi
             if (this.editedSnapshot) {
                 return concat(
                     this.update(),
-                    this.phaseEditService.saveUnsavedPhases()
+                    this.phaseEditService.saveUnsavedPhases(),
                 );
             } else {
                 return concat(
@@ -60,13 +60,13 @@ export class AdaptiveDefinitionEditConcreteService extends AdaptiveDefinitionEdi
                     this.api
                         .get(
                             this.trainingDefinitionSubject$.getValue().id,
-                            true
+                            true,
                         )
                         .pipe(
                             tap((val) =>
-                                this.trainingDefinitionSubject$.next(val)
-                            )
-                        )
+                                this.trainingDefinitionSubject$.next(val),
+                            ),
+                        ),
                 );
             }
         } else {
@@ -76,8 +76,8 @@ export class AdaptiveDefinitionEditConcreteService extends AdaptiveDefinitionEdi
                         Routing.RouteBuilder.adaptive_definition
                             .definitionId(id)
                             .edit.build(),
-                    ])
-                )
+                    ]),
+                ),
             );
         }
     }
@@ -103,17 +103,17 @@ export class AdaptiveDefinitionEditConcreteService extends AdaptiveDefinitionEdi
                     () => {
                         this.notificationService.emit(
                             'success',
-                            'Changes were saved'
+                            'Changes were saved',
                         );
                         this.onSaved();
                     },
                     (err) =>
                         this.errorHandler.emitAPIError(
                             err,
-                            'Editing training definition'
-                        )
-                )
-            )
+                            'Editing training definition',
+                        ),
+                ),
+            ),
         );
     }
 
@@ -124,18 +124,18 @@ export class AdaptiveDefinitionEditConcreteService extends AdaptiveDefinitionEdi
                     () => {
                         this.notificationService.emit(
                             'success',
-                            'Training was created'
+                            'Training was created',
                         );
                         this.onSaved();
                     },
                     (err) =>
                         this.errorHandler.emitAPIError(
                             err,
-                            'Creating training definition'
-                        )
+                            'Creating training definition',
+                        ),
                 ),
-                map((td) => td.id)
-            )
+                map((td) => td.id),
+            ),
         );
     }
 

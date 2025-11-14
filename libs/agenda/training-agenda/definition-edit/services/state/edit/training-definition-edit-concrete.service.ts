@@ -27,7 +27,7 @@ export class TrainingDefinitionEditConcreteService extends TrainingDefinitionEdi
     private loadingTracker = new LoadingTracker();
     public saveDisabled$ = combineLatest(
         this.loadingTracker.isLoading$,
-        this.saveDisabledSubject$
+        this.saveDisabledSubject$,
     ).pipe(map(([loading, invalid]) => loading || invalid));
 
     /**
@@ -52,7 +52,7 @@ export class TrainingDefinitionEditConcreteService extends TrainingDefinitionEdi
             if (this.editedSnapshot) {
                 return concat(
                     this.update(),
-                    this.levelEditService.saveUnsavedLevels()
+                    this.levelEditService.saveUnsavedLevels(),
                 );
             } else {
                 return this.levelEditService.saveUnsavedLevels();
@@ -64,8 +64,8 @@ export class TrainingDefinitionEditConcreteService extends TrainingDefinitionEdi
                         Routing.RouteBuilder.linear_definition
                             .definitionId(id)
                             .edit.build(),
-                    ])
-                )
+                    ]),
+                ),
             );
         }
     }
@@ -91,17 +91,17 @@ export class TrainingDefinitionEditConcreteService extends TrainingDefinitionEdi
                     () => {
                         this.notificationService.emit(
                             'success',
-                            'Changes were saved'
+                            'Changes were saved',
                         );
                         this.onSaved();
                     },
                     (err) =>
                         this.errorHandler.emitAPIError(
                             err,
-                            'Editing training definition'
-                        )
-                )
-            )
+                            'Editing training definition',
+                        ),
+                ),
+            ),
         );
     }
 
@@ -112,18 +112,18 @@ export class TrainingDefinitionEditConcreteService extends TrainingDefinitionEdi
                     () => {
                         this.notificationService.emit(
                             'success',
-                            'Training was created'
+                            'Training was created',
                         );
                         this.onSaved();
                     },
                     (err) =>
                         this.errorHandler.emitAPIError(
                             err,
-                            'Creating training definition'
-                        )
+                            'Creating training definition',
+                        ),
                 ),
-                map((td) => td.id)
-            )
+                map((td) => td.id),
+            ),
         );
     }
 

@@ -180,10 +180,8 @@ export class TrainingDefinitionEditOverviewComponent implements OnInit {
         this.canDeactivateTDEdit = false;
     }
 
-    onControlsAction(control: SentinelControlItemSignal): void {
-        control.result$
-            .pipe(takeUntilDestroyed(this.destroyRef))
-            .subscribe(() => (this.canDeactivateTDEdit = true));
+    onControlsAction(_control: SentinelControlItemSignal): void {
+        this.canDeactivateTDEdit = true;
     }
 
     /**
