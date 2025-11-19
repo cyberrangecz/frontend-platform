@@ -1,0 +1,27 @@
+{
+    "name": "mixins",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
+    "sourceRoot": "libs/mixins/src",
+    "prefix": "lib",
+    "projectType": "library",
+    "tags": [],
+    "targets": {
+        "build": {
+            "executor": "@nx/vite:build",
+            "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
+            "options": {
+                "main": "libs/mixins/src/index.ts"
+            }
+        },
+        "test": {
+            "executor": "@nx/vite:test",
+            "outputs": ["{options.reportsDirectory}"],
+            "options": {
+                "reportsDirectory": "../../coverage/libs/mixins"
+            }
+        },
+        "lint": {
+            "executor": "@nx/eslint:lint"
+        }
+    }
+}
