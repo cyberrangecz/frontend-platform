@@ -2,9 +2,9 @@ import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import {
     AccessedTrainingRun,
     AccessTrainingRunInfo,
+    AnswerCheckResult,
     Hint,
     Level,
-    LevelAnswerCheck,
     Question,
     TrainingRun,
     TrainingRunInfo,
@@ -89,7 +89,7 @@ export abstract class LinearRunApi {
     abstract isCorrectAnswer(
         trainingRunId: number,
         answer: string,
-    ): Observable<LevelAnswerCheck>;
+    ): Observable<AnswerCheckResult>;
 
     /**
      * Sends http request to submit the passkey from access level and check its valid

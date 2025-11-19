@@ -1,52 +1,38 @@
 <div class="level-header">
     <h1
         class="level-title"
-    >{{ level?.title }}</h1>
+    >{{ runService.runInfo$.observeProperty().displayedLevel.title.$() | async }}</h1>
+    @let startTime = (runService.runInfo$.observeProperty().startTime.$() | async);
     @if (startTime) {
         <crczp-training-timer
             [startTime]="startTime"
-            class="timer" matTooltip="Time since the start of the run" matTooltipPosition="above"/>
+            class="timer" matTooltip="Time since the start of the run" matTooltipPosition="above" />
     }
 </div>
-@if (level?.type; as type) {
-    @switch (type) {
-        @case (levelTypes.Assessment) {
-            <crczp-assessment-level
-                [level]="$any(level)"
-                [isLevelAnswered]="isLevelAnswered"
-                [isBacktracked]="isBacktracked"
-                [isLast]="isLast"
-                (next)="onNext()"/>
-        }
-        @case (levelTypes.Training) {
-            <crczp-training-level
-                [level]="$any(level)"
-                [isLast]="isLast"
-                [isLevelAnswered]="isLevelAnswered"
-                [isBacktracked]="isBacktracked"
-                [isStepperDisplayed]="isStepperDisplayed"
-                [sandboxInstanceId]="sandboxInstanceId"
-                [sandboxDefinitionId]="sandboxDefinitionId"
-                (next)="onNext()"/>
-        }
-        @case (levelTypes.Info) {
-            <crczp-info-level
-                [level]="$any(level)"
-                [isBacktracked]="isBacktracked"
-                [isLast]="isLast"
-                (next)="onNext()"/>
-        }
-        @case (levelTypes.Access) {
-            <crczp-access-level
-                [level]="$any(level)"
-                [isBacktracked]="isBacktracked"
-                [isStepperDisplayed]="isStepperDisplayed"
-                [sandboxInstanceId]="sandboxInstanceId"
-                [sandboxDefinitionId]="sandboxDefinitionId"
-                [localEnvironment]="localEnvironment"
-                [isLast]="isLast"
-                [isLevelAnswered]="isLevelAnswered"
-                (next)="onNext()"/>
-        }
+@switch (levelType()) {
+    @case (AbstractLevelTypeEnum.Info) {
+        <crczp-info-level />
+    }
+    @case (AbstractPhaseTypeEnum.Info) {
+        <crczp-info-level />
+    }
+    @case (AbstractLevelTypeEnum.Access) {
+        <crczp-linear-access-level />
+    }
+    @case (AbstractPhaseTypeEnum.Access) {
+        <crczp-adaptive-access-level />
+    }
+    @case (AbstractLevelTypeEnum.Training) {
+        <crczp-linear-training-level />
+    }
+    @case (AbstractPhaseTypeEnum.Training) {
+        <crczp-adaptive-training-level />
+    }
+    @case (AbstractLevelTypeEnum.Assessment) {
+        <crczp-assessment-level />
+    }
+    @case (AbstractPhaseTypeEnum.Questionnaire) {
+        <crczp-questionnaire-level />
     }
 }
+

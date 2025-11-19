@@ -3,11 +3,7 @@ import { RouterModule } from '@angular/router';
 import { TrainingRunOverviewComponent } from '@crczp/training-agenda/run-overview';
 import { AccessTrainingRunInfo, TrainingRun } from '@crczp/training-model';
 import { TrainingApiModule } from '@crczp/training-api';
-import {
-    Routing,
-    TrainingResolverHelperService,
-    ValidRouterConfig,
-} from '@crczp/routing-commons';
+import { Routing, TrainingResolverHelperService, ValidRouterConfig } from '@crczp/routing-commons';
 
 const routes: ValidRouterConfig<'run'> = [
     {
@@ -17,8 +13,8 @@ const routes: ValidRouterConfig<'run'> = [
     {
         path: 'adaptive/:runToken/access',
         loadComponent: () =>
-            import('@crczp/training-agenda/adaptive-run-detail').then(
-                (m) => m.AdaptiveRunDetailComponent
+            import('@crczp/training-agenda/run-detail').then(
+                (m) => m.LinearTrainingRunDetailComponent,
             ),
         data: {
             breadcrumb: 'Training',
@@ -32,8 +28,8 @@ const routes: ValidRouterConfig<'run'> = [
     {
         path: 'adaptive/:runId/resume',
         loadComponent: () =>
-            import('@crczp/training-agenda/adaptive-run-detail').then(
-                (m) => m.AdaptiveRunDetailComponent
+            import('@crczp/training-agenda/run-detail').then(
+                (m) => m.LinearTrainingRunDetailComponent,
             ),
         data: {
             breadcrumb: 'Training',
@@ -48,7 +44,7 @@ const routes: ValidRouterConfig<'run'> = [
         path: 'linear/:runToken/access',
         loadComponent: () =>
             import('@crczp/training-agenda/run-detail').then(
-                (m) => m.TrainingRunDetailComponent
+                (m) => m.LinearTrainingRunDetailComponent,
             ),
         data: {
             breadcrumb: 'Training',
@@ -63,7 +59,7 @@ const routes: ValidRouterConfig<'run'> = [
         path: 'adaptive/:runId/resume',
         loadComponent: () =>
             import('@crczp/training-agenda/run-detail').then(
-                (m) => m.TrainingRunDetailComponent
+                (m) => m.LinearTrainingRunDetailComponent,
             ),
         data: {
             breadcrumb: 'Training',
@@ -78,7 +74,7 @@ const routes: ValidRouterConfig<'run'> = [
         path: 'linear/:runId/results',
         loadComponent: () =>
             import('@crczp/training-agenda/run-results').then(
-                (m) => m.TrainingRunResultsComponent
+                (m) => m.TrainingRunResultsComponent,
             ),
         data: {
             breadcrumb: 'Results',
@@ -93,7 +89,7 @@ const routes: ValidRouterConfig<'run'> = [
         path: 'adaptive/:runId/results',
         loadComponent: () =>
             import('@crczp/training-agenda/adaptive-run-results').then(
-                (m) => m.AdaptiveRunResultsComponent
+                (m) => m.AdaptiveRunResultsComponent,
             ),
         data: {
             breadcrumb: 'Results',

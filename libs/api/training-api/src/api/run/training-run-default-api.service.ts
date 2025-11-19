@@ -6,18 +6,18 @@ import {
     OffsetPaginatedResource,
     PaginationMapper,
     ParamsBuilder,
-    QueryParam
+    QueryParam,
 } from '@crczp/api-common';
 import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import {
     AccessedTrainingRun,
     AccessTrainingRunInfo,
+    AnswerCheckResult,
     Hint,
     Level,
-    LevelAnswerCheck,
     Question,
     TrainingRun,
-    TrainingRunInfo
+    TrainingRunInfo,
 } from '@crczp/training-model';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -31,7 +31,6 @@ import { HintMapper } from '../../mappers/level/training/hint-mapper';
 import { LevelMapper } from '../../mappers/level/level-mapper';
 import { AccessTrainingRunMapper } from '../../mappers/training-run/access-training-run-mapper';
 import { AccessedTrainingRunMapper } from '../../mappers/training-run/accessed-training-run-mapper';
-import { LevelAnswerMapper } from '../../mappers/training-run/level-answer-mapper';
 import { TrainingRunMapper } from '../../mappers/training-run/training-run-mapper';
 import { LinearRunApi } from './training-run-api.service';
 import { TrainingRunInfoDTO } from '../../dto/training-run/training-run-info-dto';
@@ -39,6 +38,7 @@ import { TrainingRunInfoMapper } from '../../mappers/training-run/training-run-i
 import { AnsweredLevelMapper } from '../../mappers/training-run/training-run-levels/answered-level-mapper';
 import { PortalConfig } from '@crczp/utils';
 import { AccessedTrainingRunSort, TrainingRunSort } from '../sorts';
+import { AnswerCheckResultMapper } from '../../mappers/training-run/answer-check-result-mapper';
 
 /**
  * Default implementation of service abstracting http communication with training run endpoints.
@@ -196,13 +196,13 @@ export class TrainingRunDefaultApi extends LinearRunApi {
     isCorrectAnswer(
         trainingRunId: number,
         answer: string,
-    ): Observable<LevelAnswerCheck> {
+    ): Observable<AnswerCheckResult> {
         return this.http
             .post<IsCorrectAnswerDto>(
                 `${this.apiUrl}/${trainingRunId}/is-correct-answer`,
                 { answer },
             )
-            .pipe(map((response) => LevelAnswerMapper.fromDTO(response)));
+            .pipe(map((response) => AnswerCheckResultMapper.fromDTO(response)));
     }
 
     /**

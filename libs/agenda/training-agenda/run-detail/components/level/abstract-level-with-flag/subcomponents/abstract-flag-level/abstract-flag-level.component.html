@@ -1,0 +1,32 @@
+<div class="container">
+    <div class="level-content {{(runService.runInfo$.observeProperty().isStepperDisplayed.$() | async) ?
+      'content-height-with-stepper' :
+      'content-height-without-stepper'}}">
+        <div class="left-panel round-scrollbar">
+            <sentinel-markdown-view [markdown]="levelContent()" />
+            @for (hint of activeHints(); track hint.id) {
+                <crczp-hint-content [hintId]="hint.id" [hintText]="hint.content" />
+            }
+            @if (solutionContent()) {
+                <h2><span class="solution-color"> Solution: </span></h2>
+                <sentinel-markdown-view [markdown]="solutionContent()" />
+            }
+        </div>
+    </div>
+    @if ((runService.runInfo$.observeProperty().isLevelAnswered.$() | async) ||
+    (runService.runInfo$.observeProperty().isBacktracked.$() | async)) {
+        <button
+            (click)="runService.nextLevel()"
+            class="next-button"
+            mat-raised-button>
+            {{ runService.isLastLevelDisplayed && !runService.runInfo.isBacktracked ? "Finish" : "Next" }}
+        </button>
+    } @else {
+        <crczp-floating-answer-form
+            (answerSubmit)="answerSubmitted.emit($event)"
+            [buttonLabel]="runService.isLastLevelDisplayed ? 'Finish' : 'Submit'"
+        >
+            <ng-content />
+        </crczp-floating-answer-form>
+    }
+</div>

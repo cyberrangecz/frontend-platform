@@ -1,8 +1,8 @@
-import {AccessTrainingRunInfo, TrainingLevel} from '@crczp/training-model';
-import {AbstractLevelDTO} from '../../dto/level/abstract-level-dto';
-import {AccessTrainingRunDTO} from '../../dto/training-run/access-training-run-dto';
-import {LevelMapper} from '../level/level-mapper';
-import LevelTypeEnum = AbstractLevelDTO.LevelTypeEnum;
+import { AccessTrainingRunInfo, TrainingPhase } from '@crczp/training-model';
+import { AccessTrainingRunDTO } from '../../dto/training-run/access-training-run-dto';
+import { PhaseMapper } from '../phase/phase-mapper';
+import { AbstractPhaseDTO } from '../../dto/phase/abstract-phase-dto';
+import PhaseTypeEnum = AbstractPhaseDTO.PhaseTypeEnum;
 
 export class AccessTrainingRunMapper {
     static fromDTO(dto: AccessTrainingRunDTO): AccessTrainingRunInfo {
@@ -13,27 +13,22 @@ export class AccessTrainingRunMapper {
         result.localEnvironment = dto.local_environment;
         result.backwardMode = dto.backward_mode;
         result.startTime = new Date(dto.start_time);
-        result.isStepperDisplayed = dto.show_stepper_bar;
-        result.isLevelAnswered = dto.level_answered;
-        result.currentLevel = LevelMapper.fromDTO(dto.abstract_level_dto);
-        result.levels = LevelMapper.fromBasicDTOs(dto.info_about_levels);
+        result.isLevelAnswered = dto.phase_answered;
+        const currentLevel = PhaseMapper.fromDTO(dto.current_phase);
+        result.levels = PhaseMapper.fromBasicDTOs(dto.info_about_phases);
+        result.levels.map((level) => {
+            if (level.id === currentLevel.id) {
+                Object.assign(level, currentLevel);
+            }
+        });
+        result.currentLevelId = currentLevel.id;
 
-        if (dto.taken_solution && dto.abstract_level_dto.level_type === LevelTypeEnum.TRAINING) {
-            (result.currentLevel as TrainingLevel).solution = dto.taken_solution;
-        }
         if (
-            dto.taken_hints &&
-            dto.taken_hints.length > 0 &&
-            dto.abstract_level_dto.level_type === LevelTypeEnum.TRAINING
+            dto.taken_solution &&
+            dto.current_phase.phase_type === PhaseTypeEnum.TRAINING
         ) {
-            dto.taken_hints.forEach((takenHint) => {
-                const matchingHint = (result.currentLevel as TrainingLevel).hints.find(
-                    (hint) => hint.id === takenHint.id,
-                );
-                if (matchingHint) {
-                    matchingHint.content = takenHint.content;
-                }
-            });
+            (result.currentLevel as TrainingPhase).currentTask.solution =
+                dto.taken_solution;
         }
         return result;
     }
