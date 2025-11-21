@@ -37,7 +37,7 @@ export * from './training/training-run-info';
 // LEVEL
 export * from './level/access-level';
 export * from './level/assessment-level';
-export * from './level/level-answer-check';
+export * from './level/answer-check-result';
 export * from './level/level';
 export * from './level/training-level';
 export * from './level/hint';
@@ -56,7 +56,6 @@ export * from './phase/training-phase/decision-matrix-row';
 export * from './phase/training-phase/adaptive-task';
 export * from './phase/training-phase/training-phase';
 export * from './phase/questionnaire-phase/question-answer';
-export * from './phase/training-phase/phase-answer-check';
 
 // QUESTION
 export * from './questions/extended-matching-items';

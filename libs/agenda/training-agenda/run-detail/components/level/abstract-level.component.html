@@ -1,52 +1,38 @@
 <div class="level-header">
     <h1
         class="level-title"
-    >{{ level?.title }}</h1>
+    >{{ displayedLevelTitle$ | async }}</h1>
+    @let startTime = (startTime$ | async);
     @if (startTime) {
         <crczp-training-timer
             [startTime]="startTime"
             class="timer" matTooltip="Time since the start of the run" matTooltipPosition="above" />
     }
 </div>
-@if (level?.type; as type) {
-    @switch (type) {
-        @case (levelTypes.Assessment) {
-            <crczp-assessment-level
-                (next)="onNext()"
-                [isBacktracked]="isBacktracked"
-                [isLast]="isLast"
-                [isLevelAnswered]="isLevelAnswered"
-                [level]="$any(level)" />
-        }
-        @case (levelTypes.Training) {
-            <crczp-training-level
-                (next)="onNext()"
-                [isBacktracked]="isBacktracked"
-                [isLast]="isLast"
-                [isLevelAnswered]="isLevelAnswered"
-                [isStepperDisplayed]="isStepperDisplayed"
-                [level]="$any(level)"
-                [sandboxDefinitionId]="sandboxDefinitionId"
-                [sandboxInstanceId]="sandboxInstanceId" />
-        }
-        @case (levelTypes.Info) {
-            <crczp-info-level
-                (next)="onNext()"
-                [isBacktracked]="isBacktracked"
-                [isLast]="isLast"
-                [level]="$any(level)" />
-        }
-        @case (levelTypes.Access) {
-            <crczp-access-level
-                (next)="onNext()"
-                [isBacktracked]="isBacktracked"
-                [isLast]="isLast"
-                [isLevelAnswered]="isLevelAnswered"
-                [isStepperDisplayed]="isStepperDisplayed"
-                [level]="$any(level)"
-                [localEnvironment]="localEnvironment"
-                [sandboxDefinitionId]="sandboxDefinitionId"
-                [sandboxInstanceId]="sandboxInstanceId" />
-        }
+@switch (levelType()) {
+    @case (AbstractLevelTypeEnum.Info) {
+        <crczp-info-level />
+    }
+    @case (AbstractPhaseTypeEnum.Info) {
+        <crczp-info-level />
+    }
+    @case (AbstractLevelTypeEnum.Access) {
+        <crczp-linear-access-level />
+    }
+    @case (AbstractPhaseTypeEnum.Access) {
+        <crczp-adaptive-access-level />
+    }
+    @case (AbstractLevelTypeEnum.Training) {
+        <crczp-linear-training-level />
+    }
+    @case (AbstractPhaseTypeEnum.Training) {
+        <crczp-adaptive-training-level />
+    }
+    @case (AbstractLevelTypeEnum.Assessment) {
+        <crczp-assessment-level />
+    }
+    @case (AbstractPhaseTypeEnum.Questionnaire) {
+        <crczp-questionnaire-level />
     }
 }
+

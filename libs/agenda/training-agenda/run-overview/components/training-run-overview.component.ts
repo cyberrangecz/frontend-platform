@@ -10,12 +10,6 @@ import { AccessedTrainingRunControls } from '../model/accessed-training-run-cont
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AsyncPipe } from '@angular/common';
 import { AccessTrainingRunComponent } from './access/access-training-run.component';
-
-import { RunningTrainingRunService } from '@crczp/training-agenda/run-detail';
-import {
-    RunningAdaptiveRunConcreteService,
-    RunningAdaptiveRunService
-} from '@crczp/training-agenda/adaptive-run-detail';
 import { createPaginationEvent, PaginationMapper } from '@crczp/api-common';
 import { AccessedTrainingRunSort } from '@crczp/training-api';
 
@@ -33,20 +27,7 @@ import { AccessedTrainingRunSort } from '@crczp/training-api';
         SentinelControlsComponent,
         SentinelTableComponent,
     ],
-    providers: [
-        {
-            provide: RunningTrainingRunService,
-            useClass: RunningTrainingRunService,
-        },
-        {
-            provide: RunningAdaptiveRunService,
-            useClass: RunningAdaptiveRunConcreteService,
-        },
-        {
-            provide: AccessedTrainingRunService,
-            useClass: AccessedTrainingRunService,
-        },
-    ],
+    providers: [AccessedTrainingRunService],
 })
 export class TrainingRunOverviewComponent implements OnInit {
     trainingRuns$: Observable<SentinelTable<AccessedTrainingRun, string>>;

@@ -1,0 +1,40 @@
+<div class="anchor-div">
+    <mat-card
+        class="answer-form highlighted-resizer"
+    >
+        <ng-content />
+        <div class="answer-row">
+            <mat-form-field
+                (keydown.enter)="$event.preventDefault()"
+                appearance="outline"
+                class="input-form-field"
+                subscriptSizing="dynamic">
+                <input
+                    (keydown)="keyboardSubmitAnswer($event)"
+                    [(ngModel)]="answer"
+                    [ngModelOptions]="{ standalone: true }"
+                    autocomplete="off"
+                    matInput
+                    placeholder="Answer"
+                />
+                <button
+                    (click)="answer.set('')"
+                    [hidden]="!answer()"
+                    aria-label="Clear"
+                    mat-icon-button
+                    matSuffix
+                >
+                    <mat-icon>close</mat-icon>
+                </button>
+            </mat-form-field>
+            <button
+                (click)="submitAnswer()"
+                class="submit-button"
+                color="primary"
+                mat-flat-button
+            >
+                {{ buttonLabel() }}
+            </button>
+        </div>
+    </mat-card>
+</div>

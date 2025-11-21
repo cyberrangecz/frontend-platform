@@ -1,0 +1,6 @@
+<div class="hint-wrapper"
+    [style.border-left]="'4px solid ' + (color() || 'var(--primary-60)')"
+>
+    <div class="hint-title">{{ hintTitle() }}</div>
+    <sentinel-markdown-view [markdown]="hintText()" />
+</div>

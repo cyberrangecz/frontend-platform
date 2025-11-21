@@ -1,0 +1,23 @@
+<div class="hints-row round-scrollbar">
+    @for (hint of hints(); track hint; let i = $index) {
+        <button
+            (click)="hintRevealed.emit(hint)"
+            [disabled]="hint.isRevealed()"
+            color="warn"
+            mat-raised-button
+            matTooltip="{{ hint.title }}"
+            matTooltipPosition="above"
+        >
+            Hint {{ i + 1 }}
+        </button>
+    }
+    <button
+        (click)="solutionRevealed.emit()"
+        [disabled]="isSolutionRevealed()"
+        color="warn"
+        mat-raised-button
+        matTooltip="Display solution"
+    >
+        Reveal Solution
+    </button>
+</div>

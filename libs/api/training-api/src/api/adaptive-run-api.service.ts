@@ -13,8 +13,8 @@ import { Observable } from 'rxjs';
 import {
     AccessedTrainingRun,
     AccessTrainingRunInfo,
+    AnswerCheckResult,
     Phase,
-    PhaseAnswerCheck,
     QuestionAnswer,
     TrainingRun,
 } from '@crczp/training-model';
@@ -23,15 +23,15 @@ import { TrainingRunDTO } from '../dto/training-run/training-run-dto';
 import { AccessTrainingRunDTO } from '../dto/training-run/access-training-run-dto';
 import { AdaptiveRunMapper } from '../mappers/training-run/adaptive-run-mapper';
 import { AccessedAdaptiveRunMapper } from '../mappers/training-run/accessed-adaptive-run-mapper';
-import { AccessAdaptiveRunMapper } from '../mappers/training-run/access-adaptive-run-mapper';
 import { AbstractPhaseDTO } from '../dto/phase/abstract-phase-dto';
 import { PhaseMapper } from '../mappers/phase/phase-mapper';
 import { IsCorrectAnswerDTO } from '../dto/phase/training-phase/is-correct-answer-dto';
-import { TaskAnswerMapper } from '../mappers/training-run/task-answer-mapper';
+import { AnswerCheckResultMapper } from '../mappers/training-run/answer-check-result-mapper';
 import { QuestionAnswerMapper } from '../mappers/phase/question-answer-mapper';
 import { AnsweredPhaseMapper } from '../mappers/training-run/training-run-phases/answered-phase-mapper';
 import { PortalConfig } from '@crczp/utils';
 import { AccessedTrainingRunSort, TrainingRunSort } from './sorts';
+import { AccessAdaptiveRunMapper } from '../mappers/training-run/access-adaptive-run-mapper';
 
 @Injectable()
 export class AdaptiveRunApi {
@@ -154,13 +154,13 @@ export class AdaptiveRunApi {
     isCorrectAnswer(
         trainingRunId: number,
         answer: string,
-    ): Observable<PhaseAnswerCheck> {
+    ): Observable<AnswerCheckResult> {
         return this.http
             .post<IsCorrectAnswerDTO>(
                 `${this.apiUrl}/${trainingRunId}/is-correct-answer`,
                 { answer },
             )
-            .pipe(map((response) => TaskAnswerMapper.fromDTO(response)));
+            .pipe(map((response) => AnswerCheckResultMapper.fromDTO(response)));
     }
 
     isCorrectPasskey(

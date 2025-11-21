@@ -18,8 +18,8 @@ const routes: ValidRouterConfig<'run'> = [
     {
         path: 'adaptive/:runToken/access',
         loadComponent: () =>
-            import('@crczp/training-agenda/adaptive-run-detail').then(
-                (m) => m.AdaptiveRunDetailComponent,
+            import('@crczp/training-agenda/run-detail').then(
+                (m) => m.AdaptiveTrainingRunDetailComponent,
             ),
         data: {
             breadcrumb: 'Training',
@@ -33,8 +33,8 @@ const routes: ValidRouterConfig<'run'> = [
     {
         path: 'adaptive/:runId/resume',
         loadComponent: () =>
-            import('@crczp/training-agenda/adaptive-run-detail').then(
-                (m) => m.AdaptiveRunDetailComponent,
+            import('@crczp/training-agenda/run-detail').then(
+                (m) => m.AdaptiveTrainingRunDetailComponent,
             ),
         data: {
             breadcrumb: 'Training',
@@ -49,7 +49,7 @@ const routes: ValidRouterConfig<'run'> = [
         path: 'linear/:runToken/access',
         loadComponent: () =>
             import('@crczp/training-agenda/run-detail').then(
-                (m) => m.TrainingRunDetailComponent,
+                (m) => m.LinearTrainingRunDetailComponent,
             ),
         data: {
             breadcrumb: 'Training',
@@ -64,7 +64,7 @@ const routes: ValidRouterConfig<'run'> = [
         path: 'linear/:runId/resume',
         loadComponent: () =>
             import('@crczp/training-agenda/run-detail').then(
-                (m) => m.TrainingRunDetailComponent,
+                (m) => m.LinearTrainingRunDetailComponent,
             ),
         data: {
             breadcrumb: 'Training',

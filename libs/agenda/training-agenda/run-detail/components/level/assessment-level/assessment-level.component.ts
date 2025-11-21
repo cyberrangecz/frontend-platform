@@ -1,69 +1,62 @@
 import {
     ChangeDetectionStrategy,
     Component,
-    EventEmitter,
     inject,
-    Input,
-    OnChanges,
     OnInit,
-    Output,
     QueryList,
-    SimpleChanges,
-    ViewChildren
+    ViewChildren,
 } from '@angular/core';
-import {AssessmentLevel, AssessmentTypeEnum, Question} from '@crczp/training-model';
-import {take} from 'rxjs/operators';
-import {TraineeQuestionComponent} from './question/trainee-question.component';
 import {
-    TrainingRunAssessmentLevelService
-} from '../../../services/training-run/level/assessment/training-run-assessment-level.service';
-import {
-    TrainingRunAssessmentLevelConcreteService
-} from '../../../services/training-run/level/assessment/training-run-assessment-level-concrete.service';
-import {SentinelMarkdownViewComponent} from "@sentinel/components/markdown-view";
-import {MatDivider} from "@angular/material/divider";
+    AssessmentLevel,
+    AssessmentTypeEnum,
+    Question,
+} from '@crczp/training-model';
+import { TraineeQuestionComponent } from './question/trainee-question.component';
 
-import {MatButton} from "@angular/material/button";
+import { LinearAssessmentLevelService } from '../../../services/training-run/level/assessment/linear-assessment-level.service';
+import { SentinelMarkdownViewComponent } from '@sentinel/components/markdown-view';
+import { MatDivider } from '@angular/material/divider';
+
+import { MatButton } from '@angular/material/button';
+import { AbstractTrainingRunService } from '../../../services/training-run/abstract-training-run.service';
+import { AsyncPipe } from '@angular/common';
+import { map } from 'rxjs/operators';
 
 @Component({
     selector: 'crczp-assessment-level',
     templateUrl: './assessment-level.component.html',
     styleUrls: ['./assessment-level.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    providers: [{provide: TrainingRunAssessmentLevelService, useClass: TrainingRunAssessmentLevelConcreteService}],
+    providers: [LinearAssessmentLevelService],
     imports: [
-    SentinelMarkdownViewComponent,
-    MatDivider,
-    TraineeQuestionComponent,
-    MatButton,
-    MatButton
-]
+        SentinelMarkdownViewComponent,
+        MatDivider,
+        TraineeQuestionComponent,
+        MatButton,
+        MatButton,
+        AsyncPipe,
+    ],
 })
 /**
  * Component that displays assessment level in a trainees training run. If the questions are type of test, trainee needs
  * to answer all the questions before he can continue to the next level. If the type is questionnaire, trainee can skip
  * answering the questions.
  */
-export class AssessmentLevelComponent implements OnInit, OnChanges {
-    private assessmentService = inject(TrainingRunAssessmentLevelService);
-
-    @Input() level: AssessmentLevel;
-    @Input() isLast: boolean;
-    @Input() isLevelAnswered: boolean;
-    @Input() isBacktracked: boolean;
-    @Output() next: EventEmitter<void> = new EventEmitter();
-    @ViewChildren(TraineeQuestionComponent) questionComponents: QueryList<TraineeQuestionComponent>;
-
+export class AssessmentLevelComponent implements OnInit {
+    @ViewChildren(TraineeQuestionComponent)
+    questionComponents: QueryList<TraineeQuestionComponent>;
     canSubmit: boolean;
+    protected readonly assessmentService = inject(LinearAssessmentLevelService);
+    protected readonly runService = inject(AbstractTrainingRunService);
 
-    ngOnInit(): void {
-        this.initCanSubmit();
+    get level$() {
+        return this.runService.runInfo$.pipe(
+            map((runInfo) => runInfo.displayedLevel as AssessmentLevel),
+        );
     }
 
-    ngOnChanges(changes: SimpleChanges): void {
-        if ('level' in changes) {
-            this.initCanSubmit();
-        }
+    ngOnInit(): void {
+        this.level$.subscribe((level) => this.initCanSubmit(level));
     }
 
     /**
@@ -85,27 +78,22 @@ export class AssessmentLevelComponent implements OnInit, OnChanges {
         this.sendSubmitRequest(results);
     }
 
-    /**
-     * Emit event to next level to move to the next level
-     */
-    onNext(): void {
-        this.next.emit();
-    }
-
     private sendSubmitRequest(answers: Question[]) {
-        this.assessmentService.submit(answers).pipe(take(1)).subscribe();
+        this.assessmentService.submit(answers);
     }
 
     private checkCanSubmit() {
-        this.canSubmit = this.questionComponents.toArray().every((component) => component.canBeSubmitted());
+        this.canSubmit = this.questionComponents
+            .toArray()
+            .every((component) => component.canBeSubmitted());
     }
 
-    private initCanSubmit() {
-        if (this.level.assessmentType === AssessmentTypeEnum.Test) {
+    private initCanSubmit(level: AssessmentLevel) {
+        if (level.assessmentType === AssessmentTypeEnum.Test) {
             this.canSubmit = false;
             return;
         } else {
-            if (this.level.questions.some((question) => question.required)) {
+            if (level.questions.some((question) => question.required)) {
                 this.canSubmit = false;
                 return;
             }

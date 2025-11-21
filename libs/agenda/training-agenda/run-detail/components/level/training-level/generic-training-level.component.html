@@ -1,0 +1,14 @@
+<crczp-abstract-flag-level
+    (answerSubmitted)="onAnswerSubmitted($event)"
+    [hints]="hints$ | async"
+    [levelContent]="levelContent$ | async"
+    [solutionContent]="solutionContent$ | async"
+>
+    <crczp-answer-form-hints
+        (hintRevealed)="revealHint($event)"
+        (solutionRevealed)="revealSolution()"
+        [hints]="hints$ | async"
+        [isSolutionRevealed]="isSolutionRevealed$ | async"
+    />
+</crczp-abstract-flag-level>
+
