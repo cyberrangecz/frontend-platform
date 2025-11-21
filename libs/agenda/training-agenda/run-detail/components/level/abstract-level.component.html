@@ -1,8 +1,8 @@
 <div class="level-header">
     <h1
         class="level-title"
-    >{{ runService.runInfo$.observeProperty().displayedLevel.title.$() | async }}</h1>
-    @let startTime = (runService.runInfo$.observeProperty().startTime.$() | async);
+    >{{ displayedLevelTitle$ | async }}</h1>
+    @let startTime = (startTime$ | async);
     @if (startTime) {
         <crczp-training-timer
             [startTime]="startTime"

@@ -4,27 +4,30 @@
       'content-height-without-stepper'}}">
         <div class="left-panel round-scrollbar">
             <sentinel-markdown-view [markdown]="levelContent()" />
-            @for (hint of activeHints(); track hint.id) {
-                <crczp-hint-content [hintId]="hint.id" [hintText]="hint.content" />
-            }
-            @if (solutionContent()) {
-                <h2><span class="solution-color"> Solution: </span></h2>
-                <sentinel-markdown-view [markdown]="solutionContent()" />
-            }
+            <div class="vflex g-1rem">
+                @for (hint of activeHints(); track hint.id) {
+                    <crczp-hint-content [hintText]="hint.content" [hintTitle]="hint.title" />
+                }
+                @if (solutionContent()) {
+                    <crczp-hint-content [color]="'var(--warning-60)'" [hintText]="solutionContent()"
+                                        [hintTitle]="'Solution'" />
+                }
+            </div>
         </div>
     </div>
-    @if ((runService.runInfo$.observeProperty().isLevelAnswered.$() | async) ||
+    @let lastLevelDisplayed = runService.runInfo$.observeProperty().isLastLevelDisplayed.$() | async;
+    @if ((runService.runInfo$.observeProperty().isCurrentLevelAnswered.$() | async) ||
     (runService.runInfo$.observeProperty().isBacktracked.$() | async)) {
         <button
             (click)="runService.nextLevel()"
             class="next-button"
             mat-raised-button>
-            {{ runService.isLastLevelDisplayed && !runService.runInfo.isBacktracked ? "Finish" : "Next" }}
+            {{ lastLevelDisplayed && !runService.runInfo.isBacktracked ? "Finish" : "Next" }}
         </button>
     } @else {
         <crczp-floating-answer-form
             (answerSubmit)="answerSubmitted.emit($event)"
-            [buttonLabel]="runService.isLastLevelDisplayed ? 'Finish' : 'Submit'"
+            [buttonLabel]="lastLevelDisplayed ? 'Finish' : 'Submit'"
         >
             <ng-content />
         </crczp-floating-answer-form>

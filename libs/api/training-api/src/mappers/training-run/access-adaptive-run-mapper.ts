@@ -4,24 +4,21 @@ import { PhaseMapper } from '../phase/phase-mapper';
 import { AbstractPhaseDTO } from '../../dto/phase/abstract-phase-dto';
 import PhaseTypeEnum = AbstractPhaseDTO.PhaseTypeEnum;
 
-export class AccessTrainingRunMapper {
+export class AccessAdaptiveRunMapper {
     static fromDTO(dto: AccessTrainingRunDTO): AccessTrainingRunInfo {
         const result = new AccessTrainingRunInfo();
+        const currentLevel = PhaseMapper.fromDTO(dto.current_phase);
+
         result.trainingRunId = dto.training_run_id;
         result.sandboxInstanceId = dto.sandbox_instance_ref_id;
         result.sandboxDefinitionId = dto.sandbox_definition_id;
         result.localEnvironment = dto.local_environment;
         result.backwardMode = dto.backward_mode;
         result.startTime = new Date(dto.start_time);
-        result.isLevelAnswered = dto.phase_answered;
-        const currentLevel = PhaseMapper.fromDTO(dto.current_phase);
-        result.levels = PhaseMapper.fromBasicDTOs(dto.info_about_phases);
-        result.levels.map((level) => {
-            if (level.id === currentLevel.id) {
-                Object.assign(level, currentLevel);
-            }
-        });
+        result.isCurrentLevelAnswered = dto.phase_answered;
         result.currentLevelId = currentLevel.id;
+        result.displayedLevelId = result.currentLevelId;
+        result.levels = PhaseMapper.fromBasicDTOs(dto.info_about_phases);
 
         if (
             dto.taken_solution &&
@@ -30,6 +27,13 @@ export class AccessTrainingRunMapper {
             (result.currentLevel as TrainingPhase).currentTask.solution =
                 dto.taken_solution;
         }
+        result.levels = result.levels.map((level) => {
+            if (level.id === currentLevel.id) {
+                return currentLevel;
+            }
+            return level;
+        });
+
         return result;
     }
 }

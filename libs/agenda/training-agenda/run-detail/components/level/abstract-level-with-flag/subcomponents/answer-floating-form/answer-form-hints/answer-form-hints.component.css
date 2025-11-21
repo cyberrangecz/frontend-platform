@@ -3,7 +3,7 @@
     flex-direction: row;
     gap: 1rem;
     max-width: 75vw;
-    padding-bottom: 0.5rem;
+    padding: 2px 0.5rem 0.5rem;
     overflow-x: auto;
     width: 100%;
 }

@@ -6,7 +6,7 @@ import {
     OffsetPaginatedResource,
     PaginationMapper,
     ParamsBuilder,
-    QueryParam,
+    QueryParam
 } from '@crczp/api-common';
 import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import {
@@ -17,7 +17,7 @@ import {
     Level,
     Question,
     TrainingRun,
-    TrainingRunInfo,
+    TrainingRunInfo
 } from '@crczp/training-model';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -29,7 +29,7 @@ import { TrainingRunDTO } from '../../dto/training-run/training-run-dto';
 import { QuestionMapper } from '../../mappers/level/assessment/question-mapper';
 import { HintMapper } from '../../mappers/level/training/hint-mapper';
 import { LevelMapper } from '../../mappers/level/level-mapper';
-import { AccessTrainingRunMapper } from '../../mappers/training-run/access-training-run-mapper';
+import { AccessLinearRunMapper } from '../../mappers/training-run/access-linear-run-mapper';
 import { AccessedTrainingRunMapper } from '../../mappers/training-run/accessed-training-run-mapper';
 import { TrainingRunMapper } from '../../mappers/training-run/training-run-mapper';
 import { LinearRunApi } from './training-run-api.service';
@@ -161,7 +161,7 @@ export class TrainingRunDefaultApi extends LinearRunApi {
         const params = new HttpParams().append('accessToken', token);
         return this.http
             .post<AccessTrainingRunDTO>(this.apiUrl, {}, { params })
-            .pipe(map((response) => AccessTrainingRunMapper.fromDTO(response)));
+            .pipe(map((response) => AccessLinearRunMapper.fromDTO(response)));
     }
 
     /**
@@ -173,7 +173,7 @@ export class TrainingRunDefaultApi extends LinearRunApi {
             .get<AccessTrainingRunDTO>(
                 `${this.apiUrl}/${trainingRunId}/resumption`,
             )
-            .pipe(map((response) => AccessTrainingRunMapper.fromDTO(response)));
+            .pipe(map((response) => AccessLinearRunMapper.fromDTO(response)));
     }
 
     /**

@@ -18,20 +18,14 @@
 <div class="hflex">
 
     @if (!!(this.trainingRunService.runInfo$ | async)) {
-        <!-- CONTENT OF ACTIVE LEVEL -->
-        <crczp-abstract-level
-            [hidden]="shouldHideActiveLevel()"
-        />
-        @if (!shouldHideActiveLevel()) {
-            <crczp-abstract-level />
-        }
+        <crczp-abstract-level />
     }
     @let sandboxInstanceId = (this.trainingRunService.runInfo$.observeProperty().sandboxInstanceId.$() | async);
     @if (!!sandboxInstanceId) {
-        <crczp-topology-wrapper
-            (getAccessFile)="onAccessFileRequested()"
-            [id]="{instanceId: sandboxInstanceId}"
-            class="topology-wrapper"
-        />
+        <!--        <crczp-topology-wrapper-->
+            <!--            (getAccessFile)="onAccessFileRequested()"-->
+            <!--            [id]="{instanceId: sandboxInstanceId}"-->
+            <!--            class="topology-wrapper"-->
+            <!--        />-->
     }
 </div>

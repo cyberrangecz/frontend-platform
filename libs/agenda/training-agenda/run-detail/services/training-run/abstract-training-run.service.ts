@@ -1,4 +1,14 @@
-import { AccessTrainingRunInfo, Level, Phase } from '@crczp/training-model';
+import {
+    AccessLevel,
+    AccessPhase,
+    AccessTrainingRunInfo,
+    InfoLevel,
+    InfoPhase,
+    Level,
+    Phase,
+    TrainingLevel,
+    TrainingPhase,
+} from '@crczp/training-model';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { ErrorHandlerService } from '@crczp/utils';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -18,6 +28,7 @@ export abstract class AbstractTrainingRunService {
         private dialog: MatDialog,
         accessTrainingRunInfo: AccessTrainingRunInfo,
     ) {
+        console.log('Initial data', accessTrainingRunInfo);
         this.runInfoSubject$.next(accessTrainingRunInfo);
     }
 
@@ -32,6 +43,9 @@ export abstract class AbstractTrainingRunService {
     public get stepperBar$(): Observable<TrainingRunStepper | null> {
         return this.runInfoSubject$.asObservable().pipe(
             map((runInfo) => {
+                if (!runInfo || !runInfo.displayedLevel) {
+                    return null;
+                }
                 if (runInfo.isStepperDisplayed) {
                     return new TrainingRunStepper(
                         runInfo.levels,
@@ -44,57 +58,103 @@ export abstract class AbstractTrainingRunService {
         );
     }
 
-    public get isLastLevelDisplayed(): boolean {
-        return (
-            this.runInfo.displayedLevel.id ===
-            this.runInfo.levels[this.runInfo.levels.length - 1]?.id
-        );
-    }
-
-    public get isLastLevelDisplayed$(): Observable<boolean> {
-        return this.runInfo$.pipe(map((_) => this.isLastLevelDisplayed));
-    }
-
     public updateRunInfo(properties: Partial<AccessTrainingRunInfo>): void {
         this.runInfoSubject$.next(this.runInfo.update(properties));
     }
 
     public nextLevel(): void {
-        if (!this.runInfo.isLevelAnswered) {
+        if (!this.runInfo.isCurrentLevelAnswered) {
             this.errorHandlerService.emitFrontendErrorNotification(
                 'Cannot proceed to next level before answering the current level',
             );
         }
         if (this.runInfo.isBacktracked) {
             this.displayNextLevel();
-        } else if (this.isLastLevelDisplayed) {
+        } else if (this.runInfo.isLastLevelDisplayed) {
             this.callApiToFinish().subscribe();
         } else {
-            this.callApiToNextLevel().subscribe();
+            this.callApiToNextLevel().subscribe((nextLevel) => {
+                this.updateRunInfoWithNextLevel(nextLevel);
+                this.displayNextLevel();
+            });
         }
     }
 
-    public updateLevel(trainingLevel: Level | Phase): void {
-        const updatedLevels = this.runInfo.levels.map((level) =>
-            level.id === trainingLevel.id ? trainingLevel : level,
+    public updateRunInfoWithNextLevel(level: Level | Phase): void {
+        const updatedLevels = this.runInfo.levels.map((lvl) =>
+            lvl.id === level.id ? level : lvl,
         );
         this.updateRunInfo({ levels: updatedLevels });
     }
 
-    public displayLevel(levelId: number): void {
-        const currentLevelOrder = this.runInfo.currentLevel.order;
-        const targetLevel = this.findLevelOrThrow(levelId);
-        if (targetLevel.order > currentLevelOrder) {
+    public updateRunInfoWithLoadedLevel(level: Level | Phase): void {
+        console.log(
+            'Instanceof access level',
+            level instanceof AccessPhase || level instanceof AccessLevel,
+        );
+        const updatedLevels = this.runInfo.levels.map((lvl) => {
+            if (lvl.id !== level.id) {
+                return lvl;
+            }
+            if (lvl instanceof TrainingPhase) {
+                lvl.currentTask.content = (
+                    level as TrainingPhase
+                ).currentTask.content;
+            }
+            if (
+                lvl instanceof TrainingLevel ||
+                lvl instanceof InfoLevel ||
+                lvl instanceof InfoPhase
+            ) {
+                lvl.content = (level as TrainingLevel).content;
+            }
+            if (lvl instanceof AccessPhase || lvl instanceof AccessLevel) {
+                lvl.cloudContent = (
+                    level as AccessPhase | AccessLevel
+                ).cloudContent;
+                lvl.localContent = (
+                    level as AccessPhase | AccessLevel
+                ).localContent;
+                console.log('Updating access level', lvl);
+            }
+            return lvl;
+        });
+        this.updateRunInfo({
+            displayedLevelId: level.id,
+            levels: updatedLevels,
+        });
+    }
+
+    public displayLevelByOrder(levelOrder: number): void {
+        const targetLevel = this.runInfo.levels.find(
+            (lvl) => lvl.order === levelOrder,
+        );
+        if (!targetLevel) {
             this.errorHandlerService.emitFrontendErrorNotification(
-                'Cannot display a level ahead of the current level',
+                `Level with order ${levelOrder} not found in current training run`,
             );
         }
-        this.updateRunInfo({ displayedLevelId: targetLevel.id });
+        this.displayLevel(targetLevel.id);
+    }
+
+    public displayLevel(levelId: number): void {
+        const targetLevel = this.findLevelOrThrow(levelId);
+        if (!targetLevel.isLoaded) {
+            this.callApiToLoadLevel(targetLevel.id).subscribe((loadedLevel) => {
+                this.updateRunInfoWithLoadedLevel(loadedLevel);
+            });
+        } else {
+            this.updateRunInfo({ displayedLevelId: targetLevel.id });
+        }
     }
 
     protected abstract callApiToNextLevel(): Observable<Phase | Level>;
 
     protected abstract callApiToFinish(): Observable<boolean>;
+
+    protected abstract callApiToLoadLevel(
+        levelId: number,
+    ): Observable<Phase | Level>;
 
     protected findLevelOrThrow(levelId: number): Level | Phase {
         const targetLevel = this.runInfo.levels.find(
@@ -109,10 +169,7 @@ export abstract class AbstractTrainingRunService {
     }
 
     protected displayNextLevel() {
-        const nextLevel = this.runInfo.levels.find(
-            (lvl) => lvl.order === this.runInfo.currentLevel.order + 1,
-        );
-        this.updateRunInfo({ displayedLevelId: nextLevel.id });
+        this.displayLevelByOrder(this.runInfo.currentLevel.order + 1);
     }
 
     private displayLoadingDialog(): MatDialogRef<LoadingDialogComponent> {

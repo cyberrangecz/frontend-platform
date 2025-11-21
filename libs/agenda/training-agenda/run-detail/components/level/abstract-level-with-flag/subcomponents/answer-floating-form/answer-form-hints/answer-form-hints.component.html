@@ -13,7 +13,7 @@
     }
     <button
         (click)="solutionRevealed.emit()"
-        [disabled]="solutionRevealed"
+        [disabled]="isSolutionRevealed()"
         color="warn"
         mat-raised-button
         matTooltip="Display solution"

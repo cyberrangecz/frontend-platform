@@ -12,6 +12,7 @@ import { AssessmentLevelComponent } from './assessment-level/assessment-level.co
 import { QuestionnaireLevelComponent } from './questionnaire-phase/questionnaire-level.component';
 import { AdaptiveAccessLevelComponent } from './access-level/adaptive-access-level.component';
 import { LinearAccessLevelComponent } from './access-level/linear-access-level.component';
+import { Observable } from 'rxjs';
 
 /**
  * Component to display one level in a training run. Serves mainly as a wrapper which determines the type of the training
@@ -44,6 +45,19 @@ export class AbstractLevelComponent implements OnInit {
     protected readonly destroyRef = inject(DestroyRef);
     protected readonly AbstractLevelTypeEnum = AbstractLevelTypeEnum;
     protected readonly AbstractPhaseTypeEnum = AbstractPhaseTypeEnum;
+
+    protected readonly displayedLevelTitle$: Observable<string>;
+    protected readonly startTime$: Observable<Date>;
+
+    constructor() {
+        this.displayedLevelTitle$ = this.runService.runInfo$
+            .observeProperty()
+            .displayedLevel.title.$();
+
+        this.startTime$ = this.runService.runInfo$
+            .observeProperty()
+            .startTime.$();
+    }
 
     ngOnInit(): void {
         this.runService.runInfo$.subscribe((runInfo) => {

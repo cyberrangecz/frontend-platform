@@ -18,11 +18,15 @@ export class AdaptiveTrainingRunService extends AbstractTrainingRunService {
         );
     }
 
-    callApiToFinish(): Observable<boolean> {
-        return this.runApi.finish(super.runInfo.trainingRunId);
+    protected callApiToFinish(): Observable<boolean> {
+        return this.runApi.finish(this.runInfo.trainingRunId);
     }
 
-    callApiToNextLevel(): Observable<Phase> {
-        return this.runApi.nextPhase(super.runInfo.trainingRunId);
+    protected callApiToNextLevel(): Observable<Phase> {
+        return this.runApi.nextPhase(this.runInfo.trainingRunId);
+    }
+
+    protected callApiToLoadLevel(levelId: number): Observable<Phase> {
+        return this.runApi.moveToPhase(this.runInfo.trainingRunId, levelId);
     }
 }

@@ -19,10 +19,14 @@ export class LinearTrainingRunService extends AbstractTrainingRunService {
     }
 
     callApiToFinish(): Observable<boolean> {
-        return this.runApi.finish(super.runInfo.trainingRunId);
+        return this.runApi.finish(this.runInfo.trainingRunId);
     }
 
     callApiToNextLevel(): Observable<Level> {
-        return this.runApi.nextLevel(super.runInfo.trainingRunId);
+        return this.runApi.nextLevel(this.runInfo.trainingRunId);
+    }
+
+    protected callApiToLoadLevel(levelId: number): Observable<Level> {
+        return this.runApi.moveToLevel(this.runInfo.trainingRunId, levelId);
     }
 }

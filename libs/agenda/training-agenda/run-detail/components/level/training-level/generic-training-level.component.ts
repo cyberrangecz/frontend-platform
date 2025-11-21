@@ -1,6 +1,6 @@
 import { DestroyRef } from '@angular/core';
-import { Observable, of, skipWhile, switchMap } from 'rxjs';
-import { filter, map, take } from 'rxjs/operators';
+import { Observable, of, shareReplay, skipWhile, switchMap } from 'rxjs';
+import { filter, map, take, tap } from 'rxjs/operators';
 import { Hint, TrainingLevel, TrainingPhase } from '@crczp/training-model';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AbstractTrainingRunService } from '../../../services/training-run/abstract-training-run.service';
@@ -8,6 +8,10 @@ import { AbstractTrainingLevelService } from '../../../services/training-run/lev
 
 export abstract class GenericTrainingLevelComponent {
     isLoading$: Observable<boolean>;
+    readonly isSolutionRevealed$: Observable<boolean>;
+    readonly solutionContent$: Observable<string>;
+    abstract readonly hints$: Observable<Hint[]>;
+    abstract readonly levelContent$: Observable<string>;
     protected readonly of = of;
     private shouldScrollAfterViewCheck = false;
 
@@ -22,13 +26,8 @@ export abstract class GenericTrainingLevelComponent {
                 this.shouldScrollAfterViewCheck = false;
             }
         });
-    }
 
-    abstract get hints$(): Observable<Hint[]>;
-    abstract get levelContent$(): Observable<string>;
-
-    get isSolutionRevealed$(): Observable<boolean> {
-        return this.runService.runInfo$
+        this.isSolutionRevealed$ = this.runService.runInfo$
             .observeProperty()
             .displayedLevel.$()
             .pipe(
@@ -40,16 +39,16 @@ export abstract class GenericTrainingLevelComponent {
                             (level as TrainingPhase).solutionRevealed()),
                 ),
             );
-    }
 
-    get solutionContent$(): Observable<string> {
-        return this.isSolutionRevealed$.pipe(
+        this.solutionContent$ = this.isSolutionRevealed$.pipe(
+            tap((isRevealed) => console.log('Solution revealed:', isRevealed)),
             skipWhile((isRevealed) => !isRevealed),
             switchMap(() =>
                 this.runService.runInfo$
                     .observeProperty()
                     .displayedLevel.$()
                     .pipe(
+
                         map((level) => {
                             if (level instanceof TrainingLevel) {
                                 return (level as TrainingLevel).solution;
@@ -72,6 +71,8 @@ export abstract class GenericTrainingLevelComponent {
     abstract revealHint(hint: Hint): void;
 
     revealSolution(): void {
+        this.trainingLevelService.revealSolution();
+        // Subscribe to scroll to bottom after solution is revealed
         this.isSolutionRevealed$
             .pipe(
                 filter((isRevealed) => isRevealed),
@@ -81,7 +82,6 @@ export abstract class GenericTrainingLevelComponent {
             .subscribe(() => {
                 this.shouldScrollAfterViewCheck = true;
             });
-        this.trainingLevelService.revealSolution();
     }
 
     abstract registerViewCheckHook(viewCheckHook: () => void): void;

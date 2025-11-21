@@ -10,7 +10,7 @@ import { AsyncPipe } from '@angular/common';
 import { MatButton } from '@angular/material/button';
 import { FloatingAnswerFormComponent } from '../answer-floating-form/floating-answer-form.component';
 import { SentinelMarkdownViewComponent } from '@sentinel/components/markdown-view';
-import { HintContent } from '../hint-content/hint-content';
+import { HintContentComponent } from '../hint-content/hint-content.component';
 import { AbstractTrainingRunService } from '../../../../../services/training-run/abstract-training-run.service';
 import { Hint } from '@crczp/training-model';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
@@ -24,13 +24,13 @@ import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
         MatButton,
         FloatingAnswerFormComponent,
         SentinelMarkdownViewComponent,
-        HintContent,
+        HintContentComponent,
     ],
 })
 export class AbstractFlagLevelComponent {
     readonly hints = input<Hint[]>([]);
     readonly levelContent = input.required<string>();
-    protected readonly solutionContent = input<string | null>(null);
+    readonly solutionContent = input<string | null>(null);
 
     protected readonly answerSubmitted = output<string>();
 

@@ -34,13 +34,13 @@ export class AdaptiveTrainingLevelService extends AbstractTrainingLevelService {
 
     callApiToSubmitAnswer(answer: string): Observable<AnswerCheckResult> {
         return this.api
-            .isCorrectAnswer(this.runService.runInfo.displayedLevel.id, answer)
+            .isCorrectAnswer(this.runService.runInfo.trainingRunId, answer)
             .pipe(take(1));
     }
 
     protected callApiToRevealSolution(): Observable<string> {
         return this.api
-            .takeSolution(this.runService.runInfo.displayedLevel.id)
+            .takeSolution(this.runService.runInfo.trainingRunId)
             .pipe(take(1));
     }
 }

@@ -8,7 +8,7 @@ import {
     AbstractAccessLevelService,
     TrainingLevelData,
 } from '../abstract-access-level.service';
-import { map, take } from 'rxjs/operators';
+import { take } from 'rxjs/operators';
 import {
     AnswerCheckResult,
     TrainingLevel,
@@ -34,20 +34,9 @@ export abstract class AbstractTrainingLevelService extends AbstractAccessLevelSe
     }
 
     protected get displayedTrainingLevel() {
-        return super.runService.runInfo.currentLevel as
+        return this.runService.runInfo.currentLevel as
             | TrainingLevel
             | TrainingPhase;
-    }
-
-    protected get displayedTrainingLevel$(): Observable<
-        TrainingLevel | TrainingPhase
-    > {
-        return this.runService.runInfo$.pipe(
-            map(
-                (runInfo) =>
-                    runInfo.currentLevel as TrainingLevel | TrainingPhase,
-            ),
-        );
     }
 
     revealSolution(): void {
@@ -59,8 +48,21 @@ export abstract class AbstractTrainingLevelService extends AbstractAccessLevelSe
                 if (result === SentinelDialogResultEnum.CONFIRMED) {
                     this.callApiToRevealSolution().subscribe((solution) => {
                         const trainingLevel = this.displayedTrainingLevel;
-                        trainingLevel.setSolutionContent(solution);
-                        this.runService.updateLevel(trainingLevel);
+                        this.runService.updateRunInfo({
+                            levels: this.runService.runInfo.levels.map(
+                                (level) => {
+                                    if (level.id === trainingLevel.id) {
+                                        if (level instanceof TrainingLevel) {
+                                            level.solution = solution;
+                                        }
+                                        if (level instanceof TrainingPhase) {
+                                            level.currentTask.solution = solution;
+                                        }
+                                    }
+                                    return level;
+                                },
+                            ),
+                        });
                     });
                 }
             });

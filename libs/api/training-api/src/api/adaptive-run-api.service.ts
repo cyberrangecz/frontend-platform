@@ -23,7 +23,6 @@ import { TrainingRunDTO } from '../dto/training-run/training-run-dto';
 import { AccessTrainingRunDTO } from '../dto/training-run/access-training-run-dto';
 import { AdaptiveRunMapper } from '../mappers/training-run/adaptive-run-mapper';
 import { AccessedAdaptiveRunMapper } from '../mappers/training-run/accessed-adaptive-run-mapper';
-import { AccessTrainingRunMapper } from '../mappers/training-run/access-training-run-mapper';
 import { AbstractPhaseDTO } from '../dto/phase/abstract-phase-dto';
 import { PhaseMapper } from '../mappers/phase/phase-mapper';
 import { IsCorrectAnswerDTO } from '../dto/phase/training-phase/is-correct-answer-dto';
@@ -32,6 +31,7 @@ import { QuestionAnswerMapper } from '../mappers/phase/question-answer-mapper';
 import { AnsweredPhaseMapper } from '../mappers/training-run/training-run-phases/answered-phase-mapper';
 import { PortalConfig } from '@crczp/utils';
 import { AccessedTrainingRunSort, TrainingRunSort } from './sorts';
+import { AccessAdaptiveRunMapper } from '../mappers/training-run/access-adaptive-run-mapper';
 
 @Injectable()
 export class AdaptiveRunApi {
@@ -128,7 +128,7 @@ export class AdaptiveRunApi {
         const params = new HttpParams().append('accessToken', token);
         return this.http
             .post<AccessTrainingRunDTO>(this.apiUrl, {}, { params })
-            .pipe(map((response) => AccessTrainingRunMapper.fromDTO(response)));
+            .pipe(map((response) => AccessAdaptiveRunMapper.fromDTO(response)));
     }
 
     /**
@@ -140,7 +140,7 @@ export class AdaptiveRunApi {
             .get<AccessTrainingRunDTO>(
                 `${this.apiUrl}/${trainingRunId}/resumption`,
             )
-            .pipe(map((response) => AccessTrainingRunMapper.fromDTO(response)));
+            .pipe(map((response) => AccessAdaptiveRunMapper.fromDTO(response)));
     }
 
     nextPhase(trainingRunId: number): Observable<Phase> {

@@ -18,8 +18,6 @@ export abstract class AbstractAccessLevelService {
         protected runService: AbstractTrainingRunService,
     ) {}
 
-    abstract getAccessFile(): Observable<boolean>;
-
     submitAnswer(answer: string): void {
         if (!answer || answer.trim() === '') {
             this.displayEmptyAnswerDialog();
@@ -39,7 +37,7 @@ export abstract class AbstractAccessLevelService {
 
     protected onCorrectAnswerSubmitted(): void {
         this.runService.updateRunInfo({
-            isLevelAnswered: true,
+            isCurrentLevelAnswered: true,
         });
         this.runService.nextLevel();
     }
@@ -60,7 +58,7 @@ export abstract class AbstractAccessLevelService {
         this.notificationService
             .emit(SentinelNotificationTypeEnum.Warning, 'Incorrect passkey', [
                 'You have submitted an incorrect answer.',
-                this.runService.runInfo.isLevelAnswered ||
+                this.runService.runInfo.isCurrentLevelAnswered ||
                 answerCheck.remainingAttempts <= 0
                     ? 'Please insert the answer according to revealed solution.'
                     : `You have ${answerCheck.remainingAttempts} remaining attempts.`,

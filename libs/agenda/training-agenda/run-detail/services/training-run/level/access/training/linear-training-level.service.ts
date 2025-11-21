@@ -2,8 +2,8 @@ import { inject, Injectable } from '@angular/core';
 import { LinearRunApi } from '@crczp/training-api';
 import { SandboxInstanceApi } from '@crczp/sandbox-api';
 import { AnswerCheckResult, Hint, TrainingLevel } from '@crczp/training-model';
-import { Observable, of, switchMap } from 'rxjs';
-import { map, take, tap } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { take } from 'rxjs/operators';
 import {
     SentinelConfirmationDialogComponent,
     SentinelConfirmationDialogConfig,
@@ -52,51 +52,54 @@ export class LinearTrainingLevelService extends AbstractTrainingLevelService {
 
     callApiToTakeHint(hint: Hint): Observable<Hint> {
         return this.api
-            .takeHint(super.runService.runInfo.displayedLevel.id, hint.id)
+            .takeHint(this.runService.runInfo.trainingRunId, hint.id)
             .pipe(take(1));
     }
 
     callApiToRevealSolution(): Observable<string> {
         return this.api
-            .takeSolution(super.runService.runInfo.displayedLevel.id)
+            .takeSolution(this.runService.runInfo.trainingRunId)
             .pipe(take(1));
     }
 
     getAccessFile(): Observable<boolean> {
         return this.sandboxApi
-            .getUserSshAccess(super.runService.runInfo.sandboxInstanceId)
+            .getUserSshAccess(this.runService.runInfo.sandboxInstanceId)
             .pipe(take(1));
     }
 
     callApiToSubmitAnswer(answer: string): Observable<AnswerCheckResult> {
         return this.api
-            .isCorrectAnswer(super.runService.runInfo.displayedLevel.id, answer)
+            .isCorrectAnswer(this.runService.runInfo.trainingRunId, answer)
             .pipe(take(1));
     }
 
-    revealHint(hint: Hint): Observable<boolean> {
+    revealHint(hint: Hint) {
         if (hint.isRevealed()) {
-            return of(false);
+            console.log('Hint is already revealed, no need to call API again.');
         }
-        return this.displayTakeHintDialog(hint).pipe(
-            take(1),
-            switchMap((result) => {
-                if (result === SentinelDialogResultEnum.CONFIRMED) {
-                    return this.callApiToTakeHint(hint).pipe(
-                        tap((revealedHint) => {
-                            const changedLevel = this
-                                .displayedTrainingLevel as TrainingLevel;
-                            changedLevel.hints = changedLevel.hints.map((h) =>
-                                h.id === revealedHint.id ? revealedHint : h,
-                            );
-                            super.runService.updateLevel(changedLevel);
-                        }),
-                        map(() => true),
+        return this.displayTakeHintDialog(hint).subscribe((result) => {
+            if (result === SentinelDialogResultEnum.CONFIRMED) {
+                console.log('User confirmed to reveal hint:', hint);
+                this.callApiToTakeHint(hint).subscribe((revealedHint) => {
+                    console.log('Hint revealed:', revealedHint);
+                    const trainingLevel = this.runService.runInfo
+                        .displayedLevel as TrainingLevel;
+                    trainingLevel.hints = trainingLevel.hints.map((h) =>
+                        h.id === revealedHint.id ? revealedHint : h,
                     );
-                }
-                return of(false);
-            }),
-        );
+                    this.runService.updateRunInfo({
+                        levels: this.runService.runInfo.levels.map((level) => {
+                            if (level.id === trainingLevel.id) {
+                                (level as TrainingLevel).hints =
+                                    trainingLevel.hints;
+                            }
+                            return level;
+                        }),
+                    });
+                });
+            }
+        });
     }
 
     protected displayTakeHintDialog(

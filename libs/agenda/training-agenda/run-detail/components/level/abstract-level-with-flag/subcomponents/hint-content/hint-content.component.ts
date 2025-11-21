@@ -4,10 +4,13 @@ import { SentinelMarkdownViewComponent } from '@sentinel/components/markdown-vie
 @Component({
     selector: 'crczp-hint-content',
     imports: [SentinelMarkdownViewComponent],
-    templateUrl: './hint-content.html',
-    styleUrl: './hint-content.scss',
+    templateUrl: './hint-content.component.html',
+    styleUrl: './hint-content.component.scss',
 })
-export class HintContent {
-    hintId = input.required<number>();
+export class HintContentComponent {
+    hintTitle = input.required<string>();
     hintText = input.required<string>();
+    color = input<CSSStyleDeclaration['backgroundColor']>(
+        'var(--primary-60)',
+    );
 }

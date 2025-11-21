@@ -6,13 +6,13 @@ import { GenericTrainingLevelComponent } from './generic-training-level.componen
 import { Observable } from 'rxjs';
 import { Hint, TrainingLevel } from '@crczp/training-model';
 import { AsyncPipe } from '@angular/common';
-import { LinearTrainingRunService } from '../../../services/training-run/linear-training-run.service';
 import { map } from 'rxjs/operators';
 import { AnswerFormHintsComponent } from '../abstract-level-with-flag/subcomponents/answer-floating-form/answer-form-hints/answer-form-hints.component';
+import { AbstractTrainingRunService } from '../../../services/training-run/abstract-training-run.service';
 
 @Component({
     selector: 'crczp-linear-training-level',
-    templateUrl: './training-level.component.html',
+    templateUrl: './generic-training-level.component.html',
     imports: [AbstractFlagLevelComponent, AsyncPipe, AnswerFormHintsComponent],
     providers: [
         {
@@ -25,29 +25,29 @@ export class LinearTrainingLevelComponent
     extends GenericTrainingLevelComponent
     implements AfterViewChecked
 {
+    readonly levelContent$: Observable<string>;
+    readonly hints$: Observable<Hint[]>;
+
     constructor() {
         super(
-            inject(LinearTrainingRunService),
-            inject(LinearTrainingLevelService),
+            inject(AbstractTrainingRunService),
+            inject(AbstractTrainingLevelService),
             inject(DestroyRef),
         );
-    }
 
-    get levelContent$(): Observable<string> {
-        return this.runService.runInfo$
+        this.levelContent$ = this.runService.runInfo$
             .observeProperty()
-            .currentLevel.$()
+            .displayedLevel.$()
             .pipe(map((level) => (level as TrainingLevel).content));
-    }
 
-    get hints$(): Observable<Hint[]> {
-        return this.runService.runInfo$
+        this.hints$ = this.runService.runInfo$
             .observeProperty()
-            .currentLevel.$()
+            .displayedLevel.$()
             .pipe(map((level) => (level as TrainingLevel).hints));
     }
 
     revealHint(hint: Hint): void {
+        console.log('Revealing hint:', hint);
         (this.trainingLevelService as LinearTrainingLevelService).revealHint(
             hint,
         );
@@ -62,6 +62,6 @@ export class LinearTrainingLevelComponent
     }
 
     private viewCheckedCallback: () => void = () => {
-        /* */
+        /* replaced by registered callback */
     };
 }

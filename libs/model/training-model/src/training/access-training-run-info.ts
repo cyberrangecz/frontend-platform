@@ -16,13 +16,13 @@ export class AccessTrainingRunInfo {
     startTime!: Date;
     localEnvironment!: boolean;
     backwardMode!: boolean;
-    isLevelAnswered!: boolean;
+    isCurrentLevelAnswered!: boolean;
 
-    public get currentLevel(): Level | Phase {
+    public get currentLevel(): Level | Phase | undefined {
         return this.levels.find((level) => level.id === this.currentLevelId);
     }
 
-    public get displayedLevel(): Level | Phase {
+    public get displayedLevel(): Level | Phase | undefined {
         return this.levels.find((level) => level.id === this.displayedLevelId);
     }
 
@@ -31,13 +31,15 @@ export class AccessTrainingRunInfo {
     }
 
     public get isLastLevelDisplayed(): boolean {
-        return (
-            this.displayedLevel.id === this.levels[this.levels.length - 1]?.id
-        );
+        const displayed = this.displayedLevel;
+        const lastLevel = this.levels[this.levels.length - 1];
+        return displayed?.id === lastLevel?.id;
     }
 
     public get isLastLevel(): boolean {
-        return this.currentLevel.id === this.levels[this.levels.length - 1]?.id;
+        const current = this.currentLevel;
+        const lastLevel = this.levels[this.levels.length - 1];
+        return current?.id === lastLevel?.id;
     }
 
     public update(

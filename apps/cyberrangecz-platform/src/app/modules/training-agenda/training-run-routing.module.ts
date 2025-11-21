@@ -3,7 +3,12 @@ import { RouterModule } from '@angular/router';
 import { TrainingRunOverviewComponent } from '@crczp/training-agenda/run-overview';
 import { AccessTrainingRunInfo, TrainingRun } from '@crczp/training-model';
 import { TrainingApiModule } from '@crczp/training-api';
-import { Routing, TrainingResolverHelperService, ValidRouterConfig } from '@crczp/routing-commons';
+import {
+    Routing,
+    TrainingResolverHelperService,
+    ValidRouterConfig,
+} from '@crczp/routing-commons';
+import { SandboxApiModule } from '@crczp/sandbox-api';
 
 const routes: ValidRouterConfig<'run'> = [
     {
@@ -14,7 +19,7 @@ const routes: ValidRouterConfig<'run'> = [
         path: 'adaptive/:runToken/access',
         loadComponent: () =>
             import('@crczp/training-agenda/run-detail').then(
-                (m) => m.LinearTrainingRunDetailComponent,
+                (m) => m.AdaptiveTrainingRunDetailComponent,
             ),
         data: {
             breadcrumb: 'Training',
@@ -29,7 +34,7 @@ const routes: ValidRouterConfig<'run'> = [
         path: 'adaptive/:runId/resume',
         loadComponent: () =>
             import('@crczp/training-agenda/run-detail').then(
-                (m) => m.LinearTrainingRunDetailComponent,
+                (m) => m.AdaptiveTrainingRunDetailComponent,
             ),
         data: {
             breadcrumb: 'Training',
@@ -56,7 +61,7 @@ const routes: ValidRouterConfig<'run'> = [
         },
     },
     {
-        path: 'adaptive/:runId/resume',
+        path: 'linear/:runId/resume',
         loadComponent: () =>
             import('@crczp/training-agenda/run-detail').then(
                 (m) => m.LinearTrainingRunDetailComponent,
@@ -106,6 +111,7 @@ const routes: ValidRouterConfig<'run'> = [
     imports: [
         RouterModule.forChild(routes),
         TrainingApiModule,
+        SandboxApiModule,
         TrainingRunOverviewComponent,
     ],
     providers: [TrainingResolverHelperService],
