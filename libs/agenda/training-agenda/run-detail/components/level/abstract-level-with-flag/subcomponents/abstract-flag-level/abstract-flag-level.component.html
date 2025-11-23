@@ -1,7 +1,5 @@
 <div class="container">
-    <div class="level-content {{(runService.runInfo$.observeProperty().isStepperDisplayed.$() | async) ?
-      'content-height-with-stepper' :
-      'content-height-without-stepper'}}">
+    <div class="level-content">
         <div class="left-panel round-scrollbar">
             <sentinel-markdown-view [markdown]="levelContent()" />
             <div class="vflex g-1rem">

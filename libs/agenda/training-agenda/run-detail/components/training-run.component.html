@@ -15,17 +15,6 @@
     }
 </div>
 
-<div class="hflex">
-
-    @if (!!(this.trainingRunService.runInfo$ | async)) {
-        <crczp-abstract-level />
-    }
-    @let sandboxInstanceId = (this.trainingRunService.runInfo$.observeProperty().sandboxInstanceId.$() | async);
-    @if (!!sandboxInstanceId) {
-        <!--        <crczp-topology-wrapper-->
-            <!--            (getAccessFile)="onAccessFileRequested()"-->
-            <!--            [id]="{instanceId: sandboxInstanceId}"-->
-            <!--            class="topology-wrapper"-->
-            <!--        />-->
-    }
-</div>
+@if (!!(this.trainingRunService.runInfo$ | async)) {
+    <crczp-abstract-level />
+}

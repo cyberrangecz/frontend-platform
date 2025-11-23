@@ -28,7 +28,6 @@ export abstract class AbstractTrainingRunService {
         private dialog: MatDialog,
         accessTrainingRunInfo: AccessTrainingRunInfo,
     ) {
-        console.log('Initial data', accessTrainingRunInfo);
         this.runInfoSubject$.next(accessTrainingRunInfo);
     }
 
@@ -88,10 +87,6 @@ export abstract class AbstractTrainingRunService {
     }
 
     public updateRunInfoWithLoadedLevel(level: Level | Phase): void {
-        console.log(
-            'Instanceof access level',
-            level instanceof AccessPhase || level instanceof AccessLevel,
-        );
         const updatedLevels = this.runInfo.levels.map((lvl) => {
             if (lvl.id !== level.id) {
                 return lvl;
@@ -115,7 +110,6 @@ export abstract class AbstractTrainingRunService {
                 lvl.localContent = (
                     level as AccessPhase | AccessLevel
                 ).localContent;
-                console.log('Updating access level', lvl);
             }
             return lvl;
         });

@@ -9,30 +9,51 @@
             class="timer" matTooltip="Time since the start of the run" matTooltipPosition="above" />
     }
 </div>
-@switch (levelType()) {
-    @case (AbstractLevelTypeEnum.Info) {
-        <crczp-info-level />
-    }
-    @case (AbstractPhaseTypeEnum.Info) {
-        <crczp-info-level />
-    }
-    @case (AbstractLevelTypeEnum.Access) {
-        <crczp-linear-access-level />
-    }
-    @case (AbstractPhaseTypeEnum.Access) {
-        <crczp-adaptive-access-level />
-    }
-    @case (AbstractLevelTypeEnum.Training) {
-        <crczp-linear-training-level />
-    }
-    @case (AbstractPhaseTypeEnum.Training) {
-        <crczp-adaptive-training-level />
-    }
-    @case (AbstractLevelTypeEnum.Assessment) {
-        <crczp-assessment-level />
-    }
-    @case (AbstractPhaseTypeEnum.Questionnaire) {
-        <crczp-questionnaire-level />
-    }
-}
+<div #levelContent class="hflex level-content">
 
+    @switch (levelType()) {
+        @case (AbstractLevelTypeEnum.Info) {
+            <crczp-info-level />
+        }
+        @case (AbstractPhaseTypeEnum.Info) {
+            <crczp-info-level />
+        }
+        @case (AbstractLevelTypeEnum.Access) {
+            <crczp-linear-access-level />
+        }
+        @case (AbstractPhaseTypeEnum.Access) {
+            <crczp-adaptive-access-level />
+        }
+        @case (AbstractLevelTypeEnum.Training) {
+            <crczp-linear-training-level />
+        }
+        @case (AbstractPhaseTypeEnum.Training) {
+            <crczp-adaptive-training-level />
+        }
+        @case (AbstractLevelTypeEnum.Assessment) {
+            <crczp-assessment-level />
+        }
+        @case (AbstractPhaseTypeEnum.Questionnaire) {
+            <crczp-questionnaire-level />
+        }
+    }
+    @let topologyCollapsed = topologyService.topologyCollapsed$ | async;
+    @if (topologyAllowed()){
+        <button
+            (click)="topologyService.toggleCollapsed()"
+            class="expand-topology-button {{ !topologyCollapsed ? 'expand-topology-button--expanded' : '' }}"
+            matTooltip="{{ topologyCollapsed ? 'Show' : 'Hide' }} topology"
+            matTooltipPosition="left"
+        >
+            <mat-icon>
+                {{ topologyCollapsed ? 'polyline' : 'chevron_right' }}
+            </mat-icon>
+        </button>
+    }
+    <div class="level-topology-wrapper">
+        <crczp-run-topology-wrapper
+            [ngClass]="{ 'level-topology--hidden': topologyService.topologyCollapsed$ | async }"
+            class="level-topology"
+        />
+    </div>
+</div>

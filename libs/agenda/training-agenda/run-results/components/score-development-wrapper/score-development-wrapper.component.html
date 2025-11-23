@@ -2,10 +2,10 @@
   <div class="container">
     <div class="left-panel">
       <crczp-visualization-overview-table
-        [trainingDefinitionId]="vizInfo.trainingDefinitionId"
         [standalone]="true"
-        [trainingInstanceId]="vizInfo.trainingInstanceId"
         [traineeModeInfo]="traineeModeInfo$ | async"
+        [trainingDefinitionId]="vizInfo.trainingDefinitionId"
+        [trainingInstanceId]="vizInfo.trainingInstanceId"
         >
       </crczp-visualization-overview-table>
       <crczp-visualization-overview-timeline

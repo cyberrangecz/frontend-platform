@@ -1,5 +1,4 @@
 .anchor-div {
-    position: relative;
     width: 100%;
     display: flex;
     justify-content: center;
@@ -18,7 +17,8 @@
     max-width: 75%;
     min-width: max(25rem, 25%);
     position: fixed;
-    bottom: 0.5rem;
+    left: calc(50% + 140px);
+    bottom: 1rem;
     z-index: 1000;
     overflow-x: hidden;
     resize: horizontal;
@@ -61,12 +61,13 @@
 /* Breakpoint based on sentinel layout (when navbar is hidden) */
 @media (max-width: 748px ) {
 
-    .answer-floating-form {
+    .answer-form {
         bottom: 0;
         max-width: 100%;
         width: 100%;
         resize: none;
         border-radius: 0;
+        left: 50%
     }
 
     .answer-row {

@@ -1,0 +1,13 @@
+
+@let sandboxInstanceId = (this.runService.runInfo$.observeProperty().sandboxInstanceId.$() | async);
+@if (!!sandboxInstanceId) {
+    <div class="wh-100 hflex button-align-wrapper">
+        <crczp-topology-wrapper
+            (getAccessFile)="onAccessFileRequested()"
+            [id]="{instanceId: sandboxInstanceId}"
+            [standalone]="false"
+            class="wh-100 level-topology"
+        />
+    </div>
+
+}

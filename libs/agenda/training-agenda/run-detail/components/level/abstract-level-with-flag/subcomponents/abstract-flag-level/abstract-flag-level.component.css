@@ -5,6 +5,7 @@
     flex-direction: column;
     align-items: center;
     align-content: center;
+    width: 100%;
 }
 
 .level-content {
@@ -13,18 +14,9 @@
     flex-direction: row;
     width: 90%;
     max-width: 90%;
-    padding: 0 2rem 0 2rem;
-    height: fit-content;
-}
-
-.content-height-with-stepper {
-    max-height: calc(100vh - 28rem);
-    height: calc(100vh - 28rem);
-}
-
-.content-height-without-stepper {
-    max-height: calc(100vh - 28rem + 90px);
-    height: calc(100vh - 28rem + 90px);
+    padding: 0 1rem 0 2rem;
+    max-height: calc(100vh - 32rem);
+    height: calc(100vh - 32rem);
 }
 
 .split-container {
@@ -34,7 +26,6 @@
     height: 100%;
 }
 
-/* Text */
 .left-panel {
     display: flex;
     flex-direction: column;
@@ -42,24 +33,6 @@
     scroll-behavior: smooth;
     margin-left: 3rem;
     padding-right: 1rem;
-    width: 100%;
-    height: 100%;
-}
-
-
-/* Topology */
-.right-panel {
-    min-height: 275px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    justify-content: flex-start;
-    position: relative;
-    width: 100%;
-    height: 100%;
-}
-
-.topology-wrapper {
     width: 100%;
     height: 100%;
 }

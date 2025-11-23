@@ -7,10 +7,10 @@
         <!--CONTENT field -->
         <h3>Content</h3>
         <sentinel-markdown-editor
-          class="mrkdwn-content"
-          [sentinel-markdown-file-upload]="false"
           (contentChange)="content.setValue($event)"
           [content]="content.value"
+          [sentinel-markdown-file-upload]="false"
+          class="mrkdwn-content"
           />
         @if (content.hasError('required')) {
           <mat-error>Content cannot be empty</mat-error>
@@ -18,10 +18,10 @@
         <!--SOLUTION field -->
         <h3>Solution</h3>
         <sentinel-markdown-editor
-          class="mrkdwn-solution"
-          [sentinel-markdown-file-upload]="false"
           (contentChange)="solution.setValue($event)"
           [content]="solution.value"
+          [sentinel-markdown-file-upload]="false"
+          class="mrkdwn-solution"
           />
         @if (solution.hasError('required')) {
           <mat-error>Solution cannot be empty</mat-error>
@@ -31,22 +31,22 @@
       <div class="right-panel">
         <!-- TITLE filed -->
         <mat-form-field
-          appearance="outline"
           (keydown.enter)="$event.preventDefault()"
+          appearance="outline"
           >
           <mat-label>Title</mat-label>
           <input
+            formControlName="title"
             matInput
             placeholder="Title"
-            formControlName="title"
             required
             />
           @if (title.value) {
             <button
-              matSuffix
-              mat-icon-button
-              aria-label="Clear"
               (click)="title.setValue('')"
+              aria-label="Clear"
+              mat-icon-button
+              matSuffix
               >
               <mat-icon>close</mat-icon>
             </button>
@@ -64,13 +64,13 @@
           >
           <mat-label>Incorrect Answer Limit</mat-label>
           <input
-            matInput
-            placeholder="Incorrect Answer Limit"
-            type="number"
-            min="1"
-            max="100"
             formControlName="incorrectAnswerLimit"
+            matInput
+            max="100"
+            min="1"
+            placeholder="Incorrect Answer Limit"
             required
+            type="number"
             />
           <mat-error
             >Incorrect answer limit must be in range of 1 to 100
@@ -80,24 +80,24 @@
 
           <!-- ANSWER field -->
           <mat-form-field
+            (keydown.enter)="$event.preventDefault()"
             appearance="outline"
             hintLabel="Max 50 characters"
-            (keydown.enter)="$event.preventDefault()"
             >
             <mat-label>Correct Answer</mat-label>
             <input
-              matInput
-              placeholder="Correct Answer"
-              maxlength="50"
               formControlName="answer"
+              matInput
+              maxlength="50"
+              placeholder="Correct Answer"
               required
               />
             @if (answer) {
               <button
-                matSuffix
-                mat-icon-button
-                aria-label="Clear"
                 (click)="answer.setValue('')"
+                aria-label="Clear"
+                mat-icon-button
+                matSuffix
                 >
                 <mat-icon>close</mat-icon>
               </button>

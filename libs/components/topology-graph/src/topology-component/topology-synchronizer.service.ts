@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { DestroyRef, inject, Injectable } from '@angular/core';
 import { BehaviorSubject, combineLatest, map, Observable, Subject } from 'rxjs';
 import { ResizeEvent } from '@sentinel/common/resize';
 
@@ -9,7 +9,9 @@ import { ResizeEvent } from '@sentinel/common/resize';
 @Injectable({
     providedIn: 'root',
 })
-export abstract class TopologySynchronizerService {
+export class TopologySynchronizerService {
+    protected readonly destroyRef = inject(DestroyRef);
+
     private dragSubject = new Subject<number>();
     /**
      * Observable emitting position changes
@@ -27,22 +29,6 @@ export abstract class TopologySynchronizerService {
         this.topologyHeightSubject.asObservable(),
     ]).pipe(map(([width, height]) => ({ width, height } as ResizeEvent)));
 
-    /**
-     * Notify everyone that the divider position has changed
-     *
-     * @param ratio - the new position of the divider in range (0, 1)
-     * */
-    public abstract emitDividerRatioChange(ratio: number): void;
-
-    /**
-     * Get observable of the divider position
-     */
-    public abstract getDividerPosition$(): Observable<number>;
-
-    /**
-     * Get the current divider position
-     */
-    public abstract getDividerPosition(): number | undefined;
 
     /**
      * Sends a signal to resize the split panel
@@ -72,13 +58,12 @@ export abstract class TopologySynchronizerService {
         this.topologyHeightSubject.next(height);
     }
 
-    /**
-     * Sends a signal requesting that one side of
-     * a split panel should collapse
-     *
-     * @param isCollapsed - whether to collapse topology
-     */
-    public emitCollapsed(isCollapsed: boolean) {
-        this.isCollapsedSubject.next(isCollapsed);
+
+    toggleCollapsed() {
+        this.isCollapsedSubject.next(!this.isCollapsedSubject.value);
+    }
+
+    setTopologyCollapsed(collapsed: boolean) {
+        this.isCollapsedSubject.next(collapsed);
     }
 }

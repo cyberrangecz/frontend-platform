@@ -3,15 +3,15 @@
     <div class="panel-wrapper">
       <div class="left-panel">
         <!-- TITLE filed -->
-        <mat-form-field appearance="outline" (keydown.enter)="$event.preventDefault()">
+        <mat-form-field (keydown.enter)="$event.preventDefault()" appearance="outline">
           <mat-label>Title</mat-label>
-          <input matInput placeholder="Title" formControlName="title" required/>
+          <input formControlName="title" matInput placeholder="Title" required/>
           @if (title.value) {
             <button
-              matSuffix
-              mat-icon-button
-              aria-label="Clear"
               (click)="title.setValue('')"
+              aria-label="Clear"
+              mat-icon-button
+              matSuffix
               >
               <mat-icon>close</mat-icon>
             </button>
@@ -29,11 +29,11 @@
             >
             <mat-label>Estimated Duration in Minutes</mat-label>
             <input
-              matInput
-              placeholder="Estimated Duration in Minutes"
-              min="1"
-              maxlength="9"
               formControlName="estimatedDuration"
+              matInput
+              maxlength="9"
+              min="1"
+              placeholder="Estimated Duration in Minutes"
               />
             @if (estimatedDuration.hasError('pattern') || estimatedDuration.hasError('min')) {
               <mat-error>
@@ -49,11 +49,11 @@
             >
             <mat-label>Minimal Possible Solve Time in Minutes</mat-label>
             <input
-              matInput
-              placeholder="Minimal Possible Solve Time in Minutes"
-              min="0"
-              maxlength="9"
               formControlName="minimalPossibleSolveTime"
+              matInput
+              maxlength="9"
+              min="0"
+              placeholder="Minimal Possible Solve Time in Minutes"
               />
             @if (minimalPossibleSolveTime.hasError('pattern') || estimatedDuration.hasError('min')) {
               <mat-error
@@ -67,10 +67,10 @@
         <!--CONTENT field -->
         <h3>Content</h3>
         <sentinel-markdown-editor
-          class="mrkdwn-content"
-          [sentinel-markdown-file-upload]="false"
           (contentChange)="content.setValue($event)"
           [content]="content.value"
+          [sentinel-markdown-file-upload]="false"
+          class="mrkdwn-content"
           />
         @if (content.hasError('whitespace')) {
           <mat-error>Content cannot be empty</mat-error>
@@ -91,10 +91,10 @@
           </div>
         </div>
         <sentinel-markdown-editor
-          class="mrkdwn-solution"
-          [sentinel-markdown-file-upload]="false"
           (contentChange)="solution.setValue($event)"
           [content]="solution.value"
+          [sentinel-markdown-file-upload]="false"
+          class="mrkdwn-solution"
           />
         @if (solution.hasError('whitespace')) {
           <mat-error>Solution cannot be empty</mat-error>
@@ -110,13 +110,13 @@
           >
           <mat-label>Points for the Level</mat-label>
           <input
+            formControlName="maxScore"
             matInput
-            placeholder="Points for the level"
-            type="number"
             max="100"
             min="0"
-            formControlName="maxScore"
+            placeholder="Points for the level"
             required
+            type="number"
             />
           <mat-error>Maximal score must be a number in range from 0 to 100</mat-error>
         </mat-form-field>
@@ -129,22 +129,22 @@
           >
           <mat-label>Incorrect Answer Limit</mat-label>
           <input
-            matInput
-            placeholder="Incorrect Answer Limit"
-            type="number"
-            min="1"
-            max="100"
             formControlName="incorrectAnswerLimit"
+            matInput
+            max="100"
+            min="1"
+            placeholder="Incorrect Answer Limit"
             required
+            type="number"
             />
           <mat-error>Incorrect answer limit must be in range of 1 to 100</mat-error>
         </mat-form-field>
 
         <!-- SHOW VARIANT ANSWERS checkbox -->
         <mat-checkbox
-          matTooltip="Requires a sandbox definition with defined variables which will be generated uniquely for each sandbox."
-          labelPosition="after"
           formControlName="variantAnswers"
+          labelPosition="after"
+          matTooltip="Requires a sandbox definition with defined variables which will be generated uniquely for each sandbox."
           >
           Variant Answers (requires a specific sandbox definition)
         </mat-checkbox>
@@ -152,18 +152,18 @@
         <!-- ANSWER field -->
         @if (!variantAnswers.value) {
           <mat-form-field
+            (keydown.enter)="$event.preventDefault()"
             appearance="outline"
             hintLabel="'Max 50 characters'"
-            (keydown.enter)="$event.preventDefault()"
             >
             <mat-label>Correct Answer - Static</mat-label>
-            <input matInput placeholder="Correct Answer - Static" maxlength="50" formControlName="answer"/>
+            <input formControlName="answer" matInput maxlength="50" placeholder="Correct Answer - Static"/>
             @if (answer) {
               <button
-                matSuffix
-                mat-icon-button
-                aria-label="Clear"
                 (click)="answer.setValue(null)"
+                aria-label="Clear"
+                mat-icon-button
+                matSuffix
                 >
                 <mat-icon>close</mat-icon>
               </button>
@@ -179,23 +179,23 @@
         <!-- VARIABLE NAME field -->
         @if (variantAnswers.value) {
           <mat-form-field
+            (keydown.enter)="$event.preventDefault()"
             appearance="outline"
             hintLabel="'Max 50 characters'"
-            (keydown.enter)="$event.preventDefault()"
             >
             <mat-label>Correct Answer - Variable Name</mat-label>
             <input
-              matInput
-              placeholder="Correct Answer - Variable Name"
-              maxlength="50"
               formControlName="answerVariableName"
+              matInput
+              maxlength="50"
+              placeholder="Correct Answer - Variable Name"
               />
             @if (answerVariableName) {
               <button
-                matSuffix
-                mat-icon-button
-                aria-label="Clear"
                 (click)="answerVariableName.setValue(null)"
+                aria-label="Clear"
+                mat-icon-button
+                matSuffix
                 >
                 <mat-icon>close</mat-icon>
               </button>
@@ -235,20 +235,20 @@
         <crczp-hints-overview
           (hintsChange)="hintsChanged($event)"
           [hints]="level.hints"
-          [levelMaxScore]="level.maxScore"
           [levelId]="level.id"
+          [levelMaxScore]="level.maxScore"
           >
         </crczp-hints-overview>
 
         <crczp-mitre-technique-select
-          [mitreTechniques]="level.mitreTechniques"
-          [mitreTechniquesList]="mitreTechniquesList"
           (mitreTechniquesChange)="mitreTechniquesChanged($event)"
+          [mitreTechniquesList]="mitreTechniquesList"
+          [mitreTechniques]="level.mitreTechniques"
           />
 
         <crczp-expected-commands-select
-          [expectedCommands]="level.expectedCommands"
           (expectedCommandsChange)="expectedCommandsChanged($event)"
+          [expectedCommands]="level.expectedCommands"
           />
       </form>
     </div>

@@ -1,0 +1,124 @@
+:host-context(.padded-content) {
+    padding-right: 0 !important;
+}
+
+.level-header {
+    display: flex;
+    flex-direction: row;
+    justify-items: stretch;
+    align-items: center;
+    width: 100%;
+    margin-top: 0;
+}
+
+.timer {
+    text-align: right;
+    width: 15rem;
+}
+
+.level-title {
+    margin-left: 15rem !important;
+    width: 100%;
+    text-align: center;
+    margin-bottom: 2rem !important;
+}
+
+.level-content {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+    overflow-x: hidden;
+}
+
+.level-content > *:first-child {
+    width: 100%;
+}
+
+.level-content:has(.level-topology--hidden) > *:first-child {
+    position: absolute;
+    left: 140px;
+    right: 120px;
+    width: auto;
+}
+
+.level-topology-wrapper {
+    max-width: 60dvw;
+    flex-shrink: 0;
+    margin-left: auto;
+    overflow: visible;
+    height: calc(100dvh - 32rem);
+}
+
+.level-topology {
+    height: calc(100dvh - 32rem);
+    max-width: 60dvw;
+    transform: translateX(0);
+}
+
+.level-topology--hidden {
+    transform: translateX(calc(100% + 40px));
+}
+
+.expand-topology-button {
+    position: absolute;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    top: 52dvh;
+    right: 0;
+    height: 4rem;
+    width: 2rem;
+    border-radius: 1rem 0 0 1rem;
+    background: var(--neutral-98);
+    box-shadow: -2px 1px 2px var(--neutral-70);
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    margin: 0 1px 0 0;
+}
+
+.expand-topology-button--expanded {
+    position: static;
+    margin: 0 3px 0 0;
+}
+
+.expand-topology-button {
+    &:hover, &:active, &:focus {
+        box-shadow: -1px 1px 2px var(--neutral-70);
+    }
+
+    &:hover{
+        background: var(--primary-95);
+    }
+}
+
+
+@media (max-width: 1400px) {
+    .level-title {
+        margin-left: 2rem !important;
+        text-align: left !important;
+    }
+}
+
+@media (max-width: 748px) {
+
+    .level-header {
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .level-title {
+        margin: 0 0 1rem 0 !important;
+        text-align: center !important;
+    }
+
+    .timer {
+        width: fit-content;
+        scale: 0.75;
+    }
+}
+

@@ -1,7 +1,7 @@
 <mat-card appearance="outlined" class="info-card">
   <div class="left-panel">
     <div class="user-base-info">
-      <img class="user-picture" src="{{'data:image/png;base64,'+user.picture}}" [alt]="user.name"/>
+      <img [alt]="user.name" class="user-picture" src="{{'data:image/png;base64,'+user.picture}}"/>
       <div class="user-name">{{ user.name }}</div>
     </div>
     <div class="user-description">{{ user.mail }}</div>
@@ -9,15 +9,15 @@
 
   <div class="right-panel">
     <div class="icon-container">
-      <mat-icon matTooltip="Roles" class="icon">add_moderator</mat-icon>
+      <mat-icon class="icon" matTooltip="Roles">add_moderator</mat-icon>
       <div class="icon-text">{{ user.roles.length }}</div>
     </div>
   </div>
 </mat-card>
 <mat-card appearance="outlined" class="members-card">
   <div class='detail-action-buttons'>
-    <button mat-button color="primary" (click)="accordion.openAll()">Expand All</button>
-    <button mat-button color="primary" (click)="accordion.closeAll()">Collapse All</button>
+    <button (click)="accordion.openAll()" color="primary" mat-button>Expand All</button>
+    <button (click)="accordion.closeAll()" color="primary" mat-button>Collapse All</button>
   </div>
   <mat-accordion class="detail-headers-align" multi>
     @for (role of user.roles; track role; let first = $first) {
@@ -25,7 +25,7 @@
         <mat-expansion-panel-header>
           <mat-panel-title>
             <div class="user-detail-title">
-              <mat-icon mat-list-icon color="primary">policy</mat-icon>
+              <mat-icon color="primary" mat-list-icon>policy</mat-icon>
               <h4>{{ role.roleType }}</h4>
             </div>
           </mat-panel-title>

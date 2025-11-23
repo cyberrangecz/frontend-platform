@@ -47,7 +47,6 @@ export class LinearTrainingLevelComponent
     }
 
     revealHint(hint: Hint): void {
-        console.log('Revealing hint:', hint);
         (this.trainingLevelService as LinearTrainingLevelService).revealHint(
             hint,
         );

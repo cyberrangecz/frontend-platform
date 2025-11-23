@@ -75,14 +75,9 @@ export class LinearTrainingLevelService extends AbstractTrainingLevelService {
     }
 
     revealHint(hint: Hint) {
-        if (hint.isRevealed()) {
-            console.log('Hint is already revealed, no need to call API again.');
-        }
         return this.displayTakeHintDialog(hint).subscribe((result) => {
             if (result === SentinelDialogResultEnum.CONFIRMED) {
-                console.log('User confirmed to reveal hint:', hint);
                 this.callApiToTakeHint(hint).subscribe((revealedHint) => {
-                    console.log('Hint revealed:', revealedHint);
                     const trainingLevel = this.runService.runInfo
                         .displayedLevel as TrainingLevel;
                     trainingLevel.hints = trainingLevel.hints.map((h) =>

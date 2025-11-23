@@ -4,17 +4,17 @@
             <!--CONTENT field -->
             <h3>Content</h3>
             <sentinel-markdown-editor
-                class="mrkdwn-content"
-                [sentinel-markdown-file-upload]="false"
                 [content]="task.content"
+                [sentinel-markdown-file-upload]="false"
+                class="mrkdwn-content"
             />
 
             <!--SOLUTION field -->
             <h3>Solution</h3>
             <sentinel-markdown-editor
-                class="mrkdwn-solution"
-                [sentinel-markdown-file-upload]="false"
                 [content]="task.solution"
+                [sentinel-markdown-file-upload]="false"
+                class="mrkdwn-solution"
             />
         </div>
 
@@ -24,10 +24,10 @@
                 appearance="outline">
                 <mat-label>Title</mat-label>
                 <input
-                    matInput
-                    placeholder="Title"
                     [disabled]="true"
                     [value]="task.title"
+                    matInput
+                    placeholder="Title"
                 />
             </mat-form-field>
 
@@ -36,10 +36,10 @@
                 appearance="outline">
                 <mat-label>Incorrect Answer Limit</mat-label>
                 <input
-                    matInput
-                    placeholder="Incorrect Answer Limit"
                     [disabled]="true"
                     [value]="task.incorrectAnswerLimit"
+                    matInput
+                    placeholder="Incorrect Answer Limit"
                 />
             </mat-form-field>
 
@@ -48,16 +48,16 @@
                 appearance="outline">
                 <mat-label>Correct Answer</mat-label>
                 <input
-                    matInput
-                    placeholder="Correct Answer"
                     [disabled]="true"
                     [value]="task.incorrectAnswerLimit"
+                    matInput
+                    placeholder="Correct Answer"
                 />
             </mat-form-field>
 
             <div class="modify-sandbox">
                 <span>Modify sandbox: </span>
-                <mat-slide-toggle [disabled]="true" [checked]="task.modifySandbox" />
+                <mat-slide-toggle [checked]="task.modifySandbox" [disabled]="true" />
             </div>
         </div>
     </div>

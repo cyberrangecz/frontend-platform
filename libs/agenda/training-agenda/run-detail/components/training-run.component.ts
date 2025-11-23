@@ -16,13 +16,19 @@ import { isLoading } from '@sentinel/common/utils';
 import { AsyncPipe } from '@angular/common';
 import { SshAccessService } from '../services/training-run/ssh/ssh-acess.service';
 import { tap } from 'rxjs/operators';
+import { TopologyWrapperComponent } from '@crczp/topology-graph';
 
 @Component({
     selector: 'crczp-training-run',
     templateUrl: './training-run.component.html',
     styleUrls: ['./training-run.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [AbstractLevelComponent, SentinelStepperComponent, AsyncPipe],
+    imports: [
+        AbstractLevelComponent,
+        SentinelStepperComponent,
+        AsyncPipe,
+        TopologyWrapperComponent,
+    ],
     providers: [SshAccessService],
 })
 /**
@@ -35,7 +41,6 @@ export class TrainingRunComponent implements OnInit {
     protected readonly shouldHideActiveLevel = signal<boolean>(false);
     protected readonly isLoading = isLoading;
     protected readonly trainingRunService = inject(AbstractTrainingRunService);
-    protected readonly sshAccessService = inject(SshAccessService);
     private readonly destroyRef = inject(DestroyRef);
     private auth = inject(SentinelAuthService);
 
@@ -60,9 +65,5 @@ export class TrainingRunComponent implements OnInit {
         this.trainingRunService.displayLevelByOrder(index);
     }
 
-    protected onAccessFileRequested() {
-        this.sshAccessService.getAccessFile(
-            this.trainingRunService.runInfo.sandboxInstanceId,
-        );
-    }
+
 }

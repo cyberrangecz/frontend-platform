@@ -1,6 +1,6 @@
 import { DestroyRef } from '@angular/core';
-import { Observable, of, shareReplay, skipWhile, switchMap } from 'rxjs';
-import { filter, map, take, tap } from 'rxjs/operators';
+import { Observable, of, skipWhile, switchMap } from 'rxjs';
+import { filter, map, take } from 'rxjs/operators';
 import { Hint, TrainingLevel, TrainingPhase } from '@crczp/training-model';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AbstractTrainingRunService } from '../../../services/training-run/abstract-training-run.service';
@@ -41,14 +41,12 @@ export abstract class GenericTrainingLevelComponent {
             );
 
         this.solutionContent$ = this.isSolutionRevealed$.pipe(
-            tap((isRevealed) => console.log('Solution revealed:', isRevealed)),
             skipWhile((isRevealed) => !isRevealed),
             switchMap(() =>
                 this.runService.runInfo$
                     .observeProperty()
                     .displayedLevel.$()
                     .pipe(
-
                         map((level) => {
                             if (level instanceof TrainingLevel) {
                                 return (level as TrainingLevel).solution;

@@ -130,7 +130,6 @@ export class UserAssignService {
         this.clearSelectedAssignedUsers();
         const filter = filterValue ? [new UserFilter(filterValue)] : [];
         this.lastAssignedPagination = pagination;
-        console.log('Requested pagination:', pagination);
         this.lastAssignedFilter = filterValue;
         this.hasErrorSubject$.next(false);
         this.isLoadingAssignedSubject$.next(true);

@@ -6,14 +6,12 @@
     </div>
 } @else {
     @if (this.topology()) {
-        <div class="topology-container">
             <crczp-topology
                 [sandboxUuid]="getSandboxId()"
                 [standalone]="standalone()"
                 [topology]="topology()"
                 class="wh-100"
             />
-        </div>
         @if ('sandboxId' in this.id()) {
             <button
                 (click)="this.getAccessFile.emit()"
