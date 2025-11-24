@@ -15,6 +15,7 @@
             ],
             "@crczp/api-common": ["libs/api/api-common/src/index.ts"],
             "@crczp/components": ["libs/utils/components/src/index.ts"],
+            "@crczp/mixins": ["libs/mixins/src/index.ts"],
             "@crczp/routing-commons": ["libs/utils/routing/src/index.ts"],
             "@crczp/sandbox-agenda": [
                 "libs/agenda/sandbox-agenda/src/index.ts"

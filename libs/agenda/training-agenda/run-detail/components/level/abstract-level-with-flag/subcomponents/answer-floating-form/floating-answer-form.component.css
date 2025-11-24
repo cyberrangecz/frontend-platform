@@ -1,0 +1,78 @@
+.anchor-div {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.center-anchor-div {
+    position: relative;
+}
+
+.answer-form {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 75%;
+    min-width: max(25rem, 25%);
+    position: fixed;
+    left: calc(50% + 140px);
+    bottom: 1rem;
+    z-index: 1000;
+    overflow-x: hidden;
+    resize: horizontal;
+    transform: translateX(-50%);
+
+    /* soften the appearance when unloading and loading level */
+    opacity: 1;
+    animation: 0.1s ease-in 1 fadeIn;
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+
+.answer-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    max-width: 75vw;
+    width: 100%;
+}
+
+.input-form-field {
+    min-width: 8rem;
+    width: 100%;
+}
+
+.submit-button {
+    min-width: 6rem;
+}
+
+/* Breakpoint based on sentinel layout (when navbar is hidden) */
+@media (max-width: 748px ) {
+
+    .answer-form {
+        bottom: 0;
+        max-width: 100%;
+        width: 100%;
+        resize: none;
+        border-radius: 0;
+        left: 50%
+    }
+
+    .answer-row {
+        max-width: 100%;
+        width: 100%;
+    }
+}
+

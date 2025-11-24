@@ -12,9 +12,9 @@ import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import {
     AccessedTrainingRun,
     AccessTrainingRunInfo,
+    AnswerCheckResult,
     Hint,
     Level,
-    LevelAnswerCheck,
     Question,
     TrainingRun,
     TrainingRunInfo
@@ -29,9 +29,8 @@ import { TrainingRunDTO } from '../../dto/training-run/training-run-dto';
 import { QuestionMapper } from '../../mappers/level/assessment/question-mapper';
 import { HintMapper } from '../../mappers/level/training/hint-mapper';
 import { LevelMapper } from '../../mappers/level/level-mapper';
-import { AccessTrainingRunMapper } from '../../mappers/training-run/access-training-run-mapper';
+import { AccessLinearRunMapper } from '../../mappers/training-run/access-linear-run-mapper';
 import { AccessedTrainingRunMapper } from '../../mappers/training-run/accessed-training-run-mapper';
-import { LevelAnswerMapper } from '../../mappers/training-run/level-answer-mapper';
 import { TrainingRunMapper } from '../../mappers/training-run/training-run-mapper';
 import { LinearRunApi } from './training-run-api.service';
 import { TrainingRunInfoDTO } from '../../dto/training-run/training-run-info-dto';
@@ -39,6 +38,7 @@ import { TrainingRunInfoMapper } from '../../mappers/training-run/training-run-i
 import { AnsweredLevelMapper } from '../../mappers/training-run/training-run-levels/answered-level-mapper';
 import { PortalConfig } from '@crczp/utils';
 import { AccessedTrainingRunSort, TrainingRunSort } from '../sorts';
+import { AnswerCheckResultMapper } from '../../mappers/training-run/answer-check-result-mapper';
 
 /**
  * Default implementation of service abstracting http communication with training run endpoints.
@@ -161,7 +161,7 @@ export class TrainingRunDefaultApi extends LinearRunApi {
         const params = new HttpParams().append('accessToken', token);
         return this.http
             .post<AccessTrainingRunDTO>(this.apiUrl, {}, { params })
-            .pipe(map((response) => AccessTrainingRunMapper.fromDTO(response)));
+            .pipe(map((response) => AccessLinearRunMapper.fromDTO(response)));
     }
 
     /**
@@ -173,7 +173,7 @@ export class TrainingRunDefaultApi extends LinearRunApi {
             .get<AccessTrainingRunDTO>(
                 `${this.apiUrl}/${trainingRunId}/resumption`,
             )
-            .pipe(map((response) => AccessTrainingRunMapper.fromDTO(response)));
+            .pipe(map((response) => AccessLinearRunMapper.fromDTO(response)));
     }
 
     /**
@@ -196,13 +196,13 @@ export class TrainingRunDefaultApi extends LinearRunApi {
     isCorrectAnswer(
         trainingRunId: number,
         answer: string,
-    ): Observable<LevelAnswerCheck> {
+    ): Observable<AnswerCheckResult> {
         return this.http
             .post<IsCorrectAnswerDto>(
                 `${this.apiUrl}/${trainingRunId}/is-correct-answer`,
                 { answer },
             )
-            .pipe(map((response) => LevelAnswerMapper.fromDTO(response)));
+            .pipe(map((response) => AnswerCheckResultMapper.fromDTO(response)));
     }
 
     /**

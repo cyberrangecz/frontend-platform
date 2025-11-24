@@ -1,11 +1,11 @@
 <div class="container">
     <div class="content">
-        <sentinel-markdown-view [markdown]="level.content"/>
+        <sentinel-markdown-view [markdown]="levelContent$ | async" />
     </div>
     <button
+        (click)="runService.nextLevel()"
         class="next-button"
-        mat-raised-button
-        (click)="onNext()">
-        {{ isLast && !isBacktracked ? "Finish" : "Next" }}
+        mat-raised-button>
+        {{ (runService.runInfo$.observeProperty().isLastLevel.$() | async) ? "Finish" : "Next" }}
     </button>
 </div>

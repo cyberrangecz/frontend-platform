@@ -1,28 +1,27 @@
-import {SentinelStepper, StepStateEnum} from '@sentinel/components/stepper';
-import {LevelStepperAdapter} from '@crczp/training-agenda/internal';
+import { SentinelStepper, StepStateEnum } from '@sentinel/components/stepper';
+import { LevelStepperAdapter } from '@crczp/training-agenda/internal';
+import { Level, Phase } from '@crczp/training-model';
 
 /**
  * Training run levels adapter to stepper component
  */
-export class TrainingRunStepper implements SentinelStepper<LevelStepperAdapter> {
+export class TrainingRunStepper
+    implements SentinelStepper<LevelStepperAdapter>
+{
     activeLevelIndex: number;
     items: LevelStepperAdapter[];
 
-    constructor(levels: LevelStepperAdapter[], activeLevelIndex: number) {
-        this.items = levels;
-        this.activeLevelIndex = activeLevelIndex;
+    constructor(
+        levels: (Level | Phase)[],
+        activeLevelId: number,
+        public selectable: boolean,
+    ) {
+        this.items = levels.map((level) => new LevelStepperAdapter(level));
+        this.activeLevelIndex = this.items.findIndex(
+            (level) => level.id === activeLevelId,
+        );
         this.markCompletedLevels();
-        this.markPendingLevels(levels);
-    }
-
-    onActiveLevelUpdated(activeLevelIndex: number): void {
-        this.items[this.activeLevelIndex].state = StepStateEnum.SELECTABLE;
-        this.activeLevelIndex = activeLevelIndex;
-        this.markCompletedLevels();
-        const current = this.items[activeLevelIndex];
-        if (current) {
-            current.state = StepStateEnum.ACTIVE;
-        }
+        this.markPendingLevels(this.items);
     }
 
     /**

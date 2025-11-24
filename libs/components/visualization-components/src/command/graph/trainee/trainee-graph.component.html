@@ -7,9 +7,9 @@
                     <mat-form-field appearance="fill">
                         <mat-label>Choose trainee</mat-label>
                         <mat-select
-                            [value]="selectedTrainingRun$ | async"
-                            (selectionChange)="onChange($event)"
                             (opened)="onTraineesSelectionOpened()"
+                            (selectionChange)="onChange($event)"
+                            [value]="selectedTrainingRun$ | async"
                         >
                             <mat-option>--</mat-option>
                             @for (trainingRun of trainingRuns$ | async; track trainingRun) {
@@ -23,10 +23,10 @@
                         </mat-select>
                     </mat-form-field>
                     <button
-                        mat-raised-button
-                        color="primary"
-                        [disabled]="(selectedTrainingRun$ | async) === null"
                         (click)="onSubmit()"
+                        [disabled]="(selectedTrainingRun$ | async) === null"
+                        color="primary"
+                        mat-raised-button
                     >
                         Show Trainee Graph
                     </button>

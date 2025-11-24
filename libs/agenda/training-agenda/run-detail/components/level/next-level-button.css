@@ -1,0 +1,22 @@
+.next-button {
+    width: 8rem;
+    position: fixed;
+    bottom: 2rem;
+    z-index: 1000;
+    /* soften the appearance when unloading and loading level */
+    opacity: 1;
+    animation: 0.1s ease-in 1 fadeIn;
+    padding: 1rem;
+    left: calc(50% + 40px);
+    transform: translateX(-50%);
+}
+
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}

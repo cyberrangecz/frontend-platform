@@ -1,0 +1,20 @@
+.hints-row {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    max-width: 75vw;
+    padding: 2px 0.5rem 0.5rem;
+    overflow-x: auto;
+    width: 100%;
+}
+
+.hints-row * {
+    flex-shrink: 0;
+}
+
+@media (max-width: 748px ) {
+    .hints-row {
+        max-width: 90dvw;
+        min-width: 0;
+    }
+}

@@ -21,7 +21,7 @@ import { mapTopologyToTopologyVisualization } from './topology-visualization-uti
 import { TOPOLOGY_CONFIG } from './topology-graph-config';
 import { FormsModule } from '@angular/forms';
 import { toObservable } from '@angular/core/rxjs-interop';
-import { TopologySynchronizerService } from '../divider-position/topology-synchronizer.service';
+import { TopologySynchronizerService } from '../topology-synchronizer.service';
 
 export type GraphNodeType = 'INTERNET' | 'ROUTER' | 'HOST' | 'SUBNET';
 

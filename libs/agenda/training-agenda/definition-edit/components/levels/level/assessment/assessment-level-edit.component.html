@@ -8,8 +8,8 @@
                     <mat-label>Title</mat-label>
                     <input formControlName="title" matInput placeholder="Title" required>
                     @if (title.value) {
-                        <button matSuffix mat-icon-button
-                                aria-label="Clear" (click)="title.setValue('');">
+                        <button (click)="title.setValue('');" aria-label="Clear"
+                                mat-icon-button matSuffix>
                             <mat-icon>close</mat-icon>
                         </button>
                     }

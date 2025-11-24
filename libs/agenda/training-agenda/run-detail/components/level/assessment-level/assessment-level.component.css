@@ -1,4 +1,4 @@
-@import "../next-level-button/next-level-button.css";
+@import "../next-level-button.css";
 
 markdown ::ng-deep pre {
     white-space: pre-wrap;

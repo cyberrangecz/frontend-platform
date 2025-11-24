@@ -1,4 +1,4 @@
-@import "../next-level-button/next-level-button.css";
+@import "../next-level-button.css";
 
 .container {
     display: flex;
@@ -38,13 +38,19 @@ markdown ::ng-deep pre {
     margin-top: 2rem;
 }
 
-@media screen and (max-width: 800px) {
+@media screen and (max-width: 1400px) {
     .content {
         width: 90%;
     }
+}
+
+@media screen and (max-width: 800px) {
+=
 
     markdown > img {
         max-width: 700px;
     }
 }
+
+
 

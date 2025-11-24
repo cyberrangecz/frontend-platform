@@ -1,0 +1,20 @@
+<div class="header">
+    <!-- LEVEL STEPPER -->
+    @let stepper = this.trainingRunService.stepperBar$ | async;
+    @if (stepper) {
+        <div class="training-run-stepper round-scrollbar">
+            <sentinel-stepper
+                (indexSelected)="activeStepChanged($event)"
+                [activeIndex]="stepper.activeLevelIndex"
+                [draggable]="false"
+                [selectable]="stepper.selectable"
+                [stepperItems]="stepper"
+            >
+            </sentinel-stepper>
+        </div>
+    }
+</div>
+
+@if (!!(this.trainingRunService.runInfo$ | async)) {
+    <crczp-abstract-level />
+}
