@@ -13,7 +13,7 @@ import { AbstractLevelTypeEnum, AbstractPhaseTypeEnum } from '@crczp/training-mo
 import { TrainingTimerComponent } from './training-timer/training-timer.component';
 import { MatTooltip } from '@angular/material/tooltip';
 import { AbstractTrainingRunService } from '../../services/training-run/abstract-training-run.service';
-import { AsyncPipe, NgClass } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import '@crczp/mixins';
 import { InfoLevelComponent } from './info-level/info-level.component';
 import { LinearTrainingLevelComponent } from './training-level/linear-training-level.component';
@@ -25,7 +25,6 @@ import { LinearAccessLevelComponent } from './access-level/linear-access-level.c
 import { Observable } from 'rxjs';
 import { RunTopologyWrapperComponent } from './run-topology-wrapper/run-topology-wrapper.component';
 import { TopologySynchronizerService } from '@crczp/topology-graph';
-import { MatIcon } from '@angular/material/icon';
 
 /**
  * Component to display one level in a training run. Serves mainly as a wrapper which determines the type of the training
@@ -50,8 +49,6 @@ import { MatIcon } from '@angular/material/icon';
         AssessmentLevelComponent,
         QuestionnaireLevelComponent,
         RunTopologyWrapperComponent,
-        NgClass,
-        MatIcon,
     ],
 })
 export class AbstractLevelComponent implements OnInit, AfterViewInit {
@@ -84,12 +81,17 @@ export class AbstractLevelComponent implements OnInit, AfterViewInit {
         this.topologyService.emitTopologyWidthChange(
             this.levelContent.nativeElement.clientWidth / 2,
         );
+        this.topologyService.setMaxTopologyWidth(
+            this.levelContent.nativeElement.clientWidth * 0.65,
+        );
+        this.topologyService.setMinTopologyWidth(
+            this.levelContent.nativeElement.clientWidth * 0.25,
+        );
     }
 
     ngOnInit(): void {
         this.runService.runInfo$.subscribe((runInfo) => {
             const levelType = runInfo.displayedLevel.type;
-            console.log('Level type set to: ', levelType);
             this.levelType.set(levelType);
             const shouldCollapse =
                 levelType !== AbstractLevelTypeEnum.Training &&

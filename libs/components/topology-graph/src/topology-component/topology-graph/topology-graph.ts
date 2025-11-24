@@ -66,20 +66,20 @@ export class TopologyGraph implements AfterViewInit {
     openConsole = output<OpenConsoleEvent>();
 
     topology = input.required<Topology>();
-    loading = input<boolean>(false);
-    stabilized = signal(false);
-    resized = signal(true);
     @ViewChild('networkContainer', { static: false })
     networkContainer: ElementRef<HTMLDivElement>;
     network: Network;
+    protected loading = input<boolean>(false);
+    protected stabilized = signal(false);
+    protected resized = signal(true);
     protected accessibleNodes = signal<string[]>([]);
     protected nodes: TopologyGraphNode[];
     protected links: TopologyGraphLink[];
-    private readonly svgService = inject(TopologyNodeSvgService);
-    private readonly errorHandlerService = inject(ErrorHandlerService);
-    private readonly topologySynchronizerService = inject(
+    protected readonly topologySynchronizerService = inject(
         TopologySynchronizerService,
     );
+    private readonly svgService = inject(TopologyNodeSvgService);
+    private readonly errorHandlerService = inject(ErrorHandlerService);
     private nodeNamesDict: { [key: string]: TopologyGraphNode } = {};
 
     constructor() {
@@ -91,7 +91,7 @@ export class TopologyGraph implements AfterViewInit {
             (dimensions) =>
                 this.handleDimensionsChange(
                     dimensions.width,
-                    dimensions.height,
+                    dimensions.height - 49, // tabs header height,
                 ),
         );
     }

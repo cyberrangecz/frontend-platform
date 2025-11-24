@@ -1,5 +1,4 @@
 import {
-    AfterViewChecked,
     AfterViewInit,
     Component,
     ElementRef,
@@ -7,11 +6,14 @@ import {
     inject,
     input,
     signal,
-    ViewChild
+    ViewChild,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatTab, MatTabGroup, MatTabLabel } from '@angular/material/tabs';
-import { OpenConsoleEvent, TopologyGraph } from './topology-graph/topology-graph';
+import {
+    OpenConsoleEvent,
+    TopologyGraph,
+} from './topology-graph/topology-graph';
 import { MatTooltip } from '@angular/material/tooltip';
 import { ConsoleView } from '../console/console-view.component';
 import { Topology } from '@crczp/sandbox-model';
@@ -40,10 +42,7 @@ import { Router } from '@angular/router';
     templateUrl: './topology-component.html',
     styleUrl: './topology-component.scss',
 })
-export class TopologyComponent implements AfterViewInit, AfterViewChecked {
-
-    private static readonly MIN_WIDTH_PX = 400;
-
+export class TopologyComponent implements AfterViewInit {
     topology = input.required<Topology>();
     sandboxUuid = input<string>(undefined);
     standalone = input<boolean>(false);
@@ -56,8 +55,6 @@ export class TopologyComponent implements AfterViewInit, AfterViewChecked {
     @ViewChild('topologyTabsDiv') topologyTabsDiv: ElementRef<HTMLDivElement>;
     protected tabs = signal<OpenConsoleEvent[]>([]);
     protected readonly window = window;
-    private childWidth: number | null = null;
-    private isDragging = false;
 
     constructor() {
         this.synchronizerService.topologyCollapsed$.subscribe(
@@ -66,13 +63,26 @@ export class TopologyComponent implements AfterViewInit, AfterViewChecked {
 
         this.synchronizerService.drag$.subscribe((delta) => {
             if (this.topologyTabsDiv) {
-                const currentWidth = this.childWidth ?? this.topologyTabsDiv.nativeElement.clientWidth;
+                const currentWidth =
+                    this.topologyTabsDiv.nativeElement.clientWidth;
                 const newWidth = currentWidth - delta;
-                this.childWidth = Math.max(TopologyComponent.MIN_WIDTH_PX, newWidth);
-                this.topologyTabsDiv.nativeElement.style.minWidth = `${this.childWidth}px`;
-                this.topologyTabsDiv.nativeElement.style.width = `${this.childWidth}px`;
+                this.synchronizerService.emitTopologyWidthChange(newWidth);
             }
         });
+
+        this.synchronizerService.topologyDimensions$.subscribe(
+            ({ width, height }) => {
+                if (this.topologyTabsDiv) {
+                    this.topologyTabsDiv.nativeElement.style.width = `${width}px`;
+                    this.topologyTabsDiv.nativeElement.style.height = `${height}px`;
+                }
+            },
+        );
+    }
+
+    @HostListener('window:resize')
+    onWindowResize(): void {
+        this.updateTopologyDimensions();
     }
 
     @HostListener('window:keydown', ['$event'])
@@ -112,40 +122,12 @@ export class TopologyComponent implements AfterViewInit, AfterViewChecked {
         this.updateTopologyDimensions();
     }
 
-    ngAfterViewChecked(): void {
-        if (this.topologyTabsDiv && this.childWidth !== null && window.innerWidth > 1400) {
-            // Find the mat-drawer-content element
-            const drawerContent = document.querySelector('mat-drawer-content');
-
-            if (drawerContent) {
-                const hasHorizontalScroll = drawerContent.scrollWidth > drawerContent.clientWidth;
-
-                if (hasHorizontalScroll) {
-                    const overflow = (drawerContent.scrollWidth - drawerContent.clientWidth) +10;
-
-                    // Shrink the child width by the overflow amount
-                    this.childWidth = Math.max(200, this.childWidth - overflow);
-                    this.topologyTabsDiv.nativeElement.style.minWidth = `${this.childWidth}px`;
-                    this.topologyTabsDiv.nativeElement.style.width = `${this.childWidth}px`;
-                }
-            }
-        }
-    }
-
     closeTab(index: number): void {
         this.tabs.update((tabs) => tabs.filter((_, i) => i !== index));
     }
 
     mouseDown(event: MouseEvent): void {
-        this.isDragging = true;
-
-        // Initialize childWidth if not set
-        if (this.childWidth === null && this.topologyTabsDiv) {
-            this.childWidth = this.topologyTabsDiv.nativeElement.clientWidth;
-        }
-
         const mouseUp = () => {
-            this.isDragging = false;
             document.removeEventListener('mousemove', mouseMove);
             document.removeEventListener('mouseup', mouseUp);
         };
@@ -161,14 +143,16 @@ export class TopologyComponent implements AfterViewInit, AfterViewChecked {
     }
 
     updateTopologyDimensions() {
-        console.log('Reize topology', this.topologyTabsDiv?.nativeElement.clientHeight , this.topologyTabsDiv?.nativeElement.clientWidth);
         if (this.collapsed) return;
         if (this.topologyTabsDiv) {
             this.synchronizerService.emitTopologyWidthChange(
-                this.topologyTabsDiv.nativeElement.clientWidth,
+                this.standalone()
+                    ? this.topologyTabsDiv.nativeElement.parentElement
+                          .offsetWidth
+                    : this.topologyTabsDiv.nativeElement.offsetWidth,
             );
             this.synchronizerService.emitTopologyHeightChange(
-                this.topologyTabsDiv.nativeElement.clientHeight - 49,
+                this.topologyTabsDiv.nativeElement.parentElement.offsetHeight,
             );
         }
     }
@@ -201,5 +185,4 @@ export class TopologyComponent implements AfterViewInit, AfterViewChecked {
         console.info('Opening console in new window:', url);
         window.open(url, '_blank');
     }
-
 }

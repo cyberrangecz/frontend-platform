@@ -1,9 +1,61 @@
+:host {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    height: calc(100dvh - 32rem);
+    position: relative;
+}
+
 .button-align-wrapper {
     align-items: center;
 }
 
-.collapse-button--collapsed{
+
+.level-topology {
+    display: block;
+    height: calc(100dvh - 32rem);
+    max-width: 60dvw;
+    transform: translateX(0);
+}
+
+.level-topology--hidden {
+    width: 100dvw;
+    height: calc(100dvh - 32rem);
     position: absolute;
-    right: 20rem;
-    top: 50dwh;
+    left: 0;
+    opacity: 0;
+}
+
+
+.expand-topology-button {
+    display: flex;
+    z-index: 10;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    top: 52dvh;
+    right: 0;
+    height: 8rem;
+    width: 2rem;
+    border-radius: 1rem 0 0 1rem;
+    background: var(--neutral-98);
+    box-shadow: -2px 1px 2px var(--neutral-70);
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    margin: 0 1px 0 0;
+
+    &:hover, &:active, &:focus {
+        box-shadow: -1px 1px 2px var(--neutral-70);
+    }
+
+    &:hover {
+        background: var(--primary-95);
+    }
+
+    &--expanded {
+        position: static;
+        margin: 0 3px 0 0;
+    }
 }

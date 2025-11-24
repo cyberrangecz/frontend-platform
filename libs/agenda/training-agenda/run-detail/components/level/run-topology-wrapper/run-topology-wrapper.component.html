@@ -1,13 +1,25 @@
-
-@let sandboxInstanceId = (this.runService.runInfo$.observeProperty().sandboxInstanceId.$() | async);
-@if (!!sandboxInstanceId) {
-    <div class="wh-100 hflex button-align-wrapper">
+<div class="hflex ai-center wh-100">
+    @let topologyCollapsed = topologyService.topologyCollapsed$ | async;
+    @if (topologyAllowed()) {
+        <button
+            (click)="topologyService.toggleCollapsed()"
+            class="expand-topology-button {{ !topologyCollapsed ? 'expand-topology-button--expanded' : '' }}"
+            matTooltip="{{ topologyCollapsed ? 'Show' : 'Hide' }} topology"
+            matTooltipPosition="left"
+        >
+            <mat-icon>
+                {{ topologyCollapsed ? 'polyline' : 'chevron_right' }}
+            </mat-icon>
+        </button>
+    }
+    @let sandboxInstanceId = (this.runService.runInfo$.observeProperty().sandboxInstanceId.$() | async);
+    @if (!!sandboxInstanceId) {
         <crczp-topology-wrapper
             (getAccessFile)="onAccessFileRequested()"
             [id]="{instanceId: sandboxInstanceId}"
+            [ngClass]="{ 'level-topology--hidden': topologyService.topologyCollapsed$ | async }"
             [standalone]="false"
             class="wh-100 level-topology"
         />
-    </div>
-
-}
+    }
+</div>

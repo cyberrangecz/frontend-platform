@@ -37,23 +37,9 @@
             <crczp-questionnaire-level />
         }
     }
-    @let topologyCollapsed = topologyService.topologyCollapsed$ | async;
-    @if (topologyAllowed()){
-        <button
-            (click)="topologyService.toggleCollapsed()"
-            class="expand-topology-button {{ !topologyCollapsed ? 'expand-topology-button--expanded' : '' }}"
-            matTooltip="{{ topologyCollapsed ? 'Show' : 'Hide' }} topology"
-            matTooltipPosition="left"
-        >
-            <mat-icon>
-                {{ topologyCollapsed ? 'polyline' : 'chevron_right' }}
-            </mat-icon>
-        </button>
-    }
-    <div class="level-topology-wrapper">
-        <crczp-run-topology-wrapper
-            [ngClass]="{ 'level-topology--hidden': topologyService.topologyCollapsed$ | async }"
-            class="level-topology"
-        />
-    </div>
+
+    <crczp-run-topology-wrapper
+        [topologyAllowed]="topologyAllowed()"
+        class="level-topology-wrapper"
+    />
 </div>
