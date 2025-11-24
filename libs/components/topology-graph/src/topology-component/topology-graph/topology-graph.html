@@ -11,6 +11,15 @@
     />
 }
 
+@if (!resized()) {
+    <div class="resizing-indicator">
+        <div class="resize-line"></div>
+        <h1>
+            {{ networkContainer.offsetWidth }} px
+        </h1>
+    </div>
+}
+
 <crczp-context-menu
     [accessibleNodes]="this.accessibleNodes()"
     [boundingBox]="networkContainer.getBoundingClientRect()"

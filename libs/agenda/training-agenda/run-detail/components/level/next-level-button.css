@@ -7,10 +7,15 @@
     opacity: 1;
     animation: 0.1s ease-in 1 fadeIn;
     padding: 1rem;
-    left: calc(50% + 40px);
-    transform: translateX(-50%);
 }
 
+
+@media (max-width: 748px) {
+    .next-button {
+        width: 50%;
+
+    }
+}
 
 @keyframes fadeIn {
     0% {
