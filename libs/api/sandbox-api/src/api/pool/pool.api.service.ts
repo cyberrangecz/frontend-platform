@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpContext, HttpHeaders, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { ResponseHeaderContentDispositionReader } from '@sentinel/common';
 import { OffsetPaginationEvent } from '@sentinel/common/pagination';
@@ -31,11 +31,13 @@ import { RequestDTO } from '../../dto/sandbox-instance/request-dto';
 import { RequestMapper } from '../../mappers/sandbox-instance/request-mapper';
 import {
     BlobFileSaver,
+    CRCZPHttpService,
     DjangoResourceDTO,
     handleJsonError,
     OffsetPaginatedResource,
     PaginationMapper,
-    ParamsBuilder
+    ParamsBuilder,
+    SKIPPED_ERROR_CODES
 } from '@crczp/api-common';
 import { PortalConfig } from '@crczp/utils';
 import { AllocationRequestSort, PoolSort, SandboxDefinitionSort } from '../sorts';
@@ -46,6 +48,7 @@ import { AllocationRequestSort, PoolSort, SandboxDefinitionSort } from '../sorts
 @Injectable()
 export class PoolApi {
     private readonly http = inject(HttpClient);
+    private readonly crczpHttp = inject(CRCZPHttpService);
 
     private readonly apiUrl = inject(PortalConfig).basePaths.sandbox + '/pools';
     private readonly sandboxAllocationUnitsUriExtension =
@@ -80,11 +83,14 @@ export class PoolApi {
     /**
      * Sends http request to retrieve pool by id
      * @param poolId id of the pool
+     * @param expectedErrors list of expected error codes
      */
-    getPool(poolId: number): Observable<Pool> {
-        return this.http
-            .get<PoolDTO>(`${this.apiUrl}/${poolId}`)
-            .pipe(map((response) => PoolMapper.fromDTO(response)));
+    getPool(poolId: number, expectedErrors?: number[]): Observable<Pool> {
+        return this.crczpHttp
+            .get<PoolDTO>(`${this.apiUrl}/${poolId}`, 'Retrieve pool')
+            .setExpectedErrors(expectedErrors)
+            .withReceiveMapper((response) => PoolMapper.fromDTO(response))
+            .execute();
     }
 
     /**
@@ -375,10 +381,12 @@ export class PoolApi {
      * Sends http request to get all sandboxes of the given pool.
      * @param poolId id of a pool
      * @param pagination a requested pagination
+     * @param ignoredErrors list of error codes handled by the caller
      */
     getPoolsSandboxes(
         poolId: number,
         pagination?: OffsetPaginationEvent<string>,
+        ignoredErrors?: number[],
     ): Observable<OffsetPaginatedResource<SandboxInstance>> {
         if (
             pagination &&
@@ -392,6 +400,9 @@ export class PoolApi {
                 `${this.apiUrl}/${poolId}/sandboxes`,
                 {
                     params: ParamsBuilder.djangoPaginationParams(pagination),
+                    context: new HttpContext().set(
+                        SKIPPED_ERROR_CODES, ignoredErrors || [],
+                    )
                 },
             )
             .pipe(

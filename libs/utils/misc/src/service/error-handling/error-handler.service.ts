@@ -28,11 +28,7 @@ export class ErrorHandlerService implements ErrorHandler {
     }
 
     handleError(error: any) {
-        this.emitFrontendErrorNotification(
-            error ? error : 'Unknown error',
-            'Error Handler'
-        );
-        throw error;
+        console.error('An error occurred:', error);
     }
 
     emitNavigationError(error: any, url?: string): Observable<boolean> {
@@ -51,7 +47,7 @@ export class ErrorHandlerService implements ErrorHandler {
 
     emitAPIError(
         err: HttpErrorResponse,
-        operation: string
+        operation: string,
     ): Observable<boolean> {
         const notification: SentinelNotification = {
             type: SentinelNotificationTypeEnum.Error,
@@ -76,7 +72,7 @@ export class ErrorHandlerService implements ErrorHandler {
             return this.safeEmit(
                 this.notificationService,
                 'emit',
-                notification
+                notification,
             );
         }
 
@@ -104,7 +100,7 @@ export class ErrorHandlerService implements ErrorHandler {
 
     emitFrontendErrorNotification(
         error: string,
-        source?: string
+        source?: string,
     ): Observable<boolean> {
         return this.safeEmit(this.notificationService, 'emit', {
             type: SentinelNotificationTypeEnum.Error,
@@ -120,14 +116,14 @@ export class ErrorHandlerService implements ErrorHandler {
     private safeEmit(
         service: any,
         method: string,
-        payload: SentinelNotification
+        payload: SentinelNotification,
     ): Observable<boolean> {
         if (typeof service?.[method] !== 'function') {
             return of(false);
         }
         try {
             return service[method](payload).pipe(
-                map((r: any) => r === SentinelNotificationResult.CONFIRMED)
+                map((r: any) => r === SentinelNotificationResult.CONFIRMED),
             );
         } catch {
             return of(false);
@@ -139,8 +135,8 @@ export class ErrorHandlerService implements ErrorHandler {
             .pipe(
                 filter(
                     (event: Event): event is NavigationError =>
-                        event instanceof NavigationError
-                )
+                        event instanceof NavigationError,
+                ),
             )
             .subscribe((errorEvent: NavigationError) => {
                 this.navigationErrorSubject.next(errorEvent);
@@ -150,14 +146,14 @@ export class ErrorHandlerService implements ErrorHandler {
 
     private setJavaApiErrorNotification(
         err: HttpErrorResponse,
-        notification: SentinelNotification
+        notification: SentinelNotification,
     ) {
         notification.additionalInfo = [err.error.message];
     }
 
     private setPythonApiErrorToNotification(
         err: HttpErrorResponse,
-        notification: SentinelNotification
+        notification: SentinelNotification,
     ) {
         if (err.error.detail) {
             notification.additionalInfo = [err.error.detail];
@@ -168,7 +164,7 @@ export class ErrorHandlerService implements ErrorHandler {
 
     private checkForClockSyncErr(
         err: HttpErrorResponse | string,
-        notification: SentinelNotification
+        notification: SentinelNotification,
     ) {
         if (err === 'Token has expired') {
             notification.source = err;
