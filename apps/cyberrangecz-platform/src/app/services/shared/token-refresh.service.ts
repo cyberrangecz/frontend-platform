@@ -44,7 +44,7 @@ export class TokenRefreshService {
      */
     refreshToken(): Observable<TokenRefreshState> {
         if (this.isTokenExpired()) {
-            console.log('token expired');
+            console.warn('Token expired');
             this.stateSubject.next(TokenRefreshState.REFRESHING);
             return from(
                 this.oauthService.discoveryDocumentLoaded
