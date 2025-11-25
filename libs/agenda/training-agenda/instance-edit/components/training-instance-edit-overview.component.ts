@@ -26,9 +26,9 @@ import { MatError } from '@angular/material/input';
 import { TrainingInstanceEditComponent } from './training-instance-edit/training-instance-edit.component';
 import { MatDivider } from '@angular/material/divider';
 import { CommonTrainingInstanceEditService } from '../services/state/edit/common-training-instance-edit.service';
-import { createInfinitePaginationEvent, createPaginationEvent } from '@crczp/api-common';
+import { createInfinitePaginationEvent } from '@crczp/api-common';
 import { PoolSort, SandboxDefinitionSort } from '@crczp/sandbox-api';
-import { TrainingDefinitionSort, TrainingInstanceSort } from '@crczp/training-api';
+import { TrainingDefinitionSort } from '@crczp/training-api';
 
 /**
  * Main component of training instance edit/create page. Serves mainly as a smart component wrapper
@@ -75,11 +75,6 @@ export class TrainingInstanceEditOverviewComponent implements OnInit {
     private readonly organizersAssignService = inject(
         SentinelUserAssignService,
     );
-    private trainingInstancePagination =
-        createPaginationEvent<TrainingInstanceSort>({
-            sort: 'id',
-            sortDir: 'asc',
-        });
 
     constructor() {
         this.trainingInstance$ = this.editService.trainingInstance$;
@@ -155,9 +150,8 @@ export class TrainingInstanceEditOverviewComponent implements OnInit {
         );
     }
 
-    onControlsAction(control: SentinelControlItemSignal): void {
+    onControlsAction(_control: SentinelControlItemSignal): void {
         this.canDeactivateTIEdit.next(true);
-        control.result$.pipe(take(1)).subscribe();
     }
 
     /**

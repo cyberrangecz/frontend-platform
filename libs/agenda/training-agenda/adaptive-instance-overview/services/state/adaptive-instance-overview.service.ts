@@ -7,7 +7,7 @@ import {
     TrainingInstanceSort,
 } from '@crczp/training-api';
 import { TrainingInstance } from '@crczp/training-model';
-import { EMPTY, from, Observable, of } from 'rxjs';
+import { combineLatest, EMPTY, from, Observable, of, throwError } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { AdaptiveInstanceFilter } from '../../model/adapters/adaptive-instance-filter';
 import {
@@ -24,8 +24,10 @@ import {
 import { Routing } from '@crczp/routing-commons';
 import {
     CrczpOffsetElementsPaginatedService,
+    createInfinitePaginationEvent,
     OffsetPaginatedResource,
 } from '@crczp/api-common';
+import { PoolSize } from '@crczp/training-agenda/instance-overview';
 
 @Injectable()
 export class AdaptiveInstanceOverviewService extends CrczpOffsetElementsPaginatedService<TrainingInstance> {
@@ -72,7 +74,6 @@ export class AdaptiveInstanceOverviewService extends CrczpOffsetElementsPaginate
             this.router.navigate([
                 Routing.RouteBuilder.adaptive_instance.create.build(),
             ]),
-            //this.navigator.toNewAdaptiveInstance()])
         );
     }
 
@@ -83,7 +84,6 @@ export class AdaptiveInstanceOverviewService extends CrczpOffsetElementsPaginate
                     .instanceId(id)
                     .edit.build(),
             ]),
-            //this.navigator.toAdaptiveInstanceEdit(id)])
         );
     }
 
@@ -151,24 +151,6 @@ export class AdaptiveInstanceOverviewService extends CrczpOffsetElementsPaginate
         );
     }
 
-    /**
-     * Returns size of a pool specified by @poolId and '-' if the pool does not exist.
-     * @param poolId ID of a pool
-     */
-    getPoolSize(poolId: number): Observable<string> {
-        return this.poolApi.getPool(poolId).pipe(
-            map(
-                (pool) => pool.maxSize.toString(),
-                (err) => {
-                    this.hasErrorSubject$.next(true);
-                    this.errorHandler.emitAPIError(err, 'Fetching pool size');
-                    return EMPTY;
-                },
-            ),
-            catchError((err) => (err.status === 404 ? of('-') : EMPTY)),
-        );
-    }
-
     poolExists(poolId: number): Observable<boolean> {
         return this.poolApi.getPool(poolId).pipe(
             map(() => true),
@@ -177,37 +159,47 @@ export class AdaptiveInstanceOverviewService extends CrczpOffsetElementsPaginate
     }
 
     /**
-     * Gets available sandboxes of pool specified by @poolId and returns an empty
-     * string if pool does not exist.
+     * Returns observable of PoolSize, holding data about total and used size of a pool or
+     * an error if the pool is not assigned or has been removed.
      * @param poolId ID of a pool
      */
-    getAvailableSandboxes(poolId: number): Observable<string> {
-        return this.poolApi
-            .getPoolsSandboxes(poolId, {
-                page: 0,
-                size: Number.MAX_SAFE_INTEGER,
-                sort: 'id',
-                sortDir: 'asc',
-            })
-            .pipe(
-                map(
-                    (sandboxes) =>
-                        sandboxes.elements
-                            .filter((sandbox) => !sandbox.isLocked())
-                            .length.toString(),
-                    (err) => {
-                        this.hasErrorSubject$.next(true);
-                        this.errorHandler.emitAPIError(
-                            err,
-                            'Fetching available sandboxes',
-                        );
-                        return EMPTY;
-                    },
-                ),
+    getPoolSize(poolId: number): Observable<PoolSize> {
+        console.log(`getPoolSize called for pool ${poolId}`);
+
+        return combineLatest([
+            this.poolApi.getPool(poolId, [404]).pipe(
                 catchError((err) => {
-                    return err.status === 404 ? of('') : EMPTY;
+                    if (err?.status === 404) {
+                        return of(null);
+                    }
+                    throwError(() => err);
                 }),
-            );
+            ),
+            this.poolApi
+                .getPoolsSandboxes(poolId, createInfinitePaginationEvent(), [
+                    404,
+                ])
+                .pipe(
+                    catchError((err) => {
+                        if (err?.status === 404) {
+                            return of(null);
+                        }
+                        throwError(() => err);
+                    }),
+                ),
+        ]).pipe(
+            map(([pool, sandboxes]): PoolSize => {
+                if (sandboxes === null || pool === null) {
+                    return { error: 'REMOVED' };
+                }
+                return {
+                    total: pool.maxSize,
+                    used: sandboxes.elements.filter((sandbox) =>
+                        sandbox.isLocked(),
+                    ).length,
+                };
+            }),
+        );
     }
 
     getSshAccess(poolId: number): Observable<boolean> {

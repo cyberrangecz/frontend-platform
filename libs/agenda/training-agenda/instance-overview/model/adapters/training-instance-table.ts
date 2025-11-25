@@ -1,9 +1,9 @@
 import { TrainingInstance } from '@crczp/training-model';
 import { Column, DeleteAction, EditAction, Row, RowAction, SentinelTable } from '@sentinel/components/table';
-import { combineLatest, defer, of, startWith } from 'rxjs';
+import { defer, of, startWith } from 'rxjs';
 import { TrainingInstanceOverviewService } from '../../services/state/training-instance-overview.service';
 import { TrainingInstanceRowAdapter } from './training-instance-row-adapter';
-import { map } from 'rxjs/operators';
+import { map, shareReplay } from 'rxjs/operators';
 import { Routing } from '@crczp/routing-commons';
 import { TrainingInstanceSort } from '@crczp/training-api';
 import { OffsetPaginatedResource } from '@crczp/api-common';
@@ -96,16 +96,15 @@ export class TrainingInstanceTable extends SentinelTable<
                 .detail.build(),
         );
         if (ti.hasPool()) {
-            row.element.poolSize = combineLatest([
-                service.getPoolSize(ti.poolId),
-                service.getAvailableSandboxes(ti.poolId),
-            ]);
+            row.element.poolSize = service.getPoolSize(ti.poolId).pipe(
+                shareReplay({ bufferSize: 1, refCount: false }),
+            );
             row.addLink(
                 'poolTitle',
                 Routing.RouteBuilder.pool.poolId(ti.poolId).build(),
             );
         } else {
-            row.element.poolSize = of(['-', '']);
+            row.element.poolSize = of({error: 'NOT_ASSIGNED'}) ;
         }
         return row;
     }

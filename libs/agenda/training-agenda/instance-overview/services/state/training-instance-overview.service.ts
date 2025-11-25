@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { DestroyRef, inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import { PoolApi } from '@crczp/sandbox-api';
@@ -7,7 +7,7 @@ import {
     TrainingInstanceSort,
 } from '@crczp/training-api';
 import { TrainingInstance } from '@crczp/training-model';
-import { EMPTY, Observable, of } from 'rxjs';
+import { combineLatest, EMPTY, Observable, of, throwError } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { TrainingInstanceFilter } from '../../model/adapters/training-instance-filter';
 import {
@@ -27,6 +27,18 @@ import {
     createInfinitePaginationEvent,
     OffsetPaginatedResource,
 } from '@crczp/api-common';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+
+export type PoolError = 'NOT_ASSIGNED' | 'REMOVED';
+
+export type PoolSize =
+    | {
+          total: number;
+          used: number;
+      }
+    | {
+          error: PoolError;
+      };
 
 @Injectable()
 export class TrainingInstanceOverviewService extends CrczpOffsetElementsPaginatedService<TrainingInstance> {
@@ -39,6 +51,7 @@ export class TrainingInstanceOverviewService extends CrczpOffsetElementsPaginate
 
     private lastPagination: OffsetPaginationEvent<TrainingInstanceSort>;
     private lastFilter: string;
+    private destroyRef = inject(DestroyRef);
 
     constructor() {
         super(inject(PortalConfig).defaultPageSize);
@@ -139,61 +152,62 @@ export class TrainingInstanceOverviewService extends CrczpOffsetElementsPaginate
     }
 
     /**
-     * Returns size of a pool specified by @poolId and '-' if the pool does not exist.
+     * Returns observable of PoolSize, holding data about total and used size of a pool or
+     * an error if the pool is not assigned or has been removed.
      * @param poolId ID of a pool
      */
-    getPoolSize(poolId: number): Observable<string> {
-        return this.poolApi.getPool(poolId).pipe(
-            map(
-                (pool) => pool.maxSize.toString(),
-                (err) => {
-                    this.hasErrorSubject$.next(true);
-                    this.errorHandler.emitAPIError(err, 'Fetching pool size');
-                    return EMPTY;
-                },
+    getPoolSize(poolId: number): Observable<PoolSize> {
+        console.log(`getPoolSize called for pool ${poolId}`);
+
+        return combineLatest([
+            this.poolApi.getPool(poolId, [404]).pipe(
+                catchError((err) => {
+                    if (err?.status === 404) {
+                        return of(null);
+                    }
+                    throwError(() => err);
+                }),
             ),
-            catchError((err) => (err.status === 404 ? of('-') : EMPTY)),
+            this.poolApi
+                .getPoolsSandboxes(poolId, createInfinitePaginationEvent(), [
+                    404,
+                ])
+                .pipe(
+                    catchError((err) => {
+                        if (err?.status === 404) {
+                            return of(null);
+                        }
+                        throwError(() => err);
+                    }),
+                ),
+        ]).pipe(
+            map(([pool, sandboxes]): PoolSize => {
+                if (sandboxes === null || pool === null) {
+                    return { error: 'REMOVED' };
+                }
+                return {
+                    total: pool.maxSize,
+                    used: sandboxes.elements.filter((sandbox) =>
+                        sandbox.isLocked(),
+                    ).length,
+                };
+            }),
         );
     }
 
     poolExists(poolId: number): Observable<boolean> {
-        return this.poolApi.getPool(poolId).pipe(
+        return this.poolApi.getPool(poolId, [404]).pipe(
             map(() => true),
-            catchError(() => of(false)),
+            catchError((_err) => {
+                console.log('Pool does not exist in poolExists check');
+                return of(false);
+            }),
         );
-    }
-
-    /**
-     * Gets available sandboxes of pool specified by @poolId and returns an empty
-     * string if pool does not exist.
-     * @param poolId ID of a pool
-     */
-    getAvailableSandboxes(poolId: number): Observable<string> {
-        return this.poolApi
-            .getPoolsSandboxes(poolId, createInfinitePaginationEvent())
-            .pipe(
-                map(
-                    (sandboxes) =>
-                        sandboxes.elements
-                            .filter((sandbox) => !sandbox.isLocked())
-                            .length.toString(),
-                    (err) => {
-                        this.hasErrorSubject$.next(true);
-                        this.errorHandler.emitAPIError(
-                            err,
-                            'Fetching available sandboxes',
-                        );
-                        return EMPTY;
-                    },
-                ),
-                catchError((err) => {
-                    return err.status === 404 ? of('') : EMPTY;
-                }),
-            );
     }
 
     getSshAccess(poolId: number): Observable<boolean> {
         return this.poolApi.getManagementSshAccess(poolId).pipe(
+            takeUntilDestroyed(this.destroyRef),
             catchError((err) => {
                 this.errorHandler.emitAPIError(err, 'Management SSH Access');
                 return EMPTY;
@@ -242,6 +256,7 @@ export class TrainingInstanceOverviewService extends CrczpOffsetElementsPaginate
         trainingInstance: TrainingInstance,
     ): Observable<OffsetPaginatedResource<TrainingInstance>> {
         return this.trainingInstanceApi.delete(trainingInstance.id).pipe(
+            takeUntilDestroyed(this.destroyRef),
             tap(() =>
                 this.notificationService.emit(
                     'success',
@@ -271,6 +286,7 @@ export class TrainingInstanceOverviewService extends CrczpOffsetElementsPaginate
 
     private forceDelete(id: number): Observable<any> {
         return this.trainingInstanceApi.delete(id, true).pipe(
+            takeUntilDestroyed(this.destroyRef),
             tap(
                 () =>
                     this.notificationService.emit(

@@ -26,8 +26,9 @@ import {TrainingDefinitionEditOverviewMaterialModule} from '../training-definiti
         SentinelControlsComponent,
         TrainingDefinitionEditOverviewMaterialModule,
         ngfModule,
+        TrainingLevelStepperComponent,
+        LevelOverviewComponent,
     ],
-    declarations: [TrainingLevelStepperComponent, LevelOverviewComponent],
     exports: [LevelOverviewComponent],
 })
 export class LevelOverviewComponentsModule {}

@@ -48,7 +48,7 @@ export class InstanceCountdownComponent implements OnInit {
 
     private updateTime() {
         const timeToExpire = Utils.Date.formatDurationSimple(
-            this.trainingInstance.endTime.getTime()
+            this.trainingInstance.endTime.getTime(),
         );
         if (timeToExpire.length === 0) {
             this.timeToExpiration.set(InstanceCountdownComponent.EXPIRED_TEXT);
