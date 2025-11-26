@@ -111,6 +111,14 @@ export abstract class AbstractTrainingRunService {
                     level as AccessPhase | AccessLevel
                 ).localContent;
             }
+            if (
+                lvl instanceof AssessmentLevel ||
+                lvl instanceof QuestionnairePhase
+            ) {
+                lvl.questions = (
+                    level as AssessmentLevel | QuestionnairePhase
+                ).questions;
+            }
             return lvl;
         });
         this.updateRunInfo({
@@ -172,6 +180,24 @@ export abstract class AbstractTrainingRunService {
                 'Processing training data for visualization',
                 `Please wait while your training data are being processed`,
             ),
+        });
+    }
+
+    private advanceCurrentLevel() {
+        const nextLevelByOrder = this.runInfo.levels.find(
+            (lvl) => lvl.order === this.runInfo.currentLevel.order + 1,
+        );
+        if (!nextLevelByOrder) {
+            this.errorHandlerService.emitFrontendErrorNotification(
+                `Next level with order ${
+                    this.runInfo.currentLevel.order + 1
+                } not found in current training run`,
+            );
+        }
+        this.updateRunInfo({
+            currentLevelId: nextLevelByOrder.id,
+            displayedLevelId: nextLevelByOrder.id,
+            isCurrentLevelAnswered: false,
         });
     }
 }
