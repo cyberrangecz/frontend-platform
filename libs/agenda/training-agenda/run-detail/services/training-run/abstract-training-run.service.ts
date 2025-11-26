@@ -2,22 +2,19 @@ import {
     AccessLevel,
     AccessPhase,
     AccessTrainingRunInfo,
+    AssessmentLevel,
     InfoLevel,
     InfoPhase,
     Level,
     Phase,
+    QuestionnairePhase,
     TrainingLevel,
-    TrainingPhase,
+    TrainingPhase
 } from '@crczp/training-model';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { ErrorHandlerService } from '@crczp/utils';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import {
-    LoadingDialogComponent,
-    LoadingDialogOptions,
-} from '@crczp/components';
-import { TrainingRunStepper } from '../../model/training-run-stepper';
-import { map } from 'rxjs/operators';
+import { LoadingDialogComponent, LoadingDialogOptions } from '@crczp/components';
 
 export abstract class AbstractTrainingRunService {
     private readonly runInfoSubject$ =
@@ -47,11 +44,13 @@ export abstract class AbstractTrainingRunService {
         if (this.runInfo.isBacktracked) {
             this.displayNextLevel();
         } else if (this.runInfo.isLastLevelDisplayed) {
-            this.callApiToFinish().subscribe();
+            this.callApiToFinish().subscribe(() => {
+                this.navigateToRunSummary();
+            });
         } else {
             this.callApiToNextLevel().subscribe((nextLevel) => {
                 this.updateRunInfoWithNextLevel(nextLevel);
-                this.displayNextLevel();
+                this.advanceCurrentLevel();
             });
         }
     }
@@ -127,6 +126,8 @@ export abstract class AbstractTrainingRunService {
         }
     }
 
+    protected abstract navigateToRunSummary(): void;
+
     protected abstract callApiToNextLevel(): Observable<Phase | Level>;
 
     protected abstract callApiToFinish(): Observable<boolean>;
@@ -148,7 +149,7 @@ export abstract class AbstractTrainingRunService {
     }
 
     protected displayNextLevel() {
-        this.displayLevelByOrder(this.runInfo.currentLevel.order + 1);
+        this.displayLevelByOrder(this.runInfo.displayedLevel.order + 1);
     }
 
     private displayLoadingDialog(): MatDialogRef<LoadingDialogComponent> {
