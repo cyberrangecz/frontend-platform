@@ -2,30 +2,23 @@ import { DestroyRef, inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import { PoolApi } from '@crczp/sandbox-api';
-import {
-    LinearTrainingInstanceApi,
-    TrainingInstanceSort,
-} from '@crczp/training-api';
+import { LinearTrainingInstanceApi, TrainingInstanceSort } from '@crczp/training-api';
 import { TrainingInstance } from '@crczp/training-model';
-import { combineLatest, EMPTY, Observable, of, throwError } from 'rxjs';
+import { combineLatest, EMPTY, NEVER, Observable, of, OperatorFunction } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { TrainingInstanceFilter } from '../../model/adapters/training-instance-filter';
 import {
     SentinelConfirmationDialogComponent,
     SentinelConfirmationDialogConfig,
-    SentinelDialogResultEnum,
+    SentinelDialogResultEnum
 } from '@sentinel/components/dialogs';
 import { MatDialog } from '@angular/material/dialog';
-import {
-    ErrorHandlerService,
-    NotificationService,
-    PortalConfig,
-} from '@crczp/utils';
+import { ErrorHandlerService, NotificationService, PortalConfig } from '@crczp/utils';
 import { Routing } from '@crczp/routing-commons';
 import {
     CrczpOffsetElementsPaginatedService,
     createInfinitePaginationEvent,
-    OffsetPaginatedResource,
+    OffsetPaginatedResource
 } from '@crczp/api-common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
@@ -157,29 +150,21 @@ export class TrainingInstanceOverviewService extends CrczpOffsetElementsPaginate
      * @param poolId ID of a pool
      */
     getPoolSize(poolId: number): Observable<PoolSize> {
-        console.log(`getPoolSize called for pool ${poolId}`);
-
+        const catchToNull = <T>(): OperatorFunction<T, T | null> => {
+            return catchError((_err) => {
+                if (_err && _err.status === 404) {
+                    return of(null);
+                }
+                return NEVER;
+            });
+        };
         return combineLatest([
-            this.poolApi.getPool(poolId, [404]).pipe(
-                catchError((err) => {
-                    if (err?.status === 404) {
-                        return of(null);
-                    }
-                    throwError(() => err);
-                }),
-            ),
+            this.poolApi.getPool(poolId, [404]).pipe(catchToNull()),
             this.poolApi
                 .getPoolsSandboxes(poolId, createInfinitePaginationEvent(), [
                     404,
                 ])
-                .pipe(
-                    catchError((err) => {
-                        if (err?.status === 404) {
-                            return of(null);
-                        }
-                        throwError(() => err);
-                    }),
-                ),
+                .pipe(catchToNull()),
         ]).pipe(
             map(([pool, sandboxes]): PoolSize => {
                 if (sandboxes === null || pool === null) {
@@ -199,7 +184,6 @@ export class TrainingInstanceOverviewService extends CrczpOffsetElementsPaginate
         return this.poolApi.getPool(poolId, [404]).pipe(
             map(() => true),
             catchError((_err) => {
-                console.log('Pool does not exist in poolExists check');
                 return of(false);
             }),
         );

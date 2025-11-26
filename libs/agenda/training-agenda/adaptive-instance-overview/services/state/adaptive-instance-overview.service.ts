@@ -164,8 +164,6 @@ export class AdaptiveInstanceOverviewService extends CrczpOffsetElementsPaginate
      * @param poolId ID of a pool
      */
     getPoolSize(poolId: number): Observable<PoolSize> {
-        console.log(`getPoolSize called for pool ${poolId}`);
-
         return combineLatest([
             this.poolApi.getPool(poolId, [404]).pipe(
                 catchError((err) => {

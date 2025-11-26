@@ -123,7 +123,6 @@ export class TrainingInstanceOverviewComponent {
         poolSize: PoolSize,
         localEnvironment: boolean,
     ): boolean {
-        console.log('poolSize', poolSize, localEnvironment);
         return (
             !localEnvironment &&
             ('error' in poolSize || (poolSize.total - poolSize.used === 0))
