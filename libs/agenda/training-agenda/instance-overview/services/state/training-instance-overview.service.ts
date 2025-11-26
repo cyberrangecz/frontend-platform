@@ -4,7 +4,7 @@ import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import { PoolApi } from '@crczp/sandbox-api';
 import { LinearTrainingInstanceApi, TrainingInstanceSort } from '@crczp/training-api';
 import { TrainingInstance } from '@crczp/training-model';
-import { combineLatest, EMPTY, NEVER, Observable, of, OperatorFunction } from 'rxjs';
+import { combineLatest, EMPTY, NEVER, Observable, of } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { TrainingInstanceFilter } from '../../model/adapters/training-instance-filter';
 import {
@@ -21,6 +21,7 @@ import {
     OffsetPaginatedResource
 } from '@crczp/api-common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Pool, SandboxInstance } from '@crczp/sandbox-model';
 
 export type PoolError = 'NOT_ASSIGNED' | 'REMOVED';
 
@@ -150,21 +151,22 @@ export class TrainingInstanceOverviewService extends CrczpOffsetElementsPaginate
      * @param poolId ID of a pool
      */
     getPoolSize(poolId: number): Observable<PoolSize> {
-        const catchToNull = <T>(): OperatorFunction<T, T | null> => {
-            return catchError((_err) => {
-                if (_err && _err.status === 404) {
+        const mapToNullIfNotFound = <T>() =>
+            catchError<T, Observable<T | null>>((err) => {
+                if (err?.status === 404) {
                     return of(null);
                 }
-                return NEVER;
+                return NEVER as Observable<T | null>;
             });
-        };
         return combineLatest([
-            this.poolApi.getPool(poolId, [404]).pipe(catchToNull()),
+            this.poolApi
+                .getPool(poolId, [404])
+                .pipe(mapToNullIfNotFound<Pool>()),
             this.poolApi
                 .getPoolsSandboxes(poolId, createInfinitePaginationEvent(), [
                     404,
                 ])
-                .pipe(catchToNull()),
+                .pipe(mapToNullIfNotFound<OffsetPaginatedResource<SandboxInstance>>()),
         ]).pipe(
             map(([pool, sandboxes]): PoolSize => {
                 if (sandboxes === null || pool === null) {

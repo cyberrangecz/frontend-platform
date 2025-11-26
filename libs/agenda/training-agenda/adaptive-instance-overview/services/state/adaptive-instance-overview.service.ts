@@ -2,32 +2,26 @@ import { inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import { PoolApi } from '@crczp/sandbox-api';
-import {
-    AdaptiveTrainingInstanceApi,
-    TrainingInstanceSort,
-} from '@crczp/training-api';
+import { AdaptiveTrainingInstanceApi, TrainingInstanceSort } from '@crczp/training-api';
 import { TrainingInstance } from '@crczp/training-model';
-import { combineLatest, EMPTY, from, Observable, of, throwError } from 'rxjs';
+import { combineLatest, EMPTY, from, NEVER, Observable, of } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { AdaptiveInstanceFilter } from '../../model/adapters/adaptive-instance-filter';
 import {
     SentinelConfirmationDialogComponent,
     SentinelConfirmationDialogConfig,
-    SentinelDialogResultEnum,
+    SentinelDialogResultEnum
 } from '@sentinel/components/dialogs';
 import { MatDialog } from '@angular/material/dialog';
-import {
-    ErrorHandlerService,
-    NotificationService,
-    PortalConfig,
-} from '@crczp/utils';
+import { ErrorHandlerService, NotificationService, PortalConfig } from '@crczp/utils';
 import { Routing } from '@crczp/routing-commons';
 import {
     CrczpOffsetElementsPaginatedService,
     createInfinitePaginationEvent,
-    OffsetPaginatedResource,
+    OffsetPaginatedResource
 } from '@crczp/api-common';
 import { PoolSize } from '@crczp/training-agenda/instance-overview';
+import { Pool, SandboxInstance } from '@crczp/sandbox-model';
 
 @Injectable()
 export class AdaptiveInstanceOverviewService extends CrczpOffsetElementsPaginatedService<TrainingInstance> {
@@ -164,26 +158,25 @@ export class AdaptiveInstanceOverviewService extends CrczpOffsetElementsPaginate
      * @param poolId ID of a pool
      */
     getPoolSize(poolId: number): Observable<PoolSize> {
+        const mapToNullIfNotFound = <T>() =>
+            catchError<T, Observable<T | null>>((err) => {
+                if (err?.status === 404) {
+                    return of(null);
+                }
+                return NEVER as Observable<T | null>;
+            });
         return combineLatest([
-            this.poolApi.getPool(poolId, [404]).pipe(
-                catchError((err) => {
-                    if (err?.status === 404) {
-                        return of(null);
-                    }
-                    throwError(() => err);
-                }),
-            ),
+            this.poolApi
+                .getPool(poolId, [404])
+                .pipe(mapToNullIfNotFound<Pool>()),
             this.poolApi
                 .getPoolsSandboxes(poolId, createInfinitePaginationEvent(), [
                     404,
                 ])
                 .pipe(
-                    catchError((err) => {
-                        if (err?.status === 404) {
-                            return of(null);
-                        }
-                        throwError(() => err);
-                    }),
+                    mapToNullIfNotFound<
+                        OffsetPaginatedResource<SandboxInstance>
+                    >(),
                 ),
         ]).pipe(
             map(([pool, sandboxes]): PoolSize => {
