@@ -39,34 +39,11 @@ export abstract class AbstractTrainingRunService {
         return this.runInfoSubject$.asObservable();
     }
 
-    public get stepperBar$(): Observable<TrainingRunStepper | null> {
-        return this.runInfoSubject$.asObservable().pipe(
-            map((runInfo) => {
-                if (!runInfo || !runInfo.displayedLevel) {
-                    return null;
-                }
-                if (runInfo.isStepperDisplayed) {
-                    return new TrainingRunStepper(
-                        runInfo.levels,
-                        runInfo.displayedLevel.id,
-                        runInfo.backwardMode,
-                    );
-                }
-                return null;
-            }),
-        );
-    }
-
     public updateRunInfo(properties: Partial<AccessTrainingRunInfo>): void {
         this.runInfoSubject$.next(this.runInfo.update(properties));
     }
 
     public nextLevel(): void {
-        if (!this.runInfo.isCurrentLevelAnswered) {
-            this.errorHandlerService.emitFrontendErrorNotification(
-                'Cannot proceed to next level before answering the current level',
-            );
-        }
         if (this.runInfo.isBacktracked) {
             this.displayNextLevel();
         } else if (this.runInfo.isLastLevelDisplayed) {
