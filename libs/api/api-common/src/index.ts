@@ -12,7 +12,8 @@ export * from './validation/presence-validator';
 export * from './pagination/offset-paginated-resource';
 export * from './pagination/crczp-offset-elements-paginated-service-';
 
-export {
+
+export type {
     SnakeToCamelCase,
     CamelToSnakeCase,
     StringNonMethodKeys,

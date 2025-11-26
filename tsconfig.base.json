@@ -10,11 +10,8 @@
         "module": "esnext",
         "moduleResolution": "node",
         "paths": {
-            "@crczp/adaptive-instance-simulator": [
-                "libs/components/adaptive-instance-simulator/src/index.ts"
-            ],
             "@crczp/api-common": ["libs/api/api-common/src/index.ts"],
-            "@crczp/components": ["libs/utils/components/src/index.ts"],
+            "@crczp/components": ["libs/components/src/index.ts"],
             "@crczp/mixins": ["libs/mixins/src/index.ts"],
             "@crczp/routing-commons": ["libs/utils/routing/src/index.ts"],
             "@crczp/sandbox-agenda": [
@@ -55,12 +52,6 @@
             ],
             "@crczp/sandbox-api": ["libs/api/sandbox-api/src/index.ts"],
             "@crczp/sandbox-model": ["libs/model/sandbox-model/src/index.ts"],
-            "@crczp/topology-graph": [
-                "libs/components/topology-graph/src/index.ts"
-            ],
-            "@crczp/topology-graph-model": [
-                "libs/model/topology-graph-model/src/index.ts"
-            ],
             "@crczp/training-agenda": [
                 "libs/agenda/training-agenda/src/index.ts"
             ],
@@ -79,9 +70,6 @@
             "@crczp/training-agenda/adaptive-definition-summary": [
                 "libs/agenda/training-agenda/adaptive-definition-summary/index.ts"
             ],
-            "@crczp/training-agenda/adaptive-instance-edit": [
-                "libs/agenda/training-agenda/adaptive-instance-edit/index.ts"
-            ],
             "@crczp/training-agenda/adaptive-instance-overview": [
                 "libs/agenda/training-agenda/adaptive-instance-overview/index.ts"
             ],
@@ -96,9 +84,6 @@
             ],
             "@crczp/training-agenda/adaptive-instance-summary": [
                 "libs/agenda/training-agenda/adaptive-instance-summary/index.ts"
-            ],
-            "@crczp/training-agenda/adaptive-run-detail": [
-                "libs/agenda/training-agenda/adaptive-run-detail/index.ts"
             ],
             "@crczp/training-agenda/adaptive-run-results": [
                 "libs/agenda/training-agenda/adaptive-run-results/index.ts"
@@ -213,9 +198,6 @@
             ],
             "@crczp/visualization-api/command-visualization-api": [
                 "libs/api/visualization-api/command-visualization-api/src/index.ts"
-            ],
-            "@crczp/visualization-components": [
-                "libs/components/visualization-components/src/index.ts"
             ],
             "@crczp/visualization-model": [
                 "libs/model/visualization-model/src/index.ts"

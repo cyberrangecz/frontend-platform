@@ -45,6 +45,7 @@ function mapCacheTTLToMs(ttl: CacheTTL): number {
     if (ttl.endsWith('h')) {
         return parseInt(ttl.slice(0, -1), 10) * 60 * 60 * 1000;
     }
+    throw new Error(`Invalid TTL format: ${ttl}`);
 }
 type BaseOptions = {
     headers?: HttpHeaders;

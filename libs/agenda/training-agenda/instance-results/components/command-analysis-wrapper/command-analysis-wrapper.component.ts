@@ -1,16 +1,14 @@
-import {Component, DestroyRef, inject, OnInit} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
-import {TrainingInstance} from '@crczp/training-model';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {MistakeComponent} from "@crczp/visualization-components";
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { TrainingInstance } from '@crczp/training-model';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { MistakeComponent } from '@crczp/components';
 
 @Component({
     selector: 'crczp-command-analysis-wrapper',
     templateUrl: './command-analysis-wrapper.component.html',
     styleUrls: ['./command-analysis-wrapper.component.css'],
-    imports: [
-        MistakeComponent
-    ]
+    imports: [MistakeComponent],
 })
 export class CommandAnalysisWrapperComponent implements OnInit {
     trainingInstance: TrainingInstance;
@@ -20,6 +18,8 @@ export class CommandAnalysisWrapperComponent implements OnInit {
     ngOnInit(): void {
         this.activeRoute.parent.data
             .pipe(takeUntilDestroyed(this.destroyRef))
-            .subscribe((data) => (this.trainingInstance = data.trainingInstance));
+            .subscribe(
+                (data) => (this.trainingInstance = data.trainingInstance),
+            );
     }
 }

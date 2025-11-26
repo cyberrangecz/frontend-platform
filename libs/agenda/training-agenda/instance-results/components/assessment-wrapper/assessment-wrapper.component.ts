@@ -1,16 +1,14 @@
-import {Component, DestroyRef, inject, OnInit} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
-import {TrainingInstance} from '@crczp/training-model';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {AssessmentResultsVisualizationComponent} from "@crczp/visualization-components";
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { TrainingInstance } from '@crczp/training-model';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { AssessmentResultsVisualizationComponent } from '@crczp/components';
 
 @Component({
     selector: 'crczp-assessment-wrapper',
     templateUrl: './assessment-wrapper.component.html',
     styleUrls: ['./assessment-wrapper.component.css'],
-    imports: [
-        AssessmentResultsVisualizationComponent
-    ]
+    imports: [AssessmentResultsVisualizationComponent],
 })
 export class AssessmentWrapperComponent implements OnInit {
     trainingInstance: TrainingInstance;
@@ -20,6 +18,8 @@ export class AssessmentWrapperComponent implements OnInit {
     ngOnInit(): void {
         this.activeRoute.parent.data
             .pipe(takeUntilDestroyed(this.destroyRef))
-            .subscribe((data) => (this.trainingInstance = data.trainingInstance));
+            .subscribe(
+                (data) => (this.trainingInstance = data.trainingInstance),
+            );
     }
 }

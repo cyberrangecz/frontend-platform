@@ -6,8 +6,12 @@ import { filter, map } from 'rxjs/operators';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AsyncPipe } from '@angular/common';
 import { MatTab, MatTabContent, MatTabGroup, MatTabLabel } from '@angular/material/tabs';
-import { CommandTimelineComponent, ProgressVisualizationsComponent, ViewEnum } from '@crczp/visualization-components';
 import { MatIcon } from '@angular/material/icon';
+import {
+    CommandTimelineComponent,
+    ProgressVisualizationsComponent,
+    ViewEnum,
+} from '@crczp/components';
 
 /**
  * Component displaying progress visualization

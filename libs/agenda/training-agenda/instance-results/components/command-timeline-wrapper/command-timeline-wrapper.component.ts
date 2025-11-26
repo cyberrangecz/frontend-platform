@@ -1,16 +1,14 @@
-import {Component, DestroyRef, inject, OnInit} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
-import {TrainingInstance} from '@crczp/training-model';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {CommandTimelineComponent} from "@crczp/visualization-components";
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { TrainingInstance } from '@crczp/training-model';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { CommandTimelineComponent } from '@crczp/components';
 
 @Component({
     selector: 'crczp-command-timeline-wrapper',
     templateUrl: './command-timeline-wrapper.component.html',
     styleUrls: ['./command-timeline-wrapper.component.css'],
-    imports: [
-        CommandTimelineComponent
-    ]
+    imports: [CommandTimelineComponent],
 })
 export class CommandTimelineWrapperComponent implements OnInit {
     trainingInstance: TrainingInstance;
@@ -20,6 +18,8 @@ export class CommandTimelineWrapperComponent implements OnInit {
     ngOnInit(): void {
         this.activeRoute.parent.data
             .pipe(takeUntilDestroyed(this.destroyRef))
-            .subscribe((data) => (this.trainingInstance = data.trainingInstance));
+            .subscribe(
+                (data) => (this.trainingInstance = data.trainingInstance),
+            );
     }
 }
