@@ -1,7 +1,7 @@
 import { DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Observable } from 'rxjs';
-import { distinctUntilChanged, map } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 
 /**
  * Check if a type is a plain object (not array, date, function, primitive, etc.)
@@ -91,7 +91,6 @@ function createPropertyTree<T extends object>(
                             }
                             return current;
                         }),
-                        distinctUntilChanged(),
                     );
 
                     return destroyRef
