@@ -1,6 +1,5 @@
 import { inject, Injectable } from '@angular/core';
 import { LinearRunApi } from '@crczp/training-api';
-import { SandboxInstanceApi } from '@crczp/sandbox-api';
 import { AnswerCheckResult, Hint, TrainingLevel } from '@crczp/training-model';
 import { Observable } from 'rxjs';
 import { take } from 'rxjs/operators';
@@ -11,20 +10,12 @@ import {
 } from '@sentinel/components/dialogs';
 import { MatDialog } from '@angular/material/dialog';
 import { AbstractTrainingRunService } from '../../../abstract-training-run.service';
-import {
-    AbstractTrainingLevelService,
-    TrainingLevelDataWithSolution,
-} from './abstract-training-level.service';
+import { AbstractTrainingLevelService } from './abstract-training-level.service';
 import { ErrorHandlerService, NotificationService } from '@crczp/utils';
-
-export type LinearTrainingLevelData = TrainingLevelDataWithSolution & {
-    hints: Hint[];
-};
 
 @Injectable()
 export class LinearTrainingLevelService extends AbstractTrainingLevelService {
     private api = inject(LinearRunApi);
-    private sandboxApi = inject(SandboxInstanceApi);
 
     constructor() {
         super(
@@ -33,21 +24,6 @@ export class LinearTrainingLevelService extends AbstractTrainingLevelService {
             inject(AbstractTrainingRunService),
             inject(ErrorHandlerService),
         );
-    }
-
-    private static mapToDataObject(
-        level: TrainingLevel,
-        isAnswered: boolean,
-        sandboxId: string,
-    ): LinearTrainingLevelData {
-        return {
-            levelId: level.id,
-            revealedSolution: level.solution,
-            hints: level.hints,
-            solutionPenalized: level.isSolutionPenalized,
-            isAnswered: isAnswered,
-            sandboxInstanceId: sandboxId,
-        };
     }
 
     callApiToTakeHint(hint: Hint): Observable<Hint> {
@@ -62,12 +38,6 @@ export class LinearTrainingLevelService extends AbstractTrainingLevelService {
             .pipe(take(1));
     }
 
-    getAccessFile(): Observable<boolean> {
-        return this.sandboxApi
-            .getUserSshAccess(this.runService.runInfo.sandboxInstanceId)
-            .pipe(take(1));
-    }
-
     callApiToSubmitAnswer(answer: string): Observable<AnswerCheckResult> {
         return this.api
             .isCorrectAnswer(this.runService.runInfo.trainingRunId, answer)
@@ -75,14 +45,17 @@ export class LinearTrainingLevelService extends AbstractTrainingLevelService {
     }
 
     revealHint(hint: Hint) {
-        return this.displayTakeHintDialog(hint).subscribe((result) => {
+        this.displayTakeHintDialog(hint).subscribe((result) => {
             if (result === SentinelDialogResultEnum.CONFIRMED) {
                 this.callApiToTakeHint(hint).subscribe((revealedHint) => {
+                    console.log('Received revealed hint: ', revealedHint);
                     const trainingLevel = this.runService.runInfo
                         .displayedLevel as TrainingLevel;
+                    console.log('Displayed training level: ', trainingLevel);
                     trainingLevel.hints = trainingLevel.hints.map((h) =>
                         h.id === revealedHint.id ? revealedHint : h,
                     );
+                    console.log('Updated training level: ', trainingLevel);
                     this.runService.updateRunInfo({
                         levels: this.runService.runInfo.levels.map((level) => {
                             if (level.id === trainingLevel.id) {

@@ -197,7 +197,7 @@ export const APP_ROUTES: ValidRouterConfig<''> = [
     {
         path: 'console/sandbox-instance/:sandboxInstanceId/console/:nodeId',
         loadComponent: () =>
-            import('@crczp/topology-graph').then(
+            import('@crczp/components').then(
                 (m) => m.ConsoleFullscreenWrapperComponent,
             ),
         canActivate: [sentinelAuthGuardWithLogin],
