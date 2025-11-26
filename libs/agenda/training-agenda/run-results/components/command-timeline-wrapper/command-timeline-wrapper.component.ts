@@ -1,16 +1,14 @@
-import {Component, DestroyRef, inject, OnInit} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
-import {TrainingRun} from '@crczp/training-model';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {CommandTimelineComponent} from "@crczp/visualization-components";
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { TrainingRun } from '@crczp/training-model';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { CommandTimelineComponent } from '@crczp/components';
 
 @Component({
     selector: 'crczp-command-timeline-wrapper',
     templateUrl: './command-timeline-wrapper.component.html',
     styleUrls: ['./command-timeline-wrapper.component.css'],
-    imports: [
-        CommandTimelineComponent
-    ]
+    imports: [CommandTimelineComponent],
 })
 export class CommandTimelineWrapperComponent implements OnInit {
     trainingRun: TrainingRun;
