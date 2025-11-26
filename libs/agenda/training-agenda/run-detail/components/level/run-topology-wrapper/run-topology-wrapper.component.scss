@@ -1,9 +1,12 @@
+$content-height: calc(100dvh - 36rem);
+
+
 :host {
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    height: calc(100dvh - 32rem);
+    height: $content-height;
     position: relative;
 }
 
@@ -14,14 +17,14 @@
 
 .level-topology {
     display: block;
-    height: calc(100dvh - 32rem);
+    height: $content-height;
     max-width: 60dvw;
     transform: translateX(0);
 }
 
 .level-topology--hidden {
     width: 100dvw;
-    height: calc(100dvh - 32rem);
+    height: $content-height;
     position: absolute;
     left: 0;
     opacity: 0;

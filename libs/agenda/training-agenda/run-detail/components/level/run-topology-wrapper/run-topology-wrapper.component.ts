@@ -1,22 +1,13 @@
-import {
-    Component,
-    ElementRef,
-    inject,
-    input,
-    OnDestroy,
-    OnInit,
-    Renderer2,
-    signal,
-} from '@angular/core';
+import { Component, ElementRef, inject, input, OnDestroy, OnInit, Renderer2, signal } from '@angular/core';
 import { AbstractTrainingRunService } from '../../../services/training-run/abstract-training-run.service';
 import { AsyncPipe, NgClass } from '@angular/common';
-import {
-    TopologySynchronizerService,
-    TopologyWrapperComponent,
-} from '@crczp/topology-graph';
 import { SshAccessService } from '../../../services/training-run/ssh/ssh-acess.service';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
+import {
+    TopologySynchronizerService,
+    TopologyWrapperComponent,
+} from '@crczp/components';
 
 @Component({
     selector: 'crczp-run-topology-wrapper',

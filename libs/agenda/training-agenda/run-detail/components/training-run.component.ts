@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import {
+    ChangeDetectionStrategy,
+    Component,
+    DestroyRef,
+    inject,
+    OnInit,
+    signal,
+} from '@angular/core';
 import { SentinelUser } from '@sentinel/layout';
 import { SentinelAuthService } from '@sentinel/auth';
 import { AbstractTrainingRunService } from '../services/training-run/abstract-training-run.service';
