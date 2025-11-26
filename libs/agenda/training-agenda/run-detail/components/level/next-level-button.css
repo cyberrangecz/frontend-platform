@@ -7,13 +7,14 @@
     opacity: 1;
     animation: 0.1s ease-in 1 fadeIn;
     padding: 1rem;
+    left: calc(50% + 140px - 4rem);
 }
 
 
 @media (max-width: 748px) {
     .next-button {
         width: 50%;
-
+        left: calc(25%);
     }
 }
 

@@ -70,7 +70,7 @@
     @if (isBacktracked) {
         <button
             (click)="onNext()"
-            class="next-button"
+            class="confirm-button"
             mat-raised-button>
             Next
         </button>
@@ -78,7 +78,7 @@
         <button
             (click)="submit()"
             [disabled]="!canSubmit()"
-            class="next-button"
+            class="confirm-button"
             mat-flat-button>
             {{ isLast ? "Finish" : "Submit" }}
         </button>
