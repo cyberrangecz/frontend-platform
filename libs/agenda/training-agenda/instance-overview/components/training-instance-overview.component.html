@@ -27,24 +27,24 @@
 </ng-template>
 
 <ng-template #accessToken let-row>
-    @if (row.element.poolSize | async; as poolSize) {
+    @if (castToPoolSize(row.element.poolSize | async); as poolSize) {
         <div
             class="access-token-container"
-            matTooltip="{{ getAccessTokenTooltip(poolSize[1], row.element.localEnvironment, poolSize[0]) }}"
+            matTooltip="{{ getAccessTokenTooltip(poolSize, row.element.localEnvironment) }}"
         >
             <button
                 (click)="onCopyToken()"
                 [cdkCopyToClipboard]="row.element.accessToken"
-                [disabled]="!row.element.localEnvironment && (poolSize[1]==='0' || poolSize[1]==='')"
+                [disabled]="tokenCopyDisabled(poolSize, row.element.localEnvironment)"
                 class="token-button"
                 color="primary"
                 mat-button
             >
                 {{ row.element.accessToken }}
             </button>
-            @if (!row.element.localEnvironment && poolSize[0] === '-') {
+            @if (!row.element.localEnvironment && 'error' in poolSize) {
                 <mat-icon color="warn">error</mat-icon>
-            } @else if (!row.element.localEnvironment && poolSize[1] === '0') {
+            } @else if (!row.element.localEnvironment && getFreePoolSize(poolSize) <= 0) {
                 <mat-icon class="warning">warning</mat-icon>
             }
         </div>
@@ -54,27 +54,22 @@
 </ng-template>
 
 <ng-template #poolSize let-row>
-    @if (row.element.poolSize | async; as poolSize) {
+    @if (castToPoolSize(row.element.poolSize | async); as poolSize) {
         <div>
-            @if (poolSize[0] !== '-') {
-                <div>
-                    <span>{{ poolSize[0] }}</span>
-                    @if (poolSize[1]) {
-                        <span
-                        > (<span [ngClass]="{ 'warn': poolSize[1] === 0 }">{{ poolSize[1] }}  free</span>)</span
-                        >
-                    }
-                </div>
-            } @else {
+            @if ('error' in poolSize) {
                 @if (row.element.poolTitle !== 'Local') {
                     <mat-icon [matTooltip]="'Given pool does not exist.'"
                               class="warn">warning
                     </mat-icon>
                 }
+            } @else {
+                <div>
+                    <span>{{poolSize.total}} ({{poolSize.total - poolSize.used}} free)</span>
+                </div>
             }
             @if (row.element.poolTitle === 'Local') {
                 <div>
-                    <span>{{ poolSize[0] }}</span>
+                    <span>N/A</span>
                 </div>
             }
         </div>

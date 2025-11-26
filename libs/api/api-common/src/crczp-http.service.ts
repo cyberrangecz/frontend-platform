@@ -1,7 +1,13 @@
 import { inject, Injectable } from '@angular/core';
-import { HttpClient, HttpContext, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
+import {
+    HttpClient,
+    HttpContext,
+    HttpContextToken,
+    HttpHeaders,
+    HttpParams,
+} from '@angular/common/http';
 
-import { ErrorHandlerService, PortalConfig } from '@crczp/utils';
+import { PortalConfig } from '@crczp/utils';
 
 import { OffsetPagination } from '@sentinel/common/pagination';
 
@@ -9,11 +15,11 @@ import {
     DjangoOffsetPaginationDTO,
     DjangoResourceDTO,
     JavaOffsetPaginationDTO,
-    JavaPaginatedResource
+    JavaPaginatedResource,
 } from './pagination/pagination-types';
 
 import { PaginationMapper } from './pagination/pagination-mapper';
-import { catchError, EMPTY, map, Observable, switchMap, take } from 'rxjs';
+import { map, Observable, take } from 'rxjs';
 import { handleJsonError } from './validation/json-error-converter';
 import { OffsetPaginatedResource } from './pagination/offset-paginated-resource';
 import { withCache } from '@ngneat/cashew';
@@ -21,6 +27,8 @@ import { withCache } from '@ngneat/cashew';
 type Backend = 'java' | 'python';
 type BodylessVerb = 'GET' | 'DELETE';
 type BodyVerb = 'POST' | 'PUT' | 'PATCH';
+
+export const SKIPPED_ERROR_CODES = new HttpContextToken<number[]>(() => []);
 
 export type CacheTTL = `${number}s` | `${number}m` | `${number}h` | 'forever';
 
@@ -65,7 +73,6 @@ export class CRCZPHttpService {
     private readonly http = inject(HttpClient);
     /** Unwrapped Angular HttpClient for edge cases. */
     public readonly raw = this.http;
-    private readonly errorHandler = inject(ErrorHandlerService);
     private readonly version = inject(PortalConfig).version;
 
     /**
@@ -76,7 +83,6 @@ export class CRCZPHttpService {
     get<TRecv = unknown>(url: string, operation: string) {
         return new BodylessRequestBuilder<TRecv>(
             this.http,
-            this.pipeError.bind(this),
             'GET',
             url,
             operation,
@@ -92,7 +98,6 @@ export class CRCZPHttpService {
     delete<TRecv = unknown>(url: string, operation: string) {
         return new BodylessRequestBuilder<TRecv>(
             this.http,
-            this.pipeError.bind(this),
             'DELETE',
             url,
             operation,
@@ -108,7 +113,6 @@ export class CRCZPHttpService {
     post<TSend = unknown, TRecv = unknown>(url: string, operation: string) {
         return new BodyRequestBuilder<TSend, TRecv>(
             this.http,
-            this.pipeError.bind(this),
             'POST',
             url,
             operation,
@@ -123,7 +127,6 @@ export class CRCZPHttpService {
     put<TSend = unknown, TRecv = unknown>(url: string, operation: string) {
         return new BodyRequestBuilder<TSend, TRecv>(
             this.http,
-            this.pipeError.bind(this),
             'PUT',
             url,
             operation,
@@ -138,22 +141,10 @@ export class CRCZPHttpService {
     patch<TSend = unknown, TRecv = unknown>(url: string, operation: string) {
         return new BodyRequestBuilder<TSend, TRecv>(
             this.http,
-            this.pipeError.bind(this),
             'PATCH',
             url,
             operation,
         );
-    }
-
-    private pipeError<T>(operation?: string) {
-        return (src: Observable<T>) =>
-            src.pipe(
-                catchError((err: HttpErrorResponse) =>
-                    this.errorHandler
-                        .emitAPIError(err, operation)
-                        .pipe(switchMap(() => EMPTY as Observable<T>)),
-                ),
-            );
     }
 }
 
@@ -164,12 +155,10 @@ abstract class BaseRequestBuilder<TRecv, TOut = TRecv> {
     protected options: BaseOptions = { observe: 'body', responseType: 'json' };
     protected pagination?: Backend;
     protected receiveMapper?: (from: TRecv) => TOut;
+    protected expectedErrors: number[] = [];
 
-    constructor(
+    protected constructor(
         protected readonly http: HttpClient,
-        protected readonly errorPipe: <T>(
-            operation?: string,
-        ) => (src: Observable<T>) => Observable<T>,
         protected readonly method: BodylessVerb | BodyVerb,
         protected readonly url: string,
         protected readonly opName: string,
@@ -192,6 +181,24 @@ abstract class BaseRequestBuilder<TRecv, TOut = TRecv> {
         const h =
             headers instanceof HttpHeaders ? headers : new HttpHeaders(headers);
         this.options = { ...this.options, headers: h };
+        return this;
+    }
+
+    /**
+     * Specify expected error HTTP status codes that should not trigger automatic
+     * error notification emission.
+     *
+     * @param expectedErrors Array of HTTP status codes.
+     */
+    setExpectedErrors(expectedErrors: number[]) {
+        this.options = {
+            ...this.options,
+            context: (this.options.context ?? new HttpContext()).set(
+                SKIPPED_ERROR_CODES,
+                expectedErrors,
+            ),
+        };
+        this.expectedErrors = expectedErrors;
         return this;
     }
 
@@ -326,16 +333,12 @@ class BodylessRequestBuilder<TRecv, TOut = TRecv> extends BaseRequestBuilder<
 > {
     constructor(
         http: HttpClient,
-        errorPipe: <T>(
-            verb: string,
-            operation?: string,
-        ) => (src: Observable<T>) => Observable<T>,
         method: BodylessVerb,
         url: string,
         operation: string,
         private version: string,
     ) {
-        super(http, errorPipe, method, url, operation);
+        super(http, method, url, operation);
     }
 
     /**
@@ -393,7 +396,7 @@ class BodylessRequestBuilder<TRecv, TOut = TRecv> extends BaseRequestBuilder<
 
         const normalized$ = request$.pipe(handleJsonError());
         const mapped$ = this.mapPaginatedOrReceive(normalized$);
-        return mapped$.pipe(take(1), this.errorPipe(this.opName));
+        return mapped$.pipe(take(1));
     }
 }
 
@@ -409,15 +412,11 @@ class BodyRequestBuilder<TSend, TRecv, TOut = TRecv> extends BaseRequestBuilder<
 
     constructor(
         http: HttpClient,
-        errorPipe: <T>(
-            verb: string,
-            operation?: string,
-        ) => (src: Observable<T>) => Observable<T>,
         method: BodyVerb,
         url: string,
         operation: string,
     ) {
-        super(http, errorPipe, method, url, operation);
+        super(http, method, url, operation);
     }
 
     /**
@@ -473,7 +472,7 @@ class BodyRequestBuilder<TSend, TRecv, TOut = TRecv> extends BaseRequestBuilder<
 
         const normalized$ = request$.pipe(handleJsonError());
         const mapped$ = this.mapPaginatedOrReceive(normalized$);
-        return mapped$.pipe(take(1), this.errorPipe(this.opName));
+        return mapped$.pipe(take(1));
     }
 
     private mapSend(body?: TSend): unknown {

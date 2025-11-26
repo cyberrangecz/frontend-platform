@@ -1,6 +1,7 @@
 import { HttpEvent, HttpHandlerFn, HttpRequest, HttpResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { Observable, Subscriber } from 'rxjs';
+import { Observable } from 'rxjs';
+import { finalize, tap } from 'rxjs/operators';
 import { LoadingService } from '../loading.service';
 
 /**
@@ -19,29 +20,14 @@ export function loadingInterceptor(
     requests.add(requestId);
     loadingService.set(true);
 
-    return new Observable((observer: Subscriber<HttpEvent<unknown>>) => {
-        const subscription = next(req).subscribe({
-            next: (event) => {
-                if (event instanceof HttpResponse) {
-                    removeRequest(requestId, loadingService);
-                }
-                observer.next(event);
-            },
-            error: (err) => {
+    return next(req).pipe(
+        tap((event) => {
+            if (event instanceof HttpResponse) {
                 removeRequest(requestId, loadingService);
-                observer.error(err);
-            },
-            complete: () => {
-                removeRequest(requestId, loadingService);
-                observer.complete();
-            },
-        });
-
-        return () => {
-            removeRequest(requestId, loadingService);
-            subscription.unsubscribe();
-        };
-    });
+            }
+        }),
+        finalize(() => removeRequest(requestId, loadingService))
+    );
 }
 
 function removeRequest(requestId: string, loadingService: LoadingService) {
