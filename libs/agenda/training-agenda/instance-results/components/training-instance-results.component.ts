@@ -3,16 +3,12 @@ import { ActivatedRoute, RouterLink, RouterLinkActive, RouterOutlet } from '@ang
 import { Observable } from 'rxjs';
 import { LinearTrainingDefinitionApi } from '@crczp/training-api';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatTabLink, MatTabNav } from '@angular/material/tabs';
+import { MatTabLink, MatTabNav, MatTabNavPanel } from '@angular/material/tabs';
 import { MatIcon } from '@angular/material/icon';
 import { WalkthroughService } from './walkthrough-wrapper/services/walkthrough.service';
-import { TrainingInstanceResultsRoutingModule } from './training-instance-results-routing.module';
 import { TrainingInstance } from '@crczp/training-model';
 import { filter } from 'rxjs/operators';
 
-/**
- * Component displaying training instance results visualizations
- */
 @Component({
     selector: 'crczp-training-instance-results',
     templateUrl: './training-instance-results.component.html',
@@ -25,7 +21,7 @@ import { filter } from 'rxjs/operators';
         RouterLinkActive,
         MatIcon,
         RouterOutlet,
-        TrainingInstanceResultsRoutingModule,
+        MatTabNavPanel,
     ],
     providers: [WalkthroughService],
 })

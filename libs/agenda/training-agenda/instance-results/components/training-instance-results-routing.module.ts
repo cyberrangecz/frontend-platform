@@ -1,50 +1,59 @@
 import { RouterModule } from '@angular/router';
 import { NgModule } from '@angular/core';
-import { AssessmentWrapperComponent } from './assessment-wrapper/assessment-wrapper.component';
-import { DashboardWrapperComponent } from './dashboard-wrapper/dashboard-wrapper.component';
-import { TrainingInstanceResultsComponent } from './training-instance-results.component';
-import { CommandTimelineWrapperComponent } from './command-timeline-wrapper/command-timeline-wrapper.component';
-import { CommandAnalysisWrapperComponent } from './command-analysis-wrapper/command-analysis-wrapper.component';
-import { WalkthroughWrapperComponent } from './walkthrough-wrapper/walkthrough-wrapper.component';
 import { ValidRouterConfig } from '@crczp/routing-commons';
 
 const routes: ValidRouterConfig<'linear-instance/:instanceId/results'> = [
     {
         path: '',
-        component: TrainingInstanceResultsComponent,
+        loadComponent: () =>
+            import('./training-instance-results.component').then(
+                (m) => m.TrainingInstanceResultsComponent,
+            ),
         children: [
             {
                 path: '',
-                pathMatch: 'prefix',
+                pathMatch: 'full',
                 redirectTo: 'dashboard',
             },
             {
                 path: 'dashboard',
-                component: DashboardWrapperComponent,
+                loadComponent: () =>
+                    import(
+                        './dashboard-wrapper/dashboard-wrapper.component'
+                    ).then((m) => m.DashboardWrapperComponent),
             },
             {
                 path: 'quiz-results',
-                component: AssessmentWrapperComponent,
+                loadComponent: () =>
+                    import(
+                        './assessment-wrapper/assessment-wrapper.component'
+                    ).then((m) => m.AssessmentWrapperComponent),
             },
             {
                 path: 'walkthrough',
-                component: WalkthroughWrapperComponent,
+                loadComponent: () =>
+                    import(
+                        './walkthrough-wrapper/walkthrough-wrapper.component'
+                    ).then((m) => m.WalkthroughWrapperComponent),
             },
             {
                 path: 'command-timeline',
-                component: CommandTimelineWrapperComponent,
+                loadComponent: () =>
+                    import(
+                        './command-timeline-wrapper/command-timeline-wrapper.component'
+                    ).then((m) => m.CommandTimelineWrapperComponent),
             },
             {
                 path: 'command-analysis',
-                component: CommandAnalysisWrapperComponent,
+                loadComponent: () =>
+                    import(
+                        './command-analysis-wrapper/command-analysis-wrapper.component'
+                    ).then((m) => m.CommandAnalysisWrapperComponent),
             },
         ],
     },
 ];
 
-/**
- * Routing for training instance module
- */
 @NgModule({
     imports: [RouterModule.forChild(routes)],
     exports: [RouterModule],

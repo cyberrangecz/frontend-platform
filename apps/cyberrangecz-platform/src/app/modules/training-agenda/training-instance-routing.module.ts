@@ -82,7 +82,6 @@ const routes: ValidRouterConfig<'linear-instance'> = [
     },
     {
         path: ':instanceId/results',
-        pathMatch: 'prefix',
         resolve: {
             [TrainingInstance.name]:
                 Routing.Resolvers.TrainingInstance.linearInstanceResolver,
@@ -92,9 +91,9 @@ const routes: ValidRouterConfig<'linear-instance'> = [
             title: Routing.Resolvers.TrainingInstance
                 .linearInstanceTitleResolver,
         },
-        loadComponent: () =>
+        loadChildren: () =>
             import('@crczp/training-agenda/instance-results').then(
-                (m) => m.TrainingInstanceResultsComponent,
+                (m) => m.TrainingInstanceResultsRoutingModule,
             ),
     },
     {

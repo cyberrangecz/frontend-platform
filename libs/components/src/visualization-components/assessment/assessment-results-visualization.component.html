@@ -1,0 +1,18 @@
+@let assessments = assessments$ | async;
+@if (assessments !== null) {
+    @if (assessments.length === 0) {
+        <h3
+            [style]="{
+             'color': '#999999',
+             'margin': '10px'
+                 }"
+        >*No assessment results available</h3>
+    } @else {
+        <crczp-assessment-results
+            [assessments]="assessments"
+        />
+    }
+}
+
+
+
