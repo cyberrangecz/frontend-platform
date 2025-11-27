@@ -242,7 +242,7 @@ export class AdaptiveInstanceOverviewService extends CrczpOffsetElementsPaginate
     private callApiToDelete(
         trainingInstance: TrainingInstance,
     ): Observable<OffsetPaginatedResource<TrainingInstance>> {
-        return this.adaptiveInstanceApi.delete(trainingInstance.id).pipe(
+        return this.adaptiveInstanceApi.delete(trainingInstance.id, false,[409]).pipe(
             tap(() =>
                 this.notificationService.emit(
                     'success',

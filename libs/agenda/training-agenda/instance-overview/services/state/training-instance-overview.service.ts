@@ -241,7 +241,7 @@ export class TrainingInstanceOverviewService extends CrczpOffsetElementsPaginate
     private callApiToDelete(
         trainingInstance: TrainingInstance,
     ): Observable<OffsetPaginatedResource<TrainingInstance>> {
-        return this.trainingInstanceApi.delete(trainingInstance.id).pipe(
+        return this.trainingInstanceApi.delete(trainingInstance.id,false,[409]).pipe(
             takeUntilDestroyed(this.destroyRef),
             tap(() =>
                 this.notificationService.emit(

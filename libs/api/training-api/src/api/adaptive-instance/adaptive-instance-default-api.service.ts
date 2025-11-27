@@ -3,6 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { ResponseHeaderContentDispositionReader, SentinelParamsMerger } from '@sentinel/common';
 import {
     BlobFileSaver,
+    CRCZPHttpService,
     handleJsonError,
     JavaPaginatedResource,
     OffsetPaginatedResource,
@@ -29,6 +30,7 @@ import { TrainingInstanceSort, TrainingRunSort } from '../sorts';
 @Injectable()
 export class AdaptiveInstanceDefaultApi extends AdaptiveTrainingInstanceApi {
     private readonly http = inject(HttpClient);
+    private readonly crczpHttp = inject(CRCZPHttpService);
 
     private readonly trainingInstancesUriExtension = 'training-instances';
     private readonly trainingRunsUriExtension = 'training-runs';
@@ -155,13 +157,22 @@ export class AdaptiveInstanceDefaultApi extends AdaptiveTrainingInstanceApi {
      * Sends http request to delete training instance
      * @param trainingInstanceId id of training instance which should be deleted
      * @param force true if delete should be forced, false otherwise
+     * @param expectedErrorCodes list of expected error codes that should not trigger error handling
      */
-    delete(trainingInstanceId: number, force = false): Observable<any> {
+    delete(
+        trainingInstanceId: number,
+        force: boolean,
+        expectedErrorCodes: number[] = [],
+    ): Observable<any> {
         const params = new HttpParams().append('forceDelete', force.toString());
-        return this.http.delete<any>(
-            `${this.trainingInstancesEndpointUri}/${trainingInstanceId}`,
-            { params },
-        );
+        return this.crczpHttp
+            .delete(
+                `${this.trainingInstancesEndpointUri}/${trainingInstanceId}`,
+                'Delete training instance',
+            )
+            .setExpectedErrors(expectedErrorCodes)
+            .withParams(params)
+            .execute();
     }
 
     /**
