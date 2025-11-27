@@ -2,22 +2,19 @@ import {
     AccessLevel,
     AccessPhase,
     AccessTrainingRunInfo,
+    AssessmentLevel,
     InfoLevel,
     InfoPhase,
     Level,
     Phase,
+    QuestionnairePhase,
     TrainingLevel,
-    TrainingPhase,
+    TrainingPhase
 } from '@crczp/training-model';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { ErrorHandlerService } from '@crczp/utils';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import {
-    LoadingDialogComponent,
-    LoadingDialogOptions,
-} from '@crczp/components';
-import { TrainingRunStepper } from '../../model/training-run-stepper';
-import { map } from 'rxjs/operators';
+import { LoadingDialogComponent, LoadingDialogOptions } from '@crczp/components';
 
 export abstract class AbstractTrainingRunService {
     private readonly runInfoSubject$ =
@@ -39,42 +36,21 @@ export abstract class AbstractTrainingRunService {
         return this.runInfoSubject$.asObservable();
     }
 
-    public get stepperBar$(): Observable<TrainingRunStepper | null> {
-        return this.runInfoSubject$.asObservable().pipe(
-            map((runInfo) => {
-                if (!runInfo || !runInfo.displayedLevel) {
-                    return null;
-                }
-                if (runInfo.isStepperDisplayed) {
-                    return new TrainingRunStepper(
-                        runInfo.levels,
-                        runInfo.displayedLevel.id,
-                        runInfo.backwardMode,
-                    );
-                }
-                return null;
-            }),
-        );
-    }
-
     public updateRunInfo(properties: Partial<AccessTrainingRunInfo>): void {
         this.runInfoSubject$.next(this.runInfo.update(properties));
     }
 
     public nextLevel(): void {
-        if (!this.runInfo.isCurrentLevelAnswered) {
-            this.errorHandlerService.emitFrontendErrorNotification(
-                'Cannot proceed to next level before answering the current level',
-            );
-        }
         if (this.runInfo.isBacktracked) {
             this.displayNextLevel();
         } else if (this.runInfo.isLastLevelDisplayed) {
-            this.callApiToFinish().subscribe();
+            this.callApiToFinish().subscribe(() => {
+                this.navigateToRunSummary();
+            });
         } else {
             this.callApiToNextLevel().subscribe((nextLevel) => {
                 this.updateRunInfoWithNextLevel(nextLevel);
-                this.displayNextLevel();
+                this.advanceCurrentLevel();
             });
         }
     }
@@ -111,6 +87,14 @@ export abstract class AbstractTrainingRunService {
                     level as AccessPhase | AccessLevel
                 ).localContent;
             }
+            if (
+                lvl instanceof AssessmentLevel ||
+                lvl instanceof QuestionnairePhase
+            ) {
+                lvl.questions = (
+                    level as AssessmentLevel | QuestionnairePhase
+                ).questions;
+            }
             return lvl;
         });
         this.updateRunInfo({
@@ -142,6 +126,8 @@ export abstract class AbstractTrainingRunService {
         }
     }
 
+    protected abstract navigateToRunSummary(): void;
+
     protected abstract callApiToNextLevel(): Observable<Phase | Level>;
 
     protected abstract callApiToFinish(): Observable<boolean>;
@@ -163,7 +149,7 @@ export abstract class AbstractTrainingRunService {
     }
 
     protected displayNextLevel() {
-        this.displayLevelByOrder(this.runInfo.currentLevel.order + 1);
+        this.displayLevelByOrder(this.runInfo.displayedLevel.order + 1);
     }
 
     private displayLoadingDialog(): MatDialogRef<LoadingDialogComponent> {
@@ -172,6 +158,24 @@ export abstract class AbstractTrainingRunService {
                 'Processing training data for visualization',
                 `Please wait while your training data are being processed`,
             ),
+        });
+    }
+
+    private advanceCurrentLevel() {
+        const nextLevelByOrder = this.runInfo.levels.find(
+            (lvl) => lvl.order === this.runInfo.currentLevel.order + 1,
+        );
+        if (!nextLevelByOrder) {
+            this.errorHandlerService.emitFrontendErrorNotification(
+                `Next level with order ${
+                    this.runInfo.currentLevel.order + 1
+                } not found in current training run`,
+            );
+        }
+        this.updateRunInfo({
+            currentLevelId: nextLevelByOrder.id,
+            displayedLevelId: nextLevelByOrder.id,
+            isCurrentLevelAnswered: false,
         });
     }
 }

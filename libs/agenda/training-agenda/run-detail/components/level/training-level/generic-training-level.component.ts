@@ -69,7 +69,7 @@ export abstract class GenericTrainingLevelComponent {
     abstract revealHint(hint: Hint): void;
 
     revealSolution(): void {
-        this.trainingLevelService.revealSolution();
+        this.trainingLevelService.showRevealSolutionDialogAndFetch();
         // Subscribe to scroll to bottom after solution is revealed
         this.isSolutionRevealed$
             .pipe(

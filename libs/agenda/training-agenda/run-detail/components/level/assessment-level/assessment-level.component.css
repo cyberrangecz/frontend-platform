@@ -11,12 +11,13 @@ markdown ::ng-deep img {
     margin: 0 auto;
 }
 
-.next-button {
+.confirm-button {
     height: 3rem;
     width: 8rem;
     position: relative;
     bottom: unset;
     z-index: 1000;
+    margin-bottom: 2px;
 }
 
 .container {

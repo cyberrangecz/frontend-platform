@@ -1,21 +1,27 @@
-import {Component, DestroyRef, HostListener, inject, OnInit} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
-import {TrainingRun} from '@crczp/training-model';
-import {VisualizationInfo} from '@crczp/training-agenda/internal';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {Observable} from "rxjs";
-import {map} from "rxjs/operators";
-import {TrainingsVisualizationsOverviewLibModule, VizOverviewTraineeInfo} from "@crczp/visualization-components";
-import {AsyncPipe} from "@angular/common";
+import {
+    Component,
+    DestroyRef,
+    HostListener,
+    inject,
+    OnInit,
+} from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { TrainingRun } from '@crczp/training-model';
+import { VisualizationInfo } from '@crczp/training-agenda/internal';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { AsyncPipe } from '@angular/common';
+import {
+    TrainingsVisualizationsOverviewLibModule,
+    VizOverviewTraineeInfo,
+} from '@crczp/components';
 
 @Component({
     selector: 'crczp-score-development-wrapper',
     templateUrl: './score-development-wrapper.component.html',
     styleUrls: ['./score-development-wrapper.component.css'],
-    imports: [
-        AsyncPipe,
-        TrainingsVisualizationsOverviewLibModule
-    ]
+    imports: [AsyncPipe, TrainingsVisualizationsOverviewLibModule],
 })
 export class ScoreDevelopmentWrapperComponent implements OnInit {
     visualizationInfo$: Observable<VisualizationInfo>;
@@ -26,7 +32,10 @@ export class ScoreDevelopmentWrapperComponent implements OnInit {
 
     @HostListener('window:resize', ['$event'])
     onResize(event: any): void {
-        this.setVisualizationSize(event.target.innerWidth, event.target.innerHeight);
+        this.setVisualizationSize(
+            event.target.innerWidth,
+            event.target.innerHeight,
+        );
     }
 
     ngOnInit(): void {
@@ -40,7 +49,9 @@ export class ScoreDevelopmentWrapperComponent implements OnInit {
     loadVisualizationInfo(): void {
         this.visualizationInfo$ = this.activatedRoute.data.pipe(
             takeUntilDestroyed(this.destroyRef),
-            map((data) => this.createTrainingVisualizationInfo(data[TrainingRun.name])),
+            map((data) =>
+                this.createTrainingVisualizationInfo(data[TrainingRun.name]),
+            ),
         );
         this.traineeModeInfo$ = this.visualizationInfo$.pipe(
             map((vizInfo) => {
@@ -53,9 +64,12 @@ export class ScoreDevelopmentWrapperComponent implements OnInit {
         );
     }
 
-    private createTrainingVisualizationInfo(trainingRun: TrainingRun): VisualizationInfo {
+    private createTrainingVisualizationInfo(
+        trainingRun: TrainingRun,
+    ): VisualizationInfo {
         const visualizationInfo = new VisualizationInfo();
-        visualizationInfo.trainingDefinitionId = trainingRun.trainingDefinitionId;
+        visualizationInfo.trainingDefinitionId =
+            trainingRun.trainingDefinitionId;
         visualizationInfo.trainingInstanceId = trainingRun.trainingInstanceId;
         visualizationInfo.trainingRunId = trainingRun.id;
         visualizationInfo.traineeId = trainingRun?.player?.id;
@@ -66,6 +80,6 @@ export class ScoreDevelopmentWrapperComponent implements OnInit {
         const divideBy = 2;
         const width = windowWidth / divideBy;
         const height = windowHeight / divideBy;
-        this.vizSize = {width, height};
+        this.vizSize = { width, height };
     }
 }

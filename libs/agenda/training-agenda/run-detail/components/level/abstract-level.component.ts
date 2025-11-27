@@ -4,12 +4,13 @@ import {
     Component,
     DestroyRef,
     ElementRef,
+    HostListener,
     inject,
     OnInit,
     signal,
     ViewChild
 } from '@angular/core';
-import { AbstractLevelTypeEnum, AbstractPhaseTypeEnum } from '@crczp/training-model';
+import { AbstractLevelTypeEnum, AbstractPhaseTypeEnum, AccessTrainingRunInfo } from '@crczp/training-model';
 import { TrainingTimerComponent } from './training-timer/training-timer.component';
 import { MatTooltip } from '@angular/material/tooltip';
 import { AbstractTrainingRunService } from '../../services/training-run/abstract-training-run.service';
@@ -24,7 +25,8 @@ import { AdaptiveAccessLevelComponent } from './access-level/adaptive-access-lev
 import { LinearAccessLevelComponent } from './access-level/linear-access-level.component';
 import { Observable } from 'rxjs';
 import { RunTopologyWrapperComponent } from './run-topology-wrapper/run-topology-wrapper.component';
-import { TopologySynchronizerService } from '@crczp/topology-graph';
+import { Stepper, StepperItem, TopologySynchronizerService } from '@crczp/components';
+import { SentinelResizeDirective } from '@sentinel/common/resize';
 
 /**
  * Component to display one level in a training run. Serves mainly as a wrapper which determines the type of the training
@@ -49,6 +51,8 @@ import { TopologySynchronizerService } from '@crczp/topology-graph';
         AssessmentLevelComponent,
         QuestionnaireLevelComponent,
         RunTopologyWrapperComponent,
+        Stepper,
+        SentinelResizeDirective,
     ],
 })
 export class AbstractLevelComponent implements OnInit, AfterViewInit {
@@ -66,6 +70,10 @@ export class AbstractLevelComponent implements OnInit, AfterViewInit {
     protected readonly startTime$: Observable<Date>;
     protected readonly topologyService = inject(TopologySynchronizerService);
     protected readonly topologyAllowed = signal<boolean>(true);
+    protected readonly stepperSteps = signal<StepperItem[]>([]);
+    protected readonly stepperSelectedIndex = signal<number | null>(null);
+    protected readonly stepperLastIndex = signal<number | null>(null);
+    protected stepperHeight = signal<number>(148);
 
     constructor() {
         this.displayedLevelTitle$ = this.runService.runInfo$
@@ -81,6 +89,11 @@ export class AbstractLevelComponent implements OnInit, AfterViewInit {
         this.topologyService.emitTopologyWidthChange(
             this.levelContent.nativeElement.clientWidth / 2,
         );
+        this.onResize();
+    }
+
+    @HostListener('window:resize')
+    onResize() {
         this.topologyService.setMaxTopologyWidth(
             this.levelContent.nativeElement.clientWidth * 0.65,
         );
@@ -91,15 +104,58 @@ export class AbstractLevelComponent implements OnInit, AfterViewInit {
 
     ngOnInit(): void {
         this.runService.runInfo$.subscribe((runInfo) => {
-            const levelType = runInfo.displayedLevel.type;
-            this.levelType.set(levelType);
-            const shouldCollapse =
-                levelType !== AbstractLevelTypeEnum.Training &&
-                levelType !== AbstractLevelTypeEnum.Access &&
-                levelType !== AbstractPhaseTypeEnum.Training &&
-                levelType !== AbstractPhaseTypeEnum.Access;
-            this.topologyAllowed.set(!shouldCollapse);
-            this.topologyService.setTopologyCollapsed(shouldCollapse);
+            this.updateLevelType(runInfo);
+            this.updateTopologyAllowed(runInfo);
+            this.updateStepper(runInfo);
         });
+    }
+
+    private updateLevelType(runInfo: AccessTrainingRunInfo) {
+        const levelType = runInfo.displayedLevel.type;
+        this.levelType.set(levelType);
+    }
+
+    private updateTopologyAllowed(runInfo: AccessTrainingRunInfo) {
+        const shouldCollapse =
+            runInfo.displayedLevel.type !== AbstractLevelTypeEnum.Training &&
+            runInfo.displayedLevel.type !== AbstractLevelTypeEnum.Access &&
+            runInfo.displayedLevel.type !== AbstractPhaseTypeEnum.Training &&
+            runInfo.displayedLevel.type !== AbstractPhaseTypeEnum.Access;
+        this.topologyAllowed.set(!shouldCollapse && !runInfo.localEnvironment);
+        this.topologyService.setTopologyCollapsed(
+            shouldCollapse || runInfo.localEnvironment,
+        );
+    }
+
+    private levelTypeToIcon(
+        levelType: AbstractLevelTypeEnum | AbstractPhaseTypeEnum,
+    ): string {
+        switch (levelType) {
+            case AbstractLevelTypeEnum.Info:
+            case AbstractPhaseTypeEnum.Info:
+                return 'info';
+            case AbstractLevelTypeEnum.Training:
+            case AbstractPhaseTypeEnum.Training:
+                return 'videogame_asset';
+            case AbstractLevelTypeEnum.Access:
+            case AbstractPhaseTypeEnum.Access:
+                return 'settings';
+            case AbstractLevelTypeEnum.Assessment:
+                return 'assignment';
+            case AbstractPhaseTypeEnum.Questionnaire:
+                return 'quiz';
+            default:
+                return 'help';
+        }
+    }
+
+    private updateStepper(runInfo: AccessTrainingRunInfo) {
+        const steps: StepperItem[] = runInfo.levels.map((level) => ({
+            icon: this.levelTypeToIcon(level.type),
+            label: level.title,
+        }));
+        this.stepperSteps.set(steps);
+        this.stepperSelectedIndex.set(runInfo.displayedLevel.order);
+        this.stepperLastIndex.set(runInfo.currentLevel.order);
     }
 }

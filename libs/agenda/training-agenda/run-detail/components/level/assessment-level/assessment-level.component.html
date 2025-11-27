@@ -19,7 +19,7 @@
     @if (isBacktracked) {
         <button
             (click)="this.runService.nextLevel()"
-            class="next-button"
+            class="confirm-button"
             mat-raised-button>
             Next
         </button>
@@ -27,7 +27,7 @@
         <button
             (click)="submit()"
             [disabled]="!canSubmit"
-            class="next-button"
+            class="confirm-button"
             mat-flat-button>
             {{
                 (runService.runInfo$

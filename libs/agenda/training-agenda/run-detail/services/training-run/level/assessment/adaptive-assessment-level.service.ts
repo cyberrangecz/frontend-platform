@@ -17,6 +17,11 @@ export class AdaptiveAssessmentLevelService {
                 this.runningTrainingRunService.runInfo.trainingRunId,
                 answers,
             )
-            .subscribe(() => this.runningTrainingRunService.nextLevel());
+            .subscribe(() => {
+                this.runningTrainingRunService.updateRunInfo({
+                    isCurrentLevelAnswered: true,
+                });
+                this.runningTrainingRunService.nextLevel();
+            });
     }
 }

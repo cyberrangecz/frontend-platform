@@ -1,0 +1,210 @@
+.stepper-container {
+    display: flex;
+    gap: 0;
+    width: 100%;
+    overflow-x: auto;
+    box-sizing: border-box;
+    padding: 1rem 0 8px;
+    margin-bottom: 6px;
+
+    &::-webkit-scrollbar-thumb {
+        background-color: var(--neutral-70);
+        border-radius: 2px;
+    }
+
+    &::-webkit-scrollbar {
+        height: 0;
+    }
+
+    &::-webkit-scrollbar-track {
+        background-color: var(--neutral-90);
+        border-radius: 2px;
+    }
+
+
+    &::-webkit-scrollbar-thumb {
+        border-radius: 2px;
+    }
+
+    .step-node-container:last-child .step-label {
+        word-break: break-all;
+    }
+
+
+}
+
+.scrollbar-show-trigger {
+    padding-bottom: 10px;
+
+    &:hover {
+        .stepper-container {
+            padding-bottom: 0;
+
+            &::-webkit-scrollbar {
+                height: 8px;
+            }
+        }
+    }
+}
+
+
+.step-node-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    position: relative;
+    width: 5rem;
+    flex-shrink: 0;
+    overflow: visible;
+    background-color: var(--neutral-98);
+
+    &.selected .step-label {
+        color: var(--warning-60);
+        font-weight: 600;
+    }
+
+    &.locked .step-label {
+        color: var(--neutral-variant-50);
+        opacity: 0.6;
+    }
+
+    &.accessible:not(.selected):hover {
+        cursor: pointer;
+
+        .step-label {
+            color: var(--primary-30);
+            cursor: pointer;
+        }
+
+        .step-node {
+            border-color: var(--primary-30);
+            transform: scale(1.1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            cursor: pointer;
+
+            mat-icon {
+                color: var(--primary-30);
+            }
+
+            .circle {
+                background-color: var(--primary-30);
+            }
+        }
+    }
+}
+
+.step-node {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--primary-40);
+    background-color: var(--neutral-98);
+    transition: all 0.15s linear;
+    position: relative;
+    z-index: 2;
+    outline: none;
+
+    mat-icon {
+        font-size: 1.5rem;
+        width: 1.5rem;
+        height: 1.5rem;
+        color: var(--primary-40);
+        transition: color 0.15s linear;
+    }
+
+    .circle {
+        width: 1rem;
+        height: 1rem;
+        border-radius: 50%;
+        background-color: var(--primary-40);
+        transition: background-color 0.15s linear;
+    }
+
+    &.accessible:not(.selected):focus-visible {
+        outline: 2px solid var(--primary-40);
+        outline-offset: 3px;
+    }
+
+    &.selected {
+        border-width: 3px;
+        border-color: var(--warning-60);
+        background-color: var(--warning-95);
+        box-shadow: 0 0 0 4px rgba(224, 172, 0, 0.2);
+
+        mat-icon {
+            color: var(--warning-60);
+        }
+
+        .circle {
+            background-color: var(--warning-60);
+        }
+
+        &:focus-visible {
+            outline: 2px solid var(--warning-60);
+            outline-offset: 3px;
+        }
+    }
+
+    &.locked {
+        cursor: not-allowed;
+        opacity: 0.4;
+        border-color: var(--neutral-variant-50);
+
+        mat-icon {
+            color: var(--neutral-variant-50);
+        }
+
+        .circle {
+            background-color: var(--neutral-variant-50);
+        }
+    }
+}
+
+.step-label {
+    font-size: 0.875rem;
+    color: var(--neutral-30);
+    text-align: center;
+    width: 100%;
+    min-width: 0;
+    overflow-wrap: normal;
+    word-break: normal;
+    hyphens: none;
+    transition: color 0.15s linear;
+    font-weight: 500;
+}
+
+.step-line {
+    height: 2px;
+    flex: 1 1 auto;
+    min-width: 40px;
+    width: 100%;
+    margin-top: 1.5rem;
+    background-color: var(--primary-40);
+    transition: all 0.15s linear;
+    position: relative;
+    z-index: 1;
+
+    &.fade {
+        height: 3px;
+        background: linear-gradient(to right, var(--warning-60) 30%, var(--primary-40) 70%);
+    }
+
+    &.fade--reverse {
+        @extend .fade;
+        transform: scaleX(-1);
+    }
+
+    &.selected {
+        height: 3px;
+        background-color: var(--warning-60);
+    }
+
+    &.locked {
+        background-color: var(--neutral-variant-50);
+        opacity: 0.4;
+    }
+}

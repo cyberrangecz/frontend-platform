@@ -12,6 +12,8 @@ export type TrainingLevelData = {
 };
 
 export abstract class AbstractAccessLevelService {
+    private readonly triedAnswers: Set<string> = new Set<string>();
+
     protected constructor(
         protected dialog: MatDialog,
         protected notificationService: NotificationService,
@@ -20,8 +22,18 @@ export abstract class AbstractAccessLevelService {
 
     submitAnswer(answer: string): void {
         if (!answer || answer.trim() === '') {
-            this.displayEmptyAnswerDialog();
+            this.displayEmptyAnswerNotification();
         }
+        if (this.triedAnswers.has(answer)) {
+            this.notificationService
+                .emit(
+                    SentinelNotificationTypeEnum.Warning,
+                    'You have already tried this answer.',
+                )
+                .subscribe();
+            return;
+        }
+        this.triedAnswers.add(answer);
         this.callApiToSubmitAnswer(answer).subscribe((answerCheck) => {
             if (answerCheck.isCorrect) {
                 this.onCorrectAnswerSubmitted();
@@ -43,26 +55,23 @@ export abstract class AbstractAccessLevelService {
     }
 
     protected onWrongAnswerSubmitted(answerCheck: AnswerCheckResult): void {
-        this.displayWrongAnswerDialog(answerCheck);
+        this.displayWrongAnswerNotification(answerCheck);
     }
 
-    protected displayEmptyAnswerDialog(): void {
+    protected displayEmptyAnswerNotification(): void {
         this.notificationService
-            .emit(SentinelNotificationTypeEnum.Warning, 'Incorrect passkey', [
+            .emit(
+                SentinelNotificationTypeEnum.Warning,
                 'Answer cannot be empty.',
-            ])
+            )
             .subscribe();
     }
 
-    protected displayWrongAnswerDialog(answerCheck: AnswerCheckResult): void {
+    protected displayWrongAnswerNotification(
+        answerCheck: AnswerCheckResult,
+    ): void {
         this.notificationService
-            .emit(SentinelNotificationTypeEnum.Warning, 'Incorrect passkey', [
-                'You have submitted an incorrect answer.',
-                this.runService.runInfo.isCurrentLevelAnswered ||
-                answerCheck.remainingAttempts <= 0
-                    ? 'Please insert the answer according to revealed solution.'
-                    : `You have ${answerCheck.remainingAttempts} remaining attempts.`,
-            ])
+            .emit(SentinelNotificationTypeEnum.Warning, 'Incorrect passkey')
             .subscribe();
     }
 }

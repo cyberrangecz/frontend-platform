@@ -11,24 +11,16 @@ import { SentinelAuthService } from '@sentinel/auth';
 import { AbstractTrainingRunService } from '../services/training-run/abstract-training-run.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AbstractLevelComponent } from './level/abstract-level.component';
-import { SentinelStepperComponent } from '@sentinel/components/stepper';
 import { isLoading } from '@sentinel/common/utils';
 import { AsyncPipe } from '@angular/common';
 import { SshAccessService } from '../services/training-run/ssh/ssh-acess.service';
-import { tap } from 'rxjs/operators';
-import { TopologyWrapperComponent } from '@crczp/topology-graph';
 
 @Component({
     selector: 'crczp-training-run',
     templateUrl: './training-run.component.html',
     styleUrls: ['./training-run.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [
-        AbstractLevelComponent,
-        SentinelStepperComponent,
-        AsyncPipe,
-        TopologyWrapperComponent,
-    ],
+    imports: [AbstractLevelComponent, AsyncPipe],
     providers: [SshAccessService],
 })
 /**
@@ -59,11 +51,10 @@ export class TrainingRunComponent implements OnInit {
 
     /**
      * Jump to training run level.
-     * @param index of desired level
+     * @param order of desired level
      */
-    activeStepChanged(index: number): void {
-        this.trainingRunService.displayLevelByOrder(index);
+    activeStepChanged(order: number): void {
+        console.log('Active step changed to order:', order);
+        this.trainingRunService.displayLevelByOrder(order);
     }
-
-
 }

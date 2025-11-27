@@ -1,5 +1,7 @@
 @import "../../../next-level-button.css";
 
+$content-height: calc(100vh - 36rem);
+
 .container {
     display: flex;
     flex-direction: column;
@@ -15,8 +17,8 @@
     width: 90%;
     max-width: 90%;
     padding: 0 1rem 0 2rem;
-    max-height: calc(100vh - 32rem);
-    height: calc(100vh - 32rem);
+    max-height: $content-height;
+    height: $content-height;
 }
 
 .split-container {
@@ -71,7 +73,7 @@
 
 
 /* Breakpoint based on sentinel layout (when navbar is hidden) */
-@media (max-width: 748px ) {
+@media (max-width: 748px) {
 
     .level-content {
         padding: 0;

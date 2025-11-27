@@ -2,12 +2,17 @@
     padding-right: 0 !important;
 }
 
+.training-run-stepper {
+    padding-right: 40px;
+    overflow: hidden;
+}
+
 .level-header {
     display: flex;
     flex-direction: row;
     justify-items: stretch;
     align-items: center;
-    width: 100%;
+    width: calc(100% - 40px);
     margin-top: 0;
 }
 
@@ -26,7 +31,7 @@
 .level-content {
     display: flex;
     flex-direction: row;
-    align-items: center;
+    align-items: flex-start;
     flex-grow: 0;
     flex-shrink: 0;
     justify-content: flex-start;
@@ -41,7 +46,6 @@
 }
 
 .level-topology-wrapper {
-    height: calc(100dvh - 32rem);
     flex: 0 0 auto;
 }
 

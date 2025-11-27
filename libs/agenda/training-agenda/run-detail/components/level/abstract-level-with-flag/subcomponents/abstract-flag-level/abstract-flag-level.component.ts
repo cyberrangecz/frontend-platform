@@ -18,7 +18,7 @@ import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 @Component({
     selector: 'crczp-abstract-flag-level',
     templateUrl: './abstract-flag-level.component.html',
-    styleUrl: './abstract-flag-level.component.css',
+    styleUrl: './abstract-flag-level.component.scss',
     imports: [
         AsyncPipe,
         MatButton,

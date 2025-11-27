@@ -1,3 +1,15 @@
+@if (runService.runInfo$.observeProperty().isStepperDisplayed.$() | async) {
+    <div
+        (sentinelResize)="stepperHeight.set($event.height)"
+        class="training-run-stepper round-scrollbar">
+        <crczp-stepper
+            (stepClicked)="runService.displayLevelByOrder($event)"
+            [lastEnabledIndex]="stepperLastIndex()"
+            [selectedIndex]="stepperSelectedIndex()"
+            [steps]="stepperSteps()"
+        />
+    </div>
+}
 <div class="level-header">
     <h1
         class="level-title"

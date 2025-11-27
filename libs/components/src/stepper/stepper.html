@@ -1,0 +1,54 @@
+<div
+    [ngClass]="{
+    'scrollbar-show-trigger': isOverflowing()
+    }"
+>
+    <div
+        #stepperContainer
+        class="stepper-container">
+        @for (step of steps(); track $index) {
+            <!-- Step Node -->
+            <div
+                (click)="onStepClick($index)"
+                [ngClass]="{
+            'selected': isSelected($index),
+            'accessible': isAccessible($index),
+            'locked': !isAccessible($index)
+          }"
+                class="step-node-container"
+            >
+                <div
+                    (keydown.enter)="onStepClick($index)"
+                    (keydown.space)="onStepClick($index)"
+                    [attr.tabindex]="isAccessible($index) ? 0 : -1"
+                    [ngClass]="{
+                    'selected': isSelected($index),
+                    'accessible': isAccessible($index),
+                    'locked': !isAccessible($index)
+                  }"
+                    class="step-node">
+                    @if (step.icon) {
+                        <mat-icon>{{ step.icon }}</mat-icon>
+                    } @else {
+                        <div class="circle"></div>
+                    }
+                </div>
+                <div class="step-label">{{ step.label }}</div>
+            </div>
+
+            <!-- Connecting Line -->
+            @if ($index < steps().length - 1) {
+                <div
+                    [ngClass]="{
+            'selected': isSelected($index) || isSelected($index + 1),
+            'accessible': isAccessible($index + 1),
+            'locked': !isAccessible($index + 1),
+            'fade': (isSelected($index) && isAccessible($index + 1)),
+            'fade--reverse': isAccessible($index) && isSelected($index + 1)
+          }"
+                    class="step-line">
+                </div>
+            }
+        }
+    </div>
+</div>

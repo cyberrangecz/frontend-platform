@@ -7,6 +7,7 @@ export * from './table/table-state-cell/table-state-cell.component';
 export * from './table/table-countdown/table-countdown.component';
 export * from './logo-spinner/logo-spinner.component';
 export * from './log-view/log-view.component';
+export * from './stepper/stepper';
 export * from './topology-graph/index';
 export * from './visualization-components/index';
 export * from './adaptive-instance-simulator/index';
