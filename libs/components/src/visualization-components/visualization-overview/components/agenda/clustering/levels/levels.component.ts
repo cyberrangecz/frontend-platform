@@ -19,7 +19,7 @@ import {
 } from './config';
 
 import { SvgConfig } from '../../../../shared/interfaces/configurations/svg-config';
-import { VizOverviewTraineeInfo } from '../../../../shared/interfaces/viz-overview-trainee-info';
+import { TraineeModeInfo } from '../../../../shared/interfaces/trainee-mode-info';
 import { take } from 'rxjs/operators';
 import { ClusteringTrainingData } from '../../../model/clustering/clustering-training-data';
 import { LevelTypeEnum } from '../../../model/clustering/enums/level-type.enum';
@@ -57,7 +57,7 @@ export class LevelsComponent implements OnInit, OnChanges {
     /**
      * Use if visualization should use anonymized data (without names and credentials of other users) from trainee point of view
      */
-    @Input() traineeModeInfo: VizOverviewTraineeInfo;
+    @Input() traineeModeInfo: TraineeModeInfo;
     /**
      * List of players which should be displayed
      */
@@ -183,14 +183,16 @@ export class LevelsComponent implements OnInit, OnChanges {
             .append('svg')
             .attr(
                 'width',
-                this.svgWidth + SVG_MARGIN_CONFIG.left + SVG_MARGIN_CONFIG.right
+                this.svgWidth +
+                    SVG_MARGIN_CONFIG.left +
+                    SVG_MARGIN_CONFIG.right,
             )
             .attr(
                 'height',
                 this.svgHeight +
                     SVG_MARGIN_CONFIG.top +
                     SVG_MARGIN_CONFIG.bottom +
-                    20
+                    20,
             )
             .append('g')
             .attr(
@@ -199,7 +201,7 @@ export class LevelsComponent implements OnInit, OnChanges {
                     SVG_MARGIN_CONFIG.left +
                     ',' +
                     SVG_MARGIN_CONFIG.top +
-                    ')'
+                    ')',
             );
     }
 
@@ -245,14 +247,14 @@ export class LevelsComponent implements OnInit, OnChanges {
             .attr('class', 'score-level-bar score-level-bar-max')
             .attr('x', 0)
             .attr('y', (level: Level) =>
-                this.yScaleBandBars(level.order.toString())
+                this.yScaleBandBars(level.order.toString()),
             )
             .attr('height', this.yScaleBandBars.bandwidth())
             .attr('width', (level: Level) =>
-                this.xScale(level.maxParticipantTime)
+                this.xScale(level.maxParticipantTime),
             )
             .style('fill', (d, i) =>
-                this.d3.interpolateGreys((1 / (data.length + 4)) * (i + 2))
+                this.d3.interpolateGreys((1 / (data.length + 4)) * (i + 2)),
             )
             .style('opacity', BARS_CONFIG.maxBarOpacity);
     }
@@ -270,18 +272,18 @@ export class LevelsComponent implements OnInit, OnChanges {
             .append('rect')
             .attr(
                 'id',
-                (level: Level) => 'score-level-bar-estimate-' + level.order
+                (level: Level) => 'score-level-bar-estimate-' + level.order,
             )
             .attr('class', 'score-level-bar score-level-bar-estimate')
             .attr('x', 0)
             .attr('y', (level: Level) =>
-                this.yScaleBandBars(level.order.toString())
+                this.yScaleBandBars(level.order.toString()),
             )
             .attr('height', this.yScaleBandBars.bandwidth())
             .attr('width', (level: Level) =>
                 this.xScale(level.estimatedTime) > this.barWidth
                     ? this.xScale(level.maxParticipantTime)
-                    : this.xScale(level.estimatedTime)
+                    : this.xScale(level.estimatedTime),
             )
             .style('fill', (level: Level) => {
                 if (level.order > 5) {
@@ -309,14 +311,14 @@ export class LevelsComponent implements OnInit, OnChanges {
             .style('stroke', '#3C4445')
             .attr('x1', (level: Level) => this.xScale(level.averageTime))
             .attr('y1', (level: Level) =>
-                this.yScaleBandBars(level.order.toString())
+                this.yScaleBandBars(level.order.toString()),
             )
             .attr('x2', (level: Level) => this.xScale(level.averageTime))
             .attr(
                 'y2',
                 (level: Level) =>
                     this.yScaleBandBars.bandwidth() +
-                    this.yScaleBandBars(level.order.toString())
+                    this.yScaleBandBars(level.order.toString()),
             );
     }
 
@@ -349,7 +351,7 @@ export class LevelsComponent implements OnInit, OnChanges {
             .attr('x2', (level: Level) =>
                 this.d3
                     .select('#score-level-bar-max-' + level.order)
-                    .attr('width')
+                    .attr('width'),
             )
             .attr('y2', (level: Level) => {
                 const yScale = this.d3
@@ -374,12 +376,12 @@ export class LevelsComponent implements OnInit, OnChanges {
             // we only show training levels in this visualization
             if (level.levelType === LevelTypeEnum.TrainingLevel) {
                 const bar = this.d3.select(
-                    '#score-level-bar-max-' + level.order
+                    '#score-level-bar-max-' + level.order,
                 );
                 const estimateBarWidth = Number(
                     this.d3
                         .select('#score-level-bar-estimate-' + level.order)
-                        .attr('width')
+                        .attr('width'),
                 );
                 const maxBarWidth = Number(bar.attr('width'));
                 const barY = bar.attr('y');
@@ -392,7 +394,7 @@ export class LevelsComponent implements OnInit, OnChanges {
                +Math.max(estimateBarWidth, maxBarWidth) +
                LEVEL_LABELS_CONFIG.padding.left
            },
-           ${+barY})`
+           ${+barY})`,
                     )
                     .append('text');
 
@@ -436,7 +438,7 @@ export class LevelsComponent implements OnInit, OnChanges {
                 'transform',
                 `translate(${AXES_CONFIG.xAxis.position.x}, ${
                     this.svgHeight + 0.3 * 0.3
-                })`
+                })`,
             )
             .call(xAxis);
         this.drawTimeAxisLabel();
@@ -464,7 +466,7 @@ export class LevelsComponent implements OnInit, OnChanges {
             .append('text')
             .attr(
                 'transform',
-                `translate(${this.barWidth / 2 - 50}, ${this.svgHeight + 60})`
+                `translate(${this.barWidth / 2 - 50}, ${this.svgHeight + 60})`,
             )
             .text('time per level')
             .style('fill', '#4c4a4a');
@@ -490,12 +492,12 @@ export class LevelsComponent implements OnInit, OnChanges {
             .attr('class', 'y-axis-nolabel')
             .attr(
                 'transform',
-                `translate(${AXES_CONFIG.yAxis.position.x}, ${AXES_CONFIG.yAxis.position.y})`
+                `translate(${AXES_CONFIG.yAxis.position.x}, ${AXES_CONFIG.yAxis.position.y})`,
             )
             .append('path')
             .attr(
                 'd',
-                `M0,${this.svgHeight - SVG_MARGIN_CONFIG.bottom * 0.3}.5V0.5H0`
+                `M0,${this.svgHeight - SVG_MARGIN_CONFIG.bottom * 0.3}.5V0.5H0`,
             );
     }
 
@@ -507,7 +509,8 @@ export class LevelsComponent implements OnInit, OnChanges {
         const trainingLevels =
             this.levelsData !== null
                 ? this.levelsData.levels.filter(
-                      (level) => level.levelType === LevelTypeEnum.TrainingLevel
+                      (level) =>
+                          level.levelType === LevelTypeEnum.TrainingLevel,
                   )
                 : [];
         d3.selectAll('.score-level-bar-max').each((bar) => {
@@ -536,7 +539,7 @@ export class LevelsComponent implements OnInit, OnChanges {
                 .attr('class', 'y-axis')
                 .attr(
                     'transform',
-                    `translate(${AXES_CONFIG.yAxis.position.x}, ${barY})`
+                    `translate(${AXES_CONFIG.yAxis.position.x}, ${barY})`,
                 )
                 .call(yAxis);
 
@@ -555,7 +558,7 @@ export class LevelsComponent implements OnInit, OnChanges {
                 'transform',
                 `translate(${AXES_CONFIG.yAxis.position.x - 50}, ${
                     this.svgHeight / 2
-                }) rotate(-90)`
+                }) rotate(-90)`,
             )
             .attr('text-anchor', 'middle')
             .style('fill', '#4c4a4a')
@@ -598,7 +601,7 @@ export class LevelsComponent implements OnInit, OnChanges {
         if (this.standalone) {
             players = players.filter(
                 (player) =>
-                    this.filterPlayers.indexOf(player.trainingRunId) !== -1
+                    this.filterPlayers.indexOf(player.trainingRunId) !== -1,
             );
         }
 
@@ -617,16 +620,16 @@ export class LevelsComponent implements OnInit, OnChanges {
                     'player-point player-point-level-' +
                     i +
                     ' p' +
-                    d.trainingRunId
+                    d.trainingRunId,
             )
             .attr('cx', (d: PlayerLevelData) => this.xScale(d.trainingTime))
             .attr('cy', (d: PlayerLevelData) =>
-                yBarScale(d.participantLevelScore)
+                yBarScale(d.participantLevelScore),
             )
             .attr('r', (d: PlayerLevelData) =>
                 d.trainingRunId === this.traineesTrainingRunId
                     ? PLAYER_POINT_CONFIG.feedbackLearner.pointRadius
-                    : PLAYER_POINT_CONFIG.pointRadius
+                    : PLAYER_POINT_CONFIG.pointRadius,
             )
             .style('fill', (d: PlayerLevelData) => d.avatarColor);
     }
@@ -687,20 +690,20 @@ export class LevelsComponent implements OnInit, OnChanges {
         svg.selectAll('.score-level-bar')
             .on('mouseover', () => this.onBarMouseover())
             .on('mousemove', (event, datum) =>
-                this.onBarMousemove(event, datum)
+                this.onBarMousemove(event, datum),
             )
             .on('mouseout', () => this.onBarMouseout());
 
         svg.selectAll('.player-point')
             .on('mouseover', (event, datum) =>
-                this.onPlayerPointMouseover(event, datum)
+                this.onPlayerPointMouseover(event, datum),
             )
             .on('mousemove', (event, datum) =>
-                this.onPlayerPointMousemove(event, datum)
+                this.onPlayerPointMousemove(event, datum),
             )
             .on('mouseout', (_, datum) => this.onPlayerPointMouseout(datum))
             .on('click', (event, datum) =>
-                this.onPlayerPointClick(event, datum)
+                this.onPlayerPointClick(event, datum),
             );
 
         this.d3
@@ -733,7 +736,8 @@ export class LevelsComponent implements OnInit, OnChanges {
         const trainingLevels =
             this.levelsData !== null
                 ? this.levelsData.levels.filter(
-                      (level) => level.levelType === LevelTypeEnum.TrainingLevel
+                      (level) =>
+                          level.levelType === LevelTypeEnum.TrainingLevel,
                   )
                 : [];
         const xScale = this.d3
@@ -767,7 +771,7 @@ export class LevelsComponent implements OnInit, OnChanges {
      */
     updateCrosshair(
         groups: { lines: any; labels: any },
-        playersData: { x: number; y: number; time: string; score: number }
+        playersData: { x: number; y: number; time: string; score: number },
     ): void {
         this.updateScoreCrosshair(groups, playersData);
         this.updateTimeCrosshair(groups, playersData);
@@ -780,7 +784,7 @@ export class LevelsComponent implements OnInit, OnChanges {
      */
     updateScoreCrosshair(
         groups: { lines: any; labels: any },
-        playersData: { x: number; y: number; time: string; score: number }
+        playersData: { x: number; y: number; time: string; score: number },
     ): void {
         const crosshairConfig = CROSSHAIR_CONFIG;
         groups.lines
@@ -804,7 +808,7 @@ export class LevelsComponent implements OnInit, OnChanges {
      */
     updateTimeCrosshair(
         groups: { lines: any; labels: any },
-        playersData: { x: number; y: number; time: string; score: number }
+        playersData: { x: number; y: number; time: string; score: number },
     ): void {
         const crosshairConfig = CROSSHAIR_CONFIG;
         groups.lines
@@ -819,7 +823,7 @@ export class LevelsComponent implements OnInit, OnChanges {
             .attr('x', +playersData.x + crosshairConfig.time.label.x)
             .attr(
                 'y',
-                this.svgHeight + BARS_CONFIG.padding * BARS_CONFIG.padding - 5
+                this.svgHeight + BARS_CONFIG.padding * BARS_CONFIG.padding - 5,
             )
             .text(playersData.time);
     }
@@ -864,7 +868,7 @@ export class LevelsComponent implements OnInit, OnChanges {
      */
     highlightHoveredPlayer(player: PlayerLevelData): void {
         const players = this.d3.selectAll(
-            '.player-point.p' + player.trainingRunId
+            '.player-point.p' + player.trainingRunId,
         );
         const isTraineesRun =
             player.trainingRunId === this.traineesTrainingRunId;
@@ -897,7 +901,7 @@ export class LevelsComponent implements OnInit, OnChanges {
         playerTooltip.transition().duration(200).style('opacity', 0.9);
         const coordinates = this.d3.pointer(
             event,
-            <ContainerElement>this.d3.select('#score-level-bars').node()
+            <ContainerElement>this.d3.select('#score-level-bars').node(),
         );
         const groupHeight =
             this.yScaleBandBars.step() * this.levelsData.levels.length +
@@ -906,7 +910,7 @@ export class LevelsComponent implements OnInit, OnChanges {
 
         playerTooltip
             .html(
-                `<p><b>Player: ${player.name} <br> Score: ${player.participantLevelScore}</b>`
+                `<p><b>Player: ${player.name} <br> Score: ${player.participantLevelScore}</b>`,
             )
             .style('left', event.pageX + 10 + 'px')
             .style('top', event.pageY + yOffset + 'px');
@@ -927,7 +931,7 @@ export class LevelsComponent implements OnInit, OnChanges {
                 ? this.levelsData.levels.filter(
                       (trainingLevel) =>
                           trainingLevel.levelType ===
-                          LevelTypeEnum.TrainingLevel
+                          LevelTypeEnum.TrainingLevel,
                   )
                 : [];
         const yScale = d3
@@ -972,7 +976,7 @@ export class LevelsComponent implements OnInit, OnChanges {
      */
     unhighlightHoveredPlayer(player: PlayerLevelData): void {
         const players = this.d3.selectAll(
-            '.player-point-highlighted.p' + player.trainingRunId
+            '.player-point-highlighted.p' + player.trainingRunId,
         );
         const isTraineesRun =
             player.trainingRunId === this.traineesTrainingRunId;
@@ -1034,7 +1038,7 @@ export class LevelsComponent implements OnInit, OnChanges {
             'r',
             PLAYER_POINT_CONFIG.pointRadius *
                 PLAYER_POINT_CONFIG.pointHighlight *
-                1.1
+                1.1,
         );
     }
 
@@ -1043,7 +1047,7 @@ export class LevelsComponent implements OnInit, OnChanges {
      */
     getTrainingLevels(): Level[] {
         const levels = this.levelsData.levels.filter(
-            (level) => level.levelType === LevelTypeEnum.TrainingLevel
+            (level) => level.levelType === LevelTypeEnum.TrainingLevel,
         );
         levels.forEach((level, i) => {
             level.order = ++i;
@@ -1066,7 +1070,7 @@ export class LevelsComponent implements OnInit, OnChanges {
 
     private getMaxTime(): number {
         const levels = this.levelsData.levels.filter(
-            (level) => level.levelType === LevelTypeEnum.TrainingLevel
+            (level) => level.levelType === LevelTypeEnum.TrainingLevel,
         );
         let maxTime = 0;
         levels.forEach((level) => {

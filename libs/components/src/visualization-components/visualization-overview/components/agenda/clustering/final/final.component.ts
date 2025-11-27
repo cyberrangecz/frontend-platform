@@ -17,7 +17,7 @@ import {
     SVG_MARGIN_CONFIG,
 } from './config';
 import { SvgConfig } from '../../../../shared/interfaces/configurations/svg-config';
-import { VizOverviewTraineeInfo } from '../../../../shared/interfaces/viz-overview-trainee-info';
+import { TraineeModeInfo } from '../../../../shared/interfaces/trainee-mode-info';
 import { take } from 'rxjs/operators';
 import { ClusteringTrainingData } from '../../../model/clustering/clustering-training-data';
 import { ClusteringService } from '../shared/service/clustering.service';
@@ -56,7 +56,7 @@ export class FinalComponent implements OnInit, OnChanges {
     /**
      * Use if visualization should use anonymized data (without names and credentials of other users) from trainee point of view
      */
-    @Input() traineeModeInfo: VizOverviewTraineeInfo | undefined;
+    @Input() traineeModeInfo: TraineeModeInfo | undefined;
     /**
      * Emits id of selected player.
      */
@@ -197,14 +197,16 @@ export class FinalComponent implements OnInit, OnChanges {
             .append('svg')
             .attr(
                 'width',
-                this.svgWidth + SVG_MARGIN_CONFIG.left + SVG_MARGIN_CONFIG.right
+                this.svgWidth +
+                    SVG_MARGIN_CONFIG.left +
+                    SVG_MARGIN_CONFIG.right,
             )
             .attr(
                 'height',
                 this.svgHeight +
                     SVG_MARGIN_CONFIG.top +
                     SVG_MARGIN_CONFIG.bottom +
-                    30
+                    30,
             )
             .append('g')
             .attr(
@@ -213,7 +215,7 @@ export class FinalComponent implements OnInit, OnChanges {
                     SVG_MARGIN_CONFIG.left +
                     ',' +
                     SVG_MARGIN_CONFIG.top +
-                    ')'
+                    ')',
             );
     }
 
@@ -227,20 +229,20 @@ export class FinalComponent implements OnInit, OnChanges {
 
         this.drawMaximumTimeBar(
             barsGroup,
-            this.dataClusteringFinal.finalResults
+            this.dataClusteringFinal.finalResults,
         );
         this.drawEstimatedTimeBar(
             barsGroup,
-            this.dataClusteringFinal.finalResults
+            this.dataClusteringFinal.finalResults,
         );
         this.drawAverageTimeLine(
             barsGroup,
-            this.dataClusteringFinal.finalResults
+            this.dataClusteringFinal.finalResults,
         );
         if (this.standalone) {
             this.drawAverageScoreLine(
                 barsGroup,
-                this.dataClusteringFinal.finalResults
+                this.dataClusteringFinal.finalResults,
             );
         }
         this.drawBarLabel();
@@ -293,7 +295,7 @@ export class FinalComponent implements OnInit, OnChanges {
                 'width',
                 this.xScale(data.estimatedTime) > this.barWidth
                     ? this.xScale(data.maxParticipantTime)
-                    : this.xScale(data.estimatedTime)
+                    : this.xScale(data.estimatedTime),
             )
             .attr('fill', 'url(#diagonalHatchDarker)');
     }
@@ -365,25 +367,25 @@ export class FinalComponent implements OnInit, OnChanges {
         if (this.standalone) {
             this.drawAverageScoreLegend(
                 { x: x, y: y + yOffset * 3 },
-                labelOffset
+                labelOffset,
             );
         }
 
         if (this.traineesTrainingRunId != null) {
             this.drawOtherPlayersLegend(
                 { x: x, y: y + yOffset * 3 },
-                labelOffset
+                labelOffset,
             );
             this.drawFeedbackLearnerLegend(
                 { x: x, y: y + yOffset * 4 },
-                labelOffset
+                labelOffset,
             );
         }
     }
 
     drawMaximumTimeLegend(
         coordinates: { x: number; y: number },
-        labelOffset
+        labelOffset,
     ): void {
         this.svg
             .append('rect')
@@ -401,7 +403,7 @@ export class FinalComponent implements OnInit, OnChanges {
 
     drawEstimatedTimeLegend(
         coordinates: { x: number; y: number },
-        labelOffset
+        labelOffset,
     ): void {
         this.svg
             .append('rect')
@@ -420,7 +422,7 @@ export class FinalComponent implements OnInit, OnChanges {
 
     drawAverageTimeLegend(
         coordinates: { x: number; y: number },
-        labelOffset
+        labelOffset,
     ): void {
         this.svg
             .append('line')
@@ -440,7 +442,7 @@ export class FinalComponent implements OnInit, OnChanges {
 
     drawAverageScoreLegend(
         coordinates: { x: number; y: number },
-        labelOffset
+        labelOffset,
     ): void {
         this.svg
             .append('line')
@@ -460,7 +462,7 @@ export class FinalComponent implements OnInit, OnChanges {
 
     drawOtherPlayersLegend(
         coordinates: { x: number; y: number },
-        labelOffset
+        labelOffset,
     ): void {
         this.svg
             .append('circle')
@@ -477,7 +479,7 @@ export class FinalComponent implements OnInit, OnChanges {
 
     drawFeedbackLearnerLegend(
         coordinates: { x: number; y: number },
-        labelOffset
+        labelOffset,
     ): void {
         this.svg
             .append('circle')
@@ -485,7 +487,7 @@ export class FinalComponent implements OnInit, OnChanges {
             .attr(
                 'cy',
                 coordinates.y +
-                    PLAYER_POINT_CONFIG.feedbackLearner.pointRadius / 1.5
+                    PLAYER_POINT_CONFIG.feedbackLearner.pointRadius / 1.5,
             )
             .attr('r', PLAYER_POINT_CONFIG.feedbackLearner.pointRadius)
             .style('fill', PLAYER_POINT_CONFIG.fillColor);
@@ -522,7 +524,7 @@ export class FinalComponent implements OnInit, OnChanges {
                 'transform',
                 `translate(${AXES_CONFIG.xAxis.position.x}, ${
                     SVG_CONFIG.height + 20
-                })`
+                })`,
             )
             .call(xAxis);
 
@@ -553,7 +555,7 @@ export class FinalComponent implements OnInit, OnChanges {
             .append('text')
             .attr(
                 'transform',
-                `translate(${this.barWidth / 2 - 50}, ${this.svgHeight + 75})`
+                `translate(${this.barWidth / 2 - 50}, ${this.svgHeight + 75})`,
             )
             .style('fill', '#4c4a4a')
             .text('training time');
@@ -593,7 +595,7 @@ export class FinalComponent implements OnInit, OnChanges {
             .attr('class', 'y-axis')
             .attr(
                 'transform',
-                `translate(${axesConfig.yAxis.position.x}, ${axesConfig.yAxis.position.y})`
+                `translate(${axesConfig.yAxis.position.x}, ${axesConfig.yAxis.position.y})`,
             )
             .call(yAxis);
 
@@ -607,7 +609,7 @@ export class FinalComponent implements OnInit, OnChanges {
                 'transform',
                 `translate(${AXES_CONFIG.xAxis.position.x - 35}, ${
                     this.svgHeight / 2
-                }) rotate(-90)`
+                }) rotate(-90)`,
             )
             .text('score')
             .attr('text-anchor', 'middle')
@@ -625,7 +627,7 @@ export class FinalComponent implements OnInit, OnChanges {
         if (this.standalone) {
             players = this.dataClusteringFinal.finalResults.playerData.filter(
                 (player) =>
-                    this.filterPlayers.indexOf(player.trainingRunId) !== -1
+                    this.filterPlayers.indexOf(player.trainingRunId) !== -1,
             );
         }
 
@@ -637,22 +639,22 @@ export class FinalComponent implements OnInit, OnChanges {
             .attr(
                 'class',
                 (playerData: PlayerData) =>
-                    'player-point p' + playerData.trainingRunId
+                    'player-point p' + playerData.trainingRunId,
             )
             .attr(
                 'id',
-                (playerData: PlayerData) => 'p' + playerData.trainingRunId
+                (playerData: PlayerData) => 'p' + playerData.trainingRunId,
             )
             .attr('cx', (playerData: PlayerData) =>
-                this.xScale(playerData.trainingTime)
+                this.xScale(playerData.trainingTime),
             )
             .attr('cy', (playerData: PlayerData) =>
-                this.yScale(playerData.trainingScore)
+                this.yScale(playerData.trainingScore),
             )
             .attr('r', (playerData: PlayerData) =>
                 playerData.trainingRunId === this.traineesTrainingRunId
                     ? PLAYER_POINT_CONFIG.feedbackLearner.pointRadius
-                    : PLAYER_POINT_CONFIG.pointRadius
+                    : PLAYER_POINT_CONFIG.pointRadius,
             )
             .style('fill', (playerData: PlayerData) => playerData.avatarColor);
     }
@@ -731,10 +733,10 @@ export class FinalComponent implements OnInit, OnChanges {
         this.svg
             .selectAll('.player-point')
             .on('mouseover', (event, datum) =>
-                this.onPlayerMouseover(event, datum)
+                this.onPlayerMouseover(event, datum),
             )
             .on('mousemove', (event, datum) =>
-                this.onPlayerMousemove(event, datum)
+                this.onPlayerMousemove(event, datum),
             )
             .on('mouseout', (_, datum) => this.onPlayerMouseout(datum))
             .on('click', (event, datum) => this.onPlayerClick(event, datum));
@@ -789,7 +791,7 @@ export class FinalComponent implements OnInit, OnChanges {
 
         const coordinates = this.d3.pointer(
             event,
-            <ContainerElement>this.d3.select('.score-final-bars').node()
+            <ContainerElement>this.d3.select('.score-final-bars').node(),
         );
         const yOffset = coordinates[1] > 55 ? -50 : 10;
         const x = event.pageX + 10;
@@ -797,7 +799,7 @@ export class FinalComponent implements OnInit, OnChanges {
 
         playerTooltip
             .html(
-                `<p><b>Player: ${player.name} <br> Score: ${player.trainingScore}</b>`
+                `<p><b>Player: ${player.name} <br> Score: ${player.trainingScore}</b>`,
             )
             .style('left', x + 'px')
             .style('top', y + 'px');
@@ -845,7 +847,7 @@ export class FinalComponent implements OnInit, OnChanges {
      */
     updateCrosshair(
         groups: { lines: any; labels: any },
-        playersData: { x: number; y: number; time: string; score: number }
+        playersData: { x: number; y: number; time: string; score: number },
     ): void {
         this.updateScoreCrosshair(groups, playersData);
         this.updateTimeCrosshair(groups, playersData);
@@ -858,7 +860,7 @@ export class FinalComponent implements OnInit, OnChanges {
      */
     updateScoreCrosshair(
         groups: { lines: any; labels: any },
-        playersData: { x: number; y: number; time: string; score: number }
+        playersData: { x: number; y: number; time: string; score: number },
     ): void {
         const crosshairConfig = CROSSHAIR_CONFIG;
         groups.lines
@@ -882,7 +884,7 @@ export class FinalComponent implements OnInit, OnChanges {
      */
     updateTimeCrosshair(
         groups: { lines: any; labels: any },
-        playersData: { x: number; y: number; time: string; score: number }
+        playersData: { x: number; y: number; time: string; score: number },
     ): void {
         const crosshairConfig = CROSSHAIR_CONFIG;
         groups.lines
@@ -919,7 +921,7 @@ export class FinalComponent implements OnInit, OnChanges {
      */
     unhighlightHoveredPlayer(player: PlayerData): void {
         const players = this.d3.selectAll(
-            '.player-point-highlighted.p' + player.trainingRunId
+            '.player-point-highlighted.p' + player.trainingRunId,
         );
         const isFeedbackLearner =
             player.trainingRunId === this.traineesTrainingRunId;
@@ -989,7 +991,7 @@ export class FinalComponent implements OnInit, OnChanges {
         const crosshairLabelsGroup = d3.select('.focus-labels');
         const coordinates = this.d3.pointer(
             event,
-            <ContainerElement>this.d3.select('.score-final-bars').node()
+            <ContainerElement>this.d3.select('.score-final-bars').node(),
         );
         this.yScale.clamp(true);
 
@@ -1063,7 +1065,7 @@ export class FinalComponent implements OnInit, OnChanges {
             'r',
             PLAYER_POINT_CONFIG.pointRadius *
                 PLAYER_POINT_CONFIG.pointHighlight *
-                1.1
+                1.1,
         );
     }
 

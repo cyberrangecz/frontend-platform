@@ -7,7 +7,7 @@ import {
     OnInit,
 } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { VizOverviewTraineeInfo } from '../../../shared/interfaces/viz-overview-trainee-info';
+import { TraineeModeInfo } from '../../../shared/interfaces/trainee-mode-info';
 import { take } from 'rxjs/operators';
 import { TableData } from '../../model/table/table-data';
 import { PlayerTableData } from '../../model/table/player-table-data';
@@ -15,7 +15,6 @@ import { LevelTableData } from '../../model/table/level-table-data';
 import { TableDataService } from './service/table-data.service';
 import { TableService } from '../../../services/table.service';
 import { FiltersService } from '../../../services/filters.service';
-import { VizConfigService } from '../../../../common/viz-config.service';
 
 @Component({
     selector: 'crczp-visualization-overview-table',
@@ -48,7 +47,7 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
     /**
      * Use if visualization should use anonymized data (without names and credentials of other users) from trainee point of view
      */
-    @Input() traineeModeInfo: VizOverviewTraineeInfo;
+    @Input() traineeModeInfo: TraineeModeInfo;
     public tableLevelHeader: LevelTableData[] = [];
     public playersOrdered: PlayerTableData[] = [];
     public sortedColumn = null;
@@ -60,8 +59,6 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
     private filtersService = inject(FiltersService);
     private dataService = inject(TableDataService);
     private playerColorScaleSource: Subscription;
-
-    private readonly configService = inject(VizConfigService);
 
     constructor() {
         this.playerColorScaleSource =
@@ -87,12 +84,6 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
         ) {
             this.tableData.players = this.jsonTableData.players;
         }
-        this.configService.trainingDefinitionId = this.trainingDefinitionId;
-        this.configService.trainingInstanceId = this.trainingInstanceId;
-        if (this.traineeModeInfo) {
-            this.configService.trainingRunId =
-                this.traineeModeInfo.trainingRunId;
-        }
         if (this.tableData.players) {
             this.getMaxReachedLevel();
             this.redraw();
@@ -101,7 +92,7 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
 
     load() {
         this.dataService
-            .getAllData(this.traineeModeInfo)
+            .getAllData(this.traineeModeInfo, this.trainingInstanceId)
             .pipe(take(1))
             .subscribe((res) => {
                 this.tableData = res;
@@ -143,7 +134,7 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
             return;
         }
         const feedbackLearner = this.tableData.players.find(
-            (player) => player.trainingRunId === this.traineesTrainingRun
+            (player) => player.trainingRunId === this.traineesTrainingRun,
         );
         if (feedbackLearner !== undefined) {
             feedbackLearner.checked = !feedbackLearner.checked;

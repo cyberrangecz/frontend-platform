@@ -67,7 +67,7 @@ export class TrainingsVisualizationsOverviewLibModule {
 
         if (parentModule) {
             throw new Error(
-                'TrainingsVisualizationsOverviewLibModule is already loaded. Import it in the main module only'
+                'TrainingsVisualizationsOverviewLibModule is already loaded. Import it in the main module only',
             );
         }
     }

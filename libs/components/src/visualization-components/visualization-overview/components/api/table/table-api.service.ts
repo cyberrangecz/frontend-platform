@@ -3,12 +3,10 @@ import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { PlayerTableDataDTO } from '../dto/table/player-table-data-dto';
 import { PortalConfig } from '@crczp/utils';
-import { VizConfigService } from '../../../../common/viz-config.service';
 
 @Injectable()
 export class TableApiService {
     private readonly http = inject(HttpClient);
-    private readonly configService = inject(VizConfigService);
 
     private readonly trainingVisualizationEndpoint: string;
     private readonly anonymizedTrainingVisualizationEndpoint: string;
@@ -17,20 +15,26 @@ export class TableApiService {
         const baseUrl = inject(PortalConfig).basePaths.linearTraining;
 
         this.trainingVisualizationEndpoint =
-            baseUrl + 'visualizations/training-runs';
+            baseUrl + '/visualizations/training-instances';
         this.anonymizedTrainingVisualizationEndpoint =
-            baseUrl + 'visualizations/training-instances';
+            baseUrl + '/visualizations/training-runs';
     }
 
-    getTableVisualizationData(): Observable<PlayerTableDataDTO[]> {
+    getTableVisualizationData(
+        trainingInstanceId: number,
+    ): Observable<PlayerTableDataDTO[]> {
+        console.log('table by instance id: ' + trainingInstanceId);
         return this.http.get<PlayerTableDataDTO[]>(
-            `${this.trainingVisualizationEndpoint}/${this.configService.trainingInstanceId}/table`
+            `${this.trainingVisualizationEndpoint}/${trainingInstanceId}/table`,
         );
     }
 
-    getAnonymizedTableVisualizationData(): Observable<PlayerTableDataDTO[]> {
+    getAnonymizedTableVisualizationData(
+        trainingRunId: number,
+    ): Observable<PlayerTableDataDTO[]> {
+        console.log('anonymized table by run id: ' + trainingRunId);
         return this.http.get<PlayerTableDataDTO[]>(
-            `${this.anonymizedTrainingVisualizationEndpoint}/${this.configService.trainingRunId}/table`
+            `${this.anonymizedTrainingVisualizationEndpoint}/${trainingRunId}/table`,
         );
     }
 }

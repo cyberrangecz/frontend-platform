@@ -32,7 +32,7 @@ const routes: Routes = [
  * Routing for training run module
  */
 @NgModule({
-    imports: [RouterModule.forChild(routes)],
+    imports: [RouterModule.forChild(routes), TrainingRunResultsComponent],
     exports: [RouterModule],
 })
 export class TrainingRunResultsRoutingModule {}

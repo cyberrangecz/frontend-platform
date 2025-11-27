@@ -79,7 +79,7 @@ const routes: ValidRouterConfig<'run'> = [
         path: 'linear/:runId/results',
         loadComponent: () =>
             import('@crczp/training-agenda/run-results').then(
-                (m) => m.TrainingRunResultsComponent,
+                (m) => m.ScoreDevelopmentWrapperComponent,
             ),
         data: {
             breadcrumb: 'Results',

@@ -2,13 +2,11 @@ import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { TimelineDataDTO } from '../dto/timeline/timeline-data-dto';
-import { VizConfigService } from '../../../../common/viz-config.service';
 import { PortalConfig } from '@crczp/utils';
 
 @Injectable()
 export class TimelineApiService {
     private readonly http = inject(HttpClient);
-    private readonly configService = inject(VizConfigService);
 
     private readonly trainingVisualizationEndpoint: string;
     private readonly anonymizedTrainingVisualizationEndpoint: string;
@@ -22,15 +20,19 @@ export class TimelineApiService {
             basePath + '/visualizations/training-runs';
     }
 
-    getTimelineVisualizationData(): Observable<TimelineDataDTO> {
+    getTimelineVisualizationData(
+        trainingInstanceId: number,
+    ): Observable<TimelineDataDTO> {
         return this.http.get<TimelineDataDTO>(
-            `${this.trainingVisualizationEndpoint}/${this.configService.trainingInstanceId}/timeline`
+            `${this.trainingVisualizationEndpoint}/${trainingInstanceId}/timeline`,
         );
     }
 
-    getAnonymizedTimelineVisualizationData(): Observable<TimelineDataDTO> {
+    getAnonymizedTimelineVisualizationData(
+        trainingRunId: number,
+    ): Observable<TimelineDataDTO> {
         return this.http.get<TimelineDataDTO>(
-            `${this.anonymizedTrainingVisualizationEndpoint}/${this.configService.trainingRunId}/timeline`
+            `${this.anonymizedTrainingVisualizationEndpoint}/${trainingRunId}/timeline`,
         );
     }
 }

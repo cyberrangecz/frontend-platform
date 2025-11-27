@@ -1,7 +1,6 @@
 import {
     Component,
     EventEmitter,
-    inject,
     Input,
     OnChanges,
     OnInit,
@@ -11,9 +10,8 @@ import {
 } from '@angular/core';
 import { FinalComponent } from './final/final.component';
 import { LevelsComponent } from './levels/levels.component';
-import { VizOverviewTraineeInfo } from '../../../shared/interfaces/viz-overview-trainee-info';
+import { TraineeModeInfo } from '../../../shared/interfaces/trainee-mode-info';
 import { ClusteringTrainingData } from '../../model/clustering/clustering-training-data';
-import { VizConfigService } from '../../../../common/viz-config.service';
 
 @Component({
     selector: 'crczp-visualization-overview-clustering',
@@ -50,7 +48,7 @@ export class ClusteringComponent implements OnInit, OnChanges {
     /**
      * Use if visualization should use anonymized data (without names and credentials of other users) from trainee point of view
      */
-    @Input() traineeModeInfo: VizOverviewTraineeInfo;
+    @Input() traineeModeInfo: TraineeModeInfo;
     /**
      * List of players which should be displayed
      */
@@ -75,7 +73,6 @@ export class ClusteringComponent implements OnInit, OnChanges {
      * If provided is used for aggregated view across data from several instances.
      */
     @Input() instanceIds: number[];
-    private readonly configService = inject(VizConfigService);
 
     ngOnInit(): void {
         if (this.traineeModeInfo && this.standalone) {
@@ -84,8 +81,6 @@ export class ClusteringComponent implements OnInit, OnChanges {
     }
 
     ngOnChanges(changes: SimpleChanges): void {
-        this.configService.trainingDefinitionId = this.trainingDefinitionId;
-        this.configService.trainingInstanceId = this.trainingInstanceId;
         if ('highlightedTrainee' in changes) {
             this.selectedTrainingRunId = this.highlightedTrainee;
         }
