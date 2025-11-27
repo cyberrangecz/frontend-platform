@@ -5,10 +5,9 @@ import { Observable } from 'rxjs';
 import { filter, map, tap } from 'rxjs/operators';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatTab, MatTabContent, MatTabGroup, MatTabLabel } from '@angular/material/tabs';
-import { CommandTimelineComponent } from '@crczp/visualization-components';
 import { MatIcon } from '@angular/material/icon';
-import { SankeyVisualizationComponent } from '@crczp/adaptive-instance-simulator';
 import { AsyncPipe } from '@angular/common';
+import { CommandTimelineComponent, SankeyVisualizationComponent } from '@crczp/components';
 
 /**
  * Component displaying adaptive instance progress visualizations

@@ -67,7 +67,7 @@ Api libraries provide abstraction layer over REST API calls via simple function 
 
 ### Utils
 
-Small utility functions, classes, services and components.
+Small utility functions, classes and services.
 
 - [components](./libs/utils/components/README.md) - Shared utility UI components
 - [routing](./libs/utils/routing/README.md) - Common routing utilities
@@ -75,11 +75,7 @@ Small utility functions, classes, services and components.
 
 ### Components
 
-Larger self-contained components.
-
-- [adaptive-instance-simulator](./libs/components/adaptive-instance-simulator/README.md) - Adaptive instance simulation components
-- [topology-graph](./libs/components/topology-graph/README.md) - Topology graph components
-- [visualization-components](./libs/components/visualization-components/README.md) - Visualization components
+Collection of self-contained reusable components.
 
 ### Model
 

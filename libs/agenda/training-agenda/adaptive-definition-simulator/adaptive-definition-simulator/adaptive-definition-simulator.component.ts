@@ -1,10 +1,10 @@
 import { Component, inject } from '@angular/core';
+import { ErrorHandlerService, NotificationService } from '@crczp/utils';
 import {
     InstanceModelSimulatorComponent,
     SimulatorState,
     SimulatorStateEventTypeEnum,
-} from '@crczp/adaptive-instance-simulator';
-import { ErrorHandlerService, NotificationService } from '@crczp/utils';
+} from '@crczp/components';
 
 @Component({
     selector: 'crczp-adaptive-definition-simulator-wrapper',

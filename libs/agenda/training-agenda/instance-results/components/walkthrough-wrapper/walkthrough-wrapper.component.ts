@@ -1,21 +1,18 @@
-import {Component, DestroyRef, inject, OnInit} from '@angular/core';
-import {Level, TrainingInstance} from '@crczp/training-model';
-import {ActivatedRoute} from '@angular/router';
-import {exhaustMap, Observable} from 'rxjs';
-import {map} from 'rxjs/operators';
-import {WalkthroughService} from './services/walkthrough.service';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {AsyncPipe} from "@angular/common";
-import {WalkthroughVisualizationWrapperComponent} from "@crczp/visualization-components";
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { Level, TrainingInstance } from '@crczp/training-model';
+import { ActivatedRoute } from '@angular/router';
+import { exhaustMap, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { WalkthroughService } from './services/walkthrough.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { AsyncPipe } from '@angular/common';
+import { WalkthroughVisualizationWrapperComponent } from '@crczp/components';
 
 @Component({
     selector: 'crczp-walkthrough-wrapper',
     templateUrl: './walkthrough-wrapper.component.html',
     styleUrls: ['./walkthrough-wrapper.component.css'],
-    imports: [
-        AsyncPipe,
-        WalkthroughVisualizationWrapperComponent
-    ]
+    imports: [AsyncPipe, WalkthroughVisualizationWrapperComponent],
 })
 export class WalkthroughWrapperComponent implements OnInit {
     trainingInstance$: Observable<TrainingInstance>;
@@ -30,7 +27,11 @@ export class WalkthroughWrapperComponent implements OnInit {
             takeUntilDestroyed(this.destroyRef),
         );
         this.levels$ = this.trainingInstance$.pipe(
-            exhaustMap((trainingInstance) => this.walkthroughService.get(trainingInstance.trainingDefinition.id)),
+            exhaustMap((trainingInstance) =>
+                this.walkthroughService.get(
+                    trainingInstance.trainingDefinition.id,
+                ),
+            ),
             map((trainingDefinition) => trainingDefinition.levels),
         ) as Observable<Level[]>;
     }

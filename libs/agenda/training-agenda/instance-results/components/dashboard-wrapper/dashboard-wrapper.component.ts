@@ -1,16 +1,14 @@
-import {Component, DestroyRef, inject, OnInit} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
-import {TrainingInstance} from '@crczp/training-model';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {DashboardComponent} from "@crczp/visualization-components";
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { TrainingInstance } from '@crczp/training-model';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { DashboardComponent } from '@crczp/components';
 
 @Component({
     selector: 'crczp-dashboard-wrapper',
     templateUrl: './dashboard-wrapper.component.html',
     styleUrls: ['./dashboard-wrapper.component.css'],
-    imports: [
-        DashboardComponent
-    ]
+    imports: [DashboardComponent],
 })
 export class DashboardWrapperComponent implements OnInit {
     trainingInstance: TrainingInstance;
@@ -20,6 +18,8 @@ export class DashboardWrapperComponent implements OnInit {
     ngOnInit(): void {
         this.activeRoute.parent.data
             .pipe(takeUntilDestroyed(this.destroyRef))
-            .subscribe((data) => (this.trainingInstance = data.trainingInstance));
+            .subscribe(
+                (data) => (this.trainingInstance = data.trainingInstance),
+            );
     }
 }

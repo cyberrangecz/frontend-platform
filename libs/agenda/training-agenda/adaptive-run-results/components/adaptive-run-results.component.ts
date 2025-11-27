@@ -9,8 +9,8 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { AsyncPipe } from '@angular/common';
 import { MatCard } from '@angular/material/card';
-import { AdaptiveTransitionVisualizationComponent } from '@crczp/adaptive-instance-simulator';
 import { TrainingRun } from '@crczp/training-model';
+import { AdaptiveTransitionVisualizationComponent } from '@crczp/components';
 
 @Component({
     selector: 'crczp-adaptive-run-results',

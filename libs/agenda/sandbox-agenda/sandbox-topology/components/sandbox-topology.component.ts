@@ -1,7 +1,10 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
-import { TopologySource, TopologyWrapperComponent } from '@crczp/topology-graph';
 import { Routing } from '@crczp/routing-commons';
-import { LogoSpinnerComponent } from '@crczp/components';
+import {
+    LogoSpinnerComponent,
+    TopologySource,
+    TopologyWrapperComponent,
+} from '@crczp/components';
 import { ErrorHandlerService } from '@crczp/utils';
 import { ActivatedRoute } from '@angular/router';
 
@@ -24,16 +27,16 @@ export class SandboxTopologyComponent {
     constructor() {
         const sandboxInstanceId = Routing.Utils.extractVariable(
             'sandboxInstanceId',
-            this.route.snapshot
+            this.route.snapshot,
         );
         const definitionId = Routing.Utils.extractVariable(
             'definitionId',
-            this.route.snapshot
+            this.route.snapshot,
         );
         if (!sandboxInstanceId && !definitionId) {
             this.errorService.emitFrontendErrorNotification(
                 'Sandbox instance ID or definition ID is missing',
-                'Topology component'
+                'Topology component',
             );
         } else {
             this.idData.set(
@@ -43,7 +46,7 @@ export class SandboxTopologyComponent {
                       }
                     : {
                           definitionId: Number.parseInt(definitionId),
-                      }
+                      },
             );
         }
     }

@@ -1,7 +1,11 @@
-import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
-import {Phase} from '@crczp/training-model';
-import {MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle} from "@angular/material/expansion";
-import {ModelSimulatorComponent} from "@crczp/adaptive-instance-simulator";
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { Phase } from '@crczp/training-model';
+import {
+    MatExpansionPanel,
+    MatExpansionPanelHeader,
+    MatExpansionPanelTitle,
+} from '@angular/material/expansion';
+import { ModelSimulatorComponent } from '@crczp/components';
 
 @Component({
     selector: 'crczp-model-simulator',
@@ -12,8 +16,8 @@ import {ModelSimulatorComponent} from "@crczp/adaptive-instance-simulator";
         MatExpansionPanel,
         MatExpansionPanelHeader,
         MatExpansionPanelTitle,
-        ModelSimulatorComponent
-    ]
+        ModelSimulatorComponent,
+    ],
 })
 export class ModelSimulatorComponentWrapper {
     @Input() phases: Phase[];

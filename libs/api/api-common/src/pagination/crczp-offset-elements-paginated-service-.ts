@@ -5,7 +5,7 @@ import { OffsetPaginatedElementsService } from '@sentinel/common';
 export class CrczpOffsetElementsPaginatedService<
     T,
 > extends OffsetPaginatedElementsService<T> {
-    resource$ = this.resourceSubject$
+    override resource$ = this.resourceSubject$
         .asObservable()
         .pipe(
             map((elements) =>
