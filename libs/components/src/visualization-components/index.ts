@@ -1,4 +1,4 @@
-export * from './assessment/assessment-results-visualization.component'
+export * from './assessment/assessment-results-visualization.component';
 export * from './clustering/clustering-visualizations.component';
 export * from './clustering/components/line-chart/line-chart.component';
 export * from './clustering/components/radar-chart/radar-chart.component';
@@ -9,18 +9,18 @@ export * from './command/command-timeline/command-timeline.component';
 export * from './command/graph/reference/reference-graph.component';
 export * from './command/graph/summary/summary-graph.component';
 export * from './command/graph/trainee/trainee-graph.component';
-export * from './progress/components/types'
+export * from './progress/components/types';
 export * from './progress/components/visualizations/progress-visualizations.component';
 export * from './visualization-overview/trainings-visualizations-overview-lib.module';
-export * from './visualization-overview/shared/interfaces/viz-overview-trainee-info';
+export * from './visualization-overview/shared/interfaces/trainee-mode-info';
 export * from './walkthrough/walkthrough-visualization.component';
 export * from './walkthrough/walkthrough-visualization-wrapper.component';
 export * from './statistics/statistical-viz/statistical-viz.component';
-export {ClusteringComponent} from './visualization-overview/components/agenda/clustering/clustering.component';
-export {DashboardComponent} from './visualization-dashboard/dashboard.component';
-export {FiltersComponent} from './visualization-overview/components/agenda/filters/filters.component';
-export {FinalComponent} from './visualization-overview/components/agenda/clustering/final/final.component';
-export {LevelsComponent} from './visualization-overview/components/agenda/clustering/levels/levels.component';
-export {LineComponent} from './visualization-overview/components/agenda/timeline/line/line.component';
-export {TableComponent} from './visualization-overview/components/agenda/table/table.component';
-export {TimelineComponent} from './visualization-overview/components/agenda/timeline/timeline.component';
+export { ClusteringComponent } from './visualization-overview/components/agenda/clustering/clustering.component';
+export { DashboardComponent } from './visualization-dashboard/dashboard.component';
+export { FiltersComponent } from './visualization-overview/components/agenda/filters/filters.component';
+export { FinalComponent } from './visualization-overview/components/agenda/clustering/final/final.component';
+export { LevelsComponent } from './visualization-overview/components/agenda/clustering/levels/levels.component';
+export { LineComponent } from './visualization-overview/components/agenda/timeline/line/line.component';
+export { TableComponent } from './visualization-overview/components/agenda/table/table.component';
+export { TimelineComponent } from './visualization-overview/components/agenda/timeline/timeline.component';

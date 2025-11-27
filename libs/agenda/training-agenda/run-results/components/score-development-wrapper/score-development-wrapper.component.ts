@@ -13,8 +13,8 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { AsyncPipe } from '@angular/common';
 import {
+    TraineeModeInfo,
     TrainingsVisualizationsOverviewLibModule,
-    VizOverviewTraineeInfo,
 } from '@crczp/components';
 
 @Component({
@@ -25,7 +25,7 @@ import {
 })
 export class ScoreDevelopmentWrapperComponent implements OnInit {
     visualizationInfo$: Observable<VisualizationInfo>;
-    traineeModeInfo$: Observable<VizOverviewTraineeInfo>;
+    traineeModeInfo$: Observable<TraineeModeInfo>;
     vizSize: { width: number; height: number };
     destroyRef = inject(DestroyRef);
     private activatedRoute = inject(ActivatedRoute);
@@ -55,7 +55,7 @@ export class ScoreDevelopmentWrapperComponent implements OnInit {
         );
         this.traineeModeInfo$ = this.visualizationInfo$.pipe(
             map((vizInfo) => {
-                const traineeModeInfo = new VizOverviewTraineeInfo();
+                const traineeModeInfo = new TraineeModeInfo();
                 traineeModeInfo.trainingRunId = vizInfo.trainingRunId;
                 traineeModeInfo.activeTraineeId = vizInfo.traineeId;
 

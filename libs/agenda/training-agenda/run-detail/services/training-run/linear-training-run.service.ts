@@ -35,7 +35,7 @@ export class LinearTrainingRunService extends AbstractTrainingRunService {
 
     protected navigateToRunSummary() {
         this.router.navigate([
-            Routing.RouteBuilder.run.adaptive
+            Routing.RouteBuilder.run.linear
                 .runId(this.runInfo.trainingRunId)
                 .results.build(),
         ]);

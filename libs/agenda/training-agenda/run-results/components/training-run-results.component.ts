@@ -15,9 +15,8 @@ import { Observable } from 'rxjs';
 import { LinearTrainingDefinitionApi } from '@crczp/training-api';
 import { MitreTechniquesOverviewService } from '../service/mitre-techniques.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatTabLink, MatTabNav } from '@angular/material/tabs';
+import { MatTabLink, MatTabNav, MatTabNavPanel } from '@angular/material/tabs';
 import { MatIcon } from '@angular/material/icon';
-import { TrainingRunResultsRoutingModule } from './training-run-results-routing.module';
 import { AsyncPipe } from '@angular/common';
 import { TrainingRun } from '@crczp/training-model';
 
@@ -34,8 +33,8 @@ import { TrainingRun } from '@crczp/training-model';
         MatIcon,
         MatIcon,
         RouterOutlet,
-        TrainingRunResultsRoutingModule,
         AsyncPipe,
+        MatTabNavPanel,
     ],
     providers: [MitreTechniquesOverviewService],
 })

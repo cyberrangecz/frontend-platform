@@ -13,7 +13,7 @@ import {
 import { AXES_CONFIG, colorScheme, CONTEXT_CONFIG, SVG_MARGIN_CONFIG } from './config';
 import { SvgConfig } from '../../../../shared/interfaces/configurations/svg-config';
 import { SvgMarginConfig } from '../../../../shared/interfaces/configurations/svg-margin-config';
-import { VizOverviewTraineeInfo } from '../../../../shared/interfaces/viz-overview-trainee-info';
+import { TraineeModeInfo } from '../../../../shared/interfaces/trainee-mode-info';
 import { take } from 'rxjs/operators';
 import { Timeline } from '../../../model/timeline/timeline';
 import { TimelineService } from '../service/timeline.service';
@@ -29,7 +29,6 @@ import { D3, D3Service } from '../../../../../common/d3-service/d3-service';
 import { Subscription } from 'rxjs';
 import { TableService } from '../../../../services/table.service';
 import { FiltersService } from '../../../../services/filters.service';
-import { VizConfigService } from '../../../../../common/viz-config.service';
 import TimelineLevelTypeEnum = BasicLevelInfo.TimelineLevelTypeEnum;
 
 @Component({
@@ -60,7 +59,7 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
     /**
      * Use if visualization should use anonymized data (without names and credentials of other users) from trainee point of view
      */
-    @Input() traineeModeInfo: VizOverviewTraineeInfo;
+    @Input() traineeModeInfo: TraineeModeInfo;
     /**
      * Emits boolean that indicates if table should be placed under the visualization
      */
@@ -132,7 +131,6 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
     // Temp fix (https://stackoverflow.com/questions/67035992/d3-v6-brush-chart) implemented with transition from d3v5 -> d3v7
     private sourceEvent = null;
     private traineesTrainingRun: number;
-    private readonly configService = inject(VizConfigService);
 
     constructor() {
         const d3service = inject(D3Service);
@@ -141,22 +139,22 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
         this.tableRowClicked = this.tableService.tableRowClicked$.subscribe(
             (player: TimelinePlayer) => {
                 this.onRowClicked(player.trainingRunId);
-            }
+            },
         );
         this.tableRowMouseover = this.tableService.tableRowMouseover$.subscribe(
             (id: any) => {
                 this.highlightLine(id);
-            }
+            },
         );
         this.tableRowMouseout = this.tableService.tableRowMouseout$.subscribe(
             (id: any) => {
                 this.unhighlightLine(id);
-            }
+            },
         );
         this.filterChanged = this.filtersService.filterChanged$.subscribe(
             () => {
                 this.onFilterChange();
-            }
+            },
         );
     }
 
@@ -167,12 +165,6 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
     }
 
     ngOnChanges(changes: SimpleChanges): void {
-        this.configService.trainingDefinitionId = this.trainingDefinitionId;
-        this.configService.trainingInstanceId = this.trainingInstanceId;
-        if (this.traineeModeInfo) {
-            this.configService.trainingRunId =
-                this.traineeModeInfo.trainingRunId;
-        }
         if (this.timelineData !== null && this.timelineData.timeline !== null) {
             this.players = this.timelineData.timeline.playerData;
             this.redraw();
@@ -189,7 +181,7 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
                 if (!changes['highlightedTrainee'].isFirstChange()) {
                     if (!this.zoomTransform) {
                         this.unhighlightLine(
-                            changes['highlightedTrainee'].previousValue
+                            changes['highlightedTrainee'].previousValue,
                         );
                     }
                     this.highlightLine(this.highlightedTrainee);
@@ -212,7 +204,7 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
     load(): void {
         this.isLoading = true;
         this.timelineService
-            .getAllData(this.traineeModeInfo)
+            .getAllData(this.traineeModeInfo, this.trainingInstanceId)
             .pipe(take(1))
             .subscribe((res) => {
                 this.isLoading = false;
@@ -220,7 +212,7 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
                 this.players = this.timelineData.timeline.playerData;
                 this.redraw();
                 if (
-                    VizOverviewTraineeInfo.isTrainee(this.traineeModeInfo) &&
+                    TraineeModeInfo.isTrainee(this.traineeModeInfo) &&
                     !this.standalone
                 ) {
                     this.onRowClicked(this.traineeModeInfo.trainingRunId);
@@ -266,7 +258,7 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
         } else {
             if (this.filterPlayers) {
                 this.filterPlayers.forEach((playerId) =>
-                    this.drawPlayer(playerId)
+                    this.drawPlayer(playerId),
                 );
             }
         }
@@ -291,7 +283,7 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
                 ? this.players.filter(
                       (player) =>
                           this.filterPlayers.indexOf(player.trainingRunId) !==
-                          -1
+                          -1,
                   )
                 : [];
         }
@@ -343,13 +335,13 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
                 'width',
                 this.size.width +
                     SVG_MARGIN_CONFIG.left +
-                    SVG_MARGIN_CONFIG.right
+                    SVG_MARGIN_CONFIG.right,
             )
             .attr(
                 'height',
                 this.size.height +
                     SVG_MARGIN_CONFIG.top +
-                    SVG_MARGIN_CONFIG.bottom
+                    SVG_MARGIN_CONFIG.bottom,
             )
             .style('margin-right', '10px')
             .append('g')
@@ -359,7 +351,7 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
                     SVG_MARGIN_CONFIG.left +
                     ',' +
                     SVG_MARGIN_CONFIG.top +
-                    ')'
+                    ')',
             );
     }
 
@@ -471,7 +463,7 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
             .select('.brush')
             .call(
                 this.brush.move,
-                this.timeScale.range().map(transform.invertX, transform)
+                this.timeScale.range().map(transform.invertX, transform),
             );
         this.sourceEvent = null;
     }
@@ -506,7 +498,7 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
         const selection = event.selection || this.contextTimeScale;
         const newDomain = selection.map(
             this.contextTimeScale.invert,
-            this.contextTimeScale
+            this.contextTimeScale,
         );
         this.timeScale.domain(newDomain);
 
@@ -618,8 +610,8 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
                 this.timelineData.timeline.estimatedTime -
                     Math.abs(
                         this.size.width -
-                            this.timelineData.timeline.estimatedTime
-                    )
+                            this.timelineData.timeline.estimatedTime,
+                    ),
             )
             .attr('height', this.size.height)
             .attr('fill', 'url(#diagonalHatch)');
@@ -651,7 +643,7 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
                 'transform',
                 `translate(${AXES_CONFIG.xAxis.position.x}, ${
                     this.size.height + 20
-                })`
+                })`,
             )
             .call(this.xAxis);
     }
@@ -675,7 +667,7 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
             .attr('class', 'score-progress y-axis')
             .attr(
                 'transform',
-                `translate(${axesConfig.yAxis.position.x}, ${axesConfig.yAxis.position.y})`
+                `translate(${axesConfig.yAxis.position.x}, ${axesConfig.yAxis.position.y})`,
             )
             .call(yAxis);
     }
@@ -690,7 +682,7 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
                 'transform',
                 `translate(${this.svgConfig.width / 2 - 50}, ${
                     this.svgConfig.height + 65
-                })`
+                })`,
             )
             .text('training time')
             .style('fill', '#4c4a4a');
@@ -701,7 +693,7 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
                 'transform',
                 `translate(${AXES_CONFIG.yAxis.position.x - 75}, ${
                     this.svgConfig.height / 2
-                }) rotate(-90)`
+                }) rotate(-90)`,
             )
             .attr('text-anchor', 'middle')
             .style('fill', '#4c4a4a')
@@ -743,7 +735,7 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
             .data();
         const levelScoresWithoutLastLevel = levelScores.slice(
             0,
-            levelScores.length - 1
+            levelScores.length - 1,
         );
         const lineGenerator = this.d3.line();
         const thresholdsGroup = this.svg
@@ -860,7 +852,7 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
                 'transform',
                 `translate(${AXES_CONFIG.xAxis.position.x}, ${
                     this.size.height + CONTEXT_CONFIG.height
-                })`
+                })`,
             );
 
         context
@@ -1014,7 +1006,7 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
             .append('text')
             .attr(
                 'transform',
-                `translate(${x + rectWidth + 10}, ${y + rectHeight / 1.5 + 1})`
+                `translate(${x + rectWidth + 10}, ${y + rectHeight / 1.5 + 1})`,
             )
             .html('Estimated time');
 
@@ -1030,7 +1022,7 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
             .append('text')
             .attr(
                 'transform',
-                `translate(${x + rectWidth + 179}, ${y + rectHeight / 1.5 + 1})`
+                `translate(${x + rectWidth + 179}, ${y + rectHeight / 1.5 + 1})`,
             )
             .html('Average time');
     }
@@ -1045,7 +1037,7 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
             return;
         }
         const player: TimelinePlayer = this.players.filter(
-            (p) => p.trainingRunId === trainingRunId
+            (p) => p.trainingRunId === trainingRunId,
         )[0];
         if (player === undefined) {
             return;
@@ -1079,7 +1071,7 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
             .attr('class', 'score-progress-player')
             .classed(
                 'score-progress-player-highlight',
-                player.trainingRunId === this.traineesTrainingRun
+                player.trainingRunId === this.traineesTrainingRun,
             )
             .classed('visible-line', true)
             .datum(player)
@@ -1112,10 +1104,10 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
      */
     addListenersToLine(line): void {
         line.on('mouseover', (event, datum) =>
-            this.onLineMouseover(event, datum)
+            this.onLineMouseover(event, datum),
         )
             .on('mousemove', (event, datum) =>
-                this.onLineMousemove(event, datum)
+                this.onLineMousemove(event, datum),
             )
             .on('mouseout', (event, datum) => this.onLineMouseout(datum))
             .on('wheel', (event, _) => this.disableScrolling(event));
@@ -1146,7 +1138,7 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
      */
     highlightLine(playerId: number): void {
         const playerGroup = this.d3.select(
-            '#score-progress-player-' + playerId
+            '#score-progress-player-' + playerId,
         );
         const path = playerGroup.select('.visible-line');
         path.classed('score-progress-player-highlight', true);
@@ -1201,7 +1193,7 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
             return;
         }
         const playerGroup = this.d3.select(
-            '#score-progress-player-' + playerId
+            '#score-progress-player-' + playerId,
         );
         const path = playerGroup.select('path');
         path.classed('score-progress-player-highlight', false);
@@ -1251,7 +1243,7 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
                     return 'lightgray';
                 }
                 return this.d3.interpolateGreys(
-                    (1 / (player.levels.length + 4)) * (event.levelOrder + 2)
+                    (1 / (player.levels.length + 4)) * (event.levelOrder + 2),
                 );
             })
             .datum((event) => {
@@ -1276,7 +1268,7 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
         // checks if there is any checked filter if not empty array of events is set
         if (
             Object.keys(this.filters).some(
-                (key) => this.filters[key].checked === true
+                (key) => this.filters[key].checked === true,
             )
         ) {
             Object.keys(this.filters).forEach((key) => {
@@ -1325,7 +1317,7 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
     addListenersToEvents(events): void {
         events
             .on('mouseover', (event, datum) =>
-                this.onEventMouseover(event, datum)
+                this.onEventMouseover(event, datum),
             )
             .on('mousemove', (event, _) => this.onEventMousemove(event))
             .on('mouseout', (event, datum) => this.onEventMouseout(datum))
@@ -1341,7 +1333,7 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
     drawInnerLevelUps(
         eventsGroup,
         filteredEvents: TimelineEvent[],
-        colorScale
+        colorScale,
     ): void {
         let levelUpsInnerFill = eventsGroup
             .selectAll('.level-up')
@@ -1354,7 +1346,7 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
             .filter(
                 (event) =>
                     event.text.toUpperCase().split(' ')[0] === 'CORRECT' &&
-                    event.level !== this.getLevels().length
+                    event.level !== this.getLevels().length,
             )
             .append('circle')
             .attr('class', 'level-up')
@@ -1364,7 +1356,7 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
             .style('fill', (event) =>
                 this.d3
                     .hsl(colorScale((event.level + 1).toString()).toString())
-                    .darker(0.9)
+                    .darker(0.9),
             )
             .style('stroke', 'black')
             .style('stroke-width', '0.2');
@@ -1401,8 +1393,8 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
     ${eventMessage}
     <br>
     <b>${player.scoreChange > 0 ? '+' : ''}${
-            player.scoreChange !== 0 ? player.scoreChange : ''
-        }</b>
+        player.scoreChange !== 0 ? player.scoreChange : ''
+    }</b>
     <hr style='margin: 5px'>
     Score: ${player.score}`;
         this.eventTooltip.html(content);
@@ -1491,7 +1483,7 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
             .selectAll('rect')
             .attr(
                 'transform',
-                `translate(${transform.x},0) scale(${transform.k}, 1)`
+                `translate(${transform.x},0) scale(${transform.k}, 1)`,
             );
     }
 
@@ -1509,8 +1501,8 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
             (level, index, self) =>
                 index ===
                 self.findIndex(
-                    (t) => t.id === level.id && t.name === level.name
-                )
+                    (t) => t.id === level.id && t.name === level.name,
+                ),
         );
         return levels;
     }
@@ -1540,7 +1532,7 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
     onFilterChange(): void {
         if (!this.standalone) {
             const checkedPlayers = this.players.filter(
-                (player) => player.checked
+                (player) => player.checked,
             );
             checkedPlayers.forEach((player) => {
                 this.drawPlayersEvents(player);
