@@ -19,6 +19,7 @@ import {
 } from './status/guacamoleStatusMapper';
 import Guacamole from '@dushixiang/guacamole-common-js';
 import { GuacamoleKeyCodes } from './keycodes';
+import { PortalConfig } from '@crczp/utils';
 
 export type ConnectionParams = {
     sandboxUuid: string;
@@ -53,6 +54,7 @@ export class ConsoleView implements AfterViewInit, OnDestroy {
     private RESIZE_DEBOUNCE_MS = 50;
     private INITIAL_RESOLUTION_COEFFICIENT = 1;
     private currentScale = signal<number>(1);
+    private readonly platformConfig = inject(PortalConfig);
 
     ngAfterViewInit(): void {
         this.connectGuacamole();
@@ -246,8 +248,25 @@ export class ConsoleView implements AfterViewInit, OnDestroy {
     }
 
     private connectGuacamole() {
+        const wssPath = this.platformConfig.basePaths.guacamole.startsWith('https://')
+            ? this.platformConfig.basePaths.guacamole.replace(
+                  'https://',
+                  'wss://',
+              )
+            : this.platformConfig.basePaths.guacamole.startsWith('http://')
+            ? this.platformConfig.basePaths.guacamole.replace(
+                  'http://',
+                  'ws://',
+              )
+            : this.platformConfig.basePaths.guacamole;
+
+        if(!wssPath.startsWith('ws://') && !wssPath.startsWith('wss://')) {
+            console.error('Failed to derive WebSocket path from Guacamole base path:', this.platformConfig.basePaths.guacamole);
+            return;
+        }
+
         const tunnel = new Guacamole.WebSocketTunnel(
-            'wss://devel.platform.cyberrange.cz/guacamole/api/v1/websocket/guacamole',
+            `${this.platformConfig.basePaths.guacamole.replace('https://', 'wss://')}/websocket/guacamole`,
         );
 
         tunnel.onerror = (error) => {
