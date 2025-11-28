@@ -2,11 +2,11 @@ import {Component, DestroyRef, inject, OnInit} from '@angular/core';
 import {TrainingInstance} from '@crczp/training-model';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Observable} from 'rxjs';
-import {TrainingNavigator} from '@crczp/training-agenda';
 import {map} from 'rxjs/operators';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {AsyncPipe} from "@angular/common";
-import {StatisticalVizComponent} from "@crczp/visualization-components";
+import { StatisticalVizComponent } from '@crczp/components';
+import { Routing } from '@crczp/routing-commons';
 
 @Component({
     selector: 'crczp-aggregated-dashboard-wrapper',
@@ -22,16 +22,17 @@ export class AggregatedDashboardWrapperComponent implements OnInit {
     destroyRef = inject(DestroyRef);
     private activeRoute = inject(ActivatedRoute);
     private router = inject(Router);
-    private navigator = inject(TrainingNavigator);
 
     ngOnInit(): void {
         this.trainingInstance$ = this.activeRoute.parent.data.pipe(
             takeUntilDestroyed(this.destroyRef),
-            map((data) => data.trainingInstance as TrainingInstance),
+            map((data) => data[TrainingInstance.name])
         );
     }
 
     redirectToDetailView(instanceId: number): void {
-        this.router.navigate([this.navigator.toTrainingInstanceResults(instanceId)]);
+        this.router.navigate([
+            Routing.RouteBuilder.linear_instance.instanceId(instanceId).results.build()
+        ]);
     }
 }

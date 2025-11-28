@@ -55,10 +55,12 @@ export abstract class LinearTrainingInstanceApi {
      * Sends http request to delete training instance
      * @param trainingInstanceId id of training instance which should be deleted
      * @param force true if delete should be forced, false otherwise
+     * @param expectedErrorCodes array of expected error codes, those will not be treated as errors
      */
     abstract delete(
         trainingInstanceId: number,
-        force?: boolean,
+        force: boolean,
+        expectedErrorCodes?: number[],
     ): Observable<any>;
 
     /**

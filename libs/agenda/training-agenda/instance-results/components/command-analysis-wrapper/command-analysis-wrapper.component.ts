@@ -19,7 +19,7 @@ export class CommandAnalysisWrapperComponent implements OnInit {
         this.activeRoute.parent.data
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe(
-                (data) => (this.trainingInstance = data.trainingInstance),
+                (data) => (this.trainingInstance = data[TrainingInstance.name]),
             );
     }
 }

@@ -12,6 +12,8 @@ import { AsyncPipe } from '@angular/common';
 import { WalkthroughVisualizationData } from '@crczp/visualization-model';
 import { WalkthroughVisualizationService } from './service/walkthrough-visualization.service';
 import { WalkthroughVisualizationComponent } from './walkthrough-visualization.component';
+import { WalkthroughVisualizationApi } from '@crczp/visualization-api';
+import { AbsolutePositionService } from './service/absolute-position.service';
 
 @Component({
     selector: 'crczp-walkthrough-visualization-wrapper',
@@ -27,6 +29,7 @@ import { WalkthroughVisualizationComponent } from './walkthrough-visualization.c
         MatOption,
         WalkthroughVisualizationComponent,
     ],
+    providers: [WalkthroughVisualizationApi, WalkthroughVisualizationService,AbsolutePositionService],
 })
 export class WalkthroughVisualizationWrapperComponent implements OnInit {
     @Input() instanceId: number;
@@ -34,7 +37,7 @@ export class WalkthroughVisualizationWrapperComponent implements OnInit {
     data$: Observable<WalkthroughVisualizationData>;
     currentLevel: Level;
     private readonly visualizationService = inject(
-        WalkthroughVisualizationService
+        WalkthroughVisualizationService,
     );
 
     ngOnInit() {

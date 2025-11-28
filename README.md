@@ -1,5 +1,3 @@
-> WORK IN PROGRESS - Parts of this codebase are still in development and as such, this version serves only as a preview
-
 # CyberRangeᶜᶻ Platform
 
 Nx monorepo containing the CyberRangeCZ Platform frontend.

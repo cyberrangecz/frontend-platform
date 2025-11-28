@@ -19,10 +19,7 @@ import {HighlightService} from './services/highlight.service';
  */
 @Component({
     selector: 'crczp-assessment-results-visualization',
-    template: `
-        <crczp-assessment-results
-            [assessments]="assessments$ | async"
-        />`,
+    templateUrl: "./assessment-results-visualization.component.html",
     imports: [
         AsyncPipe,
         AssessmentResultsComponent,

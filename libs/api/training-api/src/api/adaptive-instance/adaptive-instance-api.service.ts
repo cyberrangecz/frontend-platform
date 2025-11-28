@@ -58,7 +58,8 @@ export abstract class AdaptiveTrainingInstanceApi {
      */
     abstract delete(
         trainingInstanceId: number,
-        force?: boolean,
+        force: boolean,
+        expectedErrorCodes?: number[],
     ): Observable<any>;
 
     /**

@@ -18,6 +18,6 @@ export class CommandTimelineWrapperComponent implements OnInit {
     ngOnInit(): void {
         this.activeRoute.parent.data
             .pipe(takeUntilDestroyed(this.destroyRef))
-            .subscribe((data) => (this.trainingRun = data.trainingRun));
+            .subscribe((data) => (this.trainingRun = data[TrainingRun.name]));
     }
 }

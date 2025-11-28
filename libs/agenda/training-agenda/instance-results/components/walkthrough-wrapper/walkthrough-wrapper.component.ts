@@ -23,7 +23,7 @@ export class WalkthroughWrapperComponent implements OnInit {
 
     ngOnInit(): void {
         this.trainingInstance$ = this.activeRoute.parent.data.pipe(
-            map((data) => data.trainingInstance),
+            map((data) => data[TrainingInstance.name]),
             takeUntilDestroyed(this.destroyRef),
         );
         this.levels$ = this.trainingInstance$.pipe(

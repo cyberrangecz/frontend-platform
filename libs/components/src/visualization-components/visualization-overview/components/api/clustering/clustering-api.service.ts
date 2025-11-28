@@ -26,7 +26,7 @@ export class ClusteringApiService {
      * @param instanceIds if present uses endpoint that aggregates data from multiple instances.
      */
     getClusteringVisualizationData(
-        instanceIds?: number[],
+        instanceIds: number[],
     ): Observable<ClusteringVisualizationResourceDTO> {
         return this.http.get<ClusteringVisualizationResourceDTO>(
             `${this.trainingVisualizationEndpoint}/clustering`,

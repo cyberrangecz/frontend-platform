@@ -19,7 +19,7 @@ export class AssessmentWrapperComponent implements OnInit {
         this.activeRoute.parent.data
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe(
-                (data) => (this.trainingInstance = data.trainingInstance),
+                (data) => (this.trainingInstance = data[TrainingInstance.name]),
             );
     }
 }

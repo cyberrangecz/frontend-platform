@@ -10,6 +10,7 @@ export * from './command/graph/reference/reference-graph.component';
 export * from './command/graph/summary/summary-graph.component';
 export * from './command/graph/trainee/trainee-graph.component';
 export * from './progress/components/types';
+export * from './progress/services/sorting.service';
 export * from './progress/components/visualizations/progress-visualizations.component';
 export * from './visualization-overview/trainings-visualizations-overview-lib.module';
 export * from './visualization-overview/shared/interfaces/trainee-mode-info';

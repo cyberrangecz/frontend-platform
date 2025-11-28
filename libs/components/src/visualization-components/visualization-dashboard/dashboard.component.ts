@@ -17,7 +17,11 @@ import { TrainingsVisualizationsOverviewLibModule } from '../visualization-overv
 import { ProgressVisualizationsComponent } from '../progress/components/visualizations/progress-visualizations.component';
 import { CommonModule } from '@angular/common';
 import { MatOptionModule } from '@angular/material/core';
-import { CommandApi, TimelineCommandApi } from '@crczp/visualization-api';
+import {
+    CommandApi,
+    ProgressVisualizationApi,
+    TimelineCommandApi,
+} from '@crczp/visualization-api';
 import { TimelineCommandService } from '../command/command-timeline/timeline-command.service';
 import { D3, D3Service } from '../common/d3-service/d3-service';
 import { TraineeViewEnum } from '../progress/components/types';
@@ -42,7 +46,13 @@ import { FiltersComponent } from '../visualization-overview/components/agenda/fi
         ProgressVisualizationsComponent,
         FiltersComponent,
     ],
-    providers: [CommandApi, TimelineCommandApi, TimelineCommandService],
+    providers: [
+        CommandApi,
+        TimelineCommandApi,
+        TimelineCommandService,
+        ProgressVisualizationsDataService,
+        ProgressVisualizationApi
+    ],
     styleUrls: ['./dashboard.component.css'],
 })
 export class DashboardComponent implements OnInit {
@@ -61,7 +71,7 @@ export class DashboardComponent implements OnInit {
     selectedTraineeView: TraineeViewEnum = TraineeViewEnum.Avatar;
     visualizationData$: Observable<ProgressVisualizationData>;
     private visualizationDataService = inject(
-        ProgressVisualizationsDataService
+        ProgressVisualizationsDataService,
     );
     private ref = inject(ChangeDetectorRef);
     private highlightedTraineeSubject$: BehaviorSubject<number> =
@@ -85,16 +95,12 @@ export class DashboardComponent implements OnInit {
     hurdlingSelectedTrainees$: Observable<number[]> =
         this.hurdlingSelectedTraineesSubject$.asObservable();
     private activeFiltersSubject$: BehaviorSubject<any[]> = new BehaviorSubject(
-        []
+        [],
     );
     activeFilters$: Observable<any[]> =
         this.activeFiltersSubject$.asObservable();
-    private d3: D3;
 
     constructor() {
-        const d3service = inject(D3Service);
-
-        this.d3 = d3service.getD3();
     }
 
     ngOnInit(): void {
@@ -162,11 +168,11 @@ export class DashboardComponent implements OnInit {
      */
     traineeFilterChange(selectedTrainees: ProgressTraineeInfo[]): void {
         this.lineTraineesSubject$.next(
-            this.updateLineTrainees(selectedTrainees)
+            this.updateLineTrainees(selectedTrainees),
         );
         this.hurdlingTraineesSubject$.next(selectedTrainees);
         this.filteredTraineesSubject$.next(
-            selectedTrainees.map((trainee) => trainee.trainingRunId)
+            selectedTrainees.map((trainee) => trainee.trainingRunId),
         );
     }
 
@@ -198,7 +204,7 @@ export class DashboardComponent implements OnInit {
 
     private updateLineTrainees(trainees: ProgressTraineeInfo[]): number[] {
         const gridSelected: number[] = trainees.map(
-            (trainee) => trainee.trainingRunId
+            (trainee) => trainee.trainingRunId,
         );
         return this.hurdlingSelectedTraineesSubject$
             .getValue()

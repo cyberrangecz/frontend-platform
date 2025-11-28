@@ -1,6 +1,6 @@
 import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { TrainingInstance } from '@crczp/training-model';
+import { TrainingInstance, TrainingRun } from '@crczp/training-model';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MistakeComponent } from '@crczp/components';
 
@@ -18,6 +18,6 @@ export class CommandAnalysisWrapperComponent implements OnInit {
     ngOnInit(): void {
         this.activeRoute.parent.data
             .pipe(takeUntilDestroyed(this.destroyRef))
-            .subscribe((data) => (this.trainingRun = data.trainingRun));
+            .subscribe((data) => (this.trainingRun = data[TrainingRun.name]))
     }
 }
