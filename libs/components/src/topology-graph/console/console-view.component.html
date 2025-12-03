@@ -1,7 +1,11 @@
 <div
     #guacWrapper
+    (focusin)="lockKeyboard()"
+    (focusout)="unlockKeyboard()"
+    [ngClass]="{'guacamole-wrapper--unfocused': !this.keyboardLocked()}"
     [ngStyle]="buildWrapperStyle()"
     class="guacamole-wrapper wh-100"
+    tabindex="0"
 >
     <div #guacContainer></div>
 

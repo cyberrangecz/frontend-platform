@@ -42,6 +42,7 @@ export class ConsoleView implements AfterViewInit, OnDestroy {
     connectionParams = input.required<ConnectionParams>();
     tunnelStateCode = signal<GuacamoleTunnelState>('INVALID');
     clientStateCode = signal<GuacamoleClientState>('INVALID');
+    protected readonly keyboardLocked = signal(false);
     private readonly PADDING_NO_GUI = 12;
     private readonly authService = inject(OAuthService);
     private guacClient: Guacamole.Client | null = null;
@@ -55,6 +56,8 @@ export class ConsoleView implements AfterViewInit, OnDestroy {
     private INITIAL_RESOLUTION_COEFFICIENT = 1;
     private currentScale = signal<number>(1);
     private readonly platformConfig = inject(PortalConfig);
+    private keydownHandler: ((e: KeyboardEvent) => void) | null = null;
+    private keyupHandler: ((e: KeyboardEvent) => void) | null = null;
 
     ngAfterViewInit(): void {
         this.connectGuacamole();
@@ -116,6 +119,30 @@ export class ConsoleView implements AfterViewInit, OnDestroy {
                   }
                 : {}),
         };
+    }
+
+    protected lockKeyboard() {
+        if (this.keyboardLocked()) return;
+        this.keyboardLocked.set(true);
+
+        if (this.keydownHandler && this.keyupHandler) {
+            document.addEventListener('keydown', this.keydownHandler, {
+                passive: false,
+            });
+            document.addEventListener('keyup', this.keyupHandler, {
+                passive: false,
+            });
+        }
+    }
+
+    protected unlockKeyboard() {
+        if (!this.keyboardLocked()) return;
+        this.keyboardLocked.set(false);
+
+        if (this.keydownHandler && this.keyupHandler) {
+            document.removeEventListener('keydown', this.keydownHandler);
+            document.removeEventListener('keyup', this.keyupHandler);
+        }
     }
 
     private get_keysym(
@@ -248,20 +275,25 @@ export class ConsoleView implements AfterViewInit, OnDestroy {
     }
 
     private connectGuacamole() {
-        const wssPath = this.platformConfig.basePaths.guacamole.startsWith('https://')
+        const wssPath = this.platformConfig.basePaths.guacamole.startsWith(
+            'https://',
+        )
             ? this.platformConfig.basePaths.guacamole.replace(
                   'https://',
                   'wss://',
               )
             : this.platformConfig.basePaths.guacamole.startsWith('http://')
-            ? this.platformConfig.basePaths.guacamole.replace(
-                  'http://',
-                  'ws://',
-              )
-            : this.platformConfig.basePaths.guacamole;
+              ? this.platformConfig.basePaths.guacamole.replace(
+                    'http://',
+                    'ws://',
+                )
+              : this.platformConfig.basePaths.guacamole;
 
-        if(!wssPath.startsWith('ws://') && !wssPath.startsWith('wss://')) {
-            console.error('Failed to derive WebSocket path from Guacamole base path:', this.platformConfig.basePaths.guacamole);
+        if (!wssPath.startsWith('ws://') && !wssPath.startsWith('wss://')) {
+            console.error(
+                'Failed to derive WebSocket path from Guacamole base path:',
+                this.platformConfig.basePaths.guacamole,
+            );
             return;
         }
 
@@ -280,7 +312,7 @@ export class ConsoleView implements AfterViewInit, OnDestroy {
 
         this.setupClipboardReceiver();
 
-        const keydownHandler = (e: KeyboardEvent) => {
+        this.keydownHandler = (e: KeyboardEvent) => {
             e.preventDefault();
             const keysym =
                 this.keysym_from_key_identifier(e.key, e.location) ||
@@ -289,7 +321,7 @@ export class ConsoleView implements AfterViewInit, OnDestroy {
                 this.guacClient?.sendKeyEvent(1, keysym);
             }
         };
-        const keyupHandler = (e: KeyboardEvent) => {
+        this.keyupHandler = (e: KeyboardEvent) => {
             e.preventDefault();
             const keysym =
                 this.keysym_from_key_identifier(e.key, e.location) ||
@@ -298,16 +330,17 @@ export class ConsoleView implements AfterViewInit, OnDestroy {
                 this.guacClient?.sendKeyEvent(0, keysym);
             }
         };
-        document.addEventListener('keydown', keydownHandler, {
-            passive: false,
+
+        this.listeners.push(() => {
+            if (this.keydownHandler) {
+                document.removeEventListener('keydown', this.keydownHandler);
+            }
         });
-        document.addEventListener('keyup', keyupHandler, { passive: false });
-        this.listeners.push(() =>
-            document.removeEventListener('keydown', keydownHandler),
-        );
-        this.listeners.push(() =>
-            document.removeEventListener('keyup', keyupHandler),
-        );
+        this.listeners.push(() => {
+            if (this.keyupHandler) {
+                document.removeEventListener('keyup', this.keyupHandler);
+            }
+        });
 
         this.guacMouse = new Guacamole.Mouse(this.guacContainer.nativeElement);
 
@@ -337,7 +370,7 @@ export class ConsoleView implements AfterViewInit, OnDestroy {
 
                 const display = this.guacClient?.getDisplay();
                 if (display) {
-                    display.onresize = (width: number, height: number) => {
+                    display.onresize = (_width: number, _height: number) => {
                         this.handleResize();
                     };
 
@@ -345,6 +378,8 @@ export class ConsoleView implements AfterViewInit, OnDestroy {
                 }
 
                 this.handleResize();
+
+                this.guacWrapper.nativeElement.focus();
             }
         };
 
