@@ -9,4 +9,8 @@
     padding: 0;
     box-sizing: border-box;
     box-shadow: 0 0 5px 10px rgba(0, 0, 0, 0.5);
+
+    &--unfocused {
+        filter: brightness(0.8);
+    }
 }
