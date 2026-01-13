@@ -1,9 +1,9 @@
 import {
     Component,
-    EventEmitter,
-    Input,
+    input,
     OnChanges,
-    Output,
+    output,
+    signal,
     SimpleChanges,
 } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
@@ -17,6 +17,10 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { Utils } from '@crczp/utils';
+import { XScaleRestriction } from '../visualizations/progress/progress.component';
+
+
+export type RestrictionEvent = { type: string; value: number };
 
 @Component({
     selector: 'crczp-viz-hurdling-settings',
@@ -35,40 +39,48 @@ import { Utils } from '@crczp/utils';
     ],
 })
 export class HurdlingConfigComponent implements OnChanges {
-    @Input() maximumTime = 100;
-    @Input() timelineStepSize = 10;
-    @Output() scaleRestrictionEvent = new EventEmitter<any>();
-    @Output() restrictByTrainees = new EventEmitter<boolean>();
-    @Output() restrictToTimeline = new EventEmitter<boolean>();
+    maximumTime = input<number>(100);
+    timelineStepSize = input<number>(10);
 
-    public customRestrictedXScale = {
+    scaleRestrictionEvent = output<RestrictionEvent>();
+    restrictByTrainees = output<boolean>();
+    restrictToTimeline = output<boolean>();
+
+    public customRestrictedXScale: XScaleRestriction = {
         min: 0,
         max: 100,
         minRestriction: 0,
         maxRestriction: 0,
     };
-    public panelOpenState = false;
-    public restrictToCustomTimelines = false;
-    public restrictToVisibleTrainees = false;
+
+    public panelOpenState = signal<boolean>(false);
+    public restrictToCustomTimelines = signal<boolean>(false);
+    public restrictToVisibleTrainees = signal<boolean>(false);
 
     formatTime(seconds: number) {
         return Utils.Date.formatDurationSimple(seconds);
     }
 
     restrictTrainees() {
-        this.restrictToVisibleTrainees = !this.restrictToVisibleTrainees;
-        this.restrictByTrainees.emit(this.restrictToVisibleTrainees);
+        this.restrictToVisibleTrainees.update((value) => !value);
+        this.restrictByTrainees.emit(this.restrictToVisibleTrainees());
     }
 
     restrictCustom() {
-        this.restrictToCustomTimelines = !this.restrictToCustomTimelines;
-        this.restrictToTimeline.emit(this.restrictToCustomTimelines);
+        this.restrictToCustomTimelines.update((value) => !value);
+        this.restrictToTimeline.emit(this.restrictToCustomTimelines());
     }
 
     ngOnChanges(changes: SimpleChanges) {
+        console.group('settings.component - ngOnChanges');
         if (changes['maximumTime']) {
-            this.customRestrictedXScale.max = this.maximumTime;
+            this.customRestrictedXScale.max = this.maximumTime();
+            console.log('maximumTime changed:', this.maximumTime);
         }
+        if (changes['timelineStepSize']) {
+            console.log('timelineStepSize changed:', this.timelineStepSize);
+        }
+        console.groupEnd();
     }
 
     updateVisibleTimeline(event: any, type: string) {
@@ -87,7 +99,7 @@ export class HurdlingConfigComponent implements OnChanges {
                 break;
             case 'max':
                 restriction.value = Number.parseInt(
-                    (this.customRestrictedXScale.max - value).toFixed()
+                    (this.customRestrictedXScale.max - value).toFixed(),
                 );
                 break;
         }

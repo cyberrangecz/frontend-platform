@@ -22,4 +22,25 @@ export abstract class Phase {
             (this as unknown as QuestionnairePhase).questions !== undefined
         );
     }
+
+    static getIconByType(type: AbstractPhaseTypeEnum): string {
+        switch (type) {
+            case AbstractPhaseTypeEnum.Info:
+                return 'info';
+            case AbstractPhaseTypeEnum.Training:
+                return 'transform';
+            case AbstractPhaseTypeEnum.Access:
+                return 'settings';
+            case AbstractPhaseTypeEnum.Task:
+                return 'videogame_asset';
+            case AbstractPhaseTypeEnum.Questionnaire:
+                return 'help';
+            default:
+                return 'error';
+        }
+    }
+
+    getIcon(): string {
+        return Phase.getIconByType(this.type);
+    }
 }

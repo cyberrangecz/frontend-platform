@@ -1,0 +1,38 @@
+.avatar-wrapper {
+    width: 100%;
+    height: 100%;
+    padding: 4px;
+    border-radius: 0.75rem;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+
+    &--warning {
+        background: color-mix(in srgb, var(--warning-80) 40%, var(--neutral-98));
+    }
+}
+
+.warning-icon {
+    position: absolute;
+    bottom: 4px;
+    right: 3px;
+    background-color: var(--neutral-98);
+    border-radius: 50%;
+    padding: 2px;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
+}
+
+.user-picture-wrapper {
+    position: relative;
+}
+
+.user-picture {
+    background-color: var(--neutral-98);
+    border-radius: 0.75rem;
+}
+
+.user-name {
+    text-align: center;
+    overflow-wrap: anywhere;
+    text-overflow: ellipsis;
+    font-weight: 500;
+    font-size: 18px;
+}

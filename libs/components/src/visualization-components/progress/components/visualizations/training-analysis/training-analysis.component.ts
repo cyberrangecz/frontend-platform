@@ -1,16 +1,16 @@
 import {
     AfterViewInit,
     Component,
-    EventEmitter,
+    computed,
     inject,
-    Input,
+    input,
     OnChanges,
-    OnDestroy,
-    Output,
+    output,
+    signal,
     ViewEncapsulation,
 } from '@angular/core';
 import { PROGRESS_CONFIG } from '../../../progress-config';
-import { DisplayView, TraineeViewEnum, ViewEnum } from '../../types';
+import { TraineeViewEnum, ViewEnum } from '../../types';
 import {
     HintTakenEvent,
     PlanDataEntry,
@@ -30,7 +30,6 @@ import { TrainingAnalysisEventService } from './training-analysis-event-service'
 import { BaseConfig, Padding } from '../../../base-config';
 import { D3, D3Service } from '../../../../common/d3-service/d3-service';
 import { Axis, ScaleBand, ScaleLinear } from 'd3';
-import { Subscription } from 'rxjs';
 import { PlanConfig, PlanData } from '../../../plan-config';
 import { FilteringService } from '../../../services/filtering.service';
 import { ProgressConfigService } from '../../../services/progress-config.service';
@@ -60,93 +59,8 @@ import { Utils } from '@crczp/utils';
         FormsModule,
     ],
 })
-export class TrainingAnalysisComponent
-    implements OnChanges, OnDestroy, AfterViewInit
-{
-    @Input() visualizationData: ProgressVisualizationData;
-    @Input() view = PROGRESS_CONFIG.defaultView;
-    @Input() selectedTraineeView: TraineeViewEnum = TraineeViewEnum.Both;
-    @Input() colorScheme: string[];
-    @Input() eventService: TrainingAnalysisEventService;
-    @Input() setDashboardView = false;
-    @Input() externalFilters: {
-        hintFilter: { checked: boolean };
-        wrongAnswerFilter: { checked: boolean };
-        skipFilter: { checked: boolean };
-    };
-    @Input() trainingColors = PROGRESS_CONFIG.trainingColors;
-    @Input() traineeColorScheme: string[];
-    @Input() trainingInstanceId: number;
-    @Input() selectedTrainees: ProgressTraineeInfo[];
-    @Output() outputSelectedTrainees = new EventEmitter<number[]>();
-    @Output() highlightedTrainee = new EventEmitter<number>();
-    public xScale: ScaleLinear<number, number>;
-    public time = 0;
-    public startTime = 0;
-    public participants;
-    public filterStatus = '';
-    public sortType = 'name';
-    public sortReverse = false;
-    public sortLevel = 0;
-    public levelSortOptions: any[] = [];
-    public viewOptions: DisplayView[] = PROGRESS_CONFIG.viewOptions;
-    public filterOptions: DisplayView[] = PROGRESS_CONFIG.filterOptions;
-    public selectedFilterValue = 1;
-    public columns: string[] = ['time', 'score', 'hints', 'answers'];
-    public columnInfo = {
-        name: 80,
-        progress: 80,
-        time: 80,
-        score: 80,
-        hints: 80,
-        answers: 80,
-    };
-    public hasData;
-    public errorMessage: string = null;
-    public runsToCompare: Array<{ id: string; avatar: string }> = [];
-    public filteredTrainees: ProgressTraineeInfo[];
-    public traineeDetailId: number;
-    private sortingService = inject(SortingService);
-    private filteringService = inject(FilteringService);
-    private configService = inject(ProgressConfigService);
-    private wrapperWidth: number;
-    private wrapperHeight: number;
-    private width: number;
-    private height: number;
-    private padding: Padding;
-    private bounds: any;
-    private outerWrapper;
-    private readonly d3: D3;
-    private chart;
-    private plan;
-    private planDomain: number;
-    private trainingDomain: number;
-    private fullTime: number;
-    private trainingChartWrapper;
-    private trainingChart;
-    private yScale: ScaleBand<string>;
-    private xAxis: Axis<number | { valueOf(): number }>;
-    private planSegments;
-    private boundSegments;
-    private tooltip;
-    private trainingDataSet: TrainingDataEntry[] = [];
-    private planDataSet: object[] = [];
-    private levels: ProgressLevelInfo[];
-    private levelKeys: string[] = [];
-    private levelsTimePlan: number[];
-    private _activeDataSubscribtion: Subscription;
-    private _updateVisSubscribtion: Subscription;
-    private currentTime: number;
-    private filterSubscription: Subscription;
-    private highlightSubscription: Subscription;
-    private levelSorted: ProgressLevelInfo;
-    private selectedTraineeIds: number[] = [];
-    private approxFontWidth = 10;
-    // zooming
-    private panValue = 0;
-    private overviewZoomValue = 1;
-    private zoomValue = 1;
-    private dataColumns = {
+export class TrainingAnalysisComponent implements OnChanges, AfterViewInit {
+    private static readonly DATA_COLUMN_MAPPING = {
         team: 'ctf-progress-teamcolumn',
         time: 'ctf-progress-timecolumn',
         score: 'ctf-progress-scorecolumn',
@@ -154,24 +68,105 @@ export class TrainingAnalysisComponent
         answers: 'ctf-progress-answerscolumn',
         compare: 'ctf-progress-comparecolumn',
     };
+    private static readonly FONT_WIDTH_APPROXIMATION = 10;
+    // Inputs
+    readonly visualizationData = input.required<ProgressVisualizationData>();
+    readonly trainingInstanceId = input.required<number>();
+    readonly selectedTrainees = input<ProgressTraineeInfo[]>([]);
+    readonly view = input<ViewEnum>(PROGRESS_CONFIG.defaultView);
+    readonly selectedTraineeView = input<TraineeViewEnum>(TraineeViewEnum.Both);
+    readonly colorScheme = input<string[]>(undefined);
+    readonly eventService = input<TrainingAnalysisEventService>();
+    readonly setDashboardView = input<boolean>(false);
+    readonly trainingColors = input<string[]>(PROGRESS_CONFIG.trainingColors);
+    readonly traineeColorScheme = input<string[]>(
+        PROGRESS_CONFIG.traineeColors,
+    );
+    // Outputs
+    readonly outputSelectedTrainees = output<number[]>();
+    readonly highlightedTrainee = output<number>();
+    // Constants
+    protected readonly COLUMNS: string[] = [
+        'time',
+        'score',
+        'hints',
+        'answers',
+    ];
+    // Signals
+    protected readonly filteredTrainees = signal<ProgressTraineeInfo[]>([]);
+    protected errorMessage = signal<string | null>(null);
+    protected traineeDetailId = signal<number | null>(null);
+
+    // Computed signals
+    protected readonly time = computed(() => this.getTime());
+    protected readonly startTime = computed(() =>
+        this.getFirstEventTimestamp(),
+    );
+    // Properties
+    protected filterStatus = '';
+    protected sortType = 'name';
+    protected sortReverse = false;
+    protected sortLevel = 0;
+    protected levelSortOptions: any[] = [];
+    protected selectedFilterValue = 1;
+    protected hasData = false;
+    protected runsToCompare: Array<{ id: string; avatar: string }> = [];
+    protected readonly PROGRESS_CONFIG = PROGRESS_CONFIG;
+    // Services
+    private readonly sortingService = inject(SortingService);
+    private readonly filteringService = inject(FilteringService);
+    private readonly configService = inject(ProgressConfigService);
+    private readonly d3: D3 = inject(D3Service).getD3();
+    private wrapperWidth: number;
+    private wrapperHeight: number;
+    private width: number;
+    private height: number;
+    private padding: Padding;
+    private bounds: any;
+    private fullTime: number;
+    private trainingDataSet: TrainingDataEntry[] = [];
+    private levelKeys: string[] = [];
+    private levelsTimePlan: number[];
+    private selectedTraineeIds: number[] = [];
+    // domains
+    private planDomain: number;
+    private trainingDomain: number;
+    // references to svg elements
+    private readonly elementRefs: {
+        outerWrapper: any;
+        chart: any;
+        plan: any;
+        planSegments: any;
+        tooltip: any;
+        trainingChartWrapper: any;
+        trainingChart: any;
+        boundSegments: any;
+        yScale: ScaleBand<string>;
+        xScale: ScaleLinear<number, number>;
+        xAxis: Axis<number | { valueOf(): number }>;
+    } = {
+        outerWrapper: null,
+        chart: null,
+        plan: null,
+        planSegments: null,
+        tooltip: null,
+        trainingChartWrapper: null,
+        trainingChart: null,
+        boundSegments: null,
+        xScale: null,
+        yScale: null,
+        xAxis: null,
+    };
+    // zooming
+    private panValue = 0;
+    private overviewZoomValue = 1;
+    private zoomValue = 1;
     private trainingData: TrainingData;
     private planData: PlanData;
 
-    constructor() {
-        const d3Service = inject(D3Service);
-
-        this.d3 = d3Service.getD3();
-    }
-
     ngOnChanges(): void {
-        this.configService.trainingColors = this.trainingColors;
-        this.setData();
-    }
-
-    checkIfActive(trainee: ProgressTraineeInfo): boolean {
-        return !!this.visualizationData.traineeProgress.find(
-            (traineeProgress) => traineeProgress.userRefId == trainee.userRefId
-        );
+        this.configService.trainingColors = this.trainingColors();
+        this.drawChart();
     }
 
     ngAfterViewInit(): void {
@@ -182,38 +177,34 @@ export class TrainingAnalysisComponent
     }
 
     setData() {
-        this.startTime = this.getFirstEventTimestamp();
-        this.time = this.getTime();
-        this.currentTime = this.time;
-        this.levels = this.visualizationData.levels;
         this.trainingDataSet = this.populateTrainingDataset();
         this.levelsTimePlan = this.getLevelsTimePlan();
         this.levelKeys = this.getLevelKeys();
-        this.planDataSet = this.getUpdatedPlanDataSet(this.trainingDataSet);
-        this.participants = this.visualizationData.trainees;
         this.drawChart();
     }
 
     getTime(): number {
         const allFinished =
-            this.visualizationData.traineeProgress
-                .map((traineeProgress) => traineeProgress.levels)
+            this.visualizationData()
+                .traineeProgress.map(
+                    (traineeProgress) => traineeProgress.levels,
+                )
                 .reduce((accumulator, value) => accumulator.concat(value), [])
                 .map((levels) => levels.events)
                 .reduce((accumulator, value) => accumulator.concat(value), [])
                 .filter((event) => event instanceof TrainingRunEndedEvent)
-                .length == this.visualizationData.traineeProgress.length;
+                .length == this.visualizationData().traineeProgress.length;
 
         if (allFinished) {
-            return this.getLatestEventTimestamp() - this.startTime;
+            return this.getLatestEventTimestamp() - this.startTime();
         } else {
-            return this.visualizationData.currentTime - this.startTime;
+            return this.visualizationData().currentTime - this.startTime();
         }
     }
 
     getLatestEventTimestamp(): number {
-        return this.visualizationData.traineeProgress
-            .map((traineeProgress) => traineeProgress.levels)
+        return this.visualizationData()
+            .traineeProgress.map((traineeProgress) => traineeProgress.levels)
             .reduce((accumulator, value) => accumulator.concat(value), [])
             .map((levels) => levels.events)
             .reduce((accumulator, value) => accumulator.concat(value), [])
@@ -223,8 +214,8 @@ export class TrainingAnalysisComponent
     }
 
     getFirstEventTimestamp(): number {
-        return this.visualizationData.traineeProgress
-            .map((traineeProgress) => traineeProgress.levels)
+        return this.visualizationData()
+            .traineeProgress.map((traineeProgress) => traineeProgress.levels)
             .reduce((accumulator, value) => accumulator.concat(value), [])
             .map((levels) => levels.events)
             .reduce((accumulator, value) => accumulator.concat(value), [])
@@ -235,40 +226,40 @@ export class TrainingAnalysisComponent
 
     populateTrainingDataset(): TrainingDataEntry[] {
         const trainingDataSet = [];
-        this.visualizationData.traineeProgress.forEach((traineeProgress) => {
+        this.visualizationData().traineeProgress.forEach((traineeProgress) => {
             const trainingDataEntry = new TrainingDataEntry();
             trainingDataEntry.trainingRunId = traineeProgress.trainingRunId;
             trainingDataEntry.traineeId = traineeProgress.userRefId;
             trainingDataEntry.traineeName = this.getTraineeData(
-                traineeProgress.userRefId
+                traineeProgress.userRefId,
             ).name;
             trainingDataEntry.traineeAvatar = this.getTraineeData(
-                traineeProgress.userRefId
+                traineeProgress.userRefId,
             ).picture;
             trainingDataEntry.teamIndex = this.getTraineeData(
-                traineeProgress.userRefId
+                traineeProgress.userRefId,
             ).teamIndex;
             trainingDataEntry.hints = this.getHintsForTrainee(
-                traineeProgress.userRefId
+                traineeProgress.userRefId,
             );
             trainingDataEntry.score = this.getScoreForTrainee(
-                traineeProgress.userRefId
+                traineeProgress.userRefId,
             );
             trainingDataEntry.answers = this.getAnswersForTrainee(
-                traineeProgress.userRefId
+                traineeProgress.userRefId,
             );
             trainingDataEntry.events = this.getEventsForTrainee(
-                traineeProgress.userRefId
+                traineeProgress.userRefId,
             );
             trainingDataEntry.totalTime = this.getTotalTime(
-                traineeProgress.userRefId
+                traineeProgress.userRefId,
             );
             trainingDataEntry.currentState = this.getStateForTrainee(
-                traineeProgress.userRefId
+                traineeProgress.userRefId,
             );
             trainingDataEntry['start'] =
                 this.getFirstLevelTimestamp(traineeProgress.userRefId) -
-                this.startTime;
+                this.startTime();
             traineeProgress.levels.forEach((level, index = 1) => {
                 if (level.state == 'FINISHED') {
                     trainingDataEntry['level' + (index + 1)] =
@@ -294,16 +285,16 @@ export class TrainingAnalysisComponent
 
     getStateForTrainee(traineeId: number): string {
         const levelsFinishedCount = this.getProgressLevelVisualizationDatas(
-            traineeId
+            traineeId,
         ).filter((traineeLevel) => traineeLevel.state == 'FINISHED').length;
-        return levelsFinishedCount == this.levels.length
+        return levelsFinishedCount == this.visualizationData().levels.length
             ? 'FINISHED'
             : 'level' + (levelsFinishedCount + 1);
     }
 
     getTotalTime(traineeId: number): number {
         const traineeStartTime =
-            this.getFirstLevelTimestamp(traineeId) - this.startTime;
+            this.getFirstLevelTimestamp(traineeId) - this.startTime();
         if (this.getStateForTrainee(traineeId) == 'FINISHED') {
             const traineeLevels =
                 this.getProgressLevelVisualizationDatas(traineeId);
@@ -312,11 +303,11 @@ export class TrainingAnalysisComponent
                     .trainingTime -
                 traineeStartTime +
                 this.trainingDataSet.find(
-                    (trainee) => trainee.traineeId == traineeId
+                    (trainee) => trainee.traineeId == traineeId,
                 )?.start
             );
         }
-        return this.currentTime - traineeStartTime;
+        return this.visualizationData().currentTime - traineeStartTime;
     }
 
     getHintsForTrainee(traineeId: number) {
@@ -346,31 +337,36 @@ export class TrainingAnalysisComponent
     }
 
     getLevelNumber(levelId: number) {
-        return this.levels.find((level) => level.id === levelId).order + 1;
+        return (
+            this.visualizationData().levels.find(
+                (level) => level.id === levelId,
+            ).order + 1
+        );
     }
 
     getProgressLevelVisualizationDatas(
-        traineeId: number
+        traineeId: number,
     ): ProgressLevelVisualizationData[] {
-        return this.visualizationData.traineeProgress.find(
-            (trainee) => trainee.userRefId == traineeId
+        return this.visualizationData().traineeProgress.find(
+            (trainee) => trainee.userRefId == traineeId,
         ).levels;
     }
 
     getTraineeData(traineeId: number) {
-        return this.visualizationData.trainees.find(
-            (trainee) => trainee.userRefId == traineeId
+        return this.visualizationData().trainees.find(
+            (trainee) => trainee.userRefId == traineeId,
         );
     }
 
     getLevelsTimePlan() {
-        return this.visualizationData.levels.map((level: ProgressLevelInfo) =>
-            level.estimatedDuration > 0 ? level.estimatedDuration * 60 : 60
+        return this.visualizationData().levels.map(
+            (level: ProgressLevelInfo) =>
+                level.estimatedDuration > 0 ? level.estimatedDuration * 60 : 60,
         );
     }
 
     setFilteredTrainees(trainees: ProgressTraineeInfo[]) {
-        this.filteredTrainees = trainees;
+        this.filteredTrainees.set(trainees);
         this.drawChart();
     }
 
@@ -387,9 +383,10 @@ export class TrainingAnalysisComponent
                 // but we don't want the zooming to be extreme
                 Math.min(
                     PROGRESS_CONFIG.maxZoomValue,
-                    this.xScale(this.planDomain) / this.xScale(this.time)
+                    this.elementRefs.xScale(this.planDomain) /
+                        this.elementRefs.xScale(this.time()),
                 ),
-                1
+                1,
             );
             this.zoomValue = this.overviewZoomValue;
         }
@@ -398,7 +395,7 @@ export class TrainingAnalysisComponent
     getPreparedData(): PreparedData {
         const filteredTrainingDataSet = this.filteringService.filter(
             this.trainingDataSet,
-            this.selectedFilterValue
+            this.selectedFilterValue,
         );
 
         let sortedTrainingDataSet = this.sortingService.sort(
@@ -406,36 +403,36 @@ export class TrainingAnalysisComponent
             this.sortReverse,
             this.sortType,
             this.sortLevel,
-            this.levels
+            this.visualizationData().levels,
         );
         let sortedPlanDataSet = this.getUpdatedPlanDataSet(
-            sortedTrainingDataSet
+            sortedTrainingDataSet,
         );
 
         // filter out the trainees from trainee selection component
-        if (this.selectedTrainees) {
+        if (this.selectedTrainees()) {
             sortedTrainingDataSet = sortedTrainingDataSet.filter((data) =>
-                this.selectedTrainees.find(
-                    (trainee) => trainee.userRefId === data.traineeId
-                )
+                this.selectedTrainees().find(
+                    (trainee) => trainee.userRefId === data.traineeId,
+                ),
             );
             sortedPlanDataSet = sortedPlanDataSet.filter((data) =>
-                this.selectedTrainees.find(
-                    (trainee) => trainee.userRefId === data.traineeId
-                )
+                this.selectedTrainees().find(
+                    (trainee) => trainee.userRefId === data.traineeId,
+                ),
             );
-        } else if (!this.selectedTrainees && this.filteredTrainees) {
+        } else if (!this.selectedTrainees() && this.filteredTrainees()) {
             sortedTrainingDataSet = sortedTrainingDataSet.filter(
                 (dataRow) =>
-                    this.filteredTrainees.find(
-                        (trainee) => trainee.name === dataRow.traineeName
-                    ) !== undefined
+                    this.filteredTrainees().find(
+                        (trainee) => trainee.name === dataRow.traineeName,
+                    ) !== undefined,
             );
             sortedPlanDataSet = sortedPlanDataSet.filter(
                 (dataRow) =>
-                    this.filteredTrainees.find(
-                        (trainee) => trainee.name === dataRow.traineeName
-                    ) !== undefined
+                    this.filteredTrainees().find(
+                        (trainee) => trainee.name === dataRow.traineeName,
+                    ) !== undefined,
             );
         }
         return {
@@ -452,7 +449,7 @@ export class TrainingAnalysisComponent
             planDataEntry.traineeName = d.traineeName;
             planDataEntry.traineeId = d.traineeId;
             planDataEntry['start'] = 0;
-            this.levels.forEach((level, index) => {
+            this.visualizationData().levels.forEach((level, index) => {
                 planDataEntry['level' + (level.order + 1)] =
                     this.levelsTimePlan[index];
             });
@@ -471,13 +468,13 @@ export class TrainingAnalysisComponent
         this.hasData = true;
 
         this.trainingData = {
-            time: this.time,
-            levels: this.levels,
+            time: this.time(),
+            levels: this.visualizationData().levels,
             keys: this.levelKeys,
             teams: trainingDataSet,
         };
 
-        this.planData = {
+        const planData = {
             keys: this.levelKeys,
             teams: planDataSet,
         };
@@ -487,7 +484,7 @@ export class TrainingAnalysisComponent
         const estimatedTime = this.getEstimatedTime();
         this.fullTime = this.trainingData.time;
         this.drawChartBase({
-            data: this.planData,
+            data: planData,
             element: 'ctf-progress-chart',
             outerWrapperElement: 'ctf-progress-wrapper',
             time: 0,
@@ -501,7 +498,7 @@ export class TrainingAnalysisComponent
         });
 
         this.drawPlan({
-            data: this.planData,
+            data: planData,
             time: 0,
             estimatedTime: estimatedTime,
         });
@@ -523,13 +520,13 @@ export class TrainingAnalysisComponent
     getLongestEstimate(): number {
         let longestEstimate = 0;
         const elapsedTime =
-            this.visualizationData.currentTime -
-            this.visualizationData.startTime;
-        this.visualizationData.traineeProgress.forEach((traineeProgress) => {
+            this.visualizationData().currentTime -
+            this.visualizationData().startTime;
+        this.visualizationData().traineeProgress.forEach((traineeProgress) => {
             const remainingTime = traineeProgress.levels
                 .map((traineeLevel, i) => {
                     return traineeLevel.state != 'FINISHED'
-                        ? this.visualizationData.levels[i].estimatedDuration *
+                        ? this.visualizationData().levels[i].estimatedDuration *
                               60
                         : 0;
                 })
@@ -550,28 +547,30 @@ export class TrainingAnalysisComponent
             estimatedTime: number = baseConfig.estimatedTime,
             stack = d3.stack().keys(planData.keys).offset(d3.stackOffsetNone),
             layers = stack(planData.teams);
-        this.time = baseConfig.time;
+        //this.time.set(baseConfig.time);
         this.padding = padding;
 
         // clear wrapper content
         d3.select('#' + element).html('');
-        this.outerWrapper = d3.select('.' + baseConfig.outerWrapperElement);
+        this.elementRefs.outerWrapper = d3.select(
+            '.' + baseConfig.outerWrapperElement,
+        );
         // create svg
         // calculate the height first, width can change when the scrollbar is added
         this.wrapperWidth = Math.max(
             document.getElementById(element)?.getBoundingClientRect().width, // original (standalone) size
-            window.innerWidth - window.innerWidth * 0.37
+            window.innerWidth - window.innerWidth * 0.37,
         ); // get width in the dashboard as a 75% piece of a halfpage
         const maxHeight: number = Math.min(
             this.wrapperWidth * 0.7,
             window.innerHeight - 130,
-            baseConfig.maxBarHeight * planData.teams.length
+            baseConfig.maxBarHeight * planData.teams.length,
         );
         const minHeight: number =
             baseConfig.minBarHeight * planData.teams.length + 80;
         this.wrapperHeight = Math.max(maxHeight, minHeight);
 
-        this.chart = d3
+        this.elementRefs.chart = d3
             .select('#' + element)
             .append('svg')
             .attr('class', 'ctf-progress-chart')
@@ -586,7 +585,7 @@ export class TrainingAnalysisComponent
             estimatedTime,
             d3.max(layers[layers.length - 1], (d: number[]): number => {
                 return d[1];
-            })
+            }),
         );
 
         this.initializeScales(planData);
@@ -602,41 +601,41 @@ export class TrainingAnalysisComponent
         const yDomain = planData.teams.map((d): string => d.traineeName);
 
         const paddingOffset = PROGRESS_CONFIG.finalViewBarPadding;
-        this.xScale = this.d3
+        this.elementRefs.xScale = this.d3
             .scaleLinear()
             .rangeRound([0, this.width - paddingOffset]);
-        this.xScale.domain([0, this.planDomain]);
-        this.yScale = this.d3
+        this.elementRefs.xScale.domain([0, this.planDomain]);
+        this.elementRefs.yScale = this.d3
             .scaleBand()
             .rangeRound([this.height, 0])
             .padding(yScalePadding);
-        this.yScale.domain(yDomain);
+        this.elementRefs.yScale.domain(yDomain);
     }
 
     createAxis(estimatedTime) {
-        this.xAxis = this.d3
-            .axisBottom(this.xScale)
+        this.elementRefs.xAxis = this.d3
+            .axisBottom(this.elementRefs.xScale)
             .tickFormat((d) => this.getXAxisTickFormat(d))
             .tickSize(5)
             .tickValues(
-                this.d3.range(0, estimatedTime, this.getXAxisTickInterval())
+                this.d3.range(0, estimatedTime, this.getXAxisTickInterval()),
             );
 
-        this.trainingChartWrapper = this.chart
+        this.elementRefs.trainingChartWrapper = this.elementRefs.chart
             .append('g')
             .attr('class', 'ctf-training-overview');
-        this.trainingChart = this.trainingChartWrapper
+        this.elementRefs.trainingChart = this.elementRefs.trainingChartWrapper
             .append('g')
             .attr('class', 'ctf-training');
 
         // append x axis
-        this.trainingChart
+        this.elementRefs.trainingChart
             .append('g')
             .attr('class', 'axis axis-x')
             .attr('transform', 'translate(0,' + (this.height + 10) + ')')
-            .call(this.xAxis);
+            .call(this.elementRefs.xAxis);
 
-        this.trainingChart
+        this.elementRefs.trainingChart
             .append('text')
             .attr(
                 'transform',
@@ -644,7 +643,7 @@ export class TrainingAnalysisComponent
                     (this.wrapperWidth / 2) * this.zoomValue +
                     ', ' +
                     this.wrapperHeight +
-                    ')'
+                    ')',
             )
             .style('text-anchor', 'middle')
             .text('Time');
@@ -660,9 +659,9 @@ export class TrainingAnalysisComponent
         let interval: number =
             this.wrapperWidth < 500
                 ? 1800
-                : this.xScale(this.fullTime) < 1000
-                ? 300
-                : 900;
+                : this.elementRefs.xScale(this.fullTime) < 1000
+                  ? 300
+                  : 900;
         if (this.wrapperWidth > 500 && this.wrapperWidth < 1200) {
             interval = 600;
         }
@@ -674,7 +673,9 @@ export class TrainingAnalysisComponent
             planData: PlanData = planConfig.data,
             stack = d3.stack().keys(planData.keys).offset(d3.stackOffsetNone),
             layers = stack(planData.teams);
-        this.plan = this.trainingChart.append('g').attr('class', 'plan');
+        this.elementRefs.plan = this.elementRefs.trainingChart
+            .append('g')
+            .attr('class', 'plan');
 
         this.createPattern(planData);
         this.createStatePatterns();
@@ -684,7 +685,7 @@ export class TrainingAnalysisComponent
     }
 
     createPattern(planData) {
-        const defs = this.plan.append('defs');
+        const defs = this.elementRefs.plan.append('defs');
         const pattern = defs
             .selectAll('pattern')
             .data(planData.keys)
@@ -701,13 +702,13 @@ export class TrainingAnalysisComponent
             .attr('height', '4')
             .attr('transform', 'translate(0,0)')
             .attr('fill', (r: object, i: string): string =>
-                this.getPlanColor(+i)
+                this.getPlanColor(+i),
             )
             .style('opacity', '0.5');
     }
 
     createPlanLayersAndReturnThem(layers) {
-        return this.plan
+        return this.elementRefs.plan
             .selectAll('.plan-layer')
             .data(layers)
             .enter()
@@ -715,7 +716,8 @@ export class TrainingAnalysisComponent
             .attr('class', 'plan-layer')
             .style(
                 'fill',
-                (d: object, i: string): string => 'url(#diagonalHatch' + i + ')'
+                (d: object, i: string): string =>
+                    'url(#diagonalHatch' + i + ')',
             );
     }
 
@@ -723,10 +725,10 @@ export class TrainingAnalysisComponent
         // draw segment (row in column) for each team
         const displayedParticipants = this.filteredTrainees
             ? this.filteredTrainees.length
-            : this.participants.length;
+            : this.visualizationData().trainees.length;
 
         let index = -1;
-        this.planSegments = planLayers
+        this.elementRefs.planSegments = planLayers
             .selectAll('.plan-segment')
             .data((d: object): object => d)
             .enter()
@@ -736,23 +738,27 @@ export class TrainingAnalysisComponent
                     'url(#diagonalHatch-' +
                     this.getSegmentColor(
                         d.data.traineeName,
-                        Math.floor(++index / displayedParticipants)
+                        Math.floor(++index / displayedParticipants),
                     ) +
                     ')'
                 );
             })
-            .attr('y', (d): number => this.yScale(String(d.data.traineeName)))
-            .attr('x', (d): number => this.xScale(d[0]))
-            .attr('height', this.yScale.bandwidth())
+            .attr('y', (d): number =>
+                this.elementRefs.yScale(String(d.data.traineeName)),
+            )
+            .attr('x', (d): number => this.elementRefs.xScale(d[0]))
+            .attr('height', this.elementRefs.yScale.bandwidth())
             .attr(
                 'width',
-                (d): number => this.xScale(d[1]) - this.xScale(d[0])
+                (d): number =>
+                    this.elementRefs.xScale(d[1]) -
+                    this.elementRefs.xScale(d[0]),
             );
     }
 
     getSegmentColor(team: string, levelIndex: number): string {
         const teamData = this.trainingDataSet.find(
-            (data) => data.traineeName === team
+            (data) => data.traineeName === team,
         );
         const estimatedTimeForLevel = this.levelsTimePlan[levelIndex - 1];
         let previousLevelTime = 0;
@@ -763,7 +769,9 @@ export class TrainingAnalysisComponent
         }
 
         const currentLevelTime =
-            this.currentTime - previousLevelTime - teamData.start;
+            this.visualizationData().currentTime -
+            previousLevelTime -
+            teamData.start;
         if (teamData.currentState !== 'level' + levelIndex) {
             return 'gray';
         } else {
@@ -785,7 +793,7 @@ export class TrainingAnalysisComponent
 
     createStatePatterns() {
         const states = ['green', 'orange', 'red', 'gray'];
-        const defs = this.plan.append('defs');
+        const defs = this.elementRefs.plan.append('defs');
         const pattern = defs
             .selectAll('pattern')
             .data(states)
@@ -808,7 +816,9 @@ export class TrainingAnalysisComponent
     createBoundingLines(layers) {
         // draw bounding lines for each team
         const boundWidth = 2;
-        this.bounds = this.trainingChart.append('g').attr('class', 'bounds');
+        this.bounds = this.elementRefs.trainingChart
+            .append('g')
+            .attr('class', 'bounds');
         const boundGroups = this.bounds
             .selectAll('.bounds-layer')
             .data(layers)
@@ -819,16 +829,18 @@ export class TrainingAnalysisComponent
                 return this.getPlanColor(+i);
             });
 
-        this.boundSegments = boundGroups
+        this.elementRefs.boundSegments = boundGroups
             .selectAll('rect.plan-bound')
             .data((d: object): object => d)
             .enter()
             .append('rect')
-            .attr('y', (d): number => this.yScale(String(d.data.traineeName)))
-            .attr('x', (d): string =>
-                (<number>this.xScale(d[1]) - boundWidth).toString()
+            .attr('y', (d): number =>
+                this.elementRefs.yScale(String(d.data.traineeName)),
             )
-            .attr('height', this.yScale.bandwidth())
+            .attr('x', (d): string =>
+                (<number>this.elementRefs.xScale(d[1]) - boundWidth).toString(),
+            )
+            .attr('height', this.elementRefs.yScale.bandwidth())
             .attr('width', boundWidth);
     }
 
@@ -842,17 +854,16 @@ export class TrainingAnalysisComponent
                 .offset(d3.stackOffsetNone),
             layers = stack(trainingData.teams); // !!
 
-        this.time = trainingConfig.time;
         this.trainingDomain = Math.max(
-            this.time,
+            this.time(),
             d3.max(
                 layers[layers.length - 1],
-                (d: number[]): number => d['data'].totalTime
-            )
+                (d: number[]): number => d['data'].totalTime,
+            ),
         );
 
         if (!isNaN(this.trainingDomain)) {
-            this.xScale.domain([
+            this.elementRefs.xScale.domain([
                 0,
                 Math.max(this.planDomain, this.trainingDomain),
             ]);
@@ -894,18 +905,18 @@ export class TrainingAnalysisComponent
     }
 
     updateXAxis() {
-        this.xAxis = this.d3
-            .axisBottom(this.xScale)
+        this.elementRefs.xAxis = this.d3
+            .axisBottom(this.elementRefs.xScale)
             .tickFormat((d) => this.getXAxisTickFormat(d))
             .tickSize(5)
             .tickValues(
-                this.d3.range(0, this.time, this.getXAxisTickInterval())
+                this.d3.range(0, this.time(), this.getXAxisTickInterval()),
             );
-        this.d3.select('.axis.axis-x').call(this.xAxis as any);
+        this.d3.select('.axis.axis-x').call(this.elementRefs.xAxis as any);
     }
 
     createColumnForEachLevel(layers) {
-        const training = this.trainingChart
+        const training = this.elementRefs.trainingChart
             .append('g')
             .attr('class', 'training');
         return training
@@ -918,13 +929,15 @@ export class TrainingAnalysisComponent
     }
 
     createSegmentForEachTeam({ layer, trainingData, layers }) {
-        const xScale: ScaleLinear<number, number> = this.xScale;
+        const xScale: ScaleLinear<number, number> = this.elementRefs.xScale;
         layer
             .selectAll('rect.training-segment')
             .data((d) => d)
             .enter()
             .append('rect')
-            .attr('y', (d): number => this.yScale(d.data.traineeName))
+            .attr('y', (d): number =>
+                this.elementRefs.yScale(d.data.traineeName),
+            )
             .attr('x', (d, i: number): number => {
                 const x: number = d[0];
                 // when sorting by level, align the teams by this level
@@ -949,16 +962,16 @@ export class TrainingAnalysisComponent
                         }
                     }
                     return (
-                        this.xScale(x) +
-                        this.xScale(
-                            trainingData.teams[i].offsets[this.sortLevel]
+                        this.elementRefs.xScale(x) +
+                        this.elementRefs.xScale(
+                            trainingData.teams[i].offsets[this.sortLevel],
                         )
                     );
                 } else {
-                    return this.xScale(x);
+                    return this.elementRefs.xScale(x);
                 }
             })
-            .attr('height', this.yScale.bandwidth())
+            .attr('height', this.elementRefs.yScale.bandwidth())
             .attr('width', (d: object, i: number, nodes) => {
                 const level: any = this.d3.select(nodes[i].parentNode).datum(),
                     levelIndex: number = level.index,
@@ -971,16 +984,16 @@ export class TrainingAnalysisComponent
                 allNodes
                     .classed('preserved', (data: any) =>
                         this.runsToCompare.some(
-                            (run) => run.id === data.data.id
-                        )
+                            (run) => run.id === data.data.id,
+                        ),
                     )
                     .classed(
                         'faded',
                         (data: any) =>
                             this.runsToCompare.length > 0 &&
                             !this.runsToCompare.some(
-                                (run) => run.id === data.data.id
-                            )
+                                (run) => run.id === data.data.id,
+                            ),
                     );
 
                 if (typeof currentLevelData === 'undefined') {
@@ -992,7 +1005,7 @@ export class TrainingAnalysisComponent
                                 'undefined' &&
                             currentState !== 'level' + this.sortLevel
                                 ? 0.3
-                                : 0.5
+                                : 0.5,
                         );
                 }
 
@@ -1007,7 +1020,10 @@ export class TrainingAnalysisComponent
             .on('mouseover', (event, d) => {
                 this.highlightedTrainee.emit(d.data.traineeId);
                 // highlight team on hover
-                this.outerWrapper.classed('ctf-progress-hover', true);
+                this.elementRefs.outerWrapper.classed(
+                    'ctf-progress-hover',
+                    true,
+                );
                 this.d3
                     .selectAll('.data text')
                     .filter((data: any) => data.traineeId === d.data.traineeId)
@@ -1015,10 +1031,10 @@ export class TrainingAnalysisComponent
                 this.d3
                     .selectAll('.training .training-layer rect')
                     .filter(
-                        (data: any) => data.data.traineeId === d.data.traineeId
+                        (data: any) => data.data.traineeId === d.data.traineeId,
                     )
                     .classed('data-hover', true);
-                this.tooltip
+                this.elementRefs.tooltip
                     .transition()
                     .duration(200)
                     .delay(500)
@@ -1028,7 +1044,7 @@ export class TrainingAnalysisComponent
                     .select(event.currentTarget.parentNode)
                     .datum();
                 const thisLevel = this.findLevelByKey(datum.index + 1);
-                this.tooltip
+                this.elementRefs.tooltip
                     .html((): string => {
                         return (
                             '<div>' +
@@ -1036,11 +1052,11 @@ export class TrainingAnalysisComponent
                             (thisLevel.levelType === 'info'
                                 ? 'Info level'
                                 : thisLevel.levelType === 'access'
-                                ? 'Access level'
-                                : thisLevel.levelType === 'assessment'
-                                ? 'Questionnaire level'
-                                : 'ProgressLevelInfo ' +
-                                  this.getTrainingLevelIndex(thisLevel)) +
+                                  ? 'Access level'
+                                  : thisLevel.levelType === 'assessment'
+                                    ? 'Questionnaire level'
+                                    : 'ProgressLevelInfo ' +
+                                      this.getTrainingLevelIndex(thisLevel)) +
                             ' </span>' +
                             '<span>' +
                             thisLevel.title +
@@ -1050,40 +1066,46 @@ export class TrainingAnalysisComponent
                     })
                     .style('left', event.offsetX + 'px')
                     .style('top', event.offsetY + 'px');
-                if (this.eventService) {
-                    this.eventService.trainingAnalysisOnBarMouseover(
-                        d.data.id.toString()
+                if (this.eventService()) {
+                    this.eventService().trainingAnalysisOnBarMouseover(
+                        d.data.id.toString(),
                     );
                 }
             })
             .on('mouseout', (_, d) => {
-                this.tooltip.transition().duration(0).style('opacity', 0);
+                this.elementRefs.tooltip
+                    .transition()
+                    .duration(0)
+                    .style('opacity', 0);
                 // remove team highlighting
                 if (this.runsToCompare.length === 0)
-                    this.outerWrapper.classed('ctf-progress-hover', false);
+                    this.elementRefs.outerWrapper.classed(
+                        'ctf-progress-hover',
+                        false,
+                    );
                 this.d3
                     .selectAll('.data text')
                     .filter(
                         (data: any) =>
                             !this.runsToCompare.some(
-                                (run) => run.id === data.id
-                            )
+                                (run) => run.id === data.id,
+                            ),
                     )
                     .classed('data-hover', false);
                 this.d3
                     .selectAll('.training .training-layer rect')
                     .filter((data: any) => data.data.id === d.data.id)
                     .classed('data-hover', false);
-                if (this.eventService) {
-                    this.eventService.trainingAnalysisOnBarMouseout(
-                        d.data.id.toString()
+                if (this.eventService()) {
+                    this.eventService().trainingAnalysisOnBarMouseout(
+                        d.data.id.toString(),
                     );
                 }
             })
             .on('click', (_, d) => {
                 if (this.runsToCompare.some((run) => run.id === d.data.id)) {
                     this.runsToCompare = this.runsToCompare.filter(
-                        (item) => item.id !== d.data.id
+                        (item) => item.id !== d.data.id,
                     );
                 } else {
                     this.runsToCompare.push({
@@ -1091,9 +1113,9 @@ export class TrainingAnalysisComponent
                         avatar: d.data.traineeAvatar,
                     });
                 }
-                if (this.eventService) {
-                    this.eventService.trainingAnalysisOnBarClick(
-                        d.data.id.toString()
+                if (this.eventService()) {
+                    this.eventService().trainingAnalysisOnBarClick(
+                        d.data.id.toString(),
                     );
                 }
                 if (
@@ -1101,14 +1123,17 @@ export class TrainingAnalysisComponent
                 ) {
                     this.selectedTraineeIds.splice(
                         this.selectedTraineeIds.indexOf(d.data.trainingRunId),
-                        1
+                        1,
                     );
                 } else {
                     this.selectedTraineeIds.push(d.data.trainingRunId);
                 }
                 this.outputSelectedTrainees.emit(this.selectedTraineeIds);
 
-                this.outerWrapper.classed('ctf-progress-hover', true);
+                this.elementRefs.outerWrapper.classed(
+                    'ctf-progress-hover',
+                    true,
+                );
                 this.d3
                     .selectAll('.data text')
                     .filter((data: any) => data.id === d.data.id)
@@ -1117,13 +1142,13 @@ export class TrainingAnalysisComponent
                     .selectAll('.training .training-layer rect')
                     .filter((data: any) => data.data.id === d.data.id)
                     .classed('preserved', (data: any) => {
-                        if (this.view == ViewEnum.Overview) {
+                        if (this.view() == ViewEnum.Overview) {
                             return this.selectedTraineeIds.some(
-                                (run) => run === data.data.trainingRunId
+                                (run) => run === data.data.trainingRunId,
                             );
                         } else {
                             return this.runsToCompare.some(
-                                (run) => run.id === data.data.id
+                                (run) => run.id === data.data.id,
                             );
                         }
                     });
@@ -1148,12 +1173,12 @@ export class TrainingAnalysisComponent
     }
 
     findLevelByKey(levelIndex: number): ProgressLevelInfo {
-        return this.levels[levelIndex - 1];
+        return this.visualizationData().levels[levelIndex - 1];
     }
 
     getTrainingLevelIndex(level: ProgressLevelInfo): number {
-        const trainingLevels = this.levels.filter(
-            (level) => level.levelType == AbstractLevelTypeEnum.Training
+        const trainingLevels = this.visualizationData().levels.filter(
+            (level) => level.levelType == AbstractLevelTypeEnum.Training,
         );
         return trainingLevels.indexOf(level) + 1;
     }
@@ -1161,7 +1186,7 @@ export class TrainingAnalysisComponent
     updatePlan(trainingData: any): void {
         const d3: D3 = this.d3,
             offset: number[] = [],
-            xScale: ScaleLinear<number, number> = this.xScale,
+            xScale: ScaleLinear<number, number> = this.elementRefs.xScale,
             stack = d3
                 .stack()
                 .keys(trainingData.keys)
@@ -1169,8 +1194,8 @@ export class TrainingAnalysisComponent
             layers = stack(trainingData.teams);
 
         // pan plan to top
-        this.plan.raise();
-        this.planSegments
+        this.elementRefs.plan.raise();
+        this.elementRefs.planSegments
             .style('opacity', (d: object, i: number, nodes): number => {
                 const level: any = d3.select(nodes[i].parentNode).datum(),
                     levelIndex: number = level.index,
@@ -1222,10 +1247,10 @@ export class TrainingAnalysisComponent
                     const currentEstimate = d['data'][currentState];
                     if (currentData[0] + currentEstimate > this.time) {
                         return xScale(
-                            Math.max(1, currentData[0] + currentEstimate + num)
+                            Math.max(1, currentData[0] + currentEstimate + num),
                         );
                     }
-                    return xScale(Math.max(1, this.time + num));
+                    return xScale(Math.max(1, this.time() + num));
                 }
                 if (offset[teamIndex] !== undefined) {
                     x = x + offset[teamIndex];
@@ -1236,7 +1261,8 @@ export class TrainingAnalysisComponent
                 'width',
                 (d: object): number =>
                     // rescale to new x domain
-                    this.xScale(d[1]) - this.xScale(d[0])
+                    this.elementRefs.xScale(d[1]) -
+                    this.elementRefs.xScale(d[0]),
             )
             .style('transform', (d: object, i: number): string => {
                 let teamOffset = 0;
@@ -1251,13 +1277,15 @@ export class TrainingAnalysisComponent
             });
 
         // rescale bounds (xScale could change)
-        this.boundSegments.attr('x', (d: object): number => this.xScale(d[1]));
+        this.elementRefs.boundSegments.attr('x', (d: object): number =>
+            this.elementRefs.xScale(d[1]),
+        );
     }
 
     createEventTooltips() {
-        if (typeof this.tooltip !== 'undefined') this.tooltip.remove();
+        if (typeof this.elementRefs.tooltip !== 'undefined') this.elementRefs.tooltip.remove();
 
-        this.tooltip = this.d3
+        this.elementRefs.tooltip = this.d3
             .select('#ctf-progress-chart')
             .append('div')
             .attr('class', 'ctf-progress-tooltip')
@@ -1281,18 +1309,24 @@ export class TrainingAnalysisComponent
 
                 team.events.forEach((event: ProgressEvent, index) => {
                     if (previousEvent != null) {
-                        const levelX: number = this.xScale(
-                                team['level' + event.levelNumber]
+                        const levelX: number = this.elementRefs.xScale(
+                                team['level' + event.levelNumber],
                             ),
-                            eventX: number = this.xScale(event.timestamp),
+                            eventX: number = this.elementRefs.xScale(
+                                event.timestamp,
+                            ),
                             currentEventX: number =
                                 levelX - eventX < eventIconWidth / 2
                                     ? eventX - eventIconWidth / 2
                                     : eventX,
                             previousEventX: number = previousOffset
-                                ? this.xScale(previousEvent.timestamp) +
+                                ? this.elementRefs.xScale(
+                                      previousEvent.timestamp,
+                                  ) +
                                   eventIconWidth / 2
-                                : this.xScale(previousEvent.timestamp),
+                                : this.elementRefs.xScale(
+                                      previousEvent.timestamp,
+                                  ),
                             diff: number = currentEventX - previousEventX;
                         isDuplicated =
                             event.getContent() === previousEvent.getContent() &&
@@ -1313,7 +1347,8 @@ export class TrainingAnalysisComponent
                         }
                     }
                     previousOffset =
-                        this.xScale(event.timestamp) < eventIconWidth / 2;
+                        this.elementRefs.xScale(event.timestamp) <
+                        eventIconWidth / 2;
 
                     // don't push duplicated events
                     if (!isDuplicated) group.events.push(event);
@@ -1327,15 +1362,17 @@ export class TrainingAnalysisComponent
             }
             eventsGroups.forEach((group) => {
                 const events = group.events;
-                const groupLevelX: number = this.xScale(
-                    team['level' + group.level]
+                const groupLevelX: number = this.elementRefs.xScale(
+                    team['level' + group.level],
                 );
                 const firstGroupEvent: ProgressEvent = events[0];
                 const lastGroupEvent: ProgressEvent = events[events.length - 1];
-                const firstX: number = this.xScale(
-                    firstGroupEvent.trainingTime
+                const firstX: number = this.elementRefs.xScale(
+                    firstGroupEvent.trainingTime,
                 );
-                const lastX: number = this.xScale(lastGroupEvent.trainingTime);
+                const lastX: number = this.elementRefs.xScale(
+                    lastGroupEvent.trainingTime,
+                );
                 let x: number;
                 if (firstX === lastX) x = firstX;
                 else x = firstX + (lastX - firstX) / 2;
@@ -1360,7 +1397,7 @@ export class TrainingAnalysisComponent
         eventIconWidth,
     }) {
         const d3 = this.d3;
-        const eventsLayer = this.trainingChart
+        const eventsLayer = this.elementRefs.trainingChart
             .append('g')
             .attr('class', 'events');
         const eventLayers = eventsLayer
@@ -1378,21 +1415,23 @@ export class TrainingAnalysisComponent
                 ) {
                     teamOffset = trainingData.teams[i].offsets[this.sortLevel];
                 }
-                return 'translateX(' + this.xScale(teamOffset) + 'px)';
+                return (
+                    'translateX(' + this.elementRefs.xScale(teamOffset) + 'px)'
+                );
             })
             .attr('data-index', (d: object, i: number): number => i)
             .on('mouseover', (_, d) => {
                 // preserve team highlight
-                this.outerWrapper.classed('ctf-progress-hover', true);
+                this.elementRefs.outerWrapper.classed('ctf-progress-hover', true);
                 d3.selectAll(
-                    '.data text:nth-child(' + (d.teamIndex + 1) + ')'
+                    '.data text:nth-child(' + (d.teamIndex + 1) + ')',
                 ).classed('data-hover', true);
             })
             .on('mouseout', (_, d) => {
                 if (this.runsToCompare.length > 0) return;
-                this.outerWrapper.classed('ctf-progress-hover', false);
+                this.elementRefs.outerWrapper.classed('ctf-progress-hover', false);
                 d3.selectAll(
-                    '.data text:nth-child(' + (d.teamIndex + 1) + ')'
+                    '.data text:nth-child(' + (d.teamIndex + 1) + ')',
                 ).classed('data-hover', false);
             });
 
@@ -1402,7 +1441,6 @@ export class TrainingAnalysisComponent
             .enter()
             .append('path')
             .attr('class', 'event')
-            .style('display', (group) => this.setEventGroupVisibility(group))
             .attr('d', (group: any): string => {
                 if (group.events.length === 1) {
                     const event = group.events[0];
@@ -1418,7 +1456,7 @@ export class TrainingAnalysisComponent
                 const colorIndex: number = +d.level - 1; // in final overview is no first transparent column for start
                 // check if the event is in current unfinished level
                 return teamStruct['currentState'] === 'level' + d.level &&
-                    this.view !== ViewEnum.Overview
+                    this.view() !== ViewEnum.Overview
                     ? this.getSegmentColor(d.events[0].traineeName, d.level)
                     : this.getPlanColor(colorIndex);
             })
@@ -1432,20 +1470,20 @@ export class TrainingAnalysisComponent
                     d3.select(nodes[i].parentNode).datum()
                 );
                 let y =
-                    this.yScale(teamStruct.traineeName) +
-                    this.yScale.bandwidth() * 0.5 -
+                    this.elementRefs.yScale(teamStruct.traineeName) +
+                    this.elementRefs.yScale.bandwidth() * 0.5 -
                     iconWidth / 2;
                 y -= group.events.length > 1 ? 1.5 : 0;
                 const x = group.x - iconWidth / 2;
                 return 'translate(' + x + ',' + y + ') scale(' + scale + ')';
             })
             .on('mouseover', (_, d) => {
-                this.tooltip.transition().duration(200).style('opacity', 0.9);
+                this.elementRefs.tooltip.transition().duration(200).style('opacity', 0.9);
                 const teamNode = d,
                     teamStruct: ProgressDataEntry = teamNode,
                     y =
-                        this.yScale(teamStruct.traineeName) +
-                        this.yScale.bandwidth() * 0.5 +
+                        this.elementRefs.yScale(teamStruct.traineeName) +
+                        this.elementRefs.yScale.bandwidth() * 0.5 +
                         3;
                 let teamOffset = 0;
                 const teamIndex: string = teamNode.level;
@@ -1459,8 +1497,12 @@ export class TrainingAnalysisComponent
                     teamOffset =
                         trainingData.teams[teamIndex].offsets[this.sortLevel];
                 }
-                const x = d.x + 2 + this.panValue + this.xScale(teamOffset);
-                this.tooltip
+                const x =
+                    d.x +
+                    2 +
+                    this.panValue +
+                    this.elementRefs.xScale(teamOffset);
+                this.elementRefs.tooltip
                     .html((): string => {
                         let text = '';
                         d.events.forEach((event) => {
@@ -1473,7 +1515,7 @@ export class TrainingAnalysisComponent
                                     '"/>',
                                 '</svg>',
                                 this.resolveEventTooltip(event),
-                                '</span>'
+                                '</span>',
                             );
                             text += item.join('');
                         });
@@ -1483,7 +1525,7 @@ export class TrainingAnalysisComponent
                     .style('top', y + 'px');
             })
             .on('mouseout', () => {
-                this.tooltip.transition().duration(0).style('opacity', 0);
+                this.elementRefs.tooltip.transition().duration(0).style('opacity', 0);
             });
 
         eventLayers
@@ -1492,15 +1534,14 @@ export class TrainingAnalysisComponent
             .enter()
             .append('text')
             .filter((group) => group.events.length > 1)
-            .style('display', (group) => this.setEventGroupVisibility(group))
             .attr('class', 'event-number')
             .attr('y', (d: object, i: number, nodes): string => {
                 const teamStruct: ProgressDataEntry = <ProgressDataEntry>(
                         d3.select(nodes[i].parentNode).datum()
                     ),
                     y =
-                        this.yScale(teamStruct.traineeName) +
-                        this.yScale.bandwidth() * 0.5 +
+                        this.elementRefs.yScale(teamStruct.traineeName) +
+                        this.elementRefs.yScale.bandwidth() * 0.5 +
                         groupCircleWidth / 5;
                 return y.toString();
             })
@@ -1533,22 +1574,6 @@ export class TrainingAnalysisComponent
         return '';
     }
 
-    setEventGroupVisibility(group) {
-        if (this.externalFilters === undefined) return 'block';
-        if (group.events[0].type === 'hint') {
-            return this.externalFilters.hintFilter.checked ? 'block' : 'none';
-        }
-        if (group.events[0].type === 'wrong') {
-            return this.externalFilters.wrongAnswerFilter.checked
-                ? 'block'
-                : 'none';
-        }
-        if (group.events[0].type === 'skip') {
-            return this.externalFilters.skipFilter.checked ? 'block' : 'none';
-        }
-        return 'block';
-    }
-
     createSortingLabels(trainingData) {
         let previous = 0;
         let difference = 0;
@@ -1559,25 +1584,41 @@ export class TrainingAnalysisComponent
                     const levelsTimePlanSum = this.levelsTimePlan
                         .slice(0, index + 1)
                         .reduce((a, b) => a + b, 0);
-                    const x: number = this.xScale(levelsTimePlanSum);
+                    const x: number =
+                        this.elementRefs.xScale(levelsTimePlanSum);
 
                     difference = levelsTimePlanSum - previous;
                     previous = levelsTimePlanSum;
 
                     let sortLevelName: string;
-                    if (this.levels[index].levelType === 'info') {
+                    if (
+                        this.visualizationData().levels[index].levelType ===
+                        'info'
+                    ) {
                         sortLevelName = difference > 530 ? 'Info' : 'I';
                     }
-                    if (this.levels[index].levelType === 'access') {
+                    if (
+                        this.visualizationData().levels[index].levelType ===
+                        'access'
+                    ) {
                         sortLevelName = difference > 530 ? 'Access' : 'A';
                     }
-                    if (this.levels[index].levelType === 'assessment') {
+                    if (
+                        this.visualizationData().levels[index].levelType ===
+                        'assessment'
+                    ) {
                         sortLevelName = difference > 530 ? 'Q' : 'Q';
                     }
-                    if (this.levels[index].levelType === 'training') {
+                    if (
+                        this.visualizationData().levels[index].levelType ===
+                        'training'
+                    ) {
                         let levelNum = 0;
                         for (let i = 0; i <= index; i++) {
-                            if (this.levels[i].levelType === 'training') {
+                            if (
+                                this.visualizationData().levels[i].levelType ===
+                                'training'
+                            ) {
                                 levelNum++;
                             }
                         }
@@ -1593,7 +1634,7 @@ export class TrainingAnalysisComponent
                         x: x + 'px',
                         translate: 'translate(calc(-100% + 5px), 0)',
                     });
-                }
+                },
             );
         }
     }
@@ -1607,9 +1648,9 @@ export class TrainingAnalysisComponent
         const teamDataLayer: any = this.addOneColumn('team');
         const compareDataLayer: any = this.addOneColumn('compare');
 
-        if (this.selectedTraineeView === 'avatar') {
+        if (this.selectedTraineeView() === 'avatar') {
             this.addTraineeAvatar(teamDataLayer);
-        } else if (this.selectedTraineeView === 'name') {
+        } else if (this.selectedTraineeView() === 'name') {
             this.addTraineeName(teamDataLayer, this.trainingData, 160);
         } else {
             this.addTraineeAvatar(teamDataLayer);
@@ -1617,17 +1658,18 @@ export class TrainingAnalysisComponent
         }
 
         const colors: string[] =
-            this.traineeColorScheme || PROGRESS_CONFIG.traineeColors;
+            this.traineeColorScheme() || PROGRESS_CONFIG.traineeColors;
         compareDataLayer
             .selectAll('text.data-compare')
             .data(this.trainingData.teams)
             .enter()
             .append('svg')
-            .attr('height', this.yScale.bandwidth())
+            .attr('height', this.elementRefs.yScale.bandwidth())
             .attr('width', '5')
             .attr(
                 'y',
-                (d: PlanDataEntry): number => this.yScale(d.traineeName) + 8
+                (d: PlanDataEntry): number =>
+                    this.elementRefs.yScale(d.traineeName) + 8,
             )
             .attr('x', 0)
             .append('path')
@@ -1639,14 +1681,14 @@ export class TrainingAnalysisComponent
                 return d.compare;
             })
             .attr('d', (_d) => {
-                const h = this.yScale.bandwidth();
+                const h = this.elementRefs.yScale.bandwidth();
                 const w = 5;
                 return 'M0 ' + h + ' L ' + w + ' ' + h + ' L' + w + ' 0 L0 0 Z';
             });
     }
 
     pan(left?: number) {
-        if (typeof this.trainingChart === 'undefined') {
+        if (typeof this.elementRefs.trainingChart === 'undefined') {
             return;
         }
 
@@ -1654,7 +1696,10 @@ export class TrainingAnalysisComponent
         let pan: number = this.panValue + left;
         pan = Math.max(-(this.width - this.wrapperWidth), pan);
         pan = Math.min(0, pan);
-        this.trainingChart.style('transform', 'translate(' + pan + 'px, 0)');
+        this.elementRefs.trainingChart.style(
+            'transform',
+            'translate(' + pan + 'px, 0)',
+        );
         this.d3
             .selectAll('#ctf-progress-time')
             .style('transform', 'translate(' + pan + 'px ,0px)');
@@ -1669,7 +1714,7 @@ export class TrainingAnalysisComponent
         if (this.zoomValue < PROGRESS_CONFIG.maxZoomValue) {
             const newZoomValue = Math.min(
                     PROGRESS_CONFIG.maxZoomValue,
-                    this.zoomValue + PROGRESS_CONFIG.zoomStep
+                    this.zoomValue + PROGRESS_CONFIG.zoomStep,
                 ),
                 scale = newZoomValue / this.zoomValue,
                 dx =
@@ -1681,9 +1726,9 @@ export class TrainingAnalysisComponent
             this.drawChart();
 
             // because of team highlighting animation, add class which cancels the animation after zoom
-            this.outerWrapper.classed('ctf-progress-zoom', true);
+            this.elementRefs.outerWrapper.classed('ctf-progress-zoom', true);
             setTimeout(() => {
-                this.outerWrapper.classed('ctf-progress-zoom', false);
+                this.elementRefs.outerWrapper.classed('ctf-progress-zoom', false);
             }, 150);
 
             this.pan(dx);
@@ -1695,7 +1740,7 @@ export class TrainingAnalysisComponent
         if (this.zoomValue > 1) {
             const newZoomValue = Math.max(
                     1,
-                    this.zoomValue - PROGRESS_CONFIG.zoomStep
+                    this.zoomValue - PROGRESS_CONFIG.zoomStep,
                 ),
                 scale = newZoomValue / this.zoomValue,
                 dx =
@@ -1706,9 +1751,9 @@ export class TrainingAnalysisComponent
             this.drawChart();
 
             // because of team highlighting animation, add class which cancels the animation after zoom
-            this.outerWrapper.classed('ctf-progress-zoom', true);
+            this.elementRefs.outerWrapper.classed('ctf-progress-zoom', true);
             setTimeout(() => {
-                this.outerWrapper.classed('ctf-progress-zoom', false);
+                this.elementRefs.outerWrapper.classed('ctf-progress-zoom', false);
             }, 150);
 
             this.pan(dx);
@@ -1724,15 +1769,6 @@ export class TrainingAnalysisComponent
         this.updatePanValue();
     }
 
-    setSort(level: ProgressLevelInfo) {
-        this.sortType = 'active-level';
-        this.sortReverse =
-            level.id === this.levelSorted?.id ? !this.sortReverse : false;
-        this.sortLevel = level.order + 1;
-        this.levelSorted = level;
-        this.drawChart();
-    }
-
     onFilterValueChange(): void {
         this.setFilterStatus();
         this.drawChart();
@@ -1741,7 +1777,7 @@ export class TrainingAnalysisComponent
     onSortValueChange(
         sortType: string,
         sortReverse: boolean,
-        levelIndex?: number
+        levelIndex?: number,
     ): void {
         this.sortType = sortType;
         this.sortReverse = sortReverse;
@@ -1752,26 +1788,27 @@ export class TrainingAnalysisComponent
         }
         this.drawChart();
         if (this.runsToCompare.length > 0) {
-            this.outerWrapper.classed('ctf-progress-hover', true);
+            this.elementRefs.outerWrapper.classed('ctf-progress-hover', true);
             this.d3
                 .selectAll('.data text')
                 .filter((data: any) =>
                     this.runsToCompare.some(
-                        (run) => run.id === data.traineeName
-                    )
+                        (run) => run.id === data.traineeName,
+                    ),
                 )
                 .classed('data-hover', true);
         }
     }
 
     updatePanValue() {
-        if (typeof this.trainingChart === 'undefined') return;
+        if (typeof this.elementRefs.trainingChart === 'undefined') return;
 
-        const transform: string = this.trainingChart.style('transform'),
+        const transform: string =
+                this.elementRefs.trainingChart.style('transform'),
             translate: string[] = transform
                 .substring(
                     transform.indexOf('translate(') + 10,
-                    transform.indexOf(')')
+                    transform.indexOf(')'),
                 )
                 .split(','),
             xStr: string = translate[0];
@@ -1783,14 +1820,14 @@ export class TrainingAnalysisComponent
 
     getColor(level: number): string {
         const colors: string[] =
-            this.colorScheme || this.configService.trainingColors;
+            this.colorScheme() || this.configService.trainingColors;
         const colorsCount: number = colors.length;
         return colors[level % colorsCount];
     }
 
     getPlanColor(level: number): string {
         const colors: string[] =
-            this.colorScheme || this.configService.trainingColors;
+            this.colorScheme() || this.configService.trainingColors;
         const colorsCount: number = colors.length;
         const color = this.d3.hsl(colors[level % colorsCount]);
         return color.darker(1.1).toString();
@@ -1798,7 +1835,7 @@ export class TrainingAnalysisComponent
 
     getLightenedColor(level: number): string {
         const colors: string[] =
-            this.colorScheme || this.configService.trainingColors;
+            this.colorScheme() || this.configService.trainingColors;
         const colorsCount: number = colors.length;
         const color = this.d3.hsl(colors[level % colorsCount]);
         return color.brighter(0.8).toString();
@@ -1824,7 +1861,7 @@ export class TrainingAnalysisComponent
     }
 
     highlightGivenTrainee(traineeId: number): void {
-        this.outerWrapper?.classed('ctf-progress-hover', true);
+        this.elementRefs.outerWrapper?.classed('ctf-progress-hover', true);
         // remove fade class from text
         this.d3
             .selectAll('.data text')
@@ -1860,7 +1897,7 @@ export class TrainingAnalysisComponent
     }
 
     unhighlightGivenTrainee(traineeId: number): void {
-        this.outerWrapper?.classed('ctf-progress-hover', false);
+        this.elementRefs.outerWrapper?.classed('ctf-progress-hover', false);
         // add fade class to text
         this.d3
             .selectAll('.data text')
@@ -1882,7 +1919,7 @@ export class TrainingAnalysisComponent
             .classed('fade', true);
 
         const totalTime = this.trainingDataSet.find(
-            (trainee) => trainee.traineeId == traineeId
+            (trainee) => trainee.traineeId == traineeId,
         ).totalTime;
 
         // add hidden class to plan segments for already passed levels
@@ -1910,7 +1947,7 @@ export class TrainingAnalysisComponent
     preserveHighlightedTrainee(traineeId: string): void {
         if (this.runsToCompare.some((run) => run.id === traineeId)) {
             this.runsToCompare = this.runsToCompare.filter(
-                (item) => item.id !== traineeId
+                (item) => item.id !== traineeId,
             );
         } else {
             this.runsToCompare.push({ id: traineeId, avatar: '' });
@@ -1920,22 +1957,12 @@ export class TrainingAnalysisComponent
             .selectAll('.training .training-layer rect')
             .filter((data: any) => data.data.id === traineeId)
             .classed('preserved', (data: any) =>
-                this.runsToCompare.includes(data.data.id)
+                this.runsToCompare.includes(data.data.id),
             );
 
         this.d3
             .selectAll('.training .training-layer rect')
             .classed('faded', (_data: any) => this.runsToCompare.length > 0);
-    }
-
-    onFilterChange() {
-        this.d3
-            .selectAll('.events-row path.event')
-            .style('display', (group) => this.setEventGroupVisibility(group));
-
-        this.d3
-            .selectAll('.events-row text.event-number')
-            .style('display', (group) => this.setEventGroupVisibility(group));
     }
 
     onTraineeViewChange() {
@@ -1954,7 +1981,7 @@ export class TrainingAnalysisComponent
 
     setHighlightedTrainee(trainee: ProgressTraineeInfo) {
         if (trainee) {
-            this.visualizationData.traineeProgress.forEach((p) => {
+            this.visualizationData().traineeProgress.forEach((p) => {
                 if (p.userRefId == trainee.userRefId) {
                     this.highlightGivenTrainee(p.userRefId);
                 } else {
@@ -1962,30 +1989,15 @@ export class TrainingAnalysisComponent
                 }
             });
         } else {
-            this.visualizationData.traineeProgress.forEach((p) => {
+            this.visualizationData().traineeProgress.forEach((p) => {
                 this.highlightGivenTrainee(p.userRefId);
             });
         }
     }
 
     showTraineeDetail(event) {
-        if (this.view == ViewEnum.Progress)
+        if (this.view() == ViewEnum.Progress)
             this.traineeDetailId = event.path[0].attributes.traineeId?.value;
-    }
-
-    ngOnDestroy() {
-        if (this._activeDataSubscribtion) {
-            this._activeDataSubscribtion.unsubscribe();
-        }
-        if (this._updateVisSubscribtion) {
-            this._updateVisSubscribtion.unsubscribe();
-        }
-        if (this.filterSubscription) {
-            this.filterSubscription.unsubscribe();
-        }
-        if (this.highlightSubscription) {
-            this.highlightSubscription.unsubscribe();
-        }
     }
 
     getEventShapePaths() {
@@ -2010,28 +2022,29 @@ export class TrainingAnalysisComponent
     }
 
     setColumnsWidth() {
-        this.columnInfo.name =
-            Math.max(
-                ...this.visualizationData.trainees.map(
-                    (trainee) => trainee.name.length
-                )
-            ) * this.approxFontWidth;
-
-        this.columnInfo.time =
-            this.getTimeString(
-                this.visualizationData.currentTime -
-                    this.visualizationData.startTime
-            ).length * this.approxFontWidth;
-        this.columnInfo.progress =
+        const progressColumnWidth =
             (this.d3.select('.visualization-container').node() as HTMLElement)
                 .offsetWidth -
-            this.columnInfo.name -
+            80 - // name column
             21 -
             50 -
-            this.columnInfo.time -
-            this.columnInfo.score -
-            this.columnInfo.hints -
-            this.columnInfo.answers;
+            80 - // time column
+            80 - // score column
+            80 - // hints column
+            80; // answers column
+
+        const nameColWith =
+            Math.max(
+                ...this.visualizationData().trainees.map(
+                    (trainee) => trainee.name.length,
+                ),
+            ) * TrainingAnalysisComponent.FONT_WIDTH_APPROXIMATION;
+
+        const timeColumnWidth =
+            this.getTimeString(
+                this.visualizationData().currentTime -
+                    this.visualizationData().startTime,
+            ).length * TrainingAnalysisComponent.FONT_WIDTH_APPROXIMATION;
 
         // column size adjustment
         this.d3
@@ -2040,24 +2053,26 @@ export class TrainingAnalysisComponent
             .style('max-width', '80px');
         this.d3
             .selectAll('.ctfh-col-8')
-            .style('max-width', this.columnInfo.progress + 'px');
+            .style('max-width', progressColumnWidth + 'px');
         this.d3
             .selectAll('.final-2-name')
-            .style('max-width', this.columnInfo.name + 'px');
+            .style('max-width', nameColWith + 'px');
         this.d3
             .selectAll('.ctfh-col-2 .ctf-progress-timecolumn')
-            .style('max-width', this.columnInfo.time + 'px');
+            .style('max-width', timeColumnWidth + 'px');
     }
 
     private getLevelKeys(): string[] {
         // in progress view we want to also see start time offset
-        return this.levels.map((level) => 'level' + (level.order + 1));
+        return this.visualizationData().levels.map(
+            (level) => 'level' + (level.order + 1),
+        );
     }
 
     private addTraineeName(
         teamDataLayer,
         trainingData: TrainingData,
-        xPosition = 130
+        xPosition = 130,
     ) {
         teamDataLayer
             .selectAll('text.data-team')
@@ -2069,9 +2084,9 @@ export class TrainingAnalysisComponent
             .attr(
                 'y',
                 (d: any): number =>
-                    this.yScale(d.traineeName) +
-                    this.yScale.bandwidth() * 0.6 +
-                    this.padding.top
+                    this.elementRefs.yScale(d.traineeName) +
+                    this.elementRefs.yScale.bandwidth() * 0.6 +
+                    this.padding.top,
             )
             .attr('x', xPosition)
             .style('text-anchor', 'end')
@@ -2088,27 +2103,29 @@ export class TrainingAnalysisComponent
             .attr(
                 'xlink:href',
                 (d: TrainingDataEntry): string =>
-                    'data:image/png;base64,' + d.traineeAvatar
+                    'data:image/png;base64,' + d.traineeAvatar,
             )
             .attr('width', 15)
             .attr('height', 15)
             .attr(
                 'y',
                 (d: TrainingDataEntry): number =>
-                    this.yScale(d.traineeName) +
-                    this.yScale.bandwidth() * 0.6 +
+                    this.elementRefs.yScale(d.traineeName) +
+                    this.elementRefs.yScale.bandwidth() * 0.6 +
                     this.padding.top -
-                    10
+                    10,
             )
             .attr('x', 145)
             .attr('cursor', 'default');
     }
 
     private addOneColumn(name, append = false) {
-        this.d3.select('#' + this.dataColumns[name]).html('');
+        this.d3
+            .select('#' + TrainingAnalysisComponent.DATA_COLUMN_MAPPING[name])
+            .html('');
 
         const data = this.d3
-            .select('#' + this.dataColumns[name])
+            .select('#' + TrainingAnalysisComponent.DATA_COLUMN_MAPPING[name])
             .append('svg')
             .attr('height', this.wrapperHeight)
             .attr('width', 90);
@@ -2139,9 +2156,9 @@ export class TrainingAnalysisComponent
                 .attr(
                     'y',
                     (d) =>
-                        this.yScale(d.traineeName) +
-                        this.yScale.bandwidth() * 0.6 +
-                        this.padding.top
+                        this.elementRefs.yScale(d.traineeName) +
+                        this.elementRefs.yScale.bandwidth() * 0.6 +
+                        this.padding.top,
                 )
                 .attr('x', 0);
         }

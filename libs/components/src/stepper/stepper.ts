@@ -26,32 +26,13 @@ export type StepperItem = {
     styleUrl: './stepper.scss',
 })
 export class Stepper implements OnDestroy, AfterViewInit {
-    selectedIndex = input<number>(3);
-    lastEnabledIndex = input<number | null>(3);
-    steps = input<StepperItem[]>([
-        { icon: 'security', label: 'Security Basics' },
-        { icon: 'vpn_key', label: 'Authentication' },
-        { icon: 'lock', label: 'Encryption 101' },
-        { icon: 'shield', label: 'Network Defense' },
-        { icon: 'bug_report', label: 'Threat Detection' },
-        { icon: 'admin_panel_settings', label: 'Access Control' },
-        { icon: 'policy', label: 'Security Policies' },
-        { icon: 'fingerprint', label: 'Biometrics' },
-        { icon: 'verified_user', label: 'Identity Management' },
-        { icon: 'gpp_maybe', label: 'Vulnerability Assessment' },
-        { icon: 'phishing', label: 'Phishing Defense' },
-        { icon: 'password', label: 'Password Security' },
-        { icon: 'https', label: 'SSL/TLS' },
-        { icon: 'storage', label: 'Data Protection' },
-        { icon: 'cloud_sync', label: 'Cloud Security' },
-        { icon: 'device_hub', label: 'IoT Security' },
-        { icon: 'crisis_alert', label: 'Incident Response' },
-        { icon: 'token', label: 'Token Management' },
-        { icon: 'encrypted', label: 'Advanced Encryption' },
-        { icon: 'military_tech', label: 'Security Expert' },
-    ]);
+    selectedIndex = input<number>(null);
+    lastEnabledIndex = input<number | null>(null);
+    steps = input<StepperItem[]>();
 
     stepClicked = output<number>();
+    mouseHoveringStep = output<number | null>();
+
     maxAccessibleIndex = computed(() => {
         const lastAccessible = this.lastEnabledIndex();
         return lastAccessible !== null
@@ -101,6 +82,8 @@ export class Stepper implements OnDestroy, AfterViewInit {
     isSelected(index: number): boolean {
         return index === this.selectedIndex() && this.isAccessible(index);
     }
+
+    protected onStepHover($index: number) {}
 
     private scrollSelectedIntoView(selectedIdx: number): void {
         const container = this.containerEl()?.nativeElement;

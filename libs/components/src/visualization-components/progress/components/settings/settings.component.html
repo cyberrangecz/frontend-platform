@@ -1,15 +1,15 @@
 <mat-accordion>
-    <mat-expansion-panel (closed)="panelOpenState =false" (opened)="panelOpenState=true">
+    <mat-expansion-panel (closed)="panelOpenState.set(false)"  (opened)="panelOpenState.set(true)">
         <mat-expansion-panel-header class="nav-header">
             <mat-panel-title>
                 <button
                     class="sidenav-button"
                     mat-icon-button
                     type="button">
-                    @if (!panelOpenState) {
+                    @if (!panelOpenState()) {
                         <mat-icon>menu</mat-icon>
                     }
-                    @if (panelOpenState) {
+                    @if (panelOpenState()) {
                         <mat-icon>expand_less</mat-icon>
                     }
                 </button>
@@ -19,16 +19,16 @@
         <div class="expansion-content">
             <mat-slide-toggle
                 (change)="restrictTrainees()"
-                [checked]="restrictToVisibleTrainees"
-                [disabled]="restrictToCustomTimelines"
+                [checked]="restrictToVisibleTrainees()"
+                [disabled]="restrictToCustomTimelines()"
                 matTooltip="In selected runs, this ensures that only the relevant trainee timeline portion is displayed.">
                 Automatically restrict timeline (crop the area with selected runs only)
             </mat-slide-toggle>
             <hr [style.margin]="'25px 0px'">
             <mat-slide-toggle
                 (change)="restrictCustom()"
-                [checked]="restrictToCustomTimelines"
-                [disabled]="restrictToVisibleTrainees"
+                [checked]="restrictToCustomTimelines()"
+                [disabled]="restrictToVisibleTrainees()"
                 matTooltip="In selected runs, this ensures that only the relevant trainee timeline portion is displayed.">
                 Manually restrict timeline
             </mat-slide-toggle>
@@ -50,9 +50,9 @@
                     </mat-form-field>
                     <mat-slider [min]="0"
                                 [max]="customRestrictedXScale.max"
-                                [disabled]="!restrictToCustomTimelines"
+                                [disabled]="!restrictToCustomTimelines()"
                                 [showTickMarks]="true"
-                                [step]="timelineStepSize"
+                                [step]="timelineStepSize()"
                                 [discrete]="true"
                                 [displayWith]="formatTime"
                                 [style.width]="'calc(100% - 480px)'"

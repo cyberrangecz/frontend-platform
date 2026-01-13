@@ -88,6 +88,7 @@
         "angular-oauth2-oidc": "^20.0.0",
         "angular-oauth2-oidc-jwks": "^20.0.0",
         "autoprefixer": "^10.4.0",
+        "baseline-browser-mapping": "^2.9.12",
         "caret-pos": "^2.0.0",
         "esbuild": "^0.19.2",
         "eslint": "^9.8.0",

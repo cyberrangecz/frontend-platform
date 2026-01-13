@@ -1,0 +1,15 @@
+<div [ngClass]="{ 'avatar-wrapper--warning': warning() }"
+     class="avatar-wrapper vflex jc-center ai-center g-0-25rem"
+>
+    <div class="user-picture-wrapper">
+        @if (warning()) {
+            <mat-icon
+                [matTooltip]="warning()"
+                class="warning-icon" color="warn">warning_amber
+            </mat-icon>
+        }
+        <img [alt]="traineeInfo().name+'\'s avatar'" class="user-picture"
+             src="{{'data:image/png;base64,'+traineeInfo().picture}}" />
+    </div>
+    <span class="user-name">{{ traineeInfo().name }}</span>
+</div>

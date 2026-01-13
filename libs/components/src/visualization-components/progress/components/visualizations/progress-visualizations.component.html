@@ -1,38 +1,35 @@
-@if (view === getViewEnum().Progress && visualizationData$ | async ) {
-  <crczp-viz-hurdling-settings
-    [maximumTime]="maxTime"
-    [timelineStepSize]="stepSize"
-    (scaleRestrictionEvent)="scaleRestrictionEvent($event)"
-    (restrictByTrainees)="restrictionTypeEvent($event, 'restrictToVisibleTrainees')"
-    (restrictToTimeline)="restrictionTypeEvent($event, 'restrictToCustomTimelines')"
+@if (view === getViewEnum().Progress && visualizationData$ | async) {
+    <crczp-viz-hurdling-settings
+        (restrictByTrainees)="restrictionTypeEvent($event, 'restrictToVisibleTrainees')"
+        (restrictToTimeline)="restrictionTypeEvent($event, 'restrictToCustomTimelines')"
+        (scaleRestrictionEvent)="scaleRestrictionEvent($event)"
+        [maximumTime]="maxTime"
+        [timelineStepSize]="stepSize"
     />
-  <crczp-viz-progress
-    id="viz-progress"
-    [visualizationData]="visualizationData$ | async"
-    [view]="view"
-    [setDashboardView]="setDashboardView"
-    [externalFilters]="externalFilters"
-    [trainingInstanceId]="trainingInstanceId"
-    [restrictToCustomTimelines]="restrictToCustomTimelines"
-    [restrictToVisibleTrainees]="restrictToVisibleTrainees"
-    [restriction]="restriction"
-    (getMaxTime)="getMaxTime($event)"
-    (getStepSize)="getStepSize($event)"
+    <crczp-viz-progress
+        (getMaxTime)="getMaxTime($event)"
+        (getStepSize)="getStepSize($event)"
+        [restrictToCustomTimelines]="restrictToCustomTimelines"
+        [restrictToVisibleTrainees]="restrictToVisibleTrainees"
+        [restriction]="restriction"
+        [setDashboardView]="setDashboardView"
+        [trainingInstanceId]="trainingInstanceId"
+        [view]="view"
+        [visualizationData]="visualizationData$ | async"
+        id="viz-progress"
     />
 }
 
-@if (view === getViewEnum().Overview && visualizationData$ | async ) {
-  <crczp-viz-hurdling
-    [visualizationData]="visualizationData$ | async"
-    [view]="view"
-    [colorScheme]="colorScheme"
-    [eventService]="colorScheme"
-    [setDashboardView]="setDashboardView"
-    [externalFilters]="externalFilters"
-    [trainingColors]="trainingColors"
-    [traineeColorScheme]="traineeColorScheme"
-    [trainingInstanceId]="trainingInstanceId"
-    [selectedTrainees]="selectedTrainees"
-    (outputSelectedTrainees)="selectTrainees($event)"
-    (highlightedTrainee)="emitHighlightedTrainee($event)"/>
+@if (view === getViewEnum().Overview && visualizationData$ | async) {
+    <!--  <crczp-viz-hurdling-->
+        <!--    [visualizationData]="visualizationData$ | async"-->
+        <!--    [view]="view"-->
+        <!--    [colorScheme]="colorScheme"-->
+        <!--    [setDashboardView]="setDashboardView"-->
+        <!--    [trainingColors]="trainingColors"-->
+        <!--    [traineeColorScheme]="traineeColorScheme"-->
+        <!--    [trainingInstanceId]="trainingInstanceId"-->
+        <!--    [selectedTrainees]="selectedTrainees"-->
+        <!--    (outputSelectedTrainees)="selectTrainees($event)"-->
+        <!--    (highlightedTrainee)="emitHighlightedTrainee($event)"/>-->
 }

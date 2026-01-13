@@ -14,7 +14,7 @@ import { inject, Injectable } from '@angular/core';
 import {
     ErrorHandlerService,
     FileUploadProgressService,
-    Injection,
+    InjectionTokens,
     NotificationService,
     PortalConfig
 } from '@crczp/utils';
@@ -33,7 +33,9 @@ import { CrczpOffsetElementsPaginatedService, OffsetPaginatedResource, QueryPara
  */
 @Injectable()
 export class TrainingDefinitionService extends CrczpOffsetElementsPaginatedService<TrainingDefinition> {
-    private trainingType: TrainingTypeEnum = inject(Injection.TrainingType);
+    private trainingType: TrainingTypeEnum = inject(
+        InjectionTokens.TrainingType,
+    );
     private api =
         this.trainingType === TrainingTypeEnum.LINEAR
             ? inject(LinearTrainingDefinitionApi)

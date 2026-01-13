@@ -1,0 +1,98 @@
+{
+    "name": "examples",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
+    "projectType": "application",
+    "prefix": "crczp",
+    "sourceRoot": "apps/examples/src",
+    "tags": [],
+    "implicitDependencies": ["theme"],
+    "targets": {
+        "build": {
+            "executor": "@angular-devkit/build-angular:application",
+            "dependsOn": [
+                {
+                    "target": "build",
+                    "projects": ["theme"]
+                }
+            ],
+            "outputs": ["{options.outputPath}"],
+            "options": {
+                "outputPath": "dist/apps/examples",
+                "browser": "apps/examples/src/main.ts",
+                "polyfills": ["zone.js"],
+                "tsConfig": "apps/examples/tsconfig.app.json",
+                "inlineStyleLanguage": "scss",
+                "assets": [
+                    {
+                        "glob": "**/*",
+                        "input": "apps/examples/public",
+                        "output": "./assets/"
+                    },
+                    {
+                        "glob": "**/*",
+                        "input": "dist/libs/utils/theme/assets/",
+                        "output": "/assets/"
+                    }
+                ],
+                "styles": ["dist/libs/utils/theme/theme/apply-all.scss"],
+                "scripts": ["node_modules/@hpcc-js/wasm/dist/graphviz.umd.js"]
+            },
+            "configurations": {
+                "production": {
+                    "budgets": [
+                        {
+                            "type": "initial",
+                            "maximumWarning": "500kb",
+                            "maximumError": "2mb"
+                        },
+                        {
+                            "type": "anyComponentStyle",
+                            "maximumWarning": "4kb",
+                            "maximumError": "8kb"
+                        }
+                    ],
+                    "outputHashing": "all"
+                },
+                "development": {
+                    "optimization": false,
+                    "extractLicenses": false,
+                    "sourceMap": true
+                }
+            },
+            "defaultConfiguration": "production"
+        },
+        "serve": {
+            "continuous": true,
+            "executor": "@angular/build:dev-server",
+            "configurations": {
+                "production": {
+                    "buildTarget": "examples:build:production"
+                },
+                "development": {
+                    "buildTarget": "examples:build:development"
+                }
+            },
+            "defaultConfiguration": "development"
+        },
+        "lint": {
+            "executor": "@nx/eslint:lint"
+        },
+        "test": {
+            "executor": "@nx/vite:test",
+            "outputs": ["{options.reportsDirectory}"],
+            "options": {
+                "reportsDirectory": "../../coverage/apps/examples"
+            }
+        },
+        "serve-static": {
+            "continuous": true,
+            "executor": "@nx/web:file-server",
+            "options": {
+                "buildTarget": "examples:build",
+                "port": 4200,
+                "staticFilePath": "dist/apps/examples/browser",
+                "spa": true
+            }
+        }
+    }
+}

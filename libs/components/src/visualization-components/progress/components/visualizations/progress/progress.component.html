@@ -1,6 +1,7 @@
-<div class="overall-time-container">
+@if(visualizationData()){
+    <div class="overall-time-container">
     <crczp-viz-hurdling-overview-progress-bar
-        [visualizationData]="visualizationData">
+        [visualizationData]="visualizationData()">
     </crczp-viz-hurdling-overview-progress-bar>
 </div>
 
@@ -9,15 +10,15 @@
         (filteredTraineesChange)="setFilteredTrainees($event)"
         (highlightTraineeChange)="setHighlightedTrainee($event)"
         [filteredTrainees]="filteredTrainees"
-        [selectedTraineeView]="selectedTraineeView"
-        [visualizationData]="visualizationData">
+        [selectedTraineeView]="selectedTraineeView()"
+        [visualizationData]="visualizationData()">
     </crczp-viz-hurdling-trainee-selection>
 </div>
 
 <div class="level-grid-container">
     <crczp-viz-hurdling-level-list
         (filteredTrainees)="setFilteredTrainees($event)"
-        [visualizationData]="visualizationData">
+        [visualizationData]="visualizationData()">
     </crczp-viz-hurdling-level-list>
 </div>
 
@@ -25,8 +26,8 @@
     <div class="trainee-detail-container">
         <crczp-trainee-detail
             [trainee]=getTraineeData(traineeDetailId)
-            [visualizationData]="visualizationData"
-            [trainingInstanceId]="trainingInstanceId"
+            [visualizationData]="visualizationData()"
+            [trainingInstanceId]="trainingInstanceId()"
             (hideDetail)="onTraineeDetailChange()" />
     </div>
 }
@@ -44,7 +45,7 @@
         <span class="header ctf-progress-header-column"
               id="progress-elapsed-time"
               matTooltip="Elapsed time">
-      {{ getTimeString(visualizationData.currentTime - visualizationData.startTime) }}
+      {{ getTimeString(visualizationData().currentTime - visualizationData().startTime) }}
     </span>
 
         <crczp-viz-hurdling-column-header
@@ -63,5 +64,6 @@
 <div class="legend-container">
     <crczp-viz-hurdling-legend
         (zoomResetChange)="onZoomReset()"
-        [selectedViewValue]="view" />
+        [selectedViewValue]="view()" />
 </div>
+}

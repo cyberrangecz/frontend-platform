@@ -6,7 +6,7 @@ import { SentinelUserAssignService } from '@sentinel/components/user-assign';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
 import { UserNameFilters } from '@crczp/training-agenda/internal';
-import { ErrorHandlerService, Injection } from '@crczp/utils';
+import { ErrorHandlerService, InjectionTokens } from '@crczp/utils';
 import { createPaginatedResource, OffsetPaginatedResource } from '@crczp/api-common';
 
 /**
@@ -15,7 +15,7 @@ import { createPaginatedResource, OffsetPaginatedResource } from '@crczp/api-com
  */
 @Injectable()
 export class OrganizersAssignService extends SentinelUserAssignService {
-    private trainingType = inject(Injection.TrainingType);
+    private trainingType = inject(InjectionTokens.TrainingType);
     private userApi = inject(UserApi);
     private errorHandler = inject(ErrorHandlerService);
 
@@ -212,8 +212,12 @@ export class OrganizersAssignService extends SentinelUserAssignService {
         userIds: number[],
     ): Observable<any> {
         return this.userApi
-            .updateOrganizers(resourceId, [],
-                this.trainingType === 'adaptive', userIds)
+            .updateOrganizers(
+                resourceId,
+                [],
+                this.trainingType === 'adaptive',
+                userIds,
+            )
             .pipe(
                 tap(
                     () => this.clearSelectedAssignedUsers(),

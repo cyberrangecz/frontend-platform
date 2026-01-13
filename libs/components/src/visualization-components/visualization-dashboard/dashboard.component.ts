@@ -12,9 +12,6 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { MatSelectChange, MatSelectModule } from '@angular/material/select';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatExpansionModule } from '@angular/material/expansion';
-import { TraineeSelectionComponent } from '../progress/components/visualizations/trainee-selection/trainee-selection.component';
-import { TrainingsVisualizationsOverviewLibModule } from '../visualization-overview/trainings-visualizations-overview-lib.module';
-import { ProgressVisualizationsComponent } from '../progress/components/visualizations/progress-visualizations.component';
 import { CommonModule } from '@angular/common';
 import { MatOptionModule } from '@angular/material/core';
 import {
@@ -23,14 +20,14 @@ import {
     TimelineCommandApi,
 } from '@crczp/visualization-api';
 import { TimelineCommandService } from '../command/command-timeline/timeline-command.service';
-import { D3, D3Service } from '../common/d3-service/d3-service';
 import { TraineeViewEnum } from '../progress/components/types';
 import {
-    ProgressTraineeInfo,
     ProgressVisualizationData,
+    TraineeProgressData,
 } from '@crczp/visualization-model';
 import { ProgressVisualizationsDataService } from '../progress/services/progress-visualizations-data.service';
 import { FiltersComponent } from '../visualization-overview/components/agenda/filters/filters.component';
+import { LogoSpinnerComponent } from '../../logo-spinner/logo-spinner.component';
 
 @Component({
     selector: 'crczp-dashboard',
@@ -39,19 +36,18 @@ import { FiltersComponent } from '../visualization-overview/components/agenda/fi
         CommonModule,
         MatSidenavModule,
         MatExpansionModule,
-        TraineeSelectionComponent,
+        //TraineeSelectionComponent,
         MatOptionModule,
         MatSelectModule,
-        TrainingsVisualizationsOverviewLibModule,
-        ProgressVisualizationsComponent,
         FiltersComponent,
+        LogoSpinnerComponent,
     ],
     providers: [
         CommandApi,
         TimelineCommandApi,
         TimelineCommandService,
         ProgressVisualizationsDataService,
-        ProgressVisualizationApi
+        ProgressVisualizationApi,
     ],
     styleUrls: ['./dashboard.component.css'],
 })
@@ -86,9 +82,9 @@ export class DashboardComponent implements OnInit {
         new BehaviorSubject([]);
     lineTrainees$: Observable<number[]> =
         this.lineTraineesSubject$.asObservable();
-    private hurdlingTraineesSubject$: BehaviorSubject<ProgressTraineeInfo[]> =
+    private hurdlingTraineesSubject$: BehaviorSubject<TraineeProgressData[]> =
         new BehaviorSubject([]);
-    hurdlingTrainees$: Observable<ProgressTraineeInfo[]> =
+    hurdlingTrainees$: Observable<TraineeProgressData[]> =
         this.hurdlingTraineesSubject$.asObservable();
     private hurdlingSelectedTraineesSubject$: BehaviorSubject<number[]> =
         new BehaviorSubject([]);
@@ -99,9 +95,6 @@ export class DashboardComponent implements OnInit {
     );
     activeFilters$: Observable<any[]> =
         this.activeFiltersSubject$.asObservable();
-
-    constructor() {
-    }
 
     ngOnInit(): void {
         this.visualizationData$ =
@@ -166,7 +159,7 @@ export class DashboardComponent implements OnInit {
      * Updates subject of currently selected trainees from event emitted by hurdling player selection component
      * @param selectedTrainees selected trainees
      */
-    traineeFilterChange(selectedTrainees: ProgressTraineeInfo[]): void {
+    traineeFilterChange(selectedTrainees: TraineeProgressData[]): void {
         this.lineTraineesSubject$.next(
             this.updateLineTrainees(selectedTrainees),
         );
@@ -202,7 +195,7 @@ export class DashboardComponent implements OnInit {
             .subscribe();
     }
 
-    private updateLineTrainees(trainees: ProgressTraineeInfo[]): number[] {
+    private updateLineTrainees(trainees: TraineeProgressData[]): number[] {
         const gridSelected: number[] = trainees.map(
             (trainee) => trainee.trainingRunId,
         );

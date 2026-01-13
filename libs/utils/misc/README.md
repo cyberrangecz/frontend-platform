@@ -18,4 +18,4 @@ This library contains miscellaneous utilities for the platform.
 - **Utils.NavBar**: Utility for building navigation.
 - **Utils.Provision**: Utility for property provisioning.
 - **Utils.Document**: Utility functions for web document handling.
-- **Injection**: Platform-wise injection tokens.
+- **InjectionTokens**: Platform-wise injection tokens.

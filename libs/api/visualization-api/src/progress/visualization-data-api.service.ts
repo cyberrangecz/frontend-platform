@@ -24,16 +24,16 @@ export class ProgressVisualizationApi {
      * Sends http request to retrieve all data for visualizations
      */
     getVisualizationData(
-        trainingInstanceId: number
+        trainingInstanceId: number,
     ): Observable<ProgressVisualizationData> {
         return this.http
             .get<ProgressVisualizationDataDTO>(
-                `${this.apiUrl}/visualizations/training-instances/${trainingInstanceId}/progress`
+                `${this.apiUrl}/visualizations/training-instances/${trainingInstanceId}/progress`,
             )
             .pipe(
                 map((response) =>
-                    ProgressVisualizationDataMapper.fromDTO(response)
-                )
+                    ProgressVisualizationDataMapper.fromDTO(response),
+                ),
             );
     }
 
@@ -42,14 +42,14 @@ export class ProgressVisualizationApi {
      */
     getAdaptiveRunVisualization(
         trainingInstanceId: number,
-        trainingRunId: number
+        trainingRunId: number,
     ): Observable<CommandLineEntry[]> {
         return this.http
-            .get<CommandLineEntryDTO[]>(
-                `${this.apiUrl}/visualizations/training-instances/${trainingInstanceId}/training-runs/${trainingRunId}/commands`
-            )
+            .get<
+                CommandLineEntryDTO[]
+            >(`${this.apiUrl}/visualizations/training-instances/${trainingInstanceId}/training-runs/${trainingRunId}/commands`)
             .pipe(
-                map((response) => ProgressCommandLineMapper.fromDTOs(response))
+                map((response) => ProgressCommandLineMapper.fromDTOs(response)),
             );
     }
 }

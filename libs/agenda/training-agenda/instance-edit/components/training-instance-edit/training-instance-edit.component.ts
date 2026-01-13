@@ -34,7 +34,7 @@ import { MatIcon } from '@angular/material/icon';
 import { OwlDateTimeModule, OwlNativeDateTimeModule } from '@danielmoncada/angular-datetime-picker';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { MatError, MatFormField, MatHint, MatInput, MatLabel, MatSuffix } from '@angular/material/input';
-import { Injection } from '@crczp/utils';
+import { InjectionTokens } from '@crczp/utils';
 
 /**
  * Component for creating new or editing existing training instance
@@ -104,7 +104,7 @@ export class TrainingInstanceEditComponent implements OnChanges, AfterViewInit {
     );
     private poolSearchStringSubject = new BehaviorSubject<string>('');
     private readonly destroyRef = inject(DestroyRef);
-    private readonly trainingType = inject(Injection.TrainingType);
+    private readonly trainingType = inject(InjectionTokens.TrainingType);
 
     get startTime(): AbstractControl {
         return this.trainingInstanceFormGroup.formGroup.get('startTime');

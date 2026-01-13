@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { TrainingTypeEnum } from '@crczp/training-model';
 import { CommonTrainingDefinitionOverviewComponent } from './common-training-definition-overview.component';
-import { Injection, providePaginationStorageService } from '@crczp/utils';
+import { InjectionTokens, providePaginationStorageService } from '@crczp/utils';
 
 /**
  * Main smart component of training definition overview
@@ -12,10 +12,10 @@ import { Injection, providePaginationStorageService } from '@crczp/utils';
     imports: [CommonTrainingDefinitionOverviewComponent],
     providers: [
         providePaginationStorageService(
-            AdaptiveTrainingDefinitionOverviewComponent
+            AdaptiveTrainingDefinitionOverviewComponent,
         ),
         {
-            provide: Injection.TrainingType,
+            provide: InjectionTokens.TrainingType,
             useValue: TrainingTypeEnum.ADAPTIVE,
         },
     ],

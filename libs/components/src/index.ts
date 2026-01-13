@@ -11,3 +11,4 @@ export * from './stepper/stepper';
 export * from './topology-graph/index';
 export * from './visualization-components/index';
 export * from './adaptive-instance-simulator/index';
+export * from './stepper/stepper';

@@ -10,24 +10,9 @@
                                 <path [attr.d]="$any(getEventShapePaths()).filter" />
                             </svg>
                             <select (change)="onFilterValueChange()" [(ngModel)]="selectedFilterValue">
-                                @for (o of filterOptions; track o) {
+                                @for (o of PROGRESS_CONFIG.filterOptions; track o) {
                                     <option [ngValue]="o.id">{{ o.name }}</option>
                                 }
-                            </select>
-                        </div>
-                    </div>
-                }
-
-                @if (!errorMessage && !setDashboardView) {
-                    <div class="ctf-progress-select-wrapper">
-                        <div class="ctf-progress-select">
-                            <svg class="ctf-progress-select-icon" height="20" viewBox="0 0 24 24" width="20">
-                                <path [attr.d]="$any(getEventShapePaths()).person" />
-                            </svg>
-                            <select (change)="onTraineeViewChange()" [(ngModel)]="selectedTraineeView">
-                                <option [ngValue]="'name'">Name</option>
-                                <option [ngValue]="'avatar'">Avatar</option>
-                                <option [ngValue]="'both'">Avatar + Name</option>
                             </select>
                         </div>
                     </div>
@@ -41,9 +26,9 @@
         <div class="trainee-detail-container">
             <crczp-trainee-detail
                 (hideDetail)="onTraineeDetailChange()"
-                [trainee]=getTraineeData(traineeDetailId)
-                [trainingInstanceId]="trainingInstanceId"
-                [visualizationData]="visualizationData" />
+                [trainee]=getTraineeData(traineeDetailId())
+                [trainingInstanceId]="trainingInstanceId()"
+                [visualizationData]="visualizationData()" />
         </div>
     }
 
@@ -81,8 +66,8 @@
                         </div>
                     </div>
                 }
-                @for (column of columns; track column) {
-                    <div [ngClass]="{ 'final-2': view === 'overview' && column === 'time' }" class="ctfh-col-2">
+                @for (column of COLUMNS; track column) {
+                    <div [ngClass]="{ 'final-2': view() === 'overview' && column === 'time' }" class="ctfh-col-2">
                         <div class="{{'ctf-progress-column ctf-progress-' + column + 'column'}}">
                             <crczp-viz-hurdling-column-header
                                 (sortEmitter)="onSortValueChange(column, $event.sortReverse)"
@@ -124,8 +109,8 @@
                              crczpMouseWheel></div>
                     </div>
                 </div>
-                @for (column of columns; track column) {
-                    <div [ngClass]="{ 'final-2': view === 'overview' && column === 'time' }" class="ctfh-col-2">
+                @for (column of COLUMNS; track column) {
+                    <div [ngClass]="{ 'final-2': view() === 'overview' && column === 'time' }" class="ctfh-col-2">
                         <div
                             class="{{'ctf-progress-column ctf-progress-' + column + 'column ctf-progress-column-data'}}"
                             id="{{'ctf-progress-' + column + 'column'}}">
@@ -136,19 +121,19 @@
             <div class="legend-container">
                 <crczp-viz-hurdling-legend
                     (zoomResetChange)="onZoomReset()"
-                    [selectedViewValue]="view" />
+                    [selectedViewValue]="view()" />
             </div>
         </div>
     }
 
-    @if (errorMessage) {
+    @if (errorMessage()) {
         <div class="ctfh-container-fluid">
             <div class="ctfh-row ctfh-no-gutters ctfh-col-sm-8 ctfh-offset-sm-2">
                 <p class="ctf-progress-error">
                     <svg class="ctf-progress-error-icon" height="20" viewBox="0 0 24 24" width="20">
                         <path d="M13,14H11V10H13M13,18H11V16H13M1,21H23L12,2L1,21Z" />
                     </svg>
-                    {{ errorMessage }}
+                    {{ errorMessage() }}
                 </p>
             </div>
         </div>

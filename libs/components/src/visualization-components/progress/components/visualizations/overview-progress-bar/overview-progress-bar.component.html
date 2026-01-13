@@ -3,7 +3,7 @@
     <span>Time allocation</span>
     @if (this.getLongestEstimate()) {
       <span class="estimated-end-time" matTooltip="Estimated end time">
-        {{ estimatedEndTime | date: "HH:mm" }}
+        {{ estimatedEndTime() | date: "HH:mm" }}
       </span>
     }
   </div>
