@@ -54,7 +54,6 @@ export class TrainingRunComponent implements OnInit {
      * @param order of desired level
      */
     activeStepChanged(order: number): void {
-        console.log('Active step changed to order:', order);
         this.trainingRunService.displayLevelByOrder(order);
     }
 }

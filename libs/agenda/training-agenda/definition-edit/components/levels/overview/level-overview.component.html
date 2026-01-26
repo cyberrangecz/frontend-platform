@@ -9,9 +9,7 @@
                     (levelMove)="onLevelMoved($event)"
                     [activeStep]="activeStep$ | async"
                     [levels]="stepperLevels | async"
-                    [movingInProgress]="levelMovingInProgress"
-                >
-                </crczp-levels-stepper>
+                    [movingInProgress]="levelMovingInProgress" />
                 <mat-divider />
                 <crczp-level-edit
                     (levelChange)="onActiveLevelChanged($event)"

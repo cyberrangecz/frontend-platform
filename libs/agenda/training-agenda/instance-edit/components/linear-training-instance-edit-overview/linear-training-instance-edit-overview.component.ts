@@ -21,7 +21,7 @@ import { TrainingInstanceEditComponent } from '../training-instance-edit/trainin
 import { MatDivider } from '@angular/material/divider';
 import { TrainingInstanceEditOverviewComponent } from '../training-instance-edit-overview.component';
 import { LinearTrainingInstanceEditService } from '../../services/state/edit/linear-training-instance-edit.service';
-import { Injection } from '@crczp/utils';
+import { InjectionTokens } from '@crczp/utils';
 
 @Component({
     selector: 'crczp-linear-training-instance-edit-overview',
@@ -52,7 +52,10 @@ import { Injection } from '@crczp/utils';
             provide: SentinelUserAssignService,
             useClass: OrganizersAssignService,
         },
-        { provide: Injection.TrainingType, useValue: TrainingTypeEnum.LINEAR },
+        {
+            provide: InjectionTokens.TrainingType,
+            useValue: TrainingTypeEnum.LINEAR,
+        },
     ],
 })
 export class LinearTrainingInstanceEditOverviewComponent extends TrainingInstanceEditOverviewComponent {}

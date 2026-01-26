@@ -1,11 +1,11 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { Level, TrainingDefinition } from '@crczp/training-model';
-import { LevelStepperAdapter } from '@crczp/training-agenda/internal';
 import { ActivatedRoute } from '@angular/router';
 import { TrainingPreviewStepper } from '../model/training-preview-stepper';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { SentinelStepperComponent } from '@sentinel/components/stepper';
 import { AbstractLevelComponent } from './level/abstract-level.component';
+import { LevelStepperAdapter } from '@crczp/components';
 
 /**
  * Main component of training run preview.

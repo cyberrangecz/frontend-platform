@@ -14,15 +14,13 @@ import { Level, MitreTechnique, TrainingDefinition } from '@crczp/training-model
 import { Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { LevelOverviewControls } from '../../../model/adapters/level-overview-controls';
-import { LevelStepperAdapter } from '@crczp/training-agenda/internal';
-import { LevelMoveEvent } from '../../../model/events/level-move-event';
 import { LevelEditService } from '../../../services/state/level/level-edit.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { SentinelControlItem, SentinelControlsComponent } from '@sentinel/components/controls';
 import { AsyncPipe } from '@angular/common';
 import { MatDivider } from '@angular/material/divider';
-import { TrainingLevelStepperComponent } from '../stepper/training-level-stepper.component';
 import { AbstractLevelEditComponent } from '../level/abstract-level-edit.component';
+import { LevelMoveEvent, LevelStepperAdapter, TrainingLevelStepperComponent } from '@crczp/components';
 
 /**
  * Smart component for level stepper and level edit components
@@ -36,8 +34,8 @@ import { AbstractLevelEditComponent } from '../level/abstract-level-edit.compone
         AsyncPipe,
         SentinelControlsComponent,
         MatDivider,
-        TrainingLevelStepperComponent,
         AbstractLevelEditComponent,
+        TrainingLevelStepperComponent,
     ],
 })
 export class LevelOverviewComponent implements OnInit, OnChanges {

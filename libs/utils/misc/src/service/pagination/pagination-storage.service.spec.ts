@@ -30,8 +30,8 @@ describe('Pagination should load', () => {
                     new PaginationStorageService(
                         'key',
                         new PaginationRegistryService(),
-                        10
-                    )
+                        10,
+                    ),
             );
     });
 

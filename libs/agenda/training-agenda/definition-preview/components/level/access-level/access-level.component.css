@@ -108,6 +108,7 @@ button {
     justify-content: center;
     flex-wrap: wrap;
     gap: 2vw;
+    padding: 80% 0;
 }
 
 .controls-container.wrapped {

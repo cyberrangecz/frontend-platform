@@ -1,26 +1,25 @@
-import {STEPPER_GLOBAL_OPTIONS} from '@angular/cdk/stepper';
-import {ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit} from '@angular/core';
-import {MatDialog} from '@angular/material/dialog';
-import {SentinelControlItem, SentinelControlItemSignal, SentinelControlsComponent} from '@sentinel/components/controls';
-import {defer, Observable, of} from 'rxjs';
-import {map} from 'rxjs/operators';
-import {PhaseStepperAdapter} from '@crczp/training-agenda/internal';
-import {PhaseEditService} from '../../../../../../services/state/phase/phase-edit.service';
-import {PhaseMoveEvent} from '../../../../../../model/events/phase-move-event';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import { STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { SentinelControlItem, SentinelControlsComponent } from '@sentinel/components/controls';
+import { defer, Observable, of } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { PhaseEditService } from '../../../../../../services/state/phase/phase-edit.service';
+import { PhaseMoveEvent } from '../../../../../../model/events/phase-move-event';
 import {
     MatExpansionPanel,
     MatExpansionPanelDescription,
     MatExpansionPanelHeader,
     MatExpansionPanelTitle
-} from "@angular/material/expansion";
-import {MatIcon} from "@angular/material/icon";
-import {MatError} from "@angular/material/input";
-import {TaskStepperComponent} from "../stepper/task-stepper.component";
-import {MatDivider} from "@angular/material/divider";
-import { AsyncPipe } from "@angular/common";
-import {TaskEditComponent} from "../detail/task-edit.component";
-import {AdaptiveTask} from "@crczp/training-model";
+} from '@angular/material/expansion';
+import { MatIcon } from '@angular/material/icon';
+import { MatError } from '@angular/material/input';
+import { TaskStepperComponent } from '../stepper/task-stepper.component';
+import { MatDivider } from '@angular/material/divider';
+import { AsyncPipe } from '@angular/common';
+import { TaskEditComponent } from '../detail/task-edit.component';
+import { AdaptiveTask } from '@crczp/training-model';
+import { PhaseStepperAdapter } from '@crczp/components';
 
 /**
  * Main hint edit component. Contains stepper to navigate through existing hints and controls to create new hints
@@ -33,32 +32,31 @@ import {AdaptiveTask} from "@crczp/training-model";
     providers: [
         {
             provide: STEPPER_GLOBAL_OPTIONS,
-            useValue: {showError: true},
+            useValue: { showError: true },
         },
     ],
     imports: [
-    SentinelControlsComponent,
-    MatIcon,
-    MatError,
-    MatExpansionPanelDescription,
-    MatExpansionPanelHeader,
-    MatExpansionPanelTitle,
-    MatExpansionPanel,
-    TaskStepperComponent,
-    MatDivider,
-    AsyncPipe,
-    TaskEditComponent
-]
+        SentinelControlsComponent,
+        MatIcon,
+        MatError,
+        MatExpansionPanelDescription,
+        MatExpansionPanelHeader,
+        MatExpansionPanelTitle,
+        MatExpansionPanel,
+        TaskStepperComponent,
+        MatDivider,
+        AsyncPipe,
+        TaskEditComponent,
+    ],
 })
 export class TasksOverviewComponent implements OnInit {
     dialog = inject(MatDialog);
-    private phaseService = inject(PhaseEditService);
-
     stepperTasks: Observable<PhaseStepperAdapter[]>;
     controls: SentinelControlItem[];
     activeStep$: Observable<number>;
     tasksHasErrors: boolean;
     destroyRef = inject(DestroyRef);
+    private phaseService = inject(PhaseEditService);
 
     ngOnInit(): void {
         this.activeStep$ = this.phaseService.activeTaskStep$;
@@ -72,9 +70,11 @@ export class TasksOverviewComponent implements OnInit {
         this.phaseService.setActiveTask(index);
     }
 
-
     onTaskMoved(event: PhaseMoveEvent): void {
-        this.phaseService.moveTasks(event.stepperState.previousIndex, event.stepperState.currentIndex);
+        this.phaseService.moveTasks(
+            event.stepperState.previousIndex,
+            event.stepperState.currentIndex,
+        );
     }
 
     onTaskChanged(task: AdaptiveTask): void {
@@ -94,14 +94,18 @@ export class TasksOverviewComponent implements OnInit {
                 'copy',
                 'Copy',
                 'accent',
-                this.phaseService.activeTasks$.pipe(map((tasks) => tasks.length <= 0)),
+                this.phaseService.activeTasks$.pipe(
+                    map((tasks) => tasks.length <= 0),
+                ),
                 defer(() => this.phaseService.cloneTask()),
             ),
             new SentinelControlItem(
                 'delete',
                 'Delete',
                 'warn',
-                this.phaseService.activeTasks$.pipe(map((tasks) => tasks.length <= 0)),
+                this.phaseService.activeTasks$.pipe(
+                    map((tasks) => tasks.length <= 0),
+                ),
                 defer(() => this.phaseService.deleteTask()),
             ),
         ];

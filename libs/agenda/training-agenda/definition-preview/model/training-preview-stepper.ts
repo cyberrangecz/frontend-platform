@@ -1,10 +1,12 @@
-import {SentinelStepper, StepStateEnum} from '@sentinel/components/stepper';
-import {LevelStepperAdapter} from '@crczp/training-agenda/internal';
+import { SentinelStepper, StepStateEnum } from '@sentinel/components/stepper';
+import { LevelStepperAdapter } from '@crczp/components';
 
 /**
  * Training preview levels adapter to stepper component
  */
-export class TrainingPreviewStepper implements SentinelStepper<LevelStepperAdapter> {
+export class TrainingPreviewStepper
+    implements SentinelStepper<LevelStepperAdapter>
+{
     activeLevelIndex: number;
     items: LevelStepperAdapter[];
 

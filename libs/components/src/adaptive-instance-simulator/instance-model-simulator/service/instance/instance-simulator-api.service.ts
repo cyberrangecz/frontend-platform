@@ -34,7 +34,7 @@ export class InstanceSimulatorApiService {
                 file,
                 {
                     headers: headers,
-                }
+                },
             )
             .pipe(map((resp) => InstanceSimulatorMapper.fromDTO(resp)));
     }
@@ -45,12 +45,12 @@ export class InstanceSimulatorApiService {
      * @return data for sankey diagram visualization
      */
     generate(
-        instanceModelSimulator: InstanceModelSimulator
+        instanceModelSimulator: InstanceModelSimulator,
     ): Observable<SankeyData> {
         return this.http
             .post<SankeyDataDTO>(
                 `${this.settings.basePaths.adaptiveTraining}/visualizations/training-instances/generate`,
-                InstanceModelUpdateMapper.toUpdateDTO(instanceModelSimulator)
+                InstanceModelUpdateMapper.toUpdateDTO(instanceModelSimulator),
             )
             .pipe(map((resp) => SankeyDataMapper.fromDTOs(resp)));
     }
