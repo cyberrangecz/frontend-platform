@@ -10,6 +10,8 @@
             <!-- Step Node -->
             <div
                 (click)="onStepClick($index)"
+                (mouseenter)="mouseHoveringStep.emit($index)"
+                (mouseleave)="mouseHoveringStep.emit(null)"
                 [ngClass]="{
             'selected': isSelected($index),
             'accessible': isAccessible($index),

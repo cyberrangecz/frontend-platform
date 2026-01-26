@@ -9,9 +9,6 @@ export * from './command/command-timeline/command-timeline.component';
 export * from './command/graph/reference/reference-graph.component';
 export * from './command/graph/summary/summary-graph.component';
 export * from './command/graph/trainee/trainee-graph.component';
-export * from './progress/components/types';
-export * from './progress/services/sorting.service';
-export * from './progress/components/visualizations/progress-visualizations.component';
 export * from './visualization-overview/trainings-visualizations-overview-lib.module';
 export * from './visualization-overview/shared/interfaces/trainee-mode-info';
 export * from './walkthrough/walkthrough-visualization.component';
@@ -25,3 +22,6 @@ export { LevelsComponent } from './visualization-overview/components/agenda/clus
 export { LineComponent } from './visualization-overview/components/agenda/timeline/line/line.component';
 export { TableComponent } from './visualization-overview/components/agenda/table/table.component';
 export { TimelineComponent } from './visualization-overview/components/agenda/timeline/timeline.component';
+export { ProgressVisualizationComponent } from './progress/components/progress-visualization.component';
+export { ProgressChartComponent } from './progress/components/progress-chart/progress-chart.component';
+export { TraineeViewEnum } from './visualization-dashboard/trainee-view';

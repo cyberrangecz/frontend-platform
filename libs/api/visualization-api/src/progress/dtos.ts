@@ -1,5 +1,3 @@
-import {UserRefDTO} from '@crczp/training-api';
-
 export class CommandLineEntryDTO {
     timestamp_str: string;
     cmd: string;
@@ -21,7 +19,7 @@ export class ProgressHintDTO {
     hint_title: string;
     hint_content: string;
 }
-export class ProgressLevelVisualizationDTO {
+export class TraineeLevelProgressVisualizationDTO {
     id: number;
     state: string;
     start_time: number;
@@ -32,18 +30,19 @@ export class ProgressLevelVisualizationDTO {
 }
 
 export class TraineeProgressDTO {
-    user_ref_id: number;
+    id: number;
+    name: string;
+    picture: string;
     training_run_id: number;
-    levels: ProgressLevelVisualizationDTO[];
+    levels: TraineeLevelProgressVisualizationDTO[];
 }
 
 export class ProgressVisualizationDataDTO {
     start_time: number;
     estimated_end_time: number;
     current_time: number;
-    players: UserRefDTO[];
     levels: ProgressLeveInfoDTO[];
-    player_progress: TraineeProgressDTO[];
+    progress: TraineeProgressDTO[];
 }
 
 export class ProgressLeveInfoDTO {

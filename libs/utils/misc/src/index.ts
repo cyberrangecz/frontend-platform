@@ -27,6 +27,9 @@ export const Utils = {
     NavBar: NavBuilder,
     Provision: ProvisionUtil,
     Document: DocumentUtils,
+    Array: ArrayUtils,
+    Set: SetUtils,
+    Object: ObjectUtils,
 };
 
 export const Injection = {

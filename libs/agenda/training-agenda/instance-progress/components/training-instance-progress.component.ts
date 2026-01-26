@@ -7,11 +7,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AsyncPipe } from '@angular/common';
 import { MatTab, MatTabContent, MatTabGroup, MatTabLabel } from '@angular/material/tabs';
 import { MatIcon } from '@angular/material/icon';
-import {
-    CommandTimelineComponent,
-    ProgressVisualizationsComponent,
-    ViewEnum,
-} from '@crczp/components';
+import { CommandTimelineComponent, ProgressVisualizationComponent } from '@crczp/components';
 
 /**
  * Component displaying progress visualization
@@ -26,16 +22,15 @@ import {
         MatTabGroup,
         MatTab,
         MatIcon,
-        ProgressVisualizationsComponent,
         MatTabLabel,
         MatTabContent,
         CommandTimelineComponent,
+        ProgressVisualizationComponent,
     ],
 })
 export class TrainingInstanceProgressComponent implements OnInit {
     @Input() trainingInstance$: Observable<TrainingInstance>;
     destroyRef = inject(DestroyRef);
-    protected readonly ViewEnum = ViewEnum;
     private activeRoute = inject(ActivatedRoute);
 
     ngOnInit(): void {

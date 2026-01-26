@@ -1,0 +1,14 @@
+<div class="time-range-selector-container">
+    <sentinel-enumeration-select
+        [(selected)]="selectedOption"
+        [label]="'Time Range'"
+        [matFormAppearance]="'outline'"
+        [options]="timeRangeOptions()"
+    />
+
+    <crczp-timeline-chart
+        [(currentIndex)]="timelineIndex"
+        [breakpoints]="breakpoints()"
+        [scale]="endTimeMs() - startTimeMs()"
+    />
+</div>

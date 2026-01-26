@@ -1,5 +1,5 @@
 @if ((trainingInstance$ | async); as trainingInstance) {
-    <mat-tab-group mat-stretch-tabs="always" class="mat-elevation-z4">
+    <mat-tab-group class="mat-elevation-z4" mat-stretch-tabs="always">
         <mat-tab>
             <ng-template mat-tab-label>
                 <mat-icon class="tab-icon">insights</mat-icon>
@@ -7,10 +7,9 @@
             </ng-template>
             <ng-template matTabContent>
                 <div class="container">
-                    <crczp-hurdling-visualization
-                        [view]="ViewEnum.Progress"
-                        [trainingInstanceId]="trainingInstance?.id">
-                    </crczp-hurdling-visualization>
+                    <crczp-progress-visualization
+                        [instanceId]="trainingInstance.id"
+                    />
                 </div>
             </ng-template>
         </mat-tab>
@@ -21,7 +20,7 @@
             </ng-template>
             <ng-template matTabContent>
                 <div class="container">
-                    <crczp-timeline [trainingInstanceId]="trainingInstance.id" [isStandalone]="true"/>
+                    <crczp-timeline [isStandalone]="true" [trainingInstanceId]="trainingInstance.id" />
                 </div>
             </ng-template>
         </mat-tab>

@@ -1,0 +1,21 @@
+.time-range-selector-container {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+
+    sentinel-enumeration-select {
+        flex-shrink: 0;
+    }
+
+    crczp-dial-selector {
+        flex-shrink: 0;
+    }
+
+    crczp-timeline-chart {
+        width: 100%;
+        flex: 1;
+        min-width: 0;
+        display: block;
+    }
+}

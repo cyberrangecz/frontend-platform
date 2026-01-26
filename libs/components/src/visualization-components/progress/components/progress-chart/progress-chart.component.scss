@@ -1,0 +1,52 @@
+:host {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+
+.chart-container {
+    width: 100%;
+    height: 624px;
+    min-height: 624px;
+}
+
+.controls-container {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    align-items: center;
+    min-height: 2rem;
+    padding: 0 60px 0 150px;
+}
+
+.clear-button {
+    position: absolute;
+    left: 48px;
+}
+
+.clear-button__top {
+    top: 60px;
+}
+
+.clear-button__bottom {
+    top: -54px;
+    left: 32px;
+    border-radius: 50%;
+    background: transparent;
+    box-shadow: none;
+
+    &:hover {
+        background: transparent;
+        box-shadow: none;
+    }
+}
+
+
+.sort-direction-button {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}

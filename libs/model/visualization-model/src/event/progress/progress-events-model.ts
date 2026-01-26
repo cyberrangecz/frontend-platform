@@ -1,5 +1,4 @@
 export abstract class ProgressEvent {
-    type: string;
     timestamp: number;
     trainingTime: number;
     levelId: number;
@@ -7,7 +6,10 @@ export abstract class ProgressEvent {
     traineeId: number;
     traineeName: string;
 
-    abstract getContent(): string;
+    protected constructor(
+        public type: ProgressEventType,
+        public description: string,
+    ) {}
 }
 
 export enum ProgressEventType {
@@ -24,60 +26,67 @@ export enum ProgressEventType {
 }
 
 export class HintTakenEvent extends ProgressEvent {
-    hintId: number;
-    hintTitle: string;
-
-    constructor() {
-        super();
-        this.type = 'hint';
-    }
-
-    getContent() {
-        return 'Hint <i>' + this.hintTitle + '</i> taken';
+    constructor(
+        public hintId: number,
+        public hintTitle: string,
+    ) {
+        super(
+            ProgressEventType.HintTaken,
+            'Hint taken: <span style="color: #d3b102;"><i>' +
+                hintTitle +
+                '</i></span>',
+        );
     }
 }
 
 export class SolutionDisplayedEvent extends ProgressEvent {
     constructor() {
-        super();
-        this.type = 'solution';
-    }
-
-    getContent() {
-        return 'Solution displayed';
+        super(ProgressEventType.SolutionDisplayed, 'Solution displayed');
     }
 }
 
 export class TrainingRunEndedEvent extends ProgressEvent {
     constructor() {
-        super();
-    }
-
-    getContent() {
-        return '';
+        super(ProgressEventType.TrainingRunFinished, 'Training run ended');
     }
 }
 
 export class TrainingRunStartedEvent extends ProgressEvent {
     constructor() {
-        super();
-    }
-
-    getContent() {
-        return '';
+        super(ProgressEventType.TrainingRunStarted, 'Training run started');
     }
 }
 
 export class WrongAnswerEvent extends ProgressEvent {
-    declare type: string;
-    answerContent: string;
-
-    constructor() {
-        super();
-        this.type = 'wrong';
+    constructor(public answerContent: string) {
+        super(
+            ProgressEventType.WrongAnswer,
+            'Wrong answer submitted: <span style="color: red;"><i>' +
+                answerContent +
+                '</i></span>',
+        );
     }
+}
 
-    getContent() {
-        return 'Wrong answer submitted: <i>' + this.answerContent + '</i>';
+export class LevelStartedEvent extends ProgressEvent {
+    constructor() {
+        super(ProgressEventType.LevelStarted, 'Level started');
+    }
+}
+
+export class LevelCompletedEvent extends ProgressEvent {
+    constructor() {
+        super(ProgressEventType.LevelCompleted, 'Level completed');
+    }
+}
+
+export class CorrectFlagEvent extends ProgressEvent {
+    constructor(public answerContent: string) {
+        super(
+            ProgressEventType.CorrectFlag,
+            'Correct flag submitted: <span style="color: green;"><i>' +
+                answerContent +
+                '</i></span>',
+        );
     }
 }
