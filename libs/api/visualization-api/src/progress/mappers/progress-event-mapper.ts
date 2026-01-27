@@ -47,8 +47,8 @@ export class ProgressEventMapper {
                 return;
             }
         }
-        event.timestamp = dto.timestamp / 1000;
-        event.trainingTime = dto.training_time / 1000;
+        event.timestamp = dto.timestamp;
+        event.trainingTime = dto.training_time;
         event.levelId = dto.level;
         return event;
     }
