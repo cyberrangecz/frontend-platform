@@ -168,35 +168,27 @@ export class PoolDetailComponent implements OnInit, AfterViewInit {
                 this.onLoadEvent(initialLoadEvent);
             });
 
-        const sandboxes$ = this.sandboxInstanceService.allocationUnits$.pipe(
-            map((resource) => {
-                return resource.elements.map(
-                    (allocationUnit) => new AbstractSandbox(allocationUnit),
-                );
-            }),
-        );
+        const sandboxes$ = this.sandboxInstanceService.allocationUnits$;
 
         this.instances$ = sandboxes$.pipe(
             map(
                 (data) =>
                     new PoolDetailTable(
-                        this.mapSandboxesToPaginatedResource(data),
+                        this.mapToAbstractSandboxes(data),
                         this.sandboxInstanceService,
                     ),
             ),
         );
     }
 
-    private mapSandboxesToPaginatedResource(
-        sandboxes: AbstractSandbox[],
+    private mapToAbstractSandboxes(
+        sandboxes: OffsetPaginatedResource<SandboxAllocationUnit>,
     ): OffsetPaginatedResource<AbstractSandbox> {
-        const pagination = PaginationMapper.fromArray(
-            sandboxes,
-            this.paginationService.loadPageSize(),
-        );
         return new OffsetPaginatedResource<AbstractSandbox>(
-            sandboxes,
-            pagination,
+            sandboxes.elements.map(
+                (allocationUnit) => new AbstractSandbox(allocationUnit),
+            ),
+            sandboxes.pagination,
         );
     }
 
