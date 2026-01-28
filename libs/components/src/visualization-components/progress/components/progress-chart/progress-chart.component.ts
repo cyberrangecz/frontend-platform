@@ -11,7 +11,7 @@ import {
     signal,
     untracked,
     viewChild,
-    WritableSignal,
+    WritableSignal
 } from '@angular/core';
 import { ProgressVisualizationApiData } from '@crczp/visualization-model';
 import { TimeInterpolationService } from '../../services/time-interpolation.service';
@@ -19,16 +19,11 @@ import { MatButton, MatMiniFabButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { SentinelEnumerationSelectComponent } from '@sentinel/components/enumeration-select';
 import { SentinelButtonWithIconComponent } from '@sentinel/components/button-with-icon';
-import {
-    CombinedProgressChartData,
-    LagState,
-    SortCriteria,
-} from '../../echarts/chart-utility-types';
+import { CombinedProgressChartData, LagState, SortCriteria } from '../../echarts/chart-utility-types';
 import { LagStateUtils } from '../../echarts/data-manipulation/lag-state';
 import { ChartStateService } from '../../services/chart-state.service';
 import { TimeRangeOption } from '../time-range-selector/time-range-selector';
 import { MatTooltip } from '@angular/material/tooltip';
-import { A } from '@angular/cdk/keycodes';
 
 /**
  * Time padding in milliseconds added to chart boundaries.
@@ -57,8 +52,6 @@ export class ProgressChartComponent implements AfterViewInit, OnDestroy {
     highlightedLevel = input<number | null>(null);
     selectedLevel = input<number | null>(null);
 
-    protected readonly TIME_PADDING = TIME_PADDING_MS;
-
     protected readonly favoriteTrainees = signal<Set<number>>(new Set());
 
     protected sortOptions: SortCriteria[] = [
@@ -86,7 +79,6 @@ export class ProgressChartComponent implements AfterViewInit, OnDestroy {
     protected selectedTimeRangeOption = model<TimeRangeOption>('UNLIMITED');
 
     protected readonly timeService = inject(TimeInterpolationService);
-    protected readonly A = A;
 
     private readonly chartContainer =
         viewChild.required<ElementRef>('chartContainer');
