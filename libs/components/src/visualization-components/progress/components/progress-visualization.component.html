@@ -1,0 +1,18 @@
+<h1>Progress Visualization</h1>
+
+@if (progressData()) {
+    <crczp-stepper
+        (mouseHoveringStep)="highlightedLevelIndex.set($event)"
+        (stepClicked)="updateSelectedLevel($event)"
+        [selectedIndex]="selectedLevelIndex()"
+        [steps]="stepperLevels()"
+        class="levels-stepper" />
+
+    <crczp-progress-chart
+        [highlightedLevel]="highlightedLevelIndex()"
+        [selectedLevel]="selectedLevelIndex()"
+        [visualizationData]="progressData()"
+    />
+}
+
+

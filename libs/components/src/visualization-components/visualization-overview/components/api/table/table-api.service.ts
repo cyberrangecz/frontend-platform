@@ -23,7 +23,6 @@ export class TableApiService {
     getTableVisualizationData(
         trainingInstanceId: number,
     ): Observable<PlayerTableDataDTO[]> {
-        console.log('table by instance id: ' + trainingInstanceId);
         return this.http.get<PlayerTableDataDTO[]>(
             `${this.trainingVisualizationEndpoint}/${trainingInstanceId}/table`,
         );
@@ -32,7 +31,6 @@ export class TableApiService {
     getAnonymizedTableVisualizationData(
         trainingRunId: number,
     ): Observable<PlayerTableDataDTO[]> {
-        console.log('anonymized table by run id: ' + trainingRunId);
         return this.http.get<PlayerTableDataDTO[]>(
             `${this.anonymizedTrainingVisualizationEndpoint}/${trainingRunId}/table`,
         );

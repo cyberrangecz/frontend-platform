@@ -5,10 +5,7 @@ import { map } from 'rxjs/operators';
 import { CommandLineEntryDTO, ProgressVisualizationDataDTO } from './dtos';
 import { ProgressVisualizationDataMapper } from './mappers/progress-visualization-data-mapper';
 import { ProgressCommandLineMapper } from './mappers/progress-command-line-mapper';
-import {
-    CommandLineEntry,
-    ProgressVisualizationData,
-} from '@crczp/visualization-model';
+import { CommandLineEntry, ProgressVisualizationApiData } from '@crczp/visualization-model';
 import { PortalConfig } from '@crczp/utils';
 
 /**
@@ -24,16 +21,16 @@ export class ProgressVisualizationApi {
      * Sends http request to retrieve all data for visualizations
      */
     getVisualizationData(
-        trainingInstanceId: number
-    ): Observable<ProgressVisualizationData> {
+        trainingInstanceId: number,
+    ): Observable<ProgressVisualizationApiData> {
         return this.http
             .get<ProgressVisualizationDataDTO>(
-                `${this.apiUrl}/visualizations/training-instances/${trainingInstanceId}/progress`
+                `${this.apiUrl}/visualizations/training-instances/${trainingInstanceId}/progress`,
             )
             .pipe(
                 map((response) =>
-                    ProgressVisualizationDataMapper.fromDTO(response)
-                )
+                    ProgressVisualizationDataMapper.fromDTO(response),
+                ),
             );
     }
 
@@ -42,14 +39,14 @@ export class ProgressVisualizationApi {
      */
     getAdaptiveRunVisualization(
         trainingInstanceId: number,
-        trainingRunId: number
+        trainingRunId: number,
     ): Observable<CommandLineEntry[]> {
         return this.http
-            .get<CommandLineEntryDTO[]>(
-                `${this.apiUrl}/visualizations/training-instances/${trainingInstanceId}/training-runs/${trainingRunId}/commands`
-            )
+            .get<
+                CommandLineEntryDTO[]
+            >(`${this.apiUrl}/visualizations/training-instances/${trainingInstanceId}/training-runs/${trainingRunId}/commands`)
             .pipe(
-                map((response) => ProgressCommandLineMapper.fromDTOs(response))
+                map((response) => ProgressCommandLineMapper.fromDTOs(response)),
             );
     }
 }

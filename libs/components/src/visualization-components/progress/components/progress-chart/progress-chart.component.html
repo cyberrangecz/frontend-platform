@@ -1,0 +1,43 @@
+<div class="controls-container">
+
+    <button
+        (click)="clearSelected()"
+        [style.visibility]="favoriteTrainees().size > 0 ? 'visible' : 'hidden'" class="clear-button clear-button__top"
+        mat-button>
+        Clear
+        <mat-icon>person_off</mat-icon>
+    </button>
+
+    <sentinel-enumeration-select
+        (selectedChange)="selectedSort.set($event)"
+        [label]="'Sort by'"
+        [matFormAppearance]="'outline'"
+        [noOptionPossible]="false"
+        [options]="sortOptions"
+        [selected]="selectedSort()"
+        [style]="'outline'"
+    />
+
+    <sentinel-button-with-icon
+        (click)="sortDirection.set(sortDirection() === 'asc' ? 'desc' : 'asc')"
+        [buttonStyle]="'regular'"
+        [icon]=" sortDirection() === 'asc' ? 'arrow_upward' : 'arrow_downward' "
+        class="sort-direction-button"
+    >
+        {{ sortDirection() }}
+    </sentinel-button-with-icon>
+</div>
+<div #chartContainer class="chart-container"></div>
+
+<div class="controls-container">
+    <button
+        (click)="this.chartStateService.resetZoom()"
+        [matTooltip]="'Reset Zoom'"
+        [style.visibility]="isZoomedIn() ? 'visible' : 'hidden'"
+        class="clear-button clear-button__bottom" mat-mini-fab>
+        <mat-icon
+            [style.color]="'#4045EA'"
+        >zoom_out_map
+        </mat-icon>
+    </button>
+</div>

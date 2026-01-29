@@ -48,14 +48,11 @@ export class LinearTrainingLevelService extends AbstractTrainingLevelService {
         this.displayTakeHintDialog(hint).subscribe((result) => {
             if (result === SentinelDialogResultEnum.CONFIRMED) {
                 this.callApiToTakeHint(hint).subscribe((revealedHint) => {
-                    console.log('Received revealed hint: ', revealedHint);
                     const trainingLevel = this.runService.runInfo
                         .displayedLevel as TrainingLevel;
-                    console.log('Displayed training level: ', trainingLevel);
                     trainingLevel.hints = trainingLevel.hints.map((h) =>
                         h.id === revealedHint.id ? revealedHint : h,
                     );
-                    console.log('Updated training level: ', trainingLevel);
                     this.runService.updateRunInfo({
                         levels: this.runService.runInfo.levels.map((level) => {
                             if (level.id === trainingLevel.id) {

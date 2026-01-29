@@ -395,8 +395,11 @@ export class TopologyGraph implements AfterViewInit {
 
         this.network.on('doubleClick', (event) => {
             if (event.nodes.length > 0) {
-                console.log('Double click on node:', event.nodes[0]);
-                this.emitConsoleEvent(this.nodeNamesDict[event.nodes[0]], false, false);
+                this.emitConsoleEvent(
+                    this.nodeNamesDict[event.nodes[0]],
+                    false,
+                    false,
+                );
             }
         });
     }

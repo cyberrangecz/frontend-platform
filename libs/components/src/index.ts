@@ -11,3 +11,8 @@ export * from './stepper/stepper';
 export * from './topology-graph/index';
 export * from './visualization-components/index';
 export * from './adaptive-instance-simulator/index';
+export * from './stepper/stepper';
+export * from './stepper/level-stepper-adapter';
+export * from './stepper/phase-stepper-adapter';
+export * from './stepper/level-move-event';
+export * from './stepper/training-level-stepper.component';

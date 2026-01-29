@@ -8,10 +8,13 @@ import {
     OnChanges,
     OnInit,
     Output,
-    SimpleChanges
+    SimpleChanges,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { SentinelControlItem, SentinelControlsComponent } from '@sentinel/components/controls';
+import {
+    SentinelControlItem,
+    SentinelControlsComponent,
+} from '@sentinel/components/controls';
 import { Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import {
@@ -22,9 +25,8 @@ import {
     QuestionnairePhase,
     QuestionnaireTypeEnum,
     TrainingDefinition,
-    TrainingPhase
+    TrainingPhase,
 } from '@crczp/training-model';
-import { PhaseStepperAdapter } from '@crczp/training-agenda/internal';
 import { PhaseEditService } from '../../../services/state/phase/phase-edit.service';
 import { PhaseMoveEvent } from '../../../model/events/phase-move-event';
 import { PhaseOverviewControls } from '../../../model/adapters/phase-overview-controls';
@@ -33,6 +35,7 @@ import { MatDivider } from '@angular/material/divider';
 import { PhaseStepperComponent } from '../stepper/phase-stepper.component';
 import { AbstractPhaseEditComponent } from '../phase/abstract-phase-edit.component';
 import { AsyncPipe } from '@angular/common';
+import { PhaseStepperAdapter } from '@crczp/components';
 
 /**
  * Smart component for phases stepper and phases edit components

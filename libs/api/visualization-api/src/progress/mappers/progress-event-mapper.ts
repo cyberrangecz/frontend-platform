@@ -1,4 +1,4 @@
-import {ProgressEventDTO} from '../dtos';
+import { ProgressEventDTO } from '../dtos';
 import {
     HintTakenEvent,
     ProgressEvent,
@@ -6,13 +6,14 @@ import {
     SolutionDisplayedEvent,
     TrainingRunEndedEvent,
     TrainingRunStartedEvent,
-    WrongAnswerEvent
+    WrongAnswerEvent,
 } from '@crczp/visualization-model';
-
 
 export class ProgressEventMapper {
     static fromDTOs(dtos: ProgressEventDTO[]): ProgressEvent[] {
-        return dtos.map((dto) => ProgressEventMapper.fromDTO(dto)).filter((event) => event);
+        return dtos
+            .map((dto) => ProgressEventMapper.fromDTO(dto))
+            .filter((event) => event);
     }
 
     static fromDTO(dto: ProgressEventDTO): ProgressEvent {
@@ -23,14 +24,11 @@ export class ProgressEventMapper {
         let event;
         switch (dto.type) {
             case ProgressEventType.HintTaken: {
-                event = new HintTakenEvent();
-                event.hintId = dto.hint_id;
-                event.hintTitle = dto.hint_title;
+                event = new HintTakenEvent(dto.hint_id, dto.hint_title);
                 break;
             }
             case ProgressEventType.WrongAnswer: {
-                event = new WrongAnswerEvent();
-                event.answerContent = dto.answer_content;
+                event = new WrongAnswerEvent(dto.answer_content);
                 break;
             }
             case ProgressEventType.SolutionDisplayed: {
@@ -49,8 +47,8 @@ export class ProgressEventMapper {
                 return;
             }
         }
-        event.timestamp = dto.timestamp / 1000;
-        event.trainingTime = dto.training_time / 1000;
+        event.timestamp = dto.timestamp;
+        event.trainingTime = dto.training_time;
         event.levelId = dto.level;
         return event;
     }

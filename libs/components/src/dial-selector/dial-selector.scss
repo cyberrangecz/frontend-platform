@@ -1,0 +1,29 @@
+.dial-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: ns-resize;
+    user-select: none;
+    height: 100px; // Example height
+    justify-content: center;
+
+    .dial-item {
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease-in-out;
+        width: 100%;
+
+        &.prev, &.next {
+            opacity: 0.5;
+            font-size: 0.8em;
+            cursor: pointer;
+        }
+
+        &.current {
+            font-weight: bold;
+            font-size: 1em;
+        }
+    }
+}

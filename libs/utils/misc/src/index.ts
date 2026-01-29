@@ -2,7 +2,14 @@ import { DateUtils } from './utils/functions/date-utils';
 import { NavBuilder } from './utils/functions/nav-builder';
 import { ProvisionUtil } from './utils/functions/property-provision';
 import { DocumentUtils } from './utils/functions/document-utils';
-import { TRAINING_TYPE_TOKEN } from './types/training-type-token';
+import {
+    INSTANCE_ID_TOKEN,
+    TRAINING_TYPE_TOKEN,
+} from './utils/classes/injection-tokens';
+import { LevelTypeUtils } from './utils/functions/level-type-utils';
+import { ArrayUtils } from './utils/functions/array-utils';
+import { SetUtils } from './utils/functions/set-utils';
+import { ObjectUtils } from './utils/functions/object-utils';
 
 export * from './rxjs/unique';
 export * from './rxjs/tresholdBufferPipe';
@@ -27,8 +34,13 @@ export const Utils = {
     NavBar: NavBuilder,
     Provision: ProvisionUtil,
     Document: DocumentUtils,
+    LevelType: LevelTypeUtils,
+    Array: ArrayUtils,
+    Set: SetUtils,
+    Object: ObjectUtils,
 };
 
-export const Injection = {
+export const InjectionTokens = {
     TrainingType: TRAINING_TYPE_TOKEN,
+    TrainingInstanceId: INSTANCE_ID_TOKEN,
 };

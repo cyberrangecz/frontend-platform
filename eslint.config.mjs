@@ -43,6 +43,7 @@ export default [
                     caughtErrorsIgnorePattern: '^_',
                 },
             ],
+            '@typescript-eslint/no-namespace': 'off',
         },
     },
     {

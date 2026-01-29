@@ -24,32 +24,12 @@
                 </div>
             </div>
         </mat-expansion-panel>
-        <!-- TRAINEE SELECTION  -->
-        @if (visualizationData$ | async) {
-            <div class="trainee-selection">
-                <crczp-viz-hurdling-trainee-selection
-                    [visualizationData]="visualizationData$ | async"
-                    [selectedTraineeView]="selectedTraineeView"
-                    (filteredTraineesChange)="traineeFilterChange($event)">
-                </crczp-viz-hurdling-trainee-selection>
-            </div>
-        }
 
-        <!-- DASHBOARD CONTENT  -->
         <div class="dashboard-container">
             <!-- HURDLING CONTENT  -->
             <div class="vis hurdling-content" style="display: block; justify-content: center;">
-                @if (visualizationData$ | async) {
-                    <div class="name-header">Training Overview</div>
-                }
-                <crczp-hurdling-visualization
-                    (highlightedTrainee)="highlightTraineeChange($event)"
-                    (outputSelectedTrainees)="selectedTraineesChange($event)"
-                    [isStandalone]="true"
-                    [selectedTraineeView]="selectedTraineeView"
-                    [selectedTrainees]="hurdlingTrainees$ | async"
-                    [setDashboardView]=true
-                    [trainingInstanceId]="trainingInstanceId"
+                <crczp-progress-visualization
+                    [instanceId]="trainingInstanceId"
                 />
             </div>
             <div class="overview-container">
@@ -60,46 +40,29 @@
                         (selectedTrainee)="highlightTraineeChange($event)"
                         [filterPlayers]="filteredTrainees$ | async"
                         [highlightedTrainee]="highlightedTrainee$ | async"
+                        [instanceIds]="[trainingInstanceId]"
                         [size]="clusteringSize"
                         [standalone]="true"
                         [trainingDefinitionId]="trainingDefinitionId"
                         [trainingInstanceId]="trainingInstanceId"
-                        [instanceIds]="[trainingInstanceId]"
                     />
                 </div>
                 @if ((lineTrainees$ | async); as lineTrainees) {
                     <div
-                        class="vis right overflow overview-line {{!((lineTrainees).length > 0) ?  'hidden' : ''}}"
-                        [ngStyle]="{'justify-content': 'center'}">
+                        [ngStyle]="{'justify-content': 'center'}"
+                        class="vis right overflow overview-line {{!((lineTrainees).length > 0) ?  'hidden' : ''}}">
                         <div class="overview-visualization-container">
-                            <div class="name-header">Individual Walkthrough for
-                                @if (selectedTraineeView === 'avatar') {
-                                    <div>
-                                        @for (traineeId of lineTrainees; track traineeId) {
-                                            <span>
-                        <img
-                            class="trainee-avatar"
-                            alt="trainee-avatar"
-                            src="data:image/png;base64,{{getTraineeAvatar(traineeId)}}"
-                            width="18" />
-                      </span>
-                                        }
-                                    </div>
-                                } @else {
-                                    selected trainees
-                                }
-                            </div>
                             <!-- TIMELINE CONTENT  -->
                             <div class="vis-timeline">
                                 <crczp-visualization-overview-line
-                                    [size]="timelineSize"
-                                    [trainingInstanceId]="trainingInstanceId"
-                                    [trainingDefinitionId]="trainingDefinitionId"
-                                    [standalone]="true"
+                                    (selectedTrainee)="highlightTraineeChange($event)"
                                     [activeFilters]="activeFilters$ | async"
                                     [filterPlayers]="lineTrainees"
                                     [highlightedTrainee]="highlightedTrainee$ | async"
-                                    (selectedTrainee)="highlightTraineeChange($event)"
+                                    [size]="timelineSize"
+                                    [standalone]="true"
+                                    [trainingDefinitionId]="trainingDefinitionId"
+                                    [trainingInstanceId]="trainingInstanceId"
                                 />
                             </div>
                         </div>
@@ -109,3 +72,4 @@
         </div>
     </mat-sidenav-content>
 </mat-sidenav-container>
+

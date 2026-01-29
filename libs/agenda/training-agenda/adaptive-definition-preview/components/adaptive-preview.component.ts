@@ -1,11 +1,11 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Phase, TrainingDefinition } from '@crczp/training-model';
-import { PhaseStepperAdapter } from '@crczp/training-agenda/internal';
 import { AdaptivePreviewStepper } from '../model/adaptive-preview-stepper';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AbstractPhaseComponent } from './phase/abstract-phase.component';
 import { SentinelStepperComponent } from '@sentinel/components/stepper';
+import { PhaseStepperAdapter } from '@crczp/components';
 
 @Component({
     selector: 'crczp-designer-preview',

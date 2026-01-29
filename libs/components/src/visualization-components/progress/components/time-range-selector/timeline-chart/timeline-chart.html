@@ -1,0 +1,25 @@
+<div class="timeline-container">
+    <div class="timeline-line"></div>
+
+    <div class="intervals">
+        @for (breakpoint of breakpoints().slice(0, -1); track $index) {
+            <button
+                (click)="selectInterval($index)"
+                [class.selected]="(breakpoints().length - 2 - $index) === currentIndex()"
+                [style.left.%]="getPercentage(breakpoint.value)"
+                [style.width.%]="getPercentage(breakpoints()[$index + 1].value) - getPercentage(breakpoint.value)"
+                class="interval"
+                type="button"
+            ></button>
+        }
+    </div>
+
+    <div class="breakpoints">
+        @for (breakpoint of breakpoints(); track $index) {
+            <div [style.left.%]="getPercentage(breakpoint.value)" class="breakpoint">
+                <div class="tick"></div>
+                <div class="label">{{ breakpoint.label }}</div>
+            </div>
+        }
+    </div>
+</div>

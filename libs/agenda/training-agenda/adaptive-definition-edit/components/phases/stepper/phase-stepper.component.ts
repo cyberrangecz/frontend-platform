@@ -1,13 +1,22 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, inject } from '@angular/core';
-import {MatDialog} from '@angular/material/dialog';
+import {
+    ChangeDetectionStrategy,
+    Component,
+    EventEmitter,
+    inject,
+    Input,
+    OnChanges,
+    Output,
+    SimpleChanges
+} from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import {
     SentinelStepper,
     SentinelStepperComponent,
     StepperStateChange,
     StepStateEnum
 } from '@sentinel/components/stepper';
-import {PhaseStepperAdapter} from '@crczp/training-agenda/internal';
-import {PhaseMoveEvent} from '../../../model/events/phase-move-event';
+import { PhaseMoveEvent } from '../../../model/events/phase-move-event';
+import { PhaseStepperAdapter } from '@crczp/components';
 
 /**
  * Stepper component for navigation between training-training-phase definition levels
@@ -17,9 +26,7 @@ import {PhaseMoveEvent} from '../../../model/events/phase-move-event';
     templateUrl: './phase-stepper.component.html',
     styleUrls: ['./phase-stepper.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [
-        SentinelStepperComponent
-    ]
+    imports: [SentinelStepperComponent],
 })
 export class PhaseStepperComponent implements OnChanges {
     dialog = inject(MatDialog);
@@ -30,9 +37,10 @@ export class PhaseStepperComponent implements OnChanges {
 
     @Output() activeStepChange: EventEmitter<number> = new EventEmitter();
     @Output() phaseMove: EventEmitter<PhaseMoveEvent> = new EventEmitter();
-    @Output() initialPhases: EventEmitter<PhaseStepperAdapter[]> = new EventEmitter();
+    @Output() initialPhases: EventEmitter<PhaseStepperAdapter[]> =
+        new EventEmitter();
 
-    phaseStepper: SentinelStepper<PhaseStepperAdapter> = {items: []};
+    phaseStepper: SentinelStepper<PhaseStepperAdapter> = { items: [] };
 
     private previousActiveStep = -1;
 
@@ -60,8 +68,12 @@ export class PhaseStepperComponent implements OnChanges {
     }
 
     private changeSelectedStep(index: number) {
-        if (this.previousActiveStep >= 0 && this.previousActiveStep < this.phaseStepper.items.length) {
-            this.phaseStepper.items[this.previousActiveStep].state = StepStateEnum.SELECTABLE;
+        if (
+            this.previousActiveStep >= 0 &&
+            this.previousActiveStep < this.phaseStepper.items.length
+        ) {
+            this.phaseStepper.items[this.previousActiveStep].state =
+                StepStateEnum.SELECTABLE;
         }
         this.phaseStepper.items[index].state = StepStateEnum.ACTIVE;
         this.previousActiveStep = this.activeStep;

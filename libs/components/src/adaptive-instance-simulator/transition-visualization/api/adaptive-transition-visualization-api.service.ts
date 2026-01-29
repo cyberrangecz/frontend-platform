@@ -16,21 +16,21 @@ export class AdaptiveTransitionVisualizationApi {
     private readonly apiUrl = inject(PortalConfig).basePaths.linearTraining;
 
     getDataForTrainingInstance(
-        trainingInstanceId: number
+        trainingInstanceId: number,
     ): Observable<TransitionGraphVisualizationData> {
         return this.http
             .get<VisualizationDataDTO>(
-                `${this.apiUrl}/visualizations/training-instances/${trainingInstanceId}/transitions-graph`
+                `${this.apiUrl}/visualizations/training-instances/${trainingInstanceId}/transitions-graph`,
             )
             .pipe(map((response) => VisualizationDataMapper.fromDTO(response)));
     }
 
     getDataForTrainingRun(
-        trainingRunId: number
+        trainingRunId: number,
     ): Observable<TransitionGraphVisualizationData> {
         return this.http
             .get<VisualizationDataDTO>(
-                `${this.apiUrl}/visualizations/training-runs/${trainingRunId}/transitions-graph`
+                `${this.apiUrl}/visualizations/training-runs/${trainingRunId}/transitions-graph`,
             )
             .pipe(map((response) => VisualizationDataMapper.fromDTO(response)));
     }

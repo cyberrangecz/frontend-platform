@@ -45,8 +45,6 @@ markdown ::ng-deep pre {
 }
 
 @media screen and (max-width: 800px) {
-=
-
     markdown > img {
         max-width: 700px;
     }

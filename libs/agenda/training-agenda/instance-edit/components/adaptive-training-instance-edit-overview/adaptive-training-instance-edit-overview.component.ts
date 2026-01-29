@@ -21,7 +21,7 @@ import { MatError } from '@angular/material/input';
 import { AsyncPipe } from '@angular/common';
 import { TrainingInstanceEditComponent } from '../training-instance-edit/training-instance-edit.component';
 import { MatDivider } from '@angular/material/divider';
-import { Injection } from '@crczp/utils';
+import { InjectionTokens } from '@crczp/utils';
 
 @Component({
     selector: 'crczp-adaptive-training-instance-edit-overview',
@@ -53,7 +53,7 @@ import { Injection } from '@crczp/utils';
             useClass: OrganizersAssignService,
         },
         {
-            provide: Injection.TrainingType,
+            provide: InjectionTokens.TrainingType,
             useValue: TrainingTypeEnum.ADAPTIVE,
         },
     ],

@@ -1,36 +1,19 @@
-import {
-    ChangeDetectorRef,
-    Component,
-    HostListener,
-    inject,
-    Input,
-    OnInit,
-} from '@angular/core';
-import { take } from 'rxjs/operators';
+import { ChangeDetectorRef, Component, HostListener, inject, Input } from '@angular/core';
 
 import { BehaviorSubject, Observable } from 'rxjs';
 import { MatSelectChange, MatSelectModule } from '@angular/material/select';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatExpansionModule } from '@angular/material/expansion';
-import { TraineeSelectionComponent } from '../progress/components/visualizations/trainee-selection/trainee-selection.component';
-import { TrainingsVisualizationsOverviewLibModule } from '../visualization-overview/trainings-visualizations-overview-lib.module';
-import { ProgressVisualizationsComponent } from '../progress/components/visualizations/progress-visualizations.component';
+import {
+    TrainingsVisualizationsOverviewLibModule
+} from '../visualization-overview/trainings-visualizations-overview-lib.module';
 import { CommonModule } from '@angular/common';
 import { MatOptionModule } from '@angular/material/core';
-import {
-    CommandApi,
-    ProgressVisualizationApi,
-    TimelineCommandApi,
-} from '@crczp/visualization-api';
+import { CommandApi, ProgressVisualizationApi, TimelineCommandApi } from '@crczp/visualization-api';
 import { TimelineCommandService } from '../command/command-timeline/timeline-command.service';
-import { D3, D3Service } from '../common/d3-service/d3-service';
-import { TraineeViewEnum } from '../progress/components/types';
-import {
-    ProgressTraineeInfo,
-    ProgressVisualizationData,
-} from '@crczp/visualization-model';
-import { ProgressVisualizationsDataService } from '../progress/services/progress-visualizations-data.service';
 import { FiltersComponent } from '../visualization-overview/components/agenda/filters/filters.component';
+import { ProgressVisualizationComponent } from '../progress/components/progress-visualization.component';
+import { TraineeViewEnum } from './trainee-view';
 
 @Component({
     selector: 'crczp-dashboard',
@@ -39,23 +22,22 @@ import { FiltersComponent } from '../visualization-overview/components/agenda/fi
         CommonModule,
         MatSidenavModule,
         MatExpansionModule,
-        TraineeSelectionComponent,
         MatOptionModule,
         MatSelectModule,
         TrainingsVisualizationsOverviewLibModule,
-        ProgressVisualizationsComponent,
         FiltersComponent,
+        ProgressVisualizationComponent,
+
     ],
     providers: [
         CommandApi,
         TimelineCommandApi,
         TimelineCommandService,
-        ProgressVisualizationsDataService,
-        ProgressVisualizationApi
+        ProgressVisualizationApi,
     ],
     styleUrls: ['./dashboard.component.css'],
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent {
     @Input() trainingInstanceId: number;
     @Input() trainingDefinitionId: number;
     @Input() hasReferenceSolution: boolean;
@@ -68,11 +50,7 @@ export class DashboardComponent implements OnInit {
         innerWidth > 1550
             ? { width: innerWidth * 0.33, height: 400 }
             : { width: innerWidth * 0.7, height: 400 };
-    selectedTraineeView: TraineeViewEnum = TraineeViewEnum.Avatar;
-    visualizationData$: Observable<ProgressVisualizationData>;
-    private visualizationDataService = inject(
-        ProgressVisualizationsDataService,
-    );
+    protected selectedTraineeView: TraineeViewEnum = TraineeViewEnum.Both;
     private ref = inject(ChangeDetectorRef);
     private highlightedTraineeSubject$: BehaviorSubject<number> =
         new BehaviorSubject(null);
@@ -86,28 +64,11 @@ export class DashboardComponent implements OnInit {
         new BehaviorSubject([]);
     lineTrainees$: Observable<number[]> =
         this.lineTraineesSubject$.asObservable();
-    private hurdlingTraineesSubject$: BehaviorSubject<ProgressTraineeInfo[]> =
-        new BehaviorSubject([]);
-    hurdlingTrainees$: Observable<ProgressTraineeInfo[]> =
-        this.hurdlingTraineesSubject$.asObservable();
-    private hurdlingSelectedTraineesSubject$: BehaviorSubject<number[]> =
-        new BehaviorSubject([]);
-    hurdlingSelectedTrainees$: Observable<number[]> =
-        this.hurdlingSelectedTraineesSubject$.asObservable();
     private activeFiltersSubject$: BehaviorSubject<any[]> = new BehaviorSubject(
         [],
     );
     activeFilters$: Observable<any[]> =
         this.activeFiltersSubject$.asObservable();
-
-    constructor() {
-    }
-
-    ngOnInit(): void {
-        this.visualizationData$ =
-            this.visualizationDataService.visualizationData$;
-        this.loadData();
-    }
 
     @HostListener('window:resize', ['$event'])
     onResize() {
@@ -150,7 +111,6 @@ export class DashboardComponent implements OnInit {
      * @param trainingRunIds array of training runs
      */
     selectedTraineesChange(trainingRunIds: number[]): void {
-        this.hurdlingSelectedTraineesSubject$.next(trainingRunIds);
         this.lineTraineesSubject$.next([...trainingRunIds]);
     }
 
@@ -160,54 +120,5 @@ export class DashboardComponent implements OnInit {
      */
     filterChange(activeFilters: any): void {
         this.activeFiltersSubject$.next(activeFilters);
-    }
-
-    /**
-     * Updates subject of currently selected trainees from event emitted by hurdling player selection component
-     * @param selectedTrainees selected trainees
-     */
-    traineeFilterChange(selectedTrainees: ProgressTraineeInfo[]): void {
-        this.lineTraineesSubject$.next(
-            this.updateLineTrainees(selectedTrainees),
-        );
-        this.hurdlingTraineesSubject$.next(selectedTrainees);
-        this.filteredTraineesSubject$.next(
-            selectedTrainees.map((trainee) => trainee.trainingRunId),
-        );
-    }
-
-    /**
-     * Returns trainee picture
-     * @param traineeId id of trainee
-     */
-    getTraineeAvatar(traineeId: number): string {
-        if (
-            this.hurdlingTraineesSubject$
-                .getValue()
-                .find((player) => player.trainingRunId === traineeId) !==
-            undefined
-        ) {
-            return this.hurdlingTraineesSubject$
-                .getValue()
-                .find((player) => player.trainingRunId === traineeId).picture;
-        } else {
-            return '';
-        }
-    }
-
-    private loadData(): void {
-        this.visualizationDataService
-            .getData(this.trainingInstanceId)
-            .pipe(take(1))
-            .subscribe();
-    }
-
-    private updateLineTrainees(trainees: ProgressTraineeInfo[]): number[] {
-        const gridSelected: number[] = trainees.map(
-            (trainee) => trainee.trainingRunId,
-        );
-        return this.hurdlingSelectedTraineesSubject$
-            .getValue()
-            .filter((trainee) => gridSelected.indexOf(trainee) !== -1);
     }
 }

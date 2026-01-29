@@ -20,16 +20,16 @@ export class SankeyDataService {
                 this.settings.basePaths.adaptiveTraining +
                     'visualizations/training-instances/' +
                     instanceId +
-                    '/sankey'
+                    '/sankey',
             )
             .pipe(
                 map((data) => SankeyDataMapper.fromDTOs(data)),
                 catchError((error) => {
                     return throwError(
                         'Could not connect to API to obtain data: ' +
-                            error.message
+                            error.message,
                     );
-                })
+                }),
             );
     }
 }
