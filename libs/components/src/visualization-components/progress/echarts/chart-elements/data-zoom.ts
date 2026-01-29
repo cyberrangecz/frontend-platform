@@ -27,9 +27,11 @@ function horizonalTimeline(showDate: boolean): DataZoomComponentOption {
          * Matches X-axis label format.
          */
         labelFormatter: (value: number) => {
-            return moment(value).format(
-                (showDate ? 'MMMM D, ' : '') + 'HH:mm:ss',
-            );
+            const time = moment(value);
+            if (showDate) {
+                return time.format('MMMM D') + '\n' + time.format('HH:mm:ss');
+            }
+            return time.format('HH:mm:ss');
         },
     };
 }
