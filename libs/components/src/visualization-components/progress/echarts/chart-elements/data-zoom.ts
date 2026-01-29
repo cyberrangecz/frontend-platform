@@ -1,32 +1,38 @@
 import { DataZoomComponentOption } from 'echarts';
+import moment from 'moment';
 
 /**
  * Main horizontal timeline slider at bottom of chart for time range control.
  * Provides visual representation of full time range with draggable zoom controls.
+ * @param showDate - Whether to include date in time labels
+ * @returns ECharts data zoom configuration for horizontal timeline slider
  */
-const horizonalTimeline: DataZoomComponentOption = {
-    type: 'slider',
-    xAxisIndex: 0,
-    filterMode: 'none',
-    height: 38,
-    bottom: 15,
-    start: 0,
-    end: 100,
-    handleSize: '150%',
-    moveHandleSize: 12,
-    showDetail: true,
-    handleLabel: {
-        show: true,
-    },
-    /**
-     * Formats slider labels as readable time (HH:MM).
-     * Matches X-axis label format.
-     */
-    labelFormatter: (value: number) => {
-        const date = new Date(value);
-        return date.toLocaleTimeString();
-    },
-};
+function horizonalTimeline(showDate: boolean): DataZoomComponentOption {
+    return {
+        type: 'slider',
+        xAxisIndex: 0,
+        filterMode: 'none',
+        height: 38,
+        bottom: 15,
+        start: 0,
+        end: 100,
+        handleSize: '150%',
+        moveHandleSize: 12,
+        showDetail: true,
+        handleLabel: {
+            show: true,
+        },
+        /**
+         * Formats slider labels as readable time (HH:MM).
+         * Matches X-axis label format.
+         */
+        labelFormatter: (value: number) => {
+            return moment(value).format(
+                (showDate ? 'MMMM D, ' : '') + 'HH:mm:ss',
+            );
+        },
+    };
+}
 
 /**
  * Mouse drag navigation for horizontal time axis panning.

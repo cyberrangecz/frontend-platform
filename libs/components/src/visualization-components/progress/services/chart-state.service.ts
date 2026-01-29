@@ -1,9 +1,6 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import * as echarts from 'echarts';
-import {
-    CombinedProgressChartData,
-    SingleBarData,
-} from '../echarts/chart-utility-types';
+import { CombinedProgressChartData, SingleBarData } from '../echarts/chart-utility-types';
 import { ProgressLevelInfo } from '@crczp/visualization-model';
 import { Sorting } from '../echarts/data-manipulation/sorting';
 import { Mapping, TraineeMappers } from '../echarts/data-manipulation/mapping';
@@ -104,6 +101,7 @@ export class ChartStateService implements OnDestroy {
             this.barBuilder,
             2,
             1000,
+            this.getShowDate(),
         );
         this.chart.setOption(option);
     }
@@ -127,7 +125,11 @@ export class ChartStateService implements OnDestroy {
 
         this.chart.setOption(
             {
-                ...ProgressChartBuilder.buildXAxis(this.data, this.barData),
+                ...ProgressChartBuilder.buildXAxis(
+                    this.data,
+                    this.barData,
+                    this.getShowDate(),
+                ),
                 ...ProgressChartBuilder.buildYAxis(this.data),
                 ...ProgressChartBuilder.buildLegend(this.data),
                 ...this.buildSeries(),
@@ -153,7 +155,11 @@ export class ChartStateService implements OnDestroy {
             {
                 ...this.buildGrid(),
                 ...this.buildDataZoom(true),
-                ...ProgressChartBuilder.buildXAxis(this.data, this.barData),
+                ...ProgressChartBuilder.buildXAxis(
+                    this.data,
+                    this.barData,
+                    this.getShowDate(),
+                ),
                 ...this.buildSeries(),
                 ...this.getUpdateByTraineeCountOption(),
             },
@@ -205,7 +211,11 @@ export class ChartStateService implements OnDestroy {
         // Update legend
         this.chart.setOption(
             {
-                ...ProgressChartBuilder.buildXAxis(this.data, this.barData),
+                ...ProgressChartBuilder.buildXAxis(
+                    this.data,
+                    this.barData,
+                    this.getShowDate(),
+                ),
                 ...ProgressChartBuilder.buildYAxis(this.data),
                 ...ProgressChartBuilder.buildLegend(this.data),
                 ...this.buildSeries(),
@@ -256,7 +266,11 @@ export class ChartStateService implements OnDestroy {
 
         this.chart.setOption(
             {
-                ...ProgressChartBuilder.buildXAxis(this.data, this.barData),
+                ...ProgressChartBuilder.buildXAxis(
+                    this.data,
+                    this.barData,
+                    this.getShowDate(),
+                ),
                 ...ProgressChartBuilder.buildYAxis(this.data),
                 ...ProgressChartBuilder.buildLegend(this.data),
                 ...ProgressChartBuilder.buildSeries(
@@ -391,6 +405,7 @@ export class ChartStateService implements OnDestroy {
         }
 
         const zoomOption = ProgressChartBuilder.buildDataZoom(
+            this.getShowDate(),
             traineeCount,
             BAR_DIMENSIONS.maxVisibleEntries,
             startValue,
@@ -406,6 +421,23 @@ export class ChartStateService implements OnDestroy {
         }
 
         return zoomOption;
+    }
+
+    private getShowDate(): boolean {
+        this.checkInitialized();
+        const startTime = this.data.startTime;
+        const endTime =
+            TraineeMappers.getTrainingEndTime(
+                this.data.endTime,
+                this.barData!,
+            ) ?? this.data.startTime;
+        const startDate = new Date(startTime);
+        const endDate = new Date(endTime);
+        return (
+            startDate.getFullYear() !== endDate.getFullYear() ||
+            startDate.getMonth() !== endDate.getMonth() ||
+            startDate.getDate() !== endDate.getDate()
+        );
     }
 
     /**

@@ -1,22 +1,22 @@
 import { XAXisComponentOption, YAXisComponentOption } from 'echarts';
-import {
-    CombinedProgressChartData,
-    SingleBarData,
-} from '../chart-utility-types';
+import { CombinedProgressChartData, SingleBarData } from '../chart-utility-types';
 import { TraineeMappers } from '../data-manipulation/mapping';
 import { LabelBuilder } from './labels';
 import { TIME_PADDING_MS } from '../../components/progress-chart/progress-chart.component';
+import moment from 'moment';
 
 /**
  * Creates X-axis configuration for time-based horizontal axis.
  * Sets dynamic min/max bounds based on actual and estimated end times.
  * @param data - Combined chart data for time bounds
  * @param barData - All bar data for calculating maximum end time
+ * @param showDate - Whether to include date in time labels
  * @returns ECharts X-axis configuration
  */
 function buildXAxis(
     data: CombinedProgressChartData,
     barData: SingleBarData[],
+    showDate: boolean,
 ): XAXisComponentOption {
     return {
         type: 'value',
@@ -29,15 +29,27 @@ function buildXAxis(
             (TraineeMappers.getTrainingEndTime(data.endTime, barData) ??
                 data.startTime) + TIME_PADDING_MS,
 
+        splitLine: {
+            show: true,
+            lineStyle: {
+                color: '#e0e0e0',
+                width: 1,
+                type: 'solid',
+            },
+        },
+
         axisLabel: {
             /**
              * Formats timestamps as readable time (HH:MM or HH:MM:SS).
              * Uses browser locale for 12h/24h preference.
              */
             formatter: (value: number) => {
-                const date = new Date(value);
-                return date.toLocaleTimeString();
+                return moment(value).format(
+                    (showDate ? 'MMM D, ' : '') + 'HH:mm:ss',
+                );
             },
+            showMinLabel: true,
+            showMaxLabel: true,
         },
         name: 'Time',
         nameLocation: 'middle',

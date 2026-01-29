@@ -1,10 +1,7 @@
 import { EChartsOption } from 'echarts';
 import { CurrentTimeMarker } from './chart-elements/current-time-marker';
 import { LagLegend } from './chart-elements/lag-legend';
-import {
-    CombinedProgressChartData,
-    SingleBarData,
-} from './chart-utility-types';
+import { CombinedProgressChartData, SingleBarData } from './chart-utility-types';
 import { DataZoom } from './chart-elements/data-zoom';
 import { Tooltip } from './chart-elements/tooltip';
 import { Axis } from './chart-elements/axis';
@@ -40,16 +37,18 @@ function buildSeries(
  * @param traineeCount - Total number of trainees
  * @param maxVisibleEntries - Maximum trainees visible without scrolling
  * @param startValue - Optional initial scroll position
+ * @param showDate - Whether to add date information to horizontal axis
  * @returns Partial ECharts option with data zoom configurations
  */
 function buildDataZoom(
+    showDate: boolean,
     traineeCount: number,
     maxVisibleEntries: number,
     startValue?: number,
 ): Partial<EChartsOption> {
     return {
         dataZoom: [
-            DataZoom.horizonalTimeline, // Bottom slider (time)
+            DataZoom.horizonalTimeline(showDate), // Bottom slider (time)
             DataZoom.horizontalMouseNavigation, // Scroll wheel (time)
             DataZoom.buildVerticalScroll(
                 maxVisibleEntries,
@@ -120,9 +119,10 @@ function buildYAxis(data: CombinedProgressChartData): Partial<EChartsOption> {
 function buildXAxis(
     data: CombinedProgressChartData,
     barData: SingleBarData[],
+    showDate: boolean,
 ): Partial<EChartsOption> {
     return {
-        xAxis: Axis.buildXAxis(data, barData),
+        xAxis: Axis.buildXAxis(data, barData, showDate),
     };
 }
 
@@ -133,6 +133,7 @@ function buildXAxis(
  * @param cacheBarBuilder - BarBuilder instance for creating series
  * @param gridHeight - Height of chart grid area
  * @param visibleEntries - Maximum visible trainees
+ * @param showDate - Whether to include date in time labels
  * @returns Complete ECharts option object
  */
 function buildFullChart(
@@ -141,16 +142,17 @@ function buildFullChart(
     cacheBarBuilder: BarBuilder,
     gridHeight: number,
     visibleEntries: number,
+    showDate: boolean,
 ): EChartsOption {
     return {
         animation: false,
         animationUpdate: false,
         ...buildLegend(data),
-        ...buildXAxis(data, barData),
+        ...buildXAxis(data, barData, showDate),
         ...buildYAxis(data),
         ...buildGrid(gridHeight),
         ...buildTooltip(),
-        ...buildDataZoom(data.progress.length, visibleEntries),
+        ...buildDataZoom(showDate, data.progress.length, visibleEntries),
         ...buildSeries(data, barData, cacheBarBuilder),
     };
 }
