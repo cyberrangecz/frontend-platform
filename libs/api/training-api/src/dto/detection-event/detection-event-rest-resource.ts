@@ -1,5 +1,5 @@
-import {DetectionEventDTO} from './detection-event-dto';
-import {DjangoOffsetPaginationDTO} from '@crczp/api-common';
+import { DetectionEventDTO } from './detection-event-dto';
+import { JavaOffsetPaginationDTO } from '@crczp/api-common';
 
 export interface DetectionEventRestResource {
     /**
@@ -9,5 +9,5 @@ export interface DetectionEventRestResource {
     /**
      * Paginated including: page number, number of elements in page, size, total elements and total pages.
      */
-    pagination?: DjangoOffsetPaginationDTO;
+    pagination?: JavaOffsetPaginationDTO;
 }

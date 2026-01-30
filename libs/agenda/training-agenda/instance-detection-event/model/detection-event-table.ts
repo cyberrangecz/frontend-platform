@@ -3,8 +3,9 @@ import { Column, Row, RowAction, SentinelTable } from '@sentinel/components/tabl
 import { AbstractDetectionEvent, AbstractDetectionEventTypeEnum } from '@crczp/training-model';
 import { DetectionEventRowAdapter } from './detection-event-row-adapter';
 import { defer, of } from 'rxjs';
-import { DetectionEventService } from '../services/detection-event.service';
 import { OffsetPaginatedResource } from '@crczp/api-common';
+import { DetectionEventConcreteService } from '../services/detection-event-concrete.service';
+import { AbstractDetectionEventSort } from '@crczp/training-api';
 
 /**
  * Helper class transforming paginated resource to class for common table component
@@ -12,22 +13,36 @@ import { OffsetPaginatedResource } from '@crczp/api-common';
  */
 export class DetectionEventTable extends SentinelTable<
     DetectionEventRowAdapter,
-    string
+    AbstractDetectionEventSort
 > {
     constructor(
         resource: OffsetPaginatedResource<AbstractDetectionEvent>,
-        service: DetectionEventService,
+        service: DetectionEventConcreteService,
     ) {
         const columns = [
-            new Column<string>('levelTitle', 'level title', true, 'levelTitle'),
-            new Column<string>('levelId', 'level id', true, 'levelId'),
-            new Column<string>(
+            new Column<AbstractDetectionEventSort>(
+                'levelTitle',
+                'level title',
+                true,
+                'levelTitle',
+            ),
+            new Column<AbstractDetectionEventSort>(
+                'levelId',
+                'level id',
+                true,
+                'levelId',
+            ),
+            new Column<AbstractDetectionEventSort>(
                 'participantCount',
                 'number of participants',
                 false,
             ),
-            new Column<string>('participants', 'participants', false),
-            new Column<string>(
+            new Column<AbstractDetectionEventSort>(
+                'participants',
+                'participants',
+                false,
+            ),
+            new Column<AbstractDetectionEventSort>(
                 'detectionEventTypeFormatted',
                 'detection type',
                 false,
@@ -43,7 +58,7 @@ export class DetectionEventTable extends SentinelTable<
 
     private static createRow(
         element: AbstractDetectionEvent,
-        service: DetectionEventService,
+        service: DetectionEventConcreteService,
     ): Row<DetectionEventRowAdapter> {
         const datePipe = new DatePipe('en-EN');
         const adapter = element as DetectionEventRowAdapter;
@@ -80,14 +95,14 @@ export class DetectionEventTable extends SentinelTable<
 
     private static createActions(
         de: AbstractDetectionEvent,
-        service: DetectionEventService,
+        service: DetectionEventConcreteService,
     ): RowAction[] {
         return [...this.createStateActions(de, service)];
     }
 
     private static createStateActions(
         de: AbstractDetectionEvent,
-        service: DetectionEventService,
+        service: DetectionEventConcreteService,
     ): RowAction[] {
         return [
             new RowAction(

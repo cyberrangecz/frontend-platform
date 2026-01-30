@@ -89,7 +89,7 @@ export class DetectionEventApi {
                     (response) =>
                         new OffsetPaginatedResource<AbstractDetectionEvent>(
                             DetectionEventMapper.fromDTOs(response.content),
-                            PaginationMapper.fromDjangoDTO(response.pagination),
+                            PaginationMapper.fromJavaDTO(response.pagination),
                         ),
                 ),
             );

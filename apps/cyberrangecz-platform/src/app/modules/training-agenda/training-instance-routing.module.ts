@@ -4,11 +4,7 @@ import { TrainingApiModule } from '@crczp/training-api';
 import { SandboxApiModule } from '@crczp/sandbox-api';
 import { TrainingInstanceOverviewComponent } from '@crczp/training-agenda/instance-overview';
 import { TrainingInstance } from '@crczp/training-model';
-import {
-    Routing,
-    TrainingResolverHelperService,
-    ValidRouterConfig,
-} from '@crczp/routing-commons';
+import { Routing, TrainingResolverHelperService, ValidRouterConfig } from '@crczp/routing-commons';
 import { canDeactivateTrainingInstance } from '@crczp/training-agenda/instance-edit';
 
 const routes: ValidRouterConfig<'linear-instance'> = [
@@ -111,6 +107,22 @@ const routes: ValidRouterConfig<'linear-instance'> = [
             import('@crczp/training-agenda/instance-access-token').then(
                 (m) => m.AccessTokenDetailComponent,
             ),
+    },
+    {
+        path: ':instanceId/cheating-detection',
+        resolve: {
+            [TrainingInstance.name]:
+                Routing.Resolvers.TrainingInstance.linearInstanceResolver,
+            breadcrumb:
+                Routing.Resolvers.TrainingInstance
+                    .linearInstanceBreadcrumbResolver,
+            title: Routing.Resolvers.TrainingInstance
+                .linearInstanceTitleResolver,
+        },
+        loadChildren: () =>
+            import(
+                './training-instance-cheating-detection-routing.module'
+            ).then((m) => m.CheatingDetectionOverviewRoutingModule),
     },
     {
         path: ':instanceId/runs',

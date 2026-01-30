@@ -6,7 +6,6 @@ import {
     TrainingResolverHelperService,
     ValidRouterConfig,
 } from '@crczp/routing-commons';
-import { TrainingApiModule } from '@crczp/training-api';
 
 const routes: ValidRouterConfig<'linear-instance/:instanceId/cheating-detection'> =
     [
@@ -14,7 +13,7 @@ const routes: ValidRouterConfig<'linear-instance/:instanceId/cheating-detection'
             path: '',
             pathMatch: 'full',
             component: CheatingDetectionOverviewComponent,
-            data: {
+            resolve: {
                 title: Routing.Resolvers.CheatingDetection
                     .resolveCheatingDetectionTitle,
                 breadcrumb:
@@ -24,11 +23,11 @@ const routes: ValidRouterConfig<'linear-instance/:instanceId/cheating-detection'
         },
         {
             path: 'create',
-            loadChildren: () =>
+            loadComponent: () =>
                 import(
                     '@crczp/training-agenda/instance-cheating-detection-edit'
                 ).then((m) => m.CheatingDetectionEditComponent),
-            data: {
+            resolve: {
                 title: Routing.Resolvers.CheatingDetection
                     .resolveCheatingDetectionTitle,
                 breadcrumb:
@@ -37,12 +36,12 @@ const routes: ValidRouterConfig<'linear-instance/:instanceId/cheating-detection'
             },
         },
         {
-            path: ':eventId',
-            loadChildren: () =>
+            path: ':detectionId',
+            loadComponent: () =>
                 import('@crczp/training-agenda/instance-detection-event').then(
-                    (m) => m.TrainingInstanceDetectionEventComponent
+                    (m) => m.TrainingInstanceDetectionEventComponent,
                 ),
-            data: {
+            resolve: {
                 title: Routing.Resolvers.CheatingDetection
                     .resolveCheatingDetectionTitle,
                 breadcrumb:
@@ -51,8 +50,8 @@ const routes: ValidRouterConfig<'linear-instance/:instanceId/cheating-detection'
             },
         },
         {
-            path: `:eventId/detail`,
-            loadChildren: () =>
+            path: `:detectionId/event/:eventId`,
+            loadComponent: () =>
                 import(
                     '@crczp/training-agenda/instance-detection-event-detail'
                 ).then((m) => m.TrainingInstanceDetectionEventDetailComponent),
@@ -69,7 +68,6 @@ const routes: ValidRouterConfig<'linear-instance/:instanceId/cheating-detection'
 @NgModule({
     imports: [
         RouterModule.forChild(routes),
-        TrainingApiModule,
         CheatingDetectionOverviewComponent,
     ],
     providers: [TrainingResolverHelperService],

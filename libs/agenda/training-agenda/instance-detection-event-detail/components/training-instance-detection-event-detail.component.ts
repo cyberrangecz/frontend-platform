@@ -10,34 +10,43 @@ import {
     LocationSimilarityDetectionEvent,
     MinimalSolveTimeDetectionEvent,
     NoCommandsDetectionEvent,
-    TimeProximityDetectionEvent
+    TimeProximityDetectionEvent,
 } from '@crczp/training-model';
 import { Observable } from 'rxjs';
-import { SentinelTable, SentinelTableComponent, TableActionEvent, TableLoadEvent } from '@sentinel/components/table';
+import {
+    SentinelTable,
+    SentinelTableComponent,
+    TableActionEvent,
+    TableLoadEvent,
+} from '@sentinel/components/table';
 import { map, take } from 'rxjs/operators';
 import { DetectionEventParticipantTable } from '../model/detection-event-participant-table';
 import { DetectionEventParticipantService } from '../services/participant/detection-event-participant.service';
 import { DetectionEventService } from '../services/detection-event/detection-event.service';
 import { ActivatedRoute } from '@angular/router';
-import {
-    DetectionEventForbiddenCommandsService
-} from '../services/forbidden-commands/detection-event-forbidden-commands.service';
+import { DetectionEventForbiddenCommandsService } from '../services/forbidden-commands/detection-event-forbidden-commands.service';
 import { DetectionEventForbiddenCommandsTable } from '../model/detection-event-forbidden-commands-table';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DetectionEventConcreteService } from '../services/detection-event/detection-event-concrete.service';
-import {
-    DetectionEventParticipantConcreteService
-} from '../services/participant/detection-event-participant-concrete.service';
-import {
-    DetectionEventForbiddenCommandsConcreteService
-} from '../services/forbidden-commands/detection-event-forbidden-commands-concrete.service';
+import { DetectionEventParticipantConcreteService } from '../services/participant/detection-event-participant-concrete.service';
+import { DetectionEventForbiddenCommandsConcreteService } from '../services/forbidden-commands/detection-event-forbidden-commands-concrete.service';
 import { MatCard } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
 import { MatDivider } from '@angular/material/divider';
-import { MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
-import { CommandTimelineComponent } from '@crczp/visualization-components';
-import { PaginationStorageService, providePaginationStorageService } from '@crczp/utils';
-import { createInfinitePaginationEvent, PaginationMapper } from '@crczp/api-common';
+import {
+    MatExpansionPanel,
+    MatExpansionPanelHeader,
+    MatExpansionPanelTitle,
+} from '@angular/material/expansion';
+import {
+    PaginationStorageService,
+    providePaginationStorageService,
+} from '@crczp/utils';
+import {
+    createInfinitePaginationEvent,
+    PaginationMapper,
+} from '@crczp/api-common';
+import { CommandTimelineComponent } from '@crczp/components';
 
 /**
  * Main component of training instance detection event detail.

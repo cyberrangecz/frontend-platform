@@ -46,9 +46,7 @@ export class DetectionEventConcreteService extends CrczpOffsetElementsPaginatedS
             )
             .pipe(
                 tap(
-                    (events) => {
-                        this.resourceSubject$.next(events);
-                    },
+                    (events) => this.resourceSubject$.next(events),
                     () => this.onGetAllError(),
                 ),
             );
