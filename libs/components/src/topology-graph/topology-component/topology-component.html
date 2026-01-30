@@ -5,7 +5,7 @@
             wh-100 {{(synchronizerService.topologyCollapsed$ | async)  ? 'topology-tabs-wrapper--collapsed': ''}}
             {{standalone() ? 'topology-tabs-wrapper--standalone' : ''}}
         ">
-    @if (!(synchronizerService.topologyCollapsed$ | async) && (window.innerWidth) > 1400 && !standalone()) {
+    @if ((synchronizerService.topologyCollapsed$ | async) === false && !standalone()) {
         <div (mousedown)="mouseDown($event)" class="draggable-bar"></div>
     }
     <mat-tab-group

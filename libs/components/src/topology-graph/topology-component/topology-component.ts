@@ -7,14 +7,11 @@ import {
     inject,
     input,
     signal,
-    ViewChild,
+    ViewChild
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatTab, MatTabGroup, MatTabLabel } from '@angular/material/tabs';
-import {
-    OpenConsoleEvent,
-    TopologyGraph,
-} from './topology-graph/topology-graph';
+import { OpenConsoleEvent, TopologyGraph } from './topology-graph/topology-graph';
 import { MatTooltip } from '@angular/material/tooltip';
 import { ConsoleView } from '../console/console-view.component';
 import { Topology } from '@crczp/sandbox-model';
@@ -58,7 +55,6 @@ export class TopologyComponent implements AfterViewInit {
     protected tabs = signal<OpenConsoleEvent[]>([]);
     protected readonly window = window;
     protected focusSubject = new Subject<number>();
-    protected readonly console = console;
 
     constructor() {
         this.synchronizerService.topologyCollapsed$.subscribe(
