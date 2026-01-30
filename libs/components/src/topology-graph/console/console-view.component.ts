@@ -1,6 +1,7 @@
 import {
     AfterViewInit,
     Component,
+    DestroyRef,
     ElementRef,
     inject,
     input,
@@ -20,6 +21,8 @@ import {
 import Guacamole from '@dushixiang/guacamole-common-js';
 import { GuacamoleKeyCodes } from './keycodes';
 import { PortalConfig } from '@crczp/utils';
+import { Observable, Subject } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 export type ConnectionParams = {
     sandboxUuid: string;
@@ -42,7 +45,9 @@ export class ConsoleView implements AfterViewInit, OnDestroy {
     connectionParams = input.required<ConnectionParams>();
     tunnelStateCode = signal<GuacamoleTunnelState>('INVALID');
     clientStateCode = signal<GuacamoleClientState>('INVALID');
+    focusStream? = input<Observable<void> | undefined>(new Subject<void>());
     protected readonly keyboardLocked = signal(false);
+    protected readonly destroyRef = inject(DestroyRef);
     private readonly PADDING_NO_GUI = 12;
     private readonly authService = inject(OAuthService);
     private guacClient: Guacamole.Client | null = null;
@@ -63,6 +68,15 @@ export class ConsoleView implements AfterViewInit, OnDestroy {
         this.connectGuacamole();
         this.setupResizeObserver();
         this.setupClipboardSync();
+
+        this.focusStream()
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe(() => {
+                console.log('Focusing Guacamole wrapper...');
+                setTimeout(() => {
+                    this.guacWrapper.nativeElement.focus();
+                }, 100);
+            });
     }
 
     ngOnDestroy(): void {

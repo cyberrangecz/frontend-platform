@@ -33,7 +33,9 @@
             <ng-container>
                 <mat-tab [matTooltip]="tab.nodeId">
                     <ng-template mat-tab-label>
-                      <span (auxclick)="handleTabClick($event, $index)" class="tab-label">
+                      <span
+                          (auxclick)="handleTabMiddleClick($event, $index)"
+                          class="tab-label">
                           <span class="tab-ip">{{ tab.nodeId }}</span>
                           <button (click)="closeTab($index)" class="close-tab-button">
                                 <mat-icon class="close-icon">close</mat-icon>
@@ -47,6 +49,7 @@
                             sandboxUuid: sandboxUuid(),
                             nodeName: tab.nodeId,
                         }"
+                        [focusStream]="getConsoleFocus$($index)"
                         class="block wh-100"
                     />
                 </mat-tab>
