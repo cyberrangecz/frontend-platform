@@ -148,6 +148,7 @@ export class MistakeComponent implements OnInit {
                 .getTrainingRuns(this.trainingInstanceId)
                 .pipe(
                     tap((res) => {
+                        console.log('Training Runs:', res);
                         this.traineesDropdownList = res.map((trainingRun) => {
                             return {
                                 id: trainingRun.id,
