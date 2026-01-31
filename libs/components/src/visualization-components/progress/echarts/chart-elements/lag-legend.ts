@@ -9,7 +9,7 @@ import { LagStateUtils } from '../data-manipulation/lag-state';
 const LEGEND_CONFIG: Partial<LegendComponentOption> = {
     orient: 'horizontal' as const,
     left: 'center',
-    top: 0,
+    top: 20,
     padding: [5, 10],
     itemGap: 20,
     itemWidth: 25,

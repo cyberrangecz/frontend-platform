@@ -12,24 +12,28 @@ import { BarBuilder } from './chart-elements/progress-chart-bar/bar-builder';
  * @param data - Combined chart data
  * @param barsData - Array of all bar data items
  * @param barBuilder - BarBuilder instance for creating bar series
+ * @param includeTimeMarker - Whether to include the current time marker (default: true)
  * @returns Partial ECharts option with series array
  */
 function buildSeries(
     data: CombinedProgressChartData,
     barsData: SingleBarData[],
     barBuilder: BarBuilder,
+    includeTimeMarker = true,
 ): Partial<EChartsOption> {
-    return {
-        series: [
-            // Dummy series for legend (empty but colored)
-            ...LagLegend.buildDummySeries(),
+    const series = [
+        // Dummy series for legend (empty but colored)
+        ...LagLegend.buildDummySeries(),
 
-            ...barsData.flatMap((item) => barBuilder.buildBar(item)),
+        ...barsData.flatMap((item) => barBuilder.buildBar(item)),
+    ];
 
-            // Vertical line showing current time
-            CurrentTimeMarker(data.endTime),
-        ],
-    };
+    // Only add vertical time marker if requested (hidden when all runs finished)
+    if (includeTimeMarker) {
+        series.push(CurrentTimeMarker(data.endTime));
+    }
+
+    return { series };
 }
 
 /**
@@ -114,15 +118,18 @@ function buildYAxis(data: CombinedProgressChartData): Partial<EChartsOption> {
  * Creates X-axis configuration for time-based horizontal axis.
  * @param data - Combined chart data for time bounds
  * @param barData - All bar data for calculating max end time
+ * @param showDate - Whether to include date in time labels
+ * @param allRunsFinished - Whether all training runs are finished (affects time bounds calculation)
  * @returns Partial ECharts option with X-axis settings
  */
 function buildXAxis(
     data: CombinedProgressChartData,
     barData: SingleBarData[],
     showDate: boolean,
+    allRunsFinished: boolean = false,
 ): Partial<EChartsOption> {
     return {
-        xAxis: Axis.buildXAxis(data, barData, showDate),
+        xAxis: Axis.buildXAxis(data, barData, showDate, allRunsFinished),
     };
 }
 
@@ -134,6 +141,7 @@ function buildXAxis(
  * @param gridHeight - Height of chart grid area
  * @param visibleEntries - Maximum visible trainees
  * @param showDate - Whether to include date in time labels
+ * @param allRunsFinished - Whether all training runs are finished (affects time bounds and marker visibility)
  * @returns Complete ECharts option object
  */
 function buildFullChart(
@@ -143,17 +151,18 @@ function buildFullChart(
     gridHeight: number,
     visibleEntries: number,
     showDate: boolean,
+    allRunsFinished: boolean = false,
 ): EChartsOption {
     return {
         animation: false,
         animationUpdate: false,
         ...buildLegend(data),
-        ...buildXAxis(data, barData, showDate),
+        ...buildXAxis(data, barData, showDate, allRunsFinished),
         ...buildYAxis(data),
         ...buildGrid(gridHeight),
         ...buildTooltip(),
         ...buildDataZoom(showDate, data.progress.length, visibleEntries),
-        ...buildSeries(data, barData, cacheBarBuilder),
+        ...buildSeries(data, barData, cacheBarBuilder, !allRunsFinished),
     };
 }
 

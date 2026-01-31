@@ -11,23 +11,35 @@ import moment from 'moment';
  * @param data - Combined chart data for time bounds
  * @param barData - All bar data for calculating maximum end time
  * @param showDate - Whether to include date in time labels
+ * @param allRunsFinished - If true, clamps timeline to actual data bounds only
  * @returns ECharts X-axis configuration
  */
 function buildXAxis(
     data: CombinedProgressChartData,
     barData: SingleBarData[],
     showDate: boolean,
+    allRunsFinished = false,
 ): XAXisComponentOption {
+    // Calculate max time based on whether all runs are finished
+    let maxTime: number;
+    if (allRunsFinished) {
+        // When all finished, use only actual bar data bounds (ignore interpolated time)
+        maxTime = TraineeMappers.getTrainingEndTime(barData) ?? data.startTime;
+    } else {
+        // When some running, include interpolated current time in max calculation
+        maxTime =
+            TraineeMappers.getTrainingEndTime(barData, data.endTime) ??
+            data.startTime;
+    }
+
     return {
         type: 'value',
 
         min:
-            TraineeMappers.getTrainingStartTime(data.startTime, barData) -
+            TraineeMappers.getTrainingStartTime(barData, data.startTime) -
             TIME_PADDING_MS,
 
-        max:
-            (TraineeMappers.getTrainingEndTime(data.endTime, barData) ??
-                data.startTime) + TIME_PADDING_MS,
+        max: maxTime + TIME_PADDING_MS,
 
         splitLine: {
             show: true,

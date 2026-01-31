@@ -85,6 +85,11 @@ export class ProgressChartComponent implements AfterViewInit, OnDestroy {
 
     constructor() {
         this.setupChartUpdateEffects();
+
+        effect(() => {
+            const _chartHeight = this.chartStateService.chartHeight();
+            this.onResize();
+        });
     }
 
     ngAfterViewInit(): void {

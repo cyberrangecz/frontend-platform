@@ -1,4 +1,4 @@
-import { Injectable, OnDestroy } from '@angular/core';
+import { computed, Injectable, OnDestroy, signal } from '@angular/core';
 import * as echarts from 'echarts';
 import { CombinedProgressChartData, SingleBarData } from '../echarts/chart-utility-types';
 import { ProgressLevelInfo } from '@crczp/visualization-model';
@@ -25,6 +25,8 @@ const BAR_DIMENSIONS = {
     maxVisibleEntries: 15,
 } as const;
 
+const DEFAULT_CHART_HEIGHT = 624;
+
 /**
  * Total height per bar including margins for grid calculations.
  */
@@ -36,18 +38,22 @@ const TOTAL_BAR_HEIGHT =
 @Injectable()
 export class ChartStateService implements OnDestroy {
     protected levelDataById: Record<number, ProgressLevelInfo> = {};
-
     protected previousTraineeCount = 0;
-
     protected data: CombinedProgressChartData | null = null;
-
     protected barData: SingleBarData[] | null = null;
     protected chartInstance: echarts.ECharts | null = null;
     protected readonly barBuilder = new BarBuilder(BAR_DIMENSIONS.height);
-
     protected isDragging = false;
-
+    protected allFinished = false;
     protected updateQueue: (() => void)[] = [];
+    private readonly shownTrainees = signal<number>(
+        BAR_DIMENSIONS.maxVisibleEntries,
+    );
+    public readonly chartHeight = computed(
+        () =>
+            DEFAULT_CHART_HEIGHT -
+            (15 - this.shownTrainees()) * (TOTAL_BAR_HEIGHT - 4),
+    );
 
     get chart(): echarts.ECharts {
         if (!this.chartInstance) {
@@ -62,6 +68,19 @@ export class ChartStateService implements OnDestroy {
             this.barData !== null &&
             this.chartInstance !== null
         );
+    }
+
+    /**
+     * Checks if all displayed training runs are finished.
+     * When all runs are finished, we clamp the timeline to actual data bounds
+     * and hide the current time marker.
+     * @returns true if all barData entries have state === 'FINISHED'
+     */
+    public areAllRunsFinished(): boolean {
+        if (!this.barData || this.barData.length === 0) {
+            return false;
+        }
+        return this.barData.every((bar) => bar.state === 'FINISHED');
     }
 
     /**
@@ -95,6 +114,7 @@ export class ChartStateService implements OnDestroy {
         this.initData(data);
         this.chartInstance = echarts.init(container);
 
+        this.allFinished = this.areAllRunsFinished();
         const option = ProgressChartBuilder.buildFullChart(
             this.data,
             this.barData,
@@ -102,6 +122,7 @@ export class ChartStateService implements OnDestroy {
             2,
             1000,
             this.getShowDate(),
+            this.allFinished,
         );
         this.chart.setOption(option);
     }
@@ -123,12 +144,14 @@ export class ChartStateService implements OnDestroy {
         this.sortData();
         this.updateBarData();
 
+        this.allFinished = this.areAllRunsFinished();
         this.chart.setOption(
             {
                 ...ProgressChartBuilder.buildXAxis(
                     this.data,
                     this.barData,
                     this.getShowDate(),
+                    this.allFinished,
                 ),
                 ...ProgressChartBuilder.buildYAxis(this.data),
                 ...ProgressChartBuilder.buildLegend(this.data),
@@ -144,6 +167,7 @@ export class ChartStateService implements OnDestroy {
      * @param data - Combined chart data with updated time
      */
     public updatedInterpolatedTime(data: CombinedProgressChartData) {
+        if (this.allFinished) return;
         if (this.isDragging) {
             this.updateQueue.push(() => this.updatedNewApiData(data));
             return;
@@ -159,6 +183,7 @@ export class ChartStateService implements OnDestroy {
                     this.data,
                     this.barData,
                     this.getShowDate(),
+                    this.allFinished,
                 ),
                 ...this.buildSeries(),
                 ...this.getUpdateByTraineeCountOption(),
@@ -186,6 +211,7 @@ export class ChartStateService implements OnDestroy {
                     this.data,
                     this.barData,
                     this.barBuilder,
+                    !this.allFinished,
                 ),
             },
             { replaceMerge: ['series'] },
@@ -205,16 +231,15 @@ export class ChartStateService implements OnDestroy {
         this.filterData();
         this.sortData();
         this.updateBarData();
-        // Update series
-        // Update xAxis
-        // Update yAxis
-        // Update legend
+
+        this.allFinished = this.areAllRunsFinished();
         this.chart.setOption(
             {
                 ...ProgressChartBuilder.buildXAxis(
                     this.data,
                     this.barData,
                     this.getShowDate(),
+                    this.allFinished,
                 ),
                 ...ProgressChartBuilder.buildYAxis(this.data),
                 ...ProgressChartBuilder.buildLegend(this.data),
@@ -237,12 +262,14 @@ export class ChartStateService implements OnDestroy {
         this.copyDataExceptProgress(data);
         this.updateBarData();
 
+        this.allFinished = this.areAllRunsFinished();
         this.chart.setOption(
             {
                 ...ProgressChartBuilder.buildSeries(
                     this.data,
                     this.barData,
                     this.barBuilder,
+                    !this.allFinished,
                 ),
                 ...this.getUpdateByTraineeCountOption(),
             },
@@ -264,12 +291,14 @@ export class ChartStateService implements OnDestroy {
         this.sortData();
         this.updateBarData();
 
+        this.allFinished = this.areAllRunsFinished();
         this.chart.setOption(
             {
                 ...ProgressChartBuilder.buildXAxis(
                     this.data,
                     this.barData,
                     this.getShowDate(),
+                    this.allFinished,
                 ),
                 ...ProgressChartBuilder.buildYAxis(this.data),
                 ...ProgressChartBuilder.buildLegend(this.data),
@@ -277,6 +306,7 @@ export class ChartStateService implements OnDestroy {
                     this.data,
                     this.barData,
                     this.barBuilder,
+                    !this.allFinished,
                 ),
                 ...this.getUpdateByTraineeCountOption(),
             },
@@ -428,8 +458,8 @@ export class ChartStateService implements OnDestroy {
         const startTime = this.data.startTime;
         const endTime =
             TraineeMappers.getTrainingEndTime(
+                this.barData,
                 this.data.endTime,
-                this.barData!,
             ) ?? this.data.startTime;
         const startDate = new Date(startTime);
         const endDate = new Date(endTime);
@@ -445,10 +475,12 @@ export class ChartStateService implements OnDestroy {
      * @returns Partial ECharts option with series array
      */
     private buildSeries() {
+        this.allFinished = this.areAllRunsFinished();
         return ProgressChartBuilder.buildSeries(
             this.data,
             this.barData,
             this.barBuilder,
+            !this.allFinished, // Only show time marker if not all finished
         );
     }
 
@@ -458,6 +490,16 @@ export class ChartStateService implements OnDestroy {
     private filterData() {
         this.data.progress = Filtering.filterByLagState(this.data);
         this.data.progress = Filtering.filterBySelectedLevel(this.data);
+        this.updateShownTrainees();
+    }
+
+    private updateShownTrainees() {
+        this.shownTrainees.set(
+            Math.min(
+                this.data ? this.data.progress.length : 0,
+                BAR_DIMENSIONS.maxVisibleEntries,
+            ),
+        );
     }
 
     /**
