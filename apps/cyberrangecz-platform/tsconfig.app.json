@@ -7,13 +7,6 @@
         "resolveJsonModule": true,
         "esModuleInterop": true
     },
-    "angularCompilerOptions": {
-        "strictTemplates": true,
-        "strictInputTypes": false,
-        "strictSafeNavigationTypes": false,
-        "strictDomLocalRefTypes": false,
-        "strictAttributeTypes": false
-    },
     "files": [
         "src/main.ts"
     ],

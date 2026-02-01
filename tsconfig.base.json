@@ -1,4 +1,23 @@
 {
+    "angularCompilerOptions": {
+        "strictTemplates": true,
+        "strictInputTypes": false,
+        "strictSafeNavigationTypes": true,
+        "strictDomLocalRefTypes": true,
+        "strictAttributeTypes": true,
+        "strictInjectionParameters": true,
+        "strictInputAccessModifiers": true,
+        "extendedDiagnostics": {
+            "checks": {
+                "interpolatedSignalNotInvoked": "error"
+            },
+            "defaultCategory": "warning"
+        }
+    },
+    "exclude": [
+        "node_modules",
+        "tmp"
+    ],
     "compileOnSave": false,
     "compilerOptions": {
         "baseUrl": ".",
@@ -6,14 +25,27 @@
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
         "importHelpers": true,
-        "lib": ["es2020", "dom"],
+        "incremental": true,
+        "tsBuildInfoFile": ".angular/cache/.tsbuildinfo",
+        "lib": [
+            "es2020",
+            "dom"
+        ],
         "module": "esnext",
         "moduleResolution": "node",
         "paths": {
-            "@crczp/api-common": ["libs/api/api-common/src/index.ts"],
-            "@crczp/components": ["libs/components/src/index.ts"],
-            "@crczp/mixins": ["libs/mixins/src/index.ts"],
-            "@crczp/routing-commons": ["libs/utils/routing/src/index.ts"],
+            "@crczp/api-common": [
+                "libs/api/api-common/src/index.ts"
+            ],
+            "@crczp/components": [
+                "libs/components/src/index.ts"
+            ],
+            "@crczp/mixins": [
+                "libs/mixins/src/index.ts"
+            ],
+            "@crczp/routing-commons": [
+                "libs/utils/routing/src/index.ts"
+            ],
             "@crczp/sandbox-agenda": [
                 "libs/agenda/sandbox-agenda/src/index.ts"
             ],
@@ -50,8 +82,12 @@
             "@crczp/sandbox-agenda/sandbox-topology": [
                 "libs/agenda/sandbox-agenda/sandbox-topology/index.ts"
             ],
-            "@crczp/sandbox-api": ["libs/api/sandbox-api/src/index.ts"],
-            "@crczp/sandbox-model": ["libs/model/sandbox-model/src/index.ts"],
+            "@crczp/sandbox-api": [
+                "libs/api/sandbox-api/src/index.ts"
+            ],
+            "@crczp/sandbox-model": [
+                "libs/model/sandbox-model/src/index.ts"
+            ],
             "@crczp/training-agenda": [
                 "libs/agenda/training-agenda/src/index.ts"
             ],
@@ -157,8 +193,12 @@
             "@crczp/training-agenda/run-results": [
                 "libs/agenda/training-agenda/run-results/index.ts"
             ],
-            "@crczp/training-api": ["libs/api/training-api/src/index.ts"],
-            "@crczp/training-model": ["libs/model/training-model/src/index.ts"],
+            "@crczp/training-api": [
+                "libs/api/training-api/src/index.ts"
+            ],
+            "@crczp/training-model": [
+                "libs/model/training-model/src/index.ts"
+            ],
             "@crczp/user-and-group-agenda": [
                 "libs/agenda/user-and-group-agenda/src/index.ts"
             ],
@@ -192,7 +232,9 @@
             "@crczp/user-and-group-model": [
                 "libs/model/user-and-group-model/src/index.ts"
             ],
-            "@crczp/utils": ["libs/utils/misc/src/index.ts"],
+            "@crczp/utils": [
+                "libs/utils/misc/src/index.ts"
+            ],
             "@crczp/visualization-api": [
                 "libs/api/visualization-api/src/index.ts"
             ],
@@ -202,7 +244,9 @@
             "@crczp/visualization-model": [
                 "libs/model/visualization-model/src/index.ts"
             ],
-            "@crczp/visualization/api": ["lib/api/walkthrough-api/src/index.ts"]
+            "@crczp/visualization/api": [
+                "lib/api/walkthrough-api/src/index.ts"
+            ]
         },
         "rootDir": ".",
         "skipDefaultLibCheck": true,
@@ -210,5 +254,4 @@
         "sourceMap": true,
         "target": "es2015"
     },
-    "exclude": ["node_modules", "tmp"]
 }

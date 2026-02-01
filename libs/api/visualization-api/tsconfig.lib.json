@@ -7,12 +7,6 @@
         "inlineSources": true,
         "types": []
     },
-    "angularCompilerOptions": {
-        "enableI18nLegacyMessageIdFormat": false,
-        "strictInjectionParameters": true,
-        "strictInputAccessModifiers": true,
-        "strictTemplates": true
-    },
     "exclude": [
         "**/*.spec.ts",
         "test-setup.ts",
@@ -29,5 +23,7 @@
         "**/*.spec.jsx",
         "test-setup.ts"
     ],
-    "include": ["**/*.ts"]
+    "include": [
+        "**/*.ts"
+    ]
 }
