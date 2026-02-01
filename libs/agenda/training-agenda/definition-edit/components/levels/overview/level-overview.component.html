@@ -9,7 +9,8 @@
                     (levelMove)="onLevelMoved($event)"
                     [activeStep]="activeStep$ | async"
                     [levels]="stepperLevels | async"
-                    [movingInProgress]="levelMovingInProgress" />
+                    [movingInProgress]="levelMovingInProgress"
+                />
                 <mat-divider />
                 <crczp-level-edit
                     (levelChange)="onActiveLevelChanged($event)"
@@ -22,6 +23,8 @@
         }
     </div>
 } @else {
-    <h3>To add levels, fill in and save the basic information about the training definition.</h3>
+    <h3>
+        To add levels, fill in and save the basic information about the training
+        definition.
+    </h3>
 }
-

@@ -1,21 +1,22 @@
+import { AsyncPipe } from '@angular/common';
 import {
     Component,
     DestroyRef,
     HostListener,
     inject,
+    input,
     OnInit,
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { TrainingRun } from '@crczp/training-model';
-import { VisualizationInfo } from '@crczp/training-agenda/internal';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { AsyncPipe } from '@angular/common';
+import { ActivatedRoute } from '@angular/router';
 import {
     TraineeModeInfo,
     TrainingsVisualizationsOverviewLibModule,
 } from '@crczp/components';
+import { VisualizationInfo } from '@crczp/training-agenda/internal';
+import { TrainingRun } from '@crczp/training-model';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Component({
     selector: 'crczp-score-development-wrapper',
@@ -28,6 +29,7 @@ export class ScoreDevelopmentWrapperComponent implements OnInit {
     traineeModeInfo$: Observable<TraineeModeInfo>;
     vizSize: { width: number; height: number };
     destroyRef = inject(DestroyRef);
+    runIds = input.required<number[]>();
     private activatedRoute = inject(ActivatedRoute);
 
     @HostListener('window:resize', ['$event'])

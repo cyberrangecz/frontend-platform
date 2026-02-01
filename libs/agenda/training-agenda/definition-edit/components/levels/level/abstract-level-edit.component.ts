@@ -1,9 +1,19 @@
-import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@angular/core';
-import {AbstractLevelTypeEnum, Level, MitreTechnique} from '@crczp/training-model';
-import {AssessmentLevelEditComponent} from "./assessment/assessment-level-edit.component";
-import {InfoLevelEditComponent} from "./info/info-level-edit.component";
-import {AccessLevelEditComponent} from "./access/access-level-edit.component";
-import {TrainingLevelEditComponent} from "./training/training-level-edit.component";
+import {
+    ChangeDetectionStrategy,
+    Component,
+    EventEmitter,
+    Input,
+    Output,
+} from '@angular/core';
+import {
+    AbstractLevelTypeEnum,
+    Level,
+    MitreTechnique,
+} from '@crczp/training-model';
+import { AccessLevelEditComponent } from './access/access-level-edit.component';
+import { AssessmentLevelEditComponent } from './assessment/assessment-level-edit.component';
+import { InfoLevelEditComponent } from './info/info-level-edit.component';
+import { TrainingLevelEditComponent } from './training/training-level-edit.component';
 
 /**
  * Main component of level edit. Resolves which component should be display based on level type
@@ -17,8 +27,8 @@ import {TrainingLevelEditComponent} from "./training/training-level-edit.compone
         AssessmentLevelEditComponent,
         InfoLevelEditComponent,
         AccessLevelEditComponent,
-        TrainingLevelEditComponent
-    ]
+        TrainingLevelEditComponent,
+    ],
 })
 export class AbstractLevelEditComponent {
     @Input() level: Level;

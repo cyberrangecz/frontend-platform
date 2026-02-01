@@ -1,32 +1,30 @@
-@if ((visualizationInfo$ | async); as vizInfo) {
-  <div class="container">
-    <div class="left-panel">
-      <crczp-visualization-overview-table
-        [standalone]="true"
-        [traineeModeInfo]="traineeModeInfo$ | async"
-        [trainingDefinitionId]="vizInfo.trainingDefinitionId"
-        [trainingInstanceId]="vizInfo.trainingInstanceId"
-        >
-      </crczp-visualization-overview-table>
-      <crczp-visualization-overview-timeline
-        [size]="vizSize"
-        [standalone]="false"
-        [traineeModeInfo]="traineeModeInfo$ | async"
-        [trainingDefinitionId]="vizInfo.trainingDefinitionId"
-        [trainingInstanceId]="vizInfo.trainingInstanceId"
-        >
-      </crczp-visualization-overview-timeline>
+@if (visualizationInfo$ | async; as vizInfo) {
+    <div class="container">
+        <div class="left-panel">
+            <crczp-visualization-overview-table
+                [standalone]="true"
+                [traineeModeInfo]="traineeModeInfo$ | async"
+                [trainingDefinitionId]="vizInfo.trainingDefinitionId"
+                [trainingInstanceId]="vizInfo.trainingInstanceId"
+            ></crczp-visualization-overview-table>
+            <crczp-visualization-overview-timeline
+                [size]="vizSize"
+                [standalone]="false"
+                [traineeModeInfo]="traineeModeInfo$ | async"
+                [trainingDefinitionId]="vizInfo.trainingDefinitionId"
+                [trainingInstanceId]="vizInfo.trainingInstanceId"
+            ></crczp-visualization-overview-timeline>
+        </div>
+        <div class="middle-panel">
+            <crczp-visualization-overview-clustering
+                [runIds]="runIds"
+                [size]="vizSize"
+                [standalone]="false"
+                [traineeModeInfo]="traineeModeInfo$ | async"
+                [trainingDefinitionId]="vizInfo.trainingDefinitionId"
+                [trainingInstanceId]="vizInfo.trainingInstanceId"
+            ></crczp-visualization-overview-clustering>
+        </div>
+        <div class="right-panel"></div>
     </div>
-    <div class="middle-panel">
-      <crczp-visualization-overview-clustering
-        [size]="vizSize"
-        [standalone]="false"
-        [traineeModeInfo]="traineeModeInfo$ | async"
-        [trainingDefinitionId]="vizInfo.trainingDefinitionId"
-        [trainingInstanceId]="vizInfo.trainingInstanceId"
-        >
-      </crczp-visualization-overview-clustering>
-    </div>
-    <div class="right-panel"></div>
-  </div>
 }
