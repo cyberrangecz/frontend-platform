@@ -1,11 +1,10 @@
 import {
     Component,
-    EventEmitter,
     inject,
     Input,
+    model,
     OnChanges,
     OnInit,
-    Output,
     SimpleChanges,
 } from '@angular/core';
 import {
@@ -18,16 +17,16 @@ import {
     SVG_MARGIN_CONFIG,
 } from './config';
 
+import { ContainerElement, ScaleBand, ScaleLinear } from 'd3';
+import { take } from 'rxjs/operators';
+import { D3, D3Service } from '../../../../../common/d3-service/d3-service';
 import { SvgConfig } from '../../../../shared/interfaces/configurations/svg-config';
 import { TraineeModeInfo } from '../../../../shared/interfaces/trainee-mode-info';
-import { take } from 'rxjs/operators';
 import { ClusteringTrainingData } from '../../../model/clustering/clustering-training-data';
 import { LevelTypeEnum } from '../../../model/clustering/enums/level-type.enum';
 import { Level } from '../../../model/clustering/level';
-import { ClusteringService } from '../shared/service/clustering.service';
 import { PlayerLevelData } from '../../../model/clustering/player-level-data';
-import { D3, D3Service } from '../../../../../common/d3-service/d3-service';
-import { ContainerElement, ScaleBand, ScaleLinear } from 'd3';
+import { ClusteringService } from '../shared/service/clustering.service';
 
 @Component({
     selector: 'crczp-visualization-overview-levels',
@@ -45,7 +44,7 @@ export class LevelsComponent implements OnInit, OnChanges {
     /**
      * Player to highlight
      */
-    @Input() selectedTrainingRunId: number;
+    highlightedTrainingRunId = model<number | null>(null);
     /**
      * Main svg dimensions.
      */
@@ -61,11 +60,7 @@ export class LevelsComponent implements OnInit, OnChanges {
     /**
      * List of players which should be displayed
      */
-    @Input() filterPlayers: number[];
-    /**
-     * Emits id of selected player.
-     */
-    @Output() selectedTrainee = new EventEmitter<number>();
+    @Input() runIds: number[];
     /**
      * If visualization is used as standalone it displays all given players automatically, highlighting feedback learner
      * if provided. On the other hand, it displays only players from @filterPlayers and reacts to event selectedTrainingRunId.
@@ -600,8 +595,7 @@ export class LevelsComponent implements OnInit, OnChanges {
             .datum({ number: levelNumber });
         if (this.standalone) {
             players = players.filter(
-                (player) =>
-                    this.filterPlayers.indexOf(player.trainingRunId) !== -1,
+                (player) => this.runIds.indexOf(player.trainingRunId) !== -1,
             );
         }
 
@@ -1011,14 +1005,14 @@ export class LevelsComponent implements OnInit, OnChanges {
      */
     highlightSelectedTrainingRun(): void {
         this.hideTooltip(); // Prevents showing the tooltip when user quickly leaves the viz
-        if (!this.selectedTrainingRunId) {
+        if (!this.highlightedTrainingRunId()) {
             return;
         }
 
         this.svg.selectAll('.player-point').style('opacity', 0.5);
 
         const player = this.svg
-            .selectAll('.p' + this.selectedTrainingRunId)
+            .selectAll('.p' + this.highlightedTrainingRunId())
             .classed('player-point', false)
             .classed('player-point-selected', true)
             .transition()
@@ -1030,7 +1024,7 @@ export class LevelsComponent implements OnInit, OnChanges {
                 return color.darker(0.8);
             });
 
-        if (this.selectedTrainingRunId === this.traineesTrainingRunId) {
+        if (this.highlightedTrainingRunId() === this.traineesTrainingRunId) {
             return;
         }
 
@@ -1083,8 +1077,8 @@ export class LevelsComponent implements OnInit, OnChanges {
     }
 
     private emitSelectedTrainee(trainingRunId: number) {
-        if (this.selectedTrainingRunId !== trainingRunId) {
-            this.selectedTrainee.emit(trainingRunId);
+        if (this.highlightedTrainingRunId() !== trainingRunId) {
+            this.highlightedTrainingRunId.set(trainingRunId);
         }
     }
 }
