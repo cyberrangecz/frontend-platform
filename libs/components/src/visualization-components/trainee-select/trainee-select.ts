@@ -1,13 +1,5 @@
 import { CommonModule } from '@angular/common';
-import {
-    Component,
-    computed,
-    effect,
-    input,
-    model,
-    output,
-    signal,
-} from '@angular/core';
+import { Component, computed, effect, input, model, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
@@ -39,7 +31,9 @@ export class TraineeSelect {
 
     filteredTrainees = computed(() => {
         const search = this.searchTerm().toLowerCase();
-        const allTrainees = this.trainees();
+        const allTrainees = this.trainees().sort((a, b) =>
+            a.name.localeCompare(b.name),
+        );
 
         if (!search) {
             return allTrainees;
