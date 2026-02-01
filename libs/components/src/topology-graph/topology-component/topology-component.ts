@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import {
     AfterViewInit,
     Component,
@@ -7,22 +8,24 @@ import {
     inject,
     input,
     signal,
-    ViewChild
+    ViewChild,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { MatIcon } from '@angular/material/icon';
 import { MatTab, MatTabGroup, MatTabLabel } from '@angular/material/tabs';
-import { OpenConsoleEvent, TopologyGraph } from './topology-graph/topology-graph';
 import { MatTooltip } from '@angular/material/tooltip';
-import { ConsoleView } from '../console/console-view.component';
+import { Router } from '@angular/router';
+import { Routing } from '@crczp/routing-commons';
 import { Topology } from '@crczp/sandbox-model';
 import { SentinelResizeDirective } from '@sentinel/common/resize';
-import { TopologySynchronizerService } from './topology-synchronizer.service';
-import { TopologyNodeSvgService } from './topology-graph/services/topology-svg-generator.service';
-import { TopologyIconsService } from './topology-graph/services/topology-icons.service';
-import { MatIcon } from '@angular/material/icon';
-import { Routing } from '@crczp/routing-commons';
-import { Router } from '@angular/router';
 import { filter, map, Observable, Subject } from 'rxjs';
+import { ConsoleView } from '../console/console-view.component';
+import { TopologyIconsService } from './topology-graph/services/topology-icons.service';
+import { TopologyNodeSvgService } from './topology-graph/services/topology-svg-generator.service';
+import {
+    OpenConsoleEvent,
+    TopologyGraph,
+} from './topology-graph/topology-graph';
+import { TopologySynchronizerService } from './topology-synchronizer.service';
 
 @Component({
     selector: 'crczp-topology',
@@ -80,7 +83,6 @@ export class TopologyComponent implements AfterViewInit {
         );
 
         effect(() => {
-            console.log('focus tab index:', this.selectedIndex());
             this.focusSubject.next(this.selectedIndex() - 1);
         });
     }
