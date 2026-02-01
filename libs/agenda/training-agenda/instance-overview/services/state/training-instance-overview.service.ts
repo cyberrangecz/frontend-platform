@@ -1,27 +1,34 @@
 import { DestroyRef, inject, Injectable } from '@angular/core';
-import { Router } from '@angular/router';
-import { OffsetPaginationEvent } from '@sentinel/common/pagination';
-import { PoolApi } from '@crczp/sandbox-api';
-import { LinearTrainingInstanceApi, TrainingInstanceSort } from '@crczp/training-api';
-import { TrainingInstance } from '@crczp/training-model';
-import { combineLatest, EMPTY, NEVER, Observable, of } from 'rxjs';
-import { catchError, map, switchMap, tap } from 'rxjs/operators';
-import { TrainingInstanceFilter } from '../../model/adapters/training-instance-filter';
-import {
-    SentinelConfirmationDialogComponent,
-    SentinelConfirmationDialogConfig,
-    SentinelDialogResultEnum
-} from '@sentinel/components/dialogs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatDialog } from '@angular/material/dialog';
-import { ErrorHandlerService, NotificationService, PortalConfig } from '@crczp/utils';
-import { Routing } from '@crczp/routing-commons';
+import { Router } from '@angular/router';
 import {
     CrczpOffsetElementsPaginatedService,
     createInfinitePaginationEvent,
-    OffsetPaginatedResource
+    OffsetPaginatedResource,
 } from '@crczp/api-common';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Routing } from '@crczp/routing-commons';
+import { PoolApi } from '@crczp/sandbox-api';
 import { Pool, SandboxInstance } from '@crczp/sandbox-model';
+import {
+    LinearTrainingInstanceApi,
+    TrainingInstanceSort,
+} from '@crczp/training-api';
+import { TrainingInstance } from '@crczp/training-model';
+import {
+    ErrorHandlerService,
+    NotificationService,
+    PortalConfig,
+} from '@crczp/utils';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
+import {
+    SentinelConfirmationDialogComponent,
+    SentinelConfirmationDialogConfig,
+    SentinelDialogResultEnum,
+} from '@sentinel/components/dialogs';
+import { combineLatest, EMPTY, NEVER, Observable, of } from 'rxjs';
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
+import { TrainingInstanceFilter } from '../../model/adapters/training-instance-filter';
 
 export type PoolError = 'NOT_ASSIGNED' | 'REMOVED';
 
@@ -163,17 +170,23 @@ export class TrainingInstanceOverviewService extends CrczpOffsetElementsPaginate
                 .getPool(poolId, [404])
                 .pipe(mapToNullIfNotFound<Pool>()),
             this.poolApi
-                .getPoolsSandboxes(poolId, createInfinitePaginationEvent(), [
-                    404,
-                ])
-                .pipe(mapToNullIfNotFound<OffsetPaginatedResource<SandboxInstance>>()),
+                .getPoolsSandboxes(
+                    poolId,
+                    createInfinitePaginationEvent(),
+                    [404],
+                )
+                .pipe(
+                    mapToNullIfNotFound<
+                        OffsetPaginatedResource<SandboxInstance>
+                    >(),
+                ),
         ]).pipe(
             map(([pool, sandboxes]): PoolSize => {
                 if (sandboxes === null || pool === null) {
                     return { error: 'REMOVED' };
                 }
                 return {
-                    total: pool.maxSize,
+                    total: pool.usedSize,
                     used: sandboxes.elements.filter((sandbox) =>
                         sandbox.isLocked(),
                     ).length,
@@ -241,33 +254,37 @@ export class TrainingInstanceOverviewService extends CrczpOffsetElementsPaginate
     private callApiToDelete(
         trainingInstance: TrainingInstance,
     ): Observable<OffsetPaginatedResource<TrainingInstance>> {
-        return this.trainingInstanceApi.delete(trainingInstance.id,false,[409]).pipe(
-            takeUntilDestroyed(this.destroyRef),
-            tap(() =>
-                this.notificationService.emit(
-                    'success',
-                    'Training instance was successfully deleted',
+        return this.trainingInstanceApi
+            .delete(trainingInstance.id, false, [409])
+            .pipe(
+                takeUntilDestroyed(this.destroyRef),
+                tap(() =>
+                    this.notificationService.emit(
+                        'success',
+                        'Training instance was successfully deleted',
+                    ),
                 ),
-            ),
-            catchError((err) => {
-                if (err && err.status === 409) {
-                    return this.displayDialogToConfirmForceDelete(
-                        trainingInstance,
-                    ).pipe(
-                        switchMap((result) =>
-                            result === SentinelDialogResultEnum.CONFIRMED
-                                ? this.forceDelete(trainingInstance.id)
-                                : EMPTY,
-                        ),
+                catchError((err) => {
+                    if (err && err.status === 409) {
+                        return this.displayDialogToConfirmForceDelete(
+                            trainingInstance,
+                        ).pipe(
+                            switchMap((result) =>
+                                result === SentinelDialogResultEnum.CONFIRMED
+                                    ? this.forceDelete(trainingInstance.id)
+                                    : EMPTY,
+                            ),
+                        );
+                    }
+                    return this.errorHandler.emitAPIError(
+                        err,
+                        'Deleting training instance',
                     );
-                }
-                return this.errorHandler.emitAPIError(
-                    err,
-                    'Deleting training instance',
-                );
-            }),
-            switchMap(() => this.getAll(this.lastPagination, this.lastFilter)),
-        );
+                }),
+                switchMap(() =>
+                    this.getAll(this.lastPagination, this.lastFilter),
+                ),
+            );
     }
 
     private forceDelete(id: number): Observable<any> {
