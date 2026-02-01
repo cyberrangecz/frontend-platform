@@ -4,26 +4,26 @@ import {
     computed,
     effect,
     ElementRef,
+    HostListener,
     inject,
     input,
     model,
-    OnDestroy,
     signal,
     untracked,
     viewChild,
     WritableSignal
 } from '@angular/core';
-import { ProgressVisualizationApiData } from '@crczp/visualization-model';
-import { TimeInterpolationService } from '../../services/time-interpolation.service';
 import { MatButton, MatMiniFabButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { SentinelEnumerationSelectComponent } from '@sentinel/components/enumeration-select';
+import { MatTooltip } from '@angular/material/tooltip';
+import { ProgressVisualizationApiData } from '@crczp/visualization-model';
 import { SentinelButtonWithIconComponent } from '@sentinel/components/button-with-icon';
+import { SentinelEnumerationSelectComponent } from '@sentinel/components/enumeration-select';
 import { CombinedProgressChartData, LagState, SortCriteria } from '../../echarts/chart-utility-types';
 import { LagStateUtils } from '../../echarts/data-manipulation/lag-state';
 import { ChartStateService } from '../../services/chart-state.service';
+import { TimeInterpolationService } from '../../services/time-interpolation.service';
 import { TimeRangeOption } from '../time-range-selector/time-range-selector';
-import { MatTooltip } from '@angular/material/tooltip';
 
 /**
  * Time padding in milliseconds added to chart boundaries.
@@ -44,13 +44,16 @@ export const TIME_PADDING_MS = 5 * 60 * 1000;
     templateUrl: './progress-chart.component.html',
     styleUrl: './progress-chart.component.scss',
 })
-export class ProgressChartComponent implements AfterViewInit, OnDestroy {
+export class ProgressChartComponent implements AfterViewInit {
     visualizationData = input.required<ProgressVisualizationApiData>();
     combinedData = computed<CombinedProgressChartData>(() => {
         return this.buildData();
     });
     highlightedLevel = input<number | null>(null);
     selectedLevel = input<number | null>(null);
+
+    // Allows additional highlighting of a specific trainee
+    highlightedTraineeId = model<number | null>();
 
     protected readonly favoriteTrainees = signal<Set<number>>(new Set());
 
@@ -88,7 +91,8 @@ export class ProgressChartComponent implements AfterViewInit, OnDestroy {
 
         effect(() => {
             const _chartHeight = this.chartStateService.chartHeight();
-            this.onResize();
+            // Defer resize until after DOM update
+            setTimeout(() => this.onResize(), 0);
         });
     }
 
@@ -101,15 +105,6 @@ export class ProgressChartComponent implements AfterViewInit, OnDestroy {
         this.setupClickHandler();
         this.setupLegendSelectHandler();
         this.setupDataZoomListeners();
-
-        window.addEventListener('resize', this.onResize);
-    }
-
-    ngOnDestroy(): void {
-        if (this.chartClickHandler) {
-            this.chartStateService.chart?.off('click', this.chartClickHandler);
-        }
-        window.removeEventListener('resize', this.onResize);
     }
 
     /**
@@ -295,7 +290,9 @@ export class ProgressChartComponent implements AfterViewInit, OnDestroy {
     /**
      * Handles window resize events to resize chart.
      */
+    @HostListener('window:resize')
     private onResize = (): void => {
+        if (!this.chartStateService.initialized) return;
         this.chartStateService.chart.resize();
     };
 
