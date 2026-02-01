@@ -10,20 +10,18 @@ const routes: ValidRouterConfig<'linear-instance/:instanceId/results'> = [
                 (m) => m.TrainingInstanceResultsComponent,
             ),
         children: [
-            // TODO - Dashboard to be fully reworked with
-            //  new and compatible echarts library
-            // {
-            //     path: '',
-            //     pathMatch: 'full',
-            //     redirectTo: 'dashboard',
-            // },
-            // {
-            //     path: 'dashboard',
-            //     loadComponent: () =>
-            //         import(
-            //             './dashboard-wrapper/dashboard-wrapper.component'
-            //         ).then((m) => m.DashboardWrapperComponent),
-            // },
+            {
+                path: '',
+                pathMatch: 'full',
+                redirectTo: 'dashboard',
+            },
+            {
+                path: 'dashboard',
+                loadComponent: () =>
+                    import(
+                        './dashboard-wrapper/dashboard-wrapper.component'
+                    ).then((m) => m.DashboardWrapperComponent),
+            },
             {
                 path: 'quiz-results',
                 loadComponent: () =>

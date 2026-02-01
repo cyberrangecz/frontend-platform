@@ -1,16 +1,15 @@
 <div class="mat-elevation-z4">
     <nav [tabPanel]="tabPanel" mat-stretch-tabs="always" mat-tab-nav-bar>
-        <!--        TODO - Replace with echarts dashboard-->
-        <!--        <a-->
-        <!--            #dashboard="routerLinkActive"-->
-        <!--            [active]="dashboard.isActive"-->
-        <!--            [routerLink]="['dashboard']"-->
-        <!--            mat-tab-link-->
-        <!--            routerLinkActive-->
-        <!--        >-->
-        <!--            <mat-icon class="tab-icon">dashboard</mat-icon>-->
-        <!--            Dashboard-->
-        <!--        </a>-->
+        <a
+            #dashboard="routerLinkActive"
+            [active]="dashboard.isActive"
+            [routerLink]="['dashboard']"
+            mat-tab-link
+            routerLinkActive
+        >
+            <mat-icon class="tab-icon">dashboard</mat-icon>
+            Dashboard
+        </a>
         <a
             #assessments="routerLinkActive"
             [active]="assessments.isActive"

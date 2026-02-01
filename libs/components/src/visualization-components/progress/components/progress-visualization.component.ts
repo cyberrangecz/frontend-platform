@@ -4,19 +4,21 @@ import {
     DestroyRef,
     inject,
     input,
+    model,
     OnInit,
     signal,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Level } from '@crczp/training-model';
 import { ProgressVisualizationApi } from '@crczp/visualization-api';
-import { ProgressDataService } from '../services/progress-data.service';
 import {
     ProgressLevelInfo,
     ProgressVisualizationApiData,
 } from '@crczp/visualization-model';
-import { ProgressChartComponent } from './progress-chart/progress-chart.component';
-import { Level } from '@crczp/training-model';
+import { Observable } from 'rxjs';
 import { Stepper, StepperItem } from '../../../stepper/stepper';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ProgressDataService } from '../services/progress-data.service';
+import { ProgressChartComponent } from './progress-chart/progress-chart.component';
 
 @Component({
     selector: 'crczp-progress-visualization',
@@ -27,6 +29,11 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 })
 export class ProgressVisualizationComponent implements OnInit {
     instanceId = input.required<number>();
+    highlightedTraineeId = model<number | null>(null);
+    progressApiData = input<Observable<ProgressVisualizationApiData> | null>(
+        null,
+    );
+
     protected progressData = signal<ProgressVisualizationApiData>({
         startTime: 0,
         estimatedEndTime: 0,
@@ -34,6 +41,7 @@ export class ProgressVisualizationComponent implements OnInit {
         levels: [],
         progress: [],
     });
+
     protected readonly stepperLevels = computed((): StepperItem[] =>
         this.progressData().levels.map((level) => ({
             label: this.buildStepperLevelLabel(level),
@@ -48,9 +56,11 @@ export class ProgressVisualizationComponent implements OnInit {
     /**
      * Initializes component and subscribes to progress data updates.
      */
-    async ngOnInit(): Promise<void> {
-        this.progressDataService
-            .getVisualizationData$(this.instanceId())
+    ngOnInit() {
+        (
+            this.progressApiData() ??
+            this.progressDataService.getVisualizationData$(this.instanceId())
+        )
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe((data) => {
                 this.progressData.set(data);

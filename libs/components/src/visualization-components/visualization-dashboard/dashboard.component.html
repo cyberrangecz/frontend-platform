@@ -1,35 +1,28 @@
 <mat-sidenav-container class="dashboard-container">
     <mat-sidenav-content>
-        <mat-expansion-panel>
-            <!-- FILTERS SELECTION  -->
-            <mat-expansion-panel-header>
-                <mat-panel-title>
-                    <b>Visualization filters</b>
-                </mat-panel-title>
-            </mat-expansion-panel-header>
-            <div class="filter-content">
-                Manage displayed events:
-                <crczp-visualization-overview-filters
-                    (activeFilters)="filterChange($event)">
-                </crczp-visualization-overview-filters>
-                <div class="display-selection">
-                    <mat-form-field appearance="fill">
-                        <mat-label>Trainee display</mat-label>
-                        <mat-select (selectionChange)="togglePlayerView($event)" [(value)]="selectedTraineeView">
-                            <mat-option [value]="'avatar'">Avatar</mat-option>
-                            <mat-option [value]="'name'">Name</mat-option>
-                            <mat-option [value]="'both'">Avatar + Name</mat-option>
-                        </mat-select>
-                    </mat-form-field>
-                </div>
-            </div>
-        </mat-expansion-panel>
-
         <div class="dashboard-container">
+            <crczp-trainee-select
+                (highlightedTraineeIdChange)="
+                    updateHighlightByTraineeId($event)
+                "
+                (selectedTraineesChange)="filteredTrainees.set($event)"
+                [highlightedTraineeId]="highlightedTrainee()?.id"
+                [trainees]="progressTrainees()"
+                class="trainee-select"
+            />
+            <mat-divider />
             <!-- HURDLING CONTENT  -->
-            <div class="vis hurdling-content" style="display: block; justify-content: center;">
+            <div
+                class="hurdling-content"
+                style="display: block; justify-content: center"
+            >
                 <crczp-progress-visualization
-                    [instanceId]="trainingInstanceId"
+                    (highlightedTraineeIdChange)="
+                        updateHighlightByTraineeId($event)
+                    "
+                    [highlightedTraineeId]="highlightedTrainee()?.id"
+                    [instanceId]="trainingInstanceId()"
+                    [progressApiData]="progressApiDataObservable"
                 />
             </div>
             <div class="overview-container">
@@ -37,39 +30,45 @@
                 <div class="vis left">
                     <div class="name-header">Time-Score Overview</div>
                     <crczp-visualization-overview-clustering
-                        (selectedTrainee)="highlightTraineeChange($event)"
-                        [filterPlayers]="filteredTrainees$ | async"
-                        [highlightedTrainee]="highlightedTrainee$ | async"
-                        [instanceIds]="[trainingInstanceId]"
+                        (highlightedTrainingRunIdChange)="
+                            updateHighlightByTrainingRunId($event)
+                        "
+                        [highlightedTrainingRunId]="
+                            highlightedTrainee()?.trainingRunId
+                        "
+                        [instanceIds]="[trainingInstanceId()]"
+                        [runIds]="runIds()"
                         [size]="clusteringSize"
                         [standalone]="true"
-                        [trainingDefinitionId]="trainingDefinitionId"
-                        [trainingInstanceId]="trainingInstanceId"
+                        [trainingDefinitionId]="trainingDefinitionId()"
+                        [trainingInstanceId]="trainingInstanceId()"
                     />
                 </div>
-                @if ((lineTrainees$ | async); as lineTrainees) {
-                    <div
-                        [ngStyle]="{'justify-content': 'center'}"
-                        class="vis right overflow overview-line {{!((lineTrainees).length > 0) ?  'hidden' : ''}}">
-                        <div class="overview-visualization-container">
-                            <!-- TIMELINE CONTENT  -->
-                            <div class="vis-timeline">
-                                <crczp-visualization-overview-line
-                                    (selectedTrainee)="highlightTraineeChange($event)"
-                                    [activeFilters]="activeFilters$ | async"
-                                    [filterPlayers]="lineTrainees"
-                                    [highlightedTrainee]="highlightedTrainee$ | async"
-                                    [size]="timelineSize"
-                                    [standalone]="true"
-                                    [trainingDefinitionId]="trainingDefinitionId"
-                                    [trainingInstanceId]="trainingInstanceId"
-                                />
-                            </div>
+                <div
+                    [ngStyle]="{ 'justify-content': 'center' }"
+                    class="vis right overflow overview-line"
+                >
+                    <div class="overview-visualization-container">
+                        <!-- TIMELINE CONTENT  -->
+                        <div class="vis-timeline">
+                            <crczp-visualization-overview-line
+                                (highlightedTrainingRunIdChange)="
+                                    updateHighlightByTrainingRunId($event)
+                                "
+                                [activeFilters]="activeFilters()"
+                                [highlightedTrainingRunId]="
+                                    highlightedTrainee()?.trainingRunId
+                                "
+                                [runIdsFilter]="runIds()"
+                                [size]="timelineSize"
+                                [standalone]="true"
+                                [trainingDefinitionId]="trainingDefinitionId()"
+                                [trainingInstanceId]="trainingInstanceId()"
+                            />
                         </div>
                     </div>
-                }
+                </div>
             </div>
         </div>
     </mat-sidenav-content>
 </mat-sidenav-container>
-
