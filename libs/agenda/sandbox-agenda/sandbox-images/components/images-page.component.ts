@@ -1,4 +1,4 @@
-import { map } from 'rxjs/operators';
+import { AsyncPipe } from '@angular/common';
 import {
     ChangeDetectionStrategy,
     Component,
@@ -6,23 +6,23 @@ import {
     inject,
     OnInit,
 } from '@angular/core';
-import { Observable } from 'rxjs';
-import {
-    SentinelTableComponent,
-    TableLoadEvent,
-} from '@sentinel/components/table';
-import { VirtualImagesTable } from '../models/virtual-images-table';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { VMImagesService } from '../services/v-m-images.service';
 import { MatCheckbox } from '@angular/material/checkbox';
-import { AsyncPipe } from '@angular/common';
+import { PaginationMapper } from '@crczp/api-common';
+import { VmImageSort } from '@crczp/sandbox-api';
 import {
     PaginationStorageService,
     providePaginationStorageService,
 } from '@crczp/utils';
-import { PaginationMapper } from '@crczp/api-common';
 import { OffsetPaginationEvent } from '@sentinel/common/pagination';
-import { VmImageSort } from '@crczp/sandbox-api';
+import {
+    SentinelTableComponent,
+    TableLoadEvent,
+} from '@sentinel/components/table';
+import { Observable, of } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { VirtualImagesTable } from '../models/virtual-images-table';
+import { VMImagesService } from '../services/v-m-images.service';
 
 @Component({
     selector: 'crczp-images-page',
@@ -39,9 +39,9 @@ import { VmImageSort } from '@crczp/sandbox-api';
     ],
 })
 export class ImagesPageComponent implements OnInit {
-    images$: Observable<VirtualImagesTable>;
-    imagesTableHasError$: Observable<boolean>;
-    isLoadingImages$: Observable<boolean>;
+    images$: Observable<VirtualImagesTable> = of();
+    imagesTableHasError$: Observable<boolean> = of();
+    isLoadingImages$: Observable<boolean> = of();
     guiAccess = false;
     crczpImages = false;
     destroyRef = inject(DestroyRef);
@@ -49,7 +49,7 @@ export class ImagesPageComponent implements OnInit {
     readonly DEFAULT_SORT_DIRECTION = 'asc';
     private vmImagesService = inject(VMImagesService);
     private paginationService = inject(PaginationStorageService);
-    private lastFilter: string;
+    private lastFilter = '';
 
     private readonly initialImagesPagination =
         this.paginationService.createPagination<VmImageSort>(

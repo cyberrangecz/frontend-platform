@@ -1,37 +1,53 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { SortDir } from '@sentinel/common/pagination';
-import { OffsetPaginatedResource, PaginationMapper } from '@crczp/api-common';
-import { SentinelControlItem, SentinelControlsComponent } from '@sentinel/components/controls';
-import { Pool, RequestStageState, SandboxAllocationUnit } from '@crczp/sandbox-model';
-import { SentinelRowDirective, SentinelTableComponent, TableLoadEvent } from '@sentinel/components/table';
-import { Observable, Subscription } from 'rxjs';
-import { map, take } from 'rxjs/operators';
-import { AllocationRequestsService } from '../services/state/request/allocation/requests/allocation-requests.service';
-import { CleanupRequestsService } from '../services/state/request/cleanup/cleanup-requests.service';
-import { PoolDetailControls } from './pool-detail-controls';
+import { AsyncPipe } from '@angular/common';
 import {
-    AllocationRequestsConcreteService
-} from '../services/state/request/allocation/requests/allocation-requests-concrete.service';
-import { CleanupRequestsConcreteService } from '../services/state/request/cleanup/cleanup-requests-concrete.service';
-import { PoolDetailTable } from '../model/pool-detail-table';
-import { AbstractSandbox } from '../model/abstract-sandbox';
-import { SelectedStage } from '../model/selected-stage';
+    AfterViewInit,
+    ChangeDetectionStrategy,
+    Component,
+    DestroyRef,
+    inject,
+    OnInit,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatCard } from '@angular/material/card';
-import { StageOverviewComponent } from './stage-overview/stage-overview.component';
-import { AsyncPipe } from '@angular/common';
-import { PaginationStorageService, PollingService, providePaginationStorageService } from '@crczp/utils';
+import { ActivatedRoute } from '@angular/router';
+import { OffsetPaginatedResource, PaginationMapper } from '@crczp/api-common';
 import { EditableCommentComponent } from '@crczp/sandbox-agenda/internal';
-import {
-    SandboxAllocationUnitsService
-} from '../services/state/sandbox-allocation-unit/sandbox-allocation-units.service';
-import {
-    SandboxAllocationUnitsConcreteService
-} from '../services/state/sandbox-allocation-unit/sandbox-allocation-units-concrete.service';
-import { SandboxInstanceService } from '../services/state/sandbox-instance/sandbox-instance.service';
 import { AllocationRequestSort, PoolSort } from '@crczp/sandbox-api';
+import {
+    Pool,
+    RequestStageState,
+    SandboxAllocationUnit,
+} from '@crczp/sandbox-model';
+import {
+    PaginationStorageService,
+    PollingService,
+    providePaginationStorageService,
+} from '@crczp/utils';
+import { SortDir } from '@sentinel/common/pagination';
+import {
+    SentinelControlItem,
+    SentinelControlsComponent,
+} from '@sentinel/components/controls';
+import {
+    SentinelRowDirective,
+    SentinelTableComponent,
+    TableLoadEvent,
+} from '@sentinel/components/table';
+import { Observable, of, Subscription } from 'rxjs';
+import { map, take } from 'rxjs/operators';
+import { AbstractSandbox } from '../model/abstract-sandbox';
 import { PoolDetailRowAdapter } from '../model/pool-detail-row-adapter';
+import { PoolDetailTable } from '../model/pool-detail-table';
+import { SelectedStage } from '../model/selected-stage';
+import { AllocationRequestsConcreteService } from '../services/state/request/allocation/requests/allocation-requests-concrete.service';
+import { AllocationRequestsService } from '../services/state/request/allocation/requests/allocation-requests.service';
+import { CleanupRequestsConcreteService } from '../services/state/request/cleanup/cleanup-requests-concrete.service';
+import { CleanupRequestsService } from '../services/state/request/cleanup/cleanup-requests.service';
+import { SandboxAllocationUnitsConcreteService } from '../services/state/sandbox-allocation-unit/sandbox-allocation-units-concrete.service';
+import { SandboxAllocationUnitsService } from '../services/state/sandbox-allocation-unit/sandbox-allocation-units.service';
+import { SandboxInstanceService } from '../services/state/sandbox-instance/sandbox-instance.service';
+import { PoolDetailControls } from './pool-detail-controls';
+import { StageOverviewComponent } from './stage-overview/stage-overview.component';
 
 /**
  * Smart component of pool detail page
@@ -70,9 +86,9 @@ import { PoolDetailRowAdapter } from '../model/pool-detail-row-adapter';
 })
 export class PoolDetailComponent implements OnInit, AfterViewInit {
     pool: Pool;
-    instances$: Observable<PoolDetailTable>;
-    instancesTableHasError$: Observable<boolean>;
-    controls: SentinelControlItem[];
+    instances$: Observable<PoolDetailTable> = of();
+    instancesTableHasError$: Observable<boolean> = of();
+    controls: SentinelControlItem[] = [];
     commentTrim = 15;
     destroyRef = inject(DestroyRef);
     readonly DEFAULT_SORT_COLUMN: PoolSort = 'id';
@@ -80,7 +96,7 @@ export class PoolDetailComponent implements OnInit, AfterViewInit {
     private sandboxInstanceService = inject(SandboxInstanceService);
     private paginationService = inject(PaginationStorageService);
     private activeRoute = inject(ActivatedRoute);
-    private subscription: Subscription;
+    private subscription?: Subscription;
 
     private readonly initSandboxPagination =
         this.paginationService.createPagination<AllocationRequestSort>(
