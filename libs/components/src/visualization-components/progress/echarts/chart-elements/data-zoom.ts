@@ -27,6 +27,10 @@ function horizonalTimeline(showDate: boolean): DataZoomComponentOption {
          * Matches X-axis label format.
          */
         labelFormatter: (value: number) => {
+            if (Number.isNaN(value) || value < 10*60*1000) {
+                return '';
+            }
+
             const time = moment(value);
             if (showDate) {
                 return time.format('MMMM D') + '\n' + time.format('HH:mm:ss');

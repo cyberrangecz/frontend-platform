@@ -1,7 +1,8 @@
 .dashboard-container {
     display: flex;
     flex-direction: column;
-    background-color: #fafafa;
+    background-color: var(--primary-98);
+    padding-top: 2rem;
 }
 
 mat-sidenav-content {
@@ -9,7 +10,7 @@ mat-sidenav-content {
 }
 
 .hurdling-content {
-    margin-bottom: 10px;
+    padding: 1rem;
 }
 
 .overview-container {
@@ -24,8 +25,11 @@ mat-sidenav-content {
     justify-content: center;
 }
 
+.trainee-select {
+    margin-bottom: 1rem;
+}
+
 .vis {
-    background: white;
     border: solid 1px #d0d0d0;
     margin: 5px 10px;
 }
@@ -46,7 +50,8 @@ mat-sidenav-content {
     margin-left: 10px;
 }
 
-.name-header, .graph-name-header {
+.name-header,
+.graph-name-header {
     padding: 10px;
     border-bottom: 1px solid;
     border-bottom-color: #d0d0d0;
@@ -57,7 +62,8 @@ mat-sidenav-content {
     flex-direction: column;
 }
 
-.graph-name-header h5, .name-header {
+.graph-name-header h5,
+.name-header {
     font-weight: bolder;
     font-size: 15px !important;
 }
@@ -80,10 +86,6 @@ mat-sidenav-content {
 
 .mat-drawer-opened .mat-drawer.mat-drawer-end {
     right: 0px !important;
-}
-
-.mat-drawer-container {
-    background-color: #fff;
 }
 
 .overview-visualization-container {
@@ -134,7 +136,8 @@ mat-sidenav-content {
     flex-direction: row;
 }
 
-#reference-graph, .reference-content {
+#reference-graph,
+.reference-content {
     padding-top: 10px;
 }
 

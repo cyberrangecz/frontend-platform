@@ -1,13 +1,21 @@
 import {
     Component,
-    EventEmitter,
     inject,
     Input,
+    model,
     OnChanges,
     OnInit,
-    Output,
     SimpleChanges,
 } from '@angular/core';
+import { ContainerElement, ScaleLinear } from 'd3';
+import { take } from 'rxjs/operators';
+import { D3, D3Service } from '../../../../../common/d3-service/d3-service';
+import { SvgConfig } from '../../../../shared/interfaces/configurations/svg-config';
+import { TraineeModeInfo } from '../../../../shared/interfaces/trainee-mode-info';
+import { ClusteringTrainingData } from '../../../model/clustering/clustering-training-data';
+import { FinalResults } from '../../../model/clustering/final-results';
+import { PlayerData } from '../../../model/clustering/player-data';
+import { ClusteringService } from '../shared/service/clustering.service';
 import {
     AXES_CONFIG,
     BAR_CONFIG,
@@ -16,15 +24,6 @@ import {
     SVG_CONFIG,
     SVG_MARGIN_CONFIG,
 } from './config';
-import { SvgConfig } from '../../../../shared/interfaces/configurations/svg-config';
-import { TraineeModeInfo } from '../../../../shared/interfaces/trainee-mode-info';
-import { take } from 'rxjs/operators';
-import { ClusteringTrainingData } from '../../../model/clustering/clustering-training-data';
-import { ClusteringService } from '../shared/service/clustering.service';
-import { D3, D3Service } from '../../../../../common/d3-service/d3-service';
-import { ContainerElement, ScaleLinear } from 'd3';
-import { FinalResults } from '../../../model/clustering/final-results';
-import { PlayerData } from '../../../model/clustering/player-data';
 
 @Component({
     selector: 'crczp-visualization-overview-final',
@@ -44,7 +43,7 @@ export class FinalComponent implements OnInit, OnChanges {
     /**
      * Player to highlight
      */
-    @Input() selectedTrainingRunId: number | undefined;
+    highlightedTrainingRunId = model<number | null>(null);
     /**
      * Array of color strings for visualization.
      */
@@ -58,13 +57,9 @@ export class FinalComponent implements OnInit, OnChanges {
      */
     @Input() traineeModeInfo: TraineeModeInfo | undefined;
     /**
-     * Emits id of selected player.
-     */
-    @Output() selectedTrainee = new EventEmitter<number>();
-    /**
      * List of players which should be displayed
      */
-    @Input({ required: true }) filterPlayers!: number[];
+    @Input({ required: true }) runIds!: number[];
     /**
      * If visualization is used as standalone it displays all given players automatically, highlighting feedback learner
      * if provided. On the other hand, it displays only players from @filterPlayers and reacts to event selectedTrainingRunId.
@@ -626,8 +621,7 @@ export class FinalComponent implements OnInit, OnChanges {
         let players = this.dataClusteringFinal.finalResults.playerData;
         if (this.standalone) {
             players = this.dataClusteringFinal.finalResults.playerData.filter(
-                (player) =>
-                    this.filterPlayers.indexOf(player.trainingRunId) !== -1,
+                (player) => this.runIds.indexOf(player.trainingRunId) !== -1,
             );
         }
 
@@ -751,7 +745,7 @@ export class FinalComponent implements OnInit, OnChanges {
         this.highlightHoveredPlayer(player.trainingRunId);
         this.showTooltip(event, player);
         this.showCrosshair();
-        this.emitSelectedTrainee(player.trainingRunId);
+        this.highlightedTrainingRunId.set(player.trainingRunId);
     }
 
     /**
@@ -839,7 +833,7 @@ export class FinalComponent implements OnInit, OnChanges {
         };
 
         this.updateCrosshair(groups, playersData);
-        this.emitSelectedTrainee(player.trainingRunId);
+        this.highlightedTrainingRunId.set(player.trainingRunId);
     }
 
     /**
@@ -909,10 +903,7 @@ export class FinalComponent implements OnInit, OnChanges {
         this.unhighlightHoveredPlayer(player);
         this.hideTooltip();
         this.hideCrosshair();
-        // if (this.playerClicked === false) {
-        //   this.outputSelectedTrainingRunId.emit(); // Unhiglight with fade
-        // }
-        this.emitSelectedTrainee(player.trainingRunId);
+        this.highlightedTrainingRunId.set(player.trainingRunId);
     }
 
     /**
@@ -956,7 +947,7 @@ export class FinalComponent implements OnInit, OnChanges {
     onPlayerClick(event, player: PlayerData) {
         event.stopPropagation();
         this.playerClicked = true;
-        this.emitSelectedTrainee(player.trainingRunId);
+        this.highlightedTrainingRunId.set(player.trainingRunId);
     }
 
     /**
@@ -986,7 +977,6 @@ export class FinalComponent implements OnInit, OnChanges {
      */
     onBarMousemove(event) {
         const d3 = this.d3;
-        const crosshairConfig = CROSSHAIR_CONFIG;
         const crosshairLinesGroup = d3.select('.focus-lines');
         const crosshairLabelsGroup = d3.select('.focus-labels');
         const coordinates = this.d3.pointer(
@@ -1038,14 +1028,14 @@ export class FinalComponent implements OnInit, OnChanges {
      * Set player's circles in Score Level and Score Final components to bigger radius and fill color
      */
     highlightSelectedTrainingRun(): void {
-        if (!this.selectedTrainingRunId) {
+        if (!this.highlightedTrainingRunId()) {
             return;
         }
 
         this.svg.selectAll('.player-point').style('opacity', 0.5);
 
         const player = this.svg
-            .selectAll('.p' + this.selectedTrainingRunId)
+            .selectAll('.p' + this.highlightedTrainingRunId())
             .classed('player-point', false)
             .classed('player-point-selected', true)
             .transition()
@@ -1057,7 +1047,7 @@ export class FinalComponent implements OnInit, OnChanges {
                 return color.darker(1.5);
             });
 
-        if (this.selectedTrainingRunId === this.traineesTrainingRunId) {
+        if (this.highlightedTrainingRunId() === this.traineesTrainingRunId) {
             return;
         }
 
@@ -1080,11 +1070,5 @@ export class FinalComponent implements OnInit, OnChanges {
             .toString()
             .padStart(2, '0');
         return `${hours}:${minutes}:${seconds}`;
-    }
-
-    private emitSelectedTrainee(trainingRunId: number) {
-        if (this.selectedTrainingRunId !== trainingRunId) {
-            this.selectedTrainee.emit(trainingRunId);
-        }
     }
 }

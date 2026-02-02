@@ -2,6 +2,7 @@ import { Component, EventEmitter, inject, OnInit, Output } from '@angular/core';
 import { FiltersService } from '../../../services/filters.service';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { FormsModule } from '@angular/forms';
+import { Filter, FiltersObject } from '../../../services/filters/filters';
 
 @Component({
     selector: 'crczp-visualization-overview-filters',
@@ -10,8 +11,8 @@ import { FormsModule } from '@angular/forms';
     imports: [MatCheckbox, FormsModule],
 })
 export class FiltersComponent implements OnInit {
-    @Output() activeFilters: EventEmitter<any> = new EventEmitter();
-    filtersArray: any;
+    @Output() activeFilters: EventEmitter<FiltersObject> = new EventEmitter();
+    filtersArray: Filter[] = [];
     private filtersService = inject(FiltersService);
 
     ngOnInit(): void {

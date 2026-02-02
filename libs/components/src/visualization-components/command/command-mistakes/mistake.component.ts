@@ -1,25 +1,25 @@
+import { AsyncPipe } from '@angular/common';
 import { Component, inject, Input, OnInit } from '@angular/core';
-import { CommandMistakeService } from './command-mistake.service';
-import { map, take, tap } from 'rxjs/operators';
-import {
-    SentinelTable,
-    SentinelTableComponent,
-} from '@sentinel/components/table';
-import { BehaviorSubject, Observable } from 'rxjs';
-import {
-    SentinelResourceSelectorComponent,
-    SentinelResourceSelectorMapping,
-} from '@sentinel/components/resource-selector';
+import { MatButtonModule } from '@angular/material/button';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { CommandCorrectnessApi } from '@crczp/visualization-api';
 import {
     AggregatedCommands,
     CommandResourceSelect,
     mistakeTypes,
 } from '@crczp/visualization-model';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { AsyncPipe } from '@angular/common';
-import { MatButtonModule } from '@angular/material/button';
+import {
+    SentinelResourceSelectorComponent,
+    SentinelResourceSelectorMapping,
+} from '@sentinel/components/resource-selector';
+import {
+    SentinelTable,
+    SentinelTableComponent,
+} from '@sentinel/components/table';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { map, take, tap } from 'rxjs/operators';
+import { CommandMistakeService } from './command-mistake.service';
 import { CommandTable } from './command-table';
-import { CommandCorrectnessApi } from '@crczp/visualization-api';
 
 @Component({
     selector: 'crczp-mistake',
@@ -148,7 +148,6 @@ export class MistakeComponent implements OnInit {
                 .getTrainingRuns(this.trainingInstanceId)
                 .pipe(
                     tap((res) => {
-                        console.log('Training Runs:', res);
                         this.traineesDropdownList = res.map((trainingRun) => {
                             return {
                                 id: trainingRun.id,

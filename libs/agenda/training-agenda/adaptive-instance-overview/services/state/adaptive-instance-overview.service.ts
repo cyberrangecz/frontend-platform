@@ -1,27 +1,34 @@
 import { inject, Injectable } from '@angular/core';
-import { Router } from '@angular/router';
-import { OffsetPaginationEvent } from '@sentinel/common/pagination';
-import { PoolApi } from '@crczp/sandbox-api';
-import { AdaptiveTrainingInstanceApi, TrainingInstanceSort } from '@crczp/training-api';
-import { TrainingInstance } from '@crczp/training-model';
-import { combineLatest, EMPTY, from, NEVER, Observable, of } from 'rxjs';
-import { catchError, map, switchMap, tap } from 'rxjs/operators';
-import { AdaptiveInstanceFilter } from '../../model/adapters/adaptive-instance-filter';
-import {
-    SentinelConfirmationDialogComponent,
-    SentinelConfirmationDialogConfig,
-    SentinelDialogResultEnum
-} from '@sentinel/components/dialogs';
 import { MatDialog } from '@angular/material/dialog';
-import { ErrorHandlerService, NotificationService, PortalConfig } from '@crczp/utils';
-import { Routing } from '@crczp/routing-commons';
+import { Router } from '@angular/router';
 import {
     CrczpOffsetElementsPaginatedService,
     createInfinitePaginationEvent,
-    OffsetPaginatedResource
+    OffsetPaginatedResource,
 } from '@crczp/api-common';
-import { PoolSize } from '@crczp/training-agenda/instance-overview';
+import { Routing } from '@crczp/routing-commons';
+import { PoolApi } from '@crczp/sandbox-api';
 import { Pool, SandboxInstance } from '@crczp/sandbox-model';
+import { PoolSize } from '@crczp/training-agenda/instance-overview';
+import {
+    AdaptiveTrainingInstanceApi,
+    TrainingInstanceSort,
+} from '@crczp/training-api';
+import { TrainingInstance } from '@crczp/training-model';
+import {
+    ErrorHandlerService,
+    NotificationService,
+    PortalConfig,
+} from '@crczp/utils';
+import { OffsetPaginationEvent } from '@sentinel/common/pagination';
+import {
+    SentinelConfirmationDialogComponent,
+    SentinelConfirmationDialogConfig,
+    SentinelDialogResultEnum,
+} from '@sentinel/components/dialogs';
+import { combineLatest, EMPTY, from, NEVER, Observable, of } from 'rxjs';
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
+import { AdaptiveInstanceFilter } from '../../model/adapters/adaptive-instance-filter';
 
 @Injectable()
 export class AdaptiveInstanceOverviewService extends CrczpOffsetElementsPaginatedService<TrainingInstance> {
@@ -170,9 +177,11 @@ export class AdaptiveInstanceOverviewService extends CrczpOffsetElementsPaginate
                 .getPool(poolId, [404])
                 .pipe(mapToNullIfNotFound<Pool>()),
             this.poolApi
-                .getPoolsSandboxes(poolId, createInfinitePaginationEvent(), [
-                    404,
-                ])
+                .getPoolsSandboxes(
+                    poolId,
+                    createInfinitePaginationEvent(),
+                    [404],
+                )
                 .pipe(
                     mapToNullIfNotFound<
                         OffsetPaginatedResource<SandboxInstance>
@@ -184,7 +193,7 @@ export class AdaptiveInstanceOverviewService extends CrczpOffsetElementsPaginate
                     return { error: 'REMOVED' };
                 }
                 return {
-                    total: pool.maxSize,
+                    total: pool.usedSize,
                     used: sandboxes.elements.filter((sandbox) =>
                         sandbox.isLocked(),
                     ).length,
@@ -242,32 +251,36 @@ export class AdaptiveInstanceOverviewService extends CrczpOffsetElementsPaginate
     private callApiToDelete(
         trainingInstance: TrainingInstance,
     ): Observable<OffsetPaginatedResource<TrainingInstance>> {
-        return this.adaptiveInstanceApi.delete(trainingInstance.id, false,[409]).pipe(
-            tap(() =>
-                this.notificationService.emit(
-                    'success',
-                    'Training instance was successfully deleted',
+        return this.adaptiveInstanceApi
+            .delete(trainingInstance.id, false, [409])
+            .pipe(
+                tap(() =>
+                    this.notificationService.emit(
+                        'success',
+                        'Training instance was successfully deleted',
+                    ),
                 ),
-            ),
-            catchError((err) => {
-                if (err && err.status === 409) {
-                    return this.displayDialogToConfirmForceDelete(
-                        trainingInstance,
-                    ).pipe(
-                        switchMap((result) =>
-                            result === SentinelDialogResultEnum.CONFIRMED
-                                ? this.forceDelete(trainingInstance.id)
-                                : EMPTY,
-                        ),
+                catchError((err) => {
+                    if (err && err.status === 409) {
+                        return this.displayDialogToConfirmForceDelete(
+                            trainingInstance,
+                        ).pipe(
+                            switchMap((result) =>
+                                result === SentinelDialogResultEnum.CONFIRMED
+                                    ? this.forceDelete(trainingInstance.id)
+                                    : EMPTY,
+                            ),
+                        );
+                    }
+                    return this.errorHandler.emitAPIError(
+                        err,
+                        'Deleting training instance',
                     );
-                }
-                return this.errorHandler.emitAPIError(
-                    err,
-                    'Deleting training instance',
-                );
-            }),
-            switchMap(() => this.getAll(this.lastPagination, this.lastFilters)),
-        );
+                }),
+                switchMap(() =>
+                    this.getAll(this.lastPagination, this.lastFilters),
+                ),
+            );
     }
 
     private forceDelete(id: number): Observable<any> {

@@ -1,11 +1,4 @@
-import {
-    Component,
-    computed,
-    effect,
-    input,
-    model,
-    output,
-} from '@angular/core';
+import { Component, computed, input, model, output } from '@angular/core';
 import { SentinelEnumerationSelectComponent } from '@sentinel/components/enumeration-select';
 import moment from 'moment';
 import { TimelineChart, TimelineItem } from './timeline-chart/timeline-chart';
@@ -110,26 +103,6 @@ export class TimeRangeSelector {
         });
         return timelineBreakpoints.reverse();
     });
-
-    /**
-     * Initializes component and sets up timeline index effect.
-     */
-    constructor() {
-        effect(() => {
-            const inverseIndex =
-                this.breakpoints().length - 2 - this.timelineIndex();
-            const startTimeMs =
-                this.startTimeMs() + this.breakpoints()[inverseIndex].value;
-            const endTimeMs =
-                this.startTimeMs() + this.breakpoints()[inverseIndex + 1].value;
-
-            console.log({
-                start: moment(startTimeMs).format('HH:mm'),
-                end: moment(endTimeMs).format('HH:mm'),
-                duration: moment(endTimeMs - startTimeMs).format('HH:mm:ss'),
-            });
-        });
-    }
 
     /**
      * Formats timestamp as time string based on same-day check.

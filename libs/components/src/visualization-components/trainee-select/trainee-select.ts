@@ -39,7 +39,9 @@ export class TraineeSelect {
 
     filteredTrainees = computed(() => {
         const search = this.searchTerm().toLowerCase();
-        const allTrainees = this.trainees();
+        const allTrainees = this.trainees().sort((a, b) =>
+            a.name.localeCompare(b.name),
+        );
 
         if (!search) {
             return allTrainees;

@@ -60,7 +60,7 @@ function buildDataZoom(
                 startValue,
             ), // Right slider (trainees)
             DataZoom.verticalMouseNavigation, // Scroll wheel (trainees)
-        ],
+        ]
     };
 }
 

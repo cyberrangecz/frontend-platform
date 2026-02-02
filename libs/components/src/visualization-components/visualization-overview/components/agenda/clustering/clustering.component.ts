@@ -1,17 +1,8 @@
-import {
-    Component,
-    EventEmitter,
-    Input,
-    OnChanges,
-    OnInit,
-    Output,
-    SimpleChanges,
-    ViewChild,
-} from '@angular/core';
-import { FinalComponent } from './final/final.component';
-import { LevelsComponent } from './levels/levels.component';
+import { Component, effect, input, model, viewChild } from '@angular/core';
 import { TraineeModeInfo } from '../../../shared/interfaces/trainee-mode-info';
 import { ClusteringTrainingData } from '../../model/clustering/clustering-training-data';
+import { FinalComponent } from './final/final.component';
+import { LevelsComponent } from './levels/levels.component';
 
 @Component({
     selector: 'crczp-visualization-overview-clustering',
@@ -20,76 +11,61 @@ import { ClusteringTrainingData } from '../../model/clustering/clustering-traini
     // eslint-disable-next-line
     standalone: false,
 })
-export class ClusteringComponent implements OnInit, OnChanges {
-    @ViewChild(FinalComponent, { static: true }) finalComponent;
-    @ViewChild(LevelsComponent, { static: true }) levelsComponent;
+export class ClusteringComponent {
+    readonly finalComponent = viewChild(FinalComponent);
+    readonly levelsComponent = viewChild(LevelsComponent);
 
-    public selectedTrainingRunId: number;
-    clusteringTrainingData: ClusteringTrainingData = {
+    readonly clusteringTrainingData = model<ClusteringTrainingData>({
         finalResults: null,
         levels: null,
-    };
+    });
+
     /**
      * Array of color strings for visualization.
      */
-    @Input() colorScheme: string[];
+    readonly colorScheme = input<string[]>();
     /**
      * Main svg dimensions.
      */
-    @Input() size: { width: number; height: number };
+    readonly size = input<{ width: number; height: number }>();
     /**
      * Id of training definition
      */
-    @Input() trainingDefinitionId: number;
+    readonly trainingDefinitionId = input<number>();
     /**
      * Id of training instance
      */
-    @Input() trainingInstanceId: number;
+    readonly trainingInstanceId = input<number>();
     /**
      * Use if visualization should use anonymized data (without names and credentials of other users) from trainee point of view
      */
-    @Input() traineeModeInfo: TraineeModeInfo;
+    readonly traineeModeInfo = input<TraineeModeInfo>();
     /**
      * List of players which should be displayed
      */
-    @Input() filterPlayers: number[];
+    readonly runIds = input<number[]>([]);
     /**
-     * Id of trainee which should be highlighted
+     * Id of training run which should be highlighted
      */
-    @Input() highlightedTrainee: number;
-    /**
-     * Emits Id of trainee which should be highlighted
-     */
-    @Output() selectedTrainee: EventEmitter<number> = new EventEmitter();
+    readonly highlightedTrainingRunId = model<number | null>(null);
     /**
      * Enables trainee view - defaulty highlights given trainee
      */
-    @Input() standalone: boolean;
-    /**
-     * Id of trainees which should be displayed
-     */
-    @Input() displayedTrainees: number[];
+    readonly standalone = input<boolean>(false);
     /**
      * If provided is used for aggregated view across data from several instances.
      */
-    @Input() instanceIds: number[];
+    readonly instanceIds = input<number[]>([]);
 
-    ngOnInit(): void {
-        if (this.traineeModeInfo && this.standalone) {
-            this.selectedTrainingRunId = this.traineeModeInfo.trainingRunId;
-        }
-    }
-
-    ngOnChanges(changes: SimpleChanges): void {
-        if ('highlightedTrainee' in changes) {
-            this.selectedTrainingRunId = this.highlightedTrainee;
-        }
-    }
-
-    selectPlayer(id: number): void {
-        if (this.highlightedTrainee !== id) {
-            this.selectedTrainee.emit(id);
-        }
-        this.selectedTrainingRunId = id;
+    constructor() {
+        effect(() => {
+            const traineeModeInfo = this.traineeModeInfo();
+            const standalone = this.standalone();
+            if (traineeModeInfo && standalone) {
+                this.highlightedTrainingRunId.set(
+                    traineeModeInfo.trainingRunId,
+                );
+            }
+        });
     }
 }

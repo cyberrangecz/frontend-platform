@@ -1,13 +1,6 @@
-import {
-    Component,
-    EventEmitter,
-    Input,
-    OnInit,
-    Output,
-    ViewChild,
-} from '@angular/core';
-import { LineComponent } from './line/line.component';
+import { Component, Input, model, OnInit, ViewChild } from '@angular/core';
 import { TraineeModeInfo } from '../../../shared/interfaces/trainee-mode-info';
+import { LineComponent } from './line/line.component';
 
 @Component({
     selector: 'crczp-visualization-overview-timeline',
@@ -39,28 +32,20 @@ export class TimelineComponent implements OnInit {
      */
     @Input() traineeModeInfo: TraineeModeInfo;
     /**
-     * Id of trainee which should be highlighted
+     * Id of training run which should be highlighted
      */
-    @Input() highlightedTrainee: number;
+    highlightedTrainingRunId = model<number | null>(null);
     @Input() standalone: boolean;
-    /**
-     * Emits Id of trainee which should be highlighted
-     */
-    @Output() selectedTrainee: EventEmitter<number> = new EventEmitter();
     @ViewChild(LineComponent, { static: true }) lineComponent: LineComponent;
 
     ngOnInit(): void {
         if (this.traineeModeInfo) {
-            this.highlightedTrainee = this.traineeModeInfo.trainingRunId;
+            this.highlightedTrainingRunId.set(
+                this.traineeModeInfo.trainingRunId,
+            );
         }
     }
     setTableWidth(fullWidth: boolean): void {
         this.fullWidthTable = fullWidth;
-    }
-
-    selectPlayer(id: number): void {
-        if (this.highlightedTrainee !== id) {
-            this.selectedTrainee.emit(id);
-        }
     }
 }

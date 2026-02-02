@@ -1,15 +1,15 @@
 import {Injectable} from '@angular/core';
-import {FILTERS_ARRAY, FILTERS_OBJECT} from './filters/filters';
+import {FILTERS_ARRAY, FILTERS_OBJECT, Filter, FiltersObject} from './filters/filters';
 import {EMPTY, Subject} from 'rxjs';
 
 @Injectable({
     providedIn: 'root',
 })
 export class FiltersService {
-    filtersObject;
-    filtersArray;
+    filtersObject: FiltersObject;
+    filtersArray: Filter[];
 
-    private filterChanged: Subject<any> = new Subject<any>();
+    private filterChanged: Subject<typeof EMPTY> = new Subject<typeof EMPTY>();
 
     filterChanged$ = this.filterChanged.asObservable();
 
@@ -18,11 +18,11 @@ export class FiltersService {
         this.filtersArray = FILTERS_ARRAY;
     }
 
-    getFiltersObject(): any {
+    getFiltersObject(): FiltersObject {
         return this.filtersObject;
     }
 
-    getFiltersArray(): any {
+    getFiltersArray(): Filter[] {
         return this.filtersArray;
     }
 

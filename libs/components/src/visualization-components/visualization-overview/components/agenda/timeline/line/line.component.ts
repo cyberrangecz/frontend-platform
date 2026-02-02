@@ -4,31 +4,47 @@ import {
     EventEmitter,
     inject,
     Input,
+    model,
     OnChanges,
     OnDestroy,
     OnInit,
     Output,
-    SimpleChanges
+    SimpleChanges,
 } from '@angular/core';
-import { AXES_CONFIG, colorScheme, CONTEXT_CONFIG, SVG_MARGIN_CONFIG } from './config';
+import {
+    Axis,
+    BrushBehavior,
+    Line,
+    ScaleLinear,
+    ScaleOrdinal,
+    ZoomBehavior,
+} from 'd3';
+import { Subscription } from 'rxjs';
+import { take } from 'rxjs/operators';
+import { D3, D3Service } from '../../../../../common/d3-service/d3-service';
+import { FiltersService } from '../../../../services/filters.service';
+import { TableService } from '../../../../services/table.service';
 import { SvgConfig } from '../../../../shared/interfaces/configurations/svg-config';
 import { SvgMarginConfig } from '../../../../shared/interfaces/configurations/svg-margin-config';
 import { TraineeModeInfo } from '../../../../shared/interfaces/trainee-mode-info';
-import { take } from 'rxjs/operators';
-import { Timeline } from '../../../model/timeline/timeline';
-import { TimelineService } from '../service/timeline.service';
-import { TimelinePlayer } from '../../../model/timeline/timeline-player';
-import { BasicLevelInfo, TimelineLevel } from '../../../model/timeline/timeline-level';
-import { TrainingLevel } from '../../../model/timeline/training-level';
-import { TimelineEvent } from '../../../model/timeline/timeline-event';
-import { InfoLevel } from '../../../model/timeline/info-level';
-import { AssessmentLevel } from '../../../model/timeline/assessment-level';
 import { AccessLevel } from '../../../model/timeline/access-level';
-import { Axis, BrushBehavior, Line, ScaleLinear, ScaleOrdinal, ZoomBehavior } from 'd3';
-import { D3, D3Service } from '../../../../../common/d3-service/d3-service';
-import { Subscription } from 'rxjs';
-import { TableService } from '../../../../services/table.service';
-import { FiltersService } from '../../../../services/filters.service';
+import { AssessmentLevel } from '../../../model/timeline/assessment-level';
+import { InfoLevel } from '../../../model/timeline/info-level';
+import { Timeline } from '../../../model/timeline/timeline';
+import { TimelineEvent } from '../../../model/timeline/timeline-event';
+import {
+    BasicLevelInfo,
+    TimelineLevel,
+} from '../../../model/timeline/timeline-level';
+import { TimelinePlayer } from '../../../model/timeline/timeline-player';
+import { TrainingLevel } from '../../../model/timeline/training-level';
+import { TimelineService } from '../service/timeline.service';
+import {
+    AXES_CONFIG,
+    colorScheme,
+    CONTEXT_CONFIG,
+    SVG_MARGIN_CONFIG,
+} from './config';
 import TimelineLevelTypeEnum = BasicLevelInfo.TimelineLevelTypeEnum;
 
 @Component({
@@ -67,20 +83,16 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
     /**
      * Id of trainee which should be highlighted
      */
-    @Input() highlightedTrainee: number;
-    /**
-     * Emits Id of trainee which should be highlighted
-     */
-    @Output() selectedTrainee: EventEmitter<number> = new EventEmitter();
+    highlightedTrainingRunId = model<number | null>(null);
     /**
      * If visualization is used as standalone it displays all given players automatically, highlighting feedback learner
      * if provided. On the other hand, it displays only players from @filterPlayers and reacts to event selectedTrainingRunId.
      */
     @Input() standalone: boolean;
     /**
-     * List of players which should be displayed
+     * List of run IDs which should be displayed
      */
-    @Input() filterPlayers: number[];
+    @Input() runIdsFilter: number[];
     /**
      * Active filters for timeline visualization
      */
@@ -97,7 +109,6 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
     public filters;
     public filtersArray;
     public isLoading: boolean;
-    W;
     private tableService = inject(TableService);
     private filtersService = inject(FiltersService);
     private timelineService = inject(TimelineService);
@@ -184,7 +195,7 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
                             changes['highlightedTrainee'].previousValue,
                         );
                     }
-                    this.highlightLine(this.highlightedTrainee);
+                    this.highlightLine(this.highlightedTrainingRunId());
                 }
             }
         }
@@ -256,10 +267,10 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
         if (this.traineesTrainingRun) {
             this.drawPlayer(this.traineesTrainingRun);
         } else {
-            if (this.filterPlayers) {
-                this.filterPlayers.forEach((playerId) =>
-                    this.drawPlayer(playerId),
-                );
+            if (this.runIdsFilter) {
+                this.runIdsFilter.forEach((runId) => {
+                    this.drawPlayer(runId);
+                });
             }
         }
     }
@@ -279,10 +290,10 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
                 return player;
             });
         } else {
-            this.players = this.filterPlayers
+            this.players = this.runIdsFilter
                 ? this.players.filter(
                       (player) =>
-                          this.filterPlayers.indexOf(player.trainingRunId) !==
+                          this.runIdsFilter.indexOf(player.trainingRunId) !==
                           -1,
                   )
                 : [];
@@ -295,15 +306,16 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
      */
     setup(): void {
         // first we want the table to fit in
+        let configWidth = this.size.width;
         if (
             this.timelineData !== null &&
             this.getLevels().filter((level) => level.order !== undefined)
                 .length <= 4
         ) {
-            this.size.width =
+            configWidth =
                 window.innerWidth < 1400 && this.enableAllPlayers
-                    ? this.size.width * 0.55
-                    : this.size.width * 0.7;
+                    ? configWidth * 0.55
+                    : configWidth * 0.7;
             this.wideTable.emit(false);
         } else {
             // we want to notify the timeline, that the table should be placed under the visualization
@@ -311,9 +323,9 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
         }
         this.svgConfig = {
             width:
-                this.size.width > window.innerWidth
+                configWidth > window.innerWidth
                     ? window.innerWidth
-                    : this.size.width,
+                    : configWidth,
             height: this.size.height,
         };
         this.svgMarginConfig = SVG_MARGIN_CONFIG;
@@ -834,7 +846,7 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
      */
     addBrush(): void {
         this.buildContextAndReturn()
-            .context.append('g')
+            .append('g')
             .attr('class', 'brush')
             .attr('transform', `translate(0,10)`)
             .call(this.brush)
@@ -1039,9 +1051,6 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
         const player: TimelinePlayer = this.players.filter(
             (p) => p.trainingRunId === trainingRunId,
         )[0];
-        if (player === undefined) {
-            return;
-        }
         const playerGroup = this.playersGroup
             .append('g')
             .attr('id', 'score-progress-player-' + player.trainingRunId)
@@ -1128,8 +1137,8 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
         }
         this.lineTooltip.style('display', 'inline');
         this.showCrosshair();
-        if (player.trainingRunId !== this.highlightedTrainee) {
-            this.emitSelectedTrainee(player.trainingRunId);
+        if (player.trainingRunId !== this.highlightedTrainingRunId()) {
+            this.highlightedTrainingRunId.set(player.trainingRunId);
         }
     }
 
@@ -1579,11 +1588,5 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
             .toString()
             .padStart(2, '0');
         return `${hours}:${minutes}:${seconds}`;
-    }
-
-    private emitSelectedTrainee(trainingRunId: number) {
-        if (this.highlightedTrainee !== trainingRunId) {
-            this.selectedTrainee.emit(trainingRunId);
-        }
     }
 }

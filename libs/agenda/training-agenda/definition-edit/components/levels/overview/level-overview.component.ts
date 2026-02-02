@@ -1,3 +1,4 @@
+import { AsyncPipe } from '@angular/common';
 import {
     ChangeDetectionStrategy,
     Component,
@@ -8,19 +9,29 @@ import {
     OnChanges,
     OnInit,
     Output,
-    SimpleChanges
+    SimpleChanges,
 } from '@angular/core';
-import { Level, MitreTechnique, TrainingDefinition } from '@crczp/training-model';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { MatDivider } from '@angular/material/divider';
+import {
+    LevelMoveEvent,
+    LevelStepperAdapter,
+    TrainingLevelStepperComponent,
+} from '@crczp/components';
+import {
+    Level,
+    MitreTechnique,
+    TrainingDefinition,
+} from '@crczp/training-model';
+import {
+    SentinelControlItem,
+    SentinelControlsComponent,
+} from '@sentinel/components/controls';
 import { Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { LevelOverviewControls } from '../../../model/adapters/level-overview-controls';
 import { LevelEditService } from '../../../services/state/level/level-edit.service';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { SentinelControlItem, SentinelControlsComponent } from '@sentinel/components/controls';
-import { AsyncPipe } from '@angular/common';
-import { MatDivider } from '@angular/material/divider';
 import { AbstractLevelEditComponent } from '../level/abstract-level-edit.component';
-import { LevelMoveEvent, LevelStepperAdapter, TrainingLevelStepperComponent } from '@crczp/components';
 
 /**
  * Smart component for level stepper and level edit components

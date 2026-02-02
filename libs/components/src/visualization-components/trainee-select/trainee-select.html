@@ -39,7 +39,7 @@
         </span>
     </div>
     <div class="trainee-grid">
-        @for (trainee of trainees(); track trainee.id) {
+        @for (trainee of filteredTrainees(); track trainee.id) {
         <div
             class="trainee-item"
             [class.deselected]="!isTraineeSelected(trainee.id)"

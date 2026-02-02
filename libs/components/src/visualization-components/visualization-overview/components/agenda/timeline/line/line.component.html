@@ -1,30 +1,70 @@
 <!-- Stripe pattern -->
 <svg style="position: absolute">
     <defs>
-        <pattern height="10" id="stripe" patternTransform="rotate(90)" patternUnits="userSpaceOnUse" width="20">
-            <line style="stroke-width:3.5" x1="5" x2="15" y1="0" y2="10" />
-            <line style="stroke-width:3.5" x1="-5" x2="5" y1="0" y2="10" />
-            <line style="stroke-width:3.5" x1="15" x2="25" y1="0" y2="10" />
+        <pattern
+            height="10"
+            id="stripe"
+            patternTransform="rotate(90)"
+            patternUnits="userSpaceOnUse"
+            width="20"
+        >
+            <line
+                style="stroke-width: 3.5"
+                x1="5"
+                x2="15"
+                y1="0"
+                y2="10"
+            />
+            <line
+                style="stroke-width: 3.5"
+                x1="-5"
+                x2="5"
+                y1="0"
+                y2="10"
+            />
+            <line
+                style="stroke-width: 3.5"
+                x1="15"
+                x2="25"
+                y1="0"
+                y2="10"
+            />
         </pattern>
         <mask id="mask">
-            <rect [style.height.px]="svgConfig.height" [style.width.px]="svgConfig.width"
-                  style="fill: url(#stripe);opacity: 0.5" />
+            <rect
+                [style.height.px]="svgConfig.height"
+                [style.width.px]="svgConfig.width"
+                style="fill: url(#stripe); opacity: 0.5"
+            />
         </mask>
     </defs>
 </svg>
 
-<div [style]="{'height.px': (svgConfig.height + svgMarginConfig.top + svgMarginConfig.bottom)}" class="container">
-    <div style="position: relative;">
+<div
+    [style]="{
+        'height.px':
+            svgConfig.height + svgMarginConfig.top + svgMarginConfig.bottom,
+    }"
+    class="container"
+>
+    <div style="position: relative">
         <div class="zoom-buttons">
             <svg class="icon">
                 <path
                     d="M9,2A7,7 0 0,1 16,9C16,10.57 15.5,12 14.61,13.19L15.41,14H16L22,20L20,22L14,16V15.41L13.19,14.61C12,
-        15.5 10.57,16 9,16A7,7 0 0,1 2,9A7,7 0 0,1 9,2M8,5V8H5V10H8V13H10V10H13V8H10V5H8Z"></path>
+        15.5 10.57,16 9,16A7,7 0 0,1 2,9A7,7 0 0,1 9,2M8,5V8H5V10H8V13H10V10H13V8H10V5H8Z"
+                ></path>
             </svg>
             <span>Ctrl + Scroll</span>
             <!-- <button type="button" (click)="onButtonZoomIn()">+</button>
              <button type="button" (click)="onButtonZoomOut()">-</button> -->
-            <button (click)="onResetZoom()" mat-button type="button">Reset zoom</button>
+            <button
+                (click)="onResetZoom()"
+                mat-button
+                type="button"
+            >
+                Reset zoom
+            </button>
         </div>
         <div id="score-progress-container">
             <!-- VISUALIZATION -->

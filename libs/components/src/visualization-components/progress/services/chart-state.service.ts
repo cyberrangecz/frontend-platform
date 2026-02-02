@@ -1,12 +1,15 @@
 import { computed, Injectable, OnDestroy, signal } from '@angular/core';
-import * as echarts from 'echarts';
-import { CombinedProgressChartData, SingleBarData } from '../echarts/chart-utility-types';
 import { ProgressLevelInfo } from '@crczp/visualization-model';
-import { Sorting } from '../echarts/data-manipulation/sorting';
-import { Mapping, TraineeMappers } from '../echarts/data-manipulation/mapping';
-import { Filtering } from '../echarts/data-manipulation/filtering';
-import { ProgressChartBuilder } from '../echarts/progress-chart-builder';
+import * as echarts from 'echarts';
 import { BarBuilder } from '../echarts/chart-elements/progress-chart-bar/bar-builder';
+import {
+    CombinedProgressChartData,
+    SingleBarData,
+} from '../echarts/chart-utility-types';
+import { Filtering } from '../echarts/data-manipulation/filtering';
+import { Mapping, TraineeMappers } from '../echarts/data-manipulation/mapping';
+import { Sorting } from '../echarts/data-manipulation/sorting';
+import { ProgressChartBuilder } from '../echarts/progress-chart-builder';
 
 /**
  * Core dimensions for bar layout and grid sizing.
@@ -143,6 +146,7 @@ export class ChartStateService implements OnDestroy {
         this.filterData();
         this.sortData();
         this.updateBarData();
+        this.updateShownTrainees();
 
         this.allFinished = this.areAllRunsFinished();
         this.chart.setOption(
@@ -231,6 +235,7 @@ export class ChartStateService implements OnDestroy {
         this.filterData();
         this.sortData();
         this.updateBarData();
+        this.updateShownTrainees();
 
         this.allFinished = this.areAllRunsFinished();
         this.chart.setOption(
@@ -290,6 +295,7 @@ export class ChartStateService implements OnDestroy {
         this.filterData();
         this.sortData();
         this.updateBarData();
+        this.updateShownTrainees();
 
         this.allFinished = this.areAllRunsFinished();
         this.chart.setOption(
@@ -346,6 +352,7 @@ export class ChartStateService implements OnDestroy {
         this.filterData();
         this.sortData();
         this.updateBarData();
+        this.updateShownTrainees();
     }
 
     /**
@@ -490,7 +497,6 @@ export class ChartStateService implements OnDestroy {
     private filterData() {
         this.data.progress = Filtering.filterByLagState(this.data);
         this.data.progress = Filtering.filterBySelectedLevel(this.data);
-        this.updateShownTrainees();
     }
 
     private updateShownTrainees() {

@@ -1,24 +1,23 @@
 <div class="overview-visualization-container">
     <crczp-visualization-overview-final
-        (selectedTrainee)='selectPlayer($event)'
-        [colorScheme]="colorScheme"
-        [dataClusteringFinal]="clusteringTrainingData"
-        [filterPlayers]='filterPlayers'
-        [instanceIds]='instanceIds'
-        [selectedTrainingRunId]='selectedTrainingRunId'
-        [size]="{width: size.width, height: 100}"
-        [standalone]='standalone'
-        [traineeModeInfo]="traineeModeInfo"
+        [colorScheme]="colorScheme()"
+        [dataClusteringFinal]="clusteringTrainingData()"
+        [runIds]="runIds()"
+        [instanceIds]="instanceIds()"
+        [(highlightedTrainingRunId)]="highlightedTrainingRunId"
+        [size]="{ width: size().width, height: 100 }"
+        [standalone]="standalone()"
+        [traineeModeInfo]="traineeModeInfo()"
     />
 
     <crczp-visualization-overview-levels
-        (selectedTrainee)='selectPlayer($event)'
-        [colorScheme]="colorScheme"
-        [filterPlayers]='filterPlayers'
-        [instanceIds]='instanceIds'
-        [levelsData]="clusteringTrainingData"
-        [selectedTrainingRunId]='selectedTrainingRunId'
-        [size]="size"
-        [standalone]='standalone'
-        [traineeModeInfo]="traineeModeInfo" />
+        [colorScheme]="colorScheme()"
+        [runIds]="runIds()"
+        [instanceIds]="instanceIds()"
+        [levelsData]="clusteringTrainingData()"
+        [(highlightedTrainingRunId)]="highlightedTrainingRunId"
+        [size]="size()"
+        [standalone]="standalone()"
+        [traineeModeInfo]="traineeModeInfo()"
+    />
 </div>
