@@ -27,7 +27,10 @@
         {{ sortDirection() }}
     </sentinel-button-with-icon>
 </div>
-<div #chartContainer class="chart-container"></div>
+<div
+    #chartContainer
+    [style.height.px]="chartStateService.chartHeight()"
+    [style.min-height.px]="chartStateService.chartHeight()" class="chart-container"></div>
 
 <div class="controls-container">
     <button

@@ -1,4 +1,7 @@
+import angularEslint from '@angular-eslint/eslint-plugin';
+import angularTemplateEslint from '@angular-eslint/eslint-plugin-template';
 import nx from '@nx/eslint-plugin';
+import rdlabo from '@rdlabo/eslint-plugin-rules';
 
 export default [
     {
@@ -71,19 +74,41 @@ export default [
     },
     {
         files: ['**/*.html'],
+        plugins: {
+            '@angular-eslint': angularEslint,
+            '@angular-eslint/template': angularTemplateEslint,
+            '@rdlabo/rules': rdlabo,
+        },
         languageOptions: {
             parser: await import('@angular-eslint/template-parser'),
+            parserOptions: {
+                projectService: true,
+                allowAutomaticSingleRunInference: true,
+            },
         },
         rules: {
             '@angular-eslint/template/mouse-events-have-key-events': 'off',
             '@angular-eslint/template/click-events-have-key-events': 'off',
             '@angular-eslint/template/interactive-supports-focus': 'off',
+            '@rdlabo/rules/signal-use-as-signal-template': 'error',
         },
     },
     {
         files: ['**/*.ts'],
+        plugins: {
+            '@angular-eslint': angularEslint,
+            '@rdlabo/rules': rdlabo,
+        },
+        languageOptions: {
+            parserOptions: {
+                projectService: true,
+                allowAutomaticSingleRunInference: true,
+            },
+        },
         rules: {
             '@angular-eslint/prefer-standalone': 'off',
+            '@angular-eslint/no-uncalled-signals': 'error',
+            '@rdlabo/rules/signal-use-as-signal': 'error',
         },
     },
 ];

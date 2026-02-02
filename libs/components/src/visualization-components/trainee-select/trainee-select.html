@@ -1,0 +1,61 @@
+<div class="trainee-select-container">
+    <div class="controls">
+        <mat-form-field
+            appearance="outline"
+            class="search-field"
+            subscriptSizing="dynamic"
+        >
+            <mat-label>Search trainee</mat-label>
+            <input
+                matInput
+                type="text"
+                [value]="searchTerm()"
+                (input)="onSearchChange($any($event.target).value)"
+            />
+        </mat-form-field>
+        <button
+            mat-raised-button
+            (click)="selectAll()"
+        >
+            Select All
+        </button>
+        <button
+            mat-raised-button
+            (click)="deselectAll()"
+        >
+            Deselect All
+        </button>
+        <button
+            mat-raised-button
+            (click)="invert()"
+        >
+            Invert
+        </button>
+        <span
+            class="selection-count"
+            role="status"
+        >
+            {{ selectedCount() }} / {{ totalCount() }} Selected
+        </span>
+    </div>
+    <div class="trainee-grid">
+        @for (trainee of trainees(); track trainee.id) {
+        <div
+            class="trainee-item"
+            [class.deselected]="!isTraineeSelected(trainee.id)"
+            [class.highlighted]="highlightedTraineeId() === trainee.id"
+            (click)="onTraineeToggle(trainee.id)"
+            [title]="trainee.name"
+        >
+            <img
+                [src]="getImageSrc(trainee.picture)"
+                alt="{{ trainee.name }}"
+                class="trainee-picture"
+            />
+            <span class="trainee-name">
+                {{ getTruncatedName(trainee.name) }}
+            </span>
+        </div>
+        }
+    </div>
+</div>

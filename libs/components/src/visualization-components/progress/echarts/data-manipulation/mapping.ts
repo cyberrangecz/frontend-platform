@@ -3,12 +3,9 @@ import {
     ProgressEventType,
     ProgressLevelInfo,
     ProgressLevelVisualizationData,
-    TraineeProgressData,
+    TraineeProgressData
 } from '@crczp/visualization-model';
-import {
-    CombinedProgressChartData,
-    SingleBarData,
-} from '../chart-utility-types';
+import { CombinedProgressChartData, SingleBarData } from '../chart-utility-types';
 
 /**
  * Event types to display as icons on progress bars.
@@ -81,8 +78,8 @@ function getTraineeStartTime(trainee: TraineeProgressData): number {
  * @returns Earliest start time or provided start time
  */
 function getTrainingStartTime(
-    startTime: number,
     chartData: SingleBarData[],
+    startTime: number,
 ): number {
     return Math.min(...chartData.map((item) => item.startTime)) || startTime;
 }
@@ -95,20 +92,40 @@ function getTrainingStartTime(
  * @returns Latest end time or null
  */
 const getTrainingEndTime = (
-    currentTime: number,
     chartData: SingleBarData[],
+    currentTime = 0,
 ): number | null => {
-    let maxEndTime = currentTime;
+    function logTime(label: string, timestamp: number) {
+        const date = new Date(timestamp);
+        console.log(`${label}: ${date.toISOString()} `);
+    }
+
+    let maxEndTime = 0;
     chartData.forEach((item) => {
         // Actual end time
-        if (item.endTime > maxEndTime!) {
+        if (item.endTime > maxEndTime) {
             maxEndTime = item.endTime;
+            logTime('New max end time from actual endTime ', maxEndTime);
         }
         // Estimated end time (for running levels)
-        if (item.startTime + (item.estimatedDurationUnix || 0) > maxEndTime!) {
-            maxEndTime = item.startTime + (item.estimatedDurationUnix || 0);
+        if (item.state === 'RUNNING') {
+            if (currentTime > maxEndTime) {
+                maxEndTime = currentTime;
+                console.log('New max end time from currentTime ', maxEndTime);
+            }
+            if (
+                item.startTime + (item.estimatedDurationUnix || 0) >
+                maxEndTime
+            ) {
+                maxEndTime = item.startTime + (item.estimatedDurationUnix || 0);
+                logTime(
+                    'New max end time from estimated duration ',
+                    maxEndTime,
+                );
+            }
         }
     });
+    logTime('Final max end time ', maxEndTime);
     return maxEndTime;
 };
 
