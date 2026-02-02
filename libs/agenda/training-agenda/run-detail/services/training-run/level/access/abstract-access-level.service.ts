@@ -3,7 +3,7 @@ import { AnswerCheckResult } from '@crczp/training-model';
 import { Observable } from 'rxjs';
 import { AbstractTrainingRunService } from '../../abstract-training-run.service';
 import { SentinelNotificationTypeEnum } from '@sentinel/layout/notification';
-import { NotificationService } from '@crczp/utils';
+import { LoadingTracker, NotificationService } from '@crczp/utils';
 
 export type TrainingLevelData = {
     levelId: number;
@@ -13,6 +13,9 @@ export type TrainingLevelData = {
 
 export abstract class AbstractAccessLevelService {
     private readonly triedAnswers: Set<string> = new Set<string>();
+
+    protected readonly loadingTracker = new LoadingTracker();
+    public readonly isLoading$ = this.loadingTracker.isLoading$;
 
     protected constructor(
         protected dialog: MatDialog,
@@ -34,13 +37,15 @@ export abstract class AbstractAccessLevelService {
             return;
         }
         this.triedAnswers.add(answer);
-        this.callApiToSubmitAnswer(answer).subscribe((answerCheck) => {
-            if (answerCheck.isCorrect) {
-                this.onCorrectAnswerSubmitted();
-            } else {
-                this.onWrongAnswerSubmitted(answerCheck);
-            }
-        });
+        this.loadingTracker
+            .trackRequest(() => this.callApiToSubmitAnswer(answer))
+            .subscribe((answerCheck) => {
+                if (answerCheck.isCorrect) {
+                    this.onCorrectAnswerSubmitted();
+                } else {
+                    this.onWrongAnswerSubmitted(answerCheck);
+                }
+            });
     }
 
     protected abstract callApiToSubmitAnswer(

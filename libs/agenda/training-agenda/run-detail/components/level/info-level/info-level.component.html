@@ -4,6 +4,7 @@
     </div>
     <button
         (click)="runService.nextLevel()"
+        [disabled]="runService.isLoading$ | async"
         class="next-button"
         mat-raised-button>
         {{ (runService.runInfo$.observeProperty().isLastLevel.$() | async) ? "Finish" : "Next" }}

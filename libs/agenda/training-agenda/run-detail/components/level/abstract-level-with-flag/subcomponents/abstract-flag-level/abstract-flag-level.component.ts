@@ -28,6 +28,7 @@ import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
     ],
 })
 export class AbstractFlagLevelComponent {
+    readonly isLoading = input(false);
     readonly hints = input<Hint[]>([]);
     readonly levelContent = input.required<string>();
     readonly solutionContent = input<string | null>(null);

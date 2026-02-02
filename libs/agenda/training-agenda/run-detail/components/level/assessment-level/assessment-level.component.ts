@@ -1,4 +1,5 @@
 import {
+    AfterViewInit,
     ChangeDetectionStrategy,
     Component,
     inject,
@@ -21,6 +22,8 @@ import { MatButton } from '@angular/material/button';
 import { AbstractTrainingRunService } from '../../../services/training-run/abstract-training-run.service';
 import { AsyncPipe } from '@angular/common';
 import { map } from 'rxjs/operators';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { combineLatest } from 'rxjs';
 
 @Component({
     selector: 'crczp-assessment-level',
@@ -42,7 +45,7 @@ import { map } from 'rxjs/operators';
  * to answer all the questions before he can continue to the next level. If the type is questionnaire, trainee can skip
  * answering the questions.
  */
-export class AssessmentLevelComponent implements OnInit {
+export class AssessmentLevelComponent implements OnInit, AfterViewInit {
     @ViewChildren(TraineeQuestionComponent)
     questionComponents: QueryList<TraineeQuestionComponent>;
     canSubmit: boolean;
@@ -54,9 +57,24 @@ export class AssessmentLevelComponent implements OnInit {
             map((runInfo) => runInfo.displayedLevel as AssessmentLevel),
         );
     }
+    protected readonly isLoading = toSignal<boolean>(
+        combineLatest([
+            this.runService.isLoading$,
+            this.assessmentService.isLoading$,
+        ]).pipe(
+            map(
+                ([isSubmittingAnswer, isLoadingLevel]) =>
+                    isSubmittingAnswer || isLoadingLevel,
+            ),
+        ),
+    );
 
     ngOnInit(): void {
         this.level$.subscribe((level) => this.initCanSubmit(level));
+    }
+
+    ngAfterViewInit(): void {
+        this.checkCanSubmit();
     }
 
     /**

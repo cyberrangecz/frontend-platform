@@ -1,6 +1,6 @@
 export enum AbstractLevelTypeEnum {
-    Access = 'access',
-    Training = 'training',
-    Assessment = 'assessment',
-    Info = 'info',
+    Access = 'linear_access',
+    Training = 'linear_training',
+    Assessment = 'linear_assessment',
+    Info = 'linear_info',
 }

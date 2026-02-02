@@ -20,6 +20,8 @@ import { FormsModule } from '@angular/forms';
     ],
 })
 export class FloatingAnswerFormComponent {
+    isLoading = input<boolean>(false);
+
     buttonLabel = input<string>('Submit');
 
     answerSubmit = output<string>();
