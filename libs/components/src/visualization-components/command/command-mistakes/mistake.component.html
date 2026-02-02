@@ -8,34 +8,39 @@
         @if (!trainingRunId) {
             <sentinel-resource-selector
                 (selectionChange)="onTraineeSelect($event)"
+                [isLoading]="isLoading$ | async"
+                [noResultsLabel]="'No trainees found'"
                 [resourceMapping]="resourcesMapping"
                 [resources]="traineesDropdownList"
                 [selected]="selectedTrainingRuns$ | async"
                 searchPlaceholder="Search by Trainee"
             >
             </sentinel-resource-selector>
-        } @if (!correct) {
-        <sentinel-resource-selector
-            (selectionChange)="onMistakeSelect($event)"
-            [resourceMapping]="resourcesMapping"
-            [resources]="mistakesResources"
-            [selected]="selectedMistakeTypes$ | async"
-            searchPlaceholder="Search by Type"
-        >
-        </sentinel-resource-selector>
-    } @if (!trainingRunId || !correct) {
-        <button
-            (click)="sendRequest()"
-            [disabled]="
+        }
+        @if (!correct) {
+            <sentinel-resource-selector
+                (selectionChange)="onMistakeSelect($event)"
+                [isLoading]="isLoading$ | async"
+                [resourceMapping]="resourcesMapping"
+                [resources]="mistakesResources"
+                [selected]="selectedMistakeTypes$ | async"
+                searchPlaceholder="Search by Type"
+            >
+            </sentinel-resource-selector>
+        }
+        @if (!trainingRunId || !correct) {
+            <button
+                (click)="sendRequest()"
+                [disabled]="
                 (trainingRunId === undefined && (selectedTrainingRuns$ | async).length === 0) ||
                 ((selectedMistakeTypes$ | async).length === 0 && !correct)
             "
-            color="primary"
-            mat-raised-button
-        >
-            Filter
-        </button>
-    }
+                color="primary"
+                mat-raised-button
+            >
+                Filter
+            </button>
+        }
     </div>
     <sentinel-table
         [data]="aggregatedWrongCommands$ | async"
