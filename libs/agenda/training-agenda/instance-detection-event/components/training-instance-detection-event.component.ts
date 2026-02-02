@@ -7,12 +7,11 @@ import { DetectionEventTable } from '../model/detection-event-table';
 import { ActivatedRoute } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AsyncPipe } from '@angular/common';
-import { DetectionEventConcreteService } from '../services/detection-event-concrete.service';
 import { PaginationStorageService, providePaginationStorageService } from '@crczp/utils';
-import {
-    DetectionEventService
-} from '../../instance-detection-event-detail/services/detection-event/detection-event.service';
 import { PaginationMapper } from '@crczp/api-common';
+import { DetectionEventConcreteService } from '../services/detection-event-concrete.service';
+import { AbstractDetectionEventSort } from '@crczp/training-api';
+import { Routing } from '@crczp/routing-commons';
 
 /**
  * Main component of training instance detection event.
@@ -26,24 +25,30 @@ import { PaginationMapper } from '@crczp/api-common';
         providePaginationStorageService(
             TrainingInstanceDetectionEventComponent,
         ),
-        {
-            provide: DetectionEventService,
-            useClass: DetectionEventConcreteService,
-        },
+        DetectionEventConcreteService,
     ],
 })
 export class TrainingInstanceDetectionEventComponent implements OnInit {
     readonly INIT_SORT_NAME = 'levelId';
     readonly INIT_SORT_DIR = 'asc';
     cheatingDetectionId: number;
-    detectionEvents$: Observable<SentinelTable<AbstractDetectionEvent, string>>;
+    detectionEvents$: Observable<
+        SentinelTable<AbstractDetectionEvent, AbstractDetectionEventSort>
+    >;
     hasError$: Observable<boolean>;
     isLoading$: Observable<boolean>;
     trainingInstanceId: number;
     destroyRef = inject(DestroyRef);
-    private detectionEventService = inject(DetectionEventService);
+    private detectionEventConcreteService = inject(
+        DetectionEventConcreteService,
+    );
     private paginationService = inject(PaginationStorageService);
     private activeRoute = inject(ActivatedRoute);
+    private readonly initialPagination =
+        this.paginationService.createPagination<AbstractDetectionEventSort>(
+            this.INIT_SORT_NAME,
+            this.INIT_SORT_DIR,
+        );
 
     ngOnInit(): void {
         this.activeRoute.data
@@ -54,8 +59,12 @@ export class TrainingInstanceDetectionEventComponent implements OnInit {
             .subscribe((data) => {
                 this.trainingInstanceId = data[TrainingInstance.name].id;
             });
-        this.cheatingDetectionId =
-            this.activeRoute.snapshot.params['trainingInstanceId'];
+        this.cheatingDetectionId = Number(
+            Routing.Utils.extractVariable<'linear-instance'>(
+                'detectionId',
+                this.activeRoute.snapshot,
+            ),
+        );
         this.initTable();
     }
 
@@ -63,9 +72,9 @@ export class TrainingInstanceDetectionEventComponent implements OnInit {
      * Gets new data for table
      * @param loadEvent event emitted by table component to get new data
      */
-    onLoadEvent(loadEvent: TableLoadEvent<string>): void {
+    onLoadEvent(loadEvent: TableLoadEvent<AbstractDetectionEventSort>): void {
         this.paginationService.savePageSize(loadEvent.pagination.size);
-        this.detectionEventService
+        this.detectionEventConcreteService
             .getAll(
                 this.cheatingDetectionId,
                 this.trainingInstanceId,
@@ -77,19 +86,18 @@ export class TrainingInstanceDetectionEventComponent implements OnInit {
     }
 
     private initTable() {
-        this.hasError$ = this.detectionEventService.hasError$;
-        this.isLoading$ = this.detectionEventService.isLoading$;
-        this.detectionEvents$ = this.detectionEventService.resource$.pipe(
-            map(
-                (resource) =>
-                    new DetectionEventTable(
-                        resource,
-                        this.detectionEventService,
-                    ),
-            ),
-        );
-        const initialPagination =
-            this.paginationService.createPagination<never>();
-        this.onLoadEvent({ pagination: initialPagination });
+        this.hasError$ = this.detectionEventConcreteService.hasError$;
+        this.isLoading$ = this.detectionEventConcreteService.isLoading$;
+        this.detectionEvents$ =
+            this.detectionEventConcreteService.resource$.pipe(
+                map(
+                    (resource) =>
+                        new DetectionEventTable(
+                            resource,
+                            this.detectionEventConcreteService,
+                        ),
+                ),
+            );
+        this.onLoadEvent({ pagination: this.initialPagination });
     }
 }

@@ -105,7 +105,6 @@ export class CheatingDetectionOverviewComponent implements OnInit {
                     ),
             ),
         );
-        const initialPagination = this.initialPagination;
-        this.onLoadEvent({ pagination: initialPagination });
+        this.onLoadEvent({ pagination: this.initialPagination });
     }
 }

@@ -13,8 +13,8 @@ import { TrainingResolverHelperService } from './training-resolver-helper.servic
  */
 function resolveCheatingDetectionBreadcrumb(
     route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot
-): Observable<string> | Promise<string> | string {
+    state: RouterStateSnapshot,
+): Observable<string> | string {
     if (Routing.Utils.containsSubroute('cheating-detection/create', state)) {
         return 'Create';
     }
@@ -37,20 +37,20 @@ function resolveCheatingDetectionBreadcrumb(
  */
 function resolveCheatingDetectionTitle(
     route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot
-): Observable<string> | Promise<string> | string {
+    state: RouterStateSnapshot,
+): Observable<string> | string {
     const instanceObservable = inject(
-        TrainingResolverHelperService
+        TrainingResolverHelperService,
     ).getInstance(route, TrainingTypeEnum.LINEAR);
     return instanceObservable.pipe(
         take(1),
-        map((ti) => (ti ? resolveTitle(ti, state) : ''))
+        map((ti) => (ti ? resolveTitle(ti, state) : '')),
     );
 }
 
 function resolveTitle(
     ti: TrainingInstance,
-    state: RouterStateSnapshot
+    state: RouterStateSnapshot,
 ): string {
     if (Routing.Utils.containsSubroute('cheating-detection/create', state)) {
         return `Create of cheating detection of ${ti.title}`;
