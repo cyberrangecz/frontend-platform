@@ -5,7 +5,7 @@
             wh-100 {{(synchronizerService.topologyCollapsed$ | async)  ? 'topology-tabs-wrapper--collapsed': ''}}
             {{standalone() ? 'topology-tabs-wrapper--standalone' : ''}}
         ">
-    @if (!(synchronizerService.topologyCollapsed$ | async) && (window.innerWidth) > 1400 && !standalone()) {
+    @if ((synchronizerService.topologyCollapsed$ | async) === false && !standalone()) {
         <div (mousedown)="mouseDown($event)" class="draggable-bar"></div>
     }
     <mat-tab-group
@@ -33,7 +33,9 @@
             <ng-container>
                 <mat-tab [matTooltip]="tab.nodeId">
                     <ng-template mat-tab-label>
-                      <span (auxclick)="handleTabClick($event, $index)" class="tab-label">
+                      <span
+                          (auxclick)="handleTabMiddleClick($event, $index)"
+                          class="tab-label">
                           <span class="tab-ip">{{ tab.nodeId }}</span>
                           <button (click)="closeTab($index)" class="close-tab-button">
                                 <mat-icon class="close-icon">close</mat-icon>
@@ -47,6 +49,7 @@
                             sandboxUuid: sandboxUuid(),
                             nodeName: tab.nodeId,
                         }"
+                        [focusStream]="getConsoleFocus$($index)"
                         class="block wh-100"
                     />
                 </mat-tab>

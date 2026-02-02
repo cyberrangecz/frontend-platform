@@ -1,19 +1,17 @@
 import {
     AfterViewInit,
     Component,
+    effect,
     ElementRef,
     HostListener,
     inject,
     input,
     signal,
-    ViewChild,
+    ViewChild
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatTab, MatTabGroup, MatTabLabel } from '@angular/material/tabs';
-import {
-    OpenConsoleEvent,
-    TopologyGraph,
-} from './topology-graph/topology-graph';
+import { OpenConsoleEvent, TopologyGraph } from './topology-graph/topology-graph';
 import { MatTooltip } from '@angular/material/tooltip';
 import { ConsoleView } from '../console/console-view.component';
 import { Topology } from '@crczp/sandbox-model';
@@ -24,6 +22,7 @@ import { TopologyIconsService } from './topology-graph/services/topology-icons.s
 import { MatIcon } from '@angular/material/icon';
 import { Routing } from '@crczp/routing-commons';
 import { Router } from '@angular/router';
+import { filter, map, Observable, Subject } from 'rxjs';
 
 @Component({
     selector: 'crczp-topology',
@@ -55,6 +54,7 @@ export class TopologyComponent implements AfterViewInit {
     @ViewChild('topologyTabsDiv') topologyTabsDiv: ElementRef<HTMLDivElement>;
     protected tabs = signal<OpenConsoleEvent[]>([]);
     protected readonly window = window;
+    protected focusSubject = new Subject<number>();
 
     constructor() {
         this.synchronizerService.topologyCollapsed$.subscribe(
@@ -78,6 +78,11 @@ export class TopologyComponent implements AfterViewInit {
                 }
             },
         );
+
+        effect(() => {
+            console.log('focus tab index:', this.selectedIndex());
+            this.focusSubject.next(this.selectedIndex() - 1);
+        });
     }
 
     @HostListener('window:resize')
@@ -87,7 +92,7 @@ export class TopologyComponent implements AfterViewInit {
 
     @HostListener('window:keydown', ['$event'])
     onKeyDown(event: KeyboardEvent): void {
-        if (event.ctrlKey && event.altKey) {
+        if (event.ctrlKey && event.altKey && !event.shiftKey) {
             const totalTabs = this.tabs().length + 1;
             if (event.key === 'ArrowRight') {
                 this.selectedIndex.update((index) => (index + 1) % totalTabs);
@@ -157,12 +162,19 @@ export class TopologyComponent implements AfterViewInit {
         }
     }
 
-    handleTabClick($event: PointerEvent, index: number): void {
+    handleTabMiddleClick($event: PointerEvent, index: number): void {
         if ($event.button === 1 /* middle click */) {
             this.closeTab(index);
             $event.preventDefault();
             $event.stopPropagation();
         }
+    }
+
+    protected getConsoleFocus$($index: number): Observable<void> {
+        return this.focusSubject.asObservable().pipe(
+            filter((index) => index === $index),
+            map(() => void 0),
+        );
     }
 
     private openConsoleInNewWindow(nodeId: string, inGui: boolean): void {
