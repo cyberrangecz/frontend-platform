@@ -1,10 +1,10 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { ErrorHandler, inject, Injectable } from '@angular/core';
+import { ErrorHandler, inject, Injectable, isDevMode } from '@angular/core';
 import {
     SentinelNotification,
     SentinelNotificationResult,
     SentinelNotificationService,
-    SentinelNotificationTypeEnum,
+    SentinelNotificationTypeEnum
 } from '@sentinel/layout/notification';
 import { Observable, of, Subject } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
@@ -32,6 +32,10 @@ export class ErrorHandlerService implements ErrorHandler {
     }
 
     emitNavigationError(error: any, url?: string): Observable<boolean> {
+        if (!isDevMode()) {
+            console.warn('Unable to navigate to requested page:', url, error);
+            return of(true);
+        }
         const notification: SentinelNotification = {
             type: SentinelNotificationTypeEnum.Error,
             title: 'Navigation',
@@ -49,12 +53,11 @@ export class ErrorHandlerService implements ErrorHandler {
         err: HttpErrorResponse,
         operation: string,
     ): Observable<boolean> {
+        console.error(err);
         const notification: SentinelNotification = {
             type: SentinelNotificationTypeEnum.Error,
             title: operation,
         };
-
-        console.error(err);
 
         if (
             err === null ||
