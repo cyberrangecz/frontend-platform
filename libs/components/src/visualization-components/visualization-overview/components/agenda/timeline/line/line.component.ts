@@ -306,15 +306,16 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
      */
     setup(): void {
         // first we want the table to fit in
+        let configWidth = this.size.width;
         if (
             this.timelineData !== null &&
             this.getLevels().filter((level) => level.order !== undefined)
                 .length <= 4
         ) {
-            this.size.width =
+            configWidth =
                 window.innerWidth < 1400 && this.enableAllPlayers
-                    ? this.size.width * 0.55
-                    : this.size.width * 0.7;
+                    ? configWidth * 0.55
+                    : configWidth * 0.7;
             this.wideTable.emit(false);
         } else {
             // we want to notify the timeline, that the table should be placed under the visualization
@@ -322,9 +323,9 @@ export class LineComponent implements OnDestroy, OnChanges, OnInit {
         }
         this.svgConfig = {
             width:
-                this.size.width > window.innerWidth
+                configWidth > window.innerWidth
                     ? window.innerWidth
-                    : this.size.width,
+                    : configWidth,
             height: this.size.height,
         };
         this.svgMarginConfig = SVG_MARGIN_CONFIG;
