@@ -14,12 +14,11 @@ import { TrainingInstanceTable } from '../model/adapters/training-instance-table
 import { PoolSize, TrainingInstanceOverviewService } from '../services/state/training-instance-overview.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AsyncPipe } from '@angular/common';
-import { InstanceCountdownComponent } from './instance-countdown/instance-countdown.component';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { CdkCopyToClipboard } from '@angular/cdk/clipboard';
-import { TableDateCellComponent } from '@crczp/components';
+import { TableCountdownComponent, TableDateCellComponent } from '@crczp/components';
 import { NotificationService, PaginationStorageService, providePaginationStorageService } from '@crczp/utils';
 import { PaginationMapper } from '@crczp/api-common';
 import { TrainingInstanceSort } from '@crczp/training-api';
@@ -38,14 +37,13 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
         SentinelTableComponent,
         AsyncPipe,
         SentinelRowDirective,
-        InstanceCountdownComponent,
         TableDateCellComponent,
         MatTooltip,
         MatButton,
         MatIcon,
         CdkCopyToClipboard,
         MatProgressSpinner,
-        InstanceCountdownComponent,
+        TableCountdownComponent,
     ],
     providers: [
         providePaginationStorageService(TrainingInstanceOverviewComponent),
@@ -125,7 +123,7 @@ export class TrainingInstanceOverviewComponent {
     ): boolean {
         return (
             !localEnvironment &&
-            ('error' in poolSize || (poolSize.total - poolSize.used === 0))
+            ('error' in poolSize || poolSize.total - poolSize.used === 0)
         );
     }
 

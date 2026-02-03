@@ -27,7 +27,10 @@ import { CdkCopyToClipboard } from '@angular/cdk/clipboard';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { TableDateCellComponent } from '@crczp/components';
+import {
+    TableCountdownComponent,
+    TableDateCellComponent,
+} from '@crczp/components';
 import {
     NotificationService,
     PaginationStorageService,
@@ -37,7 +40,6 @@ import { PaginationMapper } from '@crczp/api-common';
 import { TrainingInstanceSort } from '@crczp/training-api';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { PoolSize } from '@crczp/training-agenda/instance-overview';
-import { InstanceCountdownComponent } from '../../instance-overview/components/instance-countdown/instance-countdown.component';
 
 @Component({
     selector: 'crczp-adaptive-instance-overview',
@@ -56,7 +58,7 @@ import { InstanceCountdownComponent } from '../../instance-overview/components/i
         MatIcon,
         SentinelRowDirective,
         MatProgressSpinner,
-        InstanceCountdownComponent,
+        TableCountdownComponent,
     ],
     providers: [
         providePaginationStorageService(AdaptiveInstanceOverviewComponent),

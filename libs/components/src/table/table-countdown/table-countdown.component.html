@@ -1,11 +1,13 @@
 <div class="wrapper-div">
+    @if (!expired()) {
     <span class="monospace-font">
         {{ this.getNumberPart() }}
     </span>
-    @if(expired()){
-    <mat-icon class="expiry-icon">block</mat-icon>
-    }
+        &nbsp;
     <span>
         {{ this.getStringPart() }}
     </span>
+    } @else {
+        <mat-icon class="expiry-icon">block</mat-icon>
+    }
 </div>
