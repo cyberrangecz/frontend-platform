@@ -1,11 +1,13 @@
-import {Component, inject, Input, OnInit} from '@angular/core';
-import {MatTableDataSource, MatTableModule} from '@angular/material/table';
-import {MCQTableAdapter} from '../../table-adapter/mcq-table-adapter';
-import {HighlightService} from '../../services/highlight.service';
-import {HighlightableDirective} from '../../directives/highlightable.directive';
-import {AssessmentQuestion} from '@crczp/visualization-model';
-import {CommonModule} from '@angular/common';
-import {MatTooltipModule} from '@angular/material/tooltip';
+import { Component, inject, Input, OnInit } from '@angular/core';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MCQTableAdapter } from '../../table-adapter/mcq-table-adapter';
+import { HighlightService } from '../../services/highlight.service';
+import { HighlightableDirective } from '../../directives/highlightable.directive';
+import { AssessmentQuestion } from '@crczp/visualization-model';
+import { CommonModule } from '@angular/common';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MCQTableRow } from '../../table-adapter/mcq-table-row';
+import { MatPaginator } from '@angular/material/paginator';
 
 /**
  * Component displaying result of a multiple choice question
@@ -14,13 +16,12 @@ import {MatTooltipModule} from '@angular/material/tooltip';
     selector: 'crczp-mcq-results',
     templateUrl: './mcq-results.component.html',
     styleUrls: ['../emi-mcq-table-shared.component.css'],
-    imports: [
-        CommonModule,
-        MatTooltipModule,
-        MatTableModule
-    ]
+    imports: [CommonModule, MatTooltipModule, MatTableModule],
 })
-export class MCQResultsComponent extends HighlightableDirective implements OnInit {
+export class MCQResultsComponent
+    extends HighlightableDirective
+    implements OnInit
+{
     @Input() question: AssessmentQuestion;
     @Input() isTest: boolean;
 
@@ -28,7 +29,7 @@ export class MCQResultsComponent extends HighlightableDirective implements OnIni
      * Columns of the table
      */
     displayedColumns = ['option', 'sum', 'percentage', 'answers'];
-    dataSource;
+    dataSource: MatTableDataSource<MCQTableRow, MatPaginator>;
 
     constructor() {
         const highlightService = inject(HighlightService);
@@ -37,6 +38,8 @@ export class MCQResultsComponent extends HighlightableDirective implements OnIni
     }
 
     ngOnInit(): void {
-        this.dataSource = new MatTableDataSource(new MCQTableAdapter(this.question).rows);
+        this.dataSource = new MatTableDataSource(
+            new MCQTableAdapter(this.question).rows,
+        );
     }
 }
