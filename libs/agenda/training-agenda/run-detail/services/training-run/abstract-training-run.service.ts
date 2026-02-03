@@ -9,14 +9,19 @@ import {
     Phase,
     QuestionnairePhase,
     TrainingLevel,
-    TrainingPhase
+    TrainingPhase,
 } from '@crczp/training-model';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { ErrorHandlerService } from '@crczp/utils';
+import { ErrorHandlerService, LoadingTracker } from '@crczp/utils';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { LoadingDialogComponent, LoadingDialogOptions } from '@crczp/components';
+import {
+    LoadingDialogComponent,
+    LoadingDialogOptions,
+} from '@crczp/components';
 
 export abstract class AbstractTrainingRunService {
+    protected readonly loadingTracker = new LoadingTracker();
+    public readonly isLoading$ = this.loadingTracker.isLoading$;
     private readonly runInfoSubject$ =
         new BehaviorSubject<AccessTrainingRunInfo>(undefined);
 
@@ -44,14 +49,18 @@ export abstract class AbstractTrainingRunService {
         if (this.runInfo.isBacktracked) {
             this.displayNextLevel();
         } else if (this.runInfo.isLastLevelDisplayed) {
-            this.callApiToFinish().subscribe(() => {
-                this.navigateToRunSummary();
-            });
+            this.loadingTracker
+                .trackRequest(() => this.callApiToFinish())
+                .subscribe(() => {
+                    this.navigateToRunSummary();
+                });
         } else {
-            this.callApiToNextLevel().subscribe((nextLevel) => {
-                this.updateRunInfoWithNextLevel(nextLevel);
-                this.advanceCurrentLevel();
-            });
+            this.loadingTracker
+                .trackRequest(() => this.callApiToNextLevel())
+                .subscribe((nextLevel) => {
+                    this.updateRunInfoWithNextLevel(nextLevel);
+                    this.advanceCurrentLevel();
+                });
         }
     }
 
@@ -118,9 +127,11 @@ export abstract class AbstractTrainingRunService {
     public displayLevel(levelId: number): void {
         const targetLevel = this.findLevelOrThrow(levelId);
         if (!targetLevel.isLoaded) {
-            this.callApiToLoadLevel(targetLevel.id).subscribe((loadedLevel) => {
-                this.updateRunInfoWithLoadedLevel(loadedLevel);
-            });
+            this.loadingTracker
+                .trackRequest(() => this.callApiToLoadLevel(targetLevel.id))
+                .subscribe((loadedLevel) => {
+                    this.updateRunInfoWithLoadedLevel(loadedLevel);
+                });
         } else {
             this.updateRunInfo({ displayedLevelId: targetLevel.id });
         }

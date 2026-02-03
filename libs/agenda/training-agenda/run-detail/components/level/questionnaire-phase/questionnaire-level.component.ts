@@ -1,16 +1,32 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
-import { AdaptiveQuestion, Choice, QuestionAnswer, QuestionnairePhase, QuestionTypeEnum } from '@crczp/training-model';
-import { MatError, MatFormField, MatInput, MatLabel } from '@angular/material/input';
+import {
+    ChangeDetectionStrategy,
+    Component,
+    inject,
+    OnInit,
+    signal,
+} from '@angular/core';
+import {
+    AdaptiveQuestion,
+    Choice,
+    QuestionAnswer,
+    QuestionnairePhase,
+    QuestionTypeEnum,
+} from '@crczp/training-model';
+import {
+    MatError,
+    MatFormField,
+    MatInput,
+    MatLabel,
+} from '@angular/material/input';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import {
-    AdaptiveAssessmentLevelService
-} from '../../../services/training-run/level/assessment/adaptive-assessment-level.service';
+import { AdaptiveAssessmentLevelService } from '../../../services/training-run/level/assessment/adaptive-assessment-level.service';
 import { AbstractTrainingRunService } from '../../../services/training-run/abstract-training-run.service';
 import { map } from 'rxjs/operators';
-import { async } from 'rxjs';
+import { combineLatest } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
     selector: 'crczp-questionnaire-level',
@@ -30,13 +46,23 @@ import { AsyncPipe } from '@angular/common';
     providers: [AdaptiveAssessmentLevelService],
 })
 export class QuestionnaireLevelComponent implements OnInit {
-    isLoading = false;
     questionAnswers: QuestionAnswer[] = [];
     questionTypes = QuestionTypeEnum;
     canSubmit = signal<boolean>(false);
-    protected readonly async = async;
     protected runService = inject(AbstractTrainingRunService);
     private questionnaireService = inject(AdaptiveAssessmentLevelService);
+
+    protected readonly isLoading = toSignal(
+        combineLatest([
+            this.runService.isLoading$,
+            this.questionnaireService.isLoading$,
+        ]).pipe(
+            map(
+                ([isSubmittingAnswer, isLoadingLevel]) =>
+                    isSubmittingAnswer || isLoadingLevel,
+            ),
+        ),
+    );
 
     protected get phase$() {
         return this.runService.runInfo$.pipe(
@@ -59,6 +85,8 @@ export class QuestionnaireLevelComponent implements OnInit {
 
     ngOnInit(): void {
         this.initEmptyAnswers();
+
+        this.checkIfCanBeSubmitted();
     }
 
     onMCQChecked(event, questionIndex: number, answer: string): void {
@@ -69,6 +97,7 @@ export class QuestionnaireLevelComponent implements OnInit {
                 questionIndex
             ].answers.filter((a) => a !== answer);
         }
+        this.checkIfCanBeSubmitted();
     }
 
     checkIfCanBeSubmitted(): void {
@@ -92,6 +121,7 @@ export class QuestionnaireLevelComponent implements OnInit {
         } else {
             this.questionAnswers[questionIndex].answers = [];
         }
+        this.checkIfCanBeSubmitted();
     }
 
     submit(): void {
@@ -99,7 +129,6 @@ export class QuestionnaireLevelComponent implements OnInit {
     }
 
     checkedAsAnswered(question: AdaptiveQuestion, choice: Choice): boolean {
-        this.checkIfCanBeSubmitted();
         return question.userAnswers?.some(
             (answer: string) => answer === choice.text,
         );

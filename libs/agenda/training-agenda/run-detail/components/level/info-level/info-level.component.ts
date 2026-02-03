@@ -6,6 +6,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { InfoLevel, InfoPhase } from '@crczp/training-model';
 import { AsyncPipe } from '@angular/common';
+import { isLoading } from '@sentinel/common/utils';
 
 @Component({
     selector: 'crczp-info-level',
@@ -28,4 +29,6 @@ export class InfoLevelComponent {
             ),
         );
     }
+
+    protected readonly isLoading = isLoading;
 }

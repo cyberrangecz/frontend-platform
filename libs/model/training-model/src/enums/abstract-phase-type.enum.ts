@@ -1,7 +1,7 @@
 export enum AbstractPhaseTypeEnum {
-    Info = 'info',
-    Training = 'training',
-    Access = 'access',
-    Questionnaire = 'questionnaire',
-    Task = 'task',
+    Info = 'adaptive_info',
+    Training = 'adaptive_training',
+    Access = 'adaptive_access',
+    Questionnaire = 'adaptive_questionnaire',
+    Task = 'adaptive_task',
 }

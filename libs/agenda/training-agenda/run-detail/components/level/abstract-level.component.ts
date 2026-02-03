@@ -73,7 +73,7 @@ export class AbstractLevelComponent implements OnInit, AfterViewInit {
     protected readonly stepperSteps = signal<StepperItem[]>([]);
     protected readonly stepperSelectedIndex = signal<number | null>(null);
     protected readonly stepperLastIndex = signal<number | null>(null);
-    protected stepperHeight = signal<number>(148);
+    protected readonly stepperHeight = signal<number>(148);
 
     constructor() {
         this.displayedLevelTitle$ = this.runService.runInfo$

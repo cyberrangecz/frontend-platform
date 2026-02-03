@@ -13,7 +13,7 @@ import { PortalConfig } from '@crczp/utils';
 export class AdaptiveTransitionVisualizationApi {
     private readonly http = inject(HttpClient);
 
-    private readonly apiUrl = inject(PortalConfig).basePaths.linearTraining;
+    private readonly apiUrl = inject(PortalConfig).basePaths.adaptiveTraining;
 
     getDataForTrainingInstance(
         trainingInstanceId: number,

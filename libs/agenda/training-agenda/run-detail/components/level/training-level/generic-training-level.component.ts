@@ -1,10 +1,12 @@
-import { DestroyRef } from '@angular/core';
-import { Observable, of, skipWhile, switchMap } from 'rxjs';
+import { DestroyRef, signal } from '@angular/core';
+import { combineLatest, Observable, of, skipWhile, switchMap } from 'rxjs';
 import { filter, map, take } from 'rxjs/operators';
 import { Hint, TrainingLevel, TrainingPhase } from '@crczp/training-model';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AbstractTrainingRunService } from '../../../services/training-run/abstract-training-run.service';
-import { AbstractTrainingLevelService } from '../../../services/training-run/level/access/training/abstract-training-level.service';
+import {
+    AbstractTrainingLevelService
+} from '../../../services/training-run/level/access/training/abstract-training-level.service';
 
 export abstract class GenericTrainingLevelComponent {
     isLoading$: Observable<boolean>;
@@ -13,6 +15,7 @@ export abstract class GenericTrainingLevelComponent {
     abstract readonly hints$: Observable<Hint[]>;
     abstract readonly levelContent$: Observable<string>;
     protected readonly of = of;
+    protected readonly isLoading = signal(false);
     private shouldScrollAfterViewCheck = false;
 
     protected constructor(
@@ -20,6 +23,16 @@ export abstract class GenericTrainingLevelComponent {
         protected readonly trainingLevelService: AbstractTrainingLevelService,
         protected readonly destroyRef: DestroyRef,
     ) {
+        combineLatest([
+            this.runService.isLoading$,
+            this.trainingLevelService.isLoading$,
+        ]).pipe(
+            map(
+                ([isSubmittingAnswer, isLoadingLevel]) =>
+                    isSubmittingAnswer || isLoadingLevel,
+            ),
+        ).subscribe((loading) => this.isLoading.set(loading));
+        
         this.registerViewCheckHook(() => {
             if (this.shouldScrollAfterViewCheck) {
                 this.scrollToBottom();

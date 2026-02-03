@@ -18,12 +18,14 @@
     (runService.runInfo$.observeProperty().isBacktracked.$() | async)) {
         <button
             (click)="runService.nextLevel()"
+            [disabled]="isLoading()"
             class="next-button"
             mat-raised-button>
             {{ lastLevelDisplayed && !runService.runInfo.isBacktracked ? "Finish" : "Next" }}
         </button>
     } @else {
         <crczp-floating-answer-form
+            [isLoading]="isLoading()"
             (answerSubmit)="answerSubmitted.emit($event)"
             [buttonLabel]="lastLevelDisplayed ? 'Finish' : 'Submit'"
         >

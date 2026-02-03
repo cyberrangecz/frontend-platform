@@ -71,7 +71,7 @@ const routes: ValidRouterConfig<'adaptive-instance'> = [
             title: Routing.Resolvers.TrainingInstance
                 .adaptiveInstanceTitleResolver,
         },
-        loadChildren: () =>
+        loadComponent: () =>
             import('@crczp/training-agenda/adaptive-instance-summary').then(
                 (m) => m.AdaptiveInstanceSummaryComponent,
             ),
@@ -87,7 +87,7 @@ const routes: ValidRouterConfig<'adaptive-instance'> = [
             title: Routing.Resolvers.TrainingInstance
                 .adaptiveInstanceTitleResolver,
         },
-        loadChildren: () =>
+        loadComponent: () =>
             import('@crczp/training-agenda/adaptive-instance-results').then(
                 (m) => m.AdaptiveInstanceResultsComponent,
             ),
@@ -103,7 +103,7 @@ const routes: ValidRouterConfig<'adaptive-instance'> = [
             title: Routing.Resolvers.TrainingInstance
                 .adaptiveInstanceTitleResolver,
         },
-        loadChildren: () =>
+        loadComponent: () =>
             import('@crczp/training-agenda/adaptive-instance-progress').then(
                 (m) => m.AdaptiveInstanceProgressComponent,
             ),
@@ -119,7 +119,7 @@ const routes: ValidRouterConfig<'adaptive-instance'> = [
             title: Routing.Resolvers.TrainingInstance
                 .adaptiveInstanceTitleResolver,
         },
-        loadChildren: () =>
+        loadComponent: () =>
             import('@crczp/training-agenda/adaptive-instance-runs').then(
                 (m) => m.AdaptiveInstanceRunsComponent,
             ),

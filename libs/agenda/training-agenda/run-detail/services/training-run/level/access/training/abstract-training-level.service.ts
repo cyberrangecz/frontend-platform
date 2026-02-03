@@ -105,21 +105,23 @@ export abstract class AbstractTrainingLevelService extends AbstractAccessLevelSe
     }
 
     private revealSolution(): void {
-        this.callApiToRevealSolution().subscribe((solution) => {
-            const trainingLevel = this.displayedTrainingLevel;
-            this.runService.updateRunInfo({
-                levels: this.runService.runInfo.levels.map((level) => {
-                    if (level.id === trainingLevel.id) {
-                        if (level instanceof TrainingLevel) {
-                            level.solution = solution;
+        this.loadingTracker
+            .trackRequest(() => this.callApiToRevealSolution())
+            .subscribe((solution) => {
+                const trainingLevel = this.displayedTrainingLevel;
+                this.runService.updateRunInfo({
+                    levels: this.runService.runInfo.levels.map((level) => {
+                        if (level.id === trainingLevel.id) {
+                            if (level instanceof TrainingLevel) {
+                                level.solution = solution;
+                            }
+                            if (level instanceof TrainingPhase) {
+                                level.currentTask.solution = solution;
+                            }
                         }
-                        if (level instanceof TrainingPhase) {
-                            level.currentTask.solution = solution;
-                        }
-                    }
-                    return level;
-                }),
+                        return level;
+                    }),
+                });
             });
-        });
     }
 }
