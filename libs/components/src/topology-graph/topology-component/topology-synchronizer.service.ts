@@ -1,5 +1,5 @@
 import { DestroyRef, inject, Injectable } from '@angular/core';
-import { BehaviorSubject, combineLatest, distinctUntilChanged, map, Observable, Subject } from 'rxjs';
+import { BehaviorSubject, combineLatest, distinctUntilChanged, map, Observable, ReplaySubject, Subject } from 'rxjs';
 import { ResizeEvent } from '@sentinel/common/resize';
 
 /**
@@ -22,8 +22,8 @@ export class TopologySynchronizerService {
      * Observable emitting external signals to collapse one side of the split panel
      */
     public topologyCollapsed$ = this.isCollapsedSubject.asObservable();
-    private topologyWidthSubject = new Subject<number>();
-    private topologyHeightSubject = new Subject<number>();
+    private topologyWidthSubject = new ReplaySubject<number>(1);
+    private topologyHeightSubject = new ReplaySubject<number>(1);
     private maxWidthSubject = new BehaviorSubject<number | null>(null);
     private minWidthSubject = new BehaviorSubject<number | null>(null);
     public topologyDimensions$ = combineLatest([
