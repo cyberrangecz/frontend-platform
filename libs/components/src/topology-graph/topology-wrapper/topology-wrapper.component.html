@@ -12,7 +12,7 @@
             [topology]="topology()"
             class="wh-100 block"
         />
-        @if ('sandboxId' in this.id()) {
+        @if (this.hasInstance()) {
             <button
                 (click)="this.getAccessFile.emit()"
                 [disabled]="this.topologyLoading()"
