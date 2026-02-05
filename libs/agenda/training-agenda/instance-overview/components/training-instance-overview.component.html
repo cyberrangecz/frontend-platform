@@ -17,7 +17,7 @@
 </div>
 
 <ng-template #instanceCountdown let-row>
-    <crczp-instance-countdown [trainingInstance]="row.element" />
+    <crczp-table-countdown [endTime]="row.element.endTime" />
 </ng-template>
 <ng-template #startTime let-row>
     <crczp-table-date-cell [displayedDate]="row.element.startTime" [showTimeWhenPossible]="true" />

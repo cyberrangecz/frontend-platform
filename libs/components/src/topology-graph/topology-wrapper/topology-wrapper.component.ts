@@ -1,12 +1,4 @@
-import {
-    Component,
-    DestroyRef,
-    inject,
-    input,
-    OnInit,
-    output,
-    signal,
-} from '@angular/core';
+import { Component, computed, DestroyRef, inject, input, OnInit, output, signal } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Topology } from '@crczp/sandbox-model';
@@ -17,7 +9,9 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { LogoSpinnerComponent } from '../../logo-spinner/logo-spinner.component';
 import { TopologyComponent } from '../topology-component/topology-component';
 
-export type TopologySource = { instanceId: string } | { definitionId: number };
+type SandboxInstanceSource = { instanceId: string };
+type SandboxDefinitionSource = { definitionId: number };
+export type TopologySource = SandboxInstanceSource | SandboxDefinitionSource;
 
 @Component({
     selector: 'crczp-topology-wrapper',
@@ -36,6 +30,9 @@ export class TopologyWrapperComponent implements OnInit {
     levelLoading = input(false);
     standalone = input(false);
 
+    hasInstance = computed(
+        () => !!(this.id() as SandboxInstanceSource).instanceId,
+    );
     getAccessFile = output<void>();
 
     destroyRef = inject(DestroyRef);

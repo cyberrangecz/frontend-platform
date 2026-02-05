@@ -1,12 +1,4 @@
-import {
-    Component,
-    DestroyRef,
-    inject,
-    Input,
-    OnInit,
-    signal,
-    WritableSignal,
-} from '@angular/core';
+import { Component, DestroyRef, inject, Input, OnInit, signal, WritableSignal } from '@angular/core';
 import { timer } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatIcon } from '@angular/material/icon';
@@ -46,8 +38,9 @@ export class TableCountdownComponent implements OnInit {
     }
 
     private updateTime() {
-        const timeToExpire = Utils.Date.formatDurationSimple(
-            this.endTime.getTime()
+        const timeToExpire = Utils.Date.timeBetweenDatesSimple(
+            new Date(),
+            this.endTime,
         );
         if (timeToExpire.length === 0) {
             this.timeToExpiration.set(TableCountdownComponent.EXPIRED_TEXT);

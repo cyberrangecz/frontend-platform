@@ -1,13 +1,4 @@
-import {
-    AfterViewInit,
-    Component,
-    ElementRef,
-    inject,
-    input,
-    output,
-    signal,
-    ViewChild,
-} from '@angular/core';
+import { AfterViewInit, Component, effect, ElementRef, inject, input, output, signal, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Edge, Network, Node } from 'vis-network';
 import { DataSet } from 'vis-data';
@@ -68,7 +59,7 @@ export class TopologyGraph implements AfterViewInit {
     topology = input.required<Topology>();
     @ViewChild('networkContainer', { static: false })
     networkContainer: ElementRef<HTMLDivElement>;
-    network: Network;
+    network = signal<Network | null>(null);
     protected loading = input<boolean>(false);
     protected stabilized = signal(false);
     protected resized = signal(true);
@@ -81,6 +72,8 @@ export class TopologyGraph implements AfterViewInit {
     private readonly svgService = inject(TopologyNodeSvgService);
     private readonly errorHandlerService = inject(ErrorHandlerService);
     private nodeNamesDict: { [key: string]: TopologyGraphNode } = {};
+    private bufferedDimensionsChange: { width: number; height: number } | null =
+        null;
 
     constructor() {
         toObservable(this.topology).subscribe((topology) =>
@@ -94,6 +87,13 @@ export class TopologyGraph implements AfterViewInit {
                     dimensions.height - 49, // tabs header height,
                 ),
         );
+        effect(() => {
+            if (this.network() && this.bufferedDimensionsChange) {
+                const { width, height } = this.bufferedDimensionsChange;
+                this.bufferedDimensionsChange = null;
+                this.handleDimensionsChange(width, height);
+            }
+        });
     }
 
     createContextMenu(nodeId: string | number): ContextMenuItem[] {
@@ -137,15 +137,19 @@ export class TopologyGraph implements AfterViewInit {
     }
 
     private handleDimensionsChange(width: number, height: number) {
-        if (!this.networkContainer || !this.network) return;
+        if (!this.networkContainer || !this.network()) {
+            // If the network isn't initialized yet, buffer the dimensions change
+            this.bufferedDimensionsChange = { width, height };
+            return;
+        }
         this.resized.set(false);
         const scaleChange =
             this.networkContainer.nativeElement.offsetWidth / width;
         const zoomAdjustment = scaleChange <= 0 ? 1 : scaleChange;
 
-        const scale = this.network.getScale();
-        const viewPosition = this.network.getViewPosition();
-        this.network.moveTo({
+        const scale = this.network().getScale();
+        const viewPosition = this.network().getViewPosition();
+        this.network().moveTo({
             position: viewPosition,
             scale: scale * zoomAdjustment,
             animation: false,
@@ -202,10 +206,10 @@ export class TopologyGraph implements AfterViewInit {
     }
 
     private getPositionExtremes(): [number, number, number, number] {
-        if (!this.network || this.nodes.length === 0) return [0, 0, 0, 0];
+        if (!this.network() || this.nodes.length === 0) return [0, 0, 0, 0];
 
         const allNodePositions = this.nodes.map(
-            (node) => this.network.getPositions([node.id])[node.id],
+            (node) => this.network().getPositions([node.id])[node.id],
         );
 
         const xs = allNodePositions.map((pos) => pos.x);
@@ -220,10 +224,10 @@ export class TopologyGraph implements AfterViewInit {
     }
 
     private enforceViewportBounds(): void {
-        if (!this.network || this.nodes.length === 0) return;
+        if (!this.network() || this.nodes.length === 0) return;
 
-        const viewPosition = this.network.getViewPosition();
-        const scale = this.network.getScale();
+        const viewPosition = this.network().getViewPosition();
+        const scale = this.network().getScale();
 
         const [minX, maxX, minY, maxY] = this.getPositionExtremes();
 
@@ -237,28 +241,13 @@ export class TopologyGraph implements AfterViewInit {
         );
 
         if (boundedX !== viewPosition.x || boundedY !== viewPosition.y) {
-            this.network.moveTo({
+            this.network().moveTo({
                 position: { x: boundedX, y: boundedY },
                 scale,
                 animation: {
                     duration: 400,
                     easingFunction: 'easeOutQuad',
                 },
-            });
-        }
-    }
-
-    private enforceZoomLimits(): void {
-        if (!this.network) return;
-
-        const scale = this.network.getScale();
-
-        if (scale < 0.1 || scale > 2) {
-            const viewPosition = this.network.getViewPosition();
-            this.network.moveTo({
-                position: viewPosition,
-                scale: Math.max(0.1, Math.min(scale, 2)),
-                animation: false,
             });
         }
     }
@@ -369,31 +358,26 @@ export class TopologyGraph implements AfterViewInit {
         options.physics.stabilization.iterations =
             1000 + this.nodes.length * 10;
 
-        this.network = new Network(
+        this.network.set( new Network(
             this.networkContainer.nativeElement,
             data,
             TOPOLOGY_CONFIG.GRAPH,
-        );
+        ));
 
-        this.network.on('stabilized', () => {
+        this.network().on('stabilized', () => {
             this.stabilized.set(true);
         });
 
-        this.network.on('afterDrawing', () => {
+        this.network().on('afterDrawing', () => {
             this.resized.set(true);
         });
 
         // Event handlers
-        this.network.on('dragEnd', () => {
+        this.network().on('dragEnd', () => {
             this.enforceViewportBounds();
         });
 
-        // this.network.on('zoom', () => {
-        //     this.enforceZoomLimits();
-        //     this.enforceViewportBounds();
-        // });
-
-        this.network.on('doubleClick', (event) => {
+        this.network().on('doubleClick', (event) => {
             if (event.nodes.length > 0) {
                 this.emitConsoleEvent(
                     this.nodeNamesDict[event.nodes[0]],

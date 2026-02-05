@@ -13,9 +13,9 @@
                 (mouseenter)="mouseHoveringStep.emit($index)"
                 (mouseleave)="mouseHoveringStep.emit(null)"
                 [ngClass]="{
-            'selected': isSelected($index),
-            'accessible': isAccessible($index),
-            'locked': !isAccessible($index)
+            'selected-step': isSelected($index),
+            'accessible-step': isAccessible($index),
+            'locked-step': !isAccessible($index)
           }"
                 class="step-node-container"
             >
@@ -24,9 +24,9 @@
                     (keydown.space)="onStepClick($index)"
                     [attr.tabindex]="isAccessible($index) ? 0 : -1"
                     [ngClass]="{
-                    'selected': isSelected($index),
-                    'accessible': isAccessible($index),
-                    'locked': !isAccessible($index)
+                    'selected-step': isSelected($index),
+                    'accessible-step': isAccessible($index),
+                    'locked-step': !isAccessible($index)
                   }"
                     class="step-node">
                     @if (step.icon) {
@@ -42,9 +42,9 @@
             @if ($index < steps().length - 1) {
                 <div
                     [ngClass]="{
-            'selected': isSelected($index) || isSelected($index + 1),
-            'accessible': isAccessible($index + 1),
-            'locked': !isAccessible($index + 1),
+            'selected-step': isSelected($index) || isSelected($index + 1),
+            'accessible-step': isAccessible($index + 1),
+            'locked-step': !isAccessible($index + 1),
             'fade': (isSelected($index) && isAccessible($index + 1)),
             'fade--reverse': isAccessible($index) && isSelected($index + 1)
           }"

@@ -58,17 +58,17 @@
     flex-shrink: 0;
     overflow: visible;
 
-    &.selected .step-label {
+    &.selected-step .step-label {
         color: var(--warning-60);
         font-weight: 600;
     }
 
-    &.locked .step-label {
+    &.locked-step .step-label {
         color: var(--neutral-variant-50);
         opacity: 0.6;
     }
 
-    &.accessible:not(.selected):hover {
+    &.accessible-step:not(.selected-step):hover {
         cursor: pointer;
 
         .step-label {
@@ -122,12 +122,12 @@
         transition: background-color 0.15s linear;
     }
 
-    &.accessible:not(.selected):focus-visible {
+    &.accessible-step:not(.selected-step):focus-visible {
         outline: 2px solid var(--primary-40);
         outline-offset: 3px;
     }
 
-    &.selected {
+    &.selected-step {
         border-width: 3px;
         border-color: var(--warning-60);
         background-color: var(--warning-95);
@@ -147,7 +147,7 @@
         }
     }
 
-    &.locked {
+    &.locked-step {
         cursor: not-allowed;
         opacity: 0.4;
         border-color: var(--neutral-variant-50);
@@ -197,12 +197,12 @@
         transform: scaleX(-1);
     }
 
-    &.selected {
+    &.selected-step {
         height: 3px;
         background-color: var(--warning-60);
     }
 
-    &.locked {
+    &.locked-step {
         background-color: var(--neutral-variant-50);
         opacity: 0.4;
     }

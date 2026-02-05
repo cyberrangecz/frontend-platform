@@ -33,7 +33,7 @@
           @for (participant of data.participants; track participant) {
             <span class="player-answer"
               [ngClass]="{'selected': participant.isHighlighted}"
-              [matTooltip]="participant.fullName"
+              [matTooltip]="participant.name"
               (click)="highlight(participant, $event)">
             </span>
           }

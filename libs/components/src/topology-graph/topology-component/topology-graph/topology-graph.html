@@ -4,7 +4,7 @@
 @if (!!network && nodes.length > 15) {
     <crczp-minimap
         [edges]="links"
-        [network]="this.network"
+        [network]="this.network()"
         [nodes]="nodes"
         [parentContainer]="this.networkContainer"
         class="minimap"
@@ -24,5 +24,5 @@
     [accessibleNodes]="this.accessibleNodes()"
     [boundingBox]="networkContainer.getBoundingClientRect()"
     [createContextMenu]="this.createContextMenu.bind(this)"
-    [network]="this.network"
+    [network]="this.network()"
 />
