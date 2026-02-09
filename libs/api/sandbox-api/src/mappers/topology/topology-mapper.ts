@@ -7,22 +7,11 @@ import {
 } from '../../dto/topology/topology-dto.model';
 import {
     HostNode,
-    OsType,
+    parseOsType,
     RouterNode,
     Subnet,
     Topology,
 } from '@crczp/sandbox-model';
-
-export function parseOsType(input: string | undefined): OsType {
-    switch (input) {
-        case 'windows':
-            return 'windows';
-        case 'linux':
-            return 'linux';
-        default:
-            return 'other';
-    }
-}
 
 const hostMapper = MapperBuilder.createDTOtoModelMapper<HostNodeDTO, HostNode>({
     mappedProperties: ['name', 'ip', 'guiAccess', 'isAccessible'],
