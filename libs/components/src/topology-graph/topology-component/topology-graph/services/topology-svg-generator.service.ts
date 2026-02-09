@@ -18,16 +18,19 @@ export class TopologyNodeSvgService {
     private textMeasureContext?: CanvasRenderingContext2D;
     private readonly iconsService = inject(TopologyIconsService);
 
-    public get INTERNET_SVG(): string {
-        const internetIconUri = this.iconsService.getPreloadedIcon('INTERNET');
+    public generateInternetSvg(): Observable<string> {
+        return this.iconsService.isLoading$.pipe(
+            skipWhile((loading) => loading),
+            map(() => {
+                const internetIconUri = this.iconsService.getPreloadedIcon('INTERNET');
 
-        const radius = 128;
+                const radius = 128;
 
-        const svgSize = radius * 2;
-        const centerX = svgSize / 2;
-        const centerY = svgSize / 2;
+                const svgSize = radius * 2;
+                const centerX = svgSize / 2;
+                const centerY = svgSize / 2;
 
-        const svgContent = `
+                const svgContent = `
             <svg width="${svgSize}" height="${svgSize}" xmlns="http://www.w3.org/2000/svg">
                     <defs>
                        <radialGradient id="internet-border"
@@ -101,7 +104,9 @@ export class TopologyNodeSvgService {
             </g>
             </svg>`.trim();
 
-        return `data:image/svg+xml;base64,${btoa(svgContent)}`;
+                return `data:image/svg+xml;base64,${btoa(svgContent)}`;
+            }),
+        );
     }
 
     public generateNodeSvg(
@@ -133,7 +138,7 @@ export class TopologyNodeSvgService {
                                   ],
                           }
                         : null,
-                    deviceType !== 'INTERNET'
+                    deviceType !== 'INTERNET' && osType !== 'other'
                         ? {
                               uri: this.iconsService.getPreloadedIcon(
                                   osType.toUpperCase() as TopologyIcon,

@@ -268,20 +268,29 @@ export class TopologyGraph implements AfterViewInit {
                 });
             }
             if (node.nodeType === 'INTERNET') {
-                return of({
-                    id: node.id,
-                    mass: this.getNodeMass('INTERNET'),
-                    shape: 'image',
-                    x: 0,
-                    y: 0,
-                    fixed: {
-                        x: true,
-                        y: true,
-                    },
-
-                    image: this.svgService.INTERNET_SVG,
-                    size: this.getNodeSize('INTERNET'),
-                });
+                return this.svgService.generateInternetSvg().pipe(
+                    map((svgDataUri) => ({
+                        id: node.id,
+                        mass: this.getNodeMass('INTERNET'),
+                        shape: 'image',
+                        x: 0,
+                        y: 0,
+                        fixed: {
+                            x: true,
+                            y: true,
+                        },
+                        image: svgDataUri,
+                        size: this.getNodeSize('INTERNET'),
+                    })),
+                    catchError((err) => {
+                        this.errorHandlerService.emitFrontendErrorNotification(
+                            'Could not create internet node SVG',
+                            'Topology graph',
+                        );
+                        console.error(err);
+                        return EMPTY;
+                    }),
+                );
             }
             return this.svgService
                 .generateNodeSvg(
