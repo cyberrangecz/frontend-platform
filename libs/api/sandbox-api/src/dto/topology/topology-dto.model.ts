@@ -3,7 +3,7 @@ import { z } from 'zod';
 
 export class HostNodeDTO extends Z.class({
     name: z.string(),
-    os_type: z.string(),
+    os_type: z.string().nullable(),
     gui_access: z.boolean(),
     is_accessible: z.boolean(),
     ip: z.string().nullable(),
