@@ -238,9 +238,8 @@ export abstract class CommonTrainingInstanceEditService extends CommonTrainingIn
                 this.getAllSandboxDefinitions(sandboxDefinitionPagination),
             );
         }
-
         return this.loadingTracker.trackRequest(() =>
-            concat([
+            concat(
                 this.trainingInstanceApi.update(this.editedSnapshot).pipe(
                     tap(
                         () => {
@@ -258,8 +257,8 @@ export abstract class CommonTrainingInstanceEditService extends CommonTrainingIn
                         },
                     ),
                 ),
-                forkJoin(observables),
-            ]).pipe(map(() => void 0)),
+                forkJoin(observables)
+            ).pipe(map(() => void 0)),
         );
     }
 
