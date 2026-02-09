@@ -1,12 +1,19 @@
 import { Z } from 'zod-class';
 import { z } from 'zod';
 
-const osType = z.enum(['linux', 'windows']);
+const osType = z.enum(['linux', 'windows', 'other']);
 
 export type OsType = z.infer<typeof osType>;
 
 export function parseOsType(input: string | undefined): z.infer<typeof osType> {
-    return osType.parse(input);
+    switch (input) {
+        case 'windows':
+            return 'windows';
+        case 'linux':
+            return 'linux';
+        default:
+            return 'other';
+    }
 }
 
 export class HostNode extends Z.class({
