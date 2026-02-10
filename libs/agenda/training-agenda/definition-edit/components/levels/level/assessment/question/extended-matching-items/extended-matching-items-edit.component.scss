@@ -1,99 +1,95 @@
-.content {
+
+$_cell_width: 20rem;
+$_end_button_width: 4rem;
+
+.emi-edit__content {
     display: flex;
     flex-direction: column;
 }
 
-.inline-input {
-    display: flex;
-    flex-direction: row;
-    align-content: space-between;
-}
-
-.inline-input > * {
-    flex-grow: 1;
-    margin-right: 10px;
-}
-
-p.required-switch-note {
-    text-align: right;
-    color: #f44336;
-}
-
-.emi-answers {
-    width: 100%;
-    max-width: 100%;
-    overflow-x: auto;
-}
-
-tr {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    align-content: center;
-    border-bottom: 1px solid #ddd;
-}
-
-tr.first-statement {
-    border-top: 0;
-}
-
-tr.last-statement {
-    border-bottom: 0;
-}
-
-tr.inner:hover {
-    background-color: gainsboro;
-}
-
-tr mat-form-field {
-    text-align: center;
-    margin-top: 5px;
-    margin-bottom: -1.25em;
-    width: 120px;
-}
-
-td {
-    padding: 0;
-    width: 130px;
-    text-align: center;
-    align-items: center;
-    align-content: center;
-}
-
-.form-container {
+.emi-edit__form-container {
     display: flex;
     flex-direction: column;
     width: 90%;
     margin-bottom: 10px;
 }
 
-mat-form-field.option-field {
-    width: 120px;
-}
-
-mat-form-field.statement-field {
-    width: 120px;
-}
-
-.right-panel mat-form-field {
-    width: 100%;
-}
-
-mat-divider {
-    margin: 0 20px;
-}
-
-button.clear-answers {
-    width: 120px;
-    float: right;
-}
-
-@media screen and (max-width: 850px) {
-}
-
-.question-text {
+.emi-edit__question-text {
     display: flex;
     flex-direction: column;
     width: calc(100% - 10px);
     margin-bottom: 10px;
+}
+
+.emi-edit__inline-input {
+    display: flex;
+    flex-direction: row;
+    align-content: space-between;
+    border-radius: 0;
+
+    & > * {
+        flex-grow: 1;
+        margin-right: 10px;
+    }
+}
+
+.emi-edit__clear-button {
+    width: fit-content;
+}
+
+.emi-edit__answers {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+.emi-edit__row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    align-content: center;
+    border-bottom: 1px solid #ddd;
+
+    &--first {
+        border-top: 0;
+        margin-right: $_end_button_width;
+    }
+
+    &--last {
+        border-bottom: 0;
+    }
+}
+
+.emi-edit__cell {
+    padding: 0;
+    min-width: $_cell_width;
+    width: 100%;
+    text-align: center;
+    align-items: center;
+    align-content: center;
+
+    &--last {
+        flex: 0 0 $_end_button_width;
+        min-width: $_end_button_width;
+    }
+
+
+    &--add-statement{
+        width: $_cell_width;
+    }
+}
+
+.emi-edit__option-field {
+    text-align: center;
+    margin-top: 5px;
+    margin-bottom: -1.25em;
+    width: calc(100% - 0.25rem);
+}
+
+.emi-edit__statement-field {
+    text-align: center;
+    margin-top: 5px;
+    margin-bottom: -1.25em;
+    width: calc(100% - 0.25rem);
 }

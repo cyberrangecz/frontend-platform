@@ -7,7 +7,7 @@ import {
     Input,
     OnChanges,
     Output,
-    SimpleChanges,
+    SimpleChanges
 } from '@angular/core';
 import {
     AbstractControl,
@@ -16,16 +16,16 @@ import {
     UntypedFormControl,
     UntypedFormGroup
 } from '@angular/forms';
-import {SentinelValidators} from '@sentinel/common';
-import {ExtendedMatchingItems, Question} from '@crczp/training-model';
-import {ExtendedMatchingItemsFormGroup} from './extended-matching-items-form-group';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {MatError, MatFormField, MatInput, MatLabel, MatSuffix} from "@angular/material/input";
-import {MatButton, MatIconButton} from "@angular/material/button";
-import {MatRadioButton, MatRadioGroup} from "@angular/material/radio";
-import {MatTooltip} from "@angular/material/tooltip";
-import {MatIcon} from "@angular/material/icon";
-import {SentinelMarkdownEditorComponent} from "@sentinel/components/markdown-editor";
+import { SentinelValidators } from '@sentinel/common';
+import { ExtendedMatchingItems, Question } from '@crczp/training-model';
+import { ExtendedMatchingItemsFormGroup } from './extended-matching-items-form-group';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { MatError, MatFormField, MatInput, MatLabel, MatSuffix } from '@angular/material/input';
+import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
+import { MatTooltip } from '@angular/material/tooltip';
+import { MatIcon } from '@angular/material/icon';
+import { SentinelMarkdownEditorComponent } from '@sentinel/components/markdown-editor';
 
 /**
  * Component for editing a question of type Extended Matching Items

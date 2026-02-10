@@ -1,9 +1,9 @@
-<form [formGroup]="extendedMatchingQuestionFormGroup.formGroup">
-    <div class="content">
-        <div class="form-container">
+<form [formGroup]="extendedMatchingQuestionFormGroup.formGroup" class="emi-edit">
+    <div class="emi-edit__content">
+        <div class="emi-edit__form-container">
             <!-- TITLE field-->
             <h3>Title</h3>
-            <div class='question-text'>
+            <div class="emi-edit__question-text">
                 <sentinel-markdown-editor
                     (contentChange)="title.setValue($event)"
                     [content]="title.value"
@@ -16,7 +16,7 @@
 
             <!--SCORE field -->
             @if (isTest) {
-                <div class="inline-input">
+                <div class="emi-edit__inline-input">
                     <mat-form-field appearance="outline" hintLabel="Number in range from 0
           to {{ maxQuestionScore }}">
                         <mat-label>Points</mat-label>
@@ -58,21 +58,15 @@
             }
         </div>
 
-        @if (isTest) {
-            <button [disabled]="!isCheckedAnyOption()"
-                    mat-button color="warn" (click)="clearAnswers()" class="clear-answers">Clear
-                Answers
-            </button>
-        }
+
         <!-- EMI -->
-        <div class="emi-answers">
+        <div class="emi-edit__answers">
             <table>
                 <!-- DELETE OPTION BUTTONS -->
-                <tr class="first-statement">
-                    <td></td>
+                <tr class="emi-edit__row emi-edit__row--first">
+                    <td class="emi-edit__cell"></td>
                     @for (option of options.controls; track option; let i = $index) {
-                        <td
-                            class="delete-col-buttons">
+                        <td class="emi-edit__cell">
                             <button matSuffix mat-icon-button aria-label="Delete
               option" color="warn" matTooltip="Delete option"
                                     (click)="deleteOption(i)">
@@ -82,31 +76,32 @@
                     }
                 </tr>
                 <!-- OPTION HEADER -->
-                <tr class="inner">
-                    <td></td>
+                <tr class="emi-edit__row">
+                    <td class="emi-edit__cell">
+                        @if (isTest) {
+                            <button [disabled]="!isCheckedAnyOption()"
+                                    mat-flat-button color="warn" (click)="clearAnswers()" class="emi-edit__clear-button">Clear
+                                Answers
+                            </button>
+                        }
+                    </td>
 
                     @for (option of options.controls; track trackByFn(i); let i = $index) {
-                        <td formArrayName="options" class="col-header">
+                        <td formArrayName="options" class="emi-edit__cell">
                             <!-- OPTION NAME -->
                             <div [formGroupName]="i">
-                                <mat-form-field class="option-field"
+                                <mat-form-field class="emi-edit__option-field"
                                                 (keydown.enter)="$event.preventDefault()">
                                     <mat-label>Option {{ i + 1 }}</mat-label>
                                     <input matInput placeholder="Option {{ i + 1 }}"
                                            [formControl]="$any(option.get('text'))" required>
-                                    @if (option.get('text').value) {
-                                        <button matSuffix mat-icon-button
-                                                aria-label="Clear" (click)="option.get('text').setValue('')">
-                                            <mat-icon>close</mat-icon>
-                                        </button>
-                                    }
                                 </mat-form-field>
                             </div>
                         </td>
                     }
 
                     <!-- ADD OPTION BUTTON -->
-                    <td class="last-option">
+                    <td class="emi-edit__cell emi-edit__cell--last">
                         @if (!columnLimitReached) {
                             <button matSuffix mat-icon-button aria-label="Add option"
                                     color="primary" matTooltip="Add option"
@@ -118,27 +113,22 @@
                 </tr>
                 <!-- STATEMENTS WITH RADIO BUTTONS -->
                 @for (statement of statements.controls; track trackByFn(i); let i = $index) {
-                    <tr formArrayName="statements" class="inner">
-                        <td [formGroupName]="i">
+                    <tr formArrayName="statements" class="emi-edit__row">
+                        <td class="emi-edit__cell" [formGroupName]="i">
                             <!-- STATEMENT NAME -->
-                            <mat-form-field class="statement-field"
+                            <mat-form-field
+                                class="emi-edit__statement-field"
                                             (keydown.enter)="$event.preventDefault()">
                                 <mat-label>Statement {{ i + 1 }}</mat-label>
                                 <input matInput placeholder="Statement {{ i + 1 }}"
                                        [formControl]="$any(statement.get('text'))"
                                        required>
-                                @if (statement.get('text').value) {
-                                    <button matSuffix mat-icon-button
-                                            aria-label="Clear" (click)="statement.get('text').setValue('')">
-                                        <mat-icon>close</mat-icon>
-                                    </button>
-                                }
                             </mat-form-field>
                         </td>
                         <!-- STATEMENT OPTIONS -->
                         <mat-radio-group>
                             @for (option of getOptions(); track option; let j = $index) {
-                                <td>
+                                <td class="emi-edit__cell">
                                     <mat-radio-button [disabled]="!isTest || !required"
                                                       [value]="{ x: i, y: j }"
                                                       [checked]="isOptionChecked(statement, j)"
@@ -147,7 +137,7 @@
                             }
                         </mat-radio-group>
                         <!-- DELETE STATEMENT BUTTON -->
-                        <td class="last-option">
+                        <td class="emi-edit__cell emi-edit__cell--last">
                             <button matSuffix mat-icon-button aria-label="Delete statement"
                                     color="warn" matTooltip="Delete statement"
                                     (click)="deleteStatement(i)">
@@ -157,8 +147,8 @@
                     </tr>
                 }
                 <!-- ADD STATEMENT BUTTON -->
-                <tr class="last-statement">
-                    <td>
+                <tr class="emi-edit__row emi-edit__row--last">
+                    <td class="emi-edit__cell emi-edit__cell--add-statement">
                         <button (click)="addStatement()" aria-label="Add new
               statement" color="primary" mat-icon-button matSuffix
                                 matTooltip="Add new statement">
