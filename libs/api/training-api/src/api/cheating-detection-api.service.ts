@@ -105,8 +105,7 @@ export class CheatingDetectionApi {
      */
     archive(cheatingDetectionId: number): Observable<any> {
         const filename = `cheating-detection-${cheatingDetectionId}.zip`;
-        const headers = new HttpHeaders();
-        headers.set('Accept', ['application/octet-stream']);
+        const headers = new HttpHeaders().set('Accept', ['application/octet-stream']);
         return this.http
             .get(`${this.apiUrl}/exports/${cheatingDetectionId}`, {
                 responseType: 'blob',

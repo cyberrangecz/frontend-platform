@@ -168,8 +168,7 @@ export class UserApi {
      * Sends http request to get local OIDC users
      */
     getLocalOIDCUsers(): Observable<boolean> {
-        const headers = new HttpHeaders();
-        headers.set('Accept', ['application/octet-stream']);
+        const headers = new HttpHeaders().set('Accept', ['application/octet-stream']);
 
         return this.http
             .get(`${this.apiUrl}/initial-oidc-users`, {

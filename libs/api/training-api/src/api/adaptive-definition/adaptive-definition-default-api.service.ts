@@ -11,7 +11,7 @@ import {
     TrainingDefinition,
     TrainingDefinitionInfo,
     TrainingDefinitionStateEnum,
-    TrainingPhase,
+    TrainingPhase
 } from '@crczp/training-model';
 import { InfoPhaseDTO } from '../../dto/phase/info-phase/info-phase-dto';
 import { PhaseMapper } from '../../mappers/phase/phase-mapper';
@@ -23,10 +23,7 @@ import { QuestionnairePhaseMapper } from '../../mappers/phase/questionnaire-phas
 import { InfoPhaseMapper } from '../../mappers/phase/info-phase-mapper';
 import { TaskDTO } from '../../dto/phase/training-phase/task-dto';
 import { TaskMapper } from '../../mappers/phase/task-mapper';
-import {
-    ResponseHeaderContentDispositionReader,
-    SentinelParamsMerger,
-} from '@sentinel/common';
+import { ResponseHeaderContentDispositionReader, SentinelParamsMerger } from '@sentinel/common';
 import {
     BlobFileSaver,
     handleJsonError,
@@ -34,7 +31,7 @@ import {
     OffsetPaginatedResource,
     PaginationMapper,
     ParamsBuilder,
-    QueryParam,
+    QueryParam
 } from '@crczp/api-common';
 import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import { TrainingDefinitionMapper } from '../../mappers/training-definition/training-definition-mapper';
@@ -112,8 +109,9 @@ export class AdaptiveDefinitionDefaultApiService extends AdaptiveTrainingDefinit
     }
 
     download(id: number): Observable<boolean> {
-        const headers = new HttpHeaders();
-        headers.set('Accept', ['application/octet-stream']);
+        const headers = new HttpHeaders().set('Accept', [
+            'application/octet-stream',
+        ]);
 
         return this.http
             .get(
@@ -449,7 +447,6 @@ export class AdaptiveDefinitionDefaultApiService extends AdaptiveTrainingDefinit
 
     private createDefaultHeaders(): HttpHeaders {
         const httpHeaderAccepts: string[] = ['*/*', 'application/json'];
-        const headers = new HttpHeaders().set('Accept', httpHeaderAccepts);
-        return headers;
+        return new HttpHeaders().set('Accept', httpHeaderAccepts);
     }
 }
