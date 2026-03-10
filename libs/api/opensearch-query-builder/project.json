@@ -1,0 +1,38 @@
+{
+    "name": "opensearch-query-builder",
+    "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+    "sourceRoot": "libs/api/opensearch-query-builder/src",
+    "prefix": "crczp",
+    "projectType": "library",
+    "tags": [],
+    "targets": {
+        "build": {
+            "executor": "@nx/js:tsc",
+            "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
+            "options": {
+                "main": "libs/api/opensearch-query-builder/src/index.ts",
+                "outputPath": "dist/libs/api/opensearch-query-builder",
+                "tsConfig": "libs/api/opensearch-query-builder/tsconfig.lib.json"
+            },
+            "configurations": {
+                "production": {
+                    "tsConfig": "libs/api/opensearch-query-builder/tsconfig.lib.prod.json"
+                },
+                "development": {
+                    "tsConfig": "libs/api/opensearch-query-builder/tsconfig.lib.json"
+                }
+            },
+            "defaultConfiguration": "production"
+        },
+        "test": {
+            "executor": "@nx/vite:test",
+            "outputs": ["{options.reportsDirectory}"],
+            "options": {
+                "reportsDirectory": "../../../coverage/libs/api/opensearch-query-builder"
+            }
+        },
+        "lint": {
+            "executor": "@nx/eslint:lint"
+        }
+    }
+}
