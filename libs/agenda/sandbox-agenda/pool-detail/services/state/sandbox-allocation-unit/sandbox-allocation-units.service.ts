@@ -77,6 +77,26 @@ export abstract class SandboxAllocationUnitsService {
     abstract cleanupUnlocked(poolId: number, force: boolean): Observable<any>;
 
     /**
+     * Cancels all queued (IN_QUEUE) allocation units in the given pool. Leaves deploying or built sandboxes untouched.
+     * @param poolId id of pool for which queued allocations are cancelled
+     */
+    abstract cancelQueued(poolId: number): Observable<{ cancelled_count: number }>;
+
+    /**
+     * Force-cancels all stuck allocation units (first stage running but not finished/failed) in the pool.
+     * Removes them from the Cyber Range DB only; OpenStack must be cleaned up manually.
+     * @param poolId id of pool for which stuck allocations are force-cancelled
+     */
+    abstract forceCancelAllocation(poolId: number): Observable<{ force_cancelled_count: number }>;
+
+    /**
+     * Force-removes all units in the pool that have a cleanup request that is not finished
+     * (cleanup running or stuck). Removes them from the Cyber Range DB only.
+     * @param poolId id of pool for which stuck cleanups are force-removed
+     */
+    abstract forceCleanup(poolId: number): Observable<{ force_cleaned_count: number }>;
+
+    /**
      * Initializes default resources with given pageSize
      * @param pageSize size of a page for pagination
      */

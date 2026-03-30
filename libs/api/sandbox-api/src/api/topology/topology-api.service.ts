@@ -18,12 +18,17 @@ export class TopologyApi {
     private settings = inject(PortalConfig);
 
     /**
-     * Retrieves topology by sandbox instance id
-     * @param {string} sandboxUuid
+     * Retrieves topology by sandbox instance id.
+     * When accessToken is provided (e.g. for managed runs), sends it as X-Training-Access-Token so sandbox-service can allow access.
+     * @param sandboxUuid sandbox instance UUID
+     * @param accessToken optional training instance access token (for managed runs where sandbox was allocated by Admin)
      */
-    getTopologyBySandboxInstanceId(sandboxUuid: string): Observable<Topology> {
+    getTopologyBySandboxInstanceId(
+        sandboxUuid: string,
+        accessToken?: string,
+    ): Observable<Topology> {
         const url = `${this.settings.basePaths.sandbox}/sandboxes/${sandboxUuid}/topology`;
-        return this.getTopology(url);
+        return this.getTopology(url, accessToken);
     }
 
     /**
@@ -38,15 +43,19 @@ export class TopologyApi {
     }
 
     /**
-     * Sends HTTP request and parses data for topology model
-     * @returns {Observable<{nodes: GraphNode[], links: Link[]}>} Observable of topology model
-     * Caller needs to subscribe for it.
+     * Sends HTTP request and parses data for topology model.
+     * When accessToken is provided, adds X-Training-Access-Token header (for managed runs).
      */
-    private getTopology(url: string): Observable<Topology> {
-        return this.httpService
+    private getTopology(url: string, accessToken?: string): Observable<Topology> {
+        let request = this.httpService
             .get<TopologyDTO>(url, 'Fetching Topology')
             .withReceiveMapper(topologyMapper)
-            .withCache('2h')
-            .execute();
+            .withCache('2h');
+        if (accessToken) {
+            request = request.withHeaders({
+                'X-Training-Access-Token': accessToken,
+            });
+        }
+        return request.execute();
     }
 }

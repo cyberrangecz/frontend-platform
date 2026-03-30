@@ -1,5 +1,6 @@
 import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import {
+    ActiveSandboxSummary,
     AccessedTrainingRun,
     AccessTrainingRunInfo,
     AnswerCheckResult,
@@ -68,6 +69,23 @@ export abstract class LinearRunApi {
      * @param token access token to access the training run
      */
     abstract access(token: string): Observable<AccessTrainingRunInfo>;
+
+    /**
+     * Requests cleanup of a sandbox owned by the current trainee (single-sandbox-per-user).
+     * @param sandboxId sandbox UUID
+     */
+    abstract requestTraineeSandboxCleanup(sandboxId: string): Observable<void>;
+
+    /**
+     * Requests cleanup by allocation unit id (when sandbox_id is null, e.g. building or already removed).
+     * @param allocationUnitId allocation unit id
+     */
+    abstract requestTraineeSandboxCleanupByAllocationId(allocationUnitId: number): Observable<void>;
+
+    /**
+     * Gets active sandboxes for the current user (single-sandbox-per-user). Used by Run Overview.
+     */
+    abstract getUserActiveSandboxes(): Observable<ActiveSandboxSummary[]>;
 
     /**
      * Sends http request to resume in training run

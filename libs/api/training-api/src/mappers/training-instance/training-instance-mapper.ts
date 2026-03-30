@@ -22,6 +22,7 @@ export class TrainingInstanceMapper {
         result.sandboxDefinitionId = dto.sandbox_definition_id;
         result.backwardMode = dto.backward_mode;
         result.showStepperBar = dto.show_stepper_bar;
+        result.managed = dto.managed ?? false;
         return result;
     }
 
@@ -41,6 +42,7 @@ export class TrainingInstanceMapper {
         result.sandbox_definition_id = trainingInstance.sandboxDefinitionId;
         result.backward_mode = trainingInstance.backwardMode;
         result.show_stepper_bar = trainingInstance.showStepperBar;
+        result.managed = trainingInstance.managed ?? false;
         return result;
     }
 
@@ -57,6 +59,7 @@ export class TrainingInstanceMapper {
         result.sandbox_definition_id = trainingInstance.sandboxDefinitionId;
         result.backward_mode = trainingInstance.backwardMode;
         result.show_stepper_bar = trainingInstance.showStepperBar;
+        result.managed = trainingInstance.managed ?? false;
         return result;
     }
 }

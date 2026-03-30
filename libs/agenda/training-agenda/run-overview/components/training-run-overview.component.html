@@ -1,5 +1,61 @@
 <div class="content">
     <crczp-access-training-run (accessToken)="access($event)" [isLoading]="isLoading" />
+    @if (accessMessage(); as msg) {
+        <div class="access-message" role="alert">
+            {{ msg }}
+        </div>
+    }
+    @if (activeSandboxes().length > 0) {
+        <div class="active-sandboxes-section">
+            <h2>Your active sandboxes</h2>
+            <p class="active-sandboxes-hint">Deployed sandboxes for your training runs. Remove a sandbox when you are done or before starting another training.</p>
+            <div class="sandbox-list">
+                @for (sb of activeSandboxes(); track sb.id) {
+                    <div class="sandbox-item">
+                        <span>{{ sb.trainingInstanceTitle ?? ('Sandbox ' + (sb.sandboxId ?? sb.id)) }}</span>
+                        @if (sb.managed) {
+                            <span class="managed-badge" matTooltip="Managed by administrator; you cannot remove this sandbox">Managed</span>
+                        }
+                        <div class="sandbox-item-right">
+                            @if (sb.cleanupRequest || removingIds().has(sb.id)) {
+                                <span class="building-status">Removing...</span>
+                                @if (sb.cleanupRequest && cleanupStagesForDisplay(sb).length > 0) {
+                                    <div class="stages">
+                                        @for (stage of cleanupStagesForDisplay(sb); track stage) {
+                                            <div [matTooltip]="stage" [ngClass]="stageIconClass(stage)" class="stage-container">
+                                                <mat-icon class="material-icons-outlined">{{ stageIconName(stage) }}</mat-icon>
+                                            </div>
+                                        }
+                                    </div>
+                                }
+                            }
+                            @if (!sb.cleanupRequest && !removingIds().has(sb.id) && allocationStagesForDisplay(sb).length > 0) {
+                                <div class="stages">
+                                    @for (stage of allocationStagesForDisplay(sb); track stage) {
+                                        <div [matTooltip]="stage" [ngClass]="stageIconClass(stage)" class="stage-container">
+                                            <mat-icon class="material-icons-outlined">{{ stageIconName(stage) }}</mat-icon>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                            @if (!sb.cleanupRequest && !removingIds().has(sb.id) && allocationStagesForDisplay(sb).length === 0 && !sb.allowRemove) {
+                                @if (sb.sandboxId) {
+                                    <span class="building-status">Building... {{ currentStageLabel(sb) }}</span>
+                                } @else {
+                                    <span class="building-status">Removed</span>
+                                }
+                            }
+                            @if (sb.allowRemove && !removingIds().has(sb.id)) {
+                                <button mat-icon-button color="warn" matTooltip="Remove sandbox" type="button" (click)="removeSandbox(sb)" aria-label="Remove sandbox">
+                                    <mat-icon>delete</mat-icon>
+                                </button>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
     <div class="table-container">
         <sentinel-controls [controls]="controls"
                            [titlecased]="false" />

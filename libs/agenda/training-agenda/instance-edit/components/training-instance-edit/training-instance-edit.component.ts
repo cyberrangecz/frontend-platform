@@ -142,6 +142,10 @@ export class TrainingInstanceEditComponent implements OnChanges, AfterViewInit {
         return this.trainingInstanceFormGroup.formGroup.get('showStepperBar');
     }
 
+    get managed(): AbstractControl {
+        return this.trainingInstanceFormGroup.formGroup.get('managed');
+    }
+
     get poolId(): AbstractControl {
         return this.trainingInstanceFormGroup.formGroup.get('poolId');
     }

@@ -34,6 +34,9 @@ export class TrainingInstanceFormGroup {
                 showStepperBar: new UntypedFormControl(
                     trainingInstance.showStepperBar
                 ),
+                managed: new UntypedFormControl(
+                    trainingInstance?.managed ?? false
+                ),
                 poolId: new UntypedFormControl(trainingInstance.poolId),
                 sandboxDefinitionId: new UntypedFormControl(
                     trainingInstance.sandboxDefinitionId
@@ -63,6 +66,7 @@ export class TrainingInstanceFormGroup {
     disable(): void {
         this.formGroup.get('showStepperBar').disable({ emitEvent: false });
         this.formGroup.get('backwardMode').disable({ emitEvent: false });
+        this.formGroup.get('managed').disable({ emitEvent: false });
         this.formGroup.get('localEnvironment').disable({ emitEvent: false });
         this.formGroup.disable({ emitEvent: false });
         this.formGroup.get('title').enable({ emitEvent: false });
@@ -97,6 +101,7 @@ export class TrainingInstanceFormGroup {
         trainingInstance.poolId = this.formGroup.get('poolId').value;
         trainingInstance.showStepperBar =
             this.formGroup.get('showStepperBar').value;
+        trainingInstance.managed = this.formGroup.get('managed').value;
     }
 
     private dateSequenceValidator: ValidatorFn = (
