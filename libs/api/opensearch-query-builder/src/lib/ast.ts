@@ -17,6 +17,7 @@ import type {
     FieldValue,
     PrimitiveFieldName,
     StringFieldName,
+    TrainingIndex,
 } from './schema';
 
 // Predicates
@@ -252,7 +253,7 @@ export type JoinClause = {
 };
 
 export type QueryState = {
-    index:    string;  // TrainingIndex or any raw string for join targets
+    index:    TrainingIndex;
     alias?:   string;
     distinct: boolean;
     select:   SelectElement[];

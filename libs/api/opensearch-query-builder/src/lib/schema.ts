@@ -11,20 +11,20 @@
 // ─── Event taxonomy ───
 
 export const EventType = {
-    TrainingRunStarted:      'cz.cyberrange.platform.events.trainings.TrainingRunStarted',
-    TrainingRunResumed:      'cz.cyberrange.platform.events.trainings.TrainingRunResumed',
-    TrainingRunEnded:        'cz.cyberrange.platform.events.trainings.TrainingRunEnded',
-    LevelStarted:            'cz.cyberrange.platform.events.trainings.LevelStarted',
-    LevelCompleted:          'cz.cyberrange.platform.events.trainings.LevelCompleted',
-    CorrectAnswerSubmitted:  'cz.cyberrange.platform.events.trainings.CorrectAnswerSubmitted',
-    CorrectFlagSubmitted:    'cz.cyberrange.platform.events.trainings.CorrectFlagSubmitted',
-    WrongAnswerSubmitted:    'cz.cyberrange.platform.events.trainings.WrongAnswerSubmitted',
-    WrongFlagSubmitted:      'cz.cyberrange.platform.events.trainings.WrongFlagSubmitted',
-    CorrectPasskeySubmitted: 'cz.cyberrange.platform.events.trainings.CorrectPasskeySubmitted',
-    WrongPasskeySubmitted:   'cz.cyberrange.platform.events.trainings.WrongPasskeySubmitted',
-    HintTaken:               'cz.cyberrange.platform.events.trainings.HintTaken',
-    SolutionDisplayed:       'cz.cyberrange.platform.events.trainings.SolutionDisplayed',
-    AssessmentAnswers:       'cz.cyberrange.platform.events.trainings.AssessmentAnswers',
+    TrainingRunStarted:      'cz.cyberrange.platform.training.opensearch.model.TrainingRunStarted',
+    TrainingRunResumed:      'cz.cyberrange.platform.training.opensearch.model.TrainingRunResumed',
+    TrainingRunEnded:        'cz.cyberrange.platform.training.opensearch.model.TrainingRunEnded',
+    LevelStarted:            'cz.cyberrange.platform.training.opensearch.model.LevelStarted',
+    LevelCompleted:          'cz.cyberrange.platform.training.opensearch.model.LevelCompleted',
+    CorrectAnswerSubmitted:  'cz.cyberrange.platform.training.opensearch.model.CorrectAnswerSubmitted',
+    CorrectFlagSubmitted:    'cz.cyberrange.platform.training.opensearch.model.CorrectFlagSubmitted',
+    WrongAnswerSubmitted:    'cz.cyberrange.platform.training.opensearch.model.WrongAnswerSubmitted',
+    WrongFlagSubmitted:      'cz.cyberrange.platform.training.opensearch.model.WrongFlagSubmitted',
+    CorrectPasskeySubmitted: 'cz.cyberrange.platform.training.opensearch.model.CorrectPasskeySubmitted',
+    WrongPasskeySubmitted:   'cz.cyberrange.platform.training.opensearch.model.WrongPasskeySubmitted',
+    HintTaken:               'cz.cyberrange.platform.training.opensearch.model.HintTaken',
+    SolutionDisplayed:       'cz.cyberrange.platform.training.opensearch.model.SolutionDisplayed',
+    AssessmentAnswers:       'cz.cyberrange.platform.training.opensearch.model.AssessmentAnswers',
 } as const;
 
 export type EventTypeName = (typeof EventType)[keyof typeof EventType];
@@ -32,10 +32,35 @@ export type LevelType = 'INFO' | 'ACCESS' | 'TRAINING' | 'ASSESSMENT';
 
 // ─── Index pattern ───
 
-/** Wildcard (all runs) or a fully-qualified single-run index. */
+/** Stands in for any field value in an OpenSearch index pattern. */
+type IndexWildcard = '*';
+
+type PoolSegment       = `pool=${number       | IndexWildcard}`;
+type SandboxSegment    = `sandbox=${string    | IndexWildcard}`;
+type DefinitionSegment = `definition=${number | IndexWildcard}`;
+type InstanceSegment   = `instance=${number   | IndexWildcard}`;
+type RunSegment        = `run=${number        | IndexWildcard}`;
+
+/**
+ * Valid OpenSearch index selector for training events.
+ *
+ * Each member represents the index pattern up to a given field, with the
+ * remaining fields replaced by a `.*` wildcard suffix. Fields themselves can
+ * be concrete values or `*`. The union is ordered: earlier members are broader
+ * selectors, the last member is the fully-qualified pattern.
+ *
+ * Examples:
+ *   crczp.events.trainings.*
+ *   crczp.events.trainings.pool=10.*
+ *   crczp.events.trainings.pool=10.sandbox=*.definition=1.instance=2.run=*
+ */
 export type TrainingIndex =
-    | 'crczp.events.trainings.*'
-    | `crczp.events.trainings.pool=${number}.sandbox=${string}.definition=${number}.instance=${number}.run=${number}`;
+    | `crczp.events.trainings.*`
+    | `crczp.events.trainings.${PoolSegment}.*`
+    | `crczp.events.trainings.${PoolSegment}.${SandboxSegment}.*`
+    | `crczp.events.trainings.${PoolSegment}.${SandboxSegment}.${DefinitionSegment}.*`
+    | `crczp.events.trainings.${PoolSegment}.${SandboxSegment}.${DefinitionSegment}.${InstanceSegment}.*`
+    | `crczp.events.trainings.${PoolSegment}.${SandboxSegment}.${DefinitionSegment}.${InstanceSegment}.${RunSegment}`;
 
 // ─── Field type map ───
 

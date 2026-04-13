@@ -15,26 +15,35 @@
  *     .toSQL();
  */
 
-import type { AnyExpr, JoinClause, JoinType, OrderByElement, Predicate, QueryState, SelectElement } from './ast';
+import type {
+    AnyExpr,
+    JoinClause,
+    JoinType,
+    OrderByElement,
+    Predicate,
+    QueryState,
+    SelectElement,
+} from './ast';
 import { and, or } from './predicates';
 import { toSQL } from './sql';
+import { TrainingIndex } from './schema';
 
 const emptyState = (): Omit<QueryState, 'index'> => ({
     distinct: false,
-    select:   ['*'],
-    joins:    [],
-    where:    null,
-    groupBy:  [],
-    having:   null,
-    orderBy:  [],
-    limit:    null,
-    offset:   null,
+    select: ['*'],
+    joins: [],
+    where: null,
+    groupBy: [],
+    having: null,
+    orderBy: [],
+    limit: null,
+    offset: null,
 });
 
 export class QueryBuilder {
     private state: QueryState;
 
-    constructor(index: string, alias?: string) {
+    constructor(index: TrainingIndex, alias?: string) {
         this.state = { ...emptyState(), index, alias };
     }
 
@@ -202,7 +211,7 @@ export class QueryBuilder {
 
     // ─── Output ───
 
-    toSQL(): string {
+    build(): string {
         return toSQL(this.state);
     }
 
