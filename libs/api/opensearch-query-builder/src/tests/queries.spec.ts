@@ -56,7 +56,7 @@ const L = (...lines: string[]) => lines.join('\n');
 
 describe('SELECT shapes', () => {
     it('defaults to SELECT * with no select() call', () => {
-        expect(new QueryBuilder('crczp.events.trainings.*').toSQL()).toBe(L(
+        expect(new QueryBuilder('crczp.events.trainings.*').build()).toBe(L(
             'SELECT *',
             'FROM crczp.events.trainings.*',
         ));
@@ -66,7 +66,7 @@ describe('SELECT shapes', () => {
         expect(
             new QueryBuilder('crczp.events.trainings.*')
                 .select(field('training_run_id'), field('type'), field('timestamp'))
-                .toSQL(),
+                .build(),
         ).toBe(L(
             'SELECT training_run_id, type, timestamp',
             'FROM crczp.events.trainings.*',
@@ -77,7 +77,7 @@ describe('SELECT shapes', () => {
         expect(
             new QueryBuilder('crczp.events.trainings.*')
                 .select(field('training_run_id'), as(count('*'), 'cnt'))
-                .toSQL(),
+                .build(),
         ).toBe(L(
             'SELECT training_run_id, COUNT(*) AS cnt',
             'FROM crczp.events.trainings.*',
@@ -89,7 +89,7 @@ describe('SELECT shapes', () => {
             new QueryBuilder('crczp.events.trainings.*')
                 .select(field('user_ref_id'))
                 .distinct()
-                .toSQL(),
+                .build(),
         ).toBe(L(
             'SELECT DISTINCT user_ref_id',
             'FROM crczp.events.trainings.*',
@@ -101,7 +101,7 @@ describe('SELECT shapes', () => {
             new QueryBuilder('crczp.events.trainings.*')
                 .addSelect(field('type'))
                 .addSelect(field('timestamp'))
-                .toSQL(),
+                .build(),
         ).toBe(L(
             'SELECT type, timestamp',
             'FROM crczp.events.trainings.*',
@@ -113,7 +113,7 @@ describe('SELECT shapes', () => {
             new QueryBuilder('crczp.events.trainings.*')
                 .select(field('type'))
                 .selectAll()
-                .toSQL(),
+                .build(),
         ).toBe(L(
             'SELECT *',
             'FROM crczp.events.trainings.*',
@@ -124,7 +124,7 @@ describe('SELECT shapes', () => {
         expect(
             new QueryBuilder('crczp.events.trainings.*', 'e')
                 .select(field('type'), field('timestamp'))
-                .toSQL(),
+                .build(),
         ).toBe(L(
             'SELECT type, timestamp',
             'FROM crczp.events.trainings.* e',
@@ -140,7 +140,7 @@ describe('WHERE conditions', () => {
             new QueryBuilder('crczp.events.trainings.*')
                 .select(field('type'), field('level'))
                 .where(eq('training_run_id', 42))
-                .toSQL(),
+                .build(),
         ).toBe(L(
             'SELECT type, level',
             'FROM crczp.events.trainings.*',
@@ -153,7 +153,7 @@ describe('WHERE conditions', () => {
             new QueryBuilder('crczp.events.trainings.*')
                 .select('*')
                 .where(eq('type', EventType.LevelStarted))
-                .toSQL(),
+                .build(),
         ).toBe(L(
             'SELECT *',
             'FROM crczp.events.trainings.*',
@@ -166,7 +166,7 @@ describe('WHERE conditions', () => {
             new QueryBuilder('crczp.events.trainings.*')
                 .select(field('training_run_id'), field('type'))
                 .where(neq('type', EventType.AssessmentAnswers))
-                .toSQL(),
+                .build(),
         ).toBe(L(
             'SELECT training_run_id, type',
             'FROM crczp.events.trainings.*',
@@ -179,7 +179,7 @@ describe('WHERE conditions', () => {
             new QueryBuilder('crczp.events.trainings.*')
                 .select(field('type'), field('timestamp'))
                 .where(between('timestamp', 1700000000000, 1800000000000))
-                .toSQL(),
+                .build(),
         ).toBe(L(
             'SELECT type, timestamp',
             'FROM crczp.events.trainings.*',
@@ -192,7 +192,7 @@ describe('WHERE conditions', () => {
             new QueryBuilder('crczp.events.trainings.*')
                 .select(field('type'), field('training_run_id'), field('actual_score_in_level'))
                 .where(inList('type', [EventType.LevelStarted, EventType.LevelCompleted]))
-                .toSQL(),
+                .build(),
         ).toBe(L(
             'SELECT type, training_run_id, actual_score_in_level',
             'FROM crczp.events.trainings.*',
@@ -205,7 +205,7 @@ describe('WHERE conditions', () => {
             new QueryBuilder('crczp.events.trainings.*')
                 .select('*')
                 .where(notIn('level_order', [0, 9, 10]))
-                .toSQL(),
+                .build(),
         ).toBe(L(
             'SELECT *',
             'FROM crczp.events.trainings.*',
@@ -218,7 +218,7 @@ describe('WHERE conditions', () => {
             new QueryBuilder('crczp.events.trainings.*')
                 .select(field('training_run_id'), field('hint_title'))
                 .where(isNull('hint_title'))
-                .toSQL(),
+                .build(),
         ).toBe(L(
             'SELECT training_run_id, hint_title',
             'FROM crczp.events.trainings.*',
@@ -231,7 +231,7 @@ describe('WHERE conditions', () => {
             new QueryBuilder('crczp.events.trainings.*')
                 .select('*')
                 .where(isNotNull('level_title'))
-                .toSQL(),
+                .build(),
         ).toBe(L(
             'SELECT *',
             'FROM crczp.events.trainings.*',
@@ -244,7 +244,7 @@ describe('WHERE conditions', () => {
             new QueryBuilder('crczp.events.trainings.*')
                 .select(field('training_run_id'), field('type'))
                 .where(like('type', 'cz.cyberrange.platform.events.trainings.%'))
-                .toSQL(),
+                .build(),
         ).toBe(L(
             'SELECT training_run_id, type',
             'FROM crczp.events.trainings.*',
@@ -257,7 +257,7 @@ describe('WHERE conditions', () => {
             new QueryBuilder('crczp.events.trainings.*')
                 .select('*')
                 .where(notLike('level_title', 'Draft%'))
-                .toSQL(),
+                .build(),
         ).toBe(L(
             'SELECT *',
             'FROM crczp.events.trainings.*',
@@ -270,7 +270,7 @@ describe('WHERE conditions', () => {
             new QueryBuilder('crczp.events.trainings.*')
                 .select('*')
                 .where(matchQuery('level_title', 'network security', { analyzer: 'standard', boost: 1.5 }))
-                .toSQL(),
+                .build(),
         ).toBe(L(
             'SELECT *',
             'FROM crczp.events.trainings.*',
@@ -283,7 +283,7 @@ describe('WHERE conditions', () => {
             new QueryBuilder('crczp.events.trainings.*')
                 .select(field('training_run_id'), field('type'))
                 .where(multiMatch(['type', 'level_title'], 'security', { operator: 'AND' }))
-                .toSQL(),
+                .build(),
         ).toBe(L(
             'SELECT training_run_id, type',
             'FROM crczp.events.trainings.*',
@@ -296,7 +296,7 @@ describe('WHERE conditions', () => {
             new QueryBuilder('crczp.events.trainings.*')
                 .select('*')
                 .where(wildcardQuery('type', 'cz.cyberrange.*', 2))
-                .toSQL(),
+                .build(),
         ).toBe(L(
             'SELECT *',
             'FROM crczp.events.trainings.*',
@@ -309,7 +309,7 @@ describe('WHERE conditions', () => {
             new QueryBuilder('crczp.events.trainings.*')
                 .select(field('training_run_id'), field('level_title'))
                 .where(score(matchQuery('level_title', 'firewall'), 1.2))
-                .toSQL(),
+                .build(),
         ).toBe(L(
             'SELECT training_run_id, level_title',
             'FROM crczp.events.trainings.*',
@@ -325,7 +325,7 @@ describe('WHERE conditions', () => {
                     eq('training_run_id', 7),
                     eq('type', EventType.LevelCompleted),
                 ))
-                .toSQL(),
+                .build(),
         ).toBe(L(
             'SELECT type, level, actual_score_in_level',
             'FROM crczp.events.trainings.*',
@@ -341,7 +341,7 @@ describe('WHERE conditions', () => {
                     eq('type', EventType.CorrectAnswerSubmitted),
                     eq('type', EventType.WrongAnswerSubmitted),
                 ))
-                .toSQL(),
+                .build(),
         ).toBe(L(
             'SELECT training_run_id, type, timestamp',
             'FROM crczp.events.trainings.*',
@@ -354,7 +354,7 @@ describe('WHERE conditions', () => {
             new QueryBuilder('crczp.events.trainings.*')
                 .select('*')
                 .where(not(eq('level_type', 'ASSESSMENT')))
-                .toSQL(),
+                .build(),
         ).toBe(L(
             'SELECT *',
             'FROM crczp.events.trainings.*',
@@ -373,7 +373,7 @@ describe('WHERE conditions', () => {
                         eq('type', EventType.HintTaken),
                     ),
                 ))
-                .toSQL(),
+                .build(),
         ).toBe(L(
             'SELECT training_run_id, type, actual_score_in_level',
             'FROM crczp.events.trainings.*',
@@ -388,7 +388,7 @@ describe('WHERE conditions', () => {
                 .where(eq('training_run_id', 3))
                 .andWhere(eq('type', EventType.LevelCompleted))
                 .andWhere(gte('actual_score_in_level', 50))
-                .toSQL(),
+                .build(),
         ).toBe(L(
             'SELECT type, level',
             'FROM crczp.events.trainings.*',
@@ -403,7 +403,7 @@ describe('WHERE conditions', () => {
                 .where(eq('type', EventType.HintTaken))
                 .orWhere(eq('type', EventType.SolutionDisplayed))
                 .orWhere(eq('type', EventType.WrongAnswerSubmitted))
-                .toSQL(),
+                .build(),
         ).toBe(L(
             'SELECT *',
             'FROM crczp.events.trainings.*',
@@ -421,7 +421,7 @@ describe('field name quoting', () => {
             new QueryBuilder('crczp.events.trainings.*')
                 .select('*')
                 .where(eq('level_title', "Attacker's Toolkit"))
-                .toSQL(),
+                .build(),
         ).toBe(L(
             'SELECT *',
             'FROM crczp.events.trainings.*',
@@ -434,7 +434,7 @@ describe('field name quoting', () => {
             new QueryBuilder('crczp.events.trainings.*')
                 .select('*')
                 .where(like('level_title', "it's%"))
-                .toSQL(),
+                .build(),
         ).toBe(L(
             'SELECT *',
             'FROM crczp.events.trainings.*',
@@ -453,7 +453,7 @@ describe('GROUP BY and HAVING', () => {
                 .where(eq('type', EventType.LevelCompleted))
                 .groupBy(field('training_run_id'))
                 .orderBy(field('training_run_id'), 'ASC')
-                .toSQL(),
+                .build(),
         ).toBe(L(
             'SELECT training_run_id, COUNT(*) AS event_count',
             'FROM crczp.events.trainings.*',
@@ -471,7 +471,7 @@ describe('GROUP BY and HAVING', () => {
                 .groupBy(field('level'))
                 .having(gt('avg_score' as any, 60))
                 .orderBy(field('level'), 'ASC')
-                .toSQL(),
+                .build(),
         ).toBe(L(
             'SELECT level, AVG(actual_score_in_level) AS avg_score',
             'FROM crczp.events.trainings.*',
@@ -491,7 +491,7 @@ describe('GROUP BY and HAVING', () => {
                 )
                 .groupBy(dateFormat(field('timestamp'), lit('%Y-%m')))
                 .orderBy(dateFormat(field('timestamp'), lit('%Y-%m')), 'ASC')
-                .toSQL(),
+                .build(),
         ).toBe(L(
             `SELECT DATE_FORMAT(timestamp, '%Y-%m') AS month, COUNT(*) AS cnt`,
             'FROM crczp.events.trainings.*',
@@ -514,7 +514,7 @@ describe('GROUP BY and HAVING', () => {
                 )
                 .orderBy(dateFormat(field('timestamp'), lit('%Y-%m')), 'ASC')
                 .orderBy(field('type'), 'ASC')
-                .toSQL(),
+                .build(),
         ).toBe(L(
             `SELECT DATE_FORMAT(timestamp, '%Y-%m') AS month, type, COUNT(*) AS cnt`,
             'FROM crczp.events.trainings.*',
@@ -534,7 +534,7 @@ describe('GROUP BY and HAVING', () => {
                 .groupBy(field('user_ref_id'))
                 .having(gte('hint_count' as any, 2))
                 .orderBy(field('hint_count' as any), 'DESC')
-                .toSQL(),
+                .build(),
         ).toBe(L(
             'SELECT user_ref_id, COUNT(*) AS hint_count',
             'FROM crczp.events.trainings.*',
@@ -551,7 +551,7 @@ describe('GROUP BY and HAVING', () => {
                 .select(field('training_run_id'), field('level'), as(count('*'), 'cnt'))
                 .groupBy(field('training_run_id'))
                 .addGroupBy(field('level'))
-                .toSQL(),
+                .build(),
         ).toBe(L(
             'SELECT training_run_id, level, COUNT(*) AS cnt',
             'FROM crczp.events.trainings.*',
@@ -570,7 +570,7 @@ describe('GROUP BY and HAVING', () => {
                 .groupBy(field('training_run_id'))
                 .having(gt('cnt' as any, 5))
                 .andHaving(gte('avg_score' as any, 40))
-                .toSQL(),
+                .build(),
         ).toBe(L(
             'SELECT training_run_id, COUNT(*) AS cnt, AVG(actual_score_in_level) AS avg_score',
             'FROM crczp.events.trainings.*',
@@ -589,7 +589,7 @@ describe('ORDER BY', () => {
                 .select(field('training_run_id'), field('timestamp'))
                 .where(eq('type', EventType.TrainingRunStarted))
                 .orderBy(field('timestamp'), 'DESC')
-                .toSQL(),
+                .build(),
         ).toBe(L(
             'SELECT training_run_id, timestamp',
             'FROM crczp.events.trainings.*',
@@ -605,7 +605,7 @@ describe('ORDER BY', () => {
                 .orderBy(field('training_run_id'), 'ASC')
                 .orderBy(field('level'), 'ASC')
                 .orderBy(field('actual_score_in_level'), 'DESC')
-                .toSQL(),
+                .build(),
         ).toBe(L(
             'SELECT training_run_id, level, actual_score_in_level',
             'FROM crczp.events.trainings.*',
@@ -618,7 +618,7 @@ describe('ORDER BY', () => {
             new QueryBuilder('crczp.events.trainings.*')
                 .select(field('user_ref_id'), field('hint_title'))
                 .orderBy(field('hint_title'), 'ASC', 'FIRST')
-                .toSQL(),
+                .build(),
         ).toBe(L(
             'SELECT user_ref_id, hint_title',
             'FROM crczp.events.trainings.*',
@@ -631,7 +631,7 @@ describe('ORDER BY', () => {
             new QueryBuilder('crczp.events.trainings.*')
                 .select(field('user_ref_id'), field('hint_title'))
                 .orderBy(field('hint_title'), 'DESC', 'LAST')
-                .toSQL(),
+                .build(),
         ).toBe(L(
             'SELECT user_ref_id, hint_title',
             'FROM crczp.events.trainings.*',
@@ -646,7 +646,7 @@ describe('ORDER BY', () => {
                 .groupBy(field('training_run_id'))
                 .orderBy(count('*'), 'DESC')
                 .limit(10)
-                .toSQL(),
+                .build(),
         ).toBe(L(
             'SELECT training_run_id, COUNT(*) AS cnt',
             'FROM crczp.events.trainings.*',
@@ -665,7 +665,7 @@ describe('ORDER BY', () => {
                 )
                 .where(eq('type', EventType.TrainingRunEnded))
                 .orderBy(sub(field('end_time'), field('start_time')), 'ASC')
-                .toSQL(),
+                .build(),
         ).toBe(L(
             'SELECT training_run_id, (end_time - start_time) AS duration',
             'FROM crczp.events.trainings.*',
@@ -685,7 +685,7 @@ describe('LIMIT and OFFSET', () => {
                 .where(eq('training_run_id', 1))
                 .orderBy(field('timestamp'), 'ASC')
                 .limit(100)
-                .toSQL(),
+                .build(),
         ).toBe(L(
             'SELECT *',
             'FROM crczp.events.trainings.*',
@@ -702,7 +702,7 @@ describe('LIMIT and OFFSET', () => {
                 .orderBy(field('timestamp'), 'ASC')
                 .limit(20)
                 .offset(40)
-                .toSQL(),
+                .build(),
         ).toBe(L(
             'SELECT *',
             'FROM crczp.events.trainings.*',
@@ -723,7 +723,7 @@ describe('expressions in SELECT', () => {
                     as(mul(div(field('actual_score_in_level'), field('max_score')), lit(100)), 'pct'),
                 )
                 .where(eq('type', EventType.LevelCompleted))
-                .toSQL(),
+                .build(),
         ).toBe(L(
             'SELECT training_run_id, ((actual_score_in_level / max_score) * 100) AS pct',
             'FROM crczp.events.trainings.*',
@@ -739,7 +739,7 @@ describe('expressions in SELECT', () => {
                     as(cast(field('timestamp'), 'DATETIME'), 'event_time'),
                 )
                 .where(eq('training_run_id', 5))
-                .toSQL(),
+                .build(),
         ).toBe(L(
             'SELECT training_run_id, CAST(timestamp AS DATETIME) AS event_time',
             'FROM crczp.events.trainings.*',
@@ -756,7 +756,7 @@ describe('expressions in SELECT', () => {
                 )
                 .where(eq('type', EventType.LevelStarted))
                 .groupBy(field('training_run_id'))
-                .toSQL(),
+                .build(),
         ).toBe(L(
             'SELECT training_run_id, COUNT(DISTINCT user_ref_id) AS unique_users',
             'FROM crczp.events.trainings.*',
@@ -777,7 +777,7 @@ describe('expressions in SELECT', () => {
                 )
                 .where(eq('type', EventType.LevelCompleted))
                 .groupBy(field('training_run_id'))
-                .toSQL(),
+                .build(),
         ).toBe(L(
             'SELECT training_run_id, SUM(actual_score_in_level) AS total_score, ROUND(AVG(actual_score_in_level), 2) AS avg_score, MIN(actual_score_in_level) AS min_score, MAX(actual_score_in_level) AS max_score',
             'FROM crczp.events.trainings.*',
@@ -796,7 +796,7 @@ describe('expressions in SELECT', () => {
                 )
                 .where(eq('type', EventType.HintTaken))
                 .orderBy(field('timestamp'), 'ASC')
-                .toSQL(),
+                .build(),
         ).toBe(L(
             `SELECT training_run_id, IFNULL(hint_title, '(no title)') AS hint_label, hint_penalty_points`,
             'FROM crczp.events.trainings.*',
@@ -815,7 +815,7 @@ describe('JOINs', () => {
                 .select('*')
                 .join('crczp.runs', 'r', [{ left: 'e.training_run_id', right: 'r.id' }])
                 .where(eq('training_run_id', 42))
-                .toSQL(),
+                .build(),
         ).toBe(L(
             'SELECT *',
             'FROM crczp.events.trainings.* e',
@@ -829,7 +829,7 @@ describe('JOINs', () => {
             new QueryBuilder('crczp.events.trainings.*', 'e')
                 .select('*')
                 .leftJoin('crczp.runs', 'r', [{ left: 'e.training_run_id', right: 'r.id' }])
-                .toSQL(),
+                .build(),
         ).toBe(L(
             'SELECT *',
             'FROM crczp.events.trainings.* e',
@@ -842,7 +842,7 @@ describe('JOINs', () => {
             new QueryBuilder('crczp.events.trainings.*', 'e')
                 .select('*')
                 .crossJoin('crczp.meta', 'm')
-                .toSQL(),
+                .build(),
         ).toBe(L(
             'SELECT *',
             'FROM crczp.events.trainings.* e',
@@ -861,7 +861,7 @@ describe('clone()', () => {
             .groupBy(field('training_run_id'))
             .limit(50);
 
-        expect(base.clone().toSQL()).toBe(base.toSQL());
+        expect(base.clone().build()).toBe(base.build());
     });
 
     it('modifying a clone does not affect the original', () => {
@@ -874,14 +874,14 @@ describe('clone()', () => {
             .andWhere(gt('actual_score_in_level', 50))
             .limit(5);
 
-        expect(base.toSQL()).toBe(L(
+        expect(base.build()).toBe(L(
             'SELECT training_run_id',
             'FROM crczp.events.trainings.*',
             `WHERE type = 'cz.cyberrange.platform.events.trainings.LevelStarted'`,
             'LIMIT 10',
         ));
 
-        expect(fork.toSQL()).toBe(L(
+        expect(fork.build()).toBe(L(
             'SELECT training_run_id',
             'FROM crczp.events.trainings.*',
             `WHERE (type = 'cz.cyberrange.platform.events.trainings.LevelStarted' AND actual_score_in_level > 50)`,
@@ -908,7 +908,7 @@ describe('realistic analytics queries', () => {
                 .groupBy(field('training_run_id'))
                 .orderBy(sum(field('actual_score_in_level')), 'DESC')
                 .limit(10)
-                .toSQL(),
+                .build(),
         ).toBe(L(
             'SELECT training_run_id, SUM(actual_score_in_level) AS total_score, COUNT(*) AS levels_completed',
             'FROM crczp.events.trainings.*',
@@ -935,7 +935,7 @@ describe('realistic analytics queries', () => {
                 .groupBy(field('training_run_id'), field('user_ref_id'))
                 .having(gt('hint_count' as any, 3))
                 .orderBy(field('total_penalty' as any), 'DESC')
-                .toSQL(),
+                .build(),
         ).toBe(L(
             'SELECT training_run_id, user_ref_id, COUNT(*) AS hint_count, SUM(hint_penalty_points) AS total_penalty',
             'FROM crczp.events.trainings.*',
@@ -961,7 +961,7 @@ describe('realistic analytics queries', () => {
                     eq('training_instance_id', 5),
                 ))
                 .orderBy(field('user_ref_id'), 'ASC')
-                .toSQL(),
+                .build(),
         ).toBe(L(
             'SELECT DISTINCT user_ref_id',
             'FROM crczp.events.trainings.*',
@@ -985,7 +985,7 @@ describe('realistic analytics queries', () => {
                     isNotNull('end_time'),
                 ))
                 .orderBy(sub(field('end_time'), field('start_time')), 'ASC')
-                .toSQL(),
+                .build(),
         ).toBe(L(
             'SELECT training_run_id, start_time, end_time, (end_time - start_time) AS duration_ms',
             'FROM crczp.events.trainings.*',
@@ -1010,7 +1010,7 @@ describe('realistic analytics queries', () => {
                 .groupBy(field('user_ref_id'), field('level'))
                 .orderBy(field('level'), 'ASC')
                 .orderBy(max(field('total_assessment_level_score')), 'DESC')
-                .toSQL(),
+                .build(),
         ).toBe(L(
             'SELECT user_ref_id, level, MAX(total_assessment_level_score) AS best_score',
             'FROM crczp.events.trainings.*',
@@ -1031,7 +1031,7 @@ describe('realistic analytics queries', () => {
                 ))
                 .orderBy(field('timestamp'), 'DESC')
                 .limit(50)
-                .toSQL(),
+                .build(),
         ).toBe(L(
             'SELECT training_run_id, user_ref_id, answer_content',
             'FROM crczp.events.trainings.*',
@@ -1052,7 +1052,7 @@ describe('realistic analytics queries', () => {
                 .orderBy(field('timestamp'), 'DESC')
                 .limit(25)
                 .offset(75)
-                .toSQL(),
+                .build(),
         ).toBe(L(
             'SELECT timestamp, type, training_run_id, user_ref_id',
             'FROM crczp.events.trainings.*',
@@ -1079,7 +1079,7 @@ describe('realistic analytics queries', () => {
                 ))
                 .orderBy(field('training_run_id'), 'ASC')
                 .orderBy(field('level'), 'ASC')
-                .toSQL(),
+                .build(),
         ).toBe(L(
             `SELECT training_run_id, level, level_type, TIMESTAMPDIFF('SECOND', start_time, end_time) AS seconds`,
             'FROM crczp.events.trainings.*',

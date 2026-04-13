@@ -100,4 +100,6 @@ export {
 
 export { QueryBuilder } from './lib/query-builder';
 
+export { IndexSelectorBuilder, PartialIndexSelectorBuilder } from './lib/index-selector-builder';
+
 export { toSQL } from './lib/sql';
