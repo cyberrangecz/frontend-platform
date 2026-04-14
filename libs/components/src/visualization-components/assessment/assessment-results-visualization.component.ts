@@ -1,7 +1,7 @@
 import {Component, inject, Input, OnChanges} from '@angular/core';
 import {Observable} from 'rxjs';
 import {Assessment} from '@crczp/visualization-model';
-import {AssessmentApi,} from '@crczp/visualization-api';
+import {AssessmentApi} from '@crczp/visualization-api';
 import {AsyncPipe, CommonModule} from '@angular/common';
 import {AssessmentResultsComponent} from './component/assessment-results.component';
 import {MatButtonModule} from '@angular/material/button';

@@ -6,25 +6,15 @@ import {
     SentinelDialogResultEnum
 } from '@sentinel/components/dialogs';
 import { OffsetPaginationEvent } from '@sentinel/common/pagination';
-import { TrainingDefinition, TrainingDefinitionStateEnum, TrainingTypeEnum } from '@crczp/training-model';
+import { TrainingDefinition, TrainingDefinitionStateEnum } from '@crczp/training-model';
 import { EMPTY, from, Observable } from 'rxjs';
 import { filter, map, switchMap, take, tap } from 'rxjs/operators';
 import { CloneDialogComponent } from '../../components/clone-dialog/clone-dialog.component';
 import { inject, Injectable } from '@angular/core';
-import {
-    ErrorHandlerService,
-    FileUploadProgressService,
-    InjectionTokens,
-    NotificationService,
-    PortalConfig
-} from '@crczp/utils';
+import { ErrorHandlerService, FileUploadProgressService, NotificationService, PortalConfig } from '@crczp/utils';
 import { Routing } from '@crczp/routing-commons';
 import { FileUploadDialog } from '@crczp/components';
-import {
-    AdaptiveTrainingDefinitionApi,
-    LinearTrainingDefinitionApi,
-    TrainingDefinitionSort
-} from '@crczp/training-api';
+import { LinearTrainingDefinitionApi, TrainingDefinitionSort } from '@crczp/training-api';
 import { CrczpOffsetElementsPaginatedService, OffsetPaginatedResource, QueryParam } from '@crczp/api-common';
 
 /**
@@ -33,13 +23,7 @@ import { CrczpOffsetElementsPaginatedService, OffsetPaginatedResource, QueryPara
  */
 @Injectable()
 export class TrainingDefinitionService extends CrczpOffsetElementsPaginatedService<TrainingDefinition> {
-    private trainingType: TrainingTypeEnum = inject(
-        InjectionTokens.TrainingType,
-    );
-    private api =
-        this.trainingType === TrainingTypeEnum.LINEAR
-            ? inject(LinearTrainingDefinitionApi)
-            : inject(AdaptiveTrainingDefinitionApi);
+    private api = inject(LinearTrainingDefinitionApi);
     private dialog = inject(MatDialog);
     private router = inject(Router);
     private notificationService = inject(NotificationService);
@@ -82,14 +66,16 @@ export class TrainingDefinitionService extends CrczpOffsetElementsPaginatedServi
 
     create(): Observable<boolean> {
         return from(
-            this.router.navigate([this.getRouteRootByType().create.build()]),
+            this.router.navigate([
+                Routing.RouteBuilder.linear_definition.create.build(),
+            ]),
         );
     }
 
     edit(trainingDefinitionId: number): Observable<boolean> {
         return from(
             this.router.navigate([
-                this.getRouteRootByType()
+                Routing.RouteBuilder.linear_definition
                     .definitionId(trainingDefinitionId)
                     .edit.build(),
             ]),
@@ -99,7 +85,7 @@ export class TrainingDefinitionService extends CrczpOffsetElementsPaginatedServi
     preview(trainingDefinitionId: number): Observable<boolean> {
         return from(
             this.router.navigate([
-                this.getRouteRootByType()
+                Routing.RouteBuilder.linear_definition
                     .definitionId(trainingDefinitionId)
                     .preview.build(),
             ]),
@@ -217,12 +203,6 @@ export class TrainingDefinitionService extends CrczpOffsetElementsPaginatedServi
             ),
             switchMap(() => this.getAll(this.lastPagination, this.lastFilters)),
         );
-    }
-
-    private getRouteRootByType() {
-        return this.trainingType === TrainingTypeEnum.LINEAR
-            ? Routing.RouteBuilder.linear_definition
-            : Routing.RouteBuilder.adaptive_definition;
     }
 
     private callApiToGetAll(

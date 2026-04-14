@@ -11,43 +11,16 @@ export class NavConfigFactory {
                 agendas: [
                     {
                         label: 'Definition',
-                        agendas: [
-                            {
-                                label: 'Adaptive',
-                                path: 'adaptive-definition' satisfies ValidPathPrefix,
-                                canActivate: () =>
-                                    RoleResolver.isAdaptiveTrainingDesigner(
-                                        user.roles,
-                                    ),
-                            },
-                            {
-                                label: 'Linear',
-                                path: 'linear-definition' satisfies ValidPathPrefix,
-                                canActivate: () =>
-                                    RoleResolver.isTrainingDesigner(user.roles),
-                            },
-                        ],
+                        path: 'linear-definition' satisfies ValidPathPrefix,
+                        canActivate: () =>
+                            RoleResolver.isTrainingDesigner(user.roles),
                     },
+
                     {
                         label: 'Instance',
-                        agendas: [
-                            {
-                                label: 'Adaptive',
-                                path: 'adaptive-instance' satisfies ValidPathPrefix,
-                                canActivate: () =>
-                                    RoleResolver.isAdaptiveTrainingOrganizer(
-                                        user.roles,
-                                    ),
-                            },
-                            {
-                                label: 'Linear',
-                                path: 'linear-instance' satisfies ValidPathPrefix,
-                                canActivate: () =>
-                                    RoleResolver.isTrainingOrganizer(
-                                        user.roles,
-                                    ),
-                            },
-                        ],
+                        path: 'linear-instance' satisfies ValidPathPrefix,
+                        canActivate: () =>
+                            RoleResolver.isTrainingOrganizer(user.roles),
                     },
                     {
                         label: 'Run',
@@ -62,19 +35,19 @@ export class NavConfigFactory {
                         label: 'Definition',
                         path: 'sandbox-definition' satisfies ValidPathPrefix,
                         canActivate: () =>
-                            RoleResolver.isAdaptiveTrainingDesigner(user.roles),
+                            RoleResolver.isSandboxDesigner(user.roles),
                     },
                     {
                         label: 'Pool',
                         path: 'pool' satisfies ValidPathPrefix,
                         canActivate: () =>
-                            RoleResolver.isTrainingOrganizer(user.roles),
+                            RoleResolver.isSandboxOrganizer(user.roles),
                     },
                     {
                         label: 'Images',
                         path: 'sandbox-image' satisfies ValidPathPrefix,
                         canActivate: () =>
-                            RoleResolver.isTrainingOrganizer(user.roles),
+                            RoleResolver.isSandboxOrganizer(user.roles),
                     },
                 ],
             },

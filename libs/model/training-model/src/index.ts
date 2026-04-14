@@ -18,10 +18,7 @@ export * from './enums/assessment-type.enum';
 export * from './enums/trainee-access-training-run-actions.enum';
 export * from './enums/training-definition-state.enum';
 export * from './enums/training-run-state.enum';
-export * from './enums/abstract-phase-type.enum';
 export * from './enums/question-type.enum';
-export * from './enums/questionnaire-type.enum';
-export * from './enums/training-run-type-enum';
 export * from './enums/detected-forbidden-command-type.enum';
 export * from './enums/training-type.enum';
 
@@ -44,18 +41,6 @@ export * from './level/hint';
 export * from './level/info-level';
 export * from './level/reference-solution-node';
 
-// PHASE
-export * from './phase/phase';
-export * from './phase/info-phase/info-phase';
-export * from './phase/access-phase/access-phase';
-export * from './phase/questionnaire-phase/adaptive-question';
-export * from './phase/questionnaire-phase/choice';
-export * from './phase/questionnaire-phase/phase-relation';
-export * from './phase/questionnaire-phase/questionnaire-phase';
-export * from './phase/training-phase/decision-matrix-row';
-export * from './phase/training-phase/adaptive-task';
-export * from './phase/training-phase/training-phase';
-export * from './phase/questionnaire-phase/question-answer';
 
 // QUESTION
 export * from './questions/extended-matching-items';
@@ -71,9 +56,6 @@ export * from './user-ref/training-user';
 export * from './user-ref/organizer';
 export * from './user-ref/designer';
 export * from './user-ref/beta-tester';
-
-// VISUALIZATION
-export * from './visualization/visualization-info';
 
 // MITRE TECHNIQUES
 export * from './mitre-techniques/mitre-technique';

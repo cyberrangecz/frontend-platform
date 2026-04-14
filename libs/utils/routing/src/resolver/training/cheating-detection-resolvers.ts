@@ -2,7 +2,7 @@ import { Routing } from '../../routing-namespace';
 import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map, take } from 'rxjs/operators';
-import { TrainingInstance, TrainingTypeEnum } from '@crczp/training-model';
+import { TrainingInstance } from '@crczp/training-model';
 import { inject } from '@angular/core';
 import { TrainingResolverHelperService } from './training-resolver-helper.service';
 
@@ -41,7 +41,7 @@ function resolveCheatingDetectionTitle(
 ): Observable<string> | string {
     const instanceObservable = inject(
         TrainingResolverHelperService,
-    ).getInstance(route, TrainingTypeEnum.LINEAR);
+    ).getInstance(route);
     return instanceObservable.pipe(
         take(1),
         map((ti) => (ti ? resolveTitle(ti, state) : '')),

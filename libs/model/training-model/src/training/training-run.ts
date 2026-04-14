@@ -1,7 +1,6 @@
-import {TrainingRunStateEnum} from '../enums/training-run-state.enum';
-import {Level} from '../level/level';
-import {Phase} from '../phase/phase';
-import {TrainingUser} from "../user-ref/training-user";
+import { TrainingRunStateEnum } from '../enums/training-run-state.enum';
+import { Level } from '../level/level';
+import { TrainingUser } from '../user-ref/training-user';
 
 /**
  * Class representing training run
@@ -15,7 +14,7 @@ export class TrainingRun {
     player!: TrainingUser;
     startTime!: Date;
     endTime!: Date;
-    currentLevel!: Level | number | Phase;
+    currentLevel!: Level | number;
     eventLogReference!: string;
     state!: TrainingRunStateEnum;
     hasDetectionEvent!: boolean;

@@ -1,15 +1,10 @@
 import {
     AccessLevel,
-    AccessPhase,
     AccessTrainingRunInfo,
     AssessmentLevel,
     InfoLevel,
-    InfoPhase,
     Level,
-    Phase,
-    QuestionnairePhase,
     TrainingLevel,
-    TrainingPhase,
 } from '@crczp/training-model';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { ErrorHandlerService, LoadingTracker } from '@crczp/utils';
@@ -64,45 +59,27 @@ export abstract class AbstractTrainingRunService {
         }
     }
 
-    public updateRunInfoWithNextLevel(level: Level | Phase): void {
+    public updateRunInfoWithNextLevel(level: Level): void {
         const updatedLevels = this.runInfo.levels.map((lvl) =>
             lvl.id === level.id ? level : lvl,
         );
         this.updateRunInfo({ levels: updatedLevels });
     }
 
-    public updateRunInfoWithLoadedLevel(level: Level | Phase): void {
+    public updateRunInfoWithLoadedLevel(level: Level): void {
         const updatedLevels = this.runInfo.levels.map((lvl) => {
             if (lvl.id !== level.id) {
                 return lvl;
             }
-            if (lvl instanceof TrainingPhase) {
-                lvl.currentTask.content = (
-                    level as TrainingPhase
-                ).currentTask.content;
-            }
-            if (
-                lvl instanceof TrainingLevel ||
-                lvl instanceof InfoLevel ||
-                lvl instanceof InfoPhase
-            ) {
+            if (lvl instanceof TrainingLevel || lvl instanceof InfoLevel) {
                 lvl.content = (level as TrainingLevel).content;
             }
-            if (lvl instanceof AccessPhase || lvl instanceof AccessLevel) {
-                lvl.cloudContent = (
-                    level as AccessPhase | AccessLevel
-                ).cloudContent;
-                lvl.localContent = (
-                    level as AccessPhase | AccessLevel
-                ).localContent;
+            if (lvl instanceof AccessLevel) {
+                lvl.cloudContent = (level as AccessLevel).cloudContent;
+                lvl.localContent = (level as AccessLevel).localContent;
             }
-            if (
-                lvl instanceof AssessmentLevel ||
-                lvl instanceof QuestionnairePhase
-            ) {
-                lvl.questions = (
-                    level as AssessmentLevel | QuestionnairePhase
-                ).questions;
+            if (lvl instanceof AssessmentLevel) {
+                lvl.questions = (level as AssessmentLevel).questions;
             }
             return lvl;
         });
@@ -139,15 +116,13 @@ export abstract class AbstractTrainingRunService {
 
     protected abstract navigateToRunSummary(): void;
 
-    protected abstract callApiToNextLevel(): Observable<Phase | Level>;
+    protected abstract callApiToNextLevel(): Observable<Level>;
 
     protected abstract callApiToFinish(): Observable<boolean>;
 
-    protected abstract callApiToLoadLevel(
-        levelId: number,
-    ): Observable<Phase | Level>;
+    protected abstract callApiToLoadLevel(levelId: number): Observable<Level>;
 
-    protected findLevelOrThrow(levelId: number): Level | Phase {
+    protected findLevelOrThrow(levelId: number): Level {
         const targetLevel = this.runInfo.levels.find(
             (lvl) => lvl.id === levelId,
         );

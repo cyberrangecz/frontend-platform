@@ -16,36 +16,6 @@ const routes: ValidRouterConfig<'run'> = [
         component: TrainingRunOverviewComponent,
     },
     {
-        path: 'adaptive/:runToken/access',
-        loadComponent: () =>
-            import('@crczp/training-agenda/run-detail').then(
-                (m) => m.AdaptiveTrainingRunDetailComponent,
-            ),
-        data: {
-            breadcrumb: 'Training',
-            title: undefined,
-        },
-        resolve: {
-            [AccessTrainingRunInfo.name]:
-                Routing.Resolvers.TrainingRun.resolveRunAccess,
-        },
-    },
-    {
-        path: 'adaptive/:runId/resume',
-        loadComponent: () =>
-            import('@crczp/training-agenda/run-detail').then(
-                (m) => m.AdaptiveTrainingRunDetailComponent,
-            ),
-        data: {
-            breadcrumb: 'Training',
-            title: undefined,
-        },
-        resolve: {
-            [AccessTrainingRunInfo.name]:
-                Routing.Resolvers.TrainingRun.resolveRunAccess,
-        },
-    },
-    {
         path: 'linear/:runToken/access',
         loadComponent: () =>
             import('@crczp/training-agenda/run-detail').then(
@@ -77,25 +47,7 @@ const routes: ValidRouterConfig<'run'> = [
     },
     {
         path: 'linear/:runId/results',
-        loadComponent: () =>
-            import('@crczp/training-agenda/run-results').then(
-                (m) => m.ScoreDevelopmentWrapperComponent,
-            ),
-        data: {
-            breadcrumb: 'Results',
-            title: 'Training Run Results',
-        },
-        resolve: {
-            [TrainingRun.name]:
-                Routing.Resolvers.TrainingRun.resolveAccessedTrainingRunResults,
-        },
-    },
-    {
-        path: 'adaptive/:runId/results',
-        loadComponent: () =>
-            import('@crczp/training-agenda/adaptive-run-results').then(
-                (m) => m.AdaptiveRunResultsComponent,
-            ),
+        // TODO add new run results component
         data: {
             breadcrumb: 'Results',
             title: 'Training Run Results',

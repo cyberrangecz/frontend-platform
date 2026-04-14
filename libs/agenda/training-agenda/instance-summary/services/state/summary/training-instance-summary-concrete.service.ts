@@ -37,16 +37,6 @@ export class TrainingInstanceSummaryConcreteService extends TrainingInstanceSumm
         );
     }
 
-    showAggregatedResults(): Observable<any> {
-        return from(
-            this.router.navigate([
-                Routing.RouteBuilder.linear_instance
-                    .instanceId(this.trainingInstance.id)
-                    .aggregated_results.build(),
-            ])
-        );
-    }
-
     showCheatingDetection(): Observable<any> {
         return from(
             this.router.navigate([

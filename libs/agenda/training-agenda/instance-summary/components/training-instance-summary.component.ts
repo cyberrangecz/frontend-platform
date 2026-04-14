@@ -110,10 +110,6 @@ export class TrainingInstanceSummaryComponent implements OnInit {
         this.trainingInstanceSummaryService.showResults();
     }
 
-    onShowAggregatedResults(): void {
-        this.trainingInstanceSummaryService.showAggregatedResults();
-    }
-
     onShowNotification(data: string[]): void {
         this.notificationService.emit(data[0] as any, data[1]);
     }

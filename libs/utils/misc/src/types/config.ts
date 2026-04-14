@@ -2,16 +2,14 @@ import { Z } from 'zod-class';
 import { z } from 'zod';
 import { sentinelAuthConfigSchema } from './sentinel-auth-config.zod';
 
-function removeTrailingSlash(str: string) {
-    return str.endsWith('/') ? str.slice(0, -1) : str;
+function removeTrailingSlash(str: string | undefined): string {
+    return !str ? '':  str.endsWith('/') ? str.slice(0, -1) : str;
 }
 
 export class RoleMapping extends Z.class({
     uagAdmin: z.string().nonempty(),
     trainingDesigner: z.string().nonempty(),
     trainingOrganizer: z.string().nonempty(),
-    adaptiveTrainingDesigner: z.string().nonempty(),
-    adaptiveTrainingOrganizer: z.string().nonempty(),
     trainingTrainee: z.string().nonempty(),
     sandboxDesigner: z.string().nonempty(),
     sandboxOrganizer: z.string().nonempty(),
@@ -51,13 +49,6 @@ export class PortalConfig extends Z.class({
         linearTraining: z
             .string({ required_error: 'Linear training API path is required' })
             .nonempty('No linear training api path provided')
-            .transform(removeTrailingSlash),
-
-        adaptiveTraining: z
-            .string({
-                required_error: 'Adaptive training API path is required',
-            })
-            .nonempty('No adaptive training api path provided')
             .transform(removeTrailingSlash),
 
         guacamole: z

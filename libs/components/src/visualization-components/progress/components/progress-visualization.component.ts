@@ -1,20 +1,6 @@
-import {
-    Component,
-    computed,
-    DestroyRef,
-    inject,
-    input,
-    model,
-    OnInit,
-    signal,
-} from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, computed, DestroyRef, inject, input, model, OnInit, signal } from '@angular/core';
 import { Level } from '@crczp/training-model';
-import { ProgressVisualizationApi } from '@crczp/visualization-api';
-import {
-    ProgressLevelInfo,
-    ProgressVisualizationApiData,
-} from '@crczp/visualization-model';
+import { ProgressLevelInfo, ProgressVisualizationApiData } from '@crczp/visualization-model';
 import { Observable } from 'rxjs';
 import { Stepper, StepperItem } from '../../../stepper/stepper';
 import { ProgressDataService } from '../services/progress-data.service';
@@ -25,7 +11,7 @@ import { ProgressChartComponent } from './progress-chart/progress-chart.componen
     imports: [ProgressChartComponent, Stepper],
     templateUrl: './progress-visualization.component.html',
     styleUrl: './progress-visualization.component.scss',
-    providers: [ProgressVisualizationApi, ProgressDataService],
+    providers: [ProgressDataService],
 })
 export class ProgressVisualizationComponent implements OnInit {
     instanceId = input.required<number>();
@@ -57,14 +43,15 @@ export class ProgressVisualizationComponent implements OnInit {
      * Initializes component and subscribes to progress data updates.
      */
     ngOnInit() {
-        (
-            this.progressApiData() ??
-            this.progressDataService.getVisualizationData$(this.instanceId())
-        )
-            .pipe(takeUntilDestroyed(this.destroyRef))
-            .subscribe((data) => {
-                this.progressData.set(data);
-            });
+        // TODO
+        // (
+        //     this.progressApiData() ??
+        //     this.progressDataService.getVisualizationData$(this.instanceId())
+        // )
+        //     .pipe(takeUntilDestroyed(this.destroyRef))
+        //     .subscribe((data) => {
+        //         this.progressData.set(data);
+        //     });
     }
 
     /**

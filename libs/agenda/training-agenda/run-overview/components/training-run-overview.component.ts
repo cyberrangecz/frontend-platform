@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit } from '@angular/core';
-import { AccessedTrainingRun, TrainingTypeEnum } from '@crczp/training-model';
+import { AccessedTrainingRun } from '@crczp/training-model';
 import { SentinelTable, SentinelTableComponent, TableLoadEvent } from '@sentinel/components/table';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -56,18 +56,13 @@ export class TrainingRunOverviewComponent implements OnInit {
     }
 
     /**
-     * According to PIN number calls service to access training run or adaptive run.
-     * @param accessToken token to access the training run or adaptive run
+     * According to PIN number calls service to access training
+     * @param accessToken token to access the training run
      */
     access(accessToken: string): void {
         this.isLoading = true;
         this.trainingRunOverviewService
-            .toAccessRun(
-                accessToken,
-                this.isAdaptiveToken(accessToken)
-                    ? TrainingTypeEnum.ADAPTIVE
-                    : TrainingTypeEnum.LINEAR,
-            )
+            .toAccessRun(accessToken)
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe(() => (this.isLoading = false));
     }
@@ -105,8 +100,4 @@ export class TrainingRunOverviewComponent implements OnInit {
         this.loadAccessedTrainingRuns(initialLoadEvent);
     }
 
-    private isAdaptiveToken(accessToken: string): boolean {
-        const re = new RegExp(/^[5-9].+$/);
-        return re.test(accessToken.split('-')[1]);
-    }
 }

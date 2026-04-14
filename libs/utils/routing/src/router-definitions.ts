@@ -17,36 +17,12 @@ export const DEFINED_ROUTES = {
         VAR_id: {},
     },
 
-    ['adaptive-definition']: {
-        create: {},
-        simulator: {},
-        EXCL_VAR_definitionId: {
-            edit: {},
-            preview: {},
-            detail: {},
-            simulator: {},
-        },
-    },
-
     ['linear-definition']: {
         create: {},
         EXCL_VAR_definitionId: {
             edit: {},
             preview: {},
             detail: {},
-        },
-    },
-
-    ['adaptive-instance']: {
-        create: {},
-        EXCL_VAR_instanceId: {
-            edit: {},
-            detail: {},
-            progress: {},
-            ['access-token']: {},
-            runs: {},
-            simulator: {},
-            results: {},
         },
     },
 
@@ -58,15 +34,8 @@ export const DEFINED_ROUTES = {
             progress: {},
             ['access-token']: {},
             runs: {},
-            simulator: {},
             results: {
-                dashboard: {},
-                ['quiz-results']: {},
-                walkthrough: {},
-                ['command-timeline']: {},
-                ['command-analysis']: {},
             },
-            ['aggregated-results']: {},
             ['cheating-detection']: {
                 create: {},
                 VAR_detectionId: {
@@ -79,15 +48,6 @@ export const DEFINED_ROUTES = {
     },
 
     run: {
-        EXCL_adaptive: {
-            EXCL_VAR_runToken: {
-                access: {},
-            },
-            EXCL_VAR_runId: {
-                resume: {},
-                results: {},
-            },
-        },
         EXCL_linear: {
             EXCL_VAR_runToken: {
                 access: {},

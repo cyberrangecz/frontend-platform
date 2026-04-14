@@ -1,12 +1,10 @@
 import { DestroyRef, signal } from '@angular/core';
 import { combineLatest, Observable, of, skipWhile, switchMap } from 'rxjs';
 import { filter, map, take } from 'rxjs/operators';
-import { Hint, TrainingLevel, TrainingPhase } from '@crczp/training-model';
+import { Hint, TrainingLevel } from '@crczp/training-model';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AbstractTrainingRunService } from '../../../services/training-run/abstract-training-run.service';
-import {
-    AbstractTrainingLevelService
-} from '../../../services/training-run/level/access/training/abstract-training-level.service';
+import { AbstractTrainingLevelService } from '../../../services/training-run/level/access/training/abstract-training-level.service';
 
 export abstract class GenericTrainingLevelComponent {
     isLoading$: Observable<boolean>;
@@ -26,13 +24,15 @@ export abstract class GenericTrainingLevelComponent {
         combineLatest([
             this.runService.isLoading$,
             this.trainingLevelService.isLoading$,
-        ]).pipe(
-            map(
-                ([isSubmittingAnswer, isLoadingLevel]) =>
-                    isSubmittingAnswer || isLoadingLevel,
-            ),
-        ).subscribe((loading) => this.isLoading.set(loading));
-        
+        ])
+            .pipe(
+                map(
+                    ([isSubmittingAnswer, isLoadingLevel]) =>
+                        isSubmittingAnswer || isLoadingLevel,
+                ),
+            )
+            .subscribe((loading) => this.isLoading.set(loading));
+
         this.registerViewCheckHook(() => {
             if (this.shouldScrollAfterViewCheck) {
                 this.scrollToBottom();
@@ -44,13 +44,13 @@ export abstract class GenericTrainingLevelComponent {
             .observeProperty()
             .displayedLevel.$()
             .pipe(
-                map(
-                    (level) =>
-                        (level instanceof TrainingLevel &&
-                            (level as TrainingLevel).solutionRevealed()) ||
-                        (level instanceof TrainingPhase &&
-                            (level as TrainingPhase).solutionRevealed()),
-                ),
+                map((level) => {
+                    if (level instanceof TrainingLevel) {
+                        return (level as TrainingLevel).solutionRevealed();
+                    } else {
+                        return false;
+                    }
+                }),
             );
 
         this.solutionContent$ = this.isSolutionRevealed$.pipe(
@@ -63,9 +63,6 @@ export abstract class GenericTrainingLevelComponent {
                         map((level) => {
                             if (level instanceof TrainingLevel) {
                                 return (level as TrainingLevel).solution;
-                            } else if (level instanceof TrainingPhase) {
-                                return (level as TrainingPhase).currentTask
-                                    .solution;
                             } else {
                                 return '';
                             }

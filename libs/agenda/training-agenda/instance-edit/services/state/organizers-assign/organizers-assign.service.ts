@@ -71,7 +71,6 @@ export class OrganizersAssignService extends SentinelUserAssignService {
             .getOrganizers(
                 resourceId,
                 this.lastAssignedPagination,
-                this.trainingType === 'adaptive',
                 UserNameFilters.create(filter),
             )
             .pipe(
@@ -110,7 +109,6 @@ export class OrganizersAssignService extends SentinelUserAssignService {
                     sort: 'givenName',
                     sortDir: 'asc',
                 },
-                this.trainingType === 'adaptive',
                 UserNameFilters.create(filter),
             )
             .pipe(
@@ -157,7 +155,6 @@ export class OrganizersAssignService extends SentinelUserAssignService {
             .updateOrganizers(
                 resourceId,
                 additions.map((user) => user.id),
-                this.trainingType === 'adaptive',
                 removals.map((user) => user.id),
             )
             .pipe(
@@ -185,7 +182,6 @@ export class OrganizersAssignService extends SentinelUserAssignService {
             .updateOrganizers(
                 resourceId,
                 userIds,
-                this.trainingType === 'adaptive',
                 [],
             )
             .pipe(
@@ -215,7 +211,6 @@ export class OrganizersAssignService extends SentinelUserAssignService {
             .updateOrganizers(
                 resourceId,
                 [],
-                this.trainingType === 'adaptive',
                 userIds,
             )
             .pipe(

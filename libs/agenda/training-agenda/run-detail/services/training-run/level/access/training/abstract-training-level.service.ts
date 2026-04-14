@@ -6,11 +6,7 @@ import {
 } from '@sentinel/components/dialogs';
 import { AbstractAccessLevelService } from '../abstract-access-level.service';
 import { take } from 'rxjs/operators';
-import {
-    AnswerCheckResult,
-    TrainingLevel,
-    TrainingPhase,
-} from '@crczp/training-model';
+import { AnswerCheckResult, TrainingLevel } from '@crczp/training-model';
 import { MatDialog } from '@angular/material/dialog';
 import { ErrorHandlerService, NotificationService } from '@crczp/utils';
 import { AbstractTrainingRunService } from '../../../abstract-training-run.service';
@@ -26,9 +22,7 @@ export abstract class AbstractTrainingLevelService extends AbstractAccessLevelSe
     }
 
     protected get displayedTrainingLevel() {
-        return this.runService.runInfo.currentLevel as
-            | TrainingLevel
-            | TrainingPhase;
+        return this.runService.runInfo.currentLevel as TrainingLevel;
     }
 
     showRevealSolutionDialogAndFetch(): void {
@@ -114,9 +108,6 @@ export abstract class AbstractTrainingLevelService extends AbstractAccessLevelSe
                         if (level.id === trainingLevel.id) {
                             if (level instanceof TrainingLevel) {
                                 level.solution = solution;
-                            }
-                            if (level instanceof TrainingPhase) {
-                                level.currentTask.solution = solution;
                             }
                         }
                         return level;

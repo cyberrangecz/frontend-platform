@@ -35,9 +35,6 @@
             "@crczp/sandbox-agenda": [
                 "libs/agenda/sandbox-agenda/src/index.ts"
             ],
-            "@crczp/sandbox-agenda/assets": [
-                "libs/agenda/sandbox-agenda/assets/index.ts"
-            ],
             "@crczp/sandbox-agenda/internal": [
                 "libs/agenda/sandbox-agenda/internal/index.ts"
             ],
@@ -52,9 +49,6 @@
             ],
             "@crczp/sandbox-agenda/request-detail": [
                 "libs/agenda/sandbox-agenda/request-detail/index.ts"
-            ],
-            "@crczp/sandbox-agenda/resolvers": [
-                "libs/agenda/sandbox-agenda/resolvers/index.ts"
             ],
             "@crczp/sandbox-agenda/sandbox-definition-edit": [
                 "libs/agenda/sandbox-agenda/sandbox-definition-edit/index.ts"
@@ -72,42 +66,6 @@
             "@crczp/sandbox-model": ["libs/model/sandbox-model/src/index.ts"],
             "@crczp/training-agenda": [
                 "libs/agenda/training-agenda/src/index.ts"
-            ],
-            "@crczp/training-agenda/adaptive-definition-edit": [
-                "libs/agenda/training-agenda/adaptive-definition-edit/index.ts"
-            ],
-            "@crczp/training-agenda/adaptive-definition-overview": [
-                "libs/agenda/training-agenda/adaptive-definition-overview/index.ts"
-            ],
-            "@crczp/training-agenda/adaptive-definition-preview": [
-                "libs/agenda/training-agenda/adaptive-definition-preview/index.ts"
-            ],
-            "@crczp/training-agenda/adaptive-definition-simulator": [
-                "libs/agenda/training-agenda/adaptive-definition-simulator/index.ts"
-            ],
-            "@crczp/training-agenda/adaptive-definition-summary": [
-                "libs/agenda/training-agenda/adaptive-definition-summary/index.ts"
-            ],
-            "@crczp/training-agenda/adaptive-instance-overview": [
-                "libs/agenda/training-agenda/adaptive-instance-overview/index.ts"
-            ],
-            "@crczp/training-agenda/adaptive-instance-progress": [
-                "libs/agenda/training-agenda/adaptive-instance-progress/index.ts"
-            ],
-            "@crczp/training-agenda/adaptive-instance-results": [
-                "libs/agenda/training-agenda/adaptive-instance-results/index.ts"
-            ],
-            "@crczp/training-agenda/adaptive-instance-runs": [
-                "libs/agenda/training-agenda/adaptive-instance-runs/index.ts"
-            ],
-            "@crczp/training-agenda/adaptive-instance-summary": [
-                "libs/agenda/training-agenda/adaptive-instance-summary/index.ts"
-            ],
-            "@crczp/training-agenda/adaptive-run-results": [
-                "libs/agenda/training-agenda/adaptive-run-results/index.ts"
-            ],
-            "@crczp/training-agenda/definition-detail": [
-                "libs/agenda/training-agenda/definition-detail/index.ts"
             ],
             "@crczp/training-agenda/definition-edit": [
                 "libs/agenda/training-agenda/definition-edit/index.ts"
@@ -145,9 +103,6 @@
             "@crczp/training-agenda/instance-progress": [
                 "libs/agenda/training-agenda/instance-progress/index.ts"
             ],
-            "@crczp/training-agenda/instance-results": [
-                "libs/agenda/training-agenda/instance-results/index.ts"
-            ],
             "@crczp/training-agenda/instance-runs": [
                 "libs/agenda/training-agenda/instance-runs/index.ts"
             ],
@@ -159,12 +114,6 @@
             ],
             "@crczp/training-agenda/mitre-techniques": [
                 "libs/agenda/training-agenda/mitre-techniques/index.ts"
-            ],
-            "@crczp/training-agenda/public": [
-                "libs/agenda/training-agenda/public/index.ts"
-            ],
-            "@crczp/training-agenda/resolvers": [
-                "libs/agenda/training-agenda/resolvers/index.ts"
             ],
             "@crczp/training-agenda/run-detail": [
                 "libs/agenda/training-agenda/run-detail/index.ts"
@@ -214,13 +163,9 @@
             "@crczp/visualization-api": [
                 "libs/api/visualization-api/src/index.ts"
             ],
-            "@crczp/visualization-api/command-visualization-api": [
-                "libs/api/visualization-api/command-visualization-api/src/index.ts"
-            ],
             "@crczp/visualization-model": [
                 "libs/model/visualization-model/src/index.ts"
-            ],
-            "@crczp/visualization/api": ["lib/api/walkthrough-api/src/index.ts"]
+            ]
         },
         "rootDir": ".",
         "skipDefaultLibCheck": true,

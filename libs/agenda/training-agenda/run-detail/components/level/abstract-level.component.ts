@@ -10,7 +10,7 @@ import {
     signal,
     ViewChild
 } from '@angular/core';
-import { AbstractLevelTypeEnum, AbstractPhaseTypeEnum, AccessTrainingRunInfo } from '@crczp/training-model';
+import { AbstractLevelTypeEnum, AccessTrainingRunInfo } from '@crczp/training-model';
 import { TrainingTimerComponent } from './training-timer/training-timer.component';
 import { MatTooltip } from '@angular/material/tooltip';
 import { AbstractTrainingRunService } from '../../services/training-run/abstract-training-run.service';
@@ -18,10 +18,7 @@ import { AsyncPipe } from '@angular/common';
 import '@crczp/mixins';
 import { InfoLevelComponent } from './info-level/info-level.component';
 import { LinearTrainingLevelComponent } from './training-level/linear-training-level.component';
-import { AdaptiveTrainingLevelComponent } from './training-level/adaptive-training-level.component';
 import { AssessmentLevelComponent } from './assessment-level/assessment-level.component';
-import { QuestionnaireLevelComponent } from './questionnaire-phase/questionnaire-level.component';
-import { AdaptiveAccessLevelComponent } from './access-level/adaptive-access-level.component';
 import { LinearAccessLevelComponent } from './access-level/linear-access-level.component';
 import { Observable } from 'rxjs';
 import { RunTopologyWrapperComponent } from './run-topology-wrapper/run-topology-wrapper.component';
@@ -43,13 +40,9 @@ import { SentinelResizeDirective } from '@sentinel/common/resize';
         MatTooltip,
         AsyncPipe,
         InfoLevelComponent,
-        AdaptiveAccessLevelComponent,
-        AdaptiveAccessLevelComponent,
         LinearAccessLevelComponent,
         LinearTrainingLevelComponent,
-        AdaptiveTrainingLevelComponent,
         AssessmentLevelComponent,
-        QuestionnaireLevelComponent,
         RunTopologyWrapperComponent,
         Stepper,
         SentinelResizeDirective,
@@ -60,12 +53,9 @@ export class AbstractLevelComponent implements OnInit, AfterViewInit {
     protected readonly levelContent: ElementRef<HTMLDivElement>;
 
     protected readonly runService = inject(AbstractTrainingRunService);
-    protected readonly levelType = signal<
-        AbstractLevelTypeEnum | AbstractPhaseTypeEnum
-    >(null);
+    protected readonly levelType = signal<AbstractLevelTypeEnum>(null);
     protected readonly destroyRef = inject(DestroyRef);
     protected readonly AbstractLevelTypeEnum = AbstractLevelTypeEnum;
-    protected readonly AbstractPhaseTypeEnum = AbstractPhaseTypeEnum;
     protected readonly displayedLevelTitle$: Observable<string>;
     protected readonly startTime$: Observable<Date>;
     protected readonly topologyService = inject(TopologySynchronizerService);
@@ -118,32 +108,23 @@ export class AbstractLevelComponent implements OnInit, AfterViewInit {
     private updateTopologyAllowed(runInfo: AccessTrainingRunInfo) {
         const shouldCollapse =
             runInfo.displayedLevel.type !== AbstractLevelTypeEnum.Training &&
-            runInfo.displayedLevel.type !== AbstractLevelTypeEnum.Access &&
-            runInfo.displayedLevel.type !== AbstractPhaseTypeEnum.Training &&
-            runInfo.displayedLevel.type !== AbstractPhaseTypeEnum.Access;
+            runInfo.displayedLevel.type !== AbstractLevelTypeEnum.Access;
         this.topologyAllowed.set(!shouldCollapse && !runInfo.localEnvironment);
         this.topologyService.setTopologyCollapsed(
             shouldCollapse || runInfo.localEnvironment,
         );
     }
 
-    private levelTypeToIcon(
-        levelType: AbstractLevelTypeEnum | AbstractPhaseTypeEnum,
-    ): string {
+    private levelTypeToIcon(levelType: AbstractLevelTypeEnum): string {
         switch (levelType) {
             case AbstractLevelTypeEnum.Info:
-            case AbstractPhaseTypeEnum.Info:
                 return 'info';
             case AbstractLevelTypeEnum.Training:
-            case AbstractPhaseTypeEnum.Training:
                 return 'videogame_asset';
             case AbstractLevelTypeEnum.Access:
-            case AbstractPhaseTypeEnum.Access:
                 return 'settings';
             case AbstractLevelTypeEnum.Assessment:
                 return 'assignment';
-            case AbstractPhaseTypeEnum.Questionnaire:
-                return 'quiz';
             default:
                 return 'help';
         }

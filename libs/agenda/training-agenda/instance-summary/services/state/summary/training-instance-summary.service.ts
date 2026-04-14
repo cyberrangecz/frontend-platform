@@ -1,5 +1,5 @@
-import {TrainingInstance} from '@crczp/training-model';
-import {Observable} from 'rxjs';
+import { TrainingInstance } from '@crczp/training-model';
+import { Observable } from 'rxjs';
 
 export abstract class TrainingInstanceSummaryService {
     hasStarted$: Observable<boolean>;
@@ -10,8 +10,6 @@ export abstract class TrainingInstanceSummaryService {
     abstract showProgress(): Observable<any>;
 
     abstract showResults(): Observable<any>;
-
-    abstract showAggregatedResults(): Observable<any>;
 
     abstract showCheatingDetection(): Observable<any>;
 }

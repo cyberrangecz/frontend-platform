@@ -11,7 +11,6 @@
         "@sentinel/common": "*",
         "@crczp/utils": "*",
         "@angular/forms": "*",
-        "@crczp/adaptive-instance-simulator": "*",
         "@angular/cdk": "*",
         "@crczp/training-api": "*",
         "@crczp/routing-commons": "*",

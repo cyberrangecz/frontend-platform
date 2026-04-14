@@ -1,6 +1,6 @@
 @if (data) {
   <div class="block-content" style="width: 85vw">
-    <mat-grid-list cols="2" [rowHeight]="detailHeight" class="pool-expand-grid">
+    <mat-grid-list cols="2" class="pool-expand-grid">
       <mat-grid-tile>
         <p><b>Build progression notifications: </b>{{ data.notifyBuild }}</p>
       </mat-grid-tile>
@@ -13,11 +13,7 @@
                 <div>
                   <span>{{ data.resources.quotas[resource].name }}
                   ({{ data[resource + 'Utilization'].toFixed(1) }}%):</span>
-                  <crczp-resource-bar
-                    [quota]="data.resources?.quotas[resource]"
-                    [poolUsage]="data[resource +'Utilization']"
-                    [color]="resourceColors[i]">
-                  </crczp-resource-bar>
+                  <crczp-resource-bar/>
                 </div>
               }
             }

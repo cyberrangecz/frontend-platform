@@ -1,32 +1,27 @@
 import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { inject } from '@angular/core';
-import { Routing } from '../../routing-namespace';
-import { TrainingTypeEnum } from '@crczp/training-model';
 import { TrainingResolverHelperService } from './training-resolver-helper.service';
 import { catchUndefinedOrNull } from '../catch-undefined-or-null';
+import { RoutingUtils } from '../../utils';
 
 function resolveRunAccess(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
 ) {
     const service = inject(TrainingResolverHelperService);
-    const runId = Routing.Utils.extractVariable<'run'>('runId', route);
-    const runToken = Routing.Utils.extractVariable<'run'>('runToken', route);
-    const isAdaptive = Routing.Utils.containsSubroute('run/adaptive', state);
-    const type = isAdaptive
-        ? TrainingTypeEnum.ADAPTIVE
-        : TrainingTypeEnum.LINEAR;
+    const runId = RoutingUtils.extractVariable<'run'>('runId', route);
+    const runToken = RoutingUtils.extractVariable<'run'>('runToken', route);
 
     if (runId) {
         if (isNaN(+runId)) {
             return service.navigateToRunOverview();
         }
-        return service.resumeRun(+runId, type);
+        return service.resumeRun(+runId);
     }
     if (!runToken) {
         return service.navigateToRunOverview();
     }
-    return service.accessRun(runToken, type);
+    return service.accessRun(runToken);
 }
 
 function resolveAccessedTrainingRunResults(
@@ -34,13 +29,9 @@ function resolveAccessedTrainingRunResults(
     state: RouterStateSnapshot
 ) {
     const service = inject(TrainingResolverHelperService);
-    const isAdaptive = Routing.Utils.containsSubroute('run/adaptive', state);
-    const type = isAdaptive
-        ? TrainingTypeEnum.ADAPTIVE
-        : TrainingTypeEnum.LINEAR;
 
     return service
-        .getRunResults(route, type)
+        .getRunResults(route)
         .pipe(
             catchUndefinedOrNull('Training run', () =>
                 service.navigateToRunOverview()

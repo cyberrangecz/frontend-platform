@@ -3,10 +3,8 @@
  */
 export interface AccessedTrainingRunDTO {
     current_level_order?: number;
-    current_phase_order?: number;
     id?: number;
     number_of_levels?: number;
-    number_of_phases?: number;
     possible_action?: AccessedTrainingRunDTO.PossibleActionEnum;
     title?: string;
     training_instance_end_date?: Date;

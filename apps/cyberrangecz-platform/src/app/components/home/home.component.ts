@@ -4,7 +4,6 @@ import { SentinelAuthService, UserRole } from '@sentinel/auth';
 import { AgendaPortalLink } from '../../model/agenda-portal-link';
 import { PortalAgendaContainer } from '../../model/portal-agenda-container';
 import { RoleResolver } from '../../utils/role-resolver';
-import { AgendaMenuItem } from '../../model/agenda-menu-item';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { PortalAgendaContainerComponent } from './portal-agenda-container/portal-agenda-container.component';
 import { ValidPath } from '@crczp/routing-commons';
@@ -28,13 +27,6 @@ export class HomeComponent implements OnInit {
 
     private authService = inject(SentinelAuthService);
     private router = inject(Router);
-
-    static createExpandedControlButtons(path: ValidPath[]): AgendaMenuItem[] {
-        return [
-            new AgendaMenuItem('timeline', 'Adaptive', path[0]),
-            new AgendaMenuItem('videogame_asset', 'Linear', path[1]),
-        ];
-    }
 
     ngOnInit(): void {
         this.roles = this.authService.getRoles();
@@ -118,10 +110,6 @@ export class HomeComponent implements OnInit {
                 'linear-definition',
                 'Training Definition is the blueprint for trainings. You can manage existing trainings and design new ones.',
                 'assignment',
-                HomeComponent.createExpandedControlButtons([
-                    'adaptive-definition',
-                    'linear-definition',
-                ]),
             ),
         ];
     }
@@ -148,10 +136,6 @@ export class HomeComponent implements OnInit {
                 'linear-instance',
                 'You can create training instances required for organizing hands-on training sessions.',
                 'event',
-                HomeComponent.createExpandedControlButtons([
-                    'adaptive-instance',
-                    'linear-instance',
-                ]),
             ),
         ];
     }

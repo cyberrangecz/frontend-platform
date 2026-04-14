@@ -7,7 +7,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AsyncPipe } from '@angular/common';
 import { MatTab, MatTabContent, MatTabGroup, MatTabLabel } from '@angular/material/tabs';
 import { MatIcon } from '@angular/material/icon';
-import { CommandTimelineComponent, ProgressVisualizationComponent } from '@crczp/components';
+import { ProgressVisualizationComponent } from '@crczp/components';
 
 /**
  * Component displaying progress visualization
@@ -24,7 +24,6 @@ import { CommandTimelineComponent, ProgressVisualizationComponent } from '@crczp
         MatIcon,
         MatTabLabel,
         MatTabContent,
-        CommandTimelineComponent,
         ProgressVisualizationComponent,
     ],
 })
