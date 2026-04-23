@@ -31,14 +31,22 @@
                     }
                 ],
                 "styles": ["dist/libs/utils/theme/theme/apply-all.scss"],
-                "scripts": ["node_modules/@hpcc-js/wasm/dist/graphviz.umd.js"]
+                "scripts": ["node_modules/@hpcc-js/wasm/dist/graphviz.umd.js"],
+                "allowedCommonJsDependencies": [
+                    "moment-mini",
+                    "jsrsasign",
+                    "fast-deep-equal",
+                    "file-saver",
+                    "fast-levenshtein",
+                    "moment"
+                ]
             },
             "configurations": {
                 "production": {
                     "budgets": [
                         {
                             "type": "initial",
-                            "maximumWarning": "1500kb",
+                            "maximumWarning": "2700kb",
                             "maximumError": "3mb"
                         },
                         {

@@ -21,7 +21,7 @@ export class AbstractSandbox {
         this.comment = allocationUnit.comment;
         this.locked = allocationUnit.locked;
         this.createdAt = allocationUnit.allocationRequest.createdAt;
-        this.createdBy = allocationUnit.createdBy.fullName;
+        this.createdBy = allocationUnit.createdBy?.fullName ?? '—';
         this.poolId = allocationUnit.poolId;
         this.allocationRequest = allocationUnit.allocationRequest;
         this.cleanupRequest = allocationUnit.cleanupRequest;
@@ -55,6 +55,17 @@ export class AbstractSandbox {
         return (
             this.allocationRequest.stages.every((stage) => stage === RequestStageState.FINISHED) &&
             !this.cleanupRunning()
+        );
+    }
+
+    /** True if all allocation stages are still IN_QUEUE (no stage started). */
+    public allocationInQueue(): boolean {
+        return (
+            this.allocationRequest?.stages != null &&
+            this.allocationRequest.stages.length > 0 &&
+            this.allocationRequest.stages.every(
+                (stage) => stage === RequestStageState.QUEUED,
+            )
         );
     }
 

@@ -352,6 +352,56 @@ export class SandboxInstanceService extends OffsetPaginatedElementsPollingServic
     }
 
     /**
+     * Cancels all queued (IN_QUEUE) allocation units in the pool. Leaves deploying or built sandboxes untouched.
+     * @param poolId id of pool for which queued allocations are cancelled
+     */
+    cancelQueued(poolId: number): Observable<any> {
+        return this.allocationUnitsService.cancelQueued(poolId).pipe(
+            switchMap(() =>
+                this.getAllUnits(
+                    this.lastPoolId,
+                    this
+                        .lastPagination as OffsetPaginationEvent<AllocationRequestSort>,
+                ),
+            ),
+        );
+    }
+
+    /**
+     * Force-cancels all stuck allocation units (first stage running) in the pool.
+     * Removes them from the Cyber Range DB only; OpenStack must be cleaned up manually.
+     * @param poolId id of pool for which stuck allocations are force-cancelled
+     */
+    forceCancelAllocation(poolId: number): Observable<any> {
+        return this.allocationUnitsService.forceCancelAllocation(poolId).pipe(
+            switchMap(() =>
+                this.getAllUnits(
+                    this.lastPoolId,
+                    this
+                        .lastPagination as OffsetPaginationEvent<AllocationRequestSort>,
+                ),
+            ),
+        );
+    }
+
+    /**
+     * Force-removes all units in the pool that have a stuck cleanup (cleanup running but not finished).
+     * Removes them from the Cyber Range DB only.
+     * @param poolId id of pool for which stuck cleanups are force-removed
+     */
+    forceCleanup(poolId: number): Observable<any> {
+        return this.allocationUnitsService.forceCleanup(poolId).pipe(
+            switchMap(() =>
+                this.getAllUnits(
+                    this.lastPoolId,
+                    this
+                        .lastPagination as OffsetPaginationEvent<AllocationRequestSort>,
+                ),
+            ),
+        );
+    }
+
+    /**
      * Starts cleanup for sandbox specified in @unitIds.
      * @param unitId allocation unit id which should be deleted
      */

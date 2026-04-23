@@ -12,4 +12,6 @@ export class TrainingInstanceCreateDTO {
     sandbox_definition_id?: number;
     backward_mode?: boolean;
     show_stepper_bar?: boolean;
+    /** When true, trainee cannot allocate a sandbox; only one allocated by Admin for this user can be used. */
+    managed?: boolean;
 }

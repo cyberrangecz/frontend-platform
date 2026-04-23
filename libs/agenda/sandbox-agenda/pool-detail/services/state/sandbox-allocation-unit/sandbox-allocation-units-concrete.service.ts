@@ -167,6 +167,47 @@ export class SandboxAllocationUnitsConcreteService extends SandboxAllocationUnit
     }
 
     /**
+     * Cancels all queued (IN_QUEUE) allocation units in the given pool.
+     */
+    cancelQueued(poolId: number): Observable<{ cancelled_count: number }> {
+        return this.displayCancelQueuedConfirmationDialog(poolId).pipe(
+            switchMap((result) =>
+                result === SentinelDialogResultEnum.CONFIRMED
+                    ? this.callApiToCancelQueued(poolId)
+                    : EMPTY,
+            ),
+        );
+    }
+
+    /**
+     * Force-cancels all stuck allocation units (first stage running) in the given pool.
+     * Removes them from the Cyber Range DB only; OpenStack must be cleaned up manually.
+     */
+    forceCancelAllocation(poolId: number): Observable<{ force_cancelled_count: number }> {
+        return this.displayForceCancelAllocationConfirmationDialog(poolId).pipe(
+            switchMap((result) =>
+                result === SentinelDialogResultEnum.CONFIRMED
+                    ? this.callApiToForceCancelAllocation(poolId)
+                    : EMPTY,
+            ),
+        );
+    }
+
+    /**
+     * Force-removes all units in the pool that have a cleanup request that is not finished
+     * (cleanup running or stuck). Removes them from the Cyber Range DB only.
+     */
+    forceCleanup(poolId: number): Observable<{ force_cleaned_count: number }> {
+        return this.displayForceCleanupConfirmationDialog(poolId).pipe(
+            switchMap((result) =>
+                result === SentinelDialogResultEnum.CONFIRMED
+                    ? this.callApiToForceCleanup(poolId)
+                    : EMPTY,
+            ),
+        );
+    }
+
+    /**
      * Initializes default resources with given pageSize
      * @param pageSize size of a page for pagination
      */
@@ -218,6 +259,141 @@ export class SandboxAllocationUnitsConcreteService extends SandboxAllocationUnit
         return this.handleApiRequests(
             this.poolApi.createUnlockedCleanupRequests(poolId, force),
             poolId,
+        );
+    }
+
+    private displayCancelQueuedConfirmationDialog(
+        poolId: number,
+    ): Observable<SentinelDialogResultEnum> {
+        const dialogRef = this.dialog.open(
+            SentinelConfirmationDialogComponent,
+            {
+                data: new SentinelConfirmationDialogConfig(
+                    'Cancel allocation',
+                    'Cancel all queued allocations in this pool? Sandboxes that have already started deploying will not be affected.',
+                    'Cancel',
+                    'Cancel allocation',
+                ),
+            },
+        );
+        return dialogRef.afterClosed();
+    }
+
+    private displayForceCancelAllocationConfirmationDialog(
+        poolId: number,
+    ): Observable<SentinelDialogResultEnum> {
+        const dialogRef = this.dialog.open(
+            SentinelConfirmationDialogComponent,
+            {
+                data: new SentinelConfirmationDialogConfig(
+                    'Force Cancel Allocation',
+                    'Remove all stuck allocations (first stage running) from the Cyber Range? They will be deleted from the database only. You must clean up OpenStack (or other cloud) resources manually.',
+                    'Cancel',
+                    'Force Cancel',
+                ),
+            },
+        );
+        return dialogRef.afterClosed();
+    }
+
+    private displayForceCleanupConfirmationDialog(
+        poolId: number,
+    ): Observable<SentinelDialogResultEnum> {
+        const dialogRef = this.dialog.open(
+            SentinelConfirmationDialogComponent,
+            {
+                data: new SentinelConfirmationDialogConfig(
+                    'Force Cleanup',
+                    'Remove all sandboxes with stuck cleanup from the Cyber Range? They will be deleted from the database only. Clean up any external resources (OpenStack, jump proxy) manually if needed.',
+                    'Cancel',
+                    'Force Cleanup',
+                ),
+            },
+        );
+        return dialogRef.afterClosed();
+    }
+
+    private callApiToCancelQueued(
+        poolId: number,
+    ): Observable<{ cancelled_count: number }> {
+        return this.poolApi.cancelQueued(poolId).pipe(
+            tap((res) =>
+                this.notificationService.emit(
+                    'success',
+                    res.cancelled_count === 0
+                        ? 'No queued allocations to cancel'
+                        : `Cancelled ${res.cancelled_count} queued allocation(s)`,
+                ),
+            ),
+            tap({
+                error: (err) =>
+                    this.errorHandler.emitAPIError(
+                        err,
+                        `Cancelling queued allocations for pool ${poolId}`,
+                    ),
+            }),
+            switchMap((res) =>
+                this.getAll(
+                    this.lastPoolId,
+                    this.lastPagination as OffsetPaginationEvent<SandboxInstanceSort>,
+                ).pipe(map(() => res)),
+            ),
+        );
+    }
+
+    private callApiToForceCancelAllocation(
+        poolId: number,
+    ): Observable<{ force_cancelled_count: number }> {
+        return this.poolApi.forceCancelAllocation(poolId).pipe(
+            tap((res) =>
+                this.notificationService.emit(
+                    'success',
+                    res.force_cancelled_count === 0
+                        ? 'No stuck allocations to force-cancel'
+                        : `Force-cancelled ${res.force_cancelled_count} stuck allocation(s). Clean up OpenStack resources manually if needed.`,
+                ),
+            ),
+            tap({
+                error: (err) =>
+                    this.errorHandler.emitAPIError(
+                        err,
+                        `Force-cancelling stuck allocations for pool ${poolId}`,
+                    ),
+            }),
+            switchMap((res) =>
+                this.getAll(
+                    this.lastPoolId,
+                    this.lastPagination as OffsetPaginationEvent<SandboxInstanceSort>,
+                ).pipe(map(() => res)),
+            ),
+        );
+    }
+
+    private callApiToForceCleanup(
+        poolId: number,
+    ): Observable<{ force_cleaned_count: number }> {
+        return this.poolApi.forceCleanup(poolId).pipe(
+            tap((res) =>
+                this.notificationService.emit(
+                    'success',
+                    res.force_cleaned_count === 0
+                        ? 'No stuck cleanups to force-remove'
+                        : `Force-removed ${res.force_cleaned_count} stuck cleanup(s). Clean up external resources manually if needed.`,
+                ),
+            ),
+            tap({
+                error: (err) =>
+                    this.errorHandler.emitAPIError(
+                        err,
+                        `Force-cleanup for pool ${poolId}`,
+                    ),
+            }),
+            switchMap((res) =>
+                this.getAll(
+                    this.lastPoolId,
+                    this.lastPagination as OffsetPaginationEvent<SandboxInstanceSort>,
+                ).pipe(map(() => res)),
+            ),
         );
     }
 

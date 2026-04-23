@@ -44,15 +44,26 @@ export class RequestMapper {
     }
 
     private static stageResolver(stage: string) {
-        switch (stage) {
+        if (!stage || typeof stage !== 'string') {
+            return RequestStageState.QUEUED;
+        }
+        const s = stage.trim();
+        switch (s) {
             case 'RUNNING':
+            case 'Running':
                 return RequestStageState.RUNNING;
             case 'FAILED':
+            case 'Failed':
                 return RequestStageState.FAILED;
             case 'FINISHED':
+            case 'Finished':
                 return RequestStageState.FINISHED;
             case 'IN_QUEUE':
+            case 'In Queue':
+            case 'QUEUED':
                 return RequestStageState.QUEUED;
+            case 'Retry':
+                return RequestStageState.RETRY;
             default:
                 throw new Error(`Unknown stage ${stage}`);
         }

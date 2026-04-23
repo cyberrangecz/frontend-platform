@@ -6,8 +6,8 @@
 @use '@sentinel/components/theming' as sentinel-components;
 @use '@sentinel/components/typography' as sentinel-typography;
 @use './forward-all' as theme;
+@use "./styles/components/moncada-datepicker" as *;
 @import '@danielmoncada/angular-datetime-picker/assets/style/picker.min.css';
-@import "./styles/components/moncada-datepicker";
 
 
 :root {

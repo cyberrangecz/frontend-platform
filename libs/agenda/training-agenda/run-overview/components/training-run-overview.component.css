@@ -9,7 +9,107 @@
     margin-bottom: 5rem;
 }
 
+.access-message {
+    width: 80%;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.06);
+    border-left: 4px solid #1976d2;
+    border-radius: 4px;
+}
+
 .table-container {
     width: 80%;
+}
+
+.active-sandboxes-section {
+    width: 80%;
+}
+
+.active-sandboxes-section h2 {
+    margin-bottom: 0.5rem;
+}
+
+.active-sandboxes-hint {
+    margin-bottom: 1rem;
+    color: rgba(0, 0, 0, 0.7);
+}
+
+.sandbox-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.active-sandboxes-section .sandbox-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+.managed-badge {
+    font-size: 0.75rem;
+    padding: 0.15rem 0.5rem;
+    background: rgba(0, 0, 0, 0.08);
+    border-radius: 4px;
+    color: rgba(0, 0, 0, 0.7);
+}
+
+/* Fixed width so the left edge of stages is aligned in every row (with or without Managed badge / delete button) */
+.sandbox-item-right {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.5rem;
+    width: 7.5rem;
+    min-width: 7.5rem;
+    flex-shrink: 0;
+}
+
+.sandbox-item .building-status {
+    font-style: italic;
+}
+
+.stages {
+    display: flex;
+    flex-direction: row;
+}
+
+.stages > * + * {
+    margin-left: 2px;
+}
+
+.stage-container {
+    border-radius: 50%;
+    border: solid 2px;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: default;
+}
+
+.stage-container mat-icon {
+    font-size: 16px;
+    height: 16px;
+    width: 16px;
+}
+
+.stages .check {
+    color: green;
+    font-weight: bolder;
+}
+
+.stages .incomplete_circle {
+    color: blue;
+}
+
+.stages .close {
+    color: red;
+}
+
+.stages .pause {
+    color: darkgoldenrod;
 }
 

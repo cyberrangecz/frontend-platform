@@ -13,10 +13,12 @@
         </button>
     }
     @let sandboxInstanceId = (this.runService.runInfo$.observeProperty().sandboxInstanceId.$() | async);
+    @let accessToken = (this.runService.runInfo$.observeProperty().accessToken.$() | async);
     @if (!!sandboxInstanceId) {
         <crczp-topology-wrapper
             (getAccessFile)="onAccessFileRequested()"
             [id]="{instanceId: sandboxInstanceId}"
+            [accessToken]="accessToken"
             [ngClass]="{ 'level-topology--hidden': topologyService.topologyCollapsed$ | async }"
             [standalone]="false"
             class="wh-100 level-topology"

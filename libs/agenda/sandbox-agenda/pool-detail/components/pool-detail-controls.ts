@@ -17,6 +17,9 @@ export class PoolDetailControls {
     static readonly DELETE_FAILED_ACTION_ID = 'delete_failed';
     static readonly DELETE_ALL_ACTION_ID = 'delete_all';
     static readonly DELETE_UNLOCKED_ACTION_ID = 'delete_unlocked';
+    static readonly CANCEL_QUEUED_ACTION_ID = 'cancel_queued';
+    static readonly FORCE_CANCEL_ALLOCATION_ACTION_ID = 'force_cancel_allocation';
+    static readonly FORCE_CLEANUP_ACTION_ID = 'force_cleanup';
 
     static create(
         pool: Pool,
@@ -61,6 +64,30 @@ export class PoolDetailControls {
                         defer(() => sandboxInstanceService.cleanupUnlocked(pool.id, true)),
                         'delete_outline',
                     ),
+                    new SentinelControlMenuItem(
+                        this.CANCEL_QUEUED_ACTION_ID,
+                        'Cancel allocation',
+                        'warn',
+                        of(!PoolDetailControls.someSandboxInQueue(sandboxes)),
+                        defer(() => sandboxInstanceService.cancelQueued(pool.id)),
+                        'pause_circle_outline',
+                    ),
+                    new SentinelControlMenuItem(
+                        this.FORCE_CANCEL_ALLOCATION_ACTION_ID,
+                        'Force Cancel Allocation',
+                        'warn',
+                        of(!PoolDetailControls.someSandboxAllocationRunning(sandboxes)),
+                        defer(() => sandboxInstanceService.forceCancelAllocation(pool.id)),
+                        'cancel',
+                    ),
+                    new SentinelControlMenuItem(
+                        this.FORCE_CLEANUP_ACTION_ID,
+                        'Force Cleanup',
+                        'warn',
+                        of(!PoolDetailControls.someSandboxCleanupRunning(sandboxes)),
+                        defer(() => sandboxInstanceService.forceCleanup(pool.id)),
+                        'delete_sweep',
+                    ),
                 ],
             ),
         ];
@@ -76,5 +103,17 @@ export class PoolDetailControls {
 
     private static someSandboxHasNoRunningCleanup(sandboxes: AbstractSandbox[]) {
         return !sandboxes.some((sandbox) => !sandbox.cleanupRunning());
+    }
+
+    private static someSandboxInQueue(sandboxes: AbstractSandbox[]) {
+        return sandboxes.some((sandbox) => sandbox.allocationInQueue());
+    }
+
+    private static someSandboxAllocationRunning(sandboxes: AbstractSandbox[]) {
+        return sandboxes.some((sandbox) => sandbox.allocationRunning());
+    }
+
+    private static someSandboxCleanupRunning(sandboxes: AbstractSandbox[]) {
+        return sandboxes.some((sandbox) => sandbox.cleanupRunning());
     }
 }

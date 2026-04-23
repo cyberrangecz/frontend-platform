@@ -16,6 +16,8 @@ export class TrainingInstance {
     sandboxDefinitionId!: number;
     backwardMode!: boolean;
     showStepperBar!: boolean;
+    /** When true, trainee cannot allocate a sandbox; only one allocated by Admin for this user can be used. */
+    managed!: boolean;
 
     /**
      * True if current time is greater than start time of the training instance, false otherwise

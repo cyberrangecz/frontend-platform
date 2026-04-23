@@ -11,6 +11,7 @@ import {
 import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import { Observable } from 'rxjs';
 import {
+    ActiveSandboxSummary,
     AccessedTrainingRun,
     AccessTrainingRunInfo,
     AnswerCheckResult,
@@ -20,7 +21,7 @@ import {
 } from '@crczp/training-model';
 import { map } from 'rxjs/operators';
 import { TrainingRunDTO } from '../dto/training-run/training-run-dto';
-import { AccessTrainingRunDTO } from '../dto/training-run/access-training-run-dto';
+import { AccessTrainingRunDTO, ActiveSandboxSummaryDTO } from '../dto/training-run/access-training-run-dto';
 import { AdaptiveRunMapper } from '../mappers/training-run/adaptive-run-mapper';
 import { AccessedAdaptiveRunMapper } from '../mappers/training-run/accessed-adaptive-run-mapper';
 import { AbstractPhaseDTO } from '../dto/phase/abstract-phase-dto';
@@ -129,6 +130,56 @@ export class AdaptiveRunApi {
         return this.http
             .post<AccessTrainingRunDTO>(this.apiUrl, {}, { params })
             .pipe(map((response) => AccessAdaptiveRunMapper.fromDTO(response)));
+    }
+
+    requestTraineeSandboxCleanup(sandboxId: string): Observable<void> {
+        return this.http.post<void>(
+            `${this.apiUrl}/user-sandboxes/${encodeURIComponent(sandboxId)}/cleanup`,
+            {},
+        );
+    }
+
+    requestTraineeSandboxCleanupByAllocationId(allocationUnitId: number): Observable<void> {
+        return this.http.post<void>(
+            `${this.apiUrl}/user-sandboxes/by-allocation/${allocationUnitId}/cleanup`,
+            {},
+        );
+    }
+
+    getUserActiveSandboxes(): Observable<ActiveSandboxSummary[]> {
+        return this.http
+            .get<ActiveSandboxSummaryDTO[]>(`${this.apiUrl}/user-active-sandboxes`)
+            .pipe(
+                map((dtos) =>
+                    (dtos ?? []).map((s) => ({
+                        id: s.id,
+                        poolId: s.pool_id,
+                        createdAt: s.created_at,
+                        createdBySub: s.created_by_sub,
+                        sandboxId: s.sandbox_id ?? null,
+                        allocationRequest: s.allocation_request
+                            ? {
+                                  id: s.allocation_request.id,
+                                  allocationUnitId:
+                                      s.allocation_request.allocation_unit_id,
+                                  stages: s.allocation_request.stages ?? [],
+                              }
+                            : undefined,
+                        cleanupRequest: s.cleanup_request
+                            ? {
+                                  id: s.cleanup_request.id,
+                                  allocationUnitId: s.cleanup_request.allocation_unit_id,
+                                  stages: s.cleanup_request.stages ?? [],
+                              }
+                            : undefined,
+                        allowRemove: s.allow_remove ?? false,
+                        trainingInstanceTitle:
+                            s.training_instance_title ?? null,
+                        trainingInstanceId: s.training_instance_id ?? null,
+                        managed: s.training_instance_managed ?? false,
+                    })),
+                ),
+            );
     }
 
     /**

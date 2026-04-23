@@ -24,3 +24,5 @@ export * from './api/cheating-detection-api.service';
 export * from './api/detection-event-api.service';
 
 export * from './api/sorts';
+export * from './mappers/training-run/access-linear-run-mapper';
+export * from './mappers/training-run/access-adaptive-run-mapper';

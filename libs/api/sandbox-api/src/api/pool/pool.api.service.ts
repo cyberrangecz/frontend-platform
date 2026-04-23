@@ -468,6 +468,43 @@ export class PoolApi {
     }
 
     /**
+     * Sends http request to cancel all queued (IN_QUEUE) allocation units in the given pool.
+     * Leaves deploying or built sandboxes untouched.
+     * @param poolId id of a pool
+     */
+    cancelQueued(poolId: number): Observable<{ cancelled_count: number }> {
+        return this.http.post<{ cancelled_count: number }>(
+            `${this.apiUrl}/${poolId}/cancel-queued`,
+            {},
+        );
+    }
+
+    /**
+     * Sends http request to force-cancel all stuck allocation units (first stage running
+     * but not finished/failed) in the given pool. Removes them from the Cyber Range DB only;
+     * OpenStack must be cleaned up manually.
+     * @param poolId id of a pool
+     */
+    forceCancelAllocation(poolId: number): Observable<{ force_cancelled_count: number }> {
+        return this.http.post<{ force_cancelled_count: number }>(
+            `${this.apiUrl}/${poolId}/force-cancel-allocation`,
+            {},
+        );
+    }
+
+    /**
+     * Sends http request to force-remove all units in the pool that have a cleanup request
+     * that is not finished (cleanup running or stuck). Removes them from the Cyber Range DB only.
+     * @param poolId id of a pool
+     */
+    forceCleanup(poolId: number): Observable<{ force_cleaned_count: number }> {
+        return this.http.post<{ force_cleaned_count: number }>(
+            `${this.apiUrl}/${poolId}/force-cleanup`,
+            {},
+        );
+    }
+
+    /**
      * Sends http request to update the pool properties
      * @param pool pool to update
      */
