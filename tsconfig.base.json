@@ -26,10 +26,13 @@
         "tsBuildInfoFile": ".angular/cache/.tsbuildinfo",
         "lib": ["es2020", "dom"],
         "module": "esnext",
-        "moduleResolution": "node",
+        "moduleResolution": "bundler",
         "paths": {
             "@crczp/api-common": ["libs/api/api-common/src/index.ts"],
             "@crczp/components": ["libs/components/src/index.ts"],
+            "@crczp/event-query-engine": [
+                "libs/api/event-query-engine/src/index.ts"
+            ],
             "@crczp/mixins": ["libs/mixins/src/index.ts"],
             "@crczp/opensearch-query-builder": [
                 "libs/api/opensearch-query-builder/src/index.ts"
