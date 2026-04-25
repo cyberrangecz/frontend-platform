@@ -1,0 +1,38 @@
+{
+    "name": "event-query-engine",
+    "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+    "sourceRoot": "libs/api/event-query-engine/src",
+    "prefix": "crczp",
+    "projectType": "library",
+    "tags": [],
+    "targets": {
+        "build": {
+            "executor": "@nx/js:tsc",
+            "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
+            "options": {
+                "main": "libs/api/event-query-engine/src/index.ts",
+                "outputPath": "dist/libs/api/event-query-engine",
+                "tsConfig": "libs/api/event-query-engine/tsconfig.lib.json"
+            },
+            "configurations": {
+                "production": {
+                    "tsConfig": "libs/api/event-query-engine/tsconfig.lib.prod.json"
+                },
+                "development": {
+                    "tsConfig": "libs/api/event-query-engine/tsconfig.lib.json"
+                }
+            },
+            "defaultConfiguration": "production"
+        },
+        "test": {
+            "executor": "@nx/vite:test",
+            "outputs": ["{options.reportsDirectory}"],
+            "options": {
+                "reportsDirectory": "../../../coverage/libs/api/event-query-engine"
+            }
+        },
+        "lint": {
+            "executor": "@nx/eslint:lint"
+        }
+    }
+}
