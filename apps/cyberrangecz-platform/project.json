@@ -28,6 +28,16 @@
                         "glob": "**/*",
                         "input": "dist/libs/utils/theme/assets/",
                         "output": "/assets/"
+                    },
+                    {
+                        "glob": "pglite.wasm",
+                        "input": "node_modules/@electric-sql/pglite/dist",
+                        "output": "/"
+                    },
+                    {
+                        "glob": "initdb.wasm",
+                        "input": "node_modules/@electric-sql/pglite/dist",
+                        "output": "/"
                     }
                 ],
                 "styles": ["dist/libs/utils/theme/theme/apply-all.scss"],

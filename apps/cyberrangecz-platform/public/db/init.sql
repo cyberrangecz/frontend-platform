@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS training_run_started (
   instance_id INTEGER NOT NULL,
   timestamp BIGINT NOT NULL,
   type TEXT NOT NULL,
-  sandbox_id TEXT NOT NULL,
+  sandbox_id TEXT,
   pool_id INTEGER NOT NULL,
   training_definition_id INTEGER NOT NULL,
   training_instance_id INTEGER NOT NULL,
@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS training_run_resumed (
   instance_id INTEGER NOT NULL,
   timestamp BIGINT NOT NULL,
   type TEXT NOT NULL,
-  sandbox_id TEXT NOT NULL,
+  sandbox_id TEXT,
   pool_id INTEGER NOT NULL,
   training_definition_id INTEGER NOT NULL,
   training_instance_id INTEGER NOT NULL,
@@ -55,7 +55,7 @@ CREATE TABLE IF NOT EXISTS training_run_ended (
   instance_id INTEGER NOT NULL,
   timestamp BIGINT NOT NULL,
   type TEXT NOT NULL,
-  sandbox_id TEXT NOT NULL,
+  sandbox_id TEXT,
   pool_id INTEGER NOT NULL,
   training_definition_id INTEGER NOT NULL,
   training_instance_id INTEGER NOT NULL,
@@ -78,7 +78,7 @@ CREATE TABLE IF NOT EXISTS level_started (
   instance_id INTEGER NOT NULL,
   timestamp BIGINT NOT NULL,
   type TEXT NOT NULL,
-  sandbox_id TEXT NOT NULL,
+  sandbox_id TEXT,
   pool_id INTEGER NOT NULL,
   training_definition_id INTEGER NOT NULL,
   training_instance_id INTEGER NOT NULL,
@@ -102,7 +102,7 @@ CREATE TABLE IF NOT EXISTS level_completed (
   instance_id INTEGER NOT NULL,
   timestamp BIGINT NOT NULL,
   type TEXT NOT NULL,
-  sandbox_id TEXT NOT NULL,
+  sandbox_id TEXT,
   pool_id INTEGER NOT NULL,
   training_definition_id INTEGER NOT NULL,
   training_instance_id INTEGER NOT NULL,
@@ -124,7 +124,7 @@ CREATE TABLE IF NOT EXISTS correct_answer_submitted (
   instance_id INTEGER NOT NULL,
   timestamp BIGINT NOT NULL,
   type TEXT NOT NULL,
-  sandbox_id TEXT NOT NULL,
+  sandbox_id TEXT,
   pool_id INTEGER NOT NULL,
   training_definition_id INTEGER NOT NULL,
   training_instance_id INTEGER NOT NULL,
@@ -136,7 +136,7 @@ CREATE TABLE IF NOT EXISTS correct_answer_submitted (
   actual_score_in_level NUMERIC NOT NULL,
   total_training_level_score NUMERIC NOT NULL,
   total_assessment_level_score NUMERIC NOT NULL,
-  answer_content TEXT NOT NULL
+  answer_content TEXT
 );
 CREATE INDEX IF NOT EXISTS idx_cas_instance_timestamp ON correct_answer_submitted(instance_id, timestamp);
 CREATE INDEX IF NOT EXISTS idx_cas_instance_type ON correct_answer_submitted(instance_id, type);
@@ -146,7 +146,7 @@ CREATE TABLE IF NOT EXISTS wrong_answer_submitted (
   instance_id INTEGER NOT NULL,
   timestamp BIGINT NOT NULL,
   type TEXT NOT NULL,
-  sandbox_id TEXT NOT NULL,
+  sandbox_id TEXT,
   pool_id INTEGER NOT NULL,
   training_definition_id INTEGER NOT NULL,
   training_instance_id INTEGER NOT NULL,
@@ -158,7 +158,7 @@ CREATE TABLE IF NOT EXISTS wrong_answer_submitted (
   actual_score_in_level NUMERIC NOT NULL,
   total_training_level_score NUMERIC NOT NULL,
   total_assessment_level_score NUMERIC NOT NULL,
-  answer_content TEXT NOT NULL,
+  answer_content TEXT,
   count INTEGER NOT NULL
 );
 CREATE INDEX IF NOT EXISTS idx_was_instance_timestamp ON wrong_answer_submitted(instance_id, timestamp);
@@ -169,7 +169,7 @@ CREATE TABLE IF NOT EXISTS hint_taken (
   instance_id INTEGER NOT NULL,
   timestamp BIGINT NOT NULL,
   type TEXT NOT NULL,
-  sandbox_id TEXT NOT NULL,
+  sandbox_id TEXT,
   pool_id INTEGER NOT NULL,
   training_definition_id INTEGER NOT NULL,
   training_instance_id INTEGER NOT NULL,
@@ -193,7 +193,7 @@ CREATE TABLE IF NOT EXISTS solution_displayed (
   instance_id INTEGER NOT NULL,
   timestamp BIGINT NOT NULL,
   type TEXT NOT NULL,
-  sandbox_id TEXT NOT NULL,
+  sandbox_id TEXT,
   pool_id INTEGER NOT NULL,
   training_definition_id INTEGER NOT NULL,
   training_instance_id INTEGER NOT NULL,
@@ -215,7 +215,7 @@ CREATE TABLE IF NOT EXISTS assessment_answers (
   instance_id INTEGER NOT NULL,
   timestamp BIGINT NOT NULL,
   type TEXT NOT NULL,
-  sandbox_id TEXT NOT NULL,
+  sandbox_id TEXT,
   pool_id INTEGER NOT NULL,
   training_definition_id INTEGER NOT NULL,
   training_instance_id INTEGER NOT NULL,
@@ -226,28 +226,27 @@ CREATE TABLE IF NOT EXISTS assessment_answers (
   level_order INTEGER NOT NULL,
   actual_score_in_level NUMERIC NOT NULL,
   total_training_level_score NUMERIC NOT NULL,
-  total_assessment_level_score NUMERIC NOT NULL
+  total_assessment_level_score NUMERIC NOT NULL,
+  answers TEXT
 );
 CREATE INDEX IF NOT EXISTS idx_aa_instance_timestamp ON assessment_answers(instance_id, timestamp);
 CREATE INDEX IF NOT EXISTS idx_aa_instance_type ON assessment_answers(instance_id, type);
 
--- Entity tables
-CREATE TABLE IF NOT EXISTS training_definitions (
-  id INTEGER PRIMARY KEY,
-  updated_at BIGINT NOT NULL
+-- Command event table
+CREATE TABLE IF NOT EXISTS commands (
+  id TEXT PRIMARY KEY,
+  instance_id INTEGER NOT NULL,
+  timestamp BIGINT NOT NULL,
+  type TEXT NOT NULL,
+  timestamp_str TEXT NOT NULL,
+  ip TEXT NOT NULL,
+  sandbox_id TEXT,
+  pool_id INTEGER NOT NULL,
+  hostname TEXT NOT NULL,
+  username TEXT NOT NULL,
+  wd TEXT NOT NULL,
+  cmd_type TEXT NOT NULL,
+  cmd TEXT NOT NULL
 );
-
-CREATE TABLE IF NOT EXISTS abstract_levels (
-  id INTEGER PRIMARY KEY,
-  updated_at BIGINT NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS training_instances (
-  id INTEGER PRIMARY KEY,
-  updated_at BIGINT NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS user_refs (
-  id INTEGER PRIMARY KEY,
-  updated_at BIGINT NOT NULL
-);
+CREATE INDEX IF NOT EXISTS idx_cmd_instance_timestamp ON commands(instance_id, timestamp);
+CREATE INDEX IF NOT EXISTS idx_cmd_instance_type ON commands(instance_id, type);
