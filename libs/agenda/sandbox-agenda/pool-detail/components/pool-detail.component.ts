@@ -23,7 +23,7 @@ import {
     PollingService,
     providePaginationStorageService,
 } from '@crczp/utils';
-import { SortDir } from '@sentinel/common/pagination';
+import { SortDir } from '@crczp/utils';
 import {
     SentinelControlItem,
     SentinelControlsComponent,

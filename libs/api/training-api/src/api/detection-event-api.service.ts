@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { SentinelParamsMerger } from '@sentinel/common';
-import { OffsetPaginationEvent } from '@sentinel/common/pagination';
+import { OffsetPaginationEvent } from '@crczp/utils';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { DetectionEventMapper } from '../mappers/detection-event/detection-event-mapper';

@@ -1,5 +1,9 @@
-import { OffsetPaginationEvent } from '@sentinel/common/pagination';
-import { TrainingInstance, TrainingRun } from '@crczp/training-model';
+import { OffsetPaginationEvent } from '@crczp/utils';
+import {
+    TrainingInstance,
+    TrainingInstanceBasic,
+    TrainingRun,
+} from '@crczp/training-model';
 import { Observable } from 'rxjs';
 import { OffsetPaginatedResource, QueryParam } from '@crczp/api-common';
 import { TrainingInstanceSort, TrainingRunSort } from '../sorts';
@@ -90,4 +94,8 @@ export abstract class LinearTrainingInstanceApi {
      * @param trainingInstanceId id of training instance
      */
     abstract exportScore(trainingInstanceId: number): Observable<boolean>;
+
+    abstract fetchInstancesByIds(
+        ids: number[],
+    ): Observable<TrainingInstanceBasic[]>;
 }

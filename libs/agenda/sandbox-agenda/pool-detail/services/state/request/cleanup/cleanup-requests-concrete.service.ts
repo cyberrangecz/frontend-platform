@@ -1,6 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { OffsetPaginationEvent } from '@sentinel/common/pagination';
+import { OffsetPaginationEvent } from '@crczp/utils';
 import { AllocationRequestSort, CleanupRequestsApi, PoolApi, SandboxAllocationUnitsApi } from '@crczp/sandbox-api';
 import { CleanupRequest, Request } from '@crczp/sandbox-model';
 import { EMPTY, Observable } from 'rxjs';

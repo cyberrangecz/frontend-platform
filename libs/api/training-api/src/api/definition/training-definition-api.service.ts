@@ -1,13 +1,16 @@
-import { OffsetPaginationEvent } from '@sentinel/common/pagination';
+import { OffsetPaginationEvent } from '@crczp/utils';
 import {
     AccessLevel,
     AssessmentLevel,
+    HintBasic,
     InfoLevel,
     Level,
+    LevelBasic,
     TrainingDefinition,
+    TrainingDefinitionBasic,
     TrainingDefinitionInfo,
     TrainingDefinitionStateEnum,
-    TrainingLevel,
+    TrainingLevel
 } from '@crczp/training-model';
 import { Observable } from 'rxjs';
 import { OffsetPaginatedResource, QueryParam } from '@crczp/api-common';
@@ -193,4 +196,12 @@ export abstract class LinearTrainingDefinitionApi {
         pagination: OffsetPaginationEvent<TrainingDefinitionSort>,
         filters?: QueryParam[],
     ): Observable<OffsetPaginatedResource<TrainingDefinition>>;
+
+    abstract fetchLevelsByIds(ids: number[]): Observable<LevelBasic[]>;
+
+    abstract fetchTrainingDefinitionsByIds(
+        ids: number[],
+    ): Observable<TrainingDefinitionBasic[]>;
+
+    abstract fetchHintsByIds(ids: number[]): Observable<HintBasic[]>;
 }

@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { OffsetPaginationEvent } from '@sentinel/common/pagination';
+import { OffsetPaginationEvent } from '@crczp/utils';
 import { LinearRunApi, LinearTrainingInstanceApi, TrainingRunSort } from '@crczp/training-api';
 import { TrainingRun } from '@crczp/training-model';
 import { EMPTY, Observable, of } from 'rxjs';

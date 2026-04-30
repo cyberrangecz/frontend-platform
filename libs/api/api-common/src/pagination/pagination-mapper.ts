@@ -2,7 +2,7 @@ import {
     OffsetPagination,
     OffsetPaginationEvent,
     PaginationEvent,
-} from '@sentinel/common/pagination';
+} from '@crczp/utils';
 import {
     DjangoOffsetPaginationDTO,
     JavaOffsetPaginationDTO,

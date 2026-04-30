@@ -1,28 +1,22 @@
 import { inject, Injectable } from '@angular/core';
-import {
-    HttpClient,
-    HttpContext,
-    HttpContextToken,
-    HttpHeaders,
-    HttpParams,
-} from '@angular/common/http';
+import { HttpClient, HttpContext, HttpContextToken, HttpHeaders, HttpParams } from '@angular/common/http';
 
 import { PortalConfig } from '@crczp/utils';
 
-import { OffsetPagination } from '@sentinel/common/pagination';
+import type { OffsetPagination } from '@crczp/utils';
 
 import {
     DjangoOffsetPaginationDTO,
     DjangoResourceDTO,
     JavaOffsetPaginationDTO,
-    JavaPaginatedResource,
+    JavaPaginatedResource
 } from './pagination/pagination-types';
 
 import { PaginationMapper } from './pagination/pagination-mapper';
-import { map, Observable, take } from 'rxjs';
+import { map, Observable, of, switchMap, take, tap } from 'rxjs';
 import { handleJsonError } from './validation/json-error-converter';
 import { OffsetPaginatedResource } from './pagination/offset-paginated-resource';
-import { withCache } from '@ngneat/cashew';
+import { HttpCacheManager, withCache } from '@ngneat/cashew';
 
 type Backend = 'java' | 'python';
 type BodylessVerb = 'GET' | 'DELETE';
@@ -31,6 +25,14 @@ type BodyVerb = 'POST' | 'PUT' | 'PATCH';
 export const SKIPPED_ERROR_CODES = new HttpContextToken<number[]>(() => []);
 
 export type CacheTTL = `${number}s` | `${number}m` | `${number}h` | 'forever';
+
+type SplitCacheConfig<TEl, TId extends string | number> = {
+    ids: TId[];
+    paramName: string;
+    cacheKey: (id: TId) => string;
+    ttl: CacheTTL;
+    itemId: (dto: TEl) => TId;
+};
 
 function mapCacheTTLToMs(ttl: CacheTTL): number {
     if (ttl === 'forever') {
@@ -75,6 +77,7 @@ export class CRCZPHttpService {
     /** Unwrapped Angular HttpClient for edge cases. */
     public readonly raw = this.http;
     private readonly version = inject(PortalConfig).version;
+    private readonly cacheManager = inject(HttpCacheManager);
 
     /**
      * Start a GET request (no request body).
@@ -88,6 +91,7 @@ export class CRCZPHttpService {
             url,
             operation,
             this.version,
+            this.cacheManager,
         );
     }
 
@@ -103,6 +107,7 @@ export class CRCZPHttpService {
             url,
             operation,
             this.version,
+            this.cacheManager,
         );
     }
 
@@ -332,12 +337,15 @@ class BodylessRequestBuilder<TRecv, TOut = TRecv> extends BaseRequestBuilder<
     TRecv,
     TOut
 > {
+    private splitCacheConfig?: SplitCacheConfig<unknown, string | number>;
+
     constructor(
         http: HttpClient,
         method: BodylessVerb,
         url: string,
         operation: string,
         private version: string,
+        private cacheManager: HttpCacheManager,
     ) {
         super(http, method, url, operation);
     }
@@ -357,6 +365,27 @@ class BodylessRequestBuilder<TRecv, TOut = TRecv> extends BaseRequestBuilder<
      */
     override withReceiveMapper<R2>(receive: (from: TRecv) => R2) {
         return this.withMapper(receive);
+    }
+
+    /**
+     * Enable per-ID split caching for batch endpoints that accept an array of IDs as a query parameter.
+     * Checks the cache for each ID individually, fetches only uncached IDs from the server,
+     * stores each returned DTO per ID, then merges the full DTO array and feeds it through
+     * the configured mapper. Mutually exclusive with {@link withCache} and {@link withPagination}.
+     * @param options.ids Array of IDs to resolve.
+     * @param options.paramName Query parameter name used to pass IDs to the endpoint.
+     * @param options.cacheKey Function producing a unique cache key for a single ID.
+     * @param options.ttl Cache TTL, e.g., '30s', '5m', '2h', or 'forever'.
+     * @param options.itemId Function extracting the ID from a returned DTO element.
+     */
+    withSplitCacheQuery<TId extends string | number>(
+        options: SplitCacheConfig<TRecv extends (infer E)[] ? E : never, TId>,
+    ): this {
+        this.splitCacheConfig = options as SplitCacheConfig<
+            unknown,
+            string | number
+        >;
+        return this;
     }
 
     /**
@@ -389,6 +418,10 @@ class BodylessRequestBuilder<TRecv, TOut = TRecv> extends BaseRequestBuilder<
      * Execute the GET/DELETE request.
      */
     execute(): Observable<TOut> {
+        if (this.splitCacheConfig) {
+            return this.executeSplitCache();
+        }
+
         const opts = this.options as any;
         let request$: Observable<any>;
 
@@ -406,6 +439,68 @@ class BodylessRequestBuilder<TRecv, TOut = TRecv> extends BaseRequestBuilder<
         const normalized$ = request$.pipe(handleJsonError());
         const mapped$ = this.mapPaginatedOrReceive(normalized$);
         return mapped$.pipe(take(1));
+    }
+
+    private executeSplitCache(): Observable<TOut> {
+        if (this.pagination) {
+            throw new Error(
+                'withSplitCache is mutually exclusive with withPagination',
+            );
+        }
+
+        const { ids, paramName, cacheKey, ttl, itemId } =
+            this.splitCacheConfig!;
+        const ttlMs = mapCacheTTLToMs(ttl);
+
+        const cachedDtos: unknown[] = [];
+        const uncachedIds: (string | number)[] = [];
+
+        for (const id of ids) {
+            const key = `${this.version}::${cacheKey(id)}`;
+            if (this.cacheManager.has(key, 'localStorage')) {
+                cachedDtos.push(this.cacheManager.get(key, 'localStorage'));
+            } else {
+                uncachedIds.push(id);
+            }
+        }
+
+        const buildResult = (freshDtos: unknown[]): Observable<TOut> => {
+            const merged = [...cachedDtos, ...freshDtos] as unknown as TRecv;
+            return (
+                this.mapPaginatedOrReceive(of(merged)) as Observable<TOut>
+            ).pipe(take(1));
+        };
+
+        if (uncachedIds.length === 0) {
+            return buildResult([]);
+        }
+
+        const existingParams =
+            this.options.params instanceof HttpParams
+                ? this.options.params
+                : new HttpParams();
+
+        const opts = {
+            ...this.options,
+            params: existingParams.set(paramName, uncachedIds.join(',')),
+            observe: 'body' as const,
+            responseType: 'json' as const,
+        };
+
+        return this.http.get<unknown[]>(this.url, opts).pipe(
+            handleJsonError(),
+            tap((freshDtos) => {
+                for (const dto of freshDtos) {
+                    this.cacheManager.set(
+                        `${this.version}::${cacheKey(itemId(dto as any))}`,
+                        dto,
+                        { ttl: ttlMs, strategy: 'localStorage' },
+                    );
+                }
+            }),
+            switchMap((freshDtos) => buildResult(freshDtos)),
+            take(1),
+        );
     }
 }
 

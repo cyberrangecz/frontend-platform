@@ -11,14 +11,16 @@ import {
     ParamsBuilder,
     QueryParam
 } from '@crczp/api-common';
-import { OffsetPaginationEvent } from '@sentinel/common/pagination';
-import { TrainingInstance, TrainingRun } from '@crczp/training-model';
+import { OffsetPaginationEvent } from '@crczp/utils';
+import { TrainingInstance, TrainingInstanceBasic, TrainingRun } from '@crczp/training-model';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { TrainingInstanceAssignPoolDTO } from '../../dto/training-instance/training-instance-assign-pool-dto';
 import { TrainingInstanceDTO } from '../../dto/training-instance/training-instance-dto';
+import { TrainingInstanceBasicDto } from '../../dto/training-instance/training-instance-basic-dto';
 import { TrainingInstanceMapper } from '../../mappers/training-instance/training-instance-mapper';
 import { TrainingRunMapper } from '../../mappers/training-run/training-run-mapper';
+import { trainingInstanceBasicArrayMapper } from '../../mappers/training-instance/training-instance-basic-mapper';
 import { LinearTrainingInstanceApi } from './training-instance-api.service';
 import { TrainingRunDTO } from '../../dto/training-run/training-run-dto';
 import { PortalConfig } from '@crczp/utils';
@@ -241,5 +243,22 @@ export class TrainingInstanceDefaultApi extends LinearTrainingInstanceApi {
                     return true;
                 }),
             );
+    }
+
+    fetchInstancesByIds(ids: number[]): Observable<TrainingInstanceBasic[]> {
+        return this.crczpHttp
+            .get<TrainingInstanceBasicDto[]>(
+                `${this.trainingInstancesEndpointUri}/by-ids`,
+                'Fetch training instances by ids',
+            )
+            .withSplitCacheQuery({
+                ids,
+                cacheKey: (id) => `trainingInstanceBasic-${id}`,
+                itemId: (dto) => dto.id,
+                paramName: 'ids',
+                ttl: '8h',
+            })
+            .withMapper(trainingInstanceBasicArrayMapper)
+            .execute();
     }
 }

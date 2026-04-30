@@ -1,5 +1,5 @@
 export interface BasicLevelInfoDTO {
-    id?: number;
+    id: number;
     level_type?: BasicLevelInfoDTO.LevelTypeEnum;
     order?: number;
     title?: string;

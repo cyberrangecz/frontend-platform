@@ -5,7 +5,7 @@ import {
     SentinelConfirmationDialogConfig,
     SentinelDialogResultEnum
 } from '@sentinel/components/dialogs';
-import { OffsetPaginationEvent } from '@sentinel/common/pagination';
+import { OffsetPaginationEvent } from '@crczp/utils';
 import { UserApi, UserSort } from '@crczp/user-and-group-api';
 import { User } from '@crczp/user-and-group-model';
 import { EMPTY, Observable } from 'rxjs';

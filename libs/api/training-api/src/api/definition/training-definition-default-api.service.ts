@@ -3,6 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { ResponseHeaderContentDispositionReader, SentinelParamsMerger } from '@sentinel/common';
 import {
     BlobFileSaver,
+    CRCZPHttpService,
     handleJsonError,
     JavaPaginatedResource,
     OffsetPaginatedResource,
@@ -10,13 +11,16 @@ import {
     ParamsBuilder,
     QueryParam
 } from '@crczp/api-common';
-import { OffsetPaginationEvent } from '@sentinel/common/pagination';
+import { OffsetPaginationEvent } from '@crczp/utils';
 import {
     AccessLevel,
     AssessmentLevel,
+    HintBasic,
     InfoLevel,
     Level,
+    LevelBasic,
     TrainingDefinition,
+    TrainingDefinitionBasic,
     TrainingDefinitionInfo,
     TrainingDefinitionStateEnum,
     TrainingLevel
@@ -35,6 +39,12 @@ import { LinearTrainingDefinitionApi } from './training-definition-api.service';
 import { TrainingDefinitionInfoDTO } from '../../dto/training-definition/training-definition-info-dto';
 import { PortalConfig } from '@crczp/utils';
 import { TrainingDefinitionSort } from '../sorts';
+import { TrainingDefinitionBasicDto } from '../../dto/training-definition/training-definition-basic-dto';
+import { LevelBasicDto } from '../../dto/level/level-basic-dto';
+import { HintBasicDto } from '../../dto/level/training/training-level-basic-dto';
+import { levelBasicArrayMapper } from '../../mappers/level/level-basic-mapper';
+import { trainingDefinitionBasicArrayMapper } from '../../mappers/training-definition/training-definition-basic-mapper';
+import { hintBasicArrayMapper } from '../../mappers/level/training/hint-basic-mapper';
 
 /**
  * Service abstracting http communication with training definition endpoints.
@@ -42,7 +52,7 @@ import { TrainingDefinitionSort } from '../sorts';
 @Injectable()
 export class TrainingDefinitionDefaultApi extends LinearTrainingDefinitionApi {
     private readonly http = inject(HttpClient);
-
+    private readonly crczpHttp = inject(CRCZPHttpService);
     private readonly trainingDefinitionUriExtension = 'training-definitions';
     private readonly levelsUriExtension = 'levels';
     private readonly sandboxDefUriExtension = 'sandbox-definitions';
@@ -58,6 +68,56 @@ export class TrainingDefinitionDefaultApi extends LinearTrainingDefinitionApi {
             basePath + '/' + this.trainingDefinitionUriExtension;
         this.trainingExportEndpointUri = basePath + '/exports';
         this.trainingImportEndpointUri = basePath + '/imports';
+    }
+
+    fetchLevelsByIds(ids: number[]): Observable<LevelBasic[]> {
+        return this.crczpHttp
+            .get<LevelBasicDto[]>(
+                `${this.trainingDefsEndpointUri}/${this.levelsUriExtension}/by-ids`,
+                'Fetch levels by ids',
+            )
+            .withSplitCacheQuery({
+                ids,
+                cacheKey: (id) => `levelBasic-${id}`,
+                itemId: (dto) => dto.id,
+                paramName: 'ids',
+                ttl: '8h',
+            })
+            .withMapper(levelBasicArrayMapper)
+            .execute();
+    }
+
+    fetchTrainingDefinitionsByIds(ids: number[]): Observable<TrainingDefinitionBasic[]> {
+        return this.crczpHttp
+            .get<TrainingDefinitionBasicDto[]>(
+                `${this.trainingDefsEndpointUri}/by-ids`,
+                'Fetch training definitions by ids',
+            )
+            .withSplitCacheQuery({
+                ids,
+                cacheKey: (id) => `trainingDefinitionBasic-${id}`,
+                itemId: (dto) => dto.id,
+                paramName: 'ids',
+                ttl: '8h',
+            })
+            .withMapper(trainingDefinitionBasicArrayMapper)
+            .execute();
+    }
+
+    fetchHintsByIds(ids: number[]): Observable<HintBasic[]> {
+        return this.crczpHttp
+            .get<HintBasicDto[]>(
+                `${this.trainingDefsEndpointUri}/hints/by-ids`,
+                'Fetch hints by ids')
+            .withSplitCacheQuery({
+                ids,
+                cacheKey: (id) => `hintBasic-${id}`,
+                itemId: (dto) => dto.id,
+                paramName: 'ids',
+                ttl: '8h',
+            })
+            .withMapper(hintBasicArrayMapper)
+            .execute();
     }
 
     /**
@@ -172,7 +232,9 @@ export class TrainingDefinitionDefaultApi extends LinearTrainingDefinitionApi {
      * @param id id of training definition which should be downloaded
      */
     download(id: number): Observable<boolean> {
-        const headers = new HttpHeaders().set('Accept', ['application/octet-stream']);
+        const headers = new HttpHeaders().set('Accept', [
+            'application/octet-stream',
+        ]);
 
         return this.http
             .get(

@@ -1,4 +1,4 @@
-import { OffsetPagination, PaginatedElements, PaginatedResource } from '@sentinel/common/pagination';
+import { OffsetPagination, PaginatedElements, PaginatedResource } from '@crczp/utils';
 
 /**
  * Class enhancing PaginatedResource with OffsetPagination type

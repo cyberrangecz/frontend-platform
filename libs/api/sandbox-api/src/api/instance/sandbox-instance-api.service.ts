@@ -1,19 +1,16 @@
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { ResponseHeaderContentDispositionReader } from '@sentinel/common';
-import { OffsetPaginationEvent } from '@sentinel/common/pagination';
-import { Lock, SandboxInstance, SandboxKeyPair, VMConsole, VMInfo, VMStatus } from '@crczp/sandbox-model';
+import { OffsetPaginationEvent, PortalConfig } from '@crczp/utils';
+import { Lock, SandboxInstance, SandboxKeyPair } from '@crczp/sandbox-model';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { LockDTO } from '../../dto/sandbox-instance/lock-dto';
 import { SandboxInstanceDTO } from '../../dto/sandbox-instance/sandbox-instance-dto';
 import { SandboxKeyPairDTO } from '../../dto/sandbox-instance/sandbox-key-pair-dto';
-import { VMInfoDTO } from '../../dto/sandbox-instance/vm-info-dto';
 import { SandboxInstanceMapper } from '../../mappers/sandbox-instance/sandbox-instance-mapper';
 import { LockMapper } from '../../mappers/sandbox-instance/lock-mapper';
 import { SandboxKeyPairMapper } from '../../mappers/sandbox-instance/sandbox-key-pair-mapper';
-import { VMConsoleMapper } from '../../mappers/sandbox-instance/vm-console-mapper';
-import { VMInfoMapper } from '../../mappers/sandbox-instance/vm-info-mapper';
 import {
     BlobFileSaver,
     DjangoResourceDTO,
@@ -22,7 +19,6 @@ import {
     PaginationMapper,
     ParamsBuilder
 } from '@crczp/api-common';
-import { PortalConfig } from '@crczp/utils';
 import { PoolLockSort, SandboxInstanceSort } from '../sorts';
 
 /**
@@ -34,7 +30,6 @@ export class SandboxInstanceApi {
 
     private readonly sandboxInstancesUriExtension = 'sandboxes';
     private readonly locksUriExtension = 'lock';
-    private readonly vmsUriExtension = 'vms';
 
     private readonly poolsEndpointUri: string;
     private readonly sandboxEndpointUri: string;
@@ -166,7 +161,9 @@ export class SandboxInstanceApi {
      * @param sandboxUuid id of the sandbox for which remote ssh access is demanded
      */
     getUserSshAccess(sandboxUuid: string): Observable<boolean> {
-        const headers = new HttpHeaders().set('Accept', ['application/octet-stream']);
+        const headers = new HttpHeaders().set('Accept', [
+            'application/octet-stream',
+        ]);
         return this.http
             .get(`${this.sandboxEndpointUri}/${sandboxUuid}/user-ssh-access`, {
                 responseType: 'blob',
@@ -186,61 +183,5 @@ export class SandboxInstanceApi {
                     return true;
                 }),
             );
-    }
-
-    /**
-     * Sends http request to generate SSH config for user access to sandbox
-     * @param sandboxId id of the sandbox
-     */
-    getUserSSHConfig(sandboxId: number): Observable<any> {
-        return this.http.get(
-            `${this.sandboxEndpointUri}/${sandboxId}/user-ssh-config`,
-        );
-    }
-
-    /**
-     * Sends http request to get VM info
-     * @param sandboxUuid id of the sandbox
-     * @param vmName name of VM to get info for
-     */
-    getVMInfo(sandboxUuid: string, vmName: string): Observable<VMInfo> {
-        return this.http
-            .get<VMInfoDTO>(
-                `${this.sandboxEndpointUri}/${sandboxUuid}/${this.vmsUriExtension}/${vmName}`,
-            )
-            .pipe(map((response) => VMInfoMapper.fromDTO(response)));
-    }
-
-    /**
-     * Sends http request to update VM status
-     * @param sandboxUuid id of the sandbox
-     * @param vmName name of VM to get info for
-     * @param newStatus new status of the VM
-     */
-    updateVMStatus(
-        sandboxUuid: string,
-        vmName: string,
-        newStatus: VMStatus,
-    ): Observable<any> {
-        const param = new HttpParams().set('action', newStatus);
-        return this.http.patch(
-            `${this.sandboxEndpointUri}/${sandboxUuid}/${this.vmsUriExtension}/${vmName}`,
-            {
-                params: param,
-            },
-        );
-    }
-
-    /**
-     * Sends http request to get VM console
-     * @param sandboxUuid id of the sandbox
-     * @param vmName name of VM to get info for
-     */
-    getVMConsole(sandboxUuid: string, vmName: string): Observable<VMConsole> {
-        return this.http
-            .get<VMConsole>(
-                `${this.sandboxEndpointUri}/${sandboxUuid}/${this.vmsUriExtension}/${vmName}/console`,
-            )
-            .pipe(map((response) => VMConsoleMapper.fromDTO(response)));
     }
 }

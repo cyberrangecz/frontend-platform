@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit } from '@angular/core';
-import { OffsetPaginationEvent, SortDir } from '@sentinel/common/pagination';
+import { OffsetPaginationEvent, SortDir } from '@crczp/utils';
 import { SentinelControlItem, SentinelControlsComponent } from '@sentinel/components/controls';
 import { User } from '@crczp/user-and-group-model';
 import { SentinelTable, SentinelTableComponent, TableLoadEvent } from '@sentinel/components/table';

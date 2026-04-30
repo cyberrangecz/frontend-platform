@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { OffsetPaginationEvent } from '@sentinel/common/pagination';
+import { OffsetPaginationEvent } from '@crczp/utils';
 import { SandboxDefinition, SandboxDefinitionRef } from '@crczp/sandbox-model';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';

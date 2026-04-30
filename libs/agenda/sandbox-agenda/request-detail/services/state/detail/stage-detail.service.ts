@@ -1,6 +1,6 @@
 import { merge, Observable, takeUntil } from 'rxjs';
 import { OffsetPaginatedElementsPollingService } from '@sentinel/common';
-import { OffsetPaginationEvent } from '@sentinel/common/pagination';
+import { OffsetPaginationEvent } from '@crczp/utils';
 import { RequestStage } from '@crczp/sandbox-model';
 import { filter, map, tap } from 'rxjs/operators';
 import { StagesDetailPollRegistry } from './stages-detail-poll-registry.service';

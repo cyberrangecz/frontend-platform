@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { OffsetPaginationEvent, PaginationBase } from '@sentinel/common/pagination';
+import { OffsetPaginationEvent, PaginationBase } from '@crczp/utils';
 import { UserApi, UserRefSort } from '@crczp/training-api';
 import { Organizer } from '@crczp/training-model';
 import { SentinelUserAssignService } from '@sentinel/components/user-assign';

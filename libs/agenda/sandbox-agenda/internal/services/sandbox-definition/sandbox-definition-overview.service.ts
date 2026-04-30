@@ -1,4 +1,4 @@
-import { OffsetPaginationEvent } from '@sentinel/common/pagination';
+import { OffsetPaginationEvent } from '@crczp/utils';
 import { SandboxDefinition } from '@crczp/sandbox-model';
 import { Observable } from 'rxjs';
 import { SandboxDefinitionSort } from '@crczp/sandbox-api';

@@ -2,13 +2,14 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { SentinelParamsMerger } from '@sentinel/common';
 import {
+    CRCZPHttpService,
     JavaPaginatedResource,
     OffsetPaginatedResource,
     PaginationMapper,
     ParamsBuilder,
     QueryParam
 } from '@crczp/api-common';
-import { OffsetPaginationEvent } from '@sentinel/common/pagination';
+import { OffsetPaginationEvent } from '@crczp/utils';
 import { BetaTester, Designer, Organizer, TrainingUser } from '@crczp/training-model';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -23,6 +24,7 @@ import { UserRefSort } from './sorts';
 @Injectable()
 export class UserApi {
     private readonly http = inject(HttpClient);
+    private readonly crczpHttp = inject(CRCZPHttpService);
 
     private readonly trainingDefinitionUriExtension = 'training-definitions';
     private readonly trainingInstanceUrlExtension = 'training-instances';
@@ -250,6 +252,28 @@ export class UserApi {
                 `${this.trainingRunEndpointUri}/${trainingRunId}/organizers`,
             )
             .pipe(map((resp) => UserMapper.fromDTO(resp)));
+    }
+
+    /**
+     * Fetches users by their IDs, resolving each ID individually from cache.
+     * Only uncached IDs are sent to the server; results are merged and cached per ID.
+     * @param ids Array of user IDs to fetch.
+     */
+    fetchUsersByIds(ids: number[]): Observable<TrainingUser[]> {
+        return this.crczpHttp
+            .get<UserRefDTO[]>(
+                `${this.trainingRunEndpointUri}/users`,
+                'Fetch users by ids',
+            )
+            .withSplitCacheQuery({
+                ids,
+                paramName: 'ids',
+                cacheKey: (id) => `user-${id}`,
+                ttl: '8h',
+                itemId: (dto) => dto.user_ref_id,
+            })
+            .withMapper(UserMapper.fromDTOs)
+            .execute();
     }
 
     private paginatedUsersFromDTO(

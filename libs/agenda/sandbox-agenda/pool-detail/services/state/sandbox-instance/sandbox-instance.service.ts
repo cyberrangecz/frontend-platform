@@ -7,7 +7,7 @@ import {
     SentinelConfirmationDialogConfig,
     SentinelDialogResultEnum
 } from '@sentinel/components/dialogs';
-import { OffsetPaginationEvent } from '@sentinel/common/pagination';
+import { OffsetPaginationEvent } from '@crczp/utils';
 import {
     AllocationRequestSort,
     PoolApi,

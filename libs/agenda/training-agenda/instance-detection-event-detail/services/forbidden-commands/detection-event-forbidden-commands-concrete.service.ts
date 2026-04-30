@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { DetectedForbiddenCommandSort, DetectionEventApi } from '@crczp/training-api';
-import { OffsetPaginationEvent } from '@sentinel/common/pagination';
+import { OffsetPaginationEvent } from '@crczp/utils';
 import { Observable } from 'rxjs';
 import { DetectedForbiddenCommand } from '@crczp/training-model';
 import { tap } from 'rxjs/operators';

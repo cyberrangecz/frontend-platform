@@ -3,7 +3,7 @@ import {
     SelectablePaginatedService,
 } from '@crczp/user-and-group-agenda/internal';
 import { inject, Injectable } from '@angular/core';
-import { OffsetPaginationEvent } from '@sentinel/common/pagination';
+import { OffsetPaginationEvent } from '@crczp/utils';
 import { MicroserviceApi, MicroserviceSort } from '@crczp/user-and-group-api';
 import { Router } from '@angular/router';
 import { Microservice } from '@crczp/user-and-group-model';

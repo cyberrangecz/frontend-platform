@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, input, OnInit, output, signal } from '@angular/core';
-import { SortDir } from '@sentinel/common/pagination';
+import { SortDir } from '@crczp/utils';
 import { SentinelControlItem, SentinelControlsComponent } from '@sentinel/components/controls';
 import { Group, UserRole } from '@crczp/user-and-group-model';
 import { SentinelTable, SentinelTableComponent, TableLoadEvent } from '@sentinel/components/table';

@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { SentinelParamsMerger } from '@sentinel/common';
 import { JavaPaginatedResource, OffsetPaginatedResource, ParamsBuilder, QueryParam } from '@crczp/api-common';
-import { OffsetPaginationEvent } from '@sentinel/common/pagination';
+import { OffsetPaginationEvent } from '@crczp/utils';
 import { Group, UserRole } from '@crczp/user-and-group-model';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';

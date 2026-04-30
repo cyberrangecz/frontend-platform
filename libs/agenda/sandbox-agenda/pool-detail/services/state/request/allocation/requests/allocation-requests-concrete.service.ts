@@ -6,7 +6,7 @@ import {
     SentinelConfirmationDialogConfig,
     SentinelDialogResultEnum
 } from '@sentinel/components/dialogs';
-import { OffsetPaginationEvent } from '@sentinel/common/pagination';
+import { OffsetPaginationEvent } from '@crczp/utils';
 import { AllocationRequestsApi, AllocationRequestSort, PoolApi, SandboxAllocationUnitsApi } from '@crczp/sandbox-api';
 import { Request } from '@crczp/sandbox-model';
 import { EMPTY, Observable } from 'rxjs';

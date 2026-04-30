@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { DetectionEventApi, DetectionEventParticipantSort } from '@crczp/training-api';
-import { OffsetPaginationEvent } from '@sentinel/common/pagination';
+import { OffsetPaginationEvent } from '@crczp/utils';
 import { Observable } from 'rxjs';
 import { DetectionEventParticipant } from '@crczp/training-model';
 import { tap } from 'rxjs/operators';
