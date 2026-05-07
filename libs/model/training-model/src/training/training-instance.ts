@@ -2,6 +2,16 @@
  * Class representing training instance of a definition.
  */
 import {TrainingDefinition} from './training-definition';
+import { Z } from 'zod-class';
+import { z } from 'zod';
+
+export class TrainingInstanceBasic extends Z.class({
+    id: z.number(),
+    title: z.string(),
+    startTime: z.date(),
+    endTime: z.date(),
+    trainingDefinitionId: z.number(),
+}) {}
 
 export class TrainingInstance {
     id!: number;
@@ -18,6 +28,7 @@ export class TrainingInstance {
     showStepperBar!: boolean;
 
     /**
+     *
      * True if current time is greater than start time of the training instance, false otherwise
      */
     hasStarted(): boolean {
@@ -33,6 +44,9 @@ export class TrainingInstance {
      * @param timestamp time to be compared with start time and end time of training instance
      */
     isActive(timestamp: number): boolean {
-        return this.startTime.valueOf() < timestamp && this.endTime.valueOf() > timestamp;
+        return (
+            this.startTime.valueOf() < timestamp &&
+            this.endTime.valueOf() > timestamp
+        );
     }
 }

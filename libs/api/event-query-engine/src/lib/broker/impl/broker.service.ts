@@ -3,7 +3,7 @@ import { catchError, Observable, switchMap } from 'rxjs';
 import { PlatformEventType } from '@crczp/visualization-model';
 import { ErrorHandlerService, PortalConfig } from '@crczp/utils';
 import { LinearTrainingInstanceApi } from '@crczp/training-api';
-import { CacheService } from '../../cache/impl/cache.service';
+import { PgliteCacheService } from '../../cache/impl/pglite-cache.service';
 import { EventCacheDb } from '../../cache/cache.interface';
 import { CacheSyncService } from '../../sync/sync.interface';
 import { DataBrokerService } from '../broker.interface';
@@ -17,7 +17,7 @@ import { toObservable } from '@angular/core/rxjs-interop';
 export class DataBrokerServiceImpl implements DataBrokerService {
     private readonly injector = inject(Injector);
     private readonly syncService = inject(CacheSyncService);
-    private readonly cacheService = inject(CacheService);
+    private readonly cacheService = inject(PgliteCacheService);
     private readonly instanceApi = inject(LinearTrainingInstanceApi);
     private readonly errorHandler = inject(ErrorHandlerService);
     private readonly intervalMs =

@@ -2,6 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { SentinelParamsMerger } from '@sentinel/common';
 import {
+    CRCZPHttpService,
     JavaPaginatedResource,
     OffsetPaginatedResource,
     PaginationMapper,

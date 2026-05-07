@@ -60,15 +60,6 @@ function groupByTypeAndInstance(rows: RawEventRow[]): Record<string, RawEventRow
     );
 }
 
-function normalizeRow(row: RawEventRow): Record<string, unknown> {
-    const base: Record<string, unknown> = {
-        id: row.id,
-        instance_id: row.instance_id,
-        timestamp: row.timestamp,
-        type: row.type,
-    };
-    for (const [key, value] of Object.entries(row)) {
-        if (!(key in base)) base[key] = value;
-    }
-    return base;
+function normalizeRow({ id, ...rest }: RawEventRow): Record<string, unknown> {
+    return id !== undefined ? { id, ...rest } : { ...rest };
 }

@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
-import { Observable, concatMap, from, switchMap } from 'rxjs';
-import { CacheService } from '../../cache/impl/cache.service';
+import { concatMap, from, Observable, switchMap } from 'rxjs';
+import { PgliteCacheService } from '../../cache/impl/pglite-cache.service';
 import { WatermarkEntry } from '../../cache/cache.interface';
 import { CacheSyncService } from '../sync.interface';
 import { SyncParams } from '../sync-params.interface';
@@ -10,7 +10,7 @@ import { syncSingleType } from './single-type-sync';
 
 @Injectable({ providedIn: 'root' })
 export class SyncService extends CacheSyncService {
-    private readonly cacheService = inject(CacheService);
+    private readonly cacheService = inject(PgliteCacheService);
     private readonly fetchApi = inject(EventFetchApi);
 
     sync(params: SyncParams): Observable<SyncTableComplete> {

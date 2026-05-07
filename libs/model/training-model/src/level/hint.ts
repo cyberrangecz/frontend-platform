@@ -1,3 +1,12 @@
+import { Z } from 'zod-class';
+import { z } from 'zod';
+
+export class HintBasic extends Z.class({
+    id: z.number(),
+    title: z.string(),
+    penalty: z.number(),
+}) {}
+
 /**
  * Class representing hint in a training level.
  */

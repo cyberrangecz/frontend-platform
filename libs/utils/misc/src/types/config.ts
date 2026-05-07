@@ -70,6 +70,13 @@ export class PortalConfig extends Z.class({
             })
             .gt(0, 'Event cache max staleness must be greater than 0')
             .describe('Maxmimum milliseconds after which cached event data is considered stale and triggers a synchronization on query'),
+        eventCacheMaxSize: z
+            .number()
+            .int('Event cache max size must be an integer')
+            .gt(0, 'Event cache max size must be greater than 0')
+            .optional()
+            .default(524_288_000)
+            .describe('Maximum size in bytes for the event cache database. When exceeded at bootstrap, least-recently-synced instances are dropped until the limit is satisfied. Defaults to 500 MB.'),
     }),
 
     basePaths: z.object({

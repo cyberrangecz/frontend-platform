@@ -1,9 +1,9 @@
 import { inject, Injectable, InjectionToken } from '@angular/core';
 import { PgliteDatabase } from 'drizzle-orm/pglite';
-import { Observable, from, throwError } from 'rxjs';
+import { from, Observable, throwError } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 import { PortalConfig } from '@crczp/utils';
-import { RawEventRow, SqliteCacheService, WatermarkEntry } from '../cache.interface';
+import { CacheService, EventCacheDb, RawEventRow, WatermarkEntry } from '../cache.interface';
 import { initializeSchema } from './schema/schema-initializer';
 import { insert } from './operator/insert-operator';
 import { getWatermarks } from './operator/watermark-query-operator';
@@ -18,8 +18,8 @@ import { evictStaleInstances } from './operator/eviction-operator';
 export const EVENT_CACHE_DB = new InjectionToken<Promise<PgliteDatabase>>('EVENT_CACHE_DB');
 
 @Injectable({ providedIn: 'root' })
-export class CacheService implements SqliteCacheService {
-    private db: PgliteDatabase | null = null;
+export class PgliteCacheService implements CacheService {
+    private db: (PgliteDatabase & EventCacheDb) | null = null;
     private readonly initPromise: Promise<void>;
     private readonly config = inject(PortalConfig);
     private readonly dbPromise = inject(EVENT_CACHE_DB);
@@ -29,8 +29,9 @@ export class CacheService implements SqliteCacheService {
     }
 
     private async initializeDatabase(): Promise<void> {
-        this.db = await this.dbPromise;
-        await initializeSchema(this.db);
+        const rawDb = await this.dbPromise;
+        await initializeSchema(rawDb);
+        this.db = rawDb as unknown as PgliteDatabase & EventCacheDb;
     }
 
     private async ensureInitialized(): Promise<void> {
@@ -52,9 +53,9 @@ export class CacheService implements SqliteCacheService {
         );
     }
 
-    query<TResult>(queryFn: (db: any) => Observable<TResult[]>): Observable<TResult[]> {
+    query<TResult>(queryFn: (db: EventCacheDb) => Observable<TResult[]>): Observable<TResult[]> {
         return from(this.ensureInitialized()).pipe(
-            switchMap(() => queryFn(this.db)),
+            switchMap(() => queryFn(this.db!)),
             catchError((err) => throwError(() => new Error(`Query failed: ${err.message}`))),
         );
     }
@@ -66,9 +67,9 @@ export class CacheService implements SqliteCacheService {
         );
     }
 
-    evictStaleInstances(activeInstanceId?: number): Observable<void> {
+    evictStaleInstances(): Observable<void> {
         return from(this.ensureInitialized()).pipe(
-            switchMap(() => from(evictStaleInstances(this.db!, this.config, activeInstanceId))),
+            switchMap(() => from(evictStaleInstances(this.db!, this.config))),
             catchError((err) => throwError(() => new Error(`Evict stale instances failed: ${err.message}`))),
         );
     }

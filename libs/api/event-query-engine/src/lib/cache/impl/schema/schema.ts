@@ -1,7 +1,7 @@
 import { pgTable, text, integer, bigint, numeric, uniqueIndex, index } from 'drizzle-orm/pg-core';
 
 const baseEventFields = {
-  id: text('id').primaryKey(),
+  id: text('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
   instance_id: integer('instance_id').notNull(),
   timestamp: bigint('timestamp', { mode: 'number' }).notNull(),
   type: text('type').notNull(),
@@ -151,15 +151,17 @@ export const watermarkTable = pgTable(
   (table) => [uniqueIndex('idx_watermark_instance_type').on(table.instance_id, table.event_type)],
 );
 
-export const eventTables = {
-  TrainingRunStarted: trainingRunStartedTable,
-  TrainingRunResumed: trainingRunResumedTable,
-  TrainingRunEnded: trainingRunEndedTable,
-  LevelStarted: levelStartedTable,
-  LevelCompleted: levelCompletedTable,
-  CorrectAnswerSubmitted: correctAnswerSubmittedTable,
-  WrongAnswerSubmitted: wrongAnswerSubmittedTable,
-  HintTaken: hintTakenTable,
-  SolutionDisplayed: solutionDisplayedTable,
-  AssessmentAnswers: assessmentAnswersTable,
+import { PlatformEventType } from '@crczp/visualization-model';
+
+export const eventTables: Partial<Record<PlatformEventType, any>> = {
+  [PlatformEventType.TRAINING_RUN_STARTED]: trainingRunStartedTable,
+  [PlatformEventType.TRAINING_RUN_RESUMED]: trainingRunResumedTable,
+  [PlatformEventType.TRAINING_RUN_ENDED]: trainingRunEndedTable,
+  [PlatformEventType.LEVEL_STARTED]: levelStartedTable,
+  [PlatformEventType.LEVEL_COMPLETED]: levelCompletedTable,
+  [PlatformEventType.CORRECT_ANSWER_SUBMITTED]: correctAnswerSubmittedTable,
+  [PlatformEventType.WRONG_ANSWER_SUBMITTED]: wrongAnswerSubmittedTable,
+  [PlatformEventType.HINT_TAKEN]: hintTakenTable,
+  [PlatformEventType.SOLUTION_DISPLAYED]: solutionDisplayedTable,
+  [PlatformEventType.ASSESSMENT_ANSWERS]: assessmentAnswersTable,
 };

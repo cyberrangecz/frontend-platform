@@ -3,13 +3,12 @@ import '@analogjs/vitest-angular/setup-zone';
 import { BrowserDynamicTestingModule, platformBrowserDynamicTesting } from '@angular/platform-browser-dynamic/testing';
 import { getTestBed } from '@angular/core/testing';
 
-// Inject Node 22's native BroadcastChannel into the jsdom window so PGliteWorker
-// can use it for cross-thread RPC. Node's BroadcastChannel works across worker_threads
-// in the same process, which is exactly what @vitest/web-worker creates.
+// jsdom 22 provides its own BroadcastChannel scoped to the DOM context; it cannot
+// communicate with Node worker_threads. PGliteWorker leader election uses
+// BroadcastChannel across threads, so we must unconditionally replace jsdom's
+// implementation with the Node-native one.
 import { BroadcastChannel as NodeBroadcastChannel } from 'node:worker_threads';
-if (typeof globalThis.BroadcastChannel === 'undefined') {
-    (globalThis as any).BroadcastChannel = NodeBroadcastChannel;
-}
+(globalThis as any).BroadcastChannel = NodeBroadcastChannel;
 
 // navigator.locks polyfill — PGliteWorker leader-election requires it; absent in jsdom 22
 const _locksQueues = new Map<string, Promise<void>>();

@@ -8,7 +8,7 @@ import { EventCacheDb } from '../cache/cache.interface';
  *
  * Owns the Observable stream lifecycle — from scope signal to typed result
  * delivery. Delegates sync to CacheSyncService and cache queries to
- * SqliteCacheService.
+ * CacheService.
  *
  * Entity resolution is NOT handled by the broker. A separate module resolves
  * entity ID fields into entity objects using Cashew for HTTP caching. Clients

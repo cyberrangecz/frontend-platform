@@ -36,7 +36,7 @@ export interface TrainingEvent extends PlatformEvent {
     total_assessment_level_score: number;
 }
 
-export enum ProgressEventType {
+export enum PlatformEventType {
     TRAINING_RUN_STARTED = 'TrainingRunStarted',
     TRAINING_RUN_RESUMED = 'TrainingRunResumed',
     TRAINING_RUN_ENDED = 'TrainingRunEnded',
@@ -47,6 +47,7 @@ export enum ProgressEventType {
     HINT_TAKEN = 'HintTaken',
     SOLUTION_DISPLAYED = 'SolutionDisplayed',
     ASSESSMENT_ANSWERS = 'AssessmentAnswers',
+    COMMAND = 'Command',
 }
 
 export type LevelType = 'INFO' | 'ACCESS' | 'TRAINING' | 'ASSESSMENT';

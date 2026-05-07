@@ -1,4 +1,5 @@
 import {
+    APP_INITIALIZER,
     enableProdMode,
     ErrorHandler,
     importProvidersFrom,
@@ -58,9 +59,10 @@ import { provideNativeDateAdapter } from '@angular/material/core';
 import { RoleService } from './app/services/role.service';
 import { APP_ROUTES } from './app/app-routes';
 import { provideSentinelMarkdownEditorConfig } from '@sentinel/components/markdown-editor';
+import { firstValueFrom } from 'rxjs';
 import { PGliteWorker } from '@electric-sql/pglite/worker';
 import { drizzle } from 'drizzle-orm/pglite';
-import { EVENT_CACHE_DB } from '@crczp/event-query-engine';
+import { CacheService, EVENT_CACHE_DB } from '@crczp/event-query-engine';
 
 @Injectable()
 export class SentinelUagAuthorizationStrategy extends SentinelAuthorizationStrategy {
@@ -155,6 +157,14 @@ SentinelBootstrapper.bootstrapApplication('assets/config.json', AppComponent, {
                 const pg = new PGliteWorker(new Worker(workerUrl, { type: 'module' }));
                 return pg.waitReady.then(() => drizzle({ client: pg as any }));
             },
+        },
+        {
+            provide: APP_INITIALIZER,
+            useFactory: () => {
+                const cache = inject(CacheService);
+                return () => firstValueFrom(cache.evictStaleInstances());
+            },
+            multi: true,
         },
     ],
 }).catch((err) => console.error('Error bootstrapping application:', err));

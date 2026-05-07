@@ -1,6 +1,18 @@
+import { Z } from 'zod-class';
+import { z } from 'zod';
 import {formatDate} from '@angular/common';
 import {TrainingDefinitionStateEnum} from '../enums/training-definition-state.enum';
 import {Level} from '../level/level';
+
+/** Basic read-only training definition data safe for all roles. Subset of {@link TrainingDefinition}. */
+export class TrainingDefinitionBasic extends Z.class({
+    id: z.number(),
+    title: z.string(),
+    description: z.string(),
+    estimatedDuration: z.number(),
+    state: z.nativeEnum(TrainingDefinitionStateEnum),
+    levels: z.array(z.any()),
+}) {}
 
 /**
  * Class representing training definition in a system.

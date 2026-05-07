@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 /**
  * Opaque handle to the Drizzle async SQLite database with the full event schema loaded.
  *
- * Consumers receive this type only inside a SqliteCacheService.query callback — it is never
+ * Consumers receive this type only inside a CacheService.query callback — it is never
  * constructed or held directly. The concrete type is resolved by the cache implementation.
  */
 declare const _cacheDbBrand: unique symbol;
@@ -15,8 +15,8 @@ export type EventCacheDb = { readonly [_cacheDbBrand]: void };
  * as unknown until narrowed by the consumer's query or schema.
  */
 export interface RawEventRow {
-    /** UUID assigned by the backend. Primary key used for deduplication on insert. */
-    id: string;
+    /** UUID. Omit to let the cache DB generate one via crypto.randomUUID(). */
+    id?: string;
     /** Event class name. Determines which SQLite table the row is routed to. */
     type: string;
     /** Epoch milliseconds. Used for watermark tracking and delta sync. */
@@ -54,7 +54,7 @@ export interface WatermarkEntry {
  * execution, using Cashew for HTTP caching. Event rows contain entity ID fields (e.g.
  * training_definition_id, user_ref_id) that are resolved into entity objects outside this cache.
  */
-export interface SqliteCacheService {
+export abstract class CacheService {
     /**
      * Accepts raw event rows for any mix of event types and persists them.
      *
@@ -66,14 +66,14 @@ export interface SqliteCacheService {
      * All operations are executed in a single worker transaction.
      * Watermarks are committed only on full success — a failure leaves previous state intact.
      */
-    insert(rows: RawEventRow[]): Observable<void>;
+    abstract insert(rows: RawEventRow[]): Observable<void>;
 
     /**
      * Returns the current watermark state for the given (instanceId, eventTypes) pairs.
      * Used by the Sync Module to determine cache freshness and compute `sinceTimestamp`.
      * Entries not yet present in the watermark table are absent from the result.
      */
-    getWatermarks(instanceId: number, eventTypes: string[]): Observable<WatermarkEntry[]>;
+    abstract getWatermarks(instanceId: number, eventTypes: string[]): Observable<WatermarkEntry[]>;
 
     /**
      * Executes a typed Drizzle query against the local SQLite database.
@@ -81,19 +81,18 @@ export interface SqliteCacheService {
      * The `db` argument is the Drizzle async SQLite database with the full schema loaded.
      * Returns all matching rows, including those persisted in prior sessions.
      */
-    query<TResult>(queryFn: (db: EventCacheDb) => Observable<TResult[]>): Observable<TResult[]>;
+    abstract query<TResult>(queryFn: (db: EventCacheDb) => Observable<TResult[]>): Observable<TResult[]>;
 
     /**
      * Deletes all event rows and watermark entries scoped to the given instance.
      * After purge, the next Sync call for this instance will issue a full fetch.
      */
-    purge(instanceId: number): Observable<void>;
+    abstract purge(instanceId: number): Observable<void>;
 
     /**
      * Enforces the 7-day TTL and max-size cap on instance event data.
      * Drops the least-recently-synced instance first (by `last_synced` watermark).
-     * Never drops the currently active instance, even if it exceeds the size cap.
-     * Called once by bootstrap on application init.
+     * Called once by bootstrap on application init, before any instance is active.
      */
-    evictStaleInstances(activeInstanceId?: number): Observable<void>;
+    abstract evictStaleInstances(): Observable<void>;
 }

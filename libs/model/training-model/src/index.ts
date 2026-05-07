@@ -32,6 +32,7 @@ export * from './training/training-run';
 export * from './training/training-run-info';
 
 // LEVEL
+export * from './level/abstract-level-basic';
 export * from './level/access-level';
 export * from './level/assessment-level';
 export * from './level/answer-check-result';

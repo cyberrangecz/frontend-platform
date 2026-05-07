@@ -1,6 +1,13 @@
-import { Observable, concat, ignoreElements, of, switchMap, throwError } from 'rxjs';
+import {
+    concat,
+    ignoreElements,
+    Observable,
+    of,
+    switchMap,
+    throwError,
+} from 'rxjs';
 import { PlatformEventType } from '@crczp/visualization-model';
-import { SqliteCacheService, WatermarkEntry } from '../../cache/cache.interface';
+import { CacheService, WatermarkEntry } from '../../cache/cache.interface';
 import { EventFetchApi } from '../event-fetch-api';
 import { SyncTableComplete } from '../sync-result.interface';
 import { getSinceTimestamp, isWatermarkFresh } from './watermark-freshness';
@@ -12,7 +19,7 @@ export function syncSingleType(
     poolId: number | undefined,
     watermark: WatermarkEntry | undefined,
     fetchApi: EventFetchApi,
-    cacheService: SqliteCacheService,
+    cacheService: CacheService,
 ): Observable<SyncTableComplete> {
     const complete: SyncTableComplete = { eventType, instanceId };
 

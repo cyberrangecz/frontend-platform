@@ -1,6 +1,6 @@
-import { Observable, concat, defer, ignoreElements } from 'rxjs';
+import { concat, defer, ignoreElements, Observable } from 'rxjs';
 import { PlatformEventType } from '@crczp/visualization-model';
-import { EventCacheDb, SqliteCacheService } from '../../cache/cache.interface';
+import { CacheService, EventCacheDb } from '../../cache/cache.interface';
 import { CacheSyncService } from '../../sync/sync.interface';
 
 export function executeSyncAndQuery<TResult>(
@@ -9,10 +9,12 @@ export function executeSyncAndQuery<TResult>(
     poolId: number | undefined,
     queryFn: (db: EventCacheDb) => Observable<TResult[]>,
     syncService: CacheSyncService,
-    cacheService: SqliteCacheService,
+    cacheService: CacheService,
 ): Observable<TResult[]> {
     return concat(
-        syncService.sync({ instanceId, eventTypes, poolId }).pipe(ignoreElements()),
+        syncService
+            .sync({ instanceId, eventTypes, poolId })
+            .pipe(ignoreElements()),
         defer(() => cacheService.query(queryFn)),
     );
 }
