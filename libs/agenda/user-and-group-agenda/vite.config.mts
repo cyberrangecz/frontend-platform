@@ -3,6 +3,7 @@ import {defineConfig} from 'vite';
 import angular from '@analogjs/vite-plugin-angular';
 import {nxViteTsPaths} from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
 import {nxCopyAssetsPlugin} from '@nx/vite/plugins/nx-copy-assets.plugin';
+import { createTestConfig } from '../../../vitest.shared';
 
 export default defineConfig(() => ({
     root: __dirname,
@@ -12,19 +13,5 @@ export default defineConfig(() => ({
     // worker: {
     //  plugins: [ nxViteTsPaths() ],
     // },
-    test: {
-        watch: false,
-        globals: true,
-        environment: 'jsdom',
-        include: [
-            '{src,tests}/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}',
-        ],
-        setupFiles: ['src/test-setup.ts'],
-        reporters: ['default'],
-        coverage: {
-            reportsDirectory:
-                '../../../coverage/libs/agenda/user-and-group-agenda',
-            provider: 'v8' as const,
-        },
-    },
+    test: createTestConfig('../../../coverage/libs/agenda/user-and-group-agenda'),
 }));

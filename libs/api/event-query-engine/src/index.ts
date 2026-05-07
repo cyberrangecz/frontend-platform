@@ -1,5 +1,5 @@
 export { EVENT_CACHE_DB } from './lib/cache/impl/pglite-cache.service';
-export { CacheService } from './lib/cache/cache.interface';
+export { CacheService, EventCacheDb, RawEventRow, WatermarkEntry } from './lib/cache/cache.interface';
 export { EntityType, EntityValueType, ResolveEntities, ResolveEntitiesSafe } from './lib/entity-resolver/entity-type';
 export { EntityResolverService } from './lib/entity-resolver/entity-resolver.service';
 export { provideEntityResolverService } from './lib/entity-resolver/provide-entity-resolver';
