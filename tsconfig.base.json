@@ -166,6 +166,7 @@
                 "libs/model/user-and-group-model/src/index.ts"
             ],
             "@crczp/utils": ["libs/utils/misc/src/index.ts"],
+            "@crczp/test-utils": ["libs/utils/testing/src/index.ts"],
             "@crczp/visualization-api": [
                 "libs/api/visualization-api/src/index.ts"
             ],

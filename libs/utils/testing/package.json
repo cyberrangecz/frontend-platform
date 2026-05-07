@@ -1,0 +1,9 @@
+{
+    "name": "@crczp/test-utils",
+    "peerDependencies": {
+        "@angular/core": "*",
+        "zod": "*",
+        "zod-class": "*"
+    },
+    "sideEffects": false
+}
