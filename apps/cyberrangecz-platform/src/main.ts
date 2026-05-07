@@ -1,10 +1,10 @@
 import {
-    APP_INITIALIZER,
     enableProdMode,
     ErrorHandler,
     importProvidersFrom,
     inject,
     Injectable,
+    provideAppInitializer,
 } from '@angular/core';
 import { environment } from './environments/environment';
 import {
@@ -158,13 +158,9 @@ SentinelBootstrapper.bootstrapApplication('assets/config.json', AppComponent, {
                 return pg.waitReady.then(() => drizzle({ client: pg as any }));
             },
         },
-        {
-            provide: APP_INITIALIZER,
-            useFactory: () => {
-                const cache = inject(CacheService);
-                return () => firstValueFrom(cache.evictStaleInstances());
-            },
-            multi: true,
-        },
+        provideAppInitializer(() => {
+            const cache = inject(CacheService);
+            return firstValueFrom(cache.evictStaleInstances());
+        }),
     ],
 }).catch((err) => console.error('Error bootstrapping application:', err));
