@@ -1,82 +1,44 @@
-import { Component, computed, DestroyRef, inject, input, model, OnInit, signal } from '@angular/core';
-import { Level } from '@crczp/training-model';
-import { ProgressLevelInfo, ProgressVisualizationApiData } from '@crczp/visualization-model';
-import { Observable } from 'rxjs';
-import { Stepper, StepperItem } from '../../../stepper/stepper';
-import { ProgressDataService } from '../services/progress-data.service';
-import { ProgressChartComponent } from './progress-chart/progress-chart.component';
+import { ChangeDetectionStrategy, Component, effect, inject, input } from '@angular/core';
+import { ChartRendererService } from '../services/chart-renderer.interface.service';
+import { ProgressFeedService } from '../services/progress-feed.interface.service';
+import { ProgressUiStateService } from '../services/progress-ui-state.interface.service';
+import { InstanceId } from '../types/ids.types';
 
+/**
+ * Root component of the progress visualization.
+ *
+ * Declares the three component-scoped services in `providers` so each
+ * instance gets isolated feed, UI state, and renderer. Binds the feed to
+ * the `instanceId` input via an effect so navigating between instances
+ * within the same component instance re-scopes the broker streams.
+ *
+ * Renders the stepper, controls, and chart child component. The chart
+ * child binds the renderer to its host element during its view-init
+ * phase; no rendering glue lives at this level.
+ */
 @Component({
     selector: 'crczp-progress-visualization',
-    imports: [ProgressChartComponent, Stepper],
-    templateUrl: './progress-visualization.component.html',
+    standalone: true,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    providers: [
+        // ProgressFeedService — provided by impl class in code phase
+        // ProgressUiStateService — provided by impl class in code phase
+        // ChartRendererService — provided by impl class in code phase
+        // LinearTrainingInstanceApi expected to be available from app-root scope
+    ],
     styleUrl: './progress-visualization.component.scss',
-    providers: [ProgressDataService],
+    templateUrl: './progress-visualization.component.html',
 })
-export class ProgressVisualizationComponent implements OnInit {
-    instanceId = input.required<number>();
-    highlightedTraineeId = model<number | null>(null);
-    progressApiData = input<Observable<ProgressVisualizationApiData> | null>(
-        null,
-    );
+export class ProgressVisualizationComponent {
+    readonly instanceId = input.required<InstanceId>();
 
-    protected progressData = signal<ProgressVisualizationApiData>({
-        startTime: 0,
-        estimatedEndTime: 0,
-        endTime: 0,
-        levels: [],
-        progress: [],
-    });
+    private readonly feed = inject(ProgressFeedService);
+    protected readonly ui = inject(ProgressUiStateService);
+    protected readonly renderer = inject(ChartRendererService);
 
-    protected readonly stepperLevels = computed((): StepperItem[] =>
-        this.progressData().levels.map((level) => ({
-            label: this.buildStepperLevelLabel(level),
-            icon: Level.getLevelByType(level.levelType),
-        })),
-    );
-    protected highlightedLevelIndex = signal<number | null>(null);
-    protected selectedLevelIndex = signal<number | null>(null);
-    protected readonly destroyRef = inject(DestroyRef);
-    private progressDataService = inject(ProgressDataService);
-
-    /**
-     * Initializes component and subscribes to progress data updates.
-     */
-    ngOnInit() {
-        // TODO
-        // (
-        //     this.progressApiData() ??
-        //     this.progressDataService.getVisualizationData$(this.instanceId())
-        // )
-        //     .pipe(takeUntilDestroyed(this.destroyRef))
-        //     .subscribe((data) => {
-        //         this.progressData.set(data);
-        //     });
-    }
-
-    /**
-     * Toggles selected level for filtering.
-     * @param $event - Level index to select or deselect
-     */
-    protected updateSelectedLevel($event: number) {
-        if (this.selectedLevelIndex() === $event) {
-            this.selectedLevelIndex.set(null);
-        } else {
-            this.selectedLevelIndex.set($event);
-        }
-    }
-
-    /**
-     * Builds stepper label with level title and active trainee count.
-     * @param level - Level information
-     * @returns Formatted label string
-     */
-    private buildStepperLevelLabel(level: ProgressLevelInfo) {
-        const traineeCount = this.progressData().progress.filter((trainee) =>
-            trainee.levels.some(
-                (lvl) => lvl.id === level.id && lvl.state === 'RUNNING',
-            ),
-        ).length;
-        return level.title + `\n[${traineeCount} active]`;
+    constructor() {
+        effect(() => {
+            this.feed.bind(this.instanceId);
+        });
     }
 }
