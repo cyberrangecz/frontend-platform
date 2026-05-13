@@ -41,11 +41,8 @@ export const LONG_ESTIMATE_THRESHOLDS: LongEstimateThresholds = {
 };
 
 /**
- * Per-lag-state color palette.
- *
- * Values mirror the legacy palette documented in `../../../../../.docs/progress-visualization/visuals.md`.
- * Authoritative status pending design review — candidates for moving to
- * theme tokens (`@crczp/theme`) during the design pass.
+ * Per-lag-state color palette. Mirrors the legacy palette; candidates
+ * for moving to theme tokens (`@crczp/theme`) during the design pass.
  */
 export const LAG_STATE_COLORS: Readonly<Record<LagState, string>> = {
     UNKNOWN: 'rgba(84,112,198,1)',

@@ -21,9 +21,7 @@ export { asInstanceId, asTraineeId, asLevelId, asTrainingRunId, asBarKey } from 
 export type { LagState } from './types/lag-state.types';
 export { LAG_STATES, LAG_STATES_FILTERABLE } from './types/lag-state.types';
 
-export type { SortCriterion, SortDirection } from './types/sort.types';
-export { SORT_CRITERIA } from './types/sort.types';
+export type { SortCriterion, SortDirection } from './types/ui-state.types';
+export { SORT_CRITERIA } from './types/ui-state.types';
 
-export type { ViewModel } from './types/view-model.types';
-export type { LiveViewModel } from './types/live-view-model.types';
-export type { SkeletonViewModel } from './types/skeleton-view-model.types';
+export type { ViewModel, LiveViewModel, SkeletonViewModel } from './types/view-model.types';

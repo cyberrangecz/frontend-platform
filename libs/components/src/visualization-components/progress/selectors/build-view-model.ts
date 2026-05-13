@@ -1,12 +1,10 @@
 import { TrainingInstance } from '@crczp/training-model';
-import { BarRow, BarWithLag } from '../types/bar.types';
+import { BarRow, BarWithLag, LevelInfo } from '../types/bar.types';
 import { EventRow } from '../types/event.types';
-import { HighlightVm } from '../types/highlight.types';
 import { LevelId, TraineeId } from '../types/ids.types';
 import { LagState } from '../types/lag-state.types';
-import { LevelInfo } from '../types/level.types';
-import { LiveViewModel } from '../types/live-view-model.types';
-import { SortCriterion, SortDirection } from '../types/sort.types';
+import { HighlightVm, SortCriterion, SortDirection } from '../types/ui-state.types';
+import { LiveViewModel } from '../types/view-model.types';
 
 /**
  * Inputs to the live view-model assembler. Every slice the assembler

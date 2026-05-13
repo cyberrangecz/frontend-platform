@@ -1,5 +1,5 @@
-import { LegendItemVm } from '../types/legend.types';
 import { OptionFragment } from '../types/option-fragment.types';
+import { LegendItemVm } from '../types/view-model.types';
 
 /**
  * Translates the legend slice into the ghost-series option fragment plus

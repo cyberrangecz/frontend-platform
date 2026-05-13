@@ -1,6 +1,6 @@
 import { BarRow, BarWithLag } from '../types/bar.types';
 import { LevelId } from '../types/ids.types';
-import { LevelInfo } from '../types/level.types';
+import { LevelInfo } from '../types/bar.types';
 
 /**
  * Attaches the lag classification and the resolved effective right edge

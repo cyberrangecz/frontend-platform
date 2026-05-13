@@ -1,7 +1,7 @@
 import { Signal } from '@angular/core';
 import { TraineeId } from '../types/ids.types';
 import { LagState } from '../types/lag-state.types';
-import { SortCriterion, SortDirection } from '../types/sort.types';
+import { SortCriterion, SortDirection } from '../types/ui-state.types';
 
 /**
  * Owns all UI-side reactive state for the visualization — the values

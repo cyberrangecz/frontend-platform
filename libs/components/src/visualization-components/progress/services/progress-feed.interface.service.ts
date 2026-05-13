@@ -3,7 +3,7 @@ import { TrainingInstance } from '@crczp/training-model';
 import { BarRow } from '../types/bar.types';
 import { EventRow } from '../types/event.types';
 import { InstanceId, LevelId } from '../types/ids.types';
-import { LevelInfo } from '../types/level.types';
+import { LevelInfo } from '../types/bar.types';
 import { ViewModel } from '../types/view-model.types';
 
 /**

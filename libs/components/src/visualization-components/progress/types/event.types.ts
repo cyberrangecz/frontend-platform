@@ -38,8 +38,7 @@ export const EVENT_KINDS: readonly EventKind[] = [
  *  - `hintTitle`: the short label on HINT_TAKEN (always present on hint rows).
  *  - `hint`: the resolved `HintBasic` entity — only set after resolution
  *    succeeds. Note that `HintBasic` does not include `content`; full hint
- *    content for the shift-hold tooltip expansion requires a separate path
- *    (see open item in `data-flow-decisions.md`).
+ *    content for the shift-hold tooltip expansion requires a separate path.
  */
 export interface EventRow {
     readonly kind: EventKind;

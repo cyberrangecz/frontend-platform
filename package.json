@@ -27,6 +27,7 @@
         "@sentinel/layout": "20.1.3",
         "angular-mgl-timeline": "^1.1.0",
         "comlink": "^4.4.2",
+        "date-fns": "^4.1.0",
         "dom-to-svg": "^0.12.0",
         "drizzle-orm": "^0.45.2",
         "echarts": "^6.0.0",

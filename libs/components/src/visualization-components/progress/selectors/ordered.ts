@@ -1,6 +1,6 @@
 import { BarWithLag } from '../types/bar.types';
 import { TraineeId } from '../types/ids.types';
-import { SortCriterion, SortDirection } from '../types/sort.types';
+import { SortCriterion, SortDirection } from '../types/ui-state.types';
 
 /**
  * Three-stage stable ordering:
