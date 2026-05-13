@@ -62,7 +62,7 @@ import { provideSentinelMarkdownEditorConfig } from '@sentinel/components/markdo
 import { firstValueFrom } from 'rxjs';
 import { PGliteWorker } from '@electric-sql/pglite/worker';
 import { drizzle } from 'drizzle-orm/pglite';
-import { CacheService, EVENT_CACHE_DB } from '@crczp/event-query-engine';
+import { CacheService, provideEventBroker, provideEntityResolverService } from '@crczp/event-query-engine';
 
 @Injectable()
 export class SentinelUagAuthorizationStrategy extends SentinelAuthorizationStrategy {
@@ -150,14 +150,12 @@ SentinelBootstrapper.bootstrapApplication('assets/config.json', AppComponent, {
         }),
         provideHttpCache(withLocalStorage()),
         provideRouter(APP_ROUTES),
-        {
-            provide: EVENT_CACHE_DB,
-            useFactory: () => {
-                const workerUrl = new URL('./cache.worker.ts', import.meta.url);
-                const pg = new PGliteWorker(new Worker(workerUrl, { type: 'module' }));
-                return pg.waitReady.then(() => drizzle({ client: pg as any }));
-            },
-        },
+        provideEventBroker((() => {
+            const workerUrl = new URL('./cache.worker.ts', import.meta.url);
+            const pg = new PGliteWorker(new Worker(workerUrl, { type: 'module' }));
+            return pg.waitReady.then(() => drizzle({ client: pg as any }));
+        })()),
+        provideEntityResolverService(),
         provideAppInitializer(() => {
             const cache = inject(CacheService);
             return firstValueFrom(cache.evictStaleInstances());

@@ -1,5 +1,4 @@
 // @vitest-environment node
-import { JSDOM } from 'jsdom';
 import { TestBed } from '@angular/core/testing';
 import { PGlite } from '@electric-sql/pglite';
 import type { PgliteDatabase } from 'drizzle-orm/pglite';
@@ -11,6 +10,7 @@ import { signal } from '@angular/core';
 
 import { ErrorHandlerService, PortalConfig } from '@crczp/utils';
 import { LinearTrainingInstanceApi } from '@crczp/training-api';
+import { applyNodeTestEnvironment, provideTestPortalConfig } from '@crczp/test-utils';
 
 import { RawEventRow } from '../cache/cache.interface';
 import { initializeSchema } from '../cache/impl/schema/schema-initializer';
@@ -18,29 +18,14 @@ import { insert } from '../cache/impl/operator/insert-operator';
 import { getWatermarks } from '../cache/impl/operator/watermark-query-operator';
 import { purge } from '../cache/impl/operator/purge-operator';
 import { evictStaleInstances } from '../cache/impl/operator/eviction-operator';
-import {
-    levelStartedTable,
-    trainingRunStartedTable,
-    watermarkTable,
-} from '../cache/impl/schema/schema';
-import {
-    EVENT_CACHE_DB,
-    PgliteCacheService,
-} from '../cache/impl/pglite-cache.service';
+import { levelStartedTable, trainingRunStartedTable, watermarkTable } from '../cache/impl/schema/schema';
+import { EVENT_CACHE_DB, PgliteCacheService } from '../cache/impl/pglite-cache.service';
 import { SyncService } from '../sync/impl/sync.service';
 import { CacheSyncService } from '../sync/sync.interface';
 import { EventFetchApi, EventFetchParams } from '../sync/event-fetch-api';
 import { DataBrokerServiceImpl } from '../broker/impl/broker.service';
 
-const _jsdom = new JSDOM('<!doctype html><html><body></body></html>', {
-    url: 'http://localhost/',
-});
-(globalThis as any).window ??= _jsdom.window;
-(globalThis as any).document ??= _jsdom.window.document;
-(globalThis as any).location ??= _jsdom.window.location;
-(globalThis as any).navigator ??= _jsdom.window.navigator;
-(globalThis as any).HTMLElement ??= _jsdom.window.HTMLElement;
-(globalThis as any).Node ??= _jsdom.window.Node;
+applyNodeTestEnvironment();
 
 const activePgs: PGlite[] = [];
 
@@ -62,23 +47,44 @@ afterEach(async () => {
     }
 });
 
+/**
+ * Default polling and caching overrides shared by the integration suite.
+ * Short polling and short staleness windows keep the tests fast; everything
+ * else inherits the production-like defaults from `provideTestPortalConfig`.
+ */
+const DEFAULT_TEST_OVERRIDES = {
+    polling: {
+        pollingPeriodShort: 200,
+        pollingPeriodLong: 5000,
+        retryCount: 0,
+    },
+    caching: {
+        eventCacheMaxStaleness: 1000,
+    },
+} as const;
+
+/**
+ * Resolved {@link PortalConfig} value used by tests that call cache operators
+ * (e.g. {@link evictStaleInstances}) directly without going through TestBed,
+ * and by TestBed providers via {@link TEST_PORTAL_CONFIG_PROVIDER}.
+ *
+ * @param ttlSeconds Override for `caching.eventCacheTTL`.
+ * @param eventCacheMaxSize Override for `caching.eventCacheMaxSize`.
+ */
 function makeConfig(ttlSeconds = 7 * 24 * 3600, eventCacheMaxSize = 524_288_000): PortalConfig {
-    return {
-        polling: {
-            pollingPeriodShort: 200,
-            pollingPeriodLong: 5000,
-            retryCount: 0,
-        },
+    const provider = provideTestPortalConfig({
+        ...DEFAULT_TEST_OVERRIDES,
         caching: {
-            endpointCachingDisabled: false,
-            endpointCacheTTL: 300,
+            ...DEFAULT_TEST_OVERRIDES.caching,
             eventCacheTTL: ttlSeconds,
-            eventEntityCacheTTL: 300,
-            eventCacheMaxStaleness: 1000,
             eventCacheMaxSize,
         },
-    } as unknown as PortalConfig;
+    }) as { useValue: PortalConfig };
+    return provider.useValue;
 }
+
+/** Provider form for TestBed `providers` arrays, sharing the same default overrides. */
+const TEST_PORTAL_CONFIG_PROVIDER = provideTestPortalConfig(DEFAULT_TEST_OVERRIDES);
 
 const TRAINING_BASE: Omit<RawEventRow, 'id'> = {
     type: PlatformEventType.TRAINING_RUN_STARTED,
@@ -264,6 +270,32 @@ describe('Cache layer — operators against real PGlite', () => {
             ]);
             expect(wm.maxTimestamp).toBe(500);
         });
+
+        it('numeric columns return JS number, not string (mode: number)', async () => {
+            await insert(db, [
+                makeRow({
+                    id: 'numeric-check',
+                    actual_score_in_level: 80,
+                    total_training_level_score: 100,
+                    total_assessment_level_score: 0,
+                }),
+                makeRow({
+                    id: 'level-numeric',
+                    type: PlatformEventType.LEVEL_STARTED,
+                    level_type: 'TRAINING',
+                    level_title: 'L1',
+                    max_score: 100,
+                }),
+            ]);
+
+            const [trs] = await (db as any).select().from(trainingRunStartedTable);
+            expect(typeof trs.actual_score_in_level).toBe('number');
+            expect(typeof trs.total_training_level_score).toBe('number');
+            expect(typeof trs.total_assessment_level_score).toBe('number');
+
+            const [ls] = await (db as any).select().from(levelStartedTable);
+            expect(typeof ls.max_score).toBe('number');
+        });
     });
 
     describe('purge', () => {
@@ -441,7 +473,7 @@ describe('Sync layer — SyncService with real Cache + mocked EventFetchApi', ()
                 PgliteCacheService,
                 SyncService,
                 { provide: EVENT_CACHE_DB, useValue: dbPromise },
-                { provide: PortalConfig, useValue: makeConfig() },
+                TEST_PORTAL_CONFIG_PROVIDER,
                 { provide: EventFetchApi, useValue: mockFetch },
             ],
         });
@@ -680,7 +712,7 @@ describe('Broker layer — DataBrokerServiceImpl with real Sync + Cache', () => 
                 SyncService,
                 DataBrokerServiceImpl,
                 { provide: EVENT_CACHE_DB, useValue: dbPromise },
-                { provide: PortalConfig, useValue: makeConfig() },
+                TEST_PORTAL_CONFIG_PROVIDER,
                 { provide: EventFetchApi, useValue: mockFetch },
                 { provide: CacheSyncService, useExisting: SyncService },
                 {

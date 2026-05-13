@@ -1,5 +1,10 @@
 import { pgTable, text, integer, bigint, numeric, uniqueIndex, index } from 'drizzle-orm/pg-core';
 
+// Score and penalty columns use numeric({ mode: 'number' }) so Drizzle performs Number(value)
+// on read. Trade-off: float64 precision. All affected values are bounded integers (0–100,
+// counts, penalty points) so precision loss is not a concern. SQL schema stays numeric —
+// no IndexedDB cache rebuild required.
+
 const baseEventFields = {
   id: text('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
   instance_id: integer('instance_id').notNull(),
@@ -18,9 +23,9 @@ const trainingEventFields = {
   user_ref_id: integer('user_ref_id').notNull(),
   training_time: bigint('training_time', { mode: 'number' }).notNull(),
   level_order: integer('level_order').notNull(),
-  actual_score_in_level: numeric('actual_score_in_level').notNull(),
-  total_training_level_score: numeric('total_training_level_score').notNull(),
-  total_assessment_level_score: numeric('total_assessment_level_score').notNull(),
+  actual_score_in_level: numeric('actual_score_in_level', { mode: 'number' }).notNull(),
+  total_training_level_score: numeric('total_training_level_score', { mode: 'number' }).notNull(),
+  total_assessment_level_score: numeric('total_assessment_level_score', { mode: 'number' }).notNull(),
 };
 
 export const trainingRunStartedTable = pgTable(
@@ -60,7 +65,7 @@ export const levelStartedTable = pgTable(
     ...trainingEventFields,
     level_type: text('level_type').notNull(),
     level_title: text('level_title').notNull(),
-    max_score: numeric('max_score').notNull(),
+    max_score: numeric('max_score', { mode: 'number' }).notNull(),
   },
   (table) => [
     index('idx_ls_instance_timestamp').on(table.instance_id, table.timestamp),
@@ -111,7 +116,7 @@ export const hintTakenTable = pgTable(
     ...trainingEventFields,
     hint_id: integer('hint_id').notNull(),
     hint_title: text('hint_title').notNull(),
-    hint_penalty_points: numeric('hint_penalty_points').notNull(),
+    hint_penalty_points: numeric('hint_penalty_points', { mode: 'number' }).notNull(),
   },
   (table) => [
     index('idx_ht_instance_timestamp').on(table.instance_id, table.timestamp),
@@ -123,7 +128,7 @@ export const solutionDisplayedTable = pgTable(
   'solution_displayed',
   {
     ...trainingEventFields,
-    penalty_points: numeric('penalty_points').notNull(),
+    penalty_points: numeric('penalty_points', { mode: 'number' }).notNull(),
   },
   (table) => [
     index('idx_sd_instance_timestamp').on(table.instance_id, table.timestamp),
