@@ -3,6 +3,9 @@
     "version": "2.5.6",
     "license": "MIT",
     "private": true,
+    "scripts": {
+        "e2e:ui": "playwright test --config=apps/cyberrangecz-platform/e2e/playwright.config.ts --ui"
+    },
     "dependencies": {
         "@acrodata/code-editor": "^0.5.0",
         "@angular/animations": "~20.3.0",

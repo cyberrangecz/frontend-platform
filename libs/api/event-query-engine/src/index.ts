@@ -12,3 +12,20 @@ export { SyncService } from './lib/sync/impl/sync.service';
 export { DataBrokerService } from './lib/broker/broker.interface';
 export { DataBrokerServiceImpl } from './lib/broker/impl/broker.service';
 export { provideEventBroker } from './lib/broker/provide-event-broker';
+export { createPgliteEventDb } from './lib/broker/create-pglite-event-db';
+export {
+    initEventCacheWorker,
+    EventCacheWorkerOptions,
+} from './lib/cache/impl/init-event-cache-worker';
+export {
+    assessmentAnswersTable,
+    correctAnswerSubmittedTable,
+    hintTakenTable,
+    levelCompletedTable,
+    levelStartedTable,
+    solutionDisplayedTable,
+    trainingRunEndedTable,
+    trainingRunResumedTable,
+    trainingRunStartedTable,
+    wrongAnswerSubmittedTable,
+} from './lib/cache/impl/schema/schema';
