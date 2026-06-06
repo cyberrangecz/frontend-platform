@@ -11,7 +11,13 @@ export class TrainingInstanceBasic extends Z.class({
     startTime: z.date(),
     endTime: z.date(),
     trainingDefinitionId: z.number(),
-}) {}
+}) {
+    declare id: number;
+    declare title: string;
+    declare startTime: Date;
+    declare endTime: Date;
+    declare trainingDefinitionId: number;
+}
 
 export class TrainingInstance {
     id!: number;

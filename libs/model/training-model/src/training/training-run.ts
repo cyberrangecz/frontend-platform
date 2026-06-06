@@ -14,7 +14,17 @@ export class TrainingRunBasic extends Z.class({
     currentLevelId: z.number().nullable(),
     currentLevelOrder: z.number().nullable(),
     state: z.nativeEnum(TrainingRunStateEnum),
-}) {}
+}) {
+    declare id: number;
+    declare sandboxInstanceId: string | null;
+    declare trainingInstanceId: number;
+    declare trainingDefinitionId: number;
+    declare startTime: Date;
+    declare endTime: Date;
+    declare currentLevelId: number | null;
+    declare currentLevelOrder: number | null;
+    declare state: TrainingRunStateEnum;
+}
 
 /**
  * Class representing training run
