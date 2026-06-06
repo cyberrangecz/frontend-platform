@@ -15,9 +15,9 @@ import { ViewModel } from '../types/view-model.types';
  * source observable into a reactive signal scoped to the host
  * component's destruction lifecycle.
  *
- * Exposes the assembled view-model signal — already the right mode
- * (live when bars are present, skeleton otherwise) — so the renderer
- * has a single reactive input to consume.
+ * Exposes the assembled view-model signal — the live view-model once the
+ * instance prefetch resolves, `null` until then — so the renderer has a
+ * single reactive input to consume.
  *
  * Boundaries:
  *  - no mutation surface; consumers cannot push data in
@@ -34,10 +34,18 @@ export abstract class ProgressFeedService {
     /**
      * Binds the feed to the visualization's instance-id input. Called
      * once by the host component on construction. Re-binding is not
-     * supported; supplying a different `Signal` reference replaces the
-     * scope and tears down the existing subscriptions.
+     * supported; the underlying source observables are bridged to
+     * signals against the host's `DestroyRef` and cannot be torn down
+     * mid-life from inside this service.
      */
     abstract bind(instanceId: Signal<InstanceId>): void;
+
+    /**
+     * Re-triggers the instance prefetch fetch chain after a terminal
+     * error. Delegated to the instance-prefetch result's retry handle;
+     * a no-op before {@link bind}.
+     */
+    abstract retry(): void;
 
     /** Raw bar rows, after entity resolution. Empty array until first cycle. */
     abstract readonly bars: Signal<readonly BarRow[]>;
@@ -65,8 +73,25 @@ export abstract class ProgressFeedService {
     abstract readonly isLive: Signal<boolean>;
 
     /**
-     * Assembled view-model. Carries the `mode` tag — `live` once bars
-     * have arrived, `skeleton` while the bars source is empty.
+     * Terminal prefetch error sentinel, surfaced from the instance
+     * prefetch source. `null` while loading, while a fetch is in
+     * flight, and on success. Non-null after the prefetch exhausts
+     * its retries; the host component renders an error UI when this
+     * is non-null.
      */
-    abstract readonly viewModel: Signal<ViewModel>;
+    abstract readonly error: Signal<{ message: string } | null>;
+
+    /**
+     * Assembled view-model. The live view-model once the instance
+     * prefetch has resolved, `null` while it has not.
+     */
+    abstract readonly viewModel: Signal<ViewModel | null>;
+
+    /**
+     * Refreshes the axis now-anchor to the current wall-clock time so
+     * that the next view-model emission carries a fresh `axis.endMs`.
+     * Called by the chart renderer's watchdog when the remaining right-
+     * padding (axisEnd − now) drops below the refresh threshold.
+     */
+    abstract refreshAxisNow(): void;
 }

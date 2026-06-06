@@ -1,3 +1,4 @@
+// Canonical home for all view-model slice types. Do not duplicate declarations in sibling files.
 import { AbstractLevelTypeEnum } from '@crczp/training-model';
 import { BarVm } from './bar.types';
 import { EventVm } from './event.types';
@@ -8,18 +9,17 @@ import { HighlightVm } from './ui-state.types';
 /**
  * Axis view-model slice.
  *
- * Y-axis row count is implied by `trainees.length` on the live view-model
- * (or `placeholders.length` on the skeleton); the axis VM carries only
+ * Y-axis row count is implied by `trainees.length` on the live view-model;
+ * the axis VM carries only
  * the X-axis bounds, the date-prefix toggle that controls whether the
  * label format includes the day prefix when the instance spans midnight,
  * and the mount-time snapshot that anchors engine-driven motion.
  *
- * `mountNowMs` is the wall-clock timestamp captured when the feed bound
- * to its instance signal. Bar right-edge growth and the current-time
- * marker use it as the `percent: 0` anchor of a single linear keyframe
- * animation that runs in real time to `endMs` — so the chart paints
- * once and the engine's RAF loop owns visual progression. Stable for
- * the lifetime of one feed binding.
+ * `mountNowMs` is the wall-clock timestamp sampled when the view-model is
+ * assembled. Bar right-edge growth and the current-time marker use it as
+ * the `percent: 0` anchor of a single linear keyframe animation that runs
+ * in real time to `endMs` — so the engine's RAF loop owns visual
+ * progression between view-model emits.
  */
 export interface AxisVm {
     readonly startMs: number;
@@ -56,6 +56,11 @@ export interface StepperItemVm {
     readonly type: AbstractLevelTypeEnum;
     readonly title: string;
     readonly activeTraineeCount: number;
+    /**
+     * True when no bar exists for this level in the unfiltered instance
+     * population — no training run has started or completed the level.
+     */
+    readonly locked: boolean;
 }
 
 /**
@@ -72,17 +77,22 @@ export interface LegendItemVm {
 }
 
 /**
- * Skeleton placeholder row. The chart paints a fixed number of these
- * with the documented growing-bar animation while bars source is empty.
+ * Future legend-count transition event, derived from the pre-filter
+ * classified bar set. At `atMs` the legend chip for `fromState` decrements
+ * by one and the chip for `toState` increments by one.
  *
- * `startMs` defines the bar's left edge. The right edge is engine-
- * animated from `axis.mountNowMs` to `axis.endMs` in real time, so it
- * is not encoded on the row — placeholders share the axis's mount-time
- * snapshot and animate in lock-step with the current-time marker.
+ * Pre-filter on purpose: the legend is documented to reflect the whole
+ * instance population, not the visible subset. Filtering applies to the
+ * bars rendered in the chart, not to chip counts.
+ *
+ * Consumed by the live-view-model's `LegendTransitionSchedulerService`,
+ * which drives a partial `setOption` dispatch at each `atMs` to refresh
+ * chip text without disturbing the bars series animations.
  */
-export interface PlaceholderRowVm {
-    readonly rowIndex: number;
-    readonly startMs: number;
+export interface LegendTransitionEventVm {
+    readonly atMs: number;
+    readonly fromState: LagState;
+    readonly toState: LagState;
 }
 
 /**
@@ -91,9 +101,6 @@ export interface PlaceholderRowVm {
  * Composed from per-feature slice types. Each slice should preserve a stable
  * reference when its upstream inputs do not change — this is what drives the
  * renderer's minimal-payload mechanism (reference equality per slice).
- *
- * The `mode` tag disambiguates this from `SkeletonViewModel` at consumption
- * sites (renderer narrows via `if (vm.mode === 'live')`).
  */
 export interface LiveViewModel {
     readonly mode: 'live';
@@ -104,37 +111,20 @@ export interface LiveViewModel {
     readonly stepper: readonly StepperItemVm[];
     readonly legend: readonly LegendItemVm[];
     /**
-     * `false` when all training runs have finished; the marker is hidden.
-     * The marker's pixel position is engine-animated from `axis.mountNowMs`
-     * to `axis.endMs`, so the view-model carries no per-tick position.
+     * Future legend-count transitions across the *pre-filter* classified
+     * bar set, ordered ascending by `atMs`. The renderer's scheduler
+     * consumes this to dispatch partial legend `setOption` payloads as
+     * bars cross lag-state thresholds — independently of the filtered
+     * `bars` slice rendered in the chart.
+     *
+     * Empty when the instance has no running bars with future crossings.
      */
-    readonly showCurrentTime: boolean;
+    readonly legendTransitions: readonly LegendTransitionEventVm[];
     readonly highlight: HighlightVm;
 }
 
 /**
- * Bootstrap view-model. Painted while the bars source is empty.
- *
- * Carries enough information to draw plausible chrome (axes, current-time
- * marker, frame) plus a fixed list of animated placeholder rows.
- *
- * The current-time marker derives from `axis.mountNowMs` and `axis.endMs`
- * directly — its position is engine-animated, so the view-model does not
- * carry a per-tick `currentTimeMs` field. The marker is always shown in
- * skeleton mode, so a visibility toggle is also omitted.
- *
- * Trainees, events, stepper, legend, and highlight are intentionally omitted
- * — they are not yet meaningful, and synthesizing them could leak placeholder
- * data into other code paths.
- */
-export interface SkeletonViewModel {
-    readonly mode: 'skeleton';
-    readonly axis: AxisVm;
-    readonly placeholders: readonly PlaceholderRowVm[];
-}
-
-/**
  * The single shape that crosses the source → selector → option-builder
- * boundary. Discriminated by the `mode` tag.
+ * boundary.
  */
-export type ViewModel = LiveViewModel | SkeletonViewModel;
+export type ViewModel = LiveViewModel;

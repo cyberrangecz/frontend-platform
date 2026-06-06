@@ -45,7 +45,7 @@ export const LONG_ESTIMATE_THRESHOLDS: LongEstimateThresholds = {
  * for moving to theme tokens (`@crczp/theme`) during the design pass.
  */
 export const LAG_STATE_COLORS: Readonly<Record<LagState, string>> = {
-    UNKNOWN: 'rgba(84,112,198,1)',
+    COMPLETED: 'rgba(84,112,198,1)',
     OK: 'rgba(76,175,80,1)',
     WARNING: 'rgba(255,152,0,1)',
     LATE: 'rgba(244,67,54,1)',
@@ -59,7 +59,7 @@ export const LAG_STATE_COLORS: Readonly<Record<LagState, string>> = {
  * source so the legend builder and the filter-toggle path stay in sync.
  */
 export const LAG_STATE_LABELS: Readonly<Record<LagState, string>> = {
-    UNKNOWN: 'Unknown',
+    COMPLETED: 'Completed',
     OK: 'On Track',
     WARNING: 'Warning',
     LATE: 'Late',

@@ -24,4 +24,4 @@ export { LAG_STATES, LAG_STATES_FILTERABLE } from './types/lag-state.types';
 export type { SortCriterion, SortDirection } from './types/ui-state.types';
 export { SORT_CRITERIA } from './types/ui-state.types';
 
-export type { ViewModel, LiveViewModel, SkeletonViewModel } from './types/view-model.types';
+export type { ViewModel, LiveViewModel } from './types/view-model.types';

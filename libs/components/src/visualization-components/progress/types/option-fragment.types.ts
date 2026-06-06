@@ -12,6 +12,7 @@ import { EChartsOption } from 'echarts';
 export type OptionFragmentKey =
     | 'axis'
     | 'bars'
+    | 'runCaps'
     | 'eventIcons'
     | 'legend'
     | 'currentTimeMarker'

@@ -32,12 +32,30 @@ export abstract class ChartRendererService {
      * Initialises ECharts, wires the drag queue, the resize hook, and
      * the view-model effect. Disposal hooks the host component's
      * `DestroyRef`.
+     *
+     * @param outerHost - The outer container whose natural flex height is
+     *                    observed to derive `visibleRowCount`.
+     * @param innerHost - The ECharts mount target sized to the exact bar
+     *                    area plus top/bottom reserves.
+     * @param viewModel - The view-model signal.
      */
-    abstract bind(host: HTMLElement, viewModel: Signal<ViewModel>): void;
+    abstract bind(
+        outerHost: HTMLElement,
+        innerHost: HTMLElement,
+        viewModel: Signal<ViewModel | null>,
+    ): void;
 
     /** Imperative zoom reset for the reset-zoom UI control. */
     abstract resetZoom(): void;
 
     /** `true` while the chart's current zoom is anything other than 0–100%. */
     abstract readonly isZoomedIn: Signal<boolean>;
+
+    /**
+     * Pixel height that the inner chart container should be set to,
+     * derived from the outer host's available height and the current
+     * trainee count. Consumed by the chart component to set
+     * `[style.height.px]` on the inner host element.
+     */
+    abstract readonly innerHostHeightPx: Signal<number>;
 }

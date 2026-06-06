@@ -17,35 +17,23 @@ import { ProgressFeedService } from '../services/progress-feed.interface.service
     selector: 'crczp-progress-chart',
     standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    template: `
-        <div
-            #host
-            class="progress-chart-host"
-        ></div>
-    `,
-    styles: [
-        `
-            :host {
-                display: block;
-                width: 100%;
-                height: 100%;
-            }
-            .progress-chart-host {
-                width: 100%;
-                height: 100%;
-            }
-        `,
-    ],
+    templateUrl: './progress-chart.component.html',
+    styleUrl: './progress-chart.component.scss',
 })
 export class ProgressChartComponent {
+    protected readonly renderer = inject(ChartRendererService);
     private readonly feed = inject(ProgressFeedService);
-    private readonly renderer = inject(ChartRendererService);
 
-    private readonly host = viewChild.required<ElementRef<HTMLElement>>('host');
+    private readonly outer = viewChild.required<ElementRef<HTMLElement>>('outer');
+    private readonly inner = viewChild.required<ElementRef<HTMLElement>>('inner');
 
     constructor() {
         afterNextRender(() => {
-            this.renderer.bind(this.host().nativeElement, this.feed.viewModel);
+            this.renderer.bind(
+                this.outer().nativeElement,
+                this.inner().nativeElement,
+                this.feed.viewModel,
+            );
         });
     }
 }

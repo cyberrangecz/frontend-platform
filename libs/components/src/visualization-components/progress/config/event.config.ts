@@ -30,6 +30,27 @@ export const EVENT_ICON_CATALOG: Readonly<Record<EventKind, EventIconDescriptor>
  * Rationale: semantically informative icons (Solution, Hint) surface above
  * duplicates when clustered on the same timestamp.
  */
+/**
+ * Shared background fill for both run-boundary cap half-pills. The solid
+ * neutral gray renders consistently regardless of what is painted beneath
+ * the cap; glyph colour carries the semantic distinction between start and end.
+ */
+export const RUN_CAP_FILL_COLOR = '#e8edf5';
+
+/**
+ * Foreground colour of the glyph drawn inside the start cap.
+ * Solid green matches the semantic meaning of a run beginning and
+ * provides sufficient contrast against the neutral fill.
+ */
+export const RUN_START_CAP_GLYPH_COLOR = '#27ae60';
+
+/**
+ * Foreground colour of the glyph drawn inside the end cap.
+ * Solid blue matches the completed-run hue family and provides sufficient
+ * contrast against the neutral fill.
+ */
+export const RUN_END_CAP_GLYPH_COLOR = 'rgba(84,112,198,1)';
+
 export const EVENT_Z_ORDER: Readonly<Record<EventKind, number>> = {
     TRAINING_RUN_ENDED: 70,
     SOLUTION_DISPLAYED: 60,

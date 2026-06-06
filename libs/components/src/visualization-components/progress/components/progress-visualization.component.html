@@ -1,3 +1,58 @@
 <div class="progress-visualization-root">
-    <crczp-progress-chart class="progress-visualization-chart" />
+    @if (feed.error(); as error) {
+        <mat-card appearance="outlined" class="progress-visualization-error-banner">
+            <div class="progress-visualization-error-banner__content">
+                <mat-icon class="progress-visualization-error-banner__icon">warning</mat-icon>
+                <span class="progress-visualization-error-banner__copy">Couldn't load training instance</span>
+            </div>
+            <button mat-stroked-button (click)="feed.retry()">Retry</button>
+        </mat-card>
+    }
+    @if (stepperItems(); as items) {
+        @if (items.length > 0) {
+            <crczp-progress-stepper
+                class="progress-visualization-stepper"
+                [items]="items"
+                [selectedOrder]="selectedLevelOrder()"
+                [highlightedOrder]="highlightedLevelOrder()"
+                (stepClicked)="onStepClicked($event)"
+                (stepHovered)="onStepHovered($event)"
+            />
+        }
+    }
+    <div class="progress-visualization-chart-area">
+        <div class="chart-controls">
+            <button mat-button [disabled]="ui.favorites().size === 0" (click)="ui.clearFavorites()">
+                Clear
+                <mat-icon>person_off</mat-icon>
+            </button>
+            <button mat-button class="chart-controls__sort-trigger" [matMenuTriggerFor]="sortMenu">
+                <mat-icon>sort</mat-icon>
+                Sort: <span class="chart-controls__sort-value">{{ criterionLabels[ui.sortCriterion()] }}</span>
+            </button>
+            <mat-menu #sortMenu>
+                @for (criterion of sortCriteria; track criterion) {
+                    <button mat-menu-item (click)="onSortCriterionChanged(criterion)">
+                        {{ criterionLabels[criterion] }}
+                    </button>
+                }
+            </mat-menu>
+            <button mat-icon-button class="chart-controls__sort-direction" (click)="ui.toggleSortDirection()">
+                <mat-icon>{{ ui.sortDirection() === 'ASC' ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
+            </button>
+        </div>
+        <crczp-progress-chart class="progress-visualization-chart" />
+        <div class="chart-fab-row" [style.top.px]="renderer.innerHostHeightPx() - 35">
+            @if (renderer.isZoomedIn()) {
+                <button
+                    mat-icon-button
+                    class="chart-fab-row__reset-zoom"
+                    matTooltip="Reset zoom"
+                    (click)="renderer.resetZoom()"
+                >
+                    <mat-icon>zoom_out_map</mat-icon>
+                </button>
+            }
+        </div>
+    </div>
 </div>

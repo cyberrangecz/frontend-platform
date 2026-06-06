@@ -1,5 +1,32 @@
 import { DataZoomComponentOption, EChartsOption } from 'echarts';
+import { format } from 'date-fns';
 import { OptionFragment } from '../types/option-fragment.types';
+
+/**
+ * Stable ECharts `id` for the horizontal timeline slider. Exported so
+ * the renderer can identify this component in `dataZoom` event payloads.
+ */
+export const HORIZONTAL_SLIDER_DATAZOOM_ID = 'hz-slider';
+
+/**
+ * Stable ECharts `id` for the horizontal inside-wheel zoom companion.
+ * Exported so the renderer can identify this component in `dataZoom`
+ * event payloads.
+ */
+export const HORIZONTAL_INSIDE_DATAZOOM_ID = 'hz-inside';
+
+/**
+ * Stable ECharts `id` for the vertical scrollbar slider. Exported so
+ * the renderer can identify this component in `dataZoom` event payloads.
+ */
+export const VERTICAL_SCROLLBAR_DATAZOOM_ID = 'vt-scrollbar';
+
+/**
+ * Stable ECharts `id` for the vertical inside-wheel scroll companion.
+ * Exported so the renderer can identify this component in `dataZoom`
+ * event payloads.
+ */
+export const VERTICAL_INSIDE_DATAZOOM_ID = 'vt-inside';
 
 /**
  * Pixel height of the bottom horizontal timeline slider track.
@@ -36,6 +63,7 @@ export interface DataZoomBuilderInput {
     readonly visibleRowCount: number;
     readonly preservedZoom: { readonly startPct: number; readonly endPct: number } | null;
     readonly preservedScrollStartIndex: number | null;
+    readonly spansMidnight: boolean;
 }
 
 /**
@@ -49,17 +77,17 @@ export interface DataZoomBuilderInput {
  */
 export function buildDataZoomFragment(input: DataZoomBuilderInput): OptionFragment {
     const dataZoom: DataZoomComponentOption[] = [
-        buildHorizontalSlider(input.preservedZoom),
+        buildHorizontalSlider(input.preservedZoom, input.spansMidnight),
         buildHorizontalInside(),
     ];
 
-    if (input.totalRowCount > input.visibleRowCount) {
-        const scrollStartIndex = input.preservedScrollStartIndex ?? 0;
-        dataZoom.push(
-            buildVerticalScrollbar(scrollStartIndex, input.visibleRowCount),
-            buildVerticalInside(),
-        );
-    }
+    const maxStartIndex = Math.max(0, input.totalRowCount - input.visibleRowCount);
+    const startIndex = Math.max(0, Math.min(input.preservedScrollStartIndex ?? 0, maxStartIndex));
+    const endIndex = Math.min(startIndex + input.visibleRowCount - 1, input.totalRowCount - 1);
+    dataZoom.push(
+        buildVerticalScrollbar(startIndex, endIndex),
+        buildVerticalInside(),
+    );
 
     const fragment: Partial<EChartsOption> = {
         dataZoom,
@@ -82,14 +110,25 @@ export function buildDataZoomFragment(input: DataZoomBuilderInput): OptionFragme
  */
 function buildHorizontalSlider(
     preservedZoom: DataZoomBuilderInput['preservedZoom'],
+    spansMidnight: boolean,
 ): DataZoomComponentOption {
     return {
+        id: HORIZONTAL_SLIDER_DATAZOOM_ID,
         type: 'slider',
         xAxisIndex: 0,
+        filterMode: 'weakFilter',
         start: preservedZoom?.startPct ?? 0,
         end: preservedZoom?.endPct ?? 100,
         bottom: HORIZONTAL_SLIDER_BOTTOM_PX,
         height: HORIZONTAL_SLIDER_HEIGHT_PX,
+        labelFormatter: (value: number) => {
+            if (Number.isNaN(value) || value < 10 * 60 * 1000) {
+                return '';
+            }
+            return spansMidnight
+                ? format(value, 'MMM d') + '\n' + format(value, 'HH:mm:ss')
+                : format(value, 'HH:mm:ss');
+        },
     };
 }
 
@@ -102,10 +141,13 @@ function buildHorizontalSlider(
  */
 function buildHorizontalInside(): DataZoomComponentOption {
     return {
+        id: HORIZONTAL_INSIDE_DATAZOOM_ID,
         type: 'inside',
         xAxisIndex: 0,
-        zoomOnMouseWheel: true,
-        moveOnMouseWheel: false,
+        filterMode: 'weakFilter',
+        zoomOnMouseWheel: 'ctrl' as const,
+        moveOnMouseWheel: 'shift' as const,
+        moveOnMouseMove: false,
     };
 }
 
@@ -118,16 +160,16 @@ function buildHorizontalInside(): DataZoomComponentOption {
  * is mandatory — `filter` would collapse hidden category slots and
  * break `api.coord` for visible rows.
  *
- * @param scrollStartIndex - First visible row index in the current
- *                           scroll window.
- * @param visibleRowCount - Number of rows visible without scrolling.
+ * @param startIndex - First visible row index, already clamped by the caller.
+ * @param endIndex - Last visible row index, already clamped by the caller.
  * @returns The vertical scrollbar data-zoom component option.
  */
 function buildVerticalScrollbar(
-    scrollStartIndex: number,
-    visibleRowCount: number,
+    startIndex: number,
+    endIndex: number,
 ): DataZoomComponentOption {
     return {
+        id: VERTICAL_SCROLLBAR_DATAZOOM_ID,
         type: 'slider',
         yAxisIndex: 0,
         filterMode: 'empty',
@@ -137,8 +179,8 @@ function buildVerticalScrollbar(
         handleSize: 0,
         showDetail: false,
         zoomLock: true,
-        startValue: scrollStartIndex,
-        endValue: scrollStartIndex + visibleRowCount - 1,
+        startValue: startIndex,
+        endValue: endIndex,
     };
 }
 
@@ -151,8 +193,10 @@ function buildVerticalScrollbar(
  */
 function buildVerticalInside(): DataZoomComponentOption {
     return {
+        id: VERTICAL_INSIDE_DATAZOOM_ID,
         type: 'inside',
         yAxisIndex: 0,
+        filterMode: 'empty',
         zoomOnMouseWheel: false,
         moveOnMouseWheel: true,
         moveOnMouseMove: false,

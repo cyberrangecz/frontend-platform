@@ -1,21 +1,82 @@
 import { CustomSeriesOption } from 'echarts';
 import { BAR_HEIGHT_PX } from '../../config/ui.config';
+import { LagState } from '../../types/lag-state.types';
 
 /**
- * Shared bar-geometry primitives. Both the skeleton bars builder and
- * the live bars builder (forthcoming) compose against these helpers so
- * the time-range data layout, the `api.coord`-driven rect geometry, and
- * the engine-driven right-edge growth animation stay in one place.
+ * Shared bar-geometry primitives. The bars builder composes against these
+ * helpers so the time-range data layout, the `api.coord`-driven rect
+ * geometry, and the lag-state height scale stay in one place.
  *
- * Engine-driven motion is global to the visualization: every in-progress
- * bar (placeholder or live) animates its right edge from a mount-time
- * snapshot to the axis end in real time via a single zrender
- * `keyframeAnimation` baked at render. The rendering layer dispatches
- * `setOption` once at mount and ECharts' RAF loop owns visual
- * progression. The live builder will overlay lag-state styling,
- * level-type half-pill icons, and the diagonal-stripe estimate overlay
- * on top of the same animated rect.
+ * Each completed bar is drawn as a static rect spanning its run. The
+ * growing right edge of an in-progress bar is not a series animation; the
+ * renderer paints an imperative `graphic.Rect` overlay per running bar and
+ * repositions it against `Date.now()`. The builder overlays lag-state
+ * styling, level-type half-pill icons, and the diagonal-stripe estimate
+ * overlay on top of the rect.
  */
+
+/**
+ * Z-order assigned to every bar custom series so that per-element `z2`
+ * values control intra-bar paint order (body, estimate stripes, pill/icon)
+ * while run caps (z 8) and event icons (z ≥ 10) sit above all bar layers.
+ */
+const BAR_SERIES_Z = 2;
+
+/**
+ * Scale factor applied to {@link BAR_HEIGHT_PX} for the inactive lag
+ * states (`INACTIVE`, `INACTIVE_HIGHLIGHTED`) per visuals.md §Lag-state
+ * Colors & Bar Heights — dimmed rows render shorter than the default.
+ */
+const INACTIVE_HEIGHT_SCALE = 0.6;
+
+/**
+ * Scale factor applied to {@link BAR_HEIGHT_PX} for in-progress bars per
+ * visuals.md §Lag-state Colors & Bar Heights — running rows render
+ * slightly taller than the default to draw the eye.
+ */
+const RUNNING_HEIGHT_SCALE = 1.1;
+
+/**
+ * Scale factor applied to {@link BAR_HEIGHT_PX} for completed bars —
+ * the resting visual baseline.
+ */
+const DEFAULT_HEIGHT_SCALE = 1.0;
+
+/**
+ * Minimum pixel height enforced on a rendered rect. Prevents very short
+ * levels from collapsing to an invisible 0-px sliver after the height
+ * scale is applied. Sourced from visuals.md §Bar Segments.
+ */
+export const MIN_BAR_HEIGHT_PX = 2;
+
+/**
+ * Resolves the rect's pixel height from the effective lag state and
+ * whether the bar is currently running.
+ *
+ * Inactive states render shorter, running rows render taller, everything
+ * else sits on the default baseline. The result is always clamped to
+ * {@link MIN_BAR_HEIGHT_PX} so no path can produce an invisible 0-px sliver.
+ * Sourced from visuals.md §Lag-state Colors & Bar Heights.
+ *
+ * Each call site is responsible for resolving its own effective lag state
+ * before calling this function, because live bars and estimate overlays
+ * use different state-resolution rules (highlight handling differs).
+ *
+ * @param isRunning - Whether the bar/overlay represents an in-progress run.
+ * @param state     - The already-resolved effective lag state.
+ * @returns Pixel height, clamped to at least {@link MIN_BAR_HEIGHT_PX}.
+ */
+export function resolveBarHeightPx(isRunning: boolean, state: LagState): number {
+    let scaled: number;
+    if (state === 'INACTIVE' || state === 'INACTIVE_HIGHLIGHTED') {
+        scaled = BAR_HEIGHT_PX * INACTIVE_HEIGHT_SCALE;
+    } else if (isRunning) {
+        scaled = BAR_HEIGHT_PX * RUNNING_HEIGHT_SCALE;
+    } else {
+        scaled = BAR_HEIGHT_PX * DEFAULT_HEIGHT_SCALE;
+    }
+    return Math.max(scaled, MIN_BAR_HEIGHT_PX);
+}
 
 /**
  * Single bar's pixel rectangle, ready to drop into a zrender `rect`
@@ -106,9 +167,9 @@ export function computeBarRect(
 
 /**
  * Common option fields every bar custom series carries: range-encoded
- * data shape, encode hint, animation flag, and clip flag. Live and
- * skeleton builders spread this into their series and override the
- * mode-specific fields (`silent`, `cursor`, `renderItem`, ...).
+ * data shape, encode hint, animation flag, and clip flag. The bars
+ * builder spreads this into its series and overrides the series-specific
+ * fields (`silent`, `cursor`, `renderItem`, ...).
  *
  * @param startMs - Bar's left edge as a millisecond timestamp.
  * @param endMs - Bar's right edge as a millisecond timestamp.
@@ -119,115 +180,12 @@ export function createBarSeriesShell(
     startMs: number,
     endMs: number,
     rowIndex: number,
-): Pick<CustomSeriesOption, 'type' | 'data' | 'encode' | 'animation' | 'clip'> {
+): Pick<CustomSeriesOption, 'type' | 'data' | 'encode' | 'clip' | 'z'> {
     return {
         type: 'custom',
         data: [makeBarRangeData(startMs, endMs, rowIndex)],
         encode: BAR_RANGE_ENCODE,
-        animation: false,
         clip: true,
+        z: BAR_SERIES_Z,
     };
-}
-
-/**
- * One keyframe of a zrender shape animation. The optional `easing`
- * selects the curve applied from the previous keyframe to this one.
- * Shape fields are partial so callers can animate any subset of a
- * zrender element's `shape` properties.
- */
-export interface BarShapeKeyframe {
-    readonly percent: number;
-    readonly easing?: string;
-    readonly shape: Partial<BarRect>;
-}
-
-/**
- * One entry in a zrender element's `keyframeAnimation` array. Models
- * the shape-animating variant used by the bar-growth pattern; opacity
- * animations (the skeleton mount fade-in and shimmer) keep their own
- * `style`-based shape inside the skeleton builder.
- */
-export interface BarShapeAnimation {
-    readonly duration: number;
-    readonly loop: boolean;
-    readonly delay: number;
-    readonly easing?: string;
-    readonly keyframes: readonly BarShapeKeyframe[];
-}
-
-/**
- * Builds the right-edge growth keyframe animation entry. Animates the
- * rect's `shape.width` from its width at `mountNowMs` to its width at
- * `axisEndMs` over the matching real-time duration with linear easing,
- * single non-looping cycle. After the cycle completes zrender leaves
- * the shape at the final width — the bar visually rests against the
- * axis right edge.
- *
- * Both modes consume this helper: the skeleton bars builder for its
- * placeholder rects, and the live bars builder for in-progress runs.
- * Either caller must independently emit the initial rect with
- * `shape.width` set to the mount-time width — the animation overwrites
- * `width` per frame from `percent: 0` onward, but the initial render
- * before the first frame uses the rect's own `shape.width`.
- *
- * @param api        - The `renderItem` API providing `coord([xValue, yValue])`.
- * @param startMs    - Bar's left edge as a millisecond timestamp.
- * @param mountNowMs - Wall-clock timestamp captured at feed binding,
- *                     used as the `percent: 0` width anchor.
- * @param axisEndMs  - Axis right edge as a millisecond timestamp, used
- *                     as the `percent: 1` width anchor and as the real-
- *                     time animation duration when subtracted from
- *                     `mountNowMs`.
- * @param rowIndex   - Y-axis category index for the bar's row.
- * @returns A single keyframe-animation entry. Empty `keyframes` array
- *          and zero duration when `axisEndMs <= mountNowMs` (the bar
- *          would already rest at the axis edge); callers can spread
- *          the result into a `keyframeAnimation` array unconditionally.
- */
-export function buildBarRightEdgeAnimation(
-    api: CoordResolver,
-    startMs: number,
-    mountNowMs: number,
-    axisEndMs: number,
-    rowIndex: number,
-): BarShapeAnimation {
-    const initialWidth = computeBarWidthBetween(api, startMs, mountNowMs, rowIndex);
-    const finalWidth = computeBarWidthBetween(api, startMs, axisEndMs, rowIndex);
-    const duration = Math.max(0, axisEndMs - mountNowMs);
-
-    return {
-        duration,
-        loop: false,
-        delay: 0,
-        easing: 'linear',
-        keyframes: [
-            { percent: 0, shape: { width: initialWidth } },
-            { percent: 1, shape: { width: finalWidth } },
-        ],
-    };
-}
-
-/**
- * Pixel width between two timestamps on a bar's row. The row index is
- * passed through because Y category resolution can affect the X
- * coordinate basis on some axis configurations; passing the row keeps
- * the result identical to `computeBarRect(...).width`.
- *
- * @param api      - The `renderItem` API.
- * @param fromMs   - Left edge timestamp.
- * @param toMs     - Right edge timestamp.
- * @param rowIndex - Y-axis category index.
- * @returns The pixel width, clamped non-negative.
- */
-export function computeBarWidthBetween(
-    api: CoordResolver,
-    fromMs: number,
-    toMs: number,
-    rowIndex: number,
-): number {
-    const fromPoint = api.coord([fromMs, rowIndex]);
-    const toPoint = api.coord([toMs, rowIndex]);
-    const fromX = fromPoint[0] ?? 0;
-    const toX = toPoint[0] ?? 0;
-    return Math.max(0, toX - fromX);
 }

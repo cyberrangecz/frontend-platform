@@ -61,6 +61,4 @@ export interface EventVm {
     readonly timestamp: number;
     /** Short tooltip label (always present). */
     readonly tooltipLabel: string;
-    /** Long detail surfaced when the user holds shift. `null` when none. */
-    readonly tooltipDetail: string | null;
 }

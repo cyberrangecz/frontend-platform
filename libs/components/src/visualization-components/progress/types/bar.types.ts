@@ -3,6 +3,20 @@ import { BarKey, LevelId, TraineeId, TrainingRunId } from './ids.types';
 import { LagState } from './lag-state.types';
 
 /**
+ * A single future lag-state crossing attached to a running bar.
+ *
+ * `atMs` is an absolute wall-clock timestamp (ms) at which the bar's lag
+ * state will transition to `toState`. Produced by `selectors/with-lag-state.ts`
+ * and consumed by the bars option-builder to drive ECharts `keyframeAnimation`
+ * on `itemStyle.color` so color changes animate at the correct wall-clock
+ * instant without view-model re-emission.
+ */
+export interface LagTransition {
+    readonly atMs: number;
+    readonly toState: LagState;
+}
+
+/**
  * Raw bar row as produced by the bars source (after entity resolution).
  *
  * One row per (training-run, level). All three timestamp fields are
@@ -41,6 +55,15 @@ export interface BarWithLag extends BarRow {
     readonly lagMs: number | null;
     /** Delay as a percentage of the estimate. `null` when no estimate or short-mode. */
     readonly lagPercentage: number | null;
+    /**
+     * Future state crossings whose `atMs > mountNowMs`, ordered ascending.
+     * Empty for completed bars and for bars whose level has no estimate.
+     * Consumed by the renderer's imperative running-bar fill subsystem,
+     * which replays the schedule against `Date.now()` to recolour each
+     * fill rect at the correct wall-clock instant without view-model
+     * re-emission.
+     */
+    readonly transitions: readonly LagTransition[];
 }
 
 /**
@@ -52,6 +75,11 @@ export interface BarWithLag extends BarRow {
 export interface BarVm {
     readonly key: BarKey;
     readonly traineeId: TraineeId;
+    /**
+     * Resolved trainee display name from User entity. Populated by selectors
+     * via entity-resolver pipe on bars source.
+     */
+    readonly traineeDisplayName: string;
     readonly rowIndex: number;
     readonly levelId: LevelId;
     readonly levelOrder: number;
@@ -66,6 +94,15 @@ export interface BarVm {
     readonly isHighlighted: boolean;
     readonly isOtherHighlighted: boolean;
     readonly isTraineeFavourited: boolean;
+    /**
+     * Future lag-state crossings passed through from `BarWithLag`.
+     *
+     * The renderer's imperative running-bar fill subsystem replays this
+     * schedule against `Date.now()` so each fill rect's colour changes at
+     * the correct wall-clock instant without view-model re-emission.
+     * Empty for completed bars and for bars whose level has no estimate.
+     */
+    readonly transitions: readonly LagTransition[];
 }
 
 /**
@@ -75,7 +112,7 @@ export interface BarVm {
  * Reuses the canonical `AbstractLevelBasic` shape for the identity fields
  * and replaces `estimatedDuration` (entity unit = minutes) with
  * `estimatedDurationMs` (consistent ms unit throughout the visualization).
- * Zero means "no estimate" — lag classification falls back to `UNKNOWN`.
+ * Zero means "no estimate" — lag classification falls back to `OK`.
  */
 export type LevelInfo = Pick<AbstractLevelBasic, 'id' | 'order' | 'type' | 'title'> & {
     readonly estimatedDurationMs: number;

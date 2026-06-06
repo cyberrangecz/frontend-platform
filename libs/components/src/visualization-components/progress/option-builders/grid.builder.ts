@@ -1,31 +1,29 @@
 import { EChartsOption } from 'echarts';
+import { CHART_BOTTOM_RESERVE_PX, CHART_TOP_RESERVE_PX, ROW_HEIGHT_PX } from '../config/ui.config';
 import { OptionFragment } from '../types/option-fragment.types';
 
-/**
- * Top padding. Reserves room for the lag-state legend ghost-series row
- * and the stepper-adjacent controls overlay above the plot area.
- */
-const GRID_TOP_PX = 56;
-
-/**
- * Bottom padding. Reserves room for the horizontal timeline `dataZoom`
- * slider plus its label.
- */
-const GRID_BOTTOM_PX = 64;
+const GRID_TOP_PX = CHART_TOP_RESERVE_PX;
+const GRID_BOTTOM_PX = CHART_BOTTOM_RESERVE_PX;
 
 /**
  * Left padding. Reserves the avatar + trainee name + favourite pin
  * rich-text gutter. Wide enough that long names do not collide with the
  * Y-axis line.
+ *
+ * Exported so that elements positioned imperatively outside setOption
+ * (e.g. the zrender current-time marker) can apply the same clip boundary.
  */
-const GRID_LEFT_PX = 200;
+export const GRID_LEFT_PX = 200;
 
 /**
  * Right padding. Reserves the invisible-track vertical scrollbar thumb
  * (data-zoom slider with `width: 0`) so its draggable handle does not
  * overlap the plot area.
+ *
+ * Exported so that elements positioned imperatively outside setOption
+ * (e.g. the zrender current-time marker) can apply the same clip boundary.
  */
-const GRID_RIGHT_PX = 40;
+export const GRID_RIGHT_PX = 40;
 
 /**
  * Inputs to the grid builder.
@@ -47,7 +45,7 @@ export interface GridBuilderInput {
  *                 refinement.
  * @returns A fragment keyed `'grid'` with the plot-area margins set.
  */
-export function buildGridFragment(_input: GridBuilderInput): OptionFragment {
+export function buildGridFragment(input: GridBuilderInput): OptionFragment {
     const fragment: Partial<EChartsOption> = {
         grid: {
             top: GRID_TOP_PX,
@@ -55,6 +53,7 @@ export function buildGridFragment(_input: GridBuilderInput): OptionFragment {
             left: GRID_LEFT_PX,
             right: GRID_RIGHT_PX,
             containLabel: false,
+            height: input.visibleRowCount * ROW_HEIGHT_PX,
         },
     };
 
