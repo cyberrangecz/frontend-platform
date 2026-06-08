@@ -34,9 +34,6 @@
                 "libs/api/event-query-engine/src/index.ts"
             ],
             "@crczp/mixins": ["libs/mixins/src/index.ts"],
-            "@crczp/opensearch-query-builder": [
-                "libs/api/opensearch-query-builder/src/index.ts"
-            ],
             "@crczp/routing-commons": ["libs/utils/routing/src/index.ts"],
             "@crczp/sandbox-agenda": [
                 "libs/agenda/sandbox-agenda/src/index.ts"

@@ -11,8 +11,6 @@ export * from './validation/json-error-converter';
 export * from './validation/presence-validator';
 export * from './pagination/offset-paginated-resource';
 export * from './pagination/crczp-offset-elements-paginated-service-';
-export * from './opensearch/crczp-opensearch-api.service';
-export * from './opensearch/opensearch-response-dto';
 
 
 export type {
