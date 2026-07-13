@@ -1,4 +1,167 @@
-.avatar {
+:host {
     display: block;
-    width: 5rem;
+    width: 100%;
+    height: 100%;
+    padding-inline: 1rem;
+    box-sizing: border-box;
 }
+
+.progress-visualization-root {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+}
+
+.progress-visualization-error-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.75rem 1rem;
+    margin-bottom: 0.5rem;
+    background-color: var(--mat-sys-error-container);
+    color: var(--mat-sys-on-error-container);
+
+    &__content {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    &__icon {
+        color: var(--mat-sys-on-error-container);
+    }
+
+    &__copy {
+        color: var(--mat-sys-on-error-container);
+    }
+}
+
+.progress-visualization-stepper {
+    flex: 0 0 auto;
+    margin-bottom: 0.5rem;
+}
+
+.progress-visualization-chart-area {
+    position: relative;
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    container-type: inline-size;
+}
+
+.chart-controls {
+    position: absolute;
+    top: 10px;
+    left: clamp(0px, calc(100cqw - 920px), 200px);
+    z-index: 1;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    height: 40px;
+    gap: 0.5rem;
+    pointer-events: none;
+
+    button {
+        pointer-events: auto;
+    }
+
+    &__sort-trigger {
+        --mat-text-button-label-text-color: var(--mat-sys-on-surface);
+        --mat-text-button-state-layer-color: var(--mat-sys-on-surface);
+    }
+
+    &__sort-value {
+        color: var(--mat-sys-on-surface);
+    }
+}
+
+.progress-visualization-chart {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: block;
+}
+
+.chart-fab-row {
+    position: absolute;
+    left: 9rem;
+    z-index: 1;
+
+    &__reset-zoom {
+        color: var(--mat-sys-primary);
+    }
+}
+
+// ECharts tooltips are appended to document.body outside the component host,
+// so ::ng-deep is required to reach them. All rules are scoped to .tooltip
+// descendants to avoid leaking into unrelated ECharts instances.
+
+/* stylelint-disable selector-pseudo-element-no-unknown */
+::ng-deep {
+    .tooltip {
+        font-size: 13px;
+        color: var(--mat-sys-on-surface);
+        min-width: 180px;
+    }
+
+    .tooltip-header {
+        font-weight: 600;
+        font-size: 14px;
+        margin-bottom: 4px;
+        color: var(--mat-sys-on-surface);
+    }
+
+    .tooltip-header--event {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        // color is set inline (event-kind-driven dynamic value)
+    }
+
+    .tooltip-event-icon {
+        font-family: 'Material Icons', sans-serif;
+        font-size: 14px;
+        vertical-align: middle;
+    }
+
+    .tooltip-badge-row {
+        margin-bottom: 4px;
+    }
+
+    .tooltip-lag-badge {
+        // background is set inline (lag-state-driven dynamic value)
+        color: var(--mat-sys-on-primary);
+        padding: 1px 6px;
+        border-radius: 9px;
+        font-size: 11px;
+        font-weight: 600;
+        display: inline-block;
+        line-height: 1.4;
+    }
+
+    .tooltip-row {
+        display: flex;
+        gap: 4px;
+        margin-top: 2px;
+    }
+
+    .tooltip-label {
+        color: var(--mat-sys-on-surface-variant);
+        white-space: nowrap;
+    }
+
+    .tooltip-value {
+        color: var(--mat-sys-on-surface);
+    }
+
+    .tooltip-event-label {
+        color: var(--mat-sys-on-surface-variant);
+        font-size: 12px;
+        margin-bottom: 4px;
+    }
+
+}
+

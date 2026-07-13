@@ -12,7 +12,14 @@ export class TrainingDefinitionBasic extends Z.class({
     estimatedDuration: z.number(),
     state: z.nativeEnum(TrainingDefinitionStateEnum),
     levels: z.array(z.any()),
-}) {}
+}) {
+    declare id: number;
+    declare title: string;
+    declare description: string;
+    declare estimatedDuration: number;
+    declare state: TrainingDefinitionStateEnum;
+    declare levels: unknown[];
+}
 
 /**
  * Class representing training definition in a system.

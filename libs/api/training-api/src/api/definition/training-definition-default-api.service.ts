@@ -11,14 +11,14 @@ import {
     ParamsBuilder,
     QueryParam
 } from '@crczp/api-common';
-import { OffsetPaginationEvent } from '@crczp/utils';
+import { OffsetPaginationEvent, PortalConfig } from '@crczp/utils';
 import {
+    AbstractLevelBasic,
     AccessLevel,
     AssessmentLevel,
     HintBasic,
     InfoLevel,
     Level,
-    LevelBasic,
     TrainingDefinition,
     TrainingDefinitionBasic,
     TrainingDefinitionInfo,
@@ -37,7 +37,6 @@ import { TrainingDefinitionInfoMapper } from '../../mappers/training-definition/
 import { TrainingDefinitionMapper } from '../../mappers/training-definition/training-definition-mapper';
 import { LinearTrainingDefinitionApi } from './training-definition-api.service';
 import { TrainingDefinitionInfoDTO } from '../../dto/training-definition/training-definition-info-dto';
-import { PortalConfig } from '@crczp/utils';
 import { TrainingDefinitionSort } from '../sorts';
 import { TrainingDefinitionBasicDto } from '../../dto/training-definition/training-definition-basic-dto';
 import { LevelBasicDto } from '../../dto/level/level-basic-dto';
@@ -70,7 +69,7 @@ export class TrainingDefinitionDefaultApi extends LinearTrainingDefinitionApi {
         this.trainingImportEndpointUri = basePath + '/imports';
     }
 
-    fetchLevelsByIds(ids: number[]): Observable<LevelBasic[]> {
+    fetchLevelsByIds(ids: number[]): Observable<AbstractLevelBasic[]> {
         return this.crczpHttp
             .get<LevelBasicDto[]>(
                 `${this.trainingDefsEndpointUri}/${this.levelsUriExtension}/by-ids`,
@@ -87,7 +86,9 @@ export class TrainingDefinitionDefaultApi extends LinearTrainingDefinitionApi {
             .execute();
     }
 
-    fetchTrainingDefinitionsByIds(ids: number[]): Observable<TrainingDefinitionBasic[]> {
+    fetchTrainingDefinitionsByIds(
+        ids: number[],
+    ): Observable<TrainingDefinitionBasic[]> {
         return this.crczpHttp
             .get<TrainingDefinitionBasicDto[]>(
                 `${this.trainingDefsEndpointUri}/by-ids`,
@@ -108,7 +109,8 @@ export class TrainingDefinitionDefaultApi extends LinearTrainingDefinitionApi {
         return this.crczpHttp
             .get<HintBasicDto[]>(
                 `${this.trainingDefsEndpointUri}/hints/by-ids`,
-                'Fetch hints by ids')
+                'Fetch hints by ids',
+            )
             .withSplitCacheQuery({
                 ids,
                 cacheKey: (id) => `hintBasic-${id}`,

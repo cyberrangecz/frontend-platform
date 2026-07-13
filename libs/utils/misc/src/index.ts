@@ -26,6 +26,7 @@ export * from './types/config';
 export * from './types/sentinel-auth-config.zod';
 export * from './types/type-utils';
 export * from './directives/click-outside';
+export { provideTestPortalConfig } from './testing/portal-config.provider';
 export type {
     NavAgendaConfig,
     NavAgendaContainerConfig,

@@ -1,0 +1,214 @@
+// Scrollbar wrapper — padding collapses when the user hovers to reveal the scrollbar.
+.progress-stepper-track--scrollable {
+    padding-bottom: 10px;
+
+    &:hover {
+        .progress-stepper-track {
+            padding-bottom: 0;
+
+            &::-webkit-scrollbar {
+                height: 8px;
+            }
+        }
+    }
+}
+
+.progress-stepper-track {
+    display: flex;
+    gap: 0;
+    width: 100%;
+    overflow-x: auto;
+    box-sizing: border-box;
+    padding: 1rem 0 8px;
+    margin-bottom: 6px;
+
+    &::-webkit-scrollbar {
+        height: 0;
+    }
+
+    &::-webkit-scrollbar-track {
+        background-color: var(--neutral-90);
+        border-radius: 2px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background-color: var(--neutral-70);
+        border-radius: 2px;
+    }
+
+    // Allow the last label to wrap tightly when it hits the edge.
+    .progress-stepper-step:last-child .progress-stepper-step__label {
+        word-break: break-all;
+    }
+}
+
+// Step container — holds the circular node and the text label below it.
+.progress-stepper-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    position: relative;
+    width: 5rem;
+    flex-shrink: 0;
+    overflow: visible;
+
+    // Selected label: amber title, heavier weight; count stays subdued.
+    &.progress-stepper-step--selected .progress-stepper-step__label-title {
+        color: var(--warning-60);
+        font-weight: 600;
+    }
+
+    // Locked label is muted.
+    &.progress-stepper-step--locked .progress-stepper-step__label {
+        color: var(--neutral-variant-50);
+        opacity: 0.6;
+    }
+
+    // Hover and programmatic highlight share the same visual treatment.
+    // The highlighted class is applied when `highlightedOrder` matches this
+    // step's order — enabling chart Y-axis or other external triggers to
+    // light up the stepper without a real pointer event.
+    &.progress-stepper-step--accessible:not(.progress-stepper-step--selected) {
+        &:hover,
+        &.progress-stepper-step--highlighted {
+            cursor: pointer;
+
+            .progress-stepper-step__label-title {
+                color: var(--primary-30);
+                cursor: pointer;
+            }
+
+            .progress-stepper-step__node {
+                border-color: var(--primary-30);
+                transform: scale(1.1);
+                box-shadow: 0 2px 8px color-mix(in srgb, var(--neutral-0) 15%, transparent);
+                cursor: pointer;
+
+                mat-icon {
+                    color: var(--primary-30);
+                }
+            }
+        }
+    }
+}
+
+// Circular node that houses the level-type icon.
+.progress-stepper-step__node {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--primary-40);
+    transition: all 0.15s linear;
+    position: relative;
+    z-index: 2;
+    outline: none;
+
+    mat-icon {
+        font-size: 1.5rem;
+        width: 1.5rem;
+        height: 1.5rem;
+        color: var(--primary-40);
+        transition: color 0.15s linear;
+    }
+
+    // Keyboard focus ring for accessible (non-selected) nodes.
+    &.progress-stepper-step__node--accessible:not(.progress-stepper-step__node--selected):focus-visible {
+        outline: 2px solid var(--primary-40);
+        outline-offset: 3px;
+    }
+
+    // Selected node: amber ring, tinted background, glow.
+    &.progress-stepper-step__node--selected {
+        border-width: 3px;
+        border-color: var(--warning-60);
+        background-color: var(--warning-95);
+        box-shadow: 0 0 0 4px color-mix(in srgb, var(--warning-60) 20%, transparent);
+
+        mat-icon {
+            color: var(--warning-60);
+        }
+
+        &:focus-visible {
+            outline: 2px solid var(--warning-60);
+            outline-offset: 3px;
+        }
+    }
+
+    // Locked node: greyed out and pointer interaction disabled.
+    &.progress-stepper-step__node--locked {
+        cursor: not-allowed;
+        opacity: 0.4;
+        border-color: var(--neutral-variant-50);
+
+        mat-icon {
+            color: var(--neutral-variant-50);
+        }
+    }
+}
+
+// Label beneath each step node — flex column so title and count stack naturally.
+.progress-stepper-step__label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.125rem;
+    font-size: 0.875rem;
+    color: var(--neutral-30);
+    text-align: center;
+    width: 100%;
+    min-width: 0;
+    overflow-wrap: normal;
+    word-break: normal;
+    hyphens: none;
+    transition: color 0.15s linear;
+    font-weight: 500;
+}
+
+// Count line below the level title — slightly muted and smaller to create hierarchy.
+.progress-stepper-step__label-count {
+    font-size: 0.75rem;
+    color: var(--neutral-50);
+    font-weight: 400;
+    transition: color 0.15s linear;
+}
+
+// Horizontal connector between consecutive step nodes.
+.progress-stepper-line {
+    height: 2px;
+    flex: 1 1 auto;
+    min-width: 40px;
+    width: 100%;
+    margin-top: 1.5rem;
+    background-color: var(--primary-40);
+    transition: all 0.15s linear;
+    position: relative;
+    z-index: 1;
+
+    // Line where either the left or right node is selected.
+    &.progress-stepper-line--selected {
+        height: 3px;
+        background-color: var(--warning-60);
+    }
+
+    // Gradient from amber (selected) to primary, flowing left-to-right.
+    &.progress-stepper-line--fade {
+        height: 3px;
+        background: linear-gradient(to right, var(--warning-60) 30%, var(--primary-40) 70%);
+    }
+
+    // Same gradient but mirrored — flows from primary into selected node.
+    &.progress-stepper-line--fade-reverse {
+        height: 3px;
+        background: linear-gradient(to left, var(--warning-60) 30%, var(--primary-40) 70%);
+    }
+
+    // Line leading into a locked step.
+    &.progress-stepper-line--locked {
+        background-color: var(--neutral-variant-50);
+        opacity: 0.4;
+    }
+}

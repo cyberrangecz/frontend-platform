@@ -60,9 +60,12 @@ import { RoleService } from './app/services/role.service';
 import { APP_ROUTES } from './app/app-routes';
 import { provideSentinelMarkdownEditorConfig } from '@sentinel/components/markdown-editor';
 import { firstValueFrom } from 'rxjs';
-import { PGliteWorker } from '@electric-sql/pglite/worker';
-import { drizzle } from 'drizzle-orm/pglite';
-import { CacheService, provideEventBroker, provideEntityResolverService } from '@crczp/event-query-engine';
+import {
+    CacheService,
+    createPgliteEventDb,
+    provideEntityResolverService,
+    provideEventBroker,
+} from '@crczp/event-query-engine';
 
 @Injectable()
 export class SentinelUagAuthorizationStrategy extends SentinelAuthorizationStrategy {
@@ -150,11 +153,9 @@ SentinelBootstrapper.bootstrapApplication('assets/config.json', AppComponent, {
         }),
         provideHttpCache(withLocalStorage()),
         provideRouter(APP_ROUTES),
-        provideEventBroker((() => {
-            const workerUrl = new URL('./cache.worker.ts', import.meta.url);
-            const pg = new PGliteWorker(new Worker(workerUrl, { type: 'module' }));
-            return pg.waitReady.then(() => drizzle({ client: pg as any }));
-        })()),
+        provideEventBroker(
+            createPgliteEventDb(new URL('./cache.worker.ts', import.meta.url)),
+        ),
         provideEntityResolverService(),
         provideAppInitializer(() => {
             const cache = inject(CacheService);

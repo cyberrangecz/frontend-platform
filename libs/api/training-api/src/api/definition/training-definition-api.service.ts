@@ -1,11 +1,11 @@
 import { OffsetPaginationEvent } from '@crczp/utils';
 import {
+    AbstractLevelBasic,
     AccessLevel,
     AssessmentLevel,
     HintBasic,
     InfoLevel,
     Level,
-    LevelBasic,
     TrainingDefinition,
     TrainingDefinitionBasic,
     TrainingDefinitionInfo,
@@ -197,7 +197,7 @@ export abstract class LinearTrainingDefinitionApi {
         filters?: QueryParam[],
     ): Observable<OffsetPaginatedResource<TrainingDefinition>>;
 
-    abstract fetchLevelsByIds(ids: number[]): Observable<LevelBasic[]>;
+    abstract fetchLevelsByIds(ids: number[]): Observable<AbstractLevelBasic[]>;
 
     abstract fetchTrainingDefinitionsByIds(
         ids: number[],

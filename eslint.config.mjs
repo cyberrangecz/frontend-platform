@@ -47,6 +47,7 @@ export default [
                 },
             ],
             '@typescript-eslint/no-namespace': 'off',
+            'no-console': ['error', { allow: ['warn', 'error'] }],
         },
     },
     {

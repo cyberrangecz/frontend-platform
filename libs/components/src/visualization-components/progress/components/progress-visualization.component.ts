@@ -1,82 +1,101 @@
-import { Component, computed, DestroyRef, inject, input, model, OnInit, signal } from '@angular/core';
-import { Level } from '@crczp/training-model';
-import { ProgressLevelInfo, ProgressVisualizationApiData } from '@crczp/visualization-model';
-import { Observable } from 'rxjs';
-import { Stepper, StepperItem } from '../../../stepper/stepper';
-import { ProgressDataService } from '../services/progress-data.service';
-import { ProgressChartComponent } from './progress-chart/progress-chart.component';
+import { ChangeDetectionStrategy, Component, computed, inject, Injector, input, OnInit, runInInjectionContext } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { ChartRendererService } from '../services/chart-renderer.interface.service';
+import { ChartRendererServiceImpl } from '../services/chart-renderer.service';
+import { LegendTransitionSchedulerService } from '../services/legend-transition-scheduler.service';
+import { ProgressFeedService } from '../services/progress-feed.interface.service';
+import { ProgressFeedServiceImpl } from '../services/progress-feed.service';
+import { ProgressUiStateService } from '../services/progress-ui-state.interface.service';
+import { ProgressUiStateServiceImpl } from '../services/progress-ui-state.service';
+import { TimeInterpolationService } from '../services/time-interpolation.service';
+import { InstanceId } from '../types/ids.types';
+import { SORT_CRITERIA, SortCriterion } from '../types/ui-state.types';
+import { StepperItemVm } from '../types/view-model.types';
+import { ProgressChartComponent } from './progress-chart.component';
+import { ProgressStepperComponent } from './progress-stepper.component';
 
+/**
+ * Root component of the progress visualization.
+ *
+ * Declares the four component-scoped services in `providers` so each
+ * instance gets isolated time interpolation, feed, UI state, and renderer.
+ * Binds the feed to the `instanceId` input once during construction; the
+ * feed implementation reads the signal internally so re-scoping is driven
+ * by the input signal itself.
+ *
+ * Renders the chart child component. The chart child binds the renderer
+ * to its host element during its view-init phase; no rendering glue lives
+ * at this level.
+ */
 @Component({
     selector: 'crczp-progress-visualization',
-    imports: [ProgressChartComponent, Stepper],
-    templateUrl: './progress-visualization.component.html',
+    standalone: true,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        ProgressChartComponent,
+        ProgressStepperComponent,
+        MatCardModule,
+        MatButtonModule,
+        MatIconModule,
+        MatMenuModule,
+        MatTooltipModule,
+    ],
+    providers: [
+        TimeInterpolationService,
+        LegendTransitionSchedulerService,
+        { provide: ProgressFeedService, useClass: ProgressFeedServiceImpl },
+        { provide: ProgressUiStateService, useClass: ProgressUiStateServiceImpl },
+        { provide: ChartRendererService, useClass: ChartRendererServiceImpl },
+    ],
     styleUrl: './progress-visualization.component.scss',
-    providers: [ProgressDataService],
+    templateUrl: './progress-visualization.component.html',
 })
 export class ProgressVisualizationComponent implements OnInit {
-    instanceId = input.required<number>();
-    highlightedTraineeId = model<number | null>(null);
-    progressApiData = input<Observable<ProgressVisualizationApiData> | null>(
-        null,
-    );
+    readonly instanceId = input.required<InstanceId>();
 
-    protected progressData = signal<ProgressVisualizationApiData>({
-        startTime: 0,
-        estimatedEndTime: 0,
-        endTime: 0,
-        levels: [],
-        progress: [],
+    private readonly injector = inject(Injector);
+
+    protected readonly feed = inject(ProgressFeedService);
+    protected readonly ui = inject(ProgressUiStateService);
+    protected readonly renderer = inject(ChartRendererService);
+
+    protected readonly stepperItems = computed<readonly StepperItemVm[] | null>(() => {
+        const vm = this.feed.viewModel();
+        return vm === null ? null : vm.stepper;
     });
 
-    protected readonly stepperLevels = computed((): StepperItem[] =>
-        this.progressData().levels.map((level) => ({
-            label: this.buildStepperLevelLabel(level),
-            icon: Level.getLevelByType(level.levelType),
-        })),
-    );
-    protected highlightedLevelIndex = signal<number | null>(null);
-    protected selectedLevelIndex = signal<number | null>(null);
-    protected readonly destroyRef = inject(DestroyRef);
-    private progressDataService = inject(ProgressDataService);
+    protected readonly selectedLevelOrder = this.ui.selectedLevelOrder;
+    protected readonly highlightedLevelOrder = this.ui.highlightedLevelOrder;
 
-    /**
-     * Initializes component and subscribes to progress data updates.
-     */
-    ngOnInit() {
-        // TODO
-        // (
-        //     this.progressApiData() ??
-        //     this.progressDataService.getVisualizationData$(this.instanceId())
-        // )
-        //     .pipe(takeUntilDestroyed(this.destroyRef))
-        //     .subscribe((data) => {
-        //         this.progressData.set(data);
-        //     });
+    protected readonly sortCriteria: readonly SortCriterion[] = SORT_CRITERIA;
+
+    protected readonly criterionLabels: Record<SortCriterion, string> = {
+        TRAINEE_NAME: 'Trainee name',
+        CURRENT_LEVEL_ORDER: 'Current level',
+        CURRENT_SCORE: 'Score',
+        LAG_TIME: 'Lag time',
+        LAG_PERCENTAGE: 'Lag percentage',
+        TRAINING_RUN_START: 'Run start',
+    };
+
+    ngOnInit(): void {
+        runInInjectionContext(this.injector, () => this.feed.bind(this.instanceId));
     }
 
-    /**
-     * Toggles selected level for filtering.
-     * @param $event - Level index to select or deselect
-     */
-    protected updateSelectedLevel($event: number) {
-        if (this.selectedLevelIndex() === $event) {
-            this.selectedLevelIndex.set(null);
-        } else {
-            this.selectedLevelIndex.set($event);
-        }
+    protected onStepClicked(order: number): void {
+        const current = this.ui.selectedLevelOrder();
+        this.ui.setSelectedLevel(current === order ? null : order);
     }
 
-    /**
-     * Builds stepper label with level title and active trainee count.
-     * @param level - Level information
-     * @returns Formatted label string
-     */
-    private buildStepperLevelLabel(level: ProgressLevelInfo) {
-        const traineeCount = this.progressData().progress.filter((trainee) =>
-            trainee.levels.some(
-                (lvl) => lvl.id === level.id && lvl.state === 'RUNNING',
-            ),
-        ).length;
-        return level.title + `\n[${traineeCount} active]`;
+    protected onStepHovered(order: number | null): void {
+        this.ui.setHighlightedLevel(order);
+    }
+
+    protected onSortCriterionChanged(criterion: SortCriterion): void {
+        this.ui.setSort(criterion, this.ui.sortDirection());
     }
 }
