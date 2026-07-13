@@ -1,4 +1,4 @@
-import { OffsetPaginationEvent } from '@sentinel/common/pagination';
+import { OffsetPaginationEvent } from '@crczp/utils';
 import {
     AllocationRequest,
     CloudResource,

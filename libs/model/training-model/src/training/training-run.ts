@@ -1,6 +1,20 @@
 import { TrainingRunStateEnum } from '../enums/training-run-state.enum';
 import { Level } from '../level/level';
 import { TrainingUser } from '../user-ref/training-user';
+import { Z } from 'zod-class';
+import { z } from 'zod';
+
+export class TrainingRunBasic extends Z.class({
+    id: z.number(),
+    sandboxInstanceId: z.string().nullable(),
+    trainingInstanceId: z.number(),
+    trainingDefinitionId: z.number(),
+    startTime: z.date(),
+    endTime: z.date(),
+    currentLevelId: z.number().nullable(),
+    currentLevelOrder: z.number().nullable(),
+    state: z.nativeEnum(TrainingRunStateEnum),
+}) {}
 
 /**
  * Class representing training run

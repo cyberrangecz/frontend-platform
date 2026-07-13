@@ -1,8 +1,22 @@
+import { Z } from 'zod-class';
+import { z } from 'zod';
+import { abstractLevelBasicSchema } from './abstract-level-basic';
+import { MitreTechniqueBasic } from '../mitre-techniques/mitre-technique';
+import { HintBasic } from './hint';
 import { MitreTechnique } from '../mitre-techniques/mitre-technique';
 import { Hint } from './hint';
 import { Level } from './level';
 import { ReferenceSolutionNode } from './reference-solution-node';
 import { LevelWithSolution } from '../level-with-solution-interface';
+
+/** Basic read-only training level data safe for all roles. Subset of {@link TrainingLevel}. */
+export class TrainingLevelBasic extends Z.class({
+    ...abstractLevelBasicSchema.shape,
+    incorrectAnswerLimit: z.number(),
+    isSolutionPenalized: z.boolean(),
+    hints: z.array(HintBasic.schema()),
+    mitreTechniques: z.array(MitreTechniqueBasic.schema()),
+}) {}
 
 /**
  * Class representing level in a training of type Training

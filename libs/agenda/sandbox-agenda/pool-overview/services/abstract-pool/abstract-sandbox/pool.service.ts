@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { OffsetPaginationEvent } from '@sentinel/common/pagination';
+import { OffsetPaginationEvent } from '@crczp/utils';
 import { switchMap } from 'rxjs/operators';
 import { Pool } from '@crczp/sandbox-model';
 import { PoolOverviewService } from '../../state/pool-overview.service';

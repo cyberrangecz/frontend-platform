@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { OffsetPaginationEvent } from '@sentinel/common/pagination';
+import { OffsetPaginationEvent } from '@crczp/utils';
 import { GroupApi, RoleApi, RoleSort } from '@crczp/user-and-group-api';
 import { UserRole } from '@crczp/user-and-group-model';
 import { BehaviorSubject, forkJoin, Observable, of } from 'rxjs';

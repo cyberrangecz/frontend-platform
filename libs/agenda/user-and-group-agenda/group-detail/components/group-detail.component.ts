@@ -27,7 +27,7 @@ import {
 } from '@crczp/utils';
 import { PaginationMapper } from '@crczp/api-common';
 import { RoleSort, UserSort } from '@crczp/user-and-group-api';
-import { SortDir } from '@sentinel/common/pagination';
+import { SortDir } from '@crczp/utils';
 import { map } from 'rxjs/operators';
 import { MembersDetailTable } from '../model/members-detail-table';
 import { RolesDetailTable } from '../model/roles-detail-table';

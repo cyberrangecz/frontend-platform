@@ -3,7 +3,7 @@ import { tap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { inject, Injectable } from '@angular/core';
 import { VirtualImage } from '@crczp/sandbox-model';
-import { OffsetPaginationEvent } from '@sentinel/common/pagination';
+import { OffsetPaginationEvent } from '@crczp/utils';
 import { ErrorHandlerService, PortalConfig } from '@crczp/utils';
 import {
     CrczpOffsetElementsPaginatedService,

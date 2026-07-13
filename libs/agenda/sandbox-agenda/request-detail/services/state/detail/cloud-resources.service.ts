@@ -1,7 +1,7 @@
 import { StageDetailService } from './stage-detail.service';
 import { AllocationRequestsApi, ResourceUsageSort } from '@crczp/sandbox-api';
 import { RequestStage } from '@crczp/sandbox-model';
-import { OffsetPaginationEvent } from '@sentinel/common/pagination';
+import { OffsetPaginationEvent } from '@crczp/utils';
 import { Observable } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { inject, Injectable } from '@angular/core';

@@ -2,13 +2,14 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { SentinelParamsMerger } from '@sentinel/common';
 import {
+    CRCZPHttpService,
     JavaPaginatedResource,
     OffsetPaginatedResource,
     PaginationMapper,
     ParamsBuilder,
     QueryParam
 } from '@crczp/api-common';
-import { OffsetPaginationEvent } from '@sentinel/common/pagination';
+import { OffsetPaginationEvent } from '@crczp/utils';
 import {
     AccessedTrainingRun,
     AccessTrainingRunInfo,
@@ -17,6 +18,7 @@ import {
     Level,
     Question,
     TrainingRun,
+    TrainingRunBasic,
     TrainingRunInfo
 } from '@crczp/training-model';
 import { Observable } from 'rxjs';
@@ -39,6 +41,8 @@ import { AnsweredLevelMapper } from '../../mappers/training-run/training-run-lev
 import { PortalConfig } from '@crczp/utils';
 import { AccessedTrainingRunSort, TrainingRunSort } from '../sorts';
 import { AnswerCheckResultMapper } from '../../mappers/training-run/answer-check-result-mapper';
+import { trainingRunBasicArrayMapper } from '../../mappers/training-run/training-run-basic-mapper';
+import { TrainingRunBasicDto } from '../../dto/training-run/training-run-basic-dto';
 
 /**
  * Default implementation of service abstracting http communication with training run endpoints.
@@ -46,6 +50,7 @@ import { AnswerCheckResultMapper } from '../../mappers/training-run/answer-check
 @Injectable()
 export class TrainingRunDefaultApi extends LinearRunApi {
     private readonly http = inject(HttpClient);
+    private readonly crczpHttp = inject(CRCZPHttpService);
 
     private readonly apiUrl =
         inject(PortalConfig).basePaths.linearTraining + '/training-runs';
@@ -285,5 +290,22 @@ export class TrainingRunDefaultApi extends LinearRunApi {
                 `${this.apiUrl}/${trainingRunId}/levels/${levelId}`,
             )
             .pipe(map((response) => AnsweredLevelMapper.fromDTO(response)));
+    }
+
+    fetchTrainingRunsByIds(ids: number[]): Observable<TrainingRunBasic[]> {
+        return this.crczpHttp
+            .get<TrainingRunBasicDto[]>(
+                `${this.apiUrl}/by-ids`,
+                'Fetch training runs by ids',
+            )
+            .withSplitCacheQuery({
+                ids,
+                cacheKey: (id) => `trainingRunBasic-${id}`,
+                itemId: (dto) => dto.id,
+                paramName: 'ids',
+                ttl: '8h',
+            })
+            .withMapper(trainingRunBasicArrayMapper)
+            .execute();
     }
 }

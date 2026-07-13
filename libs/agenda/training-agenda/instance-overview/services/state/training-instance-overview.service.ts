@@ -20,7 +20,7 @@ import {
     NotificationService,
     PortalConfig,
 } from '@crczp/utils';
-import { OffsetPaginationEvent } from '@sentinel/common/pagination';
+import { OffsetPaginationEvent } from '@crczp/utils';
 import {
     SentinelConfirmationDialogComponent,
     SentinelConfirmationDialogConfig,

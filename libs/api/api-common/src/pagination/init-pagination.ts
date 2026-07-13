@@ -1,4 +1,4 @@
-import { OffsetPaginationEvent, SortDir } from '@sentinel/common/pagination';
+import { OffsetPaginationEvent, SortDir } from '@crczp/utils';
 import { inject } from '@angular/core';
 import { PortalConfig } from '@crczp/utils';
 import { OffsetPaginatedResource } from './offset-paginated-resource';

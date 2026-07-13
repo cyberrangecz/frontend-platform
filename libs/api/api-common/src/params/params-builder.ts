@@ -1,5 +1,5 @@
 import { HttpParams } from '@angular/common/http';
-import { OffsetPaginationEvent } from '@sentinel/common/pagination';
+import { OffsetPaginationEvent } from '@crczp/utils';
 import { QueryParam } from './query-param';
 
 export class ParamsBuilder {

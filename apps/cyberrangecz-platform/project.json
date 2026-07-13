@@ -28,10 +28,21 @@
                         "glob": "**/*",
                         "input": "dist/libs/utils/theme/assets/",
                         "output": "/assets/"
+                    },
+                    {
+                        "glob": "pglite.wasm",
+                        "input": "node_modules/@electric-sql/pglite/dist",
+                        "output": "/"
+                    },
+                    {
+                        "glob": "initdb.wasm",
+                        "input": "node_modules/@electric-sql/pglite/dist",
+                        "output": "/"
                     }
                 ],
                 "styles": ["dist/libs/utils/theme/theme/apply-all.scss"],
-                "scripts": []
+                "scripts": [],
+                "webWorkerTsConfig": "apps/cyberrangecz-platform/tsconfig.worker.json"
             },
             "configurations": {
                 "production": {
@@ -90,7 +101,8 @@
             "executor": "@nx/vite:test",
             "outputs": ["{options.reportsDirectory}"],
             "options": {
-                "reportsDirectory": "../../coverage/apps/cyberrangecz-platform"
+                "reportsDirectory": "../../coverage/apps/cyberrangecz-platform",
+                "webWorkerTsConfig": "apps/cyberrangecz-platform/tsconfig.worker.json"
             }
         },
         "serve-static": {

@@ -1,4 +1,4 @@
-import { OffsetPaginationEvent } from '@sentinel/common/pagination';
+import { OffsetPaginationEvent } from '@crczp/utils';
 import { DetectionEventParticipant } from '@crczp/training-model';
 import { Observable } from 'rxjs';
 import { DetectionEventParticipantSort } from '@crczp/training-api';

@@ -2,7 +2,7 @@ import { RegisterControlItem } from '@crczp/user-and-group-agenda/internal';
 import { MicroserviceTable } from '../model/table/microservice-table';
 import { MicroserviceOverviewService } from '../services/microservice-overview.service';
 import { Microservice } from '@crczp/user-and-group-model';
-import { OffsetPaginationEvent } from '@sentinel/common/pagination';
+import { OffsetPaginationEvent } from '@crczp/utils';
 import {
     ChangeDetectionStrategy,
     Component,

@@ -45,6 +45,40 @@ export class PortalConfig extends Z.class({
             .nonnegative('Retry count must be a non-negative integer'),
     }),
 
+    caching: z.object({
+        endpointCachingDisabled: z
+            .boolean()
+            .nullish()
+            .describe('Disables caching of API responses if true'),
+        endpointCacheTTL: z
+            .number({ required_error: 'Cache TTL field is required' })
+            .gt(0, 'Cache TTL must be greater than 0')
+            .describe('TTL for cached API responses, used for cache eviction'),
+        eventCacheTTL: z
+            .number({ required_error: 'Event cache TTL field is required' })
+            .gt(0, 'Event cache TTL must be greater than 0')
+            .describe('TTL for cached event data, used for event query engine cache eviction'),
+        eventEntityCacheTTL: z
+            .number({
+                required_error: 'Event entity cache TTL field is required',
+            })
+            .gt(0, 'Event entity cache TTL must be greater than 0')
+            .describe('TTL for cached entities related to events, such as users and training definitions'),
+        eventCacheMaxStaleness: z
+            .number({
+                required_error: 'Event cache max staleness field is required',
+            })
+            .gt(0, 'Event cache max staleness must be greater than 0')
+            .describe('Maxmimum milliseconds after which cached event data is considered stale and triggers a synchronization on query'),
+        eventCacheMaxSize: z
+            .number()
+            .int('Event cache max size must be an integer')
+            .gt(0, 'Event cache max size must be greater than 0')
+            .optional()
+            .default(524_288_000)
+            .describe('Maximum size in bytes for the event cache database. When exceeded at bootstrap, least-recently-synced instances are dropped until the limit is satisfied. Defaults to 500 MB.'),
+    }),
+
     basePaths: z.object({
         linearTraining: z
             .string({ required_error: 'Linear training API path is required' })

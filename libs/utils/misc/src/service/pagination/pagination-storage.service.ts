@@ -1,7 +1,7 @@
 import { inject, Injectable, Provider, Type } from '@angular/core';
 import { duration, Duration } from 'moment-mini';
 import { PortalConfig } from '../../types/config';
-import { OffsetPaginationEvent } from '@sentinel/common/pagination';
+import { OffsetPaginationEvent } from '@crczp/utils';
 
 const PAGINATION_TTL = 30; //days
 

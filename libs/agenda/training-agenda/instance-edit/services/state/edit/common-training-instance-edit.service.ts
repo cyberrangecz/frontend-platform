@@ -3,7 +3,7 @@ import { PoolApi, PoolSort, SandboxDefinitionApi, SandboxDefinitionSort } from '
 import { TrainingDefinitionInfo, TrainingInstance } from '@crczp/training-model';
 import { BehaviorSubject, concat, forkJoin, from, Observable, timer } from 'rxjs';
 import { filter, map, switchMap, tap } from 'rxjs/operators';
-import { OffsetPaginationEvent } from '@sentinel/common/pagination';
+import { OffsetPaginationEvent } from '@crczp/utils';
 import { Pool, SandboxDefinition } from '@crczp/sandbox-model';
 import { ErrorHandlerService, LoadingTracker, NotificationService, PortalConfig } from '@crczp/utils';
 import { LinearTrainingDefinitionApi, LinearTrainingInstanceApi, TrainingDefinitionSort } from '@crczp/training-api';

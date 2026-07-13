@@ -7,7 +7,7 @@ import {
     ParamsBuilder,
     QueryParam
 } from '@crczp/api-common';
-import { OffsetPaginationEvent } from '@sentinel/common/pagination';
+import { OffsetPaginationEvent } from '@crczp/utils';
 import { map } from 'rxjs/operators';
 import { VirtualImagesMapper } from '../../mappers/vm-images/virtual-images-mapper';
 import { VirtualImageDTO } from '../../dto/vm-images/virtual-image-d-t-o';

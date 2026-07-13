@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { SandboxAllocationUnitsService } from './sandbox-allocation-units.service';
 import { BehaviorSubject, combineLatestWith, EMPTY, Observable } from 'rxjs';
-import { OffsetPaginationEvent } from '@sentinel/common/pagination';
+import { OffsetPaginationEvent } from '@crczp/utils';
 import {
     PoolApi,
     SandboxAllocationUnitsApi,

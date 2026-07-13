@@ -1,5 +1,5 @@
 import { OffsetPaginatedElementsPollingService } from '@sentinel/common';
-import { OffsetPaginationEvent } from '@sentinel/common/pagination';
+import { OffsetPaginationEvent } from '@crczp/utils';
 import { Request } from '@crczp/sandbox-model';
 import { Observable } from 'rxjs';
 import { AllocationRequestSort } from '@crczp/sandbox-api';

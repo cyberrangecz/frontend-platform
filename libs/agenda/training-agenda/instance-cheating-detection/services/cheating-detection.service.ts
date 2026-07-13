@@ -6,7 +6,7 @@ import {
     SentinelConfirmationDialogConfig,
     SentinelDialogResultEnum
 } from '@sentinel/components/dialogs';
-import { OffsetPaginationEvent } from '@sentinel/common/pagination';
+import { OffsetPaginationEvent } from '@crczp/utils';
 import { CheatingDetectionApi, CheatingDetectionSort } from '@crczp/training-api';
 import { CheatingDetection } from '@crczp/training-model';
 import { EMPTY, from, Observable } from 'rxjs';

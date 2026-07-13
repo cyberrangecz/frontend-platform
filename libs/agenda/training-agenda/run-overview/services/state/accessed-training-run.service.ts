@@ -4,7 +4,7 @@ import { AccessedTrainingRunSort, LinearRunApi } from '@crczp/training-api';
 import { AccessedTrainingRun } from '@crczp/training-model';
 import { BehaviorSubject, from, Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
-import { OffsetPaginationEvent } from '@sentinel/common/pagination';
+import { OffsetPaginationEvent } from '@crczp/utils';
 import { ErrorHandlerService, PortalConfig } from '@crczp/utils';
 import { Routing } from '@crczp/routing-commons';
 import { CrczpOffsetElementsPaginatedService, OffsetPaginatedResource, QueryParam } from '@crczp/api-common';
