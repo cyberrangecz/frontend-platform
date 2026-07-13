@@ -22,7 +22,7 @@
         "@ngneat/cashew": "^5.1.0",
         "@nx/devkit": "^21.6.0",
         "@sentinel/auth": "20.0.3",
-        "@sentinel/common": "20.1.5",
+        "@sentinel/common": "20.1.6",
         "@sentinel/components": "20.1.13",
         "@sentinel/layout": "20.1.3",
         "angular-mgl-timeline": "^1.1.0",
@@ -114,7 +114,7 @@
         "zod-class": "^0.0.18"
     },
     "overrides": {
-        "@sentinel/common": "20.1.5",
+        "@sentinel/common": "20.1.6",
         "ngx-indexed-db": {
             "@angular/common": "^20.0.0",
             "@angular/core": "^20.0.0",
