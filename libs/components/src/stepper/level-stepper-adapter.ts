@@ -1,14 +1,14 @@
-import { Level, Phase } from '@crczp/training-model';
+import { Level } from '@crczp/training-model';
 import { StepItem, StepStateEnum } from '@sentinel/components/stepper';
 
 export class LevelStepperAdapter implements StepItem {
     id: number;
     title: string;
-    level: Level | Phase;
+    level: Level;
     icon: string;
     state: StepStateEnum;
 
-    constructor(level: Level | Phase) {
+    constructor(level: Level) {
         this.id = level.id;
         this.title = level.title;
         this.level = level;

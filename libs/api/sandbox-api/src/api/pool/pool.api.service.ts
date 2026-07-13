@@ -354,8 +354,7 @@ export class PoolApi {
      * @param poolId id of a pool
      */
     getManagementSshAccess(poolId: number): Observable<boolean> {
-        const headers = new HttpHeaders();
-        headers.set('Accept', ['application/octet-stream']);
+        const headers = new HttpHeaders().set('Accept', ['application/octet-stream']);
         return this.http
             .get(`${this.apiUrl}/${poolId}/management-ssh-access`, {
                 responseType: 'blob',

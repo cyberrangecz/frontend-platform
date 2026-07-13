@@ -3,18 +3,17 @@ import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { inject } from '@angular/core';
 import { RoutingUtils } from '../../utils';
 import { map } from 'rxjs/operators';
-import { TrainingInstance, TrainingTypeEnum } from '@crczp/training-model';
+import { TrainingInstance } from '@crczp/training-model';
 import { TrainingResolverHelperService } from './training-resolver-helper.service';
 import { catchUndefinedOrNull } from '../catch-undefined-or-null';
 
 function resolveInstance(
     route: ActivatedRouteSnapshot,
     service: TrainingResolverHelperService,
-    type: TrainingTypeEnum,
 ) {
-    return service.getInstance(route, type).pipe(
+    return service.getInstance(route).pipe(
         catchUndefinedOrNull('Training instance', () => {
-            return service.navigateToInstanceOverview(type);
+            return service.navigateToInstanceOverview();
         }),
     );
 }
@@ -23,14 +22,7 @@ function resolveInstanceTitle(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot,
     service: TrainingResolverHelperService,
-    type: TrainingTypeEnum,
 ): Observable<string> | string {
-    if (RoutingUtils.containsSubroute('create', state)) {
-        return type === TrainingTypeEnum.LINEAR
-            ? 'Create Linear Training Instance'
-            : 'Create Adaptive Training Instance';
-    }
-
     function getTitleText(ti: TrainingInstance) {
         if (RoutingUtils.containsSubroute('edit', state)) {
             return `Edit ${ti.title}`;
@@ -57,7 +49,7 @@ function resolveInstanceTitle(
     }
 
     return service
-        .getInstance(route, type)
+        .getInstance(route)
         .pipe(map((ti) => (ti ? getTitleText(ti) : '')));
 }
 
@@ -65,7 +57,6 @@ function resolveInstanceBreadcrumb(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot,
     service: TrainingResolverHelperService,
-    type: TrainingTypeEnum,
 ): Observable<string> | string {
     if (RoutingUtils.containsSubroute('create', state)) {
         return 'Create';
@@ -78,7 +69,7 @@ function resolveInstanceBreadcrumb(
     }
 
     return service
-        .getInstance(route, type)
+        .getInstance(route)
         .pipe(map((ti) => (ti ? getBreadcrumbText(ti) : '')));
 }
 
@@ -86,21 +77,7 @@ export const TrainingInstanceResolvers = {
     linearInstanceResolver: (
         route: ActivatedRouteSnapshot,
         _state: RouterStateSnapshot,
-    ) =>
-        resolveInstance(
-            route,
-            inject(TrainingResolverHelperService),
-            TrainingTypeEnum.LINEAR,
-        ),
-    adaptiveInstanceResolver: (
-        route: ActivatedRouteSnapshot,
-        _state: RouterStateSnapshot,
-    ) =>
-        resolveInstance(
-            route,
-            inject(TrainingResolverHelperService),
-            TrainingTypeEnum.ADAPTIVE,
-        ),
+    ) => resolveInstance(route, inject(TrainingResolverHelperService)),
     linearInstanceTitleResolver: (
         route: ActivatedRouteSnapshot,
         state: RouterStateSnapshot,
@@ -109,17 +86,6 @@ export const TrainingInstanceResolvers = {
             route,
             state,
             inject(TrainingResolverHelperService),
-            TrainingTypeEnum.LINEAR,
-        ),
-    adaptiveInstanceTitleResolver: (
-        route: ActivatedRouteSnapshot,
-        state: RouterStateSnapshot,
-    ) =>
-        resolveInstanceTitle(
-            route,
-            state,
-            inject(TrainingResolverHelperService),
-            TrainingTypeEnum.ADAPTIVE,
         ),
     linearInstanceBreadcrumbResolver: (
         route: ActivatedRouteSnapshot,
@@ -129,16 +95,5 @@ export const TrainingInstanceResolvers = {
             route,
             state,
             inject(TrainingResolverHelperService),
-            TrainingTypeEnum.LINEAR,
-        ),
-    adaptiveInstanceBreadcrumbResolver: (
-        route: ActivatedRouteSnapshot,
-        state: RouterStateSnapshot,
-    ) =>
-        resolveInstanceBreadcrumb(
-            route,
-            state,
-            inject(TrainingResolverHelperService),
-            TrainingTypeEnum.ADAPTIVE,
         ),
 };

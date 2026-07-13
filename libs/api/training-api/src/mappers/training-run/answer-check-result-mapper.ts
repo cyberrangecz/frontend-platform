@@ -1,5 +1,5 @@
-import { IsCorrectAnswerDTO } from '../../dto/phase/training-phase/is-correct-answer-dto';
 import { AnswerCheckResult } from '@crczp/training-model';
+import { IsCorrectAnswerDTO } from '../../dto/training-run/is-correct-answer-dto';
 
 export class AnswerCheckResultMapper {
     static fromDTO(dto: IsCorrectAnswerDTO): AnswerCheckResult {

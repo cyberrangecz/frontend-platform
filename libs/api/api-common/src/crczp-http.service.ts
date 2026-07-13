@@ -365,14 +365,22 @@ class BodylessRequestBuilder<TRecv, TOut = TRecv> extends BaseRequestBuilder<
      * @param key Optional cache key override.
      */
     withCache(ttl: CacheTTL, key: string | null = null) {
+        const cacheContext = withCache({
+            storage: 'localStorage',
+            ttl: mapCacheTTLToMs(ttl),
+            version: this.version,
+            ...(key ? { key } : {}),
+        });
+        const existingContext = this.options.context;
+        if (existingContext) {
+            const skippedErrors = existingContext.get(SKIPPED_ERROR_CODES);
+            if (skippedErrors.length > 0) {
+                cacheContext.set(SKIPPED_ERROR_CODES, skippedErrors);
+            }
+        }
         this.options = {
             ...this.options,
-            context: withCache({
-                storage: 'localStorage',
-                ttl: mapCacheTTLToMs(ttl),
-                version: this.version,
-                ...(key ? { key } : {}),
-            }),
+            context: cacheContext,
         };
         return this;
     }

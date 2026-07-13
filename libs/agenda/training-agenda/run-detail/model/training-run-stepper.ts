@@ -1,18 +1,16 @@
 import { SentinelStepper, StepStateEnum } from '@sentinel/components/stepper';
-import { LevelStepperAdapter } from '@crczp/training-agenda/internal';
-import { Level, Phase } from '@crczp/training-model';
+import { Level } from '@crczp/training-model';
+import { LevelStepperAdapter } from '@crczp/components';
 
 /**
  * Training run levels adapter to stepper component
  */
-export class TrainingRunStepper
-    implements SentinelStepper<LevelStepperAdapter>
-{
+export class TrainingRunStepper implements SentinelStepper<LevelStepperAdapter> {
     activeLevelIndex: number;
     items: LevelStepperAdapter[];
 
     constructor(
-        levels: (Level | Phase)[],
+        levels: Level[],
         activeLevelId: number,
         public selectable: boolean,
     ) {

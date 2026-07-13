@@ -18,8 +18,6 @@ export class RoleService {
         'uagAdmin',
         'trainingDesigner',
         'trainingOrganizer',
-        'adaptiveTrainingDesigner',
-        'adaptiveTrainingOrganizer',
         'trainingTrainee',
         'sandboxDesigner',
         'sandboxOrganizer',

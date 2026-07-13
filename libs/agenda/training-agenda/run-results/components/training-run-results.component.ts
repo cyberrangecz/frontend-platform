@@ -1,23 +1,10 @@
-import {
-    ChangeDetectionStrategy,
-    Component,
-    DestroyRef,
-    inject,
-    OnInit,
-} from '@angular/core';
-import {
-    ActivatedRoute,
-    RouterLink,
-    RouterLinkActive,
-    RouterOutlet,
-} from '@angular/router';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { ActivatedRoute, RouterOutlet } from '@angular/router';
 import { Observable } from 'rxjs';
 import { LinearTrainingDefinitionApi } from '@crczp/training-api';
 import { MitreTechniquesOverviewService } from '../service/mitre-techniques.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatTabLink, MatTabNav, MatTabNavPanel } from '@angular/material/tabs';
-import { MatIcon } from '@angular/material/icon';
-import { AsyncPipe } from '@angular/common';
+import { MatTabNavPanel } from '@angular/material/tabs';
 import { TrainingRun } from '@crczp/training-model';
 
 @Component({
@@ -25,17 +12,7 @@ import { TrainingRun } from '@crczp/training-model';
     templateUrl: './training-run-results.component.html',
     styleUrls: ['./training-run-results.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [
-        RouterLinkActive,
-        RouterLink,
-        MatTabLink,
-        MatTabNav,
-        MatIcon,
-        MatIcon,
-        RouterOutlet,
-        AsyncPipe,
-        MatTabNavPanel,
-    ],
+    imports: [RouterOutlet, MatTabNavPanel],
     providers: [MitreTechniquesOverviewService],
 })
 /**

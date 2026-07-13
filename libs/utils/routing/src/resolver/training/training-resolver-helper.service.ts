@@ -2,9 +2,6 @@ import { inject, Injectable } from '@angular/core';
 import { ErrorHandlerService } from '@crczp/utils';
 import { ActivatedRouteSnapshot, Router, UrlTree } from '@angular/router';
 import {
-    AdaptiveRunApi,
-    AdaptiveTrainingDefinitionApi,
-    AdaptiveTrainingInstanceApi,
     LinearRunApi,
     LinearTrainingDefinitionApi,
     LinearTrainingInstanceApi,
@@ -14,48 +11,36 @@ import {
     TrainingDefinition,
     TrainingInstance,
     TrainingRun,
-    TrainingTypeEnum,
 } from '@crczp/training-model';
 import { catchError, take } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
-import { Routing } from '../../routing-namespace';
 import { RoutingUtils } from '../../utils';
 import { CommonResolverHelperService } from '../common-resolver-helper-service';
+import { Routing } from '../../routing-namespace';
 
 @Injectable({
     providedIn: 'root',
 })
 export class TrainingResolverHelperService extends CommonResolverHelperService {
     private readonly linearDefinitionApi = inject(LinearTrainingDefinitionApi);
-    private readonly adaptiveDefinitionApi = inject(
-        AdaptiveTrainingDefinitionApi,
-    );
     private readonly linearInstanceApi = inject(LinearTrainingInstanceApi);
-    private readonly adaptiveInstanceApi = inject(AdaptiveTrainingInstanceApi);
     private readonly linearRunApi = inject(LinearRunApi);
-    private readonly adaptiveRunApi = inject(AdaptiveRunApi);
 
     constructor() {
         super(inject(ErrorHandlerService), inject(Router));
     }
 
-    public navigateToDefinitionOverview(type: TrainingTypeEnum) {
+    public navigateToDefinitionOverview() {
         return this.navigate(
             this.router.parseUrl(
-                type === TrainingTypeEnum.LINEAR
-                    ? Routing.RouteBuilder.linear_definition.build()
-                    : Routing.RouteBuilder.adaptive_definition.build(),
+                Routing.RouteBuilder.linear_definition.build(),
             ),
         );
     }
 
-    public navigateToInstanceOverview(type: TrainingTypeEnum) {
+    public navigateToInstanceOverview() {
         return this.navigate(
-            this.router.parseUrl(
-                type === TrainingTypeEnum.LINEAR
-                    ? Routing.RouteBuilder.linear_instance.build()
-                    : Routing.RouteBuilder.adaptive_instance.build(),
-            ),
+            this.router.parseUrl(Routing.RouteBuilder.linear_instance.build()),
         );
     }
 
@@ -67,21 +52,15 @@ export class TrainingResolverHelperService extends CommonResolverHelperService {
 
     public getDefinition(
         route: ActivatedRouteSnapshot,
-        type: TrainingTypeEnum,
         withLevels = false,
     ): Observable<TrainingDefinition | null> {
-        const api =
-            type === TrainingTypeEnum.LINEAR
-                ? this.linearDefinitionApi
-                : this.adaptiveDefinitionApi;
-
         const definitionId = this.extractDefinitionId(route);
         if (!definitionId) {
             this.emitFrontendError('No definition id found in route');
             return of(null);
         }
 
-        return api.get(definitionId, withLevels).pipe(
+        return this.linearDefinitionApi.get(definitionId, withLevels).pipe(
             take(1),
             catchError((err) => {
                 this.emitApiError(err, 'Resolving training definition');
@@ -92,20 +71,14 @@ export class TrainingResolverHelperService extends CommonResolverHelperService {
 
     public getInstance(
         route: ActivatedRouteSnapshot,
-        type: TrainingTypeEnum,
     ): Observable<TrainingInstance | null> {
-        const api =
-            type === TrainingTypeEnum.LINEAR
-                ? this.linearInstanceApi
-                : this.adaptiveInstanceApi;
-
         const instanceId = this.extractInstanceId(route);
         if (!instanceId) {
             this.emitFrontendError('No instance id found in route');
             return of(null);
         }
 
-        return api.get(instanceId).pipe(
+        return this.linearInstanceApi.get(instanceId).pipe(
             take(1),
             catchError((err) => {
                 this.emitApiError(err, 'Resolving training instance');
@@ -116,13 +89,8 @@ export class TrainingResolverHelperService extends CommonResolverHelperService {
 
     public resumeRun(
         runId: number,
-        type: TrainingTypeEnum,
     ): Observable<AccessTrainingRunInfo | UrlTree> {
-        const api =
-            type === TrainingTypeEnum.LINEAR
-                ? this.linearRunApi
-                : this.adaptiveRunApi;
-        return api.resume(runId).pipe(
+        return this.linearRunApi.resume(runId).pipe(
             take(1),
             catchError((err) => {
                 this.emitApiError(err, 'Accessing training run');
@@ -133,13 +101,8 @@ export class TrainingResolverHelperService extends CommonResolverHelperService {
 
     public accessRun(
         runToken: string,
-        type: TrainingTypeEnum,
     ): Observable<AccessTrainingRunInfo | UrlTree> {
-        const api =
-            type === TrainingTypeEnum.LINEAR
-                ? this.linearRunApi
-                : this.adaptiveRunApi;
-        return api.access(runToken).pipe(
+        return this.linearRunApi.access(runToken).pipe(
             take(1),
             catchError((err) => {
                 this.emitApiError(err, 'Accessing training run');
@@ -150,20 +113,14 @@ export class TrainingResolverHelperService extends CommonResolverHelperService {
 
     public getRunResults(
         route: ActivatedRouteSnapshot,
-        type: TrainingTypeEnum,
     ): Observable<TrainingRun | null> {
-        const api =
-            type === TrainingTypeEnum.LINEAR
-                ? this.linearRunApi
-                : this.adaptiveRunApi;
-
         const runId = this.extractRunId(route);
         if (!runId) {
             this.emitFrontendError('No run id found in route');
             return of(null);
         }
 
-        return api.get(runId).pipe(
+        return this.linearRunApi.get(runId).pipe(
             take(1),
             catchError((err) => {
                 this.emitApiError(err, 'Fetching training run results');
@@ -181,9 +138,10 @@ export class TrainingResolverHelperService extends CommonResolverHelperService {
     }
 
     private extractInstanceId(route: ActivatedRouteSnapshot): number | null {
-        const instanceId = RoutingUtils.extractVariable<
-            'linear-instance' | 'adaptive-instance'
-        >('instanceId', route);
+        const instanceId = RoutingUtils.extractVariable<'linear-instance'>(
+            'instanceId',
+            route,
+        );
         if (!instanceId || isNaN(+instanceId)) {
             return null;
         }
@@ -191,9 +149,10 @@ export class TrainingResolverHelperService extends CommonResolverHelperService {
     }
 
     private extractDefinitionId(route: ActivatedRouteSnapshot): number | null {
-        const definitionId = RoutingUtils.extractVariable<
-            'linear-definition' | 'adaptive-definition'
-        >('definitionId', route);
+        const definitionId = RoutingUtils.extractVariable<'linear-definition'>(
+            'definitionId',
+            route,
+        );
         if (!definitionId || isNaN(+definitionId)) {
             return null;
         }

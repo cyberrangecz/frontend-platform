@@ -10,7 +10,7 @@ import { LogoSpinnerComponent } from '../../logo-spinner/logo-spinner.component'
 import { TitleCaseExceptPipe } from '@crczp/utils';
 
 @Component({
-    selector: 'crczp-next-phase-dialog',
+    selector: 'crczp-loading-dialog',
     templateUrl: './loading-dialog.component.html',
     styleUrls: ['./loading-dialog.component.css'],
     imports: [

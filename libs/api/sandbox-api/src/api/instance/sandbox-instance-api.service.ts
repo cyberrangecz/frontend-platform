@@ -166,8 +166,7 @@ export class SandboxInstanceApi {
      * @param sandboxUuid id of the sandbox for which remote ssh access is demanded
      */
     getUserSshAccess(sandboxUuid: string): Observable<boolean> {
-        const headers = new HttpHeaders();
-        headers.set('Accept', ['application/octet-stream']);
+        const headers = new HttpHeaders().set('Accept', ['application/octet-stream']);
         return this.http
             .get(`${this.sandboxEndpointUri}/${sandboxUuid}/user-ssh-access`, {
                 responseType: 'blob',

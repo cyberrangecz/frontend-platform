@@ -79,7 +79,6 @@ export class AccessedTrainingRunTable extends SentinelTable<
                 defer(() =>
                     service.toResumeRun(
                         trainingRun.trainingRunId,
-                        trainingRun.type,
                     ),
                 ),
             ),
@@ -96,7 +95,6 @@ export class AccessedTrainingRunTable extends SentinelTable<
                 defer(() =>
                     service.toRunResults(
                         trainingRun.trainingRunId,
-                        trainingRun.type,
                     ),
                 ),
             ),

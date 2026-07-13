@@ -9,7 +9,7 @@ import {
     OffsetPaginatedResource,
     PaginationMapper,
     ParamsBuilder,
-    QueryParam,
+    QueryParam
 } from '@crczp/api-common';
 import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import { TrainingInstance, TrainingRun } from '@crczp/training-model';
@@ -176,8 +176,9 @@ export class TrainingInstanceDefaultApi extends LinearTrainingInstanceApi {
      * @param id id of training instance which should be archived
      */
     archive(id: number): Observable<boolean> {
-        const headers = new HttpHeaders();
-        headers.set('Accept', ['application/octet-stream']);
+        const headers = new HttpHeaders().set('Accept', [
+            'application/octet-stream',
+        ]);
         return this.http
             .get(
                 `${this.trainingExportsEndpointUri}/${this.trainingInstancesUriExtension}/${id}`,
@@ -217,8 +218,7 @@ export class TrainingInstanceDefaultApi extends LinearTrainingInstanceApi {
     }
 
     exportScore(trainingInstanceId: number): Observable<boolean> {
-        const headers = new HttpHeaders();
-        headers.set('Accept', ['text/plain']);
+        const headers = new HttpHeaders().set('Accept', ['text/plain']);
         return this.http
             .get(
                 `${this.trainingExportsEndpointUri}/${this.trainingInstancesUriExtension}/${trainingInstanceId}/scores`,

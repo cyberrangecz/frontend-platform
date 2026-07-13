@@ -144,14 +144,6 @@ export class TrainingInstanceOverviewService extends CrczpOffsetElementsPaginate
         ]);
     }
 
-    aggregatedResults(id: number) {
-        return this.router.navigate([
-            Routing.RouteBuilder.linear_instance
-                .instanceId(id)
-                .aggregated_results.build(),
-        ]);
-    }
-
     /**
      * Returns observable of PoolSize, holding data about total and used size of a pool or
      * an error if the pool is not assigned or has been removed.

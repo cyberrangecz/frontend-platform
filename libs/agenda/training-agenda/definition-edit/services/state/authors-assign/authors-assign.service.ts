@@ -100,7 +100,6 @@ export class AuthorsAssignService extends SentinelUserAssignService {
                 PaginationMapper.toOffsetPaginationEvent(
                     pagination,
                 ) as OffsetPaginationEvent<UserRefSort>,
-                false,
                 UserNameFilters.create(filter),
             )
             .pipe(
@@ -136,7 +135,6 @@ export class AuthorsAssignService extends SentinelUserAssignService {
                     },
                     this.settings,
                 ),
-                false,
                 UserNameFilters.create(filter),
             )
             .pipe(
@@ -166,7 +164,6 @@ export class AuthorsAssignService extends SentinelUserAssignService {
             .updateAuthors(
                 resourceId,
                 additions.map((user) => user.id),
-                false,
                 removals.map((user) => user.id),
             )
             .pipe(
@@ -188,7 +185,7 @@ export class AuthorsAssignService extends SentinelUserAssignService {
         resourceId: number,
         userIds: number[],
     ): Observable<any> {
-        return this.userApi.updateAuthors(resourceId, userIds, false, []).pipe(
+        return this.userApi.updateAuthors(resourceId, userIds, []).pipe(
             tap(
                 () => this.clearSelectedUsersToAssign(),
                 (err) => this.errorHandler.emitAPIError(err, 'Adding authors'),
@@ -204,7 +201,7 @@ export class AuthorsAssignService extends SentinelUserAssignService {
     }
 
     private callApiToUnassign(resourceId: number, usersIds: number[]) {
-        return this.userApi.updateAuthors(resourceId, [], false, usersIds).pipe(
+        return this.userApi.updateAuthors(resourceId, [],  usersIds).pipe(
             tap(
                 () => this.clearSelectedAssignedUsers(),
                 (err) =>

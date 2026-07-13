@@ -4,7 +4,7 @@ import { MatButton } from '@angular/material/button';
 import { AbstractTrainingRunService } from '../../../services/training-run/abstract-training-run.service';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { InfoLevel, InfoPhase } from '@crczp/training-model';
+import { InfoLevel } from '@crczp/training-model';
 import { AsyncPipe } from '@angular/common';
 import { isLoading } from '@sentinel/common/utils';
 
@@ -25,7 +25,7 @@ export class InfoLevelComponent {
         return this.runService.runInfo$.pipe(
             map(
                 (runInfo) =>
-                    (runInfo.displayedLevel as InfoLevel | InfoPhase).content,
+                    (runInfo.displayedLevel as InfoLevel).content,
             ),
         );
     }

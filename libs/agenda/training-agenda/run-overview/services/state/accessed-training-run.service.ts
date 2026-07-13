@@ -1,9 +1,9 @@
 import { inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { AccessedTrainingRunSort, AdaptiveRunApi, LinearRunApi } from '@crczp/training-api';
-import { AccessedTrainingRun, TrainingTypeEnum } from '@crczp/training-model';
+import { AccessedTrainingRunSort, LinearRunApi } from '@crczp/training-api';
+import { AccessedTrainingRun } from '@crczp/training-model';
 import { BehaviorSubject, from, Observable } from 'rxjs';
-import { concatMap, map, tap } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import { ErrorHandlerService, PortalConfig } from '@crczp/utils';
 import { Routing } from '@crczp/routing-commons';
@@ -22,8 +22,8 @@ export class AccessedTrainingRunService extends CrczpOffsetElementsPaginatedServ
                 OffsetPaginatedResource.fromPaginatedElements(elements),
             ),
         );
+
     private trainingApi = inject(LinearRunApi);
-    private adaptiveApi = inject(AdaptiveRunApi);
     private router = inject(Router);
     private errorHandler = inject(ErrorHandlerService);
 
@@ -44,9 +44,6 @@ export class AccessedTrainingRunService extends CrczpOffsetElementsPaginatedServ
         const filters = filter ? [new QueryParam('title', filter)] : [];
         pagination.size = Number.MAX_SAFE_INTEGER;
         return this.trainingApi.getAccessed(pagination, filters).pipe(
-            concatMap((trainingRuns) =>
-                this.getAllAdaptive(pagination, trainingRuns),
-            ),
             tap(
                 (runs) => {
                     this.resourceSubject$.next(runs);
@@ -62,26 +59,26 @@ export class AccessedTrainingRunService extends CrczpOffsetElementsPaginatedServ
         );
     }
 
-    toResumeRun(id: number, type: TrainingTypeEnum): Observable<any> {
+    toResumeRun(id: number): Observable<any> {
         return from(
             this.router.navigate([
-                Routing.RouteBuilder.run[type].runId(id).resume.build(),
+                Routing.RouteBuilder.run.linear.runId(id).resume.build(),
             ]),
         );
     }
 
-    toAccessRun(token: string, type: TrainingTypeEnum): Observable<any> {
+    toAccessRun(token: string): Observable<any> {
         return from(
             this.router.navigate([
-                Routing.RouteBuilder.run[type].runToken(token).access.build(),
+                Routing.RouteBuilder.run.linear.runToken(token).access.build(),
             ]),
         );
     }
 
-    toRunResults(id: number, type: TrainingTypeEnum): Observable<any> {
+    toRunResults(id: number): Observable<any> {
         return from(
             this.router.navigate([
-                Routing.RouteBuilder.run[type].runId(id).results.build(),
+                Routing.RouteBuilder.run.linear.runId(id).results.build(),
             ]),
         );
     }
@@ -91,30 +88,6 @@ export class AccessedTrainingRunService extends CrczpOffsetElementsPaginatedServ
             this.router.navigate([
                 Routing.RouteBuilder.mitre_techniques.build(),
             ]),
-        );
-    }
-
-    private getAllAdaptive(
-        pagination: OffsetPaginationEvent<AccessedTrainingRunSort>,
-        trainingRuns: OffsetPaginatedResource<AccessedTrainingRun>,
-    ): Observable<OffsetPaginatedResource<AccessedTrainingRun>> {
-        return this.adaptiveApi.getAccessed(pagination).pipe(
-            map(
-                (adaptiveRuns) => {
-                    trainingRuns.elements = [
-                        ...trainingRuns.elements,
-                        ...adaptiveRuns.elements,
-                    ];
-                    return trainingRuns;
-                },
-                (err) => {
-                    this.errorHandler.emitAPIError(
-                        err,
-                        'Fetching adaptive runs',
-                    );
-                    this.hasErrorSubject$.next(true);
-                },
-            ),
         );
     }
 }

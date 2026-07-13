@@ -3,7 +3,6 @@ import { TrainingDefinitionCreateDTO } from '../../dto/training-definition/train
 import { TrainingDefinitionDTO } from '../../dto/training-definition/training-definition-dto';
 import { TrainingDefinitionUpdateDTO } from '../../dto/training-definition/training-definition-update-dto';
 import { LevelMapper } from '../level/level-mapper';
-import { PhaseMapper } from '../phase/phase-mapper';
 
 /**
  * @dynamic
@@ -12,7 +11,6 @@ export class TrainingDefinitionMapper {
     static fromDTO(
         dto: TrainingDefinitionDTO,
         withLevels: boolean,
-        withPhases?: boolean,
     ): TrainingDefinition {
         const result = new TrainingDefinition();
         result.id = dto.id;
@@ -25,8 +23,6 @@ export class TrainingDefinitionMapper {
         result.estimatedDuration = dto.estimated_duration;
         if (withLevels) {
             result.levels = LevelMapper.fromDTOs(dto.levels);
-        } else if (withPhases) {
-            result.levels = PhaseMapper.fromDTOs(dto.phases);
         }
         result.lastEditBy = dto.last_edited_by;
         result.hasReferenceSolution = dto.has_reference_solution;

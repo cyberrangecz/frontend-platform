@@ -80,8 +80,7 @@ export class ErrorHandlerService implements ErrorHandler {
         }
 
         if (
-            err.url?.startsWith(this.config.basePaths.linearTraining) ||
-            err.url?.startsWith(this.config.basePaths.adaptiveTraining)
+            err.url?.startsWith(this.config.basePaths.linearTraining)
         ) {
             this.setJavaApiErrorNotification(err, notification);
             notification.source = 'Training Agenda';

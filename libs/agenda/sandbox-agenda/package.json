@@ -13,7 +13,6 @@
         "@crczp/sandbox-model": "*",
         "@crczp/utils": "*",
         "@crczp/routing-commons": "*",
-        "d3": "*",
         "echarts": "*",
         "vite": "*",
         "@analogjs/vite-plugin-angular": "*",

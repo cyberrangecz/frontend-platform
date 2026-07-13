@@ -1,9 +1,0 @@
-.transition-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
-
-.transition-container p {
-    color: silver;
-}

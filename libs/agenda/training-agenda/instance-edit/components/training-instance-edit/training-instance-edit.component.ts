@@ -344,11 +344,7 @@ export class TrainingInstanceEditComponent implements OnChanges, AfterViewInit {
     }
 
     getTrainingDefinitionUrl(id: number) {
-        return Routing.RouteBuilder[
-            this.trainingType === TrainingTypeEnum.ADAPTIVE
-                ? 'adaptive_definition'
-                : 'linear_definition'
-        ]
+        return Routing.RouteBuilder.linear_definition
             .definitionId(id)
             .detail.build();
     }

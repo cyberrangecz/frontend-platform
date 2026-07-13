@@ -6,13 +6,7 @@ import { filter, map, switchMap, tap } from 'rxjs/operators';
 import { OffsetPaginationEvent } from '@sentinel/common/pagination';
 import { Pool, SandboxDefinition } from '@crczp/sandbox-model';
 import { ErrorHandlerService, LoadingTracker, NotificationService, PortalConfig } from '@crczp/utils';
-import {
-    AdaptiveTrainingDefinitionApi,
-    AdaptiveTrainingInstanceApi,
-    LinearTrainingDefinitionApi,
-    LinearTrainingInstanceApi,
-    TrainingDefinitionSort
-} from '@crczp/training-api';
+import { LinearTrainingDefinitionApi, LinearTrainingInstanceApi, TrainingDefinitionSort } from '@crczp/training-api';
 import { CommonTrainingInstanceSnapshotService } from './common-training-instance-snapshot.service';
 import { createPaginatedResource, OffsetPaginatedResource, QueryParam } from '@crczp/api-common';
 
@@ -64,12 +58,8 @@ export abstract class CommonTrainingInstanceEditService extends CommonTrainingIn
     private loadingTracker = new LoadingTracker();
 
     protected constructor(
-        private trainingInstanceApi:
-            | LinearTrainingInstanceApi
-            | AdaptiveTrainingInstanceApi,
-        private trainingDefinitionApi:
-            | LinearTrainingDefinitionApi
-            | AdaptiveTrainingDefinitionApi,
+        private trainingInstanceApi: LinearTrainingInstanceApi,
+        private trainingDefinitionApi: LinearTrainingDefinitionApi,
         private poolApi: PoolApi,
         private sandboxDefinitionApi: SandboxDefinitionApi,
         private router: Router,

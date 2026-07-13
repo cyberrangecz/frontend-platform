@@ -31,7 +31,7 @@
                     }
                 ],
                 "styles": ["dist/libs/utils/theme/theme/apply-all.scss"],
-                "scripts": ["node_modules/@hpcc-js/wasm/dist/graphviz.umd.js"]
+                "scripts": []
             },
             "configurations": {
                 "production": {

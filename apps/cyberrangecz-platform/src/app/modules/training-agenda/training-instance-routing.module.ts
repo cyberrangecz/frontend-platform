@@ -87,10 +87,7 @@ const routes: ValidRouterConfig<'linear-instance'> = [
             title: Routing.Resolvers.TrainingInstance
                 .linearInstanceTitleResolver,
         },
-        loadChildren: () =>
-            import('@crczp/training-agenda/instance-results').then(
-                (m) => m.TrainingInstanceResultsRoutingModule,
-            ),
+        // TODO: link to new results component
     },
     {
         path: ':instanceId/access-token',

@@ -1,5 +1,4 @@
 import { Level } from '../level/level';
-import { Phase } from '../phase/phase';
 
 /**
  * Class containing info about accessed training run
@@ -10,7 +9,7 @@ export class AccessTrainingRunInfo {
     sandboxDefinitionId?: number;
     currentLevelId!: number;
     displayedLevelId: number;
-    levels: Level[] | Phase[] = [];
+    levels: Level[] = [];
     isStepperDisplayed!: boolean;
     isPreview!: boolean;
     startTime!: Date;
@@ -18,11 +17,11 @@ export class AccessTrainingRunInfo {
     backwardMode!: boolean;
     isCurrentLevelAnswered!: boolean;
 
-    public get currentLevel(): Level | Phase | undefined {
+    public get currentLevel(): Level | undefined {
         return this.levels.find((level) => level.id === this.currentLevelId);
     }
 
-    public get displayedLevel(): Level | Phase | undefined {
+    public get displayedLevel(): Level | undefined {
         return this.levels.find((level) => level.id === this.displayedLevelId);
     }
 
