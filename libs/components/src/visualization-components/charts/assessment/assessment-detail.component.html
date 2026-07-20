@@ -1,0 +1,96 @@
+@let vm = assessment();
+
+<header class="assessment-detail--header">
+    <button
+        type="button"
+        class="assessment-detail--picker"
+        [matMenuTriggerFor]="assessmentMenu"
+        [disabled]="menuOptions().length <= 1"
+        aria-label="Select assessment"
+    >
+        <span class="assessment-detail--title" crczpOverflowTooltip>{{ vm.title }}</span>
+        <mat-icon class="assessment-detail--picker-caret" aria-hidden="true">arrow_drop_down</mat-icon>
+    </button>
+    <span class="assessment-detail--kind">{{ vm.kind }}</span>
+
+    <mat-menu #assessmentMenu="matMenu" class="assessment-detail--menu">
+        @for (option of menuOptions(); track option.order) {
+            <button
+                mat-menu-item
+                type="button"
+                [class.assessment-detail--menu-item--selected]="option.selected"
+                [attr.aria-current]="option.selected ? 'true' : null"
+                (click)="assessmentSelected.emit(option.order)"
+            >
+                <mat-icon>{{ option.icon }}</mat-icon>
+                <span class="assessment-detail--menu-label" crczpOverflowTooltip>{{ option.title }}</span>
+                @if (option.selected) {
+                    <mat-icon class="assessment-detail--menu-check">check</mat-icon>
+                }
+            </button>
+        }
+    </mat-menu>
+
+    <dl class="assessment-detail--stats">
+        @for (stat of stats(); track stat.label) {
+            <div class="assessment-detail--stat">
+                <dt class="assessment-detail--stat-label">{{ stat.label }}</dt>
+                <dd class="assessment-detail--stat-value">{{ stat.value }}</dd>
+            </div>
+        }
+    </dl>
+
+    <button
+        mat-icon-button
+        type="button"
+        class="assessment-detail--download"
+        (click)="downloadCsv.emit()"
+        matTooltip="Download CSV"
+        aria-label="Download CSV"
+    >
+        <mat-icon>download</mat-icon>
+    </button>
+</header>
+
+<div
+    class="assessment-detail--questions"
+    [style.--highlight-trainee]="traineeHighlightColor"
+    [style.--highlight-answer]="answerHighlightColor"
+>
+    @for (question of vm.questions; track question.id) {
+        <crczp-question-frame [question]="question" [scored]="vm.scored">
+            @switch (question.kind) {
+                @case ('MCQ') {
+                    <crczp-mcq-body
+                        [question]="question"
+                        [context]="bodyContext()"
+                        [activeKey]="activeAnswerKey()"
+                        (answerActivated)="answerActivated.emit($event)"
+                        (faceActivated)="faceActivated.emit($event)"
+                    />
+                }
+                @case ('EMI') {
+                    <crczp-emi-body
+                        [question]="question"
+                        [context]="bodyContext()"
+                        [activeKey]="activeAnswerKey()"
+                        (answerActivated)="answerActivated.emit($event)"
+                        (faceActivated)="faceActivated.emit($event)"
+                    />
+                }
+                @case ('FFQ') {
+                    <crczp-ffq-body
+                        [question]="question"
+                        [context]="bodyContext()"
+                        [activeKey]="activeAnswerKey()"
+                        (answerActivated)="answerActivated.emit($event)"
+                        (faceActivated)="faceActivated.emit($event)"
+                    />
+                }
+                @default {
+                    <p class="assessment-detail--unsupported">Unsupported question type.</p>
+                }
+            }
+        </crczp-question-frame>
+    }
+</div>
