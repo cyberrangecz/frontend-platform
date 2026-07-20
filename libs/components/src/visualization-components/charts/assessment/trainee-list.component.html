@@ -1,0 +1,66 @@
+<table
+    class="trainee-list"
+    role="grid"
+    [style.--highlight-trainee]="traineeBarColor"
+    [style.--highlight-answer]="answerBarColor"
+>
+    <colgroup>
+        <col class="trainee-list--col-name" />
+        @for (column of numericColumns; track column.key) {
+            <col class="trainee-list--col-num" [style.width]="column.width" />
+        }
+    </colgroup>
+
+    <thead>
+        <tr role="row">
+            @for (column of columns; track column.key) {
+                @let sort = ariaSort().get(column.key) ?? 'none';
+                <th scope="col" role="columnheader" [class.trainee-list--num]="column.numeric" [attr.aria-sort]="sort">
+                    <button type="button" class="trainee-list--sort" [matTooltip]="column.title" (click)="onSort(column.key)">
+                        <span class="trainee-list--sort-label trainee-list--sort-label--short">{{ column.label }}</span>
+                        <span class="trainee-list--sort-label trainee-list--sort-label--full">{{ column.title }}</span>
+                        <mat-icon
+                            class="trainee-list--sort-indicator"
+                            [class.trainee-list--sort-indicator--active]="sort !== 'none'"
+                            aria-hidden="true"
+                        >
+                            {{ sort === 'descending' ? 'arrow_downward' : 'arrow_upward' }}
+                        </mat-icon>
+                    </button>
+                </th>
+            }
+        </tr>
+    </thead>
+
+    <tbody>
+        @for (row of sortedRows(); track row.runId) {
+            <tr
+                class="trainee-list--row"
+                role="row"
+                tabindex="0"
+                [class.trainee-list--row--trainee]="row.emphasis === 'trainee'"
+                [class.trainee-list--row--muted]="!row.hasAnswered"
+                [class.trainee-list--row--answer]="row.emphasis === 'answer'"
+                [class.trainee-list--row--dimmed]="row.dimmed"
+                [attr.aria-current]="row.runId === focusedTraineeRunId() ? 'true' : null"
+                [attr.aria-selected]="row.runId === focusedTraineeRunId()"
+                (click)="focusedTraineeChange.emit(row.runId)"
+                (keydown.enter)="focusedTraineeChange.emit(row.runId)"
+                (keydown.space)="focusedTraineeChange.emit(row.runId); $event.preventDefault()"
+            >
+                <td class="trainee-list--cell trainee-list--cell--name" role="gridcell">
+                    <crczp-trainee-identity [name]="row.name" [picture]="row.picture" />
+                </td>
+                @for (column of numericColumns; track column.key) {
+                    <td
+                        class="trainee-list--cell trainee-list--num"
+                        role="gridcell"
+                        [attr.aria-label]="column.title + ' ' + row.cells[column.key]"
+                    >
+                        {{ row.cells[column.key] }}
+                    </td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>
