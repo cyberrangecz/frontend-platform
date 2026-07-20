@@ -1,0 +1,6 @@
+@if (pictureSrc(); as src) {
+    <img class="identity-avatar" [src]="src" alt="" aria-hidden="true" />
+} @else {
+    <span class="identity-avatar identity-avatar--placeholder" aria-hidden="true">{{ initial() }}</span>
+}
+<span class="identity-name" crczpOverflowTooltip>{{ name() }}</span>

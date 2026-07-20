@@ -13,7 +13,7 @@ import {
     viewChild,
 } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
-import { Utils } from '@crczp/utils';
+import { OverflowTooltipDirective, Utils } from '@crczp/utils';
 import { StepperItemVm } from '../types/view-model.types';
 
 /**
@@ -62,7 +62,7 @@ interface ResolvedStepVm {
     selector: 'crczp-progress-stepper',
     standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [MatIcon],
+    imports: [MatIcon, OverflowTooltipDirective],
     templateUrl: './progress-stepper.component.html',
     styleUrl: './progress-stepper.component.scss',
 })

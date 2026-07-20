@@ -28,6 +28,7 @@ export * from './types/config';
 export * from './types/unit-values';
 export * from './types/sentinel-auth-config.zod';
 export * from './types/type-utils';
+export * from './directives/overflow-tooltip.directive';
 export * from './directives/click-outside';
 export type {
     NavAgendaConfig,

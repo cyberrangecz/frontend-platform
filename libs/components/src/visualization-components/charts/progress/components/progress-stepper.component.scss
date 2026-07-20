@@ -1,6 +1,6 @@
 // Scrollbar wrapper — padding collapses when the user hovers to reveal the scrollbar.
 .progress-stepper-track--scrollable {
-    padding-bottom: 10px;
+    padding-bottom: var(--space-sm);
 
     &:hover {
         .progress-stepper-track {
@@ -19,8 +19,8 @@
     width: 100%;
     overflow-x: auto;
     box-sizing: border-box;
-    padding: 1rem 0 8px;
-    margin-bottom: 6px;
+    padding: var(--space-xl) 0 var(--space-xs);
+    margin-bottom: var(--space-2xs);
 
     &::-webkit-scrollbar {
         height: 0;
@@ -47,7 +47,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.5rem;
+    gap: var(--space-xs);
     position: relative;
     width: 5rem;
     flex-shrink: 0;
@@ -56,7 +56,7 @@
     // Selected label: amber title, heavier weight; count stays subdued.
     &.progress-stepper-step--selected .progress-stepper-step__label-title {
         color: var(--warning-60);
-        font-weight: 600;
+        font-weight: var(--font-weight-semibold);
     }
 
     // Locked label is muted.
@@ -155,8 +155,8 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.125rem;
-    font-size: 0.875rem;
+    gap: var(--space-4xs);
+    font-size: var(--font-size-lg);
     color: var(--neutral-30);
     text-align: center;
     width: 100%;
@@ -165,14 +165,23 @@
     word-break: normal;
     hyphens: none;
     transition: color 0.15s linear;
-    font-weight: 500;
+    font-weight: var(--font-weight-medium);
+}
+
+// Level title beneath the step node — clamped to fit the fixed-width column.
+.progress-stepper-step__label-title {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    width: 100%;
+    overflow: hidden;
 }
 
 // Count line below the level title — slightly muted and smaller to create hierarchy.
 .progress-stepper-step__label-count {
-    font-size: 0.75rem;
+    font-size: var(--font-size-sm);
     color: var(--neutral-50);
-    font-weight: 400;
+    font-weight: var(--font-weight-regular);
     transition: color 0.15s linear;
 }
 
@@ -182,7 +191,7 @@
     flex: 1 1 auto;
     min-width: 40px;
     width: 100%;
-    margin-top: 1.5rem;
+    margin-top: var(--space-3xl);
     background-color: var(--primary-40);
     transition: all 0.15s linear;
     position: relative;
