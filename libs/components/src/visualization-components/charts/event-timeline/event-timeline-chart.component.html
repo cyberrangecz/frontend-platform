@@ -1,0 +1,14 @@
+<crczp-chart-panel-shell
+    heading="Event timeline"
+    [status]="status()"
+    [exportable]="this"
+    info="Chronological story of one run: event markers on the top lane and console commands on the swarm below, banded by level. Time runs from the run start (0); the top axis shows wall-clock time. Hover a marker, command, or level band for detail. Scroll or drag to pan, ctrl-scroll to zoom."
+>
+    <div
+        echarts
+        class="chart-canvas"
+        [options]="chartOptions()"
+        [autoResize]="true"
+        (chartInit)="onChartInit($event)"
+    ></div>
+</crczp-chart-panel-shell>
