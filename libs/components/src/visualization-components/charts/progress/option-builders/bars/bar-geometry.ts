@@ -133,25 +133,27 @@ export function makeBarRangeData(
 }
 
 /**
- * Translates a time range plus row index into pixel coordinates,
- * vertically centred on the row at `height` thickness.
+ * Translates an axis-space X range plus row index into pixel coordinates,
+ * vertically centred on the row at `height` thickness. The X values are
+ * already in axis space (mapped through the active time scale by the caller),
+ * so the `renderItem` API resolves them directly.
  *
  * @param api - The `renderItem` API providing `coord([xValue, yValue])`.
- * @param startMs - Bar's left edge as a millisecond timestamp.
- * @param endMs - Bar's right edge as a millisecond timestamp.
+ * @param startValue - Bar's left edge as an axis-space X value.
+ * @param endValue - Bar's right edge as an axis-space X value.
  * @param rowIndex - Y-axis category index for the bar's row.
  * @param height - Pixel height of the rect. Defaults to `BAR_HEIGHT_PX`.
  * @returns Pixel-space rect ready for a zrender `rect` shape.
  */
 export function computeBarRect(
     api: CoordResolver,
-    startMs: number,
-    endMs: number,
+    startValue: number,
+    endValue: number,
     rowIndex: number,
     height: number = BAR_HEIGHT_PX,
 ): BarRect {
-    const startPoint = api.coord([startMs, rowIndex]);
-    const endPoint = api.coord([endMs, rowIndex]);
+    const startPoint = api.coord([startValue, rowIndex]);
+    const endPoint = api.coord([endValue, rowIndex]);
     const startX = startPoint[0] ?? 0;
     const startY = startPoint[1] ?? 0;
     const endX = endPoint[0] ?? 0;

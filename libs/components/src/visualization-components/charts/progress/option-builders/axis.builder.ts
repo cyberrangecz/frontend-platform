@@ -1,28 +1,13 @@
-import { EChartsOption, XAXisComponentOption, YAXisComponentOption } from 'echarts';
-import { format } from 'date-fns';
+import { XAXisComponentOption, YAXisComponentOption } from 'echarts';
+import { ChartPalette, PALETTE } from '../../shared';
 import { OptionFragment } from '../types/option-fragment.types';
-import { AxisVm, TraineeVm } from '../types/view-model.types';
+import { TraineeVm } from '../types/view-model.types';
+import { AxisTimeScale } from './axis-time-scale';
 
-/**
- * Light gray used for X-axis and Y-axis split lines. Matches the legacy
- * value preserved across the rework — keeps the chart grid unobtrusive.
- */
-const SPLIT_LINE_COLOR = '#e0e0e0';
+/** Gold accent for the favourite pin glyph and favourited trainees' Y-axis label. */
+const FAVOURITE_ACCENT_COLOR = PALETTE.gold.color;
 
-/**
- * Gold accent used for the favourite pin glyph and the bolded name of
- * favourited trainees on the Y-axis label. Matches the legacy progress
- * visualisation tint so the two implementations remain visually
- * indistinguishable across the cutover window.
- */
-const FAVOURITE_ACCENT_COLOR = '#B8860B';
-
-/**
- * Default text colour for non-favourited Y-axis labels. Mirrors the
- * Material body-text colour used elsewhere in the chart chrome.
- */
-const LABEL_TEXT_COLOR = '#333333';
-const AXIS_POINTER_LABEL_BACKGROUND_COLOR = '#E8EFFF';
+const AXIS_POINTER_LABEL_BACKGROUND_COLOR = PALETTE.blue.bgColor;
 
 /**
  * Material Icons codepoint for the `push_pin` glyph. Rendered with the
@@ -53,55 +38,50 @@ const AVATAR_SIZE = 24;
  * category axis and silently returns invalid pixels when `rowIndex`
  * has no matching category.
  *
- * @param axis - The axis view-model slice carrying X-axis bounds and the
- *               midnight-spanning toggle.
  * @param rowCount - Total Y-axis category slots, equal to `trainees.length`.
  * @param trainees - The ordered trainee list. Drives the rich-text label
  *                   dictionary.
- * @returns A fragment keyed `'axis'` with `xAxis` and `yAxis` set.
+ * @param colors - Resolved theme colours for split lines and label text.
+ * @param timeScale - Active axis time scale supplying X-axis bounds and labels.
+ * @returns A partial option with `xAxis` and `yAxis` set.
  */
 export function buildAxisFragment(
-    axis: AxisVm,
     rowCount: number,
     trainees: readonly TraineeVm[],
+    colors: ChartPalette,
+    timeScale: AxisTimeScale,
 ): OptionFragment {
-    const fragment: Partial<EChartsOption> = {
-        xAxis: buildXAxis(axis),
-        yAxis: buildYAxis(rowCount, trainees),
-    };
-
     return {
-        key: 'axis',
-        fragment,
+        xAxis: buildXAxis(colors, timeScale),
+        yAxis: buildYAxis(rowCount, trainees, colors),
     };
 }
 
 /**
- * Builds the X-axis option. Value-type axis over millisecond timestamps
- * with `HH:mm:ss` labels (or `MMM d HH:mm:ss` when the window spans
- * midnight). Animation disabled so axis re-bounds repaint instantly.
+ * Builds the X-axis option. Value-type axis whose bounds and label text come
+ * from the active timeScale: clock time in absolute mode (`HH:mm:ss`, or
+ * `MMM d HH:mm:ss` across midnight), elapsed duration in duration mode.
+ * Animation disabled so axis re-bounds repaint instantly.
  *
- * @param axis - Axis view-model slice.
+ * @param colors - Resolved theme colours for split lines and the pointer label.
+ * @param timeScale - Active axis time scale supplying bounds and label text.
  * @returns The X-axis component option.
  */
-function buildXAxis(axis: AxisVm): XAXisComponentOption {
-    const labelPattern = axis.spansMidnight ? 'MMM d HH:mm:ss' : 'HH:mm:ss';
-
+function buildXAxis(colors: ChartPalette, timeScale: AxisTimeScale): XAXisComponentOption {
     return {
         type: 'value',
-        min: axis.startMs,
-        max: axis.endMs,
+        min: timeScale.axisMin,
+        max: timeScale.axisMax,
         splitLine: {
             show: true,
             lineStyle: {
-                color: SPLIT_LINE_COLOR,
+                color: colors.gridLine,
                 width: 1,
                 type: 'solid',
             },
         },
         axisLabel: {
-            formatter: (value: number | string) =>
-                format(new Date(Number(value)), labelPattern),
+            formatter: (value: number | string) => timeScale.formatAxisLabel(Number(value)),
             showMinLabel: true,
             showMaxLabel: true,
         },
@@ -109,21 +89,19 @@ function buildXAxis(axis: AxisVm): XAXisComponentOption {
             show: true,
             type: 'line',
             snap: false,
+            triggerEmphasis: false,
             lineStyle: {
-                color: SPLIT_LINE_COLOR,
+                color: colors.gridLine,
                 width: 1,
                 type: 'solid',
             },
             label: {
                 show: true,
                 backgroundColor: AXIS_POINTER_LABEL_BACKGROUND_COLOR,
-                color: LABEL_TEXT_COLOR,
+                color: colors.text,
                 formatter: (params: { value: number | string | Date }) =>
-                    format(
-                        params.value instanceof Date
-                            ? params.value
-                            : Number(params.value),
-                        labelPattern,
+                    timeScale.formatAxisLabel(
+                        params.value instanceof Date ? params.value.getTime() : Number(params.value),
                     ),
             },
         },
@@ -133,7 +111,8 @@ function buildXAxis(axis: AxisVm): XAXisComponentOption {
 
 /**
  * Builds the Y-axis option. Category axis indexed by row position; one
- * slot per visible row.
+ * slot per visible row. A `shadow` axis pointer paints a subtle band
+ * across the row under the cursor as a hover highlight.
  *
  *  - Empty `trainees` (`trainees.length === 0`): renders blank labels —
  *    rows have no identity to show.
@@ -150,18 +129,20 @@ function buildXAxis(axis: AxisVm): XAXisComponentOption {
  *
  * @param rowCount - Number of category slots to emit.
  * @param trainees - Ordered trainee list. May be empty.
+ * @param colors - Resolved theme colours for split lines and label text.
  * @returns The Y-axis component option.
  */
 function buildYAxis(
     rowCount: number,
     trainees: readonly TraineeVm[],
+    colors: ChartPalette,
 ): YAXisComponentOption {
     const data = Array.from({ length: rowCount }, (_unused, index) =>
         String(index),
     );
 
     const traineeByRowIndex = buildTraineeIndex(trainees);
-    const rich = buildRichTextStyles(trainees);
+    const rich = buildRichTextStyles(trainees, colors);
     const formatter = buildLabelFormatter(traineeByRowIndex);
 
     return {
@@ -171,7 +152,7 @@ function buildYAxis(
         splitLine: {
             show: true,
             lineStyle: {
-                color: SPLIT_LINE_COLOR,
+                color: colors.gridLine,
                 width: 1,
                 type: 'solid',
             },
@@ -182,6 +163,18 @@ function buildYAxis(
             interval: 0,
             formatter,
             rich,
+        },
+        axisPointer: {
+            show: true,
+            type: 'shadow',
+            z: 0,
+            triggerEmphasis: false,
+            triggerTooltip: false,
+            label: { show: false },
+            shadowStyle: {
+                color: colors.accent,
+                opacity: 0.08,
+            },
         },
         triggerEvent: true,
         animation: false,
@@ -231,12 +224,14 @@ function buildTraineeIndex(
  * favourited rows to this style token.
  *
  * @param trainees - Ordered trainee list. May be empty.
+ * @param colors - Resolved theme colours for the base label text.
  * @returns A rich-text style dictionary keyed by token name. Empty
  *          object when the trainee list is empty — the formatter
  *          short-circuits to `''` in that branch.
  */
 function buildRichTextStyles(
     trainees: readonly TraineeVm[],
+    colors: ChartPalette,
 ): Record<string, unknown> {
     if (trainees.length === 0) {
         return {};
@@ -245,7 +240,7 @@ function buildRichTextStyles(
     const styles: Record<string, unknown> = {
         name: {
             fontSize: 12,
-            color: LABEL_TEXT_COLOR,
+            color: colors.text,
             padding: [0, 4, 0, 0],
             align: 'right',
             verticalAlign: 'middle',
