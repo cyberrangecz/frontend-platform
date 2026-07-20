@@ -25,7 +25,6 @@ export class TrainingDefinitionMapper {
             result.levels = LevelMapper.fromDTOs(dto.levels);
         }
         result.lastEditBy = dto.last_edited_by;
-        result.hasReferenceSolution = dto.has_reference_solution;
         result.createdAt = dto.created_at;
         return result;
     }

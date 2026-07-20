@@ -1,4 +1,4 @@
-import {ExtendedMatchingItems, ExtendedMatchingOption, ExtendedMatchingStatement} from '@crczp/training-model';
+import {ExtendedMatchingItems, ExtendedMatchingOption, ExtendedMatchingStatement, QuestionTypeEnum} from '@crczp/training-model';
 import {AbstractQuestionDTO} from '../../../dto/level/assessment/abstact-question-dto';
 import {ExtendedMatchingItemsAnswerDTO} from '../../../dto/level/assessment/extended-matching-items-answer-dto';
 import {ExtendedMatchingItemsDTO} from '../../../dto/level/assessment/extended-matching-items-dto';
@@ -8,6 +8,7 @@ import {ExtendedMatchingOptionDTO} from '../../../dto/level/assessment/extended-
 export class ExtendedMatchingItemsMapper {
     static fromDTO(dto: ExtendedMatchingItemsDTO): ExtendedMatchingItems {
         const result = new ExtendedMatchingItems(dto.text);
+        result.questionType = QuestionTypeEnum.EMI;
         result.extendedMatchingStatements = dto.extended_matching_statements?.map((statementDTO) =>
             this.fromStatementDTO(statementDTO),
         );

@@ -15,9 +15,9 @@ export const trainingLevelBasicMapper = MapperBuilder.createDTOtoModelMapper<
     TrainingLevelBasicDto,
     TrainingLevelBasic
 >({
-    mappedProperties: ['id', 'title', 'order', 'estimatedDuration', 'minimalPossibleSolveTime', 'maxScore', 'incorrectAnswerLimit'],
+    mappedProperties: ['id', 'title', 'order', 'estimatedDuration', 'maxScore', 'incorrectAnswerLimit'],
     mappers: {
-        type: (dto) => levelTypeFromDTO(dto.type),
+        type: (dto) => levelTypeFromDTO(dto.level_type),
         isSolutionPenalized: (dto) => dto.solution_penalized,
         hints: (dto) => hintBasicArrayMapper(dto.hints),
         mitreTechniques: (dto) =>

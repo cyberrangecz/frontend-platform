@@ -4,11 +4,12 @@ import {
     FreeFormQuestionDTOClass,
 } from '../../../dto/level/assessment/free-form-question-dto';
 import {QuestionAnswerDTO} from '../../../dto/level/assessment/question-answer-dto';
-import {FreeFormQuestion} from '@crczp/training-model';
+import {FreeFormQuestion, QuestionTypeEnum} from '@crczp/training-model';
 
 export class FreeFormQuestionMapper {
     static fromDTO(dto: FreeFormQuestionDTOClass): FreeFormQuestion {
         const result = new FreeFormQuestion(dto.text);
+        result.questionType = QuestionTypeEnum.FFQ;
         result.choices = dto.choices ? dto.choices : [];
         return result;
     }

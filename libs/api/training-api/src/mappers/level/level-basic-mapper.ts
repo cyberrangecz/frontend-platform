@@ -22,16 +22,9 @@ const infoLevelBasicMapper = MapperBuilder.createDTOtoModelMapper<
     InfoLevelBasicDto,
     InfoLevelBasic
 >({
-    mappedProperties: [
-        'id',
-        'title',
-        'order',
-        'estimatedDuration',
-        'minimalPossibleSolveTime',
-        'maxScore',
-    ],
+    mappedProperties: ['id', 'title', 'order', 'estimatedDuration', 'maxScore'],
     mappers: {
-        type: (dto) => levelTypeFromDTO(dto.type),
+        type: (dto) => levelTypeFromDTO(dto.level_type),
     },
     constructor: (data) => InfoLevelBasic.schema().parse(data),
 });
@@ -40,16 +33,9 @@ const accessLevelBasicMapper = MapperBuilder.createDTOtoModelMapper<
     AccessLevelBasicDto,
     AccessLevelBasic
 >({
-    mappedProperties: [
-        'id',
-        'title',
-        'order',
-        'estimatedDuration',
-        'minimalPossibleSolveTime',
-        'maxScore',
-    ],
+    mappedProperties: ['id', 'title', 'order', 'estimatedDuration', 'maxScore'],
     mappers: {
-        type: (dto) => levelTypeFromDTO(dto.type),
+        type: (dto) => levelTypeFromDTO(dto.level_type),
     },
     constructor: (data) => AccessLevelBasic.schema().parse(data),
 });
@@ -57,17 +43,19 @@ const accessLevelBasicMapper = MapperBuilder.createDTOtoModelMapper<
 export function levelBasicMapper(
     dto: LevelBasicDto,
 ): InfoLevelBasic | AccessLevelBasic | TrainingLevelBasic | AssessmentLevelBasic {
-    switch (dto.type) {
-        case 'linear_info':
+    switch (dto.level_type) {
+        case 'INFO_LEVEL':
             return infoLevelBasicMapper(dto);
-        case 'linear_access':
+        case 'ACCESS_LEVEL':
             return accessLevelBasicMapper(dto);
-        case 'linear_assessment':
+        case 'ASSESSMENT_LEVEL':
             return assessmentLevelBasicMapper(dto);
-        case 'linear_training':
+        case 'TRAINING_LEVEL':
             return trainingLevelBasicMapper(dto);
         default:
-            throw new Error(`Unknown level type: ${(dto as LevelBasicDto).type}`);
+            throw new Error(
+                `Unknown level type: ${(dto as LevelBasicDto).level_type}`,
+            );
     }
 }
 

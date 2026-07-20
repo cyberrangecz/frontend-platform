@@ -18,9 +18,9 @@ export const assessmentLevelBasicMapper = MapperBuilder.createDTOtoModelMapper<
     AssessmentLevelBasicDto,
     AssessmentLevelBasic
 >({
-    mappedProperties: ['id', 'title', 'order', 'estimatedDuration', 'minimalPossibleSolveTime', 'maxScore'],
+    mappedProperties: ['id', 'title', 'order', 'estimatedDuration', 'maxScore'],
     mappers: {
-        type: (dto) => levelTypeFromDTO(dto.type),
+        type: (dto) => levelTypeFromDTO(dto.level_type),
         assessmentType: (dto) => assessmentTypeFromDTO(dto.assessment_type),
         questions: (dto) => questionBasicArrayMapper(dto.questions),
     },
