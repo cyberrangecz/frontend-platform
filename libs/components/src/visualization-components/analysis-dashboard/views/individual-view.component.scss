@@ -1,0 +1,9 @@
+:host {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xl);
+}
+
+.individual__full-width {
+    width: 100%;
+}
