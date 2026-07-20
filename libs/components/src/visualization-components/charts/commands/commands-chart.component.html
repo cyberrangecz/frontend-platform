@@ -1,0 +1,37 @@
+<crczp-chart-panel-shell
+    heading="Commands"
+    [status]="commandsSource.status()"
+    [exportable]="this"
+    info="Tool commands used per level. Click a tool bar or label to collapse its variants. Use the filter to search by tool or argument. The timeline at the bottom switches levels. [TIP: scroll over the level picker]"
+>
+    <div class="commands-toolbar">
+        <mat-form-field class="commands-filter" appearance="outline" subscriptSizing="dynamic">
+            <input
+                matInput
+                type="search"
+                placeholder="Search"
+                [ngModel]="filterQuery()"
+                (ngModelChange)="onFilterChange($event)"
+                aria-label="Search commands"
+            />
+            <mat-icon matIconSuffix>search</mat-icon>
+        </mat-form-field>
+
+        <crczp-segmented-toggle
+            [options]="expansionOptions"
+            [value]="expansionMode()"
+            [iconOnly]="true"
+            (valueChange)="onExpansionModeChanged($event)"
+        />
+    </div>
+
+    <div
+        echarts
+        class="commands-chart-canvas"
+        [options]="chartOptions()"
+        [autoResize]="true"
+        (chartInit)="onChartInit($event)"
+        (chartClick)="onChartClick($event)"
+        (chartTimelineChanged)="onTimelineChanged($event)"
+    ></div>
+</crczp-chart-panel-shell>
