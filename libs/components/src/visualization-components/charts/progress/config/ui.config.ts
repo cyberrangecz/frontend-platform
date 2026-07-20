@@ -20,11 +20,38 @@ export const ROW_PADDING_PX = 4;
 export const ROW_HEIGHT_PX = BAR_HEIGHT_PX + ROW_PADDING_PX * 2;
 
 /**
- * Top padding reserved for the lag-state legend ghost-series row and
- * the stepper-adjacent controls overlay above the plot area.
- * Must stay in sync with `GRID_TOP_PX` in grid.builder.ts.
+ * Number of trainee rows shown at once. The chart height is fixed to this
+ * many rows; instances with more trainees expose the remainder through the
+ * vertical scroll (y-axis dataZoom) rather than growing the chart.
  */
-export const CHART_TOP_RESERVE_PX = 56;
+export const VISIBLE_ROW_COUNT = 20;
+
+/**
+ * Top padding reserved for the two stacked legend rows (event-type above
+ * lag-state) above the plot area. Must stay in sync with `GRID_TOP_PX` in
+ * grid.builder.ts and leave room for both {@link EVENT_LEGEND_TOP_PX} and
+ * {@link LAG_LEGEND_TOP_PX}.
+ */
+export const CHART_TOP_RESERVE_PX = 84;
+
+/**
+ * Top offset of the event-type legend row, the upper of the two stacked
+ * legends.
+ */
+export const EVENT_LEGEND_TOP_PX = 14;
+
+/**
+ * Top offset of the lag-state legend row, sitting beneath the event-type
+ * legend.
+ */
+export const LAG_LEGEND_TOP_PX = 46;
+
+/**
+ * Canvas width below which the legend chips drop their text labels and render
+ * as swatch/icon only, so the stacked legends stay compact and clear of the
+ * controls on a narrow chart.
+ */
+export const LEGEND_TEXT_HIDE_BELOW_PX = 1200;
 
 /**
  * Bottom padding reserved for the horizontal timeline dataZoom slider
@@ -53,24 +80,16 @@ export const AXIS_REFRESH_THRESHOLD_MS = 5 * 60 * 1000;
 export const AXIS_WATCHDOG_INTERVAL_MS = 5 * 60 * 1000;
 
 /**
- * Host width threshold below which the legend switches from horizontally
- * centred to right-aligned so it does not overlap the chart controls overlay.
- */
-export const LEGEND_ALIGN_RIGHT_BELOW_PX = 1650;
-
-/**
- * Stroke color of the current-time marker line and its clock label.
- * A near-black value that stands out against all chart series colors.
- * Canvas rendering cannot consume CSS custom properties, so the value is
- * resolved to a concrete hex here.
- *
- * Previously lived in `current-time-marker.builder.ts` as `MARKER_LINE_COLOR`;
- * moved here when the keyframe series was replaced by the imperative zrender
- * marker.
- */
-export const CURRENT_TIME_MARKER_LINE_COLOR = '#0b0b0b';
-
-/**
  * Stroke width of the current-time marker line in pixels.
  */
 export const CURRENT_TIME_MARKER_LINE_WIDTH = 2;
+
+/**
+ * Font size in pixels of the current-time marker clock label.
+ */
+export const CURRENT_TIME_MARKER_FONT_SIZE_PX = 10;
+
+/**
+ * Z-order of the current-time marker line and clock label on the zrender layer.
+ */
+export const CURRENT_TIME_MARKER_Z = 10;
