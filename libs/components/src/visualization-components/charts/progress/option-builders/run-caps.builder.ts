@@ -13,6 +13,9 @@ import { BarVm } from '../types/bar.types';
 import { EventVm } from '../types/event.types';
 import { BarKey, TraineeId } from '../types/ids.types';
 import { OptionFragment } from '../types/option-fragment.types';
+import { deriveStartAnchors, RunAnchor, toRunAnchor } from '../selectors/start-anchors';
+import { keepExtremumByKey } from '../selectors/keep-extremum-by-key';
+import { AxisTimeScale } from './axis-time-scale';
 import { resolveBarHeightPx } from './bars/bar-geometry';
 
 /**
@@ -68,23 +71,12 @@ const RUN_END_CAP_SERIES_ID = 'run-end-caps';
  *
  * The tuple length of exactly 3 ensures the tooltip formatter's `isEventData`
  * discriminator (`length === 3 && typeof data[2].kind === 'string'`) routes
- * cap hits to `buildEventTooltipHtml`, which reads `data[2]` as a flat `EventVm`.
+ * cap hits to `buildEventTooltipModel`, which reads `data[2]` as a flat `EventVm`.
  * Both `TRAINING_RUN_STARTED` and `TRAINING_RUN_ENDED` remain in
  * `EVENT_ICON_CATALOG` and `EVENT_KIND_LABELS`, so the tooltip renders their
  * label and icon correctly without any change to tooltip.builder.ts.
  */
 type CapDataTuple = readonly [anchorMs: number, rowIndex: number, payload: EventVm & { barKey: BarKey }];
-
-/**
- * Resolved anchor information for one cap.
- */
-interface CapAnchor {
-    readonly anchorMs: number;
-    readonly rowIndex: number;
-    readonly barKey: BarKey;
-    readonly isRunning: boolean;
-    readonly lagState: BarVm['lagState'];
-}
 
 /**
  * Builds an ECharts option fragment containing two custom series that
@@ -105,11 +97,13 @@ interface CapAnchor {
  *
  * @param bars - All bar view-models from the live view-model.
  * @param eventsByBar - Per-bar event groups keyed by `BarKey`.
+ * @param timeScale - Active axis time scale mapping absolute ms to axis space.
  * @returns The `runCaps` option fragment containing both series.
  */
 export function buildRunCapsFragment(
     bars: readonly BarVm[],
     eventsByBar: ReadonlyMap<BarKey, readonly EventVm[]>,
+    timeScale: AxisTimeScale,
 ): OptionFragment {
     const startAnchors = deriveStartAnchors(bars);
     const endAnchors = deriveEndAnchors(bars);
@@ -117,8 +111,8 @@ export function buildRunCapsFragment(
     const startHeightByRow = buildHeightMap(startAnchors);
     const endHeightByRow = buildHeightMap(endAnchors);
 
-    const startData = buildCapData(startAnchors, eventsByBar, 'TRAINING_RUN_STARTED');
-    const endData = buildCapData(endAnchors, eventsByBar, 'TRAINING_RUN_ENDED');
+    const startData = buildCapData(startAnchors, eventsByBar, 'TRAINING_RUN_STARTED', timeScale);
+    const endData = buildCapData(endAnchors, eventsByBar, 'TRAINING_RUN_ENDED', timeScale);
 
     const startSeries: CustomSeriesOption = {
         id: RUN_START_CAP_SERIES_ID,
@@ -144,36 +138,7 @@ export function buildRunCapsFragment(
         renderItem: buildCapRenderItem('end', RUN_CAP_FILL_COLOR, RUN_END_CAP_GLYPH_COLOR, RUN_END_CAP_GLYPH, endHeightByRow),
     };
 
-    return {
-        key: 'runCaps',
-        fragment: { series: [startSeries, endSeries] },
-    };
-}
-
-/**
- * Derives one start anchor per trainee: the bar with the minimum `startedAt`
- * across all bars belonging to that trainee.
- *
- * @param bars - All bar view-models.
- * @returns Map from `TraineeId` to its start-cap anchor.
- */
-function deriveStartAnchors(bars: readonly BarVm[]): Map<TraineeId, CapAnchor> {
-    const anchors = new Map<TraineeId, CapAnchor>();
-
-    for (const bar of bars) {
-        const existing = anchors.get(bar.traineeId);
-        if (existing === undefined || bar.startedAt < existing.anchorMs) {
-            anchors.set(bar.traineeId, {
-                anchorMs: bar.startedAt,
-                rowIndex: bar.rowIndex,
-                barKey: bar.key,
-                isRunning: bar.isRunning,
-                lagState: bar.lagState,
-            });
-        }
-    }
-
-    return anchors;
+    return { series: [startSeries, endSeries] };
 }
 
 /**
@@ -187,7 +152,7 @@ function deriveStartAnchors(bars: readonly BarVm[]): Map<TraineeId, CapAnchor> {
  * @param bars - All bar view-models.
  * @returns Map from `TraineeId` to its end-cap anchor (finished trainees only).
  */
-function deriveEndAnchors(bars: readonly BarVm[]): Map<TraineeId, CapAnchor> {
+function deriveEndAnchors(bars: readonly BarVm[]): Map<TraineeId, RunAnchor> {
     const runningTraineeIds = new Set<TraineeId>();
     for (const bar of bars) {
         if (bar.isRunning) {
@@ -195,24 +160,17 @@ function deriveEndAnchors(bars: readonly BarVm[]): Map<TraineeId, CapAnchor> {
         }
     }
 
-    const anchors = new Map<TraineeId, CapAnchor>();
+    const finishedBars = bars.filter((bar) => !runningTraineeIds.has(bar.traineeId));
+    const latestByTrainee = keepExtremumByKey(
+        finishedBars,
+        (bar) => bar.traineeId,
+        (candidate, incumbent) => candidate.effectiveEnd > incumbent.effectiveEnd,
+    );
 
-    for (const bar of bars) {
-        if (runningTraineeIds.has(bar.traineeId)) {
-            continue;
-        }
-        const existing = anchors.get(bar.traineeId);
-        if (existing === undefined || bar.effectiveEnd > existing.anchorMs) {
-            anchors.set(bar.traineeId, {
-                anchorMs: bar.effectiveEnd,
-                rowIndex: bar.rowIndex,
-                barKey: bar.key,
-                isRunning: bar.isRunning,
-                lagState: bar.lagState,
-            });
-        }
+    const anchors = new Map<TraineeId, RunAnchor>();
+    for (const [traineeId, bar] of latestByTrainee) {
+        anchors.set(traineeId, toRunAnchor(bar, bar.effectiveEnd));
     }
-
     return anchors;
 }
 
@@ -225,7 +183,7 @@ function deriveEndAnchors(bars: readonly BarVm[]): Map<TraineeId, CapAnchor> {
  * @param anchors - Anchor map whose values supply `isRunning` and `lagState`.
  * @returns Map from row index to pixel height.
  */
-function buildHeightMap(anchors: ReadonlyMap<TraineeId, CapAnchor>): Map<number, number> {
+function buildHeightMap(anchors: ReadonlyMap<TraineeId, RunAnchor>): Map<number, number> {
     const heightByRow = new Map<number, number>();
     for (const anchor of anchors.values()) {
         if (!heightByRow.has(anchor.rowIndex)) {
@@ -241,18 +199,24 @@ function buildHeightMap(anchors: ReadonlyMap<TraineeId, CapAnchor>): Map<number,
  * event is absent, synthesizes a payload of the same shape with the
  * bar-derived anchor timestamp so the tooltip still renders.
  *
- * The synthesized payload uses `'Run Started'` / `'Run Ended'` as its
- * `tooltipLabel`, matching `EVENT_KIND_LABELS` in tooltip.builder.ts.
+ * The synthesized payload carries no detail; the run-cap tooltip shows
+ * only the kind header (`EVENT_KIND_LABELS` in tooltip.builder.ts) and time.
+ *
+ * The cap's X coordinate (tuple slot 0) is projected into axis space; the
+ * tooltip payload (slot 2) keeps its absolute timestamps so the tooltip reads
+ * wall-clock time regardless of axis mode.
  *
  * @param anchors - Anchor map produced by `deriveStartAnchors` or `deriveEndAnchors`.
  * @param eventsByBar - Per-bar event groups.
  * @param eventKind - The event kind literal to search for in each bar's event list.
+ * @param timeScale - Active axis time scale mapping absolute ms to axis space.
  * @returns Data array ready to assign to a custom series.
  */
 function buildCapData(
-    anchors: ReadonlyMap<TraineeId, CapAnchor>,
+    anchors: ReadonlyMap<TraineeId, RunAnchor>,
     eventsByBar: ReadonlyMap<BarKey, readonly EventVm[]>,
     eventKind: 'TRAINING_RUN_STARTED' | 'TRAINING_RUN_ENDED',
+    timeScale: AxisTimeScale,
 ): CapDataTuple[] {
     const data: CapDataTuple[] = [];
 
@@ -265,7 +229,7 @@ function buildCapData(
                 ? { ...matchingEvent, barKey: anchor.barKey }
                 : synthesizeCapPayload(eventKind, anchor);
 
-        data.push([anchor.anchorMs, anchor.rowIndex, payload]);
+        data.push([timeScale.toAxisValue(anchor.anchorMs, anchor.rowIndex), anchor.rowIndex, payload]);
     }
 
     return data;
@@ -274,7 +238,7 @@ function buildCapData(
 /**
  * Synthesizes an `EventVm & { barKey }` payload for a cap when no matching
  * event is found in `eventsByBar`. The synthesized record matches the exact
- * shape the tooltip formatter expects so `buildEventTooltipHtml` renders
+ * shape the tooltip formatter expects so `buildEventTooltipModel` renders
  * without branching on payload origin.
  *
  * @param kind - The event kind to stamp on the synthesized payload.
@@ -283,15 +247,13 @@ function buildCapData(
  */
 function synthesizeCapPayload(
     kind: 'TRAINING_RUN_STARTED' | 'TRAINING_RUN_ENDED',
-    anchor: CapAnchor,
+    anchor: RunAnchor,
 ): EventVm & { barKey: BarKey } {
-    const tooltipLabel = kind === 'TRAINING_RUN_STARTED' ? 'Run Started' : 'Run Ended';
-
     return {
         kind,
         rowIndex: anchor.rowIndex,
         timestamp: anchor.anchorMs,
-        tooltipLabel,
+        detail: '',
         barKey: anchor.barKey,
     };
 }
