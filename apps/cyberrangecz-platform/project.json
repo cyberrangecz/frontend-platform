@@ -108,6 +108,65 @@
                 "staticFilePath": "dist/apps/cyberrangecz-platform/browser",
                 "spa": true
             }
+        },
+        "build-e2e": {
+            "executor": "@angular-devkit/build-angular:application",
+            "outputs": ["{options.outputPath}"],
+            "dependsOn": ["theme:build"],
+            "options": {
+                "outputPath": "dist/apps/cyberrangecz-platform-e2e",
+                "index": "apps/cyberrangecz-platform/e2e/harness/index.html",
+                "browser": "apps/cyberrangecz-platform/e2e/harness/main.ts",
+                "polyfills": ["zone.js"],
+                "tsConfig": "apps/cyberrangecz-platform/e2e/harness/tsconfig.json",
+                "inlineStyleLanguage": "scss",
+                "assets": [
+                    {
+                        "glob": "sqlite3.wasm",
+                        "input": "node_modules/@sqlite.org/sqlite-wasm/dist",
+                        "output": "/"
+                    }
+                ],
+                "styles": [],
+                "scripts": [],
+                "webWorkerTsConfig": "apps/cyberrangecz-platform/tsconfig.worker.json"
+            },
+            "configurations": {
+                "production": {
+                    "optimization": true,
+                    "outputHashing": "none"
+                },
+                "development": {
+                    "optimization": false,
+                    "extractLicenses": false,
+                    "sourceMap": true
+                }
+            },
+            "defaultConfiguration": "development"
+        },
+        "serve-e2e": {
+            "executor": "@angular-devkit/build-angular:dev-server",
+            "options": {
+                "port": 4300,
+                "host": "localhost",
+                "ssl": true
+            },
+            "configurations": {
+                "production": {
+                    "buildTarget": "cyberrangecz-platform:build-e2e:production"
+                },
+                "development": {
+                    "buildTarget": "cyberrangecz-platform:build-e2e:development"
+                }
+            },
+            "defaultConfiguration": "development"
+        },
+        "e2e": {
+            "executor": "@nx/playwright:playwright",
+            "outputs": ["{workspaceRoot}/dist/.playwright/apps/cyberrangecz-platform"],
+            "options": {
+                "config": "apps/cyberrangecz-platform/e2e/playwright.config.ts"
+            }
         }
     }
 }
