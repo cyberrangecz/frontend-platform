@@ -1,0 +1,33 @@
+<crczp-chart-panel-shell [status]="status()" heightMode="fit-content">
+    <div class="assessment-layout" (crczpClickOutside)="releaseHighlight()">
+        @let assessment = selectedAssessment();
+
+        <aside class="assessment-aside">
+            <crczp-trainee-list
+                [trainees]="trainees()"
+                [results]="assessment?.results ?? null"
+                [questionCount]="assessment?.questionCount ?? 0"
+                [scored]="assessment?.scored ?? false"
+                [focusedTraineeRunId]="focusedTraineeRunId()"
+                [highlight]="traineeHighlight()"
+                (focusedTraineeChange)="onFocusedTraineeChange($event)"
+            />
+        </aside>
+
+        <main class="assessment-main">
+            @if (assessment) {
+                <crczp-assessment-detail
+                    [assessment]="assessment"
+                    [options]="assessmentOptions()"
+                    [trainees]="trainees()"
+                    [highlight]="traineeHighlight()"
+                    [activeAnswerKey]="highlight()?.key ?? null"
+                    (assessmentSelected)="onAssessmentSelected($event)"
+                    (downloadCsv)="downloadCsv()"
+                    (answerActivated)="onAnswerActivated($event)"
+                    (faceActivated)="onFocusedTraineeChange($event)"
+                />
+            }
+        </main>
+    </div>
+</crczp-chart-panel-shell>
