@@ -1,3 +1,12 @@
+/**
+ * Determines whether two sets contain exactly the same members, comparing
+ * by size first and then membership. Neither set is mutated.
+ *
+ * @param a - First set to compare.
+ * @param b - Second set to compare.
+ * @returns `true` when both sets hold identical members, `false` otherwise.
+ */
+
 function equals<T>(a: ReadonlySet<T>, b: ReadonlySet<T>): boolean {
     if (a.size !== b.size) return false;
     for (const item of a) {
