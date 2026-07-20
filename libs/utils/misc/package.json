@@ -6,7 +6,7 @@
         "@angular/router": "*",
         "rxjs": "*",
         "@sentinel/layout": "*",
-        "moment-mini": "*",
+        "date-fns": "*",
         "zod-class": "*",
         "zod": "*",
         "vite": "*",

@@ -1,4 +1,4 @@
-import { duration } from 'moment-mini';
+import { intervalToDuration } from 'date-fns';
 
 /**
  * Prints the first non-zero time unit
@@ -38,21 +38,22 @@ function formatDurationSimple(durationSec: number): string {
     if (durationSec < 0) {
         return 'N/A';
     }
-    const momentTime = duration(durationSec, 'seconds');
-    if (momentTime.months() > 0) {
-        return addPluralIfNeeded(momentTime.months(), 'month');
+    const { months = 0, days = 0, hours = 0, minutes = 0, seconds = 0 } =
+        intervalToDuration({ start: 0, end: durationSec * 1000 });
+    if (months > 0) {
+        return addPluralIfNeeded(months, 'month');
     }
-    if (momentTime.days() > 0) {
-        return addPluralIfNeeded(momentTime.days(), 'day');
+    if (days > 0) {
+        return addPluralIfNeeded(days, 'day');
     }
-    if (momentTime.hours() > 0) {
-        return addPluralIfNeeded(momentTime.hours(), 'hour');
+    if (hours > 0) {
+        return addPluralIfNeeded(hours, 'hour');
     }
-    if (momentTime.minutes() > 0) {
-        return addPluralIfNeeded(momentTime.minutes(), 'minute');
+    if (minutes > 0) {
+        return addPluralIfNeeded(minutes, 'minute');
     }
-    if (momentTime.seconds() > 0) {
-        return addPluralIfNeeded(momentTime.seconds(), 'second');
+    if (seconds > 0) {
+        return addPluralIfNeeded(seconds, 'second');
     }
     return 'N/A';
 }
@@ -68,14 +69,15 @@ function formatDurationFull(durationSec: number): string {
     if (durationSec < 0) {
         return 'N/A';
     }
-    const momentTime = duration(durationSec, 'seconds');
-    const months = momentTime.months() > 0 ? momentTime.months() + ' m ' : '';
-    const days = momentTime.days() > 0 ? momentTime.days() + ' d ' : '';
-    const hours = momentTime.hours() > 0 ? momentTime.hours() + ' h ' : '';
-    const minutes =
-        momentTime.minutes() > 0 ? momentTime.minutes() + ' min' : '';
-    const seconds = momentTime.seconds() > 0 ? momentTime.seconds() + ' s' : '';
-    const total = months + days + hours + minutes + seconds;
+    const { months = 0, days = 0, hours = 0, minutes = 0, seconds = 0 } =
+        intervalToDuration({ start: 0, end: durationSec * 1000 });
+    const monthsPart = months > 0 ? months + ' m ' : '';
+    const daysPart = days > 0 ? days + ' d ' : '';
+    const hoursPart = hours > 0 ? hours + ' h ' : '';
+    const minutesPart = minutes > 0 ? minutes + ' min' : '';
+    const secondsPart = seconds > 0 ? seconds + ' s' : '';
+    const total =
+        monthsPart + daysPart + hoursPart + minutesPart + secondsPart;
     return total.length === 0 ? '0 s' : total.trim();
 }
 
