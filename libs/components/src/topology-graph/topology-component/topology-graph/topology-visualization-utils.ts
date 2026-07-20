@@ -6,16 +6,16 @@ export function mapTopologyToTopologyVisualization(topology: Topology): {
     nodes: TopologyGraphNode[];
     links: TopologyGraphLink[];
 } {
-    const nodes: TopologyGraphNode[] = [];
+    const nodes = new Map<string, TopologyGraphNode>();
     const links: TopologyGraphLink[] = [];
 
     let subnetOrd = 0;
 
     /* Internet node */
-    nodes.push({ id: 'internet', name: 'Internet', nodeType: 'INTERNET' });
+    nodes.set('internet', { id: 'internet', name: 'Internet', nodeType: 'INTERNET' });
 
     topology.routers.forEach((router) => {
-        nodes.push({
+        nodes.set(router.name, {
             id: router.name,
             name: router.name,
             nodeType: 'ROUTER',
@@ -34,7 +34,7 @@ export function mapTopologyToTopologyVisualization(topology: Topology): {
 
         router.subnets.forEach((subnet) => {
             const subnetId = `subnet-${router.name}-${subnet.name}`;
-            nodes.push({
+            nodes.set(subnetId, {
                 id: subnetId,
                 name: subnet.name,
                 nodeType: 'SUBNET',
@@ -54,7 +54,7 @@ export function mapTopologyToTopologyVisualization(topology: Topology): {
             });
 
             subnet.hosts.forEach((host) => {
-                nodes.push({
+                nodes.set(host.name, {
                     id: host.name,
                     name: host.name,
                     nodeType: 'HOST',
@@ -74,5 +74,5 @@ export function mapTopologyToTopologyVisualization(topology: Topology): {
         });
     });
 
-    return { nodes, links };
+    return { nodes: [...nodes.values()], links };
 }
