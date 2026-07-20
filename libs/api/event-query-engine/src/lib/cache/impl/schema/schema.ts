@@ -138,14 +138,37 @@ export const solutionDisplayedTable = pgTable(
 
 export const assessmentAnswersTable = pgTable(
   'assessment_answers',
-  trainingEventFields,
+  {
+    ...trainingEventFields,
+    answers: text('answers', { mode: 'json' }).$type<EventAnswer[]>().notNull(),
+  },
   (table) => [
     index('idx_aa_instance_timestamp').on(table.instance_id, table.timestamp),
     index('idx_aa_instance_type').on(table.instance_id, table.type),
   ],
 );
 
-export const watermarkTable = pgTable(
+export const commandTable = sqliteTable(
+  'command',
+  {
+    ...baseEventFields,
+    sandbox_id: text('sandbox_id').notNull(),
+    training_time: real('training_time'), // Elapsed training time in fractional seconds (Java Duration serialized as a number).
+    cmd_type: text('cmd_type').notNull(),
+    command: text('command').notNull(),
+    command_arguments: text('command_arguments'),
+    hostname: text('hostname'),
+    username: text('username'),
+    wd: text('wd'),
+    ip: text('ip'),
+  },
+  (table) => [
+    index('idx_cmd_instance_timestamp').on(table.instance_id, table.timestamp),
+    index('idx_cmd_instance_type').on(table.instance_id, table.type),
+  ],
+);
+
+export const watermarkTable = sqliteTable(
   'watermarks',
   {
     instance_id: integer('instance_id').notNull(),
@@ -169,4 +192,5 @@ export const eventTables: Partial<Record<PlatformEventType, any>> = {
   [PlatformEventType.HINT_TAKEN]: hintTakenTable,
   [PlatformEventType.SOLUTION_DISPLAYED]: solutionDisplayedTable,
   [PlatformEventType.ASSESSMENT_ANSWERS]: assessmentAnswersTable,
+  [PlatformEventType.COMMAND]: commandTable,
 };

@@ -57,9 +57,27 @@ const SCHEMA_STATEMENTS = [
     `CREATE INDEX IF NOT EXISTS idx_sd_instance_timestamp ON solution_displayed (instance_id, timestamp)`,
     `CREATE INDEX IF NOT EXISTS idx_sd_instance_type ON solution_displayed (instance_id, type)`,
 
-    `CREATE TABLE IF NOT EXISTS assessment_answers (${BASE_TRAINING_FIELDS})`,
+    `CREATE TABLE IF NOT EXISTS assessment_answers (${BASE_TRAINING_FIELDS}, answers TEXT NOT NULL)`,
     `CREATE INDEX IF NOT EXISTS idx_aa_instance_timestamp ON assessment_answers (instance_id, timestamp)`,
     `CREATE INDEX IF NOT EXISTS idx_aa_instance_type ON assessment_answers (instance_id, type)`,
+
+    `CREATE TABLE IF NOT EXISTS command (
+        id TEXT PRIMARY KEY,
+        instance_id INTEGER NOT NULL,
+        timestamp INTEGER NOT NULL,
+        type TEXT NOT NULL,
+        sandbox_id TEXT NOT NULL,
+        training_time REAL, -- Elapsed training time in fractional seconds (Java Duration serialized as a number).
+        cmd_type TEXT NOT NULL,
+        command TEXT NOT NULL,
+        command_arguments TEXT,
+        hostname TEXT,
+        username TEXT,
+        wd TEXT,
+        ip TEXT
+    )`,
+    `CREATE INDEX IF NOT EXISTS idx_cmd_instance_timestamp ON command (instance_id, timestamp)`,
+    `CREATE INDEX IF NOT EXISTS idx_cmd_instance_type ON command (instance_id, type)`,
 
     `CREATE TABLE IF NOT EXISTS watermarks (
         instance_id INTEGER NOT NULL,

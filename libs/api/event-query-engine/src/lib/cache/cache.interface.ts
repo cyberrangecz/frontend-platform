@@ -23,6 +23,8 @@ export interface RawEventRow {
     timestamp: number;
     /** Scope key. All event tables carry this field. */
     instance_id: number;
+    /** Sandbox identifier. Present on all event types. */
+    sandbox_id: string;
     [field: string]: unknown;
 }
 

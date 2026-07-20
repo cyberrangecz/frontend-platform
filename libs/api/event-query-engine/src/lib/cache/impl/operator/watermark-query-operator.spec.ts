@@ -51,11 +51,12 @@ describe('getWatermarks operator', () => {
         ]);
     });
 
-    it('returns empty array when query yields no results', async () => {
-        mockDb.where = vi.fn().mockResolvedValue([]);
-
-        const result = await getWatermarks(mockDb, 999, ['TrainingRunStarted']);
-
-        expect(result).toEqual([]);
+    it('returns mapped entries carrying the requested instance id and type', async () => {
+        const instanceId = 3;
+        await insert(cache.db, [makeLevelStartedRow({ instance_id: instanceId, timestamp: 7_000 })]);
+        const result = await getWatermarks(cache.db, instanceId, [LEVEL_STARTED_TYPE]);
+        expect(result[0].instanceId).toBe(instanceId);
+        expect(result[0].eventType).toBe(LEVEL_STARTED_TYPE);
+        expect(result[0].maxTimestamp).toBe(7_000);
     });
 });

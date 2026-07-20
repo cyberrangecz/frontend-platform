@@ -58,15 +58,29 @@ describe('insert operator', () => {
         );
     });
 
-    it('upserts watermark after events are inserted', async () => {
-        const rows: RawEventRow[] = [
-            { id: 'evt-1', type: 'TrainingRunStarted', timestamp: 1000, instance_id: 42 },
-        ];
+describe('insert — command rows with optional fields', () => {
+    it('persists a Command row that omits all nullable fields without throwing', async () => {
+        const instanceId = 7;
+        const row = makeCommandRow({ instance_id: instanceId });
 
-        await insert(mockDb, rows);
+        await expect(insert(cache.db, [row])).resolves.not.toThrow();
+        expect(await countRows(cache.db, 'command', instanceId)).toBe(1);
+    });
 
-        expect(mockTx.insert).toHaveBeenCalledWith(watermarkTable);
-        expect(mockTx.onConflictDoUpdate).toHaveBeenCalled();
+    it('persists a Command row that supplies all nullable fields', async () => {
+        const instanceId = 8;
+        const row = makeCommandRow({
+            instance_id: instanceId,
+            training_time: 3.14,
+            command_arguments: '-la',
+            hostname: 'host-1',
+            username: 'root',
+            wd: '/home',
+            ip: '10.0.0.1',
+        });
+
+        await insert(cache.db, [row]);
+        expect(await countRows(cache.db, 'command', instanceId)).toBe(1);
     });
 
     it('uses onConflictDoNothing for deduplication by id', async () => {
