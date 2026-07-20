@@ -91,8 +91,36 @@ export interface SolutionDisplayedEvent extends TrainingEvent {
     penalty_points: number;
 }
 
+export interface AnswerSelection {
+    value: string | number;
+    correct: boolean | null;
+}
+
+export interface EventAnswerBase {
+    question_id: number;
+    correct: boolean | null;
+    points_gained: number;
+}
+
+export interface FreeFormEventAnswer extends EventAnswerBase {
+    type: 'FFQ';
+    answer: AnswerSelection | null;
+}
+
+export interface MultipleChoiceEventAnswer extends EventAnswerBase {
+    type: 'MCQ';
+    selected_options: AnswerSelection[];
+}
+
+export interface ExtendedMatchingEventAnswer extends EventAnswerBase {
+    type: 'EMI';
+    pairs: Record<string, AnswerSelection>;
+}
+
+export type EventAnswer = FreeFormEventAnswer | MultipleChoiceEventAnswer | ExtendedMatchingEventAnswer;
+
 export interface AssessmentAnswersEvent extends TrainingEvent {
-    answers: Record<string, unknown>;
+    answers: EventAnswer[];
 }
 
 export interface CommandEvent extends PlatformEvent {
