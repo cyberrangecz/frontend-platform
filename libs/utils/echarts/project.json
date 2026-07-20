@@ -1,0 +1,19 @@
+{
+    "name": "echarts-utils",
+    "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+    "sourceRoot": "libs/utils/echarts/src",
+    "projectType": "library",
+    "tags": [],
+    "targets": {
+        "build": {
+            "executor": "@nx/js:tsc",
+            "outputs": ["{options.outputPath}"],
+            "options": {
+                "outputPath": "dist/libs/utils/echarts",
+                "main": "libs/utils/echarts/src/index.ts",
+                "tsConfig": "libs/utils/echarts/tsconfig.lib.json",
+                "assets": ["libs/utils/echarts/*.md"]
+            }
+        }
+    }
+}
