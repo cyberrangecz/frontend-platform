@@ -1,0 +1,19 @@
+@let _question = question();
+
+<section class="question-frame">
+    <header class="question-frame--header">
+        <span class="question-frame--index">{{ _question.order + 1 }}</span>
+        <span class="question-frame--tag">{{ _question.kind }}</span>
+        <h5 class="question-frame--title" crczpOverflowTooltip>{{ _question.title }}</h5>
+        @if (scored()) {
+            <span class="question-frame--score">
+                <span class="question-frame--reward">+{{ _question.score }}</span>
+                <span class="question-frame--penalty">−{{ _question.penalty }}</span>
+            </span>
+        }
+    </header>
+
+    <div class="question-frame--body">
+        <ng-content />
+    </div>
+</section>

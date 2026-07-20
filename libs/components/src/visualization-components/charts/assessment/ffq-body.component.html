@@ -1,0 +1,40 @@
+<mat-form-field class="ffq-body--filter" appearance="outline" subscriptSizing="dynamic">
+    <input
+        matInput
+        type="search"
+        [ngModel]="filter()"
+        (ngModelChange)="filter.set($event)"
+        placeholder="Filter answers…"
+        aria-label="Filter answers"
+    />
+    <mat-icon matIconSuffix>search</mat-icon>
+</mat-form-field>
+
+@for (section of sections(); track section.heading) {
+    <section class="ffq-body--section">
+        <h6 class="ffq-body--heading">
+            {{ section.heading }}
+            <span class="ffq-body--counts">{{ section.distinctCount }} answers · {{ section.traineeCount }} trainees</span>
+        </h6>
+        <div class="ffq-body--list" [class.ffq-body--list--scroll]="section.scroll">
+            @for (row of section.rows; track row.text) {
+                <crczp-answer-surface
+                    [class.ffq-body--answer--active]="row.key === activeKey()"
+                    marker="radio"
+                    [correctness]="row.correctness"
+                    [markerFilled]="row.focusedTraineeChose"
+                    [focusedTraineeChose]="row.focusedTraineeChose"
+                    [count]="row.count"
+                    [percent]="row.percent"
+                    [faces]="row.faces"
+                    (answerClick)="answerActivated.emit(row.key)"
+                    (faceClick)="faceActivated.emit($event)"
+                >
+                    {{ row.text }}
+                </crczp-answer-surface>
+            } @empty {
+                <p class="ffq-body--empty">No matching answers.</p>
+            }
+        </div>
+    </section>
+}

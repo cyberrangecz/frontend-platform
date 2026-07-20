@@ -1,0 +1,73 @@
+@use 'assessment-shared' as shared;
+
+:host {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+}
+
+.ffq-body {
+    &--filter {
+        width: 100%;
+        --mat-form-field-outlined-container-shape: #{shared.$radius-md};
+
+        ::ng-deep .mat-mdc-form-field-infix {
+            min-height: 2.25rem;
+            padding-top: var(--space-2xs);
+            padding-bottom: var(--space-2xs);
+        }
+
+        input {
+            font-size: var(--font-size-md);
+        }
+
+        mat-icon {
+            color: var(--neutral-50);
+        }
+    }
+
+    &--section {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-2xs);
+    }
+
+    &--heading {
+        display: flex;
+        align-items: baseline;
+        gap: var(--space-xs);
+        margin: 0;
+        font-size: var(--font-size-md);
+        font-weight: var(--font-weight-semibold);
+        color: var(--neutral-20);
+    }
+
+    &--counts {
+        color: var(--neutral-40);
+        font-size: var(--font-size-xs);
+        font-weight: var(--font-weight-regular);
+    }
+
+    &--list {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-xs);
+
+        &--scroll {
+            max-height: 22rem;
+            padding: shared.$highlight-bleed;
+            margin-inline: calc(-1 * #{shared.$highlight-bleed});
+            overflow-y: auto;
+        }
+    }
+
+    &--empty {
+        margin: 0;
+        color: var(--neutral-40);
+        font-size: var(--font-size-md);
+    }
+
+    &--answer--active {
+        @include shared.selection-ring;
+    }
+}

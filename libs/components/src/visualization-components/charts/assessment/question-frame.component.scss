@@ -1,0 +1,69 @@
+@use 'assessment-shared' as shared;
+
+:host {
+    display: block;
+}
+
+.question-frame {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+    padding: var(--space-lg) var(--space-xl);
+    border: 1px solid var(--neutral-90);
+    border-radius: shared.$radius-md;
+
+    &--header {
+        display: flex;
+        align-items: flex-start;
+        gap: var(--space-sm);
+    }
+
+    &--index {
+        display: flex;
+        flex: 0 0 auto;
+        align-items: center;
+        justify-content: center;
+        width: 1.5rem;
+        height: 1.5rem;
+        border-radius: 50%;
+        background: var(--neutral-95);
+        color: var(--neutral-30);
+        font-size: var(--font-size-sm);
+        font-weight: var(--font-weight-semibold);
+    }
+
+    &--tag {
+        @include shared.label-chip;
+        flex: 0 0 auto;
+    }
+
+    &--title {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        flex: 1 1 auto;
+        min-width: 0;
+        margin: 0;
+        font-size: var(--font-size-2xl);
+        font-weight: var(--font-weight-semibold);
+        overflow: hidden;
+        overflow-wrap: anywhere;
+    }
+
+    &--score {
+        display: flex;
+        flex: 0 0 auto;
+        gap: var(--space-xs);
+        font-size: var(--font-size-md);
+        font-weight: var(--font-weight-semibold);
+        font-variant-numeric: tabular-nums;
+    }
+
+    &--reward {
+        color: var(--primary-40);
+    }
+
+    &--penalty {
+        color: var(--error-40);
+    }
+}

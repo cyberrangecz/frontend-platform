@@ -1,0 +1,19 @@
+<div class="mcq-body">
+    @for (row of rows(); track row.order) {
+        <crczp-answer-surface
+            class="mcq-body--option"
+            [class.mcq-body--option--active]="row.key === activeKey()"
+            marker="checkbox"
+            [correctness]="row.correctness"
+            [markerFilled]="row.focusedTraineeChose"
+            [focusedTraineeChose]="row.focusedTraineeChose"
+            [count]="row.count"
+            [percent]="row.percent"
+            [faces]="row.faces"
+            (answerClick)="answerActivated.emit(row.key)"
+            (faceClick)="faceActivated.emit($event)"
+        >
+            {{ row.text }}
+        </crczp-answer-surface>
+    }
+</div>

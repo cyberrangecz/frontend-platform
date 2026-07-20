@@ -1,0 +1,90 @@
+@use 'assessment-shared' as shared;
+
+:host {
+    display: block;
+}
+
+.emi-body {
+    overflow-x: auto;
+    padding-block: shared.$highlight-bleed;
+
+    &--grid {
+        display: grid;
+        gap: var(--space-xs);
+        align-items: stretch;
+        min-width: min-content;
+    }
+
+    &--corner {
+        position: sticky;
+        left: 0;
+        z-index: 2;
+        background: var(--neutral-98);
+    }
+
+    &--col-head {
+        display: flex;
+        align-items: flex-end;
+        padding: var(--space-3xs) var(--space-xs);
+        color: var(--neutral-30);
+        font-size: var(--font-size-sm);
+        font-weight: var(--font-weight-semibold);
+        overflow-wrap: anywhere;
+    }
+
+    &--row-head {
+        position: sticky;
+        left: 0;
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        padding: var(--space-2xs) var(--space-sm) var(--space-2xs) 0;
+        background: var(--neutral-98);
+        color: var(--neutral-20);
+        font-size: var(--font-size-md);
+        overflow-wrap: anywhere;
+    }
+
+    &--head-text {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        min-width: 0;
+        overflow: hidden;
+    }
+
+    &--cell {
+        ::ng-deep .surface {
+            gap: 0;
+            padding: var(--space-2xs) var(--space-xs) var(--space-xs);
+
+            .surface--intent {
+                order: 2;
+                padding: 0;
+            }
+
+            .surface--marker,
+            .surface--label {
+                display: none;
+            }
+
+            .surface--faces {
+                order: 1;
+                align-self: stretch;
+                justify-content: flex-start;
+                min-height: 1.75rem;
+                margin-top: var(--space-2xs);
+                padding: 0;
+            }
+
+            .surface--bar {
+                order: 0;
+                padding-right: 0;
+            }
+        }
+
+        &--active {
+            @include shared.selection-ring;
+        }
+    }
+}
