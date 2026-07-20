@@ -62,7 +62,6 @@ Api libraries provide abstraction layer over REST API calls via simple function 
 - [sandbox-api](./libs/api/sandbox-api/README.md) - Sandbox API client
 - [training-api](./libs/api/training-api/README.md) - Training API client
 - [user-and-group-api](./libs/api/user-and-group-api/README.md) - User and group API client
-- [visualization-api](./libs/api/visualization-api/README.md) - Visualization API client
 
 ### Utils
 

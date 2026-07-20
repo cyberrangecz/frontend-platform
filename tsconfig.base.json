@@ -164,9 +164,6 @@
             ],
             "@crczp/utils": ["libs/utils/misc/src/index.ts"],
             "@crczp/test-utils": ["libs/utils/testing/src/index.ts"],
-            "@crczp/visualization-api": [
-                "libs/api/visualization-api/src/index.ts"
-            ],
             "@crczp/visualization-model": [
                 "libs/model/visualization-model/src/index.ts"
             ]
