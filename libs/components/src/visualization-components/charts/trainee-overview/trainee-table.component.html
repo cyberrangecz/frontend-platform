@@ -1,0 +1,63 @@
+<div class="trainee-table__header">
+    <h3 class="trainee-table__title">Trainees</h3>
+    <span class="trainee-table__count">{{ rows().length }} in this run</span>
+</div>
+
+<div class="trainee-table__scroll round-scrollbar">
+    <table
+        mat-table
+        class="trainee-table"
+        [dataSource]="sortedRows()"
+        matSort
+        [matSortActive]="sortState().active"
+        [matSortDirection]="sortState().direction"
+        matSortDisableClear
+        (matSortChange)="onSortChange($event)"
+    >
+        <ng-container matColumnDef="trainee">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header arrowPosition="after">Trainee</th>
+            <td mat-cell *matCellDef="let row">
+                <crczp-trainee-identity
+                    class="trainee-table__name"
+                    [name]="row.name"
+                    [picture]="row.picture"
+                />
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="currentTime">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header arrowPosition="after">Time</th>
+            <td mat-cell *matCellDef="let row">{{ row.currentTimeText }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="currentLevel">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header arrowPosition="after">Current level</th>
+            <td mat-cell *matCellDef="let row">
+                @if (row.state === 'finished') {
+                    <crczp-run-state-chip [state]="row.state" />
+                } @else {
+                    {{ row.currentLevelLabel }}
+                }
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="timeInLevel">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header arrowPosition="after">In level</th>
+            <td mat-cell *matCellDef="let row">{{ row.timeInLevelText }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="score">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header arrowPosition="after">Score</th>
+            <td mat-cell *matCellDef="let row">{{ row.scoreTotal }}</td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+        <tr
+            mat-row
+            *matRowDef="let row; columns: displayedColumns; trackBy: trackByRunId"
+            class="trainee-table__row"
+            [class.trainee-table__row--selected]="row.runId === selectedRunId()"
+            (click)="rowSelect.emit(row.runId)"
+        ></tr>
+    </table>
+</div>

@@ -1,0 +1,69 @@
+<div class="trainee-card">
+    @if (trainee(); as trainee) {
+        <div class="trainee-card__header">
+            @if (avatarSrc(); as src) {
+                <img class="trainee-card__avatar" [src]="src" alt="" aria-hidden="true" />
+            } @else {
+                <span class="trainee-card__avatar trainee-card__avatar--placeholder" aria-hidden="true">{{ avatarInitial() }}</span>
+            }
+            <div class="trainee-card__id">
+                <span class="trainee-card__name" crczpOverflowTooltip>{{ trainee.name }}</span>
+                <span class="trainee-card__contact" crczpOverflowTooltip>{{ trainee.login }} · {{ trainee.email }}</span>
+            </div>
+        </div>
+
+        <div class="trainee-card__stats">
+            @for (stat of stats(); track stat.label) {
+                <div class="trainee-card__stat">
+                    <span class="trainee-card__stat-label">{{ stat.label }}</span>
+                    <span class="trainee-card__stat-value" [style.color]="stat.color">{{ stat.value }}</span>
+                    @if (stat.secondary) {
+                        <span class="trainee-card__stat-secondary">{{ stat.secondary }}</span>
+                    }
+                </div>
+            }
+        </div>
+
+        <div class="trainee-card__levels round-scrollbar">
+            @for (level of levelRows(); track level.order) {
+                <div
+                    class="trainee-card__level"
+                    [class.trainee-card__level--active]="level.highlighted"
+                >
+                    <span
+                        class="trainee-card__level-badge"
+                        [style.background-color]="level.badgeColor"
+                        [style.color]="level.badgeForeground"
+                    >
+                        @switch (level.status) {
+                            @case ('cleared') {
+                                <mat-icon class="trainee-card__level-check">check</mat-icon>
+                            }
+                            @case ('not-started') {
+                                {{ level.order + 1 }}
+                            }
+                        }
+                    </span>
+
+                    <div class="trainee-card__level-main">
+                        <span class="trainee-card__level-title" crczpOverflowTooltip>{{ level.title }}</span>
+                        <span class="trainee-card__level-detail">
+                            @for (segment of level.detail; track $index) {
+                                @if (!$first) {
+                                    <span class="trainee-card__level-detail-sep"> · </span>
+                                }
+                                <span [style.color]="segment.color">{{ segment.text }}</span>
+                            }
+                        </span>
+                    </div>
+
+                    <span class="trainee-card__level-time">{{ level.timeText }}</span>
+
+                    <span class="trainee-card__level-score">{{ level.scoreText }}</span>
+                </div>
+            }
+        </div>
+    } @else {
+        <div class="trainee-card__empty">Select a trainee</div>
+    }
+</div>

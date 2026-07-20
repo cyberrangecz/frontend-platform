@@ -1,0 +1,29 @@
+<mat-card appearance="outlined" class="trainee-overview">
+    @switch (status()) {
+        @case ('error') {
+            <crczp-panel-placeholder variant="error" />
+        }
+        @case ('empty') {
+            <crczp-panel-placeholder variant="empty" message="No trainee runs in this instance yet" />
+        }
+        @default {
+            @if (rows(); as rows) {
+                <div class="trainee-overview__panels">
+                    <crczp-trainee-table
+                        class="trainee-overview__table"
+                        [rows]="rows"
+                        [selectedRunId]="selectedRunId()"
+                        (rowSelect)="onSelect($event)"
+                    />
+                    <div class="trainee-overview__divider" aria-hidden="true"></div>
+                    <crczp-trainee-card
+                        class="trainee-overview__card"
+                        [trainee]="selectedTrainee()"
+                    />
+                </div>
+            } @else {
+                <div class="trainee-overview__loading">Loading trainees…</div>
+            }
+        }
+    }
+</mat-card>
