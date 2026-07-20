@@ -1,0 +1,10 @@
+:host {
+    display: inline-block;
+}
+
+.segmented-toggle {
+    --mat-button-toggle-text-color: var(--primary-30);
+    --mat-button-toggle-divider-color: var(--primary-50);
+    --mat-button-toggle-selected-state-background-color: var(--mat-sys-primary-container);
+    --mat-button-toggle-selected-state-text-color: var(--primary-30);
+}

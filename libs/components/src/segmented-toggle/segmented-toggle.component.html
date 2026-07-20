@@ -1,0 +1,22 @@
+<mat-button-toggle-group
+    class="segmented-toggle"
+    [hideSingleSelectionIndicator]="true"
+    [value]="value()"
+    (change)="valueChange.emit($event.value)"
+>
+    @for (option of options(); track option.value) {
+        <mat-button-toggle
+            [value]="option.value"
+            [matTooltip]="iconOnly() ? option.label : ''"
+            [matTooltipDisabled]="!iconOnly()"
+            [attr.aria-label]="iconOnly() ? option.label : null"
+        >
+            @if (option.icon) {
+                <mat-icon>{{ option.icon }}</mat-icon>
+            }
+            @if (!iconOnly()) {
+                {{ option.label }}
+            }
+        </mat-button-toggle>
+    }
+</mat-button-toggle-group>
