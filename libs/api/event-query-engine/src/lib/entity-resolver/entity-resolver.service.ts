@@ -1,6 +1,13 @@
 import { Observable, OperatorFunction } from 'rxjs';
 import { EntityType, EntityValueType, ResolveEntities, ResolveEntitiesSafe } from './entity-type';
 
+/**
+ * Resolves entity IDs to typed entity objects.
+ *
+ * @contract Must cache per ID, so resolving the same IDs repeatedly — even every poll
+ * tick — does not refetch. Callers resolve directly without their own caching or
+ * deduplication layer.
+ */
 export abstract class EntityResolverService {
     /**
      * RxJS operator that resolves ID fields to entity objects.

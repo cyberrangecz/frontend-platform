@@ -10,6 +10,12 @@ export type FetcherMap = {
     [ET in EntityType]: (ids: number[]) => Observable<FetchResult<ET>[]>;
 };
 
+/**
+ * Fetches batches of entities by ID.
+ *
+ * @contract Must cache per ID, so repeated requests for the same IDs are served from
+ * cache. Callers fetch freely without their own caching or deduplication.
+ */
 export abstract class EntityFetchApi {
     abstract fetchInstances(
         ids: number[],
