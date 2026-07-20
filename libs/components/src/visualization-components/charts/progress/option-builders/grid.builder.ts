@@ -1,4 +1,3 @@
-import { EChartsOption } from 'echarts';
 import { CHART_BOTTOM_RESERVE_PX, CHART_TOP_RESERVE_PX, ROW_HEIGHT_PX } from '../config/ui.config';
 import { OptionFragment } from '../types/option-fragment.types';
 
@@ -31,7 +30,6 @@ export const GRID_RIGHT_PX = 40;
 export interface GridBuilderInput {
     readonly visibleRowCount: number;
     readonly hostWidth: number;
-    readonly hostHeight: number;
 }
 
 /**
@@ -41,12 +39,12 @@ export interface GridBuilderInput {
  * `GRID_LEFT_PX` so the rich-text Y-axis labels do not resize the plot
  * area on every trainee-list change.
  *
- * @param _input - Renderer-supplied context. Reserved for live-mode
- *                 refinement.
- * @returns A fragment keyed `'grid'` with the plot-area margins set.
+ * @param input - Renderer-supplied context with `visibleRowCount` and
+ *                `hostWidth`.
+ * @returns A partial option with the `grid` plot-area margins set.
  */
 export function buildGridFragment(input: GridBuilderInput): OptionFragment {
-    const fragment: Partial<EChartsOption> = {
+    return {
         grid: {
             top: GRID_TOP_PX,
             bottom: GRID_BOTTOM_PX,
@@ -55,10 +53,5 @@ export function buildGridFragment(input: GridBuilderInput): OptionFragment {
             containLabel: false,
             height: input.visibleRowCount * ROW_HEIGHT_PX,
         },
-    };
-
-    return {
-        key: 'grid',
-        fragment,
     };
 }

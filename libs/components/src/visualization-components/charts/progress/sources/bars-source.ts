@@ -1,9 +1,7 @@
-import { Signal } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { inject, Signal } from '@angular/core';
 import { and, eq } from 'drizzle-orm';
-import { filter, from, map, Observable, takeUntil } from 'rxjs';
+import { from, Observable } from 'rxjs';
 import {
-    DataBrokerService,
     EntityResolverService,
     EntityType,
     EventCacheDb,
@@ -14,6 +12,8 @@ import {
 } from '@crczp/event-query-engine';
 import { AbstractLevelTypeEnum, TrainingUser } from '@crczp/training-model';
 import { PlatformEventType } from '@crczp/visualization-model';
+
+import { createQuerySource, QuerySource } from '../../shared';
 import { BarRow } from '../types/bar.types';
 import { asBarKey, asLevelId, asTrainingRunId, InstanceId } from '../types/ids.types';
 
@@ -30,24 +30,6 @@ export const BARS_EVENT_TYPES: readonly PlatformEventType[] = [
     PlatformEventType.LEVEL_COMPLETED,
     PlatformEventType.TRAINING_RUN_ENDED,
 ] as const;
-
-/**
- * Dependencies for the bars source factory.
- *
- *  - `instanceId`: reactive scope. On change the inner stream is torn down
- *    and a new sync cycle begins.
- *  - `broker`: orchestrates sync + cache query. See `@crczp/event-query-engine`.
- *  - `resolver`: post-pipe operator that resolves `user_ref_id` columns into
- *    `TrainingUser` entities via the entity registry.
- *  - `liveness$`: emits `false` when the instance is past-ended; the inner
- *    observable is gated via `takeUntil` so polling stops cleanly.
- */
-export interface BarsSourceDeps {
-    readonly instanceId: Signal<InstanceId>;
-    readonly broker: DataBrokerService;
-    readonly resolver: EntityResolverService;
-    readonly liveness$: Observable<boolean>;
-}
 
 /**
  * Row shape projected by the broker cache query. Carries the resolver-owned
@@ -68,31 +50,8 @@ interface BarQueryRow {
     readonly run_ended_at: number | null;
 }
 
-/**
- * Minimal structural type covering only the Drizzle chainable surface this
- * query uses. The cache module deliberately keeps the underlying Drizzle
- * database opaque behind {@link EventCacheDb}; the integration spec uses an
- * `as any` cast for the same reason. Declaring the chain locally keeps the
- * cast typed without leaking `drizzle-orm/pglite` types into the components
- * library.
- */
-interface DrizzleSelectChain {
-    select(projection: Record<string, unknown>): {
-        from(table: unknown): {
-            leftJoin(
-                table: unknown,
-                on: unknown,
-            ): {
-                leftJoin(
-                    table: unknown,
-                    on: unknown,
-                ): {
-                    where(condition: unknown): Promise<BarQueryRow[]>;
-                };
-            };
-        };
-    };
-}
+/** Bar query row after the entity resolver substitutes its `user_ref_id`. */
+type ResolvedBarRow = ResolveEntitiesSafe<BarQueryRow, readonly [EntityType.User]>;
 
 /**
  * Builds the Drizzle query that returns one row per `(training_run_id, level_id)`
@@ -100,14 +59,14 @@ interface DrizzleSelectChain {
  * the completion event and the run-end event are LEFT-joined so the projection
  * yields `null` for the corresponding timestamps when those events have not
  * yet been observed.
+ *
+ * @param db          The typed event-cache database.
+ * @param instanceId  Instance whose bars are queried.
+ * @returns Observable emitting the raw bar rows for the instance.
  */
-function buildBarsQuery(
-    instanceIdValue: number,
-): (db: EventCacheDb) => Observable<BarQueryRow[]> {
-    return (db) => {
-        const drizzleDb = db as unknown as DrizzleSelectChain;
-
-        const query = drizzleDb
+function buildBarsQuery(db: EventCacheDb, instanceId: number): Observable<BarQueryRow[]> {
+    return from(
+        db
             .select({
                 training_run_id: levelStartedTable.training_run_id,
                 level_id: levelStartedTable.level_id,
@@ -132,10 +91,8 @@ function buildBarsQuery(
                 trainingRunEndedTable,
                 eq(trainingRunEndedTable.training_run_id, levelStartedTable.training_run_id),
             )
-            .where(eq(levelStartedTable.instance_id, instanceIdValue));
-
-        return from(query as Promise<BarQueryRow[]>);
-    };
+            .where(eq(levelStartedTable.instance_id, instanceId)) as Promise<BarQueryRow[]>,
+    );
 }
 
 /**
@@ -143,6 +100,10 @@ function buildBarsQuery(
  * populated synthetic `TrainingUser`. Downstream selectors and view-model
  * assemblers read `bar.user.id` and `bar.user.name` unconditionally, so the
  * source guarantees a complete shape on every row.
+ *
+ * @param resolvedUser  The resolver output, either a full `TrainingUser` or the
+ *                      `{ userId }` tolerant fallback.
+ * @returns A fully populated `TrainingUser`.
  */
 function normalizeUser(resolvedUser: TrainingUser | { userId: number }): TrainingUser {
     if ('name' in resolvedUser) {
@@ -158,12 +119,15 @@ function normalizeUser(resolvedUser: TrainingUser | { userId: number }): Trainin
 }
 
 /**
- * Maps the resolver's output rows into the canonical `BarRow` shape consumed
- * by the selector layer. The `key` field is built deterministically from the
+ * Maps a resolved query row into the canonical `BarRow` shape consumed by the
+ * selector layer. The `key` field is built deterministically from the
  * `(trainingRunId, levelId)` composite via {@link asBarKey} so downstream Map
  * lookups (e.g. `group-events`) remain collision-free.
+ *
+ * @param row  One resolved bar query row.
+ * @returns The normalized bar row.
  */
-function toBarRow(row: ResolveEntitiesSafe<BarQueryRow, readonly [EntityType.User]>): BarRow {
+function toBarRow(row: ResolvedBarRow): BarRow {
     const trainingRunId = asTrainingRunId(row.training_run_id);
     const levelId = asLevelId(row.level_id);
     return {
@@ -182,29 +146,26 @@ function toBarRow(row: ResolveEntitiesSafe<BarQueryRow, readonly [EntityType.Use
 }
 
 /**
- * Builds the bars reactive accessor.
+ * Live source of the instance's bar rows. Polls the level-started driver
+ * left-joined to completions and run-ends, resolves each row's `user_ref_id`
+ * to a `TrainingUser`, and projects to `BarRow`. Obeys the dashboard pause
+ * gate and stops once the instance end-time has passed.
  *
- * Wires `broker.queryPolling(BARS_EVENT_TYPES, barsQueryFn)` through the
- * resolver pipe, gates with `takeUntil(liveness$.pipe(filter(live => !live)))`,
- * and bridges into a signal at the boundary via `toSignal`.
+ * Must be called inside an injection context.
  *
- * The returned signal emits an empty array until the first poll cycle
- * completes and stays referentially stable when consecutive cycles return
- * structurally identical rows.
+ * @param instanceId  Reactive instance id scoping the query.
+ * @returns A query source emitting the instance's bar rows.
  */
-export function createBarsSource(deps: BarsSourceDeps): Signal<readonly BarRow[]> {
-    const { instanceId, broker, resolver, liveness$ } = deps;
-
-    const queryFn = (db: EventCacheDb): Observable<BarQueryRow[]> =>
-        buildBarsQuery(instanceId())(db);
-
-    const stream: Observable<readonly BarRow[]> = broker
-        .queryPolling<BarQueryRow>(instanceId, [...BARS_EVENT_TYPES], queryFn)
-        .pipe(
-            resolver.resolveSafe<BarQueryRow, readonly [EntityType.User]>([EntityType.User]),
-            map((rows) => rows.map((row) => toBarRow(row))),
-            takeUntil(liveness$.pipe(filter((live) => !live))),
-        );
-
-    return toSignal(stream, { initialValue: [] as readonly BarRow[] });
+export function createBarsSource(instanceId: Signal<InstanceId>): QuerySource<readonly BarRow[]> {
+    const resolver = inject(EntityResolverService);
+    return createQuerySource<ResolvedBarRow, readonly BarRow[]>({
+        instanceId,
+        eventTypes: [...BARS_EVENT_TYPES],
+        live: true,
+        query: (db, ctx) =>
+            buildBarsQuery(db, ctx.instanceId).pipe(
+                resolver.resolveSafe<BarQueryRow, readonly [EntityType.User]>([EntityType.User]),
+            ),
+        map: (rows) => rows.map(toBarRow),
+    });
 }

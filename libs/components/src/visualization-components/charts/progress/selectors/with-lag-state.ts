@@ -2,6 +2,8 @@ import { BarRow, BarWithLag, LagTransition, LevelInfo } from '../types/bar.types
 import { LevelId } from '../types/ids.types';
 import { LagState } from '../types/lag-state.types';
 import {
+    GRACE_PERIOD_FRACTION,
+    GRACE_PERIOD_MINIMUM_MS,
     LONG_ESTIMATE_THRESHOLDS,
     SHORT_ESTIMATE_THRESHOLD_MS,
     SHORT_ESTIMATE_THRESHOLDS,
@@ -93,11 +95,11 @@ function computeShortModeCrossings(
     startedAt: number,
     estimatedDurationMs: number,
 ): LagTransition[] {
-    const estimateEndMs = startedAt + estimatedDurationMs;
+    const deadlineMs = startedAt + estimatedDurationMs + resolveGraceMs(estimatedDurationMs);
     return [
-        { atMs: estimateEndMs, toState: 'WARNING' },
-        { atMs: estimateEndMs + SHORT_ESTIMATE_THRESHOLDS.warningMs, toState: 'LATE' },
-        { atMs: estimateEndMs + SHORT_ESTIMATE_THRESHOLDS.lateMs, toState: 'ABANDONED' },
+        { atMs: deadlineMs, toState: 'WARNING' },
+        { atMs: deadlineMs + SHORT_ESTIMATE_THRESHOLDS.warningMs, toState: 'LATE' },
+        { atMs: deadlineMs + SHORT_ESTIMATE_THRESHOLDS.lateMs, toState: 'ABANDONED' },
     ];
 }
 
@@ -105,22 +107,28 @@ function computeLongModeCrossings(
     startedAt: number,
     estimatedDurationMs: number,
 ): LagTransition[] {
-    const estimateEndMs = startedAt + estimatedDurationMs;
+    const deadlineMs = startedAt + estimatedDurationMs + resolveGraceMs(estimatedDurationMs);
     return [
-        { atMs: estimateEndMs, toState: 'WARNING' },
+        { atMs: deadlineMs, toState: 'WARNING' },
         {
-            atMs:
-                startedAt +
-                estimatedDurationMs * (1 + LONG_ESTIMATE_THRESHOLDS.warningPercentage / 100),
+            atMs: deadlineMs + estimatedDurationMs * (LONG_ESTIMATE_THRESHOLDS.warningPercentage / 100),
             toState: 'LATE',
         },
         {
-            atMs:
-                startedAt +
-                estimatedDurationMs * (1 + LONG_ESTIMATE_THRESHOLDS.abandonedPercentage / 100),
+            atMs: deadlineMs + estimatedDurationMs * (LONG_ESTIMATE_THRESHOLDS.abandonedPercentage / 100),
             toState: 'ABANDONED',
         },
     ];
+}
+
+/**
+ * Resolves the grace period granted past the estimate before a bar leaves OK.
+ *
+ * @param estimatedDurationMs Level estimate, in ms.
+ * @returns The larger of a fraction of the estimate and the floor, in ms.
+ */
+function resolveGraceMs(estimatedDurationMs: number): number {
+    return Math.max(estimatedDurationMs * GRACE_PERIOD_FRACTION, GRACE_PERIOD_MINIMUM_MS);
 }
 
 function resolveEffectiveEnd(bar: BarRow, evaluationNow: number): number {
@@ -152,22 +160,23 @@ function classifyLag(
     const lagMs = elapsedMs - estimatedDurationMs;
 
     const isShortMode = estimatedDurationMs < SHORT_ESTIMATE_THRESHOLD_MS;
+    const lagPercentage = isShortMode ? null : Math.max(0, (lagMs / estimatedDurationMs) * 100);
 
-    if (lagMs <= 0) {
-        return { lagState: 'OK', lagMs, lagPercentage: isShortMode ? null : 0 };
+    const penaltyMs = lagMs - resolveGraceMs(estimatedDurationMs);
+    if (penaltyMs <= 0) {
+        return { lagState: 'OK', lagMs, lagPercentage };
     }
 
     if (isShortMode) {
         return {
-            lagState: classifyShortMode(lagMs),
+            lagState: classifyShortMode(penaltyMs),
             lagMs,
-            lagPercentage: null,
+            lagPercentage,
         };
     }
 
-    const lagPercentage = (lagMs / estimatedDurationMs) * 100;
     return {
-        lagState: classifyLongMode(lagPercentage),
+        lagState: classifyLongMode((penaltyMs / estimatedDurationMs) * 100),
         lagMs,
         lagPercentage,
     };

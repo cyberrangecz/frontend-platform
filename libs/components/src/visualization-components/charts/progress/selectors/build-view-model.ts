@@ -1,5 +1,5 @@
 import { isSameDay } from 'date-fns';
-import { TrainingInstance } from '@crczp/training-model';
+import { TrainingInstanceBasic } from '@crczp/training-model';
 import { BarRow, BarVm, BarWithLag, LevelInfo } from '../types/bar.types';
 import { EventRow } from '../types/event.types';
 import { asTraineeId, LevelId, TraineeId } from '../types/ids.types';
@@ -43,7 +43,7 @@ export interface BuildViewModelInput {
      */
     readonly classified: readonly BarWithLag[];
     readonly events: readonly EventRow[];
-    readonly instance: TrainingInstance;
+    readonly instance: TrainingInstanceBasic;
     readonly levelsById: ReadonlyMap<LevelId, LevelInfo>;
     readonly levelOrder: readonly LevelId[];
     /**
@@ -183,7 +183,7 @@ function buildRowIndexMap(
 function buildBarVm(
     bar: BarWithLag,
     rowIndex: number,
-    instance: TrainingInstance,
+    instance: TrainingInstanceBasic,
     levelsById: ReadonlyMap<LevelId, LevelInfo>,
     highlight: HighlightVm,
     favorites: ReadonlySet<TraineeId>,
@@ -235,7 +235,7 @@ function buildBarVm(
  * `spansMidnight` is computed against the derived window boundaries.
  */
 function buildAxis(
-    instance: TrainingInstance,
+    instance: TrainingInstanceBasic,
     events: readonly EventRow[],
     nowMs: number,
     mountNowMs: number,

@@ -1,25 +1,6 @@
-import { EventKind, EventRow, EventVm } from '../types/event.types';
+import { EventRow, EventVm } from '../types/event.types';
 import { BarKey } from '../types/ids.types';
 import { BarWithLag } from '../types/bar.types';
-
-/**
- * Human-readable label for each event kind.
- *
- * Used as `EventVm.tooltipLabel` for all non-hint events.
- * Hint rows override with `EventRow.hintTitle` when present.
- * `EVENT_ICON_CATALOG` carries no label field, so labels are declared
- * here explicitly for clarity and i18n-readiness.
- */
-const KIND_LABELS: Readonly<Record<EventKind, string>> = {
-    WRONG_ANSWER: 'Wrong answer',
-    CORRECT_ANSWER: 'Correct answer',
-    HINT_TAKEN: 'Hint taken',
-    SOLUTION_DISPLAYED: 'Solution displayed',
-    ASSESSMENT_ANSWERS: 'Assessment answers',
-    TRAINING_RUN_STARTED: 'Training run started',
-    TRAINING_RUN_RESUMED: 'Training run resumed',
-    TRAINING_RUN_ENDED: 'Training run ended',
-} as const;
 
 /**
  * Shared empty map returned whenever the result would be empty.
@@ -99,22 +80,34 @@ export function groupEventsByBar(
 /**
  * Projects one `EventRow` to `EventVm`.
  *
- * Hint discrimination:
- *  - `HINT_TAKEN` → `tooltipLabel` is `hintTitle` when present, otherwise
- *    the generic kind label.
- *  - All other kinds → `tooltipLabel` is the kind's entry in `KIND_LABELS`.
+ * `detail` carries the event-specific text shown under the tooltip kind
+ * header: the answer for answer events, the hint title for hints. Kinds
+ * with no detail beyond their label resolve to an empty string.
  */
 function toEventVm(event: EventRow, rowIndex: number): EventVm {
-    const isHint = event.kind === 'HINT_TAKEN';
-
-    const tooltipLabel = isHint
-        ? (event.hintTitle ?? KIND_LABELS.HINT_TAKEN)
-        : KIND_LABELS[event.kind];
-
     return {
         kind: event.kind,
         rowIndex,
         timestamp: event.timestamp,
-        tooltipLabel,
+        detail: resolveDetail(event),
     };
+}
+
+/**
+ * Resolves the per-event detail line.
+ *
+ * @param event Source event row.
+ * @returns The answer text for answer events, the hint title for hints, or
+ *          an empty string for kinds that carry no detail.
+ */
+function resolveDetail(event: EventRow): string {
+    switch (event.kind) {
+        case 'WRONG_ANSWER':
+        case 'CORRECT_ANSWER':
+            return event.answer ?? '';
+        case 'HINT_TAKEN':
+            return event.hintTitle ?? '';
+        default:
+            return '';
+    }
 }

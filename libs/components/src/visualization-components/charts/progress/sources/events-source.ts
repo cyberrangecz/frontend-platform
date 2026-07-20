@@ -1,12 +1,9 @@
 import { Signal } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { eq, sql } from 'drizzle-orm';
-import { filter, from, map, Observable, takeUntil } from 'rxjs';
+import { eq } from 'drizzle-orm';
+import { combineLatest, from, map, Observable } from 'rxjs';
 import {
     assessmentAnswersTable,
     correctAnswerSubmittedTable,
-    DataBrokerService,
-    EntityResolverService,
     EventCacheDb,
     hintTakenTable,
     solutionDisplayedTable,
@@ -17,6 +14,8 @@ import {
 } from '@crczp/event-query-engine';
 import { HintBasic } from '@crczp/training-model';
 import { PlatformEventType } from '@crczp/visualization-model';
+
+import { createQuerySource, QuerySource } from '../../shared';
 import { EventKind, EventRow } from '../types/event.types';
 import { asBarKey, asLevelId, asTrainingRunId, InstanceId } from '../types/ids.types';
 
@@ -39,212 +38,203 @@ export const EVENTS_EVENT_TYPES: readonly PlatformEventType[] = [
 ] as const;
 
 /**
- * Dependencies for the events source factory.
- *
- *  - `instanceId`: reactive scope, same semantics as bars source.
- *  - `broker`: orchestrates sync + cache query.
- *  - `resolver`: kept in the interface for API symmetry with bars source; the
- *    events source does not call it — hint data is constructed locally from the
- *    hint_taken row columns.
- *  - `liveness$`: liveness gate, same as bars source.
+ * Columns shared by every event branch's per-table select.
  */
-export interface EventsSourceDeps {
-    readonly instanceId: Signal<InstanceId>;
-    readonly broker: DataBrokerService;
-    readonly resolver: EntityResolverService;
-    readonly liveness$: Observable<boolean>;
-}
-
-/**
- * Raw row shape returned by the union query. Each column is present in every
- * branch; branches that do not carry a given field project NULL.
- *
- * Column `kind` carries the discriminator literal so the downstream tooltip
- * formatter can read `data[2].kind` without further mapping.
- */
-interface EventQueryRow {
+interface BaseBranchRow {
     readonly training_run_id: number;
     readonly level_id: number;
     readonly timestamp: number;
-    readonly kind: string;
-    readonly answer: string | null;
+}
+
+/**
+ * Branch row carrying answer text, projected by the wrong- and correct-answer tables.
+ */
+interface AnswerBranchRow extends BaseBranchRow {
+    readonly answer_content: string | null;
+}
+
+/**
+ * Branch row carrying the hint columns, projected by the hint_taken table.
+ */
+interface HintBranchRow extends BaseBranchRow {
     readonly hint_id: number | null;
     readonly hint_title: string | null;
-    readonly hint_penalty: number | null;
+    readonly hint_penalty_points: number | null;
 }
 
+/** Per-kind detail fields layered onto the shared columns of a branch row. */
+interface EventDetail {
+    readonly answer: string | null;
+    readonly hintTitle: string | null;
+    readonly hint: HintBasic | null;
+}
+
+/** Detail for kinds that carry neither answer text nor hint columns. */
+const EMPTY_DETAIL: EventDetail = { answer: null, hintTitle: null, hint: null };
+
 /**
- * Minimal structural interface covering the Drizzle chainable surface needed
- * to express the union query. The cache module deliberately keeps the
- * underlying Drizzle database opaque behind {@link EventCacheDb}; the local
- * cast stays narrow and self-contained so no pglite types leak into the
- * components library.
+ * Assembles a canonical {@link EventRow} from a branch's shared columns, the
+ * statically-known {@link EventKind} of its source table, and the per-kind detail.
  *
- * The chain shape mirrors `select().from().where().unionAll(...).orderBy()`.
- * `unionAll` is invoked on each intermediate branch to chain all eight
- * per-kind selects into a single union before the final `orderBy`.
+ * `key` uses {@link asBarKey} with the same `(trainingRunId, levelId)` pair that
+ * bars-source uses, guaranteeing identical keys for matching composite identities
+ * so `group-events.ts` can join events to bars by key.
+ *
+ * @param kind   Discriminator identifying the source table's event kind.
+ * @param row    Shared columns read from the source table.
+ * @param detail Answer text and hint data specific to the kind; {@link EMPTY_DETAIL} when neither applies.
  */
-interface DrizzleWhereable {
-    where(condition: unknown): DrizzleUnionable;
-}
-
-interface DrizzleUnionable {
-    unionAll(right: DrizzleUnionable | DrizzleWhereable): DrizzleUnionable;
-    orderBy(column: unknown): Promise<EventQueryRow[]>;
-}
-
-interface DrizzleSelectStarter {
-    select(projection: Record<string, unknown>): {
-        from(table: unknown): DrizzleWhereable;
-    };
-}
-
-/**
- * Builds the projection for a branch that does NOT carry answer text.
- * answer is projected as a typed NULL so cardinality aligns across all branches.
- */
-function noAnswer(): Record<string, unknown> {
-    return { answer: sql<null>`NULL` };
-}
-
-/**
- * Builds the projection for a branch that does NOT carry hint columns.
- * All three hint fields project NULL for cardinality alignment.
- */
-function noHint(): Record<string, unknown> {
+function eventRow(kind: EventKind, row: BaseBranchRow, detail: EventDetail): EventRow {
+    const trainingRunId = asTrainingRunId(row.training_run_id);
+    const levelId = asLevelId(row.level_id);
     return {
-        hint_id: sql<null>`NULL`,
-        hint_title: sql<null>`NULL`,
-        hint_penalty: sql<null>`NULL`,
+        kind,
+        key: asBarKey(trainingRunId, levelId),
+        trainingRunId,
+        levelId,
+        timestamp: row.timestamp,
+        answer: detail.answer,
+        hintTitle: detail.hintTitle,
+        hint: detail.hint,
     };
 }
 
 /**
- * Common base projection for every branch. Each branch merges this with its
- * kind-specific columns via object spread.
+ * Wraps a single table's query promise into an observable of mapped {@link EventRow}s.
  *
- * @param table - The Drizzle table object for the branch. Must carry
- *   `training_run_id`, `level_id`, and `timestamp` columns.
- * @param kindLiteral - SQL literal string for the discriminator column.
+ * @param rows  Promise resolving the branch's raw rows for the scoped instance.
+ * @param toRow Maps one raw branch row to its canonical {@link EventRow}.
  */
-function baseProjection(
-    table: {
-        training_run_id: unknown;
-        level_id: unknown;
-        timestamp: unknown;
-    },
-    kindLiteral: EventKind,
-): Record<string, unknown> {
-    return {
-        training_run_id: table.training_run_id,
-        level_id: table.level_id,
-        timestamp: table.timestamp,
-        kind: sql`${kindLiteral}`,
-    };
+function branch<RawRow extends BaseBranchRow>(
+    rows: Promise<RawRow[]>,
+    toRow: (row: RawRow) => EventRow,
+): Observable<EventRow[]> {
+    return from(rows).pipe(map((list) => list.map(toRow)));
 }
 
 /**
- * Builds the eight-branch UNION ALL query that emits one flat {@link EventQueryRow}
- * per event row for the supplied instance, ordered by timestamp ascending.
+ * Builds the events query as one Drizzle select per event table, scoped to the
+ * supplied instance, merged into a single timestamp-ascending sequence.
  *
- * Branches that do not carry a given column project SQL NULL so all branches
- * emit a uniform column set that Drizzle can type as {@link EventQueryRow}.
+ * Each branch reads only the columns its table carries and tags every row with
+ * that table's {@link EventKind}; the per-branch results are concatenated and
+ * sorted in memory. This mirrors the live-event-feed source's per-table approach
+ * and avoids a cross-table UNION, whose projected discriminator literal Postgres
+ * cannot assign a type to.
  *
- * Ordering at the union level benefits downstream consumers (group-events
- * buckets, tooltip ordering) without requiring a secondary sort pass.
+ * @param db              The typed event-cache database.
+ * @param instanceIdValue Training instance ID scoping every branch.
+ * @returns An observable emitting all matching events ordered by timestamp ascending.
  */
 function buildEventsQuery(
+    db: EventCacheDb,
     instanceIdValue: number,
-): (db: EventCacheDb) => Observable<EventQueryRow[]> {
-    return (db) => {
-        const drizzleDb = db as unknown as DrizzleSelectStarter;
+): Observable<EventRow[]> {
+    const branches: Observable<EventRow[]>[] = [
+        branch(
+            db
+                .select({
+                    training_run_id: wrongAnswerSubmittedTable.training_run_id,
+                    level_id: wrongAnswerSubmittedTable.level_id,
+                    timestamp: wrongAnswerSubmittedTable.timestamp,
+                    answer_content: wrongAnswerSubmittedTable.answer_content,
+                })
+                .from(wrongAnswerSubmittedTable)
+                .where(eq(wrongAnswerSubmittedTable.instance_id, instanceIdValue)) as Promise<AnswerBranchRow[]>,
+            (row) => eventRow('WRONG_ANSWER', row, { answer: row.answer_content, hintTitle: null, hint: null }),
+        ),
+        branch(
+            db
+                .select({
+                    training_run_id: correctAnswerSubmittedTable.training_run_id,
+                    level_id: correctAnswerSubmittedTable.level_id,
+                    timestamp: correctAnswerSubmittedTable.timestamp,
+                    answer_content: correctAnswerSubmittedTable.answer_content,
+                })
+                .from(correctAnswerSubmittedTable)
+                .where(eq(correctAnswerSubmittedTable.instance_id, instanceIdValue)) as Promise<AnswerBranchRow[]>,
+            (row) => eventRow('CORRECT_ANSWER', row, { answer: row.answer_content, hintTitle: null, hint: null }),
+        ),
+        branch(
+            db
+                .select({
+                    training_run_id: hintTakenTable.training_run_id,
+                    level_id: hintTakenTable.level_id,
+                    timestamp: hintTakenTable.timestamp,
+                    hint_id: hintTakenTable.hint_id,
+                    hint_title: hintTakenTable.hint_title,
+                    hint_penalty_points: hintTakenTable.hint_penalty_points,
+                })
+                .from(hintTakenTable)
+                .where(eq(hintTakenTable.instance_id, instanceIdValue)) as Promise<HintBranchRow[]>,
+            (row) => eventRow('HINT_TAKEN', row, {
+                answer: null,
+                hintTitle: row.hint_title,
+                hint: buildHintBasic(row),
+            }),
+        ),
+        branch(
+            db
+                .select({
+                    training_run_id: solutionDisplayedTable.training_run_id,
+                    level_id: solutionDisplayedTable.level_id,
+                    timestamp: solutionDisplayedTable.timestamp,
+                })
+                .from(solutionDisplayedTable)
+                .where(eq(solutionDisplayedTable.instance_id, instanceIdValue)) as Promise<BaseBranchRow[]>,
+            (row) => eventRow('SOLUTION_DISPLAYED', row, EMPTY_DETAIL),
+        ),
+        branch(
+            db
+                .select({
+                    training_run_id: assessmentAnswersTable.training_run_id,
+                    level_id: assessmentAnswersTable.level_id,
+                    timestamp: assessmentAnswersTable.timestamp,
+                })
+                .from(assessmentAnswersTable)
+                .where(eq(assessmentAnswersTable.instance_id, instanceIdValue)) as Promise<BaseBranchRow[]>,
+            (row) => eventRow('ASSESSMENT_ANSWERS', row, EMPTY_DETAIL),
+        ),
+        branch(
+            db
+                .select({
+                    training_run_id: trainingRunStartedTable.training_run_id,
+                    level_id: trainingRunStartedTable.level_id,
+                    timestamp: trainingRunStartedTable.timestamp,
+                })
+                .from(trainingRunStartedTable)
+                .where(eq(trainingRunStartedTable.instance_id, instanceIdValue)) as Promise<BaseBranchRow[]>,
+            (row) => eventRow('TRAINING_RUN_STARTED', row, EMPTY_DETAIL),
+        ),
+        branch(
+            db
+                .select({
+                    training_run_id: trainingRunResumedTable.training_run_id,
+                    level_id: trainingRunResumedTable.level_id,
+                    timestamp: trainingRunResumedTable.timestamp,
+                })
+                .from(trainingRunResumedTable)
+                .where(eq(trainingRunResumedTable.instance_id, instanceIdValue)) as Promise<BaseBranchRow[]>,
+            (row) => eventRow('TRAINING_RUN_RESUMED', row, EMPTY_DETAIL),
+        ),
+        branch(
+            db
+                .select({
+                    training_run_id: trainingRunEndedTable.training_run_id,
+                    level_id: trainingRunEndedTable.level_id,
+                    timestamp: trainingRunEndedTable.timestamp,
+                })
+                .from(trainingRunEndedTable)
+                .where(eq(trainingRunEndedTable.instance_id, instanceIdValue)) as Promise<BaseBranchRow[]>,
+            (row) => eventRow('TRAINING_RUN_ENDED', row, EMPTY_DETAIL),
+        ),
+    ];
 
-        const wrongAnswerBranch = drizzleDb
-            .select({
-                ...baseProjection(wrongAnswerSubmittedTable, 'WRONG_ANSWER'),
-                answer: wrongAnswerSubmittedTable.answer_content,
-                ...noHint(),
-            })
-            .from(wrongAnswerSubmittedTable)
-            .where(eq(wrongAnswerSubmittedTable.instance_id, instanceIdValue));
-
-        const correctAnswerBranch = drizzleDb
-            .select({
-                ...baseProjection(correctAnswerSubmittedTable, 'CORRECT_ANSWER'),
-                answer: correctAnswerSubmittedTable.answer_content,
-                ...noHint(),
-            })
-            .from(correctAnswerSubmittedTable)
-            .where(eq(correctAnswerSubmittedTable.instance_id, instanceIdValue));
-
-        const hintTakenBranch = drizzleDb
-            .select({
-                ...baseProjection(hintTakenTable, 'HINT_TAKEN'),
-                ...noAnswer(),
-                hint_id: hintTakenTable.hint_id,
-                hint_title: hintTakenTable.hint_title,
-                hint_penalty: hintTakenTable.hint_penalty_points,
-            })
-            .from(hintTakenTable)
-            .where(eq(hintTakenTable.instance_id, instanceIdValue));
-
-        const solutionDisplayedBranch = drizzleDb
-            .select({
-                ...baseProjection(solutionDisplayedTable, 'SOLUTION_DISPLAYED'),
-                ...noAnswer(),
-                ...noHint(),
-            })
-            .from(solutionDisplayedTable)
-            .where(eq(solutionDisplayedTable.instance_id, instanceIdValue));
-
-        const assessmentAnswersBranch = drizzleDb
-            .select({
-                ...baseProjection(assessmentAnswersTable, 'ASSESSMENT_ANSWERS'),
-                ...noAnswer(),
-                ...noHint(),
-            })
-            .from(assessmentAnswersTable)
-            .where(eq(assessmentAnswersTable.instance_id, instanceIdValue));
-
-        const trainingRunStartedBranch = drizzleDb
-            .select({
-                ...baseProjection(trainingRunStartedTable, 'TRAINING_RUN_STARTED'),
-                ...noAnswer(),
-                ...noHint(),
-            })
-            .from(trainingRunStartedTable)
-            .where(eq(trainingRunStartedTable.instance_id, instanceIdValue));
-
-        const trainingRunResumedBranch = drizzleDb
-            .select({
-                ...baseProjection(trainingRunResumedTable, 'TRAINING_RUN_RESUMED'),
-                ...noAnswer(),
-                ...noHint(),
-            })
-            .from(trainingRunResumedTable)
-            .where(eq(trainingRunResumedTable.instance_id, instanceIdValue));
-
-        const trainingRunEndedBranch = drizzleDb
-            .select({
-                ...baseProjection(trainingRunEndedTable, 'TRAINING_RUN_ENDED'),
-                ...noAnswer(),
-                ...noHint(),
-            })
-            .from(trainingRunEndedTable)
-            .where(eq(trainingRunEndedTable.instance_id, instanceIdValue));
-
-        const unionQuery = wrongAnswerBranch
-            .unionAll(correctAnswerBranch)
-            .unionAll(hintTakenBranch)
-            .unionAll(solutionDisplayedBranch)
-            .unionAll(assessmentAnswersBranch)
-            .unionAll(trainingRunStartedBranch)
-            .unionAll(trainingRunResumedBranch)
-            .unionAll(trainingRunEndedBranch)
-            .orderBy(sql`timestamp ASC`);
-
-        return from(unionQuery as Promise<EventQueryRow[]>);
-    };
+    return combineLatest(branches).pipe(
+        map((perBranch) =>
+            ([] as EventRow[]).concat(...perBranch).sort((left, right) => left.timestamp - right.timestamp),
+        ),
+    );
 }
 
 /**
@@ -259,77 +249,38 @@ function buildEventsQuery(
  * Per the HANDOFF lock: `hint.content` is permanently out of scope; the
  * shift-hold tooltip expansion is dropped entirely.
  */
-function buildHintBasic(row: EventQueryRow): HintBasic | null {
-    if (row.hint_id === null || row.hint_title === null || row.hint_penalty === null) {
+function buildHintBasic(row: HintBranchRow): HintBasic | null {
+    if (row.hint_id === null || row.hint_title === null || row.hint_penalty_points === null) {
         return null;
     }
     try {
-        return HintBasic.parse({ id: row.hint_id, title: row.hint_title, penalty: row.hint_penalty });
+        return HintBasic.parse({ id: row.hint_id, title: row.hint_title, penalty: row.hint_penalty_points });
     } catch {
         return null;
     }
 }
 
 /**
- * Maps a raw {@link EventQueryRow} to the canonical {@link EventRow} shape.
+ * Live source of the instance's overlay events. Polls every per-table branch,
+ * merges them into one timestamp-ascending sequence, and emits the canonical
+ * {@link EventRow} list. Obeys the dashboard pause gate and stops once the
+ * instance end-time has passed.
  *
- * Key contracts:
- *  - `key` uses {@link asBarKey} with the same `(trainingRunId, levelId)` pair
- *    that bars-source uses, guaranteeing identical keys for matching composite
- *    identities so `group-events.ts` can join events to bars by key.
- *  - `hintTitle` is populated from the row's own `hint_title` column on
- *    HINT_TAKEN rows; no resolver is involved.
- *  - `hint` is constructed locally from row columns on HINT_TAKEN rows;
- *    null on all other kinds.
+ * No entity resolution runs: hint data is reconstructed locally from the
+ * columns the `hint_taken` table carries directly, so no round-trip through
+ * the entity resolver is needed for data already present in the cache row.
+ *
+ * Must be called inside an injection context.
+ *
+ * @param instanceId  Reactive instance id scoping every branch query.
+ * @returns A query source emitting the instance's overlay events.
  */
-function toEventRow(row: EventQueryRow): EventRow {
-    const trainingRunId = asTrainingRunId(row.training_run_id);
-    const levelId = asLevelId(row.level_id);
-    const kind = row.kind as EventKind;
-    const isHintRow = kind === 'HINT_TAKEN';
-
-    return {
-        kind,
-        key: asBarKey(trainingRunId, levelId),
-        trainingRunId,
-        levelId,
-        timestamp: row.timestamp,
-        answer: row.answer,
-        hintTitle: isHintRow ? (row.hint_title ?? null) : null,
-        hint: isHintRow ? buildHintBasic(row) : null,
-    };
-}
-
-/**
- * Builds the events reactive accessor.
- *
- * Wires `broker.queryPolling(EVENTS_EVENT_TYPES, eventsQueryFn)` through a
- * pure mapping pass that converts raw query rows into {@link EventRow} values,
- * gates with `takeUntil(liveness$.pipe(filter(live => !live)))`, and bridges
- * into a signal at the boundary via `toSignal`.
- *
- * The returned signal emits an empty array until the first poll cycle
- * completes and stays referentially stable when consecutive cycles return
- * structurally identical rows.
- *
- * The `resolver` dependency is accepted for interface symmetry with
- * {@link createBarsSource} but is not invoked: hint entity data is
- * reconstructed locally from the columns the `hint_taken` table carries
- * directly, avoiding a round-trip through the entity resolver for data that
- * is already present in the cache row.
- */
-export function createEventsSource(deps: EventsSourceDeps): Signal<readonly EventRow[]> {
-    const { instanceId, broker, liveness$ } = deps;
-
-    const queryFn = (db: EventCacheDb): Observable<EventQueryRow[]> =>
-        buildEventsQuery(instanceId())(db);
-
-    const stream: Observable<readonly EventRow[]> = broker
-        .queryPolling<EventQueryRow>(instanceId, [...EVENTS_EVENT_TYPES], queryFn)
-        .pipe(
-            map((rows) => rows.map((row) => toEventRow(row))),
-            takeUntil(liveness$.pipe(filter((live) => !live))),
-        );
-
-    return toSignal(stream, { initialValue: [] as readonly EventRow[] });
+export function createEventsSource(instanceId: Signal<InstanceId>): QuerySource<readonly EventRow[]> {
+    return createQuerySource<EventRow, readonly EventRow[]>({
+        instanceId,
+        eventTypes: [...EVENTS_EVENT_TYPES],
+        live: true,
+        query: (db, ctx) => buildEventsQuery(db, ctx.instanceId),
+        map: (rows) => rows,
+    });
 }

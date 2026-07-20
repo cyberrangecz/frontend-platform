@@ -1,11 +1,16 @@
 import { format } from 'date-fns';
 import { CallbackDataParams } from 'echarts/types/dist/shared';
 import { BarTooltipPayload } from './bars/bars.builder';
-import { EventVm } from '../types/event.types';
-import { LAG_STATE_COLORS, LAG_STATE_LABELS } from '../config/lag.config';
+import { EventKind, EventVm } from '../types/event.types';
+import {
+    ESTIMATE_GAIN_COLOR,
+    ESTIMATE_LOSS_COLOR,
+    LAG_STATE_COLORS,
+    LAG_STATE_LABELS,
+} from '../config/lag.config';
 import { EVENT_ICON_CATALOG } from '../config/event.config';
 import { OptionFragment } from '../types/option-fragment.types';
-import { LagState } from '../types/lag-state.types';
+import { ChartPalette, renderRichTooltipHtml, richTooltipDefaults, RichTooltipModel, RichTooltipRow } from '../../shared';
 
 /**
  * Bar data tuple: [startMs, endMs, rowIndex, BarTooltipPayload].
@@ -28,10 +33,7 @@ interface EventDataTuple {
     readonly 2: EventVm;
 }
 
-/**
- * FIX 1 + FIX 3 — Bar discriminator: 4-tuple with `.kind === 'bar'` on data[3].
- * Array length differentiates from the 3-tuple event shape.
- */
+/** Bar discriminator: 4-tuple with `.kind === 'bar'` on data[3]. */
 function isBarData(data: unknown): data is BarDataTuple {
     return (
         Array.isArray(data) &&
@@ -40,10 +42,7 @@ function isBarData(data: unknown): data is BarDataTuple {
     );
 }
 
-/**
- * FIX 2 + FIX 3 — Event discriminator: 3-tuple with string `.kind` on data[2].
- * Exact length === 3 differentiates from the 4-tuple bar shape.
- */
+/** Event discriminator: 3-tuple with string `.kind` on data[2]. */
 function isEventData(data: unknown): data is EventDataTuple {
     return (
         Array.isArray(data) &&
@@ -52,17 +51,8 @@ function isEventData(data: unknown): data is EventDataTuple {
     );
 }
 
-function escapeHtml(value: string): string {
-    return value
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
-}
-
 const TIME_FORMAT = 'HH:mm:ss';
-const DATETIME_FORMAT = "MMM d, HH:mm:ss";
+const DATETIME_FORMAT = 'MMM d, HH:mm:ss';
 
 function fmtTimestamp(milliseconds: number): string {
     return format(milliseconds, TIME_FORMAT);
@@ -76,55 +66,78 @@ function durationMinutes(startMs: number, endMs: number): string {
     return ((endMs - startMs) / 60_000).toFixed(1);
 }
 
-function tooltipRow(label: string, value: string): string {
-    return `<div class="tooltip-row"><span class="tooltip-label">${label}:</span> <span class="tooltip-value">${value}</span></div>`;
-}
+/** Minute delta below which the elapsed duration reads as on the estimate. */
+const ESTIMATE_DELTA_NEUTRAL_MINUTES = 0.05;
 
 /**
- * Lag state badge. Background color is dynamic (lag-state-driven) so it
- * stays inline; static layout rules live in the component SCSS.
- */
-function lagStateBadge(lagState: LagState): string {
-    const color = LAG_STATE_COLORS[lagState];
-    const label = LAG_STATE_LABELS[lagState];
-    return (
-        `<span class="tooltip-lag-badge" style="background:${color};">${label}</span>`
-    );
-}
-
-/**
- * FIX 1 — Builds the bar-segment tooltip HTML from BarTooltipPayload (data[3]).
+ * Builds the colour-coded "vs estimate" row comparing elapsed duration to the
+ * level's estimated duration. Time saved reads as a gain (ahead, green), time
+ * overrun as a loss (behind, red), and a sub-threshold delta as on the
+ * estimate. Returns null when the level carries no estimate.
  *
- * Reads all fields directly from payload — no optional cast needed.
- * traineeDisplayName is a real field on BarTooltipPayload.
- * Time fields use payload.startMs / payload.endMs per WP2 final contract.
+ * @param startMs             Level start timestamp (epoch ms).
+ * @param endMs               Effective end timestamp (epoch ms); the live clock
+ *                            for a running level, the completion time otherwise.
+ * @param estimatedDurationMs Estimated level duration (ms), or null when unset.
+ * @returns The tooltip row, or null when no estimate exists.
  */
-function buildBarTooltipHtml(payload: BarTooltipPayload): string {
+function estimateDeltaRow(
+    startMs: number,
+    endMs: number,
+    estimatedDurationMs: number | null,
+): RichTooltipRow | null {
+    if (estimatedDurationMs == null || estimatedDurationMs <= 0) {
+        return null;
+    }
+    const deltaMinutes = (endMs - startMs - estimatedDurationMs) / 60_000;
+    const magnitude = Math.abs(deltaMinutes).toFixed(1);
+    if (Math.abs(deltaMinutes) < ESTIMATE_DELTA_NEUTRAL_MINUTES) {
+        return { label: 'Δestimate', value: 'on estimate' };
+    }
+    const behind = deltaMinutes > 0;
+    return {
+        label: 'Δestimate',
+        value: `${behind ? '+' : '−'}${magnitude} min ${behind ? 'behind' : 'ahead'}`,
+        valueColor: behind ? ESTIMATE_LOSS_COLOR : ESTIMATE_GAIN_COLOR,
+    };
+}
+
+/**
+ * Builds the bar-segment tooltip model from `BarTooltipPayload` (data[3]).
+ *
+ * The level title heads the surface; the lag state rides the first detail row,
+ * coloured by its state, followed by the trainee, timing, estimate, and score.
+ */
+function buildBarTooltipModel(payload: BarTooltipPayload): RichTooltipModel {
     const endLabel = payload.isRunning ? 'running…' : fmtTimestamp(payload.endMs);
     const durationLabel = `${durationMinutes(payload.startMs, payload.endMs)} min${payload.isRunning ? ' (in progress)' : ''}`;
 
-    const traineeRow = tooltipRow('Trainee', escapeHtml(payload.traineeDisplayName));
-    const scoreRow =
-        payload.scoreOnCompletion != null
-            ? tooltipRow('Score', String(payload.scoreOnCompletion))
-            : '';
+    const rows: RichTooltipRow[] = [
+        {
+            label: 'Status',
+            value: LAG_STATE_LABELS[payload.lagState],
+            valueColor: LAG_STATE_COLORS[payload.lagState],
+        },
+        { label: 'Trainee', value: payload.traineeDisplayName },
+        { label: 'Started', value: fmtTimestamp(payload.startMs) },
+        { label: 'Ended', value: endLabel },
+        { label: 'Duration', value: durationLabel },
+    ];
 
-    return [
-        `<div class="tooltip">`,
-        `<div class="tooltip-header">${escapeHtml(payload.levelTitle)}</div>`,
-        `<div class="tooltip-badge-row">${lagStateBadge(payload.lagState)}</div>`,
-        traineeRow,
-        tooltipRow('Started', fmtTimestamp(payload.startMs)),
-        tooltipRow('Ended', endLabel),
-        tooltipRow('Duration', durationLabel),
-        scoreRow,
-        `</div>`,
-    ]
-        .filter(Boolean)
-        .join('');
+    const estimateRow = estimateDeltaRow(payload.startMs, payload.endMs, payload.estimatedDurationMs);
+    if (estimateRow !== null) {
+        rows.push(estimateRow);
+    }
+
+    if (payload.scoreOnCompletion != null) {
+        rows.push({ label: 'Score', value: String(payload.scoreOnCompletion) });
+    }
+
+    return { title: payload.levelTitle, rows };
 }
 
-const EVENT_KIND_LABELS: Readonly<Record<string, string>> = {
+/** Title shown in the event tooltip header per event kind. */
+const EVENT_KIND_LABELS: Readonly<Record<EventKind, string>> = {
     WRONG_ANSWER: 'Wrong Answer',
     CORRECT_ANSWER: 'Correct Answer',
     HINT_TAKEN: 'Hint Taken',
@@ -135,64 +148,73 @@ const EVENT_KIND_LABELS: Readonly<Record<string, string>> = {
     TRAINING_RUN_ENDED: 'Run Ended',
 } as const;
 
-/**
- * FIX 2 — Builds the event-icon tooltip HTML from EventVm (data[2], flat).
- *
- * data[2] is flat EventVm + barKey — kind, tooltipLabel, timestamp, and
- * barKey are all top-level fields.
- *
- * Event header color is dynamic (event-kind-driven) so it stays inline;
- * all static structural styles live in the component SCSS via ::ng-deep.
- */
-function buildEventTooltipHtml(eventVm: EventVm): string {
-    const descriptor = EVENT_ICON_CATALOG[eventVm.kind];
-    const kindLabel = EVENT_KIND_LABELS[eventVm.kind] ?? eventVm.kind;
+/** Detail-row label for the kinds that carry a detail value. */
+const EVENT_DETAIL_LABELS: Partial<Record<EventKind, string>> = {
+    WRONG_ANSWER: 'Answer',
+    CORRECT_ANSWER: 'Answer',
+    HINT_TAKEN: 'Hint',
+};
 
-    return [
-        `<div class="tooltip">`,
-        `<div class="tooltip-header tooltip-header--event" style="color:${escapeHtml(descriptor.color)};">`,
-        `<span class="tooltip-event-icon">${descriptor.icon}</span>`,
-        escapeHtml(kindLabel),
-        `</div>`,
-        `<div class="tooltip-event-label">${escapeHtml(eventVm.tooltipLabel)}</div>`,
-        tooltipRow('Time', fmtDatetime(eventVm.timestamp)),
-        `</div>`,
-    ]
-        .filter(Boolean)
-        .join('');
+/**
+ * Builds the event-icon tooltip model from `EventVm` (data[2]).
+ *
+ * The kind heads the surface in its semantic colour and icon (e.g. a red
+ * "Wrong Answer" with a cancel glyph). The detail line — answer text or hint
+ * title — is added only when present; the timestamp always closes the surface.
+ */
+function buildEventTooltipModel(eventVm: EventVm): RichTooltipModel {
+    const descriptor = EVENT_ICON_CATALOG[eventVm.kind];
+    const rows: RichTooltipRow[] = [];
+
+    if (eventVm.detail) {
+        rows.push({
+            label: EVENT_DETAIL_LABELS[eventVm.kind] ?? 'Detail',
+            value: eventVm.detail,
+        });
+    }
+    rows.push({ label: 'Time', value: fmtDatetime(eventVm.timestamp) });
+
+    return {
+        title: EVENT_KIND_LABELS[eventVm.kind],
+        titleColor: descriptor.color,
+        titleIcon: descriptor.icon,
+        rows,
+    };
 }
 
 /**
  * Returns the global tooltip option fragment.
  *
- * The formatter branches on payload shape:
- *   - Bar:   `params.data` is a 4-tuple; `data[3].kind === 'bar'` (FIX 1 + 3)
- *   - Event: `params.data` is a 3-tuple; `typeof data[2].kind === 'string'` (FIX 2 + 3)
+ * The formatter branches on payload shape and renders the shared rich-tooltip
+ * surface, so the native ECharts tooltip chrome is neutralised (transparent
+ * background, no border, padding, or shadow) to leave that surface as the only
+ * one shown.
+ *
+ *   - Bar:   `params.data` is a 4-tuple; `data[3].kind === 'bar'`.
+ *   - Event: `params.data` is a 3-tuple; `typeof data[2].kind === 'string'`.
  *
  * Returns a non-null fragment; the renderer emits this once at first paint
  * and omits it on subsequent partial updates.
+ *
+ * @param palette Resolved theme palette forwarded to {@link richTooltipDefaults}.
  */
-export function buildTooltipFragment(): OptionFragment {
-
+export function buildTooltipFragment(palette: ChartPalette): OptionFragment {
     return {
-        key: 'tooltip',
-        fragment: {
-            tooltip: {
-                trigger: 'item',
-                borderColor: 'transparent',
-                formatter: (params: CallbackDataParams) => {
-                    const data: unknown = params.data;
+        tooltip: {
+            ...richTooltipDefaults(palette),
+            trigger: 'item',
+            formatter: (params: CallbackDataParams) => {
+                const data: unknown = params.data;
 
-                    if (isBarData(data)) {
-                        return buildBarTooltipHtml(data[3]);
-                    }
+                if (isBarData(data)) {
+                    return renderRichTooltipHtml(buildBarTooltipModel(data[3]));
+                }
 
-                    if (isEventData(data)) {
-                        return buildEventTooltipHtml(data[2]);
-                    }
+                if (isEventData(data)) {
+                    return renderRichTooltipHtml(buildEventTooltipModel(data[2]));
+                }
 
-                    return '';
-                },
+                return '';
             },
         },
     };

@@ -1,3 +1,10 @@
-<div #outer class="progress-chart-outer">
-    <div #inner class="progress-chart-inner" [style.height.px]="renderer.innerHostHeightPx()"></div>
+<div class="progress-chart-outer">
+    <div
+        echarts
+        class="progress-chart-inner"
+        [options]="chartOptions()"
+        [autoResize]="true"
+        [style.height.px]="innerHostHeightPx()"
+        (chartInit)="onChartInit($event)"
+    ></div>
 </div>

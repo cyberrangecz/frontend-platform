@@ -1,5 +1,6 @@
 import { Signal } from '@angular/core';
-import { TrainingInstance } from '@crczp/training-model';
+import { TrainingInstanceBasic } from '@crczp/training-model';
+import { ChartSourceStatus } from '../../shared';
 import { BarRow } from '../types/bar.types';
 import { EventRow } from '../types/event.types';
 import { InstanceId, LevelId } from '../types/ids.types';
@@ -10,22 +11,23 @@ import { ViewModel } from '../types/view-model.types';
  * Single entry point for accessing source data inside the progress
  * visualization.
  *
- * Owns the wiring between the three acquisition sources (bars, events,
- * instance prefetch) and the rest of the visualization. Converts each
- * source observable into a reactive signal scoped to the host
- * component's destruction lifecycle.
+ * Owns the wiring between the acquisition sources (bars, events, and the
+ * cached resolver-backed instance) and the rest of the visualization.
+ * Converts each source observable into a reactive signal scoped to the
+ * host component's destruction lifecycle.
  *
  * Exposes the assembled view-model signal — the live view-model once the
- * instance prefetch resolves, `null` until then — so the renderer has a
- * single reactive input to consume.
+ * instance resolves, `null` until then — so the renderer has a single
+ * reactive input to consume.
  *
  * Boundaries:
  *  - no mutation surface; consumers cannot push data in
  *  - no business logic; classification/ordering/filtering live in selectors
  *  - no knowledge of the chart, renderer, or option layer
  *  - no interaction with the UI state service (read it externally)
- *  - liveness gating lives here: when the instance is past-ended, source
- *    subscriptions complete and no further data flows
+ *  - source-end stop lives inside each query source: it completes its own
+ *    polling once the instance end-time has passed; the feed only exposes
+ *    `isLive` so the renderer can stop its own time-driven work
  *
  * Provided at `<crczp-progress-visualization>` scope so two instances
  * of the chart on the same page have independent feeds.
@@ -40,29 +42,22 @@ export abstract class ProgressFeedService {
      */
     abstract bind(instanceId: Signal<InstanceId>): void;
 
-    /**
-     * Re-triggers the instance prefetch fetch chain after a terminal
-     * error. Delegated to the instance-prefetch result's retry handle;
-     * a no-op before {@link bind}.
-     */
-    abstract retry(): void;
-
     /** Raw bar rows, after entity resolution. Empty array until first cycle. */
     abstract readonly bars: Signal<readonly BarRow[]>;
 
-    /** Raw event rows, after entity resolution. Empty array until first cycle. */
+    /** Raw event rows, assembled from cache columns. Empty array until first cycle. */
     abstract readonly events: Signal<readonly EventRow[]>;
 
-    /** Full training instance from the direct HTTP prefetch. `null` until resolved. */
-    abstract readonly instance: Signal<TrainingInstance | null>;
+    /** Resolved training instance from the cached entity resolver. `null` until resolved. */
+    abstract readonly instance: Signal<TrainingInstanceBasic | null>;
 
-    /** Per-level metadata derived from the instance's training definition. */
+    /** Per-level metadata derived from the resolved training definition. */
     abstract readonly levelsById: Signal<ReadonlyMap<LevelId, LevelInfo>>;
 
     /** Ordered list of `LevelId`s for stepper iteration. */
     abstract readonly levelOrder: Signal<readonly LevelId[]>;
 
-    /** Instance end time in ms. `null` until the prefetch resolves. */
+    /** Instance end time in ms. `null` until the instance resolves. */
     abstract readonly instanceEndMs: Signal<number | null>;
 
     /**
@@ -73,17 +68,17 @@ export abstract class ProgressFeedService {
     abstract readonly isLive: Signal<boolean>;
 
     /**
-     * Terminal prefetch error sentinel, surfaced from the instance
-     * prefetch source. `null` while loading, while a fetch is in
-     * flight, and on success. Non-null after the prefetch exhausts
-     * its retries; the host component renders an error UI when this
-     * is non-null.
+     * Worst-case data status across instance resolution and the bars and
+     * events sources, for binding into the panel shell. `loading` until the
+     * instance and both sources settle, then `ready`/`empty` (decided by bar
+     * presence), `refreshing` on a live re-fetch, or `error` on failure
+     * (including a not-found or unresolvable instance).
      */
-    abstract readonly error: Signal<{ message: string } | null>;
+    abstract readonly status: Signal<ChartSourceStatus>;
 
     /**
-     * Assembled view-model. The live view-model once the instance
-     * prefetch has resolved, `null` while it has not.
+     * Assembled view-model. The live view-model once the instance has
+     * resolved, `null` while it has not.
      */
     abstract readonly viewModel: Signal<ViewModel | null>;
 
