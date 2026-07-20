@@ -10,6 +10,8 @@ import { LevelTypeUtils } from './utils/functions/level-type-utils';
 import { ArrayUtils } from './utils/functions/array-utils';
 import { SetUtils } from './utils/functions/set-utils';
 import { ObjectUtils } from './utils/functions/object-utils';
+import { ColorUtils } from './utils/functions/color-utils';
+import { StringUtils } from './utils/functions/string-utils';
 
 export * from './rxjs/unique';
 export * from './rxjs/tresholdBufferPipe';
@@ -31,6 +33,7 @@ export type {
     NavAgendaConfig,
     NavAgendaContainerConfig,
 } from './utils/functions/nav-builder';
+export type { CategoricalColorPair } from './utils/functions/color-utils';
 
 export const Utils = {
     Date: DateUtils,
@@ -41,6 +44,8 @@ export const Utils = {
     Array: ArrayUtils,
     Set: SetUtils,
     Object: ObjectUtils,
+    Color: ColorUtils,
+    String: StringUtils,
 };
 
 export const InjectionTokens = {
