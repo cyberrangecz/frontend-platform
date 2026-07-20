@@ -33,7 +33,7 @@ export class CleanupRequestsConcreteService extends RequestsService {
     constructor() {
         const settings = inject(PortalConfig);
 
-        super(settings.defaultPageSize, settings.polling.pollingPeriodShort);
+        super(settings.defaultPageSize, settings.polling.pollingPeriodShortMs);
     }
 
     /**

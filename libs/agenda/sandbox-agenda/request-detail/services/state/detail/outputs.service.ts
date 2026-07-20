@@ -62,7 +62,7 @@ export class OutputsService {
             this.isPolling = false;
         }
 
-        const pollingPeriod = this.config.polling.pollingPeriodShort;
+        const pollingPeriod = this.config.polling.pollingPeriodShortMs;
 
         // Create observable that only emits when state changes
         const state$ = stage$.pipe(

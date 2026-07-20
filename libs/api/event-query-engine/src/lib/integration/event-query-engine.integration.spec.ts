@@ -48,36 +48,31 @@ afterEach(async () => {
 });
 
 /**
- * Default polling and caching overrides shared by the integration suite.
- * Short polling and short staleness windows keep the tests fast; everything
- * else inherits the production-like defaults from `provideTestPortalConfig`.
+ * Default polling overrides shared by the integration suite.
+ * Short polling keeps the tests fast; everything else inherits the production-like
+ * defaults from `provideTestPortalConfig`.
  */
 const DEFAULT_TEST_OVERRIDES = {
     polling: {
-        pollingPeriodShort: 200,
-        pollingPeriodLong: 5000,
+        pollingPeriodShortMs: 200,
+        pollingPeriodLongMs: 5000,
         retryCount: 0,
-    },
-    caching: {
-        eventCacheMaxStaleness: 1000,
     },
 } as const;
 
 /**
- * Resolved {@link PortalConfig} value used by tests that call cache operators
- * (e.g. {@link evictStaleInstances}) directly without going through TestBed,
- * and by TestBed providers via {@link TEST_PORTAL_CONFIG_PROVIDER}.
+ * Resolved {@link PortalConfig} value used by TestBed providers via
+ * {@link TEST_PORTAL_CONFIG_PROVIDER}.
  *
- * @param ttlSeconds Override for `caching.eventCacheTTL`.
- * @param eventCacheMaxSize Override for `caching.eventCacheMaxSize`.
+ * @param eventCacheTtlMs Override for `caching.eventCacheTtlMs`.
+ * @param eventCacheMaxSizeBytes Override for `caching.eventCacheMaxSizeBytes`.
  */
-function makeConfig(ttlSeconds = 7 * 24 * 3600, eventCacheMaxSize = 524_288_000): PortalConfig {
+function makeConfig(eventCacheTtlMs = 7 * 24 * 3_600_000, eventCacheMaxSizeBytes = 524_288_000): PortalConfig {
     const provider = provideTestPortalConfig({
         ...DEFAULT_TEST_OVERRIDES,
         caching: {
-            ...DEFAULT_TEST_OVERRIDES.caching,
-            eventCacheTTL: ttlSeconds,
-            eventCacheMaxSize,
+            eventCacheTtlMs,
+            eventCacheMaxSizeBytes,
         },
     }) as { useValue: PortalConfig };
     return provider.useValue;
@@ -850,7 +845,7 @@ describe('Broker layer — DataBrokerServiceImpl with real Sync + Cache', () => 
     // so these polling tests must run on real timers with a short polling interval.
     it('queryPolling(): emits on first tick then again after interval elapses', async () => {
         const broker = TestBed.inject(DataBrokerServiceImpl);
-        const intervalMs = makeConfig().polling.pollingPeriodShort;
+        const intervalMs = makeConfig().polling.pollingPeriodShortMs;
         const emissions: unknown[] = [];
 
         const sub = broker
@@ -888,7 +883,7 @@ describe('Broker layer — DataBrokerServiceImpl with real Sync + Cache', () => 
         const callsAtUnsub = mockFetch.fetch.mock.calls.length;
 
         sub.unsubscribe();
-        await new Promise((r) => setTimeout(r, makeConfig().polling.pollingPeriodShort * 5));
+        await new Promise((r) => setTimeout(r, makeConfig().polling.pollingPeriodShortMs * 5));
 
         expect(mockFetch.fetch.mock.calls.length).toBe(callsAtUnsub);
     });
@@ -916,7 +911,7 @@ describe('Broker layer — DataBrokerServiceImpl with real Sync + Cache', () => 
 
         instanceSig.set(2);
         // allow switchMap to re-subscribe and the new timer(0) to fire
-        await new Promise((r) => setTimeout(r, makeConfig().polling.pollingPeriodShort + 100));
+        await new Promise((r) => setTimeout(r, makeConfig().polling.pollingPeriodShortMs + 100));
 
         expect(fetchedIds).toContain(2);
 

@@ -60,7 +60,7 @@ async function evictBySize(
     db: PgliteDatabase,
     config: PortalConfig,
 ): Promise<void> {
-    const maxSize = config.caching.eventCacheMaxSize;
+    const maxSize = config.caching.eventCacheMaxSizeBytes;
 
     // Reclaim space freed by TTL eviction before measuring.
     await db.execute(sql.raw('VACUUM FULL'));

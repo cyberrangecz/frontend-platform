@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpContext, HttpContextToken, HttpHeaders, HttpParams } from '@angular/common/http';
 
-import { PortalConfig } from '@crczp/utils';
+import { CacheTTL, parseDurationToMs, PortalConfig } from '@crczp/utils';
 
 import type { OffsetPagination } from '@crczp/utils';
 
@@ -24,31 +24,14 @@ type BodyVerb = 'POST' | 'PUT' | 'PATCH';
 
 export const SKIPPED_ERROR_CODES = new HttpContextToken<number[]>(() => []);
 
-export type CacheTTL = `${number}s` | `${number}m` | `${number}h` | 'forever';
-
 type SplitCacheConfig<TEl, TId extends string | number> = {
     ids: TId[];
     paramName: string;
     cacheKey: (id: TId) => string;
-    ttl: CacheTTL;
+    ttlMs: number;
     itemId: (dto: TEl) => TId;
 };
 
-function mapCacheTTLToMs(ttl: CacheTTL): number {
-    if (ttl === 'forever') {
-        return Number.MAX_SAFE_INTEGER;
-    }
-    if (ttl.endsWith('s')) {
-        return parseInt(ttl.slice(0, -1), 10) * 1000;
-    }
-    if (ttl.endsWith('m')) {
-        return parseInt(ttl.slice(0, -1), 10) * 60 * 1000;
-    }
-    if (ttl.endsWith('h')) {
-        return parseInt(ttl.slice(0, -1), 10) * 60 * 60 * 1000;
-    }
-    throw new Error(`Invalid TTL format: ${ttl}`);
-}
 type BaseOptions = {
     headers?: HttpHeaders;
     params?:
@@ -375,7 +358,7 @@ class BodylessRequestBuilder<TRecv, TOut = TRecv> extends BaseRequestBuilder<
      * @param options.ids Array of IDs to resolve.
      * @param options.paramName Query parameter name used to pass IDs to the endpoint.
      * @param options.cacheKey Function producing a unique cache key for a single ID.
-     * @param options.ttl Cache TTL, e.g., '30s', '5m', '2h', or 'forever'.
+     * @param options.ttlMs Cache entry lifetime in milliseconds.
      * @param options.itemId Function extracting the ID from a returned DTO element.
      */
     withSplitCacheQuery<TId extends string | number>(
@@ -396,7 +379,7 @@ class BodylessRequestBuilder<TRecv, TOut = TRecv> extends BaseRequestBuilder<
     withCache(ttl: CacheTTL, key: string | null = null) {
         const cacheContext = withCache({
             storage: 'localStorage',
-            ttl: mapCacheTTLToMs(ttl),
+            ttl: parseDurationToMs(ttl),
             version: this.version,
             ...(key ? { key } : {}),
         });
@@ -448,9 +431,8 @@ class BodylessRequestBuilder<TRecv, TOut = TRecv> extends BaseRequestBuilder<
             );
         }
 
-        const { ids, paramName, cacheKey, ttl, itemId } =
+        const { ids, paramName, cacheKey, ttlMs, itemId } =
             this.splitCacheConfig!;
-        const ttlMs = mapCacheTTLToMs(ttl);
 
         const cachedDtos: unknown[] = [];
         const uncachedIds: (string | number)[] = [];

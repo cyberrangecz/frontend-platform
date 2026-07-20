@@ -52,6 +52,7 @@ import { hintBasicArrayMapper } from '../../mappers/level/training/hint-basic-ma
 export class TrainingDefinitionDefaultApi extends LinearTrainingDefinitionApi {
     private readonly http = inject(HttpClient);
     private readonly crczpHttp = inject(CRCZPHttpService);
+    private readonly entityCacheTtlMs = inject(PortalConfig).caching.entityCacheTtlMs;
     private readonly trainingDefinitionUriExtension = 'training-definitions';
     private readonly levelsUriExtension = 'levels';
     private readonly sandboxDefUriExtension = 'sandbox-definitions';
@@ -80,7 +81,7 @@ export class TrainingDefinitionDefaultApi extends LinearTrainingDefinitionApi {
                 cacheKey: (id) => `levelBasic-${id}`,
                 itemId: (dto) => dto.id,
                 paramName: 'ids',
-                ttl: '8h',
+                ttlMs: this.entityCacheTtlMs,
             })
             .withMapper(levelBasicArrayMapper)
             .execute();
@@ -99,7 +100,7 @@ export class TrainingDefinitionDefaultApi extends LinearTrainingDefinitionApi {
                 cacheKey: (id) => `trainingDefinitionBasic-${id}`,
                 itemId: (dto) => dto.id,
                 paramName: 'ids',
-                ttl: '8h',
+                ttlMs: this.entityCacheTtlMs,
             })
             .withMapper(trainingDefinitionBasicArrayMapper)
             .execute();
@@ -116,7 +117,7 @@ export class TrainingDefinitionDefaultApi extends LinearTrainingDefinitionApi {
                 cacheKey: (id) => `hintBasic-${id}`,
                 itemId: (dto) => dto.id,
                 paramName: 'ids',
-                ttl: '8h',
+                ttlMs: this.entityCacheTtlMs,
             })
             .withMapper(hintBasicArrayMapper)
             .execute();
