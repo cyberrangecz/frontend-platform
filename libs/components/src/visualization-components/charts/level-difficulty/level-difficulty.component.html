@@ -1,0 +1,31 @@
+<crczp-chart-panel-shell
+    heading="Difficulty distribution by level"
+    [status]="status()"
+    [exportable]="this"
+    [info]="difficultyInfo"
+>
+    <div class="difficulty-strip">
+        @for (item of panelOptions(); track item.panel.order) {
+            <div class="difficulty-panel">
+                <div class="difficulty-header">
+                    <span class="difficulty-title" [matTooltip]="item.panel.title">{{ item.panel.title }}</span>
+                    <span class="difficulty-badge" [style.color]="item.panel.difficultyColor"
+                        >{{ item.panel.difficultyScore ?? '—' }}</span
+                    >
+                </div>
+                @if (item.panel.hasData) {
+                    <div
+                        echarts
+                        class="difficulty-radar"
+                        [options]="item.option"
+                        [autoResize]="true"
+                        (chartInit)="pinDefaultCursor($event)"
+                    ></div>
+                    <div class="difficulty-foot">{{ item.panel.startedCount }} trainees</div>
+                } @else {
+                    <div class="difficulty-empty">No trainees on this level yet</div>
+                }
+            </div>
+        }
+    </div>
+</crczp-chart-panel-shell>
