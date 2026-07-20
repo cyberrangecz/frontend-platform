@@ -1,0 +1,100 @@
+@use 'answer-highlight' as highlight;
+
+$face-size: 1.5rem;
+$card-padding: var(--space-xs);
+$card-gap: var(--space-3xs);
+
+:host {
+    display: inline-flex;
+    justify-content: flex-end;
+}
+
+.stack-row {
+    display: inline-flex;
+    align-items: center;
+    padding-top: 3px;
+    overflow: visible;
+}
+
+.stack-face {
+    position: relative;
+    box-sizing: border-box;
+    flex: 0 0 auto;
+    width: $face-size;
+    height: $face-size;
+    margin: 0;
+    padding: 0;
+    border: 2px solid var(--background);
+    border-radius: 50%;
+    background: var(--neutral-90);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+    outline-offset: 1px;
+    cursor: pointer;
+    overflow: hidden;
+
+    &--trainee {
+        --highlight-color: var(--highlight-trainee);
+        @include highlight.raised;
+    }
+
+    &--answer {
+        --highlight-color: var(--highlight-answer);
+        @include highlight.raised;
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--primary-40);
+        z-index: 2;
+    }
+
+    &--image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    &--placeholder {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        color: var(--neutral-40);
+        font-size: calc($face-size * 0.45);
+        font-weight: var(--font-weight-semibold);
+        line-height: 1;
+        text-transform: uppercase;
+    }
+}
+
+.stack-row .stack-face:not(:first-child) {
+    margin-left: calc($face-size * -0.4);
+}
+
+.stack-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--neutral-30);
+    font-size: var(--font-size-2xs);
+    font-weight: var(--font-weight-semibold);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+.stack-card {
+    position: relative;
+    display: grid;
+    grid-auto-flow: row;
+    grid-template-columns: repeat(5, $face-size);
+    gap: $card-gap;
+    max-height: calc(5 * $face-size + 4 * $card-gap + 2 * $card-padding);
+    padding: $card-padding;
+    overflow-y: auto;
+    scrollbar-gutter: stable;
+    background: var(--background);
+    border-radius: 0.5rem;
+    box-shadow:
+        0 2px 4px rgba(0, 0, 0, 0.08),
+        0 8px 16px rgba(0, 0, 0, 0.12);
+}

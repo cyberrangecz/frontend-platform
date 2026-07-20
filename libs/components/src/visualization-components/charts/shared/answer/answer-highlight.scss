@@ -1,0 +1,16 @@
+/// Room a raised highlight's ring and glow spill past the element; a clipping ancestor
+/// (a scroll container) must reserve this much inner padding for it to show in full.
+$bleed: 0.75rem;
+
+/// Raised emphasis shared by both trainee (gold) and answer (blue) highlights: the element
+/// lifts toward the top-left with a coloured ring and soft glow drawn from the caller's
+/// --highlight-color, so the two kinds differ only in colour. The lift and glow spill past
+/// the element by up to $bleed, so a clipping ancestor must reserve that much padding for it
+/// to show in full.
+@mixin raised {
+    z-index: 1;
+    transform: translate(-2px, -2px);
+    box-shadow:
+        0 0 0 2px var(--highlight-color),
+        0 3px 9px color-mix(in srgb, var(--highlight-color) 50%, transparent);
+}

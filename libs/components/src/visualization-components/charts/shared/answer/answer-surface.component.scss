@@ -1,0 +1,98 @@
+@use 'answer-highlight' as highlight;
+
+:host {
+    display: block;
+    overflow: visible;
+}
+
+.surface {
+    display: flex;
+    position: relative;
+    align-items: center;
+    gap: var(--space-md);
+    border-radius: 0.5rem;
+
+    &--focused-trainee {
+        --highlight-color: var(--highlight-trainee);
+        @include highlight.raised;
+    }
+
+    &--intent {
+        display: flex;
+        flex: 2 1 0;
+        align-items: center;
+        gap: var(--space-md);
+        min-width: 0;
+        margin: 0;
+        padding: var(--space-xs) var(--space-md);
+        border: none;
+        border-radius: inherit;
+        background: transparent;
+        color: inherit;
+        font: inherit;
+        text-align: left;
+        cursor: pointer;
+
+        &:focus-visible {
+            outline: 2px solid var(--primary-40);
+            outline-offset: -2px;
+        }
+
+        &::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+        }
+    }
+
+    &--marker {
+        flex: 0 0 auto;
+        color: var(--neutral-40);
+    }
+
+    &--label {
+        flex: 1 1 auto;
+        min-width: 0;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+    &--bar {
+        flex: 1 1 0;
+        min-width: 0;
+        padding-right: var(--space-md);
+    }
+
+    &--faces {
+        flex: 2 1 0;
+        min-width: 0;
+    }
+
+    &--cell {
+        flex-direction: column;
+        align-items: stretch;
+        gap: var(--space-xs);
+
+        .surface--intent {
+            flex: 0 0 auto;
+            flex-direction: column;
+            align-items: stretch;
+            gap: var(--space-xs);
+            padding: var(--space-xs);
+        }
+
+        .surface--bar {
+            flex: 0 0 auto;
+            padding-right: 0;
+        }
+
+        .surface--faces {
+            order: 1;
+            flex: 0 0 auto;
+            align-self: flex-start;
+            padding: 0 var(--space-xs) var(--space-xs);
+        }
+    }
+}

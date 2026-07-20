@@ -1,0 +1,71 @@
+<ng-template #faceButton let-face>
+    <button
+        type="button"
+        class="stack-face"
+        [class.stack-face--trainee]="face.emphasis === 'trainee'"
+        [class.stack-face--answer]="face.emphasis === 'answer'"
+        [matTooltip]="face.name"
+        matTooltipPosition="below"
+        [attr.aria-label]="face.name"
+        (click)="onFaceClick(face.runId)"
+    >
+        @if (face.src; as src) {
+            <img class="stack-face--image" [src]="src" alt="" aria-hidden="true" />
+        } @else {
+            <span class="stack-face--placeholder" aria-hidden="true">{{ face.initial }}</span>
+        }
+    </button>
+</ng-template>
+
+<div
+    class="stack-row"
+    [style.--highlight-trainee]="traineeRingColor"
+    [style.--highlight-answer]="answerRingColor"
+    cdkOverlayOrigin
+    #origin="cdkOverlayOrigin"
+    (mouseenter)="onHoverStart()"
+    (mouseleave)="onHoverEnd()"
+    (focusin)="onHoverStart()"
+    (focusout)="onHoverEnd()"
+>
+    @for (face of restingFaces(); track face.runId) {
+        <ng-container [ngTemplateOutlet]="faceButton" [ngTemplateOutletContext]="{ $implicit: face }" />
+    }
+    @if (overflowCount() > 0) {
+        <button
+            #overflowToggle
+            type="button"
+            class="stack-face stack-badge"
+            aria-haspopup="true"
+            [attr.aria-expanded]="isOpen()"
+            [attr.aria-label]="'Show ' + overflowCount() + ' more trainees'"
+            (click)="onOverflowToggle()"
+        >
+            +{{ overflowCount() }}
+        </button>
+    }
+</div>
+
+<ng-template
+    cdkConnectedOverlay
+    [cdkConnectedOverlayOrigin]="origin"
+    [cdkConnectedOverlayOpen]="isOpen()"
+    [cdkConnectedOverlayPositions]="overlayPositions"
+    [cdkConnectedOverlayPush]="true"
+>
+    <div
+        #card
+        class="stack-card"
+        [style.--highlight-trainee]="traineeRingColor"
+        [style.--highlight-answer]="answerRingColor"
+        (mouseenter)="onHoverStart()"
+        (mouseleave)="onHoverEnd()"
+        (focusin)="onHoverStart()"
+        (focusout)="onHoverEnd()"
+        (keydown.escape)="onCardClose()"
+    >
+        @for (face of renderFaces(); track face.runId) {
+            <ng-container [ngTemplateOutlet]="faceButton" [ngTemplateOutletContext]="{ $implicit: face }" />
+        }
+    </div>
+</ng-template>
