@@ -1,0 +1,27 @@
+:host {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.scoreboard-scroll {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+}
+
+.scoreboard-table {
+    width: 100%;
+    // Row + header height harmonised with the live event feed row (keep both in sync).
+    --mat-table-row-item-container-height: 36px;
+    --mat-table-header-container-height: 36px;
+    --mat-table-row-item-outline-color: var(--neutral-90);
+}
+
+.scoreboard-trainee-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--neutral-20);
+    font-weight: var(--font-weight-medium);
+}
