@@ -1,0 +1,16 @@
+<crczp-chart-panel-shell
+    heading="Time vs score per level"
+    [status]="status()"
+    [exportable]="this"
+    info="Time spent (bar, left axis) versus points earned (line, right axis) on each scored level for the selected run. The dashed line is the level's maximum score. Bars and the earned line appear only on completed levels."
+>
+    <div
+        echarts
+        class="chart-canvas"
+        [options]="chartOptions()"
+        [autoResize]="true"
+        (chartInit)="onChartInit($event)"
+        (chartMouseOver)="onAxisLabelHover($event)"
+        (chartMouseOut)="onAxisLabelLeave($event)"
+    ></div>
+</crczp-chart-panel-shell>
