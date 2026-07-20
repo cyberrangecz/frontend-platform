@@ -8,6 +8,7 @@ import { EntityResolverService } from '../entity-resolver.service';
 import { provideEntityResolverService } from '../provide-entity-resolver';
 import {
     EntityType,
+    EntityValueType,
     ResolveEntities,
     ResolveEntitiesSafe,
 } from '../entity-type';
@@ -62,6 +63,19 @@ export class EntityResolverServiceImpl extends EntityResolverService {
                     ),
                 ),
             ) as Observable<ResolveEntitiesSafe<TRow, ETs>[]>;
+    }
+
+    override resolveMap<ET extends EntityType>(
+        type: ET,
+        ids: number[],
+    ): Observable<Map<number, EntityValueType[ET]>> {
+        const dedupedIds = [...new Set(ids)];
+        if (dedupedIds.length === 0) {
+            return of(new Map<number, EntityValueType[ET]>());
+        }
+        return this.fetchers[type](dedupedIds).pipe(
+            map((entities) => new Map(entities.map((entity) => [entity.id, entity]))),
+        );
     }
 
     private doResolve(
