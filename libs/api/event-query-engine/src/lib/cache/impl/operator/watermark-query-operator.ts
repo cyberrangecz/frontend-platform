@@ -1,10 +1,17 @@
-import { PgliteDatabase } from 'drizzle-orm/pglite';
 import { and, eq, inArray } from 'drizzle-orm';
-import { WatermarkEntry } from '../../cache.interface';
+import { EventCacheDb, WatermarkEntry } from '../../cache.interface';
 import { watermarkTable } from '../schema/schema';
 
+/**
+ * Returns the watermark entries for the given instance and event types.
+ *
+ * @param db Event-cache database handle.
+ * @param instanceId Instance whose watermarks are read.
+ * @param eventTypes Event types to look up; an empty list yields no rows.
+ * @returns Watermark entries for the matching (instance, type) pairs.
+ */
 export async function getWatermarks(
-    db: PgliteDatabase,
+    db: EventCacheDb,
     instanceId: number,
     eventTypes: string[],
 ): Promise<WatermarkEntry[]> {

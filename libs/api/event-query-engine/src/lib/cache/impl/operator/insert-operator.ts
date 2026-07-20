@@ -1,9 +1,17 @@
-import { PgliteDatabase } from 'drizzle-orm/pglite';
-import { sql } from 'drizzle-orm';
+import { getTableColumns, sql } from 'drizzle-orm';
 import { eventTables, watermarkTable } from '../schema/schema';
-import { RawEventRow } from '../../cache.interface';
+import { EventCacheDb, RawEventRow } from '../../cache.interface';
+import { BIND_VARIABLE_BUDGET } from '../../cache.config';
 
-export async function insert(db: PgliteDatabase, rows: RawEventRow[]): Promise<void> {
+/**
+ * Persists raw event rows: routes each row to its per-type table, inserts in bind-limited chunks
+ * ignoring primary-key duplicates, and advances each (instance, type) watermark to the greatest
+ * timestamp seen. All statements run in one atomic batch — watermarks commit only on full success.
+ *
+ * @param db Event-cache database handle.
+ * @param rows Raw event rows of any mix of types.
+ */
+export async function insert(db: EventCacheDb, rows: RawEventRow[]): Promise<void> {
     if (rows.length === 0) return;
 
     const byType = groupByType(rows);
@@ -31,7 +39,7 @@ export async function insert(db: PgliteDatabase, rows: RawEventRow[]): Promise<v
                 .onConflictDoUpdate({
                     target: [watermarkTable.instance_id, watermarkTable.event_type],
                     set: {
-                        max_timestamp: sql`GREATEST(excluded.max_timestamp, ${watermarkTable.max_timestamp})`,
+                        max_timestamp: sql`max(excluded.max_timestamp, ${watermarkTable.max_timestamp})`,
                         last_synced: now,
                     },
                 });

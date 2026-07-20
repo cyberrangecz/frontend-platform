@@ -1,0 +1,44 @@
+:host {
+    display: block;
+}
+
+.blocked {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 2rem;
+    background: var(--background);
+    box-sizing: border-box;
+}
+
+.blocked-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1rem;
+    max-width: 28rem;
+    padding: 2.5rem;
+    border-radius: 1rem;
+    background: var(--neutral-100);
+}
+
+.blocked-icon {
+    width: 4rem;
+    height: 4rem;
+    font-size: 4rem;
+    color: var(--primary);
+}
+
+.blocked-title {
+    margin: 0;
+    font: var(--sys-headline-medium);
+    color: var(--neutral-10);
+}
+
+.blocked-message {
+    margin: 0;
+    font: var(--sys-body-large);
+    color: var(--neutral-variant-30);
+}

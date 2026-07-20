@@ -1,4 +1,4 @@
-export { EVENT_CACHE_DB } from './lib/cache/impl/pglite-cache.service';
+export { EVENT_CACHE_DB } from './lib/cache/impl/sqlite-cache.service';
 export { CacheService, EventCacheDb, RawEventRow, WatermarkEntry } from './lib/cache/cache.interface';
 export { EntityType, EntityValueType, ResolveEntities, ResolveEntitiesSafe } from './lib/entity-resolver/entity-type';
 export { EntityResolverService } from './lib/entity-resolver/entity-resolver.service';
@@ -12,13 +12,20 @@ export { SyncService } from './lib/sync/impl/sync.service';
 export { DataBrokerService } from './lib/broker/broker.interface';
 export { DataBrokerServiceImpl } from './lib/broker/impl/broker.service';
 export { provideEventBroker } from './lib/broker/provide-event-broker';
-export { createPgliteEventDb } from './lib/broker/create-pglite-event-db';
+export { createSqliteEventDb, CreateSqliteEventDbOptions } from './lib/broker/create-sqlite-event-db';
+export { CACHE_CLAIM, CacheClaim, requestSingleTabClaim } from './lib/single-tab/single-tab-claim';
+export { CACHE_BLOCKED_PATH, singleTabCacheGuard, withSingleTabGuard } from './lib/single-tab/single-tab.guard';
+export { CacheBlockedComponent } from './lib/single-tab/cache-blocked.component';
+export { makeCacheDb } from './lib/integration/sqlite-test-db';
+export type { TestCacheDb } from './lib/integration/sqlite-test-db';
 export {
-    initEventCacheWorker,
-    EventCacheWorkerOptions,
-} from './lib/cache/impl/init-event-cache-worker';
+    initSqliteCacheWorker,
+    openSahPoolDatabase,
+    SahPoolDatabaseOptions,
+} from './lib/cache/impl/init-sqlite-cache-worker';
 export {
     assessmentAnswersTable,
+    commandTable,
     correctAnswerSubmittedTable,
     hintTakenTable,
     levelCompletedTable,

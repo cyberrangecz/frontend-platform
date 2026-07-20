@@ -3,23 +3,57 @@ import '@analogjs/vitest-angular/setup-zone';
 import { BrowserDynamicTestingModule, platformBrowserDynamicTesting } from '@angular/platform-browser-dynamic/testing';
 import { getTestBed } from '@angular/core/testing';
 
-// jsdom 22 provides its own BroadcastChannel scoped to the DOM context; it cannot
-// communicate with Node worker_threads. PGliteWorker leader election uses
-// BroadcastChannel across threads, so we must unconditionally replace jsdom's
-// implementation with the Node-native one.
-import { BroadcastChannel as NodeBroadcastChannel } from 'node:worker_threads';
-(globalThis as any).BroadcastChannel = NodeBroadcastChannel;
+// navigator.locks polyfill — single-tab claim acquisition requires it; absent in jsdom 22.
+// Models the exclusive-mode subset the cache claim uses: the 3-argument (name, options, callback)
+// signature, ifAvailable probes invoking the callback with null without enqueuing, FIFO queueing of
+// ordinary requests, and release of the lock when the granted callback's returned promise settles.
+interface PolyfillLock {
+    name: string;
+    mode: string;
+}
+type LockGrantedCallback = (lock: PolyfillLock | null) => Promise<unknown> | unknown;
+interface LockRequestOptions {
+    mode?: string;
+    ifAvailable?: boolean;
+}
 
-// navigator.locks polyfill — PGliteWorker leader-election requires it; absent in jsdom 22
-const _locksQueues = new Map<string, Promise<void>>();
+const heldLockNames = new Set<string>();
+const lockWaitQueues = new Map<string, Array<() => void>>();
+
+function grantNextWaiter(name: string): void {
+    heldLockNames.delete(name);
+    const next = lockWaitQueues.get(name)?.shift();
+    if (next) next();
+}
+
 (globalThis as any).navigator ??= {};
 (navigator as any).locks ??= {
-    async request<T>(_name: string, fn: () => Promise<T>): Promise<T> {
-        const prev = _locksQueues.get(_name) ?? Promise.resolve();
-        let release!: () => void;
-        _locksQueues.set(_name, new Promise<void>(r => { release = r; }));
-        await prev;
-        try { return await fn(); } finally { release(); }
+    async request(
+        name: string,
+        optionsOrCallback: LockRequestOptions | LockGrantedCallback,
+        maybeCallback?: LockGrantedCallback,
+    ): Promise<unknown> {
+        const options: LockRequestOptions = typeof optionsOrCallback === 'function' ? {} : optionsOrCallback;
+        const callback: LockGrantedCallback =
+            typeof optionsOrCallback === 'function' ? optionsOrCallback : (maybeCallback as LockGrantedCallback);
+
+        if (heldLockNames.has(name)) {
+            if (options.ifAvailable) {
+                return callback(null);
+            }
+            await new Promise<void>((resolve) => {
+                const waiters = lockWaitQueues.get(name) ?? [];
+                waiters.push(resolve);
+                lockWaitQueues.set(name, waiters);
+            });
+        }
+
+        heldLockNames.add(name);
+        try {
+            return await callback({ name, mode: options.mode ?? 'exclusive' });
+        } finally {
+            grantNextWaiter(name);
+        }
     },
 };
 

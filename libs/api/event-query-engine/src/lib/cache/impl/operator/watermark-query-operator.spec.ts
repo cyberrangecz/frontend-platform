@@ -1,54 +1,36 @@
-import { PgliteDatabase } from 'drizzle-orm/pglite';
+// @vitest-environment node
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { makeCacheDb, type TestCacheDb } from '../../../integration/sqlite-test-db';
+import {
+    COMMAND_TYPE,
+    LEVEL_STARTED_TYPE,
+    makeLevelStartedRow,
+} from '../../../integration/cache-test-fixtures';
+import { insert } from './insert-operator';
 import { getWatermarks } from './watermark-query-operator';
-import { watermarkTable } from '../schema/schema';
 
-describe('getWatermarks operator', () => {
-    let mockDb: any;
+let cache: TestCacheDb;
 
-    beforeEach(() => {
-        mockDb = {
-            select: vi.fn().mockReturnThis(),
-            from: vi.fn().mockReturnThis(),
-            where: vi.fn().mockReturnThis(),
-        };
-    });
+beforeEach(async () => {
+    cache = await makeCacheDb();
+});
 
-    it('returns empty array when eventTypes is empty', async () => {
-        const result = await getWatermarks(mockDb, 1, []);
+afterEach(() => {
+    cache.close();
+});
+
+describe('getWatermarks — selection semantics', () => {
+    it('returns an empty array when eventTypes is empty', async () => {
+        await insert(cache.db, [makeLevelStartedRow({ instance_id: 1 })]);
+        const result = await getWatermarks(cache.db, 1, []);
         expect(result).toEqual([]);
-        expect(mockDb.select).not.toHaveBeenCalled();
     });
 
-    it('queries watermarkTable with correct table reference', async () => {
-        mockDb.where = vi.fn().mockResolvedValue([]);
-
-        await getWatermarks(mockDb, 42, ['TrainingRunStarted']);
-
-        expect(mockDb.select).toHaveBeenCalledWith();
-        expect(mockDb.from).toHaveBeenCalledWith(watermarkTable);
-    });
-
-    it('applies where clause scoped to instanceId', async () => {
-        mockDb.where = vi.fn().mockResolvedValue([]);
-
-        await getWatermarks(mockDb, 99, ['TrainingRunStarted']);
-
-        expect(mockDb.where).toHaveBeenCalledWith(expect.anything());
-    });
-
-    it('returns array of WatermarkEntry objects', async () => {
-        const dbRows = [
-            { instance_id: 1, event_type: 'TrainingRunStarted', max_timestamp: 1000, last_synced: 5000 },
-            { instance_id: 1, event_type: 'LevelStarted', max_timestamp: 2000, last_synced: 6000 },
-        ];
-        mockDb.where = vi.fn().mockResolvedValue(dbRows);
-
-        const result = await getWatermarks(mockDb, 1, ['TrainingRunStarted', 'LevelStarted']);
-
-        expect(result).toEqual([
-            { instanceId: 1, eventType: 'TrainingRunStarted', maxTimestamp: 1000, lastSynced: 5000 },
-            { instanceId: 1, eventType: 'LevelStarted', maxTimestamp: 2000, lastSynced: 6000 },
-        ]);
+    it('omits entries that are absent for the requested instance and types', async () => {
+        await insert(cache.db, [makeLevelStartedRow({ instance_id: 1 })]);
+        const result = await getWatermarks(cache.db, 1, [LEVEL_STARTED_TYPE, COMMAND_TYPE]);
+        expect(result).toHaveLength(1);
+        expect(result[0].eventType).toBe(LEVEL_STARTED_TYPE);
     });
 
     it('returns mapped entries carrying the requested instance id and type', async () => {

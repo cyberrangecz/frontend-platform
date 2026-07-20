@@ -1,96 +1,88 @@
-import { PgliteDatabase } from 'drizzle-orm/pglite';
-import { PortalConfig } from '@crczp/utils';
+// @vitest-environment node
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { makeCacheDb, type TestCacheDb } from '../../../integration/sqlite-test-db';
+import {
+    countRows,
+    countWatermarks,
+    LEVEL_STARTED_TYPE,
+    makeEvictionConfig,
+    seedLevelStartedRow,
+    seedWatermark,
+} from '../../../integration/cache-test-fixtures';
 import { evictStaleInstances } from './eviction-operator';
-import { eventTables, watermarkTable } from '../schema/schema';
 
-describe('evictStaleInstances operator', () => {
-    let mockDb: PgliteDatabase;
-    let mockTx: any;
+let cache: TestCacheDb;
 
-    const mockConfig: PortalConfig = {
-        caching: {
-            endpointCachingDisabled: false,
-            endpointCacheTTL: 3600,
-            eventCacheTTL: 604800, // 7 days in seconds
-            eventEntityCacheTTL: 86400,
-            eventCacheMaxStaleness: 300000,
-        },
-    } as PortalConfig;
+beforeEach(async () => {
+    cache = await makeCacheDb();
+});
 
-    beforeEach(() => {
-        mockTx = {
-            select: vi.fn().mockReturnThis(),
-            from: vi.fn().mockReturnThis(),
-            groupBy: vi.fn().mockReturnThis(),
-            where: vi.fn().mockReturnThis(),
-            delete: vi.fn().mockReturnThis(),
-        };
+afterEach(() => {
+    cache.close();
+});
 
-        mockDb = {
-            transaction: vi.fn((cb: (tx: PgliteDatabase) => Promise<void>) => cb(mockTx as PgliteDatabase)),
-        } as unknown as PgliteDatabase;
-    });
-
-    it('fetches watermarks grouped by instanceId within transaction', async () => {
-        mockTx.where = vi.fn().mockResolvedValue([]);
-        mockTx.groupBy = vi.fn().mockResolvedValue([]);
-
-        await evictStaleInstances(mockDb, mockConfig);
-
-        expect(mockDb.transaction).toHaveBeenCalled();
-        expect(mockTx.select).toHaveBeenCalledWith(
-            expect.objectContaining({ instanceId: expect.anything(), lastSynced: expect.anything() }),
-        );
-        expect(mockTx.from).toHaveBeenCalledWith(watermarkTable);
-        expect(mockTx.groupBy).toHaveBeenCalled();
-    });
-
-    it('filters instances older than TTL threshold', async () => {
+describe('evictStaleInstances — size-based eviction', () => {
+    it('never drops the last remaining instance even when over the size budget', async () => {
+        const instanceId = 1;
         const now = Date.now();
-        const staleTimestamp = now - mockConfig.caching.eventCacheTTL * 1000 - 1000;
-        const recentTimestamp = now;
+        await seedWatermark(cache.db, instanceId, LEVEL_STARTED_TYPE, 5_000, now);
+        for (let index = 0; index < 50; index += 1) {
+            await seedLevelStartedRow(cache.db, instanceId, `seed-${index}`, 1_000 + index);
+        }
 
-        mockTx.groupBy = vi.fn().mockResolvedValue([
-            { instanceId: 1, lastSynced: staleTimestamp },
-            { instanceId: 2, lastSynced: recentTimestamp },
-        ]);
+        await evictStaleInstances(cache.db, makeEvictionConfig(3_600_000, 1));
 
-        await evictStaleInstances(mockDb, mockConfig);
-
-        expect(mockTx.delete).toHaveBeenCalled();
+        expect(await countWatermarks(cache.db, instanceId)).toBe(1);
+        expect(await countRows(cache.db, 'level_started', instanceId)).toBe(50);
     });
 
-    it('sorts oldest instances first for eviction', async () => {
+    it('drops oldest-synced instances first until only the most-recent remains', async () => {
+        const oldestInstance = 1;
+        const middleInstance = 2;
+        const newestInstance = 3;
         const now = Date.now();
-        const oldestTimestamp = now - mockConfig.caching.eventCacheTTL * 1000 - 5000;
-        const middleTimestamp = now - mockConfig.caching.eventCacheTTL * 1000 - 3000;
-        const newestTimestamp = now - mockConfig.caching.eventCacheTTL * 1000 - 1000;
 
-        mockTx.groupBy = vi.fn().mockResolvedValue([
-            { instanceId: 1, lastSynced: newestTimestamp },
-            { instanceId: 2, lastSynced: oldestTimestamp },
-            { instanceId: 3, lastSynced: middleTimestamp },
-        ]);
+        await seedWatermark(cache.db, oldestInstance, LEVEL_STARTED_TYPE, 5_000, now - 30_000);
+        await seedWatermark(cache.db, middleInstance, LEVEL_STARTED_TYPE, 6_000, now - 20_000);
+        await seedWatermark(cache.db, newestInstance, LEVEL_STARTED_TYPE, 7_000, now - 10_000);
 
-        await evictStaleInstances(mockDb, mockConfig);
+        for (let index = 0; index < 5; index += 1) {
+            await seedLevelStartedRow(cache.db, oldestInstance, `oldest-${index}`, 1_000 + index);
+            await seedLevelStartedRow(cache.db, middleInstance, `middle-${index}`, 2_000 + index);
+            await seedLevelStartedRow(cache.db, newestInstance, `newest-${index}`, 3_000 + index);
+        }
 
-        // Oldest should be evicted first - check first delete call targets oldest instance
-        const firstDeleteTarget = mockTx.delete.mock.calls[0];
-        expect(firstDeleteTarget).toBeDefined();
+        await evictStaleInstances(cache.db, makeEvictionConfig(3_600_000, 1));
+
+        expect(await countWatermarks(cache.db, oldestInstance)).toBe(0);
+        expect(await countRows(cache.db, 'level_started', oldestInstance)).toBe(0);
+        expect(await countWatermarks(cache.db, middleInstance)).toBe(0);
+        expect(await countRows(cache.db, 'level_started', middleInstance)).toBe(0);
+        expect(await countWatermarks(cache.db, newestInstance)).toBe(1);
+        expect(await countRows(cache.db, 'level_started', newestInstance)).toBe(5);
     });
+});
 
-    it('deletes watermark and event table data for each stale instance', async () => {
+describe('evictStaleInstances — TTL eviction', () => {
+    it('drops the stale instance and keeps the fresh one across the TTL boundary', async () => {
+        const staleInstance = 1;
+        const freshInstance = 2;
+        const ttlMs = 3_600_000;
         const now = Date.now();
-        const staleTimestamp = now - mockConfig.caching.eventCacheTTL * 1000 - 1000;
 
-        mockTx.groupBy = vi.fn().mockResolvedValue([
-            { instanceId: 5, lastSynced: staleTimestamp },
-        ]);
+        const staleSynced = now - (ttlMs + 600_000);
+        const freshSynced = now - 60_000;
 
-        await evictStaleInstances(mockDb, mockConfig);
+        await seedWatermark(cache.db, staleInstance, LEVEL_STARTED_TYPE, 5_000, staleSynced);
+        await seedLevelStartedRow(cache.db, staleInstance, 'stale-row', 5_000);
+        await seedWatermark(cache.db, freshInstance, LEVEL_STARTED_TYPE, 6_000, freshSynced);
+        await seedLevelStartedRow(cache.db, freshInstance, 'fresh-row', 6_000);
 
-        // Should delete from watermarkTable and all event tables
-        const deleteCalls = mockTx.delete.mock.calls.length;
-        expect(deleteCalls).toBe(Object.keys(eventTables).length + 1);
+        await evictStaleInstances(cache.db, makeEvictionConfig(ttlMs, 1_000_000_000));
+
+        expect(await countWatermarks(cache.db, staleInstance)).toBe(0);
+        expect(await countRows(cache.db, 'level_started', staleInstance)).toBe(0);
+        expect(await countWatermarks(cache.db, freshInstance)).toBe(1);
+        expect(await countRows(cache.db, 'level_started', freshInstance)).toBe(1);
     });
 });

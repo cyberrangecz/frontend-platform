@@ -2,8 +2,22 @@
     "name": "@crczp/event-query-engine",
     "version": "1.0.0",
     "peerDependencies": {
-        "@angular/common": "^20.3.0",
-        "@angular/core": "^20.3.0"
+        "@angular/core": "*",
+        "@angular/router": "*",
+        "@angular/material": "*",
+        "rxjs": "*",
+        "date-fns": "*",
+        "drizzle-orm": "*",
+        "@sqlite.org/sqlite-wasm": "*",
+        "@crczp/api-common": "*",
+        "@crczp/training-api": "*",
+        "@crczp/training-model": "*",
+        "@crczp/utils": "*",
+        "@crczp/visualization-model": "*",
+        "vite": "*",
+        "@analogjs/vite-plugin-angular": "*",
+        "@nx/vite": "*",
+        "tslib": "*"
     },
     "sideEffects": false
 }

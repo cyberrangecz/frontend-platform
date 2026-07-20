@@ -1,14 +1,15 @@
-import { pgTable, text, integer, bigint, numeric, uniqueIndex, index } from 'drizzle-orm/pg-core';
+import { sqliteTable, text, integer, real, uniqueIndex, index } from 'drizzle-orm/sqlite-core';
+import { EventAnswer, PlatformEventType } from '@crczp/visualization-model';
 
-// Score and penalty columns use numeric({ mode: 'number' }) so Drizzle performs Number(value)
-// on read. Trade-off: float64 precision. All affected values are bounded integers (0–100,
-// counts, penalty points) so precision loss is not a concern. SQL schema stays numeric —
-// no IndexedDB cache rebuild required.
+// Score and penalty columns use real (SQLite REAL / float64), read back as numbers. All affected
+// values are bounded (scores 0–100, counts, penalty points, fractional training seconds) so float64
+// precision is not a concern. Millisecond-epoch timestamps use integer (SQLite 64-bit INTEGER),
+// which preserves full range and numeric ordering for sorting and range filters.
 
 const baseEventFields = {
   id: text('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
   instance_id: integer('instance_id').notNull(),
-  timestamp: bigint('timestamp', { mode: 'number' }).notNull(),
+  timestamp: integer('timestamp').notNull(),
   type: text('type').notNull(),
 };
 
@@ -21,14 +22,14 @@ const trainingEventFields = {
   training_run_id: integer('training_run_id').notNull(),
   level_id: integer('level_id').notNull(),
   user_ref_id: integer('user_ref_id').notNull(),
-  training_time: bigint('training_time', { mode: 'number' }).notNull(),
+  training_time: real('training_time').notNull(),
   level_order: integer('level_order').notNull(),
-  actual_score_in_level: numeric('actual_score_in_level', { mode: 'number' }).notNull(),
-  total_training_level_score: numeric('total_training_level_score', { mode: 'number' }).notNull(),
-  total_assessment_level_score: numeric('total_assessment_level_score', { mode: 'number' }).notNull(),
+  actual_score_in_level: real('actual_score_in_level').notNull(),
+  total_training_level_score: real('total_training_level_score').notNull(),
+  total_assessment_level_score: real('total_assessment_level_score').notNull(),
 };
 
-export const trainingRunStartedTable = pgTable(
+export const trainingRunStartedTable = sqliteTable(
   'training_run_started',
   trainingEventFields,
   (table) => [
@@ -37,7 +38,7 @@ export const trainingRunStartedTable = pgTable(
   ],
 );
 
-export const trainingRunResumedTable = pgTable(
+export const trainingRunResumedTable = sqliteTable(
   'training_run_resumed',
   trainingEventFields,
   (table) => [
@@ -46,12 +47,12 @@ export const trainingRunResumedTable = pgTable(
   ],
 );
 
-export const trainingRunEndedTable = pgTable(
+export const trainingRunEndedTable = sqliteTable(
   'training_run_ended',
   {
     ...trainingEventFields,
-    start_time: bigint('start_time', { mode: 'number' }).notNull(),
-    end_time: bigint('end_time', { mode: 'number' }).notNull(),
+    start_time: integer('start_time').notNull(),
+    end_time: integer('end_time').notNull(),
   },
   (table) => [
     index('idx_tre_instance_timestamp').on(table.instance_id, table.timestamp),
@@ -59,13 +60,13 @@ export const trainingRunEndedTable = pgTable(
   ],
 );
 
-export const levelStartedTable = pgTable(
+export const levelStartedTable = sqliteTable(
   'level_started',
   {
     ...trainingEventFields,
     level_type: text('level_type').notNull(),
     level_title: text('level_title').notNull(),
-    max_score: numeric('max_score', { mode: 'number' }).notNull(),
+    max_score: real('max_score').notNull(),
   },
   (table) => [
     index('idx_ls_instance_timestamp').on(table.instance_id, table.timestamp),
@@ -73,7 +74,7 @@ export const levelStartedTable = pgTable(
   ],
 );
 
-export const levelCompletedTable = pgTable(
+export const levelCompletedTable = sqliteTable(
   'level_completed',
   {
     ...trainingEventFields,
@@ -85,7 +86,7 @@ export const levelCompletedTable = pgTable(
   ],
 );
 
-export const correctAnswerSubmittedTable = pgTable(
+export const correctAnswerSubmittedTable = sqliteTable(
   'correct_answer_submitted',
   {
     ...trainingEventFields,
@@ -97,7 +98,7 @@ export const correctAnswerSubmittedTable = pgTable(
   ],
 );
 
-export const wrongAnswerSubmittedTable = pgTable(
+export const wrongAnswerSubmittedTable = sqliteTable(
   'wrong_answer_submitted',
   {
     ...trainingEventFields,
@@ -110,13 +111,13 @@ export const wrongAnswerSubmittedTable = pgTable(
   ],
 );
 
-export const hintTakenTable = pgTable(
+export const hintTakenTable = sqliteTable(
   'hint_taken',
   {
     ...trainingEventFields,
     hint_id: integer('hint_id').notNull(),
     hint_title: text('hint_title').notNull(),
-    hint_penalty_points: numeric('hint_penalty_points', { mode: 'number' }).notNull(),
+    hint_penalty_points: real('hint_penalty_points').notNull(),
   },
   (table) => [
     index('idx_ht_instance_timestamp').on(table.instance_id, table.timestamp),
@@ -124,11 +125,11 @@ export const hintTakenTable = pgTable(
   ],
 );
 
-export const solutionDisplayedTable = pgTable(
+export const solutionDisplayedTable = sqliteTable(
   'solution_displayed',
   {
     ...trainingEventFields,
-    penalty_points: numeric('penalty_points', { mode: 'number' }).notNull(),
+    penalty_points: real('penalty_points').notNull(),
   },
   (table) => [
     index('idx_sd_instance_timestamp').on(table.instance_id, table.timestamp),
@@ -136,7 +137,7 @@ export const solutionDisplayedTable = pgTable(
   ],
 );
 
-export const assessmentAnswersTable = pgTable(
+export const assessmentAnswersTable = sqliteTable(
   'assessment_answers',
   {
     ...trainingEventFields,
@@ -173,13 +174,11 @@ export const watermarkTable = sqliteTable(
   {
     instance_id: integer('instance_id').notNull(),
     event_type: text('event_type').notNull(),
-    max_timestamp: bigint('max_timestamp', { mode: 'number' }).notNull(),
-    last_synced: bigint('last_synced', { mode: 'number' }).notNull(),
+    max_timestamp: integer('max_timestamp').notNull(),
+    last_synced: integer('last_synced').notNull(),
   },
   (table) => [uniqueIndex('idx_watermark_instance_type').on(table.instance_id, table.event_type)],
 );
-
-import { PlatformEventType } from '@crczp/visualization-model';
 
 export const eventTables: Partial<Record<PlatformEventType, any>> = {
   [PlatformEventType.TRAINING_RUN_STARTED]: trainingRunStartedTable,

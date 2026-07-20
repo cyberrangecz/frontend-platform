@@ -10,7 +10,7 @@ import { syncSingleType } from './single-type-sync';
 
 @Injectable({ providedIn: 'root' })
 export class SyncService extends CacheSyncService {
-    private readonly cacheService = inject(PgliteCacheService);
+    private readonly cacheService = inject(CacheService);
     private readonly fetchApi = inject(EventFetchApi);
 
     sync(params: SyncParams): Observable<SyncTableComplete> {
