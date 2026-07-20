@@ -6,6 +6,7 @@ import { EventKind, EventVm } from '../types/event.types';
 import { BarKey } from '../types/ids.types';
 import { LagState } from '../types/lag-state.types';
 import { OptionFragment } from '../types/option-fragment.types';
+import { AxisTimeScale } from './axis-time-scale';
 import { resolveBarHeightPx } from './bars/bar-geometry';
 
 type RowGeometry = { isRunning: boolean; lagState: LagState };
@@ -43,13 +44,21 @@ const SHADOW_AT_REST = 'rgba(0,0,0,0.2)';
  * All events are non-animating — engine-driven motion is reserved for bar
  * right-edge growth and the current-time marker.
  *
+ * Kinds present in `excludedKinds` are skipped entirely, so toggling an
+ * event-type legend chip off removes its roundels from the chart.
+ *
  * @param eventsByBar - Per-bar event groups keyed by `BarKey`.
  * @param bars - All bar view-models; used to derive per-row pixel height so
  *   icon size matches the actual bar height (running bars are taller).
+ * @param timeScale - Active axis time scale mapping absolute ms to axis space.
+ * @param excludedKinds - Event kinds the user has toggled off; their series are
+ *   not emitted.
  */
 export function buildEventIconsFragment(
     eventsByBar: ReadonlyMap<BarKey, readonly EventVm[]>,
     bars: readonly BarVm[],
+    timeScale: AxisTimeScale,
+    excludedKinds: ReadonlySet<EventKind>,
 ): OptionFragment {
     const rowGeometryByIndex = new Map<number, RowGeometry>();
     for (const bar of bars) {
@@ -63,11 +72,14 @@ export function buildEventIconsFragment(
     const series: CustomSeriesOption[] = [];
 
     for (const [kind, events] of byKind) {
+        if (excludedKinds.has(kind)) {
+            continue;
+        }
         const catalog = EVENT_ICON_CATALOG[kind];
         const zOrder = EVENT_Z_ORDER[kind];
 
         const data: [number, number, EventVm & { barKey: BarKey }][] = events.map((ev) => [
-            ev.timestamp,
+            timeScale.toAxisValue(ev.timestamp, ev.rowIndex),
             ev.rowIndex,
             ev,
         ]);
@@ -85,7 +97,7 @@ export function buildEventIconsFragment(
         });
     }
 
-    return { key: 'eventIcons', fragment: { series } };
+    return { series };
 }
 
 /**
