@@ -34,6 +34,21 @@ export const DEFAULT_SORT_CRITERION: SortCriterion = SORT_CRITERIA[0];
 export type SortDirection = 'ASC' | 'DESC';
 
 /**
+ * X-axis scale vocabulary.
+ *
+ *  - `absolute` — shared wall-clock timeline; every row plotted at its real
+ *    epoch instant.
+ *  - `duration` — each row re-anchored to its own run-start (`t=0`); the axis
+ *    reads elapsed time so runs compare by length regardless of start time.
+ */
+export type AxisMode = 'absolute' | 'duration';
+
+export const AXIS_MODES = ['absolute', 'duration'] as const satisfies readonly AxisMode[];
+
+/** Default X-axis scale used when no preference is persisted. */
+export const DEFAULT_AXIS_MODE: AxisMode = 'absolute';
+
+/**
  * Highlight/selection slice. Rides along with the live view-model so a
  * single dispatch covers highlight-styled bars in the same payload as
  * the rest.

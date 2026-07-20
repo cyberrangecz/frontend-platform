@@ -1,7 +1,8 @@
 import { Signal } from '@angular/core';
+import { EventKind } from '../types/event.types';
 import { TraineeId } from '../types/ids.types';
 import { LagState } from '../types/lag-state.types';
-import { SortCriterion, SortDirection } from '../types/ui-state.types';
+import { AxisMode, SortCriterion, SortDirection } from '../types/ui-state.types';
 
 /**
  * Owns all UI-side reactive state for the visualization — the values
@@ -15,8 +16,8 @@ import { SortCriterion, SortDirection } from '../types/ui-state.types';
  *
  * Boundaries:
  *  - no data dependencies; knows nothing about bars, events, instance
- *  - no persistence today; future hooks (localStorage favourites)
- *    attach here, not at consumers
+ *  - persistence lives here, not at consumers: the axis mode is stored to
+ *    localStorage; the remaining state is in-memory
  *  - no coupling to the renderer
  *  - sensible defaults at construction (empty favourites, default sort,
  *    empty filter, null highlights, no selected level)
@@ -29,6 +30,10 @@ export abstract class ProgressUiStateService {
     abstract readonly favorites: Signal<ReadonlySet<TraineeId>>;
     abstract toggleFavorite(trainee: TraineeId): void;
     abstract clearFavorites(): void;
+
+    /** Active X-axis scale mode; persisted across reloads. */
+    abstract readonly axisMode: Signal<AxisMode>;
+    abstract setAxisMode(mode: AxisMode): void;
 
     /** Sort criterion + direction for the trainee ordering. */
     abstract readonly sortCriterion: Signal<SortCriterion>;
@@ -48,6 +53,11 @@ export abstract class ProgressUiStateService {
     abstract readonly lagFilter: Signal<ReadonlySet<LagState>>;
     abstract toggleLagFilter(state: LagState): void;
     abstract setLagFilter(states: ReadonlySet<LagState>): void;
+
+    /** Active event-type filter set; membership hides that kind's roundels. Empty shows all. */
+    abstract readonly eventTypeFilter: Signal<ReadonlySet<EventKind>>;
+    abstract toggleEventTypeFilter(kind: EventKind): void;
+    abstract setEventTypeFilter(kinds: ReadonlySet<EventKind>): void;
 
     /** Highlighted trainee from bar/row hover. `null` when nothing hovered. */
     abstract readonly highlightedTrainee: Signal<TraineeId | null>;
