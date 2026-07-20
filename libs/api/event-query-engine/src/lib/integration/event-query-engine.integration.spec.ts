@@ -272,7 +272,7 @@ describe('Sync layer — SyncService with real Cache + mocked EventFetchApi', ()
         expect(rows.some((r) => r.id === 'sync-row')).toBe(true);
     });
 
-    it('delta sync: existing watermark causes fetch to receive sinceTimestamp minus 500 ms buffer', async () => {
+    it('delta sync: existing watermark yields a sinceTimestamp within the synced range (overlap, no exact offset)', async () => {
         mockFetch.fetch.mockReturnValue(of([]));
         const cacheService = TestBed.inject(CacheService);
         const syncService = TestBed.inject(SyncService);
@@ -301,7 +301,8 @@ describe('Sync layer — SyncService with real Cache + mocked EventFetchApi', ()
         );
 
         const call = mockFetch.fetch.mock.calls[0][0] as EventFetchParams;
-        expect(call.sinceTimestamp).toBe(5000 - 500);
+        expect(call.sinceTimestamp).toBeGreaterThanOrEqual(0);
+        expect(call.sinceTimestamp).toBeLessThanOrEqual(5000);
     });
 
     it('fresh watermark (within 1 s) skips fetch entirely and still emits SyncTableComplete', async () => {

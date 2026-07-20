@@ -12,7 +12,6 @@ export class AbstractLevelBasic extends Z.class({
     title: z.string(),
     order: z.number(),
     estimatedDuration: z.number(),
-    minimalPossibleSolveTime: z.number(),
     maxScore: z.number(),
     type: z.nativeEnum(AbstractLevelTypeEnum),
 }) {
@@ -20,7 +19,6 @@ export class AbstractLevelBasic extends Z.class({
     declare title: string;
     declare order: number;
     declare estimatedDuration: number;
-    declare minimalPossibleSolveTime: number;
     declare maxScore: number;
     declare type: AbstractLevelTypeEnum;
 }

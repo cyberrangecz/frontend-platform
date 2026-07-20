@@ -96,16 +96,13 @@ export interface AssessmentAnswersEvent extends TrainingEvent {
 }
 
 export interface CommandEvent extends PlatformEvent {
-    timestamp_str: string;
-    ip: string;
     sandbox_id: string;
-
-    pool_id: number;
-    get pool(): Pool;
-
-    hostname: string;
-    username: string;
-    wd: string;
+    training_time: number | null;
     cmd_type: string;
-    cmd: string;
+    command: string;
+    command_arguments: string | null;
+    hostname: string | null;
+    username: string | null;
+    wd: string | null;
+    ip: string | null;
 }

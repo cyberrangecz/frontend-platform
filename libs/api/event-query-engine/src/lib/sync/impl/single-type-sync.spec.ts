@@ -93,6 +93,7 @@ describe('syncSingleType', () => {
                     type: 'Command',
                     timestamp: 1234567890,
                     instance_id: instanceId,
+                    sandbox_id: 'sb-1',
                 },
             ];
 
@@ -174,7 +175,7 @@ describe('syncSingleType', () => {
                     expect(err).toBeInstanceOf(Error);
                     expect((err as Error).message).toContain('poolId required');
                 },
-                complete: () => {},
+                complete: () => undefined,
             });
 
             await vi.runAllTimersAsync();

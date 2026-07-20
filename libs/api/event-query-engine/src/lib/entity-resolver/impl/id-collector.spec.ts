@@ -66,4 +66,10 @@ describe('collectIds', () => {
         const result = collectIds(rows, instanceEntry);
         expect(result?.matchedField).toBe('instance_id');
     });
+
+    it('prefers the first owned field in fields order when several are present in the same row', () => {
+        const rows = [{ instance_id: 1, training_instance_id: 99 }];
+        const result = collectIds(rows, instanceEntry);
+        expect(result?.matchedField).toBe('instance_id');
+    });
 });

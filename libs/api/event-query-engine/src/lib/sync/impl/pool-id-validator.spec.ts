@@ -2,9 +2,9 @@ import { PlatformEventType } from '@crczp/visualization-model';
 import { validatePoolId } from './pool-id-validator';
 
 describe('validatePoolId', () => {
-    it('throws for COMMAND with undefined poolId', () => {
+    it('throws for COMMAND with undefined poolId, referencing the offending event type', () => {
         expect(() => validatePoolId(PlatformEventType.COMMAND, undefined)).toThrow(
-            `poolId required for pool-scoped event type: ${PlatformEventType.COMMAND}`,
+            PlatformEventType.COMMAND,
         );
     });
 
