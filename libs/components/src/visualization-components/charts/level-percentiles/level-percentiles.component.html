@@ -1,0 +1,15 @@
+<crczp-chart-panel-shell
+    heading="Score & time percentile per level"
+    [status]="status()"
+    [exportable]="null"
+    [emptyMessage]="emptyMessage()"
+    info="Per graded level, where this run ranks against everyone who completed that level — score and speed as 0–100 percentiles, higher is better. Each bar is the percent of other runs this run strictly beat; levels this run didn't finish read as not completed."
+>
+    <div
+        echarts
+        class="chart-canvas"
+        [options]="chartOptions()"
+        [autoResize]="true"
+        (chartInit)="onChartInit($event)"
+    ></div>
+</crczp-chart-panel-shell>
