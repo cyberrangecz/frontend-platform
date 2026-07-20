@@ -1,0 +1,100 @@
+:host {
+    display: block;
+    width: 100%;
+}
+
+.feedback-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-4xl);
+    padding: var(--space-xs) 0;
+}
+
+.feedback-card__header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-lg);
+}
+
+.feedback-card__avatar {
+    flex-shrink: 0;
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: var(--mat-sys-corner-small);
+    object-fit: cover;
+
+    &--placeholder {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--mat-sys-surface-container-highest);
+        color: var(--mat-sys-on-surface-variant);
+        font-size: var(--font-size-4xl);
+        font-weight: var(--font-weight-semibold);
+        line-height: 1;
+        text-transform: uppercase;
+    }
+}
+
+.feedback-card__id {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3xs);
+    min-width: 0;
+}
+
+.feedback-card__name {
+    color: var(--mat-sys-on-surface);
+    font-size: var(--font-size-3xl);
+    font-weight: var(--font-weight-semibold);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.feedback-card__contact {
+    color: var(--mat-sys-on-surface-variant);
+    font-size: var(--font-size-lg);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.feedback-card__stats {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-3xl);
+}
+
+.feedback-card__stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-4xs);
+}
+
+.feedback-card__stat-label {
+    color: var(--mat-sys-on-surface-variant);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.feedback-card__stat-value {
+    color: var(--mat-sys-on-surface);
+    font-size: var(--font-size-3xl);
+    font-weight: var(--font-weight-semibold);
+    line-height: 1.1;
+}
+
+.feedback-card__state {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 6rem;
+    color: var(--mat-sys-on-surface-variant);
+}
