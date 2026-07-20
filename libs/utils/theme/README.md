@@ -78,6 +78,34 @@ This project unifies theme, styles, fonts, icons, and other assets for CyberRang
 | `m-<size>rem-<side>` | 0.25, 0.5, 0.75, 1, .., 3.75, 4 ; t,l,r,b | Margin in rem at side  |
 
 
+### Design tokens
+
+Global `:root` CSS custom properties for spacing, font-size, and font-weight, generated from the
+SCSS maps in `theming/definitions/scales.scss` (mirroring how `--primary-<shade>` etc. are
+generated from `theming/definitions/variables.scss`). Consume them directly as `var(--token)` —
+no `@use`/import required, same as the color variables above. Being global rather than
+`:host`-scoped, they also reach detached surfaces such as CDK overlays and runtime-rendered HTML
+(e.g. ECharts tooltip strings).
+
+| Variable name           | options                                                 | description                                             |
+|-------------------------|----------------------------------------------------------|---------------------------------------------------------|
+| `--space-<step>`        | `4xs, 3xs, 2xs, xs, sm, md, lg, xl, 2xl, 3xl, 4xl, 5xl` | Spacing scale, 0.125rem to 2rem, for padding/margin/gap  |
+| `--font-size-<step>`    | `2xs, xs, sm, md, lg, xl, 2xl, 3xl, 4xl, 5xl, 6xl`      | Font-size scale, 0.625rem to 3.5rem                      |
+| `--font-weight-<step>`  | `regular, medium, semibold, bold`                       | Font-weight scale, 400 to 700                            |
+
+**`--space-*`** (rem): `4xs` 0.125 · `3xs` 0.25 · `2xs` 0.375 · `xs` 0.5 · `sm` 0.625 · `md` 0.75 ·
+`lg` 0.875 · `xl` 1 · `2xl` 1.25 · `3xl` 1.5 · `4xl` 1.75 · `5xl` 2
+
+**`--font-size-*`** (rem): `2xs` 0.625 · `xs` 0.6875 · `sm` 0.75 · `md` 0.8125 · `lg` 0.875 ·
+`xl` 1 · `2xl` 1.125 · `3xl` 1.375 · `4xl` 1.5 · `5xl` 2 · `6xl` 3.5
+
+**`--font-weight-*`**: `regular` 400 · `medium` 500 · `semibold` 600 · `bold` 700
+
+> These token vocabularies (`--space-md`, `--font-size-lg`, …) are deliberately distinct from the
+> rem-in-name utility classes below (`p-0.5rem`, `w-0.5rem`) — the tokens are cascading custom
+> properties, the utilities are class selectors. Prefer the tokens for any fixed spacing/font-size/
+> font-weight value in component SCSS; do not hardcode a literal where a token step matches.
+
 ### Scroll and drag
 
 | Class name            | description                       |

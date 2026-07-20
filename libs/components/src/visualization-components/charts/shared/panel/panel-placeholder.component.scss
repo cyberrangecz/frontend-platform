@@ -1,0 +1,26 @@
+:host {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-xs);
+    height: 100%;
+    padding: var(--space-5xl) 0;
+    color: var(--neutral-50);
+    text-align: center;
+}
+
+.placeholder-icon {
+    width: 2rem;
+    height: 2rem;
+    font-size: 2rem;
+}
+
+.placeholder-text {
+    margin: 0;
+    font-size: var(--font-size-lg);
+}
+
+:host(.placeholder--error) {
+    color: var(--error-40);
+}
