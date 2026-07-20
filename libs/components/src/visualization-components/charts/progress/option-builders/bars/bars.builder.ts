@@ -1,10 +1,12 @@
-import { CustomSeriesOption, EChartsOption } from 'echarts';
+import { CustomSeriesOption } from 'echarts';
 import { Utils } from '@crczp/utils';
-import { LAG_STATE_COLORS } from '../../config/lag.config';
+import { FINISHED_LEVEL_FILL_COLOR, LAG_STATE_COLORS } from '../../config/lag.config';
+import { ChartPalette } from '../../../shared';
 import { BarVm } from '../../types/bar.types';
 import { LagState } from '../../types/lag-state.types';
 import { OptionFragment } from '../../types/option-fragment.types';
 import { AxisVm } from '../../types/view-model.types';
+import { AxisTimeScale } from '../axis-time-scale';
 import {
     BarRect,
     computeBarRect,
@@ -25,13 +27,6 @@ const PILL_ICON_HEIGHT_FRACTION = 0.65;
  * of every lag-state colour without competing for attention.
  */
 const PILL_BACKGROUND_COLOR = 'rgba(243,243,243,0.75)';
-
-/**
- * Half-pill glyph foreground colour — muted purple-gray per visuals.md
- * §Level Type Pill. Distinct from event-icon colours so the level marker
- * never reads as an event.
- */
-const PILL_FOREGROUND_COLOR = '#8989b1';
 
 /**
  * Horizontal pixel nudge applied to the half-pill glyph so its optical
@@ -186,22 +181,17 @@ type CustomRenderItemReturn = ReturnType<NonNullable<CustomSeriesOption['renderI
  * @param bars - Per-bar slices from the live view-model.
  * @param axis - Axis view-model slice — carries `mountNowMs` (hit-rect
  *               right-edge anchor) and `endMs` (series extent).
- * @returns A fragment keyed `'bars'` with one custom series per bar.
+ * @param colors - Resolved theme colours for the level-type pill glyph.
+ * @param timeScale - Active axis time scale mapping absolute ms to axis space.
+ * @returns A partial option with one custom `series` per bar.
  */
 export function buildBarsFragment(
     bars: readonly BarVm[],
     axis: AxisVm,
+    colors: ChartPalette,
+    timeScale: AxisTimeScale,
 ): OptionFragment {
-    const series = bars.map((bar) => buildLiveBarSeries(bar, axis));
-
-    const fragment: Partial<EChartsOption> = {
-        series,
-    };
-
-    return {
-        key: 'bars',
-        fragment,
-    };
+    return { series: bars.map((bar) => buildLiveBarSeries(bar, axis, colors, timeScale)) };
 }
 
 /**
@@ -230,35 +220,50 @@ export function buildBarsFragment(
  *
  * @param bar  - The bar to paint.
  * @param axis - Axis view-model slice anchoring the static mount-time extent.
+ * @param colors - Resolved theme colours for the level-type pill glyph.
+ * @param timeScale - Active axis time scale mapping absolute ms to axis space.
  * @returns A custom series option drawing a single bar group.
  */
-function buildLiveBarSeries(bar: BarVm, axis: AxisVm): CustomSeriesOption {
+function buildLiveBarSeries(
+    bar: BarVm,
+    axis: AxisVm,
+    colors: ChartPalette,
+    timeScale: AxisTimeScale,
+): CustomSeriesOption {
     const { startedAt: startMs, effectiveEnd, rowIndex, isRunning } = bar;
     const { mountNowMs, endMs: axisEndMs } = axis;
-    const effectiveState = resolveEffectiveLagState(bar);
-    const fillColor = LAG_STATE_COLORS[effectiveState];
+    const effectiveState = resolveEffectiveLagState(bar, bar.lagState);
+    const isHighlightDimmed = effectiveState === 'INACTIVE_HIGHLIGHTED';
+    const fillColor = isRunning || isHighlightDimmed
+        ? LAG_STATE_COLORS[effectiveState]
+        : FINISHED_LEVEL_FILL_COLOR;
     const barHeight = resolveBarHeightPx(bar.isRunning, effectiveState);
     const iconGlyph = Utils.LevelType.levelTypeToIcon(bar.levelType);
     const seriesEndMs = isRunning ? axisEndMs : effectiveEnd;
     const tooltipEndMs = isRunning ? mountNowMs : effectiveEnd;
     const tooltipPayload = buildBarTooltipPayload(bar, tooltipEndMs);
-    const dataTuple: BarDataTuple = [startMs, seriesEndMs, rowIndex, tooltipPayload];
+    const dataTuple: BarDataTuple = [
+        timeScale.toAxisValue(startMs, rowIndex),
+        timeScale.toAxisValue(seriesEndMs, rowIndex),
+        rowIndex,
+        tooltipPayload,
+    ];
 
     return {
         ...createBarSeriesShell(startMs, seriesEndMs, rowIndex),
         id: `bar-${bar.key}`,
         data: [dataTuple],
         renderItem: (_params, api) => {
-            const rectShape = isRunning
-                ? computeBarRect(api, startMs, mountNowMs, rowIndex, barHeight)
-                : computeBarRect(api, startMs, effectiveEnd, rowIndex, barHeight);
+            const startValue = timeScale.toAxisValue(startMs, rowIndex);
+            const endValue = timeScale.toAxisValue(isRunning ? mountNowMs : effectiveEnd, rowIndex);
+            const rectShape = computeBarRect(api, startValue, endValue, rowIndex, barHeight);
 
             const rect: BarRectElement = isRunning
                 ? { type: 'rect', shape: rectShape, style: { fill: fillColor, opacity: 0 } }
                 : { type: 'rect', shape: rectShape, style: { fill: fillColor } };
 
             const halfPill = buildHalfPillPath(rect.shape);
-            const iconText = buildPillIconText(rect.shape, iconGlyph);
+            const iconText = buildPillIconText(rect.shape, iconGlyph, colors.mutedText);
 
             const group: BarGroupElement = {
                 type: 'group',
@@ -290,15 +295,18 @@ function isLagStateOverridden(bar: BarVm): boolean {
 }
 
 /**
- * Resolves the bar's effective lag state by overlaying highlight flags
- * on top of the classified `lagState`. Centralised so colour and height
- * resolution stay in lock-step.
+ * Overlays the highlight-override rule onto a base lag state: returns
+ * `INACTIVE_HIGHLIGHTED` when {@link isLagStateOverridden} holds, otherwise the
+ * supplied base state. The single authority for the override across the bar
+ * series, the imperative running-bar fill, and the estimate overlay; each
+ * caller supplies the base state appropriate to its surface.
+ *
+ * @param bar - The bar whose highlight flags drive the override.
+ * @param baseState - The lag state to use when the override does not apply.
+ * @returns The effective lag state after applying the override.
  */
-function resolveEffectiveLagState(bar: BarVm): LagState {
-    if (isLagStateOverridden(bar)) {
-        return 'INACTIVE_HIGHLIGHTED';
-    }
-    return bar.lagState;
+export function resolveEffectiveLagState(bar: BarVm, baseState: LagState): LagState {
+    return isLagStateOverridden(bar) ? 'INACTIVE_HIGHLIGHTED' : baseState;
 }
 
 /**
@@ -341,10 +349,7 @@ export function lagStateAt(bar: BarVm, nowMs: number): LagState {
  * @returns The effective lag state for the fill colour at `nowMs`.
  */
 export function resolveRunningBarEffectiveState(bar: BarVm, nowMs: number): LagState {
-    if (isLagStateOverridden(bar)) {
-        return 'INACTIVE_HIGHLIGHTED';
-    }
-    return lagStateAt(bar, nowMs);
+    return resolveEffectiveLagState(bar, lagStateAt(bar, nowMs));
 }
 
 /**
@@ -381,8 +386,13 @@ function buildHalfPillPath(rect: BarRect): HalfPillPathElement {
  * Builds the Material Icons glyph centred inside the half-pill cap. The
  * horizontal nudge keeps the glyph optically centred on the arc rather
  * than on the rectangle seam.
+ *
+ * @param rect - The bar rectangle the pill cap anchors to.
+ * @param iconGlyph - Material Icons ligature for the level type.
+ * @param fill - Resolved foreground colour for the glyph.
+ * @returns The zrender text element for the pill glyph.
  */
-function buildPillIconText(rect: BarRect, iconGlyph: string): PillIconTextElement {
+function buildPillIconText(rect: BarRect, iconGlyph: string, fill: string): PillIconTextElement {
     const radius = rect.height / 2;
     const centerX = rect.x + radius - PILL_ICON_HORIZONTAL_NUDGE_PX;
     const centerY = rect.y + radius;
@@ -396,7 +406,7 @@ function buildPillIconText(rect: BarRect, iconGlyph: string): PillIconTextElemen
             y: centerY,
             fontSize,
             fontFamily: 'Material Icons',
-            fill: PILL_FOREGROUND_COLOR,
+            fill,
             align: 'center',
             verticalAlign: 'middle',
         },

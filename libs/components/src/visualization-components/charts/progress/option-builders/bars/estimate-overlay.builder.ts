@@ -3,6 +3,8 @@ import { LagState, LAG_STATES } from '../../types/lag-state.types';
 import { BarVm, LagTransition } from '../../types/bar.types';
 import { OptionFragment } from '../../types/option-fragment.types';
 import { AxisVm } from '../../types/view-model.types';
+import { AxisTimeScale } from '../axis-time-scale';
+import { resolveEffectiveLagState } from './bars.builder';
 import { createBarSeriesShell, computeBarRect, resolveBarHeightPx } from './bar-geometry';
 
 /**
@@ -24,28 +26,16 @@ const KEYFRAME_STEP_EPSILON = 1e-6;
 const ESTIMATE_OVERLAY_Z2 = 5;
 
 /**
- * Resolves the effective lag state for an estimate overlay, applying the
- * same highlight override rule as `resolveEffectiveLagState` in
- * `bars.builder.ts`.
+ * Resolves the effective lag state for an estimate overlay. Routes the
+ * estimate-specific base state — the bar's classified `lagState` while running,
+ * `INACTIVE` once complete — through {@link resolveEffectiveLagState}, so the
+ * highlight override is applied identically to the bar series.
  *
- * Rules (lag-state.md §EstimateState Variant + visuals.md §Highlight):
- *   - `isOtherHighlighted` bars: INACTIVE_HIGHLIGHTED regardless of run state.
- *     This mirrors `bars.builder.ts` exactly — an overriding highlight must
- *     hold for the bar's full on-screen lifetime.
- *   - Running bar, not overridden: use the bar's classified `lagState`.
- *   - Non-running bar, not overridden: INACTIVE_HIGHLIGHTED when another
- *     level is highlighted, INACTIVE otherwise.
+ * @param bar - The bar the estimate overlay belongs to.
+ * @returns The lag state token driving the stripe colour.
  */
 function resolveEstimateState(bar: BarVm): LagState {
-    if (bar.isOtherHighlighted) {
-        return 'INACTIVE_HIGHLIGHTED';
-    }
-    if (bar.isRunning) {
-        return bar.lagState;
-    }
-    // Non-running bar: always INACTIVE — `isOtherHighlighted` was already handled
-    // in the guard above, so this branch is only reached when that flag is false.
-    return 'INACTIVE';
+    return resolveEffectiveLagState(bar, bar.isRunning ? bar.lagState : 'INACTIVE');
 }
 
 /**
@@ -339,11 +329,13 @@ function buildStripeOpacityAnimation(
  *
  * @param bar  - The bar to overlay.
  * @param axis - Axis view-model slice anchoring the animation.
+ * @param timeScale - Active axis time scale mapping absolute ms to axis space.
  * @returns A custom series option or null when the estimate is absent.
  */
 function buildEstimateOverlaySeries(
     bar: BarVm,
     axis: AxisVm,
+    timeScale: AxisTimeScale,
 ): CustomSeriesOption | null {
     const { estimatedDurationMs } = bar;
 
@@ -373,13 +365,17 @@ function buildEstimateOverlaySeries(
 
         return {
             id: `estimate-${bar.key}`,
-            ...createBarSeriesShell(bar.startedAt, estimateEndMs, bar.rowIndex),
+            ...createBarSeriesShell(
+                timeScale.toAxisValue(bar.startedAt, bar.rowIndex),
+                timeScale.toAxisValue(estimateEndMs, bar.rowIndex),
+                bar.rowIndex,
+            ),
             silent: true,
             renderItem: (_params, api) => {
                 const rect = computeBarRect(
                     api,
-                    bar.startedAt,
-                    estimateEndMs,
+                    timeScale.toAxisValue(bar.startedAt, bar.rowIndex),
+                    timeScale.toAxisValue(estimateEndMs, bar.rowIndex),
                     bar.rowIndex,
                     height,
                 );
@@ -438,13 +434,17 @@ function buildEstimateOverlaySeries(
 
     return {
         id: `estimate-${bar.key}`,
-        ...createBarSeriesShell(bar.startedAt, estimateEndMs, bar.rowIndex),
+        ...createBarSeriesShell(
+            timeScale.toAxisValue(bar.startedAt, bar.rowIndex),
+            timeScale.toAxisValue(estimateEndMs, bar.rowIndex),
+            bar.rowIndex,
+        ),
         silent: true,
         renderItem: (_params, api) => {
             const rect = computeBarRect(
                 api,
-                bar.startedAt,
-                estimateEndMs,
+                timeScale.toAxisValue(bar.startedAt, bar.rowIndex),
+                timeScale.toAxisValue(estimateEndMs, bar.rowIndex),
                 bar.rowIndex,
                 height,
             );
@@ -487,24 +487,23 @@ function buildEstimateOverlaySeries(
  *
  * @param bars - Ordered list of bar view-model slices from the live VM.
  * @param axis - Axis view-model slice anchoring the animation.
+ * @param timeScale - Active axis time scale mapping absolute ms to axis space.
  * @returns Fragment whose `series` array contains one entry per bar with a
  *          valid estimate, ready to merge into the ECharts option payload.
  */
 export function buildEstimateOverlayFragment(
     bars: readonly BarVm[],
     axis: AxisVm,
+    timeScale: AxisTimeScale,
 ): OptionFragment {
     const series: CustomSeriesOption[] = [];
 
     for (const bar of bars) {
-        const overlaySeries = buildEstimateOverlaySeries(bar, axis);
+        const overlaySeries = buildEstimateOverlaySeries(bar, axis, timeScale);
         if (overlaySeries !== null) {
             series.push(overlaySeries);
         }
     }
 
-    return {
-        key: 'bars',
-        fragment: { series },
-    };
+    return { series };
 }

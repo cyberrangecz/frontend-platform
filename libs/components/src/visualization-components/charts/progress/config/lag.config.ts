@@ -1,3 +1,4 @@
+import { PALETTE } from '../../shared';
 import { LagState } from '../types/lag-state.types';
 
 /**
@@ -40,19 +41,35 @@ export const LONG_ESTIMATE_THRESHOLDS: LongEstimateThresholds = {
     abandonedPercentage: 200,
 };
 
+/** Fraction of the estimate granted as grace before a bar leaves OK. */
+export const GRACE_PERIOD_FRACTION = 0.05;
+
+/** Floor (ms) applied to the grace period so brief estimates still get an allowance. */
+export const GRACE_PERIOD_MINIMUM_MS = 2 * 60 * 1000;
+
 /**
- * Per-lag-state color palette. Mirrors the legacy palette; candidates
- * for moving to theme tokens (`@crczp/theme`) during the design pass.
+ * Single neutral, primary-toned fill for every finished level bar. Finished
+ * levels no longer convey lag through colour; lag-state colours are reserved
+ * for active levels, leaving running bars as the only vivid bars on screen.
  */
+export const FINISHED_LEVEL_FILL_COLOR = 'rgb(167,200,223)';
+
+/** Per-lag-state bar fill colour; semantic states bind the shared palette. */
 export const LAG_STATE_COLORS: Readonly<Record<LagState, string>> = {
-    COMPLETED: 'rgba(84,112,198,1)',
-    OK: 'rgba(76,175,80,1)',
-    WARNING: 'rgba(255,152,0,1)',
-    LATE: 'rgba(244,67,54,1)',
-    ABANDONED: 'rgb(92,68,68)',
+    COMPLETED: PALETTE.blue.color,
+    OK: PALETTE.green.color,
+    WARNING: PALETTE.orange.color,
+    LATE: PALETTE.red.color,
+    ABANDONED: PALETTE.darkGray.color,
     INACTIVE: 'rgb(167,200,223)',
-    INACTIVE_HIGHLIGHTED: 'rgb(106,106,106)',
+    INACTIVE_HIGHLIGHTED: PALETTE.gray.color,
 } as const;
+
+/** Value colour for time gained against the estimate (ahead of schedule). */
+export const ESTIMATE_GAIN_COLOR = PALETTE.green.color;
+
+/** Value colour for time lost against the estimate (behind schedule). */
+export const ESTIMATE_LOSS_COLOR = PALETTE.red.color;
 
 /**
  * Human-readable labels for the lag-state legend. Pulled from a single
