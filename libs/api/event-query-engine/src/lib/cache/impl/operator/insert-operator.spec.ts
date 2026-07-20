@@ -146,5 +146,15 @@ describe('insert — bulk insertion across the bind-variable chunk boundary', ()
         const rows = Array.from({ length: rowCount }, (_, index) =>
             makeLevelStartedRow({ instance_id: instanceId, timestamp: index + 1 }),
         );
+        rows[rows.length - 1] = makeLevelStartedRow({
+            instance_id: instanceId,
+            timestamp: highestTimestamp,
+        });
+
+        await insert(cache.db, rows);
+
+        expect(await countRows(cache.db, 'level_started', instanceId)).toBe(rowCount);
+        const watermarks = await getWatermarks(cache.db, instanceId, [LEVEL_STARTED_TYPE]);
+        expect(watermarks[0].maxTimestamp).toBe(highestTimestamp);
     });
 });

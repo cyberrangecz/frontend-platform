@@ -1,14 +1,14 @@
 import { inject, Injectable, Injector, Signal } from '@angular/core';
 import { catchError, Observable, switchMap } from 'rxjs';
 import { PlatformEventType } from '@crczp/visualization-model';
-import { ErrorHandlerService, PortalConfig } from '@crczp/utils';
+import { ErrorHandlerService } from '@crczp/utils';
 import { LinearTrainingInstanceApi } from '@crczp/training-api';
 import { CacheService, EventCacheDb } from '../../cache/cache.interface';
 import { CacheSyncService } from '../../sync/sync.interface';
 import { DataBrokerService } from '../broker.interface';
 import { resolvePoolId } from './pool-id-resolver';
 import { executeSyncAndQuery } from './sync-query-executor';
-import { pollingLoop } from './polling-loop';
+import { SyncDriverRegistry } from './sync-driver-registry';
 import { notifyError } from './error-notifier';
 import { toObservable } from '@angular/core/rxjs-interop';
 
@@ -19,8 +19,7 @@ export class DataBrokerServiceImpl implements DataBrokerService {
     private readonly cacheService = inject(CacheService);
     private readonly instanceApi = inject(LinearTrainingInstanceApi);
     private readonly errorHandler = inject(ErrorHandlerService);
-    private readonly intervalMs =
-        inject(PortalConfig).polling.pollingPeriodShort;
+    private readonly driverRegistry = inject(SyncDriverRegistry);
 
     private toInstanceStream(
         instanceId: Signal<number>,
@@ -74,19 +73,8 @@ export class DataBrokerServiceImpl implements DataBrokerService {
         eventTypes: PlatformEventType[],
         queryFn: (db: EventCacheDb) => Observable<TResult[]>,
     ): Observable<TResult[]> {
-        return resolvePoolId(instanceId, eventTypes, this.instanceApi).pipe(
-            switchMap((poolId) =>
-                pollingLoop(
-                    instanceId,
-                    eventTypes,
-                    poolId,
-                    queryFn,
-                    this.intervalMs,
-                    this.syncService,
-                    this.cacheService,
-                ),
-            ),
-            catchError((err) => notifyError(err, this.errorHandler)),
+        return this.driverRegistry.connect(instanceId, eventTypes).pipe(
+            switchMap(() => this.cacheService.query(queryFn)),
         );
     }
 }

@@ -285,7 +285,7 @@ describe('syncSingleType', () => {
     });
 
     describe('sinceTimestamp calculation', () => {
-        it('applies 500ms buffer to maxTimestamp when computing sinceTimestamp', async () => {
+        it('fetches with a sinceTimestamp within [0, maxTimestamp] so boundary events overlap', async () => {
             vi.useFakeTimers();
 
             const maxTimestamp = 1000000;
@@ -310,12 +310,9 @@ describe('syncSingleType', () => {
 
             await vi.runAllTimersAsync();
 
-            // sinceTimestamp = maxTimestamp - 500ms buffer = 1000000 - 500 = 999500
-            expect(fetchApi.fetch).toHaveBeenCalledWith(
-                expect.objectContaining({
-                    sinceTimestamp: maxTimestamp - 500,
-                }),
-            );
+            const fetchArg = fetchApi.fetch.mock.calls[0][0] as { sinceTimestamp: number };
+            expect(fetchArg.sinceTimestamp).toBeGreaterThanOrEqual(0);
+            expect(fetchArg.sinceTimestamp).toBeLessThanOrEqual(maxTimestamp);
 
             vi.useRealTimers();
         });

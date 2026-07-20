@@ -1,8 +1,7 @@
 import { PlatformEventType } from '@crczp/visualization-model';
 import { signal } from '@angular/core';
-import { catchError, delay, firstValueFrom, ignoreElements, Observable, of, switchMap, take } from 'rxjs';
+import { catchError, delay, firstValueFrom, ignoreElements, Observable, of, switchMap } from 'rxjs';
 import { notifyError } from './error-notifier';
-import { pollingLoop } from './polling-loop';
 import { resolvePoolId } from './pool-id-resolver';
 import { executeSyncAndQuery } from './sync-query-executor';
 import { CacheSyncService } from '../../sync/sync.interface';
@@ -11,15 +10,11 @@ import { ErrorHandlerService } from '@crczp/utils';
 import { LinearTrainingInstanceApi } from '@crczp/training-api';
 
 /**
- * Tests for DataBrokerServiceImpl behavior through its dependency functions.
+ * Tests for DataBrokerServiceImpl's one-shot query() path through its dependency functions.
  *
- * DataBrokerServiceImpl.query() and queryPolling() use:
- * - toInstanceStream() to convert instanceId signal to Observable
- * - switchMap to tear down previous sync when instanceId changes
- * - resolvePoolId, executeSyncAndQuery, pollingLoop, notifyError
- *
- * Since DataBrokerServiceImpl uses inject(), we test the underlying
- * functions and the switchMap semantics directly.
+ * query() uses toInstanceStream() → switchMap → resolvePoolId, executeSyncAndQuery, notifyError.
+ * Since DataBrokerServiceImpl uses inject(), the underlying functions and switchMap semantics are
+ * tested directly. The polling path's shared sync driver is covered in instance-sync-driver.spec.ts.
  */
 describe('DataBrokerServiceImpl', () => {
     describe('SwitchMap behavior with instanceId signal', () => {
@@ -47,7 +42,6 @@ describe('DataBrokerServiceImpl', () => {
             // Simulate the switchMap behavior: when instanceId changes,
             // previous subscription is cancelled
             const results: number[] = [];
-            let subscriptionCount = 0;
 
             // First subscription for instanceId=1
             const sub1 = resolvePoolId(instanceIdSignal(), eventTypes, instanceApi).pipe(
@@ -63,7 +57,6 @@ describe('DataBrokerServiceImpl', () => {
                 ),
             ).subscribe({
                 next: () => {
-                    subscriptionCount++;
                     results.push(instanceIdSignal());
                 },
             });
@@ -88,7 +81,7 @@ describe('DataBrokerServiceImpl', () => {
         });
 
         it('notifies error via ErrorHandlerService when sync errors', async () => {
-            const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+            const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
 
             const errorHandler = {
                 emitFrontendErrorNotification: vi.fn().mockReturnValue(of(true)),
@@ -158,105 +151,6 @@ describe('DataBrokerServiceImpl', () => {
             expect(errorMessage).toBe('sync failed');
 
             vi.useRealTimers();
-        });
-    });
-
-    describe('queryPolling behavior', () => {
-        it('uses pollingLoop with correct interval', async () => {
-            vi.useFakeTimers();
-
-            const syncService = {
-                sync: vi.fn().mockReturnValue(of({ eventType: PlatformEventType.COMMAND, instanceId: 1 }).pipe(ignoreElements())),
-            };
-            const cacheService = {
-                query: vi.fn().mockReturnValue(of([])),
-                insert: vi.fn(),
-                getWatermarks: vi.fn(),
-            };
-
-            const intervalMs = 500;
-            const eventTypes = [PlatformEventType.COMMAND];
-            const poolId = 42;
-            const queryFn = () => of([]);
-
-            const results: unknown[][] = [];
-
-            pollingLoop(
-                1,
-                eventTypes,
-                poolId,
-                queryFn,
-                intervalMs,
-                syncService as unknown as CacheSyncService,
-                cacheService as unknown as CacheService,
-            ).pipe(take(1)).subscribe((r) => results.push(r));
-
-            // First tick fires immediately
-            await vi.runAllTimersAsync();
-
-            expect(results.length).toBe(1);
-
-            vi.useRealTimers();
-        });
-
-        it('tears down polling when instanceId changes (switchMap cancellation)', async () => {
-            vi.useFakeTimers();
-
-            const syncService = {
-                sync: vi.fn().mockReturnValue(of({ eventType: PlatformEventType.COMMAND, instanceId: 1 }).pipe(ignoreElements())),
-            };
-            const cacheService = {
-                query: vi.fn().mockReturnValue(of([])),
-                insert: vi.fn(),
-                getWatermarks: vi.fn(),
-            };
-
-            const intervalMs = 100;
-            const eventTypes = [PlatformEventType.COMMAND];
-            const poolId = 42;
-            const queryFn = () => of([]);
-
-            let subscriptionActive = true;
-            const syncCalls: number[] = [];
-
-            syncService.sync.mockImplementation(() => {
-                if (subscriptionActive) {
-                    syncCalls.push(Date.now());
-                }
-                return of({ eventType: PlatformEventType.COMMAND, instanceId: 1 }).pipe(ignoreElements());
-            });
-
-            const results: unknown[][] = [];
-
-            const pollLoop = pollingLoop(
-                1,
-                eventTypes,
-                poolId,
-                queryFn,
-                intervalMs,
-                syncService as unknown as CacheSyncService,
-                cacheService as unknown as CacheService,
-            ).subscribe((r) => results.push(r));
-
-            // Only advance a bit, don't runAllTimers on an infinite observable
-            vi.advanceTimersByTime(intervalMs * 2);
-            const firstCycleCount = syncCalls.length;
-
-            // Simulate switchMap cancellation by unsubscribing
-            // (which is what happens when instanceId changes)
-            pollLoop.unsubscribe();
-            subscriptionActive = false;
-
-            vi.advanceTimersByTime(intervalMs * 5);
-            await vi.runAllTimersAsync();
-
-            // After unsubscribe, no more sync calls should be made
-            const syncCallsAfterUnsubscribe = syncCalls.length;
-
-            vi.useRealTimers();
-
-            // The key assertion is that the subscription was properly managed
-            expect(firstCycleCount).toBeGreaterThan(0);
         });
     });
 

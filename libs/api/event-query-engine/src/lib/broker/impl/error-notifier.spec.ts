@@ -1,5 +1,5 @@
-import { catchError, firstValueFrom, of } from 'rxjs';
-import { notifyError } from './error-notifier';
+import { catchError, firstValueFrom, lastValueFrom, of, toArray } from 'rxjs';
+import { notifyError, notifyOutage } from './error-notifier';
 import { ErrorHandlerService } from '@crczp/utils';
 
 describe('notifyError', () => {
@@ -11,7 +11,7 @@ describe('notifyError', () => {
     beforeEach(() => {
         consoleErrorSpy = vi
             .spyOn(console, 'error')
-            .mockImplementation(() => {});
+            .mockImplementation(() => undefined);
         errorHandler = {
             emitFrontendErrorNotification: vi.fn(() => of(true)),
         };
@@ -132,5 +132,77 @@ describe('notifyError', () => {
 
             expect(caughtError).toBe('string error');
         });
+    });
+});
+
+describe('notifyOutage', () => {
+    let consoleErrorSpy: ReturnType<typeof vi.spyOn>;
+    let errorHandler: {
+        emitFrontendErrorNotification: ReturnType<typeof vi.fn>;
+    };
+
+    beforeEach(() => {
+        consoleErrorSpy = vi
+            .spyOn(console, 'error')
+            .mockImplementation(() => undefined);
+        errorHandler = {
+            emitFrontendErrorNotification: vi.fn(() => of(true)),
+        };
+    });
+
+    afterEach(() => {
+        consoleErrorSpy.mockRestore();
+    });
+
+    it('logs the error', async () => {
+        const error = new Error('outage');
+
+        await lastValueFrom(
+            notifyOutage(
+                error,
+                errorHandler as unknown as ErrorHandlerService,
+            ).pipe(toArray()),
+        );
+
+        expect(consoleErrorSpy).toHaveBeenCalledWith(error);
+    });
+
+    it('notifies the error handler once with the error message', async () => {
+        const error = new Error('outage');
+
+        await lastValueFrom(
+            notifyOutage(
+                error,
+                errorHandler as unknown as ErrorHandlerService,
+            ).pipe(toArray()),
+        );
+
+        expect(errorHandler.emitFrontendErrorNotification).toHaveBeenCalledTimes(1);
+        expect(errorHandler.emitFrontendErrorNotification).toHaveBeenCalledWith('outage');
+    });
+
+    it('completes without emitting any value and does not rethrow', async () => {
+        const error = new Error('outage');
+
+        const emitted = await lastValueFrom(
+            notifyOutage(
+                error,
+                errorHandler as unknown as ErrorHandlerService,
+            ).pipe(toArray()),
+        );
+
+        expect(emitted).toEqual([]);
+    });
+
+    it('stringifies non-Error values for the notification', async () => {
+        await lastValueFrom(
+            notifyOutage(
+                'string outage',
+                errorHandler as unknown as ErrorHandlerService,
+            ).pipe(toArray()),
+        );
+
+        expect(consoleErrorSpy).toHaveBeenCalledWith('string outage');
+        expect(errorHandler.emitFrontendErrorNotification).toHaveBeenCalledWith('string outage');
     });
 });

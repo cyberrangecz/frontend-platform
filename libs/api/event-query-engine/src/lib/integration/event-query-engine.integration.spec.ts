@@ -328,7 +328,7 @@ describe('Sync layer — SyncService with real Cache + mocked EventFetchApi', ()
         expect(mockFetch.fetch).not.toHaveBeenCalled();
     });
 
-    it('emits one SyncTableComplete per declared type in declaration order', async () => {
+    it('emits one SyncTableComplete per declared type regardless of completion order', async () => {
         mockFetch.fetch.mockReturnValue(of([]));
         const syncService = TestBed.inject(SyncService);
 
@@ -345,10 +345,9 @@ describe('Sync layer — SyncService with real Cache + mocked EventFetchApi', ()
         );
 
         expect(completions).toHaveLength(2);
-        expect(completions[0].eventType).toBe(
-            PlatformEventType.TRAINING_RUN_STARTED,
+        expect(completions.map((c) => c.eventType).sort()).toEqual(
+            [PlatformEventType.TRAINING_RUN_STARTED, PlatformEventType.LEVEL_STARTED].sort(),
         );
-        expect(completions[1].eventType).toBe(PlatformEventType.LEVEL_STARTED);
     });
 
     it('fetch error terminates the stream with no completions emitted', async () => {

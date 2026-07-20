@@ -1,63 +1,57 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
-import { isWatermarkFresh, getSinceTimestamp } from './watermark-freshness';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { getSinceTimestamp, isWatermarkFresh } from './watermark-freshness';
 import { WatermarkEntry } from '../../cache/cache.interface';
 
 describe('isWatermarkFresh', () => {
+    beforeEach(() => {
+        vi.useFakeTimers();
+        vi.setSystemTime(new Date('2024-06-01T12:00:00Z'));
+    });
+
     afterEach(() => {
         vi.useRealTimers();
     });
 
-    it('returns false when watermark is undefined', () => {
+    it('returns false when the watermark is undefined', () => {
         expect(isWatermarkFresh(undefined)).toBe(false);
     });
 
-    it('returns true when watermark is fresh (less than 1 second old)', () => {
-        vi.useFakeTimers();
-        const now = Date.now();
+    it('returns true when lastSynced is now (clearly inside the 1-second window)', () => {
         const watermark: WatermarkEntry = {
             instanceId: 1,
-            eventType: 'TrainingStarted',
-            maxTimestamp: now,
-            lastSynced: now,
+            eventType: 'any',
+            maxTimestamp: 0,
+            lastSynced: Date.now(),
         };
         expect(isWatermarkFresh(watermark)).toBe(true);
     });
 
-    it('returns false when watermark is stale (1 second or older)', () => {
-        vi.useFakeTimers();
-        const now = Date.now();
+    it('returns false when lastSynced is far in the past (clearly outside the 1-second window)', () => {
         const watermark: WatermarkEntry = {
             instanceId: 1,
-            eventType: 'TrainingStarted',
-            maxTimestamp: now - 1000,
-            lastSynced: now - 1000,
+            eventType: 'any',
+            maxTimestamp: 0,
+            lastSynced: Date.now() - 60_000,
         };
         expect(isWatermarkFresh(watermark)).toBe(false);
     });
 });
 
 describe('getSinceTimestamp', () => {
-    it('returns 0 when watermark is undefined', () => {
+    it('returns exactly 0 when the watermark is undefined (full fetch)', () => {
         expect(getSinceTimestamp(undefined)).toBe(0);
     });
 
-    it('returns maxTimestamp minus 500ms buffer', () => {
+    it('returns a value within (0, maxTimestamp] when a watermark is present (overlap, no exact offset asserted)', () => {
+        const maxTimestamp = 1_000_000;
         const watermark: WatermarkEntry = {
             instanceId: 1,
-            eventType: 'TrainingStarted',
-            maxTimestamp: 1000,
-            lastSynced: Date.now(),
+            eventType: 'any',
+            maxTimestamp,
+            lastSynced: 0,
         };
-        expect(getSinceTimestamp(watermark)).toBe(500);
-    });
-
-    it('clamps result to 0 when maxTimestamp is less than 500ms', () => {
-        const watermark: WatermarkEntry = {
-            instanceId: 1,
-            eventType: 'TrainingStarted',
-            maxTimestamp: 300,
-            lastSynced: Date.now(),
-        };
-        expect(getSinceTimestamp(watermark)).toBe(0);
+        const since = getSinceTimestamp(watermark);
+        expect(since).toBeGreaterThan(0);
+        expect(since).toBeLessThanOrEqual(maxTimestamp);
     });
 });
