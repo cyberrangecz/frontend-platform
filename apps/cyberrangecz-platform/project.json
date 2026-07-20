@@ -30,13 +30,8 @@
                         "output": "/assets/"
                     },
                     {
-                        "glob": "pglite.wasm",
-                        "input": "node_modules/@electric-sql/pglite/dist",
-                        "output": "/"
-                    },
-                    {
-                        "glob": "initdb.wasm",
-                        "input": "node_modules/@electric-sql/pglite/dist",
+                        "glob": "sqlite3.wasm",
+                        "input": "node_modules/@sqlite.org/sqlite-wasm/dist",
                         "output": "/"
                     }
                 ],

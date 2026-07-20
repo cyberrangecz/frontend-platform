@@ -61,11 +61,16 @@ import { APP_ROUTES } from './app/app-routes';
 import { provideSentinelMarkdownEditorConfig } from '@sentinel/components/markdown-editor';
 import { firstValueFrom } from 'rxjs';
 import {
+    CACHE_CLAIM,
     CacheService,
-    createPgliteEventDb,
+    createSqliteEventDb,
     provideEntityResolverService,
     provideEventBroker,
+    requestSingleTabClaim,
+    withSingleTabGuard,
 } from '@crczp/event-query-engine';
+
+const cacheClaim = requestSingleTabClaim('event-cache-platform-v1');
 
 @Injectable()
 export class SentinelUagAuthorizationStrategy extends SentinelAuthorizationStrategy {
@@ -152,14 +157,21 @@ SentinelBootstrapper.bootstrapApplication('assets/config.json', AppComponent, {
             markdownParser: {},
         }),
         provideHttpCache(withLocalStorage()),
-        provideRouter(APP_ROUTES),
+        provideRouter(withSingleTabGuard(APP_ROUTES)),
         provideEventBroker(
-            createPgliteEventDb(new URL('./cache.worker.ts', import.meta.url)),
+            createSqliteEventDb(
+                () => new Worker(new URL('./cache.worker.ts', import.meta.url), { type: 'module' }),
+                { until: cacheClaim.granted },
+            ),
         ),
+        { provide: CACHE_CLAIM, useValue: cacheClaim },
         provideEntityResolverService(),
         provideAppInitializer(() => {
             const cache = inject(CacheService);
-            return firstValueFrom(cache.evictStaleInstances());
+            const claim = inject(CACHE_CLAIM);
+            return claim.blocked.then((blocked) =>
+                blocked ? undefined : firstValueFrom(cache.evictStaleInstances()),
+            );
         }),
     ],
 }).catch((err) => console.error('Error bootstrapping application:', err));

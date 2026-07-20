@@ -2,4 +2,4 @@
 
 import { initSqliteCacheWorker } from '@crczp/event-query-engine';
 
-initSqliteCacheWorker();
+initSqliteCacheWorker({ vfsName: 'event-cache-platform-v1' });
