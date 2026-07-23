@@ -116,7 +116,7 @@ export class FeedbackOverviewComponent {
             stats: [
                 { label: 'Score', value: String(score), color: null },
                 { label: 'Percentile', value: String(this.percentile(score, rows)), color: null },
-                { label: 'Levels solved', value: `${levelsSolved}/${levelsTotal}`, color: null },
+                { label: 'Levels solved', value: levelsTotal > 0 ? `${levelsSolved}/${levelsTotal}` : String(levelsSolved), color: null },
                 { label: 'Elapsed', value: this.elapsedText(run), color: null },
                 { label: 'Wrong', value: String(wrong), color: PALETTE.red.color },
                 { label: 'Hints', value: String(hints), color: HINT_COLOR },
