@@ -78,4 +78,18 @@ export class AnswerSurfaceComponent {
                 return null;
         }
     });
+
+    /**
+     * Emits the answer intent when the surface is activated by keyboard, mirroring native
+     * button behaviour for Enter and Space. Ignores key events bubbling from focusable
+     * descendants such as the avatar faces, which carry their own activation.
+     *
+     * @param event The keyboard event raised on the surface.
+     */
+    protected onActivateKey(event: KeyboardEvent): void {
+        if (event.target !== event.currentTarget) return;
+        if (event.key !== 'Enter' && event.key !== ' ') return;
+        event.preventDefault();
+        this.answerClick.emit();
+    }
 }

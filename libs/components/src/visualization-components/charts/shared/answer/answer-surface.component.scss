@@ -11,6 +11,12 @@
     align-items: center;
     gap: var(--space-md);
     border-radius: 0.5rem;
+    cursor: pointer;
+
+    &:focus-visible {
+        outline: 2px solid var(--primary-40);
+        outline-offset: -2px;
+    }
 
     &--focused-trainee {
         --highlight-color: var(--highlight-trainee);
@@ -23,27 +29,7 @@
         align-items: center;
         gap: var(--space-md);
         min-width: 0;
-        margin: 0;
         padding: var(--space-xs) var(--space-md);
-        border: none;
-        border-radius: inherit;
-        background: transparent;
-        color: inherit;
-        font: inherit;
-        text-align: left;
-        cursor: pointer;
-
-        &:focus-visible {
-            outline: 2px solid var(--primary-40);
-            outline-offset: -2px;
-        }
-
-        &::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            border-radius: inherit;
-        }
     }
 
     &--marker {

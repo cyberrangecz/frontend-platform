@@ -1,15 +1,19 @@
 <div
     class="surface"
+    role="button"
+    tabindex="0"
     [class.surface--cell]="layout() === 'cell'"
     [class.surface--focused-trainee]="focusedTraineeChose()"
     [style.--highlight-trainee]="traineeHighlightColor"
     [style.background-color]="tintBackground()"
+    (click)="answerClick.emit()"
+    (keydown)="onActivateKey($event)"
 >
-    <button type="button" class="surface--intent" (click)="answerClick.emit()">
+    <div class="surface--intent">
         <mat-icon class="surface--marker" aria-hidden="true">{{ markerIcon() }}</mat-icon>
 
         <span class="surface--label" crczpOverflowTooltip><ng-content /></span>
-    </button>
+    </div>
 
     <crczp-avatar-stack
         class="surface--faces"
