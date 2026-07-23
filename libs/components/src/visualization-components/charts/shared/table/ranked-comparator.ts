@@ -1,4 +1,4 @@
-import { SortDir } from '@crczp/utils';
+import { SortDir, Utils } from '@crczp/utils';
 
 /** Two-argument ordering function suitable for `Array.prototype.sort`. */
 export type Comparator<TRow> = (rowA: TRow, rowB: TRow) => number;
@@ -30,14 +30,15 @@ export function byNumber<TRow>(select: (row: TRow) => number): Comparator<TRow> 
 }
 
 /**
- * Builds a comparator ordering rows by the selected text, case- and accent-insensitively.
+ * Builds a comparator ordering rows by the selected text under shared locale-aware collation
+ * (case- and accent-insensitive, numeric-aware).
  *
  * @template TRow The row type being compared.
  * @param select Extracts the text to order by.
  * @returns The locale-aware comparator.
  */
 export function byText<TRow>(select: (row: TRow) => string): Comparator<TRow> {
-    return (rowA, rowB) => select(rowA).localeCompare(select(rowB), undefined, { sensitivity: 'base' });
+    return Utils.String.comparator(select);
 }
 
 /**

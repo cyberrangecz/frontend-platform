@@ -1,3 +1,4 @@
+import { Utils } from '@crczp/utils';
 import { BarWithLag } from '../types/bar.types';
 import { asTraineeId, TraineeId } from '../types/ids.types';
 import { SortCriterion, SortDirection } from '../types/ui-state.types';
@@ -15,14 +16,10 @@ function applyDirection(delta: number, direction: SortDirection): number {
 }
 
 /**
- * Alphabetical comparator by trainee display name (locale-aware, case-insensitive).
- * Used as the stage-1 base and as the comparator for TRAINEE_NAME criterion.
- * Direction is applied by the caller for TRAINEE_NAME; stage-1 is always ASC.
+ * Orders bars by trainee display name under shared locale-aware collation.
  */
 function compareByName(a: BarWithLag, b: BarWithLag): number {
-    return a.user.name.localeCompare(b.user.name, undefined, {
-        sensitivity: 'base',
-    });
+    return Utils.String.compare(a.user.name, b.user.name);
 }
 
 /**

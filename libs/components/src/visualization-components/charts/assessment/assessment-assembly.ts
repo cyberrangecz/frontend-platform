@@ -139,7 +139,7 @@ function buildRoster(
     });
 
     return roster.sort(
-        (first, second) => first.name.localeCompare(second.name) || first.runId - second.runId,
+        (first, second) => Utils.String.compare(first.name, second.name) || first.runId - second.runId,
     );
 }
 
