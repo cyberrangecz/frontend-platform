@@ -121,6 +121,25 @@ export function parseDurationToMs(value: string): number {
 }
 
 /**
+ * Builds a byte-size predicate that holds when a value is at least a minimum size, for composing
+ * after {@link isNumberWithByteSizeUnit} in a validation chain. A value equal to the minimum
+ * passes; a value below it fails. Inputs that are not well-formed byte sizes pass unchallenged,
+ * leaving {@link isNumberWithByteSizeUnit} the sole reporter of format errors.
+ *
+ * @param minimumByteSize Inclusive lower bound as a byte-size string such as `'30MB'`; every value
+ * at or above the bound satisfies the predicate.
+ * @returns A predicate reporting whether a byte-size string meets the minimum.
+ */
+export function isByteSizeAtLeast(
+    minimumByteSize: string,
+): (value: string) => boolean {
+    const minimumBytes = parseByteSizeToBytes(minimumByteSize);
+    return (value: string): boolean =>
+        !isNumberWithByteSizeUnit(value) ||
+        parseByteSizeToBytes(value) >= minimumBytes;
+}
+
+/**
  * Converts a validated byte-size string into a number of bytes using binary (1024-based)
  * multipliers. Call {@link isNumberWithByteSizeUnit} first; an unvalidated malformed input is a
  * programming error.

@@ -4,6 +4,7 @@ import { sentinelAuthConfigSchema } from './sentinel-auth-config.zod';
 import {
     BYTE_SIZE_UNITS_LEGEND,
     DURATION_UNITS_LEGEND,
+    isByteSizeAtLeast,
     isDurationAtLeast,
     isNumberWithByteSizeUnit,
     isNumberWithDurationUnit,
@@ -13,6 +14,7 @@ import {
 
 const POLLING_MINIMUM_DURATION = '300ms';
 const CACHE_MINIMUM_DURATION = '3s';
+const CACHE_MINIMUM_SIZE = '30MB';
 
 function removeTrailingSlash(str: string | undefined): string {
     return !str ? '' : str.endsWith('/') ? str.slice(0, -1) : str;
@@ -112,6 +114,9 @@ export class PortalConfig extends Z.class({
                 .string()
                 .refine(isNumberWithByteSizeUnit, {
                     message: `Event cache max size must be a byte size. ${BYTE_SIZE_UNITS_LEGEND}`,
+                })
+                .refine(isByteSizeAtLeast(CACHE_MINIMUM_SIZE), {
+                    message: `Event cache max size must be at least ${CACHE_MINIMUM_SIZE}.`,
                 })
                 .optional()
                 .default('500MB')
