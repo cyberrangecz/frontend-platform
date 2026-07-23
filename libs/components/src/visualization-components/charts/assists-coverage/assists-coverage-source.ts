@@ -46,8 +46,6 @@ export type AssistsCoverageVm = readonly AssistCoverageLevel[];
 
 /** One level_completed row projected to the trainee and level it completed. */
 interface CompletionRow {
-    /** Training run that completed the level. */
-    readonly training_run_id: number;
     /** Zero-based position of the completed level. */
     readonly level_order: number;
     /** Trainee who owns the run. */
@@ -186,7 +184,6 @@ function buildAssistsEventQuery(db: EventCacheDb, instanceIdValue: number): Obse
     const completionRows$ = from(
         db
             .select({
-                training_run_id: levelCompletedTable.training_run_id,
                 level_order: levelCompletedTable.level_order,
                 user_ref_id: levelCompletedTable.user_ref_id,
             })
