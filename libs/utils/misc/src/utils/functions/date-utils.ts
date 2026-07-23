@@ -10,7 +10,7 @@ import { intervalToDuration } from 'date-fns';
  */
 function timeBetweenDatesSimple(startTime: Date, endTime: Date): string {
     const seconds = Math.floor(
-        (endTime.getTime() - startTime.getTime()) / 1000
+        (endTime.getTime() - startTime.getTime()) / 1000,
     );
     return formatDurationSimple(seconds);
 }
@@ -25,7 +25,7 @@ function timeBetweenDatesSimple(startTime: Date, endTime: Date): string {
  */
 function timeBetweenDatesFull(startTime: Date, endTime: Date): string {
     const seconds = Math.floor(
-        (endTime.getTime() - startTime.getTime()) / 1000
+        (endTime.getTime() - startTime.getTime()) / 1000,
     );
     return formatDurationFull(seconds);
 }
@@ -38,10 +38,17 @@ function formatDurationSimple(durationSec: number): string {
     if (durationSec < 0) {
         return 'N/A';
     }
-    const { months = 0, days = 0, hours = 0, minutes = 0, seconds = 0 } =
-        intervalToDuration({ start: 0, end: durationSec * 1000 });
-    if (months > 0) {
-        return addPluralIfNeeded(months, 'month');
+    const {
+        years = 0,
+        months = 0,
+        days = 0,
+        hours = 0,
+        minutes = 0,
+        seconds = 0,
+    } = intervalToDuration({ start: 0, end: durationSec * 1000 });
+    const totalMonths = years * 12 + months;
+    if (totalMonths > 0) {
+        return addPluralIfNeeded(totalMonths, 'month');
     }
     if (days > 0) {
         return addPluralIfNeeded(days, 'day');
@@ -69,15 +76,21 @@ function formatDurationFull(durationSec: number): string {
     if (durationSec < 0) {
         return 'N/A';
     }
-    const { months = 0, days = 0, hours = 0, minutes = 0, seconds = 0 } =
-        intervalToDuration({ start: 0, end: durationSec * 1000 });
-    const monthsPart = months > 0 ? months + ' m ' : '';
+    const {
+        years = 0,
+        months = 0,
+        days = 0,
+        hours = 0,
+        minutes = 0,
+        seconds = 0,
+    } = intervalToDuration({ start: 0, end: durationSec * 1000 });
+    const totalMonths = years * 12 + months;
+    const monthsPart = totalMonths > 0 ? totalMonths + ' m ' : '';
     const daysPart = days > 0 ? days + ' d ' : '';
     const hoursPart = hours > 0 ? hours + ' h ' : '';
     const minutesPart = minutes > 0 ? minutes + ' min' : '';
     const secondsPart = seconds > 0 ? seconds + ' s' : '';
-    const total =
-        monthsPart + daysPart + hoursPart + minutesPart + secondsPart;
+    const total = monthsPart + daysPart + hoursPart + minutesPart + secondsPart;
     return total.length === 0 ? '0 s' : total.trim();
 }
 
