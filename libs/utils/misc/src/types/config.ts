@@ -4,11 +4,15 @@ import { sentinelAuthConfigSchema } from './sentinel-auth-config.zod';
 import {
     BYTE_SIZE_UNITS_LEGEND,
     DURATION_UNITS_LEGEND,
+    isDurationAtLeast,
     isNumberWithByteSizeUnit,
     isNumberWithDurationUnit,
     parseByteSizeToBytes,
     parseDurationToMs,
 } from './unit-values';
+
+const POLLING_MINIMUM_DURATION = '300ms';
+const CACHE_MINIMUM_DURATION = '3s';
 
 function removeTrailingSlash(str: string | undefined): string {
     return !str ? '' : str.endsWith('/') ? str.slice(0, -1) : str;
@@ -20,13 +24,21 @@ function removeTrailingSlash(str: string | undefined): string {
  *
  * @param requiredError Message emitted when the field is absent.
  * @param label Field name used to prefix the malformed-value message.
+ * @param minimumDuration Inclusive lower bound as a duration string; values below it are rejected.
  * @returns A schema validating a duration string and transforming it to milliseconds.
  */
-function durationMs(requiredError: string, label: string) {
+function durationMs(
+    requiredError: string,
+    label: string,
+    minimumDuration: string,
+) {
     return z
         .string({ required_error: requiredError })
         .refine(isNumberWithDurationUnit, {
             message: `${label} must be a duration. ${DURATION_UNITS_LEGEND}`,
+        })
+        .refine(isDurationAtLeast(minimumDuration), {
+            message: `${label} must be at least ${minimumDuration}.`,
         })
         .transform(parseDurationToMs);
 }
@@ -58,11 +70,13 @@ export class PortalConfig extends Z.class({
             pollingPeriodShort: durationMs(
                 'Short polling period field is required',
                 'Short polling period',
+                POLLING_MINIMUM_DURATION,
             ).describe('Short polling interval, in milliseconds'),
 
             pollingPeriodLong: durationMs(
                 'Long polling period field is required',
                 'Long polling period',
+                POLLING_MINIMUM_DURATION,
             ).describe('Long polling interval, in milliseconds'),
 
             retryCount: z
@@ -83,12 +97,14 @@ export class PortalConfig extends Z.class({
             eventCacheTtl: durationMs(
                 'Event cache TTL field is required',
                 'Event cache TTL',
+                CACHE_MINIMUM_DURATION,
             ).describe(
                 'TTL for cached event data in milliseconds, used for event query engine cache eviction',
             ),
             entityCacheTtl: durationMs(
                 'Entity cache TTL field is required',
                 'Entity cache TTL',
+                CACHE_MINIMUM_DURATION,
             ).describe(
                 'TTL in milliseconds for cached entities related to events, such as users and training definitions',
             ),

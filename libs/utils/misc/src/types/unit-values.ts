@@ -1,4 +1,5 @@
 const MILLISECONDS_PER_UNIT = {
+    ms: 1,
     s: 1_000,
     m: 60 * 1_000,
     h: 60 * 60 * 1_000,
@@ -12,7 +13,7 @@ const BYTES_PER_UNIT = {
     gb: 1_024 ** 3,
 } as const;
 
-const DURATION_PATTERN = /^(\d+)(s|m|h|d)$/;
+const DURATION_PATTERN = /^(\d+)(ms|s|m|h|d)$/;
 const BYTE_SIZE_PATTERN = /^(\d+)\s*(b|kb|mb|gb)$/i;
 
 /**
@@ -20,7 +21,7 @@ const BYTE_SIZE_PATTERN = /^(\d+)\s*(b|kb|mb|gb)$/i;
  * appending to a validation message.
  */
 export const DURATION_UNITS_LEGEND =
-    'Units: s (seconds), m (minutes), h (hours), d (days), or "forever".';
+    'Units: ms (milliseconds), s (seconds), m (minutes), h (hours), d (days), or "forever".';
 
 /**
  * Human-readable legend of the byte-size units accepted by {@link parseByteSizeToBytes}, suitable
@@ -32,12 +33,19 @@ export const BYTE_SIZE_UNITS_LEGEND = 'Units: B, KB, MB, GB (binary, 1024-based)
  * A cache time-to-live expressed as a magnitude with a unit suffix, or the sentinel `'forever'`.
  *
  * Supported units:
+ * - `ms` — milliseconds
  * - `s` — seconds
  * - `m` — minutes (never months; no month or year unit exists here)
  * - `h` — hours
  * - `d` — days
  */
-export type CacheTTL = `${number}s` | `${number}m` | `${number}h` | `${number}d` | 'forever';
+export type CacheTTL =
+    | `${number}ms`
+    | `${number}s`
+    | `${number}m`
+    | `${number}h`
+    | `${number}d`
+    | 'forever';
 
 /**
  * Removes underscore digit separators so grouped numbers such as `500_000` read as one value.
@@ -73,10 +81,29 @@ export function isNumberWithByteSizeUnit(value: string): boolean {
 }
 
 /**
+ * Builds a duration predicate that holds when a value is at least a minimum duration, for
+ * composing after {@link isNumberWithDurationUnit} in a validation chain. A value equal to the
+ * minimum passes; a value below it fails. Inputs that are not well-formed durations pass
+ * unchallenged, leaving {@link isNumberWithDurationUnit} the sole reporter of format errors.
+ *
+ * @param minimumDuration Inclusive lower bound as a duration string such as `'1s'`; `'forever'`
+ * and every value at or above the bound satisfy the predicate.
+ * @returns A predicate reporting whether a duration string meets the minimum.
+ */
+export function isDurationAtLeast(
+    minimumDuration: string,
+): (value: string) => boolean {
+    const minimumMs = parseDurationToMs(minimumDuration);
+    return (value: string): boolean =>
+        !isNumberWithDurationUnit(value) ||
+        parseDurationToMs(value) >= minimumMs;
+}
+
+/**
  * Converts a validated duration string into milliseconds. Call {@link isNumberWithDurationUnit}
  * first; an unvalidated malformed input is a programming error.
  *
- * @param value Duration string such as `'30s'`, `'8h'`, `'7d'`, `'1_000m'`, or `'forever'`.
+ * @param value Duration string such as `'300ms'`, `'30s'`, `'8h'`, `'1_000m'`, or `'forever'`.
  * @returns The duration in milliseconds; `Number.MAX_SAFE_INTEGER` for `'forever'`.
  * @throws {Error} When the string is not a well-formed duration.
  */
