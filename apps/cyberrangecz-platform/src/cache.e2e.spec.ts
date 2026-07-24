@@ -1,32 +1,31 @@
 // @vitest-environment node
 import { TestBed } from '@angular/core/testing';
 import { firstValueFrom } from 'rxjs';
-import { PGlite } from '@electric-sql/pglite';
-import type { PgliteDatabase } from 'drizzle-orm/pglite';
-import { drizzle } from 'drizzle-orm/pglite';
 import { PlatformEventType } from '@crczp/visualization-model';
 import {
     CacheService,
+    EventCacheDb,
+    makeCacheDb,
     provideEventBroker,
     RawEventRow,
+    TestCacheDb,
 } from '@crczp/event-query-engine';
 import { applyNodeTestEnvironment, provideTestPortalConfig } from '@crczp/test-utils';
 
 applyNodeTestEnvironment();
 
-const activePgs: PGlite[] = [];
+const openCaches: TestCacheDb[] = [];
 
-async function createDbPromise(): Promise<PgliteDatabase> {
-    const pg = new PGlite();
-    activePgs.push(pg);
-    await pg.waitReady;
-    return drizzle(pg as any) as unknown as PgliteDatabase;
+async function createDbPromise(): Promise<EventCacheDb> {
+    const cache = await makeCacheDb();
+    openCaches.push(cache);
+    return cache.db;
 }
 
-afterEach(async () => {
+afterEach(() => {
     TestBed.resetTestingModule();
-    while (activePgs.length) {
-        await activePgs.pop()!.close().catch(() => {});
+    while (openCaches.length) {
+        openCaches.pop()!.close();
     }
 });
 

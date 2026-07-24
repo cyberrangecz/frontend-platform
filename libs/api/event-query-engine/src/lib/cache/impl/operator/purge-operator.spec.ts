@@ -1,51 +1,56 @@
-import { PgliteDatabase } from 'drizzle-orm/pglite';
+// @vitest-environment node
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { makeCacheDb, type TestCacheDb } from '../../../integration/sqlite-test-db';
+import {
+    countRows,
+    countWatermarks,
+    makeCommandRow,
+    makeLevelStartedRow,
+} from '../../../integration/cache-test-fixtures';
+import { insert } from './insert-operator';
 import { purge } from './purge-operator';
-import { eventTables, watermarkTable } from '../schema/schema';
 
-describe('purge operator', () => {
-    let mockDb: PgliteDatabase;
-    let mockTx: any;
+let cache: TestCacheDb;
 
-    beforeEach(() => {
-        mockTx = {
-            delete: vi.fn().mockReturnThis(),
-            where: vi.fn().mockResolvedValue([]),
-        };
+beforeEach(async () => {
+    cache = await makeCacheDb();
+});
 
-        mockDb = {
-            transaction: vi.fn((cb: (tx: PgliteDatabase) => Promise<void>) => cb(mockTx as PgliteDatabase)),
-        } as unknown as PgliteDatabase;
+afterEach(() => {
+    cache.close();
+});
+
+describe('purge — scoped deletion', () => {
+    it('deletes all event rows and watermark entries for the target instance', async () => {
+        const target = 1;
+        await insert(cache.db, [
+            makeLevelStartedRow({ instance_id: target }),
+            makeCommandRow({ instance_id: target }),
+        ]);
+
+        await purge(cache.db, target);
+
+        expect(await countRows(cache.db, 'level_started', target)).toBe(0);
+        expect(await countRows(cache.db, 'command', target)).toBe(0);
+        expect(await countWatermarks(cache.db, target)).toBe(0);
     });
 
-    it('deletes from watermarkTable within transaction', async () => {
-        await purge(mockDb, 1);
+    it('leaves a different instance untouched', async () => {
+        const target = 1;
+        const other = 2;
+        await insert(cache.db, [makeLevelStartedRow({ instance_id: target })]);
+        await insert(cache.db, [makeLevelStartedRow({ instance_id: other })]);
 
-        expect(mockDb.transaction).toHaveBeenCalled();
-        expect(mockTx.delete).toHaveBeenCalledWith(watermarkTable);
+        await purge(cache.db, target);
+
+        expect(await countRows(cache.db, 'level_started', target)).toBe(0);
+        expect(await countRows(cache.db, 'level_started', other)).toBe(1);
+        expect(await countWatermarks(cache.db, other)).toBe(1);
     });
 
-    it('deletes from all event tables within transaction', async () => {
-        await purge(mockDb, 1);
-
-        const deleteCalls = mockTx.delete.mock.calls;
-        expect(deleteCalls.length).toBe(Object.keys(eventTables).length + 1); // +1 for watermark
-    });
-
-    it('all deletes are scoped to target instanceId', async () => {
-        await purge(mockDb, 42);
-
-        const allWhereCalls = mockTx.where.mock.calls;
-        for (const whereCall of allWhereCalls) {
-            const sqlObj = whereCall[0] as any;
-            const chunks = sqlObj.queryChunks;
-            expect(chunks).toContainEqual(expect.objectContaining({ name: 'instance_id' }));
-            expect(chunks).toContainEqual(expect.objectContaining({ value: 42 }));
-        }
-    });
-
-    it('executes all operations within a single transaction', async () => {
-        await purge(mockDb, 1);
-
-        expect(mockDb.transaction).toHaveBeenCalledTimes(1);
+    it('is a no-op when purging a non-existent instance', async () => {
+        await insert(cache.db, [makeLevelStartedRow({ instance_id: 1 })]);
+        await expect(purge(cache.db, 999)).resolves.not.toThrow();
+        expect(await countRows(cache.db, 'level_started', 1)).toBe(1);
     });
 });

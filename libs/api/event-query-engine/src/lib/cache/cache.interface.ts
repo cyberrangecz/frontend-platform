@@ -1,13 +1,14 @@
 import { Observable } from 'rxjs';
+import { SqliteRemoteDatabase } from 'drizzle-orm/sqlite-proxy';
 
 /**
- * Opaque handle to the Drizzle async SQLite database with the full event schema loaded.
+ * Drizzle SQLite database handle for the event cache.
  *
- * Consumers receive this type only inside a CacheService.query callback — it is never
- * constructed or held directly. The concrete type is resolved by the cache implementation.
+ * Consumers receive this inside a CacheService.query callback and issue typed Drizzle
+ * queries (select/from/where/leftJoin/orderBy/limit) directly against it. The alias keeps query
+ * sites insulated from the concrete storage dialect.
  */
-declare const _cacheDbBrand: unique symbol;
-export type EventCacheDb = { readonly [_cacheDbBrand]: void };
+export type EventCacheDb = SqliteRemoteDatabase;
 
 /**
  * Raw event row as returned by the Query Execution Layer.
@@ -23,6 +24,8 @@ export interface RawEventRow {
     timestamp: number;
     /** Scope key. All event tables carry this field. */
     instance_id: number;
+    /** Sandbox identifier. Present on all event types. */
+    sandbox_id: string;
     [field: string]: unknown;
 }
 
@@ -45,7 +48,7 @@ export interface WatermarkEntry {
  * All methods return Observables that complete after emitting their result.
  *
  * Concurrency model:
- * - All operations are serialized by the PGlite WebWorker — no external locking needed.
+ * - All operations are serialized by the single cache worker — no external locking needed.
  * - Callers may issue concurrent calls; the worker queues and executes them sequentially.
  *
  * Cache is passive — it never initiates operations. Eviction is triggered externally by bootstrap.

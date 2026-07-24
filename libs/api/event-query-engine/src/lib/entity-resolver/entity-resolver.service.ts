@@ -1,10 +1,13 @@
-import { OperatorFunction } from 'rxjs';
-import {
-    EntityType,
-    ResolveEntities,
-    ResolveEntitiesSafe,
-} from './entity-type';
+import { Observable, OperatorFunction } from 'rxjs';
+import { EntityType, EntityValueType, ResolveEntities, ResolveEntitiesSafe } from './entity-type';
 
+/**
+ * Resolves entity IDs to typed entity objects.
+ *
+ * @contract Must cache per ID, so resolving the same IDs repeatedly — even every poll
+ * tick — does not refetch. Callers resolve directly without their own caching or
+ * deduplication layer.
+ */
 export abstract class EntityResolverService {
     /**
      * RxJS operator that resolves ID fields to entity objects.
@@ -28,4 +31,29 @@ export abstract class EntityResolverService {
     abstract resolveSafe<T, const ETs extends readonly EntityType[]>(
         entityTypes: ETs,
     ): OperatorFunction<T[], ResolveEntitiesSafe<T, ETs>[]>;
+
+    /**
+     * Imperatively batch-resolves a list of entity ids to a id→entity lookup Map.
+     * Designed for aggregate (GROUP BY) panels where rows carry no single owned entity
+     * id column and the pipeline-based {@link resolve} / {@link resolveSafe} operators
+     * cannot be used. The caller joins the returned Map onto its aggregate rows.
+     *
+     * Duplicate ids in the input are tolerated and are silently deduplicated before
+     * the fetch is issued.
+     *
+     * The implementation caches per individual entity ID at the HTTP API layer (see
+     * class-level documentation). Repeat calls for already-cached IDs complete
+     * synchronously without a network round-trip. Callers MUST NOT layer their own
+     * caching on top.
+     *
+     * @param type  The entity type to fetch.
+     * @param ids   The entity ids to resolve. Duplicates are tolerated.
+     * @returns Observable that emits exactly one {@link Map} from numeric id to the
+     *   resolved entity of type {@link EntityValueType}`[ET]`. Fetch errors propagate
+     *   to the subscriber unchanged — no swallowing or fallback occurs.
+     */
+    abstract resolveMap<ET extends EntityType>(
+        type: ET,
+        ids: number[],
+    ): Observable<Map<number, EntityValueType[ET]>>;
 }

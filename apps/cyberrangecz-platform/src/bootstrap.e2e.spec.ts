@@ -7,7 +7,7 @@ import { CacheService } from '@crczp/event-query-engine';
  * Verifies that the Angular bootstrap sequence runs all APP_INITIALIZER tokens
  * and that the cache eviction initializer registered in main.ts is wired correctly.
  *
- * These tests do not touch PGlite — CacheService is mocked. The focus is the
+ * These tests do not touch the cache engine — CacheService is mocked. The focus is the
  * bootstrap mechanism, not cache correctness.
  */
 

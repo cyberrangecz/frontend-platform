@@ -58,6 +58,7 @@ Agendas utilise other libraries to provide the individual pages of the applicati
 Api libraries provide abstraction layer over REST API calls via simple function calls.
 
 - [api-common](./libs/api/api-common/README.md) - Common API utilities
+- [event-query-engine](./libs/api/event-query-engine) - SQLite-WASM local event cache with a query broker and entity resolution
 - [sandbox-api](./libs/api/sandbox-api/README.md) - Sandbox API client
 - [training-api](./libs/api/training-api/README.md) - Training API client
 - [user-and-group-api](./libs/api/user-and-group-api/README.md) - User and group API client

@@ -9,6 +9,10 @@ describe('needsPoolId', () => {
         expect(needsPoolId([PlatformEventType.COMMAND])).toBe(true);
     });
 
+    it('returns true when COMMAND is mixed with non-pool-scoped types', () => {
+        expect(needsPoolId([PlatformEventType.LEVEL_STARTED, PlatformEventType.COMMAND])).toBe(true);
+    });
+
     it('returns false when event types does not include COMMAND', () => {
         expect(needsPoolId([PlatformEventType.TRAINING_RUN_STARTED])).toBe(false);
     });

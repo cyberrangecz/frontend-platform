@@ -55,6 +55,8 @@ describe('executeSyncAndQuery', () => {
 
             expect(results).toEqual([{ id: 'result-1' }]);
             expect(cacheService.query).toHaveBeenCalledWith(queryFn);
+            expect(syncService.sync).toHaveBeenCalledTimes(1);
+            expect(cacheService.query).toHaveBeenCalledTimes(1);
         });
 
         it('runs sync before query', async () => {
@@ -92,7 +94,7 @@ describe('executeSyncAndQuery', () => {
         it('does not run the query function', async () => {
             const consoleErrorSpy = vi
                 .spyOn(console, 'error')
-                .mockImplementation(() => {});
+                .mockImplementation(() => undefined);
 
             syncService.sync.mockReturnValue(
                 throwError(() => new Error('sync failed')),
@@ -134,7 +136,7 @@ describe('executeSyncAndQuery', () => {
         it('propagates the error from sync', async () => {
             const consoleErrorSpy = vi
                 .spyOn(console, 'error')
-                .mockImplementation(() => {});
+                .mockImplementation(() => undefined);
             const syncError = new Error('sync failed');
             syncService.sync.mockReturnValue(throwError(() => syncError));
 

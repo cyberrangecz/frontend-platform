@@ -14,6 +14,13 @@ export class TrainingRunBasic extends Z.class({
     currentLevelId: z.number().nullable(),
     currentLevelOrder: z.number().nullable(),
     state: z.nativeEnum(TrainingRunStateEnum),
+    participantRef: z.object({
+        id: z.number(),
+        login: z.string(),
+        name: z.string(),
+        picture: z.string(),
+        mail: z.string(),
+    }),
 }) {
     declare id: number;
     declare sandboxInstanceId: string | null;
@@ -24,6 +31,7 @@ export class TrainingRunBasic extends Z.class({
     declare currentLevelId: number | null;
     declare currentLevelOrder: number | null;
     declare state: TrainingRunStateEnum;
+    declare participantRef: TrainingUser;
 }
 
 /**

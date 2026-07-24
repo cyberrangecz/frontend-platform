@@ -1,5 +1,5 @@
 /// <reference lib="webworker" />
 
-import { initEventCacheWorker } from '@crczp/event-query-engine';
+import { initSqliteCacheWorker } from '@crczp/event-query-engine';
 
-initEventCacheWorker();
+initSqliteCacheWorker();

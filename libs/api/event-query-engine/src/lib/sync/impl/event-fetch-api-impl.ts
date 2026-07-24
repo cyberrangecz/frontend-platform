@@ -4,6 +4,7 @@ import { PortalConfig } from '@crczp/utils';
 import { Observable } from 'rxjs';
 import { RawEventRow } from '../../cache/cache.interface';
 import { EventFetchApi, EventFetchParams } from '../event-fetch-api';
+import { toWireEventType } from '../event-type-wire-literal';
 import { mapToRawEventRows } from '../event-row-mapper';
 
 /**
@@ -35,7 +36,7 @@ export class EventFetchApiImpl extends EventFetchApi {
                 `${this.trainingInstancesEndpointUri}/${instanceId}/events`,
                 'Fetch training instance events',
             )
-            .withParams({ eventType, sinceTimestamp, poolId })
+            .withParams({ eventType: toWireEventType(eventType), sinceTimestamp, poolId })
             .withMapper((dtos) => mapToRawEventRows(dtos, eventType, instanceId))
             .execute();
     }

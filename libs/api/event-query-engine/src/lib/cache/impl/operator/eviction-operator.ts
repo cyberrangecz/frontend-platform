@@ -1,17 +1,17 @@
-import { PgliteDatabase } from 'drizzle-orm/pglite';
-import { asc, eq, max, sql } from 'drizzle-orm';
+import { asc, eq, max, sql, SQL } from 'drizzle-orm';
 import { PortalConfig } from '@crczp/utils';
 import { eventTables, watermarkTable } from '../schema/schema';
+import { EventCacheDb } from '../../cache.interface';
 
 /**
  * Runs TTL eviction followed by size-based LRU eviction.
  * Called once at bootstrap, before any instance is active.
  *
- * @param db - Drizzle PGlite database handle.
- * @param config - Portal configuration carrying TTL and max-size limits.
+ * @param db Event-cache database handle.
+ * @param config Portal configuration carrying TTL and max-size limits.
  */
 export async function evictStaleInstances(
-    db: PgliteDatabase,
+    db: EventCacheDb,
     config: PortalConfig,
 ): Promise<void> {
     await evictByTtl(db, config);
@@ -21,49 +21,45 @@ export async function evictStaleInstances(
 /**
  * Deletes all data for instances whose most-recent sync timestamp is older than the configured TTL.
  *
- * @param db - Drizzle PGlite database handle.
- * @param config - Portal configuration carrying the TTL value.
+ * @param db Event-cache database handle.
+ * @param config Portal configuration carrying the TTL value.
  */
 async function evictByTtl(
-    db: PgliteDatabase,
+    db: EventCacheDb,
     config: PortalConfig,
 ): Promise<void> {
-    const ttlBoundary = Date.now() - config.caching.eventCacheTTL * 1000;
+    const ttlBoundary = Date.now() - config.caching.eventCacheTtlMs;
 
-    await db.transaction(async (tx) => {
-        const watermarks = await tx
-            .select({ instanceId: watermarkTable.instance_id, lastSynced: max(watermarkTable.last_synced) })
-            .from(watermarkTable)
-            .groupBy(watermarkTable.instance_id);
+    const watermarks = await db
+        .select({ instanceId: watermarkTable.instance_id, lastSynced: max(watermarkTable.last_synced) })
+        .from(watermarkTable)
+        .groupBy(watermarkTable.instance_id);
 
-        const stale = watermarks
-            .filter((w) => w.lastSynced !== null && Number(w.lastSynced) < ttlBoundary)
-            .sort((a, b) => Number(a.lastSynced ?? 0) - Number(b.lastSynced ?? 0));
+    const stale = watermarks
+        .filter((entry) => entry.lastSynced !== null && Number(entry.lastSynced) < ttlBoundary)
+        .sort((a, b) => Number(a.lastSynced ?? 0) - Number(b.lastSynced ?? 0));
 
-        for (const { instanceId } of stale) {
-            await dropInstance(tx, instanceId);
-        }
-    });
+    for (const { instanceId } of stale) {
+        await db.batch(dropInstanceStatements(db, instanceId));
+    }
 }
 
 /**
- * Enforces the configured max cache size by dropping the least-recently-synced instances
- * one at a time until the database fits within the limit.
+ * Enforces the configured max cache size by dropping the least-recently-synced instances one at a
+ * time until the database fits within the limit. Reclaims space with `VACUUM` before each
+ * measurement, and never drops the last remaining instance.
  *
- * Runs VACUUM after each drop so that {@link pg_database_size} reflects reclaimed space.
- * Logs a warning to the console when the limit is first breached.
- *
- * @param db - Drizzle PGlite database handle.
- * @param config - Portal configuration carrying the max-size limit.
+ * @param db Event-cache database handle.
+ * @param config Portal configuration carrying the max-size limit.
  */
 async function evictBySize(
-    db: PgliteDatabase,
+    db: EventCacheDb,
     config: PortalConfig,
 ): Promise<void> {
     const maxSize = config.caching.eventCacheMaxSizeBytes;
 
-    // Reclaim space freed by TTL eviction before measuring.
-    await db.execute(sql.raw('VACUUM FULL'));
+    // Reclaim space freed by TTL eviction before measuring the high-water mark.
+    await db.run(sql`VACUUM`);
 
     let currentSize = await queryDbSize(db);
 
@@ -81,47 +77,65 @@ async function evictBySize(
         .groupBy(watermarkTable.instance_id)
         .orderBy(asc(max(watermarkTable.last_synced)));
 
-    for (let i = 0; i < candidates.length; i++) {
+    for (let index = 0; index < candidates.length; index++) {
         if (currentSize <= maxSize) break;
 
         // Never drop the last remaining instance — always keep at least one.
-        if (i === candidates.length - 1) break;
+        if (index === candidates.length - 1) break;
 
-        await db.transaction(async (tx) => dropInstance(tx, candidates[i].instanceId));
-        await db.execute(sql.raw('VACUUM FULL'));
+        await db.batch(dropInstanceStatements(db, candidates[index].instanceId));
+        await db.run(sql`VACUUM`);
         currentSize = await queryDbSize(db);
     }
 }
 
 /**
- * Deletes all watermark entries and event rows for the given instance inside the provided
- * transaction context.
+ * Builds the delete statements removing all watermark and event rows for one instance, suitable for
+ * an atomic batch.
  *
- * @param tx - Active Drizzle transaction.
- * @param instanceId - ID of the instance whose data is to be removed.
+ * @param db Event-cache database handle.
+ * @param instanceId Instance whose data is removed.
+ * @returns Delete statements covering the watermark table and every event table.
  */
-async function dropInstance(tx: PgliteDatabase, instanceId: number): Promise<void> {
-    await tx.delete(watermarkTable).where(eq(watermarkTable.instance_id, instanceId));
+function dropInstanceStatements(db: EventCacheDb, instanceId: number): Parameters<EventCacheDb['batch']>[0] {
+    const statements: unknown[] = [
+        db.delete(watermarkTable).where(eq(watermarkTable.instance_id, instanceId)),
+    ];
     for (const table of Object.values(eventTables)) {
-        await tx.delete(table as any).where(eq((table as any).instance_id, instanceId));
+        statements.push(db.delete(table as any).where(eq((table as any).instance_id, instanceId)));
     }
+    return statements as unknown as Parameters<EventCacheDb['batch']>[0];
 }
 
 /**
- * Returns the current total size of the PGlite database in bytes.
+ * Returns the current database size in bytes (`page_count` × `page_size`).
  *
- * @param db - Drizzle PGlite database handle.
- * @returns Size in bytes as reported by {@link pg_database_size}.
+ * @param db Event-cache database handle.
+ * @returns Size in bytes.
  */
-async function queryDbSize(db: PgliteDatabase): Promise<number> {
-    const result = await db.execute(sql`SELECT pg_database_size(current_database()) AS size`);
-    return Number((result.rows[0] as Record<string, unknown>).size);
+async function queryDbSize(db: EventCacheDb): Promise<number> {
+    const pageCount = await readPragmaNumber(db, sql`PRAGMA page_count`);
+    const pageSize = await readPragmaNumber(db, sql`PRAGMA page_size`);
+    return pageCount * pageSize;
+}
+
+/**
+ * Reads a single numeric value from a PRAGMA query.
+ *
+ * @param db Event-cache database handle.
+ * @param query PRAGMA statement returning one numeric column.
+ * @returns The numeric value, or 0 when absent.
+ */
+async function readPragmaNumber(db: EventCacheDb, query: SQL): Promise<number> {
+    const rows = (await db.all(query)) as unknown[];
+    const firstRow = rows[0] as unknown[] | undefined;
+    return firstRow ? Number(firstRow[0]) : 0;
 }
 
 /**
  * Formats a byte count into a human-readable string (B / KB / MB / GB).
  *
- * @param bytes - Raw byte count.
+ * @param bytes Raw byte count.
  * @returns Human-readable size string.
  */
 function formatBytes(bytes: number): string {

@@ -13,8 +13,8 @@ import { SyncTableComplete } from './sync-result.interface';
  *    declared, SyncParams.poolId must be present. Fail fast if absent.
  * 3. Fetch events from the microservice for all declared event types
  *    in a single call, passing sinceTimestamp derived from watermarks.
- * 4. Insert fetched rows into the cache. PGlite serializes concurrent
- *    writes — no external locking needed.
+ * 4. Insert fetched rows into the cache. The single cache worker serializes
+ *    concurrent writes — no external locking needed.
  * 5. Emit SyncTableComplete per event type, then complete.
  *
  * Error model — all-or-nothing:
