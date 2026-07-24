@@ -1,0 +1,32 @@
+@use '../shared/answer/answer-highlight' as highlight;
+
+/// Shared corner-radius scale for the assessment surfaces: compact controls, standard
+/// containers/rings, and pill-shaped chips.
+$radius-sm: 0.375rem;
+$radius-md: 0.5rem;
+$radius-pill: 0.625rem;
+
+/// Inner padding a scroll container reserves so a raised highlight inside it renders in full
+/// rather than being clipped at the scrollport edge.
+$highlight-bleed: highlight.$bleed;
+
+/// Selection emphasis for the actively selected answer, shared across the MCQ, EMI, and FFQ
+/// answer bodies. The same raised ring and glow the chooser avatars use, in the answer
+/// highlight colour; requires --highlight-answer on an ancestor and $highlight-bleed of
+/// padding on any scrolling ancestor.
+@mixin selection-ring {
+    --highlight-color: var(--highlight-answer);
+    @include highlight.raised;
+    border-radius: $radius-md;
+}
+
+/// Small uppercase pill chip used for question kind/type labels.
+@mixin label-chip {
+    padding: var(--space-4xs) var(--space-xs);
+    border-radius: $radius-pill;
+    background: var(--primary-90);
+    color: var(--primary-20);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: 0.04em;
+}

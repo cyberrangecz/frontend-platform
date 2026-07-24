@@ -1,0 +1,15 @@
+@use 'assessment-shared' as shared;
+
+:host {
+    display: block;
+}
+
+.mcq-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+
+    &--option--active {
+        @include shared.selection-ring;
+    }
+}

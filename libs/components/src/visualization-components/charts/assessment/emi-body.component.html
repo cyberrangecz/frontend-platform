@@ -1,0 +1,28 @@
+<div class="emi-body">
+    <div class="emi-body--grid" [style.grid-template-columns]="gridTemplateColumns()">
+        <div class="emi-body--corner"></div>
+        @for (column of columns(); track column.order) {
+            <div class="emi-body--col-head"><span class="emi-body--head-text" crczpOverflowTooltip>{{ column.text }}</span></div>
+        }
+
+        @for (row of rows(); track row.order) {
+            <div class="emi-body--row-head"><span class="emi-body--head-text" crczpOverflowTooltip>{{ row.text }}</span></div>
+            @for (cell of row.cells; track cell.optionOrder) {
+                <crczp-answer-surface
+                    class="emi-body--cell"
+                    [class.emi-body--cell--active]="cell.key === activeKey()"
+                    layout="cell"
+                    marker="radio"
+                    [correctness]="cell.correctness"
+                    [markerFilled]="cell.focusedTraineeChose"
+                    [focusedTraineeChose]="cell.focusedTraineeChose"
+                    [count]="cell.count"
+                    [percent]="cell.percent"
+                    [faces]="cell.faces"
+                    (answerClick)="answerActivated.emit(cell.key)"
+                    (faceClick)="faceActivated.emit($event)"
+                />
+            }
+        }
+    </div>
+</div>

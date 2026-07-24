@@ -1,0 +1,124 @@
+@use 'assessment-shared' as shared;
+
+:host {
+    display: block;
+}
+
+.assessment-detail {
+    &--header {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: var(--space-lg);
+        margin-bottom: var(--space-xl);
+    }
+
+    &--picker {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-3xs);
+        min-width: 0;
+        margin: 0;
+        padding: var(--space-3xs) var(--space-2xs);
+        border: none;
+        border-radius: #{shared.$radius-md};
+        background: none;
+        color: inherit;
+        cursor: pointer;
+        transition: background-color 0.15s ease;
+
+        &:hover:not(:disabled),
+        &:focus-visible {
+            background: var(--neutral-95);
+        }
+
+        &:disabled {
+            cursor: default;
+        }
+
+        &:disabled .assessment-detail--picker-caret {
+            display: none;
+        }
+    }
+
+    &--picker-caret {
+        flex: none;
+        color: var(--neutral-50);
+    }
+
+    &--title {
+        min-width: 0;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        font-size: var(--font-size-2xl);
+        font-weight: var(--font-weight-semibold);
+    }
+
+    &--kind {
+        @include shared.label-chip;
+    }
+
+    &--menu-label {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+    &--menu-item--selected {
+        font-weight: var(--font-weight-semibold);
+    }
+
+    &--menu-check {
+        margin-left: auto;
+        color: var(--primary-40);
+    }
+
+    &--download {
+        margin-left: var(--space-xs);
+        color: var(--neutral-50);
+        transition: color 0.15s ease;
+
+        &:hover {
+            color: var(--primary-40);
+        }
+    }
+
+    &--stats {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-2xl);
+        margin: 0 0 0 auto;
+    }
+
+    &--stat {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+    }
+
+    &--stat-label {
+        color: var(--neutral-40);
+        font-size: var(--font-size-xs);
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+    }
+
+    &--stat-value {
+        margin: 0;
+        font-size: var(--font-size-xl);
+        font-variant-numeric: tabular-nums;
+    }
+
+    &--questions {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-xl);
+    }
+
+    &--unsupported {
+        margin: 0;
+        color: var(--error-40);
+        font-size: var(--font-size-md);
+    }
+}

@@ -1,0 +1,31 @@
+:host {
+    display: block;
+    /* Height of the surrounding chrome (topbar, dashboard header, panel padding) reserved above the view. */
+    --assessment-chrome-height: 300px;
+    /* Viewport height left for the view once the surrounding chrome is reserved. */
+    --assessment-available-height: calc(100dvh - var(--assessment-chrome-height));
+}
+
+.assessment-layout {
+    display: grid;
+    grid-template-columns: minmax(16rem, 22rem) minmax(0, 1fr);
+    grid-template-areas: 'aside main';
+    gap: var(--space-xl);
+    min-height: var(--assessment-available-height);
+}
+
+.assessment-aside {
+    grid-area: aside;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 0;
+    border: 1px solid var(--neutral-90);
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+.assessment-main {
+    grid-area: main;
+    min-width: 0;
+}

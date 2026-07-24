@@ -1,0 +1,4 @@
+<div class="bar-track">
+    <div class="bar-track--fill" [style.transform]="'scaleX(' + fillScale() + ')'" [style.background-color]="fillColor()"></div>
+</div>
+<span class="bar-stat" [style.color]="statTextColor()">{{ statLabel() }}</span>
