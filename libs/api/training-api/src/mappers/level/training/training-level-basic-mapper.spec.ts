@@ -1,16 +1,15 @@
 import { describe, it, expect } from 'vitest';
 import { TrainingLevelBasic, AbstractLevelTypeEnum } from '@crczp/training-model';
 import { trainingLevelBasicMapper, trainingLevelBasicArrayMapper } from './training-level-basic-mapper';
+import { TrainingLevelBasicDto } from '../../../dto/level/training/training-level-basic-dto';
 
-const validDto = {
+const validDto: TrainingLevelBasicDto = {
     id: 1,
     title: 'Training Level',
     order: 3,
     estimated_duration: 30,
-    minimal_possible_solve_time: 5,
     max_score: 100,
-    type: 'linear_training' as const,
-    level_type: 'TRAINING',
+    level_type: 'TRAINING_LEVEL',
     hints: [{ id: 10, title: 'Hint One', hint_penalty: 5 }],
     incorrect_answer_limit: 3,
     solution_penalized: true,
@@ -19,14 +18,13 @@ const validDto = {
 
 describe('trainingLevelBasicMapper', () => {
     it('maps all DTO fields to correct model properties', () => {
-        const result = trainingLevelBasicMapper(validDto as any);
+        const result = trainingLevelBasicMapper(validDto);
         expect(result).toBeInstanceOf(TrainingLevelBasic);
         expect(result).toMatchObject({
             id: 1,
             title: 'Training Level',
             order: 3,
             estimatedDuration: 30,
-            minimalPossibleSolveTime: 5,
             maxScore: 100,
             type: AbstractLevelTypeEnum.Training,
             incorrectAnswerLimit: 3,
@@ -41,7 +39,7 @@ describe('trainingLevelBasicMapper', () => {
     });
 
     it('maps with empty hints and mitre_techniques arrays', () => {
-        const result = trainingLevelBasicMapper({ ...validDto, hints: [], mitre_techniques: [] } as any);
+        const result = trainingLevelBasicMapper({ ...validDto, hints: [], mitre_techniques: [] });
         expect(result.hints).toEqual([]);
         expect(result.mitreTechniques).toEqual([]);
     });
@@ -50,7 +48,7 @@ describe('trainingLevelBasicMapper', () => {
 describe('trainingLevelBasicArrayMapper', () => {
     it('maps array and returns empty array for empty input', () => {
         expect(trainingLevelBasicArrayMapper([])).toEqual([]);
-        const results = trainingLevelBasicArrayMapper([validDto, { ...validDto, id: 2 }] as any);
+        const results = trainingLevelBasicArrayMapper([validDto, { ...validDto, id: 2 }]);
         expect(results).toHaveLength(2);
         expect(results[1].id).toBe(2);
     });

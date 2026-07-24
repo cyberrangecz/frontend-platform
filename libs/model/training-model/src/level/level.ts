@@ -28,10 +28,14 @@ export abstract class Level {
         );
     }
 
-    static getLevelByType(type: AbstractLevelTypeEnum): string {
-        switch (type) {
-            case AbstractLevelTypeEnum.Assessment:
-                return 'assignment';
+    getIcon(): string {
+        switch (this.type) {
+            case AbstractLevelTypeEnum.Assessment: {
+                const asAssessmentLevel = this as unknown as AssessmentLevel;
+                if (asAssessmentLevel.assessmentType === 'test')
+                    return 'assignment';
+                else return 'quiz';
+            }
             case AbstractLevelTypeEnum.Training:
                 return 'videogame_asset';
             case AbstractLevelTypeEnum.Access:
@@ -41,9 +45,5 @@ export abstract class Level {
             default:
                 return 'error';
         }
-    }
-
-    getIcon(): string {
-        return Level.getLevelByType(this.type);
     }
 }

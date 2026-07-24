@@ -7,9 +7,7 @@ export const AccessLevelBasicDtoSchema = z.object({
     title: z.string().min(1),
     order: z.number().nonnegative().int(),
     estimated_duration: z.number().nonnegative(),
-    minimal_possible_solve_time: z.number().nonnegative(),
     max_score: z.number().nonnegative(),
-    type: z.literal('linear_access'),
     level_type: z.literal(AbstractLevelDTO.LevelTypeEnum.ACCESS),
 });
 

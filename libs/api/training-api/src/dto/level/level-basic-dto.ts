@@ -4,7 +4,7 @@ import { AccessLevelBasicDtoSchema } from './access/access-level-basic-dto';
 import { AssessmentLevelBasicDtoSchema } from './assessment/assessment-level-basic-dto';
 import { TrainingLevelBasicDtoSchema } from './training/training-level-basic-dto';
 
-export const LevelBasicDtoSchema = z.discriminatedUnion('type', [
+export const LevelBasicDtoSchema = z.discriminatedUnion('level_type', [
     InfoLevelBasicDtoSchema,
     AccessLevelBasicDtoSchema,
     AssessmentLevelBasicDtoSchema,

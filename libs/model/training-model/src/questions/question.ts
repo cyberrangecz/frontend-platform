@@ -1,5 +1,6 @@
 import { Z } from 'zod-class';
 import { z } from 'zod';
+import { QuestionTypeEnum } from '../enums/question-type.enum';
 
 /** Basic read-only question data safe for all roles. Subset of {@link Question}. */
 export class QuestionBasic extends Z.class({
@@ -8,7 +9,7 @@ export class QuestionBasic extends Z.class({
     score: z.number(),
     penalty: z.number(),
     required: z.boolean(),
-    questionType: z.string(),
+    questionType: z.nativeEnum(QuestionTypeEnum),
 }) {}
 
 /**
@@ -25,6 +26,7 @@ export abstract class Question {
     penalty = 0;
     required!: boolean;
     valid = true;
+    questionType!: QuestionTypeEnum;
 
     protected constructor(title: string) {
         this.title = title;

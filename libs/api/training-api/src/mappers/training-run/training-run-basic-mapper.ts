@@ -1,6 +1,7 @@
 import { MapperBuilder } from '@crczp/api-common';
 import { TrainingRunBasicDto } from '../../dto/training-run/training-run-basic-dto';
 import { TrainingRunBasic, TrainingRunStateEnum } from '@crczp/training-model';
+import { UserMapper } from '../user/user-mapper';
 
 function stateFromDTO(state: string): TrainingRunStateEnum {
     switch (state) {
@@ -23,6 +24,7 @@ export const trainingRunBasicMapper = MapperBuilder.createDTOtoModelMapper<
         state: (dto) => stateFromDTO(dto.state),
         currentLevelId: (dto) => dto.current_level_id,
         currentLevelOrder: (dto) => dto.current_level_order,
+        participantRef: (dto) => UserMapper.fromDTO(dto.participant_ref),
     },
     constructor: (data) => TrainingRunBasic.schema().parse(data),
 });

@@ -1,4 +1,4 @@
-import {MultipleChoiceQuestion} from '@crczp/training-model';
+import {MultipleChoiceQuestion, QuestionTypeEnum} from '@crczp/training-model';
 import {AbstractQuestionDTO} from '../../../dto/level/assessment/abstact-question-dto';
 import {
     MultipleChoiceQuestionCreateDTO,
@@ -9,6 +9,7 @@ import {QuestionAnswerDTO} from '../../../dto/level/assessment/question-answer-d
 export class MultipleChoiceQuestionMapper {
     static fromDTO(dto: MultipleChoiceQuestionCreateDTOClass): MultipleChoiceQuestion {
         const result = new MultipleChoiceQuestion(dto.text);
+        result.questionType = QuestionTypeEnum.MCQ;
         result.choices = dto.choices;
         result.choices.sort((a, b) => a.order - b.order);
         return result;

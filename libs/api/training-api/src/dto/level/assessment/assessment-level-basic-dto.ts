@@ -26,9 +26,7 @@ export const AssessmentLevelBasicDtoSchema = z.object({
     title: z.string().min(1),
     order: z.number().nonnegative().int(),
     estimated_duration: z.number().nonnegative(),
-    minimal_possible_solve_time: z.number().nonnegative(),
     max_score: z.number().nonnegative(),
-    type: z.literal('linear_assessment'),
     level_type: z.literal(AbstractLevelDTO.LevelTypeEnum.ASSESSMENT),
     assessment_type: z.enum([
         AssessmentLevelDTO.AssessmentTypeEnum.TEST,

@@ -1,19 +1,19 @@
 import { AbstractLevelTypeEnum } from '@crczp/training-model';
 
 /**
- * Converts a DTO level type string literal to the {@link AbstractLevelTypeEnum} model value.
+ * Converts the backend `level_type` discriminator value to the {@link AbstractLevelTypeEnum} model value.
  *
- * @param type - snake_case type string received from the API (e.g. `'linear_info'`)
+ * @param levelType - level type received from the API (e.g. `'INFO_LEVEL'`)
  * @returns matching {@link AbstractLevelTypeEnum} value
- * @throws when an unknown type is received
+ * @throws when an unknown level type is received
  */
-export function levelTypeFromDTO(type: string): AbstractLevelTypeEnum {
-    switch (type) {
-        case 'linear_info':       return AbstractLevelTypeEnum.Info;
-        case 'linear_access':     return AbstractLevelTypeEnum.Access;
-        case 'linear_training':   return AbstractLevelTypeEnum.Training;
-        case 'linear_assessment': return AbstractLevelTypeEnum.Assessment;
+export function levelTypeFromDTO(levelType: string): AbstractLevelTypeEnum {
+    switch (levelType) {
+        case 'INFO_LEVEL':       return AbstractLevelTypeEnum.Info;
+        case 'ACCESS_LEVEL':     return AbstractLevelTypeEnum.Access;
+        case 'TRAINING_LEVEL':   return AbstractLevelTypeEnum.Training;
+        case 'ASSESSMENT_LEVEL': return AbstractLevelTypeEnum.Assessment;
         default:
-            throw new Error(`Unknown level type: ${type}`);
+            throw new Error(`Unknown level type: ${levelType}`);
     }
 }

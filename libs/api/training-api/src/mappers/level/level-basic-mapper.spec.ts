@@ -7,49 +7,52 @@ import {
     AbstractLevelTypeEnum,
 } from '@crczp/training-model';
 import { levelBasicMapper, levelBasicArrayMapper } from './level-basic-mapper';
+import { InfoLevelBasicDto } from '../../dto/level/info/info-level-basic-dto';
+import { AccessLevelBasicDto } from '../../dto/level/access/access-level-basic-dto';
+import { TrainingLevelBasicDto } from '../../dto/level/training/training-level-basic-dto';
+import { AssessmentLevelBasicDto } from '../../dto/level/assessment/assessment-level-basic-dto';
 
 const baseLevel = {
     id: 1,
     title: 'Level',
     order: 0,
     estimated_duration: 20,
-    minimal_possible_solve_time: 0,
     max_score: 50,
 };
 
-const infoDto      = { ...baseLevel, type: 'linear_info' as const,       level_type: 'INFO' };
-const accessDto    = { ...baseLevel, type: 'linear_access' as const,     level_type: 'ACCESS' };
-const trainingDto  = { ...baseLevel, type: 'linear_training' as const,   level_type: 'TRAINING',   hints: [], incorrect_answer_limit: 3, solution_penalized: false, mitre_techniques: [] };
-const assessmentDto = { ...baseLevel, type: 'linear_assessment' as const, level_type: 'ASSESSMENT', assessment_type: 'TEST', questions: [] };
+const infoDto: InfoLevelBasicDto = { ...baseLevel, level_type: 'INFO_LEVEL' };
+const accessDto: AccessLevelBasicDto = { ...baseLevel, level_type: 'ACCESS_LEVEL' };
+const trainingDto: TrainingLevelBasicDto = { ...baseLevel, level_type: 'TRAINING_LEVEL', hints: [], incorrect_answer_limit: 3, solution_penalized: false, mitre_techniques: [] };
+const assessmentDto: AssessmentLevelBasicDto = { ...baseLevel, level_type: 'ASSESSMENT_LEVEL', assessment_type: 'TEST', questions: [] };
 
 describe('levelBasicMapper', () => {
     it('routes each type to the correct model class', () => {
-        expect(levelBasicMapper(infoDto as any)).toBeInstanceOf(InfoLevelBasic);
-        expect(levelBasicMapper(accessDto as any)).toBeInstanceOf(AccessLevelBasic);
-        expect(levelBasicMapper(trainingDto as any)).toBeInstanceOf(TrainingLevelBasic);
-        expect(levelBasicMapper(assessmentDto as any)).toBeInstanceOf(AssessmentLevelBasic);
+        expect(levelBasicMapper(infoDto)).toBeInstanceOf(InfoLevelBasic);
+        expect(levelBasicMapper(accessDto)).toBeInstanceOf(AccessLevelBasic);
+        expect(levelBasicMapper(trainingDto)).toBeInstanceOf(TrainingLevelBasic);
+        expect(levelBasicMapper(assessmentDto)).toBeInstanceOf(AssessmentLevelBasic);
 
-        const info = levelBasicMapper(infoDto as any);
+        const info = levelBasicMapper(infoDto);
         expect(info).toMatchObject({ id: 1, title: 'Level', type: AbstractLevelTypeEnum.Info });
     });
 
-    it('throws on DTO mismatch — unknown type string', () => {
-        expect(() => levelBasicMapper({ ...infoDto, type: 'linear_unknown' } as any)).toThrow();
+    it('throws on DTO mismatch — unknown level_type string', () => {
+        expect(() => levelBasicMapper({ ...infoDto, level_type: 'UNKNOWN_LEVEL' } as any)).toThrow();
     });
 
     it('maps level with empty optional collections (training and assessment)', () => {
-        const training = levelBasicMapper(trainingDto as any) as TrainingLevelBasic;
+        const training = levelBasicMapper(trainingDto) as TrainingLevelBasic;
         expect(training.hints).toEqual([]);
         expect(training.mitreTechniques).toEqual([]);
 
-        const assessment = levelBasicMapper(assessmentDto as any) as AssessmentLevelBasic;
+        const assessment = levelBasicMapper(assessmentDto) as AssessmentLevelBasic;
         expect(assessment.questions).toEqual([]);
     });
 });
 
 describe('levelBasicArrayMapper', () => {
     it('maps a mixed array of all four level types', () => {
-        const results = levelBasicArrayMapper([infoDto, accessDto, trainingDto, assessmentDto] as any);
+        const results = levelBasicArrayMapper([infoDto, accessDto, trainingDto, assessmentDto]);
         expect(results).toHaveLength(4);
         expect(results[0]).toBeInstanceOf(InfoLevelBasic);
         expect(results[1]).toBeInstanceOf(AccessLevelBasic);
