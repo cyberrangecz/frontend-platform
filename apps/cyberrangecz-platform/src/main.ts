@@ -18,7 +18,7 @@ import {
     BrowserAnimationsModule,
     provideAnimations,
 } from '@angular/platform-browser/animations';
-import { provideRouter } from '@angular/router';
+import { provideRouter, withComponentInputBinding } from '@angular/router';
 import {
     HTTP_INTERCEPTORS,
     HttpClient,
@@ -157,7 +157,7 @@ SentinelBootstrapper.bootstrapApplication('assets/config.json', AppComponent, {
             markdownParser: {},
         }),
         provideHttpCache(withLocalStorage()),
-        provideRouter(withSingleTabGuard(APP_ROUTES)),
+        provideRouter(withSingleTabGuard(APP_ROUTES), withComponentInputBinding()),
         provideEventBroker(
             createSqliteEventDb(
                 () => new Worker(new URL('./cache.worker.ts', import.meta.url), { type: 'module' }),

@@ -17,6 +17,8 @@
         "@crczp/topology-graph": "*",
         "@angular/animations": "*",
         "@crczp/components": "*",
+        "@crczp/event-query-engine": "*",
+        "date-fns": "*",
         "@crczp/sandbox-api": "*",
         "@crczp/visualization-components": "*",
         "@crczp/sandbox-model": "*",

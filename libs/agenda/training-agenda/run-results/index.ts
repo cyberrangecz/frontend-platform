@@ -1,1 +1,1 @@
-export * from './components/training-run-results.component';
+export * from './trainee-feedback-dashboard.component';

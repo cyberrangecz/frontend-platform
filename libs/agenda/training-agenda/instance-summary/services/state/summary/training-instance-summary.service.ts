@@ -7,8 +7,6 @@ export abstract class TrainingInstanceSummaryService {
 
     abstract init(ti: TrainingInstance): void;
 
-    abstract showProgress(): Observable<any>;
-
     abstract showResults(): Observable<any>;
 
     abstract showCheatingDetection(): Observable<any>;

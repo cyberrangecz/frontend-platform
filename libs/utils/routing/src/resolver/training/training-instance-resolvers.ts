@@ -30,9 +30,6 @@ function resolveInstanceTitle(
         if (RoutingUtils.containsSubroute('detail', state)) {
             return `Detail of ${ti.title}`;
         }
-        if (RoutingUtils.containsSubroute('progress', state)) {
-            return `Progress of ${ti.title}`;
-        }
         if (RoutingUtils.containsSubroute('results', state)) {
             return `Results of ${ti.title}`;
         }

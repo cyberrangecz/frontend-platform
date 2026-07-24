@@ -47,7 +47,6 @@ const routes: ValidRouterConfig<'run'> = [
     },
     {
         path: 'linear/:runId/results',
-        // TODO add new run results component
         data: {
             breadcrumb: 'Results',
             title: 'Training Run Results',
@@ -56,6 +55,10 @@ const routes: ValidRouterConfig<'run'> = [
             [TrainingRun.name]:
                 Routing.Resolvers.TrainingRun.resolveAccessedTrainingRunResults,
         },
+        loadComponent: () =>
+            import('@crczp/training-agenda/run-results').then(
+                (m) => m.TraineeFeedbackDashboardComponent,
+            ),
     },
 ];
 

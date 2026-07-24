@@ -2,9 +2,13 @@ import { ChangeDetectionStrategy, Component, computed, inject, input } from '@an
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { from } from 'rxjs';
-import { providePauseGate } from '../charts/shared';
-import { SegmentedToggleComponent, SegmentedToggleOption } from '../../segmented-toggle/segmented-toggle.component';
-import { InstanceId } from '../charts/progress';
+import {
+    asInstanceId,
+    InstanceId,
+    providePauseGate,
+    SegmentedToggleComponent,
+    SegmentedToggleOption,
+} from '@crczp/components';
 import { AggregatedViewComponent } from './views/aggregated-view.component';
 import { IndividualViewComponent } from './views/individual-view.component';
 import { AssessmentViewComponent } from './views/assessment-view.component';
@@ -71,7 +75,9 @@ export class AnalysisDashboardComponent {
     private readonly route = inject(ActivatedRoute);
     private readonly router = inject(Router);
 
-    readonly instanceId = input.required<InstanceId>();
+    readonly instanceId = input.required<InstanceId, InstanceId | string | number>({
+        transform: (value) => asInstanceId(Number(value)),
+    });
     // #TODO: derive instanceName from instanceId via event-query-engine once entity resolution is wired
     readonly instanceName = input<string>('');
 

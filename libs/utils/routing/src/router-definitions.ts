@@ -31,7 +31,6 @@ export const DEFINED_ROUTES = {
         EXCL_VAR_instanceId: {
             edit: {},
             detail: {},
-            progress: {},
             ['access-token']: {},
             runs: {},
             results: {

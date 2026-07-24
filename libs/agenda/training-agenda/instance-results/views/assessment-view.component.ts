@@ -3,16 +3,29 @@ import { EntityResolverService } from '@crczp/event-query-engine';
 import { LinearTrainingDefinitionApi } from '@crczp/training-api';
 import { ClickOutsideDirective, NotificationService } from '@crczp/utils';
 import { from } from 'rxjs';
-import { ChartPanelShellComponent, CsvColumn, CsvExportable, exportCsv } from '../../charts/shared';
-import { TraineeListComponent } from '../../charts/assessment/trainee-list.component';
-import { AssessmentDetailComponent, AssessmentOption } from '../../charts/assessment/assessment-detail.component';
-import { createAssessmentSource } from '../../charts/assessment/assessment-source';
-import { AnswerHighlight, indexAssessmentAnswers } from '../../charts/assessment/answer-highlight';
-import { TraineeHighlight } from '../../charts/assessment/answer-faces';
-import { AssessmentCsvRow, assessmentCsvColumns, assessmentCsvRows } from '../../charts/assessment/assessment-csv';
-import { AssessmentVm, TraineeIdentity } from '../../charts/assessment/assessment-view.model';
-import { defaultSort, traineeComparator, traineeSortFields, TraineeSortFields } from '../../charts/assessment/trainee-sort';
-import { InstanceId } from '../../charts/progress';
+import {
+    AnswerHighlight,
+    AssessmentCsvRow,
+    assessmentCsvColumns,
+    assessmentCsvRows,
+    AssessmentDetailComponent,
+    AssessmentOption,
+    AssessmentVm,
+    ChartPanelShellComponent,
+    createAssessmentSource,
+    CsvColumn,
+    CsvExportable,
+    defaultSort,
+    exportCsv,
+    indexAssessmentAnswers,
+    InstanceId,
+    TraineeHighlight,
+    TraineeIdentity,
+    TraineeListComponent,
+    traineeComparator,
+    traineeSortFields,
+    TraineeSortFields,
+} from '@crczp/components';
 
 /** Answer index used whenever no assessment is selected, including a failed resolution. */
 const EMPTY_INDEX: ReadonlyMap<string, AnswerHighlight> = new Map();

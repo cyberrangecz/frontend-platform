@@ -45,22 +45,6 @@ const routes: ValidRouterConfig<'linear-instance'> = [
         },
     },
     {
-        path: ':instanceId/progress',
-        resolve: {
-            [TrainingInstance.name]:
-                Routing.Resolvers.TrainingInstance.linearInstanceResolver,
-            breadcrumb:
-                Routing.Resolvers.TrainingInstance
-                    .linearInstanceBreadcrumbResolver,
-            title: Routing.Resolvers.TrainingInstance
-                .linearInstanceTitleResolver,
-        },
-        loadComponent: () =>
-            import('@crczp/training-agenda/instance-progress').then(
-                (m) => m.TrainingInstanceProgressComponent,
-            ),
-    },
-    {
         path: ':instanceId/detail',
         resolve: {
             [TrainingInstance.name]:
@@ -87,7 +71,10 @@ const routes: ValidRouterConfig<'linear-instance'> = [
             title: Routing.Resolvers.TrainingInstance
                 .linearInstanceTitleResolver,
         },
-        // TODO: link to new results component
+        loadComponent: () =>
+            import('@crczp/training-agenda/instance-results').then(
+                (m) => m.AnalysisDashboardComponent,
+            ),
     },
     {
         path: ':instanceId/access-token',

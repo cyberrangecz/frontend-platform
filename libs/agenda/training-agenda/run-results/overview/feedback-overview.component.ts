@@ -3,8 +3,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { intervalToDuration } from 'date-fns';
 import { EntityResolverService } from '@crczp/event-query-engine';
 import { OverflowTooltipDirective } from '@crczp/utils';
-import { PALETTE, resolveInstanceLevels } from '../../charts/shared';
-import { createTraineeOverviewSource, TraineeRawRow } from '../../charts/trainee-overview/trainee-overview-source';
+import { createTraineeOverviewSource, PALETTE, resolveInstanceLevels, TraineeRawRow } from '@crczp/components';
 
 /** Amber used for hint indicators; darker than the palette yellow for legibility on light surfaces. */
 const HINT_COLOR = '#a98700';

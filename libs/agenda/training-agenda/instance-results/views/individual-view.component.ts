@@ -1,12 +1,15 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
-import { ChartRowComponent, ChartRowItemDirective } from '../../dashboard-layout';
-import { TraineeOverviewComponent } from '../../charts/trainee-overview/trainee-overview.component';
-import { CumulativeScoreChartComponent } from '../../charts/cumulative-score/cumulative-score-chart.component';
-import { TimeVsScoreChartComponent } from '../../charts/time-vs-score/time-vs-score-chart.component';
-import { TraineeWrongAnswersChartComponent } from '../../charts/top-wrong-answers/trainee-wrong-answers-chart.component';
-import { EventTimelineChartComponent } from '../../charts/event-timeline/event-timeline-chart.component';
-import { CommandsLogTableComponent } from '../../charts/commands-log/commands-log-table.component';
-import { InstanceId } from '../../charts/progress';
+import {
+    ChartRowComponent,
+    ChartRowItemDirective,
+    CommandsLogTableComponent,
+    CumulativeScoreChartComponent,
+    EventTimelineChartComponent,
+    InstanceId,
+    TimeVsScoreChartComponent,
+    TraineeOverviewComponent,
+    TraineeWrongAnswersChartComponent,
+} from '@crczp/components';
 
 /**
  * Individual dashboard view: per-trainee analysis for a single selected run, covering

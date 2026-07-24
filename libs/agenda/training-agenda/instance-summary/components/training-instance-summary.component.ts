@@ -102,10 +102,6 @@ export class TrainingInstanceSummaryComponent implements OnInit {
         this.trainingRunService.getInfo(trainingRunId).pipe();
     }
 
-    onShowProgress(): void {
-        this.trainingInstanceSummaryService.showProgress();
-    }
-
     onShowResults(): void {
         this.trainingInstanceSummaryService.showResults();
     }

@@ -130,14 +130,6 @@ export class TrainingInstanceOverviewService extends CrczpOffsetElementsPaginate
         ]);
     }
 
-    progress(id: number) {
-        return this.router.navigate([
-            Routing.RouteBuilder.linear_instance
-                .instanceId(id)
-                .progress.build(),
-        ]);
-    }
-
     results(id: number) {
         return this.router.navigate([
             Routing.RouteBuilder.linear_instance.instanceId(id).results.build(),

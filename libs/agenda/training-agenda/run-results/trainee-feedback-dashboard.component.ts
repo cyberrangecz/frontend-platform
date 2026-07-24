@@ -2,16 +2,20 @@ import { ChangeDetectionStrategy, Component, computed, inject, input } from '@an
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { map, switchMap } from 'rxjs';
 import { EntityResolverService, EntityType } from '@crczp/event-query-engine';
-import { providePauseGate } from '../charts/shared';
-import { ScoreboardTableComponent } from '../charts/scoreboard/scoreboard-table.component';
-import { CumulativeScoreChartComponent } from '../charts/cumulative-score/cumulative-score-chart.component';
-import { TimeVsScoreChartComponent } from '../charts/time-vs-score/time-vs-score-chart.component';
-import { EventTimelineChartComponent } from '../charts/event-timeline/event-timeline-chart.component';
-import { ChartRowComponent, ChartRowItemDirective, DashboardSectionComponent } from '../dashboard-layout';
+import {
+    AssistsCoverageComponent,
+    ChartRowComponent,
+    ChartRowItemDirective,
+    CumulativeScoreChartComponent,
+    DashboardSectionComponent,
+    EventTimelineChartComponent,
+    LevelPercentilesComponent,
+    OverallSpeedVsScoreComponent,
+    providePauseGate,
+    ScoreboardTableComponent,
+    TimeVsScoreChartComponent,
+} from '@crczp/components';
 import { FeedbackOverviewComponent } from './overview/feedback-overview.component';
-import { OverallSpeedVsScoreComponent } from '../charts/overall-speed-vs-score/overall-speed-vs-score.component';
-import { LevelPercentilesComponent } from '../charts/level-percentiles/level-percentiles.component';
-import { AssistsCoverageComponent } from '../charts/assists-coverage/assists-coverage.component';
 
 /**
  * Post-run feedback dashboard for a single trainee: their completed run read on its own and
@@ -43,7 +47,9 @@ export class TraineeFeedbackDashboardComponent {
     private readonly entityResolver = inject(EntityResolverService);
 
     /** Identifies the completed training run this dashboard gives feedback on. */
-    readonly runId = input.required<number>();
+    readonly runId = input.required<number, string | number>({
+        transform: (value) => Number(value),
+    });
 
     /** The resolved run, or null until resolution completes. */
     private readonly run = toSignal(
