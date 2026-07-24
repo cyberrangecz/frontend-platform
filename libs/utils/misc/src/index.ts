@@ -23,10 +23,10 @@ export * from './service/pagination/pagination-storage.service';
 export * from './service/progress/file-upload-progress.service';
 export * from './service/api/polling.service';
 export * from './types/config';
+export * from './types/unit-values';
 export * from './types/sentinel-auth-config.zod';
 export * from './types/type-utils';
 export * from './directives/click-outside';
-export { provideTestPortalConfig } from './testing/portal-config.provider';
 export type {
     NavAgendaConfig,
     NavAgendaContainerConfig,

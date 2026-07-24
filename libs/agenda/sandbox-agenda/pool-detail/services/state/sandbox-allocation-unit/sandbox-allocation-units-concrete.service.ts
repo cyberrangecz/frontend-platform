@@ -46,7 +46,7 @@ export class SandboxAllocationUnitsConcreteService extends SandboxAllocationUnit
         super();
         this.unitsSubject$ = new BehaviorSubject(this.initSubject(10));
         this.units$ = this.unitsSubject$.asObservable();
-        this.poolPollingPeriod = settings.polling.pollingPeriodShort;
+        this.poolPollingPeriod = settings.polling.pollingPeriodShortMs;
         this.retryAttempts = settings.polling.retryCount;
     }
 

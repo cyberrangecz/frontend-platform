@@ -25,6 +25,7 @@ import { UserRefSort } from './sorts';
 export class UserApi {
     private readonly http = inject(HttpClient);
     private readonly crczpHttp = inject(CRCZPHttpService);
+    private readonly entityCacheTtlMs = inject(PortalConfig).caching.entityCacheTtlMs;
 
     private readonly trainingDefinitionUriExtension = 'training-definitions';
     private readonly trainingInstanceUrlExtension = 'training-instances';
@@ -269,7 +270,7 @@ export class UserApi {
                 ids,
                 paramName: 'ids',
                 cacheKey: (id) => `user-${id}`,
-                ttl: '8h',
+                ttlMs: this.entityCacheTtlMs,
                 itemId: (dto) => dto.user_ref_id,
             })
             .withMapper(UserMapper.fromDTOs)

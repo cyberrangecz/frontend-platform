@@ -17,7 +17,7 @@ export class CloudResourcesService extends StageDetailService {
         const pollRegistry = inject(StagesDetailPollRegistry);
         const settings = inject(PortalConfig);
 
-        super(pollRegistry, 500, settings.polling.pollingPeriodShort);
+        super(pollRegistry, 500, settings.polling.pollingPeriodShortMs);
     }
 
     protected callApiToGetStageDetail(

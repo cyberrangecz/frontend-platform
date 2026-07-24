@@ -33,6 +33,7 @@ import { TrainingInstanceSort, TrainingRunSort } from '../sorts';
 export class TrainingInstanceDefaultApi extends LinearTrainingInstanceApi {
     private readonly http = inject(HttpClient);
     private readonly crczpHttp = inject(CRCZPHttpService);
+    private readonly entityCacheTtlMs = inject(PortalConfig).caching.entityCacheTtlMs;
 
     private readonly trainingInstancesUriExtension = 'training-instances';
     private readonly trainingRunsUriExtension = 'training-runs';
@@ -256,7 +257,7 @@ export class TrainingInstanceDefaultApi extends LinearTrainingInstanceApi {
                 cacheKey: (id) => `trainingInstanceBasic-${id}`,
                 itemId: (dto) => dto.id,
                 paramName: 'ids',
-                ttl: '8h',
+                ttlMs: this.entityCacheTtlMs,
             })
             .withMapper(trainingInstanceBasicArrayMapper)
             .execute();

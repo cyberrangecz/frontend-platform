@@ -143,7 +143,7 @@ describe('Cache E2E — production defaults', () => {
 
 describe('Cache E2E — TTL eviction', () => {
     it('TTL=0 evicts every instance immediately', async () => {
-        const cache = setupCache({ caching: { eventCacheTTL: 0 } });
+        const cache = setupCache({ caching: { eventCacheTtlMs: 0 } });
 
         await firstValueFrom(cache.insert([makeRow()]));
         await firstValueFrom(cache.evictStaleInstances());

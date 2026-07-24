@@ -1,5 +1,5 @@
 import { inject, Injectable, Provider, Type } from '@angular/core';
-import { duration, Duration } from 'moment-mini';
+import { milliseconds } from 'date-fns';
 import { PortalConfig } from '../../types/config';
 import { OffsetPaginationEvent } from '@crczp/utils';
 
@@ -15,7 +15,7 @@ type PaginationRegistry = Record<string, PaginationState>;
 @Injectable({ providedIn: 'root' })
 export class PaginationRegistryService {
     private readonly storageKey = 'pagination';
-    private readonly ttl: Duration = duration(PAGINATION_TTL, 'days');
+    private readonly ttl: number = milliseconds({ days: PAGINATION_TTL });
 
     read(): PaginationRegistry {
         const raw = localStorage.getItem(this.storageKey);
@@ -32,7 +32,7 @@ export class PaginationRegistryService {
         let modified = false;
 
         Object.keys(registry).forEach((key) => {
-            if (now - registry[key].lastUpdate > this.ttl.asMilliseconds()) {
+            if (now - registry[key].lastUpdate > this.ttl) {
                 delete registry[key];
                 modified = true;
             }

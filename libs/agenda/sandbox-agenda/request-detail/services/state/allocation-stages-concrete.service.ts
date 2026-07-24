@@ -21,7 +21,7 @@ export class AllocationStagesConcreteService extends RequestStagesService {
     constructor() {
         const settings = inject(PortalConfig);
 
-        super(settings.polling.pollingPeriodShort * 3);
+        super(settings.polling.pollingPeriodShortMs * 3);
     }
 
     protected callApiToGetStages(request: Request): Observable<StageAdapter[]> {

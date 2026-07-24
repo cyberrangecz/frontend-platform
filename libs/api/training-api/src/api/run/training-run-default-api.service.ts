@@ -51,6 +51,7 @@ import { TrainingRunBasicDto } from '../../dto/training-run/training-run-basic-d
 export class TrainingRunDefaultApi extends LinearRunApi {
     private readonly http = inject(HttpClient);
     private readonly crczpHttp = inject(CRCZPHttpService);
+    private readonly entityCacheTtlMs = inject(PortalConfig).caching.entityCacheTtlMs;
 
     private readonly apiUrl =
         inject(PortalConfig).basePaths.linearTraining + '/training-runs';
@@ -303,7 +304,7 @@ export class TrainingRunDefaultApi extends LinearRunApi {
                 cacheKey: (id) => `trainingRunBasic-${id}`,
                 itemId: (dto) => dto.id,
                 paramName: 'ids',
-                ttl: '8h',
+                ttlMs: this.entityCacheTtlMs,
             })
             .withMapper(trainingRunBasicArrayMapper)
             .execute();

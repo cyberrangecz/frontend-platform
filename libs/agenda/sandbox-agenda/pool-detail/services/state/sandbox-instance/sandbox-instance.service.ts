@@ -56,7 +56,7 @@ export class SandboxInstanceService extends OffsetPaginatedElementsPollingServic
     constructor() {
         const settings = inject(PortalConfig);
 
-        super(settings.defaultPageSize, settings.polling.pollingPeriodShort);
+        super(settings.defaultPageSize, settings.polling.pollingPeriodShortMs);
         const allocationUnitsService = this.allocationUnitsService;
 
         this.allocationUnits$ = allocationUnitsService.units$;

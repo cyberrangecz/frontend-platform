@@ -16,17 +16,14 @@ const BASE_TEST_CONFIG = PortalConfig.schema().parse({
         sandboxOrganizer: 'ROLE_SANDBOX_ORGANIZER',
     },
     polling: {
-        pollingPeriodShort: 5_000,
-        pollingPeriodLong: 30_000,
+        pollingPeriodShort: '5s',
+        pollingPeriodLong: '30s',
         retryCount: 3,
     },
     caching: {
-        endpointCachingDisabled: false,
-        endpointCacheTTL: 300,
-        eventCacheTTL: 7 * 24 * 3_600,
-        eventEntityCacheTTL: 300,
-        eventCacheMaxStaleness: 30_000,
-        eventCacheMaxSize: 524_288_000,
+        eventCacheTtl: '7d',
+        eventCacheMaxSize: '500MB',
+        entityCacheTtl: '30m',
     },
     basePaths: {
         linearTraining: 'http://localhost/api',
@@ -44,7 +41,7 @@ const BASE_TEST_CONFIG = PortalConfig.schema().parse({
  * @param overrides Deep-partial overrides applied on top of {@link BASE_TEST_CONFIG}.
  *   Nested sections (caching, polling, roleMapping, basePaths, authConfig) are
  *   shallow-merged so callers only need to specify the fields that differ.
- *   Accepts out-of-range values (e.g. `caching.eventCacheTTL: 0`) intentionally
+ *   Accepts out-of-range values (e.g. `caching.eventCacheTtlMs: 0`) intentionally
  *   used in tests to trigger immediate eviction without bypassing Zod at call sites.
  */
 export function provideTestPortalConfig(
