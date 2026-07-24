@@ -1,0 +1,14 @@
+<crczp-chart-panel-shell
+    heading="Overall speed vs score"
+    [status]="status()"
+    [exportable]="null"
+    info="Every finished run placed by total time (x) against final score % (y). Your run is highlighted; the dashed lines mark the cohort averages, splitting the field into fast/slow × high/low quadrants."
+>
+    <div
+        echarts
+        class="chart-canvas"
+        [options]="chartOptions()"
+        [autoResize]="true"
+        (chartInit)="onChartInit($event)"
+    ></div>
+</crczp-chart-panel-shell>

@@ -1,0 +1,41 @@
+<crczp-chart-panel-shell
+    heading="Hints & solutions taken"
+    [status]="status()"
+    [exportable]="null"
+    info="One section per training level. Each bar's length is the share of trainees who completed the level and opened that hint or the solution. A green check marks the assists this run opened; those bars fill with the primary colour, the rest with a neutral accent."
+>
+    <div class="assists-sections">
+        @for (level of levels(); track level.levelOrder) {
+            <section class="assists-section">
+                <header class="assists-section--head">
+                    <h3 class="assists-section--title" crczpOverflowTooltip>{{ level.title }}</h3>
+                    <span class="assists-section--subtitle">Level {{ level.levelOrder + 1 }}</span>
+                </header>
+                <mat-card appearance="outlined">
+                    <mat-card-content>
+                        <ul class="assists-section--rows">
+                            @for (cell of level.cells; track $index) {
+                                <li
+                                    class="assists-row"
+                                    [class.assists-row--used]="cell.openedByThisRun"
+                                    [crczpRichTooltip]="tooltip(cell)"
+                                >
+                                    <span class="assists-row--name">{{ cell.label }}</span>
+                                    <span class="assists-row--track">
+                                        <span class="assists-row--fill" [style.width.%]="cell.coveragePercent"></span>
+                                    </span>
+                                    <span class="assists-row--check">
+                                        @if (cell.openedByThisRun) {
+                                            <mat-icon>check_circle</mat-icon>
+                                        }
+                                    </span>
+                                    <span class="assists-row--value">{{ cell.coveragePercent }}%</span>
+                                </li>
+                            }
+                        </ul>
+                    </mat-card-content>
+                </mat-card>
+            </section>
+        }
+    </div>
+</crczp-chart-panel-shell>

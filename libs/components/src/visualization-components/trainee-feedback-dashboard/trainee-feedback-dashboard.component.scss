@@ -1,0 +1,23 @@
+:host {
+    display: block;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+}
+
+.feedback-root {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: var(--space-xl);
+}
+
+.feedback-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3xl);
+}
+
+.feedback__full-width {
+    width: 100%;
+}

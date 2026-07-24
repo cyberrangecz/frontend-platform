@@ -1,0 +1,41 @@
+<div class="feedback-card">
+    @switch (status()) {
+        @case ('loading') {
+            <div class="feedback-card__state">Loading feedback…</div>
+        }
+        @case ('error') {
+            <div class="feedback-card__state">Feedback data could not be loaded</div>
+        }
+        @case ('empty') {
+            <div class="feedback-card__state">No data for this run</div>
+        }
+        @default {
+            @if (view(); as view) {
+                <div class="feedback-card__header">
+                    @if (view.avatarSrc; as src) {
+                        <img class="feedback-card__avatar" [src]="src" alt="" aria-hidden="true" />
+                    } @else {
+                        <span class="feedback-card__avatar feedback-card__avatar--placeholder" aria-hidden="true">
+                            {{ view.avatarInitial }}
+                        </span>
+                    }
+                    <div class="feedback-card__id">
+                        <span class="feedback-card__name" crczpOverflowTooltip>{{ view.name }}</span>
+                        @if (view.contact) {
+                            <span class="feedback-card__contact" crczpOverflowTooltip>{{ view.contact }}</span>
+                        }
+                    </div>
+                </div>
+
+                <div class="feedback-card__stats">
+                    @for (stat of view.stats; track stat.label) {
+                        <div class="feedback-card__stat">
+                            <span class="feedback-card__stat-label">{{ stat.label }}</span>
+                            <span class="feedback-card__stat-value" [style.color]="stat.color">{{ stat.value }}</span>
+                        </div>
+                    }
+                </div>
+            }
+        }
+    }
+</div>

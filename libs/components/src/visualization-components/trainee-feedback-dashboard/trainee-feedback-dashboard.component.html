@@ -1,0 +1,61 @@
+<div class="feedback-root">
+    <div class="feedback-content">
+        @if (resolvedInstanceId(); as instanceId) {
+            <crczp-feedback-overview [instanceId]="instanceId" [runId]="runId()" />
+        }
+
+        <crczp-dashboard-section label="Standing among trainees">
+            <crczp-chart-row>
+                @if (resolvedInstanceId(); as instanceId) {
+                    <crczp-overall-speed-vs-score
+                        [instanceId]="instanceId"
+                        [runId]="runId()"
+                        crczpChartRowItem
+                    />
+                    <crczp-level-percentiles
+                        [instanceId]="instanceId"
+                        [runId]="runId()"
+                        crczpChartRowItem
+                    />
+                }
+            </crczp-chart-row>
+            <crczp-chart-row>
+                @if (resolvedInstanceId(); as instanceId) {
+                    <crczp-scoreboard-table [instanceId]="instanceId" crczpChartRowItem />
+                    <crczp-assists-coverage
+                        [instanceId]="instanceId"
+                        [runId]="runId()"
+                        crczpChartRowItem
+                    />
+                }
+            </crczp-chart-row>
+        </crczp-dashboard-section>
+
+        <crczp-dashboard-section label="Score & time">
+            @if (resolvedInstanceId(); as instanceId) {
+                <crczp-chart-row>
+                    <crczp-cumulative-score-chart
+                        [instanceId]="instanceId"
+                        [runId]="runId()"
+                        crczpChartRowItem
+                    />
+                    <crczp-time-vs-score-chart
+                        [instanceId]="instanceId"
+                        [runId]="runId()"
+                        crczpChartRowItem
+                    />
+                </crczp-chart-row>
+            }
+        </crczp-dashboard-section>
+
+        <crczp-dashboard-section label="Run timeline">
+            @if (resolvedInstanceId(); as instanceId) {
+                <crczp-event-timeline-chart
+                    [instanceId]="instanceId"
+                    [runId]="runId()"
+                    class="feedback__full-width"
+                />
+            }
+        </crczp-dashboard-section>
+    </div>
+</div>
