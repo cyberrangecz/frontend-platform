@@ -1,0 +1,37 @@
+<mat-card appearance="outlined" class="panel">
+    @if (heading() || exportable() || info()) {
+        <div class="panel-header">
+            <h3 class="panel-header--title">{{ heading() }}</h3>
+            <div class="panel-header--controls">
+                <ng-content select="[panelControls]" />
+                @if (info(); as infoText) {
+                    <button mat-icon-button type="button" [matTooltip]="infoText" aria-label="About this panel">
+                        <mat-icon>info_outline</mat-icon>
+                    </button>
+                }
+                @if (exportable()) {
+                    <button mat-icon-button type="button" (click)="download()" [matTooltip]="downloadTooltip()" aria-label="Download CSV">
+                        <mat-icon>download</mat-icon>
+                    </button>
+                }
+            </div>
+        </div>
+    }
+
+    <div class="panel-body">
+        @switch (renderMode()) {
+            @case ('skeleton') {
+                <div class="panel-body--skeleton" aria-busy="true"></div>
+            }
+            @case ('empty') {
+                <crczp-panel-placeholder variant="empty" [message]="emptyMessage()" />
+            }
+            @case ('error') {
+                <crczp-panel-placeholder variant="error" />
+            }
+            @default {
+                <ng-content />
+            }
+        }
+    </div>
+</mat-card>

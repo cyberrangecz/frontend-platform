@@ -1,0 +1,34 @@
+:host {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    min-width: 0;
+    max-width: 100%;
+    vertical-align: middle;
+}
+
+.identity-avatar {
+    flex-shrink: 0;
+    width: var(--identity-avatar-size, 1.25rem);
+    height: var(--identity-avatar-size, 1.25rem);
+    border-radius: 0.125rem;
+    object-fit: cover;
+
+    &--placeholder {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--neutral-90);
+        color: var(--neutral-40);
+        font-size: calc(var(--identity-avatar-size, 1.25rem) * 0.5);
+        font-weight: var(--font-weight-semibold);
+        line-height: 1;
+        text-transform: uppercase;
+    }
+}
+
+.identity-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}

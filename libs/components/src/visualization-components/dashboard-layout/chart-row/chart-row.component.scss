@@ -1,0 +1,7 @@
+:host {
+    display: flex;
+    gap: var(--space-xl);
+    overflow-x: auto;
+    padding-bottom: var(--space-3xs);
+    scroll-padding-inline: var(--space-xs);
+}

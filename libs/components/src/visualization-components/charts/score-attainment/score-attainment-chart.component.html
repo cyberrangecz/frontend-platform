@@ -1,0 +1,14 @@
+<crczp-chart-panel-shell
+    heading="Score attainment"
+    [status]="status()"
+    [exportable]="this"
+    info="Distribution of trainees by score (% of max). Use the legend to switch between all runs and finished runs; bars count trainees per band. Drag the timeline to set the bin width. [TIP: scroll over the range picker]"
+>
+    <div
+        echarts
+        class="chart-canvas"
+        [options]="chartOptions()"
+        [autoResize]="true"
+        (chartInit)="onChartInit($event)"
+    ></div>
+</crczp-chart-panel-shell>

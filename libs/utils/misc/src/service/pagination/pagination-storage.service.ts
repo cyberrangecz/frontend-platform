@@ -1,7 +1,7 @@
 import { inject, Injectable, Provider, Type } from '@angular/core';
 import { milliseconds } from 'date-fns';
 import { PortalConfig } from '../../types/config';
-import { OffsetPaginationEvent } from '@crczp/utils';
+import { OffsetPaginationEvent, SortDir } from '@crczp/utils';
 
 const PAGINATION_TTL = 30; //days
 
@@ -95,7 +95,7 @@ export class PaginationStorageService {
 
     createPagination<Sort>(
         sort: Sort | undefined = undefined,
-        sortDir: 'asc' | 'desc' = 'asc',
+        sortDir: SortDir = 'asc',
     ): OffsetPaginationEvent<Sort> {
         return {
             page: 0,

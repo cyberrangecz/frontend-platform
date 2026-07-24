@@ -1,0 +1,34 @@
+<crczp-trainee-overview
+    [instanceId]="instanceId()"
+    [selectedRunId]="selectedRunId()"
+    (selectedRunIdChange)="selectedRunIdChange.emit($event)"
+/>
+<crczp-chart-row>
+    <crczp-cumulative-score-chart
+        [instanceId]="instanceId()"
+        [runId]="selectedRunId()"
+        crczpChartRowItem
+    />
+    <crczp-time-vs-score-chart
+        [instanceId]="instanceId()"
+        [runId]="selectedRunId()"
+        crczpChartRowItem
+    />
+    <crczp-trainee-wrong-answers-chart
+        [instanceId]="instanceId()"
+        [runId]="selectedRunId()"
+        crczpChartRowItem
+    />
+</crczp-chart-row>
+
+<crczp-event-timeline-chart
+    [instanceId]="instanceId()"
+    [runId]="selectedRunId()"
+    class="individual__full-width"
+/>
+
+<crczp-commands-log-table
+    [instanceId]="instanceId()"
+    [runId]="selectedRunId()"
+    class="individual__full-width"
+/>

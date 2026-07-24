@@ -1,0 +1,32 @@
+<div class="dashboard-root">
+    <div class="dashboard-header">
+        <h1 class="dashboard-header__title">Analysis of {{ instanceName() }}</h1>
+        <crczp-segmented-toggle
+            [options]="viewOptions"
+            [value]="view()"
+            (valueChange)="onViewChanged($event)"
+        />
+    </div>
+
+    <div class="dashboard-content">
+        @switch (view()) {
+            @case ('aggregated') {
+                <crczp-aggregated-view [instanceId]="instanceId()" />
+            }
+            @case ('individual') {
+                <crczp-individual-view
+                    [instanceId]="instanceId()"
+                    [selectedRunId]="selectedRunId()"
+                    (selectedRunIdChange)="onRunSelected($event)"
+                />
+            }
+            @case ('assessment') {
+                <crczp-assessment-view
+                    [instanceId]="instanceId()"
+                    [selectedTraineeRunId]="selectedRunId()"
+                    (selectedTraineeRunIdChange)="onRunSelected($event)"
+                />
+            }
+        }
+    </div>
+</div>

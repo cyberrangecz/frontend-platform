@@ -1,0 +1,70 @@
+:host {
+    display: block;
+    height: 100%;
+}
+
+.difficulty-strip {
+    display: flex;
+    gap: var(--space-xl);
+    height: 100%;
+    align-items: stretch;
+    justify-content: space-around;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-bottom: var(--space-xs);
+}
+
+.difficulty-panel {
+    display: flex;
+    flex: 0 0 16rem;
+    flex-direction: column;
+    padding: var(--space-md);
+    border: 1px solid var(--neutral-90);
+    border-radius: 12px;
+}
+
+.difficulty-header {
+    display: flex;
+    gap: var(--space-xs);
+    align-items: center;
+    justify-content: space-between;
+}
+
+.difficulty-title {
+    overflow: hidden;
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-semibold);
+    color: var(--neutral-20);
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.difficulty-badge {
+    flex: 0 0 auto;
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    text-align: right;
+}
+
+.difficulty-radar {
+    flex: 1 1 auto;
+    width: 100%;
+    min-height: 13rem;
+}
+
+.difficulty-empty {
+    display: flex;
+    flex: 1 1 auto;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-xl);
+    font-size: var(--font-size-md);
+    color: var(--neutral-50);
+    text-align: center;
+}
+
+.difficulty-foot {
+    font-size: var(--font-size-sm);
+    color: var(--neutral-50);
+    text-align: center;
+}

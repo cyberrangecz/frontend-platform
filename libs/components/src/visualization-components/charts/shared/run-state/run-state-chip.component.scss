@@ -1,0 +1,13 @@
+:host {
+    display: inline-flex;
+}
+
+.run-state-chip {
+    display: inline-flex;
+    align-items: center;
+    height: 20px;
+    padding: 0 var(--space-xs);
+    border-radius: 10px;
+    font-size: var(--font-size-xs);
+    pointer-events: none;
+}

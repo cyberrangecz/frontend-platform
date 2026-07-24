@@ -1,0 +1,202 @@
+:host {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.trainee-card {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2xl);
+    box-sizing: border-box;
+    padding: var(--space-2xl);
+    overflow: hidden;
+}
+
+.trainee-card__header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-lg);
+}
+
+.trainee-card__avatar {
+    flex-shrink: 0;
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 0.25rem;
+    object-fit: cover;
+
+    &--placeholder {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--neutral-90);
+        color: var(--neutral-40);
+        font-size: var(--font-size-4xl);
+        font-weight: var(--font-weight-semibold);
+        line-height: 1;
+        text-transform: uppercase;
+    }
+}
+
+.trainee-card__id {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3xs);
+    min-width: 0;
+}
+
+.trainee-card__name {
+    color: var(--neutral-20);
+    font-size: var(--font-size-3xl);
+    font-weight: var(--font-weight-semibold);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.trainee-card__contact {
+    color: var(--neutral-40);
+    font-size: var(--font-size-lg);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.trainee-card__stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3xl);
+}
+
+.trainee-card__stat {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4xs);
+}
+
+.trainee-card__stat-label {
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--neutral-40);
+}
+
+.trainee-card__stat-value {
+    font-size: var(--font-size-3xl);
+    font-weight: var(--font-weight-semibold);
+    line-height: 1.1;
+    color: var(--neutral-20);
+}
+
+.trainee-card__stat-secondary {
+    margin-top: var(--space-4xs);
+    font-size: var(--font-size-sm);
+    color: var(--neutral-40);
+}
+
+.trainee-card__levels {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 0 var(--space-xs);
+    border: 1px solid var(--neutral-80);
+    border-radius: 8px;
+    background: var(--neutral-98);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4xs);
+}
+
+:host ::ng-deep .trainee-card__levels {
+    &::-webkit-scrollbar {
+        width: 0.85rem;
+    }
+
+    &::-webkit-scrollbar-track {
+        margin: 0.25rem 0;
+        background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        border: 0.25rem solid transparent;
+        background-clip: padding-box;
+        background-color: var(--primary-10);
+    }
+}
+
+.trainee-card__level {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto auto;
+    align-items: center;
+    column-gap: var(--space-3xl);
+    width: 100%;
+    max-width: 34rem;
+    padding: var(--space-xs) var(--space-md);
+    border-radius: 8px;
+
+    &--active {
+        background: var(--primary-95);
+    }
+}
+
+.trainee-card__level-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+}
+
+.trainee-card__level-check {
+    width: 1rem;
+    height: 1rem;
+    font-size: 1rem;
+    line-height: 1;
+}
+
+.trainee-card__level-main {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4xs);
+    min-width: 0;
+}
+
+.trainee-card__level-title {
+    color: var(--neutral-20);
+    font-weight: var(--font-weight-medium);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.trainee-card__level-detail {
+    color: var(--neutral-40);
+    font-size: var(--font-size-md);
+}
+
+.trainee-card__level-time {
+    color: var(--neutral-40);
+    font-size: var(--font-size-lg);
+    text-align: right;
+}
+
+.trainee-card__level-score {
+    color: var(--neutral-20);
+    font-weight: var(--font-weight-semibold);
+    text-align: right;
+    white-space: nowrap;
+}
+
+.trainee-card__empty {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+    color: var(--neutral-40);
+}

@@ -1,0 +1,29 @@
+<crczp-chart-panel-shell
+    [heading]="heading"
+    [status]="status()"
+    [exportable]="this"
+    [info]="info"
+>
+    @if (!showCleanState()) {
+        <crczp-segmented-toggle
+            panelControls
+            [options]="viewOptions"
+            [value]="view()"
+            (valueChange)="onViewSelected($event)"
+        />
+    }
+    @if (showCleanState()) {
+        <div class="wrong-answers-clean">
+            <mat-icon class="wrong-answers-clean__icon" [style.color]="cleanIconColor">check_circle</mat-icon>
+            <p class="wrong-answers-clean__text">{{ cleanMessage }}</p>
+        </div>
+    } @else {
+        <div
+            echarts
+            class="chart-canvas"
+            [options]="chartOptions()"
+            [autoResize]="true"
+            (chartInit)="onChartInit($event)"
+        ></div>
+    }
+</crczp-chart-panel-shell>

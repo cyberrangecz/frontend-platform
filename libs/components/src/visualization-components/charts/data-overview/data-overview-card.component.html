@@ -1,0 +1,19 @@
+<div class="data-overview" [class.data-overview--loading]="cardStatus() === 'loading'">
+    @for (tile of tiles(); track tile.label) {
+        <div class="data-overview__tile">
+            <span class="data-overview__tile-label">{{ tile.label }}</span>
+            @if (tile.segments) {
+                <span class="data-overview__tile-value">
+                    @for (segment of tile.segments; track $index) {
+                        <span [style.color]="segment.color">{{ segment.text }}</span>
+                    }
+                </span>
+            } @else {
+                <span class="data-overview__tile-value" [style.color]="tile.color ?? null">{{ tile.value }}</span>
+            }
+            @if (tile.caption) {
+                <span class="data-overview__tile-caption">{{ tile.caption }}</span>
+            }
+        </div>
+    }
+</div>

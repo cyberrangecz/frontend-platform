@@ -1,0 +1,16 @@
+<crczp-chart-panel-shell
+    heading="Time vs expected per level"
+    [status]="status()"
+    [exportable]="this"
+    [info]="chartInfo"
+>
+    <div
+        echarts
+        class="chart-canvas"
+        [options]="chartOptions()"
+        [autoResize]="true"
+        (chartInit)="onChartInit($event)"
+        (chartMouseOver)="onAxisLabelHover($event)"
+        (chartMouseOut)="onAxisLabelLeave($event)"
+    ></div>
+</crczp-chart-panel-shell>

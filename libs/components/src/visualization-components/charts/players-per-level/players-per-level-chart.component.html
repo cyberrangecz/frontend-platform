@@ -1,0 +1,16 @@
+<crczp-chart-panel-shell
+    heading="Current players per level"
+    [status]="status()"
+    [exportable]="this"
+    info="Each active trainee is counted once, at the level they are currently on."
+>
+    <div
+        echarts
+        class="chart-canvas"
+        [options]="chartOptions()"
+        [autoResize]="true"
+        (chartInit)="onChartInit($event)"
+        (chartMouseOver)="onAxisLabelHover($event)"
+        (chartMouseOut)="onAxisLabelLeave($event)"
+    ></div>
+</crczp-chart-panel-shell>

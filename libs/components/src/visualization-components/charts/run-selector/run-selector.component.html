@@ -1,0 +1,10 @@
+<sentinel-resource-selector
+    [resources]="resources()"
+    [resourceMapping]="resourceMapping"
+    [multiSelection]="false"
+    [singleSelected]="singleSelected()"
+    (fetch)="onFetch($event)"
+    (singleSelectionChange)="onSingleSelectionChange($event)"
+    label="Training run"
+    searchPlaceholder="Search by name or state..."
+/>

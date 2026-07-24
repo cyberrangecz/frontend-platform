@@ -1,0 +1,10 @@
+<div class="progress-chart-outer">
+    <div
+        echarts
+        class="progress-chart-inner"
+        [options]="chartOptions()"
+        [autoResize]="true"
+        [style.height.px]="innerHostHeightPx()"
+        (chartInit)="onChartInit($event)"
+    ></div>
+</div>

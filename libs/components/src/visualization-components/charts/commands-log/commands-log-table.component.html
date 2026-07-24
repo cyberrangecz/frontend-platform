@@ -1,0 +1,59 @@
+<crczp-chart-panel-shell
+    heading="Commands log"
+    [status]="status()"
+    [emptyMessage]="emptyMessage()"
+    [exportable]="this"
+    info="Every console command issued during the selected run, in order, with the level active at the time, the host and source IP it came from, and the working directory. Sort by any column; hover a row for the command type."
+>
+    <div class="commandlog-scroll">
+        <table
+            mat-table
+            class="commandlog-table"
+            [dataSource]="sortedRows()"
+            [trackBy]="trackById"
+            matSort
+            [matSortActive]="sortState().active"
+            [matSortDirection]="sortState().direction"
+            matSortDisableClear
+            (matSortChange)="onSortChange($event)"
+        >
+            <ng-container matColumnDef="time">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header arrowPosition="after">Time</th>
+                <td mat-cell *matCellDef="let row">{{ row.offsetText }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="command">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header arrowPosition="after">Command</th>
+                <td mat-cell *matCellDef="let row" class="commandlog-cell--command">
+                    <span class="commandlog-truncate"
+                        ><span class="commandlog-tool" [style.color]="row.toolColor">{{ row.tool }}</span>{{ row.argumentsSuffix }}</span>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="level">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header arrowPosition="after">Level</th>
+                <td mat-cell *matCellDef="let row">{{ row.levelText }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="host">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header arrowPosition="after">Host</th>
+                <td mat-cell *matCellDef="let row">{{ row.hostText }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="ip">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header arrowPosition="after">Source IP</th>
+                <td mat-cell *matCellDef="let row">{{ row.ipText }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="wd">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header arrowPosition="after">Working dir</th>
+                <td mat-cell *matCellDef="let row" class="commandlog-cell--wd">
+                    <span class="commandlog-truncate">{{ row.workingDirectoryText }}</span>
+                </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns" [crczpRichTooltip]="row.tooltip"></tr>
+        </table>
+    </div>
+</crczp-chart-panel-shell>

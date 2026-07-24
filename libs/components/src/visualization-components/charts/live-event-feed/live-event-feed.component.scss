@@ -1,0 +1,81 @@
+:host {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.feed-list {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: var(--space-3xs) var(--space-xl) var(--space-xl);
+
+    &__row {
+        display: grid;
+        grid-template-columns: 6rem 9rem 1fr 8rem;
+        gap: var(--space-xs);
+        align-items: center;
+        padding: var(--space-2xs) 0;
+        box-sizing: border-box;
+        // Shared dashboard-table row height — keep in sync with the scoreboard table.
+        min-height: 36px;
+        border-bottom: 1px solid var(--neutral-90);
+        font-size: var(--font-size-lg);
+
+        &:last-child {
+            border-bottom: none;
+        }
+    }
+
+    &__time {
+        color: var(--neutral-50);
+        white-space: nowrap;
+        font-size: var(--font-size-md);
+        cursor: default;
+    }
+
+    &__trainee {
+        color: var(--neutral-20);
+        font-weight: var(--font-weight-medium);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    &__event {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2xs);
+        min-width: 0;
+        cursor: default;
+    }
+
+    &__dot {
+        flex-shrink: 0;
+        width: 0.5rem;
+        height: 0.5rem;
+        border-radius: 50%;
+    }
+
+    &__label {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    &__level {
+        color: var(--neutral-40);
+        font-size: var(--font-size-md);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    &__empty {
+        color: var(--neutral-50);
+        font-style: italic;
+        text-align: center;
+        padding: var(--space-3xl) 0;
+        margin: 0;
+    }
+}

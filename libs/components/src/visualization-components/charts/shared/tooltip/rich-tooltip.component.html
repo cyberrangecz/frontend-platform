@@ -1,0 +1,22 @@
+@if (modelContent(); as model) {
+    @if (model.title) {
+        <div class="tooltip-title" [style.color]="model.titleColor">
+            @if (model.titleIcon) {
+                <span class="tooltip-title__icon">{{ model.titleIcon }}</span>
+            }
+            <span class="tooltip-title__text">{{ model.title }}</span>
+        </div>
+    }
+    @if (model.rows.length > 0) {
+        <dl class="tooltip-rows">
+            @for (row of model.rows; track $index) {
+                <dt class="tooltip-rows__label">{{ row.label }}</dt>
+                <dd class="tooltip-rows__value" [style.color]="row.valueColor">{{ row.value }}</dd>
+            }
+        </dl>
+    }
+} @else if (templateContent(); as template) {
+    <ng-container [ngTemplateOutlet]="template" />
+} @else {
+    <span class="tooltip-text">{{ textContent() }}</span>
+}

@@ -1,0 +1,43 @@
+<crczp-data-overview-card [instanceId]="instanceId()" />
+
+<crczp-dashboard-section label="Live status">
+    <crczp-progress-visualization [instanceId]="instanceId()" />
+    <crczp-chart-row>
+        <crczp-live-event-feed
+            [instanceId]="instanceId()"
+            crczpChartRowItem
+        />
+        <crczp-scoreboard-table
+            [instanceId]="instanceId()"
+            crczpChartRowItem
+        />
+    </crczp-chart-row>
+</crczp-dashboard-section>
+
+<crczp-dashboard-section label="Standings">
+    <crczp-chart-row>
+        <crczp-players-per-level-chart
+            [instanceId]="instanceId()"
+            crczpChartRowItem
+        />
+        <crczp-score-attainment-chart [instanceId]="instanceId()" crczpChartRowItem />
+    </crczp-chart-row>
+</crczp-dashboard-section>
+
+<crczp-dashboard-section label="Level analysis">
+    <crczp-level-difficulty [instanceId]="instanceId()" />
+    <crczp-chart-row>
+        <crczp-top-wrong-answers-chart
+            [instanceId]="instanceId()"
+            crczpChartRowItem
+        />
+        <crczp-time-vs-expected-chart
+            [instanceId]="instanceId()"
+            crczpChartRowItem
+        />
+    </crczp-chart-row>
+</crczp-dashboard-section>
+
+<crczp-dashboard-section label="Commands">
+    <crczp-commands-chart [instanceId]="instanceId()" />
+</crczp-dashboard-section>

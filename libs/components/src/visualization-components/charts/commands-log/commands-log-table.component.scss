@@ -1,0 +1,38 @@
+:host {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.commandlog-scroll {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+}
+
+.commandlog-table {
+    width: 100%;
+    --mat-table-row-item-container-height: 36px;
+    --mat-table-header-container-height: 36px;
+    --mat-table-row-item-outline-color: var(--neutral-90);
+}
+
+.commandlog-truncate {
+    display: block;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.commandlog-cell--command .commandlog-truncate {
+    max-width: 24rem;
+    font-family: monospace;
+}
+
+.commandlog-tool {
+    font-weight: var(--font-weight-medium);
+}
+
+.commandlog-cell--wd .commandlog-truncate {
+    max-width: 12rem;
+}

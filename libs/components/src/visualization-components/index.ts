@@ -1,2 +1,3 @@
-export * from './assessment/assessment-results-visualization.component';
-export * from './progress';
+export * from './charts/progress';
+export * from './analysis-dashboard';
+export * from './trainee-feedback-dashboard';

@@ -1,0 +1,87 @@
+:host {
+    display: block;
+    height: var(--chart-panel-fixed-height, 30rem);
+}
+
+:host(.chart-panel-shell--fit) {
+    height: auto;
+}
+
+.panel {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    box-sizing: border-box;
+    padding: 1rem 1.25rem 1.125rem;
+}
+
+.panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-xs);
+    margin-bottom: var(--space-md);
+
+    &--title {
+        margin: 0;
+        font-size: var(--font-size-xl);
+        font-weight: var(--font-weight-semibold);
+    }
+
+    &--controls {
+        display: flex;
+        align-items: center;
+        gap: var(--space-4xs);
+
+        .mat-mdc-icon-button {
+            color: var(--neutral-50);
+            transition: color 0.15s ease;
+
+            &:hover {
+                color: var(--primary-40);
+            }
+        }
+    }
+}
+
+.panel-body {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+
+    // Rounds the scrollbar of any content projected into the body to match the
+    // global `.round-scrollbar` thumb and track radius.
+    ::ng-deep ::-webkit-scrollbar-thumb {
+        border-radius: 1rem;
+    }
+
+    ::ng-deep ::-webkit-scrollbar-track {
+        border-radius: 1rem;
+    }
+
+    &--skeleton {
+        height: 100%;
+        border-radius: 8px;
+        background: var(--neutral-95);
+        animation: panel-skeleton-pulse 1.4s ease-in-out infinite;
+    }
+}
+
+:host(.chart-panel-shell--fit) .panel-body {
+    flex: initial;
+    min-height: auto;
+    overflow: visible;
+}
+
+@keyframes panel-skeleton-pulse {
+    0%,
+    100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}

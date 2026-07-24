@@ -3,6 +3,8 @@
     "peerDependencies": {
         "@angular/common": "*",
         "@angular/core": "*",
+        "@angular/material": "*",
+        "@angular/cdk": "*",
         "@angular/router": "*",
         "rxjs": "*",
         "@sentinel/layout": "*",

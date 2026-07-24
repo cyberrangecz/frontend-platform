@@ -1,0 +1,36 @@
+<crczp-chart-panel-shell
+    heading="Live event feed"
+    [status]="status()"
+    [info]="feedInfo"
+>
+    <div
+        class="feed-list"
+        role="list"
+        aria-label="Live event feed"
+    >
+        @for (row of displayRows(); track row.id) {
+            <div class="feed-list__row" role="listitem" [crczpRichTooltip]="row.tooltip">
+                <span class="feed-list__time">{{ row.relativeTime }}</span>
+
+                <crczp-trainee-identity
+                    class="feed-list__trainee"
+                    [name]="row.traineeName"
+                    [picture]="row.traineePicture"
+                />
+
+                <span class="feed-list__event">
+                    <span
+                        class="feed-list__dot"
+                        [style.background-color]="row.dotColor"
+                        aria-hidden="true"
+                    ></span>
+                    <span class="feed-list__label">{{ row.eventLabel }}</span>
+                </span>
+
+                <span class="feed-list__level">{{ row.level }}</span>
+            </div>
+        } @empty {
+            <p class="feed-list__empty">No events to display.</p>
+        }
+    </div>
+</crczp-chart-panel-shell>

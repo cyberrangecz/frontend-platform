@@ -1,0 +1,73 @@
+:host {
+    display: block;
+    width: 100%;
+}
+
+.progress-visualization-root {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    flex: 1 1 auto;
+    min-height: 0;
+}
+
+.progress-visualization-stepper {
+    flex: 0 0 auto;
+}
+
+.progress-visualization-chart-area {
+    position: relative;
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.chart-controls {
+    position: absolute;
+    top: var(--space-2xl);
+    left: 6rem;
+    z-index: 1;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    height: 40px;
+    gap: var(--space-xs);
+    pointer-events: none;
+
+    button {
+        pointer-events: auto;
+    }
+
+    &__axis-mode {
+        pointer-events: auto;
+    }
+
+    &__sort-trigger {
+        --mat-text-button-label-text-color: var(--mat-sys-on-surface);
+        --mat-text-button-state-layer-color: var(--mat-sys-on-surface);
+    }
+
+    &__sort-value {
+        color: var(--mat-sys-on-surface);
+    }
+}
+
+.progress-visualization-chart {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: block;
+}
+
+.chart-fab-row {
+    position: absolute;
+    left: 6rem;
+    z-index: 1;
+
+    &__reset-zoom {
+        color: var(--mat-sys-primary);
+        animation: fadeIn 250ms ease;
+    }
+}
+

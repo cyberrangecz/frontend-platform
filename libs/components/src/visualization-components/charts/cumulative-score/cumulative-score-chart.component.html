@@ -1,0 +1,16 @@
+<crczp-chart-panel-shell
+    heading="Cumulative score"
+    [status]="status()"
+    [exportable]="this"
+    info="Actual cumulative score at each completed level versus the training's global penalty-free maximum. Points are coloured by level type; the dashed line is the same ceiling for every trainee."
+>
+    <div
+        echarts
+        class="chart-canvas"
+        [options]="chartOptions()"
+        [autoResize]="true"
+        (chartInit)="onChartInit($event)"
+        (chartMouseOver)="onAxisLabelHover($event)"
+        (chartMouseOut)="onAxisLabelLeave($event)"
+    ></div>
+</crczp-chart-panel-shell>
