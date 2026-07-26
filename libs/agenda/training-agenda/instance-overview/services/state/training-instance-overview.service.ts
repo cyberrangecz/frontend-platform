@@ -29,6 +29,7 @@ import {
 import { combineLatest, EMPTY, NEVER, Observable, of } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { TrainingInstanceFilter } from '../../model/adapters/training-instance-filter';
+import { ScoreCsvExportService } from '../score-export/score-csv-export.service';
 
 export type PoolError = 'NOT_ASSIGNED' | 'REMOVED';
 
@@ -49,6 +50,7 @@ export class TrainingInstanceOverviewService extends CrczpOffsetElementsPaginate
     private router = inject(Router);
     private notificationService = inject(NotificationService);
     private errorHandler = inject(ErrorHandlerService);
+    private scoreCsvExport = inject(ScoreCsvExportService);
 
     private lastPagination: OffsetPaginationEvent<TrainingInstanceSort>;
     private lastFilter: string;
@@ -104,6 +106,15 @@ export class TrainingInstanceOverviewService extends CrczpOffsetElementsPaginate
                     ),
             }),
         );
+    }
+
+    /**
+     * Downloads the CSV of per-trainee scores for a training instance, built from the
+     * local event cache.
+     * @param id id of the training instance whose scores should be exported
+     */
+    exportScore(id: number): Observable<boolean> {
+        return this.scoreCsvExport.export(id);
     }
 
     delete(trainingInstance: TrainingInstance): Observable<any> {

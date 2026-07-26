@@ -172,6 +172,15 @@ export class TrainingInstanceTable extends SentinelTable<
                 of(!ti.hasStarted()),
                 defer(() => service.results(ti.id)),
             ),
+            new RowAction(
+                'export_score',
+                'Export Score',
+                'file_download',
+                'primary',
+                'Download CSV with per-trainee scores',
+                of(!ti.hasStarted()),
+                defer(() => service.exportScore(ti.id)),
+            ),
         ];
     }
 }

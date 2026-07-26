@@ -4,7 +4,7 @@ import { LinearRunApi, LinearTrainingInstanceApi, TrainingRunSort } from '@crczp
 import { TrainingRun, TrainingRunInfo } from '@crczp/training-model';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { ErrorHandlerService, PortalConfig } from '@crczp/utils';
+import { PortalConfig } from '@crczp/utils';
 import { CrczpOffsetElementsPaginatedService, OffsetPaginatedResource } from '@crczp/api-common';
 
 /**
@@ -15,7 +15,6 @@ import { CrczpOffsetElementsPaginatedService, OffsetPaginatedResource } from '@c
 export class TrainingRunSummaryService extends CrczpOffsetElementsPaginatedService<TrainingRun> {
     private trainingInstanceApi = inject(LinearTrainingInstanceApi);
     private trainingRunApi = inject(LinearRunApi);
-    private errorHandler = inject(ErrorHandlerService);
 
     constructor() {
         super(inject(PortalConfig).defaultPageSize);
@@ -48,22 +47,6 @@ export class TrainingRunSummaryService extends CrczpOffsetElementsPaginatedServi
                 (_) => _,
                 () => this.hasErrorSubject$.next(true),
             ),
-        );
-    }
-
-    /**
-     * Get all scores from a specific training instance
-     * @param trainingInstanceId id of training instance
-     */
-    exportScore(trainingInstanceId: number): Observable<any> {
-        return this.trainingInstanceApi.exportScore(trainingInstanceId).pipe(
-            tap({
-                error: (err) =>
-                    this.errorHandler.emitAPIError(
-                        err,
-                        'Downloading training instance scores',
-                    ),
-            }),
         );
     }
 
