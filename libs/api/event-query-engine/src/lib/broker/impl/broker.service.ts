@@ -12,7 +12,7 @@ import { SyncDriverRegistry } from './sync-driver-registry';
 import { notifyError } from './error-notifier';
 import { toObservable } from '@angular/core/rxjs-interop';
 
-@Injectable({ providedIn: 'root' })
+@Injectable()
 export class DataBrokerServiceImpl implements DataBrokerService {
     private readonly injector = inject(Injector);
     private readonly syncService = inject(CacheSyncService);

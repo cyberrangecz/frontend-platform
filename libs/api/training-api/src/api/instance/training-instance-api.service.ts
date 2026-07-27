@@ -89,12 +89,6 @@ export abstract class LinearTrainingInstanceApi {
      */
     abstract unassignPool(trainingInstanceId: number): Observable<any>;
 
-    /**
-     * Sends http request to export score from training instance
-     * @param trainingInstanceId id of training instance
-     */
-    abstract exportScore(trainingInstanceId: number): Observable<boolean>;
-
     abstract fetchInstancesByIds(
         ids: number[],
     ): Observable<TrainingInstanceBasic[]>;

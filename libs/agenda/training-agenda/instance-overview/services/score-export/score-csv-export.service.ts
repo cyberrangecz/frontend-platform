@@ -34,7 +34,7 @@ const EXPORT_OPERATION = 'Exporting training instance scores';
  * The export is a one-shot read: it takes the cache's state at the moment it is
  * invoked and does not observe later events.
  */
-@Injectable({ providedIn: 'root' })
+@Injectable()
 export class ScoreCsvExportService {
     private readonly broker = inject(DataBrokerService);
     private readonly entityResolver = inject(EntityResolverService);

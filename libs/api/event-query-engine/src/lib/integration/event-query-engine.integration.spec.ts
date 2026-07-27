@@ -16,7 +16,7 @@ import { mapToRawEventRows } from '../sync/event-row-mapper';
 import { provideEventBroker } from '../broker/provide-event-broker';
 import { SyncService } from '../sync/impl/sync.service';
 import { EventFetchApi, EventFetchParams } from '../sync/event-fetch-api';
-import { DataBrokerServiceImpl } from '../broker/impl/broker.service';
+import { DataBrokerService } from '../broker/broker.interface';
 import { makeCacheDb, TestCacheDb } from './sqlite-test-db';
 
 process.env.TZ = 'America/New_York';
@@ -467,7 +467,7 @@ describe('Broker layer — DataBrokerServiceImpl with real Sync + Cache', () => 
     });
 
     it('query(): pre-seeded cache rows are returned after sync completes', async () => {
-        const broker = TestBed.inject(DataBrokerServiceImpl);
+        const broker = TestBed.inject(DataBrokerService);
         const cacheService = TestBed.inject(CacheService);
         await firstValueFrom(
             cacheService.insert([
@@ -495,7 +495,7 @@ describe('Broker layer — DataBrokerServiceImpl with real Sync + Cache', () => 
             instance_id: 1,
         });
         mockFetch.fetch.mockReturnValue(of([row]));
-        const broker = TestBed.inject(DataBrokerServiceImpl);
+        const broker = TestBed.inject(DataBrokerService);
 
         const instanceSig = signal(1);
         const rows = await firstValueFrom(
@@ -512,7 +512,7 @@ describe('Broker layer — DataBrokerServiceImpl with real Sync + Cache', () => 
 
     it('query(): COMMAND type resolves poolId from instance API before sync', async () => {
         mockInstanceApi.get.mockReturnValue(of({ poolId: 55 }));
-        const broker = TestBed.inject(DataBrokerServiceImpl);
+        const broker = TestBed.inject(DataBrokerService);
 
         const instanceSig = signal(1);
         await firstValueFrom(
@@ -533,7 +533,7 @@ describe('Broker layer — DataBrokerServiceImpl with real Sync + Cache', () => 
                 subscriber.error(new Error('sync exploded')),
             ),
         );
-        const broker = TestBed.inject(DataBrokerServiceImpl);
+        const broker = TestBed.inject(DataBrokerService);
 
         const instanceSig = signal(1);
         let streamError: unknown = null;
@@ -565,7 +565,7 @@ describe('Broker layer — DataBrokerServiceImpl with real Sync + Cache', () => 
             fetchedIds.push(params.instanceId);
             return of([]);
         });
-        const broker = TestBed.inject(DataBrokerServiceImpl);
+        const broker = TestBed.inject(DataBrokerService);
 
         await firstValueFrom(
             broker.query(
@@ -589,7 +589,7 @@ describe('Broker layer — DataBrokerServiceImpl with real Sync + Cache', () => 
     // Polling tests run on real timers with a short polling interval; the async cache
     // pipeline needs wall-clock time between ticks.
     it('queryPolling(): emits on first tick then again after interval elapses', async () => {
-        const broker = TestBed.inject(DataBrokerServiceImpl);
+        const broker = TestBed.inject(DataBrokerService);
         const intervalMs = makeConfig().polling.pollingPeriodShortMs;
         const emissions: unknown[] = [];
 
@@ -613,7 +613,7 @@ describe('Broker layer — DataBrokerServiceImpl with real Sync + Cache', () => 
     });
 
     it('queryPolling(): unsubscribe stops further fetch calls', async () => {
-        const broker = TestBed.inject(DataBrokerServiceImpl);
+        const broker = TestBed.inject(DataBrokerService);
 
         const sub = broker
             .queryPolling(
@@ -639,7 +639,7 @@ describe('Broker layer — DataBrokerServiceImpl with real Sync + Cache', () => 
             fetchedIds.push(params.instanceId);
             return of([]);
         });
-        const broker = TestBed.inject(DataBrokerServiceImpl);
+        const broker = TestBed.inject(DataBrokerService);
         const instanceSig = signal(1);
 
         const sub = broker

@@ -11,14 +11,17 @@ import { EntityResolverServiceImpl } from './impl/entity-resolver.service';
  *
  * Provides:
  * - `EntityResolverService` → {@link EntityResolverServiceImpl}
- * - `EntityFetchApi` → {@link EntityFetchApiImpl} (reuses the root-scoped singleton)
+ * - `EntityFetchApi` → {@link EntityFetchApiImpl}
  *
- * Call in `ApplicationConfig.providers`, a route's `providers`, or a lazy
- * environment injector that needs entity resolution.
+ * Both are instantiated in the injector this is called from, so the training API
+ * services {@link EntityFetchApiImpl} depends on need only be reachable from there.
+ *
+ * Call in `ApplicationConfig.providers`, an `NgModule`'s `providers`, a route's
+ * `providers`, or a lazy environment injector that needs entity resolution.
  */
 export function provideEntityResolverService(): EnvironmentProviders {
     return makeEnvironmentProviders([
         { provide: EntityResolverService, useClass: EntityResolverServiceImpl },
-        { provide: EntityFetchApi, useExisting: EntityFetchApiImpl },
+        { provide: EntityFetchApi, useClass: EntityFetchApiImpl },
     ]);
 }

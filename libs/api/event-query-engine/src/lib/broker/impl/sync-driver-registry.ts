@@ -12,7 +12,7 @@ import { InstanceSyncDriver } from './instance-sync-driver';
  * idle driver goes dormant (its polling timer suspended) rather than being torn down, so switching
  * back to a previously visited instance resumes without re-resolving its pool id.
  */
-@Injectable({ providedIn: 'root' })
+@Injectable()
 export class SyncDriverRegistry {
     private readonly syncService = inject(CacheSyncService);
     private readonly instanceApi = inject(LinearTrainingInstanceApi);

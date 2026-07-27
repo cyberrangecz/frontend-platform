@@ -220,32 +220,6 @@ export class TrainingInstanceDefaultApi extends LinearTrainingInstanceApi {
         );
     }
 
-    exportScore(trainingInstanceId: number): Observable<boolean> {
-        const headers = new HttpHeaders().set('Accept', ['text/plain']);
-        return this.http
-            .get(
-                `${this.trainingExportsEndpointUri}/${this.trainingInstancesUriExtension}/${trainingInstanceId}/scores`,
-                {
-                    responseType: 'blob',
-                    observe: 'response',
-                    headers,
-                },
-            )
-            .pipe(
-                handleJsonError(),
-                map((resp) => {
-                    BlobFileSaver.saveBlob(
-                        resp.body,
-                        ResponseHeaderContentDispositionReader.getFilenameFromResponse(
-                            resp,
-                            'training-instance-scores.csv',
-                        ),
-                    );
-                    return true;
-                }),
-            );
-    }
-
     fetchInstancesByIds(ids: number[]): Observable<TrainingInstanceBasic[]> {
         return this.crczpHttp
             .get<TrainingInstanceBasicDto[]>(

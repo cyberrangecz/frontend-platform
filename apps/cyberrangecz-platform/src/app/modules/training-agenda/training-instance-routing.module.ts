@@ -2,7 +2,11 @@ import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { TrainingApiModule } from '@crczp/training-api';
 import { SandboxApiModule } from '@crczp/sandbox-api';
-import { TrainingInstanceOverviewComponent } from '@crczp/training-agenda/instance-overview';
+import {
+    ScoreCsvExportService,
+    TrainingInstanceOverviewComponent,
+} from '@crczp/training-agenda/instance-overview';
+import { provideDataBroker, provideEntityResolverService } from '@crczp/event-query-engine';
 import { TrainingInstance } from '@crczp/training-model';
 import { Routing, TrainingResolverHelperService, ValidRouterConfig } from '@crczp/routing-commons';
 import { canDeactivateTrainingInstance } from '@crczp/training-agenda/instance-edit';
@@ -135,7 +139,12 @@ const routes: ValidRouterConfig<'linear-instance'> = [
         TrainingApiModule,
         SandboxApiModule,
     ],
-    providers: [TrainingResolverHelperService],
+    providers: [
+        TrainingResolverHelperService,
+        provideDataBroker(),
+        provideEntityResolverService(),
+        ScoreCsvExportService,
+    ],
     exports: [RouterModule],
 })
 export class TrainingInstanceRoutingModule {}
