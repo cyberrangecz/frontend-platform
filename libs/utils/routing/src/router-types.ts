@@ -1,5 +1,30 @@
-import { Route } from '@angular/router';
+import { ResolveData, ResolveFn, Route } from '@angular/router';
 import { DEFINED_ROUTES } from './router-definitions';
+
+/**
+ * Static values a route may attach for the layout shell to read.
+ *
+ * `title` and `subtitle` feed the page heading, `breadcrumb` the navigation
+ * trail, and `showSwitch` a component-level toggle. Each accepts `undefined`
+ * so a route can suppress an inherited value.
+ */
+export type RouteData = {
+    title?: string | undefined;
+    subtitle?: string | undefined;
+    breadcrumb?: string | undefined;
+    preloadRoleCondition?: string | undefined;
+    showSwitch?: boolean | undefined;
+};
+
+/**
+ * Resolvers permitted for the label keys the layout shell reads, constraining
+ * each to produce a string rather than arbitrary route data.
+ */
+type RouteLabelResolvers = {
+    title?: ResolveFn<string>;
+    subtitle?: ResolveFn<string>;
+    breadcrumb?: ResolveFn<string>;
+};
 
 type StripExcl<K extends string> = K extends `EXCL_${infer Rest}` ? Rest : K;
 
@@ -81,10 +106,12 @@ type JoinPathIfValidPrefix<A extends string, B extends string> = JoinPath<
 
 type ValidRouteConfig<Prefix extends ValidPathPrefix> = Omit<
     Route,
-    'path' | 'children' | 'redirectTo'
+    'path' | 'children' | 'redirectTo' | 'data' | 'resolve'
 > & {
     path?: '' | PathSuffixes<ValidPath, Prefix>;
     redirectTo?: '' | PathSuffixes<ValidPath, Prefix>;
+    data?: RouteData;
+    resolve?: RouteLabelResolvers & ResolveData;
     children?: PathSuffixes<
         ValidPath,
         Prefix
