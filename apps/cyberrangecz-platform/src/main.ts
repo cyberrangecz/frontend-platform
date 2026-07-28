@@ -64,8 +64,7 @@ import {
     CACHE_CLAIM,
     CacheService,
     createSqliteEventDb,
-    provideEntityResolverService,
-    provideEventBroker,
+    provideEventCache,
     requestSingleTabClaim,
     withSingleTabGuard,
 } from '@crczp/event-query-engine';
@@ -158,14 +157,13 @@ SentinelBootstrapper.bootstrapApplication('assets/config.json', AppComponent, {
         }),
         provideHttpCache(withLocalStorage()),
         provideRouter(withSingleTabGuard(APP_ROUTES), withComponentInputBinding()),
-        provideEventBroker(
+        provideEventCache(
             createSqliteEventDb(
                 () => new Worker(new URL('./cache.worker.ts', import.meta.url), { type: 'module' }),
                 { until: cacheClaim.granted },
             ),
         ),
         { provide: CACHE_CLAIM, useValue: cacheClaim },
-        provideEntityResolverService(),
         provideAppInitializer(() => {
             const cache = inject(CacheService);
             const claim = inject(CACHE_CLAIM);

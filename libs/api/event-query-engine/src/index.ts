@@ -10,7 +10,7 @@ export { EventFetchApi, EventFetchParams } from './lib/sync/event-fetch-api';
 export { CacheSyncService } from './lib/sync/sync.interface';
 export { SyncService } from './lib/sync/impl/sync.service';
 export { DataBrokerService } from './lib/broker/broker.interface';
-export { provideDataBroker, provideEventBroker } from './lib/broker/provide-event-broker';
+export { provideDataBroker, provideEventBroker, provideEventCache } from './lib/broker/provide-event-broker';
 export { createSqliteEventDb, CreateSqliteEventDbOptions } from './lib/broker/create-sqlite-event-db';
 export { CACHE_CLAIM, CacheClaim, requestSingleTabClaim } from './lib/single-tab/single-tab-claim';
 export { CACHE_BLOCKED_PATH, singleTabCacheGuard, withSingleTabGuard } from './lib/single-tab/single-tab.guard';

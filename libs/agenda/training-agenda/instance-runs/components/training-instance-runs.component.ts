@@ -23,7 +23,7 @@ import { TrainingRunSort } from '@crczp/training-api';
     styleUrls: ['./training-instance-runs.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [
-        { provide: TrainingRunService, useClass: TrainingRunService },
+        TrainingRunService,
         providePaginationStorageService(TrainingInstanceRunsComponent),
     ],
     imports: [MatCard, TrainingRunOverviewComponent, AsyncPipe],

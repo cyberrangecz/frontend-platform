@@ -34,7 +34,22 @@ export function provideDataBroker(): EnvironmentProviders {
 }
 
 /**
- * Registers the event broker and its default dependencies into the current injector.
+ * Cache- and sync-layer providers, bound to the root-scoped singletons backing them.
+ *
+ * @param db Promise resolving to the Drizzle SQLite event-cache database instance.
+ */
+function eventCacheProviders(db: Promise<EventCacheDb>): Provider[] {
+    return [
+        { provide: EVENT_CACHE_DB, useValue: db },
+        { provide: CacheService, useExisting: SqliteCacheService },
+        { provide: CacheSyncService, useExisting: SyncService },
+        { provide: EventFetchApi, useExisting: EventFetchApiImpl },
+    ];
+}
+
+/**
+ * Registers the event cache and its sync layer into the current injector, without the
+ * broker layer.
  *
  * Provides:
  * - `EVENT_CACHE_DB` → the supplied {@link EventCacheDb} promise (required — construct via
@@ -42,19 +57,32 @@ export function provideDataBroker(): EnvironmentProviders {
  * - `CacheService` → {@link SqliteCacheService} (reuses the root-scoped singleton)
  * - `CacheSyncService` → {@link SyncService} (reuses the root-scoped singleton)
  * - `EventFetchApi` → {@link EventFetchApiImpl} (reuses the root-scoped singleton)
+ *
+ * Registers no dependency on the training API, so it resolves in an injector that cannot
+ * reach it. Each subtree reading the cache registers its own broker via
+ * {@link provideDataBroker}.
+ *
+ * @param db Promise resolving to the Drizzle SQLite event-cache database instance.
+ */
+export function provideEventCache(db: Promise<EventCacheDb>): EnvironmentProviders {
+    return makeEnvironmentProviders(eventCacheProviders(db));
+}
+
+/**
+ * Registers the event broker and its default dependencies into the current injector.
+ *
+ * Provides:
+ * - everything {@link provideEventCache} registers
  * - everything {@link provideDataBroker} registers
  *
- * Call in `ApplicationConfig.providers` or a lazy environment injector that
- * needs access to {@link DataBrokerService}.
+ * Call in a lazy environment injector that needs access to {@link DataBrokerService} and
+ * can reach the training API services the broker depends on.
  *
  * @param db Promise resolving to the Drizzle SQLite event-cache database instance.
  */
 export function provideEventBroker(db: Promise<EventCacheDb>): EnvironmentProviders {
     return makeEnvironmentProviders([
-        { provide: EVENT_CACHE_DB, useValue: db },
-        { provide: CacheService, useExisting: SqliteCacheService },
-        { provide: CacheSyncService, useExisting: SyncService },
-        { provide: EventFetchApi, useExisting: EventFetchApiImpl },
+        ...eventCacheProviders(db),
         ...DATA_BROKER_PROVIDERS,
     ]);
 }

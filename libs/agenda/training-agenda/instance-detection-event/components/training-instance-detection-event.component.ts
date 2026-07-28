@@ -9,7 +9,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AsyncPipe } from '@angular/common';
 import { PaginationStorageService, providePaginationStorageService } from '@crczp/utils';
 import { PaginationMapper } from '@crczp/api-common';
-import { DetectionEventConcreteService } from '../services/detection-event-concrete.service';
+import { DetectionEventOverviewService } from '../services/detection-event-overview.service';
 import { AbstractDetectionEventSort } from '@crczp/training-api';
 import { Routing } from '@crczp/routing-commons';
 
@@ -25,7 +25,7 @@ import { Routing } from '@crczp/routing-commons';
         providePaginationStorageService(
             TrainingInstanceDetectionEventComponent,
         ),
-        DetectionEventConcreteService,
+        DetectionEventOverviewService,
     ],
 })
 export class TrainingInstanceDetectionEventComponent implements OnInit {
@@ -39,8 +39,8 @@ export class TrainingInstanceDetectionEventComponent implements OnInit {
     isLoading$: Observable<boolean>;
     trainingInstanceId: number;
     destroyRef = inject(DestroyRef);
-    private detectionEventConcreteService = inject(
-        DetectionEventConcreteService,
+    private detectionEventOverviewService = inject(
+        DetectionEventOverviewService,
     );
     private paginationService = inject(PaginationStorageService);
     private activeRoute = inject(ActivatedRoute);
@@ -74,7 +74,7 @@ export class TrainingInstanceDetectionEventComponent implements OnInit {
      */
     onLoadEvent(loadEvent: TableLoadEvent<AbstractDetectionEventSort>): void {
         this.paginationService.savePageSize(loadEvent.pagination.size);
-        this.detectionEventConcreteService
+        this.detectionEventOverviewService
             .getAll(
                 this.cheatingDetectionId,
                 this.trainingInstanceId,
@@ -86,15 +86,15 @@ export class TrainingInstanceDetectionEventComponent implements OnInit {
     }
 
     private initTable() {
-        this.hasError$ = this.detectionEventConcreteService.hasError$;
-        this.isLoading$ = this.detectionEventConcreteService.isLoading$;
+        this.hasError$ = this.detectionEventOverviewService.hasError$;
+        this.isLoading$ = this.detectionEventOverviewService.isLoading$;
         this.detectionEvents$ =
-            this.detectionEventConcreteService.resource$.pipe(
+            this.detectionEventOverviewService.resource$.pipe(
                 map(
                     (resource) =>
                         new DetectionEventTable(
                             resource,
-                            this.detectionEventConcreteService,
+                            this.detectionEventOverviewService,
                         ),
                 ),
             );

@@ -21,10 +21,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MembersDetailService } from '../services/members-detail.service';
 import { RolesDetailService } from '../services/roles-detail.service';
 import { CommonModule } from '@angular/common';
-import {
-    instantiatePaginationStorageService,
-    providePaginationStorageService,
-} from '@crczp/utils';
+import { instantiatePaginationStorageService } from '@crczp/utils';
 import { PaginationMapper } from '@crczp/api-common';
 import { RoleSort, UserSort } from '@crczp/user-and-group-api';
 import { SortDir } from '@crczp/utils';
@@ -45,12 +42,7 @@ import { RolesDetailTable } from '../model/roles-detail-table';
         MatTooltipModule,
         SentinelRowDirective,
     ],
-    providers: [
-        providePaginationStorageService(GroupDetailComponent.name + 'Members'),
-        providePaginationStorageService(GroupDetailComponent.name + 'Roles'),
-        MembersDetailService,
-        RolesDetailService,
-    ],
+    providers: [MembersDetailService, RolesDetailService],
 })
 export class GroupDetailComponent implements OnInit {
     readonly INIT_MEMBERS_SORT_NAME: UserSort = 'fullName';

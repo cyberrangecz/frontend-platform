@@ -9,6 +9,7 @@ import {
     ValidRouterConfig,
 } from '@crczp/routing-commons';
 import { SandboxApiModule } from '@crczp/sandbox-api';
+import { provideDataBroker, provideEntityResolverService } from '@crczp/event-query-engine';
 
 const routes: ValidRouterConfig<'run'> = [
     {
@@ -69,7 +70,11 @@ const routes: ValidRouterConfig<'run'> = [
         SandboxApiModule,
         TrainingRunOverviewComponent,
     ],
-    providers: [TrainingResolverHelperService],
+    providers: [
+        TrainingResolverHelperService,
+        provideDataBroker(),
+        provideEntityResolverService(),
+    ],
     exports: [RouterModule],
 })
 export class TrainingRunRoutingModule {}

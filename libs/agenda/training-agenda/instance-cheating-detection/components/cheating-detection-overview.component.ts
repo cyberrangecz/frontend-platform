@@ -35,10 +35,7 @@ import { CheatingDetectionSort } from '@crczp/training-api';
         SentinelRowDirective,
     ],
     providers: [
-        {
-            provide: CheatingDetectionService,
-            useClass: CheatingDetectionService,
-        },
+        CheatingDetectionService,
         providePaginationStorageService(CheatingDetectionOverviewComponent),
     ],
 })
