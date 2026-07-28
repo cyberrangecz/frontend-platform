@@ -34,7 +34,7 @@ function buildDefinitionTitleResolver(
 ) => Observable<string> | string {
     return (route: ActivatedRouteSnapshot, state: RouterStateSnapshot) => {
         if (RoutingUtils.containsSubroute('create', state)) {
-            return 'Create Linear Training Definition';
+            return 'Create Training Definition';
         }
 
         function getTitleText(ti: TrainingDefinition) {

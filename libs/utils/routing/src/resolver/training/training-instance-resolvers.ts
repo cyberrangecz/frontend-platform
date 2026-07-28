@@ -24,7 +24,7 @@ function resolveInstanceTitle(
     service: TrainingResolverHelperService,
 ): Observable<string> | string {
     if (RoutingUtils.containsSubroute('linear-instance/create', state)) {
-        return 'Create Linear Training Instance';
+        return 'Create Training Instance';
     }
 
     function getTitleText(ti: TrainingInstance) {
