@@ -23,6 +23,10 @@ function resolveInstanceTitle(
     state: RouterStateSnapshot,
     service: TrainingResolverHelperService,
 ): Observable<string> | string {
+    if (RoutingUtils.containsSubroute('linear-instance/create', state)) {
+        return 'Create Linear Training Instance';
+    }
+
     function getTitleText(ti: TrainingInstance) {
         if (RoutingUtils.containsSubroute('edit', state)) {
             return `Edit ${ti.title}`;
@@ -55,7 +59,7 @@ function resolveInstanceBreadcrumb(
     state: RouterStateSnapshot,
     service: TrainingResolverHelperService,
 ): Observable<string> | string {
-    if (RoutingUtils.containsSubroute('create', state)) {
+    if (RoutingUtils.containsSubroute('linear-instance/create', state)) {
         return 'Create';
     }
 
