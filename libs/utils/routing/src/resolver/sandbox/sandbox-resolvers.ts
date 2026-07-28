@@ -42,7 +42,7 @@ export function resolveSandboxBreadcrumb(
 
     return service
         .getPool(route)
-        .pipe(map((pool) => `'Allocation Request' ${pool ? pool.id : ''}`));
+        .pipe(map((pool) => `Allocation Request ${pool ? pool.id : ''}`));
 }
 
 export const SandboxResolvers = {
