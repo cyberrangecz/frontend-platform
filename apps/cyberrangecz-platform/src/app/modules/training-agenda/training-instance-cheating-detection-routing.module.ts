@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CheatingDetectionOverviewComponent } from '@crczp/training-agenda/instance-cheating-detection';
 import {
-    Routing,
     TrainingResolverHelperService,
     ValidRouterConfig,
 } from '@crczp/routing-commons';
@@ -13,13 +12,6 @@ const routes: ValidRouterConfig<'linear-instance/:instanceId/cheating-detection'
             path: '',
             pathMatch: 'full',
             component: CheatingDetectionOverviewComponent,
-            resolve: {
-                title: Routing.Resolvers.CheatingDetection
-                    .resolveCheatingDetectionTitle,
-                breadcrumb:
-                    Routing.Resolvers.CheatingDetection
-                        .resolveCheatingDetectionBreadcrumb,
-            },
         },
         {
             path: 'create',
@@ -27,12 +19,9 @@ const routes: ValidRouterConfig<'linear-instance/:instanceId/cheating-detection'
                 import(
                     '@crczp/training-agenda/instance-cheating-detection-edit'
                 ).then((m) => m.CheatingDetectionEditComponent),
-            resolve: {
-                title: Routing.Resolvers.CheatingDetection
-                    .resolveCheatingDetectionTitle,
-                breadcrumb:
-                    Routing.Resolvers.CheatingDetection
-                        .resolveCheatingDetectionBreadcrumb,
+            data: {
+                title: 'Create Cheating Detection',
+                breadcrumb: 'Create',
             },
         },
         {
@@ -41,12 +30,9 @@ const routes: ValidRouterConfig<'linear-instance/:instanceId/cheating-detection'
                 import('@crczp/training-agenda/instance-detection-event').then(
                     (m) => m.TrainingInstanceDetectionEventComponent,
                 ),
-            resolve: {
-                title: Routing.Resolvers.CheatingDetection
-                    .resolveCheatingDetectionTitle,
-                breadcrumb:
-                    Routing.Resolvers.CheatingDetection
-                        .resolveCheatingDetectionBreadcrumb,
+            data: {
+                title: 'Cheating Detection Detail',
+                breadcrumb: 'Detection',
             },
         },
         {
@@ -57,7 +43,7 @@ const routes: ValidRouterConfig<'linear-instance/:instanceId/cheating-detection'
                 ).then((m) => m.TrainingInstanceDetectionEventDetailComponent),
             data: {
                 title: 'Detection Event Detail',
-                breadcrumb: 'Detail',
+                breadcrumb: 'Event',
             },
         },
     ];

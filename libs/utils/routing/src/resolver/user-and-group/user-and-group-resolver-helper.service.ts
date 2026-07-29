@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { ErrorHandlerService } from '@crczp/utils';
-import { ActivatedRouteSnapshot, Router } from '@angular/router';
+import { ActivatedRouteSnapshot, Router, UrlTree } from '@angular/router';
 import { GroupApi, UserApi } from '@crczp/user-and-group-api';
 import { Routing } from '../../routing-namespace';
 import { Observable, of } from 'rxjs';
@@ -39,30 +39,18 @@ export class UserAndGroupResolverHelperService extends CommonResolverHelperServi
         return this.userApi.get(id).pipe(
             take(1),
             catchError((err) => {
-                inject(ErrorHandlerService).emitAPIError(
-                    err,
-                    'Resolving user from path'
-                );
+                this.emitApiError(err, 'Resolving user from path');
                 return of(null);
             })
         );
     }
 
-    public navigateToGroupOverview() {
-        return this.navigate(
-            this.router.parseUrl(Routing.RouteBuilder.group.build())
-        );
+    public groupOverviewUrl(): UrlTree {
+        return this.router.parseUrl(Routing.RouteBuilder.group.build());
     }
 
-    navigateToUserOverview() {
-        return this.navigate(
-            this.router.parseUrl(Routing.RouteBuilder.user.build())
-        );
+    public userOverviewUrl(): UrlTree {
+        return this.router.parseUrl(Routing.RouteBuilder.user.build());
     }
 
-    public navigateToNewGroup() {
-        return this.navigate(
-            this.router.parseUrl(Routing.RouteBuilder.group.create.build())
-        );
-    }
 }

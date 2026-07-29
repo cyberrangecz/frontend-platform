@@ -1,10 +1,10 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { renderRichTooltipHtml } from '../../../../../libs/components/src/visualization-components/charts/shared/tooltip/rich-tooltip-html';
 import {
+    renderRichTooltipHtml,
     RichTooltipComponent,
     RichTooltipModel,
-} from '../../../../../libs/components/src/visualization-components/charts/shared/tooltip/rich-tooltip.component';
+} from '@crczp/components';
 
 /** Title long enough to wrap well beyond the clamp ceiling, including an unbreakable token. */
 const LONG_TITLE =

@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { TrainingRunOverviewComponent } from '@crczp/training-agenda/run-overview';
-import { AccessTrainingRunInfo, TrainingRun } from '@crczp/training-model';
+import { AccessTrainingRunInfo } from '@crczp/training-model';
 import { TrainingApiModule } from '@crczp/training-api';
 import {
     Routing,
@@ -27,8 +27,7 @@ const routes: ValidRouterConfig<'run'> = [
             title: undefined,
         },
         resolve: {
-            [AccessTrainingRunInfo.name]:
-                Routing.Resolvers.TrainingRun.resolveRunAccess,
+            [AccessTrainingRunInfo.name]: Routing.Resolvers.resolveRunAccess,
         },
     },
     {
@@ -42,8 +41,7 @@ const routes: ValidRouterConfig<'run'> = [
             title: undefined,
         },
         resolve: {
-            [AccessTrainingRunInfo.name]:
-                Routing.Resolvers.TrainingRun.resolveRunAccess,
+            [AccessTrainingRunInfo.name]: Routing.Resolvers.resolveRunAccess,
         },
     },
     {
@@ -51,10 +49,6 @@ const routes: ValidRouterConfig<'run'> = [
         data: {
             breadcrumb: 'Results',
             title: 'Training Run Results',
-        },
-        resolve: {
-            [TrainingRun.name]:
-                Routing.Resolvers.TrainingRun.resolveAccessedTrainingRunResults,
         },
         loadComponent: () =>
             import('@crczp/training-agenda/run-results').then(

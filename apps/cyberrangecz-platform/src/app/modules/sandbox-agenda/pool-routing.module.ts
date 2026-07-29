@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { PoolOverviewComponent } from '@crczp/sandbox-agenda/pool-overview';
-import { Pool, Request } from '@crczp/sandbox-model';
+import { Request } from '@crczp/sandbox-model';
 import { SandboxApiModule } from '@crczp/sandbox-api';
 import {
     Routing,
@@ -20,11 +20,9 @@ const routes: ValidRouterConfig<'pool'> = [
             import('@crczp/sandbox-agenda/pool-edit').then(
                 (m) => m.PoolEditComponent,
             ),
-        resolve: {
-            breadcrumb: Routing.Resolvers.Pool.resolvePoolBreadcrumb,
-        },
         data: {
             title: 'Create Pool',
+            breadcrumb: 'Create',
         },
     },
     {
@@ -33,13 +31,10 @@ const routes: ValidRouterConfig<'pool'> = [
             import('@crczp/sandbox-agenda/pool-edit').then(
                 (m) => m.PoolEditComponent,
             ),
-        resolve: {
-            breadcrumb: Routing.Resolvers.Pool.resolvePoolBreadcrumb,
-            [Pool.name]: Routing.Resolvers.Pool.resolvePool,
-        },
-        data: {
-            title: 'Edit Pool',
-        },
+        resolve: Routing.Resolvers.resolvePool({
+            title: 'Edit Pool {id}',
+            breadcrumb: 'Edit',
+        }),
     },
     {
         path: ':poolId',
@@ -47,14 +42,10 @@ const routes: ValidRouterConfig<'pool'> = [
             import('@crczp/sandbox-agenda/pool-detail').then(
                 (m) => m.PoolDetailComponent,
             ),
-        resolve: {
-            [Pool.name]: Routing.Resolvers.Pool.resolvePool,
-            breadcrumb: Routing.Resolvers.Pool.resolvePoolBreadcrumb,
-            subtitle: Routing.Resolvers.Pool.resolvePoolComment,
-        },
-        data: {
-            title: 'Pool Detail',
-        },
+        resolve: Routing.Resolvers.resolvePool({
+            title: 'Pool {id}',
+            breadcrumb: '{id}',
+        }),
     },
     {
         path: ':poolId/sandbox-instance/:requestId',
@@ -63,12 +54,11 @@ const routes: ValidRouterConfig<'pool'> = [
                 (m) => m.AllocationRequestDetailComponent,
             ),
         resolve: {
-            breadcrumb: Routing.Resolvers.Sandbox.resolveSandboxBreadcrumb,
-            [Pool.name]: Routing.Resolvers.Pool.resolvePool,
-            [Request.name]: Routing.Resolvers.Sandbox.resolveSandbox,
+            [Request.name]: Routing.Resolvers.resolveSandbox,
         },
         data: {
             title: 'Allocation Request Stages',
+            breadcrumb: 'Allocation Request',
         },
     },
     {
@@ -77,11 +67,9 @@ const routes: ValidRouterConfig<'pool'> = [
             import('@crczp/sandbox-agenda/sandbox-topology').then(
                 (m) => m.SandboxTopologyComponent,
             ),
-        resolve: {
-            breadcrumb: Routing.Resolvers.Sandbox.resolveSandboxBreadcrumb,
-        },
         data: {
             title: 'Sandbox Topology',
+            breadcrumb: 'Sandbox Topology',
         },
     },
 ];

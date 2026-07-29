@@ -16,10 +16,6 @@
         @if (title$ | async; as title) {
             <h1>{{ title }}</h1>
         }
-        @if (subtitle$ | async; as subtitle) {
-            <p class="subtitle">{{ subtitle }}</p>
-        }
-
         <router-outlet />
     </sentinel-layout1>
 } @else {

@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { canDeactivateGroup } from '@crczp/user-and-group-agenda/group-edit';
-import { Group } from '@crczp/user-and-group-model';
 import { GroupOverviewComponent } from '@crczp/user-and-group-agenda/group-overview';
 import { UserAndGroupApiModule } from '@crczp/user-and-group-api';
 import {
@@ -21,11 +20,7 @@ const routes: ValidRouterConfig<'group'> = [
             import('@crczp/user-and-group-agenda/group-edit').then(
                 (m) => m.GroupEditOverviewComponent
             ),
-        resolve: {
-            [Group.name]: Routing.Resolvers.Group.resolveGroup,
-            breadcrumb: Routing.Resolvers.Group.resolveGroupBreadcrumb,
-            title: Routing.Resolvers.Group.resolveGroupTitle,
-        },
+        data: { title: 'Create Group', breadcrumb: 'Create' },
         canDeactivate: [canDeactivateGroup],
     },
     {
@@ -34,11 +29,10 @@ const routes: ValidRouterConfig<'group'> = [
             import('@crczp/user-and-group-agenda/group-edit').then(
                 (m) => m.GroupEditOverviewComponent
             ),
-        resolve: {
-            [Group.name]: Routing.Resolvers.Group.resolveGroup,
-            breadcrumb: Routing.Resolvers.Group.resolveGroupBreadcrumb,
-            title: Routing.Resolvers.Group.resolveGroupTitle,
-        },
+        resolve: Routing.Resolvers.resolveGroup({
+            title: 'Edit {name}',
+            breadcrumb: 'Edit',
+        }),
         canDeactivate: [canDeactivateGroup],
     },
     {
@@ -47,11 +41,10 @@ const routes: ValidRouterConfig<'group'> = [
             import('@crczp/user-and-group-agenda/group-detail').then(
                 (m) => m.GroupDetailComponent
             ),
-        resolve: {
-            [Group.name]: Routing.Resolvers.Group.resolveGroup,
-            breadcrumb: Routing.Resolvers.Group.resolveGroupBreadcrumb,
-            title: Routing.Resolvers.Group.resolveGroupTitle,
-        },
+        resolve: Routing.Resolvers.resolveGroup({
+            title: 'Detail of {name}',
+            breadcrumb: '{name}',
+        }),
     },
 ];
 

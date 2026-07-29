@@ -7,8 +7,11 @@ import {
     TrainingInstanceOverviewComponent,
 } from '@crczp/training-agenda/instance-overview';
 import { provideDataBroker, provideEntityResolverService } from '@crczp/event-query-engine';
-import { TrainingInstance } from '@crczp/training-model';
-import { Routing, TrainingResolverHelperService, ValidRouterConfig } from '@crczp/routing-commons';
+import {
+    Routing,
+    TrainingResolverHelperService,
+    ValidRouterConfig,
+} from '@crczp/routing-commons';
 import { canDeactivateTrainingInstance } from '@crczp/training-agenda/instance-edit';
 
 const routes: ValidRouterConfig<'linear-instance'> = [
@@ -23,13 +26,7 @@ const routes: ValidRouterConfig<'linear-instance'> = [
                 (m) => m.LinearTrainingInstanceEditOverviewComponent,
             ),
         canDeactivate: [canDeactivateTrainingInstance],
-        resolve: {
-            breadcrumb:
-                Routing.Resolvers.TrainingInstance
-                    .linearInstanceBreadcrumbResolver,
-            title: Routing.Resolvers.TrainingInstance
-                .linearInstanceTitleResolver,
-        },
+        data: { title: 'Create Training Instance', breadcrumb: 'Create' },
     },
     {
         path: ':instanceId/edit',
@@ -38,27 +35,17 @@ const routes: ValidRouterConfig<'linear-instance'> = [
                 (m) => m.LinearTrainingInstanceEditOverviewComponent,
             ),
         canDeactivate: [canDeactivateTrainingInstance],
-        resolve: {
-            [TrainingInstance.name]:
-                Routing.Resolvers.TrainingInstance.linearInstanceResolver,
-            breadcrumb:
-                Routing.Resolvers.TrainingInstance
-                    .linearInstanceBreadcrumbResolver,
-            title: Routing.Resolvers.TrainingInstance
-                .linearInstanceTitleResolver,
-        },
+        resolve: Routing.Resolvers.resolveTrainingInstance({
+            title: 'Edit {title}',
+            breadcrumb: '{title}',
+        }),
     },
     {
         path: ':instanceId/detail',
-        resolve: {
-            [TrainingInstance.name]:
-                Routing.Resolvers.TrainingInstance.linearInstanceResolver,
-            breadcrumb:
-                Routing.Resolvers.TrainingInstance
-                    .linearInstanceBreadcrumbResolver,
-            title: Routing.Resolvers.TrainingInstance
-                .linearInstanceTitleResolver,
-        },
+        resolve: Routing.Resolvers.resolveTrainingInstance({
+            title: 'Detail of {title}',
+            breadcrumb: 'Detail',
+        }),
         loadComponent: () =>
             import('@crczp/training-agenda/instance-summary').then(
                 (m) => m.TrainingInstanceSummaryComponent,
@@ -66,15 +53,10 @@ const routes: ValidRouterConfig<'linear-instance'> = [
     },
     {
         path: ':instanceId/results',
-        resolve: {
-            [TrainingInstance.name]:
-                Routing.Resolvers.TrainingInstance.linearInstanceResolver,
-            breadcrumb:
-                Routing.Resolvers.TrainingInstance
-                    .linearInstanceBreadcrumbResolver,
-            title: Routing.Resolvers.TrainingInstance
-                .linearInstanceTitleResolver,
-        },
+        resolve: Routing.Resolvers.resolveTrainingInstance({
+            title: 'Results of {title}',
+            breadcrumb: 'Results',
+        }),
         loadComponent: () =>
             import('@crczp/training-agenda/instance-results').then(
                 (m) => m.AnalysisDashboardComponent,
@@ -82,15 +64,10 @@ const routes: ValidRouterConfig<'linear-instance'> = [
     },
     {
         path: ':instanceId/access-token',
-        resolve: {
-            [TrainingInstance.name]:
-                Routing.Resolvers.TrainingInstance.linearInstanceResolver,
-            breadcrumb:
-                Routing.Resolvers.TrainingInstance
-                    .linearInstanceBreadcrumbResolver,
-            title: Routing.Resolvers.TrainingInstance
-                .linearInstanceTitleResolver,
-        },
+        resolve: Routing.Resolvers.resolveTrainingInstance({
+            title: 'Access Token of {title}',
+            breadcrumb: 'Access Token',
+        }),
         loadComponent: () =>
             import('@crczp/training-agenda/instance-access-token').then(
                 (m) => m.AccessTokenDetailComponent,
@@ -98,15 +75,10 @@ const routes: ValidRouterConfig<'linear-instance'> = [
     },
     {
         path: ':instanceId/cheating-detection',
-        resolve: {
-            [TrainingInstance.name]:
-                Routing.Resolvers.TrainingInstance.linearInstanceResolver,
-            breadcrumb:
-                Routing.Resolvers.TrainingInstance
-                    .linearInstanceBreadcrumbResolver,
-            title: Routing.Resolvers.TrainingInstance
-                .linearInstanceTitleResolver,
-        },
+        resolve: Routing.Resolvers.resolveTrainingInstance({
+            title: 'Cheating Detections of {title}',
+            breadcrumb: '{title}',
+        }),
         loadChildren: () =>
             import(
                 './training-instance-cheating-detection-routing.module'
@@ -114,15 +86,10 @@ const routes: ValidRouterConfig<'linear-instance'> = [
     },
     {
         path: ':instanceId/runs',
-        resolve: {
-            [TrainingInstance.name]:
-                Routing.Resolvers.TrainingInstance.linearInstanceResolver,
-            breadcrumb:
-                Routing.Resolvers.TrainingInstance
-                    .linearInstanceBreadcrumbResolver,
-            title: Routing.Resolvers.TrainingInstance
-                .linearInstanceTitleResolver,
-        },
+        resolve: Routing.Resolvers.resolveTrainingInstance({
+            title: 'Training Runs of {title}',
+            breadcrumb: 'Training Runs',
+        }),
         loadComponent: () =>
             import('@crczp/training-agenda/instance-runs').then(
                 (m) => m.TrainingInstanceRunsComponent,

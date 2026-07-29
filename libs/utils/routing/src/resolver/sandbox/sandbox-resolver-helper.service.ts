@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { ErrorHandlerService } from '@crczp/utils';
-import { ActivatedRouteSnapshot, Router } from '@angular/router';
+import { ActivatedRouteSnapshot, Router, UrlTree } from '@angular/router';
 import {
     AllocationRequestsApi,
     CleanupRequestsApi,
@@ -32,34 +32,20 @@ export class SandboxResolverHelperService extends CommonResolverHelperService {
         super(inject(ErrorHandlerService), inject(Router));
     }
 
-    public navigateToPoolOverview() {
-        return this.navigate(
-            this.router.createUrlTree([Routing.RouteBuilder.pool.build()]),
-        );
+    public poolOverviewUrl(): UrlTree {
+        return this.router.createUrlTree([Routing.RouteBuilder.pool.build()]);
     }
 
-    public navigateToPoolDetail(poolId: number) {
-        return this.navigate(
-            this.router.createUrlTree([
-                Routing.RouteBuilder.pool.poolId(poolId).build(),
-            ]),
-        );
+    public poolDetailUrl(poolId: number): UrlTree {
+        return this.router.createUrlTree([
+            Routing.RouteBuilder.pool.poolId(poolId).build(),
+        ]);
     }
 
-    public navigateToSandboxDefinitionOverview() {
-        return this.navigate(
-            this.router.createUrlTree([
-                Routing.RouteBuilder.sandbox_definition.build(),
-            ]),
-        );
-    }
-
-    public navigateToCreatePool() {
-        return this.navigate(
-            this.router.createUrlTree([
-                Routing.RouteBuilder.pool.create.build(),
-            ]),
-        );
+    public sandboxDefinitionOverviewUrl(): UrlTree {
+        return this.router.createUrlTree([
+            Routing.RouteBuilder.sandbox_definition.build(),
+        ]);
     }
 
     public getPool(route: ActivatedRouteSnapshot): Observable<Pool | null> {
@@ -82,7 +68,7 @@ export class SandboxResolverHelperService extends CommonResolverHelperService {
     ): Observable<SandboxDefinition | null> {
         const definitionId = this.extractDefinitionId(route);
         if (!definitionId) {
-            this.emitFrontendError('No group id found in route');
+            this.emitFrontendError('No sandbox definition id found in route');
             return of(null);
         }
 
@@ -104,7 +90,13 @@ export class SandboxResolverHelperService extends CommonResolverHelperService {
             this.emitFrontendError('No allocation request id found in route');
             return of(null);
         }
-        return this.allocationApi.get(+sandboxRequestId).pipe(take(1));
+        return this.allocationApi.get(+sandboxRequestId).pipe(
+            take(1),
+            catchError((err) => {
+                this.emitApiError(err, 'Resolving sandbox request');
+                return of(null);
+            }),
+        );
     }
 
     private extractPoolId(route: ActivatedRouteSnapshot): number | null {

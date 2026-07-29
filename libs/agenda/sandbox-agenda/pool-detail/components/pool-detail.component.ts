@@ -1,50 +1,33 @@
 import { AsyncPipe } from '@angular/common';
-import {
-    AfterViewInit,
-    ChangeDetectionStrategy,
-    Component,
-    DestroyRef,
-    inject,
-    OnInit,
-} from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatCard } from '@angular/material/card';
 import { ActivatedRoute } from '@angular/router';
 import { OffsetPaginatedResource, PaginationMapper } from '@crczp/api-common';
 import { EditableCommentComponent } from '@crczp/sandbox-agenda/internal';
 import { AllocationRequestSort, PoolSort } from '@crczp/sandbox-api';
-import {
-    Pool,
-    RequestStageState,
-    SandboxAllocationUnit,
-} from '@crczp/sandbox-model';
-import {
-    PaginationStorageService,
-    PollingService,
-    providePaginationStorageService,
-} from '@crczp/utils';
-import { SortDir } from '@crczp/utils';
-import {
-    SentinelControlItem,
-    SentinelControlsComponent,
-} from '@sentinel/components/controls';
-import {
-    SentinelRowDirective,
-    SentinelTableComponent,
-    TableLoadEvent,
-} from '@sentinel/components/table';
+import { Pool, RequestStageState, SandboxAllocationUnit } from '@crczp/sandbox-model';
+import { PaginationStorageService, PollingService, providePaginationStorageService, SortDir } from '@crczp/utils';
+import { SentinelControlItem, SentinelControlsComponent } from '@sentinel/components/controls';
+import { SentinelRowDirective, SentinelTableComponent, TableLoadEvent } from '@sentinel/components/table';
 import { Observable, of, Subscription } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { AbstractSandbox } from '../model/abstract-sandbox';
 import { PoolDetailRowAdapter } from '../model/pool-detail-row-adapter';
 import { PoolDetailTable } from '../model/pool-detail-table';
 import { SelectedStage } from '../model/selected-stage';
-import { AllocationRequestsConcreteService } from '../services/state/request/allocation/requests/allocation-requests-concrete.service';
+import {
+    AllocationRequestsConcreteService
+} from '../services/state/request/allocation/requests/allocation-requests-concrete.service';
 import { AllocationRequestsService } from '../services/state/request/allocation/requests/allocation-requests.service';
 import { CleanupRequestsConcreteService } from '../services/state/request/cleanup/cleanup-requests-concrete.service';
 import { CleanupRequestsService } from '../services/state/request/cleanup/cleanup-requests.service';
-import { SandboxAllocationUnitsConcreteService } from '../services/state/sandbox-allocation-unit/sandbox-allocation-units-concrete.service';
-import { SandboxAllocationUnitsService } from '../services/state/sandbox-allocation-unit/sandbox-allocation-units.service';
+import {
+    SandboxAllocationUnitsConcreteService
+} from '../services/state/sandbox-allocation-unit/sandbox-allocation-units-concrete.service';
+import {
+    SandboxAllocationUnitsService
+} from '../services/state/sandbox-allocation-unit/sandbox-allocation-units.service';
 import { SandboxInstanceService } from '../services/state/sandbox-instance/sandbox-instance.service';
 import { PoolDetailControls } from './pool-detail-controls';
 import { StageOverviewComponent } from './stage-overview/stage-overview.component';
@@ -86,6 +69,7 @@ import { StageOverviewComponent } from './stage-overview/stage-overview.componen
 })
 export class PoolDetailComponent implements OnInit, AfterViewInit {
     pool: Pool;
+    readonly poolComment = signal<string | undefined>(undefined);
     instances$: Observable<PoolDetailTable> = of();
     instancesTableHasError$: Observable<boolean> = of();
     controls: SentinelControlItem[] = [];
@@ -181,6 +165,7 @@ export class PoolDetailComponent implements OnInit, AfterViewInit {
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe((data) => {
                 this.pool = data[Pool.name];
+                this.poolComment.set(this.pool.comment);
                 this.onLoadEvent(initialLoadEvent);
             });
 

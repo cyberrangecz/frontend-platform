@@ -1,5 +1,4 @@
-import { Router, UrlTree } from '@angular/router';
-import { EMPTY } from 'rxjs';
+import { Router } from '@angular/router';
 import { ErrorHandlerService } from '@crczp/utils';
 import { HttpErrorResponse } from '@angular/common/http';
 
@@ -18,12 +17,5 @@ export class CommonResolverHelperService {
             }
             errorHandler.emitNavigationError(error);
         };
-    }
-
-    protected navigate(urlTree: UrlTree) {
-        this.router
-            .navigateByUrl(urlTree)
-            .catch((err) => this.emitApiError(err, 'Navigating to a route'));
-        return EMPTY;
     }
 }

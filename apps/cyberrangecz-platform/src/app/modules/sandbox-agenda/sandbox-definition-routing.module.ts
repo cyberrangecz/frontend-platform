@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { SandboxDefinitionOverviewComponent } from '@crczp/sandbox-agenda/sandbox-definition-overview';
-import { SandboxDefinition } from '@crczp/sandbox-model';
 import { SandboxApiModule } from '@crczp/sandbox-api';
 import {
     Routing,
@@ -31,16 +30,10 @@ const routes: ValidRouterConfig<'sandbox-definition'> = [
             import('@crczp/sandbox-agenda/sandbox-topology').then(
                 (m) => m.SandboxTopologyComponent
             ),
-        resolve: {
-            breadcrumb:
-                Routing.Resolvers.SandboxDefinition
-                    .resolveSandboxDefinitionBreadcrumb,
-            [SandboxDefinition.name]:
-                Routing.Resolvers.SandboxDefinition.resolveSandboxDefinition,
-        },
-        data: {
-            title: 'Sandbox Definition Topology',
-        },
+        resolve: Routing.Resolvers.resolveSandboxDefinition({
+            title: 'Topology of {title}',
+            breadcrumb: 'Topology',
+        }),
     },
 ];
 

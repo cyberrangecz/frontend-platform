@@ -4,13 +4,12 @@ import { DEFINED_ROUTES } from './router-definitions';
 /**
  * Static values a route may attach for the layout shell to read.
  *
- * `title` and `subtitle` feed the page heading, `breadcrumb` the navigation
- * trail, and `showSwitch` a component-level toggle. Each accepts `undefined`
- * so a route can suppress an inherited value.
+ * `title` feeds the page heading, `breadcrumb` the navigation trail, and
+ * `showSwitch` a component-level toggle. Each accepts `undefined` so a route
+ * can suppress an inherited value.
  */
 export type RouteData = {
     title?: string | undefined;
-    subtitle?: string | undefined;
     breadcrumb?: string | undefined;
     preloadRoleCondition?: string | undefined;
     showSwitch?: boolean | undefined;
@@ -22,7 +21,6 @@ export type RouteData = {
  */
 type RouteLabelResolvers = {
     title?: ResolveFn<string>;
-    subtitle?: ResolveFn<string>;
     breadcrumb?: ResolveFn<string>;
 };
 
@@ -120,49 +118,6 @@ type ValidRouteConfig<Prefix extends ValidPathPrefix> = Omit<
         : never;
 };
 
-type SplitPathToTuple<S extends string> =
-    S extends `${infer Head}/${infer Tail}`
-        ? [Head, ...SplitPathToTuple<Tail>]
-        : S extends ''
-        ? []
-        : [S];
-
-type Join<T extends string[]> = T extends []
-    ? never
-    : T extends [infer Head extends string]
-    ? Head
-    : T extends [infer Head extends string, ...infer Tail extends string[]]
-    ? `${Head}/${Join<Tail>}`
-    : never;
-
-type _ContiguousFromStart<
-    T extends string[],
-    Acc extends string[] = [],
-    Res extends string[][] = []
-> = T extends [infer Head extends string, ...infer Rest extends string[]]
-    ? _ContiguousFromStart<Rest, [...Acc, Head], [...Res, [...Acc, Head]]>
-    : Res;
-
-type ContiguousSlices<
-    T extends string[],
-    Acc extends string[][] = []
-> = T extends [infer _First extends string, ...infer Rest extends string[]]
-    ? _ContiguousFromStart<T> extends infer Slices extends string[][]
-        ? ContiguousSlices<Rest, [...Acc, ...Slices]>
-        : never
-    : Acc;
-
-type JoinContiguousSlices<Slices extends string[][]> = Slices extends [
-    infer Head extends string[],
-    ...infer Tail extends string[][]
-]
-    ? Join<Head> | JoinContiguousSlices<Tail>
-    : never;
-
-type AllContiguousPathSegments<Path extends string> = JoinContiguousSlices<
-    ContiguousSlices<SplitPathToTuple<Path>>
->;
-
 /**
  * Type describing all possible path prefixes for CRCZP
  */
@@ -190,13 +145,6 @@ export type ValidPath = ExtractNavigablePaths<typeof DEFINED_ROUTES>;
 
 export type ValidRouterConfig<Prefix extends ValidPathPrefix> =
     ValidRouteConfig<Prefix>[];
-
-export type ValidSegment = ValidPath extends infer P extends string
-    ? AllContiguousPathSegments<P>
-    : never;
-
-export type ValidSubsegment<Segment extends ValidSegment> =
-    AllContiguousPathSegments<Segment>;
 
 type StripMarkers<K extends string> = K extends `${string}VAR_${infer Rest}`
     ? StripMarkers<Rest>

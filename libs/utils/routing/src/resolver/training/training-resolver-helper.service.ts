@@ -1,6 +1,11 @@
 import { inject, Injectable } from '@angular/core';
 import { ErrorHandlerService } from '@crczp/utils';
-import { ActivatedRouteSnapshot, Router, UrlTree } from '@angular/router';
+import {
+    ActivatedRouteSnapshot,
+    RedirectCommand,
+    Router,
+    UrlTree,
+} from '@angular/router';
 import {
     LinearRunApi,
     LinearTrainingDefinitionApi,
@@ -10,7 +15,6 @@ import {
     AccessTrainingRunInfo,
     TrainingDefinition,
     TrainingInstance,
-    TrainingRun,
 } from '@crczp/training-model';
 import { catchError, take } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
@@ -30,24 +34,20 @@ export class TrainingResolverHelperService extends CommonResolverHelperService {
         super(inject(ErrorHandlerService), inject(Router));
     }
 
-    public navigateToDefinitionOverview() {
-        return this.navigate(
-            this.router.parseUrl(
-                Routing.RouteBuilder.linear_definition.build(),
-            ),
+    public definitionOverviewUrl(): UrlTree {
+        return this.router.parseUrl(
+            Routing.RouteBuilder.linear_definition.build(),
         );
     }
 
-    public navigateToInstanceOverview() {
-        return this.navigate(
-            this.router.parseUrl(Routing.RouteBuilder.linear_instance.build()),
+    public instanceOverviewUrl(): UrlTree {
+        return this.router.parseUrl(
+            Routing.RouteBuilder.linear_instance.build(),
         );
     }
 
-    public navigateToRunOverview() {
-        return this.navigate(
-            this.router.parseUrl(Routing.RouteBuilder.run.build()),
-        );
+    public runOverviewUrl(): UrlTree {
+        return this.router.parseUrl(Routing.RouteBuilder.run.build());
     }
 
     public getDefinition(
@@ -89,52 +89,26 @@ export class TrainingResolverHelperService extends CommonResolverHelperService {
 
     public resumeRun(
         runId: number,
-    ): Observable<AccessTrainingRunInfo | UrlTree> {
+    ): Observable<AccessTrainingRunInfo | RedirectCommand> {
         return this.linearRunApi.resume(runId).pipe(
             take(1),
             catchError((err) => {
                 this.emitApiError(err, 'Accessing training run');
-                return this.navigateToRunOverview();
+                return of(new RedirectCommand(this.runOverviewUrl()));
             }),
         );
     }
 
     public accessRun(
         runToken: string,
-    ): Observable<AccessTrainingRunInfo | UrlTree> {
+    ): Observable<AccessTrainingRunInfo | RedirectCommand> {
         return this.linearRunApi.access(runToken).pipe(
             take(1),
             catchError((err) => {
                 this.emitApiError(err, 'Accessing training run');
-                return this.navigateToRunOverview();
+                return of(new RedirectCommand(this.runOverviewUrl()));
             }),
         );
-    }
-
-    public getRunResults(
-        route: ActivatedRouteSnapshot,
-    ): Observable<TrainingRun | null> {
-        const runId = this.extractRunId(route);
-        if (!runId) {
-            this.emitFrontendError('No run id found in route');
-            return of(null);
-        }
-
-        return this.linearRunApi.get(runId).pipe(
-            take(1),
-            catchError((err) => {
-                this.emitApiError(err, 'Fetching training run results');
-                return of(null);
-            }),
-        );
-    }
-
-    private extractRunId(route: ActivatedRouteSnapshot): number | null {
-        const runId = RoutingUtils.extractVariable<'run'>('runId', route);
-        if (!runId || isNaN(+runId)) {
-            return null;
-        }
-        return +runId;
     }
 
     private extractInstanceId(route: ActivatedRouteSnapshot): number | null {
