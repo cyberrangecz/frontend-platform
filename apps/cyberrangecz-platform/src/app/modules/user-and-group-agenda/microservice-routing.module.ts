@@ -18,7 +18,7 @@ const routes: ValidRouterConfig<'microservice'> = [
         loadComponent: () =>
             import(
                 '@crczp/user-and-group-agenda/microservice-registration'
-            ).then((m) => m.MicroserviceEditComponent),
+            ).then((m) => m.MicroserviceEditOverviewComponent),
         data: {
             breadcrumb: 'Registration',
             title: 'Microservice Registration',

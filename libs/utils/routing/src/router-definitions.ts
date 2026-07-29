@@ -33,8 +33,7 @@ export const DEFINED_ROUTES = {
             detail: {},
             ['access-token']: {},
             runs: {},
-            results: {
-            },
+            analysis: {},
             ['cheating-detection']: {
                 create: {},
                 VAR_detectionId: {
@@ -53,11 +52,7 @@ export const DEFINED_ROUTES = {
             },
             EXCL_VAR_runId: {
                 resume: {},
-                results: {
-                    ['score-development']: {},
-                    ['command-timeline']: {},
-                    ['command-analysis']: {},
-                },
+                results: {},
             },
         },
     },

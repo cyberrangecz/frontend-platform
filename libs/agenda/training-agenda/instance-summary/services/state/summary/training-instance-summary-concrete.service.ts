@@ -22,8 +22,8 @@ export class TrainingInstanceSummaryConcreteService extends TrainingInstanceSumm
             this.router.navigate([
                 Routing.RouteBuilder.linear_instance
                     .instanceId(this.trainingInstance.id)
-                    .results.build(),
-            ])
+                    .analysis.build(),
+            ]),
         );
     }
 

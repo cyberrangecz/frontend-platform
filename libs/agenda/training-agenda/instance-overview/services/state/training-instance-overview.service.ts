@@ -5,26 +5,18 @@ import { Router } from '@angular/router';
 import {
     CrczpOffsetElementsPaginatedService,
     createInfinitePaginationEvent,
-    OffsetPaginatedResource,
+    OffsetPaginatedResource
 } from '@crczp/api-common';
 import { Routing } from '@crczp/routing-commons';
 import { PoolApi } from '@crczp/sandbox-api';
 import { Pool, SandboxInstance } from '@crczp/sandbox-model';
-import {
-    LinearTrainingInstanceApi,
-    TrainingInstanceSort,
-} from '@crczp/training-api';
+import { LinearTrainingInstanceApi, TrainingInstanceSort } from '@crczp/training-api';
 import { TrainingInstance } from '@crczp/training-model';
-import {
-    ErrorHandlerService,
-    NotificationService,
-    PortalConfig,
-} from '@crczp/utils';
-import { OffsetPaginationEvent } from '@crczp/utils';
+import { ErrorHandlerService, NotificationService, OffsetPaginationEvent, PortalConfig } from '@crczp/utils';
 import {
     SentinelConfirmationDialogComponent,
     SentinelConfirmationDialogConfig,
-    SentinelDialogResultEnum,
+    SentinelDialogResultEnum
 } from '@sentinel/components/dialogs';
 import { combineLatest, EMPTY, NEVER, Observable, of } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
@@ -143,7 +135,9 @@ export class TrainingInstanceOverviewService extends CrczpOffsetElementsPaginate
 
     results(id: number) {
         return this.router.navigate([
-            Routing.RouteBuilder.linear_instance.instanceId(id).results.build(),
+            Routing.RouteBuilder.linear_instance
+                .instanceId(id)
+                .analysis.build(),
         ]);
     }
 

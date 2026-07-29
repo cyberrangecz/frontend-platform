@@ -6,7 +6,10 @@ import {
     ScoreCsvExportService,
     TrainingInstanceOverviewComponent,
 } from '@crczp/training-agenda/instance-overview';
-import { provideDataBroker, provideEntityResolverService } from '@crczp/event-query-engine';
+import {
+    provideDataBroker,
+    provideEntityResolverService,
+} from '@crczp/event-query-engine';
 import {
     Routing,
     TrainingResolverHelperService,
@@ -52,10 +55,10 @@ const routes: ValidRouterConfig<'linear-instance'> = [
             ),
     },
     {
-        path: ':instanceId/results',
+        path: ':instanceId/analysis',
         resolve: Routing.Resolvers.resolveTrainingInstance({
-            title: 'Results of {title}',
-            breadcrumb: 'Results',
+            title: 'Analysis of {title}',
+            breadcrumb: 'Analysis',
         }),
         loadComponent: () =>
             import('@crczp/training-agenda/instance-results').then(
@@ -80,9 +83,9 @@ const routes: ValidRouterConfig<'linear-instance'> = [
             breadcrumb: '{title}',
         }),
         loadChildren: () =>
-            import(
-                './training-instance-cheating-detection-routing.module'
-            ).then((m) => m.CheatingDetectionOverviewRoutingModule),
+            import('./training-instance-cheating-detection-routing.module').then(
+                (m) => m.CheatingDetectionOverviewRoutingModule,
+            ),
     },
     {
         path: ':instanceId/runs',
