@@ -2,6 +2,7 @@
 <sentinel-table
     (tableLoad)="onLoadEvent($event)"
     [data]="sandboxDefinitions$ | async"
-    [defaultSortName]="'id'"
+    [defaultSortDirection]="DEFAULT_SORT_DIRECTION"
+    [defaultSortName]="DEFAULT_SORT_COLUMN"
     [hasError]="hasError$ | async">
 </sentinel-table>

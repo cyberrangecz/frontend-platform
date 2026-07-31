@@ -20,6 +20,7 @@ import { AsyncPipe } from '@angular/common';
 import {
     PaginationStorageService,
     providePaginationStorageService,
+    SortDir,
 } from '@crczp/utils';
 import { PaginationMapper } from '@crczp/api-common';
 import { SandboxDefinitionSort } from '@crczp/sandbox-api';
@@ -47,10 +48,16 @@ export class SandboxDefinitionOverviewComponent implements OnInit {
     sandboxDefinitions$: Observable<SandboxDefinitionTable>;
     hasError$: Observable<boolean>;
     destroyRef = inject(DestroyRef);
+    readonly DEFAULT_SORT_COLUMN: SandboxDefinitionSort = 'id';
+    readonly DEFAULT_SORT_DIRECTION: SortDir = 'asc';
     private sandboxDefinitionService = inject(SandboxDefinitionOverviewService);
     private paginationService = inject(PaginationStorageService);
     private lastLoadEvent: TableLoadEvent<SandboxDefinitionSort> = {
-        pagination: this.paginationService.createPagination('name'),
+        pagination:
+            this.paginationService.createPagination<SandboxDefinitionSort>(
+                this.DEFAULT_SORT_COLUMN,
+                this.DEFAULT_SORT_DIRECTION,
+            ),
     };
 
     ngOnInit(): void {
