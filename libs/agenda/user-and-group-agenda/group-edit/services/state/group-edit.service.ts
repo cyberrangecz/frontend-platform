@@ -111,7 +111,8 @@ export class GroupEditService {
     private create(): Observable<number> {
         return this.api.create(this.editedGroup).pipe(
             tap(
-                () => {
+                (id) => {
+                    this.editedGroup.id = id;
                     this.notificationService.emit(
                         'success',
                         'Group was created'

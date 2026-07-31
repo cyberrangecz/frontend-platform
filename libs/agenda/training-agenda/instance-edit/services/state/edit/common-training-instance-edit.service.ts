@@ -176,7 +176,8 @@ export abstract class CommonTrainingInstanceEditService extends CommonTrainingIn
             this.trainingInstanceApi.create(this.editedSnapshot).pipe(
                 map((ti) => ti.id),
                 tap(
-                    () => {
+                    (id) => {
+                        this.editedSnapshot.id = id;
                         this.notificationService.emit(
                             'success',
                             'Training instance was created',

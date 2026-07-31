@@ -109,7 +109,8 @@ export class TrainingDefinitionEditConcreteService extends TrainingDefinitionEdi
         return this.loadingTracker.trackRequest(() =>
             this.api.create(this.editedSnapshot).pipe(
                 tap(
-                    () => {
+                    (createdTrainingDefinition) => {
+                        this.editedSnapshot.id = createdTrainingDefinition.id;
                         this.notificationService.emit(
                             'success',
                             'Training was created',
