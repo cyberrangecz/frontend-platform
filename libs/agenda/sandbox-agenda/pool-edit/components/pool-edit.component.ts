@@ -142,10 +142,11 @@ export class PoolEditComponent implements OnInit {
     }
 
     /**
-     * Check the amount of allocated sandboxes and make sure the user doesn't set the number below.
+     * Lowest pool size the form accepts: the count of already allocated sandboxes when editing,
+     * one when creating.
      */
     getMinimumPoolSize(): number {
-        return this.pool ? this.pool.usedSize : 0;
+        return this.editMode ? this.pool.usedSize : 1;
     }
 
     sandboxDefinitionToDisplayString(
