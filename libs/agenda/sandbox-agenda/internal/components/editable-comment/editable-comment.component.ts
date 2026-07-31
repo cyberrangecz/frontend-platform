@@ -9,9 +9,9 @@ import {
     OnInit,
     Output,
 } from '@angular/core';
-import { CommentFormGroup } from './comment-form-group';
+import { CommentFormGroup, MAXIMUM_COMMENT_LENGTH } from './comment-form-group';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { ReactiveFormsModule } from '@angular/forms';
+import { AbstractControl, ReactiveFormsModule } from '@angular/forms';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatInputModule } from '@angular/material/input';
 import { MatFabButton } from '@angular/material/button';
@@ -38,7 +38,12 @@ export class EditableCommentComponent implements OnInit, OnChanges {
     commentFormGroup: CommentFormGroup;
     editOpacity = 0;
     editionEnabled = false;
+    readonly maximumCommentLength = MAXIMUM_COMMENT_LENGTH;
     private elementRef = inject(ElementRef);
+
+    get commentControl(): AbstractControl {
+        return this.commentFormGroup.formGroup.get('comment')!;
+    }
 
     @HostListener('focusout', ['$event'])
     onFocusOut(event: FocusEvent) {
@@ -52,7 +57,7 @@ export class EditableCommentComponent implements OnInit, OnChanges {
         ) {
             return;
         }
-        this.commentFormGroup.formGroup.get('comment').setValue(this.value);
+        this.commentControl.setValue(this.value);
         this.editionEnabled = false;
     }
 
@@ -70,10 +75,14 @@ export class EditableCommentComponent implements OnInit, OnChanges {
         this.editionEnabled = value;
     }
 
+    /**
+     * Publishes the edited comment and closes edit mode, unless the value breaks a validator.
+     */
     saveComment() {
-        this.commentChanged.emit(
-            this.commentFormGroup.formGroup.get('comment').value
-        );
+        if (this.commentFormGroup.formGroup.invalid) {
+            return;
+        }
+        this.commentChanged.emit(this.commentControl.value);
         this.toggleEdition(false);
     }
 
@@ -81,7 +90,7 @@ export class EditableCommentComponent implements OnInit, OnChanges {
         if (!this.commentFormGroup) {
             this.initFormGroup();
         } else {
-            this.commentFormGroup.formGroup.get('comment').setValue(this.value);
+            this.commentControl.setValue(this.value);
         }
     }
 

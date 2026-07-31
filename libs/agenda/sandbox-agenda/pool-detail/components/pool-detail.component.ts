@@ -1,5 +1,14 @@
 import { AsyncPipe } from '@angular/common';
-import { AfterViewInit, ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import {
+    AfterViewInit,
+    ChangeDetectionStrategy,
+    ChangeDetectorRef,
+    Component,
+    DestroyRef,
+    inject,
+    OnInit,
+    signal,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatCard } from '@angular/material/card';
 import { ActivatedRoute } from '@angular/router';
@@ -80,6 +89,7 @@ export class PoolDetailComponent implements OnInit, AfterViewInit {
     private sandboxInstanceService = inject(SandboxInstanceService);
     private paginationService = inject(PaginationStorageService);
     private activeRoute = inject(ActivatedRoute);
+    private changeDetectorRef = inject(ChangeDetectorRef);
     private subscription?: Subscription;
 
     private readonly initSandboxPagination =
@@ -148,13 +158,22 @@ export class PoolDetailComponent implements OnInit, AfterViewInit {
         this.commentTrim = +(columnWidth / fontSize).toFixed();
     }
 
+    /**
+     * Displays the new comment immediately and restores the previous one if the update is rejected.
+     */
     updateInstanceComment(row: SandboxAllocationUnit, comment: string) {
+        const previousComment = row.comment;
         row.comment = comment;
         row.id = row['unitId'];
         this.sandboxInstanceService
             .updateComment(row)
             .pipe(takeUntilDestroyed(this.destroyRef))
-            .subscribe();
+            .subscribe({
+                error: () => {
+                    row.comment = previousComment;
+                    this.changeDetectorRef.markForCheck();
+                },
+            });
     }
 
     private initTable() {
