@@ -19,7 +19,7 @@ import {MatIcon} from '@angular/material/icon';
 import {MatIconButton} from '@angular/material/button';
 import {MatTooltip} from '@angular/material/tooltip';
 import {MatCheckbox} from '@angular/material/checkbox';
-import {MatError, MatFormField, MatInput, MatLabel} from '@angular/material/input';
+import {MatError, MatFormField, MatInput, MatLabel, MatSuffix} from '@angular/material/input';
 
 /**
  * Component of individual microservice-registration role
@@ -43,7 +43,8 @@ import {MatError, MatFormField, MatInput, MatLabel} from '@angular/material/inpu
         MatLabel,
         MatError,
         MatCardTitle,
-        MatCardSubtitle
+        MatCardSubtitle,
+        MatSuffix
     ]
 })
 export class MicroserviceRoleComponent implements OnChanges {

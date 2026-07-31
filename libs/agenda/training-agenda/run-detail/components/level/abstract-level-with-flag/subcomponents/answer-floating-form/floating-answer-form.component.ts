@@ -2,7 +2,7 @@ import { Component, input, model, output } from '@angular/core';
 import { MatCard } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton, MatIconButton } from '@angular/material/button';
-import { MatFormField, MatInput } from '@angular/material/input';
+import { MatFormField, MatInput, MatSuffix } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -17,6 +17,7 @@ import { FormsModule } from '@angular/forms';
         FormsModule,
         MatIconButton,
         MatInput,
+        MatSuffix,
     ],
 })
 export class FloatingAnswerFormComponent {

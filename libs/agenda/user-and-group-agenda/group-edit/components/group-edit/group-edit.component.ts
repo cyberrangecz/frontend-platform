@@ -15,7 +15,7 @@ import { GroupChangedEvent } from '../../model/group-changed-event';
 import { GroupEditFormGroup } from './group-edit-form-group';
 import { AbstractControl, ReactiveFormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatError, MatFormField, MatInput, MatLabel } from '@angular/material/input';
+import { MatError, MatFormField, MatInput, MatLabel, MatSuffix } from '@angular/material/input';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -40,6 +40,7 @@ import { OwlDateTimeModule, OwlNativeDateTimeModule } from '@danielmoncada/angul
         MatLabel,
         OwlNativeDateTimeModule,
         OwlDateTimeModule,
+        MatSuffix,
     ],
 })
 export class GroupEditComponent implements OnInit, OnChanges {

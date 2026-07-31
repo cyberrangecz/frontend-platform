@@ -15,7 +15,7 @@ import {MicroserviceRolesState} from '../../model/microservice-roles-state';
 import {MicroserviceEditFormGroup} from './microservice-edit-form-group';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {MatCard, MatCardContent, MatCardHeader, MatCardSubtitle, MatCardTitle} from '@angular/material/card';
-import {MatError, MatFormField, MatInput, MatLabel} from '@angular/material/input';
+import {MatError, MatFormField, MatInput, MatLabel, MatSuffix} from '@angular/material/input';
 import {MatIcon} from '@angular/material/icon';
 import {MatIconButton} from '@angular/material/button';
 import {MicroserviceRoleListComponent} from '../microservice-role-list/microservice-role-list.component';
@@ -41,7 +41,8 @@ import {MicroserviceRoleListComponent} from '../microservice-role-list/microserv
         MatLabel,
         MatCardTitle,
         MatCardSubtitle,
-        MatError
+        MatError,
+        MatSuffix
     ]
 })
 export class MicroserviceEditComponent implements OnChanges {

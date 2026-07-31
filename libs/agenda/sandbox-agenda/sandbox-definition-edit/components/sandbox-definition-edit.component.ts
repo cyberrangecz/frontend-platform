@@ -4,11 +4,11 @@ import { defer } from 'rxjs';
 import { SandboxDefinitionEditService } from '../services/sandbox-definition-edit.service';
 import { SandboxDefinitionFormGroup } from './sandbox-definition-edit-form-group';
 import { AbstractControl, ReactiveFormsModule } from '@angular/forms';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { map } from 'rxjs/operators';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { map, take } from 'rxjs/operators';
 import { SandboxDefinitionEditConcreteService } from '../services/sandbox-definition-edit-concrete.service';
 import { MatCard } from '@angular/material/card';
-import { MatError, MatFormField, MatInput, MatLabel } from '@angular/material/input';
+import { MatError, MatFormField, MatInput, MatLabel, MatSuffix } from '@angular/material/input';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 
@@ -30,6 +30,7 @@ import { MatIcon } from '@angular/material/icon';
         MatInput,
         MatIcon,
         MatIconButton,
+        MatSuffix,
     ],
     providers: [
         {
@@ -43,6 +44,10 @@ export class SandboxDefinitionEditComponent implements OnInit {
     controls: SentinelControlItem[];
     destroyRef = inject(DestroyRef);
     private sandboxDefinitionService = inject(SandboxDefinitionEditService);
+    private readonly isCreating = toSignal(
+        this.sandboxDefinitionService.isLoading$,
+        { initialValue: false },
+    );
 
     get gitUrl(): AbstractControl {
         return this.sandboxDefinitionFormGroup.formGroup.get('gitUrl');
@@ -61,14 +66,18 @@ export class SandboxDefinitionEditComponent implements OnInit {
     }
 
     keyDownAction(event: KeyboardEvent): void {
-        if (
-            this.sandboxDefinitionFormGroup.formGroup.valid &&
-            event.key === 'Enter'
-        ) {
-            this.controls[0].result$
-                .pipe(takeUntilDestroyed(this.destroyRef))
-                .subscribe();
+        if (event.key !== 'Enter') {
+            return;
         }
+        if (
+            this.isCreating() ||
+            !this.sandboxDefinitionFormGroup.formGroup.valid
+        ) {
+            return;
+        }
+        this.controls[0]?.result$
+            ?.pipe(take(1), takeUntilDestroyed(this.destroyRef))
+            .subscribe();
     }
 
     private initControls() {

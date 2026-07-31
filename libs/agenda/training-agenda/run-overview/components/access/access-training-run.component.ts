@@ -12,7 +12,7 @@ import {MatButton, MatIconButton} from '@angular/material/button';
 import {TraineeAccessTrainingFormGroup} from './trainee-access-training-form-group';
 import {AbstractControl, ReactiveFormsModule} from '@angular/forms';
 import {MatCard, MatCardActions, MatCardContent, MatCardSubtitle, MatCardTitle} from "@angular/material/card";
-import {MatError, MatFormField, MatInput, MatLabel} from "@angular/material/input";
+import {MatError, MatFormField, MatInput, MatLabel, MatSuffix} from "@angular/material/input";
 
 import {MatIcon} from "@angular/material/icon";
 
@@ -38,7 +38,8 @@ import {MatIcon} from "@angular/material/icon";
     MatError,
     ReactiveFormsModule,
     MatCardActions,
-    MatButton
+    MatButton,
+    MatSuffix
 ]
 })
 export class AccessTrainingRunComponent implements OnInit {
