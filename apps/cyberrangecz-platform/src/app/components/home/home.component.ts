@@ -1,4 +1,11 @@
-import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import {
+    Component,
+    computed,
+    DestroyRef,
+    inject,
+    OnInit,
+    signal,
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { SentinelAuthService, UserRole } from '@sentinel/auth';
 import { AgendaPortalLink } from '../../model/agenda-portal-link';
@@ -21,7 +28,14 @@ import { ValidPath } from '@crczp/routing-commons';
 export class HomeComponent implements OnInit {
     elevated: string;
     roles: UserRole[];
-    portalAgendaContainers: PortalAgendaContainer[] = [];
+    portalAgendaContainers = signal<PortalAgendaContainer[]>([]);
+
+    /**
+     * Whether the user's roles grant access to no agenda at all.
+     */
+    hasNoAgendas = computed(() =>
+        this.portalAgendaContainers().every((container) => !container.displayed),
+    );
 
     destroyRef = inject(DestroyRef);
 
@@ -47,7 +61,7 @@ export class HomeComponent implements OnInit {
     }
 
     private initRoutes() {
-        this.portalAgendaContainers = [
+        this.portalAgendaContainers.set([
             {
                 agendas: this.createParticipateButtons(),
                 label: 'Participate',
@@ -80,7 +94,7 @@ export class HomeComponent implements OnInit {
                 children: [],
                 icon: 'manage_accounts',
             },
-        ];
+        ]);
     }
 
     private createParticipateButtons() {

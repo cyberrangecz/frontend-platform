@@ -6,7 +6,7 @@ import {
     sentinelNegativeAuthGuard,
 } from '@sentinel/auth';
 import { ValidRouterConfig } from '@crczp/routing-commons';
-import { RoleGuards } from './utils/guards';
+import { RoleGuards, soleAgendaGuard } from './utils/guards';
 
 export const APP_ROUTES: ValidRouterConfig<''> = [
     {
@@ -184,7 +184,7 @@ export const APP_ROUTES: ValidRouterConfig<''> = [
     {
         path: 'home',
         component: HomeComponent,
-        canActivate: [sentinelAuthGuardWithLogin],
+        canActivate: [sentinelAuthGuardWithLogin, soleAgendaGuard],
     },
     {
         path: 'logout',

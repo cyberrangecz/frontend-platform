@@ -8,6 +8,12 @@ h1 {
     width: 100%;
 }
 
+.portal-empty {
+    margin-top: 3rem;
+    font-size: large;
+    text-align: center;
+}
+
 .portal-menu {
     margin-top: 3rem;
     display: flex;
