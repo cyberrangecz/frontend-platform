@@ -12,17 +12,17 @@
             }
         </mat-card-subtitle>
         <span class="spacer"></span>
-        <div class="role-remove">
-            <button (click)="delete.emit()"
-                    [attr.aria-label]="isDefaultRole ? 'Default role cannot be removed' : 'Delete role'"
-                    [disabled]="isDefaultRole"
-                    [disabledInteractive]="isDefaultRole"
-                    [matTooltip]="isDefaultRole ? 'Microservice has to have a default role' : 'Delete role'"
-                    mat-icon-button
-                    type="button">
-                <mat-icon>close</mat-icon>
-            </button>
-        </div>
+        @if (!isDefaultRole) {
+            <div class="role-remove">
+                <button (click)="delete.emit()"
+                        aria-label="Delete role"
+                        mat-icon-button
+                        matTooltip="Delete role"
+                        type="button">
+                    <mat-icon>close</mat-icon>
+                </button>
+            </div>
+        }
     </mat-card-header>
     <mat-card-content>
         <div [formGroup]="roleFormGroup" class="form-container">
