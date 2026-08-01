@@ -7,26 +7,24 @@
         "inlineSources": true,
         "types": []
     },
-    "strictTemplates": true
-},
-"exclude": [
-    "**/*.spec.ts",
-    "test-setup.ts",
-    "jest.config.ts",
-    "**/*.test.ts",
-    "vite.config.ts",
-    "vite.config.mts",
-    "vitest.config.ts",
-    "vitest.config.mts",
-    "**/*.test.tsx",
-    "**/*.spec.tsx",
-    "**/*.test.js",
-    "**/*.spec.js",
-    "**/*.test.jsx",
-    "**/*.spec.jsx",
-    "test-setup.ts"
-],
-"include": [
-    "**/*.ts"
-]
+    "exclude": [
+        "**/*.spec.ts",
+        "test-setup.ts",
+        "jest.config.ts",
+        "**/*.test.ts",
+        "vite.config.ts",
+        "vite.config.mts",
+        "vitest.config.ts",
+        "vitest.config.mts",
+        "**/*.test.tsx",
+        "**/*.spec.tsx",
+        "**/*.test.js",
+        "**/*.spec.js",
+        "**/*.test.jsx",
+        "**/*.spec.jsx",
+        "test-setup.ts"
+    ],
+    "include": [
+        "**/*.ts"
+    ]
 }
