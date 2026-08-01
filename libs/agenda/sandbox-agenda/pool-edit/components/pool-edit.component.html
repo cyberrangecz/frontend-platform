@@ -1,5 +1,8 @@
 <mat-card appearance="outlined">
-    <mat-card-header class="card-title">
+    <mat-card-header class="card-icon-header card-title">
+        <div mat-card-avatar>
+            <mat-icon color="primary">{{ editMode ? 'edit' : 'add' }}</mat-icon>
+        </div>
         <mat-card-title>
             @if (editMode) {
                 Edit Sandbox Pool

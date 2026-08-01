@@ -4,8 +4,11 @@ h1 {
 
 .card-title {
     display: flex;
-    justify-content: space-between;
     margin-bottom: 1rem;
+}
+
+.card-title sentinel-controls {
+    margin-left: auto;
 }
 
 .form-content {

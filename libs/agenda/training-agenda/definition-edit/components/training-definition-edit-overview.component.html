@@ -13,7 +13,7 @@
                     <mat-error>Changes are not saved</mat-error>
                 </div>
             }
-            <mat-icon>edit</mat-icon>
+            <mat-icon>{{ (editMode$ | async) ? 'edit' : 'add' }}</mat-icon>
         </mat-panel-description>
 
     </mat-expansion-panel-header>

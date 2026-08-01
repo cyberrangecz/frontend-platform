@@ -12,7 +12,7 @@ import { map } from 'rxjs/operators';
 import { GroupRolesTable } from '../../model/table/group-roles-table';
 import { DeleteControlItem, SaveControlItem } from '@crczp/user-and-group-agenda/internal';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatCard, MatCardContent, MatCardHeader, MatCardSubtitle, MatCardTitle } from '@angular/material/card';
+import { MatCard, MatCardAvatar, MatCardContent, MatCardHeader, MatCardSubtitle, MatCardTitle } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
 import { AsyncPipe } from '@angular/common';
 import { RoleAssignService } from '../../services/state/role-assign.service';
@@ -32,9 +32,9 @@ import { RoleSort } from '@crczp/user-and-group-api';
         MatCard,
         MatCardContent,
         MatCardHeader,
+        MatCardAvatar,
         MatCardSubtitle,
         MatCardTitle,
-        MatIcon,
         MatIcon,
         SentinelResourceSelectorComponent,
         SentinelTableComponent,

@@ -13,7 +13,8 @@ import {
     SandboxDefinitionOverviewService
 } from '@crczp/sandbox-agenda/internal';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
+import { MatCard, MatCardAvatar, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
+import { MatIcon } from '@angular/material/icon';
 import { MatDivider } from '@angular/material/divider';
 import {
     SentinelResourceSelectorComponent,
@@ -37,6 +38,8 @@ import { createInfinitePaginationEvent } from '@crczp/api-common';
     imports: [
         MatCardTitle,
         MatCardHeader,
+        MatCardAvatar,
+        MatIcon,
         MatCard,
         SentinelControlsComponent,
         MatCardContent,
@@ -47,7 +50,6 @@ import { createInfinitePaginationEvent } from '@crczp/api-common';
         SentinelSelectorElementDirective,
         MatFormField,
         MatTooltip,
-        MatInput,
         MatInput,
         ReactiveFormsModule,
         MatLabel,

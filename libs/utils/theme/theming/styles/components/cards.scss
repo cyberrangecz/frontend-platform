@@ -1,0 +1,22 @@
+// Card header carrying a leading icon in its avatar slot. Places the icon 36px from the
+// card edge and the title 16px from the icon; the offsets are reduced by the 8px a 24px
+// icon is inset by inside Material's fixed 40px avatar box, which centres the icon.
+// Usage: <mat-card-header class="card-icon-header">
+.card-icon-header.mat-mdc-card-header {
+    align-items: center;
+    padding-left: 28px;
+
+    .mat-mdc-card-avatar {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 0;
+    }
+
+    .mat-mdc-card-avatar ~ .mat-mdc-card-header-text {
+        .mat-mdc-card-title,
+        .mat-mdc-card-subtitle {
+            padding-left: 8px;
+        }
+    }
+}
