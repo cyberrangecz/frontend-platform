@@ -6,15 +6,12 @@
         </p>
     } @else {
         <div class="portal-menu">
-            @for (portalAgendaContainer of portalAgendaContainers(); track portalAgendaContainer; let last = $last) {
-                <div>
-                    <crczp-portal-agenda-container
-                        [portalAgendaContainer]="portalAgendaContainer"
-                        [elevation]="elevated"
-                        [isLast]="last"
-                        (navigation)="navigateToRoute($event)"
-                        (setElevation)="setElevation($event)"/>
-                </div>
+            @for (portalAgendaContainer of portalAgendaContainers(); track portalAgendaContainer) {
+                <crczp-portal-agenda-container
+                    [portalAgendaContainer]="portalAgendaContainer"
+                    [elevation]="elevated"
+                    (navigation)="navigateToRoute($event)"
+                    (setElevation)="setElevation($event)"/>
             }
         </div>
     }

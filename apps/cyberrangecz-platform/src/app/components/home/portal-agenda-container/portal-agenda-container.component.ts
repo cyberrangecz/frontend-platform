@@ -20,7 +20,6 @@ import { ValidPath } from '@crczp/routing-commons';
 export class PortalAgendaContainerComponent {
     @Input() portalAgendaContainer: PortalAgendaContainer;
     @Input() elevation: string;
-    @Input() isLast: boolean;
 
     @Output() navigation: EventEmitter<ValidPath> = new EventEmitter();
     @Output() setElevation: EventEmitter<string> = new EventEmitter();
