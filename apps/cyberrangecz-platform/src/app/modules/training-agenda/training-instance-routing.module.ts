@@ -9,6 +9,7 @@ import {
 import {
     provideDataBroker,
     provideEntityResolverService,
+    singleTabCacheGuard,
 } from '@crczp/event-query-engine';
 import {
     Routing,
@@ -56,6 +57,7 @@ const routes: ValidRouterConfig<'linear-instance'> = [
     },
     {
         path: ':instanceId/analysis',
+        canActivate: [singleTabCacheGuard],
         resolve: Routing.Resolvers.resolveTrainingInstance({
             title: 'Analysis of {title}',
             breadcrumb: 'Analysis',

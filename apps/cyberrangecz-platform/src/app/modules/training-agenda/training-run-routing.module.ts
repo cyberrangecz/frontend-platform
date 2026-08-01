@@ -9,7 +9,7 @@ import {
     ValidRouterConfig,
 } from '@crczp/routing-commons';
 import { SandboxApiModule } from '@crczp/sandbox-api';
-import { provideDataBroker, provideEntityResolverService } from '@crczp/event-query-engine';
+import { provideDataBroker, provideEntityResolverService, singleTabCacheGuard } from '@crczp/event-query-engine';
 
 const routes: ValidRouterConfig<'run'> = [
     {
@@ -46,6 +46,7 @@ const routes: ValidRouterConfig<'run'> = [
     },
     {
         path: 'linear/:runId/results',
+        canActivate: [singleTabCacheGuard],
         data: {
             breadcrumb: 'Results',
             title: 'Training Run Results',

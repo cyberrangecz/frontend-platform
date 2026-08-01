@@ -13,7 +13,7 @@ export { DataBrokerService } from './lib/broker/broker.interface';
 export { provideDataBroker, provideEventBroker, provideEventCache } from './lib/broker/provide-event-broker';
 export { createSqliteEventDb, CreateSqliteEventDbOptions } from './lib/broker/create-sqlite-event-db';
 export { CACHE_CLAIM, CacheClaim, requestSingleTabClaim } from './lib/single-tab/single-tab-claim';
-export { CACHE_BLOCKED_PATH, singleTabCacheGuard, withSingleTabGuard } from './lib/single-tab/single-tab.guard';
+export { CACHE_BLOCKED_PATH, singleTabCacheGuard, withCacheBlockedRoute } from './lib/single-tab/single-tab-cache.guard';
 export { CacheBlockedComponent } from './lib/single-tab/cache-blocked.component';
 export { makeCacheDb } from './lib/integration/sqlite-test-db';
 export type { TestCacheDb } from './lib/integration/sqlite-test-db';
