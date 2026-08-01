@@ -1,7 +1,19 @@
-.controls {
+.rolelist-heading {
+    margin: 0 0 8px;
+    font: var(--mat-sys-title-medium);
+}
+
+.rolelist-items {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.rolelist-controls {
     width: 100%;
     display: flex;
     justify-content: flex-end;
+    margin-top: 10px;
 }
 
 crczp-microservice-role {

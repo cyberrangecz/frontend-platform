@@ -1,30 +1,93 @@
-import {UntypedFormArray, UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
-import {Microservice} from '@crczp/user-and-group-model';
+import {FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
+import {Microservice, MicroserviceRole} from '@crczp/user-and-group-model';
 
 /**
- * Form control for microservice-registration state component
+ * Position of the role that is registered as the microservice default role
+ */
+export const DEFAULT_ROLE_INDEX = 0;
+
+/**
+ * Reactive form of a single microservice role
+ */
+export type MicroserviceRoleFormGroup = FormGroup<{
+    type: FormControl<string>;
+    description: FormControl<string>;
+}>;
+
+/**
+ * Builds the reactive form of a single role, blank unless a role is given.
+ *
+ * @param role Role whose values seed the form.
+ * @returns {MicroserviceRoleFormGroup} Form of the given role.
+ */
+function createRoleFormGroup(role?: MicroserviceRole): MicroserviceRoleFormGroup {
+    return new FormGroup({
+        type: new FormControl(role?.type ?? '', {nonNullable: true, validators: Validators.required}),
+        description: new FormControl(role?.description ?? '', {nonNullable: true}),
+    });
+}
+
+/**
+ * Form of the microservice registration. The role at {@link DEFAULT_ROLE_INDEX} always exists
+ * and is the one registered as default, so a microservice can neither lose its roles entirely
+ * nor end up without a default one.
  */
 export class MicroserviceEditFormGroup {
-    formGroup: UntypedFormGroup;
+    readonly formGroup: FormGroup<{
+        name: FormControl<string>;
+        endpoint: FormControl<string>;
+        roles: FormArray<MicroserviceRoleFormGroup>;
+    }>;
 
     constructor(microservice: Microservice) {
-        this.formGroup = new UntypedFormGroup({
-            name: new UntypedFormControl(microservice.name, Validators.required),
-            endpoint: new UntypedFormControl(microservice.endpoint, Validators.required),
-            roles: new UntypedFormArray(
-                microservice.roles.map((roles) => new UntypedFormControl(roles)),
-                Validators.required,
-            ),
+        const [defaultRole, ...additionalRoles] = microservice.roles;
+        this.formGroup = new FormGroup({
+            name: new FormControl(microservice.name, {nonNullable: true, validators: Validators.required}),
+            endpoint: new FormControl(microservice.endpoint, {nonNullable: true, validators: Validators.required}),
+            roles: new FormArray([
+                createRoleFormGroup(defaultRole),
+                ...additionalRoles.map((role) => createRoleFormGroup(role)),
+            ]),
         });
     }
 
+    get roles(): FormArray<MicroserviceRoleFormGroup> {
+        return this.formGroup.controls.roles;
+    }
+
     /**
-     * Sets values inserted to form to microservice-registration object
-     * @param microservice microservice-registration to be filled with values
+     * Appends a blank role to the form
      */
-    setValuesToMicroservice(microservice: Microservice): void {
-        microservice.name = this.formGroup.get('name').value;
-        microservice.endpoint = this.formGroup.get('endpoint').value;
-        microservice.roles = this.formGroup.get('roles').value;
+    addRole(): void {
+        this.roles.push(createRoleFormGroup());
+    }
+
+    /**
+     * Removes the role on the given index, refusing the default role
+     * @param index index of a role to be removed
+     */
+    removeRole(index: number): void {
+        if (index !== DEFAULT_ROLE_INDEX) {
+            this.roles.removeAt(index);
+        }
+    }
+
+    /**
+     * Builds the microservice described by the current form values.
+     *
+     * @returns {Microservice} Microservice carrying the entered values, its validity, and the
+     * default flag set on the role at {@link DEFAULT_ROLE_INDEX}.
+     */
+    toMicroservice(): Microservice {
+        const {name, endpoint, roles} = this.formGroup.getRawValue();
+        const microservice = new Microservice(
+            name,
+            endpoint,
+            roles.map(
+                ({type, description}, index) => new MicroserviceRole(type, description, index === DEFAULT_ROLE_INDEX),
+            ),
+        );
+        microservice.valid = this.formGroup.valid;
+        return microservice;
     }
 }

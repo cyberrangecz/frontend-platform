@@ -1,10 +1,20 @@
-<div class="controls">
+<h2 class="rolelist-heading" id="rolelist-heading">Roles</h2>
+
+<ul aria-labelledby="rolelist-heading" class="rolelist-items" role="list">
+  @for (roleFormGroup of roles.controls; track roleFormGroup; let index = $index) {
+    <li>
+      <crczp-microservice-role
+        (delete)="removeRole.emit(index)"
+        [roleFormGroup]="roleFormGroup"
+        [isDefaultRole]="index === defaultRoleIndex" />
+    </li>
+  }
+</ul>
+
+<div class="rolelist-controls">
   <button
-    (click)="addRole()"
-    mat-flat-button
+    (click)="onAddRole()"
+    mat-stroked-button
+    type="button"
   >Add role</button>
 </div>
-@for (role of roles; track role; let i = $index) {
-  <crczp-microservice-role (roleChange)="onRoleChange($event, i)"
-    (delete)="deleteRole(i)" [role]="role"/>
-}

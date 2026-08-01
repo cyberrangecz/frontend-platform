@@ -1,9 +1,9 @@
 <mat-card appearance="outlined">
     <mat-card-header>
-        <div mat-card-avatar>
+        <div class="edit-avatar" mat-card-avatar>
             <mat-icon color="primary">account_tree</mat-icon>
         </div>
-        <mat-card-title>Microservice {{ name?.value }}</mat-card-title>
+        <mat-card-title class="edit-title" crczpOverflowTooltip>Microservice {{ name.value }}</mat-card-title>
         <mat-card-subtitle>This microservice will be registered to User and Group microservice</mat-card-subtitle>
     </mat-card-header>
     <mat-card-content>
@@ -13,12 +13,7 @@
                 <mat-form-field appearance="outline">
                     <mat-label>Name</mat-label>
                     <input formControlName="name" matInput placeholder="Name" required>
-                    @if (name.value) {
-                        <button (click)="name.setValue('');" aria-label="Clear" mat-icon-button
-                                matSuffix>
-                            <mat-icon>close</mat-icon>
-                        </button>
-                    }
+                    <crczp-clear-input-suffix [control]="name" label="Clear name" matSuffix />
                     <mat-error>Name cannot be empty</mat-error>
                 </mat-form-field>
 
@@ -26,17 +21,13 @@
                 <mat-form-field appearance="outline">
                     <mat-label>Endpoint</mat-label>
                     <input formControlName="endpoint" matInput placeholder="Example: /your-service/api/v1" required>
-                    @if (endpoint.value) {
-                        <button (click)="endpoint.setValue('');" aria-label="Clear"
-                                mat-icon-button
-                                matSuffix>
-                            <mat-icon>close</mat-icon>
-                        </button>
-                    }
+                    <crczp-clear-input-suffix [control]="endpoint" label="Clear endpoint" matSuffix />
                     <mat-error>Endpoint cannot be empty</mat-error>
                 </mat-form-field>
 
-                <crczp-microservice-role-list (microserviceRoles)="onRolesChanged($event)" />
+                <crczp-microservice-role-list (addRole)="onAddRole()"
+                                              (removeRole)="onRemoveRole($event)"
+                                              [roles]="roles" />
             </div>
         </form>
     </mat-card-content>

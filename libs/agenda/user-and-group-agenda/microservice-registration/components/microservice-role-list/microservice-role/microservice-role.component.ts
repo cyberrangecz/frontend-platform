@@ -1,25 +1,18 @@
-import {
-    ChangeDetectionStrategy,
-    Component,
-    DestroyRef,
-    EventEmitter,
-    inject,
-    Input,
-    OnChanges,
-    Output,
-    SimpleChanges,
-} from '@angular/core';
-import {MicroserviceRole} from '@crczp/user-and-group-model';
-import {MicroserviceRoleItem} from '../../../model/microservice-role-item';
-import {MicroserviceRoleForm} from './microservice-role-form';
-import {AbstractControl, ReactiveFormsModule} from '@angular/forms';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {MatCard, MatCardContent, MatCardHeader, MatCardSubtitle, MatCardTitle} from '@angular/material/card';
+import {ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, Output, viewChild} from '@angular/core';
+import {FormControl, ReactiveFormsModule} from '@angular/forms';
+import {MicroserviceRoleFormGroup} from '../../microservice-edit/microservice-edit-form-group';
+import {MatCard, MatCardAvatar, MatCardContent, MatCardHeader, MatCardSubtitle, MatCardTitle} from '@angular/material/card';
 import {MatIcon} from '@angular/material/icon';
 import {MatIconButton} from '@angular/material/button';
+import {ClearInputSuffixComponent} from '@crczp/utils';
 import {MatTooltip} from '@angular/material/tooltip';
-import {MatCheckbox} from '@angular/material/checkbox';
-import {MatError, MatFormField, MatInput, MatLabel, MatSuffix} from '@angular/material/input';
+import {MatError, MatFormField, MatHint, MatInput, MatLabel, MatSuffix} from '@angular/material/input';
+import {CdkTextareaAutosize} from '@angular/cdk/text-field';
+
+/**
+ * Maximum length of a role description accepted by the backend
+ */
+const DESCRIPTION_MAX_LENGTH = 255;
 
 /**
  * Component of individual microservice-registration role
@@ -32,88 +25,56 @@ import {MatError, MatFormField, MatInput, MatLabel, MatSuffix} from '@angular/ma
     imports: [
         MatCard,
         MatCardHeader,
+        MatCardAvatar,
         MatIcon,
         MatIconButton,
         MatTooltip,
         MatCardContent,
-        MatCheckbox,
         ReactiveFormsModule,
         MatFormField,
         MatInput,
         MatLabel,
         MatError,
+        MatHint,
         MatCardTitle,
         MatCardSubtitle,
-        MatSuffix
+        MatSuffix,
+        CdkTextareaAutosize,
+        ClearInputSuffixComponent
     ]
 })
-export class MicroserviceRoleComponent implements OnChanges {
+export class MicroserviceRoleComponent {
     /**
-     * Edited role
+     * Form of the edited role
      */
-    @Input() role: MicroserviceRole;
-
-    /**
-     * Emits event to delete this role
-     */
-    @Output() delete = new EventEmitter();
+    @Input({required: true}) roleFormGroup: MicroserviceRoleFormGroup;
 
     /**
-     * Emits event on role change
+     * True if this role is the one registered as the microservice default role
      */
-    @Output() roleChange: EventEmitter<MicroserviceRoleItem> = new EventEmitter();
-
-    /**
-     * Form control of state group-overview
-     */
-    microserviceRoleFormGroup: MicroserviceRoleForm;
-
-    destroyRef = inject(DestroyRef);
-
-    get description(): AbstractControl {
-        return this.microserviceRoleFormGroup.formGroup.get('description');
-    }
-
-    get type(): AbstractControl {
-        return this.microserviceRoleFormGroup.formGroup.get('type');
-    }
-
-    ngOnChanges(changes: SimpleChanges): void {
-        if ('role' in changes) {
-            this.microserviceRoleFormGroup = new MicroserviceRoleForm(this.role);
-            this.setupOnFormChangedEvent();
-        }
-    }
+    @Input() isDefaultRole = false;
 
     /**
      * Emits event to delete this role
      */
-    deleteRole(): void {
-        this.delete.emit();
+    @Output() delete = new EventEmitter<void>();
+
+    protected readonly descriptionMaxLength = DESCRIPTION_MAX_LENGTH;
+
+    private readonly typeInput = viewChild.required<ElementRef<HTMLInputElement>>('typeInput');
+
+    get description(): FormControl<string> {
+        return this.roleFormGroup.controls.description;
+    }
+
+    get type(): FormControl<string> {
+        return this.roleFormGroup.controls.type;
     }
 
     /**
-     * Clears values of the form
+     * Moves focus to the role type field
      */
-    onClear(): void {
-        this.microserviceRoleFormGroup.setValuesToRole(this.role);
-        this.roleChange.emit({
-            role: this.role,
-            valid: false,
-        });
-    }
-
-    private setupOnFormChangedEvent() {
-        this.microserviceRoleFormGroup.formGroup.valueChanges
-            .pipe(takeUntilDestroyed(this.destroyRef))
-            .subscribe(() => this.onChanged());
-    }
-
-    private onChanged() {
-        this.microserviceRoleFormGroup.setValuesToRole(this.role);
-        this.roleChange.emit({
-            role: this.role,
-            valid: this.microserviceRoleFormGroup.formGroup.valid,
-        });
+    focusType(): void {
+        this.typeInput().nativeElement.focus();
     }
 }

@@ -1,12 +1,22 @@
+.edit-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .form-container {
     display: flex;
     flex-direction: column;
     padding: 20px;
 }
 
-@media screen and (max-width: 900px) {
-    .form-container {
-        display: flex;
-        flex-direction: column;
-    }
+.edit-title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Material's header text wrapper keeps min-width: auto, which stops the title from ever truncating */
+:host ::ng-deep .mat-mdc-card-header-text {
+    min-width: 0;
 }

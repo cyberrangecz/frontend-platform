@@ -1,23 +1,12 @@
-import {
-    ChangeDetectionStrategy,
-    Component,
-    DestroyRef,
-    EventEmitter,
-    inject,
-    Input,
-    OnChanges,
-    Output,
-    SimpleChanges,
-} from '@angular/core';
-import {AbstractControl, ReactiveFormsModule, UntypedFormArray, UntypedFormControl} from '@angular/forms';
+import {ChangeDetectionStrategy, Component, DestroyRef, EventEmitter, inject, Input, OnInit, Output} from '@angular/core';
+import {FormArray, FormControl, ReactiveFormsModule} from '@angular/forms';
 import {Microservice} from '@crczp/user-and-group-model';
-import {MicroserviceRolesState} from '../../model/microservice-roles-state';
-import {MicroserviceEditFormGroup} from './microservice-edit-form-group';
+import {ClearInputSuffixComponent, OverflowTooltipDirective} from '@crczp/utils';
+import {MicroserviceEditFormGroup, MicroserviceRoleFormGroup} from './microservice-edit-form-group';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {MatCard, MatCardContent, MatCardHeader, MatCardSubtitle, MatCardTitle} from '@angular/material/card';
+import {MatCard, MatCardAvatar, MatCardContent, MatCardHeader, MatCardSubtitle, MatCardTitle} from '@angular/material/card';
 import {MatError, MatFormField, MatInput, MatLabel, MatSuffix} from '@angular/material/input';
 import {MatIcon} from '@angular/material/icon';
-import {MatIconButton} from '@angular/material/button';
 import {MicroserviceRoleListComponent} from '../microservice-role-list/microservice-role-list.component';
 
 /**
@@ -31,13 +20,15 @@ import {MicroserviceRoleListComponent} from '../microservice-role-list/microserv
     imports: [
         MatCard,
         MatCardHeader,
+        MatCardAvatar,
         MatIcon,
         MatFormField,
         MatInput,
         MatCardContent,
         MicroserviceRoleListComponent,
+        OverflowTooltipDirective,
+        ClearInputSuffixComponent,
         ReactiveFormsModule,
-        MatIconButton,
         MatLabel,
         MatCardTitle,
         MatCardSubtitle,
@@ -45,11 +36,11 @@ import {MicroserviceRoleListComponent} from '../microservice-role-list/microserv
         MatSuffix
     ]
 })
-export class MicroserviceEditComponent implements OnChanges {
+export class MicroserviceEditComponent implements OnInit {
     /**
-     * Edited microservice-registration
+     * Microservice whose values seed the form
      */
-    @Input() microservice: Microservice;
+    @Input({required: true}) microservice: Microservice;
 
     /**
      * Event emitter of microservice-registration change
@@ -58,52 +49,38 @@ export class MicroserviceEditComponent implements OnChanges {
 
     microserviceFormGroup: MicroserviceEditFormGroup;
     destroyRef = inject(DestroyRef);
-    private rolesValidity: boolean;
 
-    get name(): AbstractControl {
-        return this.microserviceFormGroup.formGroup.get('name');
+    get name(): FormControl<string> {
+        return this.microserviceFormGroup.formGroup.controls.name;
     }
 
-    get endpoint(): AbstractControl {
-        return this.microserviceFormGroup.formGroup.get('endpoint');
+    get endpoint(): FormControl<string> {
+        return this.microserviceFormGroup.formGroup.controls.endpoint;
     }
 
-    get roles(): UntypedFormArray {
-        return this.microserviceFormGroup.formGroup.get('roles') as UntypedFormArray;
+    get roles(): FormArray<MicroserviceRoleFormGroup> {
+        return this.microserviceFormGroup.roles;
     }
 
-    ngOnChanges(changes: SimpleChanges): void {
-        if ('microservice' in changes) {
-            this.microserviceFormGroup = new MicroserviceEditFormGroup(this.microservice);
-            this.setupOnFormChangedEvent();
-        }
+    ngOnInit(): void {
+        this.microserviceFormGroup = new MicroserviceEditFormGroup(this.microservice);
+        this.microserviceFormGroup.formGroup.valueChanges
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe(() => this.microserviceChange.emit(this.microserviceFormGroup.toMicroservice()));
     }
 
     /**
-     * Changes internal state of the component when one of the roles is changed
-     * @param event event describing state of the microservice-registration roles
+     * Appends a blank role to the form
      */
-    onRolesChanged(event: MicroserviceRolesState): void {
-        if (event.isAdded) {
-            (this.roles as UntypedFormArray).push(new UntypedFormControl(''));
-        } else if (event.isRemoved) {
-            this.roles.removeAt(event.roleIndex);
-        } else {
-            this.roles.at(event.roleIndex).setValue(event.roles[event.roleIndex]);
-        }
-        this.rolesValidity = event.validity;
-        this.onChanged();
+    onAddRole(): void {
+        this.microserviceFormGroup.addRole();
     }
 
-    private setupOnFormChangedEvent() {
-        this.microserviceFormGroup.formGroup.valueChanges
-            .pipe(takeUntilDestroyed(this.destroyRef))
-            .subscribe(() => this.onChanged());
-    }
-
-    private onChanged() {
-        this.microserviceFormGroup.setValuesToMicroservice(this.microservice);
-        this.microservice.valid = this.microserviceFormGroup.formGroup.valid && this.rolesValidity;
-        this.microserviceChange.emit(this.microservice);
+    /**
+     * Removes the role on the given index
+     * @param index index of a role to be removed
+     */
+    onRemoveRole(index: number): void {
+        this.microserviceFormGroup.removeRole(index);
     }
 }
