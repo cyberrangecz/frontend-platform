@@ -8,10 +8,7 @@ import { LevelMapper } from '../level/level-mapper';
  * @dynamic
  */
 export class TrainingDefinitionMapper {
-    static fromDTO(
-        dto: TrainingDefinitionDTO,
-        withLevels: boolean,
-    ): TrainingDefinition {
+    static fromDTO(dto: TrainingDefinitionDTO): TrainingDefinition {
         const result = new TrainingDefinition();
         result.id = dto.id;
         result.title = dto.title;
@@ -21,7 +18,7 @@ export class TrainingDefinitionMapper {
         result.state = this.stateFromDTO(dto.state);
         result.lastEditTime = dto.last_edited;
         result.estimatedDuration = dto.estimated_duration;
-        if (withLevels) {
+        if (dto.levels) {
             result.levels = LevelMapper.fromDTOs(dto.levels);
         }
         result.lastEditBy = dto.last_edited_by;
@@ -29,13 +26,8 @@ export class TrainingDefinitionMapper {
         return result;
     }
 
-    static fromDTOs(
-        dtos: TrainingDefinitionDTO[],
-        withLevels: boolean,
-    ): TrainingDefinition[] {
-        return dtos.map((dto) =>
-            TrainingDefinitionMapper.fromDTO(dto, withLevels),
-        );
+    static fromDTOs(dtos: TrainingDefinitionDTO[]): TrainingDefinition[] {
+        return dtos.map((dto) => TrainingDefinitionMapper.fromDTO(dto));
     }
 
     static stateFromDTO(

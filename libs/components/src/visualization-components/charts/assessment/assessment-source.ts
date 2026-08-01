@@ -79,7 +79,7 @@ export function createAssessmentSource(
         if (cached !== undefined) {
             return cached;
         }
-        const levels$ = definitionApi.get(definitionId, true).pipe(
+        const levels$ = definitionApi.get(definitionId).pipe(
             map((definition) =>
                 definition.levels.filter((level): level is AssessmentLevel => level instanceof AssessmentLevel),
             ),

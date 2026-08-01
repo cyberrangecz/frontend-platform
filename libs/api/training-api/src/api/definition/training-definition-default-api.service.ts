@@ -146,7 +146,6 @@ export class TrainingDefinitionDefaultApi extends LinearTrainingDefinitionApi {
                         new OffsetPaginatedResource(
                             TrainingDefinitionMapper.fromDTOs(
                                 response.content,
-                                false,
                             ),
                             PaginationMapper.fromJavaDTO(response.pagination),
                         ),
@@ -187,16 +186,11 @@ export class TrainingDefinitionDefaultApi extends LinearTrainingDefinitionApi {
     /**
      * Sends http request to retrieve training definition by its id
      * @param id id of training definition
-     * @param withLevels true if training definition should be mapped with levels, false otherwise
      */
-    get(id: number, withLevels = false): Observable<TrainingDefinition> {
+    get(id: number): Observable<TrainingDefinition> {
         return this.http
             .get<TrainingDefinitionDTO>(`${this.trainingDefsEndpointUri}/${id}`)
-            .pipe(
-                map((response) =>
-                    TrainingDefinitionMapper.fromDTO(response, withLevels),
-                ),
-            );
+            .pipe(map((response) => TrainingDefinitionMapper.fromDTO(response)));
     }
 
     /**
@@ -281,7 +275,7 @@ export class TrainingDefinitionDefaultApi extends LinearTrainingDefinitionApi {
         );
         fileReader.readAsText(file);
         return fileRead$.pipe(
-            map((resp) => TrainingDefinitionMapper.fromDTO(resp, false)),
+            map((resp) => TrainingDefinitionMapper.fromDTO(resp)),
         );
     }
 
@@ -338,7 +332,7 @@ export class TrainingDefinitionDefaultApi extends LinearTrainingDefinitionApi {
                 TrainingDefinitionMapper.toCreateDTO(trainingDefinition),
                 { headers: this.createDefaultHeaders() },
             )
-            .pipe(map((resp) => TrainingDefinitionMapper.fromDTO(resp, false)));
+            .pipe(map((resp) => TrainingDefinitionMapper.fromDTO(resp)));
     }
 
     /**
@@ -521,7 +515,6 @@ export class TrainingDefinitionDefaultApi extends LinearTrainingDefinitionApi {
                         new OffsetPaginatedResource(
                             TrainingDefinitionMapper.fromDTOs(
                                 response.content,
-                                false,
                             ),
                             PaginationMapper.fromJavaDTO(response.pagination),
                         ),

@@ -40,12 +40,8 @@ export abstract class LinearTrainingDefinitionApi {
     /**
      * Sends http request to retrieve training definition by its id
      * @param id id of training definition
-     * @param withLevels true if training definition should be mapped with levels, false otherwise
      */
-    abstract get(
-        id: number,
-        withLevels?: boolean,
-    ): Observable<TrainingDefinition>;
+    abstract get(id: number): Observable<TrainingDefinition>;
 
     /**
      * Sends http request to change state of a training definition

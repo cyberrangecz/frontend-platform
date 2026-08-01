@@ -52,7 +52,6 @@ export class TrainingResolverHelperService extends CommonResolverHelperService {
 
     public getDefinition(
         route: ActivatedRouteSnapshot,
-        withLevels = false,
     ): Observable<TrainingDefinition | null> {
         const definitionId = this.extractDefinitionId(route);
         if (!definitionId) {
@@ -60,7 +59,7 @@ export class TrainingResolverHelperService extends CommonResolverHelperService {
             return of(null);
         }
 
-        return this.linearDefinitionApi.get(definitionId, withLevels).pipe(
+        return this.linearDefinitionApi.get(definitionId).pipe(
             take(1),
             catchError((err) => {
                 this.emitApiError(err, 'Resolving training definition');
