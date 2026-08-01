@@ -103,10 +103,6 @@ export class TrainingLevelEditComponent implements OnChanges {
         return this.trainingLevelConfigFormGroup.formGroup.get('minimalPossibleSolveTime');
     }
 
-    get referenceSolution(): AbstractControl {
-        return this.trainingLevelConfigFormGroup.formGroup.get('referenceSolution');
-    }
-
     get hints(): AbstractControl {
         return this.trainingLevelConfigFormGroup.formGroup.get('hints');
     }
@@ -168,7 +164,6 @@ export class TrainingLevelEditComponent implements OnChanges {
      */
     private setFormsAsTouched(): void {
         this.title.markAsTouched();
-        this.referenceSolution.markAllAsTouched();
         this.estimatedDuration.markAsTouched();
         this.minimalPossibleSolveTime.markAsTouched();
         this.maxScore.markAsTouched();

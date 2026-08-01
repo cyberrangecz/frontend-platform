@@ -1,12 +1,6 @@
-import {
-    UntypedFormControl,
-    UntypedFormGroup,
-    ValidationErrors,
-    ValidatorFn,
-    Validators,
-} from '@angular/forms';
+import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { SentinelValidators } from '@sentinel/common';
-import { ReferenceSolutionNode, TrainingLevel } from '@crczp/training-model';
+import { TrainingLevel } from '@crczp/training-model';
 
 export const MAX_SCORE = 100;
 export const INCORRECT_ANSWER_LIMIT = 100;
@@ -76,31 +70,8 @@ export class TrainingLevelEditFormGroup {
                 level.minimalPossibleSolveTime,
                 [Validators.pattern('^[0-9]*$'), Validators.min(0)],
             ),
-            referenceSolution: new UntypedFormControl(
-                JSON.stringify(level.referenceSolution, null, 2),
-                [this.referenceSolutionValidator],
-            ),
             commandsRequired: new UntypedFormControl(level.commandsRequired),
         });
-    }
-
-    setReferenceSolution(referenceSolution: string): ReferenceSolutionNode[] {
-        try {
-            const data = JSON.parse(referenceSolution);
-            return data.map((solution) => {
-                const refSolution: ReferenceSolutionNode =
-                    new ReferenceSolutionNode();
-                refSolution.cmd = solution.cmd;
-                refSolution.cmd_type = solution.cmd_type;
-                refSolution.cmd_regex = solution.cmd_regex;
-                refSolution.optional = solution.optional;
-                refSolution.state_name = solution.state_name;
-                refSolution.prereq_state = solution.prereq_state;
-                return refSolution;
-            });
-        } catch {
-            return null;
-        }
     }
 
     /**
@@ -129,21 +100,8 @@ export class TrainingLevelEditFormGroup {
         level.minimalPossibleSolveTime = this.formGroup.get(
             'minimalPossibleSolveTime',
         ).value;
-        level.referenceSolution = this.setReferenceSolution(
-            this.formGroup.get('referenceSolution').value,
-        );
         level.commandsRequired = this.formGroup.get('commandsRequired').value;
         level.valid =
             this.formGroup.valid && level.hints.every((hint) => hint.valid);
     }
-
-    private referenceSolutionValidator: ValidatorFn = (
-        control: UntypedFormControl,
-    ): ValidationErrors | null => {
-        let error = null;
-        if (!this.setReferenceSolution(control.value) && control.value) {
-            error = { referenceSolution: true };
-        }
-        return error ? error : null;
-    };
 }

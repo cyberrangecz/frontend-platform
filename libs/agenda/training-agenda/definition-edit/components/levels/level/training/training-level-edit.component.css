@@ -31,32 +31,14 @@ div .right-panel mat-form-field {
     margin-bottom: 20px;
 }
 
-.reference-solution-container {
-    display: flex;
-    flex-direction: column;
-    padding-top: 10px;
-}
-
-.reference-solution-content {
-    width: auto;
-}
-
 textarea {
     max-height: 45vh;
     min-height: 15vh;
     resize: vertical;
 }
 
-.reference-info {
-    font-size: 13px;
-}
-
 sentinel-controls {
     margin-left: -10px;
-}
-
-.reference-solution-container h4 {
-    padding-left: 10px;
 }
 
 sentinel-markdown-editor.mrkdwn-content {

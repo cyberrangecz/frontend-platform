@@ -40,8 +40,6 @@ export * from './level/level';
 export * from './level/training-level';
 export * from './level/hint';
 export * from './level/info-level';
-export * from './level/reference-solution-node';
-
 
 // QUESTION
 export * from './questions/extended-matching-items';

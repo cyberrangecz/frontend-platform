@@ -174,14 +174,6 @@ export abstract class LinearTrainingDefinitionApi {
     ): Observable<Level[]>;
 
     /**
-     * Sends http request to determine whether given training definition has reference solution
-     * @param trainingDefinitionId training definition id
-     */
-    abstract hasReferenceSolution(
-        trainingDefinitionId: number,
-    ): Observable<boolean>;
-
-    /**
      * Sends http request to retrieve all training definitions with given sandbox definition id
      * @param sandboxDefId id of sandbox definition
      * @param pagination requested pagination
