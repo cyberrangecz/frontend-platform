@@ -1,41 +1,11 @@
-import { inject } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { UrlTree } from '@angular/router';
-import {
-    SentinelConfirmationDialogComponent,
-    SentinelConfirmationDialogConfig,
-    SentinelDialogResultEnum
-} from '@sentinel/components/dialogs';
-import { Observable, of } from 'rxjs';
-import { map, take } from 'rxjs/operators';
+import { createUnsavedChangesGuard } from '@crczp/routing-commons';
 import { MicroserviceEditOverviewComponent } from './microservice-edit-overview.component';
 
 /**
- * CanDeactivate service for microservice-registration state component.
- * Usage described in @link https://angular.io/api/router/CanDeactivate
+ * Route guard determining if navigation outside of microservice-registration state page should proceed
  */
-export function canDeactivateMicroservice(
-    component: MicroserviceEditOverviewComponent
-):
-    | Observable<boolean | UrlTree>
-    | Promise<boolean | UrlTree>
-    | boolean
-    | UrlTree {
-    if (component.canDeactivate()) {
-        return of(true);
-    }
-    const dialogData = new SentinelConfirmationDialogConfig(
-        'Unsaved changes',
-        'There are some unsaved changes. Do you want to leave without saving?',
-        'Cancel',
-        'Leave'
+export const canDeactivateMicroservice =
+    createUnsavedChangesGuard<MicroserviceEditOverviewComponent>(
+        (component) => component.canDeactivate(),
+        'There are some unsaved changes. Do you want to leave without saving?'
     );
-    const dialogRef = inject(MatDialog).open(
-        SentinelConfirmationDialogComponent,
-        { data: dialogData }
-    );
-    return dialogRef.afterClosed().pipe(
-        take(1),
-        map((result) => result === SentinelDialogResultEnum.CONFIRMED)
-    );
-}
