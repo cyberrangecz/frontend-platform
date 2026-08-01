@@ -12,13 +12,7 @@
         <input matInput (paste)="onPaste($event)" (keyup)="onKeyup($event)"
           placeholder="Access Token Prefix" formControlName="accessTokenPrefix"
           required>
-        @if (accessTokenPrefix.value) {
-          <button matSuffix
-            mat-icon-button aria-label="Clear"
-            (click)="accessTokenPrefix.setValue('')">
-            <mat-icon>close</mat-icon>
-          </button>
-        }
+        <crczp-clear-input-suffix [control]="accessTokenPrefix" matSuffix />
         @if (accessTokenPrefix.hasError('whitespace')) {
           <mat-error>Prefix cannot
             be empty
@@ -35,13 +29,7 @@
         <input #pin matInput (paste)="onPaste($event)" placeholder="Access Token PIN"
           pattern="[0-9]*" maxlength="4" minlength="4"
           formControlName="accessTokenPin" required>
-        @if (accessTokenPin.value) {
-          <button matSuffix
-            mat-icon-button aria-label="Clear"
-            (click)="accessTokenPin.setValue('')">
-            <mat-icon>close</mat-icon>
-          </button>
-        }
+        <crczp-clear-input-suffix [control]="accessTokenPin" matSuffix />
         @if (accessTokenPin.hasError('pattern')) {
           <mat-error>PIN must be
             numeric

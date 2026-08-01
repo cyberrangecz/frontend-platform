@@ -10,12 +10,7 @@
                 <input formControlName="gitUrl"
                        matInput
                        placeholder="https://git-service.com/path/to/sandbox-definitions/sandbox_name.git" required>
-                @if (gitUrl.value) {
-                    <button (click)="gitUrl.setValue('');" aria-label="Clear"
-                            mat-icon-button matSuffix>
-                        <mat-icon>close</mat-icon>
-                    </button>
-                }
+                <crczp-clear-input-suffix [control]="gitUrl" matSuffix />
                 @if (gitUrl.hasError('required')) {
                     <mat-error>This field is required</mat-error>
                 }
@@ -27,12 +22,7 @@
                 <mat-label>Revision</mat-label>
                 <input formControlName="revision" matInput placeholder="Revision"
                        required>
-                @if (revision.value) {
-                    <button (click)="revision.setValue('');" aria-label="Clear"
-                            mat-icon-button matSuffix>
-                        <mat-icon>close</mat-icon>
-                    </button>
-                }
+                <crczp-clear-input-suffix [control]="revision" matSuffix />
                 @if (revision.hasError('required')) {
                     <mat-error>This field is required</mat-error>
                 }

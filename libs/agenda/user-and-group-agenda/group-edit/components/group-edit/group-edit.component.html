@@ -6,11 +6,7 @@
                 <mat-form-field appearance="outline" class="name-form">
                     <mat-label>Name</mat-label>
                     <input formControlName="name" matInput placeholder="Name" required>
-                    @if (name) {
-                        <button (click)="name.setValue('')" aria-label="Clear" mat-icon-button matSuffix>
-                            <mat-icon>close</mat-icon>
-                        </button>
-                    }
+                    <crczp-clear-input-suffix [control]="name" matSuffix />
                     <mat-error>Name is required</mat-error>
                 </mat-form-field>
 
@@ -52,17 +48,7 @@
             maxlength="255"
             placeholder="Description"
             required></textarea>
-        @if (description) {
-            <button
-                (click)="description.setValue('')"
-                aria-label="Clear"
-                class="description-form__clear"
-                mat-icon-button
-                matTooltip="Clear"
-                matTooltipPosition="right">
-                <mat-icon>close</mat-icon>
-            </button>
-        }
+        <crczp-clear-input-suffix [control]="description" matSuffix />
         <mat-error>Description is required</mat-error>
     </mat-form-field>
 </form>

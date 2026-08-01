@@ -17,6 +17,7 @@ import {SentinelMarkdownEditorComponent} from "@sentinel/components/markdown-edi
 import {MatError, MatFormField, MatInput, MatLabel, MatSuffix} from "@angular/material/input";
 import {MatIconButton} from "@angular/material/button";
 import {MatIcon} from "@angular/material/icon";
+import { ClearInputSuffixComponent } from '@crczp/utils';
 
 /**
  * Component for editing of new or existing info level
@@ -27,14 +28,13 @@ import {MatIcon} from "@angular/material/icon";
     styleUrls: ['./info-level-edit.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
+        ClearInputSuffixComponent,
         SentinelMarkdownEditorComponent,
         MatError,
         MatFormField,
         ReactiveFormsModule,
         MatLabel,
         MatInput,
-        MatIconButton,
-        MatIcon,
         MatSuffix
     ]
 })

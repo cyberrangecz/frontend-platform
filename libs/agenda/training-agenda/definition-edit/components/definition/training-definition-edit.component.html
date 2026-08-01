@@ -7,15 +7,7 @@
           (keydown.enter)="$event.preventDefault()">
           <mat-label>Title</mat-label>
           <input matInput placeholder="Title" formControlName="title" required>
-          @if (title.value) {
-            <button
-              matSuffix
-              mat-icon-button
-              aria-label="Clear"
-              (click)="title.setValue('');title.markAsDirty();">
-              <mat-icon>close</mat-icon>
-            </button>
-          }
+          <crczp-clear-input-suffix [control]="title" label="Clear title" matSuffix />
           @if (title.hasError('whitespace')) {
             <mat-error>Title cannot be empty</mat-error>
           }
@@ -28,15 +20,7 @@
           <mat-label>Description</mat-label>
           <textarea class="description" maxlength="2048" matInput placeholder="Description"
           formControlName="description"></textarea>
-          @if (description.value) {
-            <button
-              matSuffix
-              mat-icon-button
-              aria-label="Clear"
-              (click)="description.setValue('');description.markAsDirty();">
-              <mat-icon>close</mat-icon>
-            </button>
-          }
+          <crczp-clear-input-suffix [control]="description" label="Clear description" matSuffix />
         </mat-form-field>
 
 

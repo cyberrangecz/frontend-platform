@@ -15,7 +15,7 @@
     <input matInput placeholder="Answer"
       [required]="question.required" [(ngModel)]="answer">
     @if (answer) {
-      <button matSuffix mat-icon-button
+      <button matSuffix mat-icon-button type="button"
         aria-label="Clear" (click)="answer='';">
         <mat-icon>close</mat-icon>
       </button>

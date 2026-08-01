@@ -8,13 +8,14 @@ import {
     Output,
     ViewChild,
 } from '@angular/core';
-import {MatButton, MatIconButton} from '@angular/material/button';
+import {MatButton} from '@angular/material/button';
 import {TraineeAccessTrainingFormGroup} from './trainee-access-training-form-group';
 import {AbstractControl, ReactiveFormsModule} from '@angular/forms';
 import {MatCard, MatCardActions, MatCardContent, MatCardSubtitle, MatCardTitle} from "@angular/material/card";
 import {MatError, MatFormField, MatInput, MatLabel, MatSuffix} from "@angular/material/input";
 
 import {MatIcon} from "@angular/material/icon";
+import { ClearInputSuffixComponent } from '@crczp/utils';
 
 /**
  * Component for trainee access to training run by inserting token
@@ -25,6 +26,7 @@ import {MatIcon} from "@angular/material/icon";
     styleUrls: ['./access-training-run.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
+        ClearInputSuffixComponent,
     MatCard,
     MatCardTitle,
     MatCardSubtitle,
@@ -33,8 +35,6 @@ import {MatIcon} from "@angular/material/icon";
     MatLabel,
     MatInput,
     MatFormField,
-    MatIconButton,
-    MatIcon,
     MatError,
     ReactiveFormsModule,
     MatCardActions,

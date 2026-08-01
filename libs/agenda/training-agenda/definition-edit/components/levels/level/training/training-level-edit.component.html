@@ -6,16 +6,7 @@
         <mat-form-field (keydown.enter)="$event.preventDefault()" appearance="outline">
           <mat-label>Title</mat-label>
           <input formControlName="title" matInput placeholder="Title" required/>
-          @if (title.value) {
-            <button
-              (click)="title.setValue('')"
-              aria-label="Clear"
-              mat-icon-button
-              matSuffix
-              >
-              <mat-icon>close</mat-icon>
-            </button>
-          }
+          <crczp-clear-input-suffix [control]="title" matSuffix />
           @if (title.hasError('whitespace')) {
             <mat-error>Title cannot be empty</mat-error>
           }
@@ -158,16 +149,7 @@
             >
             <mat-label>Correct Answer - Static</mat-label>
             <input formControlName="answer" matInput maxlength="50" placeholder="Correct Answer - Static"/>
-            @if (answer) {
-              <button
-                (click)="answer.setValue(null)"
-                aria-label="Clear"
-                mat-icon-button
-                matSuffix
-                >
-                <mat-icon>close</mat-icon>
-              </button>
-            }
+            <crczp-clear-input-suffix [control]="answer" [clearedValue]="null" matSuffix />
             <mat-hint align="end">{{ answer.value?.length || 0 }}/50</mat-hint>
             @if (answer.hasError('whitespace')) {
               <mat-error> 'Correct Answer - Static' cannot be empty
@@ -190,16 +172,7 @@
               maxlength="50"
               placeholder="Correct Answer - Variable Name"
               />
-            @if (answerVariableName) {
-              <button
-                (click)="answerVariableName.setValue(null)"
-                aria-label="Clear"
-                mat-icon-button
-                matSuffix
-                >
-                <mat-icon>close</mat-icon>
-              </button>
-            }
+            <crczp-clear-input-suffix [control]="answerVariableName" [clearedValue]="null" matSuffix />
             @if (variantAnswers) {
               <mat-hint align="end">{{ answerVariableName.value?.length || 0 }}/50
               </mat-hint>

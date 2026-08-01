@@ -20,6 +20,7 @@ import {MatError, MatFormField, MatInput, MatLabel, MatSuffix} from "@angular/ma
 import {MatTooltip} from "@angular/material/tooltip";
 import {MatIconButton} from "@angular/material/button";
 import {MatIcon} from "@angular/material/icon";
+import { ClearInputSuffixComponent } from '@crczp/utils';
 
 /**
  * Component for editing new or existing assessment level
@@ -30,6 +31,7 @@ import {MatIcon} from "@angular/material/icon";
     styleUrls: ['./assessment-level-edit.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
+        ClearInputSuffixComponent,
         QuestionsOverviewComponent,
         MatSlideToggle,
         MatTooltip,
@@ -39,8 +41,6 @@ import {MatIcon} from "@angular/material/icon";
         MatLabel,
         MatFormField,
         ReactiveFormsModule,
-        MatIconButton,
-        MatIcon,
         MatSuffix
     ]
 })

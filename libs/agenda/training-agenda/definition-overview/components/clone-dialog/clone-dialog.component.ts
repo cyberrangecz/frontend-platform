@@ -13,8 +13,9 @@ import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {TitleCasePipe} from "@angular/common";
 import {SentinelShortStringPipe} from "@sentinel/common/pipes";
 import {MatError, MatFormField, MatInput, MatLabel, MatSuffix} from "@angular/material/input";
-import {MatButton, MatIconButton} from "@angular/material/button";
+import {MatButton} from "@angular/material/button";
 import {MatIcon} from "@angular/material/icon";
+import { ClearInputSuffixComponent } from '@crczp/utils';
 
 /**
  * Displays dialog with a form to select name of cloned training definition
@@ -25,6 +26,7 @@ import {MatIcon} from "@angular/material/icon";
     styleUrls: ['./clone-dialog.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
+        ClearInputSuffixComponent,
         TitleCasePipe,
         SentinelShortStringPipe,
         MatDialogContent,
@@ -34,8 +36,6 @@ import {MatIcon} from "@angular/material/icon";
         MatLabel,
         MatInput,
         MatSuffix,
-        MatIconButton,
-        MatIcon,
         MatError,
         MatDialogActions,
         MatButton

@@ -76,16 +76,7 @@
                                     <mat-form-field appearance="outline" (keydown.enter)="$event.preventDefault()">
                                         <mat-label>Answer</mat-label>
                                         <input matInput placeholder="Answer" [formControl]="$any(choice.get('text'))"/>
-                                        @if (choice.get('text').value) {
-                                            <button
-                                                class="free-form-clear-btn"
-                                                matSuffix
-                                                mat-icon-button
-                                                aria-label="Clear"
-                                                (click)="choice.get('text').setValue('')">
-                                                <mat-icon>close</mat-icon>
-                                            </button>
-                                        }
+                                        <crczp-clear-input-suffix [control]="choice.get('text')!" label="Clear answer" matSuffix />
                                         @if (choice.get('text').hasError('whitespace')) {
                                             <mat-error>Answer cannot be empty
                                             </mat-error>

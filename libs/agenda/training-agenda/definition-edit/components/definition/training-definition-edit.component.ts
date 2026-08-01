@@ -17,6 +17,7 @@ import {MatTooltip} from "@angular/material/tooltip";
 
 import {SentinelFreeFormComponent} from "@sentinel/components/free-form";
 import {MatIcon} from "@angular/material/icon";
+import { ClearInputSuffixComponent } from '@crczp/utils';
 
 /**
  * Component for creating new or editing already existing training definition
@@ -26,16 +27,15 @@ import {MatIcon} from "@angular/material/icon";
     templateUrl: './training-definition-edit.component.html',
     styleUrls: ['./training-definition-edit.component.css'],
     imports: [
+        ClearInputSuffixComponent,
     ReactiveFormsModule,
     MatFormField,
     MatLabel,
     MatInput,
     MatSuffix,
-    MatIconButton,
     MatError,
     MatCheckbox,
     MatTooltip,
-    MatIcon,
     SentinelFreeFormComponent
 ]
 })

@@ -22,9 +22,10 @@ import {FreeFormQuestion, Question} from '@crczp/training-model';
 import {FreeFormQuestionFormGroup} from './free-form-question-form-group';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {MatError, MatFormField, MatInput, MatLabel, MatSuffix} from "@angular/material/input";
-import {MatButton, MatIconButton} from "@angular/material/button";
+import {MatButton} from "@angular/material/button";
 import {MatIcon} from "@angular/material/icon";
 import {SentinelMarkdownEditorComponent} from "@sentinel/components/markdown-editor";
+import { ClearInputSuffixComponent } from '@crczp/utils';
 
 @Component({
     selector: 'crczp-free-form-question-edit',
@@ -32,10 +33,10 @@ import {SentinelMarkdownEditorComponent} from "@sentinel/components/markdown-edi
     styleUrls: ['./free-form-question-edit.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
+        ClearInputSuffixComponent,
         MatError,
         MatButton,
         MatIcon,
-        MatIconButton,
         MatSuffix,
         MatInput,
         ReactiveFormsModule,

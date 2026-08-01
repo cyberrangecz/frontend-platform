@@ -18,6 +18,7 @@ import {MatError, MatFormField, MatHint, MatInput, MatLabel, MatSuffix} from "@a
 import {MatIcon} from "@angular/material/icon";
 import {MatTooltip} from "@angular/material/tooltip";
 import {MatIconButton} from "@angular/material/button";
+import { ClearInputSuffixComponent } from '@crczp/utils';
 
 /**
  * Component for editing of new or existing info level
@@ -28,6 +29,7 @@ import {MatIconButton} from "@angular/material/button";
     styleUrls: ['./access-level-edit.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
+        ClearInputSuffixComponent,
         SentinelMarkdownEditorComponent,
         MatError,
         MatIcon,
@@ -36,7 +38,6 @@ import {MatIconButton} from "@angular/material/button";
         ReactiveFormsModule,
         MatLabel,
         MatInput,
-        MatIconButton,
         MatHint,
         MatSuffix
     ]

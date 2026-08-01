@@ -9,8 +9,7 @@ import { map, take } from 'rxjs/operators';
 import { SandboxDefinitionEditConcreteService } from '../services/sandbox-definition-edit-concrete.service';
 import { MatCard } from '@angular/material/card';
 import { MatError, MatFormField, MatInput, MatLabel, MatSuffix } from '@angular/material/input';
-import { MatIconButton } from '@angular/material/button';
-import { MatIcon } from '@angular/material/icon';
+import { ClearInputSuffixComponent } from '@crczp/utils';
 
 /**
  * Component with form for creating new sandbox definition
@@ -21,6 +20,7 @@ import { MatIcon } from '@angular/material/icon';
     styleUrls: ['./sandbox-definition-edit.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
+        ClearInputSuffixComponent,
         SentinelControlsComponent,
         MatCard,
         ReactiveFormsModule,
@@ -28,8 +28,6 @@ import { MatIcon } from '@angular/material/icon';
         MatLabel,
         MatError,
         MatInput,
-        MatIcon,
-        MatIconButton,
         MatSuffix,
     ],
     providers: [
