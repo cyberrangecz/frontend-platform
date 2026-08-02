@@ -1,10 +1,14 @@
 <mat-card appearance="outlined" class="info-card">
   <div class="left-panel">
-    <div class="user-base-info">
-      <img [alt]="user.name" class="user-picture" src="{{'data:image/png;base64,'+user.picture}}"/>
+    <img [alt]="user.name" class="user-picture" src="{{'data:image/png;base64,'+user.picture}}"/>
+    <div class="user-text">
       <div class="user-name">{{ user.name }}</div>
+      @if (user.mail) {
+        <div class="user-description">{{ user.mail }}</div>
+      } @else {
+        <div class="user-description user-description--absent">No e-mail</div>
+      }
     </div>
-    <div class="user-description">{{ user.mail }}</div>
   </div>
 
   <div class="right-panel">
@@ -19,25 +23,28 @@
     <button (click)="accordion.openAll()" color="primary" mat-button>Expand All</button>
     <button (click)="accordion.closeAll()" color="primary" mat-button>Collapse All</button>
   </div>
-  <mat-accordion class="detail-headers-align" multi>
-    @for (role of user.roles; track role; let first = $first) {
-      <mat-expansion-panel class="roles mat-elevation-z0">
-        <mat-expansion-panel-header>
+  <mat-accordion class="roles-list" multi>
+    @for (role of user.roles; track role.id) {
+      <mat-expansion-panel class="roles-item mat-elevation-z0">
+        <mat-expansion-panel-header class="roles-item-header">
           <mat-panel-title>
-            <div class="user-detail-title">
-              <mat-icon color="primary" mat-list-icon>policy</mat-icon>
+            <div class="roles-item-title">
+              <mat-icon color="primary">policy</mat-icon>
               <h4>{{ role.roleType }}</h4>
             </div>
           </mat-panel-title>
           <mat-panel-description>
-            <p mat-line matTooltip="Microservice name">{{ role.microserviceName }}</p>
+            <span matTooltip="Microservice name">{{ role.microserviceName }}</span>
           </mat-panel-description>
-          @if (!first) {
-            <mat-divider/>
-          }
         </mat-expansion-panel-header>
-        <div>{{ role.description }}</div>
+        @if (role.description) {
+          <div class="roles-item-description">{{ role.description }}</div>
+        } @else {
+          <div class="roles-item-description roles-item-description--absent">No description</div>
+        }
       </mat-expansion-panel>
+    } @empty {
+      <div class="roles-list-empty">No roles assigned</div>
     }
   </mat-accordion>
 </mat-card>

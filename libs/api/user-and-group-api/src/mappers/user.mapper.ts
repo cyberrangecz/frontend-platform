@@ -69,9 +69,7 @@ export class UserMapper {
         if (dto.user_ref_id !== null && dto.user_ref_id !== undefined) {
             user.id = dto.user_ref_id;
         }
-        if (dto.mail !== null && dto.mail !== undefined) {
-            user.mail = dto.mail;
-        }
+        user.mail = dto.mail ?? null;
         user.login = dto.sub;
         user.picture = dto.picture;
         user.issuer = dto.iss;

@@ -9,16 +9,31 @@ mat-card {
     justify-content: space-between;
 }
 
-.user-base-info {
+/*
+ * The identicon spans the text block as its left anchor, so the panel's own padding is reduced by
+ * the identicon's excess over an icon column; the name stays in line with the role titles.
+ */
+.left-panel {
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
-    align-items: baseline;
+    align-items: stretch;
+    gap: 0.75rem;
+    padding-left: calc(
+        var(--content-inset) + var(--content-icon-column) - var(--user-picture-size) - 0.75rem
+    );
+}
+
+.user-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
 }
 
 .user-picture {
-    width: 25px;
-    height: 25px;
+    align-self: baseline;
+    width: var(--user-picture-size);
+    height: var(--user-picture-size);
+    box-shadow: 0 0 4px rgb(0 0 0 / 0.25);
 }
 
 .right-panel {
@@ -28,28 +43,17 @@ mat-card {
 
 .user-name {
     font-size: x-large;
-    margin-bottom: 4px;
-    margin-left: 10px;
+    line-height: 1.2;
 }
 
 .user-description {
-    color: gray;
+    color: var(--neutral-50);
     font-size: smaller;
+    line-height: 1.2;
 }
 
-.user-detail-title {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-}
-
-.user-detail-title h4 {
-    margin: 0;
-    padding-left: 10px;
-}
-
-.roles {
-    width: 100%;
+.user-description--absent {
+    font-style: italic;
 }
 
 .icon-container {
@@ -69,26 +73,87 @@ mat-card {
     text-align: center;
 }
 
-mat-divider {
-    top: 0;
-}
-
 .detail-action-buttons {
     display: flex;
     justify-content: flex-end;
     padding-bottom: 20px;
 }
 
-.detail-headers-align .mat-expansion-panel-header-title,
-.detail-headers-align .mat-expansion-panel-header-description {
-    flex-basis: 0;
+:host {
+    /* Inset of both cards' content from their own padding, shared so the two align on one line. */
+    --content-inset: 2rem;
+    /* Width of a leading icon plus its gap, by which following text clears the icon column. */
+    --content-icon-column: calc(24px + 0.75rem);
+    /* Identicon edge, sized against the name and mail lines it sits beside. */
+    --user-picture-size: 2.75rem;
 }
 
-.detail-headers-align .mat-expansion-panel-header-description {
-    justify-content: space-between;
+/*
+ * Opts the list out of the theme's panel scheme, which insets the panel and pulls the header back
+ * out with a negative margin; that margin also drags the expanded body under the header.
+ */
+.roles-item {
+    margin: 0;
+    padding: 0;
+    border-radius: 0;
+}
+
+.roles-item:not(:last-of-type) {
+    border-bottom: 1px solid var(--neutral-variant-90);
+}
+
+.roles-item-header,
+.roles-item-header.mat-expanded {
+    height: 4rem;
+    margin: 0;
+    padding: 0 var(--content-inset);
+}
+
+.roles-list ::ng-deep .mat-expansion-panel-body {
+    padding: 0 var(--content-inset) 0.75rem;
+}
+
+.roles-list-empty {
+    padding: 0.75rem var(--content-inset);
+    padding-left: calc(var(--content-inset) + var(--content-icon-column));
+    color: var(--neutral-50);
+    font-style: italic;
+}
+
+.roles-item-title {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.75rem;
+    min-width: 0;
+}
+
+.roles-item-title mat-icon {
+    flex: none;
+}
+
+.roles-item-title h4 {
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.roles-list .mat-expansion-panel-header-title {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.roles-list .mat-expansion-panel-header-description {
+    flex: 0 0 14rem;
     align-items: center;
 }
 
-.detail-headers-align .mat-mdc-form-field + .mat-mdc-form-field {
-    margin-left: 8px;
+.roles-item-description {
+    padding-left: var(--content-icon-column);
+}
+
+.roles-item-description--absent {
+    color: var(--neutral-50);
+    font-style: italic;
 }

@@ -9,6 +9,6 @@ export class UserAndGroupUserDTO {
     user_ref_id: number;
     sub: string;
     picture: string;
-    mail: string;
+    mail: string | null;
     roles: RoleDTO[];
 }
