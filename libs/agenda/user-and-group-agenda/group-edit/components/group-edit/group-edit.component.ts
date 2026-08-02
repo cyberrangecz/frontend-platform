@@ -19,6 +19,7 @@ import { MatError, MatFormField, MatInput, MatLabel, MatSuffix } from '@angular/
 import { MatTooltip } from '@angular/material/tooltip';
 import { OwlDateTimeModule, OwlNativeDateTimeModule } from '@danielmoncada/angular-datetime-picker';
 import { ClearInputSuffixComponent } from '@crczp/utils';
+import { CdkTextareaAutosize } from '@angular/cdk/text-field';
 
 /**
  * Component for editing basic group-overview attributes
@@ -29,6 +30,7 @@ import { ClearInputSuffixComponent } from '@crczp/utils';
     styleUrls: ['./group-edit.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
+        CdkTextareaAutosize,
         ClearInputSuffixComponent,
         MatInput,
         MatFormField,

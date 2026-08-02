@@ -71,12 +71,12 @@
                     <!-- COMMENT field -->
                     <mat-form-field appearance="outline" hintLabel="A description/info regarding your pool">
                         <mat-label>Comment</mat-label>
-                        <textarea class="comment"
+                        <textarea cdkTextareaAutosize
+                                  cdkAutosizeMaxRows="8"
+                                  cdkAutosizeMinRows="4"
                                   formControlName="comment"
                                   matInput maxlength="256"
-                                  placeholder="Pool comment"
-                                  type="text">
-            </textarea>
+                                  placeholder="Pool comment"></textarea>
                     </mat-form-field>
                 </div>
             </div>

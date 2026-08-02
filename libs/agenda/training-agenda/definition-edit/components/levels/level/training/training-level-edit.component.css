@@ -31,12 +31,6 @@ div .right-panel mat-form-field {
     margin-bottom: 20px;
 }
 
-textarea {
-    max-height: 45vh;
-    min-height: 15vh;
-    resize: vertical;
-}
-
 sentinel-controls {
     margin-left: -10px;
 }

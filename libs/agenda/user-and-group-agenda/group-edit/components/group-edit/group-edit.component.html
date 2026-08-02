@@ -29,8 +29,10 @@
                         />
                         <owl-date-time
                             [firstDayOfWeek]="1"
+                            pickerType="calendar"
                             #expirationDatePicker
                         />
+                        <mat-error>Enter a valid date after today</mat-error>
                     </mat-form-field>
                 </div>
             </div>
@@ -42,7 +44,9 @@
     <mat-form-field appearance="outline" class="description-form">
         <mat-label>Description</mat-label>
         <textarea
-            class="description-form__texarea"
+            cdkTextareaAutosize
+            cdkAutosizeMaxRows="6"
+            cdkAutosizeMinRows="2"
             formControlName="description"
             matInput
             maxlength="255"

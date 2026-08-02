@@ -56,12 +56,6 @@ h1 {
     max-height: 16rem;
 }
 
-.comment {
-    resize: vertical;
-    min-height: 110px;
-    max-height: 220px;
-}
-
 @media (max-width: 724px) {
     .form-content {
         flex-direction: column;

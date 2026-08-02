@@ -18,7 +18,8 @@
         <mat-form-field appearance="outline"
           (keydown.enter)="$event.preventDefault()">
           <mat-label>Description</mat-label>
-          <textarea class="description" maxlength="2048" matInput placeholder="Description"
+          <textarea cdkTextareaAutosize cdkAutosizeMaxRows="8" cdkAutosizeMinRows="3"
+          maxlength="2048" matInput placeholder="Description"
           formControlName="description"></textarea>
           <crczp-clear-input-suffix [control]="description" label="Clear description" matSuffix />
         </mat-form-field>

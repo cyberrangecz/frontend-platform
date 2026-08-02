@@ -26,6 +26,7 @@ import { MatError, MatFormField, MatInput, MatLabel } from '@angular/material/in
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { createInfinitePaginationEvent } from '@crczp/api-common';
+import { CdkTextareaAutosize } from '@angular/cdk/text-field';
 
 /**
  * Component with form for creating pool
@@ -36,6 +37,7 @@ import { createInfinitePaginationEvent } from '@crczp/api-common';
     styleUrls: ['./pool-edit.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
+        CdkTextareaAutosize,
         MatCardTitle,
         MatCardHeader,
         MatCardAvatar,

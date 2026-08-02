@@ -18,6 +18,7 @@ import {MatTooltip} from "@angular/material/tooltip";
 import {SentinelFreeFormComponent} from "@sentinel/components/free-form";
 import {MatIcon} from "@angular/material/icon";
 import { ClearInputSuffixComponent } from '@crczp/utils';
+import { CdkTextareaAutosize } from '@angular/cdk/text-field';
 
 /**
  * Component for creating new or editing already existing training definition
@@ -27,6 +28,7 @@ import { ClearInputSuffixComponent } from '@crczp/utils';
     templateUrl: './training-definition-edit.component.html',
     styleUrls: ['./training-definition-edit.component.css'],
     imports: [
+        CdkTextareaAutosize,
         ClearInputSuffixComponent,
     ReactiveFormsModule,
     MatFormField,

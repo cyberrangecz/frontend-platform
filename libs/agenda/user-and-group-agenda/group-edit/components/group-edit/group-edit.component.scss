@@ -31,15 +31,3 @@ mat-form-field {
 .description-form {
     position: relative;
 }
-
-.description-form__texarea{
-    resize: vertical;
-    min-height: 3rem;
-    max-height: 10rem;
-}
-
-.description-form__clear {
-    position: absolute;
-    right: -0.5rem;
-    top: 0.5rem;
-}
