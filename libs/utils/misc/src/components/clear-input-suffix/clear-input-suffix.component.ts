@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { AbstractControl } from '@angular/forms';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -11,7 +11,6 @@ import { MatIcon } from '@angular/material/icon';
     selector: 'crczp-clear-input-suffix',
     templateUrl: './clear-input-suffix.component.html',
     styleUrl: './clear-input-suffix.component.css',
-    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [MatIconButton, MatIcon],
 })
 export class ClearInputSuffixComponent {

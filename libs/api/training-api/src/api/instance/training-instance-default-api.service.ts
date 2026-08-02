@@ -12,12 +12,19 @@ import {
     QueryParam
 } from '@crczp/api-common';
 import { OffsetPaginationEvent } from '@crczp/utils';
-import { TrainingInstance, TrainingInstanceBasic, TrainingRun } from '@crczp/training-model';
+import {
+    TrainingInstance,
+    TrainingInstanceBasic,
+    TrainingInstanceScoreReport,
+    TrainingRun,
+} from '@crczp/training-model';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { TrainingInstanceAssignPoolDTO } from '../../dto/training-instance/training-instance-assign-pool-dto';
 import { TrainingInstanceDTO } from '../../dto/training-instance/training-instance-dto';
 import { TrainingInstanceBasicDto } from '../../dto/training-instance/training-instance-basic-dto';
+import { TrainingInstanceScoreReportDto } from '../../dto/training-instance/training-instance-score-report-dto';
+import { trainingInstanceScoreReportMapper } from '../../mappers/training-instance/training-instance-score-report-mapper';
 import { TrainingInstanceMapper } from '../../mappers/training-instance/training-instance-mapper';
 import { TrainingRunMapper } from '../../mappers/training-run/training-run-mapper';
 import { trainingInstanceBasicArrayMapper } from '../../mappers/training-instance/training-instance-basic-mapper';
@@ -234,6 +241,18 @@ export class TrainingInstanceDefaultApi extends LinearTrainingInstanceApi {
                 ttlMs: this.entityCacheTtlMs,
             })
             .withMapper(trainingInstanceBasicArrayMapper)
+            .execute();
+    }
+
+    getScoreReport(instanceId: number): Observable<TrainingInstanceScoreReport> {
+        return this.crczpHttp
+            .get<
+                InstanceType<typeof TrainingInstanceScoreReportDto>
+            >(
+                `${this.trainingExportsEndpointUri}/${this.trainingInstancesUriExtension}/${instanceId}/scores`,
+                'Fetch training instance score report',
+            )
+            .withMapper(trainingInstanceScoreReportMapper)
             .execute();
     }
 }
