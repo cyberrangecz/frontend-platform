@@ -26,7 +26,9 @@ export class CheatingDetectionEditFormGroup {
                     (forbiddenCommand) =>
                         new UntypedFormGroup(
                             {
-                                command: new UntypedFormControl(forbiddenCommand.command, [Validators.required]),
+                                command: new UntypedFormControl(forbiddenCommand.command, [
+                                    SentinelValidators.noWhitespace,
+                                ]),
                                 type: new UntypedFormControl(forbiddenCommand.type, [Validators.required]),
                                 id: new UntypedFormControl(cheatingDetection.id),
                             },

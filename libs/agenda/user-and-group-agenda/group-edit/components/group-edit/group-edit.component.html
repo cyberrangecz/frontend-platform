@@ -5,9 +5,9 @@
                 <!-- NAME field> -->
                 <mat-form-field appearance="outline" class="name-form">
                     <mat-label>Name</mat-label>
-                    <input formControlName="name" matInput placeholder="Name" required>
+                    <input formControlName="name" matInput maxlength="255" placeholder="Name" required>
                     <crczp-clear-input-suffix [control]="name" matSuffix />
-                    <mat-error>Name is required</mat-error>
+                    <mat-error>Name cannot be empty</mat-error>
                 </mat-form-field>
 
             </div>
@@ -53,6 +53,6 @@
             placeholder="Description"
             required></textarea>
         <crczp-clear-input-suffix [control]="description" matSuffix />
-        <mat-error>Description is required</mat-error>
+        <mat-error>Description cannot be empty</mat-error>
     </mat-form-field>
 </form>

@@ -1,4 +1,5 @@
 import {UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
+import {SentinelValidators} from '@sentinel/common';
 import {Group} from '@crczp/user-and-group-model';
 
 /**
@@ -9,8 +10,8 @@ export class GroupEditFormGroup {
 
     constructor(group: Group) {
         this.formGroup = new UntypedFormGroup({
-            name: new UntypedFormControl(group.name, Validators.required),
-            description: new UntypedFormControl(group.description, Validators.required),
+            name: new UntypedFormControl(group.name, SentinelValidators.noWhitespace),
+            description: new UntypedFormControl(group.description, SentinelValidators.noWhitespace),
             expirationDate: new UntypedFormControl(
                 group.expirationDate,
                 Validators.min(this.calculateTomorrowTimestamp()),

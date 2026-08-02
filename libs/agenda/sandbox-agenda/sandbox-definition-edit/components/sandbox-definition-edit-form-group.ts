@@ -1,4 +1,5 @@
-import {UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
+import {UntypedFormControl, UntypedFormGroup} from '@angular/forms';
+import {SentinelValidators} from '@sentinel/common';
 import {SandboxDefinition} from '@crczp/sandbox-model';
 
 /**
@@ -9,8 +10,8 @@ export class SandboxDefinitionFormGroup {
 
     constructor() {
         this.formGroup = new UntypedFormGroup({
-            gitUrl: new UntypedFormControl('', Validators.required),
-            revision: new UntypedFormControl('', Validators.required),
+            gitUrl: new UntypedFormControl('', SentinelValidators.noWhitespace),
+            revision: new UntypedFormControl('', SentinelValidators.noWhitespace),
         });
     }
 

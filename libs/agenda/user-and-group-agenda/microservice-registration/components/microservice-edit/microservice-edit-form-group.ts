@@ -1,4 +1,5 @@
-import {FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
+import {FormArray, FormControl, FormGroup} from '@angular/forms';
+import {SentinelValidators} from '@sentinel/common';
 import {Microservice, MicroserviceRole} from '@crczp/user-and-group-model';
 
 /**
@@ -22,7 +23,7 @@ export type MicroserviceRoleFormGroup = FormGroup<{
  */
 function createRoleFormGroup(role?: MicroserviceRole): MicroserviceRoleFormGroup {
     return new FormGroup({
-        type: new FormControl(role?.type ?? '', {nonNullable: true, validators: Validators.required}),
+        type: new FormControl(role?.type ?? '', {nonNullable: true, validators: SentinelValidators.noWhitespace}),
         description: new FormControl(role?.description ?? '', {nonNullable: true}),
     });
 }
@@ -42,8 +43,11 @@ export class MicroserviceEditFormGroup {
     constructor(microservice: Microservice) {
         const [defaultRole, ...additionalRoles] = microservice.roles;
         this.formGroup = new FormGroup({
-            name: new FormControl(microservice.name, {nonNullable: true, validators: Validators.required}),
-            endpoint: new FormControl(microservice.endpoint, {nonNullable: true, validators: Validators.required}),
+            name: new FormControl(microservice.name, {nonNullable: true, validators: SentinelValidators.noWhitespace}),
+            endpoint: new FormControl(microservice.endpoint, {
+                nonNullable: true,
+                validators: SentinelValidators.noWhitespace,
+            }),
             roles: new FormArray([
                 createRoleFormGroup(defaultRole),
                 ...additionalRoles.map((role) => createRoleFormGroup(role)),

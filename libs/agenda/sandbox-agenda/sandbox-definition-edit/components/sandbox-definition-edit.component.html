@@ -11,9 +11,7 @@
                        matInput
                        placeholder="https://git-service.com/path/to/sandbox-definitions/sandbox_name.git" required>
                 <crczp-clear-input-suffix [control]="gitUrl" matSuffix />
-                @if (gitUrl.hasError('required')) {
-                    <mat-error>This field is required</mat-error>
-                }
+                <mat-error>Git URL cannot be empty</mat-error>
             </mat-form-field>
 
             <!-- REVISION field-->
@@ -23,9 +21,7 @@
                 <input formControlName="revision" matInput placeholder="Revision"
                        required>
                 <crczp-clear-input-suffix [control]="revision" matSuffix />
-                @if (revision.hasError('required')) {
-                    <mat-error>This field is required</mat-error>
-                }
+                <mat-error>Revision cannot be empty</mat-error>
             </mat-form-field>
         </div>
     </form>

@@ -69,6 +69,7 @@ export class GroupEditService {
      * Saves edited group-overview, updated related observables or handles error
      */
     save(): Observable<any> {
+        this.saveDisabledSubject$.next(true);
         return this.editModeSubject$.getValue()
             ? this.update()
             : this.create().pipe(
@@ -79,6 +80,7 @@ export class GroupEditService {
     }
 
     createAndEdit(): Observable<any> {
+        this.saveDisabledSubject$.next(true);
         return this.create().pipe(
             tap((id) =>
                 this.router.navigate([
@@ -94,24 +96,26 @@ export class GroupEditService {
 
     private update() {
         return this.api.update(this.editedGroup).pipe(
-            tap(
-                () => {
+            tap({
+                next: () => {
                     this.notificationService.emit('success', 'Group was saved');
                     this.onSaved();
                 },
-                (err) =>
+                error: (err) => {
+                    this.saveDisabledSubject$.next(false);
                     this.errorHandler.emitAPIError(
                         err,
                         'Editing group-overview'
-                    )
-            )
+                    );
+                },
+            })
         );
     }
 
     private create(): Observable<number> {
         return this.api.create(this.editedGroup).pipe(
-            tap(
-                (id) => {
+            tap({
+                next: (id) => {
                     this.editedGroup.id = id;
                     this.notificationService.emit(
                         'success',
@@ -119,12 +123,14 @@ export class GroupEditService {
                     );
                     this.onSaved();
                 },
-                (err) =>
+                error: (err) => {
+                    this.saveDisabledSubject$.next(false);
                     this.errorHandler.emitAPIError(
                         err,
                         'Creating group-overview'
-                    )
-            )
+                    );
+                },
+            })
         );
     }
 
