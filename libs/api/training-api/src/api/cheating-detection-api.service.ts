@@ -1,6 +1,7 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { ResponseHeaderContentDispositionReader } from '@sentinel/common';
+import { saveAs } from 'file-saver';
 import { OffsetPaginationEvent } from '@crczp/utils';
 import { CheatingDetection } from '@crczp/training-model';
 import { Observable } from 'rxjs';
@@ -8,7 +9,6 @@ import { map } from 'rxjs/operators';
 import { CheatingDetectionDTO } from '../dto/cheating-detection/cheating-detection-dto';
 import { CheatingDetectionMapper } from '../mappers/cheating-detection/cheating-detection-mapper';
 import {
-    BlobFileSaver,
     handleJsonError,
     JavaPaginatedResource,
     OffsetPaginatedResource,
@@ -115,15 +115,8 @@ export class CheatingDetectionApi {
             .pipe(
                 handleJsonError(),
                 map((resp) => {
-                    BlobFileSaver.saveBlob(
-                        resp.body,
-                        ResponseHeaderContentDispositionReader.getFilenameFromResponse(
-                            resp,
-                            filename,
-                        ),
-                    );
-                    BlobFileSaver.saveBlob(
-                        resp.body,
+                    saveAs(
+                        resp.body!,
                         ResponseHeaderContentDispositionReader.getFilenameFromResponse(
                             resp,
                             filename,

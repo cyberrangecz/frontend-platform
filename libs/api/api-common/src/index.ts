@@ -1,5 +1,4 @@
 export * from './crczp-http.service';
-export * from './file/blob-file-saver';
 export * from './mapper/mapper-builder';
 export * from './pagination/init-pagination';
 export * from './pagination/pagination-mapper';

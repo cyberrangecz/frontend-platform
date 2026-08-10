@@ -1,12 +1,11 @@
 import { Parser } from '@json2csv/plainjs';
-import { BlobFileSaver } from '@crczp/api-common';
+import { saveAs } from 'file-saver';
 import { CsvExportable } from './csv-exportable';
 
 /**
  * Serializes a panel's displayed rows to CSV via @json2csv/plainjs and triggers a
- * download through the repo's BlobFileSaver (file-saver). The column definitions map
- * directly onto json2csv field selectors: header becomes the label, the accessor
- * becomes the value getter.
+ * download through file-saver. The column definitions map directly onto json2csv
+ * field selectors: header becomes the label, the accessor becomes the value getter.
  *
  * Awaits {@link CsvExportable.csvRows} so panels may resolve rows on demand
  * (e.g. fetching entity names at export time) without blocking the polling loop.
@@ -19,5 +18,5 @@ export async function exportCsv<Row>(exportable: CsvExportable<Row>): Promise<vo
     const csv = new Parser({ fields }).parse([...rows] as object[]);
     const filename = exportable.csvFilename();
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    BlobFileSaver.saveBlob(blob, filename.endsWith('.csv') ? filename : `${filename}.csv`);
+    saveAs(blob, filename.endsWith('.csv') ? filename : `${filename}.csv`);
 }

@@ -1,6 +1,7 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { ResponseHeaderContentDispositionReader } from '@sentinel/common';
+import { saveAs } from 'file-saver';
 import { OffsetPaginationEvent, PortalConfig } from '@crczp/utils';
 import { Lock, SandboxInstance, SandboxKeyPair } from '@crczp/sandbox-model';
 import { Observable } from 'rxjs';
@@ -12,7 +13,6 @@ import { SandboxInstanceMapper } from '../../mappers/sandbox-instance/sandbox-in
 import { LockMapper } from '../../mappers/sandbox-instance/lock-mapper';
 import { SandboxKeyPairMapper } from '../../mappers/sandbox-instance/sandbox-key-pair-mapper';
 import {
-    BlobFileSaver,
     DjangoResourceDTO,
     handleJsonError,
     OffsetPaginatedResource,
@@ -161,20 +161,16 @@ export class SandboxInstanceApi {
      * @param sandboxUuid id of the sandbox for which remote ssh access is demanded
      */
     getUserSshAccess(sandboxUuid: string): Observable<boolean> {
-        const headers = new HttpHeaders().set('Accept', [
-            'application/octet-stream',
-        ]);
         return this.http
             .get(`${this.sandboxEndpointUri}/${sandboxUuid}/user-ssh-access`, {
                 responseType: 'blob',
                 observe: 'response',
-                headers,
             })
             .pipe(
                 handleJsonError(),
                 map((resp) => {
-                    BlobFileSaver.saveBlob(
-                        resp.body,
+                    saveAs(
+                        resp.body!,
                         ResponseHeaderContentDispositionReader.getFilenameFromResponse(
                             resp,
                             'user-ssh-access.zip',

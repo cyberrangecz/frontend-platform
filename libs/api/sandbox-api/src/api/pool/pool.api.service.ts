@@ -1,6 +1,7 @@
-import { HttpClient, HttpContext, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpContext, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { ResponseHeaderContentDispositionReader } from '@sentinel/common';
+import { saveAs } from 'file-saver';
 import { OffsetPaginationEvent } from '@crczp/utils';
 import {
     AllocationRequest,
@@ -30,7 +31,6 @@ import { SandboxInstanceMapper } from '../../mappers/sandbox-instance/sandbox-in
 import { RequestDTO } from '../../dto/sandbox-instance/request-dto';
 import { RequestMapper } from '../../mappers/sandbox-instance/request-mapper';
 import {
-    BlobFileSaver,
     CRCZPHttpService,
     DjangoResourceDTO,
     handleJsonError,
@@ -354,18 +354,16 @@ export class PoolApi {
      * @param poolId id of a pool
      */
     getManagementSshAccess(poolId: number): Observable<boolean> {
-        const headers = new HttpHeaders().set('Accept', ['application/octet-stream']);
         return this.http
             .get(`${this.apiUrl}/${poolId}/management-ssh-access`, {
                 responseType: 'blob',
                 observe: 'response',
-                headers,
             })
             .pipe(
                 handleJsonError(),
                 map((resp) => {
-                    BlobFileSaver.saveBlob(
-                        resp.body,
+                    saveAs(
+                        resp.body!,
                         ResponseHeaderContentDispositionReader.getFilenameFromResponse(
                             resp,
                             'management-ssh-access.zip',

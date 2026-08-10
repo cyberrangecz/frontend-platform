@@ -1,8 +1,8 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { ResponseHeaderContentDispositionReader, SentinelParamsMerger } from '@sentinel/common';
+import { saveAs } from 'file-saver';
 import {
-    BlobFileSaver,
     CRCZPHttpService,
     handleJsonError,
     JavaPaginatedResource,
@@ -245,8 +245,8 @@ export class TrainingDefinitionDefaultApi extends LinearTrainingDefinitionApi {
             .pipe(
                 handleJsonError(),
                 map((resp) => {
-                    BlobFileSaver.saveBlob(
-                        resp.body,
+                    saveAs(
+                        resp.body!,
                         ResponseHeaderContentDispositionReader.getFilenameFromResponse(
                             resp,
                             'training-definition.json',

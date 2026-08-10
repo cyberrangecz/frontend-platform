@@ -32,9 +32,6 @@ A shared Angular library centered around providing a powerful, minimally-configu
 - **`validation/errors`**: Custom error classes, such as `UnknownEnumValueError`, for handling specific validation errors.
 - **`validation/json-error-converter`**: Utility function `handleJsonError` for converting blob HTTP error responses to JSON for better error handling.
 
-### File Operations
-- **`file/blob-file-saver`**: `BlobFileSaver` class for saving blob data as files using the `file-saver` library.
-
 ## Usage
 
 Import the desired modules from `@crczp/api-common`:

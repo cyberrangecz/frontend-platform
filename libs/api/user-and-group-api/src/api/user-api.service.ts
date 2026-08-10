@@ -9,8 +9,8 @@ import { RoleDTO } from '../DTO/role/role-dto';
 import { UserAndGroupUserDTO } from '../DTO/user/user-dto.model';
 import { RoleMapper } from '../mappers/role-mapper';
 import { UserMapper } from '../mappers/user.mapper';
+import { saveAs } from 'file-saver';
 import {
-    BlobFileSaver,
     handleJsonError,
     JavaPaginatedResource,
     OffsetPaginatedResource,
@@ -179,8 +179,8 @@ export class UserApi {
             .pipe(
                 handleJsonError(),
                 map((resp) => {
-                    BlobFileSaver.saveBlob(
-                        resp.body,
+                    saveAs(
+                        resp.body!,
                         ResponseHeaderContentDispositionReader.getFilenameFromResponse(
                             resp,
                             'oidc_user_info.yml',
