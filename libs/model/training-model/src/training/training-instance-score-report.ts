@@ -14,8 +14,8 @@ export class ParticipantScoreRow extends Z.class({
     name: z.string(),
     mail: z.string(),
     finished: z.boolean(),
-    startedAt: z.date(),
-    endedAt: z.date().nullable(),
+    startedAt: z.coerce.date(),
+    endedAt: z.coerce.date().nullable(),
     durationSeconds: z.number().nullable(),
     scoreByLevelId: z.map(z.number(), z.number()),
     trainingScore: z.number(),
@@ -59,7 +59,7 @@ export class ParticipantScoreRow extends Z.class({
  */
 export class TrainingInstanceScoreReport extends Z.class({
     trainingInstanceId: z.number(),
-    instanceEndAt: z.date(),
+    instanceEndAt: z.coerce.date(),
     scoredLevels: z.array(AbstractLevelBasic.schema()),
     rows: z.array(ParticipantScoreRow.schema()),
 }) {
