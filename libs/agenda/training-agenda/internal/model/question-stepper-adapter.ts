@@ -2,24 +2,32 @@ import { ExtendedMatchingItems, FreeFormQuestion, MultipleChoiceQuestion, Questi
 import { StepItem, StepStateEnum } from '@sentinel/components/stepper';
 
 export class QuestionStepperAdapter implements StepItem {
-    id: number;
-    title: string;
-    required: boolean;
-    valid: boolean;
     icon: string;
     state: StepStateEnum;
 
     constructor(question: Question) {
         this._question = question;
-        this.id = question.id;
-        this.title = question.title;
-        this.valid = question.valid;
         this.state = StepStateEnum.SELECTABLE;
-        this.required = question.required;
         this.icon = QuestionStepperAdapter.iconType(question);
     }
 
     private _question: Question;
+
+    get id(): number {
+        return this._question.id;
+    }
+
+    get title(): string {
+        return this._question.title;
+    }
+
+    get required(): boolean {
+        return this._question.required;
+    }
+
+    get valid(): boolean {
+        return this._question.valid;
+    }
 
     get question(): Question {
         return this._question;
@@ -27,9 +35,6 @@ export class QuestionStepperAdapter implements StepItem {
 
     set question(value: Question) {
         this._question = value;
-        this.id = value.id;
-        this.title = value.title;
-        this.required = value.required;
     }
 
     set requiredState(value: boolean) {

@@ -13,13 +13,12 @@ import {AssessmentLevel, Question} from '@crczp/training-model';
 import {AssessmentLevelEditFormGroup} from './assessment-level-edit-form-group';
 import {AbstractControl, ReactiveFormsModule} from '@angular/forms';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import {Subscription} from 'rxjs';
 import {QuestionsOverviewComponent} from "./question/overview/questions-overview.component";
 import {MatSlideToggle} from "@angular/material/slide-toggle";
 import {SentinelMarkdownEditorComponent} from "@sentinel/components/markdown-editor";
 import {MatError, MatFormField, MatInput, MatLabel, MatSuffix} from "@angular/material/input";
 import {MatTooltip} from "@angular/material/tooltip";
-import {MatIconButton} from "@angular/material/button";
-import {MatIcon} from "@angular/material/icon";
 import { ClearInputSuffixComponent } from '@crczp/utils';
 
 /**
@@ -49,6 +48,7 @@ export class AssessmentLevelEditComponent implements OnChanges {
     @Output() levelChange: EventEmitter<AssessmentLevel> = new EventEmitter();
     assessmentFormGroup: AssessmentLevelEditFormGroup;
     destroyRef = inject(DestroyRef);
+    private formGroupValueChangesSubscription?: Subscription;
 
     get title(): AbstractControl {
         return this.assessmentFormGroup.formGroup.get('title');
@@ -75,10 +75,13 @@ export class AssessmentLevelEditComponent implements OnChanges {
             this.assessmentFormGroup = new AssessmentLevelEditFormGroup(this.level);
             this.title.markAsTouched();
             this.estimatedDuration.markAsTouched();
-            this.assessmentFormGroup.formGroup.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
-                this.assessmentFormGroup.setToLevel(this.level);
-                this.levelChange.emit(this.level);
-            });
+            this.formGroupValueChangesSubscription?.unsubscribe();
+            this.formGroupValueChangesSubscription = this.assessmentFormGroup.formGroup.valueChanges
+                .pipe(takeUntilDestroyed(this.destroyRef))
+                .subscribe(() => {
+                    this.assessmentFormGroup.setToLevel(this.level);
+                    this.levelChange.emit(this.level);
+                });
         }
     }
 

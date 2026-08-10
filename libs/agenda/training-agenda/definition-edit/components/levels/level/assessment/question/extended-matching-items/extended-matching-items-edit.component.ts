@@ -20,6 +20,7 @@ import { SentinelValidators } from '@sentinel/common';
 import { ExtendedMatchingItems, Question } from '@crczp/training-model';
 import { ExtendedMatchingItemsFormGroup } from './extended-matching-items-form-group';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Subscription } from 'rxjs';
 import { MatError, MatFormField, MatInput, MatLabel, MatSuffix } from '@angular/material/input';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
@@ -63,6 +64,7 @@ export class ExtendedMatchingItemsEditComponent implements OnChanges {
     maxQuestionScore = Question.MAX_QUESTION_SCORE;
     maxQuestionPenalty = Question.MAX_QUESTION_PENALTY;
     destroyRef = inject(DestroyRef);
+    private formGroupValueChangesSubscription?: Subscription;
 
     get title(): AbstractControl {
         return this.extendedMatchingQuestionFormGroup.formGroup.get('title');
@@ -90,7 +92,8 @@ export class ExtendedMatchingItemsEditComponent implements OnChanges {
             this.checkState();
             this.options.markAllAsTouched();
             this.statements.markAllAsTouched();
-            this.extendedMatchingQuestionFormGroup.formGroup.valueChanges
+            this.formGroupValueChangesSubscription?.unsubscribe();
+            this.formGroupValueChangesSubscription = this.extendedMatchingQuestionFormGroup.formGroup.valueChanges
                 .pipe(takeUntilDestroyed(this.destroyRef))
                 .subscribe(() => this.questionChanged());
         }
@@ -212,7 +215,7 @@ export class ExtendedMatchingItemsEditComponent implements OnChanges {
     }
 
     getOptions(): number[] {
-        return this.options.value.map((option) => option.order);
+        return this.options.value.map((option: { order: number }) => option.order);
     }
 
     /**
