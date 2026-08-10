@@ -7,7 +7,7 @@ import {
     levelStartedTable,
     trainingRunStartedTable,
 } from '@crczp/event-query-engine';
-import { PlatformEventType } from '@crczp/visualization-model';
+import { PlatformEventType } from '@crczp/training-model';
 
 import { createQuerySource, QuerySource } from '../shared';
 

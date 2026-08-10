@@ -1,4 +1,4 @@
-import { PlatformEventType } from '@crczp/visualization-model';
+import { PlatformEventType } from '@crczp/training-model';
 import { eventTypeColors } from '../shared';
 import {
     EMPTY_VM,

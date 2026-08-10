@@ -1,4 +1,4 @@
-import { PlatformEventType } from '@crczp/visualization-model';
+import { PlatformEventType } from '@crczp/training-model';
 import { signal } from '@angular/core';
 import { catchError, delay, firstValueFrom, ignoreElements, Observable, of, switchMap } from 'rxjs';
 import { notifyError } from './error-notifier';

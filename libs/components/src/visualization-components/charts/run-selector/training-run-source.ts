@@ -8,8 +8,10 @@ import {
 } from '@angular/core';
 import { from, map, Observable } from 'rxjs';
 import { DataBrokerService, EntityResolverService, EntityType, trainingRunStartedTable } from '@crczp/event-query-engine';
-import { PlatformEventType } from '@crczp/visualization-model';
-import { TrainingRunBasic } from '@crczp/training-model';
+import {
+    PlatformEventType,
+    TrainingRunBasic
+} from '@crczp/training-model';
 
 /**
  * Abstract class used as DI token for the list of training runs visible in the dashboard.

@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { firstValueFrom, of } from 'rxjs';
 import { needsPoolId, resolvePoolId } from './pool-id-resolver';
-import { PlatformEventType } from '@crczp/visualization-model';
+import { PlatformEventType } from '@crczp/training-model';
 import { LinearTrainingInstanceApi } from '@crczp/training-api';
 
 describe('needsPoolId', () => {

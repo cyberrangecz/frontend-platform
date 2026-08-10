@@ -1,5 +1,5 @@
 import { concat, defer, ignoreElements, Observable } from 'rxjs';
-import { PlatformEventType } from '@crczp/visualization-model';
+import { PlatformEventType } from '@crczp/training-model';
 import { CacheService, EventCacheDb } from '../../cache/cache.interface';
 import { CacheSyncService } from '../../sync/sync.interface';
 

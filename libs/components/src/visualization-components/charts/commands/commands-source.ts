@@ -2,7 +2,7 @@ import { Signal } from '@angular/core';
 import { eq } from 'drizzle-orm';
 import { combineLatest, from, map, Observable } from 'rxjs';
 import { commandTable, EventCacheDb, levelStartedTable } from '@crczp/event-query-engine';
-import { PlatformEventType } from '@crczp/visualization-model';
+import { PlatformEventType } from '@crczp/training-model';
 import { createQuerySource, QuerySource } from '../shared';
 
 /**

@@ -1,6 +1,6 @@
 import { inject, Injectable, Injector, Signal } from '@angular/core';
 import { catchError, Observable, switchMap } from 'rxjs';
-import { PlatformEventType } from '@crczp/visualization-model';
+import { PlatformEventType } from '@crczp/training-model';
 import { ErrorHandlerService } from '@crczp/utils';
 import { LinearTrainingInstanceApi } from '@crczp/training-api';
 import { CacheService, EventCacheDb } from '../../cache/cache.interface';

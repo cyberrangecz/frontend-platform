@@ -12,8 +12,10 @@ import {
     trainingRunStartedTable,
     wrongAnswerSubmittedTable,
 } from '@crczp/event-query-engine';
-import { HintBasic } from '@crczp/training-model';
-import { PlatformEventType } from '@crczp/visualization-model';
+import {
+    HintBasic,
+    PlatformEventType
+} from '@crczp/training-model';
 
 import { createQuerySource, QuerySource } from '../../shared';
 import { EventKind, EventRow } from '../types/event.types';

@@ -10,8 +10,11 @@ import {
     ResolveEntitiesSafe,
     trainingRunEndedTable,
 } from '@crczp/event-query-engine';
-import { AbstractLevelTypeEnum, TrainingUser } from '@crczp/training-model';
-import { PlatformEventType } from '@crczp/visualization-model';
+import {
+    AbstractLevelTypeEnum,
+    TrainingUser,
+    PlatformEventType
+} from '@crczp/training-model';
 
 import { createQuerySource, QuerySource } from '../../shared';
 import { BarRow } from '../types/bar.types';

@@ -6,7 +6,7 @@ import {
     switchMap,
     throwError,
 } from 'rxjs';
-import { PlatformEventType } from '@crczp/visualization-model';
+import { PlatformEventType } from '@crczp/training-model';
 import { CacheService, WatermarkEntry } from '../../cache/cache.interface';
 import { EventFetchApi } from '../event-fetch-api';
 import { SyncTableComplete } from '../sync-result.interface';

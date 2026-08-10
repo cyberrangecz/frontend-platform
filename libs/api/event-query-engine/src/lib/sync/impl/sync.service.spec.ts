@@ -1,4 +1,4 @@
-import { PlatformEventType } from '@crczp/visualization-model';
+import { PlatformEventType } from '@crczp/training-model';
 import { TestBed } from '@angular/core/testing';
 import { delay, from, lastValueFrom, mergeMap, of, throwError, toArray } from 'rxjs';
 import { syncSingleType } from './single-type-sync';

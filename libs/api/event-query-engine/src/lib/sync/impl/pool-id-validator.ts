@@ -1,4 +1,4 @@
-import { PlatformEventType } from '@crczp/visualization-model';
+import { PlatformEventType } from '@crczp/training-model';
 
 export function validatePoolId(eventType: PlatformEventType, poolId: number | undefined): void {
     if (eventType === PlatformEventType.COMMAND && poolId === undefined) {

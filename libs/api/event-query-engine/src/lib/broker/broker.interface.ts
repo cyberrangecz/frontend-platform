@@ -1,6 +1,6 @@
 import { Signal } from '@angular/core';
 import { Observable } from 'rxjs';
-import { PlatformEventType } from '@crczp/visualization-model';
+import { PlatformEventType } from '@crczp/training-model';
 import { EventCacheDb } from '../cache/cache.interface';
 
 /**

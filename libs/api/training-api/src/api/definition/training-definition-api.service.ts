@@ -7,10 +7,10 @@ import {
     InfoLevel,
     Level,
     TrainingDefinition,
-    TrainingDefinitionWithLevels,
     TrainingDefinitionBasic,
     TrainingDefinitionInfo,
     TrainingDefinitionStateEnum,
+    TrainingDefinitionWithLevels,
     TrainingLevel
 } from '@crczp/training-model';
 import { Observable } from 'rxjs';
@@ -90,7 +90,9 @@ export abstract class LinearTrainingDefinitionApi {
      * Sends http request to update training definition
      * @param trainingDefinition training definition to update
      */
-    abstract update(trainingDefinition: TrainingDefinitionWithLevels): Observable<number>;
+    abstract update(
+        trainingDefinition: TrainingDefinitionWithLevels,
+    ): Observable<number>;
 
     /**
      * Sends http request to create new training definition
@@ -161,30 +163,6 @@ export abstract class LinearTrainingDefinitionApi {
         levelId: number,
         toPosition: number,
     ): Observable<Level[]>;
-
-    /**
-     * Sends http request to swap level with another level
-     * @param trainingDefinitionId id of training definition associated with the level
-     * @param levelIdFrom id of a first level which should be swaped
-     * @param levelIdTo id of a second level which should be swaped
-     */
-    abstract swapLevelWith(
-        trainingDefinitionId: number,
-        levelIdFrom: number,
-        levelIdTo: number,
-    ): Observable<Level[]>;
-
-    /**
-     * Sends http request to retrieve all training definitions with given sandbox definition id
-     * @param sandboxDefId id of sandbox definition
-     * @param pagination requested pagination
-     * @param filters filters to be applied on result
-     */
-    abstract geTrainingDefinition(
-        sandboxDefId: number,
-        pagination: OffsetPaginationEvent<TrainingDefinitionSort>,
-        filters?: QueryParam[],
-    ): Observable<OffsetPaginatedResource<TrainingDefinitionWithLevels>>;
 
     abstract fetchLevelsByIds(ids: number[]): Observable<AbstractLevelBasic[]>;
 

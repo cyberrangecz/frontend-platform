@@ -20,10 +20,10 @@ import {
     InfoLevel,
     Level,
     TrainingDefinition,
-    TrainingDefinitionWithLevels,
     TrainingDefinitionBasic,
     TrainingDefinitionInfo,
     TrainingDefinitionStateEnum,
+    TrainingDefinitionWithLevels,
     TrainingLevel
 } from '@crczp/training-model';
 import { fromEvent, Observable } from 'rxjs';
@@ -34,7 +34,7 @@ import { TrainingLevelDto } from '../../dto/level/training/training-level-dto';
 import { InfoLevelDTO } from '../../dto/level/info/info-level-dto';
 import {
     TrainingDefinitionDTO,
-    TrainingDefinitionWithLevelsDTO,
+    TrainingDefinitionWithLevelsDTO
 } from '../../dto/training-definition/training-definition-dto';
 import { LevelMapper } from '../../mappers/level/level-mapper';
 import { TrainingDefinitionInfoMapper } from '../../mappers/training-definition/training-definition-info-mapper';
@@ -59,7 +59,6 @@ export class TrainingDefinitionDefaultApi extends LinearTrainingDefinitionApi {
     private readonly entityCacheTtlMs = inject(PortalConfig).caching.entityCacheTtlMs;
     private readonly trainingDefinitionUriExtension = 'training-definitions';
     private readonly levelsUriExtension = 'levels';
-    private readonly sandboxDefUriExtension = 'sandbox-definitions';
     private readonly trainingDefsEndpointUri: string;
     private readonly trainingExportEndpointUri: string;
     private readonly trainingImportEndpointUri: string;
@@ -462,63 +461,8 @@ export class TrainingDefinitionDefaultApi extends LinearTrainingDefinitionApi {
             .pipe(map((resp) => LevelMapper.fromBasicDTOs(resp)));
     }
 
-    /**
-     * Sends http request to swap level with another level
-     * @param trainingDefinitionId id of training definition associated with the level
-     * @param levelIdFrom id of a first level which should be swaped
-     * @param levelIdTo id of a second level which should be swaped
-     */
-    swapLevelWith(
-        trainingDefinitionId: number,
-        levelIdFrom: number,
-        levelIdTo: number,
-    ): Observable<Level[]> {
-        // prettier-ignore
-        return this.http
-            .put<BasicLevelInfoDTO[]>(
-                `${this.trainingDefsEndpointUri}/${trainingDefinitionId}/` +
-                `${this.levelsUriExtension}/${levelIdFrom}/swap-with/${levelIdTo}`,
-                {},
-                { headers: this.createDefaultHeaders() }
-            )
-            .pipe(map((resp) => LevelMapper.fromBasicDTOs(resp)));
-    }
-
-    /**
-     * Sends http request to retrieve all training definitions with given sandbox definition id
-     * @param sandboxDefId id of sandbox definition
-     * @param pagination requested pagination
-     * @param filters filters to be applied on result
-     */
-    geTrainingDefinition(
-        sandboxDefId: number,
-        pagination: OffsetPaginationEvent<TrainingDefinitionSort>,
-        filters: QueryParam[] = [],
-    ): Observable<OffsetPaginatedResource<TrainingDefinitionWithLevels>> {
-        const params = SentinelParamsMerger.merge([
-            ParamsBuilder.javaPaginationParams(pagination),
-            ParamsBuilder.queryParams(filters),
-        ]);
-        return this.http
-            .get<
-                JavaPaginatedResource<TrainingDefinitionWithLevelsDTO>
-            >(`${this.trainingDefsEndpointUri}/${this.sandboxDefUriExtension}/${sandboxDefId}`, { params })
-            .pipe(
-                map(
-                    (response) =>
-                        new OffsetPaginatedResource(
-                            TrainingDefinitionMapper.withLevelsFromDTOs(
-                                response.content,
-                            ),
-                            PaginationMapper.fromJavaDTO(response.pagination),
-                        ),
-                ),
-            );
-    }
-
     private createDefaultHeaders() {
         const httpHeaderAccepts: string[] = ['*/*', 'application/json'];
-        const headers = new HttpHeaders().set('Accept', httpHeaderAccepts);
-        return headers;
+        return new HttpHeaders().set('Accept', httpHeaderAccepts);
     }
 }

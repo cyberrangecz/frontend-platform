@@ -1,4 +1,4 @@
-import { PlatformEventType } from '@crczp/visualization-model';
+import { PlatformEventType } from '@crczp/training-model';
 
 /** Foreground and background colour pair for an audit event type. */
 export interface EventColor {

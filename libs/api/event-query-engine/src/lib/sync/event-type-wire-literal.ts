@@ -1,4 +1,4 @@
-import { PlatformEventType } from '@crczp/visualization-model';
+import { PlatformEventType } from '@crczp/training-model';
 
 export const EVENT_TYPE_WIRE_LITERAL: Record<PlatformEventType, string> = {
     [PlatformEventType.TRAINING_RUN_STARTED]: 'training_run_started',

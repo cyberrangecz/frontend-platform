@@ -19,7 +19,7 @@ import {
     tap,
     timer,
 } from 'rxjs';
-import { PlatformEventType } from '@crczp/visualization-model';
+import { PlatformEventType } from '@crczp/training-model';
 import { ErrorHandlerService } from '@crczp/utils';
 import { LinearTrainingInstanceApi } from '@crczp/training-api';
 import { CacheSyncService } from '../../sync/sync.interface';

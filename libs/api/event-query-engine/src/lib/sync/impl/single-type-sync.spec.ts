@@ -1,5 +1,5 @@
 import { Observable, of } from 'rxjs';
-import { PlatformEventType } from '@crczp/visualization-model';
+import { PlatformEventType } from '@crczp/training-model';
 import { syncSingleType } from './single-type-sync';
 import {
     CacheService,

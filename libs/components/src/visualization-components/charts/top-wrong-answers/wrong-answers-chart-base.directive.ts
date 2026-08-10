@@ -5,8 +5,10 @@ import { ECElementEvent, ECharts, EChartsCoreOption } from 'echarts/core';
 import { lastValueFrom } from 'rxjs';
 
 import { EntityResolverService, EntityType } from '@crczp/event-query-engine';
-import { PlatformEventType } from '@crczp/visualization-model';
-import { AbstractLevelTypeEnum } from '@crczp/training-model';
+import {
+    PlatformEventType,
+    AbstractLevelTypeEnum
+} from '@crczp/training-model';
 
 import {
     baseCategoryAxisDefaults,

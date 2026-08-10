@@ -13,7 +13,7 @@ import {
     trainingRunStartedTable,
     wrongAnswerSubmittedTable,
 } from '@crczp/event-query-engine';
-import { PlatformEventType } from '@crczp/visualization-model';
+import { PlatformEventType } from '@crczp/training-model';
 
 /**
  * One row from any score-bearing event table, carrying the cumulative score columns

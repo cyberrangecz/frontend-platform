@@ -12,8 +12,11 @@ import {
     trainingRunEndedTable,
     wrongAnswerSubmittedTable,
 } from '@crczp/event-query-engine';
-import { PlatformEventType } from '@crczp/visualization-model';
-import { AbstractLevelBasic, AbstractLevelTypeEnum } from '@crczp/training-model';
+import {
+    PlatformEventType,
+    AbstractLevelBasic,
+    AbstractLevelTypeEnum
+} from '@crczp/training-model';
 import { createQuerySource, QuerySource } from '../shared';
 
 /** Milliseconds per minute — authored estimates are stored in minutes. */

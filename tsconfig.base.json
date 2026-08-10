@@ -164,10 +164,7 @@
             ],
             "@crczp/utils": ["libs/utils/misc/src/index.ts"],
             "@crczp/echarts-utils": ["libs/utils/echarts/src/index.ts"],
-            "@crczp/test-utils": ["libs/utils/testing/src/index.ts"],
-            "@crczp/visualization-model": [
-                "libs/model/visualization-model/src/index.ts"
-            ]
+            "@crczp/test-utils": ["libs/utils/testing/src/index.ts"]
         },
         "rootDir": ".",
         "skipDefaultLibCheck": true,

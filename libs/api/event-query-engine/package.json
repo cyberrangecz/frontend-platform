@@ -13,7 +13,6 @@
         "@crczp/training-api": "*",
         "@crczp/training-model": "*",
         "@crczp/utils": "*",
-        "@crczp/visualization-model": "*",
         "vite": "*",
         "@analogjs/vite-plugin-angular": "*",
         "@nx/vite": "*",

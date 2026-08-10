@@ -10,8 +10,10 @@ import {
     trainingRunEndedTable,
     trainingRunStartedTable,
 } from '@crczp/event-query-engine';
-import { PlatformEventType } from '@crczp/visualization-model';
-import { TrainingInstanceBasic } from '@crczp/training-model';
+import {
+    PlatformEventType,
+    TrainingInstanceBasic
+} from '@crczp/training-model';
 import { Utils } from '@crczp/utils';
 import { createQuerySource, QuerySource, resolveInstanceLevels } from '../shared';
 

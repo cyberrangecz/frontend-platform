@@ -9,8 +9,12 @@ import {
     levelCompletedTable,
     solutionDisplayedTable,
 } from '@crczp/event-query-engine';
-import { PlatformEventType } from '@crczp/visualization-model';
-import { AbstractLevelBasic, AbstractLevelTypeEnum, TrainingLevelBasic } from '@crczp/training-model';
+import {
+    PlatformEventType,
+    AbstractLevelBasic,
+    AbstractLevelTypeEnum,
+    TrainingLevelBasic
+} from '@crczp/training-model';
 import { createQuerySource, QuerySource } from '../shared';
 
 /** One assist (a hint or the solution) of a level, with cohort coverage and this run's usage. */

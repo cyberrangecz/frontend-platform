@@ -1,7 +1,7 @@
 // @vitest-environment node
 import { TestBed } from '@angular/core/testing';
 import { firstValueFrom } from 'rxjs';
-import { PlatformEventType } from '@crczp/visualization-model';
+import { PlatformEventType } from '@crczp/training-model';
 import {
     CacheService,
     EventCacheDb,

@@ -1,6 +1,6 @@
 // @vitest-environment node
 import { TestBed } from '@angular/core/testing';
-import { PlatformEventType } from '@crczp/visualization-model';
+import { PlatformEventType } from '@crczp/training-model';
 import { eq } from 'drizzle-orm';
 import { firstValueFrom, from, Observable, of, toArray } from 'rxjs';
 import { signal } from '@angular/core';

@@ -24,8 +24,10 @@ import { NgxEchartsDirective } from 'ngx-echarts';
 
 import { EntityResolverService, EntityType } from '@crczp/event-query-engine';
 import { horizontalSliderStyle } from '@crczp/echarts-utils';
-import { AbstractLevelTypeEnum } from '@crczp/training-model';
-import { PlatformEventType } from '@crczp/visualization-model';
+import {
+    AbstractLevelTypeEnum,
+    PlatformEventType
+} from '@crczp/training-model';
 import { Utils } from '@crczp/utils';
 
 import {

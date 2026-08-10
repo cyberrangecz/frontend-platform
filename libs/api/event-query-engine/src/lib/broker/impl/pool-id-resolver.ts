@@ -1,5 +1,5 @@
 import { Observable, map, of } from 'rxjs';
-import { PlatformEventType } from '@crczp/visualization-model';
+import { PlatformEventType } from '@crczp/training-model';
 import { LinearTrainingInstanceApi } from '@crczp/training-api';
 
 export function needsPoolId(eventTypes: PlatformEventType[]): boolean {

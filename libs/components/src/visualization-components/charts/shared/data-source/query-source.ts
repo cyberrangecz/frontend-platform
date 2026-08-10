@@ -6,7 +6,7 @@ import {
     EntityType,
     EventCacheDb,
 } from '@crczp/event-query-engine';
-import { PlatformEventType } from '@crczp/visualization-model';
+import { PlatformEventType } from '@crczp/training-model';
 import { isAfter } from 'date-fns';
 import {
     catchError,

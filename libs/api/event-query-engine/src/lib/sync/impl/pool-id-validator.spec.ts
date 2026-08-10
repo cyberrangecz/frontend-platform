@@ -1,4 +1,4 @@
-import { PlatformEventType } from '@crczp/visualization-model';
+import { PlatformEventType } from '@crczp/training-model';
 import { validatePoolId } from './pool-id-validator';
 
 describe('validatePoolId', () => {

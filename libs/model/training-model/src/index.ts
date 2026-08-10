@@ -21,6 +21,7 @@ export * from './enums/training-run-state.enum';
 export * from './enums/question-type.enum';
 export * from './enums/detected-forbidden-command-type.enum';
 export * from './enums/training-type.enum';
+export * from './enums/platform-event-type.enum';
 
 // MAIN
 export * from './training/access-training-run-info';
@@ -50,6 +51,7 @@ export * from './questions/question';
 export * from './questions/question-choice';
 export * from './questions/extended-matching-option';
 export * from './questions/extended-matching-statement';
+export * from './questions/event-answer';
 
 // USERS
 export * from './user-ref/training-user';

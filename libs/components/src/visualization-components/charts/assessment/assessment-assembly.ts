@@ -6,9 +6,9 @@ import {
     MultipleChoiceQuestion,
     Question,
     QuestionTypeEnum,
-    TrainingUser
+    TrainingUser,
+    EventAnswer
 } from '@crczp/training-model';
-import { EventAnswer } from '@crczp/visualization-model';
 import { Utils } from '@crczp/utils';
 import { emiAnswerLabel } from './answer-highlight';
 import {

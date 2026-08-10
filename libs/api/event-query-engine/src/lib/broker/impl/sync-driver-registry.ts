@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { PlatformEventType } from '@crczp/visualization-model';
+import { PlatformEventType } from '@crczp/training-model';
 import { ErrorHandlerService, PortalConfig } from '@crczp/utils';
 import { LinearTrainingInstanceApi } from '@crczp/training-api';
 import { CacheSyncService } from '../../sync/sync.interface';
