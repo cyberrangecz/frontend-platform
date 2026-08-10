@@ -1,12 +1,11 @@
 import { inject, Injectable } from '@angular/core';
-import { OffsetPaginationEvent } from '@crczp/utils';
+import { ErrorHandlerService, OffsetPaginationEvent } from '@crczp/utils';
 import { UserApi, UserSort } from '@crczp/user-and-group-api';
 import { User } from '@crczp/user-and-group-model';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { ErrorHandlerService } from '@crczp/utils';
 import { UserFilter } from '@crczp/user-and-group-agenda/internal';
-import { createInfinitePaginatedResource, OffsetPaginatedResource } from '@crczp/api-common';
+import { OffsetPaginatedResource } from '@crczp/api-common';
 
 /**
  * Basic implementation of a layer between a component and an API service.
@@ -29,9 +28,8 @@ export class MembersDetailService {
         this.isLoadingAssignedSubject$.asObservable();
     private userApi = inject(UserApi);
     private errorHandler = inject(ErrorHandlerService);
-    private assignedUsersSubject$: BehaviorSubject<
-        OffsetPaginatedResource<User>
-    > = new BehaviorSubject(createInfinitePaginatedResource());
+    private assignedUsersSubject$: Subject<OffsetPaginatedResource<User>> =
+        new Subject();
     /**
      * Subscribe to receive assigned users
      */

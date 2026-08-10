@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Group, User, UserRole } from '@crczp/user-and-group-model';
-import { Observable } from 'rxjs';
+import { combineLatest, Observable } from 'rxjs';
 import {
     SentinelRowDirective,
     SentinelTable,
@@ -52,9 +52,11 @@ export class GroupDetailComponent implements OnInit {
     roles$: Observable<SentinelTable<UserRole, string>>;
     rolesTableHasError$: Observable<boolean>;
     isLoadingRoles$: Observable<boolean>;
+    rolesTableIsEmpty$: Observable<boolean>;
     members$: Observable<SentinelTable<User, string>>;
     membersTableHasError$: Observable<boolean>;
     isLoadingMembers$: Observable<boolean>;
+    membersTableIsEmpty$: Observable<boolean>;
     destroyRef = inject(DestroyRef);
     private activeRoute = inject(ActivatedRoute);
     private membersDetailService = inject(MembersDetailService);
@@ -133,6 +135,11 @@ export class GroupDetailComponent implements OnInit {
         );
         this.membersTableHasError$ = this.membersDetailService.hasError$;
         this.isLoadingMembers$ = this.membersDetailService.isLoadingAssigned$;
+        this.membersTableIsEmpty$ = this.createTableIsEmptyObservable(
+            this.members$,
+            this.isLoadingMembers$,
+            this.membersTableHasError$,
+        );
         this.onMembersLoadEvent(initialLoadEvent);
     }
 
@@ -145,6 +152,31 @@ export class GroupDetailComponent implements OnInit {
         );
         this.rolesTableHasError$ = this.rolesDetailService.hasError$;
         this.isLoadingRoles$ = this.rolesDetailService.isLoadingAssigned$;
+        this.rolesTableIsEmpty$ = this.createTableIsEmptyObservable(
+            this.roles$,
+            this.isLoadingRoles$,
+            this.rolesTableHasError$,
+        );
         this.onRolesLoadEvent(initialLoadEvent);
+    }
+
+    /**
+     * Derives whether a table has genuinely no rows to show, as opposed to still loading
+     * or having failed to load.
+     * @param table$ table built from the latest loaded resource
+     * @param isLoading$ true while a load request for the table is in flight
+     * @param hasError$ true if the latest load request for the table failed
+     */
+    private createTableIsEmptyObservable<Element, Sort>(
+        table$: Observable<SentinelTable<Element, Sort>>,
+        isLoading$: Observable<boolean>,
+        hasError$: Observable<boolean>,
+    ): Observable<boolean> {
+        return combineLatest([table$, isLoading$, hasError$]).pipe(
+            map(
+                ([table, isLoading, hasError]) =>
+                    !isLoading && !hasError && table.rows.length === 0,
+            ),
+        );
     }
 }
