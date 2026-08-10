@@ -4,7 +4,7 @@ import {formatDate} from '@angular/common';
 import {TrainingDefinitionStateEnum} from '../enums/training-definition-state.enum';
 import {Level} from '../level/level';
 
-/** Basic read-only training definition data safe for all roles. Subset of {@link TrainingDefinition}. */
+/** Basic read-only training definition data safe for all roles. Subset of {@link TrainingDefinitionWithLevels}. */
 export class TrainingDefinitionBasic extends Z.class({
     id: z.number(),
     title: z.string(),
@@ -20,7 +20,7 @@ export class TrainingDefinitionBasic extends Z.class({
 }
 
 /**
- * Class representing training definition in a system.
+ * Training definition in a system, holding every attribute except the level collection.
  */
 export class TrainingDefinition {
     get lastEditTime(): Date {
@@ -39,7 +39,6 @@ export class TrainingDefinition {
     prerequisites: string[] = [];
     outcomes: string[] = [];
     state!: TrainingDefinitionStateEnum;
-    levels: Level[] = []
     defaultContent = false;
     lastEditBy!: string;
     createdAt!: Date;
@@ -50,4 +49,11 @@ export class TrainingDefinition {
     toString(): number {
         return this.id;
     }
+}
+
+/**
+ * Training definition extended with the levels it is composed of.
+ */
+export class TrainingDefinitionWithLevels extends TrainingDefinition {
+    levels: Level[] = [];
 }

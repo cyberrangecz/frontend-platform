@@ -7,6 +7,7 @@ import {
     InfoLevel,
     Level,
     TrainingDefinition,
+    TrainingDefinitionWithLevels,
     TrainingDefinitionBasic,
     TrainingDefinitionInfo,
     TrainingDefinitionStateEnum,
@@ -41,7 +42,7 @@ export abstract class LinearTrainingDefinitionApi {
      * Sends http request to retrieve training definition by its id
      * @param id id of training definition
      */
-    abstract get(id: number): Observable<TrainingDefinition>;
+    abstract get(id: number): Observable<TrainingDefinitionWithLevels>;
 
     /**
      * Sends http request to change state of a training definition
@@ -70,7 +71,7 @@ export abstract class LinearTrainingDefinitionApi {
      * Converts training definition file to a JSON object and sends it to provided url.
      * @param file json file to be uploaded
      */
-    abstract upload(file: File): Observable<TrainingDefinition>;
+    abstract upload(file: File): Observable<TrainingDefinitionWithLevels>;
 
     /**
      * Sends http request to delete training definition
@@ -89,15 +90,15 @@ export abstract class LinearTrainingDefinitionApi {
      * Sends http request to update training definition
      * @param trainingDefinition training definition to update
      */
-    abstract update(trainingDefinition: TrainingDefinition): Observable<number>;
+    abstract update(trainingDefinition: TrainingDefinitionWithLevels): Observable<number>;
 
     /**
      * Sends http request to create new training definition
      * @param trainingDefinition training definition which should be created
      */
     abstract create(
-        trainingDefinition: TrainingDefinition,
-    ): Observable<TrainingDefinition>;
+        trainingDefinition: TrainingDefinitionWithLevels,
+    ): Observable<TrainingDefinitionWithLevels>;
 
     /**
      * Sends http request to create new assessment level associated with training definition
@@ -183,7 +184,7 @@ export abstract class LinearTrainingDefinitionApi {
         sandboxDefId: number,
         pagination: OffsetPaginationEvent<TrainingDefinitionSort>,
         filters?: QueryParam[],
-    ): Observable<OffsetPaginatedResource<TrainingDefinition>>;
+    ): Observable<OffsetPaginatedResource<TrainingDefinitionWithLevels>>;
 
     abstract fetchLevelsByIds(ids: number[]): Observable<AbstractLevelBasic[]>;
 

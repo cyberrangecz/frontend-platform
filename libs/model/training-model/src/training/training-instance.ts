@@ -1,7 +1,7 @@
 /**
  * Class representing training instance of a definition.
  */
-import {TrainingDefinition} from './training-definition';
+import {TrainingDefinitionWithLevels} from './training-definition';
 import { Z } from 'zod-class';
 import { z } from 'zod';
 
@@ -22,7 +22,7 @@ export class TrainingInstanceBasic extends Z.class({
 export class TrainingInstance {
     id!: number;
     poolId!: number;
-    trainingDefinition!: TrainingDefinition;
+    trainingDefinition!: TrainingDefinitionWithLevels;
     startTime!: Date;
     endTime!: Date;
     title!: string;

@@ -11,7 +11,7 @@ export class TrainingInstanceMapper {
     static fromDTO(dto: TrainingInstanceDTO): TrainingInstance {
         const result = new TrainingInstance();
         result.id = dto.id;
-        result.trainingDefinition = TrainingDefinitionMapper.fromDTO(dto.training_definition);
+        result.trainingDefinition = TrainingDefinitionMapper.withLevelsFromDTO(dto.training_definition);
         result.startTime = new Date(dto.start_time);
         result.endTime = new Date(dto.end_time);
         result.title = dto.title;

@@ -10,7 +10,7 @@ import {
     Output,
     SimpleChanges
 } from '@angular/core';
-import { TrainingDefinition, TrainingInstance } from '@crczp/training-model';
+import { TrainingDefinitionWithLevels, TrainingInstance } from '@crczp/training-model';
 import { Observable } from 'rxjs';
 import { SentinelControlItem, SentinelControlsComponent } from '@sentinel/components/controls';
 import { map } from 'rxjs/operators';
@@ -52,7 +52,7 @@ export class TrainingInstanceInfoComponent implements OnInit, OnChanges {
     @Output() exportScore: EventEmitter<boolean> = new EventEmitter();
     @Output() showNotification: EventEmitter<string[]> = new EventEmitter();
 
-    trainingDefinition: TrainingDefinition;
+    trainingDefinition: TrainingDefinitionWithLevels;
     infoControls: SentinelControlItem[];
     destroyRef = inject(DestroyRef);
 

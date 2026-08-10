@@ -13,7 +13,7 @@ import {
 } from '@crczp/training-api';
 import {
     AccessTrainingRunInfo,
-    TrainingDefinition,
+    TrainingDefinitionWithLevels,
     TrainingInstance,
 } from '@crczp/training-model';
 import { catchError, take } from 'rxjs/operators';
@@ -52,7 +52,7 @@ export class TrainingResolverHelperService extends CommonResolverHelperService {
 
     public getDefinition(
         route: ActivatedRouteSnapshot,
-    ): Observable<TrainingDefinition | null> {
+    ): Observable<TrainingDefinitionWithLevels | null> {
         const definitionId = this.extractDefinitionId(route);
         if (!definitionId) {
             this.emitFrontendError('No definition id found in route');

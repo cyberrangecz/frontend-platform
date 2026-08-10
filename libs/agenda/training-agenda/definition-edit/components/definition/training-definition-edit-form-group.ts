@@ -1,6 +1,6 @@
 import {UntypedFormArray, UntypedFormControl, UntypedFormGroup} from '@angular/forms';
 import {SentinelValidators} from '@sentinel/common';
-import {TrainingDefinition} from '@crczp/training-model';
+import {TrainingDefinitionWithLevels} from '@crczp/training-model';
 
 /**
  * Form control class of training definition edit form
@@ -8,7 +8,7 @@ import {TrainingDefinition} from '@crczp/training-model';
 export class TrainingDefinitionEditFormGroup {
     formGroup: UntypedFormGroup;
 
-    constructor(trainingDefinition: TrainingDefinition) {
+    constructor(trainingDefinition: TrainingDefinitionWithLevels) {
         this.formGroup = new UntypedFormGroup({
             title: new UntypedFormControl(trainingDefinition.title, SentinelValidators.noWhitespace),
             description: new UntypedFormControl(trainingDefinition.description),
@@ -26,7 +26,7 @@ export class TrainingDefinitionEditFormGroup {
      * Sets values from form to training definition object
      * @param trainingDefinition training definition object to be filled with inputs from form
      */
-    setValuesToTrainingDefinition(trainingDefinition: TrainingDefinition): void {
+    setValuesToTrainingDefinition(trainingDefinition: TrainingDefinitionWithLevels): void {
         trainingDefinition.title = this.formGroup.get('title').value;
         trainingDefinition.description = this.formGroup.get('description').value;
         trainingDefinition.outcomes = this.formGroup.get('outcomes').value;

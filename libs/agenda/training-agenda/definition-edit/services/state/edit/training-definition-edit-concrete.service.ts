@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { LinearTrainingDefinitionApi } from '@crczp/training-api';
-import { TrainingDefinition } from '@crczp/training-model';
+import { TrainingDefinitionWithLevels } from '@crczp/training-model';
 import { combineLatest, concat, Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { TrainingDefinitionChangeEvent } from '../../../model/events/training-definition-change-event';
@@ -23,7 +23,7 @@ export class TrainingDefinitionEditConcreteService extends TrainingDefinitionEdi
     private notificationService = inject(NotificationService);
     private levelEditService = inject(LevelEditService);
 
-    private editedSnapshot: TrainingDefinition;
+    private editedSnapshot: TrainingDefinitionWithLevels;
     private loadingTracker = new LoadingTracker();
     public saveDisabled$ = combineLatest(
         this.loadingTracker.isLoading$,
@@ -34,11 +34,11 @@ export class TrainingDefinitionEditConcreteService extends TrainingDefinitionEdi
      * Sets training definition as currently edited
      * @param trainingDefinition to set as currently edited
      */
-    set(trainingDefinition: TrainingDefinition): void {
+    set(trainingDefinition: TrainingDefinitionWithLevels): void {
         let td = trainingDefinition;
         this.setEditMode(td);
         if (td === null) {
-            td = new TrainingDefinition();
+            td = new TrainingDefinitionWithLevels();
         }
         this.trainingDefinitionSubject$.next(td);
     }
@@ -80,7 +80,7 @@ export class TrainingDefinitionEditConcreteService extends TrainingDefinitionEdi
         this.editedSnapshot = changeEvent.trainingDefinition;
     }
 
-    private setEditMode(trainingDefinition: TrainingDefinition) {
+    private setEditMode(trainingDefinition: TrainingDefinitionWithLevels) {
         this.editModeSubject$.next(trainingDefinition !== null);
     }
 

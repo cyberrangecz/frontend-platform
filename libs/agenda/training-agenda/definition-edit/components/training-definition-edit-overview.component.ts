@@ -5,7 +5,7 @@ import {
     SentinelControlItemSignal,
     SentinelControlsComponent
 } from '@sentinel/components/controls';
-import { Level, MitreTechnique, TrainingDefinition } from '@crczp/training-model';
+import { Level, MitreTechnique, TrainingDefinitionWithLevels } from '@crczp/training-model';
 import { combineLatest, Observable, switchMap } from 'rxjs';
 import { filter, map, tap } from 'rxjs/operators';
 import { TrainingDefinitionEditControls } from '../model/adapters/training-definition-edit-controls';
@@ -73,7 +73,7 @@ import { createInfinitePaginationEvent } from '@crczp/api-common';
     ],
 })
 export class TrainingDefinitionEditOverviewComponent implements OnInit {
-    trainingDefinition$: Observable<TrainingDefinition>;
+    trainingDefinition$: Observable<TrainingDefinitionWithLevels>;
     editMode$: Observable<boolean>;
     tdTitle$: Observable<string>;
     levelsCount = -1;
@@ -115,7 +115,7 @@ export class TrainingDefinitionEditOverviewComponent implements OnInit {
         this.activeRoute.data
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe((data) =>
-                this.editService.set(data[TrainingDefinition.name] || null),
+                this.editService.set(data[TrainingDefinitionWithLevels.name] || null),
             );
         this.editMode$ = this.editService.editMode$.pipe(
             tap(

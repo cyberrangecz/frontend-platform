@@ -1,4 +1,4 @@
-import { Hint, Level, TrainingDefinition, TrainingInstance, TrainingRun, TrainingUser } from '@crczp/training-model';
+import { Hint, Level, TrainingDefinitionWithLevels, TrainingInstance, TrainingRun, TrainingUser } from '@crczp/training-model';
 import { Pool } from '@crczp/sandbox-model';
 
 export interface PlatformEvent {
@@ -14,7 +14,7 @@ export interface TrainingEvent extends PlatformEvent {
     get pool(): Pool;
 
     training_definition_id: number;
-    get trainingDefinition(): TrainingDefinition;
+    get trainingDefinition(): TrainingDefinitionWithLevels;
 
     training_instance_id: number;
     get trainingInstance(): TrainingInstance;

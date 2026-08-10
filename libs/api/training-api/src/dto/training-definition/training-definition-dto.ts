@@ -1,10 +1,9 @@
 import {AbstractLevelDTO} from '../level/abstract-level-dto';
 
 /**
- * Training Definition DTO.
+ * Training Definition DTO carrying every attribute except the level collection.
  */
 export class TrainingDefinitionDTO {
-    levels?: AbstractLevelDTO[];
     description?: string;
     id?: number;
     outcomes?: string[];
@@ -26,4 +25,11 @@ export namespace TrainingDefinitionDTO {
         ARCHIVED: 'ARCHIVED' as StateEnum,
         UNRELEASED: 'UNRELEASED' as StateEnum,
     };
+}
+
+/**
+ * Training Definition DTO extended with the levels the definition is composed of.
+ */
+export class TrainingDefinitionWithLevelsDTO extends TrainingDefinitionDTO {
+    levels?: AbstractLevelDTO[];
 }

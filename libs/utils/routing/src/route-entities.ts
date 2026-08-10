@@ -1,7 +1,7 @@
 import { inject } from '@angular/core';
 import { Group, User } from '@crczp/user-and-group-model';
 import { Pool, SandboxDefinition } from '@crczp/sandbox-model';
-import { TrainingDefinition, TrainingInstance } from '@crczp/training-model';
+import { TrainingDefinitionWithLevels, TrainingInstance } from '@crczp/training-model';
 import { of } from 'rxjs';
 import { defineRouteEntity } from './resolver/define-route-entity';
 import { TrainingResolverHelperService } from './resolver/training/training-resolver-helper.service';
@@ -21,8 +21,8 @@ export const resolveTrainingInstance = defineRouteEntity<TrainingInstance>({
 /**
  * Training definition addressed by `definitionId`, labelled by its title.
  */
-export const resolveTrainingDefinition = defineRouteEntity<TrainingDefinition>({
-    key: TrainingDefinition.name,
+export const resolveTrainingDefinition = defineRouteEntity<TrainingDefinitionWithLevels>({
+    key: TrainingDefinitionWithLevels.name,
     fetch: (route) => inject(TrainingResolverHelperService).getDefinition(route),
     redirect: () =>
         inject(TrainingResolverHelperService).definitionOverviewUrl(),

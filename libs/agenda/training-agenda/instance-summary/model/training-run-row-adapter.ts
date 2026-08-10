@@ -1,4 +1,4 @@
-import {TrainingDefinition, TrainingRun} from '@crczp/training-model';
+import {TrainingDefinitionWithLevels, TrainingRun} from '@crczp/training-model';
 
 /**
  * Class representing row of training run table
@@ -8,5 +8,5 @@ export class TrainingRunRowAdapter extends TrainingRun {
     startTimeFormatted: string;
     endTimeFormatted: string;
     duration: string;
-    trainingDefinition: TrainingDefinition;
+    trainingDefinition: TrainingDefinitionWithLevels;
 }

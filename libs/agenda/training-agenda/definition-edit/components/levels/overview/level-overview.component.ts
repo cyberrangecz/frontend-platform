@@ -21,7 +21,7 @@ import {
 import {
     Level,
     MitreTechnique,
-    TrainingDefinition,
+    TrainingDefinitionWithLevels,
 } from '@crczp/training-model';
 import {
     SentinelControlItem,
@@ -52,7 +52,7 @@ import { AbstractLevelEditComponent } from '../level/abstract-level-edit.compone
 export class LevelOverviewComponent implements OnInit, OnChanges {
     @Output() unsavedLevels: EventEmitter<Level[]> = new EventEmitter();
     @Output() levelsCount: EventEmitter<number> = new EventEmitter();
-    @Input() trainingDefinition: TrainingDefinition;
+    @Input() trainingDefinition: TrainingDefinitionWithLevels;
     @Input() editMode: boolean;
     @Input() mitreTechniquesList: MitreTechnique[];
     activeStep$: Observable<number>;

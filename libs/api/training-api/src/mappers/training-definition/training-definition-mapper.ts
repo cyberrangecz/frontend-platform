@@ -1,6 +1,13 @@
-import { TrainingDefinition, TrainingDefinitionStateEnum } from '@crczp/training-model';
+import {
+    TrainingDefinition,
+    TrainingDefinitionWithLevels,
+    TrainingDefinitionStateEnum,
+} from '@crczp/training-model';
 import { TrainingDefinitionCreateDTO } from '../../dto/training-definition/training-definition-create-dto';
-import { TrainingDefinitionDTO } from '../../dto/training-definition/training-definition-dto';
+import {
+    TrainingDefinitionDTO,
+    TrainingDefinitionWithLevelsDTO,
+} from '../../dto/training-definition/training-definition-dto';
 import { TrainingDefinitionUpdateDTO } from '../../dto/training-definition/training-definition-update-dto';
 import { LevelMapper } from '../level/level-mapper';
 
@@ -10,24 +17,45 @@ import { LevelMapper } from '../level/level-mapper';
 export class TrainingDefinitionMapper {
     static fromDTO(dto: TrainingDefinitionDTO): TrainingDefinition {
         const result = new TrainingDefinition();
-        result.id = dto.id;
-        result.title = dto.title;
-        result.description = dto.description;
-        result.prerequisites = dto.prerequisites ? dto.prerequisites : [];
-        result.outcomes = dto.outcomes ? dto.outcomes : [];
-        result.state = this.stateFromDTO(dto.state);
-        result.lastEditTime = dto.last_edited;
-        result.estimatedDuration = dto.estimated_duration;
-        if (dto.levels) {
-            result.levels = LevelMapper.fromDTOs(dto.levels);
-        }
-        result.lastEditBy = dto.last_edited_by;
-        result.createdAt = dto.created_at;
+        TrainingDefinitionMapper.assignSharedAttributes(result, dto);
         return result;
     }
 
     static fromDTOs(dtos: TrainingDefinitionDTO[]): TrainingDefinition[] {
         return dtos.map((dto) => TrainingDefinitionMapper.fromDTO(dto));
+    }
+
+    static withLevelsFromDTO(
+        dto: TrainingDefinitionWithLevelsDTO,
+    ): TrainingDefinitionWithLevels {
+        const result = new TrainingDefinitionWithLevels();
+        TrainingDefinitionMapper.assignSharedAttributes(result, dto);
+        if (dto.levels) {
+            result.levels = LevelMapper.fromDTOs(dto.levels);
+        }
+        return result;
+    }
+
+    static withLevelsFromDTOs(
+        dtos: TrainingDefinitionWithLevelsDTO[],
+    ): TrainingDefinitionWithLevels[] {
+        return dtos.map((dto) => TrainingDefinitionMapper.withLevelsFromDTO(dto));
+    }
+
+    private static assignSharedAttributes(
+        target: TrainingDefinition,
+        dto: TrainingDefinitionDTO,
+    ): void {
+        target.id = dto.id;
+        target.title = dto.title;
+        target.description = dto.description;
+        target.prerequisites = dto.prerequisites ? dto.prerequisites : [];
+        target.outcomes = dto.outcomes ? dto.outcomes : [];
+        target.state = TrainingDefinitionMapper.stateFromDTO(dto.state);
+        target.lastEditTime = dto.last_edited;
+        target.estimatedDuration = dto.estimated_duration;
+        target.lastEditBy = dto.last_edited_by;
+        target.createdAt = dto.created_at;
     }
 
     static stateFromDTO(
@@ -42,8 +70,8 @@ export class TrainingDefinitionMapper {
                 return TrainingDefinitionStateEnum.Unreleased;
             default: {
                 console.error(
-                    `Attribute "state" of TrainingDefinitionDTO with value: ${stateDTO}
-                    does not match any of the TrainingDefinition states`,
+                    `Attribute "state" of TrainingDefinitionWithLevelsDTO with value: ${stateDTO}
+                    does not match any of the TrainingDefinitionWithLevels states`,
                 );
                 return undefined;
             }
@@ -62,7 +90,7 @@ export class TrainingDefinitionMapper {
                 return TrainingDefinitionDTO.StateEnum.ARCHIVED;
             default: {
                 console.error(
-                    `Attribute "state" of TrainingDefinition with value ${state} does not match any of the TrainingDefinitionDTO states`,
+                    `Attribute "state" of TrainingDefinitionWithLevels with value ${state} does not match any of the TrainingDefinitionWithLevelsDTO states`,
                 );
                 return undefined;
             }
@@ -70,7 +98,7 @@ export class TrainingDefinitionMapper {
     }
 
     static toUpdateDTO(
-        trainingDefinition: TrainingDefinition,
+        trainingDefinition: TrainingDefinitionWithLevels,
     ): TrainingDefinitionUpdateDTO {
         const result = new TrainingDefinitionUpdateDTO();
         result.id = trainingDefinition.id;
@@ -89,7 +117,7 @@ export class TrainingDefinitionMapper {
     }
 
     static toCreateDTO(
-        trainingDefinition: TrainingDefinition,
+        trainingDefinition: TrainingDefinitionWithLevels,
     ): TrainingDefinitionCreateDTO {
         const result = new TrainingDefinitionCreateDTO();
         result.prerequisites = trainingDefinition.prerequisites.filter(

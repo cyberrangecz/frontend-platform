@@ -6,7 +6,7 @@ import {
     UntypedFormControl,
     UntypedFormGroup
 } from '@angular/forms';
-import {TrainingDefinition} from '@crczp/training-model';
+import {TrainingDefinitionWithLevels} from '@crczp/training-model';
 import {TrainingDefinitionChangeEvent} from '../../model/events/training-definition-change-event';
 import {TrainingDefinitionEditFormGroup} from './training-definition-edit-form-group';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
@@ -42,7 +42,7 @@ import { CdkTextareaAutosize } from '@angular/cdk/text-field';
 ]
 })
 export class TrainingDefinitionEditComponent implements OnChanges {
-    @Input() trainingDefinition: TrainingDefinition;
+    @Input() trainingDefinition: TrainingDefinitionWithLevels;
     @Output() edited: EventEmitter<TrainingDefinitionChangeEvent> = new EventEmitter();
 
     trainingDefinitionEditFormGroup: TrainingDefinitionEditFormGroup;

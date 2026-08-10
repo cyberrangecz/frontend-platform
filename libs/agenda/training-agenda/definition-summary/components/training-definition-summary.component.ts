@@ -5,7 +5,7 @@ import {
     OnInit,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { TrainingDefinition } from '@crczp/training-model';
+import { TrainingDefinitionWithLevels } from '@crczp/training-model';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { AsyncPipe } from '@angular/common';
@@ -27,12 +27,12 @@ import { TrainingDefinitionLevelsDetailComponent } from './levels/training-defin
     ],
 })
 export class TrainingDefinitionSummaryComponent implements OnInit {
-    trainingDefinition$: Observable<TrainingDefinition>;
+    trainingDefinition$: Observable<TrainingDefinitionWithLevels>;
     private activeRoute = inject(ActivatedRoute);
 
     ngOnInit(): void {
         this.trainingDefinition$ = this.activeRoute.data.pipe(
-            map((data) => data[TrainingDefinition.name] || null)
+            map((data) => data[TrainingDefinitionWithLevels.name] || null)
         );
     }
 }

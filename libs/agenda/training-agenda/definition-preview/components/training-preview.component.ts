@@ -1,5 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { Level, TrainingDefinition } from '@crczp/training-model';
+import { Level, TrainingDefinitionWithLevels } from '@crczp/training-model';
 import { ActivatedRoute } from '@angular/router';
 import { TrainingPreviewStepper } from '../model/training-preview-stepper';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -24,7 +24,7 @@ export class TrainingPreviewComponent implements OnInit {
 
     constructor() {
         this.activeRoute.data.pipe(takeUntilDestroyed()).subscribe((data) => {
-            this.levels = data[TrainingDefinition.name].levels;
+            this.levels = data[TrainingDefinitionWithLevels.name].levels;
         });
     }
 

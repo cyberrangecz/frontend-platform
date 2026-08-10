@@ -6,7 +6,11 @@ import {
     SentinelDialogResultEnum
 } from '@sentinel/components/dialogs';
 import { OffsetPaginationEvent } from '@crczp/utils';
-import { TrainingDefinition, TrainingDefinitionStateEnum } from '@crczp/training-model';
+import {
+    TrainingDefinition,
+    TrainingDefinitionWithLevels,
+    TrainingDefinitionStateEnum
+} from '@crczp/training-model';
 import { EMPTY, from, Observable } from 'rxjs';
 import { filter, map, switchMap, take, tap } from 'rxjs/operators';
 import { CloneDialogComponent } from '../../components/clone-dialog/clone-dialog.component';
@@ -41,7 +45,7 @@ export class TrainingDefinitionService extends CrczpOffsetElementsPaginatedServi
      * Gets training definition by @definitionId. Updates related observables or handles an error
      * @param definitionId ID of requested training definition
      */
-    get(definitionId: number): Observable<TrainingDefinition> {
+    get(definitionId: number): Observable<TrainingDefinitionWithLevels> {
         this.hasErrorSubject$.next(false);
         this.isLoadingSubject$.next(true);
         return this.api.get(definitionId);
