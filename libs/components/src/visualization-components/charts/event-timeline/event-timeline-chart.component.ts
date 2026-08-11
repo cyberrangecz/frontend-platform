@@ -19,7 +19,7 @@ import {
     ScatterSeriesOption,
     XAXisComponentOption,
 } from 'echarts';
-import { ECharts } from 'echarts/core';
+import { EChartsCoreOption, ECharts, SetOptionOpts } from 'echarts/core';
 import { NgxEchartsDirective } from 'ngx-echarts';
 
 import { EntityResolverService, EntityType } from '@crczp/event-query-engine';
@@ -31,6 +31,7 @@ import {
 import { Utils } from '@crczp/utils';
 
 import {
+    ChartOptionApply,
     ChartPalette,
     ChartPanelInputs,
     ChartPanelShellComponent,
@@ -381,13 +382,13 @@ export class EventTimelineChartComponent
     private reassertScheduled = false;
 
     /**
-     * Captures the chart instance, drives wheel zoom (plain) and pan (shift)
+     * Drives wheel zoom (plain) and pan (shift)
      * mutually exclusively, and persists the user's view window across live rebuilds.
      *
-     * @param instance  The initialised ECharts instance.
+     * @param instance  The ECharts instance being wired.
      */
-    protected override onChartInit(instance: ECharts): void {
-        super.onChartInit(instance);
+    protected override wireChart(instance: ECharts): void {
+        super.wireChart(instance);
         const renderer = instance.getZr();
         renderer.on('mousemove', (event: ZRenderPointer) => this.onPointerMove(instance, event));
         renderer.on('globalout', () => {
@@ -396,19 +397,32 @@ export class EventTimelineChartComponent
         });
         renderer.on('mousewheel', (event: ZRWheelEvent) => this.onWheel(instance, event));
         instance.on('datazoom', () => this.captureZoomWindow(instance));
+    }
 
-        const applyOption = instance.setOption.bind(instance) as (...args: unknown[]) => unknown;
-        (instance as unknown as { setOption: (...args: unknown[]) => unknown }).setOption = (...args: unknown[]): unknown => {
-            const result = applyOption(...args);
-            if (!this.snapUpdating && !this.reassertScheduled && this.lastPointerX !== null) {
-                this.reassertScheduled = true;
-                queueMicrotask(() => {
-                    this.reassertScheduled = false;
-                    this.reassertSnap(instance);
-                });
-            }
-            return result;
-        };
+    /**
+     * Re-asserts the pointer snap after a rebuild replaces the option the snap was
+     * measured against. The re-assert is queued as a microtask so it reads the
+     * settled coordinate system, and is skipped while the component is itself driving
+     * the option or while a re-assert is already pending.
+     *
+     * @param instance     The ECharts instance the option is applied to.
+     * @param applyToChart The unwrapped `setOption` that performs the application.
+     * @param option       The option payload to apply.
+     * @param notMerge     ECharts' `notMerge` flag, in either accepted form.
+     */
+    protected override applyChartOption(
+        instance: ECharts,
+        applyToChart: ChartOptionApply,
+        option: EChartsCoreOption,
+        notMerge?: boolean | SetOptionOpts,
+    ): void {
+        super.applyChartOption(instance, applyToChart, option, notMerge);
+        if (this.snapUpdating || this.reassertScheduled || this.lastPointerX === null) return;
+        this.reassertScheduled = true;
+        queueMicrotask(() => {
+            this.reassertScheduled = false;
+            this.reassertSnap(instance);
+        });
     }
 
     /**
@@ -768,11 +782,13 @@ export class EventTimelineChartComponent
     /**
      * Re-applies the snap at the last pointer position after a chart rebuild, so the
      * tooltip and snap line survive a live data reload without needing a mouse move.
+     * Skipped for a disposed instance, which the queued re-assert can still reach after
+     * the host has navigated away.
      *
      * @param instance  The chart instance to drive.
      */
     private reassertSnap(instance: ECharts): void {
-        if (this.lastPointerX === null) return;
+        if (this.lastPointerX === null || instance.isDisposed()) return;
         this.snapKey = null;
         this.onPointerMove(instance, { offsetX: this.lastPointerX, offsetY: 0 });
     }

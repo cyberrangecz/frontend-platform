@@ -1,4 +1,5 @@
 export * from './crczp-http.service';
+export * from './cache/split-entity-cache';
 export * from './mapper/mapper-builder';
 export * from './pagination/init-pagination';
 export * from './pagination/pagination-mapper';

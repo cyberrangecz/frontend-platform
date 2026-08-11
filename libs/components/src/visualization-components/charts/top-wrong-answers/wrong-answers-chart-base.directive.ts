@@ -591,14 +591,14 @@ export abstract class WrongAnswersChartBase
     }
 
     /**
-     * Captures the ECharts instance and mirrors level selection into
+     * Mirrors level selection into
      * `selectedLevelIndex`: from the timeline slider, and — in the pie view — from
      * clicking an inner-ring slice, which represents a single level.
      *
-     * @param instance The initialised ECharts instance emitted by ngx-echarts.
+     * @param instance The ECharts instance being wired.
      */
-    protected override onChartInit(instance: ECharts): void {
-        super.onChartInit(instance);
+    protected override wireChart(instance: ECharts): void {
+        super.wireChart(instance);
         instance.on('timelinechanged', (event: TimelineChangedEvent) => this.selectLevel(event.currentIndex));
         instance.on('click', (event: ECElementEvent) => {
             if (event.seriesName !== 'Level share') return;

@@ -19,7 +19,7 @@
                         class="difficulty-radar"
                         [options]="item.option"
                         [autoResize]="true"
-                        (chartInit)="pinDefaultCursor($event)"
+                        (chartInit)="onChartInit($event)"
                     ></div>
                     <div class="difficulty-foot">{{ item.panel.startedCount }} trainees</div>
                 } @else {

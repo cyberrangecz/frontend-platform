@@ -1,5 +1,5 @@
 import { afterNextRender, DestroyRef, Directive, ElementRef, inject, signal, WritableSignal } from '@angular/core';
-import { ECElementEvent, ECharts } from 'echarts/core';
+import { EChartsCoreOption, ECElementEvent, ECharts, SetOptionOpts } from 'echarts/core';
 
 import { ChartPalette, resolveChartPalette } from './chart-palette';
 
@@ -17,6 +17,14 @@ const TIMELINE_WHEEL_BAND_HEIGHT = 100;
 /** Minimum gap in milliseconds between two wheel-driven timeline steps, so the burst of
  *  wheel events a single physical scroll emits advances the selection by just one checkpoint. */
 const TIMELINE_STEP_COOLDOWN_MS = 120;
+
+/**
+ * Single call signature unifying ECharts' two `setOption` overloads as the option
+ * interceptor uses them: an option plus the optional `notMerge` flag, in either its
+ * boolean or its options-object form. The interceptor never passes the third
+ * `lazyUpdate` argument.
+ */
+export type ChartOptionApply = (option: EChartsCoreOption, notMerge?: boolean | SetOptionOpts) => void;
 
 /** Drives a {@link EchartsChartBase.configureTimelineScroll} timeline picker from the wheel. */
 interface TimelineScrollBinding {
@@ -79,10 +87,20 @@ export abstract class EchartsChartBase {
     /** Live ECharts instance captured on `chartInit`, used for imperative tooltip dispatch. */
     private chartInstance: ECharts | null = null;
 
-    /** Whether the pointer is currently inside the chart's drawing surface. */
-    private pointerInside = false;
+    /** Instances already wired, so a repeated `chartInit` for one of them wires nothing twice. */
+    private readonly wiredInstances = new WeakSet<ECharts>();
 
-    /** Last pointer position over the chart, in canvas pixels, used to re-show the tooltip. */
+    /** Whether the host component has been destroyed, gating any late `chartInit`. */
+    private destroyed = false;
+
+    /**
+     * The instance whose drawing surface the pointer is currently over, or null when the
+     * pointer is outside every one of them. Held per instance because a chart component
+     * may host several, and only the hovered one may re-show a tooltip.
+     */
+    private pointerChart: ECharts | null = null;
+
+    /** Last pointer position over {@link pointerChart}, in canvas pixels. */
     private pointerX = 0;
     private pointerY = 0;
 
@@ -116,6 +134,7 @@ export abstract class EchartsChartBase {
          * `chartOptions` computes can size category-label truncation responsively.
          */
         afterNextRender(() => this.observeWidth(this.hostElement.nativeElement));
+        this.destroyRef.onDestroy(() => (this.destroyed = true));
     }
 
     /**
@@ -135,15 +154,45 @@ export abstract class EchartsChartBase {
     }
 
     /**
-     * Captures the ECharts instance once ngx-echarts emits `chartInit`, so
-     * `onAxisLabelHover` / `onAxisLabelLeave` can dispatch tooltip actions
-     * imperatively and the wheel, row-scroll, and timeline bindings can attach.
+     * Sole `(chartInit)` binding target for every chart: admits an instance to
+     * {@link wireChart} exactly once and never after the host is destroyed.
+     *
+     * ngx-echarts creates the chart asynchronously and re-enters that path while the
+     * first creation is still in flight, so `chartInit` can emit repeatedly with the
+     * same instance ECharts returns for an already-bound host, and can emit after the
+     * host component is gone. An instance arriving past destroy is disposed here,
+     * because ngx-echarts assigns it only after its own teardown has run and would
+     * otherwise leave it alive.
+     *
+     * Not intended for overriding — subclasses extend {@link wireChart} instead, so
+     * their wiring is subject to these guards.
      *
      * @param instance The initialised ECharts instance emitted by ngx-echarts.
      */
     protected onChartInit(instance: ECharts): void {
+        if (this.destroyed) {
+            if (!instance.isDisposed()) instance.dispose();
+            return;
+        }
+        if (this.wiredInstances.has(instance)) return;
+        this.wiredInstances.add(instance);
         this.chartInstance = instance;
-        this.keepTooltipOnOptionUpdate(instance);
+        this.wireChart(instance);
+    }
+
+    /**
+     * Attaches the shared behaviours to a freshly admitted instance: the option
+     * interceptor behind {@link applyChartOption}, and the wheel, row-scroll and
+     * timeline bindings. Runs once per instance.
+     *
+     * Subclasses attach their own listeners and overlays by overriding this and
+     * calling `super.wireChart(instance)` first.
+     *
+     * @param instance The ECharts instance to wire.
+     */
+    protected wireChart(instance: ECharts): void {
+        this.trackPointer(instance);
+        this.installOptionInterceptor(instance);
         this.bindWheelScroll(instance);
         this.bindRowScrollSlider(instance);
         this.bindTimelineCursor(instance);
@@ -334,36 +383,61 @@ export abstract class EchartsChartBase {
     }
 
     /**
-     * Keeps an open tooltip visible across live option updates. ngx-echarts re-applies the
-     * full option via `setOption` on every data refresh, which dismisses any showing tooltip
-     * until the next pointer move. This tracks the pointer over the chart and re-issues
-     * `showTip` at that position immediately after each `setOption`, so a tooltip the user is
-     * reading reappears instantly instead of blanking until they move the mouse. Using pixel
-     * coordinates makes it work for both axis-trigger and item-trigger tooltips.
+     * Mirrors the pointer's position over the drawing surface into
+     * {@link pointerChart}, {@link pointerX} and {@link pointerY}, so an option update
+     * can re-show a tooltip at the place the user is reading.
      *
-     * @param instance The ECharts instance whose option updates to bridge.
+     * @param instance The ECharts instance whose pointer to track.
      */
-    private keepTooltipOnOptionUpdate(instance: ECharts): void {
+    private trackPointer(instance: ECharts): void {
         const renderer = instance.getZr();
         renderer.on('mousemove', (event: ZRenderPointerEvent) => {
-            this.pointerInside = true;
+            this.pointerChart = instance;
             this.pointerX = event.offsetX;
             this.pointerY = event.offsetY;
         });
         renderer.on('globalout', () => {
-            this.pointerInside = false;
+            if (this.pointerChart === instance) this.pointerChart = null;
         });
+    }
 
-        const applyOption = instance.setOption.bind(instance) as (...args: unknown[]) => unknown;
-        (instance as unknown as { setOption: (...args: unknown[]) => unknown }).setOption = (
-            ...args: unknown[]
-        ): unknown => {
-            const result = applyOption(...args);
-            if (this.pointerInside) {
-                instance.dispatchAction({ type: 'showTip', x: this.pointerX, y: this.pointerY });
-            }
-            return result;
-        };
+    /**
+     * Routes every `setOption` call on the instance through {@link applyChartOption},
+     * giving the hierarchy one interception point instead of a patch per level.
+     *
+     * @param instance The ECharts instance whose option calls to route.
+     */
+    private installOptionInterceptor(instance: ECharts): void {
+        const applyToChart = instance.setOption.bind(instance) as ChartOptionApply;
+        instance.setOption = ((option: EChartsCoreOption, notMerge?: boolean | SetOptionOpts): void =>
+            this.applyChartOption(instance, applyToChart, option, notMerge)) as ECharts['setOption'];
+    }
+
+    /**
+     * Applies one option to the chart and keeps an open tooltip alive across it.
+     * ngx-echarts re-applies the full option on every data refresh, which dismisses a
+     * showing tooltip until the next pointer move; re-issuing `showTip` at the tracked
+     * pixel position restores it immediately, for both axis-trigger and item-trigger
+     * tooltips.
+     *
+     * Subclasses override this to post-process the applied option or to withhold the
+     * call entirely, delegating to `super.applyChartOption(...)` to let it through.
+     *
+     * @param instance   The ECharts instance the option is applied to.
+     * @param applyToChart The unwrapped `setOption` that performs the application.
+     * @param option     The option payload to apply.
+     * @param notMerge   ECharts' `notMerge` flag, in either accepted form.
+     */
+    protected applyChartOption(
+        instance: ECharts,
+        applyToChart: ChartOptionApply,
+        option: EChartsCoreOption,
+        notMerge?: boolean | SetOptionOpts,
+    ): void {
+        applyToChart(option, notMerge);
+        if (this.pointerChart === instance) {
+            instance.dispatchAction({ type: 'showTip', x: this.pointerX, y: this.pointerY });
+        }
     }
 
     /**
@@ -379,7 +453,7 @@ export abstract class EchartsChartBase {
         if (event.componentType !== 'xAxis') return;
         const index = this.axisLabels().indexOf(String(event.value));
         if (index < 0) return;
-        this.chartInstance?.dispatchAction({ type: 'showTip', seriesIndex: 0, dataIndex: index });
+        this.liveChart()?.dispatchAction({ type: 'showTip', seriesIndex: 0, dataIndex: index });
     }
 
     /**
@@ -389,7 +463,19 @@ export abstract class EchartsChartBase {
      */
     protected onAxisLabelLeave(event: ECElementEvent): void {
         if (event.componentType !== 'xAxis') return;
-        this.chartInstance?.dispatchAction({ type: 'hideTip' });
+        this.liveChart()?.dispatchAction({ type: 'hideTip' });
+    }
+
+    /**
+     * The captured instance while it is still usable, or null once it has been
+     * disposed. Every call on a disposed instance reaches through a nulled internal
+     * renderer and throws, so imperative dispatches resolve the instance through here.
+     *
+     * @returns The live ECharts instance, or null when none is usable.
+     */
+    protected liveChart(): ECharts | null {
+        const instance = this.chartInstance;
+        return instance !== null && !instance.isDisposed() ? instance : null;
     }
 
     /**

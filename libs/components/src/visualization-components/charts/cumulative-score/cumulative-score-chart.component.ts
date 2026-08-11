@@ -291,8 +291,8 @@ export class CumulativeScoreChartComponent
         return [ORIGIN_LABEL, ...this.points().map((point) => point.title)];
     }
 
-    protected override onChartInit(instance: ECharts): void {
-        super.onChartInit(instance);
+    protected override wireChart(instance: ECharts): void {
+        super.wireChart(instance);
         instance.on('updateAxisPointer', (event) =>
             this.hoveredIndex.set(this.resolveHoverIndex(event as AxisPointerEvent)),
         );
