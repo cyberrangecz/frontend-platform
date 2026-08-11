@@ -7,7 +7,6 @@ export class TrainingDefinitionCreateDTO {
     prerequisites?: string[];
     state?: TrainingDefinitionCreateDTO.StateEnum;
     title?: string;
-    variant_sandboxes?: boolean;
     default_content?: boolean;
 }
 

@@ -12,7 +12,6 @@ export class TrainingDefinitionDTO {
     title?: string;
     estimated_duration: number;
     last_edited?: Date;
-    variant_sandboxes: boolean;
     last_edited_by?: string;
     created_at: Date;
 }

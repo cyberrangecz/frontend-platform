@@ -8,7 +8,6 @@ export class TrainingDefinitionUpdateDTO {
     prerequisites?: string[];
     state?: TrainingDefinitionUpdateDTO.StateEnum;
     title?: string;
-    variant_sandboxes?: boolean;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
