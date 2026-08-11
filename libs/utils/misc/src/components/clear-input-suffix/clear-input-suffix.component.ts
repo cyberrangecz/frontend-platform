@@ -5,7 +5,7 @@ import { MatIcon } from '@angular/material/icon';
 
 /**
  * Suffix button that empties the form control it is bound to, shown only while the control
- * holds a value. Place it inside a `mat-form-field` alongside `matSuffix`.
+ * holds a value and is enabled. Place it inside a `mat-form-field` alongside `matSuffix`.
  */
 @Component({
     selector: 'crczp-clear-input-suffix',

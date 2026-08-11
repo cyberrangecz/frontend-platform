@@ -1,4 +1,4 @@
-@if (control().value) {
+@if (control().value && control().enabled) {
     <button (click)="clear()" [attr.aria-label]="label()" mat-icon-button type="button">
         <mat-icon>close</mat-icon>
     </button>
