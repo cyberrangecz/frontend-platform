@@ -2,9 +2,7 @@ import {
     ChangeDetectionStrategy,
     Component,
     DestroyRef,
-    EventEmitter,
     inject,
-    Output,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import {
@@ -14,6 +12,7 @@ import {
 import { Group } from '@crczp/user-and-group-model';
 import { defer, filter, Observable, of } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import { UnsavedChangesTracker } from '@crczp/utils';
 import { SaveControlItem } from '@crczp/user-and-group-agenda/internal';
 import { GroupChangedEvent } from '../model/group-changed-event';
 import { GroupEditService } from '../services/state/group-edit.service';
@@ -54,12 +53,11 @@ import { GroupUserAssignComponent } from './group-user-assign/group-user-assign.
     providers: [{ provide: GroupEditService, useClass: GroupEditService }],
 })
 export class GroupEditOverviewComponent {
-    @Output() canDeactivateEvent: EventEmitter<boolean> = new EventEmitter();
     group$: Observable<Group> = of();
     editMode$: Observable<boolean>;
-    canDeactivateGroupEdit = true;
-    canDeactivateMembers = true;
-    canDeactivateRoles = true;
+    protected readonly unsavedChanges = new UnsavedChangesTracker<
+        'groupDetails' | 'groupMembers' | 'groupRoles'
+    >();
     controls: SentinelControlItem[];
     destroyRef = inject(DestroyRef);
 
@@ -85,24 +83,20 @@ export class GroupEditOverviewComponent {
      * Determines if all changes in subcomponents are saved and user can navigate to different component
      */
     canDeactivate(): boolean {
-        return (
-            this.canDeactivateGroupEdit &&
-            this.canDeactivateMembers &&
-            this.canDeactivateRoles
-        );
+        return !this.unsavedChanges.hasAny();
     }
 
     onGroupChanged(groupEvent: GroupChangedEvent): void {
-        this.canDeactivateGroupEdit = false;
+        this.unsavedChanges.set('groupDetails', true);
         this.editService.change(groupEvent);
     }
 
     onUnsavedMembersChange(hasUnsavedChanges: boolean): void {
-        this.canDeactivateMembers = !hasUnsavedChanges;
+        this.unsavedChanges.set('groupMembers', hasUnsavedChanges);
     }
 
     onUnsavedRolesChange(hasUnsavedChanges: boolean): void {
-        this.canDeactivateRoles = !hasUnsavedChanges;
+        this.unsavedChanges.set('groupRoles', hasUnsavedChanges);
     }
 
     private initControls(isEditMode: boolean) {
@@ -112,7 +106,7 @@ export class GroupEditOverviewComponent {
             defer(() =>
                 this.editService
                     .save()
-                    .pipe(tap(() => (this.canDeactivateGroupEdit = true))),
+                    .pipe(this.unsavedChanges.clearOnSuccess('groupDetails')),
             ),
         );
         if (isEditMode) {
@@ -125,7 +119,7 @@ export class GroupEditOverviewComponent {
                 defer(() =>
                     this.editService
                         .createAndEdit()
-                        .pipe(tap(() => (this.canDeactivateGroupEdit = true))),
+                        .pipe(this.unsavedChanges.clearOnSuccess('groupDetails')),
                 ),
             );
             saveAndStayItem.id = 'save_and_stay';

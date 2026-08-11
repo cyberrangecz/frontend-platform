@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { LinearTrainingDefinitionApi } from '@crczp/training-api';
 import { TrainingDefinitionWithLevels } from '@crczp/training-model';
 import { combineLatest, concat, Observable } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { map, tap, toArray } from 'rxjs/operators';
 import { TrainingDefinitionChangeEvent } from '../../../model/events/training-definition-change-event';
 import { TrainingDefinitionEditService } from './training-definition-edit.service';
 import { LevelEditService } from '../level/level-edit.service';
@@ -53,7 +53,7 @@ export class TrainingDefinitionEditConcreteService extends TrainingDefinitionEdi
                 return concat(
                     this.update(),
                     this.levelEditService.saveUnsavedLevels(),
-                );
+                ).pipe(toArray());
             } else {
                 return this.levelEditService.saveUnsavedLevels();
             }

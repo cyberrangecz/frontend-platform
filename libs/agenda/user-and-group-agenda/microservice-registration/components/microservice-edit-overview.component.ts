@@ -1,10 +1,11 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { MicroserviceApi } from '@crczp/user-and-group-api';
 import { Microservice } from '@crczp/user-and-group-model';
 import { MicroserviceEditControlsComponent } from './microservice-edit-controls/microservice-edit-controls.component';
 import { MicroserviceEditComponent } from './microservice-edit/microservice-edit.component';
-import { ErrorHandlerService, NotificationService } from '@crczp/utils';
+import { ErrorHandlerService, NotificationService, UnsavedChangesTracker } from '@crczp/utils';
 import { Routing } from '@crczp/routing-commons';
 
 /**
@@ -30,21 +31,19 @@ export class MicroserviceEditOverviewComponent {
      * True if microservice-registration state form is valid, false otherwise
      */
     isFormValid = false;
-    /**
-     * True if form data are saved, false otherwise
-     */
-    canDeactivateForm = true;
+    private readonly unsavedChanges = new UnsavedChangesTracker<'microservice'>();
     private microservice = this.initialMicroservice;
     private api = inject(MicroserviceApi);
     private router = inject(Router);
     private notificationService = inject(NotificationService);
     private errorHandler = inject(ErrorHandlerService);
+    private destroyRef = inject(DestroyRef);
 
     /**
      * True if data in the component are saved and user can navigate to different page, false otherwise
      */
     canDeactivate(): boolean {
-        return this.canDeactivateForm;
+        return !this.unsavedChanges.hasAny();
     }
 
     /**
@@ -55,29 +54,34 @@ export class MicroserviceEditOverviewComponent {
         this.microservice = microservice;
         this.hasDefaultRole = microservice.hasDefaultRole();
         this.isFormValid = this.hasDefaultRole && microservice.valid;
-        this.canDeactivateForm = false;
+        this.unsavedChanges.set('microservice', true);
     }
 
     /**
      * Calls service to create microservice-registration and handles eventual error
      */
     create(): void {
-        this.api.create(this.microservice).subscribe({
-            next: () => {
-                this.router.navigate([
-                    Routing.RouteBuilder.microservice.build(),
-                ]);
-                this.notificationService.emit(
-                    'success',
-                    'Microservice was created'
-                );
-                this.canDeactivateForm = true;
-            },
-            error: (err) =>
-                this.errorHandler.emitAPIError(
-                    err,
-                    'Creating microservice-registration'
-                ),
-        });
+        this.api
+            .create(this.microservice)
+            .pipe(
+                this.unsavedChanges.clearOnSuccess('microservice'),
+                takeUntilDestroyed(this.destroyRef),
+            )
+            .subscribe({
+                next: () => {
+                    this.router.navigate([
+                        Routing.RouteBuilder.microservice.build(),
+                    ]);
+                    this.notificationService.emit(
+                        'success',
+                        'Microservice was created'
+                    );
+                },
+                error: (err) =>
+                    this.errorHandler.emitAPIError(
+                        err,
+                        'Creating microservice-registration'
+                    ),
+            });
     }
 }

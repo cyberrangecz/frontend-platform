@@ -25,7 +25,7 @@
     <mat-expansion-panel-header>
         <mat-panel-title>Edit Members</mat-panel-title>
         <mat-panel-description>
-            @if (!canDeactivateMembers) {
+            @if (unsavedChanges.has('groupMembers')) {
                 <div class="panel-description-error">
                     <mat-icon color="warn">warning</mat-icon>
                     <mat-error class="group-members-unsaved">Changes in group members are not saved</mat-error>
@@ -46,7 +46,7 @@
     <mat-expansion-panel-header>
         <mat-panel-title>Edit Roles</mat-panel-title>
         <mat-panel-description>
-            @if (!canDeactivateRoles) {
+            @if (unsavedChanges.has('groupRoles')) {
                 <div class="panel-description-error">
                     <mat-icon class="header-icon" color="warn">warning</mat-icon>
                     <mat-error class="group-roles-unsaved">Changes in group roles are not saved</mat-error>

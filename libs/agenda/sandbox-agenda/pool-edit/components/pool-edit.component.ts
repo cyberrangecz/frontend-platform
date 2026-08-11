@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, HostListener, inject, OnInit } from '@angular/core';
 import { SentinelControlItem, SentinelControlsComponent } from '@sentinel/components/controls';
 import { BehaviorSubject, combineLatest, defer, Observable, switchMap, tap } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -8,6 +8,7 @@ import { AbstractControl, ReactiveFormsModule } from '@angular/forms';
 import { Pool, SandboxDefinition } from '@crczp/sandbox-model';
 import { ActivatedRoute } from '@angular/router';
 import { PoolChangedEvent } from '../model/pool-changed-event';
+import { UnsavedChangesTracker } from '@crczp/utils';
 import {
     SandboxDefinitionOverviewConcreteService,
     SandboxDefinitionOverviewService
@@ -70,8 +71,8 @@ export class PoolEditComponent implements OnInit {
     pool: Pool;
     poolFormGroup: PoolFormGroup;
     editMode = false;
-    canDeactivatePoolEdit = true;
     controls: SentinelControlItem[];
+    private readonly unsavedChanges = new UnsavedChangesTracker<'poolForm'>();
     destroyRef = inject(DestroyRef);
     currentSandboxDefinitionFilter$: BehaviorSubject<string> =
         new BehaviorSubject('');
@@ -133,6 +134,21 @@ export class PoolEditComponent implements OnInit {
             .subscribe();
     }
 
+    /**
+     * Shows dialog asking the user if he really wants to leave the page after refresh or navigating to another page
+     */
+    @HostListener('window:beforeunload')
+    canRefreshOrLeave(): boolean {
+        return this.canDeactivate();
+    }
+
+    /**
+     * Determines if all changes to the pool are saved and the user can navigate to a different page
+     */
+    canDeactivate(): boolean {
+        return !this.unsavedChanges.hasAny();
+    }
+
     initControls(isEditMode: boolean): void {
         this.controls = [
             new SentinelControlItem(
@@ -140,7 +156,9 @@ export class PoolEditComponent implements OnInit {
                 isEditMode ? 'Save' : 'Create',
                 'primary',
                 this.poolEditService.saveDisabled$,
-                defer(() => this.poolEditService.save()),
+                defer(() => this.poolEditService.save()).pipe(
+                    this.unsavedChanges.clearOnSuccess('poolForm'),
+                ),
             ),
         ];
     }
@@ -168,7 +186,7 @@ export class PoolEditComponent implements OnInit {
 
     private onChanged() {
         this.poolFormGroup.setValuesToPool(this.pool);
-        this.canDeactivatePoolEdit = false;
+        this.unsavedChanges.set('poolForm', true);
         const change: PoolChangedEvent = new PoolChangedEvent(
             this.pool,
             this.poolFormGroup.formGroup.valid,

@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { canDeactivatePool } from '@crczp/sandbox-agenda/pool-edit';
 import { PoolOverviewComponent } from '@crczp/sandbox-agenda/pool-overview';
 import { Request } from '@crczp/sandbox-model';
 import { SandboxApiModule } from '@crczp/sandbox-api';
@@ -24,6 +25,7 @@ const routes: ValidRouterConfig<'pool'> = [
             title: 'Create Pool',
             breadcrumb: 'Create',
         },
+        canDeactivate: [canDeactivatePool],
     },
     {
         path: ':poolId/edit',
@@ -35,6 +37,7 @@ const routes: ValidRouterConfig<'pool'> = [
             title: 'Edit Pool {id}',
             breadcrumb: 'Edit',
         }),
+        canDeactivate: [canDeactivatePool],
     },
     {
         path: ':poolId',

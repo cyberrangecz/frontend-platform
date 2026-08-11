@@ -2,13 +2,12 @@ import { ChangeDetectionStrategy, Component, DestroyRef, HostListener, inject, O
 import { ActivatedRoute } from '@angular/router';
 import {
     SentinelControlItem,
-    SentinelControlItemSignal,
     SentinelControlsComponent
 } from '@sentinel/components/controls';
 import { TrainingDefinitionInfo, TrainingInstance } from '@crczp/training-model';
-import { BehaviorSubject, combineLatestWith, Observable, switchMap } from 'rxjs';
+import { combineLatest, combineLatestWith, defer, Observable, switchMap } from 'rxjs';
 import { filter, map, take } from 'rxjs/operators';
-import { TrainingInstanceEditControls } from '../model/adapter/training-instance-edit-controls';
+import { UnsavedChangesTracker } from '@crczp/utils';
 import { TrainingInstanceChangeEvent } from '../model/events/training-instance-change-event';
 import { Pool, SandboxDefinition } from '@crczp/sandbox-model';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -64,10 +63,9 @@ export class TrainingInstanceEditOverviewComponent implements OnInit {
     protected pools$: Observable<Pool[]>;
     protected sandboxDefinitions$: Observable<SandboxDefinition[]>;
     protected hasStarted$: Observable<boolean>;
-    protected readonly canDeactivateOrganizers = new BehaviorSubject<boolean>(
-        true,
-    );
-    protected readonly canDeactivateTIEdit = new BehaviorSubject<boolean>(true);
+    protected readonly unsavedChanges = new UnsavedChangesTracker<
+        'trainingInstanceDetails' | 'organizerAssignments'
+    >();
     private readonly instanceValid$: Observable<boolean>;
     private destroyRef = inject(DestroyRef);
     private readonly activeRoute = inject(ActivatedRoute);
@@ -111,11 +109,7 @@ export class TrainingInstanceEditOverviewComponent implements OnInit {
         this.refreshTrainingDefinitions();
         this.refreshPools();
         this.refreshSandboxDefinitions();
-        this.controls = TrainingInstanceEditControls.create(
-            this.editService,
-            saveDisabled$,
-            this.instanceValid$,
-        );
+        this.controls = this.createControls(saveDisabled$, this.instanceValid$);
     }
 
     ngOnInit(): void {
@@ -145,13 +139,7 @@ export class TrainingInstanceEditOverviewComponent implements OnInit {
      */
     @HostListener('window:beforeunload')
     canRefreshOrLeave(): boolean {
-        return (
-            this.canDeactivateTIEdit.value && this.canDeactivateOrganizers.value
-        );
-    }
-
-    onControlsAction(_control: SentinelControlItemSignal): void {
-        this.canDeactivateTIEdit.next(true);
+        return !this.unsavedChanges.hasAny();
     }
 
     /**
@@ -159,7 +147,7 @@ export class TrainingInstanceEditOverviewComponent implements OnInit {
      * @param hasUnsavedChanges true if organizers component has unsaved changes, false otherwise
      */
     onOrganizersChanged(hasUnsavedChanges: boolean): void {
-        this.canDeactivateOrganizers.next(!hasUnsavedChanges);
+        this.unsavedChanges.set('organizerAssignments', hasUnsavedChanges);
     }
 
     /**
@@ -168,7 +156,7 @@ export class TrainingInstanceEditOverviewComponent implements OnInit {
      */
     onTrainingInstanceChanged($event: TrainingInstanceChangeEvent): void {
         this.editService.change($event);
-        this.canDeactivateTIEdit.next(false);
+        this.unsavedChanges.set('trainingInstanceDetails', true);
     }
 
     isLocalEnvironmentAllowed(): boolean {
@@ -202,5 +190,30 @@ export class TrainingInstanceEditOverviewComponent implements OnInit {
             )
             .pipe(take(1))
             .subscribe();
+    }
+
+    private createControls(
+        saveDisabled$: Observable<boolean>,
+        instanceValid$: Observable<boolean>,
+    ): SentinelControlItem[] {
+        const disabled$: Observable<boolean> = combineLatest([
+            saveDisabled$,
+            instanceValid$,
+        ]).pipe(map(([saveDisabled, valid]) => saveDisabled || !valid));
+        return [
+            new SentinelControlItem(
+                'save',
+                'Save',
+                'primary',
+                disabled$,
+                defer(() =>
+                    this.editService
+                        .save()
+                        .pipe(
+                            this.unsavedChanges.clearOnSuccess('trainingInstanceDetails'),
+                        ),
+                ),
+            ),
+        ];
     }
 }
