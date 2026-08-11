@@ -3,7 +3,7 @@
         <!--TITLE field-->
         <mat-form-field (keydown.enter)="$event.preventDefault()" appearance="outline">
             <mat-label>Title</mat-label>
-            <input formControlName="title" matInput placeholder="Title" required />
+            <input formControlName="title" matInput maxlength="255" placeholder="Title" required />
             <crczp-clear-input-suffix [control]="title" matSuffix />
             @if (title.hasError('whitespace')) {
                 <mat-error>This field is required</mat-error>
@@ -110,7 +110,7 @@
                     class="multi-line-hint"
                 >
                     <mat-label>Access Token Prefix</mat-label>
-                    <input formControlName="accessTokenPrefix" matInput placeholder="Access Token" required />
+                    <input formControlName="accessTokenPrefix" matInput maxlength="32" placeholder="Access Token" required />
                     <crczp-clear-input-suffix [control]="accessTokenPrefix" matSuffix />
                     @if (!editMode) {
                         <mat-hint>Generated PIN code will be added to your token</mat-hint>

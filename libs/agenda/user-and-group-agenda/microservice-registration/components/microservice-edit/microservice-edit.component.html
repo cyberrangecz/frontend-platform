@@ -12,7 +12,7 @@
                 <!-- NAME field-->
                 <mat-form-field appearance="outline">
                     <mat-label>Name</mat-label>
-                    <input formControlName="name" matInput placeholder="Name" required>
+                    <input formControlName="name" matInput maxlength="255" placeholder="Name" required>
                     <crczp-clear-input-suffix [control]="name" label="Clear name" matSuffix />
                     <mat-error>Name cannot be empty</mat-error>
                 </mat-form-field>
