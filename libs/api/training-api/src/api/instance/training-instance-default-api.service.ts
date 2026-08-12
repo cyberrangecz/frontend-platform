@@ -53,7 +53,7 @@ export class TrainingInstanceDefaultApi extends LinearTrainingInstanceApi {
         const basePath = inject(PortalConfig).basePaths.linearTraining;
         this.trainingInstancesEndpointUri =
             basePath + '/' + this.trainingInstancesUriExtension;
-        this.trainingExportsEndpointUri = basePath + '/' + '/exports';
+        this.trainingExportsEndpointUri = basePath + '/exports';
     }
 
     /**
