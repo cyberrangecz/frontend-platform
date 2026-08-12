@@ -11,7 +11,7 @@ import {
     trainingRunEndedTable,
 } from '@crczp/event-query-engine';
 import {
-    AbstractLevelTypeEnum,
+    levelTypeFromEvent,
     TrainingUser,
     PlatformEventType
 } from '@crczp/training-model';
@@ -138,7 +138,7 @@ function toBarRow(row: ResolvedBarRow): BarRow {
         trainingRunId,
         levelId,
         levelOrder: row.level_order,
-        levelType: row.level_type as AbstractLevelTypeEnum,
+        levelType: levelTypeFromEvent(row.level_type),
         levelTitle: row.level_title,
         startedAt: row.started_at,
         completedAt: row.completed_at,
