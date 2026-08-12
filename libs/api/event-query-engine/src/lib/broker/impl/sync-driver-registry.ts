@@ -2,7 +2,6 @@ import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { PlatformEventType } from '@crczp/training-model';
 import { ErrorHandlerService, PortalConfig } from '@crczp/utils';
-import { LinearTrainingInstanceApi } from '@crczp/training-api';
 import { CacheSyncService } from '../../sync/sync.interface';
 import { InstanceSyncDriver } from './instance-sync-driver';
 
@@ -10,12 +9,11 @@ import { InstanceSyncDriver } from './instance-sync-driver';
  * Owns one {@link InstanceSyncDriver} per training instance and routes reader connections to the
  * driver for their instance. Drivers are created lazily on first connection and kept thereafter; an
  * idle driver goes dormant (its polling timer suspended) rather than being torn down, so switching
- * back to a previously visited instance resumes without re-resolving its pool id.
+ * back to a previously visited instance resumes without re-warming its loaded-types set.
  */
 @Injectable()
 export class SyncDriverRegistry {
     private readonly syncService = inject(CacheSyncService);
-    private readonly instanceApi = inject(LinearTrainingInstanceApi);
     private readonly errorHandler = inject(ErrorHandlerService);
     private readonly intervalMs = inject(PortalConfig).polling.pollingPeriodShortMs;
     private readonly drivers = new Map<number, InstanceSyncDriver>();
@@ -38,7 +36,6 @@ export class SyncDriverRegistry {
                 instanceId,
                 this.intervalMs,
                 this.syncService,
-                this.instanceApi,
                 this.errorHandler,
             );
             this.drivers.set(instanceId, driver);

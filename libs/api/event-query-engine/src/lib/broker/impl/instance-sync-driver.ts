@@ -1,7 +1,6 @@
 import {
     catchError,
     concat,
-    concatMap,
     defer,
     EMPTY,
     exhaustMap,
@@ -21,10 +20,8 @@ import {
 } from 'rxjs';
 import { PlatformEventType } from '@crczp/training-model';
 import { ErrorHandlerService } from '@crczp/utils';
-import { LinearTrainingInstanceApi } from '@crczp/training-api';
 import { CacheSyncService } from '../../sync/sync.interface';
 import { SyncTableComplete } from '../../sync/sync-result.interface';
-import { needsPoolId } from './pool-id-resolver';
 import { notifyOutage } from './error-notifier';
 
 const VOID = undefined as void;
@@ -37,7 +34,7 @@ const VOID = undefined as void;
  *
  * Lifecycle is reference-counted by event type: the union is the set of types with a non-zero count.
  * The polling timer runs only while the union is non-empty; emptying it suspends the timer (dormant)
- * while retaining the resolved pool id and the loaded-types set, so re-registering resumes instantly.
+ * while retaining the loaded-types set, so re-registering resumes instantly.
  *
  * Each reader's first emission is gated on readiness: it is withheld until every type that reader
  * requested has been loaded into the cache at least once, so a reader paints as soon as its own
@@ -54,22 +51,18 @@ export class InstanceSyncDriver {
     private readonly tick$ = new Subject<void>();
     private readonly wake$ = new Subject<void>();
     private loopSubscription: Subscription | null = null;
-    private poolId: number | undefined;
-    private poolIdResolved = false;
     private outageActive = false;
 
     /**
      * @param instanceId Training instance this driver syncs.
      * @param intervalMs Polling cadence between sync cycles.
      * @param syncService Performs the actual per-type fetch-and-insert sync.
-     * @param instanceApi Resolves the instance's pool id when a pool-scoped type joins the union.
      * @param errorHandler Surfaces user-facing notifications on a sync outage.
      */
     constructor(
         private readonly instanceId: number,
         private readonly intervalMs: number,
         private readonly syncService: CacheSyncService,
-        private readonly instanceApi: LinearTrainingInstanceApi,
         private readonly errorHandler: ErrorHandlerService,
     ) {}
 
@@ -161,32 +154,12 @@ export class InstanceSyncDriver {
     }
 
     private syncUnion(snapshot: PlatformEventType[]): Observable<void> {
-        return this.resolvePoolIdIfNeeded(snapshot).pipe(
-            concatMap(() =>
-                this.syncService
-                    .sync({
-                        instanceId: this.instanceId,
-                        eventTypes: snapshot,
-                        ...(this.poolId !== undefined ? { poolId: this.poolId } : {}),
-                    })
-                    .pipe(
-                        tap((complete: SyncTableComplete) => this.markLoaded(complete.eventType)),
-                        ignoreElements(),
-                    ),
-            ),
-        );
-    }
-
-    private resolvePoolIdIfNeeded(snapshot: PlatformEventType[]): Observable<void> {
-        if (this.poolIdResolved || !needsPoolId(snapshot)) return of(VOID);
-        return this.instanceApi.get(this.instanceId).pipe(
-            take(1),
-            tap((instance) => {
-                this.poolId = instance.poolId;
-                this.poolIdResolved = true;
-            }),
-            map(() => VOID),
-        );
+        return this.syncService
+            .sync({ instanceId: this.instanceId, eventTypes: snapshot })
+            .pipe(
+                tap((complete: SyncTableComplete) => this.markLoaded(complete.eventType)),
+                ignoreElements(),
+            );
     }
 
     private markLoaded(eventType: PlatformEventType): void {

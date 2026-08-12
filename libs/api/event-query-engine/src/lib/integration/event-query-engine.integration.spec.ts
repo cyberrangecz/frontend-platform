@@ -6,7 +6,6 @@ import { firstValueFrom, from, Observable, of, toArray } from 'rxjs';
 import { signal } from '@angular/core';
 
 import { ErrorHandlerService, PortalConfig } from '@crczp/utils';
-import { LinearTrainingInstanceApi } from '@crczp/training-api';
 import { applyNodeTestEnvironment, provideTestPortalConfig } from '@crczp/test-utils';
 
 import { CacheService, EventCacheDb, RawEventRow } from '../cache/cache.interface';
@@ -382,31 +381,7 @@ describe('Sync layer — SyncService with real Cache + mocked EventFetchApi', ()
         expect(completions).toHaveLength(0);
     });
 
-    it('COMMAND without poolId errors immediately before any fetch', async () => {
-        mockFetch.fetch.mockReturnValue(of([]));
-        const syncService = TestBed.inject(SyncService);
-
-        let errorMsg = '';
-        await new Promise<void>((resolve) => {
-            syncService
-                .sync({
-                    instanceId: 1,
-                    eventTypes: [PlatformEventType.COMMAND],
-                })
-                .subscribe({
-                    error: (e) => {
-                        errorMsg = e.message;
-                        resolve();
-                    },
-                    complete: resolve,
-                });
-        });
-
-        expect(errorMsg).toMatch(/pool/i);
-        expect(mockFetch.fetch).not.toHaveBeenCalled();
-    });
-
-    it('COMMAND with poolId succeeds and forwards poolId to fetch', async () => {
+    it('COMMAND sync fetches by instance id alone', async () => {
         mockFetch.fetch.mockReturnValue(of([]));
         const syncService = TestBed.inject(SyncService);
 
@@ -415,33 +390,33 @@ describe('Sync layer — SyncService with real Cache + mocked EventFetchApi', ()
                 .sync({
                     instanceId: 1,
                     eventTypes: [PlatformEventType.COMMAND],
-                    poolId: 42,
                 })
                 .pipe(toArray()),
         );
 
         expect(completions).toHaveLength(1);
-        expect(
-            (mockFetch.fetch.mock.calls[0][0] as EventFetchParams).poolId,
-        ).toBe(42);
+        expect(mockFetch.fetch).toHaveBeenCalledOnce();
+        expect(mockFetch.fetch).toHaveBeenCalledWith({
+            instanceId: 1,
+            eventType: PlatformEventType.COMMAND,
+            sinceTimestamp: 0,
+        });
     });
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
 // BROKER LAYER — DataBrokerServiceImpl with real Sync + Cache;
-// EventFetchApi and LinearTrainingInstanceApi are mocked (no backend calls)
+// EventFetchApi is mocked (no backend calls)
 // ─────────────────────────────────────────────────────────────────────────────
 
 describe('Broker layer — DataBrokerServiceImpl with real Sync + Cache', () => {
     let mockFetch: { fetch: ReturnType<typeof vi.fn> };
-    let mockInstanceApi: { get: ReturnType<typeof vi.fn> };
     let mockErrorHandler: {
         emitFrontendErrorNotification: ReturnType<typeof vi.fn>;
     };
 
     beforeEach(async () => {
         mockFetch = { fetch: vi.fn().mockReturnValue(of([])) };
-        mockInstanceApi = { get: vi.fn() };
         mockErrorHandler = {
             emitFrontendErrorNotification: vi
                 .fn()
@@ -455,10 +430,6 @@ describe('Broker layer — DataBrokerServiceImpl with real Sync + Cache', () => 
                 provideEventBroker(dbPromise),
                 TEST_PORTAL_CONFIG_PROVIDER,
                 { provide: EventFetchApi, useValue: mockFetch },
-                {
-                    provide: LinearTrainingInstanceApi,
-                    useValue: mockInstanceApi,
-                },
                 { provide: ErrorHandlerService, useValue: mockErrorHandler },
             ],
         });
@@ -508,23 +479,6 @@ describe('Broker layer — DataBrokerServiceImpl with real Sync + Cache', () => 
         );
 
         expect(rows.some((r) => r.id === 'synced-row')).toBe(true);
-    });
-
-    it('query(): COMMAND type resolves poolId from instance API before sync', async () => {
-        mockInstanceApi.get.mockReturnValue(of({ poolId: 55 }));
-        const broker = TestBed.inject(DataBrokerService);
-
-        const instanceSig = signal(1);
-        await firstValueFrom(
-            broker.query(instanceSig, [PlatformEventType.COMMAND], (_db: any) =>
-                of([]),
-            ),
-        );
-
-        expect(mockInstanceApi.get).toHaveBeenCalledWith(1);
-        expect(
-            (mockFetch.fetch.mock.calls[0][0] as EventFetchParams).poolId,
-        ).toBe(55);
     });
 
     it('query(): sync error is forwarded to ErrorHandlerService and stream terminates', async () => {

@@ -1,7 +1,6 @@
 import { delay, from, map, merge, of, throwError, timer, ignoreElements, Observable } from 'rxjs';
 import { PlatformEventType } from '@crczp/training-model';
 import { ErrorHandlerService } from '@crczp/utils';
-import { LinearTrainingInstanceApi } from '@crczp/training-api';
 import { InstanceSyncDriver } from './instance-sync-driver';
 import { CacheSyncService } from '../../sync/sync.interface';
 import { SyncTableComplete } from '../../sync/sync-result.interface';
@@ -17,7 +16,6 @@ function complete(eventType: PlatformEventType): SyncTableComplete {
 
 describe('InstanceSyncDriver', () => {
     let syncService: { sync: ReturnType<typeof vi.fn> };
-    let instanceApi: { get: ReturnType<typeof vi.fn> };
     let errorHandler: { emitFrontendErrorNotification: ReturnType<typeof vi.fn> };
     let consoleErrorSpy: ReturnType<typeof vi.spyOn>;
 
@@ -26,7 +24,6 @@ describe('InstanceSyncDriver', () => {
             INSTANCE_ID,
             INTERVAL_MS,
             syncService as unknown as CacheSyncService,
-            instanceApi as unknown as LinearTrainingInstanceApi,
             errorHandler as unknown as ErrorHandlerService,
         );
     }
@@ -39,7 +36,6 @@ describe('InstanceSyncDriver', () => {
                 from(params.eventTypes).pipe(map((eventType) => complete(eventType))),
             ),
         };
-        instanceApi = { get: vi.fn().mockReturnValue(of({ poolId: 42 })) };
         errorHandler = { emitFrontendErrorNotification: vi.fn().mockReturnValue(of(true)) };
         consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
         vi.useFakeTimers();
@@ -188,24 +184,6 @@ describe('InstanceSyncDriver', () => {
         );
 
         first.unsubscribe();
-        second.unsubscribe();
-    });
-
-    it('resolves pool id once and reuses it across dormancy', async () => {
-        const driver = createDriver();
-
-        const first = driver.connect([PlatformEventType.COMMAND]).subscribe();
-        await vi.advanceTimersByTimeAsync(0);
-        expect(instanceApi.get).toHaveBeenCalledTimes(1);
-        expect(syncService.sync).toHaveBeenLastCalledWith(expect.objectContaining({ poolId: 42 }));
-
-        first.unsubscribe();
-        expect(driver.dormant).toBe(true);
-
-        const second = driver.connect([PlatformEventType.COMMAND]).subscribe();
-        await vi.advanceTimersByTimeAsync(0);
-        expect(instanceApi.get).toHaveBeenCalledTimes(1);
-
         second.unsubscribe();
     });
 

@@ -22,8 +22,8 @@ const DATA_BROKER_PROVIDERS: Provider[] = [
  * Registers {@link DataBrokerService} and the sync-driver registry backing it into the
  * current injector.
  *
- * Both are instantiated in the injector this is called from, so the training API services
- * they depend on need only be reachable from there — the cache and sync layers they build
+ * Both are instantiated in the injector this is called from, so each subtree gets its own
+ * driver registry and its own per-instance drivers — the cache and sync layers they build
  * on stay wherever {@link provideEventBroker} registered them.
  *
  * Call in an `NgModule`'s `providers`, a route's `providers`, or any lazy environment
@@ -58,9 +58,7 @@ function eventCacheProviders(db: Promise<EventCacheDb>): Provider[] {
  * - `CacheSyncService` → {@link SyncService} (reuses the root-scoped singleton)
  * - `EventFetchApi` → {@link EventFetchApiImpl} (reuses the root-scoped singleton)
  *
- * Registers no dependency on the training API, so it resolves in an injector that cannot
- * reach it. Each subtree reading the cache registers its own broker via
- * {@link provideDataBroker}.
+ * Each subtree reading the cache registers its own broker via {@link provideDataBroker}.
  *
  * @param db Promise resolving to the Drizzle SQLite event-cache database instance.
  */

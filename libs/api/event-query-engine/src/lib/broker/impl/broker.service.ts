@@ -2,11 +2,9 @@ import { inject, Injectable, Injector, Signal } from '@angular/core';
 import { catchError, Observable, switchMap } from 'rxjs';
 import { PlatformEventType } from '@crczp/training-model';
 import { ErrorHandlerService } from '@crczp/utils';
-import { LinearTrainingInstanceApi } from '@crczp/training-api';
 import { CacheService, EventCacheDb } from '../../cache/cache.interface';
 import { CacheSyncService } from '../../sync/sync.interface';
 import { DataBrokerService } from '../broker.interface';
-import { resolvePoolId } from './pool-id-resolver';
 import { executeSyncAndQuery } from './sync-query-executor';
 import { SyncDriverRegistry } from './sync-driver-registry';
 import { notifyError } from './error-notifier';
@@ -17,7 +15,6 @@ export class DataBrokerServiceImpl implements DataBrokerService {
     private readonly injector = inject(Injector);
     private readonly syncService = inject(CacheSyncService);
     private readonly cacheService = inject(CacheService);
-    private readonly instanceApi = inject(LinearTrainingInstanceApi);
     private readonly errorHandler = inject(ErrorHandlerService);
     private readonly driverRegistry = inject(SyncDriverRegistry);
 
@@ -53,19 +50,13 @@ export class DataBrokerServiceImpl implements DataBrokerService {
         eventTypes: PlatformEventType[],
         queryFn: (db: EventCacheDb) => Observable<TResult[]>,
     ): Observable<TResult[]> {
-        return resolvePoolId(instanceId, eventTypes, this.instanceApi).pipe(
-            switchMap((poolId) =>
-                executeSyncAndQuery(
-                    instanceId,
-                    eventTypes,
-                    poolId,
-                    queryFn,
-                    this.syncService,
-                    this.cacheService,
-                ),
-            ),
-            catchError((err) => notifyError(err, this.errorHandler)),
-        );
+        return executeSyncAndQuery(
+            instanceId,
+            eventTypes,
+            queryFn,
+            this.syncService,
+            this.cacheService,
+        ).pipe(catchError((err) => notifyError(err, this.errorHandler)));
     }
 
     private scopedPollingQuery<TResult>(

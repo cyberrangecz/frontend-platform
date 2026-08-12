@@ -6,7 +6,6 @@ export interface EventFetchParams {
     instanceId: number;
     eventType: PlatformEventType;
     sinceTimestamp: number;
-    poolId?: number;
 }
 
 export abstract class EventFetchApi {

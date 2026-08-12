@@ -1,22 +1,13 @@
-import {
-    concat,
-    ignoreElements,
-    Observable,
-    of,
-    switchMap,
-    throwError,
-} from 'rxjs';
+import { concat, ignoreElements, Observable, of, switchMap } from 'rxjs';
 import { PlatformEventType } from '@crczp/training-model';
 import { CacheService, WatermarkEntry } from '../../cache/cache.interface';
 import { EventFetchApi } from '../event-fetch-api';
 import { SyncTableComplete } from '../sync-result.interface';
 import { getSinceTimestamp, isWatermarkFresh } from './watermark-freshness';
-import { validatePoolId } from './pool-id-validator';
 
 export function syncSingleType(
     eventType: PlatformEventType,
     instanceId: number,
-    poolId: number | undefined,
     watermark: WatermarkEntry | undefined,
     fetchApi: EventFetchApi,
     cacheService: CacheService,
@@ -27,16 +18,10 @@ export function syncSingleType(
         return of(complete);
     }
 
-    try {
-        validatePoolId(eventType, poolId);
-    } catch (err) {
-        return throwError(() => err);
-    }
-
     const sinceTimestamp = getSinceTimestamp(watermark);
 
     return concat(
-        fetchApi.fetch({ instanceId, eventType, sinceTimestamp, poolId }).pipe(
+        fetchApi.fetch({ instanceId, eventType, sinceTimestamp }).pipe(
             switchMap((rows) => cacheService.insert(rows)),
             ignoreElements(),
         ),

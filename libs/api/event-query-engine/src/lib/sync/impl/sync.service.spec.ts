@@ -68,7 +68,6 @@ describe('SyncService', () => {
                         syncSingleType(
                             eventType,
                             instanceId,
-                            undefined,
                             watermarkMap.get(eventType),
                             fetchApi as unknown as EventFetchApi,
                             cacheService as unknown as CacheService,
@@ -108,7 +107,6 @@ describe('SyncService', () => {
                         syncSingleType(
                             eventType,
                             instanceId,
-                            42, // poolId for COMMAND
                             watermarkMap.get(eventType),
                             fetchApi as unknown as EventFetchApi,
                             cacheService as unknown as CacheService,
@@ -150,7 +148,6 @@ describe('SyncService', () => {
                         syncSingleType(
                             eventType,
                             instanceId,
-                            42,
                             watermarkMap.get(eventType),
                             fetchApi as unknown as EventFetchApi,
                             cacheService as unknown as CacheService,
@@ -193,7 +190,6 @@ describe('SyncService', () => {
                         syncSingleType(
                             eventType,
                             instanceId,
-                            42,
                             watermarkMap.get(eventType),
                             fetchApi as unknown as EventFetchApi,
                             cacheService as unknown as CacheService,
@@ -261,7 +257,6 @@ describe('SyncService', () => {
             syncSingleType(
                 eventType,
                 instanceId,
-                undefined,
                 freshWatermark,
                 fetchApi as unknown as EventFetchApi,
                 cacheService as unknown as CacheService,
@@ -375,16 +370,6 @@ describe('SyncService', () => {
             );
 
             expect(emissions).toEqual([]);
-        });
-
-        it('errors immediately for a COMMAND type without poolId', async () => {
-            const service = provideSyncService(vi.fn().mockReturnValue(of([])), vi.fn().mockReturnValue(of([])));
-
-            await expect(
-                lastValueFrom(
-                    service.sync({ instanceId: 3, eventTypes: [PlatformEventType.COMMAND] }).pipe(toArray()),
-                ),
-            ).rejects.toBeInstanceOf(Error);
         });
     });
 });

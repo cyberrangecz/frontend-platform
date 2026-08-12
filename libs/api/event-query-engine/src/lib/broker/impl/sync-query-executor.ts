@@ -6,15 +6,12 @@ import { CacheSyncService } from '../../sync/sync.interface';
 export function executeSyncAndQuery<TResult>(
     instanceId: number,
     eventTypes: PlatformEventType[],
-    poolId: number | undefined,
     queryFn: (db: EventCacheDb) => Observable<TResult[]>,
     syncService: CacheSyncService,
     cacheService: CacheService,
 ): Observable<TResult[]> {
     return concat(
-        syncService
-            .sync({ instanceId, eventTypes, poolId })
-            .pipe(ignoreElements()),
+        syncService.sync({ instanceId, eventTypes }).pipe(ignoreElements()),
         defer(() => cacheService.query(queryFn)),
     );
 }

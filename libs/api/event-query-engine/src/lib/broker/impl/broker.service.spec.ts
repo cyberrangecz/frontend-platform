@@ -1,24 +1,23 @@
 import { PlatformEventType } from '@crczp/training-model';
 import { signal } from '@angular/core';
-import { catchError, delay, firstValueFrom, ignoreElements, Observable, of, switchMap } from 'rxjs';
+import { catchError, delay, firstValueFrom, ignoreElements, Observable, of } from 'rxjs';
 import { notifyError } from './error-notifier';
-import { resolvePoolId } from './pool-id-resolver';
 import { executeSyncAndQuery } from './sync-query-executor';
 import { CacheSyncService } from '../../sync/sync.interface';
 import { CacheService } from '../../cache/cache.interface';
 import { ErrorHandlerService } from '@crczp/utils';
-import { LinearTrainingInstanceApi } from '@crczp/training-api';
 
 /**
  * Tests for DataBrokerServiceImpl's one-shot query() path through its dependency functions.
  *
- * query() uses toInstanceStream() → switchMap → resolvePoolId, executeSyncAndQuery, notifyError.
- * Since DataBrokerServiceImpl uses inject(), the underlying functions and switchMap semantics are
- * tested directly. The polling path's shared sync driver is covered in instance-sync-driver.spec.ts.
+ * query() pipes toObservable(instanceId) into executeSyncAndQuery and notifies through notifyError.
+ * Since DataBrokerServiceImpl uses inject(), the underlying functions are tested directly; the
+ * signal-driven scope switch is covered at DI level in the integration spec, and the polling path's
+ * shared sync driver in instance-sync-driver.spec.ts.
  */
 describe('DataBrokerServiceImpl', () => {
-    describe('SwitchMap behavior with instanceId signal', () => {
-        it('cancels previous sync when instanceId changes (switchMap semantics)', async () => {
+    describe('query path composition', () => {
+        it('syncs and queries the instance id it is given', async () => {
             vi.useFakeTimers();
 
             const syncService = {
@@ -29,53 +28,28 @@ describe('DataBrokerServiceImpl', () => {
                 insert: vi.fn(),
                 getWatermarks: vi.fn(),
             };
-            const instanceApi = {
-                get: vi.fn().mockReturnValue(of({ poolId: 42 })),
-            } as unknown as LinearTrainingInstanceApi;
-
             const eventTypes = [PlatformEventType.COMMAND];
             const queryFn = () => of([]);
 
-            let currentInstanceId = 1;
-            const instanceIdSignal = signal(currentInstanceId);
+            const instanceIdSignal = signal(1);
+            const results: unknown[][] = [];
 
-            // Simulate the switchMap behavior: when instanceId changes,
-            // previous subscription is cancelled
-            const results: number[] = [];
-
-            // First subscription for instanceId=1
-            const sub1 = resolvePoolId(instanceIdSignal(), eventTypes, instanceApi).pipe(
-                switchMap((poolId) =>
-                    executeSyncAndQuery(
-                        instanceIdSignal(),
-                        eventTypes,
-                        poolId,
-                        queryFn,
-                        syncService as unknown as CacheSyncService,
-                        cacheService as unknown as CacheService,
-                    ),
-                ),
-            ).subscribe({
-                next: () => {
-                    results.push(instanceIdSignal());
-                },
-            });
+            const subscription = executeSyncAndQuery(
+                instanceIdSignal(),
+                eventTypes,
+                queryFn,
+                syncService as unknown as CacheSyncService,
+                cacheService as unknown as CacheService,
+            ).subscribe((rows) => results.push(rows));
 
             vi.advanceTimersByTime(100);
             await vi.runAllTimersAsync();
 
-            // Change instanceId - simulates switchMap canceling previous
-            currentInstanceId = 2;
-            instanceIdSignal.set(2);
+            subscription.unsubscribe();
 
-            vi.advanceTimersByTime(100);
-            await vi.runAllTimersAsync();
-
-            sub1.unsubscribe();
-
-            // With switchMap, the second instanceId should have started a new sync
-            // The first sync's results would be for instanceId=1
-            expect(results.length).toBeGreaterThan(0);
+            expect(syncService.sync).toHaveBeenCalledWith({ instanceId: 1, eventTypes });
+            expect(cacheService.query).toHaveBeenCalledWith(queryFn);
+            expect(results).toEqual([[]]);
 
             vi.useRealTimers();
         });
@@ -116,27 +90,19 @@ describe('DataBrokerServiceImpl', () => {
                 insert: vi.fn(),
                 getWatermarks: vi.fn(),
             };
-            const instanceApi = {
-                get: vi.fn().mockReturnValue(of({ poolId: 42 })),
-            } as unknown as LinearTrainingInstanceApi;
-
             const eventTypes = [PlatformEventType.COMMAND];
             const queryFn = () => of([]);
 
             let errored = false;
             let errorMessage = '';
 
-            resolvePoolId(1, eventTypes, instanceApi).pipe(
-                switchMap((poolId) =>
-                    executeSyncAndQuery(
-                        1,
-                        eventTypes,
-                        poolId,
-                        queryFn,
-                        syncService as unknown as CacheSyncService,
-                        cacheService as unknown as CacheService,
-                    ),
-                ),
+            executeSyncAndQuery(
+                1,
+                eventTypes,
+                queryFn,
+                syncService as unknown as CacheSyncService,
+                cacheService as unknown as CacheService,
+            ).pipe(
                 catchError((err) => {
                     errorMessage = err.message;
                     errored = true;
@@ -151,34 +117,6 @@ describe('DataBrokerServiceImpl', () => {
             expect(errorMessage).toBe('sync failed');
 
             vi.useRealTimers();
-        });
-    });
-
-    describe('resolvePoolId integration', () => {
-        it('returns undefined when no COMMAND types present', async () => {
-            const mockInstanceApi = {
-                get: vi.fn(),
-            } as unknown as LinearTrainingInstanceApi;
-
-            const result = await firstValueFrom(
-                resolvePoolId(1, [PlatformEventType.TRAINING_RUN_STARTED], mockInstanceApi),
-            );
-
-            expect(result).toBeUndefined();
-            expect(mockInstanceApi.get).not.toHaveBeenCalled();
-        });
-
-        it('resolves poolId when COMMAND type is present', async () => {
-            const mockInstanceApi = {
-                get: vi.fn().mockReturnValue(of({ poolId: 42 })),
-            } as unknown as LinearTrainingInstanceApi;
-
-            const result = await firstValueFrom(
-                resolvePoolId(1, [PlatformEventType.COMMAND], mockInstanceApi),
-            );
-
-            expect(result).toBe(42);
-            expect(mockInstanceApi.get).toHaveBeenCalledWith(1);
         });
     });
 
@@ -220,7 +158,6 @@ describe('DataBrokerServiceImpl', () => {
             executeSyncAndQuery(
                 1,
                 [PlatformEventType.COMMAND],
-                42,
                 queryFn,
                 syncService as unknown as CacheSyncService,
                 cacheService as unknown as CacheService,
