@@ -1,6 +1,4 @@
 import { inject, Injectable } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
 import { PoolApi } from '@crczp/sandbox-api';
 import { Pool } from '@crczp/sandbox-model';
 import {
@@ -8,19 +6,15 @@ import {
     combineLatest,
     defer,
     finalize,
-    from,
     Observable,
     ReplaySubject,
 } from 'rxjs';
-import { map, switchMap, tap } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 import { PoolChangedEvent } from '../model/pool-changed-event';
 import { ErrorHandlerService, NotificationService } from '@crczp/utils';
-import { Routing } from '@crczp/routing-commons';
 
 @Injectable()
 export class PoolEditService {
-    private router = inject(Router);
-    private dialog = inject(MatDialog);
     private notificationService = inject(NotificationService);
     private errorHandler = inject(ErrorHandlerService);
     private api = inject(PoolApi);
@@ -68,13 +62,6 @@ export class PoolEditService {
                         ),
                     (err) =>
                         this.errorHandler.emitAPIError(err, 'Creating pool'),
-                ),
-                switchMap(() =>
-                    from(
-                        this.router.navigate([
-                            Routing.RouteBuilder.pool.build(),
-                        ]),
-                    ),
                 ),
                 finalize(() =>
                     this.requestsCountSubject$.next(
@@ -124,16 +111,10 @@ export class PoolEditService {
     }
 
     /**
-     * Saves/creates edited pool
+     * Persists the edited pool, creating it when no existing pool is being edited.
      */
     save(): Observable<any> {
-        return (
-            this.editModeSubject$.getValue() ? this.update() : this.create()
-        ).pipe(
-            tap(() =>
-                this.router.navigate([Routing.RouteBuilder.pool.build()]),
-            ),
-        );
+        return this.editModeSubject$.getValue() ? this.update() : this.create();
     }
 
     /**

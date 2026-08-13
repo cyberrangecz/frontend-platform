@@ -1,11 +1,12 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, HostListener, inject, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Routing } from '@crczp/routing-commons';
 import {
     SentinelControlItem,
     SentinelControlsComponent
 } from '@sentinel/components/controls';
 import { Level, MitreTechnique, TrainingDefinitionWithLevels } from '@crczp/training-model';
-import { combineLatest, defer, Observable, switchMap } from 'rxjs';
+import { combineLatest, defer, Observable, of, switchMap } from 'rxjs';
 import { filter, map, tap } from 'rxjs/operators';
 import { UnsavedChangesTracker } from '@crczp/utils';
 import { TrainingDefinitionChangeEvent } from '../model/events/training-definition-change-event';
@@ -86,6 +87,7 @@ export class TrainingDefinitionEditOverviewComponent implements OnInit {
     mitreTechniques$: Observable<MitreTechnique[]>;
     destroyRef = inject(DestroyRef);
     private activeRoute = inject(ActivatedRoute);
+    private router = inject(Router);
     private editService = inject(TrainingDefinitionEditService);
     private levelEditService = inject(LevelEditService);
     private mitreTechniquesService = inject(MitreTechniquesService);
@@ -143,7 +145,18 @@ export class TrainingDefinitionEditOverviewComponent implements OnInit {
                 defer(() =>
                     this.editService
                         .save()
-                        .pipe(this.unsavedChanges.clearOnSuccess('trainingDefinition')),
+                        .pipe(
+                            this.unsavedChanges.clearOnSuccess('trainingDefinition'),
+                            switchMap((createdDefinitionId) =>
+                                createdDefinitionId === null
+                                    ? of(true)
+                                    : this.router.navigate([
+                                          Routing.RouteBuilder.linear_definition
+                                              .definitionId(createdDefinitionId)
+                                              .edit.build(),
+                                      ]),
+                            ),
+                        ),
                 ),
             ),
         ];

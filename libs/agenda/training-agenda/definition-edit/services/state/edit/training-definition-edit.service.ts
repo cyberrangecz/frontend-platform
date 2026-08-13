@@ -39,9 +39,12 @@ export abstract class TrainingDefinitionEditService {
     abstract set(trainingDefinition: TrainingDefinitionWithLevels): void;
 
     /**
-     * Saves/creates training definition based on edit mode or handles error.
+     * Persists the edited training definition together with its unsaved levels,
+     * creating the definition when none is being edited yet.
+     *
+     * @returns Identifier of the newly created definition, null when an existing one was updated.
      */
-    abstract save(): Observable<any>;
+    abstract save(): Observable<number | null>;
 
     /**
      * Updated saveDisabled$ and saved snapshot of edited training definition

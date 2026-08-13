@@ -4,13 +4,14 @@ import {
     DestroyRef,
     inject,
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Routing } from '@crczp/routing-commons';
 import {
     SentinelControlItem,
     SentinelControlsComponent,
 } from '@sentinel/components/controls';
 import { Group } from '@crczp/user-and-group-model';
-import { defer, filter, Observable, of } from 'rxjs';
+import { defer, filter, Observable, of, switchMap } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { UnsavedChangesTracker } from '@crczp/utils';
 import { SaveControlItem } from '@crczp/user-and-group-agenda/internal';
@@ -63,6 +64,7 @@ export class GroupEditOverviewComponent {
 
     protected readonly of = of;
     private activeRoute = inject(ActivatedRoute);
+    private router = inject(Router);
     private editService = inject(GroupEditService);
 
     constructor() {
@@ -106,7 +108,16 @@ export class GroupEditOverviewComponent {
             defer(() =>
                 this.editService
                     .save()
-                    .pipe(this.unsavedChanges.clearOnSuccess('groupDetails')),
+                    .pipe(
+                        this.unsavedChanges.clearOnSuccess('groupDetails'),
+                        switchMap((createdGroupId) =>
+                            createdGroupId === null
+                                ? of(true)
+                                : this.router.navigate([
+                                      Routing.RouteBuilder.group.build(),
+                                  ]),
+                        ),
+                    ),
             ),
         );
         if (isEditMode) {
@@ -119,7 +130,16 @@ export class GroupEditOverviewComponent {
                 defer(() =>
                     this.editService
                         .createAndEdit()
-                        .pipe(this.unsavedChanges.clearOnSuccess('groupDetails')),
+                        .pipe(
+                            this.unsavedChanges.clearOnSuccess('groupDetails'),
+                            switchMap((createdGroupId) =>
+                                this.router.navigate([
+                                    Routing.RouteBuilder.group
+                                        .groupId(createdGroupId)
+                                        .edit.build(),
+                                ]),
+                            ),
+                        ),
                 ),
             );
             saveAndStayItem.id = 'save_and_stay';

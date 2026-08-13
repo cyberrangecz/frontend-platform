@@ -1,12 +1,10 @@
 import { inject, Injectable } from '@angular/core';
-import { Router } from '@angular/router';
 import { GroupApi } from '@crczp/user-and-group-api';
 import { Group } from '@crczp/user-and-group-model';
 import { BehaviorSubject, Observable, ReplaySubject } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 import { GroupChangedEvent } from '../../model/group-changed-event';
 import { ErrorHandlerService, NotificationService } from '@crczp/utils';
-import { Routing } from '@crczp/routing-commons';
 
 /**
  * A layer between a component and an API service. Implement a concrete service by extending this class.
@@ -19,7 +17,6 @@ import { Routing } from '@crczp/routing-commons';
 export class GroupEditService {
     private api = inject(GroupApi);
     private notificationService = inject(NotificationService);
-    private router = inject(Router);
     private errorHandler = inject(ErrorHandlerService);
 
     private editModeSubject$: BehaviorSubject<boolean> = new BehaviorSubject(
@@ -66,28 +63,25 @@ export class GroupEditService {
     }
 
     /**
-     * Saves edited group-overview, updated related observables or handles error
+     * Persists the edited group, creating it when no existing group is being edited.
+     *
+     * @returns Identifier of the newly created group, null when an existing one was updated.
      */
-    save(): Observable<any> {
+    save(): Observable<number | null> {
         this.saveDisabledSubject$.next(true);
         return this.editModeSubject$.getValue()
-            ? this.update()
-            : this.create().pipe(
-                  tap(() =>
-                      this.router.navigate([Routing.RouteBuilder.group.build()])
-                  )
-              );
+            ? this.update().pipe(map(() => null))
+            : this.create();
     }
 
-    createAndEdit(): Observable<any> {
+    /**
+     * Creates the edited group.
+     *
+     * @returns Identifier of the newly created group.
+     */
+    createAndEdit(): Observable<number> {
         this.saveDisabledSubject$.next(true);
-        return this.create().pipe(
-            tap((id) =>
-                this.router.navigate([
-                    Routing.RouteBuilder.group.groupId(id).edit.build(),
-                ])
-            )
-        );
+        return this.create();
     }
 
     private setEditMode(group: Group) {

@@ -79,19 +79,24 @@ export abstract class CommonTrainingInstanceEditService extends CommonTrainingIn
     }
 
     /**
-     * Saves/creates training instance or handles error.
+     * Persists the edited training instance, creating it when none is being edited yet.
+     *
+     * @returns Identifier of the newly created instance, null when an existing one was updated.
      */
-    public save(): Observable<void> {
+    public save(): Observable<number | null> {
         if (this.editModeSubject$.getValue()) {
-            return this.update();
-        } else {
-            return this.create().pipe(
-                switchMap((id) =>
-                    from(this.router.navigate([this.buildInstanceEditUrl(id)])),
-                ),
-                map(() => void 0),
-            );
+            return this.update().pipe(map(() => null));
         }
+        return this.create();
+    }
+
+    /**
+     * Navigates to the edit page of the training instance with the given identifier.
+     *
+     * @param id Identifier of the instance to open for editing.
+     */
+    public navigateToInstanceEdit(id: number): Observable<boolean> {
+        return from(this.router.navigate([this.buildInstanceEditUrl(id)]));
     }
 
     public getAllTrainingDefinitions(
