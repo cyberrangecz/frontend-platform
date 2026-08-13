@@ -5,7 +5,7 @@ import {
     SentinelControlsComponent
 } from '@sentinel/components/controls';
 import { TrainingDefinitionInfo, TrainingInstance } from '@crczp/training-model';
-import { combineLatest, combineLatestWith, defer, Observable, switchMap } from 'rxjs';
+import { combineLatest, combineLatestWith, defer, Observable, of, switchMap } from 'rxjs';
 import { filter, map, take } from 'rxjs/operators';
 import { UnsavedChangesTracker } from '@crczp/utils';
 import { TrainingInstanceChangeEvent } from '../model/events/training-instance-change-event';
@@ -211,6 +211,13 @@ export class TrainingInstanceEditOverviewComponent implements OnInit {
                         .save()
                         .pipe(
                             this.unsavedChanges.clearOnSuccess('trainingInstanceDetails'),
+                            switchMap((createdInstanceId) =>
+                                createdInstanceId === null
+                                    ? of(true)
+                                    : this.editService.navigateToInstanceEdit(
+                                          createdInstanceId,
+                                      ),
+                            ),
                         ),
                 ),
             ),

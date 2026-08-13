@@ -6,7 +6,8 @@ import { PoolEditService } from '../services/pool-edit.service';
 import { PoolFormGroup } from './pool-form-group';
 import { AbstractControl, ReactiveFormsModule } from '@angular/forms';
 import { Pool, SandboxDefinition } from '@crczp/sandbox-model';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Routing } from '@crczp/routing-commons';
 import { PoolChangedEvent } from '../model/pool-changed-event';
 import { UnsavedChangesTracker } from '@crczp/utils';
 import {
@@ -78,6 +79,7 @@ export class PoolEditComponent implements OnInit {
         new BehaviorSubject('');
     filteredSandboxDefinitions$: Observable<SandboxDefinition[]>;
     private activeRoute = inject(ActivatedRoute);
+    private router = inject(Router);
     private poolEditService = inject(PoolEditService);
     private sandboxDefinitionService = inject(SandboxDefinitionOverviewService);
 
@@ -158,6 +160,11 @@ export class PoolEditComponent implements OnInit {
                 this.poolEditService.saveDisabled$,
                 defer(() => this.poolEditService.save()).pipe(
                     this.unsavedChanges.clearOnSuccess('poolForm'),
+                    switchMap(() =>
+                        this.router.navigate([
+                            Routing.RouteBuilder.pool.build(),
+                        ]),
+                    ),
                 ),
             ),
         ];

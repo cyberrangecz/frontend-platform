@@ -1,5 +1,4 @@
 import { inject, Injectable } from '@angular/core';
-import { Router } from '@angular/router';
 import { LinearTrainingDefinitionApi } from '@crczp/training-api';
 import { TrainingDefinitionWithLevels } from '@crczp/training-model';
 import { combineLatest, concat, Observable } from 'rxjs';
@@ -8,7 +7,6 @@ import { TrainingDefinitionChangeEvent } from '../../../model/events/training-de
 import { TrainingDefinitionEditService } from './training-definition-edit.service';
 import { LevelEditService } from '../level/level-edit.service';
 import { ErrorHandlerService, LoadingTracker, NotificationService } from '@crczp/utils';
-import { Routing } from '@crczp/routing-commons';
 
 /**
  * Service handling editing of training definition and related operations.
@@ -17,7 +15,6 @@ import { Routing } from '@crczp/routing-commons';
  */
 @Injectable()
 export class TrainingDefinitionEditConcreteService extends TrainingDefinitionEditService {
-    private router = inject(Router);
     private api = inject(LinearTrainingDefinitionApi);
     private errorHandler = inject(ErrorHandlerService);
     private notificationService = inject(NotificationService);
@@ -43,31 +40,24 @@ export class TrainingDefinitionEditConcreteService extends TrainingDefinitionEdi
         this.trainingDefinitionSubject$.next(td);
     }
 
-    /**
-     * Saves/creates training definition based on edit mode or handles error.
-     */
-    save(): Observable<any> {
+    save(): Observable<number | null> {
         if (this.editModeSubject$.getValue()) {
             // checks if TD was edited if not only levels are updated
             if (this.editedSnapshot) {
                 return concat(
                     this.update(),
                     this.levelEditService.saveUnsavedLevels(),
-                ).pipe(toArray());
+                ).pipe(
+                    toArray(),
+                    map(() => null),
+                );
             } else {
-                return this.levelEditService.saveUnsavedLevels();
+                return this.levelEditService
+                    .saveUnsavedLevels()
+                    .pipe(map(() => null));
             }
-        } else {
-            return this.create().pipe(
-                map((id) =>
-                    this.router.navigate([
-                        Routing.RouteBuilder.linear_definition
-                            .definitionId(id)
-                            .edit.build(),
-                    ]),
-                ),
-            );
         }
+        return this.create();
     }
 
     /**
