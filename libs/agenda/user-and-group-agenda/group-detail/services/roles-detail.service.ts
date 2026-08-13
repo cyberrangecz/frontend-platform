@@ -2,10 +2,10 @@ import { inject, Injectable } from '@angular/core';
 import { GroupApi, RoleSort } from '@crczp/user-and-group-api';
 import { UserRole } from '@crczp/user-and-group-model';
 import { OffsetPaginationEvent } from '@crczp/utils';
-import { BehaviorSubject, Observable, of } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { ErrorHandlerService } from '@crczp/utils';
-import { createInfinitePaginatedResource, OffsetPaginatedResource, QueryParam } from '@crczp/api-common';
+import { OffsetPaginatedResource, QueryParam } from '@crczp/api-common';
 
 /**
  * Basic implementation of a layer between a component and an API service.
@@ -13,10 +13,6 @@ import { createInfinitePaginatedResource, OffsetPaginatedResource, QueryParam } 
  */
 @Injectable()
 export class RolesDetailService {
-    /**
-     * List of roles already assigned to the resource
-     */
-    assignedRoles$: Observable<OffsetPaginatedResource<UserRole>> = of();
     protected hasErrorSubject$: BehaviorSubject<boolean> = new BehaviorSubject(
         false,
     );
@@ -32,9 +28,13 @@ export class RolesDetailService {
         this.isLoadingAssignedSubject$.asObservable();
     private api = inject(GroupApi);
     private errorHandler = inject(ErrorHandlerService);
-    private assignedRolesSubject$: BehaviorSubject<
-        OffsetPaginatedResource<UserRole>
-    > = new BehaviorSubject(createInfinitePaginatedResource());
+    private assignedRolesSubject$: Subject<OffsetPaginatedResource<UserRole>> =
+        new Subject();
+    /**
+     * Subscribe to receive assigned roles
+     */
+    assignedRoles$: Observable<OffsetPaginatedResource<UserRole>> =
+        this.assignedRolesSubject$.asObservable();
 
     /**
      * Gets roles assigned to a resource, updates related observables or handles error

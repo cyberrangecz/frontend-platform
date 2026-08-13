@@ -27,16 +27,16 @@ export class EventFetchApiImpl extends EventFetchApi {
     /**
      * Fetches all events of a given type for the specified instance since the provided timestamp.
      *
-     * @param params - Fetch parameters including instanceId, eventType, sinceTimestamp, and optional poolId.
+     * @param params - Fetch parameters including instanceId, eventType and sinceTimestamp.
      * @returns Observable emitting the mapped RawEventRow array on completion.
      */
-    fetch({ instanceId, eventType, sinceTimestamp, poolId }: EventFetchParams): Observable<RawEventRow[]> {
+    fetch({ instanceId, eventType, sinceTimestamp }: EventFetchParams): Observable<RawEventRow[]> {
         return this.crczpHttp
             .get<Record<string, unknown>[]>(
                 `${this.trainingInstancesEndpointUri}/${instanceId}/events`,
                 'Fetch training instance events',
             )
-            .withParams({ eventType: toWireEventType(eventType), sinceTimestamp, poolId })
+            .withParams({ eventType: toWireEventType(eventType), sinceTimestamp })
             .withMapper((dtos) => mapToRawEventRows(dtos, eventType, instanceId))
             .execute();
     }

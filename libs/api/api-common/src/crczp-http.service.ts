@@ -16,7 +16,8 @@ import { PaginationMapper } from './pagination/pagination-mapper';
 import { map, Observable, of, switchMap, take, tap } from 'rxjs';
 import { handleJsonError } from './validation/json-error-converter';
 import { OffsetPaginatedResource } from './pagination/offset-paginated-resource';
-import { HttpCacheManager, withCache } from '@ngneat/cashew';
+import { withCache } from '@ngneat/cashew';
+import { SplitEntityCache } from './cache/split-entity-cache';
 
 type Backend = 'java' | 'python';
 type BodylessVerb = 'GET' | 'DELETE';
@@ -60,7 +61,7 @@ export class CRCZPHttpService {
     /** Unwrapped Angular HttpClient for edge cases. */
     public readonly raw = this.http;
     private readonly version = inject(PortalConfig).version;
-    private readonly cacheManager = inject(HttpCacheManager);
+    private readonly entityCache = inject(SplitEntityCache);
 
     /**
      * Start a GET request (no request body).
@@ -74,7 +75,7 @@ export class CRCZPHttpService {
             url,
             operation,
             this.version,
-            this.cacheManager,
+            this.entityCache,
         );
     }
 
@@ -90,7 +91,7 @@ export class CRCZPHttpService {
             url,
             operation,
             this.version,
-            this.cacheManager,
+            this.entityCache,
         );
     }
 
@@ -328,7 +329,7 @@ class BodylessRequestBuilder<TRecv, TOut = TRecv> extends BaseRequestBuilder<
         url: string,
         operation: string,
         private version: string,
-        private cacheManager: HttpCacheManager,
+        private entityCache: SplitEntityCache,
     ) {
         super(http, method, url, operation);
     }
@@ -353,9 +354,11 @@ class BodylessRequestBuilder<TRecv, TOut = TRecv> extends BaseRequestBuilder<
     /**
      * Enable per-ID split caching for batch endpoints that accept an array of IDs as a query parameter.
      * Checks the cache for each ID individually, fetches only uncached IDs from the server,
-     * stores each returned DTO per ID, then merges the full DTO array and feeds it through
-     * the configured mapper. Mutually exclusive with {@link withCache} and {@link withPagination}.
-     * @param options.ids Array of IDs to resolve.
+     * stores each returned DTO per ID, then feeds the DTOs through the configured mapper in the
+     * order the IDs were requested, dropping IDs the endpoint did not return.
+     * Cache entries are scoped to the portal version and expire after `ttlMs`.
+     * Mutually exclusive with {@link withCache} and {@link withPagination}.
+     * @param options.ids IDs to resolve; duplicates resolve once.
      * @param options.paramName Query parameter name used to pass IDs to the endpoint.
      * @param options.cacheKey Function producing a unique cache key for a single ID.
      * @param options.ttlMs Cache entry lifetime in milliseconds.
@@ -434,22 +437,30 @@ class BodylessRequestBuilder<TRecv, TOut = TRecv> extends BaseRequestBuilder<
         const { ids, paramName, cacheKey, ttlMs, itemId } =
             this.splitCacheConfig!;
 
+        const requestedIds = [...new Set(ids)];
         const cachedDtos: unknown[] = [];
         const uncachedIds: (string | number)[] = [];
 
-        for (const id of ids) {
-            const key = `${this.version}::${cacheKey(id)}`;
-            if (this.cacheManager.has(key, 'localStorage')) {
-                cachedDtos.push(this.cacheManager.get(key, 'localStorage'));
-            } else {
+        for (const id of requestedIds) {
+            const cached = this.entityCache.read(cacheKey(id));
+            if (cached === undefined) {
                 uncachedIds.push(id);
+            } else {
+                cachedDtos.push(cached);
             }
         }
 
         const buildResult = (freshDtos: unknown[]): Observable<TOut> => {
-            const merged = [...cachedDtos, ...freshDtos] as unknown as TRecv;
+            const dtosById = new Map(
+                [...cachedDtos, ...freshDtos].map(
+                    (dto) => [itemId(dto), dto] as const,
+                ),
+            );
+            const ordered = requestedIds.flatMap((id) =>
+                dtosById.has(id) ? [dtosById.get(id)] : [],
+            );
             return (
-                this.mapPaginatedOrReceive(of(merged)) as Observable<TOut>
+                this.mapPaginatedOrReceive(of(ordered)) as Observable<TOut>
             ).pipe(take(1));
         };
 
@@ -473,11 +484,7 @@ class BodylessRequestBuilder<TRecv, TOut = TRecv> extends BaseRequestBuilder<
             handleJsonError(),
             tap((freshDtos) => {
                 for (const dto of freshDtos) {
-                    this.cacheManager.set(
-                        `${this.version}::${cacheKey(itemId(dto as any))}`,
-                        dto,
-                        { ttl: ttlMs, strategy: 'localStorage' },
-                    );
+                    this.entityCache.write(cacheKey(itemId(dto)), dto, ttlMs);
                 }
             }),
             switchMap((freshDtos) => buildResult(freshDtos)),

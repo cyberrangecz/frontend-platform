@@ -1,4 +1,4 @@
-import {TrainingDefinitionDTO} from '../training-definition/training-definition-dto';
+import {TrainingDefinitionWithLevelsDTO} from '../training-definition/training-definition-dto';
 
 /**
  * Training Instance.
@@ -9,7 +9,7 @@ export interface TrainingInstanceDTO {
     pool_id: number;
     start_time?: Date;
     title?: string;
-    training_definition?: TrainingDefinitionDTO;
+    training_definition?: TrainingDefinitionWithLevelsDTO;
     access_token: string;
     last_edited_by?: string;
     local_environment?: boolean;

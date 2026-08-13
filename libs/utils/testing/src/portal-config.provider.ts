@@ -41,8 +41,8 @@ const BASE_TEST_CONFIG = PortalConfig.schema().parse({
  * @param overrides Deep-partial overrides applied on top of {@link BASE_TEST_CONFIG}.
  *   Nested sections (caching, polling, roleMapping, basePaths, authConfig) are
  *   shallow-merged so callers only need to specify the fields that differ.
- *   Accepts out-of-range values (e.g. `caching.eventCacheTtlMs: 0`) intentionally
- *   used in tests to trigger immediate eviction without bypassing Zod at call sites.
+ *   Accepts out-of-range values (e.g. `caching.eventCacheTtlMs: 0`) to facilitate
+ *   special requirements in tests. Values are applied after parsing and validating.
  */
 export function provideTestPortalConfig(
     overrides?: DeepPartial<typeof BASE_TEST_CONFIG>,

@@ -15,7 +15,7 @@
     <input matInput [disabled]="isBacktracked" placeholder="Answer" [(ngModel)]="answer"
       [required]="question.required" (keyup)="onChange()">
     @if (answer && !isBacktracked) {
-      <button matSuffix mat-icon-button
+      <button matSuffix mat-icon-button type="button"
         aria-label="Clear" (click)="answer=''; onChange()">
         <mat-icon>close</mat-icon>
       </button>

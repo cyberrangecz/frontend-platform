@@ -4,13 +4,8 @@
         <mat-form-field (keydown.enter)="$event.preventDefault()"
                         appearance="outline">
             <mat-label>Title</mat-label>
-            <input formControlName="title" matInput placeholder="Title" required>
-            @if (title) {
-                <button matSuffix mat-icon-button
-                        aria-label="Clear" (click)="title.setValue('');">
-                    <mat-icon>close</mat-icon>
-                </button>
-            }
+            <input formControlName="title" matInput maxlength="255" placeholder="Title" required>
+            <crczp-clear-input-suffix [control]="title" matSuffix />
             @if (title.hasError('whitespace')) {
                 <mat-error>Title cannot be empty</mat-error>
             }

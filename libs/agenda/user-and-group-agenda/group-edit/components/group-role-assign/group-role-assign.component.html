@@ -3,12 +3,12 @@
     class="to-assign-controls">
 </sentinel-controls>
 <mat-card appearance="outlined">
-    <mat-card-header>
+    <mat-card-header class="card-icon-header">
         <div mat-card-avatar>
-            <mat-icon class="header-icon" color="primary">add_circle_outline</mat-icon>
+            <mat-icon color="primary">add_circle_outline</mat-icon>
         </div>
         <mat-card-title>Add roles</mat-card-title>
-        <mat-card-subtitle>Add roles to {{ group?.name }} group</mat-card-subtitle>
+        <mat-card-subtitle>Add roles to {{ group().name }} group</mat-card-subtitle>
     </mat-card-header>
     <mat-card-content class="m-1rem-top">
         <sentinel-resource-selector
@@ -26,11 +26,11 @@
     class="assigned-controls">
 </sentinel-controls>
 <mat-card appearance="outlined">
-    <mat-card-header class="hflex ai-center">
+    <mat-card-header class="card-icon-header">
         <div mat-card-avatar>
-            <mat-icon class="header-icon" color="primary">policy</mat-icon>
+            <mat-icon color="primary">policy</mat-icon>
         </div>
-        <mat-card-title> Roles of group {{ group?.name }}</mat-card-title>
+        <mat-card-title> Roles of group {{ group().name }}</mat-card-title>
     </mat-card-header>
     <mat-card-content class="m-1rem-top">
         <sentinel-table

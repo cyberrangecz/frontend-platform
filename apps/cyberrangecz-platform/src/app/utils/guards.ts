@@ -1,11 +1,12 @@
-import { map, switchMap, tap } from 'rxjs/operators';
-import { sentinelAuthGuardWithLogin } from '@sentinel/auth';
+import { filter, map, switchMap, take, tap } from 'rxjs/operators';
+import { SentinelAuthService, sentinelAuthGuardWithLogin, User } from '@sentinel/auth';
 import { inject } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivateFn, Router, RouterStateSnapshot } from '@angular/router';
 import { RoleKey, RoleService } from '../services/role.service';
-import { PortalDynamicEnvironment } from '../portal-dynamic-environment';
 import { from, Observable, of } from 'rxjs';
 import { ValidPath } from '@crczp/routing-commons';
+import { Utils } from '@crczp/utils';
+import { NavConfigFactory } from './nav-config-factory';
 
 /**
  * Narrows passed result to observable type
@@ -95,35 +96,33 @@ function guardBuilderForRole(
 }
 
 /**
- * Creates a guard that redirects to the training run path if
- * a user is not an advanced user (has a stronger role than trainee).
+ * Redirects to the user's only navigable agenda, making a crossroad of a single
+ * destination unnecessary. Lets the route through when the user can reach none
+ * or several agendas.
+ *
+ * Waits for the active user to be resolved, so the decision holds on a cold page
+ * load where sibling guards are still authenticating.
  */
-const advancedUserGuard: CanActivateFn = (
-    route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot,
-) => {
-    const roleService = inject(RoleService);
-    const roleMapping = PortalDynamicEnvironment.getConfig().roleMapping;
-
-    return guardBuilder(() =>
-        roleService.hasAny$(
-            Object.values(roleMapping)
-                .map((role) => role as RoleKey)
-                .filter((role) => role !== roleMapping.trainingTrainee),
-        ),
-    )(route, state);
-};
-/**
- * Definitions of custom guards that are not based on roles.
- * These will be automatically added to the RoleGuards namespace
- */
-const customGuards = {
-    advancedUserGuard: advancedUserGuard,
+export const soleAgendaGuard: CanActivateFn = () => {
+    const router = inject(Router);
+    return inject(SentinelAuthService).activeUser$.pipe(
+        filter((user): user is User => user != null),
+        take(1),
+        map((user) => {
+            const agendas = Utils.NavBar.flattenAgendas(
+                Utils.NavBar.buildNav(NavConfigFactory.buildNavConfig(user)),
+            );
+            const [soleAgenda] = agendas;
+            return agendas.length === 1 && soleAgenda
+                ? router.createUrlTree([soleAgenda.path])
+                : true;
+        }),
+    );
 };
 
 type RoleGuardMap = {
     [K in RoleKey as `${K}Guard`]: CanActivateFn;
-} & typeof customGuards;
+};
 
 /**
  * Dynamically creates guards for each role defined in the
@@ -137,7 +136,7 @@ const guardEntries: Array<[string, CanActivateFn]> = RoleService.ROLES.map(
             string,
             CanActivateFn,
         ],
-).concat(Object.entries(customGuards) as Array<[string, CanActivateFn]>);
+);
 
 export const RoleGuards: RoleGuardMap = Object.assign(
     {},

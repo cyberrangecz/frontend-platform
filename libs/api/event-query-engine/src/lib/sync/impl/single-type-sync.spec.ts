@@ -1,5 +1,5 @@
 import { Observable, of } from 'rxjs';
-import { PlatformEventType } from '@crczp/visualization-model';
+import { PlatformEventType } from '@crczp/training-model';
 import { syncSingleType } from './single-type-sync';
 import {
     CacheService,
@@ -20,7 +20,6 @@ describe('syncSingleType', () => {
 
     const eventType = PlatformEventType.COMMAND;
     const instanceId = 1;
-    const poolId = 42;
 
     beforeEach(() => {
         fetchApi = {
@@ -61,7 +60,6 @@ describe('syncSingleType', () => {
             syncSingleType(
                 eventType,
                 instanceId,
-                poolId,
                 freshWatermark,
                 fetchApi as unknown as EventFetchApi,
                 cacheService as unknown as CacheService,
@@ -104,7 +102,6 @@ describe('syncSingleType', () => {
             syncSingleType(
                 eventType,
                 instanceId,
-                poolId,
                 staleWatermark,
                 fetchApi as unknown as EventFetchApi,
                 cacheService as unknown as CacheService,
@@ -131,7 +128,6 @@ describe('syncSingleType', () => {
             syncSingleType(
                 eventType,
                 instanceId,
-                poolId,
                 undefined,
                 fetchApi as unknown as EventFetchApi,
                 cacheService as unknown as CacheService,
@@ -144,7 +140,6 @@ describe('syncSingleType', () => {
                     instanceId,
                     eventType,
                     sinceTimestamp: 0,
-                    poolId,
                 }),
             );
             expect(cacheService.insert).toHaveBeenCalled();
@@ -152,102 +147,7 @@ describe('syncSingleType', () => {
 
             vi.useRealTimers();
         });
-    });
 
-    describe('poolId validation', () => {
-        it('throws error for COMMAND type when poolId is undefined', async () => {
-            vi.useFakeTimers();
-
-            const results: unknown[] = [];
-            let errored = false;
-
-            syncSingleType(
-                PlatformEventType.COMMAND,
-                instanceId,
-                undefined, // no poolId
-                undefined,
-                fetchApi as unknown as EventFetchApi,
-                cacheService as unknown as CacheService,
-            ).subscribe({
-                next: (r) => results.push(r),
-                error: (err) => {
-                    errored = true;
-                    expect(err).toBeInstanceOf(Error);
-                    expect((err as Error).message).toContain('poolId required');
-                },
-                complete: () => undefined,
-            });
-
-            await vi.runAllTimersAsync();
-
-            expect(errored).toBe(true);
-            expect(fetchApi.fetch).not.toHaveBeenCalled();
-
-            vi.useRealTimers();
-        });
-
-        it('does not throw for non-COMMAND type when poolId is undefined', async () => {
-            vi.useFakeTimers();
-
-            fetchApi.fetch.mockReturnValue(of([]));
-            cacheService.insert.mockReturnValue(of(undefined));
-
-            const results: SyncTableComplete[] = [];
-            let errored = false;
-
-            // Use a non-COMMAND event type
-            syncSingleType(
-                PlatformEventType.TRAINING_RUN_STARTED, // instance-scoped, no poolId required
-                instanceId,
-                undefined,
-                undefined,
-                fetchApi as unknown as EventFetchApi,
-                cacheService as unknown as CacheService,
-            ).subscribe({
-                next: (r) => results.push(r),
-                error: () => {
-                    errored = true;
-                },
-            });
-
-            await vi.runAllTimersAsync();
-
-            expect(errored).toBe(false);
-            expect(fetchApi.fetch).toHaveBeenCalled();
-
-            vi.useRealTimers();
-        });
-
-        it('works fine with poolId provided for COMMAND type', async () => {
-            vi.useFakeTimers();
-
-            fetchApi.fetch.mockReturnValue(of([]));
-            cacheService.insert.mockReturnValue(of(undefined));
-
-            const results: SyncTableComplete[] = [];
-            let errored = false;
-
-            syncSingleType(
-                PlatformEventType.COMMAND,
-                instanceId,
-                poolId,
-                undefined,
-                fetchApi as unknown as EventFetchApi,
-                cacheService as unknown as CacheService,
-            ).subscribe({
-                next: (r) => results.push(r),
-                error: () => {
-                    errored = true;
-                },
-            });
-
-            await vi.runAllTimersAsync();
-
-            expect(errored).toBe(false);
-            expect(fetchApi.fetch).toHaveBeenCalled();
-
-            vi.useRealTimers();
-        });
     });
 
     describe('empty fetch result', () => {
@@ -268,7 +168,6 @@ describe('syncSingleType', () => {
             syncSingleType(
                 eventType,
                 instanceId,
-                poolId,
                 staleWatermark,
                 fetchApi as unknown as EventFetchApi,
                 cacheService as unknown as CacheService,
@@ -303,7 +202,6 @@ describe('syncSingleType', () => {
             syncSingleType(
                 eventType,
                 instanceId,
-                poolId,
                 staleWatermark,
                 fetchApi as unknown as EventFetchApi,
                 cacheService as unknown as CacheService,

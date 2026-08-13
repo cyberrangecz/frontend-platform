@@ -1,13 +1,6 @@
-.remove-role {
+.role-remove {
     display: flex;
     justify-content: flex-end;
-}
-
-.form-line {
-    display: flex;
-    flex-direction: row;
-    justify-items: flex-end;
-    margin-bottom: 30px;
 }
 
 .spacer {
@@ -18,15 +11,4 @@
     display: flex;
     flex-direction: column;
     padding: 20px;
-}
-
-.description {
-    max-height: 226px;
-}
-
-@media screen and (max-width: 900px) {
-    .form-container {
-        display: flex;
-        flex-direction: column;
-    }
 }

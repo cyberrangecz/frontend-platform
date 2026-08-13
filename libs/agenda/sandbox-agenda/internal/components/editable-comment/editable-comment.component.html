@@ -15,9 +15,13 @@
                    matInput
                    matTooltip="{{ value }}"
                    type="text">
+            @if (editionEnabled && commentControl.hasError('maxlength')) {
+                <mat-error>At most {{ maximumCommentLength }} characters</mat-error>
+            }
         </mat-form-field>
         <!-- EDIT COMMENT button -->
         <button (click)="editionEnabled ? saveComment() : toggleEdition(true)"
+                [disabled]="editionEnabled && commentFormGroup.formGroup.invalid"
                 [matTooltip]="editionEnabled ? 'Save edited comment' : 'Edit comment'"
                 [style]="'opacity: ' + (editOpacity || editionEnabled ? 100 : 0)"
                 aria-label="Edit comment"

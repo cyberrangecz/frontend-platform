@@ -9,11 +9,15 @@
     min-height: 0;
     overflow-y: auto;
     padding: var(--space-3xs) var(--space-xl) var(--space-xl);
+    display: grid;
+    grid-template-columns: 6rem minmax(0, 9rem) minmax(6rem, 1fr) minmax(0, max-content);
+    align-content: start;
+    column-gap: var(--space-xs);
 
     &__row {
         display: grid;
-        grid-template-columns: 6rem 9rem 1fr 8rem;
-        gap: var(--space-xs);
+        grid-template-columns: subgrid;
+        grid-column: 1 / -1;
         align-items: center;
         padding: var(--space-2xs) 0;
         box-sizing: border-box;
@@ -64,6 +68,8 @@
     }
 
     &__level {
+        justify-self: end;
+        max-width: 100%;
         color: var(--neutral-40);
         font-size: var(--font-size-md);
         overflow: hidden;
@@ -72,6 +78,7 @@
     }
 
     &__empty {
+        grid-column: 1 / -1;
         color: var(--neutral-50);
         font-style: italic;
         text-align: center;

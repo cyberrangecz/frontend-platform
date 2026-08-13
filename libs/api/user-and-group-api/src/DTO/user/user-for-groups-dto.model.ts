@@ -4,6 +4,6 @@ export class UserForGroupsDTO {
     family_name: string;
     id: number;
     login: string;
-    mail: string;
+    mail: string | null;
     iss: string;
 }

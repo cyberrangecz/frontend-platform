@@ -1,3 +1,7 @@
+@if (poolComment(); as comment) {
+    <p class="pool-comment">{{ comment }}</p>
+}
+
 <mat-card appearance="outlined">
     <h3>Sandbox Instances</h3>
     <sentinel-controls [controls]="controls" />

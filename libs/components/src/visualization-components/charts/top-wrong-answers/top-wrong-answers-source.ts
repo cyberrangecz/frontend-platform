@@ -2,7 +2,7 @@ import { computed, Signal } from '@angular/core';
 import { and, eq } from 'drizzle-orm';
 import { from, Observable, of } from 'rxjs';
 import { EventCacheDb, wrongAnswerSubmittedTable } from '@crczp/event-query-engine';
-import { PlatformEventType } from '@crczp/visualization-model';
+import { PlatformEventType } from '@crczp/training-model';
 import { createQuerySource, QuerySource } from '../shared';
 
 /**

@@ -15,7 +15,7 @@ import { format, formatISO } from 'date-fns';
 import { lastValueFrom } from 'rxjs';
 
 import { EntityResolverService, EntityType } from '@crczp/event-query-engine';
-import { SortDir } from '@crczp/utils';
+import { SortDir, Utils } from '@crczp/utils';
 
 import {
     ChartPanelInputs,
@@ -262,18 +262,18 @@ export class CommandsLogTableComponent implements ChartPanelInputs, CsvExportabl
             case 'time':
                 return rowA.offsetSeconds - rowB.offsetSeconds;
             case 'command':
-                return rowA.commandLine.toLowerCase().localeCompare(rowB.commandLine.toLowerCase());
+                return Utils.String.compare(rowA.commandLine, rowB.commandLine);
             case 'level': {
                 const orderA = rowA.levelOrder ?? Number.MAX_SAFE_INTEGER;
                 const orderB = rowB.levelOrder ?? Number.MAX_SAFE_INTEGER;
                 return orderA - orderB;
             }
             case 'host':
-                return rowA.hostText.toLowerCase().localeCompare(rowB.hostText.toLowerCase());
+                return Utils.String.compare(rowA.hostText, rowB.hostText);
             case 'ip':
-                return rowA.ipText.localeCompare(rowB.ipText);
+                return Utils.String.compare(rowA.ipText, rowB.ipText);
             case 'wd':
-                return rowA.workingDirectoryText.toLowerCase().localeCompare(rowB.workingDirectoryText.toLowerCase());
+                return Utils.String.compare(rowA.workingDirectoryText, rowB.workingDirectoryText);
             default:
                 return 0;
         }

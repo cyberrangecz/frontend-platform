@@ -10,8 +10,11 @@ import {
     ResolveEntitiesSafe,
     trainingRunEndedTable,
 } from '@crczp/event-query-engine';
-import { AbstractLevelTypeEnum, TrainingUser } from '@crczp/training-model';
-import { PlatformEventType } from '@crczp/visualization-model';
+import {
+    levelTypeFromEvent,
+    TrainingUser,
+    PlatformEventType
+} from '@crczp/training-model';
 
 import { createQuerySource, QuerySource } from '../../shared';
 import { BarRow } from '../types/bar.types';
@@ -135,7 +138,7 @@ function toBarRow(row: ResolvedBarRow): BarRow {
         trainingRunId,
         levelId,
         levelOrder: row.level_order,
-        levelType: row.level_type as AbstractLevelTypeEnum,
+        levelType: levelTypeFromEvent(row.level_type),
         levelTitle: row.level_title,
         startedAt: row.started_at,
         completedAt: row.completed_at,

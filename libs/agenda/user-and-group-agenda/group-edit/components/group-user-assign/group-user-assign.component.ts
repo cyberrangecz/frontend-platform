@@ -11,7 +11,7 @@ import { map } from 'rxjs/operators';
 import { DeleteControlItem, SaveControlItem } from '@crczp/user-and-group-agenda/internal';
 import { UserAssignService } from '../../services/state/user-assign.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatCard, MatCardContent, MatCardHeader, MatCardSubtitle, MatCardTitle } from '@angular/material/card';
+import { MatCard, MatCardAvatar, MatCardContent, MatCardHeader, MatCardSubtitle, MatCardTitle } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
 import { PaginationStorageService, providePaginationStorageService } from '@crczp/utils';
 import { UserSort } from '@crczp/user-and-group-api';
@@ -31,6 +31,7 @@ import { GroupMemberTable } from '../../model/table/group-member-table';
         MatCard,
         MatCardContent,
         MatCardHeader,
+        MatCardAvatar,
         MatIcon,
         SentinelControlsComponent,
         MatCardTitle,

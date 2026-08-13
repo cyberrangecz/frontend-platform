@@ -17,6 +17,7 @@ import {SentinelMarkdownEditorComponent} from "@sentinel/components/markdown-edi
 import {MatError, MatFormField, MatInput, MatLabel, MatSuffix} from "@angular/material/input";
 import {MatIconButton} from "@angular/material/button";
 import {MatIcon} from "@angular/material/icon";
+import { ClearInputSuffixComponent } from '@crczp/utils';
 
 @Component({
     selector: 'crczp-hint-edit',
@@ -24,16 +25,15 @@ import {MatIcon} from "@angular/material/icon";
     styleUrls: ['./hint-detail-edit.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
+        ClearInputSuffixComponent,
         MatError,
         SentinelMarkdownEditorComponent,
         MatError,
         MatLabel,
         MatSuffix,
-        MatIconButton,
         MatFormField,
         ReactiveFormsModule,
-        MatInput,
-        MatIcon
+        MatInput
     ]
 })
 /**

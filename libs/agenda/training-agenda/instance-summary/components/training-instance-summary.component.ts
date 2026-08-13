@@ -19,6 +19,7 @@ import { NotificationService, PaginationStorageService, providePaginationStorage
 import { Routing } from '@crczp/routing-commons';
 import { PaginationMapper } from '@crczp/api-common';
 import { TrainingRunSort } from '@crczp/training-api';
+import { ScoreCsvExportService } from '@crczp/training-agenda/instance-overview';
 
 /**
  * Smart component of training instance summary
@@ -59,6 +60,7 @@ export class TrainingInstanceSummaryComponent implements OnInit {
     private notificationService = inject(NotificationService);
     private paginationService = inject(PaginationStorageService);
     private trainingRunService = inject(TrainingRunSummaryService);
+    private scoreCsvExportService = inject(ScoreCsvExportService);
 
     private readonly initialRunPagination =
         this.paginationService.createPagination<TrainingRunSort>(
@@ -102,10 +104,6 @@ export class TrainingInstanceSummaryComponent implements OnInit {
         this.trainingRunService.getInfo(trainingRunId).pipe();
     }
 
-    onShowProgress(): void {
-        this.trainingInstanceSummaryService.showProgress();
-    }
-
     onShowResults(): void {
         this.trainingInstanceSummaryService.showResults();
     }
@@ -121,7 +119,7 @@ export class TrainingInstanceSummaryComponent implements OnInit {
     onExportScore(): void {
         this.trainingInstance$
             .pipe(
-                switchMap((ti) => this.trainingRunService.exportScore(ti.id)),
+                switchMap((ti) => this.scoreCsvExportService.export(ti.id)),
                 take(1),
             )
             .subscribe();

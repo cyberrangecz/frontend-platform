@@ -1,4 +1,5 @@
 export * from './router-types';
+export * from './guards/unsaved-changes.guard';
 export * from './routing-namespace';
 export * from './router-definitions';
 export * from './resolver/sandbox/sandbox-resolver-helper.service';

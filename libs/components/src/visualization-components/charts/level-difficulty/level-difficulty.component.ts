@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject, input } from '@an
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { EChartsOption } from 'echarts';
+import { ECharts } from 'echarts/core';
 import { NgxEchartsDirective } from 'ngx-echarts';
 import { catchError, of } from 'rxjs';
 
@@ -139,6 +140,17 @@ export class LevelDifficultyComponent
             option: this.buildRadarOption(panel, viewModel, palette),
         }));
     });
+
+    /**
+     * Pins the hover cursor to the default arrow on each per-level radar, since none of
+     * their marks are clickable.
+     *
+     * @param instance The ECharts instance being wired.
+     */
+    protected override wireChart(instance: ECharts): void {
+        super.wireChart(instance);
+        this.pinDefaultCursor(instance);
+    }
 
     /**
      * Builds the ECharts radar option for a single level panel. The three count axes plot raw

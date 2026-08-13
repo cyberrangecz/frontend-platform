@@ -21,10 +21,12 @@ import {SentinelValidators} from '@sentinel/common';
 import {FreeFormQuestion, Question} from '@crczp/training-model';
 import {FreeFormQuestionFormGroup} from './free-form-question-form-group';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import {Subscription} from 'rxjs';
 import {MatError, MatFormField, MatInput, MatLabel, MatSuffix} from "@angular/material/input";
-import {MatButton, MatIconButton} from "@angular/material/button";
+import {MatButton} from "@angular/material/button";
 import {MatIcon} from "@angular/material/icon";
 import {SentinelMarkdownEditorComponent} from "@sentinel/components/markdown-editor";
+import { ClearInputSuffixComponent } from '@crczp/utils';
 
 @Component({
     selector: 'crczp-free-form-question-edit',
@@ -32,10 +34,10 @@ import {SentinelMarkdownEditorComponent} from "@sentinel/components/markdown-edi
     styleUrls: ['./free-form-question-edit.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
+        ClearInputSuffixComponent,
         MatError,
         MatButton,
         MatIcon,
-        MatIconButton,
         MatSuffix,
         MatInput,
         ReactiveFormsModule,
@@ -59,6 +61,7 @@ export class FreeFormQuestionEditComponent implements OnChanges {
     maxQuestionPenalty = Question.MAX_QUESTION_PENALTY;
     freeFormChoices: UntypedFormArray;
     destroyRef = inject(DestroyRef);
+    private formGroupValueChangesSubscription?: Subscription;
 
     get title(): AbstractControl {
         return this.freeFormQuestionFormGroup.freeFormQuestionFormGroup.get('title');
@@ -81,7 +84,8 @@ export class FreeFormQuestionEditComponent implements OnChanges {
             this.freeFormQuestionFormGroup = new FreeFormQuestionFormGroup(this.question);
             this.checkState();
             this.choices.markAllAsTouched();
-            this.freeFormQuestionFormGroup.freeFormQuestionFormGroup.valueChanges
+            this.formGroupValueChangesSubscription?.unsubscribe();
+            this.formGroupValueChangesSubscription = this.freeFormQuestionFormGroup.freeFormQuestionFormGroup.valueChanges
                 .pipe(takeUntilDestroyed(this.destroyRef))
                 .subscribe(() => this.questionChanged());
         }

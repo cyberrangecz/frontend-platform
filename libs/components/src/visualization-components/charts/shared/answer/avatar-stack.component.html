@@ -7,7 +7,7 @@
         [matTooltip]="face.name"
         matTooltipPosition="below"
         [attr.aria-label]="face.name"
-        (click)="onFaceClick(face.runId)"
+        (click)="onFaceClick(face.runId); $event.stopPropagation()"
     >
         @if (face.src; as src) {
             <img class="stack-face--image" [src]="src" alt="" aria-hidden="true" />

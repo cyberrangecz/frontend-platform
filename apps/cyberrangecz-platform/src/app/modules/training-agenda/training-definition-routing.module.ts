@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { SandboxApiModule } from '@crczp/sandbox-api';
 import { TrainingApiModule } from '@crczp/training-api';
-import { TrainingDefinition } from '@crczp/training-model';
 import {
     Routing,
     TrainingResolverHelperService,
@@ -23,6 +22,7 @@ const routes: ValidRouterConfig<'linear-definition'> = [
                 (m) => m.TrainingDefinitionEditOverviewComponent,
             ),
         canDeactivate: [canDeactivateTrainingDefinition],
+        data: { title: 'Create Training Definition', breadcrumb: 'Create' },
     },
     {
         path: ':definitionId/edit',
@@ -31,16 +31,10 @@ const routes: ValidRouterConfig<'linear-definition'> = [
                 (m) => m.TrainingDefinitionEditOverviewComponent,
             ),
         canDeactivate: [canDeactivateTrainingDefinition],
-        resolve: {
-            [TrainingDefinition.name]:
-                Routing.Resolvers.TrainingDefinition
-                    .linearDefinitionWithLevelsResolver,
-            breadcrumb:
-                Routing.Resolvers.TrainingDefinition
-                    .linearDefinitionBreadcrumbResolver,
-            title: Routing.Resolvers.TrainingDefinition
-                .linearDefinitionTitleResolver,
-        },
+        resolve: Routing.Resolvers.resolveTrainingDefinition({
+            title: 'Edit {title}',
+            breadcrumb: '{title}',
+        }),
     },
     {
         path: ':definitionId/preview',
@@ -51,14 +45,9 @@ const routes: ValidRouterConfig<'linear-definition'> = [
         data: {
             title: undefined,
         },
-        resolve: {
-            [TrainingDefinition.name]:
-                Routing.Resolvers.TrainingDefinition
-                    .linearDefinitionWithLevelsResolver,
-            breadcrumb:
-                Routing.Resolvers.TrainingDefinition
-                    .linearDefinitionBreadcrumbResolver,
-        },
+        resolve: Routing.Resolvers.resolveTrainingDefinition({
+            breadcrumb: 'Preview',
+        }),
     },
     {
         path: ':definitionId/detail',
@@ -66,16 +55,10 @@ const routes: ValidRouterConfig<'linear-definition'> = [
             import('@crczp/training-agenda/definition-summary').then(
                 (m) => m.TrainingDefinitionSummaryComponent,
             ),
-        resolve: {
-            [TrainingDefinition.name]:
-                Routing.Resolvers.TrainingDefinition
-                    .linearDefinitionWithLevelsResolver,
-            breadcrumb:
-                Routing.Resolvers.TrainingDefinition
-                    .linearDefinitionBreadcrumbResolver,
-            title: Routing.Resolvers.TrainingDefinition
-                .linearDefinitionTitleResolver,
-        },
+        resolve: Routing.Resolvers.resolveTrainingDefinition({
+            title: 'Detail of {title}',
+            breadcrumb: 'Detail',
+        }),
     },
 ];
 

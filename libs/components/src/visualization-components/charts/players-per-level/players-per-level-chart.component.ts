@@ -97,13 +97,13 @@ export class PlayersPerLevelChartComponent
     });
 
     /**
-     * Captures the ECharts instance and pins the hover cursor to the default arrow,
+     * Pins the hover cursor to the default arrow,
      * since none of this chart's marks are clickable.
      *
-     * @param instance The initialised ECharts instance emitted by ngx-echarts.
+     * @param instance The ECharts instance being wired.
      */
-    protected override onChartInit(instance: ECharts): void {
-        super.onChartInit(instance);
+    protected override wireChart(instance: ECharts): void {
+        super.wireChart(instance);
         this.pinDefaultCursor(instance);
     }
 

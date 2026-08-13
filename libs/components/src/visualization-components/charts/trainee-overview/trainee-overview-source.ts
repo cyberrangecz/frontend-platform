@@ -60,22 +60,12 @@ interface LevelCompletedRow {
     readonly actual_score_in_level: number;
 }
 
-/** One run-and-level keyed penalty row (hint or solution): one row per occurrence. */
+/** One run-and-level keyed penalty row (hint, solution, or wrong answer): one row per occurrence. */
 interface RunLevelRow {
     /** Training run the occurrence belongs to. */
     readonly training_run_id: number;
     /** Zero-based level position the occurrence happened on. */
     readonly level_order: number;
-}
-
-/** One wrong_answer_submitted row carrying its repetition count. */
-interface WrongAnswerRow {
-    /** Training run that submitted the wrong answer. */
-    readonly training_run_id: number;
-    /** Zero-based level position the answer was submitted on. */
-    readonly level_order: number;
-    /** Number of times this wrong answer was submitted. */
-    readonly count: number;
 }
 
 /** Combined results from all sub-queries for one polling cycle. */
@@ -91,7 +81,7 @@ export interface TraineeOverviewAggregateRow {
     /** All solution-displayed events for the instance. */
     readonly solutionRows: readonly RunLevelRow[];
     /** All wrong-answer events for the instance. */
-    readonly wrongRows: readonly WrongAnswerRow[];
+    readonly wrongRows: readonly RunLevelRow[];
     /** Latest cumulative training score per run. */
     readonly latestTrainingScoreByRunId: ReadonlyMap<number, number>;
     /** Latest cumulative assessment score per run. */
@@ -114,7 +104,7 @@ export interface TraineeLevelRaw {
     readonly hintCount: number;
     /** Solutions revealed on the level. */
     readonly solutionCount: number;
-    /** Wrong answers submitted on the level (summed repetition counts). */
+    /** Wrong answers submitted on the level. */
     readonly wrongCount: number;
 }
 
@@ -230,10 +220,9 @@ function buildTraineeOverviewQuery(
             .select({
                 training_run_id: wrongAnswerSubmittedTable.training_run_id,
                 level_order: wrongAnswerSubmittedTable.level_order,
-                count: wrongAnswerSubmittedTable.count,
             })
             .from(wrongAnswerSubmittedTable)
-            .where(eq(wrongAnswerSubmittedTable.instance_id, instanceIdValue)) as Promise<WrongAnswerRow[]>,
+            .where(eq(wrongAnswerSubmittedTable.instance_id, instanceIdValue)) as Promise<RunLevelRow[]>,
     );
 
     return combineLatest({
@@ -339,7 +328,7 @@ function aggregateLevels(combined: TraineeOverviewAggregateRow): Map<number, rea
     }
 
     for (const row of combined.wrongRows) {
-        levelAccumulator(byRun, row.training_run_id, row.level_order).wrongCount += row.count;
+        levelAccumulator(byRun, row.training_run_id, row.level_order).wrongCount += 1;
     }
 
     const result = new Map<number, readonly TraineeLevelRaw[]>();

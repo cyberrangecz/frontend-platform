@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { TrainingRunOverviewComponent } from '@crczp/training-agenda/run-overview';
-import { AccessTrainingRunInfo, TrainingRun } from '@crczp/training-model';
+import { AccessTrainingRunInfo } from '@crczp/training-model';
 import { TrainingApiModule } from '@crczp/training-api';
 import {
     Routing,
@@ -9,6 +9,7 @@ import {
     ValidRouterConfig,
 } from '@crczp/routing-commons';
 import { SandboxApiModule } from '@crczp/sandbox-api';
+import { provideDataBroker, provideEntityResolverService, singleTabCacheGuard } from '@crczp/event-query-engine';
 
 const routes: ValidRouterConfig<'run'> = [
     {
@@ -26,8 +27,7 @@ const routes: ValidRouterConfig<'run'> = [
             title: undefined,
         },
         resolve: {
-            [AccessTrainingRunInfo.name]:
-                Routing.Resolvers.TrainingRun.resolveRunAccess,
+            [AccessTrainingRunInfo.name]: Routing.Resolvers.resolveRunAccess,
         },
     },
     {
@@ -41,21 +41,20 @@ const routes: ValidRouterConfig<'run'> = [
             title: undefined,
         },
         resolve: {
-            [AccessTrainingRunInfo.name]:
-                Routing.Resolvers.TrainingRun.resolveRunAccess,
+            [AccessTrainingRunInfo.name]: Routing.Resolvers.resolveRunAccess,
         },
     },
     {
         path: 'linear/:runId/results',
-        // TODO add new run results component
+        canActivate: [singleTabCacheGuard],
         data: {
             breadcrumb: 'Results',
             title: 'Training Run Results',
         },
-        resolve: {
-            [TrainingRun.name]:
-                Routing.Resolvers.TrainingRun.resolveAccessedTrainingRunResults,
-        },
+        loadComponent: () =>
+            import('@crczp/training-agenda/run-results').then(
+                (m) => m.TraineeFeedbackDashboardComponent,
+            ),
     },
 ];
 
@@ -66,7 +65,11 @@ const routes: ValidRouterConfig<'run'> = [
         SandboxApiModule,
         TrainingRunOverviewComponent,
     ],
-    providers: [TrainingResolverHelperService],
+    providers: [
+        TrainingResolverHelperService,
+        provideDataBroker(),
+        provideEntityResolverService(),
+    ],
     exports: [RouterModule],
 })
 export class TrainingRunRoutingModule {}

@@ -1,4 +1,4 @@
-import { PlatformEventType } from '@crczp/visualization-model';
+import { PlatformEventType } from '@crczp/training-model';
 import { eventTypeColors, PALETTE } from '../../shared';
 import { EventKind, EVENT_KINDS } from '../types/event.types';
 

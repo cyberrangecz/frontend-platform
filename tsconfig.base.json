@@ -103,8 +103,8 @@
             "@crczp/training-agenda/instance-overview": [
                 "libs/agenda/training-agenda/instance-overview/index.ts"
             ],
-            "@crczp/training-agenda/instance-progress": [
-                "libs/agenda/training-agenda/instance-progress/index.ts"
+            "@crczp/training-agenda/instance-results": [
+                "libs/agenda/training-agenda/instance-results/index.ts"
             ],
             "@crczp/training-agenda/instance-runs": [
                 "libs/agenda/training-agenda/instance-runs/index.ts"
@@ -164,10 +164,7 @@
             ],
             "@crczp/utils": ["libs/utils/misc/src/index.ts"],
             "@crczp/echarts-utils": ["libs/utils/echarts/src/index.ts"],
-            "@crczp/test-utils": ["libs/utils/testing/src/index.ts"],
-            "@crczp/visualization-model": [
-                "libs/model/visualization-model/src/index.ts"
-            ]
+            "@crczp/test-utils": ["libs/utils/testing/src/index.ts"]
         },
         "rootDir": ".",
         "skipDefaultLibCheck": true,

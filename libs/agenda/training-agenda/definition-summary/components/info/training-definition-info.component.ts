@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
-import {TrainingDefinition} from '@crczp/training-model';
+import {TrainingDefinitionWithLevels} from '@crczp/training-model';
 import {MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle} from "@angular/material/expansion";
 import {MatIcon} from "@angular/material/icon";
 
@@ -16,5 +16,5 @@ import {MatIcon} from "@angular/material/icon";
     ]
 })
 export class TrainingDefinitionInfoComponent {
-    @Input() trainingDefinition: TrainingDefinition;
+    @Input() trainingDefinition: TrainingDefinitionWithLevels;
 }

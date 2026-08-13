@@ -23,6 +23,7 @@ import {MatIconButton} from "@angular/material/button";
 import {MatError, MatFormField, MatHint, MatInput, MatLabel, MatSuffix} from "@angular/material/input";
 import {SentinelMarkdownEditorComponent} from "@sentinel/components/markdown-editor";
 import {MatIcon} from "@angular/material/icon";
+import { ClearInputSuffixComponent } from '@crczp/utils';
 
 /**
  * Component for editing new or existing training level
@@ -33,12 +34,12 @@ import {MatIcon} from "@angular/material/icon";
     styleUrls: ['./training-level-edit.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
+        ClearInputSuffixComponent,
         ExpectedCommandsSelectComponent,
         MitreTechniqueSelectComponent,
         HintsOverviewComponent,
         MatCheckbox,
         MatTooltip,
-        MatIconButton,
         MatSuffix,
         ReactiveFormsModule,
         MatFormField,
@@ -102,10 +103,6 @@ export class TrainingLevelEditComponent implements OnChanges {
         return this.trainingLevelConfigFormGroup.formGroup.get('minimalPossibleSolveTime');
     }
 
-    get referenceSolution(): AbstractControl {
-        return this.trainingLevelConfigFormGroup.formGroup.get('referenceSolution');
-    }
-
     get hints(): AbstractControl {
         return this.trainingLevelConfigFormGroup.formGroup.get('hints');
     }
@@ -167,7 +164,6 @@ export class TrainingLevelEditComponent implements OnChanges {
      */
     private setFormsAsTouched(): void {
         this.title.markAsTouched();
-        this.referenceSolution.markAllAsTouched();
         this.estimatedDuration.markAsTouched();
         this.minimalPossibleSolveTime.markAsTouched();
         this.maxScore.markAsTouched();

@@ -1,5 +1,5 @@
 import { sqliteTable, text, integer, real, uniqueIndex, index } from 'drizzle-orm/sqlite-core';
-import { EventAnswer, PlatformEventType } from '@crczp/visualization-model';
+import { EventAnswer, PlatformEventType } from '@crczp/training-model';
 
 // Score and penalty columns use real (SQLite REAL / float64), read back as numbers. All affected
 // values are bounded (scores 0–100, counts, penalty points, fractional training seconds) so float64

@@ -82,4 +82,3 @@ Key type definitions for objects received from the API.
 - [sandbox-model](./libs/model/sandbox-model/README.md) - Sandbox data models
 - [training-model](./libs/model/training-model/README.md) - Training data models
 - [user-and-group-model](./libs/model/user-and-group-model/README.md) - User and group data models
-- [visualization-model](./libs/model/visualization-model/README.md) - Visualization data models

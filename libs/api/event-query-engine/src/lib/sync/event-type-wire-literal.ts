@@ -1,5 +1,10 @@
-import { PlatformEventType } from '@crczp/visualization-model';
+import { PlatformEventType } from '@crczp/training-model';
 
+/**
+ * Maps each event type to the literal the events endpoint expects in its `eventType` parameter.
+ * Training events are snake_case; `COMMAND` is uppercase because console-log events are served
+ * from a separate index whose type discriminator is not normalized alongside them.
+ */
 export const EVENT_TYPE_WIRE_LITERAL: Record<PlatformEventType, string> = {
     [PlatformEventType.TRAINING_RUN_STARTED]: 'training_run_started',
     [PlatformEventType.TRAINING_RUN_RESUMED]: 'training_run_resumed',

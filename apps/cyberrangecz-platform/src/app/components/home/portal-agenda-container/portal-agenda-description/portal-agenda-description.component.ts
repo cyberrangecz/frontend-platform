@@ -14,7 +14,6 @@ export class PortalAgendaDescriptionComponent {
     @Input() label: string;
     @Input() description: string;
     @Input() elevation: string;
-    @Input() disabled: boolean;
     @Output() elevate: EventEmitter<string> = new EventEmitter();
 
     setElevation(agendaLabel: string): void {

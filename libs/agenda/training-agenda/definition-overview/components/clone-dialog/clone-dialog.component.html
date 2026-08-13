@@ -10,13 +10,7 @@
       <mat-label>Title</mat-label>
       <input matInput placeholder="Title"
         formControlName="clonedDefinitionTitle" required>
-      @if (clonedDefinitionTitle.value) {
-        <button matSuffix
-          mat-icon-button aria-label="Clear"
-          (click)="clonedDefinitionTitle.setValue('')">
-          <mat-icon>close</mat-icon>
-        </button>
-      }
+      <crczp-clear-input-suffix [control]="clonedDefinitionTitle" matSuffix />
       @if (clonedDefinitionTitle.hasError('whitespace')) {
         <mat-error>Title cannot be empty</mat-error>
       }

@@ -1,8 +1,8 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { ResponseHeaderContentDispositionReader, SentinelParamsMerger } from '@sentinel/common';
+import { saveAs } from 'file-saver';
 import {
-    BlobFileSaver,
     CRCZPHttpService,
     handleJsonError,
     JavaPaginatedResource,
@@ -12,12 +12,19 @@ import {
     QueryParam
 } from '@crczp/api-common';
 import { OffsetPaginationEvent } from '@crczp/utils';
-import { TrainingInstance, TrainingInstanceBasic, TrainingRun } from '@crczp/training-model';
+import {
+    TrainingInstance,
+    TrainingInstanceBasic,
+    TrainingInstanceScoreReport,
+    TrainingRun,
+} from '@crczp/training-model';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { TrainingInstanceAssignPoolDTO } from '../../dto/training-instance/training-instance-assign-pool-dto';
 import { TrainingInstanceDTO } from '../../dto/training-instance/training-instance-dto';
 import { TrainingInstanceBasicDto } from '../../dto/training-instance/training-instance-basic-dto';
+import { TrainingInstanceScoreReportDto } from '../../dto/training-instance/training-instance-score-report-dto';
+import { trainingInstanceScoreReportMapper } from '../../mappers/training-instance/training-instance-score-report-mapper';
 import { TrainingInstanceMapper } from '../../mappers/training-instance/training-instance-mapper';
 import { TrainingRunMapper } from '../../mappers/training-run/training-run-mapper';
 import { trainingInstanceBasicArrayMapper } from '../../mappers/training-instance/training-instance-basic-mapper';
@@ -46,7 +53,7 @@ export class TrainingInstanceDefaultApi extends LinearTrainingInstanceApi {
         const basePath = inject(PortalConfig).basePaths.linearTraining;
         this.trainingInstancesEndpointUri =
             basePath + '/' + this.trainingInstancesUriExtension;
-        this.trainingExportsEndpointUri = basePath + '/' + '/exports';
+        this.trainingExportsEndpointUri = basePath + '/exports';
     }
 
     /**
@@ -194,8 +201,8 @@ export class TrainingInstanceDefaultApi extends LinearTrainingInstanceApi {
             .pipe(
                 handleJsonError(),
                 map((resp) => {
-                    BlobFileSaver.saveBlob(
-                        resp.body,
+                    saveAs(
+                        resp.body!,
                         ResponseHeaderContentDispositionReader.getFilenameFromResponse(
                             resp,
                             'archived-training-instance.zip',
@@ -220,32 +227,6 @@ export class TrainingInstanceDefaultApi extends LinearTrainingInstanceApi {
         );
     }
 
-    exportScore(trainingInstanceId: number): Observable<boolean> {
-        const headers = new HttpHeaders().set('Accept', ['text/plain']);
-        return this.http
-            .get(
-                `${this.trainingExportsEndpointUri}/${this.trainingInstancesUriExtension}/${trainingInstanceId}/scores`,
-                {
-                    responseType: 'blob',
-                    observe: 'response',
-                    headers,
-                },
-            )
-            .pipe(
-                handleJsonError(),
-                map((resp) => {
-                    BlobFileSaver.saveBlob(
-                        resp.body,
-                        ResponseHeaderContentDispositionReader.getFilenameFromResponse(
-                            resp,
-                            'training-instance-scores.csv',
-                        ),
-                    );
-                    return true;
-                }),
-            );
-    }
-
     fetchInstancesByIds(ids: number[]): Observable<TrainingInstanceBasic[]> {
         return this.crczpHttp
             .get<TrainingInstanceBasicDto[]>(
@@ -260,6 +241,18 @@ export class TrainingInstanceDefaultApi extends LinearTrainingInstanceApi {
                 ttlMs: this.entityCacheTtlMs,
             })
             .withMapper(trainingInstanceBasicArrayMapper)
+            .execute();
+    }
+
+    getScoreReport(instanceId: number): Observable<TrainingInstanceScoreReport> {
+        return this.crczpHttp
+            .get<
+                InstanceType<typeof TrainingInstanceScoreReportDto>
+            >(
+                `${this.trainingExportsEndpointUri}/${this.trainingInstancesUriExtension}/${instanceId}/scores`,
+                'Fetch training instance score report',
+            )
+            .withMapper(trainingInstanceScoreReportMapper)
             .execute();
     }
 }

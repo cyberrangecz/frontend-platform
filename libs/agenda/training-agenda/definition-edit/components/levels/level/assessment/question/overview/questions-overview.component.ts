@@ -76,6 +76,12 @@ export class QuestionsOverviewComponent implements OnInit, OnChanges {
     questionChanged: boolean;
     destroyRef = inject(DestroyRef);
 
+    /**
+     * Per-question required flag captured on entering Test mode, keyed by the wrapped question,
+     * so leaving Test mode can restore the choice each question held in Questionnaire mode.
+     */
+    private requiredSnapshot = new Map<Question, boolean>();
+
     ngOnInit(): void {
         this.selectedStep = 0;
         this.initControls();
@@ -88,6 +94,7 @@ export class QuestionsOverviewComponent implements OnInit, OnChanges {
                 changes['assessmentOrder'].currentValue
         ) {
             this.selectedStep = 0;
+            this.requiredSnapshot.clear();
         }
         if ('questions' in changes && changes['questions'].isFirstChange()) {
             this.selectedStep = 0;
@@ -98,18 +105,11 @@ export class QuestionsOverviewComponent implements OnInit, OnChanges {
             );
             this.calculateHasError();
         }
-        if ('isTest' in changes) {
-            if (this.isTest && this.questions) {
-                this.questionChanged = false;
-                for (const question of this.stepperQuestions.items) {
-                    if (!question.required) {
-                        question.requiredState = true;
-                        this.questionChanged = true;
-                    }
-                }
-                if (this.questionChanged) {
-                    this.onQuestionChanged();
-                }
+        if ('isTest' in changes && this.questions) {
+            if (this.isTest) {
+                this.enterTestMode();
+            } else {
+                this.leaveTestMode();
             }
         }
         if (this.stepperQuestions.items.length > 0) {
@@ -119,11 +119,49 @@ export class QuestionsOverviewComponent implements OnInit, OnChanges {
     }
 
     /**
+     * Records each question's current required choice, then forces every question to required.
+     */
+    private enterTestMode(): void {
+        for (const question of this.stepperQuestions.items) {
+            this.requiredSnapshot.set(question.question, question.required);
+        }
+        this.questionChanged = false;
+        for (const question of this.stepperQuestions.items) {
+            if (!question.required) {
+                question.requiredState = true;
+                this.questionChanged = true;
+            }
+        }
+        if (this.questionChanged) {
+            this.onQuestionChanged();
+        }
+    }
+
+    /**
+     * Replays each question's recorded required choice. A question with no recorded choice,
+     * because it was added during the Test excursion, keeps its current required value.
+     */
+    private leaveTestMode(): void {
+        this.questionChanged = false;
+        for (const question of this.stepperQuestions.items) {
+            const snapshotValue = this.requiredSnapshot.get(question.question);
+            if (snapshotValue !== undefined && question.required !== snapshotValue) {
+                question.requiredState = snapshotValue;
+                this.questionChanged = true;
+            }
+        }
+        this.requiredSnapshot.clear();
+        if (this.questionChanged) {
+            this.onQuestionChanged();
+        }
+    }
+
+    /**
      * Updates order of stepper items to match order of the questions
      */
     onOrderUpdate(): void {
         this.stepperQuestions.items.forEach((question, index) => {
-            this.stepperQuestions.items[index].question.order = index;
+            question.question.order = index;
         });
         this.onQuestionChanged();
     }

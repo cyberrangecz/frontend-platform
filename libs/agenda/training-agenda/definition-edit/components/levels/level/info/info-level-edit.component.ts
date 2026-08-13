@@ -14,9 +14,10 @@ import {InfoLevelEditFormGroup} from './info-level-edit-form-group';
 import {AbstractControl, ReactiveFormsModule} from '@angular/forms';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {SentinelMarkdownEditorComponent} from "@sentinel/components/markdown-editor";
-import {MatError, MatFormField, MatInput, MatLabel} from "@angular/material/input";
+import {MatError, MatFormField, MatInput, MatLabel, MatSuffix} from "@angular/material/input";
 import {MatIconButton} from "@angular/material/button";
 import {MatIcon} from "@angular/material/icon";
+import { ClearInputSuffixComponent } from '@crczp/utils';
 
 /**
  * Component for editing of new or existing info level
@@ -27,14 +28,14 @@ import {MatIcon} from "@angular/material/icon";
     styleUrls: ['./info-level-edit.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
+        ClearInputSuffixComponent,
         SentinelMarkdownEditorComponent,
         MatError,
         MatFormField,
         ReactiveFormsModule,
         MatLabel,
         MatInput,
-        MatIconButton,
-        MatIcon
+        MatSuffix
     ]
 })
 export class InfoLevelEditComponent implements OnChanges {

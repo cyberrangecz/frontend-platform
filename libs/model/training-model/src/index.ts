@@ -21,6 +21,7 @@ export * from './enums/training-run-state.enum';
 export * from './enums/question-type.enum';
 export * from './enums/detected-forbidden-command-type.enum';
 export * from './enums/training-type.enum';
+export * from './enums/platform-event-type.enum';
 
 // MAIN
 export * from './training/access-training-run-info';
@@ -28,6 +29,7 @@ export * from './training/accessed-training-run';
 export * from './training/training-definition-info';
 export * from './training/training-definition';
 export * from './training/training-instance';
+export * from './training/training-instance-score-report';
 export * from './training/training-run';
 export * from './training/training-run-info';
 
@@ -40,8 +42,6 @@ export * from './level/level';
 export * from './level/training-level';
 export * from './level/hint';
 export * from './level/info-level';
-export * from './level/reference-solution-node';
-
 
 // QUESTION
 export * from './questions/extended-matching-items';
@@ -51,6 +51,7 @@ export * from './questions/question';
 export * from './questions/question-choice';
 export * from './questions/extended-matching-option';
 export * from './questions/extended-matching-statement';
+export * from './questions/event-answer';
 
 // USERS
 export * from './user-ref/training-user';

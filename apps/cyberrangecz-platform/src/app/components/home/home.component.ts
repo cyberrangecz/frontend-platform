@@ -1,4 +1,11 @@
-import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import {
+    Component,
+    computed,
+    DestroyRef,
+    inject,
+    OnInit,
+    signal,
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { SentinelAuthService, UserRole } from '@sentinel/auth';
 import { AgendaPortalLink } from '../../model/agenda-portal-link';
@@ -21,12 +28,29 @@ import { ValidPath } from '@crczp/routing-commons';
 export class HomeComponent implements OnInit {
     elevated: string;
     roles: UserRole[];
-    portalAgendaContainers: PortalAgendaContainer[] = [];
+    portalAgendaContainers = signal<PortalAgendaContainer[]>([]);
+
+    /**
+     * Whether the user's roles grant access to no agenda at all.
+     */
+    hasNoAgendas = computed(() => this.portalAgendaContainers().length === 0);
 
     destroyRef = inject(DestroyRef);
 
     private authService = inject(SentinelAuthService);
     private router = inject(Router);
+
+    /**
+     * Keeps only the links whose access condition holds, preserving the given order.
+     *
+     * @param entries Pairs of an access condition and the link it guards.
+     * @returns The guarded links whose condition is met.
+     */
+    private static grantedLinks(
+        ...entries: [granted: boolean, link: AgendaPortalLink][]
+    ): AgendaPortalLink[] {
+        return entries.filter(([granted]) => granted).map(([, link]) => link);
+    }
 
     ngOnInit(): void {
         this.roles = this.authService.getRoles();
@@ -46,125 +70,136 @@ export class HomeComponent implements OnInit {
         this.elevated = buttonName;
     }
 
-    private initRoutes() {
-        this.portalAgendaContainers = [
+    private initRoutes(): void {
+        const containers: PortalAgendaContainer[] = [
             {
                 agendas: this.createParticipateButtons(),
                 label: 'Participate',
-                displayed: RoleResolver.isTrainingTrainee(this.roles),
                 children: [],
                 icon: 'play_circle',
             },
             {
                 agendas: this.createDesignButtons(),
                 label: 'Design',
-                displayed:
-                    RoleResolver.isTrainingDesigner(this.roles) ||
-                    RoleResolver.isSandboxDesigner(this.roles),
                 children: [],
                 icon: 'design_services',
             },
             {
                 agendas: this.createOrganizeButtons(),
                 label: 'Organize',
-                displayed:
-                    RoleResolver.isTrainingOrganizer(this.roles) ||
-                    RoleResolver.isSandboxOrganizer(this.roles),
                 children: [],
                 icon: 'event',
             },
             {
                 agendas: this.createManageButtons(),
                 label: 'Manage',
-                displayed: RoleResolver.isUserAndGroupAdmin(this.roles),
                 children: [],
                 icon: 'manage_accounts',
             },
         ];
+        this.portalAgendaContainers.set(
+            containers.filter((container) => container.agendas.length > 0),
+        );
     }
 
-    private createParticipateButtons() {
-        return [
+    private createParticipateButtons(): AgendaPortalLink[] {
+        return HomeComponent.grantedLinks([
+            RoleResolver.isTrainingTrainee(this.roles),
             new AgendaPortalLink(
                 'Training Run',
-                !RoleResolver.isTrainingTrainee(this.roles),
                 'run',
                 'Training Run lets you start or resume a training session or view the results of a completed training.',
                 'games',
             ),
-        ];
+        ]);
     }
 
     private createDesignButtons(): AgendaPortalLink[] {
-        return [
-            new AgendaPortalLink(
-                'Sandbox Definition',
-                !RoleResolver.isSandboxDesigner(this.roles),
-                'sandbox-definition',
-                'In the Sandbox Definition agenda, you can manage sandbox definitions—descriptions of virtual networks and computers that can be instantiated in isolated sandboxes.',
-                'event_note',
-            ),
-            new AgendaPortalLink(
-                'Training Definition',
-                !RoleResolver.isTrainingDesigner(this.roles),
-                'linear-definition',
-                'Training Definition is the blueprint for trainings. You can manage existing trainings and design new ones.',
-                'assignment',
-            ),
-        ];
+        return HomeComponent.grantedLinks(
+            [
+                RoleResolver.isSandboxDesigner(this.roles),
+                new AgendaPortalLink(
+                    'Sandbox Definition',
+                    'sandbox-definition',
+                    'In the Sandbox Definition agenda, you can manage sandbox definitions—descriptions of virtual networks and computers that can be instantiated in isolated sandboxes.',
+                    'event_note',
+                ),
+            ],
+            [
+                RoleResolver.isTrainingDesigner(this.roles),
+                new AgendaPortalLink(
+                    'Training Definition',
+                    'linear-definition',
+                    'Training Definition is the blueprint for trainings. You can manage existing trainings and design new ones.',
+                    'assignment',
+                ),
+            ],
+        );
     }
 
-    private createOrganizeButtons() {
-        return [
-            new AgendaPortalLink(
-                'Pool',
-                !RoleResolver.isSandboxOrganizer(this.roles),
-                'pool',
-                'As an instructor, you can create pools of sandboxes—the basic organizational units for instantiating sandbox definitions.',
-                'subscriptions',
-            ),
-            new AgendaPortalLink(
-                'Images',
-                !RoleResolver.isSandboxOrganizer(this.roles),
-                'sandbox-image',
-                'In the Images agenda, you can view available cloud images.',
-                'donut_large',
-            ),
-            new AgendaPortalLink(
-                'Training Instance',
-                !RoleResolver.isTrainingOrganizer(this.roles),
-                'linear-instance',
-                'You can create training instances required for organizing hands-on training sessions.',
-                'event',
-            ),
-        ];
+    private createOrganizeButtons(): AgendaPortalLink[] {
+        return HomeComponent.grantedLinks(
+            [
+                RoleResolver.isSandboxOrganizer(this.roles),
+                new AgendaPortalLink(
+                    'Pool',
+                    'pool',
+                    'As an instructor, you can create pools of sandboxes—the basic organizational units for instantiating sandbox definitions.',
+                    'subscriptions',
+                ),
+            ],
+            [
+                RoleResolver.isSandboxOrganizer(this.roles),
+                new AgendaPortalLink(
+                    'Images',
+                    'sandbox-image',
+                    'In the Images agenda, you can view available cloud images.',
+                    'donut_large',
+                ),
+            ],
+            [
+                RoleResolver.isTrainingOrganizer(this.roles),
+                new AgendaPortalLink(
+                    'Training Instance',
+                    'linear-instance',
+                    'You can create training instances required for organizing hands-on training sessions.',
+                    'event',
+                ),
+            ],
+        );
     }
 
-    private createManageButtons() {
-        const disabled = !RoleResolver.isUserAndGroupAdmin(this.roles);
-        return [
-            new AgendaPortalLink(
-                'Groups',
-                disabled,
-                'group',
-                'In Groups, you can manage groups and grant access rights to their members.',
-                'group',
-            ),
-            new AgendaPortalLink(
-                'Users',
-                disabled,
-                'user',
-                'The Users agenda lets you assign users to existing groups.',
-                'person',
-            ),
-            new AgendaPortalLink(
-                'Microservices',
-                disabled,
-                'microservice',
-                'You can also manage the microservices that provide the CyberRangeᶜᶻ Platform’s functionality. Make sure you understand the implications before making any changes.',
-                'account_tree',
-            ),
-        ];
+    private createManageButtons(): AgendaPortalLink[] {
+        const granted = RoleResolver.isUserAndGroupAdmin(this.roles);
+        return HomeComponent.grantedLinks(
+            [
+                granted,
+                new AgendaPortalLink(
+                    'Groups',
+                    'group',
+                    'In Groups, you can manage groups and grant access rights to their members.',
+                    'group',
+                ),
+            ],
+            [
+                granted,
+                new AgendaPortalLink(
+                    'Users',
+                    'user',
+                    'The Users agenda lets you assign users to existing groups.',
+                    'person',
+                ),
+            ],
+            [
+                granted,
+                new AgendaPortalLink(
+                    'Microservices',
+                    'microservice',
+                    'You can also manage the microservices that provide the CyberRangeᶜᶻ Platform’s functionality. Make sure you understand the implications before making any changes.',
+                    'account_tree',
+                ),
+            ],
+        );
     }
 
     private subscribeUserChange() {

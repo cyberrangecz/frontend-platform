@@ -5,13 +5,9 @@
                 <!-- NAME field> -->
                 <mat-form-field appearance="outline" class="name-form">
                     <mat-label>Name</mat-label>
-                    <input formControlName="name" matInput placeholder="Name" required>
-                    @if (name) {
-                        <button (click)="name.setValue('')" aria-label="Clear" mat-icon-button matSuffix>
-                            <mat-icon>close</mat-icon>
-                        </button>
-                    }
-                    <mat-error>Name is required</mat-error>
+                    <input formControlName="name" matInput maxlength="255" placeholder="Name" required>
+                    <crczp-clear-input-suffix [control]="name" matSuffix />
+                    <mat-error>Name cannot be empty</mat-error>
                 </mat-form-field>
 
             </div>
@@ -33,8 +29,10 @@
                         />
                         <owl-date-time
                             [firstDayOfWeek]="1"
+                            pickerType="calendar"
                             #expirationDatePicker
                         />
+                        <mat-error>Enter a valid date after today</mat-error>
                     </mat-form-field>
                 </div>
             </div>
@@ -46,23 +44,15 @@
     <mat-form-field appearance="outline" class="description-form">
         <mat-label>Description</mat-label>
         <textarea
-            class="description-form__texarea"
+            cdkTextareaAutosize
+            cdkAutosizeMaxRows="6"
+            cdkAutosizeMinRows="2"
             formControlName="description"
             matInput
             maxlength="255"
             placeholder="Description"
             required></textarea>
-        @if (description) {
-            <button
-                (click)="description.setValue('')"
-                aria-label="Clear"
-                class="description-form__clear"
-                mat-icon-button
-                matTooltip="Clear"
-                matTooltipPosition="right">
-                <mat-icon>close</mat-icon>
-            </button>
-        }
-        <mat-error>Description is required</mat-error>
+        <crczp-clear-input-suffix [control]="description" matSuffix />
+        <mat-error>Description cannot be empty</mat-error>
     </mat-form-field>
 </form>

@@ -4,15 +4,11 @@ import {
     AssessmentLevel,
     InfoLevel,
     Level,
-    TrainingLevel,
+    TrainingLevel
 } from '@crczp/training-model';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { ErrorHandlerService, LoadingTracker } from '@crczp/utils';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import {
-    LoadingDialogComponent,
-    LoadingDialogOptions,
-} from '@crczp/components';
+import { MatDialog } from '@angular/material/dialog';
 
 export abstract class AbstractTrainingRunService {
     protected readonly loadingTracker = new LoadingTracker();
@@ -136,15 +132,6 @@ export abstract class AbstractTrainingRunService {
 
     protected displayNextLevel() {
         this.displayLevelByOrder(this.runInfo.displayedLevel.order + 1);
-    }
-
-    private displayLoadingDialog(): MatDialogRef<LoadingDialogComponent> {
-        return this.dialog.open(LoadingDialogComponent, {
-            data: new LoadingDialogOptions(
-                'Processing training data for visualization',
-                `Please wait while your training data are being processed`,
-            ),
-        });
     }
 
     private advanceCurrentLevel() {

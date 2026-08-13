@@ -2,7 +2,7 @@ import { Router } from '@angular/router';
 import { PoolApi, PoolSort, SandboxDefinitionApi, SandboxDefinitionSort } from '@crczp/sandbox-api';
 import { TrainingDefinitionInfo, TrainingInstance } from '@crczp/training-model';
 import { BehaviorSubject, concat, forkJoin, from, Observable, timer } from 'rxjs';
-import { filter, map, switchMap, tap } from 'rxjs/operators';
+import { filter, map, switchMap, tap, toArray } from 'rxjs/operators';
 import { OffsetPaginationEvent } from '@crczp/utils';
 import { Pool, SandboxDefinition } from '@crczp/sandbox-model';
 import { ErrorHandlerService, LoadingTracker, NotificationService, PortalConfig } from '@crczp/utils';
@@ -176,7 +176,8 @@ export abstract class CommonTrainingInstanceEditService extends CommonTrainingIn
             this.trainingInstanceApi.create(this.editedSnapshot).pipe(
                 map((ti) => ti.id),
                 tap(
-                    () => {
+                    (id) => {
+                        this.editedSnapshot.id = id;
                         this.notificationService.emit(
                             'success',
                             'Training instance was created',
@@ -248,7 +249,7 @@ export abstract class CommonTrainingInstanceEditService extends CommonTrainingIn
                     ),
                 ),
                 forkJoin(observables)
-            ).pipe(map(() => void 0)),
+            ).pipe(toArray(), map(() => void 0)),
         );
     }
 

@@ -4,7 +4,7 @@ import { AbstractDetectionEvent, AbstractDetectionEventTypeEnum } from '@crczp/t
 import { DetectionEventRowAdapter } from './detection-event-row-adapter';
 import { defer, of } from 'rxjs';
 import { OffsetPaginatedResource } from '@crczp/api-common';
-import { DetectionEventConcreteService } from '../services/detection-event-concrete.service';
+import { DetectionEventOverviewService } from '../services/detection-event-overview.service';
 import { AbstractDetectionEventSort } from '@crczp/training-api';
 
 /**
@@ -17,7 +17,7 @@ export class DetectionEventTable extends SentinelTable<
 > {
     constructor(
         resource: OffsetPaginatedResource<AbstractDetectionEvent>,
-        service: DetectionEventConcreteService,
+        service: DetectionEventOverviewService,
     ) {
         const columns = [
             new Column<AbstractDetectionEventSort>(
@@ -58,7 +58,7 @@ export class DetectionEventTable extends SentinelTable<
 
     private static createRow(
         element: AbstractDetectionEvent,
-        service: DetectionEventConcreteService,
+        service: DetectionEventOverviewService,
     ): Row<DetectionEventRowAdapter> {
         const datePipe = new DatePipe('en-EN');
         const adapter = element as DetectionEventRowAdapter;
@@ -95,14 +95,14 @@ export class DetectionEventTable extends SentinelTable<
 
     private static createActions(
         de: AbstractDetectionEvent,
-        service: DetectionEventConcreteService,
+        service: DetectionEventOverviewService,
     ): RowAction[] {
         return [...this.createStateActions(de, service)];
     }
 
     private static createStateActions(
         de: AbstractDetectionEvent,
-        service: DetectionEventConcreteService,
+        service: DetectionEventOverviewService,
     ): RowAction[] {
         return [
             new RowAction(

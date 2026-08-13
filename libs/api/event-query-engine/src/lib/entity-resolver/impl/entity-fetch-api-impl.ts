@@ -9,7 +9,7 @@ import {
     UserApi,
 } from '@crczp/training-api';
 
-@Injectable({ providedIn: 'root' })
+@Injectable()
 export class EntityFetchApiImpl extends EntityFetchApi {
     private readonly instanceApi = inject(LinearTrainingInstanceApi);
     private readonly trainingRunApi = inject(LinearRunApi);

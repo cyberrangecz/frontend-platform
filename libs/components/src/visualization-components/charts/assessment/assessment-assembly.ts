@@ -6,9 +6,9 @@ import {
     MultipleChoiceQuestion,
     Question,
     QuestionTypeEnum,
-    TrainingUser
+    TrainingUser,
+    EventAnswer
 } from '@crczp/training-model';
-import { EventAnswer } from '@crczp/visualization-model';
 import { Utils } from '@crczp/utils';
 import { emiAnswerLabel } from './answer-highlight';
 import {
@@ -139,7 +139,7 @@ function buildRoster(
     });
 
     return roster.sort(
-        (first, second) => first.name.localeCompare(second.name) || first.runId - second.runId,
+        (first, second) => Utils.String.compare(first.name, second.name) || first.runId - second.runId,
     );
 }
 

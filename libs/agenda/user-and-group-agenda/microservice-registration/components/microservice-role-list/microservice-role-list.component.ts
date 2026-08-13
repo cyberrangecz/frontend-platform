@@ -1,7 +1,16 @@
-import {ChangeDetectionStrategy, Component, EventEmitter, Output} from '@angular/core';
-import {MicroserviceRole} from '@crczp/user-and-group-model';
-import {MicroserviceRoleItem} from '../../model/microservice-role-item';
-import {MicroserviceRolesState} from '../../model/microservice-roles-state';
+import {
+    afterNextRender,
+    ChangeDetectionStrategy,
+    Component,
+    EventEmitter,
+    inject,
+    Injector,
+    Input,
+    Output,
+    viewChildren,
+} from '@angular/core';
+import {FormArray} from '@angular/forms';
+import {DEFAULT_ROLE_INDEX, MicroserviceRoleFormGroup} from '../microservice-edit/microservice-edit-form-group';
 import {MicroserviceRoleComponent} from './microservice-role/microservice-role.component';
 import {MatButton} from '@angular/material/button';
 
@@ -20,76 +29,33 @@ import {MatButton} from '@angular/material/button';
 })
 export class MicroserviceRoleListComponent {
     /**
-     * Roles of microservice-registration
+     * Forms of the microservice-registration roles
      */
-    roles: MicroserviceRole[] = [];
+    @Input({required: true}) roles: FormArray<MicroserviceRoleFormGroup>;
 
     /**
-     * True if roles form is valid, false otherwise
+     * Requests a new microservice-registration role
      */
-    rolesFormValidity = true;
+    @Output() addRole = new EventEmitter<void>();
 
     /**
-     * List of validity of individual roles
+     * Requests removal of the role on the emitted index
      */
-    rolesValidity: boolean[] = [];
+    @Output() removeRole = new EventEmitter<number>();
+
+    protected readonly defaultRoleIndex = DEFAULT_ROLE_INDEX;
+
+    private readonly roleComponents = viewChildren(MicroserviceRoleComponent);
+    private readonly injector = inject(Injector);
 
     /**
-     * Emits state of microservice-registration roles
+     * Requests a new role and moves focus into it once it is rendered
      */
-    @Output() microserviceRoles: EventEmitter<MicroserviceRolesState> = new EventEmitter();
-
-    /**
-     * Adds new microservice-registration role
-     */
-    addRole(): void {
-        this.roles.push(this.createRole());
-        this.microserviceRoles.emit({
-            roles: this.roles,
-            validity: false,
-            isAdded: true,
-        });
-    }
-
-    /**
-     * Deletes role on given index
-     * @param index index of a role to be deleted
-     */
-    deleteRole(index: number): void {
-        this.roles.splice(index, 1);
-        this.microserviceRoles.emit({
-            roles: this.roles,
-            validity: this.rolesFormValidity,
-            isRemoved: true,
-            roleIndex: index,
-        });
-    }
-
-    /**
-     * Handles role change by changing internal component state and emits change event
-     * @param event event containing data about role change
-     * @param index index of changed role
-     */
-    onRoleChange(event: MicroserviceRoleItem, index: number): void {
-        this.roles[index] = event.role;
-        this.rolesFormValidity = this.updateValidity(event.valid, index);
-        this.microserviceRoles.emit({
-            roles: this.roles,
-            validity: this.rolesFormValidity,
-            roleIndex: index,
-        });
-    }
-
-    private updateValidity(isUpdatedValid: boolean, index: number): boolean {
-        this.rolesValidity[index] = isUpdatedValid;
-        return this.rolesValidity.every((roleValidity) => roleValidity);
-    }
-
-    private createRole(): MicroserviceRole {
-        const role = new MicroserviceRole();
-        role.default = false;
-        role.description = '';
-        role.type = '';
-        return role;
+    protected onAddRole(): void {
+        this.addRole.emit();
+        afterNextRender(() => {
+            const rendered = this.roleComponents();
+            rendered[rendered.length - 1]?.focusType();
+        }, {injector: this.injector});
     }
 }

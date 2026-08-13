@@ -10,7 +10,7 @@ import {
     Output,
     SimpleChanges
 } from '@angular/core';
-import { TrainingDefinition, TrainingInstance } from '@crczp/training-model';
+import { TrainingDefinitionWithLevels, TrainingInstance } from '@crczp/training-model';
 import { Observable } from 'rxjs';
 import { SentinelControlItem, SentinelControlsComponent } from '@sentinel/components/controls';
 import { map } from 'rxjs/operators';
@@ -47,14 +47,12 @@ export class TrainingInstanceInfoComponent implements OnInit, OnChanges {
     @Input() trainingDefinitionLink: string;
     @Input() hasStarted$: Observable<boolean>;
 
-    @Output() showProgress: EventEmitter<boolean> = new EventEmitter();
     @Output() showResults: EventEmitter<boolean> = new EventEmitter();
-    @Output() showAggregatedResults: EventEmitter<boolean> = new EventEmitter();
     @Output() showCheatingDetection: EventEmitter<boolean> = new EventEmitter();
     @Output() exportScore: EventEmitter<boolean> = new EventEmitter();
     @Output() showNotification: EventEmitter<string[]> = new EventEmitter();
 
-    trainingDefinition: TrainingDefinition;
+    trainingDefinition: TrainingDefinitionWithLevels;
     infoControls: SentinelControlItem[];
     destroyRef = inject(DestroyRef);
 
@@ -75,9 +73,7 @@ export class TrainingInstanceInfoComponent implements OnInit, OnChanges {
     private initInfoComponent() {
         const disabled$ = this.hasStarted$.pipe(map((hasStated) => !hasStated));
         this.infoControls = TrainingInstanceInfoControls.create(
-            this.showProgress,
             this.showResults,
-            this.showAggregatedResults,
             this.showCheatingDetection,
             this.exportScore,
             disabled$,

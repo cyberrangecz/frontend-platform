@@ -6,7 +6,7 @@ import {
     throwError,
 } from 'rxjs';
 import { executeSyncAndQuery } from './sync-query-executor';
-import { PlatformEventType } from '@crczp/visualization-model';
+import { PlatformEventType } from '@crczp/training-model';
 import { CacheService, EventCacheDb } from '../../cache/cache.interface';
 import { CacheSyncService } from '../../sync/sync.interface';
 
@@ -21,7 +21,6 @@ describe('executeSyncAndQuery', () => {
 
     const instanceId = 1;
     const eventTypes = [PlatformEventType.COMMAND];
-    const poolId = 42;
 
     beforeEach(() => {
         syncService = {
@@ -46,7 +45,6 @@ describe('executeSyncAndQuery', () => {
                 executeSyncAndQuery(
                     instanceId,
                     eventTypes,
-                    poolId,
                     queryFn,
                     syncService as unknown as CacheSyncService,
                     cacheService as unknown as CacheService,
@@ -77,7 +75,6 @@ describe('executeSyncAndQuery', () => {
                 executeSyncAndQuery(
                     instanceId,
                     eventTypes,
-                    poolId,
                     queryFn,
                     syncService as unknown as CacheSyncService,
                     cacheService as unknown as CacheService,
@@ -114,7 +111,6 @@ describe('executeSyncAndQuery', () => {
                     executeSyncAndQuery(
                         instanceId,
                         eventTypes,
-                        poolId,
                         queryFn,
                         syncService as unknown as CacheSyncService,
                         cacheService as unknown as CacheService,
@@ -146,7 +142,6 @@ describe('executeSyncAndQuery', () => {
                     executeSyncAndQuery(
                         instanceId,
                         eventTypes,
-                        poolId,
                         queryFn,
                         syncService as unknown as CacheSyncService,
                         cacheService as unknown as CacheService,
@@ -180,7 +175,6 @@ describe('executeSyncAndQuery', () => {
                 executeSyncAndQuery(
                     instanceId,
                     eventTypes,
-                    poolId,
                     queryFn,
                     syncService as unknown as CacheSyncService,
                     cacheService as unknown as CacheService,

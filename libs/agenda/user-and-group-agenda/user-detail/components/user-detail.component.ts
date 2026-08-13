@@ -18,9 +18,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatCard } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
-import { MatLine } from '@angular/material/core';
 import { MatButton } from '@angular/material/button';
-import { MatDivider } from '@angular/material/divider';
 
 @Component({
     selector: 'crczp-user-detail',
@@ -29,12 +27,10 @@ import { MatDivider } from '@angular/material/divider';
         MatAccordion,
         MatButton,
         MatCard,
-        MatDivider,
         MatExpansionPanel,
         MatExpansionPanelDescription,
         MatExpansionPanelTitle,
         MatIcon,
-        MatLine,
         MatTooltip,
         MatExpansionPanelHeader,
     ],

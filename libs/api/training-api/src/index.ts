@@ -5,6 +5,8 @@ export * from './mappers/training-run/training-run-mapper';
 export * from './dto/training-run/training-run-dto';
 export * from './dto/user/user-ref-dto';
 export * from './mappers/user/user-mapper';
+export * from './dto/training-instance/training-instance-score-report-dto';
+export * from './mappers/training-instance/training-instance-score-report-mapper';
 
 // API ABSTRACT SERVICES
 export * from './api/definition/training-definition-api.service';

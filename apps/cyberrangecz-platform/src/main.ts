@@ -18,7 +18,7 @@ import {
     BrowserAnimationsModule,
     provideAnimations,
 } from '@angular/platform-browser/animations';
-import { provideRouter } from '@angular/router';
+import { provideRouter, withComponentInputBinding } from '@angular/router';
 import {
     HTTP_INTERCEPTORS,
     HttpClient,
@@ -64,10 +64,9 @@ import {
     CACHE_CLAIM,
     CacheService,
     createSqliteEventDb,
-    provideEntityResolverService,
-    provideEventBroker,
+    provideEventCache,
     requestSingleTabClaim,
-    withSingleTabGuard,
+    withCacheBlockedRoute,
 } from '@crczp/event-query-engine';
 
 const cacheClaim = requestSingleTabClaim('event-cache-platform-v1');
@@ -157,15 +156,14 @@ SentinelBootstrapper.bootstrapApplication('assets/config.json', AppComponent, {
             markdownParser: {},
         }),
         provideHttpCache(withLocalStorage()),
-        provideRouter(withSingleTabGuard(APP_ROUTES)),
-        provideEventBroker(
+        provideRouter(withCacheBlockedRoute(APP_ROUTES), withComponentInputBinding()),
+        provideEventCache(
             createSqliteEventDb(
                 () => new Worker(new URL('./cache.worker.ts', import.meta.url), { type: 'module' }),
                 { until: cacheClaim.granted },
             ),
         ),
         { provide: CACHE_CLAIM, useValue: cacheClaim },
-        provideEntityResolverService(),
         provideAppInitializer(() => {
             const cache = inject(CacheService);
             const claim = inject(CACHE_CLAIM);

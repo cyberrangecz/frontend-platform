@@ -21,11 +21,12 @@ import {SentinelValidators} from '@sentinel/common';
 import {MultipleChoiceQuestion, Question} from '@crczp/training-model';
 import {MultipleChoiceFormGroup} from './multiple-choice-question-edit-form-group';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import {Subscription} from 'rxjs';
 import {MatButton, MatIconButton} from "@angular/material/button";
 import {MatError, MatFormField, MatInput, MatLabel, MatSuffix} from "@angular/material/input";
 import {MatIcon} from "@angular/material/icon";
 import {MatTooltip} from "@angular/material/tooltip";
-import {MatCheckbox} from "@angular/material/checkbox";
+import {MatCheckbox, MatCheckboxChange} from "@angular/material/checkbox";
 import {SentinelMarkdownEditorComponent} from "@sentinel/components/markdown-editor";
 
 /**
@@ -61,6 +62,7 @@ export class MultipleChoiceQuestionEditComponent implements OnChanges {
     maxQuestionScore = Question.MAX_QUESTION_SCORE;
     maxQuestionPenalty = Question.MAX_QUESTION_PENALTY;
     destroyRef = inject(DestroyRef);
+    private formGroupValueChangesSubscription?: Subscription;
 
     get title(): AbstractControl {
         return this.multipleChoicesFormGroup.formGroup.get('title');
@@ -83,7 +85,8 @@ export class MultipleChoiceQuestionEditComponent implements OnChanges {
             this.multipleChoicesFormGroup = new MultipleChoiceFormGroup(this.question);
             this.checkState();
             this.choices.markAllAsTouched();
-            this.multipleChoicesFormGroup.formGroup.valueChanges
+            this.formGroupValueChangesSubscription?.unsubscribe();
+            this.formGroupValueChangesSubscription = this.multipleChoicesFormGroup.formGroup.valueChanges
                 .pipe(takeUntilDestroyed(this.destroyRef))
                 .subscribe(() => this.questionChanged());
         }
@@ -161,7 +164,7 @@ export class MultipleChoiceQuestionEditComponent implements OnChanges {
         }
     }
 
-    onCorrectOptionChanged(index, event): void {
+    onCorrectOptionChanged(index: number, event: MatCheckboxChange): void {
         this.choices.at(index).get('correct').setValue(event.checked);
     }
 
@@ -170,7 +173,7 @@ export class MultipleChoiceQuestionEditComponent implements OnChanges {
      * @return true if at least one choice is selected as correct, false otherwise
      */
     isCorrectChoiceSelected(): boolean {
-        return this.choices.value.filter((choice) => choice.correct).length > 0;
+        return this.choices.value.filter((choice: { correct: boolean }) => choice.correct).length > 0;
     }
 
     /**

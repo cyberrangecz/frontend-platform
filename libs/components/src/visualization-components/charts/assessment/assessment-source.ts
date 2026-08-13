@@ -8,8 +8,11 @@ import {
     EventCacheDb,
 } from '@crczp/event-query-engine';
 import { LinearTrainingDefinitionApi } from '@crczp/training-api';
-import { AssessmentLevel, TrainingUser } from '@crczp/training-model';
-import { PlatformEventType } from '@crczp/visualization-model';
+import {
+    AssessmentLevel,
+    TrainingUser,
+    PlatformEventType
+} from '@crczp/training-model';
 import { createQuerySource, QuerySource } from '../shared';
 import { AssessmentAnswerRow, assembleAssessmentDashboard, EMPTY_DASHBOARD } from './assessment-assembly';
 import { AssessmentDashboardVm } from './assessment-view.model';
@@ -79,7 +82,7 @@ export function createAssessmentSource(
         if (cached !== undefined) {
             return cached;
         }
-        const levels$ = definitionApi.get(definitionId, true).pipe(
+        const levels$ = definitionApi.get(definitionId).pipe(
             map((definition) =>
                 definition.levels.filter((level): level is AssessmentLevel => level instanceof AssessmentLevel),
             ),

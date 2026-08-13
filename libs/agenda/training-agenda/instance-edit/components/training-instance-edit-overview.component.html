@@ -14,12 +14,12 @@
                         <mat-error>Changes are not saved</mat-error>
                     </div>
                 }
-                <mat-icon>edit</mat-icon>
+                <mat-icon>{{ (editMode$ | async) ? 'edit' : 'add' }}</mat-icon>
             </mat-panel-description>
         </mat-panel-title>
     </mat-expansion-panel-header>
     <ng-template matExpansionPanelContent>
-        <sentinel-controls (itemClicked)="onControlsAction($event)" [controls]="controls">
+        <sentinel-controls [controls]="controls">
         </sentinel-controls>
         <mat-divider />
         <crczp-training-instance-edit
@@ -44,7 +44,7 @@
             <mat-panel-title>Organizers</mat-panel-title>
             <mat-panel-description>
                 <span class="spacer"></span>
-                @if (!canDeactivateOrganizers) {
+                @if (unsavedChanges.has('organizerAssignments')) {
                     <div class="panel-description-error">
                         <mat-icon color="warn">warning</mat-icon>
                         <mat-error>Organizers are not saved</mat-error>

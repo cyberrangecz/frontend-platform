@@ -20,6 +20,21 @@ export function buildNav(
     return elements;
 }
 
+/**
+ * Collects the leaf agendas of a built navigation tree, depth first.
+ *
+ * @param elements Navigation tree elements to traverse.
+ * @returns Every agenda held in the tree, in tree order.
+ */
+export function flattenAgendas(elements: layout.MenuElement[]): layout.Agenda[] {
+    return elements.flatMap((element) => {
+        if (element instanceof layout.AgendaContainer) {
+            return flattenAgendas(element.children);
+        }
+        return element instanceof layout.Agenda ? [element] : [];
+    });
+}
+
 function appendAgenda(
     elements: layout.MenuElement[],
     agendaConfig: NavAgendaConfig
@@ -60,4 +75,5 @@ function appendContainer(
 
 export const NavBuilder = {
     buildNav,
+    flattenAgendas,
 };

@@ -2,13 +2,12 @@ import { ChangeDetectionStrategy, Component, DestroyRef, HostListener, inject, O
 import { ActivatedRoute } from '@angular/router';
 import {
     SentinelControlItem,
-    SentinelControlItemSignal,
     SentinelControlsComponent
 } from '@sentinel/components/controls';
-import { Level, MitreTechnique, TrainingDefinition } from '@crczp/training-model';
-import { combineLatest, Observable, switchMap } from 'rxjs';
+import { Level, MitreTechnique, TrainingDefinitionWithLevels } from '@crczp/training-model';
+import { combineLatest, defer, Observable, switchMap } from 'rxjs';
 import { filter, map, tap } from 'rxjs/operators';
-import { TrainingDefinitionEditControls } from '../model/adapters/training-definition-edit-controls';
+import { UnsavedChangesTracker } from '@crczp/utils';
 import { TrainingDefinitionChangeEvent } from '../model/events/training-definition-change-event';
 import { TrainingDefinitionEditService } from '../services/state/edit/training-definition-edit.service';
 import { SentinelUserAssignComponent, SentinelUserAssignService } from '@sentinel/components/user-assign';
@@ -73,16 +72,15 @@ import { createInfinitePaginationEvent } from '@crczp/api-common';
     ],
 })
 export class TrainingDefinitionEditOverviewComponent implements OnInit {
-    trainingDefinition$: Observable<TrainingDefinition>;
+    trainingDefinition$: Observable<TrainingDefinitionWithLevels>;
     editMode$: Observable<boolean>;
     tdTitle$: Observable<string>;
     levelsCount = -1;
     saveDisabled$: Observable<boolean>;
     levelSaveDisabled$: Observable<boolean>;
-    unsavedLevels: Level[] = [];
-    unsavedLevels$: Observable<Level[]>;
-    canDeactivateAuthors = true;
-    canDeactivateTDEdit = true;
+    protected readonly unsavedChanges = new UnsavedChangesTracker<
+        'trainingDefinition' | 'levels' | 'authors'
+    >();
     defaultPaginationSize: number;
     controls: SentinelControlItem[];
     mitreTechniques$: Observable<MitreTechnique[]>;
@@ -94,8 +92,6 @@ export class TrainingDefinitionEditOverviewComponent implements OnInit {
     private authorsAssignService = inject(SentinelUserAssignService);
 
     constructor() {
-        const levelEditService = this.levelEditService;
-
         this.trainingDefinition$ = this.editService.trainingDefinition$;
         this.tdTitle$ = this.editService.trainingDefinition$.pipe(
             map((td) => td.title),
@@ -111,23 +107,46 @@ export class TrainingDefinitionEditOverviewComponent implements OnInit {
             this.levelEditService.levelsValid$,
         ]).pipe(map((valid) => valid[0] && valid[1]));
         this.levelSaveDisabled$ = this.levelEditService.levelsSaveDisabled$;
-        this.unsavedLevels$ = levelEditService.unsavedLevels$;
         this.activeRoute.data
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe((data) =>
-                this.editService.set(data[TrainingDefinition.name] || null),
+                this.editService.set(data[TrainingDefinitionWithLevels.name] || null),
             );
         this.editMode$ = this.editService.editMode$.pipe(
-            tap(
-                () =>
-                    (this.controls = TrainingDefinitionEditControls.create(
-                        this.editService,
-                        this.saveDisabled$,
-                        this.levelSaveDisabled$,
-                        valid$,
-                    )),
+            tap(() => (this.controls = this.buildControls(valid$))),
+        );
+    }
+
+    /**
+     * Builds the Save control, enabled only while the definition and levels are
+     * both valid and either has changes to persist.
+     *
+     * @param valid$ Combined validity of the definition and its levels.
+     */
+    private buildControls(valid$: Observable<boolean>): SentinelControlItem[] {
+        const saveDisabled$: Observable<boolean> = combineLatest([
+            this.saveDisabled$,
+            this.levelSaveDisabled$,
+            valid$,
+        ]).pipe(
+            map(
+                ([definitionSaveDisabled, levelSaveDisabled, valid]) =>
+                    (definitionSaveDisabled && levelSaveDisabled) || !valid,
             ),
         );
+        return [
+            new SentinelControlItem(
+                'save',
+                'Save',
+                'primary',
+                saveDisabled$,
+                defer(() =>
+                    this.editService
+                        .save()
+                        .pipe(this.unsavedChanges.clearOnSuccess('trainingDefinition')),
+                ),
+            ),
+        ];
     }
 
     ngOnInit(): void {
@@ -164,11 +183,7 @@ export class TrainingDefinitionEditOverviewComponent implements OnInit {
      * Determines if all changes in sub components are saved and user can navigate to different page
      */
     canDeactivate(): boolean {
-        return (
-            this.canDeactivateTDEdit &&
-            this.canDeactivateAuthors &&
-            this.unsavedLevels.length <= 0
-        );
+        return !this.unsavedChanges.hasAny();
     }
 
     /**
@@ -177,11 +192,7 @@ export class TrainingDefinitionEditOverviewComponent implements OnInit {
      */
     onTrainingDefinitionChanged($event: TrainingDefinitionChangeEvent): void {
         this.editService.change($event);
-        this.canDeactivateTDEdit = false;
-    }
-
-    onControlsAction(_control: SentinelControlItemSignal): void {
-        this.canDeactivateTDEdit = true;
+        this.unsavedChanges.set('trainingDefinition', true);
     }
 
     /**
@@ -189,7 +200,7 @@ export class TrainingDefinitionEditOverviewComponent implements OnInit {
      * @param unsavedLevels unsaved levels emitted from child component
      */
     onUnsavedLevelsChanged(unsavedLevels: Level[]): void {
-        this.unsavedLevels = unsavedLevels;
+        this.unsavedChanges.set('levels', unsavedLevels.length > 0);
     }
 
     /**
@@ -205,6 +216,6 @@ export class TrainingDefinitionEditOverviewComponent implements OnInit {
      * @param hasUnsavedChanges true if the child component has unsaved, false otherwise
      */
     onAuthorsChanged(hasUnsavedChanges: boolean): void {
-        this.canDeactivateAuthors = !hasUnsavedChanges;
+        this.unsavedChanges.set('authors', hasUnsavedChanges);
     }
 }

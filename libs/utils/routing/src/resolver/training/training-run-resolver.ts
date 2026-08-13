@@ -1,45 +1,30 @@
-import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
+import {
+    ActivatedRouteSnapshot,
+    RedirectCommand,
+    RouterStateSnapshot,
+} from '@angular/router';
 import { inject } from '@angular/core';
+import { Observable } from 'rxjs';
+import { AccessTrainingRunInfo } from '@crczp/training-model';
 import { TrainingResolverHelperService } from './training-resolver-helper.service';
-import { catchUndefinedOrNull } from '../catch-undefined-or-null';
 import { RoutingUtils } from '../../utils';
 
-function resolveRunAccess(
+export function resolveRunAccess(
     route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot
-) {
+    _state: RouterStateSnapshot
+): RedirectCommand | Observable<AccessTrainingRunInfo | RedirectCommand> {
     const service = inject(TrainingResolverHelperService);
     const runId = RoutingUtils.extractVariable<'run'>('runId', route);
     const runToken = RoutingUtils.extractVariable<'run'>('runToken', route);
 
     if (runId) {
         if (isNaN(+runId)) {
-            return service.navigateToRunOverview();
+            return new RedirectCommand(service.runOverviewUrl());
         }
         return service.resumeRun(+runId);
     }
     if (!runToken) {
-        return service.navigateToRunOverview();
+        return new RedirectCommand(service.runOverviewUrl());
     }
     return service.accessRun(runToken);
 }
-
-function resolveAccessedTrainingRunResults(
-    route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot
-) {
-    const service = inject(TrainingResolverHelperService);
-
-    return service
-        .getRunResults(route)
-        .pipe(
-            catchUndefinedOrNull('Training run', () =>
-                service.navigateToRunOverview()
-            )
-        );
-}
-
-export const TrainingRunResolvers = {
-    resolveRunAccess,
-    resolveAccessedTrainingRunResults,
-};

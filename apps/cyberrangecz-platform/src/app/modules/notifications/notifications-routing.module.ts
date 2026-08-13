@@ -1,7 +1,7 @@
-import {CommonModule} from '@angular/common';
-import {NgModule} from '@angular/core';
-import {RouterModule} from '@angular/router';
-import {NotificationResolver, SentinelNotificationOverviewComponent,} from '@sentinel/layout/notification';
+import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
+import { RouterModule } from '@angular/router';
+import { NotificationResolver, SentinelNotificationOverviewComponent } from '@sentinel/layout/notification';
 
 @NgModule({
     imports: [
@@ -13,14 +13,14 @@ import {NotificationResolver, SentinelNotificationOverviewComponent,} from '@sen
             },
             {
                 path: ':id',
-                loadComponent: () => import("@sentinel/layout/notification").then(
-                    (m) => m.SentinelNotificationDetailComponent
-                ),
-                data: {breadcrumb: 'Detail'},
-                resolve: {sentinelNotification: NotificationResolver},
+                loadComponent: () =>
+                    import('@sentinel/layout/notification').then(
+                        (m) => m.SentinelNotificationDetailComponent,
+                    ),
+                data: { title: 'Notification Detail', breadcrumb: 'Detail' },
+                resolve: { sentinelNotification: NotificationResolver },
             },
         ]),
     ],
 })
-export class NotificationsRoutingModule {
-}
+export class NotificationsRoutingModule {}

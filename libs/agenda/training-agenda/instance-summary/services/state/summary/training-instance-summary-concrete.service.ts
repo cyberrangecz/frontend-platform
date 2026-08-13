@@ -17,23 +17,13 @@ export class TrainingInstanceSummaryConcreteService extends TrainingInstanceSumm
         );
     }
 
-    showProgress(): Observable<boolean> {
-        return from(
-            this.router.navigate([
-                Routing.RouteBuilder.linear_instance
-                    .instanceId(this.trainingInstance.id)
-                    .progress.build(),
-            ])
-        );
-    }
-
     showResults(): Observable<any> {
         return from(
             this.router.navigate([
                 Routing.RouteBuilder.linear_instance
                     .instanceId(this.trainingInstance.id)
-                    .results.build(),
-            ])
+                    .analysis.build(),
+            ]),
         );
     }
 

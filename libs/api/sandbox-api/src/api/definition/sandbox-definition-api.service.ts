@@ -8,7 +8,13 @@ import { SandboxDefinitionDTO } from '../../dto/sandbox-definition/sandbox-defin
 import { SandboxDefinitionRefDTO } from '../../dto/sandbox-definition/sandbox-definition-ref-dto';
 import { SandboxDefinitionMapper } from '../../mappers/sandbox-definition/sandbox-definition-mapper';
 import { SandboxDefinitionRefMapper } from '../../mappers/sandbox-definition/sandbox-definition-ref-mapper';
-import { DjangoResourceDTO, OffsetPaginatedResource, PaginationMapper, ParamsBuilder } from '@crczp/api-common';
+import {
+    CRCZPHttpService,
+    DjangoResourceDTO,
+    OffsetPaginatedResource,
+    PaginationMapper,
+    ParamsBuilder,
+} from '@crczp/api-common';
 import { PortalConfig } from '@crczp/utils';
 import { SandboxDefinitionRefSort, SandboxDefinitionSort } from '../sorts';
 
@@ -18,6 +24,8 @@ import { SandboxDefinitionRefSort, SandboxDefinitionSort } from '../sorts';
 @Injectable()
 export class SandboxDefinitionApi {
     private readonly http = inject(HttpClient);
+
+    private readonly crczpHttp = inject(CRCZPHttpService);
 
     private readonly apiUrl =
         inject(PortalConfig).basePaths.sandbox + '/definitions';
@@ -67,16 +75,24 @@ export class SandboxDefinitionApi {
     /**
      * Sends http request to create new sandbox definition from gitlab repo
      * @param sandboxDefinition sandbox definition to create
+     * @param expectedErrors http status codes the caller reports itself, excluded from the global error notification
      */
     create(
         sandboxDefinition: SandboxDefinition,
+        expectedErrors: number[] = [],
     ): Observable<SandboxDefinition> {
-        return this.http
-            .post<SandboxDefinitionDTO>(this.apiUrl, {
+        return this.crczpHttp
+            .post<
+                Pick<SandboxDefinition, 'url' | 'rev'>,
+                SandboxDefinitionDTO
+            >(this.apiUrl, 'Create sandbox definition')
+            .withBody({
                 url: sandboxDefinition.url,
                 rev: sandboxDefinition.rev,
             })
-            .pipe(map((response) => SandboxDefinitionMapper.fromDTO(response)));
+            .setExpectedErrors(expectedErrors)
+            .withMapper((response) => SandboxDefinitionMapper.fromDTO(response))
+            .execute();
     }
 
     /**

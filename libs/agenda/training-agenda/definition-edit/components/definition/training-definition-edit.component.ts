@@ -6,7 +6,7 @@ import {
     UntypedFormControl,
     UntypedFormGroup
 } from '@angular/forms';
-import {TrainingDefinition} from '@crczp/training-model';
+import {TrainingDefinitionWithLevels} from '@crczp/training-model';
 import {TrainingDefinitionChangeEvent} from '../../model/events/training-definition-change-event';
 import {TrainingDefinitionEditFormGroup} from './training-definition-edit-form-group';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
@@ -17,6 +17,8 @@ import {MatTooltip} from "@angular/material/tooltip";
 
 import {SentinelFreeFormComponent} from "@sentinel/components/free-form";
 import {MatIcon} from "@angular/material/icon";
+import { ClearInputSuffixComponent } from '@crczp/utils';
+import { CdkTextareaAutosize } from '@angular/cdk/text-field';
 
 /**
  * Component for creating new or editing already existing training definition
@@ -26,21 +28,21 @@ import {MatIcon} from "@angular/material/icon";
     templateUrl: './training-definition-edit.component.html',
     styleUrls: ['./training-definition-edit.component.css'],
     imports: [
+        CdkTextareaAutosize,
+        ClearInputSuffixComponent,
     ReactiveFormsModule,
     MatFormField,
     MatLabel,
     MatInput,
     MatSuffix,
-    MatIconButton,
     MatError,
     MatCheckbox,
     MatTooltip,
-    MatIcon,
     SentinelFreeFormComponent
 ]
 })
 export class TrainingDefinitionEditComponent implements OnChanges {
-    @Input() trainingDefinition: TrainingDefinition;
+    @Input() trainingDefinition: TrainingDefinitionWithLevels;
     @Output() edited: EventEmitter<TrainingDefinitionChangeEvent> = new EventEmitter();
 
     trainingDefinitionEditFormGroup: TrainingDefinitionEditFormGroup;

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { SentinelControlItem, SentinelControlsComponent } from '@sentinel/components/controls';
 import { Pool, Resources } from '@crczp/sandbox-model';
 import { Row, SentinelRowDirective, SentinelTableComponent, TableLoadEvent } from '@sentinel/components/table';
@@ -81,6 +81,7 @@ export class PoolOverviewComponent implements OnInit {
     private abstractPoolService = inject(PoolService);
     private sandboxInstanceService = inject(SandboxInstanceService);
     private paginationService = inject(PaginationStorageService);
+    private changeDetectorRef = inject(ChangeDetectorRef);
 
     private readonly initialPoolPagination =
         this.paginationService.createPagination<PoolSort>(
@@ -121,12 +122,21 @@ export class PoolOverviewComponent implements OnInit {
             .subscribe();
     }
 
+    /**
+     * Displays the new comment immediately and restores the previous one if the update is rejected.
+     */
     updatePoolComment(pool: Pool, newComment: string) {
+        const previousComment = pool.comment;
         pool.comment = newComment;
         this.abstractPoolService
             .updateComment(pool)
             .pipe(takeUntilDestroyed(this.destroyRef))
-            .subscribe();
+            .subscribe({
+                error: () => {
+                    pool.comment = previousComment;
+                    this.changeDetectorRef.markForCheck();
+                },
+            });
     }
 
     lockStateToIcon(lockState: 'locked' | 'unlocked'): string | null {

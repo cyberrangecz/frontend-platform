@@ -12,7 +12,7 @@ import { EChartsCoreOption, EChartsOption, LegendComponentOption, SeriesOption, 
 import { ECharts, graphic } from 'echarts/core';
 import { NgxEchartsDirective } from 'ngx-echarts';
 
-import { ChartPalette, ECHARTS_CORE_PROVIDER, EchartsChartBase } from '../../shared';
+import { ChartOptionApply, ChartPalette, ECHARTS_CORE_PROVIDER, EchartsChartBase } from '../../shared';
 import { LAG_STATE_COLORS, LAG_STATE_LABELS } from '../config/lag.config';
 import {
     AXIS_REFRESH_THRESHOLD_MS,
@@ -97,14 +97,6 @@ function collectExcluded<T>(
 /** Cadence of the imperative overlay reposition timer, in milliseconds. */
 const OVERLAY_TICK_MS = 250;
 
-/**
- * Single call signature unifying ECharts' two `setOption` overloads as the
- * re-assert hook uses them: an option plus the optional `notMerge` flag, in
- * either its boolean or its options-object form. The hook never passes the
- * third `lazyUpdate` argument.
- */
-type SetOptionCall = (option: EChartsCoreOption, notMergeArg?: boolean | SetOptionOpts) => void;
-
 /** One entry of the `batch` array ECharts emits on `'dataZoom'`, keyed by component id. */
 interface DataZoomBatchEntry {
     readonly dataZoomId?: string;
@@ -178,9 +170,6 @@ export class ProgressChartComponent extends EchartsChartBase {
     private readonly uiState = inject(ProgressUiStateService);
     private readonly legendScheduler = inject(LegendTransitionSchedulerService);
     private readonly sharedState = inject(ChartRendererService);
-
-    /** Live ECharts instance captured on `chartInit`. */
-    private chart: ECharts | null = null;
 
     /** Whether at least one option has been applied, gating `convertToPixel` use. */
     private chartHasOption = false;
@@ -258,17 +247,15 @@ export class ProgressChartComponent extends EchartsChartBase {
     }
 
     /**
-     * Captures the chart instance and ports the imperative subsystems: the
-     * drag-suppression gate, the dataZoom/legend/axis-label listeners, the
-     * current-time marker, the running-bar fills, the reposition timer, the
-     * axis-refresh watchdog, and the `setOption` re-assert hook. Also registers
-     * the inner-host height and zoom-reset action with the shared-state holder.
+     * Ports the imperative subsystems onto the instance: the drag-suppression gate,
+     * the dataZoom/legend/axis-label listeners, the current-time marker, the
+     * running-bar fills, the reposition timer and the axis-refresh watchdog. Also
+     * registers the zoom-reset action with the shared-state holder.
      *
-     * @param instance - The initialised ECharts instance emitted by ngx-echarts.
+     * @param instance - The ECharts instance being wired.
      */
-    protected override onChartInit(instance: ECharts): void {
-        super.onChartInit(instance);
-        this.chart = instance;
+    protected override wireChart(instance: ECharts): void {
+        super.wireChart(instance);
         this.sharedState.registerResetZoom(() => this.resetZoom());
 
         this.wireDragGate(instance);
@@ -278,11 +265,10 @@ export class ProgressChartComponent extends EchartsChartBase {
         this.startCurrentTimeMarker(instance);
         this.startOverlayTimer(instance);
         this.startWatchdog();
-        this.installReassertHook(instance);
     }
 
     resetZoom(): void {
-        this.chart?.dispatchAction({
+        this.liveChart()?.dispatchAction({
             type: 'dataZoom',
             dataZoomId: HORIZONTAL_SLIDER_DATAZOOM_ID,
             start: 0,
@@ -417,12 +403,13 @@ export class ProgressChartComponent extends EchartsChartBase {
      * @param legend - Refreshed legend slice produced by the scheduler.
      */
     private dispatchLegendUpdate(legend: readonly LegendItemVm[]): void {
-        if (this.chart === null) return;
+        const instance = this.liveChart();
+        if (instance === null) return;
         if (this.dragging) {
             this.pendingLegend = legend;
             return;
         }
-        this.chart.setOption(buildLegendPartialOption(legend, this.legendLabelsHidden()));
+        instance.setOption(buildLegendPartialOption(legend, this.legendLabelsHidden()));
     }
 
     /** Whether the legend chips render swatch/icon-only, per the live canvas width. */
@@ -469,34 +456,39 @@ export class ProgressChartComponent extends EchartsChartBase {
      * snapshot on top of it; the partial never touches the bars series.
      */
     private drainPendingLegend(): void {
-        if (this.pendingLegend === null || this.chart === null) return;
+        const instance = this.liveChart();
+        if (this.pendingLegend === null || instance === null) return;
         const legend = this.pendingLegend;
         this.pendingLegend = null;
-        this.chart.setOption(buildLegendPartialOption(legend, this.legendLabelsHidden()));
+        instance.setOption(buildLegendPartialOption(legend, this.legendLabelsHidden()));
     }
 
     /**
-     * Wraps `instance.setOption` so that, after each application, the imperative
-     * overlays are repositioned against the freshly-applied coordinate system,
-     * and so that a declarative re-application arriving mid-drag is withheld and
-     * deferred to drag release. ngx-echarts re-applies the full option on every
-     * data refresh, so this is the single seam through which overlays re-assert.
+     * Repositions the imperative overlays against the freshly-applied coordinate
+     * system after each option application, and withholds a full declarative
+     * re-application arriving mid-drag until the gesture releases. ngx-echarts
+     * re-applies the full option on every data refresh, so this is the single seam
+     * through which the overlays re-assert.
      *
-     * @param instance - The captured ECharts instance.
+     * @param instance     - The ECharts instance the option is applied to.
+     * @param applyToChart - The unwrapped `setOption` that performs the application.
+     * @param option       - The option payload to apply.
+     * @param notMerge     - ECharts' `notMerge` flag, in either accepted form.
      */
-    private installReassertHook(instance: ECharts): void {
-        const applyOption = instance.setOption.bind(instance) as SetOptionCall;
-        const reassert: SetOptionCall = (option, notMergeArg) => {
-            if (this.isFullReplace(notMergeArg) && this.dragging) {
-                this.optionWithheldDuringDrag = true;
-                return;
-            }
-            applyOption(option, notMergeArg);
-            this.chartHasOption = true;
-            this.updateCurrentTimeMarkerPosition(instance);
-            this.updateRunningBarFills(instance);
-        };
-        instance.setOption = reassert as ECharts['setOption'];
+    protected override applyChartOption(
+        instance: ECharts,
+        applyToChart: ChartOptionApply,
+        option: EChartsCoreOption,
+        notMerge?: boolean | SetOptionOpts,
+    ): void {
+        if (this.isFullReplace(notMerge) && this.dragging) {
+            this.optionWithheldDuringDrag = true;
+            return;
+        }
+        super.applyChartOption(instance, applyToChart, option, notMerge);
+        this.chartHasOption = true;
+        this.updateCurrentTimeMarkerPosition(instance);
+        this.updateRunningBarFills(instance);
     }
 
     /**
@@ -607,9 +599,13 @@ export class ProgressChartComponent extends EchartsChartBase {
      * the full-replace `[options]` performs and are never part of the option
      * model. Both paint in the resolved text colour.
      *
+     * Any marker pair from an earlier instance is released first, so the nodes never
+     * accumulate on a canvas.
+     *
      * @param instance - The captured ECharts instance.
      */
     private startCurrentTimeMarker(instance: ECharts): void {
+        this.releaseOverlayNodes();
         const markerLine = new graphic.Line({
             shape: { x1: 0, y1: 0, x2: 0, y2: 0 },
             style: { stroke: this.palette().text, lineWidth: CURRENT_TIME_MARKER_LINE_WIDTH },
@@ -640,26 +636,41 @@ export class ProgressChartComponent extends EchartsChartBase {
     /**
      * Starts the {@link OVERLAY_TICK_MS} timer that repositions the current-time
      * marker and the running-bar fills against the live axis transform. Runs
-     * outside Angular so the tick does not trigger change detection.
+     * outside Angular so the tick does not trigger change detection. Replaces any
+     * timer already running, and stops itself once the instance it repositions
+     * against is disposed — every call on a disposed instance throws.
      *
      * @param instance - The captured ECharts instance.
      */
     private startOverlayTimer(instance: ECharts): void {
+        this.stopOverlayTimer();
         this.ngZone.runOutsideAngular(() => {
             this.overlayTimer = setInterval(() => {
+                if (instance.isDisposed()) {
+                    this.stopOverlayTimer();
+                    return;
+                }
                 this.updateCurrentTimeMarkerPosition(instance);
                 this.updateRunningBarFills(instance);
             }, OVERLAY_TICK_MS);
         });
     }
 
+    /** Stops the overlay reposition timer, if one is running. */
+    private stopOverlayTimer(): void {
+        if (this.overlayTimer === null) return;
+        clearInterval(this.overlayTimer);
+        this.overlayTimer = null;
+    }
+
     /**
      * Starts the axis-padding watchdog. Runs outside Angular; when the remaining
      * right-padding (axisEnd − now) drops below the refresh threshold it re-enters
      * the zone and calls `feed.refreshAxisNow()` to advance the axis end ahead of
-     * the current time.
+     * the current time. Replaces any watchdog already running.
      */
     private startWatchdog(): void {
+        this.stopWatchdog();
         this.ngZone.runOutsideAngular(() => {
             this.watchdogTimer = setInterval(() => {
                 const vm = this.feed.viewModel();
@@ -670,6 +681,13 @@ export class ProgressChartComponent extends EchartsChartBase {
                 }
             }, AXIS_WATCHDOG_INTERVAL_MS);
         });
+    }
+
+    /** Stops the axis-padding watchdog, if one is running. */
+    private stopWatchdog(): void {
+        if (this.watchdogTimer === null) return;
+        clearInterval(this.watchdogTimer);
+        this.watchdogTimer = null;
     }
 
     /**
@@ -799,27 +817,27 @@ export class ProgressChartComponent extends EchartsChartBase {
             clearTimeout(this.dragReleaseTimer);
             this.dragReleaseTimer = null;
         }
-        if (this.overlayTimer !== null) {
-            clearInterval(this.overlayTimer);
-            this.overlayTimer = null;
-        }
-        if (this.watchdogTimer !== null) {
-            clearInterval(this.watchdogTimer);
-            this.watchdogTimer = null;
-        }
-        if (this.chart !== null && !this.chart.isDisposed()) {
-            const renderer = this.chart.getZr();
-            if (this.currentTimeMarkerLine !== null) {
-                renderer.remove(this.currentTimeMarkerLine);
-                this.currentTimeMarkerLine = null;
-            }
-            if (this.currentTimeMarkerText !== null) {
-                renderer.remove(this.currentTimeMarkerText);
-                this.currentTimeMarkerText = null;
-            }
-            for (const el of this.runningBarFills.values()) renderer.remove(el);
-        }
-        this.runningBarFills.clear();
+        this.stopOverlayTimer();
+        this.stopWatchdog();
+        this.releaseOverlayNodes();
         this.legendScheduler.cancel();
+    }
+
+    /**
+     * Drops the current-time marker pair and every running-bar fill, detaching them
+     * from the zrender layer they were added to while that layer is still alive. A
+     * disposed instance has already discarded its layer, so only the references are
+     * cleared in that case.
+     */
+    private releaseOverlayNodes(): void {
+        const renderer = this.liveChart()?.getZr() ?? null;
+        if (renderer !== null) {
+            if (this.currentTimeMarkerLine !== null) renderer.remove(this.currentTimeMarkerLine);
+            if (this.currentTimeMarkerText !== null) renderer.remove(this.currentTimeMarkerText);
+            for (const fill of this.runningBarFills.values()) renderer.remove(fill);
+        }
+        this.currentTimeMarkerLine = null;
+        this.currentTimeMarkerText = null;
+        this.runningBarFills.clear();
     }
 }

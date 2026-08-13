@@ -3,7 +3,6 @@ import { AbstractLevelBasic } from './abstract-level-basic';
 import { MitreTechnique, MitreTechniqueBasic } from '../mitre-techniques/mitre-technique';
 import { Hint, HintBasic } from './hint';
 import { Level } from './level';
-import { ReferenceSolutionNode } from './reference-solution-node';
 import { LevelWithSolution } from '../level-with-solution-interface';
 
 /** Basic read-only training level data safe for all roles. Subset of {@link TrainingLevel}. */
@@ -25,7 +24,6 @@ export class TrainingLevel extends Level implements LevelWithSolution {
     solution!: string;
     incorrectAnswerLimit = 5;
     isSolutionPenalized = true;
-    referenceSolution: ReferenceSolutionNode[] = [];
     variantAnswers!: boolean;
     mitreTechniques: MitreTechnique[] = [];
     expectedCommands: string[] = [];

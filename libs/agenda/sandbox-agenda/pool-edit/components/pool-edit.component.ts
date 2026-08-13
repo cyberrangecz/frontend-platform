@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, HostListener, inject, OnInit } from '@angular/core';
 import { SentinelControlItem, SentinelControlsComponent } from '@sentinel/components/controls';
 import { BehaviorSubject, combineLatest, defer, Observable, switchMap, tap } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -8,12 +8,14 @@ import { AbstractControl, ReactiveFormsModule } from '@angular/forms';
 import { Pool, SandboxDefinition } from '@crczp/sandbox-model';
 import { ActivatedRoute } from '@angular/router';
 import { PoolChangedEvent } from '../model/pool-changed-event';
+import { UnsavedChangesTracker } from '@crczp/utils';
 import {
     SandboxDefinitionOverviewConcreteService,
     SandboxDefinitionOverviewService
 } from '@crczp/sandbox-agenda/internal';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
+import { MatCard, MatCardAvatar, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
+import { MatIcon } from '@angular/material/icon';
 import { MatDivider } from '@angular/material/divider';
 import {
     SentinelResourceSelectorComponent,
@@ -25,6 +27,7 @@ import { MatError, MatFormField, MatInput, MatLabel } from '@angular/material/in
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { createInfinitePaginationEvent } from '@crczp/api-common';
+import { CdkTextareaAutosize } from '@angular/cdk/text-field';
 
 /**
  * Component with form for creating pool
@@ -35,8 +38,11 @@ import { createInfinitePaginationEvent } from '@crczp/api-common';
     styleUrls: ['./pool-edit.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
+        CdkTextareaAutosize,
         MatCardTitle,
         MatCardHeader,
+        MatCardAvatar,
+        MatIcon,
         MatCard,
         SentinelControlsComponent,
         MatCardContent,
@@ -47,7 +53,6 @@ import { createInfinitePaginationEvent } from '@crczp/api-common';
         SentinelSelectorElementDirective,
         MatFormField,
         MatTooltip,
-        MatInput,
         MatInput,
         ReactiveFormsModule,
         MatLabel,
@@ -66,8 +71,8 @@ export class PoolEditComponent implements OnInit {
     pool: Pool;
     poolFormGroup: PoolFormGroup;
     editMode = false;
-    canDeactivatePoolEdit = true;
     controls: SentinelControlItem[];
+    private readonly unsavedChanges = new UnsavedChangesTracker<'poolForm'>();
     destroyRef = inject(DestroyRef);
     currentSandboxDefinitionFilter$: BehaviorSubject<string> =
         new BehaviorSubject('');
@@ -129,6 +134,21 @@ export class PoolEditComponent implements OnInit {
             .subscribe();
     }
 
+    /**
+     * Shows dialog asking the user if he really wants to leave the page after refresh or navigating to another page
+     */
+    @HostListener('window:beforeunload')
+    canRefreshOrLeave(): boolean {
+        return this.canDeactivate();
+    }
+
+    /**
+     * Determines if all changes to the pool are saved and the user can navigate to a different page
+     */
+    canDeactivate(): boolean {
+        return !this.unsavedChanges.hasAny();
+    }
+
     initControls(isEditMode: boolean): void {
         this.controls = [
             new SentinelControlItem(
@@ -136,16 +156,19 @@ export class PoolEditComponent implements OnInit {
                 isEditMode ? 'Save' : 'Create',
                 'primary',
                 this.poolEditService.saveDisabled$,
-                defer(() => this.poolEditService.save()),
+                defer(() => this.poolEditService.save()).pipe(
+                    this.unsavedChanges.clearOnSuccess('poolForm'),
+                ),
             ),
         ];
     }
 
     /**
-     * Check the amount of allocated sandboxes and make sure the user doesn't set the number below.
+     * Lowest pool size the form accepts: the count of already allocated sandboxes when editing,
+     * one when creating.
      */
     getMinimumPoolSize(): number {
-        return this.pool ? this.pool.usedSize : 0;
+        return this.editMode ? this.pool.usedSize : 1;
     }
 
     sandboxDefinitionToDisplayString(
@@ -163,7 +186,7 @@ export class PoolEditComponent implements OnInit {
 
     private onChanged() {
         this.poolFormGroup.setValuesToPool(this.pool);
-        this.canDeactivatePoolEdit = false;
+        this.unsavedChanges.set('poolForm', true);
         const change: PoolChangedEvent = new PoolChangedEvent(
             this.pool,
             this.poolFormGroup.formGroup.valid,

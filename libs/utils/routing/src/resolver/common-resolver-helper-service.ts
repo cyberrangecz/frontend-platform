@@ -1,29 +1,28 @@
-import { Router, UrlTree } from '@angular/router';
-import { EMPTY } from 'rxjs';
+import { Router } from '@angular/router';
 import { ErrorHandlerService } from '@crczp/utils';
 import { HttpErrorResponse } from '@angular/common/http';
 
 export class CommonResolverHelperService {
-    protected emitApiError;
-    protected emitFrontendError;
-
     constructor(
         protected errorHandler: ErrorHandlerService,
         protected router: Router,
-    ) {
-        this.emitApiError = errorHandler.emitAPIError;
-        this.emitFrontendError = (error: any) => {
-            if (error instanceof HttpErrorResponse) {
-                return;
-            }
-            errorHandler.emitNavigationError(error);
-        };
+    ) {}
+
+    /**
+     * Reports a failed resolver request, naming the operation that failed.
+     */
+    protected emitApiError(error: HttpErrorResponse, operation: string): void {
+        this.errorHandler.emitAPIError(error, operation);
     }
 
-    protected navigate(urlTree: UrlTree) {
-        this.router
-            .navigateByUrl(urlTree)
-            .catch((err) => this.emitApiError(err, 'Navigating to a route'));
-        return EMPTY;
+    /**
+     * Reports a resolver failure that did not originate from an HTTP response; an HTTP failure is
+     * left to the API error path.
+     */
+    protected emitFrontendError(error: any): void {
+        if (error instanceof HttpErrorResponse) {
+            return;
+        }
+        this.errorHandler.emitNavigationError(error);
     }
 }

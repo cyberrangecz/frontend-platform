@@ -2,6 +2,7 @@ import { OffsetPaginationEvent } from '@crczp/utils';
 import {
     TrainingInstance,
     TrainingInstanceBasic,
+    TrainingInstanceScoreReport,
     TrainingRun,
 } from '@crczp/training-model';
 import { Observable } from 'rxjs';
@@ -89,13 +90,15 @@ export abstract class LinearTrainingInstanceApi {
      */
     abstract unassignPool(trainingInstanceId: number): Observable<any>;
 
-    /**
-     * Sends http request to export score from training instance
-     * @param trainingInstanceId id of training instance
-     */
-    abstract exportScore(trainingInstanceId: number): Observable<boolean>;
-
     abstract fetchInstancesByIds(
         ids: number[],
     ): Observable<TrainingInstanceBasic[]>;
+
+    /**
+     * Sends http request to retrieve the per-participant score report of a training instance
+     * @param instanceId id of the training instance
+     */
+    abstract getScoreReport(
+        instanceId: number,
+    ): Observable<TrainingInstanceScoreReport>;
 }

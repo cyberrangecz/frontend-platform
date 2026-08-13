@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 import { from } from 'rxjs';
 import { eq } from 'drizzle-orm';
 import { CacheService, levelStartedTable, RawEventRow } from '@crczp/event-query-engine';
-import { PlatformEventType } from '@crczp/visualization-model';
+import { PlatformEventType } from '@crczp/training-model';
 
 const PROBE_INSTANCE_ID = 1;
 

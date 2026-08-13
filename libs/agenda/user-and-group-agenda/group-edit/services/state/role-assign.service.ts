@@ -14,6 +14,12 @@ import {
 } from '@crczp/api-common';
 
 /**
+ * Stands in for the response of a role request that failed, so one failure neither cancels the rest
+ * of the batch nor collapses its result.
+ */
+const FAILED_REQUEST = Symbol('failed role request');
+
+/**
  * Basic implementation of a layer between a component and an API service.
  * Can manually get roles assigned to a resource and roles available to assign and perform assignment modifications.
  */
@@ -115,12 +121,12 @@ export class RoleAssignService {
         this.hasErrorSubject$.next(false);
         this.isLoadingAssignedSubject$.next(true);
         return this.api.getRolesOfGroup(resourceId, pagination, filter).pipe(
-            tap(
-                (roles) => {
+            tap({
+                next: (roles) => {
                     this.assignedRolesSubject$.next(roles);
                     this.isLoadingAssignedSubject$.next(false);
                 },
-                (err) => {
+                error: (err) => {
                     this.errorHandler.emitAPIError(
                         err,
                         'Fetching roles of group-overview',
@@ -128,7 +134,7 @@ export class RoleAssignService {
                     this.isLoadingAssignedSubject$.next(false);
                     this.hasErrorSubject$.next(true);
                 },
-            ),
+            }),
         );
     }
 
@@ -167,47 +173,50 @@ export class RoleAssignService {
     }
 
     private callApiToAssign(resourceId: number, roleIds: number[]) {
-        this.clearSelectedRolesToAssign();
-        return forkJoin(
+        return this.runRoleRequests(
+            resourceId,
             roleIds.map((id) => this.api.assignRole(resourceId, id)),
-        ).pipe(
-            catchError(() => of('failed')),
-            tap((results: any[]) => {
-                const failedRequests = results.filter(
-                    (result) => result === 'failed',
-                );
-                if (failedRequests.length > 1) {
-                    this.errorHandler.emitAPIError(
-                        undefined,
-                        'Assigning some roles failed',
-                    );
-                }
-            }),
-            switchMap(() =>
-                this.getAssigned(
-                    resourceId,
-                    this.lastPagination,
-                    this.lastFilter,
-                ),
-            ),
+            'Assigning some roles failed',
+            () => this.clearSelectedRolesToAssign(),
         );
     }
 
     private callApiToUnassign(resourceId: number, roleIds: number[]) {
-        this.clearSelectedAssignedRoles();
-        return forkJoin(
+        return this.runRoleRequests(
+            resourceId,
             roleIds.map((id) => this.api.removeRole(resourceId, id)),
+            'Unassigning some roles failed',
+            () => this.clearSelectedAssignedRoles(),
+        );
+    }
+
+    /**
+     * Issues every role request, reports whether any of them failed, and reloads the assigned roles.
+     * Each request absorbs its own failure, so no request is cancelled by a sibling and a partially
+     * applied batch is still reported and reflected in the reloaded table.
+     *
+     * @param resourceId Resource whose assigned roles are reloaded once the batch settles.
+     * @param requests One request per role.
+     * @param failureMessage Title of the notification raised when at least one request fails.
+     * @param clearSelection Empties the selection the batch was built from, invoked only when every
+     * request succeeded.
+     */
+    private runRoleRequests(
+        resourceId: number,
+        requests: Observable<unknown>[],
+        failureMessage: string,
+        clearSelection: () => void,
+    ): Observable<OffsetPaginatedResource<UserRole>> {
+        return forkJoin(
+            requests.map((request) =>
+                request.pipe(catchError(() => of(FAILED_REQUEST))),
+            ),
         ).pipe(
-            catchError(() => of('failed')),
-            tap((results: any[]) => {
-                const failedRequests = results.filter(
-                    (result) => result === 'failed',
-                );
-                if (failedRequests.length > 1) {
-                    this.errorHandler.emitAPIError(
-                        undefined,
-                        'Assigning some roles failed',
-                    );
+            tap((results) => {
+                if (results.includes(FAILED_REQUEST)) {
+                    this.errorHandler.emitAPIError(undefined, failureMessage);
+                } else {
+                    clearSelection();
                 }
             }),
             switchMap(() =>

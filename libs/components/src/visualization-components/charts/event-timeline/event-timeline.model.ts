@@ -1,4 +1,4 @@
-import { PlatformEventType } from '@crczp/visualization-model';
+import { PlatformEventType } from '@crczp/training-model';
 
 /** Glyph, foreground, and badge-background colours for one event-marker type. */
 export interface TimelineIcon {

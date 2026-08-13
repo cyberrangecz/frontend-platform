@@ -319,8 +319,6 @@ export class ScoreAttainmentChartComponent
     /** Population whose score distribution the legend toggle shows. */
     protected readonly selectedSeries = signal<DistributionSeries>('all');
 
-    private chartInstanceRef: ECharts | null = null;
-
     /** Sum of every level's max score — the denominator for score-as-%-of-max, or null until resolved. */
     private readonly totalMax = computed<number | null>(() => {
         const resolved = this.resolvedLevels();
@@ -377,7 +375,7 @@ export class ScoreAttainmentChartComponent
             const index = this.selectedIntervalIndex();
             const series = this.selectedSeries();
             this.chartOptions();
-            const chart = this.chartInstanceRef;
+            const chart = this.liveChart();
             if (chart === null) return;
             chart.dispatchAction({ type: 'timelineChange', currentIndex: index });
             const activeName = series === 'finished' ? FINISHED_SERIES_NAME : ALL_SERIES_NAME;
@@ -388,14 +386,13 @@ export class ScoreAttainmentChartComponent
     }
 
     /**
-     * Captures the ECharts instance and mirrors the native timeline and legend
+     * Mirrors the native timeline and legend
      * selections back into the component's signals.
      *
-     * @param instance The initialised ECharts instance emitted by ngx-echarts.
+     * @param instance The ECharts instance being wired.
      */
-    protected override onChartInit(instance: ECharts): void {
-        super.onChartInit(instance);
-        this.chartInstanceRef = instance;
+    protected override wireChart(instance: ECharts): void {
+        super.wireChart(instance);
         instance.on('timelinechanged', (event: TimelineChangedEvent) => {
             this.selectedIntervalIndex.set(event.currentIndex);
         });

@@ -29,7 +29,6 @@ export class SyncService extends CacheSyncService {
                                 syncSingleType(
                                     eventType,
                                     params.instanceId,
-                                    params.poolId,
                                     watermarkMap.get(eventType),
                                     this.fetchApi,
                                     this.cacheService,

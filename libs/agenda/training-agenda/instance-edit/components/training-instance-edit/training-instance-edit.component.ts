@@ -28,13 +28,13 @@ import {
 } from '@sentinel/components/resource-selector';
 import { AsyncPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatIcon } from '@angular/material/icon';
 import { OwlDateTimeModule, OwlNativeDateTimeModule } from '@danielmoncada/angular-datetime-picker';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { MatError, MatFormField, MatHint, MatInput, MatLabel, MatSuffix } from '@angular/material/input';
-import { InjectionTokens } from '@crczp/utils';
+import { ClearInputSuffixComponent, InjectionTokens } from '@crczp/utils';
 
 /**
  * Component for creating new or editing existing training instance
@@ -45,6 +45,7 @@ import { InjectionTokens } from '@crczp/utils';
     styleUrls: ['./training-instance-edit.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
+        ClearInputSuffixComponent,
         SentinelResourceSelectorComponent,
         SentinelSelectorSelectedElementDirective,
         AsyncPipe,
@@ -58,7 +59,6 @@ import { InjectionTokens } from '@crczp/utils';
         MatFormField,
         MatSlideToggle,
         ReactiveFormsModule,
-        MatIconButton,
         MatSuffix,
         MatInput,
         MatFormField,

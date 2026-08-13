@@ -6,7 +6,7 @@ import {
     sentinelNegativeAuthGuard,
 } from '@sentinel/auth';
 import { ValidRouterConfig } from '@crczp/routing-commons';
-import { RoleGuards } from './utils/guards';
+import { RoleGuards, soleAgendaGuard } from './utils/guards';
 
 export const APP_ROUTES: ValidRouterConfig<''> = [
     {
@@ -17,8 +17,8 @@ export const APP_ROUTES: ValidRouterConfig<''> = [
             ),
         canActivate: [RoleGuards.trainingDesignerGuard],
         data: {
-            breadcrumb: 'Linear Training Definitions',
-            title: 'Linear Training Definition Overview',
+            breadcrumb: 'Training Definitions',
+            title: 'Training Definition Overview',
             preloadRoleCondition: 'trainingDesigner',
         },
     },
@@ -30,8 +30,8 @@ export const APP_ROUTES: ValidRouterConfig<''> = [
             ),
         canActivate: [RoleGuards.trainingOrganizerGuard],
         data: {
-            breadcrumb: 'Linear Training Instances',
-            title: 'Linear Training Instance Overview',
+            breadcrumb: 'Training Instances',
+            title: 'Training Instance Overview',
             preloadRoleCondition: 'trainingOrganizer',
         },
     },
@@ -184,7 +184,7 @@ export const APP_ROUTES: ValidRouterConfig<''> = [
     {
         path: 'home',
         component: HomeComponent,
-        canActivate: [sentinelAuthGuardWithLogin],
+        canActivate: [sentinelAuthGuardWithLogin, soleAgendaGuard],
     },
     {
         path: 'logout',

@@ -16,6 +16,7 @@ import { StringUtils } from './utils/functions/string-utils';
 export * from './rxjs/unique';
 export * from './rxjs/tresholdBufferPipe';
 export * from './utils/classes/loading-tracker';
+export * from './utils/classes/unsaved-changes-tracker';
 export * from './service/error-handling/error-handler.service';
 export * from './service/error-handling/notification.service';
 export * from './pipes/title-case-except.pipe';
@@ -29,6 +30,7 @@ export * from './types/unit-values';
 export * from './types/sentinel-auth-config.zod';
 export * from './types/type-utils';
 export * from './directives/overflow-tooltip.directive';
+export * from './components/clear-input-suffix/clear-input-suffix.component';
 export * from './directives/click-outside';
 export type {
     NavAgendaConfig,

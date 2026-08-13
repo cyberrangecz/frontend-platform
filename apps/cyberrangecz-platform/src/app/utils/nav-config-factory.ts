@@ -25,6 +25,8 @@ export class NavConfigFactory {
                     {
                         label: 'Run',
                         path: 'run' satisfies ValidPathPrefix,
+                        canActivate: () =>
+                            RoleResolver.isTrainingTrainee(user.roles),
                     },
                 ],
             },

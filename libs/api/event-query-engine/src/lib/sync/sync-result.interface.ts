@@ -1,4 +1,4 @@
-import { PlatformEventType } from '@crczp/visualization-model';
+import { PlatformEventType } from '@crczp/training-model';
 
 /**
  * Emitted once per event type that completes within a sync cycle.

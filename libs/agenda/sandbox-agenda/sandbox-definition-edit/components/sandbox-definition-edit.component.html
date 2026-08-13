@@ -10,15 +10,8 @@
                 <input formControlName="gitUrl"
                        matInput
                        placeholder="https://git-service.com/path/to/sandbox-definitions/sandbox_name.git" required>
-                @if (gitUrl.value) {
-                    <button (click)="gitUrl.setValue('');" aria-label="Clear"
-                            mat-icon-button matSuffix>
-                        <mat-icon>close</mat-icon>
-                    </button>
-                }
-                @if (gitUrl.hasError('required')) {
-                    <mat-error>This field is required</mat-error>
-                }
+                <crczp-clear-input-suffix [control]="gitUrl" matSuffix />
+                <mat-error>Git URL cannot be empty</mat-error>
             </mat-form-field>
 
             <!-- REVISION field-->
@@ -27,15 +20,8 @@
                 <mat-label>Revision</mat-label>
                 <input formControlName="revision" matInput placeholder="Revision"
                        required>
-                @if (revision.value) {
-                    <button (click)="revision.setValue('');" aria-label="Clear"
-                            mat-icon-button matSuffix>
-                        <mat-icon>close</mat-icon>
-                    </button>
-                }
-                @if (revision.hasError('required')) {
-                    <mat-error>This field is required</mat-error>
-                }
+                <crczp-clear-input-suffix [control]="revision" matSuffix />
+                <mat-error>Revision cannot be empty</mat-error>
             </mat-form-field>
         </div>
     </form>

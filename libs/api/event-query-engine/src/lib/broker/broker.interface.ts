@@ -1,6 +1,6 @@
 import { Signal } from '@angular/core';
 import { Observable } from 'rxjs';
-import { PlatformEventType } from '@crczp/visualization-model';
+import { PlatformEventType } from '@crczp/training-model';
 import { EventCacheDb } from '../cache/cache.interface';
 
 /**
@@ -24,8 +24,7 @@ export abstract class DataBrokerService {
      * @param instanceId Scope signal — on change, previous stream is torn
      * down via switchMap and a new sync cycle begins for the new instance.
      * @param eventTypes Declared event types to sync before running the
-     * query. Determines which cache tables are warmed. When pool-scoped
-     * types (Command) are included, the broker resolves poolId internally.
+     * query. Determines which cache tables are warmed.
      * @param queryFn Typed Drizzle query against the local event cache.
      * Receives the Drizzle async database with the full event schema loaded.
      * Only event tables are available — entity tables are not stored in
@@ -56,8 +55,7 @@ export abstract class DataBrokerService {
      * released via switchMap and the reader re-attaches to the new instance's
      * driver.
      * @param eventTypes Declared event types to sync before running the
-     * query. Determines which cache tables are warmed. When pool-scoped
-     * types (Command) are included, the driver resolves poolId internally.
+     * query. Determines which cache tables are warmed.
      * @param queryFn Typed Drizzle query against the local event cache.
      * Receives the Drizzle async database with the full event schema loaded.
      * Only event tables are available — entity tables are not stored in

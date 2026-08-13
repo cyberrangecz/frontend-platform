@@ -3,7 +3,6 @@ import { AgendaMenuItem } from './agenda-menu-item';
 import { ValidPath } from '@crczp/routing-commons';
 
 export class AgendaPortalLink extends Agenda {
-    disabled: boolean;
     description: string;
     icon: string;
     menu?: AgendaMenuItem[];
@@ -12,15 +11,13 @@ export class AgendaPortalLink extends Agenda {
 
     constructor(
         name: string,
-        disabled: boolean,
         route: ValidPath,
         description: string,
         icon: string,
-        menu?: AgendaMenuItem[]
+        menu?: AgendaMenuItem[],
     ) {
         super(name, route);
         this.path = route;
-        this.disabled = disabled;
         this.description = description;
         this.icon = icon;
         this.menu = menu;
