@@ -1,10 +1,21 @@
 <main class="blocked" role="alert" aria-live="assertive">
     <div class="blocked-card">
         <mat-icon class="blocked-icon" aria-hidden="true">tab_unselected</mat-icon>
-        <h1 class="blocked-title">This dashboard is already open</h1>
+        <h1 class="blocked-title">Event database is in use by another window</h1>
         <p class="blocked-message">
-            The local event cache can be used by a single tab at a time. Close the other tab or
-            window running this dashboard — this page resumes automatically once it does.
+            The connection limit of the event database is exhausted — another window is holding the
+            connection. Close that window and this page loads automatically.
         </p>
+        <div class="blocked-status">
+            <p class="blocked-connections" aria-label="One of one available connections in use">
+                <mat-icon class="blocked-connections-icon" aria-hidden="true">lan</mat-icon>
+                <span class="blocked-connections-count">1&nbsp;/&nbsp;1</span>
+                <span class="blocked-connections-label">connections</span>
+            </p>
+            <p class="blocked-waiting">
+                <mat-progress-spinner mode="indeterminate" diameter="20" strokeWidth="3" />
+                <span>Waiting for the connection to be released</span>
+            </p>
+        </div>
     </div>
 </main>

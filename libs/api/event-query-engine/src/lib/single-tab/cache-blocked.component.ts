@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CACHE_CLAIM } from './single-tab-claim';
 
 /**
@@ -8,13 +9,13 @@ import { CACHE_CLAIM } from './single-tab-claim';
  *
  * It instructs the user to use a single tab and, once the holding tab is destroyed and this tab's
  * queued claim is granted, reloads into the originally requested route so the recovered tab boots
- * the cache as the new holder.
+ * the cache as the new holder. A spinner marks the wait for the claim as ongoing.
  */
 @Component({
     selector: 'crczp-cache-blocked',
     standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [MatIconModule],
+    imports: [MatIconModule, MatProgressSpinnerModule],
     templateUrl: './cache-blocked.component.html',
     styleUrl: './cache-blocked.component.scss',
 })
