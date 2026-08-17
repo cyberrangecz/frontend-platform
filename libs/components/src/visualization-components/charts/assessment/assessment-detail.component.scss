@@ -14,25 +14,37 @@
     }
 
     &--picker {
+        --picker-title-size: var(--font-size-2xl);
+        // Glyph size and the block space it is allowed to claim, both in title sizes.
+        --picker-caret-scale: 1.5;
+        --picker-caret-block-scale: 1.2;
+
         display: inline-flex;
         align-items: center;
         gap: var(--space-3xs);
-        min-width: 0;
+        max-width: min(32rem, 100%);
         margin: 0;
-        padding: var(--space-3xs) var(--space-2xs);
+        // Inline padding matches the question frame's, so the hover box shares the
+        // frames' outer edge while the title lines up with their inner content.
+        padding: var(--space-xs) var(--space-xl);
         border: none;
         border-radius: #{shared.$radius-md};
-        background: none;
+        background: var(--primary-95);
         color: inherit;
+        font-size: var(--picker-title-size);
+        font-weight: var(--font-weight-semibold);
+        line-height: var(--picker-caret-block-scale);
         cursor: pointer;
         transition: background-color 0.15s ease;
 
         &:hover:not(:disabled),
-        &:focus-visible {
-            background: var(--neutral-95);
+        &:focus-visible,
+        &[aria-expanded='true'] {
+            background: var(--mat-sys-primary-container);
         }
 
         &:disabled {
+            background: var(--neutral-95);
             cursor: default;
         }
 
@@ -41,9 +53,18 @@
         }
     }
 
+    // Scaled off the title size so the caret stays proportional to it, with negative
+    // block margins trimming its box back to the title's line so the enlarged glyph
+    // neither grows the trigger's height nor its hover area.
     &--picker-caret {
         flex: none;
-        color: var(--neutral-50);
+        width: calc(var(--picker-title-size) * var(--picker-caret-scale));
+        height: calc(var(--picker-title-size) * var(--picker-caret-scale));
+        margin-block: calc(
+            var(--picker-title-size) * (var(--picker-caret-block-scale) - var(--picker-caret-scale)) / 2
+        );
+        color: var(--primary-40);
+        font-size: calc(var(--picker-title-size) * var(--picker-caret-scale));
     }
 
     &--title {
@@ -51,12 +72,55 @@
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
-        font-size: var(--font-size-2xl);
-        font-weight: var(--font-weight-semibold);
     }
 
     &--kind {
         @include shared.label-chip;
+    }
+
+    &--menu {
+        max-width: min(40rem, calc(100vw - var(--space-5xl)));
+        padding: var(--space-3xs) 0;
+        border-radius: #{shared.$radius-md};
+        background: var(--neutral-100);
+        box-shadow:
+            0 0.25rem 0.75rem rgb(0 0 0 / 12%),
+            0 0.0625rem 0.125rem rgb(0 0 0 / 8%);
+    }
+
+    &--menu-item {
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr) auto;
+        align-items: center;
+        gap: var(--space-md);
+        width: 100%;
+        padding: var(--space-xs) var(--space-lg);
+        border: none;
+        background: none;
+        color: inherit;
+        font-size: var(--font-size-md);
+        text-align: left;
+        cursor: pointer;
+        transition: background-color 0.15s ease;
+
+        &:hover,
+        &:focus-visible {
+            background: var(--neutral-95);
+            outline: none;
+        }
+
+        &[aria-checked='true'] {
+            font-weight: var(--font-weight-semibold);
+        }
+
+        &[aria-checked='true'] .assessment-detail--menu-check {
+            visibility: visible;
+        }
+    }
+
+    &--menu-icon {
+        flex: none;
+        color: var(--neutral-40);
     }
 
     &--menu-label {
@@ -65,13 +129,11 @@
         text-overflow: ellipsis;
     }
 
-    &--menu-item--selected {
-        font-weight: var(--font-weight-semibold);
-    }
-
+    // Occupies its column whether or not the row is selected, so picking an option
+    // never shifts the labels.
     &--menu-check {
-        margin-left: auto;
         color: var(--primary-40);
+        visibility: hidden;
     }
 
     &--download {

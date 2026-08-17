@@ -1,8 +1,8 @@
+import { CdkMenu, CdkMenuItemRadio, CdkMenuTrigger } from '@angular/cdk/menu';
 import { formatNumber } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, input, LOCALE_ID, output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { OverflowTooltipDirective } from '@crczp/utils';
 import { PALETTE } from '../shared';
@@ -31,12 +31,10 @@ export interface AssessmentOption {
     readonly kind: AssessmentKind;
 }
 
-/** One dropdown option prepared for rendering with its resolved kind icon and selected state. */
+/** One dropdown option prepared for rendering with its resolved kind icon. */
 interface RenderOption extends AssessmentOption {
     /** Material icon name conveying the assessment kind. */
     readonly icon: string;
-    /** Whether this option is the currently shown assessment. */
-    readonly selected: boolean;
 }
 
 /** Material icon per assessment kind, the sole visual cue distinguishing them. */
@@ -59,9 +57,11 @@ const KIND_ICON: Record<AssessmentKind, string> = {
         EmiBodyComponent,
         FfqBodyComponent,
         OverflowTooltipDirective,
+        CdkMenu,
+        CdkMenuItemRadio,
+        CdkMenuTrigger,
         MatButtonModule,
         MatIconModule,
-        MatMenuModule,
         MatTooltipModule,
     ],
     templateUrl: './assessment-detail.component.html',
@@ -108,15 +108,13 @@ export class AssessmentDetailComponent {
 
         return stats;
     });
-    /** Dropdown options prepared for the template with their kind icon and selected state. */
-    protected readonly menuOptions = computed<readonly RenderOption[]>(() => {
-        const selectedOrder = this.assessment().order;
-        return this.options().map((option) => ({
+    /** Dropdown options prepared for the template with their kind icon. */
+    protected readonly menuOptions = computed<readonly RenderOption[]>(() =>
+        this.options().map((option) => ({
             ...option,
             icon: KIND_ICON[option.kind],
-            selected: option.order === selectedOrder,
-        }));
-    });
+        })),
+    );
     /** Trainee identities keyed by run id, resolved from the run's trainee list. */
     private readonly traineesByRunId = computed<
         ReadonlyMap<number, TraineeIdentity>

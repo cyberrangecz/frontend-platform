@@ -4,8 +4,8 @@
     <button
         type="button"
         class="assessment-detail--picker"
-        [matMenuTriggerFor]="assessmentMenu"
-        [disabled]="menuOptions().length <= 1"
+        [cdkMenuTriggerFor]="assessmentMenu"
+        [disabled]="options().length <= 1"
         aria-label="Select assessment"
     >
         <span class="assessment-detail--title" crczpOverflowTooltip>{{ vm.title }}</span>
@@ -13,23 +13,24 @@
     </button>
     <span class="assessment-detail--kind">{{ vm.kind }}</span>
 
-    <mat-menu #assessmentMenu="matMenu" class="assessment-detail--menu">
-        @for (option of menuOptions(); track option.order) {
-            <button
-                mat-menu-item
-                type="button"
-                [class.assessment-detail--menu-item--selected]="option.selected"
-                [attr.aria-current]="option.selected ? 'true' : null"
-                (click)="assessmentSelected.emit(option.order)"
-            >
-                <mat-icon>{{ option.icon }}</mat-icon>
-                <span class="assessment-detail--menu-label" crczpOverflowTooltip>{{ option.title }}</span>
-                @if (option.selected) {
-                    <mat-icon class="assessment-detail--menu-check">check</mat-icon>
-                }
-            </button>
-        }
-    </mat-menu>
+    <ng-template #assessmentMenu>
+        <div class="assessment-detail--menu" cdkMenu>
+            @for (option of menuOptions(); track option.order) {
+                <button
+                    type="button"
+                    class="assessment-detail--menu-item"
+                    cdkMenuItemRadio
+                    [cdkMenuItemChecked]="option.order === vm.order"
+                    [cdkMenuitemTypeaheadLabel]="option.title"
+                    (cdkMenuItemTriggered)="assessmentSelected.emit(option.order)"
+                >
+                    <mat-icon class="assessment-detail--menu-icon">{{ option.icon }}</mat-icon>
+                    <span class="assessment-detail--menu-label" crczpOverflowTooltip>{{ option.title }}</span>
+                    <mat-icon class="assessment-detail--menu-check" aria-hidden="true">check</mat-icon>
+                </button>
+            }
+        </div>
+    </ng-template>
 
     <dl class="assessment-detail--stats">
         @for (stat of stats(); track stat.label) {
