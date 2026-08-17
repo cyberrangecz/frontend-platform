@@ -5,6 +5,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { SegmentedToggleComponent, SegmentedToggleOption } from '../../../../segmented-toggle/segmented-toggle.component';
 import { ChartPanelShellComponent } from '../../shared';
+import { MIN_CANVAS_HEIGHT_PX } from '../option-builders/row-layout';
 import { ChartRendererService } from '../services/chart-renderer.interface.service';
 import { ChartRendererServiceImpl } from '../services/chart-renderer.service';
 import { LegendTransitionSchedulerService } from '../services/legend-transition-scheduler.service';
@@ -17,6 +18,12 @@ import { AxisMode, SORT_CRITERIA, SortCriterion } from '../types/ui-state.types'
 import { StepperItemVm } from '../types/view-model.types';
 import { ProgressChartComponent } from './progress-chart.component';
 import { ProgressStepperComponent } from './progress-stepper.component';
+
+/**
+ * Panel height applied while a placeholder occupies the shell body, matching the
+ * smallest chart the row layout produces.
+ */
+const PLACEHOLDER_PANEL_HEIGHT = `${MIN_CANVAS_HEIGHT_PX}px`;
 
 /**
  * Root component of the progress visualization.
@@ -62,6 +69,19 @@ export class ProgressVisualizationComponent implements OnInit {
     protected readonly feed = inject(ProgressFeedService);
     protected readonly ui = inject(ProgressUiStateService);
     protected readonly renderer = inject(ChartRendererService);
+
+    /**
+     * Height strategy handed to the panel shell. The rendered chart sizes its own
+     * canvas to the trainee count, so content hugs it; the loading, empty and error
+     * placeholders carry no intrinsic height and are given {@link PLACEHOLDER_PANEL_HEIGHT}
+     * to fill instead.
+     */
+    protected readonly panelHeightMode = computed<'fixed' | 'fit-content'>(() => {
+        const status = this.feed.status();
+        return status === 'ready' || status === 'refreshing' ? 'fit-content' : 'fixed';
+    });
+
+    protected readonly placeholderPanelHeight = PLACEHOLDER_PANEL_HEIGHT;
 
     protected readonly stepperItems = computed<readonly StepperItemVm[] | null>(() => {
         const vm = this.feed.viewModel();

@@ -1,4 +1,4 @@
-import { CHART_BOTTOM_RESERVE_PX, CHART_TOP_RESERVE_PX, ROW_HEIGHT_PX } from '../config/ui.config';
+import { CHART_BOTTOM_RESERVE_PX, CHART_TOP_RESERVE_PX } from '../config/ui.config';
 import { OptionFragment } from '../types/option-fragment.types';
 
 const GRID_TOP_PX = CHART_TOP_RESERVE_PX;
@@ -28,7 +28,7 @@ export const GRID_RIGHT_PX = 40;
  * Inputs to the grid builder.
  */
 export interface GridBuilderInput {
-    readonly visibleRowCount: number;
+    readonly plotHeightPx: number;
     readonly hostWidth: number;
 }
 
@@ -39,7 +39,7 @@ export interface GridBuilderInput {
  * `GRID_LEFT_PX` so the rich-text Y-axis labels do not resize the plot
  * area on every trainee-list change.
  *
- * @param input - Renderer-supplied context with `visibleRowCount` and
+ * @param input - Renderer-supplied context with `plotHeightPx` and
  *                `hostWidth`.
  * @returns A partial option with the `grid` plot-area margins set.
  */
@@ -51,7 +51,7 @@ export function buildGridFragment(input: GridBuilderInput): OptionFragment {
             left: GRID_LEFT_PX,
             right: GRID_RIGHT_PX,
             containLabel: false,
-            height: input.visibleRowCount * ROW_HEIGHT_PX,
+            height: input.plotHeightPx,
         },
     };
 }

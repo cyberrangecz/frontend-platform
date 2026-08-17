@@ -1,7 +1,8 @@
 <crczp-chart-panel-shell
     heading="Progress"
     [status]="feed.status()"
-    fixedHeight="63.5rem"
+    [heightMode]="panelHeightMode()"
+    [fixedHeight]="placeholderPanelHeight"
     info="Per-trainee progress across levels over time, with lag-state colouring. Click a level in the stepper to focus it; sort and filter trainees with the chart controls."
 >
     <div class="progress-visualization-root">

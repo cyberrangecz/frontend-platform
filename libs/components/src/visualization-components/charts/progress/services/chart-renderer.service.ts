@@ -1,10 +1,5 @@
 import { Injectable, Signal, signal, WritableSignal } from '@angular/core';
-import {
-    CHART_BOTTOM_RESERVE_PX,
-    CHART_TOP_RESERVE_PX,
-    ROW_HEIGHT_PX,
-    VISIBLE_ROW_COUNT,
-} from '../config/ui.config';
+import { MIN_CANVAS_HEIGHT_PX } from '../option-builders/row-layout';
 import { ChartRendererService } from './chart-renderer.interface.service';
 
 /**
@@ -21,10 +16,11 @@ export class ChartRendererServiceImpl extends ChartRendererService {
     readonly isZoomedInState: WritableSignal<boolean> = signal(false);
     readonly isZoomedIn: Signal<boolean> = this.isZoomedInState.asReadonly();
 
-    /** Backing signal for {@link innerHostHeightPx}, written by the chart component per trainee count. */
-    readonly innerHostHeightState: WritableSignal<number> = signal(
-        VISIBLE_ROW_COUNT * ROW_HEIGHT_PX + CHART_TOP_RESERVE_PX + CHART_BOTTOM_RESERVE_PX,
-    );
+    /**
+     * Backing signal for {@link innerHostHeightPx}, written by the chart component
+     * per trainee count and seeded with the smallest chart the layout produces.
+     */
+    readonly innerHostHeightState: WritableSignal<number> = signal(MIN_CANVAS_HEIGHT_PX);
     readonly innerHostHeightPx: Signal<number> = this.innerHostHeightState.asReadonly();
 
     /** Zoom-reset delegate supplied by the chart component once its instance is live. */

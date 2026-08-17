@@ -23,10 +23,9 @@ import {
     CURRENT_TIME_MARKER_LINE_WIDTH,
     CURRENT_TIME_MARKER_Z,
     DRAG_RELEASE_DELAY_MS,
-    LEGEND_TEXT_HIDE_BELOW_PX,
-    ROW_HEIGHT_PX,
-    VISIBLE_ROW_COUNT
+    LEGEND_TEXT_HIDE_BELOW_PX
 } from '../config/ui.config';
+import { resolveRowLayout } from '../option-builders/row-layout';
 import { buildAxisFragment } from '../option-builders/axis.builder';
 import { AxisTimeScale, createAxisTimeScale } from '../option-builders/axis-time-scale';
 import {
@@ -227,17 +226,13 @@ export class ProgressChartComponent extends EchartsChartBase {
     });
 
     /**
-     * Pixel height the inner ECharts host is sized to: the visible-row window
-     * times the row height plus the top and bottom reserves. The outer wrapper
-     * scrolls when the rows overflow this fixed height. Mirrored into the shared
-     * holder so the shell can position the reset-zoom FAB row.
+     * Pixel height the inner ECharts host is sized to, taken from the resolved
+     * row layout. Mirrored into the shared holder so the shell can position the
+     * reset-zoom FAB row.
      */
-    protected readonly innerHostHeightPx: Signal<number> = computed<number>(() => {
-        const viewModel = this.feed.viewModel();
-        const traineeCount = viewModel?.trainees.length ?? 0;
-        const visibleRowCount = Math.max(1, Math.min(traineeCount, VISIBLE_ROW_COUNT));
-        return visibleRowCount * ROW_HEIGHT_PX + CHART_TOP_RESERVE_PX + CHART_BOTTOM_RESERVE_PX;
-    });
+    protected readonly innerHostHeightPx: Signal<number> = computed<number>(
+        () => resolveRowLayout(this.feed.viewModel()?.trainees.length ?? 0).canvasHeightPx,
+    );
 
     constructor() {
         super();
@@ -294,8 +289,7 @@ export class ProgressChartComponent extends EchartsChartBase {
         hostWidth: number,
         timeScale: AxisTimeScale,
     ): EChartsOption {
-        const traineeCount = viewModel.trainees.length;
-        const visibleRowCount = Math.max(1, Math.min(traineeCount, VISIBLE_ROW_COUNT));
+        const layout = resolveRowLayout(viewModel.trainees.length);
         const hideLabels = hostWidth < LEGEND_TEXT_HIDE_BELOW_PX;
         const legendVm: LegendVm = {
             items: viewModel.legend,
@@ -308,11 +302,11 @@ export class ProgressChartComponent extends EchartsChartBase {
         };
 
         const fragments: OptionFragment[] = [
-            buildAxisFragment(traineeCount, viewModel.trainees, palette, timeScale),
-            buildGridFragment({ visibleRowCount, hostWidth }),
+            buildAxisFragment(layout.rowSlotCount, viewModel.trainees, palette, timeScale),
+            buildGridFragment({ plotHeightPx: layout.plotHeightPx, hostWidth }),
             buildDataZoomFragment({
-                totalRowCount: traineeCount,
-                visibleRowCount,
+                totalRowCount: layout.rowSlotCount,
+                visibleRowCount: layout.visibleRowCount,
                 preservedZoom: this.currentHorizontalZoom,
                 preservedScrollStartIndex: this.currentVerticalScroll,
                 timeScale,

@@ -20,11 +20,18 @@ export const ROW_PADDING_PX = 4;
 export const ROW_HEIGHT_PX = BAR_HEIGHT_PX + ROW_PADDING_PX * 2;
 
 /**
- * Number of trainee rows shown at once. The chart height is fixed to this
- * many rows; instances with more trainees expose the remainder through the
- * vertical scroll (y-axis dataZoom) rather than growing the chart.
+ * Most trainee rows shown at once. Instances with more trainees expose the
+ * remainder through the vertical scroll (y-axis dataZoom) rather than growing
+ * the chart.
  */
 export const VISIBLE_ROW_COUNT = 20;
+
+/**
+ * Fewest trainee rows the chart lays out. Instances below this count pad the
+ * Y axis with empty rows, so the plot area keeps a workable height and the
+ * bars stay clear of the legend above and the timeline slider below.
+ */
+export const MIN_VISIBLE_ROW_COUNT = 3;
 
 /**
  * Top padding reserved for the two stacked legend rows (event-type above

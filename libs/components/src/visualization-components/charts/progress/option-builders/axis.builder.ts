@@ -33,12 +33,13 @@ const AVATAR_SIZE = 24;
  *    list drives the rich-text label dictionary; an empty `trainees`
  *    array yields blank labels.
  *
- * `rowCount` must always match the number of rows the bars layer is
- * about to draw — `api.coord([_, rowIndex])` resolves through the Y
- * category axis and silently returns invalid pixels when `rowIndex`
- * has no matching category.
+ * `rowCount` must cover every row the bars layer is about to draw —
+ * `api.coord([_, rowIndex])` resolves through the Y category axis and
+ * silently returns invalid pixels when `rowIndex` has no matching
+ * category. Slots beyond the trainee list are padding: they render a
+ * blank label and hold no bar.
  *
- * @param rowCount - Total Y-axis category slots, equal to `trainees.length`.
+ * @param rowCount - Total Y-axis category slots, at least `trainees.length`.
  * @param trainees - The ordered trainee list. Drives the rich-text label
  *                   dictionary.
  * @param colors - Resolved theme colours for split lines and label text.
