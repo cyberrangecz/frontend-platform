@@ -1,13 +1,7 @@
 /// <reference lib="webworker" />
 
+import type { Database, OpfsSAHPoolDatabase, SAHPoolUtil, Sqlite3Static, SqlValue } from '@sqlite.org/sqlite-wasm';
 import sqlite3InitModule from '@sqlite.org/sqlite-wasm';
-import type {
-    Database,
-    OpfsSAHPoolDatabase,
-    SAHPoolUtil,
-    Sqlite3Static,
-    SqlValue,
-} from '@sqlite.org/sqlite-wasm';
 import { SCHEMA_STATEMENTS } from './schema/schema-initializer';
 
 /**
@@ -191,8 +185,8 @@ async function openCacheDatabase(
         const poolUtil = await acquireSahPool(sqlite3, vfsName, initialCapacity);
         return { database: new poolUtil.OpfsSAHPoolDb(databasePath), poolUtil };
     } catch (error) {
-        console.error(
-            '[event-query-engine] SAHPool VFS unavailable; the event cache runs in memory for this session and is not persisted.',
+        console.warn(
+            '[event-query-engine] Event cache storage: in memory. The OPFS pool could not be acquired - nothing is persisted and the cache is rebuilt on the next visit.',
             error,
         );
         return {

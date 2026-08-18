@@ -91,14 +91,15 @@ function withoutBlockingStartup(
     work: Promise<unknown>,
     label: string,
 ): Promise<void> {
-    const budget = new Promise<void>((resolve) =>
-        setTimeout(() => {
+    let budgetTimer: ReturnType<typeof setTimeout>;
+    const budget = new Promise<void>((resolve) => {
+        budgetTimer = setTimeout(() => {
             console.error(
                 `${label} exceeded its startup budget and was abandoned.`,
             );
             resolve();
-        }, CACHE_STARTUP_BUDGET_MS),
-    );
+        }, CACHE_STARTUP_BUDGET_MS);
+    });
     return Promise.race([
         work.then(
             () => undefined,
@@ -107,7 +108,7 @@ function withoutBlockingStartup(
             },
         ),
         budget,
-    ]);
+    ]).finally(() => clearTimeout(budgetTimer));
 }
 
 @Injectable()
