@@ -59,6 +59,35 @@ import {
 
 const cacheClaim = requestSingleTabClaim('event-cache-platform-v1');
 
+/** Longest the startup housekeeping may delay the first render before it is abandoned. */
+const CACHE_STARTUP_BUDGET_MS = 15_000;
+
+/**
+ * Awaits startup housekeeping without letting it decide whether the application renders:
+ * a failure or an overrun is reported and the result discarded.
+ *
+ * @param work Housekeeping to await.
+ * @param label Operation name used in the reported message.
+ * @returns Promise settling once the work finishes, fails, or exhausts the budget.
+ */
+function withoutBlockingStartup(work: Promise<unknown>, label: string): Promise<void> {
+    const budget = new Promise<void>((resolve) =>
+        setTimeout(() => {
+            console.error(`${label} exceeded its startup budget and was abandoned.`);
+            resolve();
+        }, CACHE_STARTUP_BUDGET_MS),
+    );
+    return Promise.race([
+        work.then(
+            () => undefined,
+            (error: unknown) => {
+                console.error(`${label} failed.`, error);
+            },
+        ),
+        budget,
+    ]);
+}
+
 @Injectable()
 export class SentinelUagAuthorizationStrategy extends SentinelAuthorizationStrategy {
     private configService = inject(SentinelAuthContext);
@@ -162,10 +191,13 @@ SentinelBootstrapper.bootstrapApplication('assets/config.json', AppComponent, {
         provideAppInitializer(() => {
             const cache = inject(CacheService);
             const claim = inject(CACHE_CLAIM);
-            return claim.blocked.then((blocked) =>
-                blocked
-                    ? undefined
-                    : firstValueFrom(cache.evictStaleInstances()),
+            return withoutBlockingStartup(
+                claim.blocked.then((blocked) =>
+                    blocked
+                        ? undefined
+                        : firstValueFrom(cache.evictStaleInstances()),
+                ),
+                'Event cache eviction',
             );
         }),
     ],

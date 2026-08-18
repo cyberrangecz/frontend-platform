@@ -50,6 +50,15 @@ export function createSqliteEventDb(
 ): Promise<EventCacheDb> {
     const pending = new Map<number, PendingRequest>();
     let nextRequestId = 0;
+    let workerFailure: Error | null = null;
+
+    const failWorker = (error: Error): void => {
+        workerFailure = error;
+        for (const request of pending.values()) {
+            request.reject(error);
+        }
+        pending.clear();
+    };
 
     const workerReady: Promise<Worker> = Promise.resolve(options.until).then(() => {
         const worker = workerFactory();
@@ -64,11 +73,26 @@ export function createSqliteEventDb(
                 request.resolve(data);
             }
         });
+        worker.addEventListener('error', (event: ErrorEvent) =>
+            failWorker(
+                new Error(
+                    `Event cache worker failed to run: ${event.message || 'no details available'}`,
+                ),
+            ),
+        );
+        worker.addEventListener('messageerror', () =>
+            failWorker(new Error('Event cache worker sent a message that could not be read.')),
+        );
+        releaseWorkerOnUnload(worker);
         return worker;
     });
 
     const send = (payload: Record<string, unknown>): Promise<unknown> =>
         new Promise((resolve, reject) => {
+            if (workerFailure) {
+                reject(workerFailure);
+                return;
+            }
             const id = nextRequestId++;
             pending.set(id, { resolve, reject });
             workerReady.then((worker) => worker.postMessage({ id, ...payload }), reject);
@@ -86,4 +110,22 @@ export function createSqliteEventDb(
     );
 
     return Promise.resolve(database);
+}
+
+/**
+ * Instructs the worker to close the database and hand back its OPFS access handles when the page
+ * goes away for good.
+ *
+ * Each pool file is held under an exclusive OPFS access handle, so a page that leaves without
+ * releasing them makes the next page contend with handles no live document owns. Pages kept alive
+ * in the back/forward cache are left untouched, since they resume against this same worker.
+ *
+ * @param worker Cache worker owning the database connection.
+ */
+function releaseWorkerOnUnload(worker: Worker): void {
+    if (typeof globalThis.addEventListener !== 'function') return;
+    globalThis.addEventListener('pagehide', (event: Event) => {
+        if ((event as PageTransitionEvent).persisted) return;
+        worker.postMessage({ type: 'release' });
+    });
 }
