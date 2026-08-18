@@ -77,7 +77,7 @@ import {
 const cacheClaim = requestSingleTabClaim('event-cache-platform-v1');
 
 /** Longest the startup housekeeping may delay the first render before it is abandoned. */
-const CACHE_STARTUP_BUDGET_MS = 15_000;
+const CACHE_STARTUP_BUDGET_MS = 10_000;
 
 /**
  * Awaits startup housekeeping without letting it decide whether the application renders:
