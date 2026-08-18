@@ -42,7 +42,13 @@ import {
     UserDTO,
 } from '@sentinel/auth';
 import { errorLogInterceptor } from './app/services/http-interceptors/error-log-interceptor';
-import { catchError, Observable, retry, throwError } from 'rxjs';
+import {
+    catchError,
+    firstValueFrom,
+    Observable,
+    retry,
+    throwError,
+} from 'rxjs';
 import { map } from 'rxjs/operators';
 import {
     provideHttpCache,
@@ -59,7 +65,6 @@ import { provideNativeDateAdapter } from '@angular/material/core';
 import { RoleService } from './app/services/role.service';
 import { APP_ROUTES } from './app/app-routes';
 import { provideSentinelMarkdownEditorConfig } from '@sentinel/components/markdown-editor';
-import { firstValueFrom } from 'rxjs';
 import {
     CACHE_CLAIM,
     CacheService,
@@ -70,6 +75,41 @@ import {
 } from '@crczp/event-query-engine';
 
 const cacheClaim = requestSingleTabClaim('event-cache-platform-v1');
+
+/** Longest the startup housekeeping may delay the first render before it is abandoned. */
+const CACHE_STARTUP_BUDGET_MS = 10_000;
+
+/**
+ * Awaits startup housekeeping without letting it decide whether the application renders:
+ * a failure or an overrun is reported and the result discarded.
+ *
+ * @param work Housekeeping to await.
+ * @param label Operation name used in the reported message.
+ * @returns Promise settling once the work finishes, fails, or exhausts the budget.
+ */
+function withoutBlockingStartup(
+    work: Promise<unknown>,
+    label: string,
+): Promise<void> {
+    let budgetTimer: ReturnType<typeof setTimeout>;
+    const budget = new Promise<void>((resolve) => {
+        budgetTimer = setTimeout(() => {
+            console.error(
+                `${label} exceeded its startup budget and was abandoned.`,
+            );
+            resolve();
+        }, CACHE_STARTUP_BUDGET_MS);
+    });
+    return Promise.race([
+        work.then(
+            () => undefined,
+            (error: unknown) => {
+                console.error(`${label} failed.`, error);
+            },
+        ),
+        budget,
+    ]).finally(() => clearTimeout(budgetTimer));
+}
 
 @Injectable()
 export class SentinelUagAuthorizationStrategy extends SentinelAuthorizationStrategy {
@@ -156,10 +196,16 @@ SentinelBootstrapper.bootstrapApplication('assets/config.json', AppComponent, {
             markdownParser: {},
         }),
         provideHttpCache(withLocalStorage()),
-        provideRouter(withCacheBlockedRoute(APP_ROUTES), withComponentInputBinding()),
+        provideRouter(
+            withCacheBlockedRoute(APP_ROUTES),
+            withComponentInputBinding(),
+        ),
         provideEventCache(
             createSqliteEventDb(
-                () => new Worker(new URL('./cache.worker.ts', import.meta.url), { type: 'module' }),
+                () =>
+                    new Worker(new URL('./cache.worker.ts', import.meta.url), {
+                        type: 'module',
+                    }),
                 { until: cacheClaim.granted },
             ),
         ),
@@ -167,8 +213,13 @@ SentinelBootstrapper.bootstrapApplication('assets/config.json', AppComponent, {
         provideAppInitializer(() => {
             const cache = inject(CacheService);
             const claim = inject(CACHE_CLAIM);
-            return claim.blocked.then((blocked) =>
-                blocked ? undefined : firstValueFrom(cache.evictStaleInstances()),
+            return withoutBlockingStartup(
+                claim.blocked.then((blocked) =>
+                    blocked
+                        ? undefined
+                        : firstValueFrom(cache.evictStaleInstances()),
+                ),
+                'Event cache eviction',
             );
         }),
     ],
