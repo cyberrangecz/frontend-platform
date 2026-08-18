@@ -4,19 +4,27 @@ import {
     importProvidersFrom,
     inject,
     Injectable,
-    provideAppInitializer
+    provideAppInitializer,
 } from '@angular/core';
 import { environment } from './environments/environment';
-import { APP_CONFIG, appConfigProvider, SentinelBootstrapper, SentinelConfig } from '@sentinel/common/dynamic-env';
+import {
+    APP_CONFIG,
+    appConfigProvider,
+    SentinelBootstrapper,
+    SentinelConfig,
+} from '@sentinel/common/dynamic-env';
 import { AppComponent } from './app/app.component';
-import { BrowserAnimationsModule, provideAnimations } from '@angular/platform-browser/animations';
+import {
+    BrowserAnimationsModule,
+    provideAnimations,
+} from '@angular/platform-browser/animations';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
 import {
     HTTP_INTERCEPTORS,
     HttpClient,
     provideHttpClient,
     withInterceptors,
-    withInterceptorsFromDi
+    withInterceptorsFromDi,
 } from '@angular/common/http';
 import { loadingInterceptor } from './app/services/http-interceptors/loading-interceptor';
 import { tokenRefreshInterceptor } from './app/services/http-interceptors/token-refresh-interceptor';
@@ -31,18 +39,27 @@ import {
     SentinelUagStrategyConfig,
     UnauthorizedInterceptor,
     User,
-    UserDTO
+    UserDTO,
 } from '@sentinel/auth';
 import { errorLogInterceptor } from './app/services/http-interceptors/error-log-interceptor';
-import { catchError, firstValueFrom, Observable, retry, throwError } from 'rxjs';
+import {
+    catchError,
+    firstValueFrom,
+    Observable,
+    retry,
+    throwError,
+} from 'rxjs';
 import { map } from 'rxjs/operators';
-import { provideHttpCache, withHttpCacheInterceptor, withLocalStorage } from '@ngneat/cashew';
+import {
+    provideHttpCache,
+    withHttpCacheInterceptor,
+    withLocalStorage,
+} from '@ngneat/cashew';
 import { LoadingService } from './app/services/loading.service';
 import {
     ErrorHandlerService,
     NotificationService,
     PortalConfig,
-    provideUnsupportedBrowserWarning,
 } from '@crczp/utils';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { RoleService } from './app/services/role.service';
@@ -54,7 +71,7 @@ import {
     createSqliteEventDb,
     provideEventCache,
     requestSingleTabClaim,
-    withCacheBlockedRoute
+    withCacheBlockedRoute,
 } from '@crczp/event-query-engine';
 
 const cacheClaim = requestSingleTabClaim('event-cache-platform-v1');
@@ -70,10 +87,15 @@ const CACHE_STARTUP_BUDGET_MS = 15_000;
  * @param label Operation name used in the reported message.
  * @returns Promise settling once the work finishes, fails, or exhausts the budget.
  */
-function withoutBlockingStartup(work: Promise<unknown>, label: string): Promise<void> {
+function withoutBlockingStartup(
+    work: Promise<unknown>,
+    label: string,
+): Promise<void> {
     const budget = new Promise<void>((resolve) =>
         setTimeout(() => {
-            console.error(`${label} exceeded its startup budget and was abandoned.`);
+            console.error(
+                `${label} exceeded its startup budget and was abandoned.`,
+            );
             resolve();
         }, CACHE_STARTUP_BUDGET_MS),
     );
@@ -187,7 +209,6 @@ SentinelBootstrapper.bootstrapApplication('assets/config.json', AppComponent, {
             ),
         ),
         { provide: CACHE_CLAIM, useValue: cacheClaim },
-        provideUnsupportedBrowserWarning(),
         provideAppInitializer(() => {
             const cache = inject(CacheService);
             const claim = inject(CACHE_CLAIM);

@@ -2,17 +2,13 @@ import { DateUtils } from './utils/functions/date-utils';
 import { NavBuilder } from './utils/functions/nav-builder';
 import { ProvisionUtil } from './utils/functions/property-provision';
 import { DocumentUtils } from './utils/functions/document-utils';
-import {
-    INSTANCE_ID_TOKEN,
-    TRAINING_TYPE_TOKEN,
-} from './utils/classes/injection-tokens';
+import { INSTANCE_ID_TOKEN, TRAINING_TYPE_TOKEN } from './utils/classes/injection-tokens';
 import { LevelTypeUtils } from './utils/functions/level-type-utils';
 import { ArrayUtils } from './utils/functions/array-utils';
 import { SetUtils } from './utils/functions/set-utils';
 import { ObjectUtils } from './utils/functions/object-utils';
 import { ColorUtils } from './utils/functions/color-utils';
 import { StringUtils } from './utils/functions/string-utils';
-import { BrowserUtils } from './utils/functions/browser-utils';
 
 export * from './rxjs/unique';
 export * from './rxjs/tresholdBufferPipe';
@@ -33,7 +29,6 @@ export * from './types/type-utils';
 export * from './directives/overflow-tooltip.directive';
 export * from './components/clear-input-suffix/clear-input-suffix.component';
 export * from './directives/click-outside';
-export * from './providers/unsupported-browser-warning.provider';
 export type {
     NavAgendaConfig,
     NavAgendaContainerConfig,
@@ -51,7 +46,6 @@ export const Utils = {
     Object: ObjectUtils,
     Color: ColorUtils,
     String: StringUtils,
-    Browser: BrowserUtils,
 };
 
 export const InjectionTokens = {
