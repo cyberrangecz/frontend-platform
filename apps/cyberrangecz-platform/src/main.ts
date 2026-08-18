@@ -4,27 +4,19 @@ import {
     importProvidersFrom,
     inject,
     Injectable,
-    provideAppInitializer,
+    provideAppInitializer
 } from '@angular/core';
 import { environment } from './environments/environment';
-import {
-    APP_CONFIG,
-    appConfigProvider,
-    SentinelBootstrapper,
-    SentinelConfig,
-} from '@sentinel/common/dynamic-env';
+import { APP_CONFIG, appConfigProvider, SentinelBootstrapper, SentinelConfig } from '@sentinel/common/dynamic-env';
 import { AppComponent } from './app/app.component';
-import {
-    BrowserAnimationsModule,
-    provideAnimations,
-} from '@angular/platform-browser/animations';
+import { BrowserAnimationsModule, provideAnimations } from '@angular/platform-browser/animations';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
 import {
     HTTP_INTERCEPTORS,
     HttpClient,
     provideHttpClient,
     withInterceptors,
-    withInterceptorsFromDi,
+    withInterceptorsFromDi
 } from '@angular/common/http';
 import { loadingInterceptor } from './app/services/http-interceptors/loading-interceptor';
 import { tokenRefreshInterceptor } from './app/services/http-interceptors/token-refresh-interceptor';
@@ -39,34 +31,30 @@ import {
     SentinelUagStrategyConfig,
     UnauthorizedInterceptor,
     User,
-    UserDTO,
+    UserDTO
 } from '@sentinel/auth';
 import { errorLogInterceptor } from './app/services/http-interceptors/error-log-interceptor';
-import { catchError, Observable, retry, throwError } from 'rxjs';
+import { catchError, firstValueFrom, Observable, retry, throwError } from 'rxjs';
 import { map } from 'rxjs/operators';
-import {
-    provideHttpCache,
-    withHttpCacheInterceptor,
-    withLocalStorage,
-} from '@ngneat/cashew';
+import { provideHttpCache, withHttpCacheInterceptor, withLocalStorage } from '@ngneat/cashew';
 import { LoadingService } from './app/services/loading.service';
 import {
     ErrorHandlerService,
     NotificationService,
     PortalConfig,
+    provideUnsupportedBrowserWarning,
 } from '@crczp/utils';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { RoleService } from './app/services/role.service';
 import { APP_ROUTES } from './app/app-routes';
 import { provideSentinelMarkdownEditorConfig } from '@sentinel/components/markdown-editor';
-import { firstValueFrom } from 'rxjs';
 import {
     CACHE_CLAIM,
     CacheService,
     createSqliteEventDb,
     provideEventCache,
     requestSingleTabClaim,
-    withCacheBlockedRoute,
+    withCacheBlockedRoute
 } from '@crczp/event-query-engine';
 
 const cacheClaim = requestSingleTabClaim('event-cache-platform-v1');
@@ -156,19 +144,28 @@ SentinelBootstrapper.bootstrapApplication('assets/config.json', AppComponent, {
             markdownParser: {},
         }),
         provideHttpCache(withLocalStorage()),
-        provideRouter(withCacheBlockedRoute(APP_ROUTES), withComponentInputBinding()),
+        provideRouter(
+            withCacheBlockedRoute(APP_ROUTES),
+            withComponentInputBinding(),
+        ),
         provideEventCache(
             createSqliteEventDb(
-                () => new Worker(new URL('./cache.worker.ts', import.meta.url), { type: 'module' }),
+                () =>
+                    new Worker(new URL('./cache.worker.ts', import.meta.url), {
+                        type: 'module',
+                    }),
                 { until: cacheClaim.granted },
             ),
         ),
         { provide: CACHE_CLAIM, useValue: cacheClaim },
+        provideUnsupportedBrowserWarning(),
         provideAppInitializer(() => {
             const cache = inject(CacheService);
             const claim = inject(CACHE_CLAIM);
             return claim.blocked.then((blocked) =>
-                blocked ? undefined : firstValueFrom(cache.evictStaleInstances()),
+                blocked
+                    ? undefined
+                    : firstValueFrom(cache.evictStaleInstances()),
             );
         }),
     ],

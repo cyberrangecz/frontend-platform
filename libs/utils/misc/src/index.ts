@@ -12,6 +12,7 @@ import { SetUtils } from './utils/functions/set-utils';
 import { ObjectUtils } from './utils/functions/object-utils';
 import { ColorUtils } from './utils/functions/color-utils';
 import { StringUtils } from './utils/functions/string-utils';
+import { BrowserUtils } from './utils/functions/browser-utils';
 
 export * from './rxjs/unique';
 export * from './rxjs/tresholdBufferPipe';
@@ -32,6 +33,7 @@ export * from './types/type-utils';
 export * from './directives/overflow-tooltip.directive';
 export * from './components/clear-input-suffix/clear-input-suffix.component';
 export * from './directives/click-outside';
+export * from './providers/unsupported-browser-warning.provider';
 export type {
     NavAgendaConfig,
     NavAgendaContainerConfig,
@@ -49,6 +51,7 @@ export const Utils = {
     Object: ObjectUtils,
     Color: ColorUtils,
     String: StringUtils,
+    Browser: BrowserUtils,
 };
 
 export const InjectionTokens = {
