@@ -16,7 +16,7 @@
     <mat-form-field
       class="passkey-field"
       appearance="outline"
-      hintLabel="'Max 50 characters'"
+      hintLabel="Max 50 characters"
       (keydown.enter)="$event.preventDefault()"
       >
       <mat-label>Passkey</mat-label>
@@ -30,7 +30,7 @@
       <mat-hint align="end">{{ passkey.value?.length || 0 }}/50</mat-hint>
       @if (passkey.hasError('whitespace')) {
         <mat-error>
-          'Passkey' cannot be empty
+          Passkey cannot be empty
         </mat-error>
       }
     </mat-form-field>

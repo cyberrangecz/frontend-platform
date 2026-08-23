@@ -473,7 +473,7 @@ export class SandboxInstanceService extends OffsetPaginatedElementsPollingServic
             {
                 data: new SentinelConfirmationDialogConfig(
                     `${action} sandbox`,
-                    `Do you want to ${action} sandbox ${id}"?`,
+                    `Do you want to ${action.toLowerCase()} sandbox ${id}?`,
                     'Cancel',
                     action,
                 ),

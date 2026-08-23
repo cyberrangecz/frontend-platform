@@ -11,6 +11,16 @@
 .dialog-title {
     padding-top: 1rem;
     padding-bottom: 2rem;
+
+    &:has(+ .dialog-subtitle) {
+        padding-bottom: 0.5rem;
+    }
+}
+
+.dialog-subtitle {
+    margin: 0 0 2rem;
+    color: var(--mat-sys-on-surface-variant);
+    text-align: center;
 }
 
 

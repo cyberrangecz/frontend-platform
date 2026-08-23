@@ -127,7 +127,12 @@ export class GroupOverviewService extends SelectablePaginatedService<Group> {
             tap(
                 () => {
                     this.clearSelection();
-                    this.alertService.emit('success', 'Groups were deleted');
+                    this.alertService.emit(
+                        'success',
+                        groups.length > 1
+                            ? 'Groups were deleted'
+                            : 'Group was deleted',
+                    );
                 },
                 (err) => {
                     this.errorHandler.emitAPIError(err, 'Deleting groups');

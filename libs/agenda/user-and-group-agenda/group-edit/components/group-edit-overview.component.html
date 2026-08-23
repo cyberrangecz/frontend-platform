@@ -13,7 +13,7 @@
         </mat-panel-description>
     </mat-expansion-panel-header>
 
-    <sentinel-controls [controls]="controls" />
+    <sentinel-controls [controls]="controls" [titlecased]="false" />
     <mat-divider />
     <crczp-group-edit
         (edited)="onGroupChanged($event)"

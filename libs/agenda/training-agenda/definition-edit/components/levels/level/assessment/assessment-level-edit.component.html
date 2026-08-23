@@ -15,7 +15,7 @@
 
                 <div class="time-configuration-container">
                     <!-- ESTIMATED DURATION field -->
-                    <mat-form-field appearance="outline" hintLabel="Number in minutes greater than 1.">
+                    <mat-form-field appearance="outline" hintLabel="Number in minutes greater than or equal to 1.">
                         <mat-label>Estimated Duration in Minutes</mat-label>
                         <input
                             formControlName="estimatedDuration"
@@ -34,7 +34,7 @@
                     <!-- MINIMAL POSSIBLE SOLVE TIME field -->
                     <mat-form-field
                         appearance="outline"
-                        hintLabel="Number in minutes greater than 0."
+                        hintLabel="Number in minutes greater than or equal to 0."
                     >
                         <mat-label>Minimal Possible Solve Time in Minutes</mat-label>
                         <input
@@ -65,7 +65,7 @@
                     <span class="test-toggle-right-margin">Questionnaire</span>
                     <mat-slide-toggle
                         formControlName="isTest"
-                        matTooltip="Switching to questionnaire wil delete your answers">
+                        matTooltip="Switching to questionnaire will delete your answers">
                     </mat-slide-toggle>
                     <span class="test-toggle-left-margin">Test</span>
                 </div>
