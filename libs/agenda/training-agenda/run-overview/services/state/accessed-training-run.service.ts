@@ -5,7 +5,7 @@ import { AccessedTrainingRun } from '@crczp/training-model';
 import { BehaviorSubject, from, Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { OffsetPaginationEvent } from '@crczp/utils';
-import { ErrorHandlerService, PortalConfig } from '@crczp/utils';
+import { ErrorHandlerService, LoadingTracker, PortalConfig } from '@crczp/utils';
 import { Routing } from '@crczp/routing-commons';
 import { CrczpOffsetElementsPaginatedService, OffsetPaginatedResource, QueryParam } from '@crczp/api-common';
 
@@ -26,6 +26,9 @@ export class AccessedTrainingRunService extends CrczpOffsetElementsPaginatedServ
     private trainingApi = inject(LinearRunApi);
     private router = inject(Router);
     private errorHandler = inject(ErrorHandlerService);
+    private readonly loadingTracker = new LoadingTracker();
+
+    override isLoading$ = this.loadingTracker.isLoading$;
 
     constructor() {
         super(inject(PortalConfig).defaultPageSize);
@@ -43,18 +46,20 @@ export class AccessedTrainingRunService extends CrczpOffsetElementsPaginatedServ
         this.hasErrorSubject$.next(false);
         const filters = filter ? [new QueryParam('title', filter)] : [];
         pagination.size = Number.MAX_SAFE_INTEGER;
-        return this.trainingApi.getAccessed(pagination, filters).pipe(
-            tap(
-                (runs) => {
-                    this.resourceSubject$.next(runs);
-                },
-                (err) => {
-                    this.errorHandler.emitAPIError(
-                        err,
-                        'Fetching training runs',
-                    );
-                    this.hasErrorSubject$.next(true);
-                },
+        return this.loadingTracker.trackRequest(() =>
+            this.trainingApi.getAccessed(pagination, filters).pipe(
+                tap(
+                    (runs) => {
+                        this.resourceSubject$.next(runs);
+                    },
+                    (err) => {
+                        this.errorHandler.emitAPIError(
+                            err,
+                            'Fetching training runs',
+                        );
+                        this.hasErrorSubject$.next(true);
+                    },
+                ),
             ),
         );
     }

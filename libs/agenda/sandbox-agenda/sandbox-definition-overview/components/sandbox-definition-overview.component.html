@@ -4,5 +4,7 @@
     [data]="sandboxDefinitions$ | async"
     [defaultSortDirection]="DEFAULT_SORT_DIRECTION"
     [defaultSortName]="DEFAULT_SORT_COLUMN"
-    [hasError]="hasError$ | async">
+    [hasError]="hasError$ | async"
+    [isLoading]="isLoading$ | async"
+    crczpTableEmptyState="No sandbox definitions have been created yet">
 </sentinel-table>

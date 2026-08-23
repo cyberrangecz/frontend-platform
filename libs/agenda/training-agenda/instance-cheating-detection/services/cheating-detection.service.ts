@@ -11,7 +11,7 @@ import { CheatingDetectionApi, CheatingDetectionSort } from '@crczp/training-api
 import { CheatingDetection } from '@crczp/training-model';
 import { EMPTY, from, Observable } from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
-import { ErrorHandlerService, NotificationService, PortalConfig } from '@crczp/utils';
+import { ErrorHandlerService, LoadingTracker, NotificationService, PortalConfig } from '@crczp/utils';
 import { Routing } from '@crczp/routing-commons';
 import { CrczpOffsetElementsPaginatedService, OffsetPaginatedResource } from '@crczp/api-common';
 
@@ -28,6 +28,9 @@ export class CheatingDetectionService extends CrczpOffsetElementsPaginatedServic
     private errorHandler = inject(ErrorHandlerService);
 
     private lastPagination: OffsetPaginationEvent<CheatingDetectionSort>;
+    private readonly loadingTracker = new LoadingTracker();
+
+    override isLoading$ = this.loadingTracker.isLoading$;
 
     constructor() {
         super(inject(PortalConfig).defaultPageSize);
@@ -42,12 +45,15 @@ export class CheatingDetectionService extends CrczpOffsetElementsPaginatedServic
         trainingInstanceId: number,
         pagination: OffsetPaginationEvent<CheatingDetectionSort>,
     ): Observable<OffsetPaginatedResource<CheatingDetection>> {
-        return this.api.getAll(pagination, trainingInstanceId).pipe(
-            tap(
-                (detections) => {
-                    this.resourceSubject$.next(detections);
-                },
-                () => this.onGetAllError(),
+        this.hasErrorSubject$.next(false);
+        return this.loadingTracker.trackRequest(() =>
+            this.api.getAll(pagination, trainingInstanceId).pipe(
+                tap(
+                    (detections) => {
+                        this.resourceSubject$.next(detections);
+                    },
+                    () => this.onGetAllError(),
+                ),
             ),
         );
     }

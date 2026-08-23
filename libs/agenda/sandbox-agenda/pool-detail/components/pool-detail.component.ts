@@ -1,4 +1,5 @@
 import { AsyncPipe } from '@angular/common';
+import { TableEmptyStateDirective } from '@crczp/components';
 import {
     AfterViewInit,
     ChangeDetectionStrategy,
@@ -74,6 +75,7 @@ import { StageOverviewComponent } from './stage-overview/stage-overview.componen
         EditableCommentComponent,
         AsyncPipe,
         SentinelRowDirective,
+        TableEmptyStateDirective,
     ],
 })
 export class PoolDetailComponent implements OnInit, AfterViewInit {
@@ -81,6 +83,7 @@ export class PoolDetailComponent implements OnInit, AfterViewInit {
     readonly poolComment = signal<string | undefined>(undefined);
     instances$: Observable<PoolDetailTable> = of();
     instancesTableHasError$: Observable<boolean> = of();
+    instancesTableIsLoading$: Observable<boolean> = of();
     controls: SentinelControlItem[] = [];
     commentTrim = 15;
     destroyRef = inject(DestroyRef);
@@ -199,6 +202,9 @@ export class PoolDetailComponent implements OnInit, AfterViewInit {
                     ),
             ),
         );
+        this.instancesTableIsLoading$ = this.sandboxInstanceService.isLoading$;
+        this.instancesTableHasError$ =
+            this.sandboxInstanceService.allocationUnitsHasError$;
     }
 
     private mapToAbstractSandboxes(

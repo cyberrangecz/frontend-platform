@@ -14,7 +14,7 @@ import { TrainingDefinitionTable } from '../model/training-definition-table';
 import { TrainingDefinitionService } from '../services/state/training-definition.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AsyncPipe } from '@angular/common';
-import { TableDateCellComponent, TableStateCellComponent } from '@crczp/components';
+import { TableDateCellComponent, TableEmptyStateDirective, TableStateCellComponent } from '@crczp/components';
 import { FileUploadProgressService, PaginationStorageService } from '@crczp/utils';
 import { createPaginationEvent, PaginationMapper } from '@crczp/api-common';
 import { TrainingDefinitionSort } from '@crczp/training-api';
@@ -33,6 +33,7 @@ import { TrainingDefinitionSort } from '@crczp/training-api';
         TableDateCellComponent,
         SentinelRowDirective,
         TableStateCellComponent,
+        TableEmptyStateDirective,
     ],
     providers: [
         FileUploadProgressService,

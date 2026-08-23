@@ -23,13 +23,19 @@ import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { VirtualImagesTable } from '../models/virtual-images-table';
 import { VMImagesService } from '../services/v-m-images.service';
+import { TableEmptyStateDirective } from '@crczp/components';
 
 @Component({
     selector: 'crczp-images-page',
     templateUrl: './images-page.component.html',
     styleUrls: ['./images-page.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [MatCheckbox, SentinelTableComponent, AsyncPipe],
+    imports: [
+        MatCheckbox,
+        SentinelTableComponent,
+        AsyncPipe,
+        TableEmptyStateDirective,
+    ],
     providers: [
         {
             provide: VMImagesService,

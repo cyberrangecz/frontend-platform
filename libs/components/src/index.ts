@@ -5,6 +5,8 @@ export * from './table/table-date-cell/table-date-cell.component';
 export * from './table/table-date-cell/table-date-cell-sync.service';
 export * from './table/table-state-cell/table-state-cell.component';
 export * from './table/table-countdown/table-countdown.component';
+export * from './table/table-empty-state/table-empty-state.directive';
+export * from './table/table-empty-state/table-empty-row.component';
 export * from './logo-spinner/logo-spinner.component';
 export * from './segmented-toggle/segmented-toggle.component';
 export * from './log-view/log-view.component';

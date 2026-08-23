@@ -7,13 +7,14 @@ import {
 } from '@sentinel/components/table';
 import { TrainingInfoTable } from '../../../model/training-info-table';
 import { take } from 'rxjs/operators';
+import { TableEmptyStateDirective } from '@crczp/components';
 
 @Component({
     selector: 'crczp-training-run-info',
     templateUrl: './training-run-info.component.html',
     styleUrls: ['./training-run-info.component.css'],
     providers: [TrainingRunSummaryService],
-    imports: [SentinelTableComponent],
+    imports: [SentinelTableComponent, TableEmptyStateDirective],
 })
 export class TrainingRunInfoComponent implements OnInit {
     @HostBinding('style.width') width = '100%';

@@ -1,5 +1,5 @@
 import { OffsetPaginationEvent } from '@crczp/utils';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, map, Observable } from 'rxjs';
 import { SandboxAllocationUnit } from '@crczp/sandbox-model';
 import { AllocationRequestSort, SandboxInstanceSort } from '@crczp/sandbox-api';
 import { OffsetPaginatedResource } from '@crczp/api-common';
@@ -28,6 +28,20 @@ export abstract class SandboxAllocationUnitsService {
      * @contract must be updated every time new data are received
      */
     hasError$: Observable<boolean> = this.hasErrorSubject$.asObservable();
+    /**
+     * True once a fetch of allocation units has produced a result.
+     * Change internally in extending service. Client should subscribe to the observable
+     * @contract must be updated every time new data are received
+     */
+    protected initialFetchCompletedSubject$: BehaviorSubject<boolean> =
+        new BehaviorSubject(false);
+    /**
+     * True until allocation units are first received from the server. Stays false across the
+     * polling that follows, so a periodic refresh does not read as a load.
+     */
+    isLoading$: Observable<boolean> = this.initialFetchCompletedSubject$.pipe(
+        map((initialFetchCompleted) => !initialFetchCompleted),
+    );
     /**
      * Paginated resource containing pagination info and retrieved elements of SandboxAllocationUnit type.
      * Client should subscribe to the observable

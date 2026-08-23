@@ -12,6 +12,7 @@ import { AsyncPipe } from '@angular/common';
 import { PaginationStorageService, providePaginationStorageService } from '@crczp/utils';
 import { PaginationMapper } from '@crczp/api-common';
 import { GroupSort } from '@crczp/user-and-group-api';
+import { TableEmptyStateDirective } from '@crczp/components';
 
 /**
  * Main smart component of group-overview overview page
@@ -27,7 +28,12 @@ import { GroupSort } from '@crczp/user-and-group-api';
             useClass: GroupOverviewService,
         },
     ],
-    imports: [SentinelTableComponent, SentinelControlsComponent, AsyncPipe],
+    imports: [
+        SentinelTableComponent,
+        SentinelControlsComponent,
+        AsyncPipe,
+        TableEmptyStateDirective,
+    ],
 })
 export class GroupOverviewComponent implements OnInit {
     readonly INIT_SORT_NAME = 'name';
@@ -40,6 +46,10 @@ export class GroupOverviewComponent implements OnInit {
      * True if error was thrown while getting data for groups table, false otherwise
      */
     groupsHasError$: Observable<boolean>;
+    /**
+     * True while data for groups table is being fetched, false otherwise
+     */
+    isLoading$: Observable<boolean>;
     controls: SentinelControlItem[];
     destroyRef = inject(DestroyRef);
     private groupService = inject(GroupOverviewService);
@@ -58,6 +68,7 @@ export class GroupOverviewComponent implements OnInit {
             map((groups) => new GroupTable(groups, this.groupService)),
         );
         this.groupsHasError$ = this.groupService.hasError$;
+        this.isLoading$ = this.groupService.isLoading$;
         this.groupService.selected$
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe((ids) => this.initControls(ids.length));

@@ -39,14 +39,22 @@ export class SandboxInstanceService extends OffsetPaginatedElementsPollingServic
     SandboxInstance,
     SandboxInstanceSort
 > {
-    public allocationUnits$: Observable<
-        OffsetPaginatedResource<SandboxAllocationUnit>
-    >;
-
     private sandboxApi = inject(SandboxInstanceApi);
     private poolApi = inject(PoolApi);
     private sandboxAllocationUnitsApi = inject(SandboxAllocationUnitsApi);
     private allocationUnitsService = inject(SandboxAllocationUnitsService);
+
+    public allocationUnits$: Observable<
+        OffsetPaginatedResource<SandboxAllocationUnit>
+    > = this.allocationUnitsService.units$;
+    /**
+     * True when the latest fetch of the pool's allocation units failed
+     */
+    public allocationUnitsHasError$: Observable<boolean> =
+        this.allocationUnitsService.hasError$;
+    override isLoading$: Observable<boolean> =
+        this.allocationUnitsService.isLoading$;
+
     private router = inject(Router);
     private dialog = inject(MatDialog);
     private notificationService = inject(NotificationService);
@@ -57,9 +65,6 @@ export class SandboxInstanceService extends OffsetPaginatedElementsPollingServic
         const settings = inject(PortalConfig);
 
         super(settings.defaultPageSize, settings.polling.pollingPeriodShortMs);
-        const allocationUnitsService = this.allocationUnitsService;
-
-        this.allocationUnits$ = allocationUnitsService.units$;
     }
 
     /**

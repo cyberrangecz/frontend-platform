@@ -49,6 +49,7 @@ export class TrainingInstanceSummaryComponent implements OnInit {
     hasStarted$: Observable<boolean>;
     trainingRuns$: Observable<TrainingRunTable>;
     trainingRunsHasError$: Observable<boolean>;
+    trainingRunsIsLoading$: Observable<boolean>;
     trainingInstanceAccessTokenLink: string;
     trainingInstancePoolIdLink: string;
     trainingDefinitionLink: string;
@@ -156,5 +157,6 @@ export class TrainingInstanceSummaryComponent implements OnInit {
             map((resource) => new TrainingRunTable(resource)),
         );
         this.trainingRunsHasError$ = this.trainingRunService.hasError$;
+        this.trainingRunsIsLoading$ = this.trainingRunService.isLoading$;
     }
 }

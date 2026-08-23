@@ -73,11 +73,3 @@ mat-icon {
     -ms-user-select: none;
     user-select: none;
 }
-
-.members-empty,
-.roles-empty {
-    padding: var(--space-md) 0;
-    color: var(--neutral-50);
-    font-style: italic;
-    text-align: center;
-}

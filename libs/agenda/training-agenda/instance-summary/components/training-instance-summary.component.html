@@ -19,6 +19,7 @@
                 (TableLoadEvent)="onTrainingRunTableLoadEvent($event)"
                 (rowExpanded)="onTrainingRunTableRowExpand($event)"
                 [hasError]="trainingRunsHasError$ | async"
+                [isLoading]="trainingRunsIsLoading$ | async"
                 [trainingRuns]="trainingRuns$ | async"
             >
             </crczp-training-instance-runs>

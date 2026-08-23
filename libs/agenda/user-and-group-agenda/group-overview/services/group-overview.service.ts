@@ -12,7 +12,7 @@ import { Group } from '@crczp/user-and-group-model';
 import { EMPTY, Observable, of } from 'rxjs';
 import { map, switchMap, tap } from 'rxjs/operators';
 import { GroupFilter, SelectablePaginatedService } from '@crczp/user-and-group-agenda/internal';
-import { ErrorHandlerService, NotificationService, PortalConfig } from '@crczp/utils';
+import { ErrorHandlerService, LoadingTracker, NotificationService, PortalConfig } from '@crczp/utils';
 import { Routing } from '@crczp/routing-commons';
 import { OffsetPaginatedResource } from '@crczp/api-common';
 
@@ -31,6 +31,9 @@ export class GroupOverviewService extends SelectablePaginatedService<Group> {
 
     private lastPagination: OffsetPaginationEvent<GroupSort>;
     private lastFilter: string;
+    private readonly loadingTracker = new LoadingTracker();
+
+    override isLoading$ = this.loadingTracker.isLoading$;
 
     constructor() {
         super(inject(PortalConfig).defaultPageSize);
@@ -50,15 +53,17 @@ export class GroupOverviewService extends SelectablePaginatedService<Group> {
         this.clearSelection();
         const filters = filter ? [new GroupFilter(filter)] : [];
         this.hasErrorSubject$.next(false);
-        return this.api.getAll(pagination, filters).pipe(
-            tap(
-                (groups) => {
-                    this.resourceSubject$.next(groups);
-                },
-                (err) => {
-                    this.errorHandler.emitAPIError(err, 'Fetching groups');
-                    this.hasErrorSubject$.next(true);
-                },
+        return this.loadingTracker.trackRequest(() =>
+            this.api.getAll(pagination, filters).pipe(
+                tap(
+                    (groups) => {
+                        this.resourceSubject$.next(groups);
+                    },
+                    (err) => {
+                        this.errorHandler.emitAPIError(err, 'Fetching groups');
+                        this.hasErrorSubject$.next(true);
+                    },
+                ),
             ),
         );
     }

@@ -6,5 +6,7 @@
     [data]="users$ | async"
     [defaultSortDirection]="INIT_SORT_DIR"
     [defaultSortName]="INIT_SORT_NAME"
-    [hasError]="usersHasError$ | async">
+    [hasError]="usersHasError$ | async"
+    [isLoading]="isLoading$ | async"
+    crczpTableEmptyState="No users found">
 </sentinel-table>

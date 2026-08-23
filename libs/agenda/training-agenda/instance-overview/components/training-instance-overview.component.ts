@@ -18,7 +18,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { CdkCopyToClipboard } from '@angular/cdk/clipboard';
-import { TableCountdownComponent, TableDateCellComponent } from '@crczp/components';
+import { TableCountdownComponent, TableDateCellComponent, TableEmptyStateDirective } from '@crczp/components';
 import { NotificationService, PaginationStorageService, providePaginationStorageService } from '@crczp/utils';
 import { PaginationMapper } from '@crczp/api-common';
 import { TrainingInstanceSort } from '@crczp/training-api';
@@ -44,6 +44,7 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
         CdkCopyToClipboard,
         MatProgressSpinner,
         TableCountdownComponent,
+        TableEmptyStateDirective,
     ],
     providers: [
         providePaginationStorageService(TrainingInstanceOverviewComponent),
@@ -58,6 +59,7 @@ export class TrainingInstanceOverviewComponent {
     readonly INITIAL_SORT_DIR = 'desc';
     instances$: Observable<SentinelTable<TrainingInstance, string>>;
     hasError$: Observable<boolean>;
+    isLoading$: Observable<boolean>;
     destroyRef = inject(DestroyRef);
     controls: SentinelControlItem[];
     private service = inject(TrainingInstanceOverviewService);
@@ -145,6 +147,7 @@ export class TrainingInstanceOverviewComponent {
             ),
         );
         this.hasError$ = this.service.hasError$;
+        this.isLoading$ = this.service.isLoading$;
         this.onInstancesLoadEvent(initLoadEvent);
     }
 }

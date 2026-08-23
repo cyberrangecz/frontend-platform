@@ -1,11 +1,9 @@
-@if (trainingRuns.rows.length) {
-    <sentinel-table
-        (rowClick)="onTableRowExpand($event)"
-        (tableLoad)="onTableLoadEvent($event)"
-        [data]="trainingRuns"
-        [hasError]="hasError"
-    >
-    </sentinel-table>
-} @else {
-    There are no training runs yet.
-}
+<sentinel-table
+    (rowClick)="onTableRowExpand($event)"
+    (tableLoad)="onTableLoadEvent($event)"
+    [data]="trainingRuns"
+    [hasError]="hasError"
+    [isLoading]="isLoading"
+    crczpTableEmptyState="No training runs in this instance yet"
+>
+</sentinel-table>

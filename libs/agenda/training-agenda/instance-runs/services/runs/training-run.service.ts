@@ -12,7 +12,7 @@ import {
     SentinelDialogResultEnum
 } from '@sentinel/components/dialogs';
 import { SandboxInstance } from '@crczp/sandbox-model';
-import { ErrorHandlerService, NotificationService, PortalConfig } from '@crczp/utils';
+import { ErrorHandlerService, LoadingTracker, NotificationService, PortalConfig } from '@crczp/utils';
 import { OffsetPaginatedElementsPollingService } from '@sentinel/common';
 import { OffsetPaginatedResource } from '@crczp/api-common';
 
@@ -34,6 +34,9 @@ export class TrainingRunService extends OffsetPaginatedElementsPollingService<
     private errorHandler = inject(ErrorHandlerService);
 
     private lastTrainingInstanceId: number;
+    private readonly loadingTracker = new LoadingTracker();
+
+    override isLoading$ = this.loadingTracker.isLoading$;
 
     constructor() {
         const settings = inject(PortalConfig);
@@ -51,14 +54,16 @@ export class TrainingRunService extends OffsetPaginatedElementsPollingService<
         pagination: OffsetPaginationEvent<TrainingRunSort>,
     ): Observable<OffsetPaginatedResource<TrainingRun>> {
         this.onManualResourceRefresh(pagination, trainingInstanceId);
-        return this.trainingInstanceApi
-            .getAssociatedTrainingRuns(trainingInstanceId, pagination)
-            .pipe(
-                tap(
-                    (runs) => this.resourceSubject$.next(runs),
-                    () => this.onGetAllError(),
+        return this.loadingTracker.trackRequest(() =>
+            this.trainingInstanceApi
+                .getAssociatedTrainingRuns(trainingInstanceId, pagination)
+                .pipe(
+                    tap(
+                        (runs) => this.resourceSubject$.next(runs),
+                        () => this.onGetAllError(),
+                    ),
                 ),
-            );
+        );
     }
 
     delete(

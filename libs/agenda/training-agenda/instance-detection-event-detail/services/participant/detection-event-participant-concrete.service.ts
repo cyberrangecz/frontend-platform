@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import { DetectionEventParticipant } from '@crczp/training-model';
 import { tap } from 'rxjs/operators';
 import { DetectionEventParticipantService } from './detection-event-participant.service';
-import { PortalConfig } from '@crczp/utils';
+import { LoadingTracker, PortalConfig } from '@crczp/utils';
 import { OffsetPaginatedResource } from '@crczp/api-common';
 
 /**
@@ -15,6 +15,9 @@ import { OffsetPaginatedResource } from '@crczp/api-common';
 @Injectable()
 export class DetectionEventParticipantConcreteService extends DetectionEventParticipantService {
     private api = inject(DetectionEventApi);
+    private readonly loadingTracker = new LoadingTracker();
+
+    override isLoading$ = this.loadingTracker.isLoading$;
 
     constructor() {
         super(inject(PortalConfig).defaultPageSize);
@@ -29,12 +32,15 @@ export class DetectionEventParticipantConcreteService extends DetectionEventPart
         detectionEventId: number,
         pagination: OffsetPaginationEvent<DetectionEventParticipantSort>,
     ): Observable<OffsetPaginatedResource<DetectionEventParticipant>> {
-        return this.api.getAllParticipants(pagination, detectionEventId).pipe(
-            tap(
-                (detections) => {
-                    this.resourceSubject$.next(detections);
-                },
-                () => this.onGetAllError(),
+        this.hasErrorSubject$.next(false);
+        return this.loadingTracker.trackRequest(() =>
+            this.api.getAllParticipants(pagination, detectionEventId).pipe(
+                tap(
+                    (detections) => {
+                        this.resourceSubject$.next(detections);
+                    },
+                    () => this.onGetAllError(),
+                ),
             ),
         );
     }

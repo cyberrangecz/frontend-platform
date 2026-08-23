@@ -5,6 +5,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TrainingRunTable } from '../../model/training-run-table';
 import { TrainingRunSort } from '@crczp/training-api';
+import { TableEmptyStateDirective } from '@crczp/components';
 
 /**
  * Component displaying training runs and its state in real time.
@@ -20,6 +21,7 @@ import { TrainingRunSort } from '@crczp/training-api';
         MatIcon,
         SentinelRowDirective,
         MatTooltip,
+        TableEmptyStateDirective,
     ],
 })
 export class TrainingRunOverviewComponent {

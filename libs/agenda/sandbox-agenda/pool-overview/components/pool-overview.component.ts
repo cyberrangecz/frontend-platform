@@ -26,7 +26,7 @@ import { AsyncPipe } from '@angular/common';
 import { PaginationStorageService, PollingService, providePaginationStorageService } from '@crczp/utils';
 import { PaginationMapper } from '@crczp/api-common';
 import { PoolSort } from '@crczp/sandbox-api';
-import { TableStateCellComponent } from '@crczp/components';
+import { TableEmptyStateDirective, TableStateCellComponent } from '@crczp/components';
 
 /**
  * Smart component of sandbox pool overview page
@@ -44,7 +44,7 @@ import { TableStateCellComponent } from '@crczp/components';
         AsyncPipe,
         SentinelRowDirective,
         TableStateCellComponent,
-        TableStateCellComponent,
+        TableEmptyStateDirective,
     ],
     providers: [
         PollingService,
@@ -72,6 +72,7 @@ import { TableStateCellComponent } from '@crczp/components';
 export class PoolOverviewComponent implements OnInit {
     pools$: Observable<PoolTable>;
     hasError$: Observable<boolean>;
+    isLoading$: Observable<boolean>;
     resources$: Observable<Resources>;
     controls: SentinelControlItem[] = [];
     destroyRef = inject(DestroyRef);
@@ -164,6 +165,7 @@ export class PoolOverviewComponent implements OnInit {
             ),
         );
         this.hasError$ = this.abstractPoolService.poolsHasError$;
+        this.isLoading$ = this.abstractPoolService.poolsIsLoading$;
         this.onLoadEvent(initialLoadEvent);
     }
 

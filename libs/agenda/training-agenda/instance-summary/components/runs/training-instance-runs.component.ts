@@ -12,17 +12,19 @@ import {
     TableLoadEvent,
 } from '@sentinel/components/table';
 import { TrainingRunSort } from '@crczp/training-api';
+import { TableEmptyStateDirective } from '@crczp/components';
 
 @Component({
     selector: 'crczp-training-instance-runs',
     templateUrl: './training-instance-runs.component.html',
     styleUrls: ['./training-instance-runs.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [SentinelTableComponent],
+    imports: [SentinelTableComponent, TableEmptyStateDirective],
 })
 export class TrainingInstanceRunsComponent {
     @Input() trainingRuns: SentinelTable<TrainingRun, TrainingRunSort>;
     @Input() hasError: boolean;
+    @Input() isLoading: boolean;
 
     @Output() TableLoadEvent: EventEmitter<TableLoadEvent<TrainingRunSort>> =
         new EventEmitter();

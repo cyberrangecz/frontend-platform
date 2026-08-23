@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { inject, Injectable } from '@angular/core';
 import { VirtualImage } from '@crczp/sandbox-model';
 import { OffsetPaginationEvent } from '@crczp/utils';
-import { ErrorHandlerService, PortalConfig } from '@crczp/utils';
+import { ErrorHandlerService, LoadingTracker, PortalConfig } from '@crczp/utils';
 import {
     CrczpOffsetElementsPaginatedService,
     OffsetPaginatedResource,
@@ -15,6 +15,9 @@ import {
 export class VMImagesService extends CrczpOffsetElementsPaginatedService<VirtualImage> {
     private vmImagesApi = inject(VMImagesApi);
     private errorHandler = inject(ErrorHandlerService);
+    private readonly loadingTracker = new LoadingTracker();
+
+    override isLoading$ = this.loadingTracker.isLoading$;
 
     constructor() {
         super(inject(PortalConfig).defaultPageSize);
@@ -36,28 +39,28 @@ export class VMImagesService extends CrczpOffsetElementsPaginatedService<Virtual
         cached?: boolean,
         filter?: string,
     ): Observable<OffsetPaginatedResource<VirtualImage>> {
-        this.isLoadingSubject$.next(true);
         const filters = filter ? [new QueryParam('name', filter)] : [];
-        return this.vmImagesApi
-            .getAvailableImages(
-                pagination,
-                onlyCrczpImages,
-                onlyGuiAccess,
-                cached,
-                filters,
-            )
-            .pipe(
-                tap(
-                    (resource) => {
-                        this.resourceSubject$.next(resource);
-                        this.isLoadingSubject$.next(false);
-                    },
-                    (err) => {
-                        this.errorHandler.emitAPIError(err, 'Fetching images');
-                        this.hasErrorSubject$.next(true);
-                        this.isLoadingSubject$.next(false);
-                    },
+        this.hasErrorSubject$.next(false);
+        return this.loadingTracker.trackRequest(() =>
+            this.vmImagesApi
+                .getAvailableImages(
+                    pagination,
+                    onlyCrczpImages,
+                    onlyGuiAccess,
+                    cached,
+                    filters,
+                )
+                .pipe(
+                    tap(
+                        (resource) => {
+                            this.resourceSubject$.next(resource);
+                        },
+                        (err) => {
+                            this.errorHandler.emitAPIError(err, 'Fetching images');
+                            this.hasErrorSubject$.next(true);
+                        },
+                    ),
                 ),
-            );
+        );
     }
 }

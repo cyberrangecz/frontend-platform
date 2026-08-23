@@ -6,7 +6,8 @@
                     [defaultSortName]="INIT_SORT_NAME"
                     [displayedActionsCount]="4"
                     [hasError]="hasError$ | async"
-                    [isLoading]="isLoading$ | async">
+                    [isLoading]="isLoading$ | async"
+                    crczpTableEmptyState="No cheating detections have been run yet">
         <ng-container *sentinelRow="'stages'; template: stagesTemplate" />
     </sentinel-table>
 

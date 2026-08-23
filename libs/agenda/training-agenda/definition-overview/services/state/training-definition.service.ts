@@ -15,7 +15,7 @@ import { EMPTY, from, Observable } from 'rxjs';
 import { filter, map, switchMap, take, tap } from 'rxjs/operators';
 import { CloneDialogComponent } from '../../components/clone-dialog/clone-dialog.component';
 import { inject, Injectable } from '@angular/core';
-import { ErrorHandlerService, FileUploadProgressService, NotificationService, PortalConfig } from '@crczp/utils';
+import { ErrorHandlerService, FileUploadProgressService, LoadingTracker, NotificationService, PortalConfig } from '@crczp/utils';
 import { Routing } from '@crczp/routing-commons';
 import { FileUploadDialog } from '@crczp/components';
 import { LinearTrainingDefinitionApi, TrainingDefinitionSort } from '@crczp/training-api';
@@ -36,6 +36,9 @@ export class TrainingDefinitionService extends CrczpOffsetElementsPaginatedServi
 
     private lastPagination: OffsetPaginationEvent<TrainingDefinitionSort>;
     private lastFilters: string;
+    private readonly loadingTracker = new LoadingTracker();
+
+    override isLoading$ = this.loadingTracker.isLoading$;
 
     constructor() {
         super(inject(PortalConfig).defaultPageSize);
@@ -47,7 +50,6 @@ export class TrainingDefinitionService extends CrczpOffsetElementsPaginatedServi
      */
     get(definitionId: number): Observable<TrainingDefinitionWithLevels> {
         this.hasErrorSubject$.next(false);
-        this.isLoadingSubject$.next(true);
         return this.api.get(definitionId);
     }
 
@@ -64,8 +66,7 @@ export class TrainingDefinitionService extends CrczpOffsetElementsPaginatedServi
         this.lastFilters = filter;
         const filters = filter ? [new QueryParam('title', filter)] : [];
         this.hasErrorSubject$.next(false);
-        this.isLoadingSubject$.next(true);
-        return this.callApiToGetAll(pagination, filters);
+        return this.loadingTracker.trackRequest(() => this.callApiToGetAll(pagination, filters));
     }
 
     create(): Observable<boolean> {
@@ -217,11 +218,9 @@ export class TrainingDefinitionService extends CrczpOffsetElementsPaginatedServi
             tap(
                 (paginatedTrainings) => {
                     this.resourceSubject$.next(paginatedTrainings);
-                    this.isLoadingSubject$.next(false);
                 },
                 (err) => {
                     this.hasErrorSubject$.next(true);
-                    this.isLoadingSubject$.next(false);
                     this.errorHandler.emitAPIError(
                         err,
                         'Fetching training definitions',

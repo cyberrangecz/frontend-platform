@@ -11,7 +11,9 @@
                     [defaultSortName]="DEFAULT_SORT_COLUMN"
                     [displayedActionsCount]="4"
                     [hasError]="instancesTableHasError$ | async"
-                    [titlecasedActions]=false>
+                    [isLoading]="instancesTableIsLoading$ | async"
+                    [titlecasedActions]=false
+                    crczpTableEmptyState="No sandboxes in this pool yet">
         <ng-container *sentinelRow="'stages'; template: stagesTemplate" />
         <ng-container *sentinelRow="'comment'; template: comment" />
     </sentinel-table>

@@ -12,7 +12,7 @@ import { PoolApi } from '@crczp/sandbox-api';
 import { Pool, SandboxInstance } from '@crczp/sandbox-model';
 import { LinearTrainingInstanceApi, TrainingInstanceSort } from '@crczp/training-api';
 import { TrainingInstance } from '@crczp/training-model';
-import { ErrorHandlerService, NotificationService, OffsetPaginationEvent, PortalConfig } from '@crczp/utils';
+import { ErrorHandlerService, LoadingTracker, NotificationService, OffsetPaginationEvent, PortalConfig } from '@crczp/utils';
 import {
     SentinelConfirmationDialogComponent,
     SentinelConfirmationDialogConfig,
@@ -47,6 +47,9 @@ export class TrainingInstanceOverviewService extends CrczpOffsetElementsPaginate
     private lastPagination: OffsetPaginationEvent<TrainingInstanceSort>;
     private lastFilter: string;
     private destroyRef = inject(DestroyRef);
+    private readonly loadingTracker = new LoadingTracker();
+
+    override isLoading$ = this.loadingTracker.isLoading$;
 
     constructor() {
         super(inject(PortalConfig).defaultPageSize);
@@ -60,18 +63,20 @@ export class TrainingInstanceOverviewService extends CrczpOffsetElementsPaginate
         this.lastFilter = filter;
         this.hasErrorSubject$.next(false);
         const filters = filter ? [new TrainingInstanceFilter(filter)] : [];
-        return this.trainingInstanceApi.getAll(pagination, filters).pipe(
-            tap(
-                (resource) => {
-                    this.resourceSubject$.next(resource);
-                },
-                (err) => {
-                    this.hasErrorSubject$.next(true);
-                    this.errorHandler.emitAPIError(
-                        err,
-                        'Fetching training instances',
-                    );
-                },
+        return this.loadingTracker.trackRequest(() =>
+            this.trainingInstanceApi.getAll(pagination, filters).pipe(
+                tap(
+                    (resource) => {
+                        this.resourceSubject$.next(resource);
+                    },
+                    (err) => {
+                        this.hasErrorSubject$.next(true);
+                        this.errorHandler.emitAPIError(
+                            err,
+                            'Fetching training instances',
+                        );
+                    },
+                ),
             ),
         );
     }

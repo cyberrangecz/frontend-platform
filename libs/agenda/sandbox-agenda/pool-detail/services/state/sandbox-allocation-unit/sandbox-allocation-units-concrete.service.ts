@@ -61,6 +61,7 @@ export class SandboxAllocationUnitsConcreteService extends SandboxAllocationUnit
     ): Observable<OffsetPaginatedResource<SandboxAllocationUnit>> {
         this.lastPagination = pagination;
         this.lastPoolId = poolId;
+        this.hasErrorSubject$.next(false);
         const observable$: Observable<
             OffsetPaginatedResource<SandboxAllocationUnit>
         > = this.poolApi
@@ -78,9 +79,10 @@ export class SandboxAllocationUnitsConcreteService extends SandboxAllocationUnit
                     });
                     return units;
                 }),
-                tap((paginatedRequests) =>
-                    this.unitsSubject$.next(paginatedRequests),
-                ),
+                tap((paginatedRequests) => {
+                    this.unitsSubject$.next(paginatedRequests);
+                    this.initialFetchCompletedSubject$.next(true);
+                }),
             );
         return this.resourcePollingService
             .startPolling(
@@ -198,6 +200,7 @@ export class SandboxAllocationUnitsConcreteService extends SandboxAllocationUnit
     private onGetAllError(err: HttpErrorResponse) {
         this.errorHandler.emitAPIError(err, 'Fetching allocation units');
         this.hasErrorSubject$.next(true);
+        this.initialFetchCompletedSubject$.next(true);
     }
 
     private callApiToCleanupMultiple(poolId: number, force: boolean): any {
