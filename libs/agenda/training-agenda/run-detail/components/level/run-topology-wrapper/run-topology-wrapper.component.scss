@@ -1,8 +1,6 @@
 $content-height: calc(100dvh - 35rem);
 $notch-thickness: 2rem;
 $notch-gap: 3px;
-$notch-shadow-room: 4px;
-$controls-height: calc(#{$notch-thickness} + #{$notch-gap} + #{$notch-shadow-room});
 
 :host {
     display: flex;
@@ -17,37 +15,19 @@ $controls-height: calc(#{$notch-thickness} + #{$notch-gap} + #{$notch-shadow-roo
     align-items: center;
 }
 
-.topology-column {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    height: $content-height;
-}
-
 .level-topology {
     display: block;
-    z-index: 1;
-    flex: 1 1 auto;
-    min-height: 0;
+    height: $content-height;
     max-width: 60dvw;
     transform: translateX(0);
 }
 
 .level-topology--hidden {
     width: 100dvw;
-    height: calc(#{$content-height} - #{$controls-height});
+    height: $content-height;
     position: absolute;
     left: 0;
     opacity: 0;
-}
-
-.topology-controls {
-    display: flex;
-    flex: 0 0 auto;
-    flex-direction: row;
-    align-items: flex-start;
-    justify-content: flex-end;
-    height: $controls-height;
 }
 
 /** Tab hanging off one edge of the topology panel: flat where it meets the panel, rounded away from it. */
@@ -56,7 +36,6 @@ $controls-height: calc(#{$notch-thickness} + #{$notch-gap} + #{$notch-shadow-roo
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    background: var(--neutral-98);
     border: none;
 }
 
@@ -68,6 +47,7 @@ $controls-height: calc(#{$notch-thickness} + #{$notch-gap} + #{$notch-shadow-roo
     padding: 0;
     margin: 0 $notch-gap 0 0;
     border-radius: 1rem 0 0 1rem;
+    background: var(--neutral-98);
     box-shadow: -2px 1px 2px var(--neutral-70);
     cursor: pointer;
 
@@ -80,14 +60,10 @@ $controls-height: calc(#{$notch-thickness} + #{$notch-gap} + #{$notch-shadow-roo
     }
 }
 
-// Kept below .level-topology so the panel's own shadow falls across the notch.
 .panel-actions {
     @extend %panel-edge-notch;
-    z-index: 0;
     height: $notch-thickness;
-    margin: $notch-gap 0 0 0;
-    border-radius: 0 0 0 1rem;
-    box-shadow: 1px 2px 2px var(--neutral-70);
+    border-radius: 1rem 0 0 0;
     overflow: hidden;
 }
 

@@ -45,6 +45,9 @@ import { TopologySynchronizerService } from './topology-synchronizer.service';
     styleUrl: './topology-component.scss',
 })
 export class TopologyComponent implements AfterViewInit {
+    /** Index of the tab holding the topology graph; every later tab is an opened console. */
+    protected readonly TOPOLOGY_TAB_INDEX = 0;
+
     topology = input.required<Topology>();
     sandboxUuid = input<string>(undefined);
     standalone = input<boolean>(false);

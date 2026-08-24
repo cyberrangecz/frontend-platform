@@ -11,7 +11,9 @@
             [standalone]="standalone()"
             [topology]="topology()"
             class="wh-100 block"
-        />
+        >
+            <ng-content ngProjectAs="[topologyActions]" select="[topologyActions]" />
+        </crczp-topology>
     } @else {
         <div class="hflex center wh-100 mock-tabs-container">
             <mat-icon class="topology-error__icon" color="error">warning</mat-icon>

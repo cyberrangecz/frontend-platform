@@ -18,6 +18,14 @@
 }
 
 
+/** Anchors projected actions against the panel's inner bottom-right corner. */
+.topology-tab-actions {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    z-index: 1001;
+}
+
 .draggable-bar {
     position: absolute;
     left: 0;
