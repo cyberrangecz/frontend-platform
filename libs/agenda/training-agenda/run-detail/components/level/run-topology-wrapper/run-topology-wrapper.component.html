@@ -3,7 +3,7 @@
     @if (topologyAllowed()) {
         <button
             (click)="topologyService.toggleCollapsed()"
-            class="expand-topology-button {{ !topologyCollapsed ? 'expand-topology-button--expanded' : '' }}"
+            class="expand-topology-button"
             matTooltip="{{ topologyCollapsed ? 'Show' : 'Hide' }} topology"
             matTooltipPosition="left"
         >
@@ -14,12 +14,39 @@
     }
     @let sandboxInstanceId = (this.runService.runInfo$.observeProperty().sandboxInstanceId.$() | async);
     @if (!!sandboxInstanceId) {
-        <crczp-topology-wrapper
-            (getAccessFile)="onAccessFileRequested()"
-            [id]="{instanceId: sandboxInstanceId}"
-            [ngClass]="{ 'level-topology--hidden': topologyService.topologyCollapsed$ | async }"
-            [standalone]="false"
-            class="wh-100 level-topology"
-        />
+        <div class="topology-column">
+            <crczp-topology-wrapper
+                [id]="{instanceId: sandboxInstanceId}"
+                [ngClass]="{ 'level-topology--hidden': topologyCollapsed }"
+                [standalone]="false"
+                class="level-topology"
+            />
+
+            <div class="topology-controls">
+                <div class="panel-actions">
+                    <button
+                        (click)="onAccessFileRequested()"
+                        class="panel-actions__item"
+                        matTooltip="Download config for SSH client"
+                        matTooltipPosition="below"
+                    >
+                        <mat-icon class="panel-actions__icon">download</mat-icon>
+                        SSH Config
+                    </button>
+
+                    <span aria-hidden="true" class="panel-actions__divider"></span>
+
+                    <button
+                        (click)="onVpnCommandRequested()"
+                        class="panel-actions__item"
+                        matTooltip="Copy the command connecting to the sandbox over VPN"
+                        matTooltipPosition="below"
+                    >
+                        <mat-icon class="panel-actions__icon">file_copy</mat-icon>
+                        VPN connection
+                    </button>
+                </div>
+            </div>
+        </div>
     }
 </div>

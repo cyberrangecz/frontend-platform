@@ -71,8 +71,9 @@
     overflow: visible;
 }
 
+// The docked form keeps its square right edge at every width; only the standalone box rounds fully.
 @media screen and (max-width: 1400px) {
-    .toplogy-tabs-wrapper {
+    .topology-tabs-wrapper--standalone {
         border-radius: 1rem;
         box-shadow: 0 2px 4px var(--neutral-70);
     }

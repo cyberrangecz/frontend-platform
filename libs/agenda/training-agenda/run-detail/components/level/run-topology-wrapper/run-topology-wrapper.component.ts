@@ -72,6 +72,13 @@ export class RunTopologyWrapperComponent implements OnInit, OnDestroy {
         );
     }
 
+    /**
+     * Places the command connecting to this run's sandbox over VPN on the clipboard.
+     */
+    protected onVpnCommandRequested(): void {
+        // TODO: copy the VPN connection command once the platform exposes it.
+    }
+
     private findAncestorByClass(
         element: HTMLElement,
         className: string,

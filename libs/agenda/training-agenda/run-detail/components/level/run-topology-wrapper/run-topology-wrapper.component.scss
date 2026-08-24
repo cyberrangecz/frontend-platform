@@ -1,5 +1,8 @@
-$content-height: calc(100dvh - 36rem);
-
+$content-height: calc(100dvh - 35rem);
+$notch-thickness: 2rem;
+$notch-gap: 3px;
+$notch-shadow-room: 4px;
+$controls-height: calc(#{$notch-thickness} + #{$notch-gap} + #{$notch-shadow-room});
 
 :host {
     display: flex;
@@ -14,40 +17,59 @@ $content-height: calc(100dvh - 36rem);
     align-items: center;
 }
 
+.topology-column {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    height: $content-height;
+}
 
 .level-topology {
     display: block;
-    height: $content-height;
+    z-index: 1;
+    flex: 1 1 auto;
+    min-height: 0;
     max-width: 60dvw;
     transform: translateX(0);
 }
 
 .level-topology--hidden {
     width: 100dvw;
-    height: $content-height;
+    height: calc(#{$content-height} - #{$controls-height});
     position: absolute;
     left: 0;
     opacity: 0;
 }
 
-
-.expand-topology-button {
+.topology-controls {
     display: flex;
-    z-index: 10;
+    flex: 0 0 auto;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: flex-end;
+    height: $controls-height;
+}
+
+/** Tab hanging off one edge of the topology panel: flat where it meets the panel, rounded away from it. */
+%panel-edge-notch {
+    display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    top: 52dvh;
-    right: 0;
-    height: 8rem;
-    width: 2rem;
-    border-radius: 1rem 0 0 1rem;
     background: var(--neutral-98);
-    box-shadow: -2px 1px 2px var(--neutral-70);
     border: none;
-    cursor: pointer;
+}
+
+.expand-topology-button {
+    @extend %panel-edge-notch;
+    z-index: 10;
+    height: 8rem;
+    width: $notch-thickness;
     padding: 0;
-    margin: 0 1px 0 0;
+    margin: 0 $notch-gap 0 0;
+    border-radius: 1rem 0 0 1rem;
+    box-shadow: -2px 1px 2px var(--neutral-70);
+    cursor: pointer;
 
     &:hover, &:active, &:focus {
         box-shadow: -1px 1px 2px var(--neutral-70);
@@ -56,9 +78,57 @@ $content-height: calc(100dvh - 36rem);
     &:hover {
         background: var(--primary-95);
     }
+}
 
-    &--expanded {
-        position: static;
-        margin: 0 3px 0 0;
+// Kept below .level-topology so the panel's own shadow falls across the notch.
+.panel-actions {
+    @extend %panel-edge-notch;
+    z-index: 0;
+    height: $notch-thickness;
+    margin: $notch-gap 0 0 0;
+    border-radius: 0 0 0 1rem;
+    box-shadow: 1px 2px 2px var(--neutral-70);
+    overflow: hidden;
+}
+
+.panel-actions__item {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    height: 100%;
+    padding: 0 1rem;
+    background: transparent;
+    border: none;
+    color: var(--primary-40);
+    font: inherit;
+    cursor: pointer;
+
+    &:hover, &:focus {
+        background: var(--primary-95);
     }
+}
+
+// Strongest where the two actions meet, dissolving towards both ends of the notch.
+.panel-actions__divider {
+    flex: 0 0 auto;
+    width: 1px;
+    height: 100%;
+    background: linear-gradient(
+            to bottom,
+            transparent 0%,
+            var(--neutral-70) 50%,
+            transparent 100%
+    );
+}
+
+.panel-actions__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    width: 1.125rem;
+    height: 1.125rem;
+    line-height: 1;
 }
