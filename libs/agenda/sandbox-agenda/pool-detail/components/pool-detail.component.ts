@@ -111,7 +111,8 @@ export class PoolDetailComponent implements OnInit, AfterViewInit {
     }
 
     /**
-     * Gets new data for sandbox instance overview table
+     * Starts periodic retrieval of the sandbox instance overview table data, replacing any
+     * retrieval already running.
      * @param loadEvent load event emitted from sandbox instances table
      */
     onLoadEvent(loadEvent: TableLoadEvent<AllocationRequestSort>): void {
@@ -126,7 +127,7 @@ export class PoolDetailComponent implements OnInit, AfterViewInit {
                 ),
                 sort: 'id',
             })
-            .pipe(takeUntilDestroyed(this.destroyRef), take(1))
+            .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe();
     }
 
