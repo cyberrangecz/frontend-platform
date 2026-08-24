@@ -1,5 +1,5 @@
 import { DestroyRef, inject, Injectable } from '@angular/core';
-import { BehaviorSubject, combineLatest, distinctUntilChanged, map, Observable, ReplaySubject, Subject } from 'rxjs';
+import { BehaviorSubject, combineLatest, distinctUntilChanged, map, ReplaySubject } from 'rxjs';
 import { ResizeEvent } from '@sentinel/common/resize';
 
 /**
@@ -12,11 +12,6 @@ import { ResizeEvent } from '@sentinel/common/resize';
 export class TopologySynchronizerService {
     protected readonly destroyRef = inject(DestroyRef);
 
-    private dragSubject = new Subject<number>();
-    /**
-     * Observable emitting position changes
-     */
-    public drag$: Observable<number> = this.dragSubject.asObservable();
     private isCollapsedSubject = new BehaviorSubject<boolean>(false);
     /**
      * Observable emitting external signals to collapse one side of the split panel
@@ -55,17 +50,6 @@ export class TopologySynchronizerService {
         ),
     );
     private widthPreCollapse = 0;
-
-    /**
-     * Sends a signal to resize the split panel
-     * Uses pixels, as the ratio cannot be easily determined
-     * without knowledge of the split panel dimensions
-     *
-     * @param delta - pixels change
-     */
-    public emitPositionChange(delta: number) {
-        this.dragSubject.next(delta);
-    }
 
     /**
      * Emits a new value indicating a change in the topology width.

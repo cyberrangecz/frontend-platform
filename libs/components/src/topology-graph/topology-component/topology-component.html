@@ -6,7 +6,7 @@
             {{standalone() ? 'topology-tabs-wrapper--standalone' : ''}}
         ">
     @if ((synchronizerService.topologyCollapsed$ | async) === false && !standalone()) {
-        <div (mousedown)="mouseDown($event)" class="draggable-bar"></div>
+        <div (pointerdown)="startResize($event)" class="draggable-bar"></div>
     }
     <mat-tab-group
         [(selectedIndex)]="selectedIndex"

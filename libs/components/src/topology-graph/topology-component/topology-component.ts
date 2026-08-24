@@ -64,15 +64,6 @@ export class TopologyComponent implements AfterViewInit {
             (collapsed) => (this.collapsed = collapsed),
         );
 
-        this.synchronizerService.drag$.subscribe((delta) => {
-            if (this.topologyTabsDiv) {
-                const currentWidth =
-                    this.topologyTabsDiv.nativeElement.clientWidth;
-                const newWidth = currentWidth - delta;
-                this.synchronizerService.emitTopologyWidthChange(newWidth);
-            }
-        });
-
         this.synchronizerService.topologyDimensions$.subscribe(
             ({ width, height }) => {
                 if (this.topologyTabsDiv) {
@@ -133,18 +124,35 @@ export class TopologyComponent implements AfterViewInit {
         this.tabs.update((tabs) => tabs.filter((_, i) => i !== index));
     }
 
-    mouseDown(event: MouseEvent): void {
-        const mouseUp = () => {
-            document.removeEventListener('mousemove', mouseMove);
-            document.removeEventListener('mouseup', mouseUp);
+    /**
+     * Resizes the topology panel to follow the pointer for as long as the handle is held.
+     * The width is derived from the total offset since the press rather than accumulated per
+     * move, so the handle stays under the pointer even across a clamped minimum or maximum.
+     */
+    startResize(event: PointerEvent): void {
+        if (!this.topologyTabsDiv) {
+            return;
+        }
+        const handle = event.currentTarget as HTMLElement;
+        const startClientX = event.clientX;
+        const startWidth =
+            this.topologyTabsDiv.nativeElement.getBoundingClientRect().width;
+
+        const resize = (moveEvent: PointerEvent) =>
+            this.synchronizerService.emitTopologyWidthChange(
+                startWidth - (moveEvent.clientX - startClientX),
+            );
+
+        const stopResize = () => {
+            handle.removeEventListener('pointermove', resize);
+            handle.removeEventListener('pointerup', stopResize);
+            handle.removeEventListener('pointercancel', stopResize);
         };
 
-        const mouseMove = (event: MouseEvent) => {
-            this.synchronizerService.emitPositionChange(event.movementX);
-        };
-
-        document.addEventListener('mouseup', mouseUp);
-        document.addEventListener('mousemove', mouseMove);
+        handle.setPointerCapture(event.pointerId);
+        handle.addEventListener('pointermove', resize);
+        handle.addEventListener('pointerup', stopResize);
+        handle.addEventListener('pointercancel', stopResize);
         event.preventDefault();
         event.stopPropagation();
     }

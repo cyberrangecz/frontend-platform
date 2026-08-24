@@ -25,6 +25,7 @@
     height: calc(100% - 30px);
     width: 6px;
     cursor: col-resize;
+    touch-action: none;
     z-index: 1002;
     --gradient-color: color-mix(in srgb, var(--primary-60) 20%, var(--neutral-98));
     background: linear-gradient(90deg, var(--gradient-color) 50%, var(--neutral-98) 100%);
