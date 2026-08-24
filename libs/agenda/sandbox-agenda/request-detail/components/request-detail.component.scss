@@ -28,8 +28,10 @@
 }
 
 .stage-indicator {
-    width: 38px;
-    aspect-ratio: 1 / 1;
+    box-sizing: border-box;
+    width: 50px;
+    height: 50px;
+    flex: 0 0 auto;
     border: 2px solid transparent;
     border-radius: 50%;
     overflow: visible;
