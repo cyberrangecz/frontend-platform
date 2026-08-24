@@ -83,24 +83,6 @@ export class TopologyComponent implements AfterViewInit {
         this.updateTopologyDimensions();
     }
 
-    @HostListener('window:keydown', ['$event'])
-    onKeyDown(event: KeyboardEvent): void {
-        if (event.ctrlKey && event.altKey && !event.shiftKey) {
-            const totalTabs = this.tabs().length + 1;
-            if (event.key === 'ArrowRight') {
-                this.selectedIndex.update((index) => (index + 1) % totalTabs);
-                event.preventDefault();
-                event.stopPropagation();
-            } else if (event.key === 'ArrowLeft') {
-                this.selectedIndex.update((index) =>
-                    index === 0 ? totalTabs - 1 : index - 1,
-                );
-                event.preventDefault();
-                event.stopPropagation();
-            }
-        }
-    }
-
     handleOpenConsole($event: OpenConsoleEvent): void {
         if (!this.sandboxUuid()) {
             console.warn(

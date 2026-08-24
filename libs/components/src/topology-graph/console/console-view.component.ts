@@ -30,6 +30,7 @@ export type ConnectionParams = {
     withGui: boolean;
 };
 
+
 @Component({
     selector: 'crczp-console-view',
     imports: [CommonModule, GuacamoleStatus],
@@ -54,7 +55,6 @@ export class ConsoleView implements AfterViewInit, OnDestroy {
     private guacMouse: Guacamole.Mouse | null = null;
     private resizeObserver: ResizeObserver | null = null;
     private listeners: (() => void)[] = [];
-    private clipboardInterval: number | null = null;
     private lastClipboardContent = '';
     private resizeTimeout: number | null = null;
     private RESIZE_DEBOUNCE_MS = 50;
@@ -83,11 +83,6 @@ export class ConsoleView implements AfterViewInit, OnDestroy {
         if (this.resizeObserver) {
             this.resizeObserver.disconnect();
             this.resizeObserver = null;
-        }
-
-        if (this.clipboardInterval) {
-            clearInterval(this.clipboardInterval);
-            this.clipboardInterval = null;
         }
 
         if (this.resizeTimeout) {
@@ -191,24 +186,45 @@ export class ConsoleView implements AfterViewInit, OnDestroy {
         );
     }
 
+    /**
+     * Mirrors the browser clipboard into the remote session each time the operating system
+     * clipboard changes, so text copied outside the console is available inside it. Engines
+     * without the clipboardchange event are left unwatched, as the alternative of reading the
+     * clipboard on a timer raises a paste confirmation on every single read wherever no
+     * clipboard-read permission exists.
+     */
     private setupClipboardSync(): void {
-        // Poll browser clipboard every 500ms to detect changes
-        this.clipboardInterval = window.setInterval(async () => {
-            if (!this.guacClient || this.clientStateCode() !== 'CONNECTED') {
-                return;
-            }
+        if (!('onclipboardchange' in navigator.clipboard)) {
+            return;
+        }
 
-            try {
-                const clipboardText = await navigator.clipboard.readText();
-                if (clipboardText !== this.lastClipboardContent) {
-                    this.lastClipboardContent = clipboardText;
-                    this.sendClipboardToRemote(clipboardText);
-                }
-            } catch (_error) {
-                // Clipboard access denied or not available - this is normal
-                // when the tab is not focused
+        const handleClipboardChange = () => void this.readClipboardIntoRemote();
+        navigator.clipboard.addEventListener(
+            'clipboardchange',
+            handleClipboardChange,
+        );
+        this.listeners.push(() =>
+            navigator.clipboard.removeEventListener(
+                'clipboardchange',
+                handleClipboardChange,
+            ),
+        );
+    }
+
+    private async readClipboardIntoRemote(): Promise<void> {
+        if (!this.guacClient || this.clientStateCode() !== 'CONNECTED') {
+            return;
+        }
+
+        try {
+            const clipboardText = await navigator.clipboard.readText();
+            if (clipboardText !== this.lastClipboardContent) {
+                this.lastClipboardContent = clipboardText;
+                this.sendClipboardToRemote(clipboardText);
             }
-        }, 500);
+        } catch (_error) {
+            // Refused while the document holds no focus or the permission was denied.
+        }
     }
 
     private sendClipboardToRemote(text: string): void {
