@@ -7,6 +7,15 @@ const UPPERCASE_V_KEYSYM = 0x56;
 const LOWERCASE_V_KEYSYM = 0x76;
 
 /**
+ * Reports whether the host platform pastes with Command rather than Control. Read from the
+ * deprecated platform string on purpose: the client hint that supersedes it is absent from every
+ * browser on Apple systems, which is the one case this has to recognise.
+ */
+export function pastesWithCommandKey(): boolean {
+    return /^Mac|^iP(hone|ad|od)/.test(navigator.platform);
+}
+
+/**
  * The remote session a clipboard strategy drives. Every member is read at call time, so the port
  * may be handed over before the session exists.
  */
@@ -148,6 +157,7 @@ export class AutomaticClipboardStrategy extends ConsoleClipboardStrategy {
  */
 export class KeystrokeClipboardStrategy extends ConsoleClipboardStrategy {
     private pasteExpected = false;
+    private readonly commandKeyPastes = pastesWithCommandKey();
     private readonly pasteHandler = (event: ClipboardEvent) =>
         this.handlePaste(event);
 
@@ -188,16 +198,31 @@ export class KeystrokeClipboardStrategy extends ConsoleClipboardStrategy {
     }
 
     /**
-     * Claims Ctrl+V in every mode. A terminal session additionally claims Ctrl+Shift+V, whose far
-     * end reads a clipboard of its own that would otherwise diverge from the host one. A
+     * Claims the host platform's own paste shortcut in every mode, the only keystroke a browser
+     * answers with a paste event. A terminal session additionally claims its shifted form, whose
+     * far end reads a clipboard of its own that would otherwise diverge from the host one. A
      * graphical session leaves that form alone, since applications inside the guest paste with it
      * from the same guest clipboard this strategy populates.
+     *
+     * Every other combination over the V key, Control+V on an Apple platform included, is left to
+     * reach the guest untouched.
      */
     private isReservedPasteCombo(event: KeyboardEvent): boolean {
-        if (event.code !== 'KeyV' || !event.ctrlKey || event.altKey) {
+        const pasteAcceleratorHeld = this.commandKeyPastes
+            ? event.metaKey && !event.ctrlKey
+            : event.ctrlKey && !event.metaKey;
+
+        if (!this.isVKey(event) || !pasteAcceleratorHeld || event.altKey) {
             return false;
         }
         return this.session.isGraphical() ? !event.shiftKey : true;
+    }
+
+    /** Recognises the V key by label as well as by position, for a layout that moves it. */
+    private isVKey(event: KeyboardEvent): boolean {
+        return (
+            event.code === 'KeyV' || event.key === 'v' || event.key === 'V'
+        );
     }
 
     private handlePaste(event: ClipboardEvent): void {
