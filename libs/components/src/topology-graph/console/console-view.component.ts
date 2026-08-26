@@ -63,6 +63,8 @@ export class ConsoleView implements AfterViewInit, OnDestroy {
     private readonly platformConfig = inject(PortalConfig);
     private keydownHandler: ((e: KeyboardEvent) => void) | null = null;
     private keyupHandler: ((e: KeyboardEvent) => void) | null = null;
+    private readonly heldKeysyms = new Set<number>();
+    private windowBlurHandler: (() => void) | null = null;
 
     ngAfterViewInit(): void {
         this.connectGuacamole();
@@ -72,7 +74,6 @@ export class ConsoleView implements AfterViewInit, OnDestroy {
         this.focusStream()
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe(() => {
-                console.log('Focusing Guacamole wrapper...');
                 setTimeout(() => {
                     this.guacWrapper.nativeElement.focus();
                 }, 100);
@@ -91,7 +92,7 @@ export class ConsoleView implements AfterViewInit, OnDestroy {
         }
 
         if (this.guacClient) {
-            console.log('Disconnecting Guacamole client...');
+            this.releaseHeldKeys();
             this.guacClient.disconnect();
             this.guacClient = null;
         }
@@ -142,6 +143,22 @@ export class ConsoleView implements AfterViewInit, OnDestroy {
                 passive: false,
             });
         }
+
+        if (this.windowBlurHandler) {
+            window.addEventListener('blur', this.windowBlurHandler);
+        }
+    }
+
+    /**
+     * Releases every key the remote session still believes is held. Without this a modifier
+     * whose release landed outside the console stays latched in the session, silently altering
+     * each keystroke that follows.
+     */
+    private releaseHeldKeys(): void {
+        for (const keysym of this.heldKeysyms) {
+            this.guacClient?.sendKeyEvent(0, keysym);
+        }
+        this.heldKeysyms.clear();
     }
 
     protected unlockKeyboard() {
@@ -152,6 +169,12 @@ export class ConsoleView implements AfterViewInit, OnDestroy {
             document.removeEventListener('keydown', this.keydownHandler);
             document.removeEventListener('keyup', this.keyupHandler);
         }
+
+        if (this.windowBlurHandler) {
+            window.removeEventListener('blur', this.windowBlurHandler);
+        }
+
+        this.releaseHeldKeys();
     }
 
     private get_keysym(
@@ -183,6 +206,13 @@ export class ConsoleView implements AfterViewInit, OnDestroy {
         return this.get_keysym(
             GuacamoleKeyCodes.keyidentifier_keysym[identifier],
             location,
+        );
+    }
+
+    private keysymOf(event: KeyboardEvent): number | null {
+        return (
+            this.keysym_from_key_identifier(event.key, event.location) ||
+            this.keysym_from_keycode(event.keyCode, event.location)
         );
     }
 
@@ -344,22 +374,29 @@ export class ConsoleView implements AfterViewInit, OnDestroy {
 
         this.keydownHandler = (e: KeyboardEvent) => {
             e.preventDefault();
-            const keysym =
-                this.keysym_from_key_identifier(e.key, e.location) ||
-                this.keysym_from_keycode(e.keyCode, e.location);
+            const keysym = this.keysymOf(e);
             if (keysym !== null) {
+                this.heldKeysyms.add(keysym);
                 this.guacClient?.sendKeyEvent(1, keysym);
             }
         };
         this.keyupHandler = (e: KeyboardEvent) => {
             e.preventDefault();
-            const keysym =
-                this.keysym_from_key_identifier(e.key, e.location) ||
-                this.keysym_from_keycode(e.keyCode, e.location);
+
+            const keysym = this.keysymOf(e);
             if (keysym !== null) {
+                this.heldKeysyms.delete(keysym);
                 this.guacClient?.sendKeyEvent(0, keysym);
             }
         };
+
+        this.windowBlurHandler = () => this.releaseHeldKeys();
+
+        this.listeners.push(() => {
+            if (this.windowBlurHandler) {
+                window.removeEventListener('blur', this.windowBlurHandler);
+            }
+        });
 
         this.listeners.push(() => {
             if (this.keydownHandler) {
