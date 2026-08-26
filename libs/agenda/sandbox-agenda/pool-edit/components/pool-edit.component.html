@@ -29,7 +29,7 @@
                                placeholder="Sandbox pool size" required type="number">
                         @if (poolSize.hasError('min')) {
                             <mat-error>
-                                Pool size must be number larger than {{ getMinimumPoolSize() }}
+                                Pool size must be a number greater than or equal to {{ getMinimumPoolSize() }}
                                 {{ editMode ? '(amount of currently allocated sandboxes)' : '' }}
                             </mat-error>
                         }

@@ -12,6 +12,7 @@ import { AsyncPipe } from '@angular/common';
 import { AccessTrainingRunComponent } from './access/access-training-run.component';
 import { createPaginationEvent, PaginationMapper } from '@crczp/api-common';
 import { AccessedTrainingRunSort } from '@crczp/training-api';
+import { TableEmptyStateDirective } from '@crczp/components';
 
 /**
  * Main smart component of the trainee overview.
@@ -26,12 +27,14 @@ import { AccessedTrainingRunSort } from '@crczp/training-api';
         AccessTrainingRunComponent,
         SentinelControlsComponent,
         SentinelTableComponent,
+        TableEmptyStateDirective,
     ],
     providers: [AccessedTrainingRunService],
 })
 export class TrainingRunOverviewComponent implements OnInit {
     trainingRuns$: Observable<SentinelTable<AccessedTrainingRun, string>>;
     hasError$: Observable<boolean>;
+    tableIsLoading$: Observable<boolean>;
     isLoading = false;
     controls: SentinelControlItem[];
     destroyRef = inject(DestroyRef);
@@ -97,6 +100,7 @@ export class TrainingRunOverviewComponent implements OnInit {
             ),
         );
         this.hasError$ = this.trainingRunOverviewService.hasError$;
+        this.tableIsLoading$ = this.trainingRunOverviewService.isLoading$;
         this.loadAccessedTrainingRuns(initialLoadEvent);
     }
 

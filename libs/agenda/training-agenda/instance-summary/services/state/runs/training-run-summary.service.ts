@@ -4,7 +4,7 @@ import { LinearRunApi, LinearTrainingInstanceApi, TrainingRunSort } from '@crczp
 import { TrainingRun, TrainingRunInfo } from '@crczp/training-model';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { PortalConfig } from '@crczp/utils';
+import { LoadingTracker, PortalConfig } from '@crczp/utils';
 import { CrczpOffsetElementsPaginatedService, OffsetPaginatedResource } from '@crczp/api-common';
 
 /**
@@ -15,6 +15,9 @@ import { CrczpOffsetElementsPaginatedService, OffsetPaginatedResource } from '@c
 export class TrainingRunSummaryService extends CrczpOffsetElementsPaginatedService<TrainingRun> {
     private trainingInstanceApi = inject(LinearTrainingInstanceApi);
     private trainingRunApi = inject(LinearRunApi);
+    private readonly loadingTracker = new LoadingTracker();
+
+    override isLoading$ = this.loadingTracker.isLoading$;
 
     constructor() {
         super(inject(PortalConfig).defaultPageSize);
@@ -29,16 +32,19 @@ export class TrainingRunSummaryService extends CrczpOffsetElementsPaginatedServi
         trainingInstanceId: number,
         pagination: OffsetPaginationEvent<TrainingRunSort>,
     ): Observable<OffsetPaginatedResource<TrainingRun>> {
-        return this.trainingInstanceApi
-            .getAssociatedTrainingRuns(trainingInstanceId, pagination)
-            .pipe(
-                tap(
-                    (runs) => {
-                        this.resourceSubject$.next(runs);
-                    },
-                    () => this.onGetAllError(),
+        this.hasErrorSubject$.next(false);
+        return this.loadingTracker.trackRequest(() =>
+            this.trainingInstanceApi
+                .getAssociatedTrainingRuns(trainingInstanceId, pagination)
+                .pipe(
+                    tap(
+                        (runs) => {
+                            this.resourceSubject$.next(runs);
+                        },
+                        () => this.onGetAllError(),
+                    ),
                 ),
-            );
+        );
     }
 
     getInfo(trainingRunId: number): Observable<TrainingRunInfo[]> {

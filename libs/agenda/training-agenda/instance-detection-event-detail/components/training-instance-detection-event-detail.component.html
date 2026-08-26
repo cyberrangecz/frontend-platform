@@ -81,6 +81,7 @@
                 [displayedActionsCount]="4"
                 [hasError]="participantTableHasError$ | async"
                 [isLoading]="participantTableIsLoading$ | async"
+                crczpTableEmptyState="No participants in this detection event"
             >
             </sentinel-table>
         </div>
@@ -95,6 +96,7 @@
                                 [displayedActionsCount]="4"
                                 [hasError]="forbiddenCommandsTableHasError$ | async"
                                 [isLoading]="forbiddenCommandsTableIsLoading$ | async"
+                                crczpTableEmptyState="No forbidden commands were detected"
                             >
                             </sentinel-table>
                         </div>

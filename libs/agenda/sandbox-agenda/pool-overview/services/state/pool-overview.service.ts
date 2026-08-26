@@ -11,7 +11,7 @@ import { PoolApi, PoolSort } from '@crczp/sandbox-api';
 import { Pool } from '@crczp/sandbox-model';
 import { EMPTY, from, Observable } from 'rxjs';
 import { catchError, switchMap, tap } from 'rxjs/operators';
-import { ErrorHandlerService, NotificationService, PortalConfig } from '@crczp/utils';
+import { ErrorHandlerService, LoadingTracker, NotificationService, PortalConfig } from '@crczp/utils';
 import { Routing } from '@crczp/routing-commons';
 import { CrczpOffsetElementsPaginatedService, OffsetPaginatedResource } from '@crczp/api-common';
 
@@ -28,6 +28,9 @@ export class PoolOverviewService extends CrczpOffsetElementsPaginatedService<Poo
     private errorHandler = inject(ErrorHandlerService);
 
     private lastPagination: OffsetPaginationEvent<PoolSort>;
+    private readonly loadingTracker = new LoadingTracker();
+
+    override isLoading$ = this.loadingTracker.isLoading$;
 
     constructor() {
         super(inject(PortalConfig).defaultPageSize);
@@ -42,15 +45,17 @@ export class PoolOverviewService extends CrczpOffsetElementsPaginatedService<Poo
     ): Observable<OffsetPaginatedResource<Pool>> {
         this.lastPagination = pagination;
         this.hasErrorSubject$.next(false);
-        return this.poolApi.getPools(pagination).pipe(
-            tap(
-                (paginatedPools) => {
-                    this.resourceSubject$.next(paginatedPools);
-                },
-                (err) => {
-                    this.errorHandler.emitAPIError(err, 'Fetching pools');
-                    this.hasErrorSubject$.next(true);
-                },
+        return this.loadingTracker.trackRequest(() =>
+            this.poolApi.getPools(pagination).pipe(
+                tap(
+                    (paginatedPools) => {
+                        this.resourceSubject$.next(paginatedPools);
+                    },
+                    (err) => {
+                        this.errorHandler.emitAPIError(err, 'Fetching pools');
+                        this.hasErrorSubject$.next(true);
+                    },
+                ),
             ),
         );
     }

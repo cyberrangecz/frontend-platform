@@ -2,6 +2,9 @@
     <h2 class="dialog-title"
         mat-dialog-title
     >{{ data.title }}</h2>
+    @if (data.subtitle) {
+        <p class="dialog-subtitle">{{ data.subtitle }}</p>
+    }
     <mat-dialog-content class="wh-100 dialog-content">
         <ngx-file-drag-drop
             (valueChanged)="onValueChange($event)"

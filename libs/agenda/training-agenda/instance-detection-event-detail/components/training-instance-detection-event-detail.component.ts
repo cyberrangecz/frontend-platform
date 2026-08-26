@@ -36,6 +36,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatDivider } from '@angular/material/divider';
 import { MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
 import { PaginationStorageService, providePaginationStorageService } from '@crczp/utils';
+import { TableEmptyStateDirective } from '@crczp/components';
 import { createInfinitePaginationEvent, PaginationMapper } from '@crczp/api-common';
 
 /**
@@ -72,6 +73,7 @@ import { createInfinitePaginationEvent, PaginationMapper } from '@crczp/api-comm
         MatExpansionPanelHeader,
         MatExpansionPanelTitle,
         DatePipe,
+        TableEmptyStateDirective,
     ],
 })
 export class TrainingInstanceDetectionEventDetailComponent implements OnInit {

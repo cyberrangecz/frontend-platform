@@ -6,5 +6,7 @@
     [data]="groups$ | async"
     [defaultSortDirection]="INIT_SORT_DIR"
     [defaultSortName]="INIT_SORT_NAME"
-    [hasError]="groupsHasError$ | async">
+    [hasError]="groupsHasError$ | async"
+    [isLoading]="isLoading$ | async"
+    crczpTableEmptyState="No groups have been created yet">
 </sentinel-table>

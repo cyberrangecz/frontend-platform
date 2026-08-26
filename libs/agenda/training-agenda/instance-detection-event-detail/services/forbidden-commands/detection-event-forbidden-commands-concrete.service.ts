@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import { DetectedForbiddenCommand } from '@crczp/training-model';
 import { tap } from 'rxjs/operators';
 import { DetectionEventForbiddenCommandsService } from './detection-event-forbidden-commands.service';
-import { PortalConfig } from '@crczp/utils';
+import { LoadingTracker, PortalConfig } from '@crczp/utils';
 import { OffsetPaginatedResource } from '@crczp/api-common';
 
 /**
@@ -15,6 +15,9 @@ import { OffsetPaginatedResource } from '@crczp/api-common';
 @Injectable()
 export class DetectionEventForbiddenCommandsConcreteService extends DetectionEventForbiddenCommandsService {
     private api = inject(DetectionEventApi);
+    private readonly loadingTracker = new LoadingTracker();
+
+    override isLoading$ = this.loadingTracker.isLoading$;
 
     constructor() {
         super(inject(PortalConfig).defaultPageSize);
@@ -30,16 +33,19 @@ export class DetectionEventForbiddenCommandsConcreteService extends DetectionEve
         detectionEventId: number,
         pagination: OffsetPaginationEvent<DetectedForbiddenCommandSort>,
     ): Observable<OffsetPaginatedResource<DetectedForbiddenCommand>> {
-        return this.api
-            .getAllForbiddenCommandsOfEvent(pagination, detectionEventId)
-            .pipe(
-                tap(
-                    (commands) => {
-                        this.resourceSubject$.next(commands);
-                    },
-                    () => this.onGetAllError(),
+        this.hasErrorSubject$.next(false);
+        return this.loadingTracker.trackRequest(() =>
+            this.api
+                .getAllForbiddenCommandsOfEvent(pagination, detectionEventId)
+                .pipe(
+                    tap(
+                        (commands) => {
+                            this.resourceSubject$.next(commands);
+                        },
+                        () => this.onGetAllError(),
+                    ),
                 ),
-            );
+        );
     }
 
     private onGetAllError() {

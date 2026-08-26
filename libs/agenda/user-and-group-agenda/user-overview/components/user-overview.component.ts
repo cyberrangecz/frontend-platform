@@ -12,6 +12,7 @@ import { UserOverviewService } from '../services/user-overview.service';
 import { AsyncPipe } from '@angular/common';
 import { FileUploadProgressService, PaginationStorageService, providePaginationStorageService } from '@crczp/utils';
 import { UserSort } from '@crczp/user-and-group-api';
+import { TableEmptyStateDirective } from '@crczp/components';
 
 /**
  * Main smart component of user overview page
@@ -21,7 +22,12 @@ import { UserSort } from '@crczp/user-and-group-api';
     templateUrl: './user-overview.component.html',
     styleUrls: ['./user-overview.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [AsyncPipe, SentinelTableComponent, SentinelControlsComponent],
+    imports: [
+        AsyncPipe,
+        SentinelTableComponent,
+        SentinelControlsComponent,
+        TableEmptyStateDirective,
+    ],
     providers: [
         FileUploadProgressService,
         providePaginationStorageService(UserOverviewComponent),
@@ -41,6 +47,10 @@ export class UserOverviewComponent implements OnInit {
      * True, if data requested for table has error, false otherwise
      */
     usersHasError$: Observable<boolean>;
+    /**
+     * True while data for users table is being fetched, false otherwise
+     */
+    isLoading$: Observable<boolean>;
     controls: SentinelControlItem[];
     private userService = inject(UserOverviewService);
     private paginationService = inject(PaginationStorageService);
@@ -59,6 +69,7 @@ export class UserOverviewComponent implements OnInit {
             map((groups) => new UserTable(groups, this.userService)),
         );
         this.usersHasError$ = this.userService.hasError$;
+        this.isLoading$ = this.userService.isLoading$;
         this.onLoadEvent(initialLoadEvent);
         this.userService.selected$
             .pipe(takeUntilDestroyed(this.destroyRef))

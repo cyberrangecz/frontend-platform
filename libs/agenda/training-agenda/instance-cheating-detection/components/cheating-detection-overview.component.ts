@@ -16,6 +16,7 @@ import { SentinelControlItem, SentinelControlsComponent } from '@sentinel/compon
 import { AsyncPipe } from '@angular/common';
 import { StageOverviewComponent } from './stage-overview/stage-overview.component';
 import { PaginationStorageService, providePaginationStorageService } from '@crczp/utils';
+import { TableEmptyStateDirective } from '@crczp/components';
 import { CheatingDetection, TrainingInstance } from '@crczp/training-model';
 import { PaginationMapper } from '@crczp/api-common';
 import { CheatingDetectionSort } from '@crczp/training-api';
@@ -33,6 +34,7 @@ import { CheatingDetectionSort } from '@crczp/training-api';
         SentinelControlsComponent,
         StageOverviewComponent,
         SentinelRowDirective,
+        TableEmptyStateDirective,
     ],
     providers: [
         CheatingDetectionService,

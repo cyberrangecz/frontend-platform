@@ -12,6 +12,7 @@ import { PaginationMapper } from '@crczp/api-common';
 import { DetectionEventOverviewService } from '../services/detection-event-overview.service';
 import { AbstractDetectionEventSort } from '@crczp/training-api';
 import { Routing } from '@crczp/routing-commons';
+import { TableEmptyStateDirective } from '@crczp/components';
 
 /**
  * Main component of training instance detection event.
@@ -20,7 +21,7 @@ import { Routing } from '@crczp/routing-commons';
     selector: 'crczp-training-instance-detection-event',
     templateUrl: './training-instance-detection-event.component.html',
     styleUrls: ['./training-instance-detection-event.component.css'],
-    imports: [AsyncPipe, SentinelTableComponent],
+    imports: [AsyncPipe, SentinelTableComponent, TableEmptyStateDirective],
     providers: [
         providePaginationStorageService(
             TrainingInstanceDetectionEventComponent,

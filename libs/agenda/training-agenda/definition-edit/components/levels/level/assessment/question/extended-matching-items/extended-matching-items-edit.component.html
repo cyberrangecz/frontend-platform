@@ -50,7 +50,7 @@
                         @if (penalty.hasError('pattern') ||
                         penalty.hasError('min') || penalty.hasError('max')) {
                             <mat-error>Question penalty
-                                must be a number in range from 0 to this.{{ maxQuestionPenalty }}
+                                must be a number in range from 0 to {{ maxQuestionPenalty }}
                             </mat-error>
                         }
                     </mat-form-field>

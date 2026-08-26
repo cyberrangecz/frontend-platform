@@ -7,6 +7,8 @@
             (tableLoad)="loadAccessedTrainingRuns($event)"
             [data]="trainingRuns$ | async"
             [hasError]="hasError$ | async"
+            [isLoading]="tableIsLoading$ | async"
+            crczpTableEmptyState="You have not accessed any training runs yet"
         >
         </sentinel-table>
     </div>

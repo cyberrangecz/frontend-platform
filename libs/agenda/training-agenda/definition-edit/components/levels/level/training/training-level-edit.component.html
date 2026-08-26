@@ -16,7 +16,7 @@
           <!-- ESTIMATED DURATION field -->
           <mat-form-field
             appearance="outline"
-            hintLabel="Number in minutes greater than 1."
+            hintLabel="Number in minutes greater than or equal to 1."
             >
             <mat-label>Estimated Duration in Minutes</mat-label>
             <input
@@ -36,7 +36,7 @@
           <!-- MINIMAL POSSIBLE SOLVE TIME field -->
           <mat-form-field
             appearance="outline"
-            hintLabel="Number in minutes greater 0."
+            hintLabel="Number in minutes greater than or equal to 0."
             >
             <mat-label>Minimal Possible Solve Time in Minutes</mat-label>
             <input
@@ -145,14 +145,14 @@
           <mat-form-field
             (keydown.enter)="$event.preventDefault()"
             appearance="outline"
-            hintLabel="'Max 50 characters'"
+            hintLabel="Max 50 characters"
             >
             <mat-label>Correct Answer - Static</mat-label>
             <input formControlName="answer" matInput maxlength="50" placeholder="Correct Answer - Static"/>
             <crczp-clear-input-suffix [control]="answer" [clearedValue]="null" matSuffix />
             <mat-hint align="end">{{ answer.value?.length || 0 }}/50</mat-hint>
             @if (answer.hasError('whitespace')) {
-              <mat-error> 'Correct Answer - Static' cannot be empty
+              <mat-error> Correct Answer - Static cannot be empty
               </mat-error>
             }
           </mat-form-field>
@@ -163,7 +163,7 @@
           <mat-form-field
             (keydown.enter)="$event.preventDefault()"
             appearance="outline"
-            hintLabel="'Max 50 characters'"
+            hintLabel="Max 50 characters"
             >
             <mat-label>Correct Answer - Variable Name</mat-label>
             <input
@@ -179,7 +179,7 @@
             }
             @if (answerVariableName.hasError('whitespace')) {
               <mat-error>
-                'Correct Answers - Variable Name' cannot be empty
+                Correct Answers - Variable Name cannot be empty
               </mat-error>
             }
           </mat-form-field>

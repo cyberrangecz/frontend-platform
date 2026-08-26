@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
 import { Microservice } from '@crczp/user-and-group-model';
 import { Observable, of } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { ErrorHandlerService, PortalConfig } from '@crczp/utils';
+import { ErrorHandlerService, LoadingTracker, PortalConfig } from '@crczp/utils';
 import { Routing } from '@crczp/routing-commons';
 import { OffsetPaginatedResource } from '@crczp/api-common';
 
@@ -18,6 +18,9 @@ export class MicroserviceOverviewService extends SelectablePaginatedService<Micr
     private api = inject(MicroserviceApi);
     private router = inject(Router);
     private errorHandler = inject(ErrorHandlerService);
+    private readonly loadingTracker = new LoadingTracker();
+
+    override isLoading$ = this.loadingTracker.isLoading$;
 
     constructor() {
         super(inject(PortalConfig).defaultPageSize);
@@ -35,18 +38,20 @@ export class MicroserviceOverviewService extends SelectablePaginatedService<Micr
         this.clearSelection();
         const filters = filter ? [new MicroserviceFilter(filter)] : [];
         this.hasErrorSubject$.next(false);
-        return this.api.getAll(pagination, filters).pipe(
-            tap(
-                (microservices) => {
-                    this.resourceSubject$.next(microservices);
-                },
-                (err) => {
-                    this.errorHandler.emitAPIError(
-                        err,
-                        'Fetching microservices',
-                    );
-                    this.hasErrorSubject$.next(true);
-                },
+        return this.loadingTracker.trackRequest(() =>
+            this.api.getAll(pagination, filters).pipe(
+                tap(
+                    (microservices) => {
+                        this.resourceSubject$.next(microservices);
+                    },
+                    (err) => {
+                        this.errorHandler.emitAPIError(
+                            err,
+                            'Fetching microservices',
+                        );
+                        this.hasErrorSubject$.next(true);
+                    },
+                ),
             ),
         );
     }

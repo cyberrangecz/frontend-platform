@@ -12,7 +12,7 @@ import { SandboxDefinition } from '@crczp/sandbox-model';
 import { EMPTY, from, Observable, of } from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
 import { SandboxDefinitionOverviewService } from './sandbox-definition-overview.service';
-import { ErrorHandlerService, NotificationService, PortalConfig } from '@crczp/utils';
+import { ErrorHandlerService, LoadingTracker, NotificationService, PortalConfig } from '@crczp/utils';
 import { Routing } from '@crczp/routing-commons';
 import { OffsetPaginatedResource } from '@crczp/api-common';
 
@@ -29,6 +29,9 @@ export class SandboxDefinitionOverviewConcreteService extends SandboxDefinitionO
     private errorHandler = inject(ErrorHandlerService);
 
     private lastPagination: OffsetPaginationEvent<SandboxDefinitionSort>;
+    private readonly loadingTracker = new LoadingTracker();
+
+    override isLoading$ = this.loadingTracker.isLoading$;
 
     constructor() {
         super(inject(PortalConfig).defaultPageSize);
@@ -43,18 +46,20 @@ export class SandboxDefinitionOverviewConcreteService extends SandboxDefinitionO
     ): Observable<OffsetPaginatedResource<SandboxDefinition>> {
         this.hasErrorSubject$.next(false);
         this.lastPagination = pagination;
-        return this.api.getAll(pagination).pipe(
-            tap(
-                (paginatedResource) => {
-                    this.resourceSubject$.next(paginatedResource);
-                },
-                (err) => {
-                    this.errorHandler.emitAPIError(
-                        err,
-                        'Fetching sandbox definitions',
-                    );
-                    this.hasErrorSubject$.next(true);
-                },
+        return this.loadingTracker.trackRequest(() =>
+            this.api.getAll(pagination).pipe(
+                tap(
+                    (paginatedResource) => {
+                        this.resourceSubject$.next(paginatedResource);
+                    },
+                    (err) => {
+                        this.errorHandler.emitAPIError(
+                            err,
+                            'Fetching sandbox definitions',
+                        );
+                        this.hasErrorSubject$.next(true);
+                    },
+                ),
             ),
         );
     }

@@ -19,6 +19,7 @@ import { RoleAssignService } from '../../services/state/role-assign.service';
 import { PaginationStorageService, providePaginationStorageService } from '@crczp/utils';
 import { OffsetPaginatedResource, PaginationMapper } from '@crczp/api-common';
 import { RoleSort } from '@crczp/user-and-group-api';
+import { TableEmptyStateDirective } from '@crczp/components';
 
 /**
  * Component for role assignment to edited group-overview
@@ -40,6 +41,7 @@ import { RoleSort } from '@crczp/user-and-group-api';
         SentinelTableComponent,
         AsyncPipe,
         SentinelControlsComponent,
+        TableEmptyStateDirective,
     ],
     providers: [
         providePaginationStorageService(GroupRoleAssignComponent),

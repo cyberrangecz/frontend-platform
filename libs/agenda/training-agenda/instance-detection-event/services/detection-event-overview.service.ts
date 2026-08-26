@@ -6,7 +6,7 @@ import { from, Observable } from 'rxjs';
 import { AbstractDetectionEvent } from '@crczp/training-model';
 import { tap } from 'rxjs/operators';
 import { DetectionEventFilter } from '../model/detection-event-filter';
-import { PortalConfig } from '@crczp/utils';
+import { LoadingTracker, PortalConfig } from '@crczp/utils';
 import { Routing } from '@crczp/routing-commons';
 import { CrczpOffsetElementsPaginatedService, OffsetPaginatedResource } from '@crczp/api-common';
 
@@ -18,6 +18,9 @@ import { CrczpOffsetElementsPaginatedService, OffsetPaginatedResource } from '@c
 export class DetectionEventOverviewService extends CrczpOffsetElementsPaginatedService<AbstractDetectionEvent> {
     private api = inject(DetectionEventApi);
     private router = inject(Router);
+    private readonly loadingTracker = new LoadingTracker();
+
+    override isLoading$ = this.loadingTracker.isLoading$;
 
     constructor() {
         super(inject(PortalConfig).defaultPageSize);
@@ -37,19 +40,22 @@ export class DetectionEventOverviewService extends CrczpOffsetElementsPaginatedS
         filter: string = null,
     ): Observable<OffsetPaginatedResource<AbstractDetectionEvent>> {
         const filters = filter ? [new DetectionEventFilter(filter)] : [];
-        return this.api
-            .getAll(
-                pagination,
-                cheatingDetectionId,
-                trainingInstanceId,
-                filters,
-            )
-            .pipe(
-                tap(
-                    (events) => this.resourceSubject$.next(events),
-                    () => this.onGetAllError(),
+        this.hasErrorSubject$.next(false);
+        return this.loadingTracker.trackRequest(() =>
+            this.api
+                .getAll(
+                    pagination,
+                    cheatingDetectionId,
+                    trainingInstanceId,
+                    filters,
+                )
+                .pipe(
+                    tap(
+                        (events) => this.resourceSubject$.next(events),
+                        () => this.onGetAllError(),
+                    ),
                 ),
-            );
+        );
     }
 
     /**

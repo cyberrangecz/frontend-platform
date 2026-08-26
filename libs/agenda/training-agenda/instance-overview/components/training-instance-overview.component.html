@@ -7,7 +7,9 @@
         [defaultSortName]="INITIAL_SORT_NAME"
         [displayedActionsCount]="9"
         [hasError]="hasError$ | async"
-        [titlecasedActions]="false">
+        [isLoading]="isLoading$ | async"
+        [titlecasedActions]="false"
+        crczpTableEmptyState="No training instances have been created yet">
         <ng-container *sentinelRow="'startTime'; template: startTime" />
         <ng-container *sentinelRow="'endTime'; template: endTime" />
         <ng-container *sentinelRow="'expiresIn'; template: instanceCountdown" />

@@ -18,6 +18,7 @@ import { UserSort } from '@crczp/user-and-group-api';
 import { AsyncPipe } from '@angular/common';
 import { PaginationMapper } from '@crczp/api-common';
 import { GroupMemberTable } from '../../model/table/group-member-table';
+import { TableEmptyStateDirective } from '@crczp/components';
 
 /**
  * Component for user assignment to groups
@@ -39,6 +40,7 @@ import { GroupMemberTable } from '../../model/table/group-member-table';
         AsyncPipe,
         SentinelTableComponent,
         SentinelResourceSelectorComponent,
+        TableEmptyStateDirective,
     ],
     providers: [
         providePaginationStorageService(GroupUserAssignComponent),

@@ -16,7 +16,7 @@
                                         [resources]="users$ | async"
                                         [selected]="selectedUsersToAssign$ | async"
                                         class="user-selector"
-                                        searchPlaceholder="Search users by surname" />
+                                        searchPlaceholder="Search users by name" />
         </mat-card-content>
     </mat-card>
 
@@ -58,7 +58,8 @@
             [defaultSortName]="MEMBERS_OF_GROUP_INIT_SORT_NAME"
             [elevation]="0"
             [hasError]="assignedUsersHasError$ | async"
-            [isLoading]="isLoadingAssignedUsers$ | async" />
+            [isLoading]="isLoadingAssignedUsers$ | async"
+            crczpTableEmptyState="No users in this group yet" />
     </mat-card-content>
 </mat-card>
 

@@ -6,7 +6,8 @@
     [defaultSortName]="INIT_SORT_NAME"
     [displayedActionsCount]="7"
     [hasError]="hasError$ | async"
-    [isLoading]="isLoading$ | async">
+    [isLoading]="isLoading$ | async"
+    crczpTableEmptyState="No training definitions have been created yet">
 
     <ng-container *sentinelRow="'createdAt'; template: createdAt" />
     <ng-container *sentinelRow="'lastEditTime'; template: lastEditTime" />

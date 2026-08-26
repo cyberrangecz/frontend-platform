@@ -28,12 +28,18 @@ import {
     providePaginationStorageService,
 } from '@crczp/utils';
 import { MicroserviceSort } from '@crczp/user-and-group-api';
+import { TableEmptyStateDirective } from '@crczp/components';
 
 @Component({
     selector: 'crczp-microservice-overview',
     templateUrl: './microservice-overview.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [SentinelTableComponent, SentinelControlsComponent, AsyncPipe],
+    imports: [
+        SentinelTableComponent,
+        SentinelControlsComponent,
+        AsyncPipe,
+        TableEmptyStateDirective,
+    ],
     providers: [
         providePaginationStorageService(MicroserviceOverviewComponent),
         {
@@ -53,6 +59,10 @@ export class MicroserviceOverviewComponent implements OnInit {
      * True if error was thrown while getting data for microservies table, false otherwise
      */
     microservicesHasError$: Observable<boolean>;
+    /**
+     * True while data for microservices table is being fetched, false otherwise
+     */
+    isLoading$: Observable<boolean>;
     controls: SentinelControlItem[];
     destroyRef = inject(DestroyRef);
     private microserviceService = inject(MicroserviceOverviewService);
@@ -71,6 +81,7 @@ export class MicroserviceOverviewComponent implements OnInit {
             map((microservices) => new MicroserviceTable(microservices)),
         );
         this.microservicesHasError$ = this.microserviceService.hasError$;
+        this.isLoading$ = this.microserviceService.isLoading$;
         this.microserviceService.selected$
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe(() => this.initControls());

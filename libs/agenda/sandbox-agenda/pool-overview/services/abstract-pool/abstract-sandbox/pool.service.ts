@@ -16,6 +16,7 @@ export class PoolService {
     private poolOverviewService = inject(PoolOverviewService);
     pools$: Observable<OffsetPaginatedResource<Pool>> =
         this.poolOverviewService.resource$;
+    poolsIsLoading$: Observable<boolean> = this.poolOverviewService.isLoading$;
     private lastPagination: OffsetPaginationEvent<PoolSort>;
 
     /**

@@ -6,8 +6,10 @@
     [defaultSortName]="DEFAULT_SORT_COLUMN"
     [displayedActionsCount]="8"
     [hasError]="hasError$ | async"
+    [isLoading]="isLoading$ | async"
     [titlecasedActions]="false"
-    [titlecasedColumnHeaders]="false">
+    [titlecasedColumnHeaders]="false"
+    crczpTableEmptyState="No sandbox pools have been created yet">
     <ng-container *sentinelRow="'lockState'; template: lockState" />
     <ng-container *sentinelRow="'comment'; template: comment" />
 </sentinel-table>

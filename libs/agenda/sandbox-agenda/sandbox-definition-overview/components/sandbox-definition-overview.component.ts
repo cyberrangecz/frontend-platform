@@ -24,12 +24,18 @@ import {
 } from '@crczp/utils';
 import { PaginationMapper } from '@crczp/api-common';
 import { SandboxDefinitionSort } from '@crczp/sandbox-api';
+import { TableEmptyStateDirective } from '@crczp/components';
 
 @Component({
     selector: 'crczp-sandbox-definition-overview',
     templateUrl: './sandbox-definition-overview.component.html',
     styleUrls: ['./sandbox-definition-overview.component.scss'],
-    imports: [SentinelControlsComponent, SentinelTableComponent, AsyncPipe],
+    imports: [
+        SentinelControlsComponent,
+        SentinelTableComponent,
+        AsyncPipe,
+        TableEmptyStateDirective,
+    ],
     providers: [
         {
             provide: SandboxDefinitionOverviewService,
@@ -47,6 +53,7 @@ export class SandboxDefinitionOverviewComponent implements OnInit {
     controls: SentinelControlItem[];
     sandboxDefinitions$: Observable<SandboxDefinitionTable>;
     hasError$: Observable<boolean>;
+    isLoading$: Observable<boolean>;
     destroyRef = inject(DestroyRef);
     readonly DEFAULT_SORT_COLUMN: SandboxDefinitionSort = 'id';
     readonly DEFAULT_SORT_DIRECTION: SortDir = 'asc';
@@ -91,5 +98,6 @@ export class SandboxDefinitionOverviewComponent implements OnInit {
         );
         this.onLoadEvent(this.lastLoadEvent);
         this.hasError$ = this.sandboxDefinitionService.hasError$;
+        this.isLoading$ = this.sandboxDefinitionService.isLoading$;
     }
 }

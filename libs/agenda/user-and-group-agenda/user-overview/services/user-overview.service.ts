@@ -11,7 +11,7 @@ import { User } from '@crczp/user-and-group-model';
 import { EMPTY, Observable } from 'rxjs';
 import { map, switchMap, take, tap } from 'rxjs/operators';
 import { SelectablePaginatedService, UserFilter } from '@crczp/user-and-group-agenda/internal';
-import { ErrorHandlerService, FileUploadProgressService, NotificationService, PortalConfig } from '@crczp/utils';
+import { ErrorHandlerService, FileUploadProgressService, LoadingTracker, NotificationService, PortalConfig } from '@crczp/utils';
 import { FileUploadDialog, FileUploadDialogConfig } from '@crczp/components';
 import { OffsetPaginatedResource } from '@crczp/api-common';
 
@@ -30,6 +30,9 @@ export class UserOverviewService extends SelectablePaginatedService<User> {
 
     private lastPagination: OffsetPaginationEvent<UserSort>;
     private lastFilter: string;
+    private readonly loadingTracker = new LoadingTracker();
+
+    override isLoading$ = this.loadingTracker.isLoading$;
 
     constructor() {
         super(inject(PortalConfig).defaultPageSize);
@@ -49,15 +52,17 @@ export class UserOverviewService extends SelectablePaginatedService<User> {
         const filters = filterValue ? [new UserFilter(filterValue)] : [];
         this.hasErrorSubject$.next(false);
         this.clearSelection();
-        return this.api.getAll(pagination, filters).pipe(
-            tap(
-                (users) => {
-                    this.resourceSubject$.next(users);
-                },
-                (err) => {
-                    this.errorHandler.emitAPIError(err, 'Fetching users');
-                    this.hasErrorSubject$.next(true);
-                },
+        return this.loadingTracker.trackRequest(() =>
+            this.api.getAll(pagination, filters).pipe(
+                tap(
+                    (users) => {
+                        this.resourceSubject$.next(users);
+                    },
+                    (err) => {
+                        this.errorHandler.emitAPIError(err, 'Fetching users');
+                        this.hasErrorSubject$.next(true);
+                    },
+                ),
             ),
         );
     }
