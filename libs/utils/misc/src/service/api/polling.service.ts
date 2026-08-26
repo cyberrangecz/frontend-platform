@@ -12,7 +12,8 @@ export class PollingService {
      *
      * @param observable$ Observable resubscribed on every cycle.
      * @param pollingPeriod Wait between cycles, in milliseconds.
-     * @param retryAttempts Failed cycles tolerated before the error is propagated.
+     * @param retryAttempts Attempts a cycle gets in total, the first one included; the error is
+     * propagated once a failure exhausts them, so a value of one leaves no retry.
      * @param initialDelay Set to true to wait one period before the first cycle.
      * @returns Observable emitting the value of every successful cycle.
      */

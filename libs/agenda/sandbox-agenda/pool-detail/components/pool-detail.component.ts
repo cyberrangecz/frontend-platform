@@ -128,7 +128,8 @@ export class PoolDetailComponent implements OnInit, AfterViewInit {
                 sort: 'id',
             })
             .pipe(takeUntilDestroyed(this.destroyRef))
-            .subscribe();
+            // A polling failure is reported upstream.
+            .subscribe({ error: () => undefined });
     }
 
     onStageAction(

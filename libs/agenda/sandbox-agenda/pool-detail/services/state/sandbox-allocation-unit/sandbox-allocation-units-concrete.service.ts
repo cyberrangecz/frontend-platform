@@ -90,12 +90,7 @@ export class SandboxAllocationUnitsConcreteService extends SandboxAllocationUnit
                 this.poolPollingPeriod,
                 this.retryAttempts,
             )
-            .pipe(
-                tap(
-                    (_) => _,
-                    (err) => this.onGetAllError(err),
-                ),
-            );
+            .pipe(tap({ error: (err) => this.onGetAllError(err) }));
     }
 
     /**
