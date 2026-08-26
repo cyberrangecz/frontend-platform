@@ -42,7 +42,7 @@ export class TableEmptyStateDirective implements DoCheck {
 
     /** True while the table holds no rows and is neither loading them nor reporting a failure. */
     private isEmpty(): boolean {
-        return !this.table.isLoading && !this.table.hasError && (this.table.data?.rows.length ?? 0) === 0;
+        return !this.table.isLoading && !this.table.hasError && this.table.data?.rows.length === 0;
     }
 
     /** Renders the message row into the table body, keeping its content, span and placement current. */

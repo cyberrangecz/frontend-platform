@@ -6,7 +6,7 @@
             {{standalone() ? 'topology-tabs-wrapper--standalone' : ''}}
         ">
     @if ((synchronizerService.topologyCollapsed$ | async) === false && !standalone()) {
-        <div (mousedown)="mouseDown($event)" class="draggable-bar"></div>
+        <div (pointerdown)="startResize($event)" class="draggable-bar"></div>
     }
     <mat-tab-group
         [(selectedIndex)]="selectedIndex"
@@ -25,9 +25,9 @@
             </ng-template>
             <crczp-topology-graph
                 (openConsole)="handleOpenConsole($event)"
+                [consolesAvailable]="!!sandboxUuid()"
                 [topology]="topology()"
             />
-
         </mat-tab>
         @for (tab of tabs(); track tab) {
             <ng-container>
@@ -56,4 +56,10 @@
             </ng-container>
         }
     </mat-tab-group>
+
+    @if (selectedIndex() === TOPOLOGY_TAB_INDEX) {
+        <div class="topology-tab-actions">
+            <ng-content select="[topologyActions]" />
+        </div>
+    }
 </div>

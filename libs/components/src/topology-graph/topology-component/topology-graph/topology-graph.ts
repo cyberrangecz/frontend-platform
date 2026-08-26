@@ -57,6 +57,8 @@ export class TopologyGraph implements AfterViewInit {
     openConsole = output<OpenConsoleEvent>();
 
     topology = input.required<Topology>();
+    /** Whether the nodes back a running sandbox and can therefore be connected to. */
+    consolesAvailable = input<boolean>(true);
     @ViewChild('networkContainer', { static: false })
     networkContainer: ElementRef<HTMLDivElement>;
     network = signal<Network | null>(null);

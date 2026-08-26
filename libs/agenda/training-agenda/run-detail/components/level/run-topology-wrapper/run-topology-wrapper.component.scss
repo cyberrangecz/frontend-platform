@@ -1,5 +1,6 @@
-$content-height: calc(100dvh - 36rem);
-
+$content-height: calc(100dvh - 35rem);
+$notch-thickness: 2rem;
+$notch-gap: 3px;
 
 :host {
     display: flex;
@@ -13,7 +14,6 @@ $content-height: calc(100dvh - 36rem);
 .button-align-wrapper {
     align-items: center;
 }
-
 
 .level-topology {
     display: block;
@@ -30,24 +30,26 @@ $content-height: calc(100dvh - 36rem);
     opacity: 0;
 }
 
-
-.expand-topology-button {
+/** Tab hanging off one edge of the topology panel: flat where it meets the panel, rounded away from it. */
+%panel-edge-notch {
     display: flex;
-    z-index: 10;
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    top: 52dvh;
-    right: 0;
+    border: none;
+}
+
+.expand-topology-button {
+    @extend %panel-edge-notch;
+    z-index: 10;
     height: 8rem;
-    width: 2rem;
+    width: $notch-thickness;
+    padding: 0;
+    margin: 0 $notch-gap 0 0;
     border-radius: 1rem 0 0 1rem;
     background: var(--neutral-98);
     box-shadow: -2px 1px 2px var(--neutral-70);
-    border: none;
     cursor: pointer;
-    padding: 0;
-    margin: 0 1px 0 0;
 
     &:hover, &:active, &:focus {
         box-shadow: -1px 1px 2px var(--neutral-70);
@@ -56,9 +58,53 @@ $content-height: calc(100dvh - 36rem);
     &:hover {
         background: var(--primary-95);
     }
+}
 
-    &--expanded {
-        position: static;
-        margin: 0 3px 0 0;
+.panel-actions {
+    @extend %panel-edge-notch;
+    height: $notch-thickness;
+    border-radius: 1rem 0 0 0;
+    overflow: hidden;
+}
+
+.panel-actions__item {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    height: 100%;
+    padding: 0 1rem;
+    background: transparent;
+    border: none;
+    color: var(--primary-40);
+    font: inherit;
+    cursor: pointer;
+
+    &:hover, &:focus {
+        background: var(--primary-95);
     }
+}
+
+// Strongest where the two actions meet, dissolving towards both ends of the notch.
+.panel-actions__divider {
+    flex: 0 0 auto;
+    width: 1px;
+    height: 100%;
+    background: linear-gradient(
+            to bottom,
+            transparent 0%,
+            var(--neutral-70) 50%,
+            transparent 100%
+    );
+}
+
+.panel-actions__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    width: 1.125rem;
+    height: 1.125rem;
+    line-height: 1;
 }

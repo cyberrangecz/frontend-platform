@@ -1,6 +1,4 @@
-import { Component, computed, DestroyRef, inject, input, OnInit, output, signal } from '@angular/core';
-import { MatButton } from '@angular/material/button';
-import { MatTooltip } from '@angular/material/tooltip';
+import { Component, DestroyRef, inject, input, OnInit, signal } from '@angular/core';
 import { Topology } from '@crczp/sandbox-model';
 import { TopologyApi } from '@crczp/sandbox-api';
 import { ErrorHandlerService } from '@crczp/utils';
@@ -17,23 +15,12 @@ export type TopologySource = SandboxInstanceSource | SandboxDefinitionSource;
     selector: 'crczp-topology-wrapper',
     templateUrl: './topology-wrapper.component.html',
     styleUrl: './topology-wrapper.component.css',
-    imports: [
-        MatButton,
-        MatTooltip,
-        TopologyComponent,
-        LogoSpinnerComponent,
-        MatIcon,
-    ],
+    imports: [TopologyComponent, LogoSpinnerComponent, MatIcon],
 })
 export class TopologyWrapperComponent implements OnInit {
     id = input.required<TopologySource>();
     levelLoading = input(false);
     standalone = input(false);
-
-    hasInstance = computed(
-        () => !!(this.id() as SandboxInstanceSource).instanceId,
-    );
-    getAccessFile = output<void>();
 
     destroyRef = inject(DestroyRef);
     api = inject(TopologyApi);

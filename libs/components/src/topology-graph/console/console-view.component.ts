@@ -1,6 +1,7 @@
 import {
     AfterViewInit,
     Component,
+    computed,
     DestroyRef,
     ElementRef,
     inject,
@@ -23,6 +24,8 @@ import { GuacamoleKeyCodes } from './keycodes';
 import { PortalConfig } from '@crczp/utils';
 import { Observable, Subject } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ConsoleClipboard } from './console-clipboard';
+import { ConsoleClipboardHint } from './console-clipboard-hint.component';
 
 export type ConnectionParams = {
     sandboxUuid: string;
@@ -30,9 +33,10 @@ export type ConnectionParams = {
     withGui: boolean;
 };
 
+
 @Component({
     selector: 'crczp-console-view',
-    imports: [CommonModule, GuacamoleStatus],
+    imports: [CommonModule, GuacamoleStatus, ConsoleClipboardHint],
     templateUrl: './console-view.component.html',
     styleUrl: './console-view.component.scss',
 })
@@ -54,8 +58,6 @@ export class ConsoleView implements AfterViewInit, OnDestroy {
     private guacMouse: Guacamole.Mouse | null = null;
     private resizeObserver: ResizeObserver | null = null;
     private listeners: (() => void)[] = [];
-    private clipboardInterval: number | null = null;
-    private lastClipboardContent = '';
     private resizeTimeout: number | null = null;
     private RESIZE_DEBOUNCE_MS = 50;
     private INITIAL_RESOLUTION_COEFFICIENT = 1;
@@ -63,16 +65,40 @@ export class ConsoleView implements AfterViewInit, OnDestroy {
     private readonly platformConfig = inject(PortalConfig);
     private keydownHandler: ((e: KeyboardEvent) => void) | null = null;
     private keyupHandler: ((e: KeyboardEvent) => void) | null = null;
+    private readonly heldKeysyms = new Set<number>();
+    private windowBlurHandler: (() => void) | null = null;
+
+    private readonly clipboard = new ConsoleClipboard(
+        {
+            isGraphical: () => this.connectionParams().withGui,
+            isConnected: () =>
+                this.guacClient !== null &&
+                this.clientStateCode() === 'CONNECTED',
+            sendClipboardText: (text: string) =>
+                this.sendClipboardToRemote(text),
+            sendKeyEvent: (pressed: 0 | 1, keysym: number) =>
+                this.guacClient?.sendKeyEvent(pressed, keysym),
+        },
+        this.destroyRef,
+    );
+
+    /**
+     * Shows on a graphical session whose browser withholds unprompted clipboard reading, where
+     * pasting into an application inside the desktop takes two shortcuts rather than one.
+     */
+    protected readonly clipboardHintVisible = computed(
+        () =>
+            this.connectionParams().withGui &&
+            !this.clipboard.automaticSyncActive(),
+    );
 
     ngAfterViewInit(): void {
         this.connectGuacamole();
         this.setupResizeObserver();
-        this.setupClipboardSync();
 
         this.focusStream()
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe(() => {
-                console.log('Focusing Guacamole wrapper...');
                 setTimeout(() => {
                     this.guacWrapper.nativeElement.focus();
                 }, 100);
@@ -85,21 +111,18 @@ export class ConsoleView implements AfterViewInit, OnDestroy {
             this.resizeObserver = null;
         }
 
-        if (this.clipboardInterval) {
-            clearInterval(this.clipboardInterval);
-            this.clipboardInterval = null;
-        }
-
         if (this.resizeTimeout) {
             clearTimeout(this.resizeTimeout);
             this.resizeTimeout = null;
         }
 
         if (this.guacClient) {
-            console.log('Disconnecting Guacamole client...');
+            this.releaseHeldKeys();
             this.guacClient.disconnect();
             this.guacClient = null;
         }
+
+        this.clipboard.dispose();
 
         for (const remove of this.listeners) remove();
         this.listeners = [];
@@ -147,6 +170,24 @@ export class ConsoleView implements AfterViewInit, OnDestroy {
                 passive: false,
             });
         }
+
+        if (this.windowBlurHandler) {
+            window.addEventListener('blur', this.windowBlurHandler);
+        }
+
+        this.clipboard.attach();
+    }
+
+    /**
+     * Releases every key the remote session still believes is held. Without this a modifier
+     * whose release landed outside the console stays latched in the session, silently altering
+     * each keystroke that follows.
+     */
+    private releaseHeldKeys(): void {
+        for (const keysym of this.heldKeysyms) {
+            this.guacClient?.sendKeyEvent(0, keysym);
+        }
+        this.heldKeysyms.clear();
     }
 
     protected unlockKeyboard() {
@@ -157,6 +198,13 @@ export class ConsoleView implements AfterViewInit, OnDestroy {
             document.removeEventListener('keydown', this.keydownHandler);
             document.removeEventListener('keyup', this.keyupHandler);
         }
+
+        if (this.windowBlurHandler) {
+            window.removeEventListener('blur', this.windowBlurHandler);
+        }
+
+        this.clipboard.detach();
+        this.releaseHeldKeys();
     }
 
     private get_keysym(
@@ -191,26 +239,18 @@ export class ConsoleView implements AfterViewInit, OnDestroy {
         );
     }
 
-    private setupClipboardSync(): void {
-        // Poll browser clipboard every 500ms to detect changes
-        this.clipboardInterval = window.setInterval(async () => {
-            if (!this.guacClient || this.clientStateCode() !== 'CONNECTED') {
-                return;
-            }
-
-            try {
-                const clipboardText = await navigator.clipboard.readText();
-                if (clipboardText !== this.lastClipboardContent) {
-                    this.lastClipboardContent = clipboardText;
-                    this.sendClipboardToRemote(clipboardText);
-                }
-            } catch (_error) {
-                // Clipboard access denied or not available - this is normal
-                // when the tab is not focused
-            }
-        }, 500);
+    private keysymOf(event: KeyboardEvent): number | null {
+        return (
+            this.keysym_from_key_identifier(event.key, event.location) ||
+            this.keysym_from_keycode(event.keyCode, event.location)
+        );
     }
 
+    /**
+     * Sends the text to the remote session as a plain-text clipboard stream. What the far end
+     * does with it is protocol dependent: a terminal session buffers it for its own paste
+     * shortcut, while a graphical session sets the guest clipboard.
+     */
     private sendClipboardToRemote(text: string): void {
         if (!this.guacClient) return;
 
@@ -238,13 +278,8 @@ export class ConsoleView implements AfterViewInit, OnDestroy {
                 clipboardContent += text;
             };
 
-            reader.onend = async () => {
-                try {
-                    await navigator.clipboard.writeText(clipboardContent);
-                    this.lastClipboardContent = clipboardContent;
-                } catch (error) {
-                    console.error('Failed to write to clipboard:', error);
-                }
+            reader.onend = () => {
+                this.clipboard.receiveFromSession(clipboardContent);
             };
         };
     }
@@ -327,23 +362,38 @@ export class ConsoleView implements AfterViewInit, OnDestroy {
         this.setupClipboardReceiver();
 
         this.keydownHandler = (e: KeyboardEvent) => {
+            if (this.clipboard.handleKeydown(e)) {
+                return;
+            }
+
             e.preventDefault();
-            const keysym =
-                this.keysym_from_key_identifier(e.key, e.location) ||
-                this.keysym_from_keycode(e.keyCode, e.location);
+            const keysym = this.keysymOf(e);
             if (keysym !== null) {
+                this.heldKeysyms.add(keysym);
                 this.guacClient?.sendKeyEvent(1, keysym);
             }
         };
         this.keyupHandler = (e: KeyboardEvent) => {
             e.preventDefault();
-            const keysym =
-                this.keysym_from_key_identifier(e.key, e.location) ||
-                this.keysym_from_keycode(e.keyCode, e.location);
+
+            if (this.clipboard.handleKeyup(e)) {
+                return;
+            }
+
+            const keysym = this.keysymOf(e);
             if (keysym !== null) {
+                this.heldKeysyms.delete(keysym);
                 this.guacClient?.sendKeyEvent(0, keysym);
             }
         };
+
+        this.windowBlurHandler = () => this.releaseHeldKeys();
+
+        this.listeners.push(() => {
+            if (this.windowBlurHandler) {
+                window.removeEventListener('blur', this.windowBlurHandler);
+            }
+        });
 
         this.listeners.push(() => {
             if (this.keydownHandler) {
@@ -361,6 +411,8 @@ export class ConsoleView implements AfterViewInit, OnDestroy {
         this.guacMouse.onEach(
             ['mousedown', 'mousemove', 'mouseup'],
             (e: { state: Guacamole.Mouse.State }) => {
+                this.clipboard.retryPendingWrite();
+
                 if (this.guacClient && this.currentScale() !== 1) {
                     // Correct for double scaling by dividing by the scale factor
                     const correctedState = {

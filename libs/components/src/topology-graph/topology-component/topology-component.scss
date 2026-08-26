@@ -18,6 +18,14 @@
 }
 
 
+/** Anchors projected actions against the panel's inner bottom-right corner. */
+.topology-tab-actions {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    z-index: 1001;
+}
+
 .draggable-bar {
     position: absolute;
     left: 0;
@@ -25,6 +33,7 @@
     height: calc(100% - 30px);
     width: 6px;
     cursor: col-resize;
+    touch-action: none;
     z-index: 1002;
     --gradient-color: color-mix(in srgb, var(--primary-60) 20%, var(--neutral-98));
     background: linear-gradient(90deg, var(--gradient-color) 50%, var(--neutral-98) 100%);
@@ -70,8 +79,9 @@
     overflow: visible;
 }
 
+// The docked form keeps its square right edge at every width; only the standalone box rounds fully.
 @media screen and (max-width: 1400px) {
-    .toplogy-tabs-wrapper {
+    .topology-tabs-wrapper--standalone {
         border-radius: 1rem;
         box-shadow: 0 2px 4px var(--neutral-70);
     }

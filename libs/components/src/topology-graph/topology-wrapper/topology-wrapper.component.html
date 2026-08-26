@@ -11,17 +11,9 @@
             [standalone]="standalone()"
             [topology]="topology()"
             class="wh-100 block"
-        />
-        @if (this.hasInstance()) {
-            <button
-                (click)="this.getAccessFile.emit()"
-                [disabled]="this.topologyLoading()"
-                class="ssh-button"
-                mat-raised-button
-                matTooltip="Download config for SSH client">
-                Get SSH Config
-            </button>
-        }
+        >
+            <ng-content ngProjectAs="[topologyActions]" select="[topologyActions]" />
+        </crczp-topology>
     } @else {
         <div class="hflex center wh-100 mock-tabs-container">
             <mat-icon class="topology-error__icon" color="error">warning</mat-icon>

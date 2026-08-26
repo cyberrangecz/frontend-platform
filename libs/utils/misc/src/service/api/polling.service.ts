@@ -1,46 +1,45 @@
 import { Injectable } from '@angular/core';
-import { delayWhen, EMPTY, Observable, repeat, throwError, timer } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
+import { defer, EMPTY, Observable, repeat, throwError, timer } from 'rxjs';
+import { catchError, switchMap, tap } from 'rxjs/operators';
 
 @Injectable()
 export class PollingService {
     /**
-     * Start polling strategy on given observable with given period and maximal retry attempts on fail.
-     * Retry attempts are reset on success if there was an error in previous attempt.
-     * @param observable$ observable for which the polling is created
-     * @param pollingPeriod polling period
-     * @param retryAttempts retry attempts on fail
-     * @param initialDelay set to true if initial delay of length set in polling period should happen before first call
+     * Repeatedly subscribes to the given observable, separating each cycle by the polling period.
+     * A failed cycle is retried while attempts remain, each retry waiting a multiple of the period,
+     * and the wait returns to a single period once a cycle succeeds. Exhausting the attempts
+     * propagates the last error and ends the polling.
+     *
+     * @param observable$ Observable resubscribed on every cycle.
+     * @param pollingPeriod Wait between cycles, in milliseconds.
+     * @param retryAttempts Attempts a cycle gets in total, the first one included; the error is
+     * propagated once a failure exhausts them, so a value of one leaves no retry.
+     * @param initialDelay Set to true to wait one period before the first cycle.
+     * @returns Observable emitting the value of every successful cycle.
      */
     public startPolling<Type>(
         observable$: Observable<Type>,
         pollingPeriod: number,
         retryAttempts: number,
-        initialDelay?: boolean
+        initialDelay?: boolean,
     ): Observable<Type> {
         let retryAttempt = 1;
 
-        return observable$.pipe(
+        const polled$ = observable$.pipe(
             tap(() => {
-                // reset retry on successful request if it was previously increased (this resets polling delay as well)
-                if (retryAttempt > 1) {
-                    retryAttempt = 1;
-                }
+                retryAttempt = 1;
             }),
             catchError((err) => {
-                // on 4xx or 5xx backend response increase attempts
                 retryAttempt++;
-                if (retryAttempt <= retryAttempts) {
-                    return EMPTY; // catch error to allow additional attempt
-                } else {
-                    return throwError(() => err);
-                }
+                return retryAttempt <= retryAttempts
+                    ? EMPTY
+                    : throwError(() => err);
             }),
-            // increase delay exponentially on error
-            delayWhen(() =>
-                initialDelay ? timer(pollingPeriod * retryAttempt) : timer(0)
-            ),
-            repeat()
+            repeat({ delay: () => timer(pollingPeriod * retryAttempt) }),
         );
+
+        return initialDelay
+            ? defer(() => timer(pollingPeriod)).pipe(switchMap(() => polled$))
+            : polled$;
     }
 }
