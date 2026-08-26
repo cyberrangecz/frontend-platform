@@ -1,6 +1,7 @@
 import {
     AfterViewInit,
     Component,
+    computed,
     DestroyRef,
     ElementRef,
     inject,
@@ -24,6 +25,7 @@ import { PortalConfig } from '@crczp/utils';
 import { Observable, Subject } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ConsoleClipboard } from './console-clipboard';
+import { ConsoleClipboardHint } from './console-clipboard-hint.component';
 
 export type ConnectionParams = {
     sandboxUuid: string;
@@ -34,7 +36,7 @@ export type ConnectionParams = {
 
 @Component({
     selector: 'crczp-console-view',
-    imports: [CommonModule, GuacamoleStatus],
+    imports: [CommonModule, GuacamoleStatus, ConsoleClipboardHint],
     templateUrl: './console-view.component.html',
     styleUrl: './console-view.component.scss',
 })
@@ -78,6 +80,16 @@ export class ConsoleView implements AfterViewInit, OnDestroy {
                 this.guacClient?.sendKeyEvent(pressed, keysym),
         },
         this.destroyRef,
+    );
+
+    /**
+     * Shows on a graphical session whose browser withholds unprompted clipboard reading, where
+     * pasting into an application inside the desktop takes two shortcuts rather than one.
+     */
+    protected readonly clipboardHintVisible = computed(
+        () =>
+            this.connectionParams().withGui &&
+            !this.clipboard.automaticSyncActive(),
     );
 
     ngAfterViewInit(): void {

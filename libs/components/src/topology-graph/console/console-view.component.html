@@ -7,7 +7,11 @@
     class="guacamole-wrapper wh-100"
     tabindex="0"
 >
-    <div #guacContainer></div>
+    <div #guacContainer>
+        @if (clipboardHintVisible()) {
+            <crczp-console-clipboard-hint class="guacamole-clipboard-hint" />
+        }
+    </div>
 
     <crczp-guacamole-status
         [clientStateCode]="clientStateCode()"

@@ -1,0 +1,71 @@
+:host {
+    display: block;
+}
+
+.hint-icon {
+    color: var(--warning-60);
+
+    &:hover + .hint-panel {
+        display: block;
+    }
+}
+
+.hint-panel {
+    display: none;
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    right: 0;
+    width: 21rem;
+    pointer-events: none;
+    padding: 0.875rem 1rem 1rem;
+    border-radius: 0.5rem;
+    background: var(--neutral-100);
+    color: var(--neutral-20);
+    box-shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.28);
+    font-size: 0.8125rem;
+    line-height: 1.5;
+}
+
+.hint-title {
+    margin: 0 0 0.75rem;
+    color: var(--neutral-10);
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.hint-heading {
+    margin: 0 0 0.25rem;
+    color: var(--neutral-40);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+
+    &:not(:first-of-type) {
+        margin-top: 0.875rem;
+    }
+}
+
+.hint-steps {
+    margin: 0;
+    padding-left: 1.125rem;
+
+    li + li {
+        margin-top: 0.25rem;
+    }
+}
+
+.hint-text {
+    margin: 0;
+}
+
+kbd {
+    padding: 0.0625rem 0.3125rem;
+    border: 1px solid var(--neutral-90);
+    border-radius: 0.1875rem;
+    background: var(--neutral-98);
+    color: var(--neutral-10);
+    font-family: inherit;
+    font-size: 0.75rem;
+    white-space: nowrap;
+}
