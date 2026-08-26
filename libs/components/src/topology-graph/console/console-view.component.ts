@@ -24,7 +24,7 @@ import { GuacamoleKeyCodes } from './keycodes';
 import { PortalConfig } from '@crczp/utils';
 import { Observable, Subject } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ConsoleClipboard } from './console-clipboard';
+import { ConsoleClipboard, pastesWithCommandKey } from './console-clipboard';
 import { ConsoleClipboardHint } from './console-clipboard-hint.component';
 
 export type ConnectionParams = {
@@ -67,6 +67,17 @@ export class ConsoleView implements AfterViewInit, OnDestroy {
     private keyupHandler: ((e: KeyboardEvent) => void) | null = null;
     private readonly heldKeysyms = new Set<number>();
     private windowBlurHandler: (() => void) | null = null;
+    protected readonly commandKeyPlatform = pastesWithCommandKey();
+
+    /**
+     * What each Command key becomes in the session on a platform that shortcuts with it. The left
+     * one carries the shortcuts and so arrives as Control, while the right one is left as the
+     * platform key, sent as Super so a guest reads it as its own Windows key.
+     */
+    private readonly COMMAND_KEY_KEYSYMS = new Map<number, number>([
+        [0xffe7, 0xffe3],
+        [0xffe8, 0xffeb],
+    ]);
 
     private readonly clipboard = new ConsoleClipboard(
         {
@@ -239,11 +250,20 @@ export class ConsoleView implements AfterViewInit, OnDestroy {
         );
     }
 
+    /**
+     * Resolves the keysym the session receives for a key, substituting the Command keys on a
+     * platform that shortcuts with them. Their native Meta keysym addresses nothing in a Linux or
+     * Windows guest, whose shortcuts are built on Control and whose platform key is Super.
+     */
     private keysymOf(event: KeyboardEvent): number | null {
-        return (
+        const keysym =
             this.keysym_from_key_identifier(event.key, event.location) ||
-            this.keysym_from_keycode(event.keyCode, event.location)
-        );
+            this.keysym_from_keycode(event.keyCode, event.location);
+
+        if (keysym === null || !this.commandKeyPlatform) {
+            return keysym;
+        }
+        return this.COMMAND_KEY_KEYSYMS.get(keysym) ?? keysym;
     }
 
     /**
