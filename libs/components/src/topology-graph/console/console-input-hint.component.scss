@@ -3,7 +3,11 @@
 }
 
 .hint-icon {
-    color: var(--warning-60);
+    color: var(--neutral-90);
+
+    &--limiting {
+        color: var(--warning-60);
+    }
 
     &:hover + .hint-panel {
         display: block;
@@ -15,8 +19,7 @@
     position: absolute;
     top: calc(100% + 0.5rem);
     right: 0;
-    width: 21rem;
-    pointer-events: none;
+    width: 22rem;
     padding: 0.875rem 1rem 1rem;
     border-radius: 0.5rem;
     background: var(--neutral-100);
@@ -24,34 +27,42 @@
     box-shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.28);
     font-size: 0.8125rem;
     line-height: 1.5;
+    pointer-events: none;
+}
+
+.hint-section + .hint-section {
+    margin-top: 1rem;
+    padding-top: 0.875rem;
+    border-top: 1px solid var(--neutral-90);
 }
 
 .hint-title {
-    margin: 0 0 0.75rem;
+    margin: 0 0 0.5rem;
     color: var(--neutral-10);
     font-size: 0.875rem;
     font-weight: 600;
 }
 
 .hint-heading {
-    margin: 0 0 0.25rem;
+    margin: 0.875rem 0 0.25rem;
     color: var(--neutral-40);
     font-size: 0.6875rem;
     font-weight: 600;
     letter-spacing: 0.06em;
     text-transform: uppercase;
 
-    &:not(:first-of-type) {
-        margin-top: 0.875rem;
+    &:first-of-type {
+        margin-top: 0;
     }
 }
 
+.hint-notes,
 .hint-steps {
     margin: 0;
     padding-left: 1.125rem;
 
     li + li {
-        margin-top: 0.25rem;
+        margin-top: 0.375rem;
     }
 }
 

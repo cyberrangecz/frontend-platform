@@ -8,8 +8,13 @@
     tabindex="0"
 >
     <div #guacContainer>
-        @if (clipboardHintVisible()) {
-            <crczp-console-clipboard-hint class="guacamole-clipboard-hint" />
+        @if (inputHintVisible()) {
+            <crczp-console-input-hint
+                [clipboardGuidance]="clipboardGuidanceNeeded()"
+                [commandKeyPlatform]="commandKeyPlatform"
+                [class.guacamole-input-hint--gutter]="!connectionParams().withGui"
+                [graphical]="connectionParams().withGui"
+                class="guacamole-input-hint" />
         }
     </div>
 

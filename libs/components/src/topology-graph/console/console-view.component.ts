@@ -24,8 +24,8 @@ import { GuacamoleKeyCodes } from './keycodes';
 import { PortalConfig } from '@crczp/utils';
 import { Observable, Subject } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ConsoleClipboard, pastesWithCommandKey } from './console-clipboard';
-import { ConsoleClipboardHint } from './console-clipboard-hint.component';
+import { ConsoleClipboard, shortcutsWithCommandKey } from './console-clipboard';
+import { ConsoleInputHint } from './console-input-hint.component';
 
 export type ConnectionParams = {
     sandboxUuid: string;
@@ -36,7 +36,7 @@ export type ConnectionParams = {
 
 @Component({
     selector: 'crczp-console-view',
-    imports: [CommonModule, GuacamoleStatus, ConsoleClipboardHint],
+    imports: [CommonModule, GuacamoleStatus, ConsoleInputHint],
     templateUrl: './console-view.component.html',
     styleUrl: './console-view.component.scss',
 })
@@ -67,7 +67,7 @@ export class ConsoleView implements AfterViewInit, OnDestroy {
     private keyupHandler: ((e: KeyboardEvent) => void) | null = null;
     private readonly heldKeysyms = new Set<number>();
     private windowBlurHandler: (() => void) | null = null;
-    protected readonly commandKeyPlatform = pastesWithCommandKey();
+    protected readonly commandKeyPlatform = shortcutsWithCommandKey();
 
     /**
      * What each Command key becomes in the session on a platform that shortcuts with it. The left
@@ -94,13 +94,18 @@ export class ConsoleView implements AfterViewInit, OnDestroy {
     );
 
     /**
-     * Shows on a graphical session whose browser withholds unprompted clipboard reading, where
+     * Holds on a graphical session whose browser withholds unprompted clipboard reading, where
      * pasting into an application inside the desktop takes two shortcuts rather than one.
      */
-    protected readonly clipboardHintVisible = computed(
+    protected readonly clipboardGuidanceNeeded = computed(
         () =>
             this.connectionParams().withGui &&
             !this.clipboard.automaticSyncActive(),
+    );
+
+    /** Holds while the console rewrites input on its way to the session, or pasting takes a key. */
+    protected readonly inputHintVisible = computed(
+        () => this.commandKeyPlatform || this.clipboardGuidanceNeeded(),
     );
 
     ngAfterViewInit(): void {
