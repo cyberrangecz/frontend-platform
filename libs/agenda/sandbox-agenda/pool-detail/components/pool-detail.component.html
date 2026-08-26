@@ -12,7 +12,7 @@
                     [displayedActionsCount]="4"
                     [hasError]="instancesTableHasError$ | async"
                     [isLoading]="instancesTableIsLoading$ | async"
-                    [titlecasedActions]=false
+                    [titlecasedActions]="false"
                     crczpTableEmptyState="No sandboxes in this pool yet">
         <ng-container *sentinelRow="'stages'; template: stagesTemplate" />
         <ng-container *sentinelRow="'comment'; template: comment" />
