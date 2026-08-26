@@ -7,11 +7,11 @@ const UPPERCASE_V_KEYSYM = 0x56;
 const LOWERCASE_V_KEYSYM = 0x76;
 
 /**
- * Reports whether the host platform pastes with Command rather than Control. Read from the
- * deprecated platform string on purpose: the client hint that supersedes it is absent from every
- * browser on Apple systems, which is the one case this has to recognise.
+ * Reports whether the host platform builds its shortcuts on Command rather than Control. Read from
+ * the deprecated platform string on purpose: the client hint that supersedes it is absent from
+ * every browser on Apple systems, which is the one case this has to recognise.
  */
-export function pastesWithCommandKey(): boolean {
+export function shortcutsWithCommandKey(): boolean {
     return /^Mac|^iP(hone|ad|od)/.test(navigator.platform);
 }
 
@@ -165,7 +165,7 @@ export class AutomaticClipboardStrategy extends ConsoleClipboardStrategy {
  */
 export class KeystrokeClipboardStrategy extends ConsoleClipboardStrategy {
     private pasteExpected = false;
-    private readonly commandKeyPastes = pastesWithCommandKey();
+    private readonly commandKeyPastes = shortcutsWithCommandKey();
     private readonly pasteHandler = (event: ClipboardEvent) =>
         this.handlePaste(event);
 
