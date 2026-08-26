@@ -23,6 +23,7 @@ import { GuacamoleKeyCodes } from './keycodes';
 import { PortalConfig } from '@crczp/utils';
 import { Observable, Subject } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ConsoleClipboard } from './console-clipboard';
 
 export type ConnectionParams = {
     sandboxUuid: string;
@@ -55,7 +56,6 @@ export class ConsoleView implements AfterViewInit, OnDestroy {
     private guacMouse: Guacamole.Mouse | null = null;
     private resizeObserver: ResizeObserver | null = null;
     private listeners: (() => void)[] = [];
-    private lastClipboardContent = '';
     private resizeTimeout: number | null = null;
     private RESIZE_DEBOUNCE_MS = 50;
     private INITIAL_RESOLUTION_COEFFICIENT = 1;
@@ -66,10 +66,23 @@ export class ConsoleView implements AfterViewInit, OnDestroy {
     private readonly heldKeysyms = new Set<number>();
     private windowBlurHandler: (() => void) | null = null;
 
+    private readonly clipboard = new ConsoleClipboard(
+        {
+            isGraphical: () => this.connectionParams().withGui,
+            isConnected: () =>
+                this.guacClient !== null &&
+                this.clientStateCode() === 'CONNECTED',
+            sendClipboardText: (text: string) =>
+                this.sendClipboardToRemote(text),
+            sendKeyEvent: (pressed: 0 | 1, keysym: number) =>
+                this.guacClient?.sendKeyEvent(pressed, keysym),
+        },
+        this.destroyRef,
+    );
+
     ngAfterViewInit(): void {
         this.connectGuacamole();
         this.setupResizeObserver();
-        this.setupClipboardSync();
 
         this.focusStream()
             .pipe(takeUntilDestroyed(this.destroyRef))
@@ -96,6 +109,8 @@ export class ConsoleView implements AfterViewInit, OnDestroy {
             this.guacClient.disconnect();
             this.guacClient = null;
         }
+
+        this.clipboard.dispose();
 
         for (const remove of this.listeners) remove();
         this.listeners = [];
@@ -147,6 +162,8 @@ export class ConsoleView implements AfterViewInit, OnDestroy {
         if (this.windowBlurHandler) {
             window.addEventListener('blur', this.windowBlurHandler);
         }
+
+        this.clipboard.attach();
     }
 
     /**
@@ -174,6 +191,7 @@ export class ConsoleView implements AfterViewInit, OnDestroy {
             window.removeEventListener('blur', this.windowBlurHandler);
         }
 
+        this.clipboard.detach();
         this.releaseHeldKeys();
     }
 
@@ -217,46 +235,10 @@ export class ConsoleView implements AfterViewInit, OnDestroy {
     }
 
     /**
-     * Mirrors the browser clipboard into the remote session each time the operating system
-     * clipboard changes, so text copied outside the console is available inside it. Engines
-     * without the clipboardchange event are left unwatched, as the alternative of reading the
-     * clipboard on a timer raises a paste confirmation on every single read wherever no
-     * clipboard-read permission exists.
+     * Sends the text to the remote session as a plain-text clipboard stream. What the far end
+     * does with it is protocol dependent: a terminal session buffers it for its own paste
+     * shortcut, while a graphical session sets the guest clipboard.
      */
-    private setupClipboardSync(): void {
-        if (!('onclipboardchange' in navigator.clipboard)) {
-            return;
-        }
-
-        const handleClipboardChange = () => void this.readClipboardIntoRemote();
-        navigator.clipboard.addEventListener(
-            'clipboardchange',
-            handleClipboardChange,
-        );
-        this.listeners.push(() =>
-            navigator.clipboard.removeEventListener(
-                'clipboardchange',
-                handleClipboardChange,
-            ),
-        );
-    }
-
-    private async readClipboardIntoRemote(): Promise<void> {
-        if (!this.guacClient || this.clientStateCode() !== 'CONNECTED') {
-            return;
-        }
-
-        try {
-            const clipboardText = await navigator.clipboard.readText();
-            if (clipboardText !== this.lastClipboardContent) {
-                this.lastClipboardContent = clipboardText;
-                this.sendClipboardToRemote(clipboardText);
-            }
-        } catch (_error) {
-            // Refused while the document holds no focus or the permission was denied.
-        }
-    }
-
     private sendClipboardToRemote(text: string): void {
         if (!this.guacClient) return;
 
@@ -284,13 +266,8 @@ export class ConsoleView implements AfterViewInit, OnDestroy {
                 clipboardContent += text;
             };
 
-            reader.onend = async () => {
-                try {
-                    await navigator.clipboard.writeText(clipboardContent);
-                    this.lastClipboardContent = clipboardContent;
-                } catch (error) {
-                    console.error('Failed to write to clipboard:', error);
-                }
+            reader.onend = () => {
+                this.clipboard.receiveFromSession(clipboardContent);
             };
         };
     }
@@ -373,6 +350,10 @@ export class ConsoleView implements AfterViewInit, OnDestroy {
         this.setupClipboardReceiver();
 
         this.keydownHandler = (e: KeyboardEvent) => {
+            if (this.clipboard.handleKeydown(e)) {
+                return;
+            }
+
             e.preventDefault();
             const keysym = this.keysymOf(e);
             if (keysym !== null) {
@@ -382,6 +363,10 @@ export class ConsoleView implements AfterViewInit, OnDestroy {
         };
         this.keyupHandler = (e: KeyboardEvent) => {
             e.preventDefault();
+
+            if (this.clipboard.handleKeyup(e)) {
+                return;
+            }
 
             const keysym = this.keysymOf(e);
             if (keysym !== null) {
@@ -414,6 +399,8 @@ export class ConsoleView implements AfterViewInit, OnDestroy {
         this.guacMouse.onEach(
             ['mousedown', 'mousemove', 'mouseup'],
             (e: { state: Guacamole.Mouse.State }) => {
+                this.clipboard.retryPendingWrite();
+
                 if (this.guacClient && this.currentScale() !== 1) {
                     // Correct for double scaling by dividing by the scale factor
                     const correctedState = {
