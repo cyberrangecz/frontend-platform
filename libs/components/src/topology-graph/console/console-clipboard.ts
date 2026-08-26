@@ -16,6 +16,14 @@ export function pastesWithCommandKey(): boolean {
 }
 
 /**
+ * Queries the clipboard read permission, which the DOM typings do not enumerate among the
+ * permission names even where a browser supports it.
+ */
+interface ClipboardPermissions {
+    query(descriptor: { name: 'clipboard-read' }): Promise<PermissionStatus>;
+}
+
+/**
  * The remote session a clipboard strategy drives. Every member is read at call time, so the port
  * may be handed over before the session exists.
  */
@@ -344,11 +352,12 @@ export class ConsoleClipboard {
             return;
         }
 
+        const permissions =
+            navigator.permissions as unknown as ClipboardPermissions;
+
         let query: Promise<PermissionStatus>;
         try {
-            query = navigator.permissions.query({
-                name: 'clipboard-read' as PermissionName,
-            });
+            query = permissions.query({ name: 'clipboard-read' });
         } catch {
             return;
         }
