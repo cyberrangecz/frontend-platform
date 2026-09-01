@@ -11,6 +11,11 @@ export interface SegmentedToggleOption {
     readonly label: string;
     /** Optional Material icon ligature shown before the label. */
     readonly icon?: string;
+    /**
+     * Optional text revealed on hover, saying what selecting this segment means.
+     * Shown whether or not the segment is reduced to its icon.
+     */
+    readonly tooltip?: string;
 }
 
 /**
