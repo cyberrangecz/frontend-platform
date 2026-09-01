@@ -7,8 +7,8 @@
     @for (option of options(); track option.value) {
         <mat-button-toggle
             [value]="option.value"
-            [matTooltip]="iconOnly() ? option.label : ''"
-            [matTooltipDisabled]="!iconOnly()"
+            [matTooltip]="option.tooltip ?? (iconOnly() ? option.label : '')"
+            [matTooltipDisabled]="!option.tooltip && !iconOnly()"
             [attr.aria-label]="iconOnly() ? option.label : null"
         >
             @if (option.icon) {
