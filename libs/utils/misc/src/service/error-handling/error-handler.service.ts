@@ -107,7 +107,7 @@ export class ErrorHandlerService implements ErrorHandler {
         return this.safeEmit(this.notificationService, 'emit', {
             type: SentinelNotificationTypeEnum.Error,
             title: source || 'Error',
-            additionalInfo: [error],
+            additionalInfo: this.toNotificationLines(error),
         });
     }
 
@@ -150,7 +150,23 @@ export class ErrorHandlerService implements ErrorHandler {
         err: HttpErrorResponse,
         notification: SentinelNotification,
     ) {
-        notification.additionalInfo = [err.error.message];
+        notification.additionalInfo = this.toNotificationLines(err.error.message);
+    }
+
+    /**
+     * Splits a message into one entry per line, dropping blank ones, so a message composed of
+     * several statements is offered to the notification as several lines instead of one block.
+     * A message holding no line break, and one that is not text at all, yields a single entry.
+     */
+    private toNotificationLines(message: unknown): string[] {
+        if (typeof message !== 'string') {
+            return [String(message ?? '')];
+        }
+        const lines = message
+            .split('\n')
+            .map((line) => line.trim())
+            .filter((line) => line.length > 0);
+        return lines.length > 0 ? lines : [message];
     }
 
     private setPythonApiErrorToNotification(

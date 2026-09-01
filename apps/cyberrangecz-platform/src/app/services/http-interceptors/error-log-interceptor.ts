@@ -25,22 +25,25 @@ export function errorLogInterceptor(
                             .get(SKIPPED_ERROR_CODES)
                             .includes(err.status)
                     ) {
-                        let codeBasedMessage = 'Error occurred while processing a request.';
+                        let codeBasedMessage = 'Error occurred while processing a request';
                         switch (err.status) {
                             case 0:
-                                codeBasedMessage = 'Network error.';
+                                codeBasedMessage = 'Network error';
+                                break;
+                            case 400:
+                                codeBasedMessage = 'Submitted data was not accepted';
                                 break;
                             case 401:
-                                codeBasedMessage = 'Unauthorized access. Please log in.';
+                                codeBasedMessage = 'Unauthorized access. Log in to continue';
                                 break;
                             case 403:
-                                codeBasedMessage = 'Insufficient permissions.';
+                                codeBasedMessage = 'Insufficient permissions';
                                 break;
                             case 404:
-                                codeBasedMessage = 'Resource not found.';
+                                codeBasedMessage = 'Resource not found';
                                 break;
                             case 500:
-                                codeBasedMessage = 'Internal server error.';
+                                codeBasedMessage = 'Internal server error';
                                 break;
                         }
 
