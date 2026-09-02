@@ -26,7 +26,7 @@ import {
     TrainingDefinitionWithLevels,
     TrainingLevel
 } from '@crczp/training-model';
-import { fromEvent, Observable } from 'rxjs';
+import { fromEvent, merge, Observable, throwError } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
 import { AssessmentLevelDTO } from '../../dto/level/assessment/assessment-level-dto';
 import { BasicLevelInfoDTO } from '../../dto/level/basic-level-info-dto';
@@ -263,22 +263,64 @@ export class TrainingDefinitionDefaultApi extends LinearTrainingDefinitionApi {
     /**
      * Sends http request to upload training definition json file,
      * Converts training definition file to a JSON object and sends it to provided url.
+     * A file the browser cannot read fails the returned stream with a message naming the read
+     * failure, so the caller is released instead of awaiting a result that never arrives.
      * @param file json file to be uploaded
      */
     upload(file: File): Observable<TrainingDefinitionWithLevels> {
         const fileReader = new FileReader();
-        const fileRead$ = fromEvent(fileReader, 'load').pipe(
-            mergeMap(() => {
-                const jsonBody = JSON.parse(fileReader.result as string);
-                return this.http.post<TrainingDefinitionWithLevelsDTO>(
-                    `${this.trainingImportEndpointUri}/${this.trainingDefinitionUriExtension}`,
-                    jsonBody,
-                );
-            }),
+        const fileRead$ = merge(
+            fromEvent(fileReader, 'load').pipe(
+                mergeMap(() =>
+                    this.postReadDefinition(fileReader.result as string),
+                ),
+            ),
+            fromEvent(fileReader, 'error').pipe(
+                mergeMap(() =>
+                    throwError(
+                        () =>
+                            new Error(
+                                `The selected file could not be read\n${
+                                    fileReader.error?.message ??
+                                    'The browser gave no reason'
+                                }`,
+                            ),
+                    ),
+                ),
+            ),
         );
         fileReader.readAsText(file);
         return fileRead$.pipe(
             map((resp) => TrainingDefinitionMapper.withLevelsFromDTO(resp)),
+        );
+    }
+
+    /**
+     * Sends the read file content for import. Content that is not well-formed JSON fails the
+     * returned stream with a message naming the syntax failure, without reaching the server.
+     * @param content the text read from the selected file
+     */
+    private postReadDefinition(
+        content: string,
+    ): Observable<TrainingDefinitionWithLevelsDTO> {
+        let definition: unknown;
+        try {
+            definition = JSON.parse(content);
+        } catch (syntaxFailure) {
+            const detail =
+                syntaxFailure instanceof Error
+                    ? syntaxFailure.message
+                    : String(syntaxFailure);
+            return throwError(
+                () =>
+                    new Error(
+                        `The selected file is not well-formed JSON\n${detail}`,
+                    ),
+            );
+        }
+        return this.http.post<TrainingDefinitionWithLevelsDTO>(
+            `${this.trainingImportEndpointUri}/${this.trainingDefinitionUriExtension}`,
+            definition,
         );
     }
 
