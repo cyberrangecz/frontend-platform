@@ -26,7 +26,7 @@ import {
     TrainingDefinitionWithLevels,
     TrainingLevel
 } from '@crczp/training-model';
-import { fromEvent, Observable, throwError } from 'rxjs';
+import { fromEvent, merge, Observable, throwError } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
 import { AssessmentLevelDTO } from '../../dto/level/assessment/assessment-level-dto';
 import { BasicLevelInfoDTO } from '../../dto/level/basic-level-info-dto';
@@ -263,13 +263,30 @@ export class TrainingDefinitionDefaultApi extends LinearTrainingDefinitionApi {
     /**
      * Sends http request to upload training definition json file,
      * Converts training definition file to a JSON object and sends it to provided url.
+     * A file the browser cannot read fails the returned stream with a message naming the read
+     * failure, so the caller is released instead of awaiting a result that never arrives.
      * @param file json file to be uploaded
      */
     upload(file: File): Observable<TrainingDefinitionWithLevels> {
         const fileReader = new FileReader();
-        const fileRead$ = fromEvent(fileReader, 'load').pipe(
-            mergeMap(() =>
-                this.postReadDefinition(fileReader.result as string),
+        const fileRead$ = merge(
+            fromEvent(fileReader, 'load').pipe(
+                mergeMap(() =>
+                    this.postReadDefinition(fileReader.result as string),
+                ),
+            ),
+            fromEvent(fileReader, 'error').pipe(
+                mergeMap(() =>
+                    throwError(
+                        () =>
+                            new Error(
+                                `The selected file could not be read\n${
+                                    fileReader.error?.message ??
+                                    'The browser gave no reason'
+                                }`,
+                            ),
+                    ),
+                ),
             ),
         );
         fileReader.readAsText(file);

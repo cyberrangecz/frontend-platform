@@ -19,7 +19,10 @@ export function errorLogInterceptor(
         tap(
             (_) => _,
             (err) => {
-                if (err instanceof HttpErrorResponse && err.status >= 400) {
+                if (
+                    err instanceof HttpErrorResponse &&
+                    (err.status === 0 || err.status >= 400)
+                ) {
                     if (
                         !req.context
                             .get(SKIPPED_ERROR_CODES)
@@ -51,7 +54,7 @@ export function errorLogInterceptor(
                             err,
                             codeBasedMessage,
                         );
-                    } else if (err.status >= 400) {
+                    } else {
                         console.warn("Allowed error occurred:", err);
                     }
                 }
