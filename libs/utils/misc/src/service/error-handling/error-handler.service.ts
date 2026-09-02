@@ -150,7 +150,25 @@ export class ErrorHandlerService implements ErrorHandler {
         err: HttpErrorResponse,
         notification: SentinelNotification,
     ) {
-        notification.additionalInfo = this.toNotificationLines(err.error.message);
+        notification.additionalInfo = this.toNotificationLines(
+            this.describedCause(err),
+        );
+    }
+
+    /**
+     * Picks the most telling text a failed response carries, preferring the message its body
+     * states, then a body that is itself text, and settling for the transport-level message when
+     * the body holds neither. Keeps a body of an unforeseen shape from yielding a blank line.
+     */
+    private describedCause(err: HttpErrorResponse): string {
+        const statedMessage = err.error?.message;
+        if (typeof statedMessage === 'string' && statedMessage.length > 0) {
+            return statedMessage;
+        }
+        if (typeof err.error === 'string' && err.error.length > 0) {
+            return err.error;
+        }
+        return err.message;
     }
 
     /**
