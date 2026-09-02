@@ -21,4 +21,8 @@
     @include sentinel-components.all-component-themes(theme.$theme);
     @include layout.sentinel-layout-theme(theme.$theme);
     @include sentinel-layout-sidebar.sidebar-page-layout-theme(theme.$theme);
+
+    // Fills menu, autocomplete, select and timepicker panels. Material's neutral
+    // default reads as grey beside this theme's tinted surfaces.
+    --mat-sys-surface-container: var(--primary-98);
 }

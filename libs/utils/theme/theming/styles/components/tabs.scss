@@ -1,3 +1,94 @@
+// Two ways a strip of tabs is set apart from what it governs. Both part one tab from
+// the next on a hairline, and both draw every rule as a background rather than as a
+// border, so each is snapped to the device's pixels the same way and a vertical meets
+// a horizontal without a step.
+//
+// Neither moves the strip out of the box it is given: a strip that must reach past its
+// container's padding is pushed there by that container, which alone knows how far.
+//
+// Each property below is read with its default in the `var()` call rather than set on
+// the strip itself, so a value stated further up still reaches it: a property declared
+// on an element beats the one it would otherwise inherit.
+//
+// | Custom property      | Default                | Governs                    |
+// |----------------------|------------------------|----------------------------|
+// | `--tabs-divider`     | `--neutral-variant-90` | Colour of every rule drawn |
+// | `--tabs-active-fill` | `--primary-95`         | Fill behind the open tab,  |
+// |                      |                        | `gated-tabs` only          |
+.divided-tabs,
+.gated-tabs {
+    .mat-mdc-tab + .mat-mdc-tab {
+        background-repeat: no-repeat;
+        background-position: left bottom;
+        background-size: 1px 100%;
+    }
+}
+
+// A strip already closed above and below by whatever holds it: the hairline runs the
+// full height between those two edges and meets both.
+.divided-tabs {
+    .mat-mdc-tab + .mat-mdc-tab {
+        background-image: linear-gradient(
+            var(--tabs-divider, var(--neutral-variant-90)),
+            var(--tabs-divider, var(--neutral-variant-90))
+        );
+    }
+}
+
+// A strip closed beneath it alone, standing as a band across its pane so that what
+// follows reads as governed by the tab left open. The hairline stands on that rule and
+// gives out on the way up, there being no edge above for it to meet.
+//
+// Fills the height it is given, so the view under the strip scrolls within itself
+// rather than growing the pane.
+.gated-tabs {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    min-height: 0;
+
+    .mat-mdc-tab-header {
+        border-bottom: none;
+        background-image: linear-gradient(
+            var(--tabs-divider, var(--neutral-variant-90)),
+            var(--tabs-divider, var(--neutral-variant-90))
+        );
+        background-repeat: no-repeat;
+        background-position: left bottom;
+        background-size: 100% 1px;
+    }
+
+    // Material rules the strip off under the labels alone; the rule is drawn on the
+    // header above instead, so it runs the strip's whole width.
+    .mat-mdc-tab-label-container {
+        border-bottom: none;
+    }
+
+    .mat-mdc-tab + .mat-mdc-tab {
+        background-image: linear-gradient(
+            to top,
+            var(--tabs-divider, var(--neutral-variant-90)),
+            transparent
+        );
+    }
+
+    // The colour alone is set, so the hairline the tab carries as its own background
+    // survives the tab being filled.
+    .mat-mdc-tab.mdc-tab--active {
+        background-color: var(--tabs-active-fill, var(--primary-95));
+    }
+
+    .mat-mdc-tab-body-wrapper {
+        flex: 1 1 auto;
+        min-height: 0;
+    }
+
+    .mat-mdc-tab-body-content {
+        display: flex;
+        flex-direction: column;
+    }
+}
+
 .no-scroll-tabs {
     display: flex;
     flex-direction: column;
