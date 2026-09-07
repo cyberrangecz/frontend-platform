@@ -32,6 +32,7 @@ export { LogOutput } from './pool-request/stage/log-output';
 export { SandboxInstance } from './sandbox-instance/sandbox-instance';
 export { VMConsole } from './sandbox-instance/vm-console';
 export { VMInfo } from './sandbox-instance/vm-info';
+export { SandboxVpnCommand } from './sandbox-instance/sandbox-vpn-command';
 
 // TOPOLOGY ELEMENTS
 export * from './topology-graph/topology';

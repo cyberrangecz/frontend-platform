@@ -1,0 +1,90 @@
+<button
+    (click)="close.emit()"
+    aria-label="Close"
+    class="vpn-panel__close"
+    type="button"
+>
+    <mat-icon class="vpn-panel__close-icon">close</mat-icon>
+</button>
+
+@if (waiting()) {
+    <p class="vpn-panel__status">
+        Waiting for VPN credential provisioning
+        <crczp-logo-spinner size="sm" />
+    </p>
+} @else if (failed()) {
+    <p class="vpn-panel__status vpn-panel__status--failed">
+        VPN details unavailable
+    </p>
+    <button
+        (click)="retry.emit()"
+        class="vpn-panel__retry"
+        type="button"
+    >
+        Retry
+        <mat-icon class="vpn-panel__retry-icon">refresh</mat-icon>
+    </button>
+} @else if (unavailable()) {
+    <p class="vpn-panel__status">
+        VPN connection unavailable
+    </p>
+    <p class="vpn-panel__detail">
+        This sandbox has no VPN access configured.
+    </p>
+} @else {
+    @if (connectCommand(); as command) {
+        <p class="vpn-panel__prerequisite">
+            NetBird client must be installed.
+            <a
+                [href]="installDocumentationUrl"
+                class="vpn-panel__install-link"
+                rel="noopener noreferrer"
+                target="_blank"
+            >Install NetBird</a>
+        </p>
+
+        <p class="vpn-panel__label">Connect to the sandbox</p>
+        <div class="vpn-panel__command">
+            <code class="vpn-panel__command-text">{{ command }}</code>
+            <ng-container
+                *ngTemplateOutlet="copyAction; context: { command: command }" />
+        </div>
+
+        <p class="vpn-panel__label">Disconnect from the NetBird network</p>
+        <div class="vpn-panel__command">
+            <code class="vpn-panel__command-text">{{ disconnectCommand }}</code>
+            <ng-container
+                *ngTemplateOutlet="
+                    copyAction;
+                    context: { command: disconnectCommand }
+                " />
+        </div>
+
+        <div class="vpn-panel__destructive">
+            <p class="vpn-panel__label vpn-panel__label--destructive">
+                Deregister this peer
+            </p>
+            <div class="vpn-panel__command">
+                <code class="vpn-panel__command-text">{{ deregisterCommand }}</code>
+                <ng-container
+                    *ngTemplateOutlet="
+                        copyAction;
+                        context: { command: deregisterCommand }
+                    " />
+            </div>
+        </div>
+    }
+}
+
+<ng-template #copyAction let-command="command">
+    <button
+        (click)="onCopyCommand(command)"
+        [class.vpn-panel__copy--copied]="copiedCommand() === command"
+        aria-label="Copy command"
+        class="vpn-panel__copy"
+        type="button"
+    >
+        <mat-icon class="vpn-panel__copy-icon">content_copy</mat-icon>
+        <mat-icon class="vpn-panel__copy-icon vpn-panel__copy-icon--done">check</mat-icon>
+    </button>
+</ng-template>
