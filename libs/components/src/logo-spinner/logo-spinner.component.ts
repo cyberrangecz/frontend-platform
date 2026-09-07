@@ -8,7 +8,7 @@ export type LogoSpinnerSize = 'sm' | 'md' | 'lg' | 'xlg';
 const SPINNER_BASE_SIZE = 150;
 
 const SIZE_PIXELS: Record<LogoSpinnerSize, number> = {
-    sm: 16,
+    sm: 18,
     md: 32,
     lg: 64,
     xlg: SPINNER_BASE_SIZE,

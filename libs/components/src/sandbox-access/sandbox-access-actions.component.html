@@ -26,6 +26,7 @@
 </div>
 
 <ng-template
+    (detach)="closeVpnPanel()"
     (overlayOutsideClick)="closeVpnPanel()"
     [cdkConnectedOverlayOpen]="vpnPanelOpen()"
     [cdkConnectedOverlayOrigin]="vpnTrigger"
@@ -38,6 +39,7 @@
         (retry)="onVpnRetryRequested()"
         [connectCommand]="vpnConnectCommand()"
         [failed]="vpnFailed()"
+        [provisioning]="vpnProvisioning()"
         [unavailable]="vpnUnavailable()"
         [waiting]="vpnWaiting()"
     />

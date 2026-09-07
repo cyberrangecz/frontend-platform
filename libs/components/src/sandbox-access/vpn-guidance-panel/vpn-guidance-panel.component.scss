@@ -1,9 +1,14 @@
+$close-size: 1.5rem;
+
+// Keeps a row of text clear of the dismissal pinned over the panel's top corner.
+$close-clearance: $close-size + 0.5rem;
+
 :host {
     position: relative;
     display: flex;
     flex-direction: column;
     gap: var(--space-xs);
-    min-width: 18rem;
+    min-width: 24rem;
     max-width: min(28rem, 90vw);
     padding: var(--space-xl);
     border-radius: var(--space-xl);
@@ -21,8 +26,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 1.5rem;
-    height: 1.5rem;
+    width: $close-size;
+    height: $close-size;
     padding: 0;
     border: none;
     border-radius: 50%;
@@ -48,7 +53,7 @@
     align-items: center;
     gap: var(--space-sm);
     margin: 0;
-    padding-right: var(--space-2xl);
+    padding-right: $close-clearance;
 }
 
 .vpn-panel__status--failed {
@@ -79,8 +84,10 @@
     line-height: 1;
 }
 
+/** Trails a leading status row, so it keeps the corner clear for the dismissal sitting over it. */
 .vpn-panel__detail {
     margin: 0;
+    padding-right: $close-clearance;
     color: var(--neutral-30);
     font-size: var(--font-size-md);
 }
@@ -88,7 +95,7 @@
 /** Leading row of its state, so it keeps the corner clear for the dismissal sitting over it. */
 .vpn-panel__prerequisite {
     margin: 0 0 var(--space-xs);
-    padding-right: var(--space-2xl);
+    padding-right: $close-clearance;
     color: var(--neutral-30);
     font-size: var(--font-size-md);
 }
@@ -190,5 +197,18 @@
     .vpn-panel__copy-icon--done {
         opacity: 1;
         transition: none;
+    }
+}
+
+/**
+ * Wait state carrying one short row. A floor on the height keeps the panel reading as a panel
+ * rather than a strip, and centring places that row clear of the dismissal in the corner.
+ */
+:host(.vpn-panel--awaiting) {
+    min-height: 6rem;
+    justify-content: center;
+
+    .vpn-panel__status {
+        justify-content: center;
     }
 }
