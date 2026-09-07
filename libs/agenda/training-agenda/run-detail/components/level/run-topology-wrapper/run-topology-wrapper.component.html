@@ -20,10 +20,12 @@
             [standalone]="false"
             class="wh-100 level-topology"
         >
-            <crczp-sandbox-access-actions
-                [sandboxUuid]="sandboxInstanceId"
-                topologyActions
-            />
+            @if (!topologyCollapsed) {
+                <crczp-sandbox-access-actions
+                    [sandboxUuid]="sandboxInstanceId"
+                    topologyActions
+                />
+            }
         </crczp-topology-wrapper>
     }
 </div>

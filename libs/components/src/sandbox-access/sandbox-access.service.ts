@@ -26,6 +26,7 @@ export class SandboxAccessService {
 
     private readonly isLoadingSubject$ = new BehaviorSubject<boolean>(false);
     private readonly hasErrorSubject$ = new BehaviorSubject<boolean>(false);
+    private readonly isProvisioningSubject$ = new BehaviorSubject<boolean>(false);
     private readonly vpnCommandPolls = new Map<
         string,
         Observable<SandboxVpnCommand>
@@ -40,6 +41,12 @@ export class SandboxAccessService {
      * Emits true once awaiting a VPN command has failed, and false again when a new wait begins.
      */
     readonly hasError$ = this.hasErrorSubject$.asObservable();
+
+    /**
+     * Emits true once the sandbox has reported its VPN access not yet provisioned, and false again
+     * once the wait ends either way.
+     */
+    readonly isProvisioning$ = this.isProvisioningSubject$.asObservable();
 
     getSshConfigFile(sandboxInstanceId: string) {
         this.sandboxApi.getUserSshAccess(sandboxInstanceId).subscribe();
@@ -74,9 +81,13 @@ export class SandboxAccessService {
         }).pipe(
             retry({ delay: (error) => this.awaitVpnProvisioning(error) }),
             tap({
-                next: () => this.isLoadingSubject$.next(false),
+                next: () => {
+                    this.isLoadingSubject$.next(false);
+                    this.isProvisioningSubject$.next(false);
+                },
                 error: () => {
                     this.isLoadingSubject$.next(false);
+                    this.isProvisioningSubject$.next(false);
                     this.hasErrorSubject$.next(true);
                 },
             }),
@@ -85,14 +96,19 @@ export class SandboxAccessService {
     }
 
     /**
-     * Decides whether a failed attempt is retried, waiting one polling period before it is.
+     * Decides whether a failed attempt is retried, waiting one polling period before it is. A
+     * sandbox reporting its VPN access not yet provisioned is what puts the wait into its
+     * provisioning phase.
      *
      * @param error Failure raised by the attempt.
      * @returns Observable delaying the next attempt, or one propagating the failure.
      */
     private awaitVpnProvisioning(error: unknown): Observable<number> {
-        return error instanceof HttpErrorResponse && error.status === 425
-            ? timer(this.pollingPeriod)
-            : throwError(() => error);
+        if (!(error instanceof HttpErrorResponse) || error.status !== 425) {
+            return throwError(() => error);
+        }
+
+        this.isProvisioningSubject$.next(true);
+        return timer(this.pollingPeriod);
     }
 }

@@ -8,6 +8,9 @@ $notch-thickness: 2rem;
     justify-content: center;
     height: $notch-thickness;
     border: none;
+    border-radius: 1rem 0 0 0;
+    background: var(--neutral-98);
+    box-shadow: 0 0 4px var(--neutral-70);
 }
 
 .panel-actions__item {
@@ -38,7 +41,7 @@ $notch-thickness: 2rem;
 .panel-actions__item--active {
     &, &:hover, &:focus-visible {
         background: var(--neutral-98);
-        box-shadow: 0 0 8px var(--neutral-70);
+        box-shadow: 0 0 4px var(--neutral-70);
     }
 }
 

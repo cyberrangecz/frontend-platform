@@ -64,6 +64,10 @@ export class SandboxAccessActionsComponent {
     protected readonly vpnFailed = toSignal(this.accessService.hasError$, {
         initialValue: false,
     });
+    protected readonly vpnProvisioning = toSignal(
+        this.accessService.isProvisioning$,
+        { initialValue: false },
+    );
 
     protected onSshConfigRequested(): void {
         this.accessService.getSshConfigFile(this.sandboxUuid());

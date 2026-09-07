@@ -7,9 +7,13 @@
     <mat-icon class="vpn-panel__close-icon">close</mat-icon>
 </button>
 
-@if (waiting()) {
+@if (awaitingCommand()) {
     <p class="vpn-panel__status">
-        Waiting for VPN credential provisioning
+        @if (provisioning()) {
+            Waiting for VPN credential provisioning
+        } @else {
+            Loading VPN details
+        }
         <crczp-logo-spinner size="sm" />
     </p>
 } @else if (failed()) {

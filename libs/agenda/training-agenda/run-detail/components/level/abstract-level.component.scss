@@ -36,7 +36,9 @@
     flex-shrink: 0;
     justify-content: flex-start;
     width: 100%;
-    overflow-x: hidden;
+    // Clips sideways without forcing the vertical axis into a scroll container, which would cut
+    // any child taller than this row.
+    overflow-x: clip;
 }
 
 .level-content > *:first-child {

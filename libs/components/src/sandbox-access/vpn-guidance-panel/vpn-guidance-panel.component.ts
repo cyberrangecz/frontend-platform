@@ -1,4 +1,11 @@
-import { Component, inject, input, output, signal } from '@angular/core';
+import {
+    Component,
+    computed,
+    inject,
+    input,
+    output,
+    signal,
+} from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { MatIcon } from '@angular/material/icon';
@@ -20,12 +27,21 @@ const COPIED_FEEDBACK_MS = 1200;
     templateUrl: './vpn-guidance-panel.component.html',
     styleUrl: './vpn-guidance-panel.component.scss',
     imports: [NgTemplateOutlet, MatIcon, LogoSpinnerComponent],
+    host: {
+        '[class.vpn-panel--awaiting]': 'awaitingCommand()',
+    },
 })
 export class VpnGuidancePanelComponent {
     connectCommand = input<string | null>(null);
     waiting = input<boolean>(false);
     failed = input<boolean>(false);
     unavailable = input<boolean>(false);
+    provisioning = input<boolean>(false);
+
+    /** Whether the panel is showing nothing but its wait for a command. */
+    readonly awaitingCommand = computed(
+        () => this.waiting() && !this.connectCommand(),
+    );
 
     /** Emits when the VPN command is asked for again. */
     retry = output<void>();
