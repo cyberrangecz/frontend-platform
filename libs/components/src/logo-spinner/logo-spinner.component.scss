@@ -136,3 +136,21 @@
     transform: rotate3d(0, 0, 1, 90deg);
     animation: swap-background 1s infinite ease-in-out;
 }
+
+/** Fixed-size mode: the host's own box governs layout, so the spinner sits inline like an icon. */
+:host(.spinner--icon) {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+/**
+ * Lifts the fixed-basis container out of the flow and centres it on the host for the scale to act
+ * on. Centring is carried by the standalone translate property, which composes ahead of the scale
+ * held in transform and so leaves that scale untouched.
+ */
+:host(.spinner--icon) .spinner-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    translate: -50% -50%;
+}
