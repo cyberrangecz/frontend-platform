@@ -17,3 +17,5 @@ export * from './stepper/stepper';
 export * from './stepper/level-stepper-adapter';
 export * from './stepper/level-move-event';
 export * from './stepper/training-level-stepper.component';
+export * from './sandbox-access/sandbox-access.service';
+export * from './sandbox-access/sandbox-access-actions.component';

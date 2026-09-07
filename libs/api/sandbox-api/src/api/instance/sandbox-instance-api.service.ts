@@ -3,16 +3,24 @@ import { inject, Injectable } from '@angular/core';
 import { ResponseHeaderContentDispositionReader } from '@sentinel/common';
 import { saveAs } from 'file-saver';
 import { OffsetPaginationEvent, PortalConfig } from '@crczp/utils';
-import { Lock, SandboxInstance, SandboxKeyPair } from '@crczp/sandbox-model';
+import {
+    Lock,
+    SandboxInstance,
+    SandboxKeyPair,
+    SandboxVpnCommand,
+} from '@crczp/sandbox-model';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { LockDTO } from '../../dto/sandbox-instance/lock-dto';
 import { SandboxInstanceDTO } from '../../dto/sandbox-instance/sandbox-instance-dto';
 import { SandboxKeyPairDTO } from '../../dto/sandbox-instance/sandbox-key-pair-dto';
+import { SandboxVpnCommandDTO } from '../../dto/sandbox-instance/sandbox-vpn-command-dto';
 import { SandboxInstanceMapper } from '../../mappers/sandbox-instance/sandbox-instance-mapper';
 import { LockMapper } from '../../mappers/sandbox-instance/lock-mapper';
 import { SandboxKeyPairMapper } from '../../mappers/sandbox-instance/sandbox-key-pair-mapper';
+import { sandboxVpnCommandMapper } from '../../mappers/sandbox-instance/sandbox-vpn-command-mapper';
 import {
+    CRCZPHttpService,
     DjangoResourceDTO,
     handleJsonError,
     OffsetPaginatedResource,
@@ -27,6 +35,7 @@ import { PoolLockSort, SandboxInstanceSort } from '../sorts';
 @Injectable()
 export class SandboxInstanceApi {
     private readonly http = inject(HttpClient);
+    private readonly crczpHttp = inject(CRCZPHttpService);
 
     private readonly sandboxInstancesUriExtension = 'sandboxes';
     private readonly locksUriExtension = 'lock';
@@ -179,5 +188,22 @@ export class SandboxInstanceApi {
                     return true;
                 }),
             );
+    }
+
+    /**
+     * Sends http request to get the VPN client configuration granting access to a sandbox. The
+     * configuration reports itself unavailable where the sandbox holds no VPN access credential.
+     * @param sandboxUuid id of the sandbox for which VPN access is demanded
+     */
+    getSandboxVpnCommand(sandboxUuid: string): Observable<SandboxVpnCommand> {
+        return this.crczpHttp
+            .get<SandboxVpnCommandDTO>(
+                `${this.sandboxEndpointUri}/${sandboxUuid}/vpn`,
+                'Fetching sandbox VPN command',
+            )
+            .setExpectedErrors([425])
+            .withReceiveMapper(sandboxVpnCommandMapper)
+            .withCache('5m')
+            .execute();
     }
 }

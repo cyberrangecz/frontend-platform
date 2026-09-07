@@ -1,0 +1,44 @@
+<div class="panel-actions">
+    <button
+        (click)="onSshConfigRequested()"
+        class="panel-actions__item"
+        matTooltip="Download config for SSH client"
+        matTooltipPosition="above"
+    >
+        <mat-icon class="panel-actions__icon">download</mat-icon>
+        SSH Config
+    </button>
+
+    <span aria-hidden="true" class="panel-actions__divider"></span>
+
+    <button
+        #vpnTrigger="cdkOverlayOrigin"
+        (click)="onVpnCommandRequested()"
+        [class.panel-actions__item--active]="vpnPanelOpen()"
+        cdkOverlayOrigin
+        class="panel-actions__item"
+        matTooltip="Show how to connect to the sandbox over VPN"
+        matTooltipPosition="above"
+    >
+        <mat-icon class="panel-actions__icon">vpn_lock</mat-icon>
+        VPN connection
+    </button>
+</div>
+
+<ng-template
+    (overlayOutsideClick)="closeVpnPanel()"
+    [cdkConnectedOverlayOpen]="vpnPanelOpen()"
+    [cdkConnectedOverlayOrigin]="vpnTrigger"
+    [cdkConnectedOverlayPositions]="vpnPanelPositions"
+    [cdkConnectedOverlayPush]="true"
+    cdkConnectedOverlay
+>
+    <crczp-vpn-guidance-panel
+        (close)="closeVpnPanel()"
+        (retry)="onVpnRetryRequested()"
+        [connectCommand]="vpnConnectCommand()"
+        [failed]="vpnFailed()"
+        [unavailable]="vpnUnavailable()"
+        [waiting]="vpnWaiting()"
+    />
+</ng-template>
