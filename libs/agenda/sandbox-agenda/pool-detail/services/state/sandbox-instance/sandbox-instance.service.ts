@@ -1,6 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { Clipboard } from '@angular/cdk/clipboard';
 import { Router } from '@angular/router';
 import {
     SentinelConfirmationDialogComponent,
@@ -17,7 +18,7 @@ import {
 } from '@crczp/sandbox-api';
 import { SandboxAllocationUnit, SandboxInstance } from '@crczp/sandbox-model';
 import { EMPTY, from, Observable } from 'rxjs';
-import { catchError, switchMap, tap } from 'rxjs/operators';
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { SandboxAllocationUnitsService } from '../sandbox-allocation-unit/sandbox-allocation-units.service';
 import { ErrorHandlerService, NotificationService, PortalConfig } from '@crczp/utils';
 import { Routing } from '@crczp/routing-commons';
@@ -34,6 +35,9 @@ import { OffsetPaginatedResource } from '@crczp/api-common';
  * Basic implementation of a layer between a component and an API service.
  * Can get sandbox instances and perform various operations to modify them.
  */
+/** Status the sandbox service answers with while a sandbox's VPN access is not yet provisioned. */
+const VPN_NOT_PROVISIONED_STATUS = 425;
+
 @Injectable()
 export class SandboxInstanceService extends OffsetPaginatedElementsPollingService<
     SandboxInstance,
@@ -57,6 +61,7 @@ export class SandboxInstanceService extends OffsetPaginatedElementsPollingServic
 
     private router = inject(Router);
     private dialog = inject(MatDialog);
+    private clipboard = inject(Clipboard);
     private notificationService = inject(NotificationService);
     private errorHandler = inject(ErrorHandlerService);
     private lastPoolId: number;
@@ -281,6 +286,73 @@ export class SandboxInstanceService extends OffsetPaginatedElementsPollingServic
                 return EMPTY;
             }),
         );
+    }
+
+    /**
+     * Places the command connecting to a sandbox over VPN on the clipboard, reporting the outcome
+     * as a notification. A sandbox reachable over no VPN is reported as such and nothing is
+     * placed on the clipboard.
+     *
+     * @param sandboxUuid uuid of the sandbox to be reached over VPN
+     * @returns Observable emitting true once the command reached the clipboard
+     */
+    copyVpnCommand(sandboxUuid: string): Observable<boolean> {
+        return this.sandboxApi.getSandboxVpnCommand(sandboxUuid).pipe(
+            map((vpnCommand) =>
+                this.copyVpnCommandToClipboard(vpnCommand.command, sandboxUuid),
+            ),
+            catchError((err: HttpErrorResponse) => {
+                if (err.status === VPN_NOT_PROVISIONED_STATUS) {
+                    this.notificationService.emit(
+                        'warning',
+                        'VPN access is still being provisioned',
+                        [`Sandbox ${sandboxUuid}`],
+                    );
+                } else {
+                    this.errorHandler.emitAPIError(
+                        err,
+                        `VPN command for sandbox: ${sandboxUuid}`,
+                    );
+                }
+                return EMPTY;
+            }),
+        );
+    }
+
+    /**
+     * Places a VPN connection command on the clipboard and emits a notification stating the
+     * outcome. An absent command is reported as the sandbox being unreachable over VPN.
+     *
+     * @param command command connecting to the sandbox, absent where the sandbox carries none
+     * @param sandboxUuid uuid of the sandbox the command reaches
+     * @returns Whether the command reached the clipboard
+     */
+    private copyVpnCommandToClipboard(
+        command: string | null,
+        sandboxUuid: string,
+    ): boolean {
+        if (command === null) {
+            this.notificationService.emit(
+                'warning',
+                'VPN connection unavailable',
+                [`Sandbox ${sandboxUuid} has no VPN access configured`],
+            );
+            return false;
+        }
+
+        const copied = this.clipboard.copy(command);
+        if (copied) {
+            this.notificationService.emit(
+                'success',
+                'VPN connection command copied',
+            );
+        } else {
+            this.notificationService.emit(
+                'error',
+                'Copying the VPN connection command failed',
+            );
+        }
+        return copied;
     }
 
     /**
