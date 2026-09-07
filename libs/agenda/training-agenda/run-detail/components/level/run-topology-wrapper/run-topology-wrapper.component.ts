@@ -1,10 +1,19 @@
-import { Component, ElementRef, inject, input, OnDestroy, OnInit, Renderer2, signal } from '@angular/core';
+import {
+    Component,
+    ElementRef,
+    inject,
+    input,
+    OnDestroy,
+    OnInit,
+    Renderer2,
+    signal,
+} from '@angular/core';
 import { AbstractTrainingRunService } from '../../../services/training-run/abstract-training-run.service';
 import { AsyncPipe, NgClass } from '@angular/common';
-import { SshAccessService } from '../../../services/training-run/ssh/ssh-acess.service';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 import {
+    SandboxAccessActionsComponent,
     TopologySynchronizerService,
     TopologyWrapperComponent,
 } from '@crczp/components';
@@ -17,6 +26,7 @@ import {
         MatIcon,
         NgClass,
         MatTooltip,
+        SandboxAccessActionsComponent,
     ],
     templateUrl: './run-topology-wrapper.component.html',
     styleUrl: './run-topology-wrapper.component.scss',
@@ -24,7 +34,6 @@ import {
 export class RunTopologyWrapperComponent implements OnInit, OnDestroy {
     topologyAllowed = input<boolean>(true);
     protected readonly runService = inject(AbstractTrainingRunService);
-    protected readonly sshAccessService = inject(SshAccessService);
     protected readonly topologyService = inject(TopologySynchronizerService);
     protected readonly collapsed = signal<boolean>(false);
     private readonly renderer = inject(Renderer2);
@@ -64,19 +73,6 @@ export class RunTopologyWrapperComponent implements OnInit, OnDestroy {
                 this.originalPaddingRight || null,
             );
         }
-    }
-
-    protected onAccessFileRequested(): void {
-        this.sshAccessService.getAccessFile(
-            this.runService.runInfo.sandboxInstanceId,
-        );
-    }
-
-    /**
-     * Places the command connecting to this run's sandbox over VPN on the clipboard.
-     */
-    protected onVpnCommandRequested(): void {
-        // TODO: copy the VPN connection command once the platform exposes it.
     }
 
     private findAncestorByClass(
