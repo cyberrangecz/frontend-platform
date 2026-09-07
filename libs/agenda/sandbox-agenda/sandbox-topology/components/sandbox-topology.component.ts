@@ -1,7 +1,15 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
+import {
+    ChangeDetectionStrategy,
+    Component,
+    computed,
+    DestroyRef,
+    inject,
+    signal,
+} from '@angular/core';
 import { Routing } from '@crczp/routing-commons';
 import {
     LogoSpinnerComponent,
+    SandboxAccessActionsComponent,
     TopologySource,
     TopologyWrapperComponent,
 } from '@crczp/components';
@@ -16,11 +24,23 @@ import { ActivatedRoute } from '@angular/router';
     templateUrl: './sandbox-topology.component.html',
     styleUrls: ['./sandbox-topology.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [TopologyWrapperComponent, LogoSpinnerComponent],
+    imports: [
+        TopologyWrapperComponent,
+        LogoSpinnerComponent,
+        SandboxAccessActionsComponent,
+    ],
 })
 export class SandboxTopologyComponent {
     destroyRef = inject(DestroyRef);
     idData = signal<TopologySource | null>(null);
+
+    /** Uuid of the sandbox this page shows, absent while it shows a sandbox definition instead. */
+    protected readonly sandboxUuid = computed(() => {
+        const source = this.idData();
+
+        return source && 'instanceId' in source ? source.instanceId : null;
+    });
+
     private readonly route = inject(ActivatedRoute);
     private readonly errorService = inject(ErrorHandlerService);
 

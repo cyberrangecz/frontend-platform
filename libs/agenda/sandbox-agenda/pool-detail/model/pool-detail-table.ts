@@ -104,6 +104,15 @@ export class PoolDetailTable extends SentinelTable<
                 of(!data.buildFinished()),
                 defer(() => sandboxInstanceService.getUserSshAccess(data.uuid)),
             ),
+            new RowAction(
+                'copy_vpn_command',
+                'Copy VPN Command',
+                'vpn_lock',
+                'primary',
+                'Copy the VPN connection command',
+                of(!data.buildFinished()),
+                defer(() => sandboxInstanceService.copyVpnCommand(data.uuid)),
+            ),
             this.createLockAction(
                 data.id,
                 data.locked,

@@ -4,7 +4,14 @@
             [id]="idData()"
             [standalone]="true"
             class="center topology-component highlighted-resizer"
-        />
+        >
+            @if (sandboxUuid(); as uuid) {
+                <crczp-sandbox-access-actions
+                    [sandboxUuid]="uuid"
+                    topologyActions
+                />
+            }
+        </crczp-topology-wrapper>
     } @else {
         <crczp-logo-spinner />
     }
