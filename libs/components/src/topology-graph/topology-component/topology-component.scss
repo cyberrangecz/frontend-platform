@@ -18,12 +18,18 @@
 }
 
 
-/** Anchors projected actions against the panel's inner bottom-right corner. */
+/**
+ * Layer over the whole panel through which pointer events pass, laying projected actions against the
+ * panel's inner bottom-right corner and lending them the panel's size to cap against.
+ */
 .topology-tab-actions {
     position: absolute;
-    right: 0;
-    bottom: 0;
+    inset: 0;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
     z-index: 1001;
+    pointer-events: none;
 }
 
 .draggable-bar {

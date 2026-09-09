@@ -1,42 +1,23 @@
 import { Component, DestroyRef, inject, input, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import {
-    CdkConnectedOverlay,
-    CdkOverlayOrigin,
-    ConnectedPosition,
-} from '@angular/cdk/overlay';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Subject, takeUntil } from 'rxjs';
 import { SandboxAccessService } from './sandbox-access.service';
 import { VpnGuidancePanelComponent } from './vpn-guidance-panel/vpn-guidance-panel.component';
-import { PortalConfig } from '@crczp/utils';
-
-/**
- * Distance held between the guidance panel and the trigger where the panel opens below it. Tighter
- * than the upward gap, the downward shadow shift carrying the separation on that side.
- */
-const VPN_PANEL_BELOW_TRIGGER_GAP_PX = 1;
-
-/** Distance held between the guidance panel and the trigger where the panel opens above it. */
-const VPN_PANEL_ABOVE_TRIGGER_GAP_PX = 2;
+import { ClickOutsideDirective, PortalConfig } from '@crczp/utils';
 
 /**
  * Actions reaching a sandbox: a download of its SSH client configuration, and a panel guiding the
  * way through connecting to it over VPN. Each action appears only where the portal configuration
- * offers it, and nothing renders where it offers neither.
+ * offers it, and nothing renders where it offers neither. The VPN guidance unfolds above the
+ * actions as one card with them, covering the SSH download for as long as it stands open.
  */
 @Component({
     selector: 'crczp-sandbox-access-actions',
     templateUrl: './sandbox-access-actions.component.html',
     styleUrl: './sandbox-access-actions.component.scss',
-    imports: [
-        MatIcon,
-        MatTooltip,
-        CdkOverlayOrigin,
-        CdkConnectedOverlay,
-        VpnGuidancePanelComponent,
-    ],
+    imports: [MatIcon, MatTooltip, ClickOutsideDirective, VpnGuidancePanelComponent],
     providers: [SandboxAccessService],
 })
 export class SandboxAccessActionsComponent {
@@ -55,29 +36,6 @@ export class SandboxAccessActionsComponent {
     protected readonly vpnPanelOpen = signal<boolean>(false);
     protected readonly vpnConnectCommand = signal<string | null>(null);
     protected readonly vpnUnavailable = signal<boolean>(false);
-
-    /**
-     * Holds the panel clear of the trigger and marks the side it took, flipping above it where the
-     * space below falls short.
-     */
-    protected readonly vpnPanelPositions: ConnectedPosition[] = [
-        {
-            originX: 'center',
-            originY: 'bottom',
-            overlayX: 'center',
-            overlayY: 'top',
-            offsetY: VPN_PANEL_BELOW_TRIGGER_GAP_PX,
-            panelClass: 'vpn-panel--below-trigger',
-        },
-        {
-            originX: 'center',
-            originY: 'top',
-            overlayX: 'center',
-            overlayY: 'bottom',
-            offsetY: -VPN_PANEL_ABOVE_TRIGGER_GAP_PX,
-            panelClass: 'vpn-panel--above-trigger',
-        },
-    ];
 
     private readonly accessService = inject(SandboxAccessService);
     private readonly destroyRef = inject(DestroyRef);
@@ -116,7 +74,12 @@ export class SandboxAccessActionsComponent {
         this.awaitVpnCommand();
     }
 
+    /** Closes the panel and ends the wait for the VPN command; does nothing while it is closed. */
     protected closeVpnPanel(): void {
+        if (!this.vpnPanelOpen()) {
+            return;
+        }
+
         this.vpnPanelOpen.set(false);
         this.vpnPanelClosed$.next();
     }

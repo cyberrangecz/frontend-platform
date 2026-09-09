@@ -1,16 +1,40 @@
 $notch-thickness: 2rem;
 
-/** Tab hanging off one edge of the topology panel: flat where it meets the panel, rounded away from it. */
-.panel-actions {
+:host {
+    display: contents;
+}
+
+/**
+ * Surface hanging off the bottom-right corner of the topology panel: flat where it meets the panel's
+ * edges, rounded away from them. Sized by its content and capped at the panel, so the guidance
+ * wraps its lines at the panel's width and scrolls once it would outgrow the panel's height.
+ */
+.access-card {
     display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    height: $notch-thickness;
-    border: none;
+    flex-direction: column;
+    max-width: 100%;
+    max-height: 100%;
     border-radius: 1rem 0 0 0;
     background: var(--neutral-98);
     box-shadow: 0 0 4px var(--neutral-70);
+    pointer-events: auto;
+}
+
+/** Body of the card, yielding height to the footer and scrolling within what remains. */
+.access-card__guidance {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+}
+
+/** Footer row of actions, kept against the panel's corner whatever the card's width. */
+.panel-actions {
+    display: flex;
+    flex: 0 0 auto;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    height: $notch-thickness;
 }
 
 .panel-actions__item {
@@ -27,8 +51,8 @@ $notch-thickness: 2rem;
     font: inherit;
     cursor: pointer;
 
-    // Carries the notch's rounded corner, the notch itself clipping nothing so a raised item may cast.
-    &:first-child {
+    // Carries the card's rounded corner while the footer is the card's top, the card clipping nothing so a raised item may cast.
+    .access-card:not(.access-card--expanded) &:first-child {
         border-radius: 1rem 0 0 0;
     }
 
@@ -37,7 +61,7 @@ $notch-thickness: 2rem;
     }
 }
 
-// Lifts a tone step above the notch while the guidance panel stands open.
+// Lifts a tone step above the card while the guidance stands open.
 .panel-actions__item--active {
     &, &:hover, &:focus-visible {
         background: var(--neutral-100);
@@ -45,7 +69,7 @@ $notch-thickness: 2rem;
     }
 }
 
-// Strongest where the two actions meet, dissolving towards both ends of the notch.
+// Strongest where the two actions meet, dissolving towards both ends of the footer.
 .panel-actions__divider {
     flex: 0 0 auto;
     width: 1px;
@@ -66,4 +90,22 @@ $notch-thickness: 2rem;
     width: 1.125rem;
     height: 1.125rem;
     line-height: 1;
+}
+
+/**
+ * Card holding the guidance: rounded along its whole free left edge, its footer ruled off from the
+ * body, and the open action resting flat in that footer rather than raised out of it.
+ */
+.access-card--expanded {
+    border-radius: 1rem 0 0 1rem;
+
+    .panel-actions {
+        border-top: 1px solid var(--neutral-90);
+    }
+
+    .panel-actions__item--active {
+        &, &:hover, &:focus-visible {
+            box-shadow: none;
+        }
+    }
 }

@@ -29,6 +29,7 @@ const COPIED_FEEDBACK_MS = 1200;
     imports: [NgTemplateOutlet, MatIcon, LogoSpinnerComponent],
     host: {
         '[class.vpn-panel--awaiting]': 'awaitingCommand()',
+        '[class.vpn-panel--compact]': 'compact()',
     },
 })
 export class VpnGuidancePanelComponent {
@@ -41,6 +42,15 @@ export class VpnGuidancePanelComponent {
     /** Whether the panel is showing nothing but its wait for a command. */
     readonly awaitingCommand = computed(
         () => this.waiting() && !this.connectCommand(),
+    );
+
+    /** Whether the panel is showing anything other than the fetched commands. */
+    readonly compact = computed(
+        () =>
+            this.awaitingCommand() ||
+            this.failed() ||
+            this.unavailable() ||
+            !this.connectCommand(),
     );
 
     /** Emits when the VPN command is asked for again. */
