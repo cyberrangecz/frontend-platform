@@ -10,10 +10,21 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { Subject, takeUntil } from 'rxjs';
 import { SandboxAccessService } from './sandbox-access.service';
 import { VpnGuidancePanelComponent } from './vpn-guidance-panel/vpn-guidance-panel.component';
+import { PortalConfig } from '@crczp/utils';
+
+/**
+ * Distance held between the guidance panel and the trigger where the panel opens below it. Tighter
+ * than the upward gap, the downward shadow shift carrying the separation on that side.
+ */
+const VPN_PANEL_BELOW_TRIGGER_GAP_PX = 1;
+
+/** Distance held between the guidance panel and the trigger where the panel opens above it. */
+const VPN_PANEL_ABOVE_TRIGGER_GAP_PX = 2;
 
 /**
  * Actions reaching a sandbox: a download of its SSH client configuration, and a panel guiding the
- * way through connecting to it over VPN.
+ * way through connecting to it over VPN. Each action appears only where the portal configuration
+ * offers it, and nothing renders where it offers neither.
  */
 @Component({
     selector: 'crczp-sandbox-access-actions',
@@ -31,13 +42,23 @@ import { VpnGuidancePanelComponent } from './vpn-guidance-panel/vpn-guidance-pan
 export class SandboxAccessActionsComponent {
     sandboxUuid = input.required<string>();
 
+    private readonly sandboxAccessConfig = inject(PortalConfig).sandboxAccess;
+
+    protected readonly sshConfigOffered = this.sandboxAccessConfig.sshConfig;
+    protected readonly vpnOffered = this.sandboxAccessConfig.vpn;
+    protected readonly anyAccessOffered =
+        this.sshConfigOffered || this.vpnOffered;
+
+    protected readonly bothAccessOffered =
+        this.sshConfigOffered && this.vpnOffered;
+
     protected readonly vpnPanelOpen = signal<boolean>(false);
     protected readonly vpnConnectCommand = signal<string | null>(null);
     protected readonly vpnUnavailable = signal<boolean>(false);
 
     /**
-     * Places the panel flush against the trigger, flipping above it where the space below falls
-     * short.
+     * Holds the panel clear of the trigger and marks the side it took, flipping above it where the
+     * space below falls short.
      */
     protected readonly vpnPanelPositions: ConnectedPosition[] = [
         {
@@ -45,12 +66,16 @@ export class SandboxAccessActionsComponent {
             originY: 'bottom',
             overlayX: 'center',
             overlayY: 'top',
+            offsetY: VPN_PANEL_BELOW_TRIGGER_GAP_PX,
+            panelClass: 'vpn-panel--below-trigger',
         },
         {
             originX: 'center',
             originY: 'top',
             overlayX: 'center',
             overlayY: 'bottom',
+            offsetY: -VPN_PANEL_ABOVE_TRIGGER_GAP_PX,
+            panelClass: 'vpn-panel--above-trigger',
         },
     ];
 

@@ -20,7 +20,7 @@
     </div>
 }
 
-@if (consolesAvailable()) {
+@if (consolesAvailable() && guacamoleOffered) {
     <crczp-context-menu
         [accessibleNodes]="this.accessibleNodes()"
         [boundingBox]="networkContainer.getBoundingClientRect()"

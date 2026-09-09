@@ -39,8 +39,9 @@ const BASE_TEST_CONFIG = PortalConfig.schema().parse({
  * Returns an Angular provider that supplies {@link PortalConfig} in TestBed.
  *
  * @param overrides Deep-partial overrides applied on top of {@link BASE_TEST_CONFIG}.
- *   Nested sections (caching, polling, roleMapping, basePaths, authConfig) are
- *   shallow-merged so callers only need to specify the fields that differ.
+ *   Nested sections (caching, polling, roleMapping, basePaths, sandboxAccess,
+ *   authConfig) are shallow-merged so callers only need to specify the fields
+ *   that differ.
  *   Accepts out-of-range values (e.g. `caching.eventCacheTtlMs: 0`) to facilitate
  *   special requirements in tests. Values are applied after parsing and validating.
  */
@@ -57,6 +58,10 @@ export function provideTestPortalConfig(
             polling: { ...BASE_TEST_CONFIG.polling, ...(o.polling ?? {}) },
             roleMapping: { ...BASE_TEST_CONFIG.roleMapping, ...(o.roleMapping ?? {}) },
             basePaths: { ...BASE_TEST_CONFIG.basePaths, ...(o.basePaths ?? {}) },
+            sandboxAccess: {
+                ...BASE_TEST_CONFIG.sandboxAccess,
+                ...(o.sandboxAccess ?? {}),
+            },
             authConfig: { ...BASE_TEST_CONFIG.authConfig, ...(o.authConfig ?? {}) },
         },
     };

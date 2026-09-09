@@ -158,6 +158,24 @@ export class PortalConfig extends Z.class({
             .transform(removeTrailingSlash),
     }),
 
+    sandboxAccess: z
+        .object({
+            sshConfig: z
+                .boolean()
+                .default(true)
+                .describe('Availability of the SSH configuration download'),
+            vpn: z
+                .boolean()
+                .default(true)
+                .describe('Availability of the VPN configuration download'),
+            guacamole: z
+                .boolean()
+                .default(true)
+                .describe('Availability of browser-based Guacamole access'),
+        })
+        .default({})
+        .describe('Access methods offered for reaching sandbox machines'),
+
     authConfig: sentinelAuthConfigSchema.describe(
         'Sentinel authentication config',
     ),
