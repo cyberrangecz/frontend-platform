@@ -1,3 +1,6 @@
+// Pushes the shadow off the edge facing the trigger; at least half the blur radius.
+$shadow-below-trigger-shift: 5px;
+
 $close-size: 1.5rem;
 
 // Keeps a row of text clear of the dismissal pinned over the panel's top corner.
@@ -16,6 +19,12 @@ $close-clearance: $close-size + 0.5rem;
     box-shadow: 0 0 8px var(--neutral-70);
     color: var(--neutral-10);
     font-size: var(--font-size-lg);
+}
+
+// Casts the elevation downward, away from the trigger the panel opened under. Opening above it
+// keeps the even spread declared on the host.
+:host-context(.vpn-panel--below-trigger) {
+    box-shadow: 0 $shadow-below-trigger-shift 8px var(--neutral-70);
 }
 
 /** Dismissal pinned to the panel's top corner, out of flow so it claims no row of its own. */

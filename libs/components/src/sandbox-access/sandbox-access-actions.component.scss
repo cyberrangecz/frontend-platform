@@ -37,10 +37,10 @@ $notch-thickness: 2rem;
     }
 }
 
-// Rises onto the guidance panel's surface while that panel stands open, so the two read as one card.
+// Lifts a tone step above the notch while the guidance panel stands open.
 .panel-actions__item--active {
     &, &:hover, &:focus-visible {
-        background: var(--neutral-98);
+        background: var(--neutral-100);
         box-shadow: 0 0 4px var(--neutral-70);
     }
 }
