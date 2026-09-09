@@ -143,7 +143,6 @@ export class TopologyComponent implements AfterViewInit {
     }
 
     updateTopologyDimensions() {
-        if (this.collapsed) return;
         if (this.topologyTabsDiv) {
             if (this.standalone()) {
                 this.synchronizerService.emitTopologyWidthChange(
