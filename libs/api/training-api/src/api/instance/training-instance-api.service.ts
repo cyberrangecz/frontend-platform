@@ -29,8 +29,9 @@ export abstract class LinearTrainingInstanceApi {
     /**
      * Sends http request to retrieve training access token by pool id
      * @param poolId id of the pool
+     * @returns access token, or null when no training instance holds that pool
      */
-    abstract getTrainingAccessTokenByPoolId(poolId: number): Observable<string>;
+    abstract getTrainingAccessTokenByPoolId(poolId: number): Observable<string | null>;
 
     /**
      * Sends http request to retrieve all training runs associated with training instance
