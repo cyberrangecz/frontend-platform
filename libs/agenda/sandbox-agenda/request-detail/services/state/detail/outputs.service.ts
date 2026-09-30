@@ -153,10 +153,10 @@ export class OutputsService {
                         this.isFetching = false;
                     },
                     error: () => {
+                        const { content, rows } = this.logsSubject.value;
                         this.appendOutput({
-                            content:
-                                '[LOGGING ERROR]: Failed to refresh logs.\n',
-                            rows: this.logsSubject.value.rows,
+                            content: `${content ? '\n' : ''}[LOGGING ERROR]: Failed to refresh logs.`,
+                            rows,
                         });
                         this.isFetching = false;
                     },
@@ -168,8 +168,11 @@ export class OutputsService {
     }
 
     private appendOutput(output: LogOutput): void {
+        const stored = this.logsSubject.value;
+        const rowsArrived = output.rows > stored.rows;
+        const separator = stored.content && rowsArrived ? '\n' : '';
         this.logsSubject.next({
-            content: this.logsSubject.value.content + output.content,
+            content: stored.content + separator + output.content,
             rows: output.rows,
         });
     }
