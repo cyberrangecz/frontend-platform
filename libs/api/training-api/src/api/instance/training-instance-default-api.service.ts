@@ -21,6 +21,7 @@ import {
 import { Observable, of, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { TrainingInstanceAssignPoolDTO } from '../../dto/training-instance/training-instance-assign-pool-dto';
+import { TrainingInstanceAccessTokenDTO } from '../../dto/training-instance/training-instance-access-token-dto';
 import { TrainingInstanceDTO } from '../../dto/training-instance/training-instance-dto';
 import { TrainingInstanceBasicDto } from '../../dto/training-instance/training-instance-basic-dto';
 import { TrainingInstanceScoreReportDto } from '../../dto/training-instance/training-instance-score-report-dto';
@@ -103,12 +104,12 @@ export class TrainingInstanceDefaultApi extends LinearTrainingInstanceApi {
      */
     getTrainingAccessTokenByPoolId(poolId: number): Observable<string | null> {
         return this.crczpHttp
-            .get(
+            .get<TrainingInstanceAccessTokenDTO>(
                 `${this.trainingInstancesEndpointUri}/access/${poolId}`,
                 'Fetch training access token by pool id',
             )
             .setExpectedErrors([404])
-            .asText()
+            .withReceiveMapper((response) => response.access_token)
             .execute()
             .pipe(
                 catchError((error: HttpErrorResponse) =>
@@ -162,14 +163,14 @@ export class TrainingInstanceDefaultApi extends LinearTrainingInstanceApi {
      */
     update(trainingInstance: TrainingInstance): Observable<string> {
         return this.http
-            .put(
+            .put<TrainingInstanceAccessTokenDTO>(
                 this.trainingInstancesEndpointUri,
                 TrainingInstanceMapper.toUpdateDTO(trainingInstance),
-                {
-                    responseType: 'text',
-                },
             )
-            .pipe(handleJsonError());
+            .pipe(
+                map((response) => response.access_token),
+                handleJsonError(),
+            );
     }
 
     /**
