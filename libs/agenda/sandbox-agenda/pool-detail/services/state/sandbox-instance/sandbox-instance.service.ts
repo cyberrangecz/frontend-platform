@@ -1,7 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Clipboard } from '@angular/cdk/clipboard';
 import { Router } from '@angular/router';
 import {
     SentinelConfirmationDialogComponent,
@@ -17,8 +16,8 @@ import {
     SandboxInstanceSort
 } from '@crczp/sandbox-api';
 import { SandboxAllocationUnit, SandboxInstance } from '@crczp/sandbox-model';
-import { EMPTY, from, Observable } from 'rxjs';
-import { catchError, map, switchMap, tap } from 'rxjs/operators';
+import { EMPTY, firstValueFrom, from, Observable, of } from 'rxjs';
+import { catchError, filter, map, shareReplay, switchMap, tap } from 'rxjs/operators';
 import { SandboxAllocationUnitsService } from '../sandbox-allocation-unit/sandbox-allocation-units.service';
 import { ErrorHandlerService, NotificationService, PortalConfig } from '@crczp/utils';
 import { Routing } from '@crczp/routing-commons';
@@ -61,7 +60,6 @@ export class SandboxInstanceService extends OffsetPaginatedElementsPollingServic
 
     private router = inject(Router);
     private dialog = inject(MatDialog);
-    private clipboard = inject(Clipboard);
     private notificationService = inject(NotificationService);
     private errorHandler = inject(ErrorHandlerService);
     private lastPoolId: number;
@@ -291,15 +289,28 @@ export class SandboxInstanceService extends OffsetPaginatedElementsPollingServic
     /**
      * Places the command connecting to a sandbox over VPN on the clipboard, reporting the outcome
      * as a notification. A sandbox reachable over no VPN is reported as such and nothing is
-     * placed on the clipboard.
+     * placed on the clipboard. The clipboard write starts on the call itself, so the call must
+     * happen within the user gesture requesting the copy.
      *
      * @param sandboxUuid uuid of the sandbox to be reached over VPN
      * @returns Observable emitting true once the command reached the clipboard
      */
     copyVpnCommand(sandboxUuid: string): Observable<boolean> {
-        return this.sandboxApi.getSandboxVpnCommand(sandboxUuid).pipe(
-            map((vpnCommand) =>
-                this.copyVpnCommandToClipboard(vpnCommand.command, sandboxUuid),
+        const command$ = this.sandboxApi.getSandboxVpnCommand(sandboxUuid).pipe(
+            map((vpnCommand) => vpnCommand.command),
+            shareReplay(1),
+        );
+        const written$ = this.writeToClipboard(
+            command$.pipe(filter((command) => command !== null)),
+        );
+
+        return command$.pipe(
+            switchMap((command) =>
+                command === null
+                    ? this.reportVpnUnavailable(sandboxUuid)
+                    : written$.pipe(
+                          tap((copied) => this.reportCopyOutcome(copied)),
+                      ),
             ),
             catchError((err: HttpErrorResponse) => {
                 if (err.status === VPN_NOT_PROVISIONED_STATUS) {
@@ -320,27 +331,37 @@ export class SandboxInstanceService extends OffsetPaginatedElementsPollingServic
     }
 
     /**
-     * Places a VPN connection command on the clipboard and emits a notification stating the
-     * outcome. An absent command is reported as the sandbox being unreachable over VPN.
+     * Starts writing the first text a source emits to the clipboard at once, ahead of the text
+     * itself arriving.
      *
-     * @param command command connecting to the sandbox, absent where the sandbox carries none
-     * @param sandboxUuid uuid of the sandbox the command reaches
-     * @returns Whether the command reached the clipboard
+     * @param text$ source of the text to be written
+     * @returns Observable emitting whether the text reached the clipboard; false also where the
+     * source fails or completes empty
      */
-    private copyVpnCommandToClipboard(
-        command: string | null,
-        sandboxUuid: string,
-    ): boolean {
-        if (command === null) {
-            this.notificationService.emit(
-                'warning',
-                'VPN connection unavailable',
-                [`Sandbox ${sandboxUuid} has no VPN access configured`],
-            );
-            return false;
-        }
+    private writeToClipboard(text$: Observable<string>): Observable<boolean> {
+        const textBlob = firstValueFrom(
+            text$.pipe(map((text) => new Blob([text], { type: 'text/plain' }))),
+        );
+        return from(
+            navigator.clipboard
+                .write([new ClipboardItem({ 'text/plain': textBlob })])
+                .then(
+                    () => true,
+                    () => false,
+                ),
+        );
+    }
 
-        const copied = this.clipboard.copy(command);
+    private reportVpnUnavailable(sandboxUuid: string): Observable<boolean> {
+        this.notificationService.emit(
+            'warning',
+            'VPN connection unavailable',
+            [`Sandbox ${sandboxUuid} has no VPN access configured`],
+        );
+        return of(false);
+    }
+
+    private reportCopyOutcome(copied: boolean): void {
         if (copied) {
             this.notificationService.emit(
                 'success',
@@ -352,7 +373,6 @@ export class SandboxInstanceService extends OffsetPaginatedElementsPollingServic
                 'Copying the VPN connection command failed',
             );
         }
-        return copied;
     }
 
     /**
