@@ -17,7 +17,13 @@ import { OffsetPaginatedResource, PaginationMapper } from '@crczp/api-common';
 import { EditableCommentComponent } from '@crczp/sandbox-agenda/internal';
 import { AllocationRequestSort, PoolSort } from '@crczp/sandbox-api';
 import { Pool, RequestStageState, SandboxAllocationUnit } from '@crczp/sandbox-model';
-import { PaginationStorageService, PollingService, providePaginationStorageService, SortDir } from '@crczp/utils';
+import {
+    PaginationStorageService,
+    PollingService,
+    PortalConfig,
+    providePaginationStorageService,
+    SortDir,
+} from '@crczp/utils';
 import { SentinelControlItem, SentinelControlsComponent } from '@sentinel/components/controls';
 import { SentinelRowDirective, SentinelTableComponent, TableLoadEvent } from '@sentinel/components/table';
 import { Observable, of, Subscription } from 'rxjs';
@@ -93,6 +99,7 @@ export class PoolDetailComponent implements OnInit, AfterViewInit {
     private paginationService = inject(PaginationStorageService);
     private activeRoute = inject(ActivatedRoute);
     private changeDetectorRef = inject(ChangeDetectorRef);
+    private readonly vpnOffered = inject(PortalConfig).sandboxAccess.vpn;
     private subscription?: Subscription;
 
     private readonly initSandboxPagination =
@@ -201,6 +208,7 @@ export class PoolDetailComponent implements OnInit, AfterViewInit {
                     new PoolDetailTable(
                         this.mapToAbstractSandboxes(data),
                         this.sandboxInstanceService,
+                        this.vpnOffered,
                     ),
             ),
         );

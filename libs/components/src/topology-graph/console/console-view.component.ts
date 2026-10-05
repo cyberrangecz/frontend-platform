@@ -65,7 +65,8 @@ export class ConsoleView implements AfterViewInit, OnDestroy {
     private readonly platformConfig = inject(PortalConfig);
     private keydownHandler: ((e: KeyboardEvent) => void) | null = null;
     private keyupHandler: ((e: KeyboardEvent) => void) | null = null;
-    private readonly heldKeysyms = new Set<number>();
+    /** Keysym last sent as pressed for each physical key still held, keyed by its code. */
+    private readonly heldKeysymsByCode = new Map<string, number>();
     private windowBlurHandler: (() => void) | null = null;
     protected readonly commandKeyPlatform = shortcutsWithCommandKey();
 
@@ -200,10 +201,22 @@ export class ConsoleView implements AfterViewInit, OnDestroy {
      * each keystroke that follows.
      */
     private releaseHeldKeys(): void {
-        for (const keysym of this.heldKeysyms) {
+        for (const keysym of new Set(this.heldKeysymsByCode.values())) {
             this.guacClient?.sendKeyEvent(0, keysym);
         }
-        this.heldKeysyms.clear();
+        this.heldKeysymsByCode.clear();
+    }
+
+    /**
+     * Ends the hold of one physical key, releasing its keysym in the session only once no other
+     * held key still sends the same keysym.
+     */
+    private releasePhysicalKey(code: string, keysym: number): void {
+        this.heldKeysymsByCode.delete(code);
+        const stillHeld = [...this.heldKeysymsByCode.values()].includes(keysym);
+        if (!stillHeld) {
+            this.guacClient?.sendKeyEvent(0, keysym);
+        }
     }
 
     protected unlockKeyboard() {
@@ -394,7 +407,7 @@ export class ConsoleView implements AfterViewInit, OnDestroy {
             e.preventDefault();
             const keysym = this.keysymOf(e);
             if (keysym !== null) {
-                this.heldKeysyms.add(keysym);
+                this.heldKeysymsByCode.set(e.code, keysym);
                 this.guacClient?.sendKeyEvent(1, keysym);
             }
         };
@@ -405,10 +418,9 @@ export class ConsoleView implements AfterViewInit, OnDestroy {
                 return;
             }
 
-            const keysym = this.keysymOf(e);
+            const keysym = this.heldKeysymsByCode.get(e.code) ?? this.keysymOf(e);
             if (keysym !== null) {
-                this.heldKeysyms.delete(keysym);
-                this.guacClient?.sendKeyEvent(0, keysym);
+                this.releasePhysicalKey(e.code, keysym);
             }
         };
 

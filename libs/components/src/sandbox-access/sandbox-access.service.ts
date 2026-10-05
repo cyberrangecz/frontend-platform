@@ -8,7 +8,6 @@ import {
     defer,
     Observable,
     retry,
-    shareReplay,
     tap,
     throwError,
     timer,
@@ -27,10 +26,6 @@ export class SandboxAccessService {
     private readonly isLoadingSubject$ = new BehaviorSubject<boolean>(false);
     private readonly hasErrorSubject$ = new BehaviorSubject<boolean>(false);
     private readonly isProvisioningSubject$ = new BehaviorSubject<boolean>(false);
-    private readonly vpnCommandPolls = new Map<
-        string,
-        Observable<SandboxVpnCommand>
-    >();
 
     /**
      * Emits true while a VPN command is being awaited.
@@ -54,26 +49,12 @@ export class SandboxAccessService {
 
     /**
      * Provides the VPN command of a sandbox, waiting through the sandbox's VPN provisioning for
-     * as long as the caller stays subscribed. Concurrent callers share one wait, which ends when
-     * the last of them unsubscribes.
+     * as long as the caller stays subscribed. Each subscription starts its own wait.
      *
      * @param sandboxUuid Sandbox whose VPN command is awaited.
      * @returns Observable emitting the command once the sandbox reports it ready.
      */
     getVpnCommand(sandboxUuid: string): Observable<SandboxVpnCommand> {
-        const running = this.vpnCommandPolls.get(sandboxUuid);
-        if (running) {
-            return running;
-        }
-
-        const poll$ = this.createVpnCommandPoll(sandboxUuid);
-        this.vpnCommandPolls.set(sandboxUuid, poll$);
-        return poll$;
-    }
-
-    private createVpnCommandPoll(
-        sandboxUuid: string,
-    ): Observable<SandboxVpnCommand> {
         return defer(() => {
             this.isLoadingSubject$.next(true);
             this.hasErrorSubject$.next(false);
@@ -91,7 +72,6 @@ export class SandboxAccessService {
                     this.hasErrorSubject$.next(true);
                 },
             }),
-            shareReplay({ bufferSize: 1, refCount: true }),
         );
     }
 

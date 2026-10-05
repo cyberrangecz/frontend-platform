@@ -204,6 +204,7 @@ $close-clearance: $close-size + 0.5rem;
 :host(.vpn-panel--compact) {
     box-sizing: border-box;
     width: 24rem;
+    max-width: 100%;
     height: 8rem;
 }
 
