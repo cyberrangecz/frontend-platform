@@ -195,9 +195,7 @@ export class TrainingInstanceDefaultApi extends LinearTrainingInstanceApi {
      * @param id id of training instance which should be archived
      */
     archive(id: number): Observable<boolean> {
-        const headers = new HttpHeaders().set('Accept', [
-            'application/octet-stream',
-        ]);
+        const headers = new HttpHeaders().set('Accept', 'application/zip');
         return this.http
             .get(
                 `${this.trainingExportsEndpointUri}/${this.trainingInstancesUriExtension}/${id}`,

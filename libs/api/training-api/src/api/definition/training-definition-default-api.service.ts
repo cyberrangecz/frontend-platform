@@ -232,9 +232,7 @@ export class TrainingDefinitionDefaultApi extends LinearTrainingDefinitionApi {
      * @param id id of training definition which should be downloaded
      */
     download(id: number): Observable<boolean> {
-        const headers = new HttpHeaders().set('Accept', [
-            'application/octet-stream',
-        ]);
+        const headers = new HttpHeaders().set('Accept', 'application/json');
 
         return this.http
             .get(
