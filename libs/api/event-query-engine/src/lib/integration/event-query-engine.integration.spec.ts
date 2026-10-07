@@ -112,7 +112,7 @@ describe('Wire DTO → mapper → insert → query against real SQLite', () => {
     it('stores a COMMAND wire DTO in the command table with snake_case columns preserved', async () => {
         const commandDto: Record<string, unknown> = {
             type: null,
-            timestamp: '2021-03-24T12:00:00',
+            timestamp: '2021-03-24T12:00:00.000Z',
             sandbox_id: 'sb-cmd',
             training_time: 12.5,
             cmd_type: 'bash',
@@ -144,7 +144,7 @@ describe('Wire DTO → mapper → insert → query against real SQLite', () => {
     it('parses offset-free LocalDateTime as UTC epoch regardless of runner timezone', async () => {
         const trainingDto: Record<string, unknown> = {
             type: 'training_run_started',
-            timestamp: '2021-03-24T12:00:00',
+            timestamp: '2021-03-24T12:00:00.000Z',
             sandbox_id: 'sb-1',
             pool_id: 10,
             training_definition_id: 20,
@@ -171,7 +171,7 @@ describe('Wire DTO → mapper → insert → query against real SQLite', () => {
     it('persists training_time as a fractional JS number, not a string or truncated integer', async () => {
         const trainingDto: Record<string, unknown> = {
             type: 'training_run_started',
-            timestamp: '2021-03-24T12:00:00',
+            timestamp: '2021-03-24T12:00:00.000Z',
             sandbox_id: 'sb-1',
             pool_id: 10,
             training_definition_id: 20,

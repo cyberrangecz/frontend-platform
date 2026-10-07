@@ -40,9 +40,19 @@ export class GroupMapper {
         result.members = UserMapper.mapUserForGroupsDTOsToUsers(groupDTO.users);
         result.roles = RoleMapper.mapRoleDTOsToRoles(groupDTO.roles);
         if (groupDTO.expiration_date) {
-            result.expirationDate = new Date(groupDTO.expiration_date);
+            result.expirationDate = GroupMapper.toLocalCalendarDate(groupDTO.expiration_date);
         }
         return result;
+    }
+
+    /**
+     * Turns a UTC ISO-8601 instant into the local-time date carrying the same calendar day,
+     * so the expiration day shown in the UI is the day stored on the backend in any time zone
+     * @param utcInstant UTC ISO-8601 string with a `Z` designator
+     */
+    private static toLocalCalendarDate(utcInstant: string): Date {
+        const instant = new Date(utcInstant);
+        return new Date(instant.getUTCFullYear(), instant.getUTCMonth(), instant.getUTCDate());
     }
 
     /**

@@ -157,13 +157,19 @@ export class ErrorHandlerService implements ErrorHandler {
 
     /**
      * Picks the most telling text a failed response carries, preferring the message its body
-     * states, then a body that is itself text, and settling for the transport-level message when
-     * the body holds neither. Keeps a body of an unforeseen shape from yielding a blank line.
+     * states, then the detail (falling back to the title) of an RFC 9457 problem body, then a body
+     * that is itself text, and settling for the transport-level message when the body holds none.
+     * Keeps a body of an unforeseen shape from yielding a blank line.
      */
     private describedCause(err: HttpErrorResponse): string {
         const statedMessage = err.error?.message;
         if (typeof statedMessage === 'string' && statedMessage.length > 0) {
             return statedMessage;
+        }
+        for (const problemText of [err.error?.detail, err.error?.title]) {
+            if (typeof problemText === 'string' && problemText.length > 0) {
+                return problemText;
+            }
         }
         if (typeof err.error === 'string' && err.error.length > 0) {
             return err.error;
