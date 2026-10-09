@@ -1,0 +1,51 @@
+@if (anyAccessOffered) {
+    <div
+        (crczpClickOutside)="closeVpnPanel()"
+        [class.access-card--expanded]="vpnPanelOpen()"
+        class="access-card"
+    >
+        @if (vpnPanelOpen()) {
+            <crczp-vpn-guidance-panel
+                (close)="closeVpnPanel()"
+                (retry)="onVpnRetryRequested()"
+                [connectCommand]="vpnConnectCommand()"
+                [failed]="vpnFailed()"
+                [provisioning]="vpnProvisioning()"
+                [unavailable]="vpnUnavailable()"
+                [waiting]="vpnWaiting()"
+                class="access-card__guidance"
+            />
+        }
+
+        <div class="panel-actions">
+            @if (sshConfigOffered && !vpnPanelOpen()) {
+                <button
+                    (click)="onSshConfigRequested()"
+                    class="panel-actions__item"
+                    matTooltip="Download config for SSH client"
+                    matTooltipPosition="above"
+                >
+                    <mat-icon class="panel-actions__icon">download</mat-icon>
+                    SSH Config
+                </button>
+            }
+
+            @if (bothAccessOffered && !vpnPanelOpen()) {
+                <span aria-hidden="true" class="panel-actions__divider"></span>
+            }
+
+            @if (vpnOffered) {
+                <button
+                    (click)="onVpnCommandRequested()"
+                    [class.panel-actions__item--active]="vpnPanelOpen()"
+                    class="panel-actions__item"
+                    matTooltip="Show how to connect to the sandbox over VPN"
+                    matTooltipPosition="above"
+                >
+                    <mat-icon class="panel-actions__icon">vpn_lock</mat-icon>
+                    VPN connection
+                </button>
+            }
+        </div>
+    </div>
+}

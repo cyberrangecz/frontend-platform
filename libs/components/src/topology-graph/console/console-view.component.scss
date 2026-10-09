@@ -16,9 +16,13 @@
 }
 
 // Placed against the wrapper, covering its black bars, while living inside the mouse-event element.
-.guacamole-clipboard-hint {
+.guacamole-input-hint {
     position: absolute;
     top: 0.5rem;
     right: 0.5rem;
     z-index: 1;
+
+    &--gutter {
+        right: calc(0.5rem + 20px);
+    }
 }

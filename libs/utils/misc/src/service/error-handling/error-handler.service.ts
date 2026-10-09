@@ -107,7 +107,7 @@ export class ErrorHandlerService implements ErrorHandler {
         return this.safeEmit(this.notificationService, 'emit', {
             type: SentinelNotificationTypeEnum.Error,
             title: source || 'Error',
-            additionalInfo: [error],
+            additionalInfo: this.toNotificationLines(error),
         });
     }
 
@@ -150,7 +150,41 @@ export class ErrorHandlerService implements ErrorHandler {
         err: HttpErrorResponse,
         notification: SentinelNotification,
     ) {
-        notification.additionalInfo = [err.error.message];
+        notification.additionalInfo = this.toNotificationLines(
+            this.describedCause(err),
+        );
+    }
+
+    /**
+     * Picks the most telling text a failed response carries, preferring the message its body
+     * states, then a body that is itself text, and settling for the transport-level message when
+     * the body holds neither. Keeps a body of an unforeseen shape from yielding a blank line.
+     */
+    private describedCause(err: HttpErrorResponse): string {
+        const statedMessage = err.error?.message;
+        if (typeof statedMessage === 'string' && statedMessage.length > 0) {
+            return statedMessage;
+        }
+        if (typeof err.error === 'string' && err.error.length > 0) {
+            return err.error;
+        }
+        return err.message;
+    }
+
+    /**
+     * Splits a message into one entry per line, dropping blank ones, so a message composed of
+     * several statements is offered to the notification as several lines instead of one block.
+     * A message holding no line break, and one that is not text at all, yields a single entry.
+     */
+    private toNotificationLines(message: unknown): string[] {
+        if (typeof message !== 'string') {
+            return [String(message ?? '')];
+        }
+        const lines = message
+            .split('\n')
+            .map((line) => line.trim())
+            .filter((line) => line.length > 0);
+        return lines.length > 0 ? lines : [message];
     }
 
     private setPythonApiErrorToNotification(

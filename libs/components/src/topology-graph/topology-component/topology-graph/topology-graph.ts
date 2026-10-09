@@ -6,7 +6,7 @@ import { Minimap } from '../minimap/minimap';
 import { ContextMenu, ContextMenuItem } from '../context-menu/context-menu';
 import { catchError, combineLatest, EMPTY, map, of } from 'rxjs';
 import { TopologyNodeSvgService } from './services/topology-svg-generator.service';
-import { ErrorHandlerService } from '@crczp/utils';
+import { ErrorHandlerService, PortalConfig } from '@crczp/utils';
 import { OsType, Topology } from '@crczp/sandbox-model';
 import { mapTopologyToTopologyVisualization } from './topology-visualization-utils';
 import { TOPOLOGY_CONFIG } from './topology-graph-config';
@@ -59,6 +59,11 @@ export class TopologyGraph implements AfterViewInit {
     topology = input.required<Topology>();
     /** Whether the nodes back a running sandbox and can therefore be connected to. */
     consolesAvailable = input<boolean>(true);
+
+    private readonly sandboxAccessConfig = inject(PortalConfig).sandboxAccess;
+
+    protected readonly guacamoleOffered = this.sandboxAccessConfig.guacamole;
+
     @ViewChild('networkContainer', { static: false })
     networkContainer: ElementRef<HTMLDivElement>;
     network = signal<Network | null>(null);
@@ -389,7 +394,7 @@ export class TopologyGraph implements AfterViewInit {
         });
 
         this.network().on('doubleClick', (event) => {
-            if (event.nodes.length > 0) {
+            if (this.guacamoleOffered && event.nodes.length > 0) {
                 this.emitConsoleEvent(
                     this.nodeNamesDict[event.nodes[0]],
                     false,
@@ -402,7 +407,7 @@ export class TopologyGraph implements AfterViewInit {
     private emitConsoleEvent(
         topologyNode: TopologyGraphNode,
         inGui: boolean,
-        inNewWindow,
+        inNewWindow: boolean,
     ) {
         if (!topologyNode.guiAccess && inGui) {
             throw new Error(

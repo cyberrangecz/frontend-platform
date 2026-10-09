@@ -28,6 +28,8 @@ import { HintDTO } from '../../dto/level/training/hint-dto';
 import { IsCorrectAnswerDto } from '../../dto/level/training/is-correct-answer-dto';
 import { AccessTrainingRunDTO } from '../../dto/training-run/access-training-run-dto';
 import { TrainingRunDTO } from '../../dto/training-run/training-run-dto';
+import { TrainingRunSolutionDTO } from '../../dto/training-run/training-run-solution-dto';
+import { IsCorrectPasskeyDTO } from '../../dto/training-run/is-correct-passkey-dto';
 import { QuestionMapper } from '../../mappers/level/assessment/question-mapper';
 import { HintMapper } from '../../mappers/level/training/hint-mapper';
 import { LevelMapper } from '../../mappers/level/level-mapper';
@@ -220,12 +222,14 @@ export class TrainingRunDefaultApi extends LinearRunApi {
         trainingRunId: number,
         passkey: string,
     ): Observable<boolean> {
-        return this.http.post<boolean>(
-            `${this.apiUrl}/${trainingRunId}/is-correct-passkey`,
-            {
-                passkey,
-            },
-        );
+        return this.http
+            .post<IsCorrectPasskeyDTO>(
+                `${this.apiUrl}/${trainingRunId}/is-correct-passkey`,
+                {
+                    passkey,
+                },
+            )
+            .pipe(map((response) => response.correct));
     }
 
     /**
@@ -244,9 +248,11 @@ export class TrainingRunDefaultApi extends LinearRunApi {
      * @param trainingRunId id of the training run in which, solution should be revealed
      */
     takeSolution(trainingRunId: number): Observable<string> {
-        return this.http.get(`${this.apiUrl}/${trainingRunId}/solutions`, {
-            responseType: 'text',
-        });
+        return this.http
+            .get<TrainingRunSolutionDTO>(
+                `${this.apiUrl}/${trainingRunId}/solutions`,
+            )
+            .pipe(map((response) => response.solution));
     }
 
     /**

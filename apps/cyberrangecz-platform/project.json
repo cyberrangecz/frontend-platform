@@ -35,7 +35,7 @@
                         "output": "/"
                     }
                 ],
-                "styles": ["dist/libs/utils/theme/theme/apply-all.scss"],
+                "styles": ["libs/utils/theme/theming/apply-all.scss"],
                 "scripts": [],
                 "webWorkerTsConfig": "apps/cyberrangecz-platform/tsconfig.worker.json"
             },

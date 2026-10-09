@@ -98,7 +98,7 @@ export class TopologySynchronizerService {
 
     toggleCollapsed() {
         this.isCollapsedSubject.next(!this.isCollapsedSubject.value);
-        if (!this.isCollapsedSubject.value) {
+        if (!this.isCollapsedSubject.value && this.widthPreCollapse > 0) {
             this.topologyWidthSubject.next(this.widthPreCollapse);
         }
     }

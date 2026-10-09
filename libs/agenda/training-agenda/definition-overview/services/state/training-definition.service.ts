@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import {
@@ -199,10 +200,17 @@ export class TrainingDefinitionService extends CrczpOffsetElementsPaginatedServi
                 },
                 (err) => {
                     this.fileUploadProgressService.finish();
-                    this.errorHandler.emitAPIError(
-                        err,
-                        'Uploading training definition',
-                    );
+                    if (err instanceof HttpErrorResponse) {
+                        this.errorHandler.emitAPIError(
+                            err,
+                            'Uploading training definition',
+                        );
+                    } else {
+                        this.errorHandler.emitFrontendErrorNotification(
+                            err instanceof Error ? err.message : String(err),
+                            'Uploading training definition',
+                        );
+                    }
                     dialogRef.close();
                 },
             ),

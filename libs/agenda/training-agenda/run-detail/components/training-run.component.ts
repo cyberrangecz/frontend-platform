@@ -13,7 +13,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AbstractLevelComponent } from './level/abstract-level.component';
 import { isLoading } from '@sentinel/common/utils';
 import { AsyncPipe } from '@angular/common';
-import { SshAccessService } from '../services/training-run/ssh/ssh-acess.service';
 
 @Component({
     selector: 'crczp-training-run',
@@ -21,7 +20,6 @@ import { SshAccessService } from '../services/training-run/ssh/ssh-acess.service
     styleUrls: ['./training-run.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [AbstractLevelComponent, AsyncPipe],
-    providers: [SshAccessService],
 })
 /**
  * Main component of trainees training. Displays window with current level of a training and navigation to the next.

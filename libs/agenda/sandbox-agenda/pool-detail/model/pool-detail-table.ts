@@ -20,6 +20,7 @@ export class PoolDetailTable extends SentinelTable<
     constructor(
         resource: OffsetPaginatedResource<AbstractSandbox>,
         sandboxInstanceService: SandboxInstanceService,
+        vpnOffered: boolean,
     ) {
         const columns = [
             new Column<AllocationRequestSort>('name', 'name', true, 'id'),
@@ -35,7 +36,11 @@ export class PoolDetailTable extends SentinelTable<
             new Column<AllocationRequestSort>('stages', 'stages', false),
         ];
         const rows = resource.elements.map((element) =>
-            PoolDetailTable.createRow(element, sandboxInstanceService),
+            PoolDetailTable.createRow(
+                element,
+                sandboxInstanceService,
+                vpnOffered,
+            ),
         );
         super(rows, columns);
         this.pagination = resource.pagination;
@@ -44,6 +49,7 @@ export class PoolDetailTable extends SentinelTable<
     private static createRow(
         data: AbstractSandbox,
         sandboxInstanceService: SandboxInstanceService,
+        vpnOffered: boolean,
     ): Row<PoolDetailRowAdapter> {
         const rowAdapter = new PoolDetailRowAdapter();
         const dateFormatter = new DatePipe('en-US');
@@ -60,7 +66,7 @@ export class PoolDetailTable extends SentinelTable<
         rowAdapter.stages = this.requestStageResolver(data);
         const row = new Row(
             rowAdapter,
-            this.createActions(data, sandboxInstanceService),
+            this.createActions(data, sandboxInstanceService, vpnOffered),
         );
         if (!data.cleanupRunning()) {
             row.addLink(
@@ -77,6 +83,7 @@ export class PoolDetailTable extends SentinelTable<
     private static createActions(
         data: AbstractSandbox,
         sandboxInstanceService: SandboxInstanceService,
+        vpnOffered: boolean,
     ): RowAction[] {
         return [
             new DeleteAction(
@@ -104,6 +111,21 @@ export class PoolDetailTable extends SentinelTable<
                 of(!data.buildFinished()),
                 defer(() => sandboxInstanceService.getUserSshAccess(data.uuid)),
             ),
+            ...(vpnOffered
+                ? [
+                      new RowAction(
+                          'copy_vpn_command',
+                          'Copy VPN Command',
+                          'vpn_lock',
+                          'primary',
+                          'Copy the VPN connection command',
+                          of(!data.buildFinished() || !data.uuid),
+                          defer(() =>
+                              sandboxInstanceService.copyVpnCommand(data.uuid),
+                          ),
+                      ),
+                  ]
+                : []),
             this.createLockAction(
                 data.id,
                 data.locked,

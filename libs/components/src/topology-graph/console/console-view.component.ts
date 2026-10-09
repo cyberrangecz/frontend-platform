@@ -24,8 +24,8 @@ import { GuacamoleKeyCodes } from './keycodes';
 import { PortalConfig } from '@crczp/utils';
 import { Observable, Subject } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ConsoleClipboard } from './console-clipboard';
-import { ConsoleClipboardHint } from './console-clipboard-hint.component';
+import { ConsoleClipboard, shortcutsWithCommandKey } from './console-clipboard';
+import { ConsoleInputHint } from './console-input-hint.component';
 
 export type ConnectionParams = {
     sandboxUuid: string;
@@ -36,7 +36,7 @@ export type ConnectionParams = {
 
 @Component({
     selector: 'crczp-console-view',
-    imports: [CommonModule, GuacamoleStatus, ConsoleClipboardHint],
+    imports: [CommonModule, GuacamoleStatus, ConsoleInputHint],
     templateUrl: './console-view.component.html',
     styleUrl: './console-view.component.scss',
 })
@@ -65,8 +65,20 @@ export class ConsoleView implements AfterViewInit, OnDestroy {
     private readonly platformConfig = inject(PortalConfig);
     private keydownHandler: ((e: KeyboardEvent) => void) | null = null;
     private keyupHandler: ((e: KeyboardEvent) => void) | null = null;
-    private readonly heldKeysyms = new Set<number>();
+    /** Keysym last sent as pressed for each physical key still held, keyed by its code. */
+    private readonly heldKeysymsByCode = new Map<string, number>();
     private windowBlurHandler: (() => void) | null = null;
+    protected readonly commandKeyPlatform = shortcutsWithCommandKey();
+
+    /**
+     * What each Command key becomes in the session on a platform that shortcuts with it. The left
+     * one carries the shortcuts and so arrives as Control, while the right one is left as the
+     * platform key, sent as Super so a guest reads it as its own Windows key.
+     */
+    private readonly COMMAND_KEY_KEYSYMS = new Map<number, number>([
+        [0xffe7, 0xffe3],
+        [0xffe8, 0xffeb],
+    ]);
 
     private readonly clipboard = new ConsoleClipboard(
         {
@@ -83,13 +95,18 @@ export class ConsoleView implements AfterViewInit, OnDestroy {
     );
 
     /**
-     * Shows on a graphical session whose browser withholds unprompted clipboard reading, where
+     * Holds on a graphical session whose browser withholds unprompted clipboard reading, where
      * pasting into an application inside the desktop takes two shortcuts rather than one.
      */
-    protected readonly clipboardHintVisible = computed(
+    protected readonly clipboardGuidanceNeeded = computed(
         () =>
             this.connectionParams().withGui &&
             !this.clipboard.automaticSyncActive(),
+    );
+
+    /** Holds while the console rewrites input on its way to the session, or pasting takes a key. */
+    protected readonly inputHintVisible = computed(
+        () => this.commandKeyPlatform || this.clipboardGuidanceNeeded(),
     );
 
     ngAfterViewInit(): void {
@@ -184,10 +201,22 @@ export class ConsoleView implements AfterViewInit, OnDestroy {
      * each keystroke that follows.
      */
     private releaseHeldKeys(): void {
-        for (const keysym of this.heldKeysyms) {
+        for (const keysym of new Set(this.heldKeysymsByCode.values())) {
             this.guacClient?.sendKeyEvent(0, keysym);
         }
-        this.heldKeysyms.clear();
+        this.heldKeysymsByCode.clear();
+    }
+
+    /**
+     * Ends the hold of one physical key, releasing its keysym in the session only once no other
+     * held key still sends the same keysym.
+     */
+    private releasePhysicalKey(code: string, keysym: number): void {
+        this.heldKeysymsByCode.delete(code);
+        const stillHeld = [...this.heldKeysymsByCode.values()].includes(keysym);
+        if (!stillHeld) {
+            this.guacClient?.sendKeyEvent(0, keysym);
+        }
     }
 
     protected unlockKeyboard() {
@@ -239,11 +268,20 @@ export class ConsoleView implements AfterViewInit, OnDestroy {
         );
     }
 
+    /**
+     * Resolves the keysym the session receives for a key, substituting the Command keys on a
+     * platform that shortcuts with them. Their native Meta keysym addresses nothing in a Linux or
+     * Windows guest, whose shortcuts are built on Control and whose platform key is Super.
+     */
     private keysymOf(event: KeyboardEvent): number | null {
-        return (
+        const keysym =
             this.keysym_from_key_identifier(event.key, event.location) ||
-            this.keysym_from_keycode(event.keyCode, event.location)
-        );
+            this.keysym_from_keycode(event.keyCode, event.location);
+
+        if (keysym === null || !this.commandKeyPlatform) {
+            return keysym;
+        }
+        return this.COMMAND_KEY_KEYSYMS.get(keysym) ?? keysym;
     }
 
     /**
@@ -369,7 +407,7 @@ export class ConsoleView implements AfterViewInit, OnDestroy {
             e.preventDefault();
             const keysym = this.keysymOf(e);
             if (keysym !== null) {
-                this.heldKeysyms.add(keysym);
+                this.heldKeysymsByCode.set(e.code, keysym);
                 this.guacClient?.sendKeyEvent(1, keysym);
             }
         };
@@ -380,10 +418,9 @@ export class ConsoleView implements AfterViewInit, OnDestroy {
                 return;
             }
 
-            const keysym = this.keysymOf(e);
+            const keysym = this.heldKeysymsByCode.get(e.code) ?? this.keysymOf(e);
             if (keysym !== null) {
-                this.heldKeysyms.delete(keysym);
-                this.guacClient?.sendKeyEvent(0, keysym);
+                this.releasePhysicalKey(e.code, keysym);
             }
         };
 

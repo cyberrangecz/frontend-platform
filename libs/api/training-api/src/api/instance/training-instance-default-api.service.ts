@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { ResponseHeaderContentDispositionReader, SentinelParamsMerger } from '@sentinel/common';
 import { saveAs } from 'file-saver';
@@ -18,9 +18,10 @@ import {
     TrainingInstanceScoreReport,
     TrainingRun,
 } from '@crczp/training-model';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, of, throwError } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 import { TrainingInstanceAssignPoolDTO } from '../../dto/training-instance/training-instance-assign-pool-dto';
+import { TrainingInstanceAccessTokenDTO } from '../../dto/training-instance/training-instance-access-token-dto';
 import { TrainingInstanceDTO } from '../../dto/training-instance/training-instance-dto';
 import { TrainingInstanceBasicDto } from '../../dto/training-instance/training-instance-basic-dto';
 import { TrainingInstanceScoreReportDto } from '../../dto/training-instance/training-instance-score-report-dto';
@@ -99,14 +100,22 @@ export class TrainingInstanceDefaultApi extends LinearTrainingInstanceApi {
     /**
      * Sends http request to retrieve training access token by pool id
      * @param poolId id of the pool
-     * @returns access token or null if not found
+     * @returns access token, or null when no training instance holds that pool
      */
     getTrainingAccessTokenByPoolId(poolId: number): Observable<string | null> {
-        return this.http
-            .get(`${this.trainingInstancesEndpointUri}/access/${poolId}`, {
-                responseType: 'text',
-            })
-            .pipe(map((response) => response || null));
+        return this.crczpHttp
+            .get<TrainingInstanceAccessTokenDTO>(
+                `${this.trainingInstancesEndpointUri}/access/${poolId}`,
+                'Fetch training access token by pool id',
+            )
+            .setExpectedErrors([404])
+            .withReceiveMapper((response) => response.access_token)
+            .execute()
+            .pipe(
+                catchError((error: HttpErrorResponse) =>
+                    error.status === 404 ? of(null) : throwError(() => error),
+                ),
+            );
     }
 
     /**
@@ -154,14 +163,14 @@ export class TrainingInstanceDefaultApi extends LinearTrainingInstanceApi {
      */
     update(trainingInstance: TrainingInstance): Observable<string> {
         return this.http
-            .put(
+            .put<TrainingInstanceAccessTokenDTO>(
                 this.trainingInstancesEndpointUri,
                 TrainingInstanceMapper.toUpdateDTO(trainingInstance),
-                {
-                    responseType: 'text',
-                },
             )
-            .pipe(handleJsonError());
+            .pipe(
+                map((response) => response.access_token),
+                handleJsonError(),
+            );
     }
 
     /**

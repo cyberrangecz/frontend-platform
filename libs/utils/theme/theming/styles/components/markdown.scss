@@ -4,6 +4,13 @@ sentinel-markdown-view {
     background-color: transparent;
 }
 
+/* Markdown is written and read at one size, the editor setting none of its own and so
+   taking whatever surface it stands on happens to set. */
+sentinel-markdown-editor textarea,
+sentinel-markdown-editor sentinel-markdown-view {
+    font-size: 1rem;
+}
+
 markdown ::ng-deep img {
     max-width: 100%;
     display: block;
