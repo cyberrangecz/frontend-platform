@@ -14,6 +14,7 @@ import { catchError, retry, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { ErrorHandlerService, LoadingTracker, NotificationService, PollingService, PortalConfig } from '@crczp/utils';
 import { Routing } from '@crczp/routing-commons';
 import { CrczpOffsetElementsPaginatedService, OffsetPaginatedResource } from '@crczp/api-common';
+import { emitPoolCleanupResult } from '@crczp/sandbox-agenda/internal';
 
 /**
  * Basic implementation of a layer between a component and an API service.
@@ -253,10 +254,13 @@ export class PoolOverviewService extends CrczpOffsetElementsPaginatedService<Poo
     private callApiToDelete(pool: Pool, forceDelete: boolean): Observable<any> {
         return this.poolApi.deletePool(pool.id, forceDelete).pipe(
             tap(
-                () =>
-                    this.notificationService.emit(
-                        'success',
-                        `Pool ${pool.id} was deleted`,
+                (skippedUnitIds) =>
+                    emitPoolCleanupResult(
+                        this.notificationService,
+                        skippedUnitIds.length === 0
+                            ? `Pool ${pool.id} was deleted`
+                            : `Pool ${pool.id} was not deleted`,
+                        skippedUnitIds,
                     ),
                 (err) =>
                     this.errorHandler.emitAPIError(
@@ -270,10 +274,11 @@ export class PoolOverviewService extends CrczpOffsetElementsPaginatedService<Poo
     private callApiToClear(poolId: number): any {
         return this.poolApi.createMultipleCleanupRequests(poolId, true).pipe(
             tap(
-                () =>
-                    this.notificationService.emit(
-                        'success',
+                (skippedUnitIds) =>
+                    emitPoolCleanupResult(
+                        this.notificationService,
                         `Pool ${poolId} has been cleared`,
+                        skippedUnitIds,
                     ),
                 (err) =>
                     this.errorHandler.emitAPIError(
