@@ -29,6 +29,12 @@ import { SandboxDefinitionMapper } from '../../mappers/sandbox-definition/sandbo
 import { SandboxAllocationUnitMapper } from '../../mappers/sandbox-instance/sandbox-allocation-unit-mapper';
 import { SandboxInstanceMapper } from '../../mappers/sandbox-instance/sandbox-instance-mapper';
 import { RequestDTO } from '../../dto/sandbox-instance/request-dto';
+import {
+    CancelledCountDTO,
+    ForceCancelledCountDTO,
+    ForceCleanedCountDTO,
+    PoolCleanupResultDTO,
+} from '../../dto/sandbox-instance/pool-maintenance-dto';
 import { RequestMapper } from '../../mappers/sandbox-instance/request-mapper';
 import {
     CRCZPHttpService,
@@ -96,15 +102,20 @@ export class PoolApi {
     /**
      * Sends http request to delete a pool
      * @param poolId id of the pool to delete
+     * @param force whether to delete the pool's sandboxes first; the pool goes once they are gone
+     * @returns ids of the units a forced deletion left alone because their allocation is queued or
+     * its first stage is running, which keep the pool from being deleted
      */
-    deletePool(poolId: number, force: boolean): Observable<any> {
+    deletePool(poolId: number, force: boolean): Observable<number[]> {
         let params = new HttpParams();
         if (force) {
             params = new HttpParams().set('force', force.toString());
         }
-        return this.http.delete(`${this.apiUrl}/${poolId}`, {
-            params,
-        });
+        return this.http
+            .delete<PoolCleanupResultDTO | null>(`${this.apiUrl}/${poolId}`, {
+                params,
+            })
+            .pipe(map((response) => response?.skipped_unit_ids ?? []));
     }
 
     /**
@@ -417,51 +428,102 @@ export class PoolApi {
      * Sends http request to create cleanup requests for all allocation units in the given pool specified by @poolId
      * @param poolId id of a pool
      * @param force states whether the delete action should be forced
+     * @returns ids of the units left alone because their allocation is queued or its first stage is running
      */
     createMultipleCleanupRequests(
         poolId: number,
         force = false,
-    ): Observable<any> {
+    ): Observable<number[]> {
         const params = new HttpParams().append('force', force.toString());
-        return this.http.post(
-            `${this.apiUrl}/${poolId}/cleanup-requests`,
-            {},
-            { params },
-        );
+        return this.http
+            .post<PoolCleanupResultDTO | null>(
+                `${this.apiUrl}/${poolId}/cleanup-requests`,
+                {},
+                { params },
+            )
+            .pipe(map((response) => response?.skipped_unit_ids ?? []));
     }
 
     /**
      * Sends http request to create cleanup requests for all unlocked allocation units in the given pool specified by @poolId
      * @param poolId id of a pool
      * @param force states whether the delete action should be forced
+     * @returns ids of the units left alone because their allocation is queued or its first stage is running
      */
     createUnlockedCleanupRequests(
         poolId: number,
         force = false,
-    ): Observable<any> {
+    ): Observable<number[]> {
         const params = new HttpParams().append('force', force.toString());
-        return this.http.post(
-            `${this.apiUrl}/${poolId}/cleanup-unlocked`,
-            {},
-            { params },
-        );
+        return this.http
+            .post<PoolCleanupResultDTO | null>(
+                `${this.apiUrl}/${poolId}/cleanup-unlocked`,
+                {},
+                { params },
+            )
+            .pipe(map((response) => response?.skipped_unit_ids ?? []));
     }
 
     /**
      * Sends http request to create cleanup requests for all failed allocation units in the given pool specified by @poolId
      * @param poolId id of a pool
      * @param force states whether the delete action should be forced
+     * @returns ids of the units left alone because their allocation is queued or its first stage is running
      */
     createFailedCleanupRequests(
         poolId: number,
         force = false,
-    ): Observable<any> {
+    ): Observable<number[]> {
         const params = new HttpParams().append('force', force.toString());
-        return this.http.post(
-            `${this.apiUrl}/${poolId}/cleanup-failed`,
-            {},
-            { params },
-        );
+        return this.http
+            .post<PoolCleanupResultDTO | null>(
+                `${this.apiUrl}/${poolId}/cleanup-failed`,
+                {},
+                { params },
+            )
+            .pipe(map((response) => response?.skipped_unit_ids ?? []));
+    }
+
+    /**
+     * Sends http request to cancel the allocations of the pool that have not started yet and remove
+     * their units. Allocations already building and built sandboxes are left alone.
+     * @param poolId id of a pool
+     * @returns the number of removed units
+     */
+    cancelQueued(poolId: number): Observable<number> {
+        return this.http
+            .post<CancelledCountDTO>(`${this.apiUrl}/${poolId}/cancel-queued`, {})
+            .pipe(map((response) => response.cancelled_count));
+    }
+
+    /**
+     * Sends http request to cancel the allocations of the pool whose first stage is running and
+     * remove their units from the database. What the stage created in the cloud stays there.
+     * @param poolId id of a pool
+     * @returns the number of removed units
+     */
+    forceCancelAllocation(poolId: number): Observable<number> {
+        return this.http
+            .post<ForceCancelledCountDTO>(
+                `${this.apiUrl}/${poolId}/force-cancel-allocation`,
+                {},
+            )
+            .pipe(map((response) => response.force_cancelled_count));
+    }
+
+    /**
+     * Sends http request to cancel the unfinished cleanups of the pool and remove their units from
+     * the database. What the cleanups have not removed from the cloud yet stays there.
+     * @param poolId id of a pool
+     * @returns the number of removed units
+     */
+    forceCleanup(poolId: number): Observable<number> {
+        return this.http
+            .post<ForceCleanedCountDTO>(
+                `${this.apiUrl}/${poolId}/force-cleanup`,
+                {},
+            )
+            .pipe(map((response) => response.force_cleaned_count));
     }
 
     /**

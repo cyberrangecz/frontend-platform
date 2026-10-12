@@ -91,6 +91,26 @@ export abstract class SandboxAllocationUnitsService {
     abstract cleanupUnlocked(poolId: number, force: boolean): Observable<any>;
 
     /**
+     * Cancels the allocations of a pool that have not started yet and removes their units.
+     * @param poolId id of the pool
+     */
+    abstract cancelQueued(poolId: number): Observable<OffsetPaginatedResource<SandboxAllocationUnit>>;
+
+    /**
+     * Cancels the allocations of a pool whose first stage is running and removes their units from
+     * the database, leaving what the stage created in the cloud behind.
+     * @param poolId id of the pool
+     */
+    abstract forceCancelAllocation(poolId: number): Observable<OffsetPaginatedResource<SandboxAllocationUnit>>;
+
+    /**
+     * Cancels the unfinished cleanups of a pool and removes their units from the database, leaving
+     * what the cleanups have not removed from the cloud yet behind.
+     * @param poolId id of the pool
+     */
+    abstract forceCleanup(poolId: number): Observable<OffsetPaginatedResource<SandboxAllocationUnit>>;
+
+    /**
      * Initializes default resources with given pageSize
      * @param pageSize size of a page for pagination
      */

@@ -26,6 +26,7 @@ import {
     createPaginatedResource,
     OffsetPaginatedResource,
 } from '@crczp/api-common';
+import { emitPoolCleanupResult } from '@crczp/sandbox-agenda/internal';
 
 @Injectable()
 export class SandboxAllocationUnitsConcreteService extends SandboxAllocationUnitsService {
@@ -164,6 +165,62 @@ export class SandboxAllocationUnitsConcreteService extends SandboxAllocationUnit
     }
 
     /**
+     * Cancels the allocations of a pool that have not started yet and removes their units.
+     * @param poolId id of the pool
+     */
+    cancelQueued(poolId: number): Observable<OffsetPaginatedResource<SandboxAllocationUnit>> {
+        return this.removeStuckUnits(
+            poolId,
+            'Cancel Queued Allocations',
+            `Do you want to cancel the allocations of pool ${poolId} that have not started yet? Sandboxes being built and built ones stay.`,
+            'Cancel Allocations',
+            this.poolApi.cancelQueued(poolId),
+            (count) =>
+                count === 0
+                    ? 'No allocation was waiting to start'
+                    : `Cancelled ${count} queued allocation${count === 1 ? '' : 's'}`,
+        );
+    }
+
+    /**
+     * Cancels the allocations of a pool whose first stage is running and removes their units from
+     * the database, leaving what the stage created in the cloud behind.
+     * @param poolId id of the pool
+     */
+    forceCancelAllocation(poolId: number): Observable<OffsetPaginatedResource<SandboxAllocationUnit>> {
+        return this.removeStuckUnits(
+            poolId,
+            'Force Cancel Allocations',
+            `Do you want to cancel the allocations of pool ${poolId} whose first stage is running and remove their sandboxes from the database? What the stage has already created in the cloud stays there and has to be deleted by hand.`,
+            'Force Cancel',
+            this.poolApi.forceCancelAllocation(poolId),
+            (count) =>
+                count === 0
+                    ? 'No allocation was in its first stage'
+                    : `Removed ${count} sandbox${count === 1 ? '' : 'es'} whose allocation was in its first stage; delete their cloud resources by hand`,
+        );
+    }
+
+    /**
+     * Cancels the unfinished cleanups of a pool and removes their units from the database, leaving
+     * what the cleanups have not removed from the cloud yet behind.
+     * @param poolId id of the pool
+     */
+    forceCleanup(poolId: number): Observable<OffsetPaginatedResource<SandboxAllocationUnit>> {
+        return this.removeStuckUnits(
+            poolId,
+            'Force Cleanup',
+            `Do you want to stop the unfinished cleanups of pool ${poolId} and remove their sandboxes from the database? What the cleanups have not removed from the cloud yet stays there and has to be deleted by hand.`,
+            'Force Cleanup',
+            this.poolApi.forceCleanup(poolId),
+            (count) =>
+                count === 0
+                    ? 'No cleanup was unfinished'
+                    : `Removed ${count} sandbox${count === 1 ? '' : 'es'} whose cleanup was unfinished; delete what is left of them in the cloud by hand`,
+        );
+    }
+
+    /**
      * Initializes default resources with given pageSize
      * @param pageSize size of a page for pagination
      */
@@ -190,6 +247,51 @@ export class SandboxAllocationUnitsConcreteService extends SandboxAllocationUnit
             },
         );
         return dialogRef.afterClosed();
+    }
+
+    /**
+     * Asks to confirm a pool maintenance action, then runs it and reports how many units it
+     * removed.
+     */
+    private removeStuckUnits(
+        poolId: number,
+        title: string,
+        question: string,
+        confirmLabel: string,
+        request$: Observable<number>,
+        describeResult: (removedCount: number) => string,
+    ): Observable<OffsetPaginatedResource<SandboxAllocationUnit>> {
+        const dialogRef = this.dialog.open(
+            SentinelConfirmationDialogComponent,
+            {
+                data: new SentinelConfirmationDialogConfig(
+                    title,
+                    question,
+                    'Cancel',
+                    confirmLabel,
+                ),
+            },
+        );
+        return dialogRef.afterClosed().pipe(
+            switchMap((result) =>
+                result === SentinelDialogResultEnum.CONFIRMED
+                    ? request$
+                    : EMPTY,
+            ),
+            tap({
+                next: (removedCount) =>
+                    this.notificationService.emit(
+                        'success',
+                        describeResult(removedCount),
+                    ),
+                error: (err) =>
+                    this.errorHandler.emitAPIError(
+                        err,
+                        `${title} in pool ${poolId}`,
+                    ),
+            }),
+            switchMap(() => this.getAll(this.lastPoolId, this.lastPagination)),
+        );
     }
 
     private onGetAllError(err: HttpErrorResponse) {
@@ -219,13 +321,17 @@ export class SandboxAllocationUnitsConcreteService extends SandboxAllocationUnit
         );
     }
 
-    private handleApiRequests(request: Observable<any>, poolId: number): any {
+    private handleApiRequests(
+        request: Observable<number[]>,
+        poolId: number,
+    ): any {
         return request.pipe(
             tap({
-                next: () =>
-                    this.notificationService.emit(
-                        'success',
+                next: (skippedUnitIds) =>
+                    emitPoolCleanupResult(
+                        this.notificationService,
                         `Cleanup request for pool ${poolId}`,
+                        skippedUnitIds,
                     ),
                 error: (err) =>
                     this.errorHandler.emitAPIError(

@@ -52,6 +52,13 @@ export class RoleMapping extends Z.class({
     trainingTrainee: z.string().nonempty(),
     sandboxDesigner: z.string().nonempty(),
     sandboxOrganizer: z.string().nonempty(),
+    sandboxAdmin: z
+        .string()
+        .nonempty()
+        .default('ROLE_SANDBOX-SERVICE_ADMIN')
+        .describe(
+            'Role that may force the removal of stuck sandboxes; the sandbox service requires this one',
+        ),
 }) {}
 
 export class PortalConfig extends Z.class({

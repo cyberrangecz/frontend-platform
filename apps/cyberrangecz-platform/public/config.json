@@ -23,7 +23,8 @@
         "adaptiveTrainingOrganizer": "ROLE_ADAPTIVE_TRAINING_ORGANIZER",
         "trainingTrainee": "ROLE_TRAINING_TRAINEE",
         "sandboxDesigner": "ROLE_SANDBOX-SERVICE_DESIGNER",
-        "sandboxOrganizer": "ROLE_SANDBOX-SERVICE_ORGANIZER"
+        "sandboxOrganizer": "ROLE_SANDBOX-SERVICE_ORGANIZER",
+        "sandboxAdmin": "ROLE_SANDBOX-SERVICE_ADMIN"
     },
     "authConfig": {
         "guardMainPageRedirect": "home",

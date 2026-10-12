@@ -449,6 +449,52 @@ export class SandboxInstanceService extends OffsetPaginatedElementsPollingServic
     }
 
     /**
+     * Cancels the allocations of the pool that have not started yet and removes their units.
+     * @param poolId id of the pool
+     */
+    cancelQueued(poolId: number): Observable<OffsetPaginatedResource<SandboxAllocationUnit>> {
+        return this.refreshUnitsAfter(
+            this.allocationUnitsService.cancelQueued(poolId),
+        );
+    }
+
+    /**
+     * Cancels the allocations of the pool whose first stage is running and removes their units
+     * from the database, leaving what the stage created in the cloud behind.
+     * @param poolId id of the pool
+     */
+    forceCancelAllocation(poolId: number): Observable<OffsetPaginatedResource<SandboxAllocationUnit>> {
+        return this.refreshUnitsAfter(
+            this.allocationUnitsService.forceCancelAllocation(poolId),
+        );
+    }
+
+    /**
+     * Cancels the unfinished cleanups of the pool and removes their units from the database,
+     * leaving what the cleanups have not removed from the cloud yet behind.
+     * @param poolId id of the pool
+     */
+    forceCleanup(poolId: number): Observable<OffsetPaginatedResource<SandboxAllocationUnit>> {
+        return this.refreshUnitsAfter(
+            this.allocationUnitsService.forceCleanup(poolId),
+        );
+    }
+
+    private refreshUnitsAfter(
+        action$: Observable<unknown>,
+    ): Observable<OffsetPaginatedResource<SandboxAllocationUnit>> {
+        return action$.pipe(
+            switchMap(() =>
+                this.getAllUnits(
+                    this.lastPoolId,
+                    this
+                        .lastPagination as OffsetPaginationEvent<AllocationRequestSort>,
+                ),
+            ),
+        );
+    }
+
+    /**
      * Starts cleanup for sandbox specified in @unitIds.
      * @param unitId allocation unit id which should be deleted
      */

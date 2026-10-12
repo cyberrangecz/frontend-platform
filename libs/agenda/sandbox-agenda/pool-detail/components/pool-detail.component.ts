@@ -24,6 +24,7 @@ import {
     providePaginationStorageService,
     SortDir,
 } from '@crczp/utils';
+import { SentinelAuthService } from '@sentinel/auth';
 import { SentinelControlItem, SentinelControlsComponent } from '@sentinel/components/controls';
 import { SentinelRowDirective, SentinelTableComponent, TableLoadEvent } from '@sentinel/components/table';
 import { Observable, of, Subscription } from 'rxjs';
@@ -100,6 +101,10 @@ export class PoolDetailComponent implements OnInit, AfterViewInit {
     private activeRoute = inject(ActivatedRoute);
     private changeDetectorRef = inject(ChangeDetectorRef);
     private readonly vpnOffered = inject(PortalConfig).sandboxAccess.vpn;
+    private readonly sandboxAdminRole = inject(PortalConfig).roleMapping.sandboxAdmin;
+    private readonly isSandboxAdmin = inject(SentinelAuthService)
+        .getRoles()
+        .some((role) => role.roleType === this.sandboxAdminRole);
     private subscription?: Subscription;
 
     private readonly initSandboxPagination =
@@ -237,6 +242,7 @@ export class PoolDetailComponent implements OnInit, AfterViewInit {
                         (allocationUnit) => new AbstractSandbox(allocationUnit),
                     ),
                     this.sandboxInstanceService,
+                    this.isSandboxAdmin,
                 );
                 return resource.elements.map(
                     (allocationUnit) => new AbstractSandbox(allocationUnit),
