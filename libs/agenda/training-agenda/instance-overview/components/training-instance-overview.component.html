@@ -32,12 +32,12 @@
     @if (castToPoolSize(row.element.poolSize | async); as poolSize) {
         <div
             class="access-token-container"
-            matTooltip="{{ getAccessTokenTooltip(poolSize, row.element.localEnvironment) }}"
+            matTooltip="{{ getAccessTokenTooltip(poolSize, row.element) }}"
         >
             <button
                 (click)="onCopyToken()"
                 [cdkCopyToClipboard]="row.element.accessToken"
-                [disabled]="tokenCopyDisabled(poolSize, row.element.localEnvironment)"
+                [disabled]="tokenCopyDisabled(poolSize, row.element)"
                 class="token-button"
                 color="primary"
                 mat-button
@@ -46,7 +46,7 @@
             </button>
             @if (!row.element.localEnvironment && 'error' in poolSize) {
                 <mat-icon color="warn">error</mat-icon>
-            } @else if (!row.element.localEnvironment && getFreePoolSize(poolSize) <= 0) {
+            } @else if (needsFreeSandbox(row.element) && getFreePoolSize(poolSize) <= 0) {
                 <mat-icon class="warning">warning</mat-icon>
             }
         </div>

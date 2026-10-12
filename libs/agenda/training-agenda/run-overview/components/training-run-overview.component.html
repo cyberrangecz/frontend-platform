@@ -1,5 +1,18 @@
 <div class="content">
-    <crczp-access-training-run (accessToken)="access($event)" [isLoading]="isLoading" />
+    <div class="access-container">
+        <crczp-access-training-run (accessToken)="access($event)" [isLoading]="isLoading" />
+        @if (sandboxWaitMessage$ | async; as sandboxWaitMessage) {
+            <div class="sandbox-wait" role="status">
+                <mat-icon>info</mat-icon>
+                <span>{{ sandboxWaitMessage }}</span>
+            </div>
+        }
+        @if (ownSandboxes$ | async; as ownSandboxes) {
+            @if (ownSandboxes.length > 0) {
+                <crczp-own-sandboxes (remove)="removeOwnSandbox($event)" [sandboxes]="ownSandboxes" />
+            }
+        }
+    </div>
     <div class="table-container">
         <sentinel-controls [controls]="controls"
                            [titlecased]="false" />

@@ -19,7 +19,12 @@ import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { CdkCopyToClipboard } from '@angular/cdk/clipboard';
 import { TableCountdownComponent, TableDateCellComponent, TableEmptyStateDirective } from '@crczp/components';
-import { NotificationService, PaginationStorageService, providePaginationStorageService } from '@crczp/utils';
+import {
+    NotificationService,
+    PaginationStorageService,
+    PortalConfig,
+    providePaginationStorageService,
+} from '@crczp/utils';
 import { PaginationMapper } from '@crczp/api-common';
 import { TrainingInstanceSort } from '@crczp/training-api';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
@@ -65,6 +70,8 @@ export class TrainingInstanceOverviewComponent {
     private service = inject(TrainingInstanceOverviewService);
     private paginationService = inject(PaginationStorageService);
     private notificationService = inject(NotificationService);
+    private readonly traineeSandboxAllocation =
+        !!inject(PortalConfig).enableTraineeSandboxAllocation;
     private readonly initialInstancePagination =
         this.paginationService.createPagination<TrainingInstanceSort>(
             this.INITIAL_SORT_NAME,
@@ -96,8 +103,8 @@ export class TrainingInstanceOverviewComponent {
         );
     }
 
-    getAccessTokenTooltip(poolSize: PoolSize, localEnvironment: boolean) {
-        if (!localEnvironment) {
+    getAccessTokenTooltip(poolSize: PoolSize, instance: TrainingInstance) {
+        if (!instance.localEnvironment) {
             if ('error' in poolSize) {
                 if (poolSize.error === 'REMOVED') {
                     return 'Cannot copy access token because the associated pool has been removed.';
@@ -105,11 +112,26 @@ export class TrainingInstanceOverviewComponent {
                 if (poolSize.error === 'NOT_ASSIGNED') {
                     return 'Cannot copy access token because there is no associated pool.';
                 }
-            } else if (poolSize.total - poolSize.used === 0) {
+            } else if (
+                this.needsFreeSandbox(instance) &&
+                poolSize.total - poolSize.used === 0
+            ) {
                 return 'Cannot copy access token because there is no free sandbox.';
             }
         }
         return 'Click to copy access token';
+    }
+
+    /**
+     * True if trainees of the instance work in sandboxes allocated in its pool in advance, so
+     * that one has to be free for a trainee to start. Trainees of an instance that is neither
+     * managed nor local allocate their own where the deployment lets them.
+     */
+    protected needsFreeSandbox(instance: TrainingInstance): boolean {
+        return (
+            !instance.localEnvironment &&
+            !(this.traineeSandboxAllocation && instance.managed === false)
+        );
     }
 
     protected castToPoolSize(poolSize: unknown): PoolSize {
@@ -121,11 +143,13 @@ export class TrainingInstanceOverviewComponent {
 
     protected tokenCopyDisabled(
         poolSize: PoolSize,
-        localEnvironment: boolean,
+        instance: TrainingInstance,
     ): boolean {
         return (
-            !localEnvironment &&
-            ('error' in poolSize || poolSize.total - poolSize.used === 0)
+            !instance.localEnvironment &&
+            ('error' in poolSize ||
+                (this.needsFreeSandbox(instance) &&
+                    poolSize.total - poolSize.used === 0))
         );
     }
 

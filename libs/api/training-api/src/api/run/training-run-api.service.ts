@@ -5,6 +5,7 @@ import {
     Hint,
     Level,
     Question,
+    TraineeSandbox,
     TrainingRun,
     TrainingRunBasic,
     TrainingRunInfo,
@@ -75,6 +76,17 @@ export abstract class LinearRunApi {
      * @param trainingRunId id of a training run to resume
      */
     abstract resume(trainingRunId: number): Observable<AccessTrainingRunInfo>;
+
+    /**
+     * Sends http request to list the sandboxes the logged in trainee allocated for themselves
+     */
+    abstract getOwnSandboxes(): Observable<TraineeSandbox[]>;
+
+    /**
+     * Sends http request to remove a sandbox the logged in trainee allocated for themselves
+     * @param allocationUnitId id of the sandbox's allocation unit
+     */
+    abstract removeOwnSandbox(allocationUnitId: number): Observable<void>;
 
     /**
      * Sends http request to move to next level
