@@ -163,6 +163,10 @@ export class TrainingInstanceEditOverviewComponent implements OnInit {
         return this.editService.isLocalEnvironmentAllowed();
     }
 
+    isTraineeSandboxAllocationAllowed(): boolean {
+        return this.editService.isTraineeSandboxAllocationAllowed();
+    }
+
     private refreshTrainingDefinitions() {
         const pagination =
             createInfinitePaginationEvent<TrainingDefinitionSort>('title');

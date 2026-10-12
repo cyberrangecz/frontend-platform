@@ -32,6 +32,11 @@ export class TrainingInstance {
     sandboxDefinitionId!: number;
     backwardMode!: boolean;
     showStepperBar!: boolean;
+    /**
+     * True if trainees work in sandboxes the organizer allocates in the pool in advance, false if
+     * each trainee allocates one of their own where the deployment lets trainees do so
+     */
+    managed?: boolean;
 
     /**
      *

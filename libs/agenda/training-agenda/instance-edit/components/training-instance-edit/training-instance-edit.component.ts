@@ -76,6 +76,7 @@ export class TrainingInstanceEditComponent implements OnChanges, AfterViewInit {
     @Input() pools: Pool[];
     @Input() sandboxDefinitions: SandboxDefinition[];
     @Input() localEnvironmentAllowed: boolean;
+    @Input() traineeSandboxAllocationAllowed: boolean;
 
     @Output() edited: EventEmitter<TrainingInstanceChangeEvent> =
         new EventEmitter();
@@ -140,6 +141,10 @@ export class TrainingInstanceEditComponent implements OnChanges, AfterViewInit {
 
     get showStepperBar(): AbstractControl {
         return this.trainingInstanceFormGroup.formGroup.get('showStepperBar');
+    }
+
+    get managed(): AbstractControl {
+        return this.trainingInstanceFormGroup.formGroup.get('managed');
     }
 
     get poolId(): AbstractControl {
@@ -238,6 +243,7 @@ export class TrainingInstanceEditComponent implements OnChanges, AfterViewInit {
         if ('trainingInstance' in changes) {
             this.trainingInstanceFormGroup = new TrainingInstanceFormGroup(
                 this.trainingInstance,
+                !this.traineeSandboxAllocationAllowed,
             );
             this.setupOnFormChangedEvent();
         }

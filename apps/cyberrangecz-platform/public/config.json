@@ -1,5 +1,6 @@
 {
     "enableLocalMode": true,
+    "enableTraineeSandboxAllocation": false,
     "defaultPageSize": 15,
     "polling": {
         "pollingPeriodShort": 3000,

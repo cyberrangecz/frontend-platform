@@ -62,6 +62,14 @@ export class PortalConfig extends Z.class({
         .nullish()
         .describe('Enable local mode if true'),
 
+    enableTraineeSandboxAllocation: z
+        .boolean()
+        .nullish()
+        .describe(
+            'Let trainees of training instances that are not managed allocate their own sandboxes. ' +
+                'Turn it on together with single.sandbox.per.user.enabled of the training service.',
+        ),
+
     defaultPageSize: z
         .number({ required_error: 'Default page size field is required' })
         .gt(0, 'Page size must be greater than 0'),

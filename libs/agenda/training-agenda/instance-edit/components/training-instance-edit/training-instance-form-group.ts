@@ -8,7 +8,12 @@ import { TrainingInstance } from '@crczp/training-model';
 export class TrainingInstanceFormGroup {
     formGroup: UntypedFormGroup;
 
-    constructor(trainingInstance: TrainingInstance) {
+    /**
+     * @param trainingInstance the edited training instance
+     * @param defaultManaged whether a new instance is managed; where trainees cannot allocate their
+     * own sandboxes, it is, so that letting them later does not change instances created before
+     */
+    constructor(trainingInstance: TrainingInstance, defaultManaged = false) {
         this.formGroup = new UntypedFormGroup(
             {
                 startTime: new UntypedFormControl(trainingInstance.startTime),
@@ -33,6 +38,9 @@ export class TrainingInstanceFormGroup {
                 backwardMode: new UntypedFormControl(false),
                 showStepperBar: new UntypedFormControl(
                     trainingInstance.showStepperBar
+                ),
+                managed: new UntypedFormControl(
+                    trainingInstance.managed ?? defaultManaged
                 ),
                 poolId: new UntypedFormControl(trainingInstance.poolId),
                 sandboxDefinitionId: new UntypedFormControl(
@@ -97,6 +105,7 @@ export class TrainingInstanceFormGroup {
         trainingInstance.poolId = this.formGroup.get('poolId').value;
         trainingInstance.showStepperBar =
             this.formGroup.get('showStepperBar').value;
+        trainingInstance.managed = this.formGroup.get('managed').value;
     }
 
     private dateSequenceValidator: ValidatorFn = (
