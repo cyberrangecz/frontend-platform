@@ -16,7 +16,7 @@ import {
     TrainingDefinitionWithLevels,
     TrainingInstance,
 } from '@crczp/training-model';
-import { catchError, take } from 'rxjs/operators';
+import { catchError, map, take } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
 import { RoutingUtils } from '../../utils';
 import { CommonResolverHelperService } from '../common-resolver-helper-service';
@@ -26,6 +26,9 @@ import { Routing } from '../../routing-namespace';
     providedIn: 'root',
 })
 export class TrainingResolverHelperService extends CommonResolverHelperService {
+    /** Query parameter of the run overview that says why the trainee waits for their sandbox */
+    public static readonly SANDBOX_WAIT_PARAM = 'sandbox';
+
     private readonly linearDefinitionApi = inject(LinearTrainingDefinitionApi);
     private readonly linearInstanceApi = inject(LinearTrainingInstanceApi);
     private readonly linearRunApi = inject(LinearRunApi);
@@ -91,6 +94,7 @@ export class TrainingResolverHelperService extends CommonResolverHelperService {
     ): Observable<AccessTrainingRunInfo | RedirectCommand> {
         return this.linearRunApi.resume(runId).pipe(
             take(1),
+            map((runInfo) => this.redirectWhileWaitingForSandbox(runInfo)),
             catchError((err) => {
                 this.emitApiError(err, 'Accessing training run');
                 return of(new RedirectCommand(this.runOverviewUrl()));
@@ -103,9 +107,30 @@ export class TrainingResolverHelperService extends CommonResolverHelperService {
     ): Observable<AccessTrainingRunInfo | RedirectCommand> {
         return this.linearRunApi.access(runToken).pipe(
             take(1),
+            map((runInfo) => this.redirectWhileWaitingForSandbox(runInfo)),
             catchError((err) => {
                 this.emitApiError(err, 'Accessing training run');
                 return of(new RedirectCommand(this.runOverviewUrl()));
+            }),
+        );
+    }
+
+    /**
+     * Sends the trainee back to the run overview while the run waits for the sandbox they allocate
+     * for themselves, telling the overview why.
+     */
+    private redirectWhileWaitingForSandbox(
+        runInfo: AccessTrainingRunInfo,
+    ): AccessTrainingRunInfo | RedirectCommand {
+        if (!runInfo.waitingForSandbox) {
+            return runInfo;
+        }
+        return new RedirectCommand(
+            this.router.createUrlTree([Routing.RouteBuilder.run.build()], {
+                queryParams: {
+                    [TrainingResolverHelperService.SANDBOX_WAIT_PARAM]:
+                        runInfo.sandboxWaitReason,
+                },
             }),
         );
     }
