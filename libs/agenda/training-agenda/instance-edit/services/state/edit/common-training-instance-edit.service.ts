@@ -178,6 +178,10 @@ export abstract class CommonTrainingInstanceEditService extends CommonTrainingIn
         return !!this.config.enableLocalMode;
     }
 
+    public isTraineeSandboxAllocationAllowed(): boolean {
+        return !!this.config.enableTraineeSandboxAllocation;
+    }
+
     private create(): Observable<number> {
         if (this.editedSnapshot) {
             if (!this.editedSnapshot.startTime)

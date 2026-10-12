@@ -20,8 +20,14 @@ export class TrainingInstanceFormGroup {
      * @param trainingInstance training instance whose values fill the form
      * @param editMode true for an existing instance, whose stored values are kept as they are;
      * false for a new one, which starts now and with the default access token prefix
+     * @param defaultManaged whether a new instance is managed; where trainees cannot allocate their
+     * own sandboxes, it is, so that letting them later does not change instances created before
      */
-    constructor(trainingInstance: TrainingInstance, editMode: boolean) {
+    constructor(
+        trainingInstance: TrainingInstance,
+        editMode: boolean,
+        defaultManaged = false,
+    ) {
         this.formGroup = new UntypedFormGroup(
             {
                 startTime: new UntypedFormControl(
@@ -60,6 +66,9 @@ export class TrainingInstanceFormGroup {
                 ),
                 showStepperBar: new UntypedFormControl(
                     trainingInstance.showStepperBar
+                ),
+                managed: new UntypedFormControl(
+                    trainingInstance.managed ?? defaultManaged
                 ),
                 poolId: new UntypedFormControl(trainingInstance.poolId),
                 sandboxDefinitionId: new UntypedFormControl(
@@ -124,6 +133,7 @@ export class TrainingInstanceFormGroup {
         trainingInstance.poolId = this.formGroup.get('poolId').value;
         trainingInstance.showStepperBar =
             this.formGroup.get('showStepperBar').value;
+        trainingInstance.managed = this.formGroup.get('managed').value;
     }
 
     private dateSequenceValidator: ValidatorFn = (

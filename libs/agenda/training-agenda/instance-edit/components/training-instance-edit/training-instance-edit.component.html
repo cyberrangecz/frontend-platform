@@ -95,6 +95,15 @@
                         formControlName="backwardMode">
                         Backward Mode
                     </mat-slide-toggle>
+                    @if (traineeSandboxAllocationAllowed && !localEnvironment.value) {
+                        <mat-slide-toggle
+                            [matTooltip]="managed.value
+                                        ? 'Managed: trainees get the sandboxes you allocate in the pool in advance.'
+                                        : 'Not managed: each trainee allocates a sandbox of their own on entering the access token.'"
+                            formControlName="managed">
+                            Managed
+                        </mat-slide-toggle>
+                    }
                     @if (localEnvironmentAllowed) {
                         <mat-slide-toggle
                             [matTooltip]="(localEnvironment.valueChanges | async)

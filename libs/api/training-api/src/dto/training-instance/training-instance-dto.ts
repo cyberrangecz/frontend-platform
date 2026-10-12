@@ -16,4 +16,5 @@ export interface TrainingInstanceDTO {
     sandbox_definition_id?: number;
     backward_mode?: boolean;
     show_stepper_bar?: boolean;
+    managed?: boolean;
 }
