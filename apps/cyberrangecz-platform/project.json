@@ -37,6 +37,11 @@
                 ],
                 "styles": ["libs/utils/theme/theming/apply-all.scss"],
                 "scripts": [],
+                "allowedCommonJsDependencies": [
+                    "fast-deep-equal",
+                    "file-saver",
+                    "jsrsasign"
+                ],
                 "webWorkerTsConfig": "apps/cyberrangecz-platform/tsconfig.worker.json"
             },
             "configurations": {
