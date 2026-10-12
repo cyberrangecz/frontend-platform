@@ -21,6 +21,7 @@ export class RoleService {
         'trainingTrainee',
         'sandboxDesigner',
         'sandboxOrganizer',
+        'sandboxAdmin',
     ] as const;
 
     /**
