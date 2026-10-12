@@ -1,0 +1,36 @@
+<mat-card appearance="outlined">
+    <mat-card-title>Your Sandboxes</mat-card-title>
+    <mat-card-subtitle>
+        You can have one sandbox at a time. Finishing a training removes its
+        sandbox; to start another training before that, remove it here.
+    </mat-card-subtitle>
+    <mat-card-content>
+        @for (sandbox of sandboxes(); track sandbox.id) {
+            <div class="own-sandbox">
+                <span class="own-sandbox-title">
+                    {{
+                        sandbox.trainingInstanceTitle ?? 'Sandbox ' + sandbox.id
+                    }}
+                </span>
+                <span
+                    [class.own-sandbox-failed]="hasFailed(sandbox)"
+                    class="own-sandbox-state"
+                >
+                    <mat-icon>{{ stateIcon(sandbox) }}</mat-icon>
+                    {{ stateLabel(sandbox) }}
+                </span>
+                @if (sandbox.removable) {
+                    <button
+                        (click)="remove.emit(sandbox)"
+                        aria-label="Remove sandbox"
+                        color="warn"
+                        mat-icon-button
+                        matTooltip="Remove sandbox"
+                    >
+                        <mat-icon>delete</mat-icon>
+                    </button>
+                }
+            </div>
+        }
+    </mat-card-content>
+</mat-card>

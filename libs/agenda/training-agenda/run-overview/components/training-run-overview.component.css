@@ -9,6 +9,19 @@
     margin-bottom: 5rem;
 }
 
+.access-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.sandbox-wait {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    max-width: 40rem;
+}
+
 .table-container {
     width: 80%;
 }

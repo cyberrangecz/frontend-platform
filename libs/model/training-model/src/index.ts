@@ -22,6 +22,8 @@ export * from './enums/question-type.enum';
 export * from './enums/detected-forbidden-command-type.enum';
 export * from './enums/training-type.enum';
 export * from './enums/platform-event-type.enum';
+export * from './enums/sandbox-wait-reason.enum';
+export * from './enums/trainee-sandbox-state.enum';
 
 // MAIN
 export * from './training/access-training-run-info';
@@ -32,6 +34,7 @@ export * from './training/training-instance';
 export * from './training/training-instance-score-report';
 export * from './training/training-run';
 export * from './training/training-run-info';
+export * from './training/trainee-sandbox';
 
 // LEVEL
 export * from './level/abstract-level-basic';

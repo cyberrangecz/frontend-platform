@@ -1,0 +1,29 @@
+mat-card {
+    padding: 16px;
+}
+
+mat-card-content {
+    padding: 16px 0 0;
+}
+
+.own-sandbox {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    min-height: 48px;
+}
+
+.own-sandbox-title {
+    flex: 1;
+    font-weight: 500;
+}
+
+.own-sandbox-state {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.own-sandbox-failed {
+    color: var(--mat-sys-error);
+}

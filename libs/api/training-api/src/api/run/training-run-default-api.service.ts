@@ -17,6 +17,7 @@ import {
     Hint,
     Level,
     Question,
+    TraineeSandbox,
     TrainingRun,
     TrainingRunBasic,
     TrainingRunInfo
@@ -45,6 +46,8 @@ import { AccessedTrainingRunSort } from '../sorts';
 import { AnswerCheckResultMapper } from '../../mappers/training-run/answer-check-result-mapper';
 import { trainingRunBasicArrayMapper } from '../../mappers/training-run/training-run-basic-mapper';
 import { TrainingRunBasicDto } from '../../dto/training-run/training-run-basic-dto';
+import { TraineeSandboxDTO } from '../../dto/training-run/trainee-sandbox-dto';
+import { TraineeSandboxMapper } from '../../mappers/training-run/trainee-sandbox-mapper';
 
 /**
  * Default implementation of service abstracting http communication with training run endpoints.
@@ -156,6 +159,26 @@ export class TrainingRunDefaultApi extends LinearRunApi {
                 `${this.apiUrl}/${trainingRunId}/resumption`,
             )
             .pipe(map((response) => AccessLinearRunMapper.fromDTO(response)));
+    }
+
+    /**
+     * Sends http request to list the sandboxes the logged in trainee allocated for themselves
+     */
+    getOwnSandboxes(): Observable<TraineeSandbox[]> {
+        return this.http
+            .get<TraineeSandboxDTO[]>(`${this.apiUrl}/user-active-sandboxes`)
+            .pipe(map((response) => TraineeSandboxMapper.fromDTOs(response)));
+    }
+
+    /**
+     * Sends http request to remove a sandbox the logged in trainee allocated for themselves
+     * @param allocationUnitId id of the sandbox's allocation unit
+     */
+    removeOwnSandbox(allocationUnitId: number): Observable<void> {
+        return this.http.post<void>(
+            `${this.apiUrl}/user-sandboxes/by-allocation/${allocationUnitId}/cleanup`,
+            {},
+        );
     }
 
     /**
