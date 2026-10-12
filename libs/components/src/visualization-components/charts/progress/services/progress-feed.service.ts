@@ -109,7 +109,7 @@ export class ProgressFeedServiceImpl extends ProgressFeedService {
      */
     private readonly resolved$ = computed<InstanceResolveState>(() => {
         const holder = this.resolvedHolder();
-        return holder === null ? { kind: 'loading' } : holder();
+        return holder?.() ?? { kind: 'loading' };
     });
 
     private readonly instance$ = computed<TrainingInstanceBasic | null>(() => {

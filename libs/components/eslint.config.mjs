@@ -34,11 +34,10 @@ export default [
             ],
             '@angular-eslint/component-selector': [
                 'error',
-                {
-                    type: 'element',
-                    prefix: 'crczp',
-                    style: 'kebab-case',
-                },
+                [
+                    { type: 'element', prefix: 'crczp', style: 'kebab-case' },
+                    { type: 'attribute', prefix: 'crczp', style: 'camelCase' },
+                ],
             ],
         },
     },

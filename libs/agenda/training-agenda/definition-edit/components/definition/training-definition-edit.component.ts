@@ -1,4 +1,4 @@
-import {Component, DestroyRef, EventEmitter, inject, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
+import {Component, DestroyRef, EventEmitter, inject, Input, OnChanges, Output, SimpleChanges, ChangeDetectionStrategy} from '@angular/core';
 import {
     AbstractControl,
     ReactiveFormsModule,
@@ -12,11 +12,9 @@ import {TrainingDefinitionEditFormGroup} from './training-definition-edit-form-g
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {MatError, MatFormField, MatInput, MatLabel, MatSuffix} from "@angular/material/input";
 import {MatCheckbox} from "@angular/material/checkbox";
-import {MatIconButton} from "@angular/material/button";
 import {MatTooltip} from "@angular/material/tooltip";
 
 import {SentinelFreeFormComponent} from "@sentinel/components/free-form";
-import {MatIcon} from "@angular/material/icon";
 import { ClearInputSuffixComponent } from '@crczp/utils';
 import { CdkTextareaAutosize } from '@angular/cdk/text-field';
 
@@ -27,6 +25,7 @@ import { CdkTextareaAutosize } from '@angular/cdk/text-field';
     selector: 'crczp-training-definition-edit',
     templateUrl: './training-definition-edit.component.html',
     styleUrls: ['./training-definition-edit.component.css'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         CdkTextareaAutosize,
         ClearInputSuffixComponent,

@@ -2,7 +2,8 @@ import { ChangeDetectionStrategy, Component, DestroyRef, inject, input, OnInit, 
 import { SortDir } from '@crczp/utils';
 import { SentinelControlItem, SentinelControlsComponent } from '@sentinel/components/controls';
 import { Group, UserRole } from '@crczp/user-and-group-model';
-import { SentinelTable, SentinelTableComponent, TableLoadEvent } from '@sentinel/components/table';
+import { SentinelTableComponent, TableLoadEvent } from '@sentinel/components/table';
+import { SentinelFilterFreeInputComponent } from '@sentinel/components/filters';
 import {
     SentinelResourceSelectorComponent,
     SentinelResourceSelectorMapping
@@ -16,10 +17,10 @@ import { MatCard, MatCardAvatar, MatCardContent, MatCardHeader, MatCardSubtitle,
 import { MatIcon } from '@angular/material/icon';
 import { AsyncPipe } from '@angular/common';
 import { RoleAssignService } from '../../services/state/role-assign.service';
-import { PaginationStorageService, providePaginationStorageService } from '@crczp/utils';
+import { OffsetPaginationEvent, PaginationStorageService, providePaginationStorageService } from '@crczp/utils';
 import { OffsetPaginatedResource, PaginationMapper } from '@crczp/api-common';
 import { RoleSort } from '@crczp/user-and-group-api';
-import { TableEmptyStateDirective } from '@crczp/components';
+import { TableEmptyStateDirective, TableModel } from '@crczp/components';
 
 /**
  * Component for role assignment to edited group-overview
@@ -39,6 +40,7 @@ import { TableEmptyStateDirective } from '@crczp/components';
         MatIcon,
         SentinelResourceSelectorComponent,
         SentinelTableComponent,
+        SentinelFilterFreeInputComponent,
         AsyncPipe,
         SentinelControlsComponent,
         TableEmptyStateDirective,
@@ -81,7 +83,11 @@ export class GroupRoleAssignComponent implements OnInit {
     /**
      * Data for assigned roles table component
      */
-    assignedRoles$ = new Subject<SentinelTable<UserRole, string>>();
+    assignedRoles$ = new Subject<TableModel<UserRole, string>>();
+    /**
+     * Text the assigned roles are currently filtered by
+     */
+    filter = '';
     /**
      * True if getting data for table component is in progress, false otherwise
      */
@@ -101,6 +107,8 @@ export class GroupRoleAssignComponent implements OnInit {
             this.ROLES_OF_GROUP_INIT_SORT_NAME,
             this.ROLES_OF_GROUP_INIT_SORT_DIR,
         );
+    private pagination: OffsetPaginationEvent<RoleSort> =
+        this.initialRolesPagination;
 
     ngOnInit() {
         this.selectedRolesToAssign$ =
@@ -135,16 +143,28 @@ export class GroupRoleAssignComponent implements OnInit {
         this.roleAssignService.setSelectedRolesToAssign(selected);
     }
 
+    /**
+     * Calls service to get data for assigned roles table
+     * @param event load table event emitted by table component
+     */
     onAssignedRolesLoad(event: TableLoadEvent<RoleSort>): void {
-        this.paginationService.savePageSize(event.pagination.size);
-        this.roleAssignService
-            .getAssigned(
-                this.group().id,
-                PaginationMapper.toOffsetPaginationEvent(event.pagination),
-                event.filter,
-            )
-            .pipe(takeUntilDestroyed(this.destroyRef))
-            .subscribe();
+        if (event.pagination) {
+            this.pagination = PaginationMapper.toOffsetPaginationEvent(
+                event.pagination,
+            );
+        }
+        this.paginationService.savePageSize(this.pagination.size);
+        this.load();
+    }
+
+    /**
+     * Reloads the assigned roles from the first page, filtered by the given text
+     * @param filter text to filter roles by, empty for no filter
+     */
+    onFilter(filter: string): void {
+        this.filter = filter;
+        this.pagination = { ...this.pagination, page: 0 };
+        this.load();
     }
 
     /**
@@ -153,6 +173,17 @@ export class GroupRoleAssignComponent implements OnInit {
      */
     onAssignedRolesSelection(selected: UserRole[]): void {
         this.roleAssignService.setSelectedAssignedRoles(selected);
+    }
+
+    private load(): void {
+        this.roleAssignService
+            .getAssigned(
+                this.group().id,
+                this.pagination,
+                this.filter || undefined,
+            )
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe();
     }
 
     private initTable() {

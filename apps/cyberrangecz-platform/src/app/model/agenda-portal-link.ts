@@ -4,7 +4,7 @@ import { ValidPath } from '@crczp/routing-commons';
 
 export class AgendaPortalLink extends Agenda {
     description: string;
-    icon: string;
+    declare icon: string;
     menu?: AgendaMenuItem[];
 
     declare path: ValidPath;

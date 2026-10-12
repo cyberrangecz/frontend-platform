@@ -1,36 +1,48 @@
 <sentinel-controls [controls]="topControls" />
+@let table = trainingDefinitions$ | async;
+@if (table?.filterable) {
+    <sentinel-filter-free-input
+        (filterChange)="onFilter($event)"
+        (filterCleared)="onFilter('')"
+        [label]="table.filterLabel"
+        [placeholder]="table.filterLabel"
+        [value]="filter" />
+}
 <sentinel-table
     (tableLoad)="onLoadEvent($event)"
-    [data]="trainingDefinitions$ | async"
+    [columns]="table?.columns ?? []"
     [defaultSortDirection]="INIT_SORT_DIR"
     [defaultSortName]="INIT_SORT_NAME"
     [displayedActionsCount]="7"
-    [hasError]="hasError$ | async"
-    [isLoading]="isLoading$ | async"
+    [hasError]="!!(hasError$ | async)"
+    [isLoading]="!!(isLoading$ | async)"
+    [pagination]="table?.pagination"
+    [rows]="table?.rows ?? []"
+    [selectable]="!!table?.selectable"
     crczpTableEmptyState="No training definitions have been created yet">
 
-    <ng-container *sentinelRow="'createdAt'; template: createdAt" />
-    <ng-container *sentinelRow="'lastEditTime'; template: lastEditTime" />
-    <ng-container *sentinelRow="'state'; template: state" />
+    <ng-template [sentinelCellType]="table?.rows" let-row sentinelCell="title">
+        <a [routerLink]="row.links.get('title')">{{ row.element.title }}</a>
+    </ng-template>
 
-    <ng-template #state let-row>
+    <ng-template [sentinelCellType]="table?.rows" let-row sentinelCell="state">
         <crczp-table-state-cell
             [icon]="stateToIcon(row.element.state)"
             [text]="row.element.state"
         />
     </ng-template>
 
-    <ng-template #createdAt let-row>
+    <ng-template [sentinelCellType]="table?.rows" let-row sentinelCell="createdAt">
         <crczp-table-date-cell
             [displayedDate]="row.element.createdAt"
-            [isLoading]="isLoading$ | async"
+            [isLoading]="!!(isLoading$ | async)"
             [showTimeWhenPossible]="true" />
     </ng-template>
 
-    <ng-template #lastEditTime let-row>
+    <ng-template [sentinelCellType]="table?.rows" let-row sentinelCell="lastEditTime">
         <crczp-table-date-cell
             [displayedDate]="row.element.lastEditTime"
-            [isLoading]="isLoading$ | async"
+            [isLoading]="!!(isLoading$ | async)"
             [showTimeWhenPossible]="true" />
     </ng-template>
 </sentinel-table>

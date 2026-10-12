@@ -44,6 +44,7 @@ export class TrainingInstanceRunsComponent implements OnInit {
             'endTime',
             'asc',
         );
+    private pagination = this.initialRunPagination;
 
     ngOnInit(): void {
         this.trainingInstance$ = this.activeRoute.data.pipe(
@@ -57,12 +58,14 @@ export class TrainingInstanceRunsComponent implements OnInit {
     }
 
     onTrainingRunsLoadEvent(loadEvent: TableLoadEvent<TrainingRunSort>): void {
-        this.paginationService.savePageSize(loadEvent.pagination.size);
+        if (loadEvent.pagination) {
+            this.pagination = PaginationMapper.toOffsetPaginationEvent(
+                loadEvent.pagination,
+            );
+        }
+        this.paginationService.savePageSize(this.pagination.size);
         this.trainingRunService
-            .getAll(
-                this.trainingInstance.id,
-                PaginationMapper.toOffsetPaginationEvent(loadEvent.pagination),
-            )
+            .getAll(this.trainingInstance.id, this.pagination)
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe();
     }

@@ -1,4 +1,4 @@
-import {Component, ElementRef, EventEmitter, Input, OnChanges, Output, ViewChild} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Input, OnChanges, Output, ViewChild, ChangeDetectionStrategy} from '@angular/core';
 import {MitreTechnique} from '@crczp/training-model';
 import {COMMA, ENTER, SEMICOLON} from '@angular/cdk/keycodes';
 import {MatChipGrid, MatChipInput, MatChipInputEvent, MatChipRemove, MatChipRow} from '@angular/material/chips';
@@ -22,6 +22,7 @@ import {
     selector: 'crczp-mitre-technique-select',
     templateUrl: './mitre-technique-select.component.html',
     styleUrls: ['./mitre-technique-select.component.css'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         MatError,
         MatHint,

@@ -6,16 +6,13 @@ export class TrainingDefinitionUpdateDTO {
     id?: number;
     outcomes?: string[];
     prerequisites?: string[];
-    state?: TrainingDefinitionUpdateDTO.StateEnum;
+    state?: TrainingDefinitionUpdateDTOStateEnum;
     title?: string;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-namespace
-export namespace TrainingDefinitionUpdateDTO {
-    export type StateEnum = 'RELEASED' | 'ARCHIVED' | 'UNRELEASED';
-    export const StateEnum = {
-        RELEASED: 'RELEASED' as StateEnum,
-        ARCHIVED: 'ARCHIVED' as StateEnum,
-        UNRELEASED: 'UNRELEASED' as StateEnum,
-    };
-}
+export type TrainingDefinitionUpdateDTOStateEnum = 'RELEASED' | 'ARCHIVED' | 'UNRELEASED';
+export const TrainingDefinitionUpdateDTOStateEnum = {
+    RELEASED: 'RELEASED' as TrainingDefinitionUpdateDTOStateEnum,
+    ARCHIVED: 'ARCHIVED' as TrainingDefinitionUpdateDTOStateEnum,
+    UNRELEASED: 'UNRELEASED' as TrainingDefinitionUpdateDTOStateEnum,
+};

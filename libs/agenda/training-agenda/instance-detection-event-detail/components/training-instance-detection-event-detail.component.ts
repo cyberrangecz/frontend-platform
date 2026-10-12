@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, Input, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { AsyncPipe, DatePipe } from '@angular/common';
 import {
     AbstractDetectionEvent,
@@ -13,8 +13,8 @@ import {
     TimeProximityDetectionEvent
 } from '@crczp/training-model';
 import { Observable } from 'rxjs';
-import { SentinelTable, SentinelTableComponent, TableActionEvent, TableLoadEvent } from '@sentinel/components/table';
-import { map, take } from 'rxjs/operators';
+import { SentinelTableComponent, TableActionEvent, TableLoadEvent } from '@sentinel/components/table';
+import { filter, map, shareReplay, switchMap, take } from 'rxjs/operators';
 import { DetectionEventParticipantTable } from '../model/detection-event-participant-table';
 import { DetectionEventParticipantService } from '../services/participant/detection-event-participant.service';
 import { DetectionEventService } from '../services/detection-event/detection-event.service';
@@ -35,9 +35,10 @@ import { MatCard } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
 import { MatDivider } from '@angular/material/divider';
 import { MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
-import { PaginationStorageService, providePaginationStorageService } from '@crczp/utils';
-import { TableEmptyStateDirective } from '@crczp/components';
+import { OffsetPaginationEvent, PaginationStorageService, providePaginationStorageService } from '@crczp/utils';
+import { TableEmptyStateDirective, TableModel } from '@crczp/components';
 import { createInfinitePaginationEvent, PaginationMapper } from '@crczp/api-common';
+import { DetectedForbiddenCommandSort, DetectionEventParticipantSort } from '@crczp/training-api';
 
 /**
  * Main component of training instance detection event detail.
@@ -63,6 +64,7 @@ import { createInfinitePaginationEvent, PaginationMapper } from '@crczp/api-comm
             useClass: DetectionEventForbiddenCommandsConcreteService,
         },
     ],
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         MatCard,
         MatIcon,
@@ -83,9 +85,9 @@ export class TrainingInstanceDetectionEventDetailComponent implements OnInit {
     forbiddenCommandsTableHasError$: Observable<boolean>;
     forbiddenCommandsTableIsLoading$: Observable<boolean>;
     detectionEvent$: Observable<AbstractDetectionEvent>;
-    participants$: Observable<SentinelTable<DetectionEventParticipant, string>>;
+    participants$: Observable<TableModel<DetectionEventParticipant, string>>;
     forbiddenCommands$: Observable<
-        SentinelTable<DetectedForbiddenCommand, string>
+        TableModel<DetectedForbiddenCommand, string>
     >;
     answerSimilarityEvent$: Observable<AnswerSimilarityDetectionEvent>;
     locationSimilarityEvent$: Observable<LocationSimilarityDetectionEvent>;
@@ -94,9 +96,6 @@ export class TrainingInstanceDetectionEventDetailComponent implements OnInit {
     noCommandsEvent$: Observable<NoCommandsDetectionEvent>;
     forbiddenCommandsEvent$: Observable<ForbiddenCommandsDetectionEvent>;
     eventId: number;
-    detectionRunAt: Date;
-    eventType: AbstractDetectionEventTypeEnum;
-    eventTypeFormatted: string;
     destroyRef = inject(DestroyRef);
     private detectionEventService = inject(DetectionEventService);
     private detectionEventParticipantService = inject(
@@ -107,73 +106,82 @@ export class TrainingInstanceDetectionEventDetailComponent implements OnInit {
     );
     private paginationService = inject(PaginationStorageService);
     private activeRoute = inject(ActivatedRoute);
+    private participantPagination: OffsetPaginationEvent<DetectionEventParticipantSort> =
+        createInfinitePaginationEvent();
+    private forbiddenCommandPagination: OffsetPaginationEvent<DetectedForbiddenCommandSort> =
+        createInfinitePaginationEvent();
 
     ngOnInit(): void {
         this.eventId = Number(
             this.activeRoute.snapshot.paramMap.get('eventId'),
         );
-        this.detectionEvent$ = this.detectionEventService.get(this.eventId);
-        this.detectionEvent$.subscribe((event) => {
-            this.detectionRunAt = event.detectedAt;
-            this.eventType = event.detectionEventType;
-            this.populateEventData();
-        });
+        this.detectionEvent$ = this.detectionEventService
+            .get(this.eventId)
+            .pipe(shareReplay({ bufferSize: 1, refCount: true }));
+        this.answerSimilarityEvent$ = this.eventOfType$(
+            AbstractDetectionEventTypeEnum.Answer_similarity,
+            (eventId) =>
+                this.detectionEventService.getAnswerSimilarityEventById(
+                    eventId,
+                ),
+        );
+        this.locationSimilarityEvent$ = this.eventOfType$(
+            AbstractDetectionEventTypeEnum.Location_similarity,
+            (eventId) =>
+                this.detectionEventService.getLocationSimilarityEventById(
+                    eventId,
+                ),
+        );
+        this.timeProximityEvent$ = this.eventOfType$(
+            AbstractDetectionEventTypeEnum.Time_proximity,
+            (eventId) =>
+                this.detectionEventService.getTimeProximityEventById(eventId),
+        );
+        this.minimalSolveTimeEvent$ = this.eventOfType$(
+            AbstractDetectionEventTypeEnum.Minimal_solve_time,
+            (eventId) =>
+                this.detectionEventService.getMinimalSolveTimeEventById(
+                    eventId,
+                ),
+        );
+        this.noCommandsEvent$ = this.eventOfType$(
+            AbstractDetectionEventTypeEnum.No_commands,
+            (eventId) =>
+                this.detectionEventService.getNoCommandsEventById(eventId),
+        );
+        this.forbiddenCommandsEvent$ = this.eventOfType$(
+            AbstractDetectionEventTypeEnum.Forbidden_commands,
+            (eventId) =>
+                this.detectionEventService.getForbiddenCommandsEventById(
+                    eventId,
+                ),
+        );
         this.initParticipantsTable();
         this.initForbiddenCommandsTable();
     }
 
-    populateEventData(): void {
-        switch (this.eventType) {
+    eventTypeLabel(eventType: AbstractDetectionEventTypeEnum): string {
+        switch (eventType) {
             case AbstractDetectionEventTypeEnum.Answer_similarity:
-                this.eventTypeFormatted = 'Answer similarity';
-                this.answerSimilarityEvent$ =
-                    this.detectionEventService.getAnswerSimilarityEventById(
-                        this.eventId,
-                    );
-                break;
+                return 'Answer similarity';
             case AbstractDetectionEventTypeEnum.Location_similarity:
-                this.eventTypeFormatted = 'Location similarity';
-                this.locationSimilarityEvent$ =
-                    this.detectionEventService.getLocationSimilarityEventById(
-                        this.eventId,
-                    );
-                break;
+                return 'Location similarity';
             case AbstractDetectionEventTypeEnum.Time_proximity:
-                this.eventTypeFormatted = 'Time proximity';
-                this.timeProximityEvent$ =
-                    this.detectionEventService.getTimeProximityEventById(
-                        this.eventId,
-                    );
-                break;
+                return 'Time proximity';
             case AbstractDetectionEventTypeEnum.Minimal_solve_time:
-                this.eventTypeFormatted = 'Minimal solve time';
-                this.minimalSolveTimeEvent$ =
-                    this.detectionEventService.getMinimalSolveTimeEventById(
-                        this.eventId,
-                    );
-                break;
+                return 'Minimal solve time';
             case AbstractDetectionEventTypeEnum.No_commands:
-                this.eventTypeFormatted = 'No commands';
-                this.noCommandsEvent$ =
-                    this.detectionEventService.getNoCommandsEventById(
-                        this.eventId,
-                    );
-                break;
+                return 'No commands';
             case AbstractDetectionEventTypeEnum.Forbidden_commands:
-                this.eventTypeFormatted = 'Forbidden commands';
-                this.forbiddenCommandsEvent$ =
-                    this.detectionEventService.getForbiddenCommandsEventById(
-                        this.eventId,
-                    );
-                break;
+                return 'Forbidden commands';
             default:
-                this.eventTypeFormatted = 'Undefined';
+                return 'Undefined';
         }
     }
 
-    detectionRunTime(): string {
+    detectionRunTime(detectedAt: Date): string {
         const datePipe = new DatePipe('en-EN');
-        return `${datePipe.transform(this.detectionRunAt)}`;
+        return `${datePipe.transform(detectedAt)}`;
     }
 
     /**
@@ -204,25 +212,39 @@ export class TrainingInstanceDetectionEventDetailComponent implements OnInit {
      * @param loadEvent event emitted by table component to get new data
      */
     onLoadEventParticipants(loadEvent: TableLoadEvent<any>): void {
-        this.paginationService.savePageSize(loadEvent.pagination.size);
+        if (loadEvent.pagination) {
+            this.participantPagination =
+                PaginationMapper.toOffsetPaginationEvent(loadEvent.pagination);
+        }
+        this.paginationService.savePageSize(this.participantPagination.size);
         this.detectionEventParticipantService
-            .getAll(
-                this.eventId,
-                PaginationMapper.toOffsetPaginationEvent(loadEvent.pagination),
-            )
+            .getAll(this.eventId, this.participantPagination)
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe();
     }
 
     onLoadEventForbiddenCommands(loadEvent: TableLoadEvent<any>): void {
-        this.paginationService.savePageSize(loadEvent.pagination.size);
+        if (loadEvent.pagination) {
+            this.forbiddenCommandPagination =
+                PaginationMapper.toOffsetPaginationEvent(loadEvent.pagination);
+        }
+        this.paginationService.savePageSize(
+            this.forbiddenCommandPagination.size,
+        );
         this.detectionEventForbiddenCommandsService
-            .getAll(
-                this.eventId,
-                PaginationMapper.toOffsetPaginationEvent(loadEvent.pagination),
-            )
+            .getAll(this.eventId, this.forbiddenCommandPagination)
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe();
+    }
+
+    private eventOfType$<EventType>(
+        eventType: AbstractDetectionEventTypeEnum,
+        loadEvent: (eventId: number) => Observable<EventType>,
+    ): Observable<EventType> {
+        return this.detectionEvent$.pipe(
+            filter((event) => event.detectionEventType === eventType),
+            switchMap(() => loadEvent(this.eventId)),
+        );
     }
 
     private initParticipantsTable() {

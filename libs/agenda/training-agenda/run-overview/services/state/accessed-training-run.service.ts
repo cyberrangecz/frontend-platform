@@ -41,7 +41,7 @@ export class AccessedTrainingRunService extends CrczpOffsetElementsPaginatedServ
      */
     getAll(
         pagination: OffsetPaginationEvent<AccessedTrainingRunSort>,
-        filter: string,
+        filter?: string,
     ): Observable<OffsetPaginatedResource<AccessedTrainingRun>> {
         this.hasErrorSubject$.next(false);
         const filters = filter ? [new QueryParam('title', filter)] : [];

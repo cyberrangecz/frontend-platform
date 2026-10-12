@@ -21,7 +21,7 @@
     <div class="panel-body">
         @switch (renderMode()) {
             @case ('skeleton') {
-                <div class="panel-body--skeleton" aria-busy="true"></div>
+                <ngx-skeleton-loader animation="pulse" [theme]="skeletonTheme" />
             }
             @case ('empty') {
                 <crczp-panel-placeholder variant="empty" [message]="emptyMessage()" />

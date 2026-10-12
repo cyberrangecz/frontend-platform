@@ -1,6 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { TrainingRun, TrainingRunStateEnum } from '@crczp/training-model';
-import { Column, ExpandableSentinelTable, Row, RowExpand } from '@sentinel/components/table';
+import { Column, RowExpand } from '@sentinel/components/table';
+import { LinkedRow, TableModel } from '@crczp/components';
 import { TrainingRunRowAdapter } from './training-run-row-adapter';
 import { TrainingRunInfoComponent } from '../components/runs/detail/training-run-info.component';
 import { Utils } from '@crczp/utils';
@@ -10,12 +11,7 @@ import { OffsetPaginatedResource } from '@crczp/api-common';
 /**
  * @dynamic
  */
-export class TrainingRunTable extends ExpandableSentinelTable<
-    TrainingRun,
-    TrainingRunInfoComponent,
-    null,
-    TrainingRunSort
-> {
+export class TrainingRunTable extends TableModel<TrainingRun, TrainingRunSort> {
     constructor(resource: OffsetPaginatedResource<TrainingRun>) {
         const columns = [
             new Column<TrainingRunSort>(
@@ -57,7 +53,9 @@ export class TrainingRunTable extends ExpandableSentinelTable<
         this.filterable = false;
     }
 
-    private static createRow(element: TrainingRun): Row<TrainingRunRowAdapter> {
+    private static createRow(
+        element: TrainingRun,
+    ): LinkedRow<TrainingRunRowAdapter> {
         const datePipe = new DatePipe('en-EN');
         const adapter = element as TrainingRunRowAdapter;
         adapter.playerName = adapter.player.name;
@@ -72,6 +70,6 @@ export class TrainingRunTable extends ExpandableSentinelTable<
             adapter.endTimeFormatted = '-';
             adapter.duration = '-';
         }
-        return new Row(adapter);
+        return new LinkedRow(adapter);
     }
 }

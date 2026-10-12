@@ -1,5 +1,6 @@
 import { User } from '@crczp/user-and-group-model';
-import { Column, Row, SentinelTable } from '@sentinel/components/table';
+import { Column } from '@sentinel/components/table';
+import { LinkedRow, TableModel } from '@crczp/components';
 import { defer, of } from 'rxjs';
 import { UserDeleteAction } from '@crczp/user-and-group-agenda/internal';
 import { UserOverviewService } from '../services/user-overview.service';
@@ -9,7 +10,7 @@ import { OffsetPaginatedResource } from '@crczp/api-common';
 /**
  * Class creating data source for user table
  */
-export class UserTable extends SentinelTable<User, string> {
+export class UserTable extends TableModel<User, string> {
     constructor(
         resource: OffsetPaginatedResource<User>,
         service: UserOverviewService,
@@ -33,7 +34,7 @@ export class UserTable extends SentinelTable<User, string> {
     }
 
     private static createRow(user: User, service: UserOverviewService) {
-        const row = new Row(user, [UserTable.createActions(user, service)]);
+        const row = new LinkedRow(user, [UserTable.createActions(user, service)]);
         row.addLink(
             'name',
             Routing.RouteBuilder.user.userId(user.id.toString()).build(),

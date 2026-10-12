@@ -1,7 +1,8 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, input, OnInit, output, signal } from '@angular/core';
 import { SentinelControlItem, SentinelControlsComponent } from '@sentinel/components/controls';
 import { Group, User } from '@crczp/user-and-group-model';
-import { SentinelTable, SentinelTableComponent, TableLoadEvent } from '@sentinel/components/table';
+import { SentinelTableComponent, TableLoadEvent } from '@sentinel/components/table';
+import { SentinelFilterFreeInputComponent } from '@sentinel/components/filters';
 import {
     SentinelResourceSelectorComponent,
     SentinelResourceSelectorMapping
@@ -13,12 +14,12 @@ import { UserAssignService } from '../../services/state/user-assign.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatCard, MatCardAvatar, MatCardContent, MatCardHeader, MatCardSubtitle, MatCardTitle } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
-import { PaginationStorageService, providePaginationStorageService } from '@crczp/utils';
+import { OffsetPaginationEvent, PaginationStorageService, providePaginationStorageService } from '@crczp/utils';
 import { UserSort } from '@crczp/user-and-group-api';
 import { AsyncPipe } from '@angular/common';
 import { PaginationMapper } from '@crczp/api-common';
 import { GroupMemberTable } from '../../model/table/group-member-table';
-import { TableEmptyStateDirective } from '@crczp/components';
+import { TableEmptyStateDirective, TableModel } from '@crczp/components';
 
 /**
  * Component for user assignment to groups
@@ -39,6 +40,7 @@ import { TableEmptyStateDirective } from '@crczp/components';
         MatCardSubtitle,
         AsyncPipe,
         SentinelTableComponent,
+        SentinelFilterFreeInputComponent,
         SentinelResourceSelectorComponent,
         TableEmptyStateDirective,
     ],
@@ -89,7 +91,11 @@ export class GroupUserAssignComponent implements OnInit {
     /**
      * Data for table component of already assigned users
      */
-    assignedUsers$: Observable<SentinelTable<User, string>>;
+    assignedUsers$: Observable<TableModel<User, string>>;
+    /**
+     * Text the assigned users are currently filtered by
+     */
+    filter = '';
     /**
      * True if error was thrown while getting data for assigned users table component, false otherwise
      */
@@ -111,6 +117,8 @@ export class GroupUserAssignComponent implements OnInit {
             this.MEMBERS_OF_GROUP_INIT_SORT_NAME,
             this.MEMBERS_OF_GROUP_INIT_SORT_DIR,
         );
+    private pagination: OffsetPaginationEvent<UserSort> =
+        this.initialUserPagination;
 
     ngOnInit() {
         this.selectedUsersToAssign$ =
@@ -178,12 +186,31 @@ export class GroupUserAssignComponent implements OnInit {
      * @param loadEvent event to load new data emitted by assigned users table component
      */
     onAssignedLoadEvent(loadEvent: TableLoadEvent<UserSort>): void {
-        this.paginationService.savePageSize(loadEvent.pagination.size);
+        if (loadEvent.pagination) {
+            this.pagination = PaginationMapper.toOffsetPaginationEvent(
+                loadEvent.pagination,
+            );
+        }
+        this.paginationService.savePageSize(this.pagination.size);
+        this.load();
+    }
+
+    /**
+     * Reloads the assigned users from the first page, filtered by the given text
+     * @param filter text to filter users by, empty for no filter
+     */
+    onFilter(filter: string): void {
+        this.filter = filter;
+        this.pagination = { ...this.pagination, page: 0 };
+        this.load();
+    }
+
+    private load(): void {
         this.userAssignService
             .getAssigned(
                 this.group().id,
-                PaginationMapper.toOffsetPaginationEvent(loadEvent.pagination),
-                loadEvent.filter,
+                this.pagination,
+                this.filter || undefined,
             )
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe();

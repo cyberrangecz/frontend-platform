@@ -1,5 +1,5 @@
 import {TrainingRun, TrainingRunStateEnum} from '@crczp/training-model';
-import {TrainingRunDTO} from '../../dto/training-run/training-run-dto';
+import {TrainingRunDTO, TrainingRunDTOStateEnum} from '../../dto/training-run/training-run-dto';
 import {LevelMapper} from '../level/level-mapper';
 import {UserMapper} from '../user/user-mapper';
 
@@ -31,13 +31,13 @@ export class TrainingRunMapper {
         return result;
     }
 
-    private static resolveState(state: TrainingRunDTO.StateEnum): TrainingRunStateEnum {
+    private static resolveState(state: TrainingRunDTOStateEnum): TrainingRunStateEnum {
         switch (state) {
-            case TrainingRunDTO.StateEnum.RUNNING:
+            case TrainingRunDTOStateEnum.RUNNING:
                 return TrainingRunStateEnum.RUNNING;
-            case TrainingRunDTO.StateEnum.FINISHED:
+            case TrainingRunDTOStateEnum.FINISHED:
                 return TrainingRunStateEnum.FINISHED;
-            case TrainingRunDTO.StateEnum.ARCHIVED:
+            case TrainingRunDTOStateEnum.ARCHIVED:
                 return TrainingRunStateEnum.ARCHIVED;
             default: {
                 console.error(`Unsupported training run state of value: ${state}`);

@@ -6,6 +6,6 @@ import { PortalConfig } from '@crczp/utils';
 
 export class PortalDynamicEnvironment {
     public static getConfig(): PortalConfig {
-        return DynamicEnvironment.getConfig<SentinelConfig>();
+        return DynamicEnvironment.getConfig<SentinelConfig & PortalConfig>();
     }
 }

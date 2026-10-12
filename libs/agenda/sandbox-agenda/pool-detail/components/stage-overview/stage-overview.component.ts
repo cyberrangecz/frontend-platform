@@ -1,10 +1,11 @@
 import {
-    Component,
-    EventEmitter,
-    Input,
-    OnChanges,
-    Output,
-    SimpleChanges,
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  Output,
+  SimpleChanges,
+  ChangeDetectionStrategy
 } from '@angular/core';
 import { RequestStageState } from '@crczp/sandbox-model';
 import { SelectedStage } from '../../model/selected-stage';
@@ -17,6 +18,7 @@ import { MatTooltip } from '@angular/material/tooltip';
     selector: 'crczp-stage-overview',
     templateUrl: './stage-overview.component.html',
     styleUrls: ['./stage-overview.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [MatRipple, MatIcon, MatTooltip, NgClass],
 })
 export class StageOverviewComponent implements OnChanges {

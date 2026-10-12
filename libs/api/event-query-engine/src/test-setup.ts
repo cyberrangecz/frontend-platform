@@ -1,6 +1,7 @@
+import '@angular/compiler';
 import '@analogjs/vitest-angular/setup-zone';
 
-import { BrowserDynamicTestingModule, platformBrowserDynamicTesting } from '@angular/platform-browser-dynamic/testing';
+import { BrowserTestingModule, platformBrowserTesting } from '@angular/platform-browser/testing';
 import { getTestBed } from '@angular/core/testing';
 
 // navigator.locks polyfill — single-tab claim acquisition requires it; absent in jsdom 22.
@@ -57,4 +58,4 @@ function grantNextWaiter(name: string): void {
     },
 };
 
-getTestBed().initTestEnvironment(BrowserDynamicTestingModule, platformBrowserDynamicTesting());
+getTestBed().initTestEnvironment(BrowserTestingModule, platformBrowserTesting());

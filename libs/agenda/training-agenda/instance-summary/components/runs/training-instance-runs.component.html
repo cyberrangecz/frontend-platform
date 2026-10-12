@@ -1,9 +1,13 @@
 <sentinel-table
     (rowClick)="onTableRowExpand($event)"
     (tableLoad)="onTableLoadEvent($event)"
-    [data]="trainingRuns"
+    [columns]="trainingRuns?.columns ?? []"
+    [expand]="trainingRuns?.expand"
     [hasError]="hasError"
     [isLoading]="isLoading"
+    [pagination]="trainingRuns?.pagination"
+    [rows]="trainingRuns?.rows ?? []"
+    [selectable]="!!trainingRuns?.selectable"
     crczpTableEmptyState="No training runs in this instance yet"
 >
 </sentinel-table>

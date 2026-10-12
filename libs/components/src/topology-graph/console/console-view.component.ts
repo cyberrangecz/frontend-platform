@@ -1,14 +1,15 @@
 import {
-    AfterViewInit,
-    Component,
-    computed,
-    DestroyRef,
-    ElementRef,
-    inject,
-    input,
-    OnDestroy,
-    signal,
-    ViewChild,
+  AfterViewInit,
+  Component,
+  computed,
+  DestroyRef,
+  ElementRef,
+  inject,
+  input,
+  OnDestroy,
+  signal,
+  ViewChild,
+  ChangeDetectionStrategy
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { OAuthService } from 'angular-oauth2-oidc';
@@ -38,6 +39,7 @@ export type ConnectionParams = {
     selector: 'crczp-console-view',
     imports: [CommonModule, GuacamoleStatus, ConsoleInputHint],
     templateUrl: './console-view.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     styleUrl: './console-view.component.scss',
 })
 export class ConsoleView implements AfterViewInit, OnDestroy {
@@ -467,10 +469,6 @@ export class ConsoleView implements AfterViewInit, OnDestroy {
         this.guacClient.onstatechange = (state: number) => {
             this.clientStateCode.set(mapGuacamoleClientState(state));
             if (this.clientStateCode() === 'CONNECTED') {
-                console.log(
-                    'Guacamole client connected, setting up display...',
-                );
-
                 const display = this.guacClient?.getDisplay();
                 if (display) {
                     display.onresize = (_width: number, _height: number) => {

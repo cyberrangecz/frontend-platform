@@ -1,5 +1,5 @@
-import { Component, input, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, input, signal, ChangeDetectionStrategy } from '@angular/core';
+
 import { toObservable } from '@angular/core/rxjs-interop';
 import { combineLatest } from 'rxjs';
 import { GuacamoleClientState, GuacamoleTunnelState } from './guacamoleStatusMapper';
@@ -12,8 +12,9 @@ import { GuacamoleClientState, GuacamoleTunnelState } from './guacamoleStatusMap
  */
 @Component({
     selector: 'crczp-guacamole-status',
-    imports: [CommonModule],
+    imports: [],
     templateUrl: './guacamole-status.html',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     styleUrl: './guacamole-status.scss',
 })
 export class GuacamoleStatus {

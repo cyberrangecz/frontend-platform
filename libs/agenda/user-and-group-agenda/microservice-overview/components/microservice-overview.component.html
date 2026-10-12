@@ -1,11 +1,23 @@
 <sentinel-controls [controls]="controls" />
+@let table = microservices$ | async;
+@if (table?.filterable) {
+    <sentinel-filter-free-input
+        (filterChange)="onFilter($event)"
+        (filterCleared)="onFilter('')"
+        [label]="table.filterLabel"
+        [placeholder]="table.filterLabel"
+        [value]="filter" />
+}
 <sentinel-table
     (tableLoad)="onTableLoadEvent($event)"
-    [data]="microservices$ | async"
+    [columns]="table?.columns ?? []"
     [defaultSortDirection]="INIT_SORT_DIR"
     [defaultSortName]="INIT_SORT_NAME"
-    [hasError]="microservicesHasError$ | async"
-    [isLoading]="isLoading$ | async"
+    [hasError]="!!(microservicesHasError$ | async)"
+    [isLoading]="!!(isLoading$ | async)"
+    [pagination]="table?.pagination"
+    [rows]="table?.rows ?? []"
+    [selectable]="!!table?.selectable"
     crczpTableEmptyState="No microservices are registered"
 >
 </sentinel-table>

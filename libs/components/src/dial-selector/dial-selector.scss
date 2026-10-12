@@ -16,6 +16,11 @@
         width: 100%;
 
         &.prev, &.next {
+            padding: 0;
+            border: none;
+            background: none;
+            color: inherit;
+            font-family: inherit;
             opacity: 0.5;
             font-size: 0.8em;
             cursor: pointer;

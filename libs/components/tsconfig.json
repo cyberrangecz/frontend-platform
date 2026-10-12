@@ -3,7 +3,11 @@
     "compilerOptions": {
         "target": "es2022",
         "esModuleInterop": true,
-        "forceConsistentCasingInFileNames": true
+        "forceConsistentCasingInFileNames": true,
+        "module": "preserve",
+        "moduleResolution": "bundler",
+        "lib": ["dom", "es2022"],
+        "ignoreDeprecations": "6.0"
     },
     "angularCompilerOptions": {
         "enableI18nLegacyMessageIdFormat": false

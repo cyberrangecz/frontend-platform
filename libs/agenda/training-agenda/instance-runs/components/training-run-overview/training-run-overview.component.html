@@ -1,37 +1,36 @@
 <sentinel-table
     (tableLoad)="onTableLoadEvent($event)"
-    [data]="trainingRuns"
+    [columns]="trainingRuns?.columns ?? []"
     [hasError]="hasError"
     [isLoading]="isLoading"
+    [pagination]="trainingRuns?.pagination"
+    [rows]="trainingRuns?.rows ?? []"
+    [selectable]="!!trainingRuns?.selectable"
     crczpTableEmptyState="No training runs in this instance yet"
 >
-    <ng-container *sentinelRow="'eventLogging'; template: eventLogging" />
-    <ng-container *sentinelRow="'commandLogging'; template: commandLogging" />
+    <ng-template [sentinelCellType]="trainingRuns?.rows" let-row sentinelCell="eventLogging">
+        @if (row.element.eventLogging) {
+            <div class="stages">
+                <div [matRippleCentered]='true' [matTooltip]="'Trainees events are logged'" class="stage-container"
+                     matRipple>
+                    <mat-icon class="material-icons-outlined workingState">check</mat-icon>
+                </div>
+            </div>
+        } @else {
+            <mat-icon [matTooltip]="'No training events logged yet.'" class="warning">warning</mat-icon>
+        }
+    </ng-template>
+
+    <ng-template [sentinelCellType]="trainingRuns?.rows" let-row sentinelCell="commandLogging">
+        @if (row.element.commandLogging) {
+            <div class="stages">
+                <div [matRippleCentered]='true' [matTooltip]="'Trainees commands are logged'" class="stage-container"
+                     matRipple>
+                    <mat-icon class="material-icons-outlined workingState">check</mat-icon>
+                </div>
+            </div>
+        } @else {
+            <mat-icon [matTooltip]="'No training commands logged yet.'" class="warning">warning</mat-icon>
+        }
+    </ng-template>
 </sentinel-table>
-
-
-<ng-template #eventLogging let-row>
-    @if (row.element.eventLogging) {
-        <div class="stages">
-            <div [matRippleCentered]='true' [matTooltip]="'Trainees events are logged'" class="stage-container"
-                 matRipple>
-                <mat-icon class="material-icons-outlined workingState">check</mat-icon>
-            </div>
-        </div>
-    } @else {
-    <mat-icon [matTooltip]="'No training events logged yet.'" class="warning">warning</mat-icon>
-}
-</ng-template>
-
-<ng-template #commandLogging let-row>
-    @if (row.element.commandLogging) {
-        <div class="stages">
-            <div [matRippleCentered]='true' [matTooltip]="'Trainees commands are logged'" class="stage-container"
-                 matRipple>
-                <mat-icon class="material-icons-outlined workingState">check</mat-icon>
-            </div>
-        </div>
-    } @else {
-    <mat-icon [matTooltip]="'No training commands logged yet.'" class="warning">warning</mat-icon>
-}
-</ng-template>

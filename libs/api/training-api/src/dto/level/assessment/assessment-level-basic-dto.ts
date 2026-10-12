@@ -1,7 +1,7 @@
 import { z } from 'zod';
-import { AbstractLevelDTO } from '../abstract-level-dto';
-import { AssessmentLevelDTO } from './assessment-level-dto';
-import { AbstractQuestionDTO } from './abstact-question-dto';
+import {AbstractLevelDTOLevelTypeEnum} from '../abstract-level-dto';
+import {AssessmentLevelDTOAssessmentTypeEnum} from './assessment-level-dto';
+import {AbstractQuestionDTOQuestionTypeEnum} from './abstact-question-dto';
 import { idSchema } from '../../shared-schemas';
 
 export const QuestionBasicDtoSchema: z.ZodType<any> = z.lazy(() =>
@@ -12,9 +12,9 @@ export const QuestionBasicDtoSchema: z.ZodType<any> = z.lazy(() =>
         penalty: z.number().nonnegative().default(0),
         answer_required: z.boolean(),
         question_type: z.enum([
-            AbstractQuestionDTO.QuestionTypeEnum.FFQ,
-            AbstractQuestionDTO.QuestionTypeEnum.MCQ,
-            AbstractQuestionDTO.QuestionTypeEnum.EMI,
+            AbstractQuestionDTOQuestionTypeEnum.FFQ,
+            AbstractQuestionDTOQuestionTypeEnum.MCQ,
+            AbstractQuestionDTOQuestionTypeEnum.EMI,
         ]),
     })
 );
@@ -27,10 +27,10 @@ export const AssessmentLevelBasicDtoSchema = z.object({
     order: z.number().nonnegative().int(),
     estimated_duration: z.number().nonnegative(),
     max_score: z.number().nonnegative(),
-    level_type: z.literal(AbstractLevelDTO.LevelTypeEnum.ASSESSMENT),
+    level_type: z.literal(AbstractLevelDTOLevelTypeEnum.ASSESSMENT),
     assessment_type: z.enum([
-        AssessmentLevelDTO.AssessmentTypeEnum.TEST,
-        AssessmentLevelDTO.AssessmentTypeEnum.QUESTIONNAIRE,
+        AssessmentLevelDTOAssessmentTypeEnum.TEST,
+        AssessmentLevelDTOAssessmentTypeEnum.QUESTIONNAIRE,
     ]),
     questions: z.array(QuestionBasicDtoSchema),
 });

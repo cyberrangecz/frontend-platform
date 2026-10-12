@@ -1,11 +1,6 @@
-import { Component, DestroyRef, EventEmitter, inject, OnInit, Output } from '@angular/core';
+import { Component, DestroyRef, EventEmitter, inject, OnInit, Output, ChangeDetectionStrategy } from '@angular/core';
 import { Observable } from 'rxjs';
-import {
-    SentinelRowDirective,
-    SentinelTable,
-    SentinelTableComponent,
-    TableLoadEvent
-} from '@sentinel/components/table';
+import { SentinelCellDirective, SentinelTableComponent, TableLoadEvent } from '@sentinel/components/table';
 import { filter, map } from 'rxjs/operators';
 import { CheatingDetectionOverviewControls } from '../model/cheating-detection-overview-controls';
 import { CheatingDetectionService } from '../services/cheating-detection.service';
@@ -16,7 +11,7 @@ import { SentinelControlItem, SentinelControlsComponent } from '@sentinel/compon
 import { AsyncPipe } from '@angular/common';
 import { StageOverviewComponent } from './stage-overview/stage-overview.component';
 import { PaginationStorageService, providePaginationStorageService } from '@crczp/utils';
-import { TableEmptyStateDirective } from '@crczp/components';
+import { TableEmptyStateDirective, TableModel } from '@crczp/components';
 import { CheatingDetection, TrainingInstance } from '@crczp/training-model';
 import { PaginationMapper } from '@crczp/api-common';
 import { CheatingDetectionSort } from '@crczp/training-api';
@@ -33,9 +28,10 @@ import { CheatingDetectionSort } from '@crczp/training-api';
         SentinelTableComponent,
         SentinelControlsComponent,
         StageOverviewComponent,
-        SentinelRowDirective,
+        SentinelCellDirective,
         TableEmptyStateDirective,
     ],
+    changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [
         CheatingDetectionService,
         providePaginationStorageService(CheatingDetectionOverviewComponent),
@@ -47,7 +43,7 @@ export class CheatingDetectionOverviewComponent implements OnInit {
     readonly INIT_SORT_NAME = 'lastEdited';
     readonly INIT_SORT_DIR = 'asc';
     trainingInstance$: Observable<TrainingInstance>;
-    cheatingDetections$: Observable<SentinelTable<CheatingDetection, string>>;
+    cheatingDetections$: Observable<TableModel<CheatingDetection, string>>;
     hasError$: Observable<boolean>;
     isLoading$: Observable<boolean>;
     topControls: SentinelControlItem[] = [];
@@ -60,6 +56,7 @@ export class CheatingDetectionOverviewComponent implements OnInit {
         this.paginationService.createPagination<CheatingDetectionSort>(
             this.INIT_SORT_NAME,
         );
+    private pagination = this.initialPagination;
 
     ngOnInit(): void {
         this.trainingInstance$ = this.activeRoute.data.pipe(
@@ -82,12 +79,14 @@ export class CheatingDetectionOverviewComponent implements OnInit {
      * @param loadEvent event emitted by table component to get new data
      */
     onLoadEvent(loadEvent: TableLoadEvent<CheatingDetectionSort>): void {
-        this.paginationService.savePageSize(loadEvent.pagination.size);
+        if (loadEvent.pagination) {
+            this.pagination = PaginationMapper.toOffsetPaginationEvent(
+                loadEvent.pagination,
+            );
+        }
+        this.paginationService.savePageSize(this.pagination.size);
         this.cheatingDetectionService
-            .getAll(
-                this.trainingInstanceId,
-                PaginationMapper.toOffsetPaginationEvent(loadEvent.pagination),
-            )
+            .getAll(this.trainingInstanceId, this.pagination)
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe();
     }

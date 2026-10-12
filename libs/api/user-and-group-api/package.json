@@ -4,10 +4,12 @@
         "@angular/common": "*",
         "@angular/core": "*",
         "@sentinel/common": "*",
+        "@sentinel/auth": "*",
         "@crczp/user-and-group-model": "*",
         "rxjs": "*",
         "@crczp/api-common": "*",
         "@crczp/utils": "*",
+        "file-saver": "*",
         "vite": "*",
         "@analogjs/vite-plugin-angular": "*",
         "@nx/vite": "*"

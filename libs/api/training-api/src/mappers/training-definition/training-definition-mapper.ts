@@ -6,6 +6,7 @@ import {
 import { TrainingDefinitionCreateDTO } from '../../dto/training-definition/training-definition-create-dto';
 import {
     TrainingDefinitionDTO,
+    TrainingDefinitionDTOStateEnum,
     TrainingDefinitionWithLevelsDTO,
 } from '../../dto/training-definition/training-definition-dto';
 import { TrainingDefinitionUpdateDTO } from '../../dto/training-definition/training-definition-update-dto';
@@ -59,14 +60,14 @@ export class TrainingDefinitionMapper {
     }
 
     static stateFromDTO(
-        stateDTO: TrainingDefinitionDTO.StateEnum,
+        stateDTO: TrainingDefinitionDTOStateEnum,
     ): TrainingDefinitionStateEnum {
         switch (stateDTO) {
-            case TrainingDefinitionDTO.StateEnum.ARCHIVED:
+            case TrainingDefinitionDTOStateEnum.ARCHIVED:
                 return TrainingDefinitionStateEnum.Archived;
-            case TrainingDefinitionDTO.StateEnum.RELEASED:
+            case TrainingDefinitionDTOStateEnum.RELEASED:
                 return TrainingDefinitionStateEnum.Released;
-            case TrainingDefinitionDTO.StateEnum.UNRELEASED:
+            case TrainingDefinitionDTOStateEnum.UNRELEASED:
                 return TrainingDefinitionStateEnum.Unreleased;
             default: {
                 console.error(
@@ -80,14 +81,14 @@ export class TrainingDefinitionMapper {
 
     static stateToDTO(
         state: TrainingDefinitionStateEnum,
-    ): TrainingDefinitionDTO.StateEnum {
+    ): TrainingDefinitionDTOStateEnum {
         switch (state) {
             case TrainingDefinitionStateEnum.Unreleased:
-                return TrainingDefinitionDTO.StateEnum.UNRELEASED;
+                return TrainingDefinitionDTOStateEnum.UNRELEASED;
             case TrainingDefinitionStateEnum.Released:
-                return TrainingDefinitionDTO.StateEnum.RELEASED;
+                return TrainingDefinitionDTOStateEnum.RELEASED;
             case TrainingDefinitionStateEnum.Archived:
-                return TrainingDefinitionDTO.StateEnum.ARCHIVED;
+                return TrainingDefinitionDTOStateEnum.ARCHIVED;
             default: {
                 console.error(
                     `Attribute "state" of TrainingDefinitionWithLevels with value ${state} does not match any of the TrainingDefinitionWithLevelsDTO states`,
@@ -127,7 +128,7 @@ export class TrainingDefinitionMapper {
             (outcome) => outcome.length > 1,
         );
         result.description = trainingDefinition.description;
-        result.state = TrainingDefinitionDTO.StateEnum.UNRELEASED;
+        result.state = TrainingDefinitionDTOStateEnum.UNRELEASED;
         result.title = trainingDefinition.title;
         result.default_content = trainingDefinition.defaultContent;
         return result;

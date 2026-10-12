@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
-import { SentinelRowDirective, SentinelTableComponent, TableLoadEvent } from '@sentinel/components/table';
+import { SentinelCellDirective, SentinelTableComponent, TableLoadEvent } from '@sentinel/components/table';
 import { MatRipple } from '@angular/material/core';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -19,7 +19,7 @@ import { TableEmptyStateDirective } from '@crczp/components';
         SentinelTableComponent,
         MatRipple,
         MatIcon,
-        SentinelRowDirective,
+        SentinelCellDirective,
         MatTooltip,
         TableEmptyStateDirective,
     ],

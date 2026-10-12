@@ -6,16 +6,13 @@ export interface AbstractLevelDTO {
     order?: number;
     snapshot_hook?: any;
     title?: string;
-    level_type?: AbstractLevelDTO.LevelTypeEnum;
+    level_type?: AbstractLevelDTOLevelTypeEnum;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-namespace
-export namespace AbstractLevelDTO {
-    export type LevelTypeEnum = 'INFO_LEVEL' | 'ASSESSMENT_LEVEL' | 'TRAINING_LEVEL' | 'ACCESS_LEVEL';
-    export const LevelTypeEnum = {
-        INFO: 'INFO_LEVEL' as LevelTypeEnum,
-        ASSESSMENT: 'ASSESSMENT_LEVEL' as LevelTypeEnum,
-        TRAINING: 'TRAINING_LEVEL' as LevelTypeEnum,
-        ACCESS: 'ACCESS_LEVEL' as LevelTypeEnum,
-    };
-}
+export type AbstractLevelDTOLevelTypeEnum = 'INFO_LEVEL' | 'ASSESSMENT_LEVEL' | 'TRAINING_LEVEL' | 'ACCESS_LEVEL';
+export const AbstractLevelDTOLevelTypeEnum = {
+    INFO: 'INFO_LEVEL',
+    ASSESSMENT: 'ASSESSMENT_LEVEL',
+    TRAINING: 'TRAINING_LEVEL',
+    ACCESS: 'ACCESS_LEVEL',
+} as const satisfies Record<string, AbstractLevelDTOLevelTypeEnum>;

@@ -1,5 +1,6 @@
 import { User } from '@crczp/user-and-group-model';
-import { Column, Row, SentinelTable } from '@sentinel/components/table';
+import { Column } from '@sentinel/components/table';
+import { LinkedRow, TableModel } from '@crczp/components';
 import { defer, of } from 'rxjs';
 import { UserAssignService } from '../../services/state/user-assign.service';
 import { UserDeleteAction } from '@crczp/user-and-group-agenda/internal';
@@ -8,7 +9,7 @@ import { OffsetPaginatedResource } from '@crczp/api-common';
 /**
  * Class creating data source for group-overview members table
  */
-export class GroupMemberTable extends SentinelTable<User, string> {
+export class GroupMemberTable extends TableModel<User, string> {
     constructor(
         resource: OffsetPaginatedResource<User>,
         resourceId: number,
@@ -16,7 +17,7 @@ export class GroupMemberTable extends SentinelTable<User, string> {
     ) {
         const rows = resource.elements.map(
             (user) =>
-                new Row(user, [
+                new LinkedRow(user, [
                     new UserDeleteAction(
                         of(false),
                         defer(() => service.unassign(resourceId, [user])),

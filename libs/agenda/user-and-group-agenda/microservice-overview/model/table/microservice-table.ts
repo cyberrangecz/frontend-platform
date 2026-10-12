@@ -1,4 +1,5 @@
-import { Column, Row, SentinelTable } from '@sentinel/components/table';
+import { Column } from '@sentinel/components/table';
+import { LinkedRow, TableModel } from '@crczp/components';
 import { Microservice } from '@crczp/user-and-group-model';
 import { OffsetPaginatedResource } from '@crczp/api-common';
 
@@ -6,7 +7,7 @@ import { OffsetPaginatedResource } from '@crczp/api-common';
  * @dynamic
  * Class creating data source for microservice-overview table
  */
-export class MicroserviceTable extends SentinelTable<Microservice, string> {
+export class MicroserviceTable extends TableModel<Microservice, string> {
     constructor(resource: OffsetPaginatedResource<Microservice>) {
         const rows = resource.elements.map((element) =>
             MicroserviceTable.createRow(element),
@@ -23,7 +24,7 @@ export class MicroserviceTable extends SentinelTable<Microservice, string> {
         this.selectable = false;
     }
 
-    private static createRow(microservice: Microservice): Row<Microservice> {
-        return new Row(microservice);
+    private static createRow(microservice: Microservice): LinkedRow<Microservice> {
+        return new LinkedRow(microservice);
     }
 }

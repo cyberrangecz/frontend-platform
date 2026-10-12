@@ -63,6 +63,7 @@
         (focusin)="onHoverStart()"
         (focusout)="onHoverEnd()"
         (keydown.escape)="onCardClose()"
+        role="presentation"
     >
         @for (face of renderFaces(); track face.runId) {
             <ng-container [ngTemplateOutlet]="faceButton" [ngTemplateOutletContext]="{ $implicit: face }" />

@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, DestroyRef, inject, Input, OnInit, ViewChild} from '@angular/core';
 import {AbstractLevelTypeEnum, Level} from '@crczp/training-model';
-import {SentinelControlItem, SentinelControlItemSignal, SentinelControlsComponent} from '@sentinel/components/controls';
+import {ISentinelControlItemSignal, SentinelControlItem, SentinelControlsComponent} from '@sentinel/components/controls';
 import {LevelDetailExpandControls} from '../../model/level-detail-expand-controls';
 import {MatAccordion} from '@angular/material/expansion';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
@@ -35,8 +35,8 @@ export class TrainingDefinitionLevelsDetailComponent implements OnInit {
         this.controls = LevelDetailExpandControls.create();
     }
 
-    onControlsAction(control: SentinelControlItemSignal): void {
-        control.result$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((res) => {
+    onControlsAction(control: ISentinelControlItemSignal): void {
+        control.result$?.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((res) => {
             if (res === 'expand') {
                 this.accordion.openAll();
             } else {

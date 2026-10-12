@@ -1,5 +1,6 @@
 import { DatePipe } from '@angular/common';
-import { Column, DeleteAction, Row, RowAction, SentinelTable } from '@sentinel/components/table';
+import { Column, DeleteAction, RowAction } from '@sentinel/components/table';
+import { LinkedRow, TableModel } from '@crczp/components';
 import { CheatingDetection, CheatingDetectionStateEnum } from '@crczp/training-model';
 import { CheatingDetectionRowAdapter } from './cheating-detection-row-adapter';
 import { CheatingDetectionService } from '../services/cheating-detection.service';
@@ -10,7 +11,7 @@ import { OffsetPaginatedResource } from '@crczp/api-common';
  * Helper class transforming paginated resource to class for common table component
  * @dynamic
  */
-export class CheatingDetectionTable extends SentinelTable<
+export class CheatingDetectionTable extends TableModel<
     CheatingDetectionRowAdapter,
     string
 > {
@@ -37,7 +38,7 @@ export class CheatingDetectionTable extends SentinelTable<
     private static createRow(
         element: CheatingDetection,
         service: CheatingDetectionService,
-    ): Row<CheatingDetectionRowAdapter> {
+    ): LinkedRow<CheatingDetectionRowAdapter> {
         const datePipe = new DatePipe('en-EN');
         const adapter = element as CheatingDetectionRowAdapter;
 
@@ -49,7 +50,7 @@ export class CheatingDetectionTable extends SentinelTable<
             adapter.executeTime,
         )}`;
         adapter.stages = this.requestStageResolver(element);
-        return new Row(adapter, this.createActions(element, service));
+        return new LinkedRow(adapter, this.createActions(element, service));
     }
 
     private static createActions(

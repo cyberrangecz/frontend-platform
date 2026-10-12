@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { AccessedTrainingRun } from '@crczp/training-model';
-import { SentinelTable, SentinelTableComponent, TableLoadEvent } from '@sentinel/components/table';
+import { SentinelTableComponent, TableLoadEvent } from '@sentinel/components/table';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { AccessedTrainingRunTable } from '../model/accessed-training-run-table';
@@ -12,7 +12,7 @@ import { AsyncPipe } from '@angular/common';
 import { AccessTrainingRunComponent } from './access/access-training-run.component';
 import { createPaginationEvent, PaginationMapper } from '@crczp/api-common';
 import { AccessedTrainingRunSort } from '@crczp/training-api';
-import { TableEmptyStateDirective } from '@crczp/components';
+import { TableEmptyStateDirective, TableModel } from '@crczp/components';
 
 /**
  * Main smart component of the trainee overview.
@@ -32,7 +32,7 @@ import { TableEmptyStateDirective } from '@crczp/components';
     providers: [AccessedTrainingRunService],
 })
 export class TrainingRunOverviewComponent implements OnInit {
-    trainingRuns$: Observable<SentinelTable<AccessedTrainingRun, string>>;
+    trainingRuns$: Observable<TableModel<AccessedTrainingRun, string>>;
     hasError$: Observable<boolean>;
     tableIsLoading$: Observable<boolean>;
     isLoading = false;
@@ -45,6 +45,7 @@ export class TrainingRunOverviewComponent implements OnInit {
             sort: 'endTime',
             sortDir: 'desc',
         });
+    private pagination = this.initialRunPagination;
 
     constructor() {
         const trainingRunOverviewService = this.trainingRunOverviewService;
@@ -76,11 +77,13 @@ export class TrainingRunOverviewComponent implements OnInit {
     loadAccessedTrainingRuns(
         loadEvent: TableLoadEvent<AccessedTrainingRunSort>,
     ): void {
+        if (loadEvent.pagination) {
+            this.pagination = PaginationMapper.toOffsetPaginationEvent(
+                loadEvent.pagination,
+            );
+        }
         this.trainingRunOverviewService
-            .getAll(
-                PaginationMapper.toOffsetPaginationEvent(loadEvent.pagination),
-                loadEvent.filter,
-            )
+            .getAll(this.pagination)
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe();
     }

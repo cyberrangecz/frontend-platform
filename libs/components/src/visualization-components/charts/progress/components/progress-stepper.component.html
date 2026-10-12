@@ -6,6 +6,7 @@
             <!-- Step node -->
             <div
                 (click)="onStepClick(resolved)"
+                role="presentation"
                 (mouseenter)="stepHovered.emit(resolved.item.order)"
                 (mouseleave)="stepHovered.emit(null)"
                 [class.progress-stepper-step--selected]="resolved.selected"

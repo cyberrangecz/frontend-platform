@@ -1,5 +1,6 @@
 import { TrainingInstance } from '@crczp/training-model';
-import { Column, DeleteAction, EditAction, Row, RowAction, SentinelTable } from '@sentinel/components/table';
+import { Column, DeleteAction, EditAction, RowAction } from '@sentinel/components/table';
+import { LinkedRow, TableModel } from '@crczp/components';
 import { defer, of, startWith } from 'rxjs';
 import { TrainingInstanceOverviewService } from '../../services/state/training-instance-overview.service';
 import { TrainingInstanceRowAdapter } from './training-instance-row-adapter';
@@ -11,7 +12,7 @@ import { OffsetPaginatedResource } from '@crczp/api-common';
 /**
  * @dynamic
  */
-export class TrainingInstanceTable extends SentinelTable<
+export class TrainingInstanceTable extends TableModel<
     TrainingInstanceRowAdapter,
     TrainingInstanceSort
 > {
@@ -71,7 +72,7 @@ export class TrainingInstanceTable extends SentinelTable<
     private static createRow(
         ti: TrainingInstance,
         service: TrainingInstanceOverviewService,
-    ): Row<TrainingInstanceRowAdapter> {
+    ): LinkedRow<TrainingInstanceRowAdapter> {
         const adapter = ti as TrainingInstanceRowAdapter;
         adapter.tdTitle = adapter.trainingDefinition.title;
         if (adapter.hasPool()) {
@@ -81,7 +82,7 @@ export class TrainingInstanceTable extends SentinelTable<
         } else {
             adapter.poolTitle = '-';
         }
-        const row = new Row(adapter, this.createActions(ti, service));
+        const row = new LinkedRow(adapter, this.createActions(ti, service));
 
         row.addLink(
             'title',

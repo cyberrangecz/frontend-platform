@@ -1,12 +1,13 @@
 import {
-    Component,
-    ElementRef,
-    inject,
-    input,
-    OnDestroy,
-    OnInit,
-    Renderer2,
-    signal,
+  Component,
+  ElementRef,
+  inject,
+  input,
+  OnDestroy,
+  OnInit,
+  Renderer2,
+  signal,
+  ChangeDetectionStrategy
 } from '@angular/core';
 import { AbstractTrainingRunService } from '../../../services/training-run/abstract-training-run.service';
 import { AsyncPipe, NgClass } from '@angular/common';
@@ -29,6 +30,7 @@ import {
         SandboxAccessActionsComponent,
     ],
     templateUrl: './run-topology-wrapper.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     styleUrl: './run-topology-wrapper.component.scss',
 })
 export class RunTopologyWrapperComponent implements OnInit, OnDestroy {

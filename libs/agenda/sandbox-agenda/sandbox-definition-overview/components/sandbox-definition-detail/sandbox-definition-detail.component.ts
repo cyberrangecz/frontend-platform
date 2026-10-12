@@ -1,4 +1,4 @@
-import {Component, Input} from '@angular/core';
+import {Component, Input, ChangeDetectionStrategy} from '@angular/core';
 import {SandboxDefinition} from '@crczp/sandbox-model';
 
 /**
@@ -8,8 +8,9 @@ import {SandboxDefinition} from '@crczp/sandbox-model';
     selector: 'crczp-sandbox-definition-detail',
     templateUrl: './sandbox-definition-detail.component.html',
     styleUrls: ['./sandbox-definition-detail.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: []
 })
 export class SandboxDefinitionDetailComponent {
-    @Input() data: SandboxDefinition;
+    @Input() sentinelExpandData: SandboxDefinition;
 }

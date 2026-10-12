@@ -1,4 +1,4 @@
-import { Component, input, model, output } from '@angular/core';
+import { Component, input, model, output, ChangeDetectionStrategy } from '@angular/core';
 import { MatCard } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton, MatIconButton } from '@angular/material/button';
@@ -9,6 +9,7 @@ import { FormsModule } from '@angular/forms';
     selector: 'crczp-floating-answer-form',
     templateUrl: './floating-answer-form.component.html',
     styleUrl: './floating-answer-form.component.css',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         MatIcon,
         MatButton,

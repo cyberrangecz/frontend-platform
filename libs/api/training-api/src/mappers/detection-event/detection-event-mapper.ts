@@ -1,5 +1,5 @@
 import {AbstractDetectionEvent} from '@crczp/training-model';
-import {DetectionEventDTO} from '../../dto/detection-event/detection-event-dto';
+import {DetectionEventDTO, DetectionEventDTOAbstractDetectionEventTypeEnum} from '../../dto/detection-event/detection-event-dto';
 import {
     AnswerSimilarityDetectionEventDTO
 } from '../../dto/detection-event/answer-similarity/answer-similarity-detection-event-dto';
@@ -27,29 +27,29 @@ export class DetectionEventMapper {
     static fromDTO(dto: DetectionEventDTO): AbstractDetectionEvent {
         let detectionEvent = new AbstractDetectionEvent();
         switch (dto.detection_event_type) {
-            case DetectionEventDTO.AbstractDetectionEventTypeEnum.ANSWER_SIMIlARITY: {
+            case DetectionEventDTOAbstractDetectionEventTypeEnum.ANSWER_SIMIlARITY: {
                 detectionEvent = AnswerSimilarityDetectionEventMapper.fromDTO(dto as AnswerSimilarityDetectionEventDTO);
                 break;
             }
-            case DetectionEventDTO.AbstractDetectionEventTypeEnum.LOCATION_SIMILARITY: {
+            case DetectionEventDTOAbstractDetectionEventTypeEnum.LOCATION_SIMILARITY: {
                 detectionEvent = LocationSimilarityDetectionEventMapper.fromDTO(
                     dto as LocationSimilarityDetectionEventDTO,
                 );
                 break;
             }
-            case DetectionEventDTO.AbstractDetectionEventTypeEnum.TIME_PROXIMITY: {
+            case DetectionEventDTOAbstractDetectionEventTypeEnum.TIME_PROXIMITY: {
                 detectionEvent = TimeProximityDetectionEventMapper.fromDTO(dto as TimeProximityDetectionEventDTO);
                 break;
             }
-            case DetectionEventDTO.AbstractDetectionEventTypeEnum.MINIMAL_SOLVE_TIME: {
+            case DetectionEventDTOAbstractDetectionEventTypeEnum.MINIMAL_SOLVE_TIME: {
                 detectionEvent = MinimalSolveTimeDetectionEventMapper.fromDTO(dto as MinimalSolveTimeDetectionEventDTO);
                 break;
             }
-            case DetectionEventDTO.AbstractDetectionEventTypeEnum.NO_COMMANDS: {
+            case DetectionEventDTOAbstractDetectionEventTypeEnum.NO_COMMANDS: {
                 detectionEvent = NoCommandsDetectionEventMapper.fromDTO(dto as NoCommandsDetectionEventDTO);
                 break;
             }
-            case DetectionEventDTO.AbstractDetectionEventTypeEnum.FORBIDDEN_COMMANDS: {
+            case DetectionEventDTOAbstractDetectionEventTypeEnum.FORBIDDEN_COMMANDS: {
                 detectionEvent = ForbiddenCommandsDetectionEventMapper.fromDTO(
                     dto as ForbiddenCommandsDetectionEventDTO,
                 );

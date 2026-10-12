@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, input, signal } from '@angular/core';
+import { Component, DestroyRef, inject, input, signal, ChangeDetectionStrategy } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -18,6 +18,7 @@ import { ClickOutsideDirective, PortalConfig } from '@crczp/utils';
     templateUrl: './sandbox-access-actions.component.html',
     styleUrl: './sandbox-access-actions.component.scss',
     imports: [MatIcon, MatTooltip, ClickOutsideDirective, VpnGuidancePanelComponent],
+    changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [SandboxAccessService],
 })
 export class SandboxAccessActionsComponent {

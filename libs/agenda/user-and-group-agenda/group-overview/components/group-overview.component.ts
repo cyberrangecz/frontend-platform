@@ -1,7 +1,9 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { SentinelControlItem, SentinelControlsComponent } from '@sentinel/components/controls';
 import { Group } from '@crczp/user-and-group-model';
-import { SentinelTable, SentinelTableComponent, TableLoadEvent } from '@sentinel/components/table';
+import { SentinelCellDirective, SentinelTableComponent, TableLoadEvent } from '@sentinel/components/table';
+import { SentinelFilterFreeInputComponent } from '@sentinel/components/filters';
+import { RouterLink } from '@angular/router';
 import { defer, Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { GroupTable } from '../model/table/group-table';
@@ -9,10 +11,10 @@ import { DeleteControlItem, SaveControlItem } from '@crczp/user-and-group-agenda
 import { GroupOverviewService } from '../services/group-overview.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AsyncPipe } from '@angular/common';
-import { PaginationStorageService, providePaginationStorageService } from '@crczp/utils';
+import { OffsetPaginationEvent, PaginationStorageService, providePaginationStorageService } from '@crczp/utils';
 import { PaginationMapper } from '@crczp/api-common';
 import { GroupSort } from '@crczp/user-and-group-api';
-import { TableEmptyStateDirective } from '@crczp/components';
+import { TableEmptyStateDirective, TableModel } from '@crczp/components';
 
 /**
  * Main smart component of group-overview overview page
@@ -30,9 +32,12 @@ import { TableEmptyStateDirective } from '@crczp/components';
     ],
     imports: [
         SentinelTableComponent,
+        SentinelCellDirective,
+        SentinelFilterFreeInputComponent,
         SentinelControlsComponent,
         AsyncPipe,
         TableEmptyStateDirective,
+        RouterLink,
     ],
 })
 export class GroupOverviewComponent implements OnInit {
@@ -41,7 +46,11 @@ export class GroupOverviewComponent implements OnInit {
     /**
      * Data for groups table component
      */
-    groups$: Observable<SentinelTable<Group, string>>;
+    groups$: Observable<TableModel<Group, string>>;
+    /**
+     * Text the groups are currently filtered by
+     */
+    filter = '';
     /**
      * True if error was thrown while getting data for groups table, false otherwise
      */
@@ -59,6 +68,7 @@ export class GroupOverviewComponent implements OnInit {
             this.INIT_SORT_NAME,
             this.INIT_SORT_DIR,
         );
+    private pagination: OffsetPaginationEvent<GroupSort> = this.initPagination;
 
     ngOnInit(): void {
         const initialLoadEvent: TableLoadEvent<GroupSort> = {
@@ -80,14 +90,23 @@ export class GroupOverviewComponent implements OnInit {
      * @param event event emitted from table component
      */
     onTableLoadEvent(event: TableLoadEvent<GroupSort>): void {
-        this.paginationService.savePageSize(event.pagination.size);
-        this.groupService
-            .getAll(
-                PaginationMapper.toOffsetPaginationEvent(event.pagination),
-                event.filter,
-            )
-            .pipe(takeUntilDestroyed(this.destroyRef))
-            .subscribe();
+        if (event.pagination) {
+            this.pagination = PaginationMapper.toOffsetPaginationEvent(
+                event.pagination,
+            );
+        }
+        this.paginationService.savePageSize(this.pagination.size);
+        this.load();
+    }
+
+    /**
+     * Reloads the groups from the first page, filtered by the given text
+     * @param filter text to filter groups by, empty for no filter
+     */
+    onFilter(filter: string): void {
+        this.filter = filter;
+        this.pagination = { ...this.pagination, page: 0 };
+        this.load();
     }
 
     /**
@@ -96,6 +115,13 @@ export class GroupOverviewComponent implements OnInit {
      */
     onGroupSelected(selected: Group[]): void {
         this.groupService.setSelection(selected);
+    }
+
+    private load(): void {
+        this.groupService
+            .getAll(this.pagination, this.filter || undefined)
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe();
     }
 
     private initControls(selectedLength: number) {

@@ -5,17 +5,14 @@ export class TrainingDefinitionCreateDTO {
     description?: string;
     outcomes?: string[];
     prerequisites?: string[];
-    state?: TrainingDefinitionCreateDTO.StateEnum;
+    state?: TrainingDefinitionCreateDTOStateEnum;
     title?: string;
     default_content?: boolean;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-namespace
-export namespace TrainingDefinitionCreateDTO {
-    export type StateEnum = 'RELEASED' | 'ARCHIVED' | 'UNRELEASED';
-    export const StateEnum = {
-        RELEASED: 'RELEASED' as StateEnum,
-        ARCHIVED: 'ARCHIVED' as StateEnum,
-        UNRELEASED: 'UNRELEASED' as StateEnum,
-    };
-}
+export type TrainingDefinitionCreateDTOStateEnum = 'RELEASED' | 'ARCHIVED' | 'UNRELEASED';
+export const TrainingDefinitionCreateDTOStateEnum = {
+    RELEASED: 'RELEASED' as TrainingDefinitionCreateDTOStateEnum,
+    ARCHIVED: 'ARCHIVED' as TrainingDefinitionCreateDTOStateEnum,
+    UNRELEASED: 'UNRELEASED' as TrainingDefinitionCreateDTOStateEnum,
+};

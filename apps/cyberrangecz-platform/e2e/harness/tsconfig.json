@@ -5,13 +5,17 @@
         "types": [],
         "strict": false,
         "resolveJsonModule": true,
-        "esModuleInterop": true
+        "esModuleInterop": true,
+        "ignoreDeprecations": "6.0"
     },
-    "files": [
-        "main.ts"
-    ],
-    "include": [
-        "**/*.d.ts",
-        "**/*.ts"
-    ]
+    "files": ["main.ts"],
+    "include": ["**/*.d.ts", "**/*.ts"],
+    "angularCompilerOptions": {
+        "extendedDiagnostics": {
+            "checks": {
+                "nullishCoalescingNotNullable": "suppress",
+                "optionalChainNotNullable": "suppress"
+            }
+        }
+    }
 }

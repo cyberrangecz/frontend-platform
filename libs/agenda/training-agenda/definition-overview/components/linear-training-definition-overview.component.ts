@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { TrainingTypeEnum } from '@crczp/training-model';
 import { CommonTrainingDefinitionOverviewComponent } from './common-training-definition-overview.component';
 import { InjectionTokens, providePaginationStorageService } from '@crczp/utils';
@@ -10,6 +10,7 @@ import { InjectionTokens, providePaginationStorageService } from '@crczp/utils';
     selector: 'crczp-linear-training-definition-overview',
     template: '<crczp-common-training-definition-overview/>',
     imports: [CommonTrainingDefinitionOverviewComponent],
+    changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [
         providePaginationStorageService(
             LinearTrainingDefinitionOverviewComponent,

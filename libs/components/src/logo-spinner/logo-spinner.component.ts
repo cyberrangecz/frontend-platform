@@ -1,4 +1,4 @@
-import { Component, computed, input, signal } from '@angular/core';
+import { Component, computed, input, signal, ChangeDetectionStrategy } from '@angular/core';
 import { ResizeEvent, SentinelResizeDirective } from '@sentinel/common/resize';
 
 /** Named square the spinner renders within, from an inline icon up to the unscaled animation. */
@@ -20,6 +20,7 @@ const SIZE_PIXELS: Record<LogoSpinnerSize, number> = {
     templateUrl: './logo-spinner.component.html',
     styleUrl: './logo-spinner.component.scss',
     imports: [SentinelResizeDirective],
+    changeDetection: ChangeDetectionStrategy.OnPush,
     host: {
         '[class.spinner--icon]': 'sizePixels() !== null',
         '[style.width.px]': 'sizePixels()',

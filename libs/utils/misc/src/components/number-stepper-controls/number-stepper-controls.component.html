@@ -1,0 +1,29 @@
+<span class="stepper-chevrons">
+    <button
+        (pointercancel)="release()"
+        (pointerdown)="hold(1, $event)"
+        (pointerleave)="release()"
+        (pointerup)="release()"
+        aria-hidden="true"
+        class="stepper-chevron stepper-chevron--up"
+        tabindex="-1"
+        type="button"
+    >
+        <mat-icon class="stepper-icon">keyboard_arrow_up</mat-icon>
+    </button>
+    <button
+        (pointercancel)="release()"
+        (pointerdown)="hold(-1, $event)"
+        (pointerleave)="release()"
+        (pointerup)="release()"
+        aria-hidden="true"
+        class="stepper-chevron stepper-chevron--down"
+        tabindex="-1"
+        type="button"
+    >
+        <mat-icon class="stepper-icon">keyboard_arrow_down</mat-icon>
+    </button>
+</span>
+@if (unit(); as unit) {
+    <span class="stepper-unit">{{ unit }}</span>
+}

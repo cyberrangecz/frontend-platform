@@ -1,15 +1,16 @@
 import {
-    AfterViewInit,
-    Component,
-    computed,
-    effect,
-    ElementRef,
-    HostListener,
-    input,
-    OnDestroy,
-    output,
-    signal,
-    viewChild,
+  AfterViewInit,
+  Component,
+  computed,
+  effect,
+  ElementRef,
+  HostListener,
+  input,
+  OnDestroy,
+  output,
+  signal,
+  viewChild,
+  ChangeDetectionStrategy
 } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
 import { NgClass } from '@angular/common';
@@ -23,6 +24,7 @@ export type StepperItem = {
     selector: 'crczp-stepper',
     imports: [MatIcon, NgClass],
     templateUrl: './stepper.html',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     styleUrl: './stepper.scss',
 })
 export class Stepper implements OnDestroy, AfterViewInit {
@@ -82,8 +84,6 @@ export class Stepper implements OnDestroy, AfterViewInit {
     isSelected(index: number): boolean {
         return index === this.selectedIndex() && this.isAccessible(index);
     }
-
-    protected onStepHover($index: number) {}
 
     private scrollSelectedIntoView(selectedIdx: number): void {
         const container = this.containerEl()?.nativeElement;

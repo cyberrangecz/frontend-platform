@@ -1,4 +1,4 @@
-import {AbstractQuestionCreateDTO, AbstractQuestionDTO} from '../../level/assessment/abstact-question-dto';
+import {AbstractQuestionCreateDTO, AbstractQuestionDTOQuestionTypeEnum} from '../../level/assessment/abstact-question-dto';
 import {ExtendedMatchingOptionDTO} from '../../level/assessment/extended-matching-option-dto';
 import {AnsweredExtendedMatchingStatementDTO} from './answered-extended-matching-statement-dto';
 
@@ -9,6 +9,6 @@ export class AnsweredExtendedMatchingItemsDTO implements AbstractQuestionCreateD
     order: number;
     penalty: number;
     points: number;
-    question_type: AbstractQuestionDTO.QuestionTypeEnum;
+    question_type: AbstractQuestionDTOQuestionTypeEnum;
     text: string;
 }

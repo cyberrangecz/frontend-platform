@@ -1,16 +1,17 @@
 import {
-    AfterViewInit,
-    Component,
-    DOCUMENT,
-    effect,
-    ElementRef,
-    HostListener,
-    inject,
-    input,
-    signal,
-    ViewChild,
+  AfterViewInit,
+  Component,
+  DOCUMENT,
+  effect,
+  ElementRef,
+  HostListener,
+  inject,
+  input,
+  signal,
+  ViewChild,
+  ChangeDetectionStrategy
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { MatIcon } from '@angular/material/icon';
 import { MatIconButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -24,8 +25,9 @@ const BOTTOM_MARGIN = 32; // px
 
 @Component({
     selector: 'crczp-log-view',
-    imports: [CommonModule, MatIcon, MatIconButton, MatTooltip, CodeEditor],
+    imports: [MatIcon, MatIconButton, MatTooltip, CodeEditor],
     templateUrl: './log-view.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     styleUrl: './log-view.component.scss',
 })
 export class LogView implements AfterViewInit {

@@ -1,4 +1,4 @@
-import {DetectedForbiddenCommandDTO} from '../../dto/detection-event/detected-forbidden-command-dto';
+import {DetectedForbiddenCommandDTO, DetectedForbiddenCommandDTODetectedForbiddenCommandTypeEnum} from '../../dto/detection-event/detected-forbidden-command-dto';
 import {DetectedForbiddenCommand, DetectedForbiddenCommandTypeEnum} from '@crczp/training-model';
 
 export class DetectedForbiddenCommandMapper {
@@ -16,12 +16,12 @@ export class DetectedForbiddenCommandMapper {
     }
 
     private static typeFromDTO(
-        type: DetectedForbiddenCommandDTO.DetectedForbiddenCommandTypeEnum,
+        type: DetectedForbiddenCommandDTODetectedForbiddenCommandTypeEnum,
     ): DetectedForbiddenCommandTypeEnum {
         switch (type) {
-            case DetectedForbiddenCommandDTO.DetectedForbiddenCommandTypeEnum.BASH:
+            case DetectedForbiddenCommandDTODetectedForbiddenCommandTypeEnum.BASH:
                 return DetectedForbiddenCommandTypeEnum.Bash;
-            case DetectedForbiddenCommandDTO.DetectedForbiddenCommandTypeEnum.MSF:
+            case DetectedForbiddenCommandDTODetectedForbiddenCommandTypeEnum.MSF:
                 return DetectedForbiddenCommandTypeEnum.Msf;
             default:
                 console.error('Could not map DetectedForbiddenCommandTypeEnum to any known DTO');

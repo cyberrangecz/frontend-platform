@@ -5,7 +5,7 @@ export interface AccessedTrainingRunDTO {
     current_level_order?: number;
     id?: number;
     number_of_levels?: number;
-    possible_action?: AccessedTrainingRunDTO.PossibleActionEnum;
+    possible_action?: AccessedTrainingRunDTOPossibleActionEnum;
     title?: string;
     training_instance_end_date?: Date;
     training_instance_start_date?: Date;
@@ -13,12 +13,9 @@ export interface AccessedTrainingRunDTO {
     sandbox_definition_id?: number;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-namespace
-export namespace AccessedTrainingRunDTO {
-    export type PossibleActionEnum = 'RESULTS';
-    export const PossibleActionEnum = {
-        RESULTS: 'RESULTS' as PossibleActionEnum,
-        RESUME: 'RESUME' as PossibleActionEnum,
-        NONE: 'NONE' as PossibleActionEnum,
-    };
-}
+export type AccessedTrainingRunDTOPossibleActionEnum = 'RESULTS';
+export const AccessedTrainingRunDTOPossibleActionEnum = {
+    RESULTS: 'RESULTS' as AccessedTrainingRunDTOPossibleActionEnum,
+    RESUME: 'RESUME' as AccessedTrainingRunDTOPossibleActionEnum,
+    NONE: 'NONE' as AccessedTrainingRunDTOPossibleActionEnum,
+};

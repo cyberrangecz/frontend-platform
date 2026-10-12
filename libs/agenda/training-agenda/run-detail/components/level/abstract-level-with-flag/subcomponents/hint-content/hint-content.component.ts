@@ -1,10 +1,11 @@
-import { Component, input } from '@angular/core';
+import { Component, input, ChangeDetectionStrategy } from '@angular/core';
 import { SentinelMarkdownViewComponent } from '@sentinel/components/markdown-view';
 
 @Component({
     selector: 'crczp-hint-content',
     imports: [SentinelMarkdownViewComponent],
     templateUrl: './hint-content.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     styleUrl: './hint-content.component.scss',
 })
 export class HintContentComponent {

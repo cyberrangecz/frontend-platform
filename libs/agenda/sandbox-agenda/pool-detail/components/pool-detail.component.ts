@@ -12,12 +12,13 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatCard } from '@angular/material/card';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { OffsetPaginatedResource, PaginationMapper } from '@crczp/api-common';
 import { EditableCommentComponent } from '@crczp/sandbox-agenda/internal';
 import { AllocationRequestSort, PoolSort } from '@crczp/sandbox-api';
 import { Pool, RequestStageState, SandboxAllocationUnit } from '@crczp/sandbox-model';
 import {
+    OffsetPaginationEvent,
     PaginationStorageService,
     PollingService,
     PortalConfig,
@@ -25,7 +26,7 @@ import {
     SortDir,
 } from '@crczp/utils';
 import { SentinelControlItem, SentinelControlsComponent } from '@sentinel/components/controls';
-import { SentinelRowDirective, SentinelTableComponent, TableLoadEvent } from '@sentinel/components/table';
+import { SentinelCellDirective, SentinelTableComponent, TableLoadEvent } from '@sentinel/components/table';
 import { Observable, of, Subscription } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { AbstractSandbox } from '../model/abstract-sandbox';
@@ -80,8 +81,9 @@ import { StageOverviewComponent } from './stage-overview/stage-overview.componen
         StageOverviewComponent,
         EditableCommentComponent,
         AsyncPipe,
-        SentinelRowDirective,
+        SentinelCellDirective,
         TableEmptyStateDirective,
+        RouterLink,
     ],
 })
 export class PoolDetailComponent implements OnInit, AfterViewInit {
@@ -107,6 +109,7 @@ export class PoolDetailComponent implements OnInit, AfterViewInit {
             'id',
             'asc',
         );
+    private pagination = this.initSandboxPagination;
 
     ngOnInit(): void {
         this.initTable();
@@ -123,15 +126,16 @@ export class PoolDetailComponent implements OnInit, AfterViewInit {
      * @param loadEvent load event emitted from sandbox instances table
      */
     onLoadEvent(loadEvent: TableLoadEvent<AllocationRequestSort>): void {
-        this.paginationService.savePageSize(loadEvent.pagination.size);
+        if (loadEvent.pagination) {
+            this.pagination = loadEvent.pagination as OffsetPaginationEvent<AllocationRequestSort>;
+        }
+        this.paginationService.savePageSize(this.pagination.size);
         if (this.subscription) {
             this.subscription.unsubscribe();
         }
         this.subscription = this.sandboxInstanceService
             .getAllUnits(this.pool.id, {
-                ...PaginationMapper.toOffsetPaginationEvent(
-                    loadEvent.pagination,
-                ),
+                ...PaginationMapper.toOffsetPaginationEvent(this.pagination),
                 sort: 'id',
             })
             .pipe(takeUntilDestroyed(this.destroyRef))

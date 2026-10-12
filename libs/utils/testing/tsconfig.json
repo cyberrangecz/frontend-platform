@@ -4,14 +4,11 @@
         "target": "es2022",
         "moduleResolution": "bundler",
         "module": "preserve",
-        "types": [
-            "node"
-        ]
+        "types": ["node"],
+        "lib": ["dom", "es2022"],
+        "ignoreDeprecations": "6.0"
     },
-    "include": [
-        "src/**/*.ts",
-        "src/**/*.d.ts"
-    ],
+    "include": ["src/**/*.ts", "src/**/*.d.ts"],
     "references": [
         {
             "path": "./tsconfig.spec.json"

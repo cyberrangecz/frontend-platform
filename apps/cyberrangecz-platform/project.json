@@ -93,7 +93,7 @@
             "executor": "@nx/eslint:lint"
         },
         "test": {
-            "executor": "@nx/vite:test",
+            "executor": "@nx/vitest:test",
             "outputs": ["{options.reportsDirectory}"],
             "options": {
                 "reportsDirectory": "../../coverage/apps/cyberrangecz-platform",
@@ -115,6 +115,7 @@
             "dependsOn": ["theme:build"],
             "options": {
                 "outputPath": "dist/apps/cyberrangecz-platform-e2e",
+                "externalDependencies": ["jsdom"],
                 "index": "apps/cyberrangecz-platform/e2e/harness/index.html",
                 "browser": "apps/cyberrangecz-platform/e2e/harness/main.ts",
                 "polyfills": ["zone.js"],
@@ -163,7 +164,9 @@
         },
         "e2e": {
             "executor": "@nx/playwright:playwright",
-            "outputs": ["{workspaceRoot}/dist/.playwright/apps/cyberrangecz-platform"],
+            "outputs": [
+                "{workspaceRoot}/dist/.playwright/apps/cyberrangecz-platform"
+            ],
             "options": {
                 "config": "apps/cyberrangecz-platform/e2e/playwright.config.ts"
             }

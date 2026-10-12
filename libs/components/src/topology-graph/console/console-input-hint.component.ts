@@ -1,4 +1,4 @@
-import { Component, computed, input } from '@angular/core';
+import { Component, computed, input, ChangeDetectionStrategy } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 
 /**
@@ -10,6 +10,7 @@ import { MatIconModule } from '@angular/material/icon';
     selector: 'crczp-console-input-hint',
     imports: [MatIconModule],
     templateUrl: './console-input-hint.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     styleUrl: './console-input-hint.component.scss',
 })
 export class ConsoleInputHint {

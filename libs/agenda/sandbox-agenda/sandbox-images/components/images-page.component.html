@@ -5,12 +5,25 @@
             <mat-checkbox (change)="osImagesToggled()">Only custom images</mat-checkbox>
             <mat-checkbox (change)="guiAccessToggled()">Only GUI access</mat-checkbox>
         </div>
+        @let table = images$ | async;
+        @if (table?.filterable) {
+            <sentinel-filter-free-input
+                (filterChange)="onFilter($event)"
+                (filterCleared)="onFilter('')"
+                [label]="table.filterLabel"
+                [placeholder]="table.filterLabel"
+                [value]="filter" />
+        }
         <sentinel-table
+            [columns]="table?.columns ?? []"
             [defaultSortName]="DEFAULT_SORT_COLUMN"
             [defaultSortDirection]="DEFAULT_SORT_DIRECTION"
-            [data]="images$ | async"
-            [isLoading]="isLoadingImages$ | async"
-            [hasError]="imagesTableHasError$ | async"
+            [expand]="table?.expand"
+            [hasError]="!!(imagesTableHasError$ | async)"
+            [isLoading]="!!(isLoadingImages$ | async)"
+            [pagination]="table?.pagination"
+            [rows]="table?.rows ?? []"
+            [selectable]="!!table?.selectable"
             (tableLoad)="onTableLoadEvent($event)"
             crczpTableEmptyState="No virtual machine images are available"
         >

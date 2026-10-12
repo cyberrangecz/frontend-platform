@@ -2,7 +2,9 @@ import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit } from '
 import { OffsetPaginationEvent, SortDir } from '@crczp/utils';
 import { SentinelControlItem, SentinelControlsComponent } from '@sentinel/components/controls';
 import { User } from '@crczp/user-and-group-model';
-import { SentinelTable, SentinelTableComponent, TableLoadEvent } from '@sentinel/components/table';
+import { SentinelCellDirective, SentinelTableComponent, TableLoadEvent } from '@sentinel/components/table';
+import { SentinelFilterFreeInputComponent } from '@sentinel/components/filters';
+import { RouterLink } from '@angular/router';
 import { defer, Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { UserTable } from '../model/user-table';
@@ -12,7 +14,7 @@ import { UserOverviewService } from '../services/user-overview.service';
 import { AsyncPipe } from '@angular/common';
 import { FileUploadProgressService, PaginationStorageService, providePaginationStorageService } from '@crczp/utils';
 import { UserSort } from '@crczp/user-and-group-api';
-import { TableEmptyStateDirective } from '@crczp/components';
+import { TableEmptyStateDirective, TableModel } from '@crczp/components';
 
 /**
  * Main smart component of user overview page
@@ -25,8 +27,11 @@ import { TableEmptyStateDirective } from '@crczp/components';
     imports: [
         AsyncPipe,
         SentinelTableComponent,
+        SentinelCellDirective,
+        SentinelFilterFreeInputComponent,
         SentinelControlsComponent,
         TableEmptyStateDirective,
+        RouterLink,
     ],
     providers: [
         FileUploadProgressService,
@@ -42,7 +47,11 @@ export class UserOverviewComponent implements OnInit {
     /**
      * Data for users table
      */
-    users$: Observable<SentinelTable<User, string>>;
+    users$: Observable<TableModel<User, string>>;
+    /**
+     * Text the users are currently filtered by
+     */
+    filter = '';
     /**
      * True, if data requested for table has error, false otherwise
      */
@@ -60,6 +69,7 @@ export class UserOverviewComponent implements OnInit {
             this.INIT_SORT_NAME,
             this.INIT_SORT_DIR,
         );
+    private pagination = this.initPagination;
 
     ngOnInit(): void {
         const initialLoadEvent: TableLoadEvent<string> = {
@@ -81,14 +91,21 @@ export class UserOverviewComponent implements OnInit {
      * @param event load table vent emitted by table component
      */
     onLoadEvent(event: TableLoadEvent<string>): void {
-        this.paginationService.savePageSize(event.pagination.size);
-        this.userService
-            .getAll(
-                event.pagination as OffsetPaginationEvent<UserSort>,
-                event.filter,
-            )
-            .pipe(takeUntilDestroyed(this.destroyRef))
-            .subscribe();
+        if (event.pagination) {
+            this.pagination = event.pagination as OffsetPaginationEvent<UserSort>;
+        }
+        this.paginationService.savePageSize(this.pagination.size);
+        this.load();
+    }
+
+    /**
+     * Reloads the users from the first page, filtered by the given text
+     * @param filter text to filter users by, empty for no filter
+     */
+    onFilter(filter: string): void {
+        this.filter = filter;
+        this.pagination = { ...this.pagination, page: 0 };
+        this.load();
     }
 
     /**
@@ -97,6 +114,13 @@ export class UserOverviewComponent implements OnInit {
      */
     onUserSelected(selected: User[]): void {
         this.userService.setSelection(selected);
+    }
+
+    private load(): void {
+        this.userService
+            .getAll(this.pagination, this.filter || undefined)
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe();
     }
 
     private initControls(selectedUsersLength: number) {

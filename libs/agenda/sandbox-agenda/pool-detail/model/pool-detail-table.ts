@@ -1,5 +1,6 @@
 import { CleanupRequest, SandboxInstance } from '@crczp/sandbox-model';
-import { Column, DeleteAction, Row, RowAction, SentinelTable } from '@sentinel/components/table';
+import { Column, DeleteAction, RowAction } from '@sentinel/components/table';
+import { LinkedRow, TableModel } from '@crczp/components';
 import { defer, of } from 'rxjs';
 import { PoolDetailRowAdapter } from './pool-detail-row-adapter';
 import { CleanupRequestsService } from '../services/state/request/cleanup/cleanup-requests.service';
@@ -13,7 +14,7 @@ import { OffsetPaginatedResource } from '@crczp/api-common';
 /**
  * @dynamic
  */
-export class PoolDetailTable extends SentinelTable<
+export class PoolDetailTable extends TableModel<
     PoolDetailRowAdapter,
     AllocationRequestSort
 > {
@@ -50,7 +51,7 @@ export class PoolDetailTable extends SentinelTable<
         data: AbstractSandbox,
         sandboxInstanceService: SandboxInstanceService,
         vpnOffered: boolean,
-    ): Row<PoolDetailRowAdapter> {
+    ): LinkedRow<PoolDetailRowAdapter> {
         const rowAdapter = new PoolDetailRowAdapter();
         const dateFormatter = new DatePipe('en-US');
         rowAdapter.sandboxData = data;
@@ -64,7 +65,7 @@ export class PoolDetailTable extends SentinelTable<
         rowAdapter.createdBy = data.createdBy;
         rowAdapter.state = data.stateResolver();
         rowAdapter.stages = this.requestStageResolver(data);
-        const row = new Row(
+        const row = new LinkedRow(
             rowAdapter,
             this.createActions(data, sandboxInstanceService, vpnOffered),
         );

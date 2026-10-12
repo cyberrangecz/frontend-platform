@@ -1,12 +1,9 @@
-import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { SentinelControlItem, SentinelControlsComponent } from '@sentinel/components/controls';
 import { TrainingDefinition, TrainingDefinitionStateEnum } from '@crczp/training-model';
-import {
-    SentinelRowDirective,
-    SentinelTable,
-    SentinelTableComponent,
-    TableLoadEvent
-} from '@sentinel/components/table';
+import { SentinelCellDirective, SentinelTableComponent, TableLoadEvent } from '@sentinel/components/table';
+import { SentinelFilterFreeInputComponent } from '@sentinel/components/filters';
+import { RouterLink } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { TrainingDefinitionOverviewControls } from '../model/training-definition-overview-controls';
@@ -14,8 +11,13 @@ import { TrainingDefinitionTable } from '../model/training-definition-table';
 import { TrainingDefinitionService } from '../services/state/training-definition.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AsyncPipe } from '@angular/common';
-import { TableDateCellComponent, TableEmptyStateDirective, TableStateCellComponent } from '@crczp/components';
-import { FileUploadProgressService, PaginationStorageService } from '@crczp/utils';
+import {
+    TableDateCellComponent,
+    TableEmptyStateDirective,
+    TableModel,
+    TableStateCellComponent
+} from '@crczp/components';
+import { FileUploadProgressService, OffsetPaginationEvent, PaginationStorageService } from '@crczp/utils';
 import { createPaginationEvent, PaginationMapper } from '@crczp/api-common';
 import { TrainingDefinitionSort } from '@crczp/training-api';
 
@@ -30,11 +32,14 @@ import { TrainingDefinitionSort } from '@crczp/training-api';
         AsyncPipe,
         SentinelControlsComponent,
         SentinelTableComponent,
+        SentinelCellDirective,
+        SentinelFilterFreeInputComponent,
+        RouterLink,
         TableDateCellComponent,
-        SentinelRowDirective,
         TableStateCellComponent,
         TableEmptyStateDirective,
     ],
+    changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [
         FileUploadProgressService,
         {
@@ -47,7 +52,11 @@ export class CommonTrainingDefinitionOverviewComponent implements OnInit {
     readonly INIT_SORT_NAME = 'lastEdited';
     readonly INIT_SORT_DIR = 'desc';
 
-    trainingDefinitions$: Observable<SentinelTable<TrainingDefinition, string>>;
+    trainingDefinitions$: Observable<TableModel<TrainingDefinition, string>>;
+    /**
+     * Text the training definitions are currently filtered by
+     */
+    filter = '';
     hasError$: Observable<boolean>;
     isLoading$: Observable<boolean>;
     topControls: SentinelControlItem[] = [];
@@ -55,6 +64,7 @@ export class CommonTrainingDefinitionOverviewComponent implements OnInit {
     destroyRef = inject(DestroyRef);
     private trainingDefinitionService = inject(TrainingDefinitionService);
     private paginationService = inject(PaginationStorageService);
+    private pagination: OffsetPaginationEvent<TrainingDefinitionSort>;
 
     ngOnInit(): void {
         this.topControls = TrainingDefinitionOverviewControls.createTopControls(
@@ -72,14 +82,23 @@ export class CommonTrainingDefinitionOverviewComponent implements OnInit {
      * @param loadEvent event emitted by table component to get new data
      */
     onLoadEvent(loadEvent: TableLoadEvent<TrainingDefinitionSort>): void {
-        this.paginationService.savePageSize(loadEvent.pagination.size);
-        this.trainingDefinitionService
-            .getAll(
-                PaginationMapper.toOffsetPaginationEvent(loadEvent.pagination),
-                loadEvent.filter,
-            )
-            .pipe(takeUntilDestroyed(this.destroyRef))
-            .subscribe();
+        if (loadEvent.pagination) {
+            this.pagination = PaginationMapper.toOffsetPaginationEvent(
+                loadEvent.pagination,
+            );
+        }
+        this.paginationService.savePageSize(this.pagination.size);
+        this.load();
+    }
+
+    /**
+     * Reloads the training definitions from the first page, filtered by the given text
+     * @param filter text to filter training definitions by, empty for no filter
+     */
+    onFilter(filter: string): void {
+        this.filter = filter;
+        this.pagination = { ...this.pagination, page: 0 };
+        this.load();
     }
 
     /**
@@ -96,6 +115,13 @@ export class CommonTrainingDefinitionOverviewComponent implements OnInit {
             case TrainingDefinitionStateEnum.Archived:
                 return 'archive';
         }
+    }
+
+    private load(): void {
+        this.trainingDefinitionService
+            .getAll(this.pagination, this.filter || undefined)
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe();
     }
 
     private initTable() {

@@ -2,13 +2,13 @@
  * Assessment Level to update.
  */
 import {AbstractQuestionCreateDTO} from './abstact-question-dto';
-import {AbstractLevelDTO} from '../abstract-level-dto';
+import {AbstractLevelDTOLevelTypeEnum} from '../abstract-level-dto';
 
 export interface AssessmentLevelUpdateDTO {
     id?: number;
     title?: string;
-    level_type?: AbstractLevelDTO.LevelTypeEnum;
-    type?: AssessmentLevelUpdateDTO.TypeEnum;
+    level_type?: AbstractLevelDTOLevelTypeEnum;
+    type?: AssessmentLevelUpdateDTOTypeEnum;
     max_score?: number;
     estimated_duration: number;
     minimal_possible_solve_time: number;
@@ -16,20 +16,17 @@ export interface AssessmentLevelUpdateDTO {
     questions?: AbstractQuestionCreateDTO[];
 }
 
-// eslint-disable-next-line @typescript-eslint/no-namespace
-export namespace AssessmentLevelUpdateDTO {
-    export type TypeEnum = 'TEST' | 'QUESTIONNAIRE';
-    export const TypeEnum = {
-        TEST: 'TEST' as TypeEnum,
-        QUESTIONNAIRE: 'QUESTIONNAIRE' as TypeEnum,
-    };
-}
+export type AssessmentLevelUpdateDTOTypeEnum = 'TEST' | 'QUESTIONNAIRE';
+export const AssessmentLevelUpdateDTOTypeEnum = {
+    TEST: 'TEST' as AssessmentLevelUpdateDTOTypeEnum,
+    QUESTIONNAIRE: 'QUESTIONNAIRE' as AssessmentLevelUpdateDTOTypeEnum,
+};
 
 export class AssessmentLevelUpdateDTOClass implements AssessmentLevelUpdateDTO {
     id: number;
     title: string;
-    level_type: AbstractLevelDTO.LevelTypeEnum = 'ASSESSMENT_LEVEL';
-    type: AssessmentLevelUpdateDTO.TypeEnum;
+    level_type: AbstractLevelDTOLevelTypeEnum = 'ASSESSMENT_LEVEL';
+    type: AssessmentLevelUpdateDTOTypeEnum;
     instructions: string;
     max_score: number;
     questions: AbstractQuestionCreateDTO[];

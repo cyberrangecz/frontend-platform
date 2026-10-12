@@ -1,4 +1,4 @@
-import { AfterViewChecked, Component, DestroyRef, inject } from '@angular/core';
+import { AfterViewChecked, Component, DestroyRef, inject, ChangeDetectionStrategy } from '@angular/core';
 import { AbstractFlagLevelComponent } from '../abstract-level-with-flag/subcomponents/abstract-flag-level/abstract-flag-level.component';
 import { AbstractTrainingLevelService } from '../../../services/training-run/level/access/training/abstract-training-level.service';
 import { LinearTrainingLevelService } from '../../../services/training-run/level/access/training/linear-training-level.service';
@@ -14,6 +14,7 @@ import { AbstractTrainingRunService } from '../../../services/training-run/abstr
     selector: 'crczp-linear-training-level',
     templateUrl: './generic-training-level.component.html',
     imports: [AbstractFlagLevelComponent, AsyncPipe, AnswerFormHintsComponent],
+    changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [
         {
             provide: AbstractTrainingLevelService,

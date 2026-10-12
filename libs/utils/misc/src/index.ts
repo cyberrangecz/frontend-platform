@@ -27,6 +27,8 @@ export * from './types/unit-values';
 export * from './types/sentinel-auth-config.zod';
 export * from './types/type-utils';
 export * from './directives/overflow-tooltip.directive';
+export * from './directives/number-stepper.directive';
+export * from './effects/length-limit.directive';
 export * from './components/clear-input-suffix/clear-input-suffix.component';
 export * from './directives/click-outside';
 export type {

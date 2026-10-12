@@ -1,7 +1,7 @@
 import { inject, Injectable, Provider, Type } from '@angular/core';
 import { milliseconds } from 'date-fns';
 import { PortalConfig } from '../../types/config';
-import { OffsetPaginationEvent, SortDir } from '@crczp/utils';
+import { OffsetPaginationEvent, SortDir } from './pagination-model';
 
 const PAGINATION_TTL = 30; //days
 

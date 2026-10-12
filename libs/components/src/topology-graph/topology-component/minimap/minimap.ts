@@ -1,14 +1,15 @@
 import {
-    Component,
-    ElementRef,
-    inject,
-    Input,
-    OnChanges,
-    OnInit,
-    signal,
-    ViewChild,
+  Component,
+  ElementRef,
+  inject,
+  Input,
+  OnChanges,
+  OnInit,
+  signal,
+  ViewChild,
+  ChangeDetectionStrategy
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { Network } from 'vis-network';
 import { Subject, takeUntil, timer } from 'rxjs';
 import {
@@ -22,8 +23,9 @@ import {
 
 @Component({
     selector: 'crczp-minimap',
-    imports: [CommonModule],
+    imports: [],
     templateUrl: './minimap.html',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     styleUrl: './minimap.scss',
 })
 export class Minimap implements OnChanges, OnInit {

@@ -1,5 +1,5 @@
 import { MitreTechniqueDTO } from '../../mitre-techniques/mitre-technique-dto';
-import { AbstractLevelDTO } from '../abstract-level-dto';
+import {AbstractLevelDTOLevelTypeEnum} from '../abstract-level-dto';
 import { HintDTO } from './hint-dto';
 
 export interface TrainingLevelUpdateDto {
@@ -12,7 +12,7 @@ export interface TrainingLevelUpdateDto {
     answer_variable_name?: string;
     hints?: HintDTO[];
     incorrect_answer_limit?: number;
-    level_type: AbstractLevelDTO.LevelTypeEnum;
+    level_type: AbstractLevelDTOLevelTypeEnum;
     solution?: string;
     solution_penalized?: boolean;
     variant_answers?: boolean;
@@ -30,7 +30,7 @@ export class TrainingLevelUpdateDTOClass implements TrainingLevelUpdateDto {
     hints: HintDTO[];
     id: number;
     incorrect_answer_limit: number;
-    level_type: AbstractLevelDTO.LevelTypeEnum = 'TRAINING_LEVEL';
+    level_type: AbstractLevelDTOLevelTypeEnum = 'TRAINING_LEVEL';
     max_score: number;
     solution: string;
     solution_penalized: boolean;

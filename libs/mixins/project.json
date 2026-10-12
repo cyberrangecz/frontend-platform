@@ -10,11 +10,12 @@
             "executor": "@nx/vite:build",
             "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
             "options": {
-                "main": "libs/mixins/src/index.ts"
+                "main": "libs/mixins/src/index.ts",
+                "outputPath": "dist/libs/mixins"
             }
         },
         "test": {
-            "executor": "@nx/vite:test",
+            "executor": "@nx/vitest:test",
             "outputs": ["{options.reportsDirectory}"],
             "options": {
                 "reportsDirectory": "../../coverage/libs/mixins"

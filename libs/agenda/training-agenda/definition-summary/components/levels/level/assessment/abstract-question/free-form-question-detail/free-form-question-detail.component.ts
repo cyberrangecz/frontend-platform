@@ -1,4 +1,4 @@
-import {Component, Input} from '@angular/core';
+import {Component, Input, ChangeDetectionStrategy} from '@angular/core';
 import {FreeFormQuestion} from '@crczp/training-model';
 import {MatIcon} from "@angular/material/icon";
 import {MatTooltip} from "@angular/material/tooltip";
@@ -7,6 +7,7 @@ import {MatTooltip} from "@angular/material/tooltip";
     selector: 'crczp-free-form-question-detail',
     templateUrl: './free-form-question-detail.component.html',
     styleUrls: ['./free-form-question-detail.component.css'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         MatIcon,
         MatTooltip

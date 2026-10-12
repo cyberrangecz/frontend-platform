@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {Component, EventEmitter, Input, Output, ChangeDetectionStrategy} from '@angular/core';
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import {MatChipGrid, MatChipInput, MatChipInputEvent, MatChipRow} from '@angular/material/chips';
 import {
@@ -14,6 +14,7 @@ import {MatIcon} from "@angular/material/icon";
     selector: 'crczp-expected-commands-select',
     templateUrl: './expected-commands-select.component.html',
     styleUrls: ['./expected-commands-select.component.css'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         MatExpansionPanel,
         MatExpansionPanelHeader,

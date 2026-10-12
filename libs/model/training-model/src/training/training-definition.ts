@@ -1,4 +1,4 @@
-import { Z } from 'zod-class';
+import { Z } from '@crczp/zod-class';
 import { z } from 'zod';
 import {formatDate} from '@angular/common';
 import {TrainingDefinitionStateEnum} from '../enums/training-definition-state.enum';
@@ -10,14 +10,8 @@ export class TrainingDefinitionBasic extends Z.class({
     title: z.string(),
     description: z.string(),
     estimatedDuration: z.number(),
-    levels: z.array(z.any()),
-}) {
-    declare id: number;
-    declare title: string;
-    declare description: string;
-    declare estimatedDuration: number;
-    declare levels: unknown[];
-}
+    levels: z.array(z.unknown()),
+}) {}
 
 /**
  * Training definition in a system, holding every attribute except the level collection.

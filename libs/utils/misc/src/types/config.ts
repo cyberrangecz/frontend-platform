@@ -1,4 +1,4 @@
-import { Z } from 'zod-class';
+import { Z } from '@crczp/zod-class';
 import { z } from 'zod';
 import { sentinelAuthConfigSchema } from './sentinel-auth-config.zod';
 import {
@@ -21,6 +21,18 @@ function removeTrailingSlash(str: string | undefined): string {
 }
 
 /**
+ * Builds schema params that report the given message when the field is absent and leave
+ * every other issue to the default message.
+ *
+ * @param message Message emitted when the field is absent.
+ */
+function requiredField(message: string): { error: z.core.$ZodErrorMap } {
+    return {
+        error: (issue) => (issue.input === undefined ? message : undefined),
+    };
+}
+
+/**
  * Builds a schema that accepts a human-readable duration string and yields the equivalent
  * milliseconds as a number.
  *
@@ -35,7 +47,7 @@ function durationMs(
     minimumDuration: string,
 ) {
     return z
-        .string({ required_error: requiredError })
+        .string(requiredField(requiredError))
         .refine(isNumberWithDurationUnit, {
             message: `${label} must be a duration. ${DURATION_UNITS_LEGEND}`,
         })
@@ -63,7 +75,7 @@ export class PortalConfig extends Z.class({
         .describe('Enable local mode if true'),
 
     defaultPageSize: z
-        .number({ required_error: 'Default page size field is required' })
+        .number(requiredField('Default page size field is required'))
         .gt(0, 'Page size must be greater than 0'),
     roleMapping: RoleMapping.schema(),
 
@@ -82,7 +94,7 @@ export class PortalConfig extends Z.class({
             ).describe('Long polling interval, in milliseconds'),
 
             retryCount: z
-                .number({ required_error: 'Retry count field is required' })
+                .number(requiredField('Retry count field is required'))
                 .int('Retry count must be an integer')
                 .nonnegative('Retry count must be a non-negative integer'),
         })
@@ -133,27 +145,27 @@ export class PortalConfig extends Z.class({
 
     basePaths: z.object({
         linearTraining: z
-            .string({ required_error: 'Linear training API path is required' })
+            .string(requiredField('Linear training API path is required'))
             .nonempty('No linear training api path provided')
             .transform(removeTrailingSlash),
 
         guacamole: z
-            .string({ required_error: 'Guacamole path is required' })
+            .string(requiredField('Guacamole path is required'))
             .nonempty('No guacamole path provided')
             .transform(removeTrailingSlash),
 
         mitre: z
-            .string({ required_error: 'Mitre API path is required' })
+            .string(requiredField('Mitre API path is required'))
             .nonempty('No mitre api path provided')
             .transform(removeTrailingSlash),
 
         userAndGroup: z
-            .string({ required_error: 'User and group API path is required' })
+            .string(requiredField('User and group API path is required'))
             .nonempty('No user and group api path provided')
             .transform(removeTrailingSlash),
 
         sandbox: z
-            .string({ required_error: 'Sandbox API path is required' })
+            .string(requiredField('Sandbox API path is required'))
             .nonempty('No sandbox api path provided')
             .transform(removeTrailingSlash),
     }),
@@ -173,7 +185,7 @@ export class PortalConfig extends Z.class({
                 .default(true)
                 .describe('Availability of browser-based Guacamole access'),
         })
-        .default({})
+        .prefault({})
         .describe('Access methods offered for reaching sandbox machines'),
 
     authConfig: sentinelAuthConfigSchema.describe(

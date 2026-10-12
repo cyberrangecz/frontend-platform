@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { Level, TrainingDefinitionWithLevels } from '@crczp/training-model';
 import { ActivatedRoute } from '@angular/router';
 import { TrainingPreviewStepper } from '../model/training-preview-stepper';
@@ -14,6 +14,7 @@ import { LevelStepperAdapter } from '@crczp/components';
     selector: 'crczp-designer-preview',
     templateUrl: './training-preview.component.html',
     styleUrls: ['./training-preview.component.css'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [SentinelStepperComponent, AbstractLevelComponent],
 })
 export class TrainingPreviewComponent implements OnInit {

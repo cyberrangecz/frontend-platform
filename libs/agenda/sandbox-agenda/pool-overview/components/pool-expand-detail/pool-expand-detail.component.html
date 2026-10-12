@@ -1,25 +1,26 @@
-@if (data) {
+@if (sentinelExpandData) {
+  @let resources = sentinelExpandData.resources$ | async;
   <div class="block-content" style="width: 85vw">
     <mat-grid-list cols="2" class="pool-expand-grid">
       <mat-grid-tile>
-        <p><b>Build progression notifications: </b>{{ data.notifyBuild }}</p>
+        <p><b>Build progression notifications: </b>{{ sentinelExpandData.notifyBuild }}</p>
       </mat-grid-tile>
       <mat-grid-tile>
         <p class="resource-heading"><b>Resources utilization: </b></p>
-        @if (data.usedSize > 0) {
+        @if (sentinelExpandData.usedSize > 0) {
           <div class="resource-content">
             @for (resource of displayedResources; track resource; let i = $index) {
-              @if (data.resources?.quotas[resource]) {
+              @if (resources?.quotas[resource]) {
                 <div>
-                  <span>{{ data.resources.quotas[resource].name }}
-                  ({{ data[resource + 'Utilization'].toFixed(1) }}%):</span>
+                  <span>{{ resources.quotas[resource].name }}
+                  ({{ sentinelExpandData[resource + 'Utilization'].toFixed(1) }}%):</span>
                   <crczp-resource-bar/>
                 </div>
               }
             }
           </div>
         }
-        @if (data.usedSize === 0 || data.resources === undefined) {
+        @if (sentinelExpandData.usedSize === 0 || !resources) {
           <p> No data to display</p>
         }
       </mat-grid-tile>

@@ -52,7 +52,7 @@ describe('observeProperty', () => {
         expect(brand).toBe('Tesla');
     });
 
-    it('should emit distinct values only', () => {
+    it('should emit on every source emission', () => {
         const car$ = new BehaviorSubject<Car>({
             wheel: { color: 'black', diameter: 18 },
             brand: 'Tesla',
@@ -66,28 +66,25 @@ describe('observeProperty', () => {
             colors.push(color);
         });
 
-        // Emit same value - should not trigger
         car$.next({
             wheel: { color: 'black', diameter: 18 },
             brand: 'Tesla',
             year: 2024,
         });
 
-        // Emit different value - should trigger
         car$.next({
             wheel: { color: 'red', diameter: 18 },
             brand: 'Tesla',
             year: 2024,
         });
 
-        // Emit same value again - should not trigger
         car$.next({
             wheel: { color: 'red', diameter: 18 },
             brand: 'Tesla',
             year: 2024,
         });
 
-        expect(colors).toEqual(['black', 'red']);
+        expect(colors).toEqual(['black', 'black', 'red', 'red']);
     });
 
     it('should handle nested object changes', () => {

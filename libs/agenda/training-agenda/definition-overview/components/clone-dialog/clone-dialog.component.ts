@@ -14,7 +14,6 @@ import {TitleCasePipe} from "@angular/common";
 import {SentinelShortStringPipe} from "@sentinel/common/pipes";
 import {MatError, MatFormField, MatInput, MatLabel, MatSuffix} from "@angular/material/input";
 import {MatButton} from "@angular/material/button";
-import {MatIcon} from "@angular/material/icon";
 import { ClearInputSuffixComponent } from '@crczp/utils';
 
 /**

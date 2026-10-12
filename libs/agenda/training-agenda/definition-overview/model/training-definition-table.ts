@@ -4,10 +4,9 @@ import {
     DeleteAction,
     DownloadAction,
     EditAction,
-    Row,
-    RowAction,
-    SentinelTable
+    RowAction
 } from '@sentinel/components/table';
+import { LinkedRow, TableModel } from '@crczp/components';
 import { defer, of } from 'rxjs';
 import { TrainingDefinitionService } from '../services/state/training-definition.service';
 import { TrainingDefinitionRowAdapter } from './training-definition-row-adapter';
@@ -19,7 +18,7 @@ import { OffsetPaginatedResource } from '@crczp/api-common';
  * Helper class transforming paginated resource to class for common table component
  * @dynamic
  */
-export class TrainingDefinitionTable extends SentinelTable<
+export class TrainingDefinitionTable extends TableModel<
     TrainingDefinition,
     string
 > {
@@ -54,12 +53,12 @@ export class TrainingDefinitionTable extends SentinelTable<
     private static createRow(
         td: TrainingDefinition,
         service: TrainingDefinitionService,
-    ): Row<TrainingDefinition> {
+    ): LinkedRow<TrainingDefinition> {
         const adapter = td as TrainingDefinitionRowAdapter;
         adapter.duration = Utils.Date.formatDurationFull(
             td.estimatedDuration * 60,
         );
-        const row = new Row(
+        const row = new LinkedRow(
             adapter,
             TrainingDefinitionTable.createActions(adapter, service),
         );

@@ -1,22 +1,13 @@
 import { VMImagesRowAdapter } from './vm-images-row-adapter';
-import {
-    Column,
-    ExpandableSentinelTable,
-    Row,
-    RowExpand,
-} from '@sentinel/components/table';
+import { Column, RowExpand } from '@sentinel/components/table';
+import { LinkedRow, TableModel } from '@crczp/components';
 import { VirtualImage } from '@crczp/sandbox-model';
 import { VMImageDetailComponent } from '../components/vm-image-detail/vm-image-detail.component';
 import { formatDate } from '@angular/common';
 import { VmImageSort } from '@crczp/sandbox-api';
 import { OffsetPaginatedResource } from '@crczp/api-common';
 
-export class VirtualImagesTable extends ExpandableSentinelTable<
-    VMImagesRowAdapter,
-    VMImageDetailComponent,
-    null,
-    VmImageSort
-> {
+export class VirtualImagesTable extends TableModel<VMImagesRowAdapter, VmImageSort> {
     constructor(resource: OffsetPaginatedResource<VirtualImage>) {
         const rows = resource.elements.map((element) =>
             VirtualImagesTable.createRow(element),
@@ -40,7 +31,7 @@ export class VirtualImagesTable extends ExpandableSentinelTable<
         this.filterLabel = 'Filter by name';
     }
 
-    private static createRow(image: VirtualImage): Row<VMImagesRowAdapter> {
+    private static createRow(image: VirtualImage): LinkedRow<VMImagesRowAdapter> {
         const rowAdapter = image as VMImagesRowAdapter;
         rowAdapter.updatedAtFormatted = formatDate(
             rowAdapter.updatedAt,
@@ -56,6 +47,6 @@ export class VirtualImagesTable extends ExpandableSentinelTable<
             ? 'Yes'
             : 'No';
         rowAdapter.sizeFormatted = Math.round(image.size * 10) / 10;
-        return new Row<VMImagesRowAdapter>(rowAdapter);
+        return new LinkedRow<VMImagesRowAdapter>(rowAdapter);
     }
 }

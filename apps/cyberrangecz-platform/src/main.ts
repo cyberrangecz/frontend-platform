@@ -1,7 +1,6 @@
 import {
     enableProdMode,
     ErrorHandler,
-    importProvidersFrom,
     inject,
     Injectable,
     provideAppInitializer,
@@ -14,17 +13,14 @@ import {
     SentinelConfig,
 } from '@sentinel/common/dynamic-env';
 import { AppComponent } from './app/app.component';
-import {
-    BrowserAnimationsModule,
-    provideAnimations,
-} from '@angular/platform-browser/animations';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
 import {
-    HTTP_INTERCEPTORS,
-    HttpClient,
-    provideHttpClient,
-    withInterceptors,
-    withInterceptorsFromDi,
+  HTTP_INTERCEPTORS,
+  HttpClient,
+  provideHttpClient,
+  withInterceptors,
+  withInterceptorsFromDi,
+  withXhr
 } from '@angular/common/http';
 import { loadingInterceptor } from './app/services/http-interceptors/loading-interceptor';
 import { tokenRefreshInterceptor } from './app/services/http-interceptors/token-refresh-interceptor';
@@ -147,8 +143,6 @@ if (environment.production) {
 
 SentinelBootstrapper.bootstrapApplication('assets/config.json', AppComponent, {
     providers: [
-        importProvidersFrom(BrowserAnimationsModule),
-        provideAnimations(),
         provideNativeDateAdapter(),
         appConfigProvider,
         {
@@ -169,7 +163,7 @@ SentinelBootstrapper.bootstrapApplication('assets/config.json', AppComponent, {
             useClass: UnauthorizedInterceptor,
             multi: true,
         },
-        provideHttpClient(
+        provideHttpClient(withXhr(), 
             withInterceptorsFromDi(),
             withInterceptors([
                 tokenRefreshInterceptor,

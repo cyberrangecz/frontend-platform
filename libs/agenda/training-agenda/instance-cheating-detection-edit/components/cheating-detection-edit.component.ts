@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject } from '@angular/core';
+import { Component, DestroyRef, inject, ChangeDetectionStrategy } from '@angular/core';
 import { SentinelValidators } from '@sentinel/common';
 import {
     AbstractControl,
@@ -54,6 +54,7 @@ import { CheatingDetectionEditConcreteService } from '../services/cheating-detec
         MatSuffix,
         MatIcon,
     ],
+    changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [
         {
             provide: CheatingDetectionEditService,

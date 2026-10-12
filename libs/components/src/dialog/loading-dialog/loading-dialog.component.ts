@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import {
     MAT_DIALOG_DATA,
     MatDialogContent,
@@ -13,6 +13,7 @@ import { TitleCaseExceptPipe } from '@crczp/utils';
     selector: 'crczp-loading-dialog',
     templateUrl: './loading-dialog.component.html',
     styleUrls: ['./loading-dialog.component.css'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         LogoSpinnerComponent,
         TitleCaseExceptPipe,

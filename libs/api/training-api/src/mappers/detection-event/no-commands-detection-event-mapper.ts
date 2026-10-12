@@ -2,9 +2,8 @@ import {AbstractDetectionEventTypeEnum, NoCommandsDetectionEvent} from '@crczp/t
 import {NoCommandsDetectionEventDTO} from '../../dto/detection-event/no-commands/no-commands-detection-event-dto';
 
 export class NoCommandsDetectionEventMapper {
-    static fromDTO(dto: NoCommandsDetectionEventDTO): NoCommandsDetectionEvent {
+    static fromDTO(_dto: NoCommandsDetectionEventDTO): NoCommandsDetectionEvent {
         const result = new NoCommandsDetectionEvent();
-        console.debug(dto + ' TBD');
         result.detectionEventType = AbstractDetectionEventTypeEnum.No_commands;
         return result;
     }

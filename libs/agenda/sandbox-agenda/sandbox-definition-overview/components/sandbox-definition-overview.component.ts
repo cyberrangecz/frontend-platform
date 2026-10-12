@@ -1,9 +1,10 @@
-import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import {
     SentinelControlItem,
     SentinelControlsComponent,
 } from '@sentinel/components/controls';
 import {
+    SentinelCellDirective,
     SentinelTableComponent,
     TableLoadEvent,
 } from '@sentinel/components/table';
@@ -18,6 +19,7 @@ import { SandboxDefinitionOverviewControls } from './sandbox-definition-overview
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AsyncPipe } from '@angular/common';
 import {
+    OffsetPaginationEvent,
     PaginationStorageService,
     providePaginationStorageService,
     SortDir,
@@ -33,9 +35,11 @@ import { TableEmptyStateDirective } from '@crczp/components';
     imports: [
         SentinelControlsComponent,
         SentinelTableComponent,
+        SentinelCellDirective,
         AsyncPipe,
         TableEmptyStateDirective,
     ],
+    changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [
         {
             provide: SandboxDefinitionOverviewService,
@@ -59,13 +63,12 @@ export class SandboxDefinitionOverviewComponent implements OnInit {
     readonly DEFAULT_SORT_DIRECTION: SortDir = 'asc';
     private sandboxDefinitionService = inject(SandboxDefinitionOverviewService);
     private paginationService = inject(PaginationStorageService);
-    private lastLoadEvent: TableLoadEvent<SandboxDefinitionSort> = {
-        pagination:
-            this.paginationService.createPagination<SandboxDefinitionSort>(
-                this.DEFAULT_SORT_COLUMN,
-                this.DEFAULT_SORT_DIRECTION,
-            ),
-    };
+    private readonly initialPagination =
+        this.paginationService.createPagination<SandboxDefinitionSort>(
+            this.DEFAULT_SORT_COLUMN,
+            this.DEFAULT_SORT_DIRECTION,
+        );
+    private pagination = this.initialPagination;
 
     ngOnInit(): void {
         this.controls = SandboxDefinitionOverviewControls.create(
@@ -79,9 +82,12 @@ export class SandboxDefinitionOverviewComponent implements OnInit {
      * @param event to load data
      */
     onLoadEvent(event: TableLoadEvent<SandboxDefinitionSort>): void {
-        this.paginationService.savePageSize(event.pagination.size);
+        if (event.pagination) {
+            this.pagination = event.pagination as OffsetPaginationEvent<SandboxDefinitionSort>;
+        }
+        this.paginationService.savePageSize(this.pagination.size);
         this.sandboxDefinitionService
-            .getAll(PaginationMapper.toOffsetPaginationEvent(event.pagination))
+            .getAll(PaginationMapper.toOffsetPaginationEvent(this.pagination))
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe();
     }
@@ -96,7 +102,7 @@ export class SandboxDefinitionOverviewComponent implements OnInit {
                     ),
             ),
         );
-        this.onLoadEvent(this.lastLoadEvent);
+        this.onLoadEvent({ pagination: this.initialPagination });
         this.hasError$ = this.sandboxDefinitionService.hasError$;
         this.isLoading$ = this.sandboxDefinitionService.isLoading$;
     }

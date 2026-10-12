@@ -1,6 +1,6 @@
 import { MapperBuilder } from './mapper-builder';
 import { describe, expect, test } from 'vitest';
-import { Z } from 'zod-class';
+import { Z } from '@crczp/zod-class';
 import { z } from 'zod';
 
 describe('Testing of properties mapping', () => {

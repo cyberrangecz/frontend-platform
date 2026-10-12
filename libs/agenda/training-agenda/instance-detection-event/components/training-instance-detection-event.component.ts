@@ -1,6 +1,6 @@
-import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { Observable } from 'rxjs';
-import { SentinelTable, SentinelTableComponent, TableLoadEvent } from '@sentinel/components/table';
+import { SentinelTableComponent, TableLoadEvent } from '@sentinel/components/table';
 import { AbstractDetectionEvent, TrainingInstance } from '@crczp/training-model';
 import { filter, map } from 'rxjs/operators';
 import { DetectionEventTable } from '../model/detection-event-table';
@@ -12,7 +12,7 @@ import { PaginationMapper } from '@crczp/api-common';
 import { DetectionEventOverviewService } from '../services/detection-event-overview.service';
 import { AbstractDetectionEventSort } from '@crczp/training-api';
 import { Routing } from '@crczp/routing-commons';
-import { TableEmptyStateDirective } from '@crczp/components';
+import { TableEmptyStateDirective, TableModel } from '@crczp/components';
 
 /**
  * Main component of training instance detection event.
@@ -22,6 +22,7 @@ import { TableEmptyStateDirective } from '@crczp/components';
     templateUrl: './training-instance-detection-event.component.html',
     styleUrls: ['./training-instance-detection-event.component.css'],
     imports: [AsyncPipe, SentinelTableComponent, TableEmptyStateDirective],
+    changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [
         providePaginationStorageService(
             TrainingInstanceDetectionEventComponent,
@@ -34,7 +35,7 @@ export class TrainingInstanceDetectionEventComponent implements OnInit {
     readonly INIT_SORT_DIR = 'asc';
     cheatingDetectionId: number;
     detectionEvents$: Observable<
-        SentinelTable<AbstractDetectionEvent, AbstractDetectionEventSort>
+        TableModel<AbstractDetectionEvent, AbstractDetectionEventSort>
     >;
     hasError$: Observable<boolean>;
     isLoading$: Observable<boolean>;
@@ -50,6 +51,7 @@ export class TrainingInstanceDetectionEventComponent implements OnInit {
             this.INIT_SORT_NAME,
             this.INIT_SORT_DIR,
         );
+    private pagination = this.initialPagination;
 
     ngOnInit(): void {
         this.activeRoute.data
@@ -74,13 +76,17 @@ export class TrainingInstanceDetectionEventComponent implements OnInit {
      * @param loadEvent event emitted by table component to get new data
      */
     onLoadEvent(loadEvent: TableLoadEvent<AbstractDetectionEventSort>): void {
-        this.paginationService.savePageSize(loadEvent.pagination.size);
+        if (loadEvent.pagination) {
+            this.pagination = PaginationMapper.toOffsetPaginationEvent(
+                loadEvent.pagination,
+            );
+        }
+        this.paginationService.savePageSize(this.pagination.size);
         this.detectionEventOverviewService
             .getAll(
                 this.cheatingDetectionId,
                 this.trainingInstanceId,
-                PaginationMapper.toOffsetPaginationEvent(loadEvent.pagination),
-                loadEvent.filter,
+                this.pagination,
             )
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe();

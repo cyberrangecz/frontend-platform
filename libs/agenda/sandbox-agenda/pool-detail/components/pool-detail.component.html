@@ -5,30 +5,37 @@
 <mat-card appearance="outlined">
     <h3>Sandbox Instances</h3>
     <sentinel-controls [controls]="controls" />
+    @let table = instances$ | async;
     <sentinel-table (tableLoad)="onLoadEvent($event)"
-                    [data]="instances$ | async"
+                    [columns]="table?.columns ?? []"
                     [defaultSortDirection]="DEFAULT_SORT_DIRECTION"
                     [defaultSortName]="DEFAULT_SORT_COLUMN"
                     [displayedActionsCount]="5"
-                    [hasError]="instancesTableHasError$ | async"
-                    [isLoading]="instancesTableIsLoading$ | async"
+                    [hasError]="!!(instancesTableHasError$ | async)"
+                    [isLoading]="!!(instancesTableIsLoading$ | async)"
+                    [pagination]="table?.pagination"
+                    [rows]="table?.rows ?? []"
+                    [selectable]="!!table?.selectable"
                     [titlecasedActions]="false"
                     crczpTableEmptyState="No sandboxes in this pool yet">
-        <ng-container *sentinelRow="'stages'; template: stagesTemplate" />
-        <ng-container *sentinelRow="'comment'; template: comment" />
+        <ng-template [sentinelCellType]="table?.rows" let-row sentinelCell="name">
+            @if (row.links.get('name'); as link) {
+                <a [routerLink]="link">{{ row.element.name }}</a>
+            } @else {
+                {{ row.element.name }}
+            }
+        </ng-template>
+        <ng-template [sentinelCellType]="table?.rows" let-row sentinelCell="stages">
+            <crczp-stage-overview (stageSelected)="onStageAction($event, row.element)"
+                                  [navigable]="!row.element.sandboxData.cleanupExists()"
+                                  [stages]="row.element.stages"
+                                  [unitId]="row.element.unitId"
+            />
+        </ng-template>
+        <ng-template [sentinelCellType]="table?.rows" let-row sentinelCell="comment">
+            <crczp-editable-comment
+                (commentChanged)="updateInstanceComment(row.element, $event)"
+                [value]="row.element.comment" />
+        </ng-template>
     </sentinel-table>
 </mat-card>
-
-<ng-template #stagesTemplate let-row>
-    <crczp-stage-overview (stageSelected)="onStageAction($event, row.element)"
-                          [navigable]="!row.element.sandboxData.cleanupExists()"
-                          [stages]="row.element.stages"
-                          [unitId]="row.element.unitId"
-    />
-</ng-template>
-
-<ng-template #comment let-row>
-    <crczp-editable-comment
-        (commentChanged)="updateInstanceComment(row.element,$event)"
-        [value]="row.element.comment" />
-</ng-template>

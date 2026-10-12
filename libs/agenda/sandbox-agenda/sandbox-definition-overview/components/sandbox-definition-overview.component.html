@@ -1,10 +1,18 @@
 <sentinel-controls [controls]="controls" />
+@let table = sandboxDefinitions$ | async;
 <sentinel-table
     (tableLoad)="onLoadEvent($event)"
-    [data]="sandboxDefinitions$ | async"
+    [columns]="table?.columns ?? []"
     [defaultSortDirection]="DEFAULT_SORT_DIRECTION"
     [defaultSortName]="DEFAULT_SORT_COLUMN"
-    [hasError]="hasError$ | async"
-    [isLoading]="isLoading$ | async"
+    [expand]="table?.expand"
+    [hasError]="!!(hasError$ | async)"
+    [isLoading]="!!(isLoading$ | async)"
+    [pagination]="table?.pagination"
+    [rows]="table?.rows ?? []"
+    [selectable]="!!table?.selectable"
     crczpTableEmptyState="No sandbox definitions have been created yet">
+    <ng-template [sentinelCellType]="table?.rows" let-row sentinelCell="titleWithRevision">
+        <a [href]="row.links.get('titleWithRevision')" target="_blank">{{ row.element.titleWithRevision }}</a>
+    </ng-template>
 </sentinel-table>

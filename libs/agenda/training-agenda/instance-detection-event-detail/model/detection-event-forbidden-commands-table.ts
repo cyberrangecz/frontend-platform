@@ -1,4 +1,5 @@
-import { Column, Row, SentinelTable } from '@sentinel/components/table';
+import { Column } from '@sentinel/components/table';
+import { LinkedRow, TableModel } from '@crczp/components';
 import { DetectedForbiddenCommand, DetectedForbiddenCommandTypeEnum } from '@crczp/training-model';
 import { DatePipe } from '@angular/common';
 import { DetectionEventForbiddenCommandsRowAdapter } from './detection-event-forbidden-commands-row-adapter';
@@ -7,7 +8,7 @@ import { OffsetPaginatedResource } from '@crczp/api-common';
 /**
  * @dynamic
  */
-export class DetectionEventForbiddenCommandsTable extends SentinelTable<
+export class DetectionEventForbiddenCommandsTable extends TableModel<
     DetectionEventForbiddenCommandsRowAdapter,
     string
 > {
@@ -28,13 +29,13 @@ export class DetectionEventForbiddenCommandsTable extends SentinelTable<
 
     private static createRow(
         element: DetectedForbiddenCommand,
-    ): Row<DetectionEventForbiddenCommandsRowAdapter> {
+    ): LinkedRow<DetectionEventForbiddenCommandsRowAdapter> {
         const datePipe = new DatePipe('en-EN');
         const adapter = element as DetectionEventForbiddenCommandsRowAdapter;
         adapter.occurredAtFormatted = `${datePipe.transform(adapter.occurredAt, 'medium')}`;
         adapter.typeFormatted = this.evaluateCommandTypeString(adapter.type);
 
-        return new Row(adapter);
+        return new LinkedRow(adapter);
     }
 
     private static evaluateCommandTypeString(

@@ -1,6 +1,5 @@
 import {AccessedTrainingRun, TraineeAccessTrainingRunActionEnum, TrainingTypeEnum} from '@crczp/training-model';
-import {AccessedTrainingRunDTO} from '../../dto/training-run/accessed-training-run-dto';
-import PossibleActionEnum = AccessedTrainingRunDTO.PossibleActionEnum;
+import {AccessedTrainingRunDTO, AccessedTrainingRunDTOPossibleActionEnum} from '../../dto/training-run/accessed-training-run-dto';
 
 /**
  * @dynamic
@@ -34,13 +33,13 @@ export class AccessedTrainingRunMapper {
         return `${duration.split(' ')[1]} ${duration.split(' ')[0]} ${duration.split(' ').slice(len).join(' ')}`;
     }
 
-    private static resolvePossibleAction(action: PossibleActionEnum): TraineeAccessTrainingRunActionEnum {
+    private static resolvePossibleAction(action: AccessedTrainingRunDTOPossibleActionEnum): TraineeAccessTrainingRunActionEnum {
         switch (action) {
-            case PossibleActionEnum.RESULTS:
+            case AccessedTrainingRunDTOPossibleActionEnum.RESULTS:
                 return TraineeAccessTrainingRunActionEnum.Results;
-            case PossibleActionEnum.RESUME:
+            case AccessedTrainingRunDTOPossibleActionEnum.RESUME:
                 return TraineeAccessTrainingRunActionEnum.Resume;
-            case PossibleActionEnum.NONE:
+            case AccessedTrainingRunDTOPossibleActionEnum.NONE:
                 return TraineeAccessTrainingRunActionEnum.None;
             default: {
                 console.error(`Unsupported possible action of training run:${action}`);

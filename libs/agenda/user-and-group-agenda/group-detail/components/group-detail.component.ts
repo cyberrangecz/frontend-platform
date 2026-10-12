@@ -9,11 +9,11 @@ import { ActivatedRoute } from '@angular/router';
 import { Group, User, UserRole } from '@crczp/user-and-group-model';
 import { Observable } from 'rxjs';
 import {
-    SentinelRowDirective,
-    SentinelTable,
+    SentinelCellDirective,
     SentinelTableComponent,
     TableLoadEvent,
 } from '@sentinel/components/table';
+import { SentinelFilterFreeInputComponent } from '@sentinel/components/filters';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -24,11 +24,11 @@ import { CommonModule } from '@angular/common';
 import { instantiatePaginationStorageService } from '@crczp/utils';
 import { PaginationMapper } from '@crczp/api-common';
 import { RoleSort, UserSort } from '@crczp/user-and-group-api';
-import { SortDir } from '@crczp/utils';
+import { OffsetPaginationEvent, SortDir } from '@crczp/utils';
 import { map } from 'rxjs/operators';
 import { MembersDetailTable } from '../model/members-detail-table';
 import { RolesDetailTable } from '../model/roles-detail-table';
-import { TableEmptyStateDirective } from '@crczp/components';
+import { TableEmptyStateDirective, TableModel } from '@crczp/components';
 
 @Component({
     selector: 'crczp-group-detail',
@@ -38,10 +38,11 @@ import { TableEmptyStateDirective } from '@crczp/components';
     imports: [
         CommonModule,
         SentinelTableComponent,
+        SentinelCellDirective,
         MatCardModule,
         MatIconModule,
         MatTooltipModule,
-        SentinelRowDirective,
+        SentinelFilterFreeInputComponent,
         TableEmptyStateDirective,
     ],
     providers: [MembersDetailService, RolesDetailService],
@@ -51,10 +52,18 @@ export class GroupDetailComponent implements OnInit {
     readonly INIT_ROLES_SORT_NAME: RoleSort = 'roleType';
     readonly INIT_SORT_DIR: SortDir = 'asc';
     group: Group;
-    roles$: Observable<SentinelTable<UserRole, string>>;
+    roles$: Observable<TableModel<UserRole, RoleSort>>;
+    /**
+     * Text the roles are currently filtered by
+     */
+    rolesFilter = '';
     rolesTableHasError$: Observable<boolean>;
     isLoadingRoles$: Observable<boolean>;
-    members$: Observable<SentinelTable<User, string>>;
+    members$: Observable<TableModel<User, string>>;
+    /**
+     * Text the members are currently filtered by
+     */
+    membersFilter = '';
     membersTableHasError$: Observable<boolean>;
     isLoadingMembers$: Observable<boolean>;
     destroyRef = inject(DestroyRef);
@@ -79,6 +88,10 @@ export class GroupDetailComponent implements OnInit {
             this.INIT_MEMBERS_SORT_NAME,
             this.INIT_SORT_DIR,
         );
+    private rolesPagination: OffsetPaginationEvent<RoleSort> =
+        this.initialRolePagination;
+    private membersPagination: OffsetPaginationEvent<UserSort> =
+        this.initialUserPagination;
 
     ngOnInit(): void {
         this.initTables();
@@ -89,15 +102,23 @@ export class GroupDetailComponent implements OnInit {
      * @param loadEvent load event emitted from roles detail table
      */
     onRolesLoadEvent(loadEvent: TableLoadEvent<RoleSort>): void {
-        this.rolesPaginationService.savePageSize(loadEvent.pagination.size);
-        this.rolesDetailService
-            .getAssigned(
-                this.group.id,
-                PaginationMapper.toOffsetPaginationEvent(loadEvent.pagination),
-                loadEvent.filter,
-            )
-            .pipe(takeUntilDestroyed(this.destroyRef))
-            .subscribe();
+        if (loadEvent.pagination) {
+            this.rolesPagination = PaginationMapper.toOffsetPaginationEvent(
+                loadEvent.pagination,
+            );
+        }
+        this.rolesPaginationService.savePageSize(this.rolesPagination.size);
+        this.loadRoles();
+    }
+
+    /**
+     * Reloads the roles from the first page, filtered by the given text
+     * @param filter text to filter roles by, empty for no filter
+     */
+    onRolesFilter(filter: string): void {
+        this.rolesFilter = filter;
+        this.rolesPagination = { ...this.rolesPagination, page: 0 };
+        this.loadRoles();
     }
 
     /**
@@ -105,12 +126,42 @@ export class GroupDetailComponent implements OnInit {
      * @param loadEvent load event emitted from mmebers detail table
      */
     onMembersLoadEvent(loadEvent: TableLoadEvent<UserSort>): void {
-        this.membersPaginationService.savePageSize(loadEvent.pagination.size);
+        if (loadEvent.pagination) {
+            this.membersPagination = PaginationMapper.toOffsetPaginationEvent(
+                loadEvent.pagination,
+            );
+        }
+        this.membersPaginationService.savePageSize(this.membersPagination.size);
+        this.loadMembers();
+    }
+
+    /**
+     * Reloads the members from the first page, filtered by the given text
+     * @param filter text to filter members by, empty for no filter
+     */
+    onMembersFilter(filter: string): void {
+        this.membersFilter = filter;
+        this.membersPagination = { ...this.membersPagination, page: 0 };
+        this.loadMembers();
+    }
+
+    private loadRoles(): void {
+        this.rolesDetailService
+            .getAssigned(
+                this.group.id,
+                this.rolesPagination,
+                this.rolesFilter || undefined,
+            )
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe();
+    }
+
+    private loadMembers(): void {
         this.membersDetailService
             .getAssigned(
                 this.group.id,
-                PaginationMapper.toOffsetPaginationEvent(loadEvent.pagination),
-                loadEvent.filter,
+                this.membersPagination,
+                this.membersFilter || undefined,
             )
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe();

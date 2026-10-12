@@ -1,4 +1,5 @@
 import {Pool, Resources} from '@crczp/sandbox-model';
+import {Observable} from 'rxjs';
 
 export class PoolRowAdapter extends Pool {
     title: string;
@@ -10,5 +11,5 @@ export class PoolRowAdapter extends Pool {
     networkUtilization: number;
     portUtilization: number;
     sandboxDefinitionNameAndRevision: string;
-    resources?: Resources;
+    resources$: Observable<Resources>;
 }

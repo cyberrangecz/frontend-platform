@@ -19,7 +19,6 @@ import {MitreTechniqueSelectComponent} from "./mitre-technique/mitre-technique-s
 import {HintsOverviewComponent} from "./hint/overview/hints-overview.component";
 import {MatCheckbox} from "@angular/material/checkbox";
 import {MatTooltip} from "@angular/material/tooltip";
-import {MatIconButton} from "@angular/material/button";
 import {MatError, MatFormField, MatHint, MatInput, MatLabel, MatSuffix} from "@angular/material/input";
 import {SentinelMarkdownEditorComponent} from "@sentinel/components/markdown-editor";
 import {MatIcon} from "@angular/material/icon";

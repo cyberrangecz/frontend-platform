@@ -1,5 +1,7 @@
-import { Component, input } from '@angular/core';
+import { Component, input, ChangeDetectionStrategy } from '@angular/core';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { AbstractControl } from '@angular/forms';
+import { map, startWith, switchMap } from 'rxjs';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 
@@ -11,6 +13,7 @@ import { MatIcon } from '@angular/material/icon';
     selector: 'crczp-clear-input-suffix',
     templateUrl: './clear-input-suffix.component.html',
     styleUrl: './clear-input-suffix.component.css',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [MatIconButton, MatIcon],
 })
 export class ClearInputSuffixComponent {
@@ -22,6 +25,19 @@ export class ClearInputSuffixComponent {
 
     /** Accessible name of the button, naming the field it empties. */
     readonly label = input('Clear');
+
+    /** Whether the bound control currently holds a value and is enabled. */
+    protected readonly clearable = toSignal(
+        toObservable(this.control).pipe(
+            switchMap((control) =>
+                control.events.pipe(
+                    startWith(null),
+                    map(() => Boolean(control.value) && control.enabled),
+                ),
+            ),
+        ),
+        { initialValue: false },
+    );
 
     protected clear(): void {
         const control = this.control();

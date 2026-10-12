@@ -1,12 +1,13 @@
 import {
-    Component,
-    computed,
-    effect,
-    input,
-    model,
-    output,
+  Component,
+  computed,
+  effect,
+  input,
+  model,
+  output,
+  ChangeDetectionStrategy
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 
 export interface DialItem {
     key: string;
@@ -15,8 +16,9 @@ export interface DialItem {
 
 @Component({
     selector: 'crczp-dial-selector',
-    imports: [CommonModule],
+    imports: [],
     templateUrl: './dial-selector.html',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     styleUrl: './dial-selector.scss',
 })
 export class DialSelector {

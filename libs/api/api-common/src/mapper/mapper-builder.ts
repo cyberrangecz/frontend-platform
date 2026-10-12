@@ -63,10 +63,11 @@ export class MapperBuilder {
             const data = {} as Record<string, unknown>;
 
             const mappedKeys = config.mappedProperties.map(config.keyMapper);
-            console.assert(
-                new Set(mappedKeys).size === config.mappedProperties.length,
-                'Array of mapped properties is not unique – duplicate entries detected.'
-            );
+            if (new Set(mappedKeys).size !== config.mappedProperties.length) {
+                console.warn(
+                    'Array of mapped properties is not unique – duplicate entries detected.'
+                );
+            }
 
             if (config.mappers) {
                 for (const [targetKey, fn] of Object.entries(

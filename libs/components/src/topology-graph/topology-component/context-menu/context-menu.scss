@@ -19,7 +19,8 @@
         padding: 4px 10px;
         cursor: pointer;
 
-        &:hover {
+        &:hover,
+        &:focus-visible {
             background-color: #eee;
         }
     }

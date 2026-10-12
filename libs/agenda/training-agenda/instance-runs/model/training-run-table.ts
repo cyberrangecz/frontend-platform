@@ -1,6 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { TrainingInstance, TrainingRun, TrainingRunStateEnum } from '@crczp/training-model';
-import { Column, DeleteAction, Row, RowAction, SentinelTable } from '@sentinel/components/table';
+import { Column, DeleteAction, RowAction } from '@sentinel/components/table';
+import { LinkedRow, TableModel } from '@crczp/components';
 import { defer, of } from 'rxjs';
 import { TrainingRunService } from '../services/runs/training-run.service';
 import { TrainingRunRowAdapter } from './training-run-row-adapter';
@@ -11,7 +12,7 @@ import { OffsetPaginatedResource } from '@crczp/api-common';
  * Helper class transforming paginated resource to class for common table component
  * @dynamic
  */
-export class TrainingRunTable extends SentinelTable<
+export class TrainingRunTable extends TableModel<
     TrainingRunRowAdapter,
     string
 > {
@@ -49,7 +50,7 @@ export class TrainingRunTable extends SentinelTable<
         element: TrainingRun,
         service: TrainingRunService,
         instance: TrainingInstance,
-    ): Row<TrainingRunRowAdapter> {
+    ): LinkedRow<TrainingRunRowAdapter> {
         const datePipe = new DatePipe('en-EN');
         const adapter = element as TrainingRunRowAdapter;
         adapter.playerName = adapter.player.name;
@@ -65,7 +66,7 @@ export class TrainingRunTable extends SentinelTable<
             adapter.endTimeFormatted = '-';
             adapter.duration = '-';
         }
-        return new Row(adapter, this.createActions(element, service, instance));
+        return new LinkedRow(adapter, this.createActions(element, service, instance));
     }
 
     private static createActions(

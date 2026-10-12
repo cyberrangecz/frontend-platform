@@ -1,5 +1,5 @@
-import { AfterViewInit, Component, effect, ElementRef, inject, input, output, signal, ViewChild } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { AfterViewInit, Component, effect, ElementRef, inject, input, output, signal, ViewChild, ChangeDetectionStrategy } from '@angular/core';
+
 import { Edge, Network, Node } from 'vis-network';
 import { DataSet } from 'vis-data';
 import { Minimap } from '../minimap/minimap';
@@ -49,8 +49,9 @@ export type OpenConsoleEvent = {
 @Component({
     selector: 'crczp-topology-graph',
     standalone: true,
-    imports: [CommonModule, Minimap, ContextMenu, FormsModule],
+    imports: [Minimap, ContextMenu, FormsModule],
     templateUrl: './topology-graph.html',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     styleUrl: './topology-graph.scss',
 })
 export class TopologyGraph implements AfterViewInit {

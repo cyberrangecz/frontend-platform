@@ -1,5 +1,6 @@
 import { Group } from '@crczp/user-and-group-model';
-import { Column, Row, RowAction, SentinelTable } from '@sentinel/components/table';
+import { Column, RowAction } from '@sentinel/components/table';
+import { LinkedRow, TableModel } from '@crczp/components';
 import { defer, of } from 'rxjs';
 import { GroupOverviewService } from '../../services/group-overview.service';
 import { GroupDeleteAction } from './group-delete-action';
@@ -12,7 +13,7 @@ import { OffsetPaginatedResource } from '@crczp/api-common';
  * @dynamic
  * Class creating data source for group-overview table
  */
-export class GroupTable extends SentinelTable<GroupRowAdapter, string> {
+export class GroupTable extends TableModel<GroupRowAdapter, string> {
     constructor(
         resource: OffsetPaginatedResource<Group>,
         service: GroupOverviewService,
@@ -45,7 +46,7 @@ export class GroupTable extends SentinelTable<GroupRowAdapter, string> {
     private static createRow(
         group: Group,
         service: GroupOverviewService,
-    ): Row<GroupRowAdapter> {
+    ): LinkedRow<GroupRowAdapter> {
         const rowAdapter = group as GroupRowAdapter;
         if (rowAdapter.expirationDate) {
             rowAdapter.expirationDateFormatted = `${group.expirationDate.getFullYear()}-${
@@ -55,7 +56,7 @@ export class GroupTable extends SentinelTable<GroupRowAdapter, string> {
         } else {
             rowAdapter.expirationDateFormatted = '-';
         }
-        const row = new Row(
+        const row = new LinkedRow(
             rowAdapter,
             GroupTable.createActions(group, service),
         );

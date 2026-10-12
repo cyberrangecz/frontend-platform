@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { AbstractLevelDTO } from '../abstract-level-dto';
+import {AbstractLevelDTOLevelTypeEnum} from '../abstract-level-dto';
 import { idSchema } from '../../shared-schemas';
 
 export const HintBasicDtoSchema = z.object({
@@ -23,7 +23,7 @@ export const TrainingLevelBasicDtoSchema = z.object({
     order: z.number().nonnegative().int(),
     estimated_duration: z.number().nonnegative(),
     max_score: z.number().nonnegative(),
-    level_type: z.literal(AbstractLevelDTO.LevelTypeEnum.TRAINING),
+    level_type: z.literal(AbstractLevelDTOLevelTypeEnum.TRAINING),
     hints: z.array(HintBasicDtoSchema),
     incorrect_answer_limit: z.number().nonnegative().int(),
     solution_penalized: z.boolean(),

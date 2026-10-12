@@ -1,5 +1,6 @@
 import { DatePipe } from '@angular/common';
-import { Column, Row, RowAction, SentinelTable } from '@sentinel/components/table';
+import { Column, RowAction } from '@sentinel/components/table';
+import { LinkedRow, TableModel } from '@crczp/components';
 import { AbstractDetectionEvent, AbstractDetectionEventTypeEnum } from '@crczp/training-model';
 import { DetectionEventRowAdapter } from './detection-event-row-adapter';
 import { defer, of } from 'rxjs';
@@ -11,7 +12,7 @@ import { AbstractDetectionEventSort } from '@crczp/training-api';
  * Helper class transforming paginated resource to class for common table component
  * @dynamic
  */
-export class DetectionEventTable extends SentinelTable<
+export class DetectionEventTable extends TableModel<
     DetectionEventRowAdapter,
     AbstractDetectionEventSort
 > {
@@ -59,7 +60,7 @@ export class DetectionEventTable extends SentinelTable<
     private static createRow(
         element: AbstractDetectionEvent,
         service: DetectionEventOverviewService,
-    ): Row<DetectionEventRowAdapter> {
+    ): LinkedRow<DetectionEventRowAdapter> {
         const datePipe = new DatePipe('en-EN');
         const adapter = element as DetectionEventRowAdapter;
 
@@ -69,7 +70,7 @@ export class DetectionEventTable extends SentinelTable<
         adapter.detectionEventTypeFormatted = this.evaluateEventTypeString(
             adapter.detectionEventType,
         );
-        return new Row(adapter, this.createActions(element, service));
+        return new LinkedRow(adapter, this.createActions(element, service));
     }
 
     private static evaluateEventTypeString(

@@ -33,10 +33,10 @@ let nextTooltipId = 0;
 })
 export class RichTooltipDirective implements OnDestroy {
     /** Tooltip content: structured rows, a plain string, or a template for rich markup. */
-    readonly content = input<RichTooltipContent | null>(null, { alias: 'crczpRichTooltip' });
+    readonly crczpRichTooltip = input<RichTooltipContent | null>(null);
 
     /** Suppresses the tooltip when true. */
-    readonly disabled = input(false, { alias: 'richTooltipDisabled' });
+    readonly richTooltipDisabled = input(false);
 
     private readonly overlay = inject(Overlay);
     private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
@@ -94,8 +94,8 @@ export class RichTooltipDirective implements OnDestroy {
 
     /** Schedules the tooltip to appear after the hover delay, unless empty or disabled. */
     private scheduleShow(): void {
-        const content = this.content();
-        if (this.disabled() || content === null) return;
+        const content = this.crczpRichTooltip();
+        if (this.richTooltipDisabled() || content === null) return;
         if (typeof content === 'string' && content.length === 0) return;
         if (typeof content !== 'string' && !(content instanceof TemplateRef) && !content.title && content.rows.length === 0) {
             return;

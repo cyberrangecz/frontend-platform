@@ -1,4 +1,4 @@
-import {AbstractQuestionCreateDTO, AbstractQuestionDTO} from './abstact-question-dto';
+import {AbstractQuestionCreateDTO, AbstractQuestionDTOQuestionTypeEnum} from './abstact-question-dto';
 import {QuestionChoiceDTO} from './question-choice-dto';
 
 export interface MultipleChoiceQuestionCreateDTO extends AbstractQuestionCreateDTO {
@@ -10,7 +10,7 @@ export class MultipleChoiceQuestionCreateDTOClass implements MultipleChoiceQuest
     order: number;
     penalty: number;
     points: number;
-    question_type: AbstractQuestionDTO.QuestionTypeEnum;
+    question_type: AbstractQuestionDTOQuestionTypeEnum;
     text: string;
     choices: QuestionChoiceDTO[];
 }

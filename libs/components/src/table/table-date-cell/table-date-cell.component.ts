@@ -1,15 +1,16 @@
 import {
-    AfterViewInit,
-    Component,
-    ElementRef,
-    HostListener,
-    inject,
-    Input,
-    OnChanges,
-    OnDestroy,
-    OnInit,
-    signal,
-    ViewChild,
+  AfterViewInit,
+  Component,
+  ElementRef,
+  HostListener,
+  inject,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  signal,
+  ViewChild,
+  ChangeDetectionStrategy
 } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { TableDateCellSyncService } from './table-date-cell-sync.service';
@@ -19,6 +20,7 @@ import { TableDateCellSyncService } from './table-date-cell-sync.service';
     standalone: true,
     imports: [DatePipe],
     templateUrl: './table-date-cell.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     styleUrl: './table-date-cell.component.css',
 })
 export class TableDateCellComponent
