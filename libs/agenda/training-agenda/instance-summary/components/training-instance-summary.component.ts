@@ -15,7 +15,7 @@ import { MatCard } from '@angular/material/card';
 import { TrainingInstanceInfoComponent } from './info/training-instance-info.component';
 import { TrainingInstanceRunsComponent } from './runs/training-instance-runs.component';
 import { AsyncPipe } from '@angular/common';
-import { NotificationService, PaginationStorageService, providePaginationStorageService } from '@crczp/utils';
+import { NotificationService, PaginationStorageService, providePaginationStorageService, SortDir } from '@crczp/utils';
 import { Routing } from '@crczp/routing-commons';
 import { PaginationMapper } from '@crczp/api-common';
 import { TrainingRunSort } from '@crczp/training-api';
@@ -53,6 +53,8 @@ export class TrainingInstanceSummaryComponent implements OnInit {
     trainingInstanceAccessTokenLink: string;
     trainingInstancePoolIdLink: string;
     trainingDefinitionLink: string;
+    readonly INITIAL_SORT_NAME: TrainingRunSort = 'startTime';
+    readonly INITIAL_SORT_DIR: SortDir = 'desc';
     destroyRef = inject(DestroyRef);
     private activeRoute = inject(ActivatedRoute);
     private trainingInstanceSummaryService = inject(
@@ -65,8 +67,8 @@ export class TrainingInstanceSummaryComponent implements OnInit {
 
     private readonly initialRunPagination =
         this.paginationService.createPagination<TrainingRunSort>(
-            'endTime',
-            'asc',
+            this.INITIAL_SORT_NAME,
+            this.INITIAL_SORT_DIR,
         );
     private pagination = this.initialRunPagination;
 

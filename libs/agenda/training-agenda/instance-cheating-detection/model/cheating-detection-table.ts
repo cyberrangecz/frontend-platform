@@ -6,6 +6,7 @@ import { CheatingDetectionRowAdapter } from './cheating-detection-row-adapter';
 import { CheatingDetectionService } from '../services/cheating-detection.service';
 import { defer, of } from 'rxjs';
 import { OffsetPaginatedResource } from '@crczp/api-common';
+import { CheatingDetectionSort } from '@crczp/training-api';
 
 /**
  * Helper class transforming paginated resource to class for common table component
@@ -13,19 +14,39 @@ import { OffsetPaginatedResource } from '@crczp/api-common';
  */
 export class CheatingDetectionTable extends TableModel<
     CheatingDetectionRowAdapter,
-    string
+    CheatingDetectionSort
 > {
     constructor(
         resource: OffsetPaginatedResource<CheatingDetection>,
         service: CheatingDetectionService,
     ) {
         const columns = [
-            new Column<string>('id', 'id', false),
-            new Column<string>('executeTimeFormatted', 'executed at', false),
-            new Column<string>('executedBy', 'executed by', false),
-            new Column<string>('currentState', 'state', false),
-            new Column<string>('resultsFormatted', 'results', false),
-            new Column<string>('stages', 'stages', false),
+            new Column<CheatingDetectionSort>('id', 'id', true, 'id'),
+            new Column<CheatingDetectionSort>(
+                'executeTimeFormatted',
+                'executed at',
+                true,
+                'executeTime',
+            ),
+            new Column<CheatingDetectionSort>(
+                'executedBy',
+                'executed by',
+                true,
+                'executedBy',
+            ),
+            new Column<CheatingDetectionSort>(
+                'currentState',
+                'state',
+                true,
+                'currentState',
+            ),
+            new Column<CheatingDetectionSort>(
+                'resultsFormatted',
+                'results',
+                true,
+                'results',
+            ),
+            new Column<CheatingDetectionSort>('stages', 'stages', false),
         ];
         const rows = resource.elements.map((element) =>
             CheatingDetectionTable.createRow(element, service),

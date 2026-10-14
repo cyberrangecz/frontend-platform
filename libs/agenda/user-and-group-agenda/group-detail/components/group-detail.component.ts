@@ -48,7 +48,7 @@ import { TableEmptyStateDirective, TableModel } from '@crczp/components';
     providers: [MembersDetailService, RolesDetailService],
 })
 export class GroupDetailComponent implements OnInit {
-    readonly INIT_MEMBERS_SORT_NAME: UserSort = 'fullName';
+    readonly INIT_MEMBERS_SORT_NAME: UserSort = 'familyName,givenName';
     readonly INIT_ROLES_SORT_NAME: RoleSort = 'roleType';
     readonly INIT_SORT_DIR: SortDir = 'asc';
     group: Group;
@@ -59,7 +59,7 @@ export class GroupDetailComponent implements OnInit {
     rolesFilter = '';
     rolesTableHasError$: Observable<boolean>;
     isLoadingRoles$: Observable<boolean>;
-    members$: Observable<TableModel<User, string>>;
+    members$: Observable<TableModel<User, UserSort>>;
     /**
      * Text the members are currently filtered by
      */

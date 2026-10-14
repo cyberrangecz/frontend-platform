@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { OffsetPaginationEvent, PaginationBase } from '@crczp/utils';
+import { PaginationBase } from '@crczp/utils';
 import { UserApi, UserRefSort } from '@crczp/training-api';
 import { Designer } from '@crczp/training-model';
 import { SentinelUserAssignService } from '@sentinel/components/user-assign';
@@ -26,7 +26,7 @@ export class AuthorsAssignService extends SentinelUserAssignService {
     private settings = inject(PortalConfig);
 
     private userPagination =
-        createInfinitePaginationEvent<UserRefSort>('givenName');
+        createInfinitePaginationEvent<UserRefSort>('familyName,givenName');
     private lastAssignedFilter: string;
     private assignedUsersSubject: BehaviorSubject<
         OffsetPaginatedResource<Designer>
@@ -97,9 +97,10 @@ export class AuthorsAssignService extends SentinelUserAssignService {
         return this.userApi
             .getAuthors(
                 resourceId,
-                PaginationMapper.toOffsetPaginationEvent(
-                    pagination,
-                ) as OffsetPaginationEvent<UserRefSort>,
+                {
+                    ...PaginationMapper.toOffsetPaginationEvent(pagination),
+                    sort: 'familyName,givenName',
+                },
                 UserNameFilters.create(filter),
             )
             .pipe(
@@ -131,7 +132,7 @@ export class AuthorsAssignService extends SentinelUserAssignService {
                 resourceId,
                 createPaginationEvent<UserRefSort>(
                     {
-                        sort: 'givenName',
+                        sort: 'familyName,givenName',
                     },
                     this.settings,
                 ),

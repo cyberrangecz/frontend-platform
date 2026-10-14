@@ -14,12 +14,7 @@ import { OffsetPaginatedResource } from '@crczp/api-common';
 export class TrainingRunTable extends TableModel<TrainingRun, TrainingRunSort> {
     constructor(resource: OffsetPaginatedResource<TrainingRun>) {
         const columns = [
-            new Column<TrainingRunSort>(
-                'playerName',
-                'player',
-                true,
-                'participantRef',
-            ),
+            new Column<TrainingRunSort>('playerName', 'player', false),
             new Column<TrainingRunSort>(
                 'startTimeFormatted',
                 'start time',

@@ -24,7 +24,7 @@ import { PoolService } from '../services/abstract-pool/abstract-sandbox/pool.ser
 import { SandboxResourcesConcreteService } from '../services/resources/sandbox-resources-concrete.service';
 import { QuotasComponent } from './quotas/quotas.component';
 import { AsyncPipe } from '@angular/common';
-import { OffsetPaginationEvent, PaginationStorageService, PollingService, providePaginationStorageService } from '@crczp/utils';
+import { OffsetPaginationEvent, PaginationStorageService, PollingService, providePaginationStorageService, SortDir } from '@crczp/utils';
 import { PaginationMapper } from '@crczp/api-common';
 import { PoolSort } from '@crczp/sandbox-api';
 import { TableEmptyStateDirective, TableStateCellComponent } from '@crczp/components';
@@ -78,8 +78,8 @@ export class PoolOverviewComponent implements OnInit {
     resources$: Observable<Resources>;
     controls: SentinelControlItem[] = [];
     destroyRef = inject(DestroyRef);
-    readonly DEFAULT_SORT_COLUMN = 'id';
-    readonly DEFAULT_SORT_DIRECTION = 'asc';
+    readonly DEFAULT_SORT_COLUMN: PoolSort = 'id';
+    readonly DEFAULT_SORT_DIRECTION: SortDir = 'desc';
     private sandboxResourcesService = inject(SandboxResourcesService);
     private abstractPoolService = inject(PoolService);
     private sandboxInstanceService = inject(SandboxInstanceService);
@@ -89,6 +89,7 @@ export class PoolOverviewComponent implements OnInit {
     private readonly initialPoolPagination =
         this.paginationService.createPagination<PoolSort>(
             this.DEFAULT_SORT_COLUMN,
+            this.DEFAULT_SORT_DIRECTION,
         );
     private pagination = this.initialPoolPagination;
 

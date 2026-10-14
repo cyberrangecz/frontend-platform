@@ -6,6 +6,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { TrainingRunTable } from '../../model/training-run-table';
 import { TrainingRunSort } from '@crczp/training-api';
 import { TableEmptyStateDirective } from '@crczp/components';
+import { SortDir } from '@crczp/utils';
 
 /**
  * Component displaying training runs and its state in real time.
@@ -28,6 +29,8 @@ export class TrainingRunOverviewComponent {
     @Input() trainingRuns: TrainingRunTable;
     @Input() hasError: boolean;
     @Input() isLoading: boolean;
+    @Input() defaultSortName: TrainingRunSort;
+    @Input() defaultSortDirection: SortDir;
 
     @Output() TableLoadEvent: EventEmitter<TableLoadEvent<TrainingRunSort>> =
         new EventEmitter();

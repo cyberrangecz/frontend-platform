@@ -5,7 +5,7 @@ import { OffsetPaginationEvent } from '@crczp/utils';
 import {
     PoolApi,
     SandboxAllocationUnitsApi,
-    SandboxInstanceSort,
+    SandboxAllocationUnitSort,
 } from '@crczp/sandbox-api';
 import { SandboxAllocationUnit } from '@crczp/sandbox-model';
 import { map, switchMap, tap } from 'rxjs/operators';
@@ -57,7 +57,7 @@ export class SandboxAllocationUnitsConcreteService extends SandboxAllocationUnit
      */
     getAll(
         poolId: number,
-        pagination: OffsetPaginationEvent<SandboxInstanceSort>,
+        pagination: OffsetPaginationEvent<SandboxAllocationUnitSort>,
     ): Observable<OffsetPaginatedResource<SandboxAllocationUnit>> {
         this.lastPagination = pagination;
         this.lastPoolId = poolId;
@@ -68,7 +68,10 @@ export class SandboxAllocationUnitsConcreteService extends SandboxAllocationUnit
             .getPoolsSandboxAllocationUnits(poolId, pagination)
             .pipe(
                 combineLatestWith(
-                    this.poolApi.getPoolsSandboxes(poolId, pagination),
+                    this.poolApi.getPoolsSandboxes(poolId, {
+                        ...pagination,
+                        sort: 'allocation_unit_id',
+                    }),
                 ),
                 map(([units, sandboxes]) => {
                     units.elements.map((unit) => {

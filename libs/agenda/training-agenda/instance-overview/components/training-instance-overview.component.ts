@@ -21,7 +21,12 @@ import {
     TableEmptyStateDirective,
     TableModel
 } from '@crczp/components';
-import { NotificationService, PaginationStorageService, providePaginationStorageService } from '@crczp/utils';
+import {
+    NotificationService,
+    PaginationStorageService,
+    providePaginationStorageService,
+    SortDir,
+} from '@crczp/utils';
 import { PaginationMapper } from '@crczp/api-common';
 import { TrainingInstanceSort } from '@crczp/training-api';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
@@ -59,9 +64,9 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
     ],
 })
 export class TrainingInstanceOverviewComponent {
-    readonly INITIAL_SORT_NAME = 'startTime';
-    readonly INITIAL_SORT_DIR = 'desc';
-    instances$: Observable<TableModel<TrainingInstance, string>>;
+    readonly INITIAL_SORT_NAME: TrainingInstanceSort = 'startTime';
+    readonly INITIAL_SORT_DIR: SortDir = 'desc';
+    instances$: Observable<TableModel<TrainingInstance, TrainingInstanceSort>>;
     /**
      * Text the training instances are currently filtered by
      */

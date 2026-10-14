@@ -17,7 +17,7 @@ import {
     TableModel,
     TableStateCellComponent
 } from '@crczp/components';
-import { FileUploadProgressService, OffsetPaginationEvent, PaginationStorageService } from '@crczp/utils';
+import { FileUploadProgressService, OffsetPaginationEvent, PaginationStorageService, SortDir } from '@crczp/utils';
 import { createPaginationEvent, PaginationMapper } from '@crczp/api-common';
 import { TrainingDefinitionSort } from '@crczp/training-api';
 
@@ -49,10 +49,10 @@ import { TrainingDefinitionSort } from '@crczp/training-api';
     ],
 })
 export class CommonTrainingDefinitionOverviewComponent implements OnInit {
-    readonly INIT_SORT_NAME = 'lastEdited';
-    readonly INIT_SORT_DIR = 'desc';
+    readonly INIT_SORT_NAME: TrainingDefinitionSort = 'lastEdited';
+    readonly INIT_SORT_DIR: SortDir = 'desc';
 
-    trainingDefinitions$: Observable<TableModel<TrainingDefinition, string>>;
+    trainingDefinitions$: Observable<TableModel<TrainingDefinition, TrainingDefinitionSort>>;
     /**
      * Text the training definitions are currently filtered by
      */
@@ -139,7 +139,8 @@ export class CommonTrainingDefinitionOverviewComponent implements OnInit {
             );
         this.onLoadEvent({
             pagination: createPaginationEvent({
-                sort: 'id',
+                sort: this.INIT_SORT_NAME,
+                sortDir: this.INIT_SORT_DIR,
                 pageSize: this.paginationService.loadPageSize(),
             }),
         });

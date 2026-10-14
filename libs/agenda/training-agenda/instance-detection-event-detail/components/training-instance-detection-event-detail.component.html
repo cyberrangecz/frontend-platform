@@ -78,6 +78,9 @@
             <h1>Participants</h1>
             @let participantTable = participants$ | async;
             <sentinel-table
+                (tableLoad)="onLoadEventParticipants($event)"
+                [defaultSortDirection]="INITIAL_SORT_DIR"
+                [defaultSortName]="PARTICIPANT_INITIAL_SORT_NAME"
                 [columns]="participantTable?.columns ?? []"
                 [displayedActionsCount]="4"
                 [hasError]="!!(participantTableHasError$ | async)"
@@ -97,6 +100,9 @@
                         <div class="forbidden-commands-table">
                             @let forbiddenCommandTable = forbiddenCommands$ | async;
                             <sentinel-table
+                                (tableLoad)="onLoadEventForbiddenCommands($event)"
+                                [defaultSortDirection]="INITIAL_SORT_DIR"
+                                [defaultSortName]="FORBIDDEN_COMMAND_INITIAL_SORT_NAME"
                                 [columns]="forbiddenCommandTable?.columns ?? []"
                                 [displayedActionsCount]="4"
                                 [hasError]="!!(forbiddenCommandsTableHasError$ | async)"

@@ -29,7 +29,8 @@ export class SandboxDefinitionTable extends TableModel<SandboxDefinition, Sandbo
             new Column<SandboxDefinitionSort>(
                 'createdByName',
                 'Created by',
-                false,
+                true,
+                'created_by_id',
             ),
         ];
         const rows = resource.elements.map((element) =>

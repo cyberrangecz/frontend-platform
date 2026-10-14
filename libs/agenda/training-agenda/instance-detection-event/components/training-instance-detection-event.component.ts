@@ -7,7 +7,7 @@ import { DetectionEventTable } from '../model/detection-event-table';
 import { ActivatedRoute } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AsyncPipe } from '@angular/common';
-import { PaginationStorageService, providePaginationStorageService } from '@crczp/utils';
+import { PaginationStorageService, providePaginationStorageService, SortDir } from '@crczp/utils';
 import { PaginationMapper } from '@crczp/api-common';
 import { DetectionEventOverviewService } from '../services/detection-event-overview.service';
 import { AbstractDetectionEventSort } from '@crczp/training-api';
@@ -31,8 +31,8 @@ import { TableEmptyStateDirective, TableModel } from '@crczp/components';
     ],
 })
 export class TrainingInstanceDetectionEventComponent implements OnInit {
-    readonly INIT_SORT_NAME = 'levelId';
-    readonly INIT_SORT_DIR = 'asc';
+    readonly INIT_SORT_NAME: AbstractDetectionEventSort = 'levelOrder';
+    readonly INIT_SORT_DIR: SortDir = 'asc';
     cheatingDetectionId: number;
     detectionEvents$: Observable<
         TableModel<AbstractDetectionEvent, AbstractDetectionEventSort>

@@ -1,43 +1,41 @@
-import { VirtualImageDTO } from '../dto/vm-images/virtual-image-d-t-o';
-
 export type PoolSort =
-    | 'allocation_units'
-    | 'comment'
-    | 'created_by'
-    | 'created_by_id'
-    | 'definition'
-    | 'definition_id'
     | 'id'
-    | 'lock'
-    | 'management_certificate'
+    | 'definition_id'
+    | 'created_by_id'
+    | 'size'
     | 'max_size'
-    | 'private_management_key'
-    | 'public_management_key'
     | 'rev'
     | 'rev_sha'
-    | 'sandboxrequestgroup'
-    | 'send_emails'
-    | 'size'
-    | 'uuid'
-    | 'visible';
+    | 'comment'
+    | 'visible'
+    | 'send_emails';
 export type SandboxDefinitionSort =
-    | 'created_by'
-    | 'created_by_id'
     | 'id'
     | 'name'
-    | 'pool'
+    | 'url'
     | 'rev'
-    | 'url';
-export type SandboxDefinitionRefSort = never; // TODO: define when needed
-export type SandboxInstanceSort =
-    | 'allocation_unit'
-    | 'allocation_unit_id'
+    | 'created_by_id';
+export type SandboxDefinitionRefSort = 'name';
+export type SandboxInstanceSort = 'id' | 'allocation_unit_id' | 'ready';
+export type SandboxAllocationUnitSort =
     | 'id'
-    | 'lock'
-    | 'private_user_key'
-    | 'public_user_key'
-    | 'ready';
-export type AllocationRequestSort = 'id';
+    | 'pool_id'
+    | 'created_by_id'
+    | 'comment';
+export type AllocationRequestSort = 'id' | 'allocation_unit_id' | 'created';
 export type ResourceUsageSort = never; // TODO: define when needed
-export type VmImageSort = keyof VirtualImageDTO;
-export type PoolLockSort = never; // TODO: define when needed
+export type VmImageSort =
+    | 'name'
+    | 'os_distro'
+    | 'os_type'
+    | 'disk_format'
+    | 'container_format'
+    | 'visibility'
+    | 'size'
+    | 'status'
+    | 'min_ram'
+    | 'min_disk'
+    | 'created_at'
+    | 'updated_at'
+    | 'default_user';
+export type PoolLockSort = 'id' | 'pool_id';

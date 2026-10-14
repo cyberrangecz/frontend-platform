@@ -8,7 +8,7 @@ import { AbstractSandbox } from './abstract-sandbox';
 import { SandboxInstanceService } from '../services/state/sandbox-instance/sandbox-instance.service';
 import { DatePipe } from '@angular/common';
 import { Routing } from '@crczp/routing-commons';
-import { AllocationRequestSort } from '@crczp/sandbox-api';
+import { SandboxAllocationUnitSort } from '@crczp/sandbox-api';
 import { OffsetPaginatedResource } from '@crczp/api-common';
 
 /**
@@ -16,7 +16,7 @@ import { OffsetPaginatedResource } from '@crczp/api-common';
  */
 export class PoolDetailTable extends TableModel<
     PoolDetailRowAdapter,
-    AllocationRequestSort
+    SandboxAllocationUnitSort
 > {
     constructor(
         resource: OffsetPaginatedResource<AbstractSandbox>,
@@ -24,17 +24,23 @@ export class PoolDetailTable extends TableModel<
         vpnOffered: boolean,
     ) {
         const columns = [
-            new Column<AllocationRequestSort>('name', 'name', true, 'id'),
-            new Column<AllocationRequestSort>(
+            new Column<SandboxAllocationUnitSort>('name', 'name', true, 'id'),
+            new Column<SandboxAllocationUnitSort>(
                 'comment',
                 'notes and comments',
-                false,
+                true,
+                'comment',
             ),
-            new Column<AllocationRequestSort>('lock', 'lock', false),
-            new Column<AllocationRequestSort>('created', 'created', false),
-            new Column<AllocationRequestSort>('createdBy', 'created by', false),
-            new Column<AllocationRequestSort>('state', 'state', false),
-            new Column<AllocationRequestSort>('stages', 'stages', false),
+            new Column<SandboxAllocationUnitSort>('lock', 'lock', false),
+            new Column<SandboxAllocationUnitSort>('created', 'created', false),
+            new Column<SandboxAllocationUnitSort>(
+                'createdBy',
+                'created by',
+                true,
+                'created_by_id',
+            ),
+            new Column<SandboxAllocationUnitSort>('state', 'state', false),
+            new Column<SandboxAllocationUnitSort>('stages', 'stages', false),
         ];
         const rows = resource.elements.map((element) =>
             PoolDetailTable.createRow(

@@ -15,7 +15,7 @@ import { MatCard } from '@angular/material/card';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { OffsetPaginatedResource, PaginationMapper } from '@crczp/api-common';
 import { EditableCommentComponent } from '@crczp/sandbox-agenda/internal';
-import { AllocationRequestSort, PoolSort } from '@crczp/sandbox-api';
+import { SandboxAllocationUnitSort } from '@crczp/sandbox-api';
 import { Pool, RequestStageState, SandboxAllocationUnit } from '@crczp/sandbox-model';
 import {
     OffsetPaginationEvent,
@@ -95,7 +95,7 @@ export class PoolDetailComponent implements OnInit, AfterViewInit {
     controls: SentinelControlItem[] = [];
     commentTrim = 15;
     destroyRef = inject(DestroyRef);
-    readonly DEFAULT_SORT_COLUMN: PoolSort = 'id';
+    readonly DEFAULT_SORT_COLUMN: SandboxAllocationUnitSort = 'id';
     readonly DEFAULT_SORT_DIRECTION: SortDir = 'asc';
     private sandboxInstanceService = inject(SandboxInstanceService);
     private paginationService = inject(PaginationStorageService);
@@ -105,9 +105,9 @@ export class PoolDetailComponent implements OnInit, AfterViewInit {
     private subscription?: Subscription;
 
     private readonly initSandboxPagination =
-        this.paginationService.createPagination<AllocationRequestSort>(
-            'id',
-            'asc',
+        this.paginationService.createPagination<SandboxAllocationUnitSort>(
+            this.DEFAULT_SORT_COLUMN,
+            this.DEFAULT_SORT_DIRECTION,
         );
     private pagination = this.initSandboxPagination;
 
@@ -125,19 +125,19 @@ export class PoolDetailComponent implements OnInit, AfterViewInit {
      * retrieval already running.
      * @param loadEvent load event emitted from sandbox instances table
      */
-    onLoadEvent(loadEvent: TableLoadEvent<AllocationRequestSort>): void {
+    onLoadEvent(loadEvent: TableLoadEvent<SandboxAllocationUnitSort>): void {
         if (loadEvent.pagination) {
-            this.pagination = loadEvent.pagination as OffsetPaginationEvent<AllocationRequestSort>;
+            this.pagination = loadEvent.pagination as OffsetPaginationEvent<SandboxAllocationUnitSort>;
         }
         this.paginationService.savePageSize(this.pagination.size);
         if (this.subscription) {
             this.subscription.unsubscribe();
         }
         this.subscription = this.sandboxInstanceService
-            .getAllUnits(this.pool.id, {
-                ...PaginationMapper.toOffsetPaginationEvent(this.pagination),
-                sort: 'id',
-            })
+            .getAllUnits(
+                this.pool.id,
+                PaginationMapper.toOffsetPaginationEvent(this.pagination),
+            )
             .pipe(takeUntilDestroyed(this.destroyRef))
             // A polling failure is reported upstream.
             .subscribe({ error: () => undefined });
@@ -193,7 +193,7 @@ export class PoolDetailComponent implements OnInit, AfterViewInit {
     }
 
     private initTable() {
-        const initialLoadEvent: TableLoadEvent<AllocationRequestSort> = {
+        const initialLoadEvent: TableLoadEvent<SandboxAllocationUnitSort> = {
             pagination: this.initSandboxPagination,
         };
         this.activeRoute.data

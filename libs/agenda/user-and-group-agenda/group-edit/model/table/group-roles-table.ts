@@ -22,7 +22,6 @@ export class GroupRolesTable extends TableModel<UserRole, RoleSort> {
                 'microserviceId',
                 'microservice id',
                 false,
-                'idOfMicroservice',
             ),
             new Column<RoleSort>('roleType', 'role type', true, 'roleType'),
             new Column<RoleSort>('microserviceName', 'microservice name', false),

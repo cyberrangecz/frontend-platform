@@ -14,7 +14,7 @@ export class VirtualImagesTable extends TableModel<VMImagesRowAdapter, VmImageSo
         );
         const columns = [
             new Column<VmImageSort>('name', 'name', true, 'name'),
-            new Column<VmImageSort>('defaultUser', 'default user', false),
+            new Column<VmImageSort>('defaultUser', 'default user', true, 'default_user'),
             new Column<VmImageSort>(
                 'updatedAtFormatted',
                 'updated at',
@@ -22,7 +22,7 @@ export class VirtualImagesTable extends TableModel<VMImagesRowAdapter, VmImageSo
                 'updated_at',
             ),
             new Column<VmImageSort>('guiAccessFormatted', 'GUI access', false),
-            new Column<VmImageSort>('sizeFormatted', 'size (GB)', false),
+            new Column<VmImageSort>('sizeFormatted', 'size (GB)', true, 'size'),
         ];
         const expand = new RowExpand(VMImageDetailComponent, null);
         super(rows, columns, expand);

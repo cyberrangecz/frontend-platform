@@ -40,14 +40,14 @@ import { TableEmptyStateDirective, TableModel } from '@crczp/components';
     ],
 })
 export class UserOverviewComponent implements OnInit {
-    readonly INIT_SORT_NAME: UserSort = 'familyName';
+    readonly INIT_SORT_NAME: UserSort = 'familyName,givenName';
     readonly INIT_SORT_DIR: SortDir = 'asc';
     destroyRef = inject(DestroyRef);
 
     /**
      * Data for users table
      */
-    users$: Observable<TableModel<User, string>>;
+    users$: Observable<TableModel<User, UserSort>>;
     /**
      * Text the users are currently filtered by
      */

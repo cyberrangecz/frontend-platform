@@ -40,7 +40,13 @@ import {
     SKIPPED_ERROR_CODES
 } from '@crczp/api-common';
 import { PortalConfig } from '@crczp/utils';
-import { AllocationRequestSort, PoolSort, SandboxDefinitionSort } from '../sorts';
+import {
+    AllocationRequestSort,
+    PoolSort,
+    SandboxAllocationUnitSort,
+    SandboxDefinitionSort,
+    SandboxInstanceSort,
+} from '../sorts';
 
 /**
  * Service abstracting http communication with pools endpoints.
@@ -308,11 +314,8 @@ export class PoolApi {
      */
     getPoolsSandboxAllocationUnits(
         poolId: number,
-        pagination?: OffsetPaginationEvent<string>,
+        pagination?: OffsetPaginationEvent<SandboxAllocationUnitSort>,
     ): Observable<OffsetPaginatedResource<SandboxAllocationUnit>> {
-        if (pagination && pagination.sort) {
-            pagination.sort = pagination.sort.replace('allocation_unit__', '');
-        }
         return this.http
             .get<DjangoResourceDTO<SandboxAllocationUnitDTO>>(
                 `${this.apiUrl}/${poolId}/${this.sandboxAllocationUnitsUriExtension}`,
@@ -382,16 +385,9 @@ export class PoolApi {
      */
     getPoolsSandboxes(
         poolId: number,
-        pagination?: OffsetPaginationEvent<string>,
+        pagination?: OffsetPaginationEvent<SandboxInstanceSort>,
         ignoredErrors?: number[],
     ): Observable<OffsetPaginatedResource<SandboxInstance>> {
-        if (
-            pagination &&
-            pagination.sort &&
-            !pagination.sort.startsWith('allocation_unit')
-        ) {
-            pagination.sort = `allocation_unit_${pagination.sort}`;
-        }
         return this.http
             .get<DjangoResourceDTO<SandboxInstanceDTO>>(
                 `${this.apiUrl}/${poolId}/sandboxes`,

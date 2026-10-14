@@ -1,26 +1,89 @@
-import { TrainingInstanceDTO } from '../dto/training-instance/training-instance-dto';
-import { TrainingDefinitionDTO } from '../dto/training-definition/training-definition-dto';
-import { TrainingRunDTO } from '../dto/training-run/training-run-dto';
-import { UserRefDTO } from '../dto/user/user-ref-dto';
-import { DetectedForbiddenCommandDTO } from '../dto/detection-event/detected-forbidden-command-dto';
-import { DetectionEventParticipantDTO } from '../dto/detection-event/detection-event-participant-dto';
-import { DetectionEventDTO } from '../dto/detection-event/detection-event-dto';
-import { SnakeToCamelCase } from '@crczp/api-common';
+export type TrainingDefinitionSort =
+    | 'id'
+    | 'title'
+    | 'description'
+    | 'state'
+    | 'estimatedDuration'
+    | 'lastEdited'
+    | 'lastEditedBy'
+    | 'createdAt';
 
-export type TrainingInstanceSort = SnakeToCamelCase<keyof TrainingInstanceDTO>;
-export type TrainingDefinitionSort = SnakeToCamelCase<
-    keyof TrainingDefinitionDTO
->;
-export type TrainingRunSort = SnakeToCamelCase<keyof TrainingRunDTO>;
-export type AccessedTrainingRunSort = 'endTime' | 'startTime';
-export type UserRefSort = SnakeToCamelCase<keyof UserRefDTO>;
-export type CheatingDetectionSort = 'lastEdited';
-export type AbstractDetectionEventSort = SnakeToCamelCase<
-    keyof DetectionEventDTO
->;
-export type DetectedForbiddenCommandSort = SnakeToCamelCase<
-    keyof DetectedForbiddenCommandDTO
->;
-export type DetectionEventParticipantSort = SnakeToCamelCase<
-    keyof DetectionEventParticipantDTO
->;
+export type TrainingInstanceSort =
+    | 'id'
+    | 'title'
+    | 'startTime'
+    | 'endTime'
+    | 'poolId'
+    | 'accessToken'
+    | 'lastEdited'
+    | 'lastEditedBy'
+    | 'localEnvironment'
+    | 'sandboxDefinitionId'
+    | 'showStepperBar'
+    | 'backwardMode';
+
+export type TrainingRunSort =
+    | 'id'
+    | 'startTime'
+    | 'endTime'
+    | 'state'
+    | 'incorrectAnswerCount'
+    | 'solutionTaken'
+    | 'totalTrainingScore'
+    | 'totalAssessmentScore'
+    | 'maxLevelScore'
+    | 'currentPenalty'
+    | 'hasDetectionEvent';
+
+export type AccessedTrainingRunSort = TrainingRunSort | 'trainingInstance.title';
+
+export type CheatingDetectionSort =
+    | 'id'
+    | 'executeTime'
+    | 'executedBy'
+    | 'proximityThreshold'
+    | 'currentState'
+    | 'results'
+    | 'answerSimilarityState'
+    | 'locationSimilarityState'
+    | 'timeProximityState'
+    | 'minimalSolveTimeState'
+    | 'forbiddenCommandsState'
+    | 'noCommandsState';
+
+export type AbstractDetectionEventSort =
+    | 'id'
+    | 'detectedAt'
+    | 'levelId'
+    | 'levelOrder'
+    | 'levelTitle'
+    | 'participantCount'
+    | 'detectionEventType'
+    | 'trainingRunId';
+
+export type DetectedForbiddenCommandSort =
+    | 'id'
+    | 'command'
+    | 'type'
+    | 'hostname'
+    | 'occurredAt';
+
+export type DetectionEventParticipantSort =
+    | 'id'
+    | 'occurredAt'
+    | 'participantName'
+    | 'ipAddress'
+    | 'solvedInTime'
+    | 'userId';
+
+export type UserRefSort =
+    | 'id'
+    | 'sub'
+    | 'iss'
+    | 'fullName'
+    | 'givenName'
+    | 'familyName'
+    | 'familyName,givenName'
+    | 'mail'
+    | 'status'
+    | 'externalId';

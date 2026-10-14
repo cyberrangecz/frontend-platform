@@ -83,7 +83,7 @@ export class GroupRoleAssignComponent implements OnInit {
     /**
      * Data for assigned roles table component
      */
-    assignedRoles$ = new Subject<TableModel<UserRole, string>>();
+    assignedRoles$ = new Subject<TableModel<UserRole, RoleSort>>();
     /**
      * Text the assigned roles are currently filtered by
      */

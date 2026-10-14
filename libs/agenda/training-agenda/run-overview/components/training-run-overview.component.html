@@ -7,6 +7,8 @@
         <sentinel-table
             (tableLoad)="loadAccessedTrainingRuns($event)"
             [columns]="table?.columns ?? []"
+            [defaultSortDirection]="INITIAL_SORT_DIR"
+            [defaultSortName]="INITIAL_SORT_NAME"
             [hasError]="!!(hasError$ | async)"
             [isLoading]="!!(tableIsLoading$ | async)"
             [pagination]="table?.pagination"

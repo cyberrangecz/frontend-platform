@@ -5,6 +5,7 @@ import { defer, of } from 'rxjs';
 import { AccessedTrainingRunService } from '../services/state/accessed-training-run.service';
 import { AccessedTrainingRunRowAdapter } from './accessed-training-run-row-adapter';
 import { OffsetPaginatedResource } from '@crczp/api-common';
+import { AccessedTrainingRunSort } from '@crczp/training-api';
 
 /**
  * Helper class transforming paginated resource to class for common table component
@@ -12,20 +13,25 @@ import { OffsetPaginatedResource } from '@crczp/api-common';
  */
 export class AccessedTrainingRunTable extends TableModel<
     AccessedTrainingRunRowAdapter,
-    string
+    AccessedTrainingRunSort
 > {
     constructor(
         resource: OffsetPaginatedResource<AccessedTrainingRun>,
         service: AccessedTrainingRunService,
     ) {
         const columns = [
-            new Column<string>('trainingInstanceTitle', 'title', false),
-            new Column<string>(
+            new Column<AccessedTrainingRunSort>(
+                'trainingInstanceTitle',
+                'title',
+                true,
+                'trainingInstance.title',
+            ),
+            new Column<AccessedTrainingRunSort>(
                 'trainingInstanceFormattedDuration',
                 'Time slot',
                 false,
             ),
-            new Column<string>('completedLevels', 'Completed Levels', false),
+            new Column<AccessedTrainingRunSort>('completedLevels', 'Completed Levels', false),
         ];
 
         const sortByInstanceDateAndState = (

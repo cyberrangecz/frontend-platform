@@ -14,7 +14,7 @@ import { UserAssignService } from '../../services/state/user-assign.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatCard, MatCardAvatar, MatCardContent, MatCardHeader, MatCardSubtitle, MatCardTitle } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
-import { OffsetPaginationEvent, PaginationStorageService, providePaginationStorageService } from '@crczp/utils';
+import { OffsetPaginationEvent, PaginationStorageService, providePaginationStorageService, SortDir } from '@crczp/utils';
 import { UserSort } from '@crczp/user-and-group-api';
 import { AsyncPipe } from '@angular/common';
 import { PaginationMapper } from '@crczp/api-common';
@@ -50,8 +50,8 @@ import { TableEmptyStateDirective, TableModel } from '@crczp/components';
     ],
 })
 export class GroupUserAssignComponent implements OnInit {
-    readonly MEMBERS_OF_GROUP_INIT_SORT_NAME = 'familyName';
-    readonly MEMBERS_OF_GROUP_INIT_SORT_DIR = 'asc';
+    readonly MEMBERS_OF_GROUP_INIT_SORT_NAME: UserSort = 'familyName,givenName';
+    readonly MEMBERS_OF_GROUP_INIT_SORT_DIR: SortDir = 'asc';
     /**
      * Edited group-overview to assign to
      */
@@ -91,7 +91,7 @@ export class GroupUserAssignComponent implements OnInit {
     /**
      * Data for table component of already assigned users
      */
-    assignedUsers$: Observable<TableModel<User, string>>;
+    assignedUsers$: Observable<TableModel<User, UserSort>>;
     /**
      * Text the assigned users are currently filtered by
      */

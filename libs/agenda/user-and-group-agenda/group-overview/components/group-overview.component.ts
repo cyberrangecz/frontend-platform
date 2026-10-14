@@ -11,7 +11,7 @@ import { DeleteControlItem, SaveControlItem } from '@crczp/user-and-group-agenda
 import { GroupOverviewService } from '../services/group-overview.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AsyncPipe } from '@angular/common';
-import { OffsetPaginationEvent, PaginationStorageService, providePaginationStorageService } from '@crczp/utils';
+import { OffsetPaginationEvent, PaginationStorageService, providePaginationStorageService, SortDir } from '@crczp/utils';
 import { PaginationMapper } from '@crczp/api-common';
 import { GroupSort } from '@crczp/user-and-group-api';
 import { TableEmptyStateDirective, TableModel } from '@crczp/components';
@@ -41,12 +41,12 @@ import { TableEmptyStateDirective, TableModel } from '@crczp/components';
     ],
 })
 export class GroupOverviewComponent implements OnInit {
-    readonly INIT_SORT_NAME = 'name';
-    readonly INIT_SORT_DIR = 'asc';
+    readonly INIT_SORT_NAME: GroupSort = 'name';
+    readonly INIT_SORT_DIR: SortDir = 'asc';
     /**
      * Data for groups table component
      */
-    groups$: Observable<TableModel<Group, string>>;
+    groups$: Observable<TableModel<Group, GroupSort>>;
     /**
      * Text the groups are currently filtered by
      */

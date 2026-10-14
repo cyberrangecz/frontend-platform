@@ -59,7 +59,7 @@ export class SandboxDefinitionOverviewComponent implements OnInit {
     hasError$: Observable<boolean>;
     isLoading$: Observable<boolean>;
     destroyRef = inject(DestroyRef);
-    readonly DEFAULT_SORT_COLUMN: SandboxDefinitionSort = 'id';
+    readonly DEFAULT_SORT_COLUMN: SandboxDefinitionSort = 'name';
     readonly DEFAULT_SORT_DIRECTION: SortDir = 'asc';
     private sandboxDefinitionService = inject(SandboxDefinitionOverviewService);
     private paginationService = inject(PaginationStorageService);

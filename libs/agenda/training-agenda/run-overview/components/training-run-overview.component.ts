@@ -12,6 +12,7 @@ import { AsyncPipe } from '@angular/common';
 import { AccessTrainingRunComponent } from './access/access-training-run.component';
 import { createPaginationEvent, PaginationMapper } from '@crczp/api-common';
 import { AccessedTrainingRunSort } from '@crczp/training-api';
+import { SortDir } from '@crczp/utils';
 import { TableEmptyStateDirective, TableModel } from '@crczp/components';
 
 /**
@@ -32,7 +33,9 @@ import { TableEmptyStateDirective, TableModel } from '@crczp/components';
     providers: [AccessedTrainingRunService],
 })
 export class TrainingRunOverviewComponent implements OnInit {
-    trainingRuns$: Observable<TableModel<AccessedTrainingRun, string>>;
+    readonly INITIAL_SORT_NAME: AccessedTrainingRunSort = 'startTime';
+    readonly INITIAL_SORT_DIR: SortDir = 'desc';
+    trainingRuns$: Observable<TableModel<AccessedTrainingRun, AccessedTrainingRunSort>>;
     hasError$: Observable<boolean>;
     tableIsLoading$: Observable<boolean>;
     isLoading = false;
@@ -42,8 +45,8 @@ export class TrainingRunOverviewComponent implements OnInit {
 
     private readonly initialRunPagination =
         createPaginationEvent<AccessedTrainingRunSort>({
-            sort: 'endTime',
-            sortDir: 'desc',
+            sort: this.INITIAL_SORT_NAME,
+            sortDir: this.INITIAL_SORT_DIR,
         });
     private pagination = this.initialRunPagination;
 

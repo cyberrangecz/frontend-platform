@@ -13,6 +13,7 @@ import { VmImageSort } from '@crczp/sandbox-api';
 import {
     PaginationStorageService,
     providePaginationStorageService,
+    SortDir,
 } from '@crczp/utils';
 import { OffsetPaginationEvent } from '@crczp/utils';
 import {
@@ -57,14 +58,15 @@ export class ImagesPageComponent implements OnInit {
      */
     filter = '';
     destroyRef = inject(DestroyRef);
-    readonly DEFAULT_SORT_COLUMN = 'name';
-    readonly DEFAULT_SORT_DIRECTION = 'asc';
+    readonly DEFAULT_SORT_COLUMN: VmImageSort = 'name';
+    readonly DEFAULT_SORT_DIRECTION: SortDir = 'asc';
     private vmImagesService = inject(VMImagesService);
     private paginationService = inject(PaginationStorageService);
 
     private readonly initialImagesPagination =
         this.paginationService.createPagination<VmImageSort>(
             this.DEFAULT_SORT_COLUMN,
+            this.DEFAULT_SORT_DIRECTION,
         );
     private pagination = this.initialImagesPagination;
 

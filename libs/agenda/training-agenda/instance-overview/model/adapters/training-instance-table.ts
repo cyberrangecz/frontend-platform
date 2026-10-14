@@ -21,7 +21,7 @@ export class TrainingInstanceTable extends TableModel<
         service: TrainingInstanceOverviewService,
     ) {
         const columns = [
-            new Column<TrainingInstanceSort>('title', 'Title', true),
+            new Column<TrainingInstanceSort>('title', 'Title', true, 'title'),
             new Column<TrainingInstanceSort>(
                 'startTime',
                 'Start Time',
@@ -43,7 +43,8 @@ export class TrainingInstanceTable extends TableModel<
             new Column<TrainingInstanceSort>(
                 'lastEditBy',
                 'Last Edit By',
-                false,
+                true,
+                'lastEditedBy',
             ),
             new Column<TrainingInstanceSort>(
                 'poolTitle',

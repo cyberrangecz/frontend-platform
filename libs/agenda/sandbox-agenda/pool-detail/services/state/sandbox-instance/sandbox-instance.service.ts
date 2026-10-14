@@ -9,7 +9,7 @@ import {
 } from '@sentinel/components/dialogs';
 import { OffsetPaginationEvent } from '@crczp/utils';
 import {
-    AllocationRequestSort,
+    SandboxAllocationUnitSort,
     PoolApi,
     SandboxAllocationUnitsApi,
     SandboxInstanceApi,
@@ -97,7 +97,7 @@ export class SandboxInstanceService extends OffsetPaginatedElementsPollingServic
      */
     getAllUnits(
         poolId: number,
-        pagination: OffsetPaginationEvent<AllocationRequestSort>,
+        pagination: OffsetPaginationEvent<SandboxAllocationUnitSort>,
     ): Observable<OffsetPaginatedResource<SandboxAllocationUnit>> {
         this.lastPoolId = poolId;
         return this.allocationUnitsService.getAll(poolId, pagination);
@@ -145,7 +145,7 @@ export class SandboxInstanceService extends OffsetPaginatedElementsPollingServic
                 return this.getAllUnits(
                     this.lastPoolId,
                     this
-                        .lastPagination as OffsetPaginationEvent<AllocationRequestSort>,
+                        .lastPagination as OffsetPaginationEvent<SandboxAllocationUnitSort>,
                 );
             }),
         );
@@ -187,7 +187,7 @@ export class SandboxInstanceService extends OffsetPaginatedElementsPollingServic
                                   return this.getAllUnits(
                                       this.lastPoolId,
                                       this
-                                          .lastPagination as OffsetPaginationEvent<AllocationRequestSort>,
+                                          .lastPagination as OffsetPaginationEvent<SandboxAllocationUnitSort>,
                                   );
                               }),
                           )
@@ -218,7 +218,7 @@ export class SandboxInstanceService extends OffsetPaginatedElementsPollingServic
                 this.getAllUnits(
                     this.lastPoolId,
                     this
-                        .lastPagination as OffsetPaginationEvent<AllocationRequestSort>,
+                        .lastPagination as OffsetPaginationEvent<SandboxAllocationUnitSort>,
                 ),
             ),
         );
@@ -264,7 +264,7 @@ export class SandboxInstanceService extends OffsetPaginatedElementsPollingServic
                 this.getAllUnits(
                     this.lastPoolId,
                     this
-                        .lastPagination as OffsetPaginationEvent<AllocationRequestSort>,
+                        .lastPagination as OffsetPaginationEvent<SandboxAllocationUnitSort>,
                 ),
             ),
         );
@@ -404,7 +404,7 @@ export class SandboxInstanceService extends OffsetPaginatedElementsPollingServic
                     this.getAllUnits(
                         this.lastPoolId,
                         this
-                            .lastPagination as OffsetPaginationEvent<AllocationRequestSort>,
+                            .lastPagination as OffsetPaginationEvent<SandboxAllocationUnitSort>,
                     ),
                 ),
             );
@@ -423,7 +423,7 @@ export class SandboxInstanceService extends OffsetPaginatedElementsPollingServic
                     this.getAllUnits(
                         this.lastPoolId,
                         this
-                            .lastPagination as OffsetPaginationEvent<AllocationRequestSort>,
+                            .lastPagination as OffsetPaginationEvent<SandboxAllocationUnitSort>,
                     ),
                 ),
             );
@@ -442,7 +442,7 @@ export class SandboxInstanceService extends OffsetPaginatedElementsPollingServic
                     this.getAllUnits(
                         this.lastPoolId,
                         this
-                            .lastPagination as OffsetPaginationEvent<AllocationRequestSort>,
+                            .lastPagination as OffsetPaginationEvent<SandboxAllocationUnitSort>,
                     ),
                 ),
             );
@@ -470,7 +470,7 @@ export class SandboxInstanceService extends OffsetPaginatedElementsPollingServic
                 this.getAllUnits(
                     this.lastPoolId,
                     this
-                        .lastPagination as OffsetPaginationEvent<AllocationRequestSort>,
+                        .lastPagination as OffsetPaginationEvent<SandboxAllocationUnitSort>,
                 ),
             ),
         );
@@ -599,7 +599,7 @@ export class SandboxInstanceService extends OffsetPaginatedElementsPollingServic
                 this.getAllUnits(
                     this.lastPoolId,
                     this
-                        .lastPagination as OffsetPaginationEvent<AllocationRequestSort>,
+                        .lastPagination as OffsetPaginationEvent<SandboxAllocationUnitSort>,
                 ),
             ),
         );
@@ -627,7 +627,7 @@ export class SandboxInstanceService extends OffsetPaginatedElementsPollingServic
                     this.getAllUnits(
                         this.lastPoolId,
                         this
-                            .lastPagination as OffsetPaginationEvent<AllocationRequestSort>,
+                            .lastPagination as OffsetPaginationEvent<SandboxAllocationUnitSort>,
                     ),
                 ),
             );

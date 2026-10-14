@@ -12,6 +12,7 @@ import { TrainingDefinitionService } from '../services/state/training-definition
 import { TrainingDefinitionRowAdapter } from './training-definition-row-adapter';
 import { Routing } from '@crczp/routing-commons';
 import { Utils } from '@crczp/utils';
+import { TrainingDefinitionSort } from '@crczp/training-api';
 import { OffsetPaginatedResource } from '@crczp/api-common';
 
 /**
@@ -20,24 +21,29 @@ import { OffsetPaginatedResource } from '@crczp/api-common';
  */
 export class TrainingDefinitionTable extends TableModel<
     TrainingDefinition,
-    string
+    TrainingDefinitionSort
 > {
     constructor(
         resource: OffsetPaginatedResource<TrainingDefinition>,
         service: TrainingDefinitionService,
     ) {
         const columns = [
-            new Column<string>('title', 'title', true),
-            new Column<string>(
+            new Column<TrainingDefinitionSort>('title', 'title', true, 'title'),
+            new Column<TrainingDefinitionSort>(
                 'duration',
                 'estimated duration',
                 true,
                 'estimatedDuration',
             ),
-            new Column<string>('createdAt', 'created at', true, 'createdAt'),
-            new Column<string>('lastEditTime', 'last edit', true, 'lastEdited'),
-            new Column<string>('lastEditBy', 'last edit by', false),
-            new Column<string>('state', 'state', true),
+            new Column<TrainingDefinitionSort>('createdAt', 'created at', true, 'createdAt'),
+            new Column<TrainingDefinitionSort>('lastEditTime', 'last edit', true, 'lastEdited'),
+            new Column<TrainingDefinitionSort>(
+                'lastEditBy',
+                'last edit by',
+                true,
+                'lastEditedBy',
+            ),
+            new Column<TrainingDefinitionSort>('state', 'state', true, 'state'),
         ];
 
         const rows = resource.elements.map((definition) =>

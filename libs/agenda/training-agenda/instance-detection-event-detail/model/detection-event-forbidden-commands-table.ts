@@ -4,20 +4,41 @@ import { DetectedForbiddenCommand, DetectedForbiddenCommandTypeEnum } from '@crc
 import { DatePipe } from '@angular/common';
 import { DetectionEventForbiddenCommandsRowAdapter } from './detection-event-forbidden-commands-row-adapter';
 import { OffsetPaginatedResource } from '@crczp/api-common';
+import { DetectedForbiddenCommandSort } from '@crczp/training-api';
 
 /**
  * @dynamic
  */
 export class DetectionEventForbiddenCommandsTable extends TableModel<
     DetectionEventForbiddenCommandsRowAdapter,
-    string
+    DetectedForbiddenCommandSort
 > {
     constructor(resource: OffsetPaginatedResource<DetectedForbiddenCommand>) {
         const columns = [
-            new Column<string>('command', 'command', false),
-            new Column<string>('typeFormatted', 'type', false),
-            new Column<string>('hostname', 'hostname', false),
-            new Column<string>('occurredAtFormatted', 'occurred At', false),
+            new Column<DetectedForbiddenCommandSort>(
+                'command',
+                'command',
+                true,
+                'command',
+            ),
+            new Column<DetectedForbiddenCommandSort>(
+                'typeFormatted',
+                'type',
+                true,
+                'type',
+            ),
+            new Column<DetectedForbiddenCommandSort>(
+                'hostname',
+                'hostname',
+                true,
+                'hostname',
+            ),
+            new Column<DetectedForbiddenCommandSort>(
+                'occurredAtFormatted',
+                'occurred At',
+                true,
+                'occurredAt',
+            ),
         ];
         const rows = resource.elements.map((element) =>
             DetectionEventForbiddenCommandsTable.createRow(element),

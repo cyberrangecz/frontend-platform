@@ -6,11 +6,12 @@ import { UserDeleteAction } from '@crczp/user-and-group-agenda/internal';
 import { UserOverviewService } from '../services/user-overview.service';
 import { Routing } from '@crczp/routing-commons';
 import { OffsetPaginatedResource } from '@crczp/api-common';
+import { UserSort } from '@crczp/user-and-group-api';
 
 /**
  * Class creating data source for user table
  */
-export class UserTable extends TableModel<User, string> {
+export class UserTable extends TableModel<User, UserSort> {
     constructor(
         resource: OffsetPaginatedResource<User>,
         service: UserOverviewService,
@@ -20,11 +21,11 @@ export class UserTable extends TableModel<User, string> {
         );
 
         const columns = [
-            new Column<string>('id', 'id', true, 'id'),
-            new Column<string>('name', 'name', true, 'familyName,givenName'),
-            new Column<string>('login', 'login', true, 'sub'),
-            new Column<string>('issuer', 'issuer', true, 'iss'),
-            new Column<string>('mail', 'email', true, 'mail'),
+            new Column<UserSort>('id', 'id', true, 'id'),
+            new Column<UserSort>('name', 'name', true, 'familyName,givenName'),
+            new Column<UserSort>('login', 'login', true, 'sub'),
+            new Column<UserSort>('issuer', 'issuer', true, 'iss'),
+            new Column<UserSort>('mail', 'email', true, 'mail'),
         ];
         super(rows, columns);
         this.pagination = resource.pagination;

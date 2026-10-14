@@ -22,6 +22,12 @@ export class DetectionEventTable extends TableModel<
     ) {
         const columns = [
             new Column<AbstractDetectionEventSort>(
+                'levelOrder',
+                'level order',
+                true,
+                'levelOrder',
+            ),
+            new Column<AbstractDetectionEventSort>(
                 'levelTitle',
                 'level title',
                 true,
@@ -36,7 +42,8 @@ export class DetectionEventTable extends TableModel<
             new Column<AbstractDetectionEventSort>(
                 'participantCount',
                 'number of participants',
-                false,
+                true,
+                'participantCount',
             ),
             new Column<AbstractDetectionEventSort>(
                 'participants',
@@ -46,7 +53,8 @@ export class DetectionEventTable extends TableModel<
             new Column<AbstractDetectionEventSort>(
                 'detectionEventTypeFormatted',
                 'detection type',
-                false,
+                true,
+                'detectionEventType',
             ),
         ];
         const rows = resource.elements.map((element) =>

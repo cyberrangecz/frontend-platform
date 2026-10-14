@@ -1,5 +1,7 @@
 <sentinel-table
     (tableLoad)="onTableLoadEvent($event)"
+    [defaultSortDirection]="defaultSortDirection"
+    [defaultSortName]="defaultSortName"
     [columns]="trainingRuns?.columns ?? []"
     [hasError]="hasError"
     [isLoading]="isLoading"

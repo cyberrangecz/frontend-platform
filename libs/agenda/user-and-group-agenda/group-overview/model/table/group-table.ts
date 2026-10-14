@@ -9,11 +9,12 @@ import { GroupRowAdapter } from './group-row-adapter';
 import { Routing } from '@crczp/routing-commons';
 import { OffsetPaginatedResource } from '@crczp/api-common';
 
+import { GroupSort } from '@crczp/user-and-group-api';
 /**
  * @dynamic
  * Class creating data source for group-overview table
  */
-export class GroupTable extends TableModel<GroupRowAdapter, string> {
+export class GroupTable extends TableModel<GroupRowAdapter, GroupSort> {
     constructor(
         resource: OffsetPaginatedResource<Group>,
         service: GroupOverviewService,
@@ -22,14 +23,14 @@ export class GroupTable extends TableModel<GroupRowAdapter, string> {
             GroupTable.createRow(element, service),
         );
         const columns = [
-            new Column<string>('name', 'name', true, 'name'),
-            new Column<string>(
+            new Column<GroupSort>('name', 'name', true, 'name'),
+            new Column<GroupSort>(
                 'description',
                 'description',
                 true,
                 'description',
             ),
-            new Column<string>(
+            new Column<GroupSort>(
                 'expirationDateFormatted',
                 'expiration date',
                 true,

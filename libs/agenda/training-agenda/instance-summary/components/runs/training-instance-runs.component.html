@@ -1,6 +1,8 @@
 <sentinel-table
     (rowClick)="onTableRowExpand($event)"
     (tableLoad)="onTableLoadEvent($event)"
+    [defaultSortDirection]="defaultSortDirection"
+    [defaultSortName]="defaultSortName"
     [columns]="trainingRuns?.columns ?? []"
     [expand]="trainingRuns?.expand"
     [hasError]="hasError"

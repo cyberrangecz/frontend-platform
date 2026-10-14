@@ -2,7 +2,7 @@ import { RegisterControlItem } from '@crczp/user-and-group-agenda/internal';
 import { MicroserviceTable } from '../model/table/microservice-table';
 import { MicroserviceOverviewService } from '../services/microservice-overview.service';
 import { Microservice } from '@crczp/user-and-group-model';
-import { OffsetPaginationEvent } from '@crczp/utils';
+import { OffsetPaginationEvent, SortDir } from '@crczp/utils';
 import { SentinelFilterFreeInputComponent } from '@sentinel/components/filters';
 import {
     ChangeDetectionStrategy,
@@ -50,12 +50,12 @@ import { TableEmptyStateDirective, TableModel } from '@crczp/components';
     ],
 })
 export class MicroserviceOverviewComponent implements OnInit {
-    readonly INIT_SORT_NAME = 'name';
-    readonly INIT_SORT_DIR = 'asc';
+    readonly INIT_SORT_NAME: MicroserviceSort = 'name';
+    readonly INIT_SORT_DIR: SortDir = 'asc';
     /**
      * Data for microservices table component
      */
-    microservices$: Observable<TableModel<Microservice, string>>;
+    microservices$: Observable<TableModel<Microservice, MicroserviceSort>>;
     /**
      * Text the microservices are currently filtered by
      */

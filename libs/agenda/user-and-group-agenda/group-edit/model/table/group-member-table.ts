@@ -5,11 +5,12 @@ import { defer, of } from 'rxjs';
 import { UserAssignService } from '../../services/state/user-assign.service';
 import { UserDeleteAction } from '@crczp/user-and-group-agenda/internal';
 import { OffsetPaginatedResource } from '@crczp/api-common';
+import { UserSort } from '@crczp/user-and-group-api';
 
 /**
  * Class creating data source for group-overview members table
  */
-export class GroupMemberTable extends TableModel<User, string> {
+export class GroupMemberTable extends TableModel<User, UserSort> {
     constructor(
         resource: OffsetPaginatedResource<User>,
         resourceId: number,
@@ -25,10 +26,10 @@ export class GroupMemberTable extends TableModel<User, string> {
                 ]),
         );
         const columns = [
-            new Column<string>('id', 'id', true, 'id'),
-            new Column<string>('name', 'name', true, 'familyName'),
-            new Column<string>('login', 'login', true, 'sub'),
-            new Column<string>('issuer', 'issuer', true, 'iss'),
+            new Column<UserSort>('id', 'id', true, 'id'),
+            new Column<UserSort>('name', 'name', true, 'familyName,givenName'),
+            new Column<UserSort>('login', 'login', true, 'sub'),
+            new Column<UserSort>('issuer', 'issuer', true, 'iss'),
         ];
         super(rows, columns);
         this.pagination = resource.pagination;
