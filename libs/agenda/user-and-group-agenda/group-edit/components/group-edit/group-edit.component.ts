@@ -16,7 +16,6 @@ import { GroupEditFormGroup } from './group-edit-form-group';
 import { AbstractControl, ReactiveFormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatError, MatFormField, MatInput, MatLabel, MatSuffix } from '@angular/material/input';
-import { MatTooltip } from '@angular/material/tooltip';
 import { OwlDateTimeModule, OwlNativeDateTimeModule } from '@danielmoncada/angular-datetime-picker';
 import { ClearInputSuffixComponent } from '@crczp/utils';
 import { CdkTextareaAutosize } from '@angular/cdk/text-field';
@@ -35,7 +34,6 @@ import { CdkTextareaAutosize } from '@angular/cdk/text-field';
         MatInput,
         MatFormField,
         ReactiveFormsModule,
-        MatTooltip,
         MatError,
         MatLabel,
         OwlNativeDateTimeModule,

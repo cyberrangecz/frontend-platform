@@ -9,9 +9,14 @@
 }
 
 @function get-filename($base, $weight, $style) {
-    @return if($weight == 400 and $style == normal, '#{$base}-regular.ttf',
-               if($weight == 400 and $style == italic, '#{$base}-italic.ttf',
-                  if($style == normal, '#{$base}-#{$weight}.ttf', '#{$base}-#{$weight}italic.ttf')));
+    @if $weight == 400 and $style == normal {
+        @return '#{$base}-regular.ttf';
+    } @else if $weight == 400 and $style == italic {
+        @return '#{$base}-italic.ttf';
+    } @else if $style == normal {
+        @return '#{$base}-#{$weight}.ttf';
+    }
+    @return '#{$base}-#{$weight}italic.ttf';
 }
 
 /* Inter Font Family */
