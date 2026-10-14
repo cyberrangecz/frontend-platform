@@ -20,6 +20,7 @@
                 >
                     <mat-label>Start Time</mat-label>
                     <input
+                        [errorStateMatcher]="dateErrorStateMatcher"
                         [max]="endTime.value"
                         [min]="now"
                         [owlDateTime]="startTimePicker"
@@ -49,6 +50,7 @@
                 >
                     <mat-label>End Time</mat-label>
                     <input
+                        [errorStateMatcher]="dateErrorStateMatcher"
                         [min]="startTime.value || now"
                         [owlDateTime]="endTimePicker"
                         formControlName="endTime"

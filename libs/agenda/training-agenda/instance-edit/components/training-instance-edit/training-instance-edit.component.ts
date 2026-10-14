@@ -29,6 +29,7 @@ import {
 import { AsyncPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { MatButton } from '@angular/material/button';
+import { ErrorStateMatcher } from '@angular/material/core';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatIcon } from '@angular/material/icon';
 import { OwlDateTimeModule, OwlNativeDateTimeModule } from '@danielmoncada/angular-datetime-picker';
@@ -87,6 +88,13 @@ export class TrainingInstanceEditComponent implements OnChanges, AfterViewInit {
     @ViewChild('poolSelect', { static: false, read: ElementRef })
     poolSelect: ElementRef;
     now: Date;
+    readonly dateErrorStateMatcher: ErrorStateMatcher = {
+        isErrorState: (control) =>
+            !!control &&
+            (control.touched || control.dirty) &&
+            (control.invalid ||
+                !!control.parent?.hasError('startTimeAfterEndTime')),
+    };
     trainingInstanceFormGroup: TrainingInstanceFormGroup;
     protected readonly TrainingTypeEnum = TrainingTypeEnum;
     private trainingDefinitionsSubject = new BehaviorSubject<
@@ -105,6 +113,8 @@ export class TrainingInstanceEditComponent implements OnChanges, AfterViewInit {
     private poolSearchStringSubject = new BehaviorSubject<string>('');
     private readonly destroyRef = inject(DestroyRef);
     private readonly trainingType = inject(InjectionTokens.TrainingType);
+    protected readonly canOpenTrainingDefinition =
+        inject(RoleService).hasRole('trainingDesigner');
 
     get startTime(): AbstractControl {
         return this.trainingInstanceFormGroup.formGroup.get('startTime');
@@ -113,8 +123,6 @@ export class TrainingInstanceEditComponent implements OnChanges, AfterViewInit {
     get endTime(): AbstractControl {
         return this.trainingInstanceFormGroup.formGroup.get('endTime');
     }
-    protected readonly canOpenTrainingDefinition =
-        inject(RoleService).hasRole('trainingDesigner');
 
     get title(): AbstractControl {
         return this.trainingInstanceFormGroup.formGroup.get('title');
@@ -244,9 +252,6 @@ export class TrainingInstanceEditComponent implements OnChanges, AfterViewInit {
             this.setupOnFormChangedEvent();
         }
         if ('hasStarted' in changes && this.hasStarted) {
-            this.trainingInstanceFormGroup.disable();
-        }
-        if ('editMode' in changes && changes.editMode.currentValue) {
             this.trainingInstanceFormGroup.disable();
         }
     }

@@ -11,7 +11,10 @@ export class TrainingInstanceFormGroup {
     constructor(trainingInstance: TrainingInstance) {
         this.formGroup = new UntypedFormGroup(
             {
-                startTime: new UntypedFormControl(trainingInstance.startTime),
+                startTime: new UntypedFormControl(
+                    trainingInstance.startTime,
+                    [this.dateValidator],
+                ),
                 endTime: new UntypedFormControl(trainingInstance.endTime, [
                     Validators.required,
                     this.dateValidator,
@@ -30,7 +33,9 @@ export class TrainingInstanceFormGroup {
                 localEnvironment: new UntypedFormControl(
                     trainingInstance.localEnvironment
                 ),
-                backwardMode: new UntypedFormControl(false),
+                backwardMode: new UntypedFormControl(
+                    trainingInstance.backwardMode,
+                ),
                 showStepperBar: new UntypedFormControl(
                     trainingInstance.showStepperBar
                 ),
@@ -108,7 +113,7 @@ export class TrainingInstanceFormGroup {
             : Date.now();
         const endTime = control.get('endTime').value;
         if (startTime && endTime && startTime.valueOf() > endTime.valueOf()) {
-            error = { c: true };
+            error = { startTimeAfterEndTime: true };
         }
         return error ? error : null;
     };
