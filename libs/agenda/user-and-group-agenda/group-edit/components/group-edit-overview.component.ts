@@ -103,7 +103,7 @@ export class GroupEditOverviewComponent {
 
     private initControls(isEditMode: boolean) {
         const saveItem = new SaveControlItem(
-            'Save',
+            isEditMode ? 'Save' : 'Create',
             this.editService.saveDisabled$,
             defer(() =>
                 this.editService
@@ -123,7 +123,6 @@ export class GroupEditOverviewComponent {
         if (isEditMode) {
             this.controls = [saveItem];
         } else {
-            saveItem.label = 'Create';
             const saveAndStayItem = new SaveControlItem(
                 'Create and continue editing',
                 this.editService.saveDisabled$,

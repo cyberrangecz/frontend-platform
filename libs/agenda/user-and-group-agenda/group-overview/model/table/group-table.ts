@@ -1,6 +1,7 @@
 import { Group } from '@crczp/user-and-group-model';
 import { Column, RowAction } from '@sentinel/components/table';
 import { LinkedRow, TableModel } from '@crczp/components';
+import { signal } from '@angular/core';
 import { defer, of } from 'rxjs';
 import { GroupOverviewService } from '../../services/group-overview.service';
 import { GroupDeleteAction } from './group-delete-action';
@@ -8,8 +9,8 @@ import { GroupEditAction } from './group-edit-action';
 import { GroupRowAdapter } from './group-row-adapter';
 import { Routing } from '@crczp/routing-commons';
 import { OffsetPaginatedResource } from '@crczp/api-common';
-
 import { GroupSort } from '@crczp/user-and-group-api';
+
 /**
  * @dynamic
  * Class creating data source for group-overview table
@@ -50,16 +51,21 @@ export class GroupTable extends TableModel<GroupRowAdapter, GroupSort> {
     ): LinkedRow<GroupRowAdapter> {
         const rowAdapter = group as GroupRowAdapter;
         if (rowAdapter.expirationDate) {
-            rowAdapter.expirationDateFormatted = `${group.expirationDate.getFullYear()}-${
-                group.expirationDate.getMonth() + 1
-            }
-      -${group.expirationDate.getDate()}`;
+            rowAdapter.expirationDateFormatted = [
+                group.expirationDate.getFullYear(),
+                group.expirationDate.getMonth() + 1,
+                group.expirationDate.getDate(),
+            ].join('-');
         } else {
             rowAdapter.expirationDateFormatted = '-';
         }
         const row = new LinkedRow(
             rowAdapter,
             GroupTable.createActions(group, service),
+            false,
+            undefined,
+            undefined,
+            signal(!group.canBeDeleted),
         );
         row.addLink(
             'name',
@@ -72,15 +78,20 @@ export class GroupTable extends TableModel<GroupRowAdapter, GroupSort> {
         group: Group,
         service: GroupOverviewService,
     ): RowAction[] {
-        return [
+        const actions: RowAction[] = [
             new GroupEditAction(
                 of(false),
                 defer(() => service.edit(group)),
             ),
-            new GroupDeleteAction(
-                of(false),
-                defer(() => service.delete(group)),
-            ),
         ];
+        if (group.canBeDeleted) {
+            actions.push(
+                new GroupDeleteAction(
+                    of(false),
+                    defer(() => service.delete(group)),
+                ),
+            );
+        }
+        return actions;
     }
 }
