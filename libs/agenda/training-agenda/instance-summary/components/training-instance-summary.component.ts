@@ -135,10 +135,10 @@ export class TrainingInstanceSummaryComponent implements OnInit {
             .instanceId(trainingInstance.id)
             .access_token.build()}`;
         this.trainingInstancePoolIdLink = `/${Routing.RouteBuilder.pool
-            .poolId(trainingInstance.id)
+            .poolId(trainingInstance.poolId)
             .build()}`;
         this.trainingDefinitionLink = `/${Routing.RouteBuilder.linear_definition
-            .definitionId(trainingInstance.id)
+            .definitionId(trainingInstance.trainingDefinition.id)
             .detail.build()}`;
         this.hasStarted$ = this.trainingInstanceSummaryService.hasStarted$;
     }
