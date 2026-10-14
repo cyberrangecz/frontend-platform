@@ -1,0 +1,8 @@
+{
+    "name": "@crczp/zod-class",
+    "version": "0.0.1",
+    "peerDependencies": {
+        "zod": "^4.0.0"
+    },
+    "sideEffects": false
+}
