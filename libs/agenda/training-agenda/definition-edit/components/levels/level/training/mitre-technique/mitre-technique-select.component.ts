@@ -1,4 +1,4 @@
-import {Component, ElementRef, EventEmitter, Input, OnChanges, Output, ViewChild, ChangeDetectionStrategy} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, ElementRef, EventEmitter, inject, Input, Output, signal, ViewChild} from '@angular/core';
 import {MitreTechnique} from '@crczp/training-model';
 import {COMMA, ENTER, SEMICOLON} from '@angular/cdk/keycodes';
 import {MatChipGrid, MatChipInput, MatChipInputEvent, MatChipRemove, MatChipRow} from '@angular/material/chips';
@@ -11,6 +11,8 @@ import {
 } from '@angular/material/autocomplete';
 import {MatError, MatFormField, MatHint, MatInput, MatLabel} from "@angular/material/input";
 import {MatIcon} from "@angular/material/icon";
+import {MatButton} from "@angular/material/button";
+import {MitreTechniquesService} from "../../../../../services/state/mitre-techniques/mitre-techniques.service";
 import {
     MatExpansionPanel,
     MatExpansionPanelDescription,
@@ -29,6 +31,7 @@ import {
         MatOption,
         MatAutocomplete,
         MatIcon,
+        MatButton,
         MatChipRemove,
         MatChipRow,
         MatChipGrid,
@@ -44,21 +47,33 @@ import {
         MatInput
     ]
 })
-export class MitreTechniqueSelectComponent implements OnChanges {
+export class MitreTechniqueSelectComponent {
     @Input() mitreTechniques: MitreTechnique[];
-    @Input() mitreTechniquesList: MitreTechnique[];
 
     @Output() mitreTechniquesChange: EventEmitter<MitreTechnique[]> = new EventEmitter();
 
     @ViewChild('techniqueInput') techniqueInput: ElementRef<HTMLInputElement>;
 
     chipListCtrl = new UntypedFormControl();
-    filteredTechniquesList: MitreTechnique[];
+    private readonly mitreTechniquesService = inject(MitreTechniquesService);
+    private readonly filterText = signal('');
+
+    readonly loadState = this.mitreTechniquesService.loadState;
+    readonly filteredTechniquesList = computed(() => {
+        const filterValue = this.filterText().toLowerCase();
+        return this.mitreTechniquesService
+            .techniques()
+            .filter((technique) =>
+                `${technique.techniqueKey} - ${technique.techniqueName}`
+                    .toLowerCase()
+                    .includes(filterValue),
+            );
+    });
 
     readonly separatorKeysCodes = [ENTER, COMMA, SEMICOLON] as const;
 
-    ngOnChanges(): void {
-        this.filteredTechniquesList = this.mitreTechniquesList;
+    loadTechniques(): void {
+        this.mitreTechniquesService.load();
     }
 
     add(event: MatChipInputEvent) {
@@ -105,7 +120,7 @@ export class MitreTechniqueSelectComponent implements OnChanges {
     onInput(event: any): void {
         this.chipListCtrl.setErrors({wrongFormat: false});
         this.chipListCtrl.markAsUntouched();
-        this.filteredTechniquesList = this.filter(event.target.value);
+        this.filterText.set(event.target.value);
     }
 
     private pushTechnique(technique: string): void {
@@ -119,13 +134,5 @@ export class MitreTechniqueSelectComponent implements OnChanges {
         const pattern = new RegExp('(^TA[0-9]{4}.T[0-9]{4}|^$)');
         const res = pattern.test(technique);
         return res;
-    }
-
-    private filter(value: string): MitreTechnique[] {
-        const filterValue = value.toLowerCase();
-        return this.mitreTechniquesList.filter((technique) => {
-            const techniqueString = `${technique.techniqueKey} - ${technique.techniqueName}`;
-            return techniqueString.toLowerCase().includes(filterValue);
-        });
     }
 }

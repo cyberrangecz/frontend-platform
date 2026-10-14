@@ -2,7 +2,6 @@
     @case (levelTypes.Training) {
         <crczp-training-level-edit
             [level]="$any(level)"
-            [mitreTechniquesList]="mitreTechniquesList"
             (levelChange)="onLevelChange($event)"/>
     }
     @case (levelTypes.Access) {

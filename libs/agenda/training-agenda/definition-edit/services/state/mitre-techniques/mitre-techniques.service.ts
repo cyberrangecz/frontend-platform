@@ -1,15 +1,17 @@
-/**
- * Service handling editing of training-training definition's levels and related operations.
- * Serves as a layer between component and API service
- * Subscribe to levels$, activeStep$ and activeLevelCanBeSaved$ to receive latest data updates.
- */
-import { BehaviorSubject, Observable } from 'rxjs';
+import { Signal } from '@angular/core';
 import { MitreTechnique } from '@crczp/training-model';
 
-export abstract class MitreTechniquesService {
-    protected mitreTechniquesSubject$: BehaviorSubject<MitreTechnique[]> =
-        new BehaviorSubject([]);
-    mitreTechniques$ = this.mitreTechniquesSubject$.asObservable();
+export type MitreTechniquesLoadState = 'idle' | 'loading' | 'loaded' | 'failed';
 
-    abstract getAll(): Observable<any>;
+/**
+ * Holds the MITRE technique index offered by technique pickers, fetched on demand.
+ */
+export abstract class MitreTechniquesService {
+    abstract readonly techniques: Signal<MitreTechnique[]>;
+    abstract readonly loadState: Signal<MitreTechniquesLoadState>;
+
+    /**
+     * Fetches the index unless it is loaded or being loaded; calling it again after a failure retries.
+     */
+    abstract load(): void;
 }

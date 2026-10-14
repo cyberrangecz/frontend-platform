@@ -52,7 +52,6 @@ import { ClearInputSuffixComponent } from '@crczp/utils';
 })
 export class TrainingLevelEditComponent implements OnChanges {
     @Input() level: TrainingLevel;
-    @Input() mitreTechniquesList: MitreTechnique[];
     @Output() levelChange: EventEmitter<TrainingLevel> = new EventEmitter();
     trainingLevelConfigFormGroup: TrainingLevelEditFormGroup;
     controls: SentinelControlItemSignal[];

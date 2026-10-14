@@ -5,7 +5,7 @@ import {
     SentinelControlItem,
     SentinelControlsComponent
 } from '@sentinel/components/controls';
-import { Level, MitreTechnique, TrainingDefinitionWithLevels } from '@crczp/training-model';
+import { Level, TrainingDefinitionWithLevels } from '@crczp/training-model';
 import { combineLatest, defer, Observable, of, switchMap } from 'rxjs';
 import { filter, map, tap } from 'rxjs/operators';
 import { UnsavedChangesTracker } from '@crczp/utils';
@@ -84,13 +84,11 @@ export class TrainingDefinitionEditOverviewComponent implements OnInit {
     >();
     defaultPaginationSize: number;
     controls: SentinelControlItem[];
-    mitreTechniques$: Observable<MitreTechnique[]>;
     destroyRef = inject(DestroyRef);
     private activeRoute = inject(ActivatedRoute);
     private router = inject(Router);
     private editService = inject(TrainingDefinitionEditService);
     private levelEditService = inject(LevelEditService);
-    private mitreTechniquesService = inject(MitreTechniquesService);
     private authorsAssignService = inject(SentinelUserAssignService);
 
     constructor() {
@@ -99,11 +97,6 @@ export class TrainingDefinitionEditOverviewComponent implements OnInit {
             map((td) => td.title),
         );
         this.saveDisabled$ = this.editService.saveDisabled$;
-        this.mitreTechniques$ = this.mitreTechniquesService.mitreTechniques$;
-        this.mitreTechniquesService
-            .getAll()
-            .pipe(takeUntilDestroyed(this.destroyRef))
-            .subscribe();
         const valid$: Observable<boolean> = combineLatest([
             this.editService.definitionValid$,
             this.levelEditService.levelsValid$,

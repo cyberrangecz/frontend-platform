@@ -20,7 +20,6 @@ import {
 } from '@crczp/components';
 import {
     Level,
-    MitreTechnique,
     TrainingDefinitionWithLevels,
 } from '@crczp/training-model';
 import {
@@ -54,7 +53,6 @@ export class LevelOverviewComponent implements OnInit, OnChanges {
     @Output() levelsCount: EventEmitter<number> = new EventEmitter();
     @Input() trainingDefinition: TrainingDefinitionWithLevels;
     @Input() editMode: boolean;
-    @Input() mitreTechniquesList: MitreTechnique[];
     activeStep$: Observable<number>;
     stepperLevels: Observable<LevelStepperAdapter[]>;
     controls: SentinelControlItem[];

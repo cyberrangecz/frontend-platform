@@ -1,4 +1,4 @@
-<mat-expansion-panel>
+<mat-expansion-panel (opened)="loadTechniques()">
     <mat-expansion-panel-header>
         <mat-panel-title> MITRE ATT&CK Techniques</mat-panel-title>
         <mat-panel-description>
@@ -39,7 +39,7 @@
             />
         </mat-chip-grid>
         <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
-            @for (mitreTechnique of filteredTechniquesList; track mitreTechnique) {
+            @for (mitreTechnique of filteredTechniquesList(); track mitreTechnique) {
                 <mat-option [value]="mitreTechnique">
                     {{ mitreTechnique.techniqueKey }} - {{ mitreTechnique.techniqueName }}
                 </mat-option>
@@ -53,4 +53,16 @@
             <mat-error> Wrong format!</mat-error>
         }
     </mat-form-field>
+    @switch (loadState()) {
+        @case ('loading') {
+            <p class="technique-load-status">Loading MITRE technique index</p>
+        }
+        @case ('failed') {
+            <div class="technique-load-status technique-load-status--failed">
+                <mat-icon>error</mat-icon>
+                <span>MITRE technique index failed to load. Suggestions are unavailable; techniques can still be entered by key.</span>
+                <button mat-button type="button" (click)="loadTechniques()">Retry</button>
+            </div>
+        }
+    }
 </mat-expansion-panel>

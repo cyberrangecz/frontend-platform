@@ -8,7 +8,6 @@ import {
 import {
     AbstractLevelTypeEnum,
     Level,
-    MitreTechnique,
 } from '@crczp/training-model';
 import { AccessLevelEditComponent } from './access/access-level-edit.component';
 import { AssessmentLevelEditComponent } from './assessment/assessment-level-edit.component';
@@ -32,7 +31,6 @@ import { TrainingLevelEditComponent } from './training/training-level-edit.compo
 })
 export class AbstractLevelEditComponent {
     @Input() level: Level;
-    @Input() mitreTechniquesList: MitreTechnique[];
     @Output() levelChange: EventEmitter<Level> = new EventEmitter();
     levelTypes = AbstractLevelTypeEnum;
 

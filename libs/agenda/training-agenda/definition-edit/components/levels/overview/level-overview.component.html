@@ -15,7 +15,6 @@
                 <crczp-level-edit
                     (levelChange)="onActiveLevelChanged($event)"
                     [level]="(stepperLevels | async)[activeStep$ | async].level"
-                    [mitreTechniquesList]="mitreTechniquesList"
                 />
             </div>
         } @else {
