@@ -34,7 +34,7 @@ import { MatIcon } from '@angular/material/icon';
 import { OwlDateTimeModule, OwlNativeDateTimeModule } from '@danielmoncada/angular-datetime-picker';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { MatError, MatFormField, MatHint, MatInput, MatLabel, MatSuffix } from '@angular/material/input';
-import { ClearInputSuffixComponent, InjectionTokens } from '@crczp/utils';
+import { ClearInputSuffixComponent, InjectionTokens, RoleService } from '@crczp/utils';
 
 /**
  * Component for creating new or editing existing training instance
@@ -113,6 +113,8 @@ export class TrainingInstanceEditComponent implements OnChanges, AfterViewInit {
     get endTime(): AbstractControl {
         return this.trainingInstanceFormGroup.formGroup.get('endTime');
     }
+    protected readonly canOpenTrainingDefinition =
+        inject(RoleService).hasRole('trainingDesigner');
 
     get title(): AbstractControl {
         return this.trainingInstanceFormGroup.formGroup.get('title');

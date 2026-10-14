@@ -19,6 +19,7 @@ export class TrainingInstanceTable extends TableModel<
     constructor(
         resource: OffsetPaginatedResource<TrainingInstance>,
         service: TrainingInstanceOverviewService,
+        canOpenTrainingDefinition: boolean,
     ) {
         const columns = [
             new Column<TrainingInstanceSort>('title', 'Title', true, 'title'),
@@ -61,7 +62,11 @@ export class TrainingInstanceTable extends TableModel<
             ),
         ];
         const rows = resource.elements.map((element) =>
-            TrainingInstanceTable.createRow(element, service),
+            TrainingInstanceTable.createRow(
+                element,
+                service,
+                canOpenTrainingDefinition,
+            ),
         );
         super(rows, columns);
         this.pagination = resource.pagination;
@@ -73,6 +78,7 @@ export class TrainingInstanceTable extends TableModel<
     private static createRow(
         ti: TrainingInstance,
         service: TrainingInstanceOverviewService,
+        canOpenTrainingDefinition: boolean,
     ): LinkedRow<TrainingInstanceRowAdapter> {
         const adapter = ti as TrainingInstanceRowAdapter;
         adapter.tdTitle = adapter.trainingDefinition.title;
@@ -91,12 +97,14 @@ export class TrainingInstanceTable extends TableModel<
                 .instanceId(ti.id)
                 .detail.build(),
         );
-        row.addLink(
-            'tdTitle',
-            Routing.RouteBuilder.linear_definition
-                .definitionId(ti.trainingDefinition.id)
-                .detail.build(),
-        );
+        if (canOpenTrainingDefinition) {
+            row.addLink(
+                'tdTitle',
+                Routing.RouteBuilder.linear_definition
+                    .definitionId(ti.trainingDefinition.id)
+                    .detail.build(),
+            );
+        }
         if (ti.hasPool()) {
             row.element.poolSize = service.getPoolSize(ti.poolId).pipe(
                 shareReplay({ bufferSize: 1, refCount: false }),

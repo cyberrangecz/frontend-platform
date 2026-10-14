@@ -150,7 +150,7 @@
                     <span class="resource-select__bottom_text resource-select__bottom_text--error">
       This field is required
     </span>
-                } @else if (trainingDefinition.value) {
+                } @else if (trainingDefinition.value && canOpenTrainingDefinition) {
                     <a class="resource-select__bottom_text subtext-link"
                        mat-button
                        [routerLink]="getTrainingDefinitionUrl(trainingDefinition.value.id)"

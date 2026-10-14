@@ -27,7 +27,11 @@
         </ng-template>
 
         <ng-template [sentinelCellType]="table?.rows" let-row sentinelCell="tdTitle">
-            <a [routerLink]="row.links.get('tdTitle')">{{ row.element.tdTitle }}</a>
+            @if (row.links.get('tdTitle'); as definitionLink) {
+                <a [routerLink]="definitionLink">{{ row.element.tdTitle }}</a>
+            } @else {
+                {{ row.element.tdTitle }}
+            }
         </ng-template>
 
         <ng-template [sentinelCellType]="table?.rows" let-row sentinelCell="poolTitle">

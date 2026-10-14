@@ -3,10 +3,14 @@
         <h2>{{ trainingInstance?.title }}</h2>
         <h3>
             of Training Definition:
-            <button [routerLink]="trainingDefinitionLink" class="link-button definition-title" color="primary"
-                    mat-button>
+            @if (canOpenTrainingDefinition) {
+                <button [routerLink]="trainingDefinitionLink" class="link-button definition-title" color="primary"
+                        mat-button>
+                    {{ trainingDefinition?.title }}
+                </button>
+            } @else {
                 {{ trainingDefinition?.title }}
-            </button>
+            }
         </h3>
         <p>{{ trainingDefinition.description }}</p>
     </div>

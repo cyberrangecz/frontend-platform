@@ -25,6 +25,7 @@ import {
     NotificationService,
     PaginationStorageService,
     providePaginationStorageService,
+    RoleService,
     SortDir,
 } from '@crczp/utils';
 import { PaginationMapper } from '@crczp/api-common';
@@ -78,6 +79,7 @@ export class TrainingInstanceOverviewComponent {
     private service = inject(TrainingInstanceOverviewService);
     private paginationService = inject(PaginationStorageService);
     private notificationService = inject(NotificationService);
+    private roleService = inject(RoleService);
     private readonly initialInstancePagination =
         this.paginationService.createPagination<TrainingInstanceSort>(
             this.INITIAL_SORT_NAME,
@@ -173,7 +175,11 @@ export class TrainingInstanceOverviewComponent {
         this.instances$ = this.service.resource$.pipe(
             map(
                 (instances) =>
-                    new TrainingInstanceTable(instances, this.service),
+                    new TrainingInstanceTable(
+                        instances,
+                        this.service,
+                        this.roleService.hasRole('trainingDesigner'),
+                    ),
             ),
         );
         this.hasError$ = this.service.hasError$;

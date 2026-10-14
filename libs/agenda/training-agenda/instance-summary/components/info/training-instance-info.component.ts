@@ -21,6 +21,7 @@ import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 import { CdkCopyToClipboard } from '@angular/cdk/clipboard';
+import { RoleService } from '@crczp/utils';
 
 /**
  * Component for displaying basic info about selected training instance.
@@ -55,6 +56,8 @@ export class TrainingInstanceInfoComponent implements OnInit, OnChanges {
     trainingDefinition: TrainingDefinitionWithLevels;
     infoControls: SentinelControlItem[];
     destroyRef = inject(DestroyRef);
+    protected readonly canOpenTrainingDefinition =
+        inject(RoleService).hasRole('trainingDesigner');
 
     ngOnInit(): void {
         this.initInfoComponent();
