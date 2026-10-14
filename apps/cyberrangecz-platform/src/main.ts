@@ -58,7 +58,6 @@ import {
     PortalConfig,
 } from '@crczp/utils';
 import { provideNativeDateAdapter } from '@angular/material/core';
-import { RoleService } from './app/services/role.service';
 import { APP_ROUTES } from './app/app-routes';
 import { provideSentinelMarkdownEditorConfig } from '@sentinel/components/markdown-editor';
 import {
@@ -177,7 +176,6 @@ SentinelBootstrapper.bootstrapApplication('assets/config.json', AppComponent, {
             useFactory: () => inject(PortalConfig).authConfig,
             deps: [PortalConfig],
         },
-        RoleService,
         {
             provide: SentinelAuthorizationStrategy,
             useClass: SentinelUagAuthorizationStrategy,

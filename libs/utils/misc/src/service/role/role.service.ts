@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { SentinelAuthService } from '@sentinel/auth';
-import { PortalConfig, RoleMapping } from '@crczp/utils';
+import { PortalConfig, RoleMapping } from '../../types/config';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 

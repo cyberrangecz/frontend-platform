@@ -2,10 +2,9 @@ import { filter, map, switchMap, take, tap } from 'rxjs/operators';
 import { SentinelAuthService, sentinelAuthGuardWithLogin, User } from '@sentinel/auth';
 import { inject } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivateFn, Router, RouterStateSnapshot } from '@angular/router';
-import { RoleKey, RoleService } from '../services/role.service';
 import { from, Observable, of } from 'rxjs';
 import { ValidPath } from '@crczp/routing-commons';
-import { Utils } from '@crczp/utils';
+import { RoleKey, RoleService, Utils } from '@crczp/utils';
 import { NavConfigFactory } from './nav-config-factory';
 
 /**
