@@ -8,6 +8,9 @@ import {Observable} from 'rxjs';
  * Subscribe to trainingDefinitions$ to receive latest data updates.
  */
 export abstract class CheatingDetectionEditService {
+    /** Emits true while a create request is in flight. */
+    abstract isLoading$: Observable<boolean>;
+
     /**
      * Makes an API call to create a cheating detection object in the database.
      * @param cheatingDetection the cheating detection object

@@ -3,8 +3,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { CheatingDetectionApi } from '@crczp/training-api';
 import { CheatingDetection } from '@crczp/training-model';
-import { Observable } from 'rxjs';
-import { switchMap, tap } from 'rxjs/operators';
+import { BehaviorSubject, defer, finalize, Observable } from 'rxjs';
+import { map, switchMap, tap } from 'rxjs/operators';
 import { CheatingDetectionEditService } from './cheating-detection-edit.service';
 import { ErrorHandlerService, NotificationService } from '@crczp/utils';
 import { Routing } from '@crczp/routing-commons';
@@ -17,6 +17,12 @@ export class CheatingDetectionEditConcreteService extends CheatingDetectionEditS
     private errorHandler = inject(ErrorHandlerService);
     private api = inject(CheatingDetectionApi);
 
+    private requestsCountSubject$ = new BehaviorSubject<number>(0);
+
+    public isLoading$: Observable<boolean> = this.requestsCountSubject$
+        .asObservable()
+        .pipe(map((count: number) => count > 0));
+
     /**
      * Makes an API call to create a cheating detection object in the database.
      * @param cheatingDetection the cheating detection object
@@ -26,26 +32,32 @@ export class CheatingDetectionEditConcreteService extends CheatingDetectionEditS
         cheatingDetection: CheatingDetection,
         trainingInstanceId: number
     ): Observable<any> {
-        return this.api.createAndExecute(cheatingDetection).pipe(
-            tap(
-                () =>
-                    this.notificationService.emit(
-                        'success',
-                        'Cheating Detection started executing'
-                    ),
-                (err) =>
-                    this.errorHandler.emitAPIError(
-                        err,
-                        'Creating and Executing Cheating Detection'
-                    )
-            ),
-            switchMap(() =>
-                this.router.navigate([
-                    Routing.RouteBuilder.linear_instance
-                        .instanceId(trainingInstanceId)
-                        .cheating_detection.build(),
-                ])
-            )
-        );
+        return defer(() => {
+            this.requestsCountSubject$.next(this.requestsCountSubject$.value + 1);
+            return this.api.createAndExecute(cheatingDetection).pipe(
+                tap(
+                    () =>
+                        this.notificationService.emit(
+                            'success',
+                            'Cheating Detection started executing'
+                        ),
+                    (err) =>
+                        this.errorHandler.emitAPIError(
+                            err,
+                            'Creating and Executing Cheating Detection'
+                        )
+                ),
+                switchMap(() =>
+                    this.router.navigate([
+                        Routing.RouteBuilder.linear_instance
+                            .instanceId(trainingInstanceId)
+                            .cheating_detection.build(),
+                    ])
+                ),
+                finalize(() =>
+                    this.requestsCountSubject$.next(this.requestsCountSubject$.value - 1)
+                )
+            );
+        });
     }
 }

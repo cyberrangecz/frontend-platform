@@ -122,22 +122,18 @@
             <div class="forbidden-commands-panel">
 
                 <div formArrayName="forbiddenCommands">
-                    @for (forbiddenCommandsGroup of forbiddenCommands.controls; track forbiddenCommandsGroup; let
+                    @for (forbiddenCommandsGroup of forbiddenCommandGroups; track forbiddenCommandsGroup; let
                         i = $index) {
-                        <div [formGroupName]="i"
+                        <div [formGroup]="forbiddenCommandsGroup"
                              class="divideWrapper">
                             <div class="forbidden-commands-wrapper">
                                 <div class="forbidden-command-type-element1">
-                                    <mat-radio-group class="type-options">
-                                        <mat-radio-button (change)="changeType(i, 'BASH')"
-                                                          formControlName="type"
-                                                          labelPosition="after"
-                                                          value="bash">BASH
+                                    <mat-radio-group class="type-options" formControlName="type">
+                                        <mat-radio-button labelPosition="after"
+                                                          value="BASH">BASH
                                         </mat-radio-button>
-                                        <mat-radio-button (change)="changeType(i, 'MSF')"
-                                                          formControlName="type"
-                                                          labelPosition="after"
-                                                          value="msf">Metasploit
+                                        <mat-radio-button labelPosition="after"
+                                                          value="MSF">Metasploit
                                         </mat-radio-button>
                                         @if (forbiddenCommandsGroup.get('type').hasError('required')) {
                                             <mat-error>You need
@@ -149,7 +145,8 @@
                                 <div class="forbidden-command-label-element2">
                                     <mat-form-field appearance="outline">
                                         <mat-label class="command-input">Command {{ i + 1 }}</mat-label>
-                                        <input formControlName="command" matInput placeholder="Forbidden Command"
+                                        <input [attr.aria-label]="'Command ' + (i + 1)"
+                                               formControlName="command" matInput placeholder="Forbidden Command"
                                                required />
                                         @if (forbiddenCommandsGroup.get('command').hasError('whitespace')) {
                                             <mat-error>

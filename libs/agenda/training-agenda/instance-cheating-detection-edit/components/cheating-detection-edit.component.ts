@@ -13,8 +13,8 @@ import { CheatingDetectionEditService } from '../services/cheating-detection-edi
 import { ActivatedRoute } from '@angular/router';
 import { CheatingDetection, TrainingInstance } from '@crczp/training-model';
 import { SentinelControlItem, SentinelControlsComponent } from '@sentinel/components/controls';
-import { filter, map } from 'rxjs/operators';
-import { defer, Observable, of } from 'rxjs';
+import { filter, map, startWith } from 'rxjs/operators';
+import { combineLatest, defer, Observable, of } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
@@ -90,9 +90,6 @@ export class CheatingDetectionEditComponent {
                 this.trainingInstanceId,
             );
         this.initControls(this.editService);
-        this.cheatingDetectionEditFormGroup.formGroup.valueChanges
-            .pipe(takeUntilDestroyed(this.destroyRef))
-            .subscribe(() => this.initControls(this.editService));
     }
 
     get forbiddenCommandsMethod(): AbstractControl {
@@ -105,6 +102,10 @@ export class CheatingDetectionEditComponent {
         return this.cheatingDetectionEditFormGroup.formGroup.get(
             'forbiddenCommands',
         ) as UntypedFormArray;
+    }
+
+    get forbiddenCommandGroups(): UntypedFormGroup[] {
+        return this.forbiddenCommands.controls as UntypedFormGroup[];
     }
 
     get timeProximityMethod(): AbstractControl {
@@ -123,11 +124,6 @@ export class CheatingDetectionEditComponent {
      */
     deleteForbiddenCommand(index: number): void {
         this.forbiddenCommands.removeAt(index);
-        this.forbiddenCommands.controls
-            .slice(index)
-            .forEach((choice) =>
-                choice.get('order').setValue(choice.get('order').value - 1),
-            );
         this.forbiddenCommandsChanged();
     }
 
@@ -147,11 +143,6 @@ export class CheatingDetectionEditComponent {
         this.forbiddenCommandsChanged();
     }
 
-    changeType(i: number, value: string): void {
-        this.forbiddenCommands.controls[i].get('type').setValue(value);
-        this.forbiddenCommandsChanged();
-    }
-
     forbiddenCommandsChanged(): void {
         this.cheatingDetectionEditFormGroup.formGroup.markAsDirty();
     }
@@ -166,7 +157,14 @@ export class CheatingDetectionEditComponent {
                 'create',
                 'Create',
                 'primary',
-                of(this.isFormValid()),
+                combineLatest([
+                    editService.isLoading$,
+                    this.cheatingDetectionEditFormGroup.formGroup.statusChanges.pipe(
+                        startWith(null),
+                    ),
+                ]).pipe(
+                    map(([loading]) => loading || this.isFormValid()),
+                ),
                 defer(() =>
                     editService.create(
                         this.cheatingDetectionEditFormGroup.createCheatingDetection(),
