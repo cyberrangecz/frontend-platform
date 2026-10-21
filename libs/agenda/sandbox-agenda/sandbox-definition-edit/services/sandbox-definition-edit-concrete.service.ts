@@ -10,7 +10,7 @@ import { ErrorHandlerService, NotificationService } from '@crczp/utils';
 import { Routing } from '@crczp/routing-commons';
 
 /** Status the sandbox backend answers with when it cannot read the requested repository. */
-const UNPROCESSABLE_REPOSITORY_STATUS = 500;
+const UNPROCESSABLE_REPOSITORY_STATUS = 422;
 
 @Injectable()
 export class SandboxDefinitionEditConcreteService extends SandboxDefinitionEditService {

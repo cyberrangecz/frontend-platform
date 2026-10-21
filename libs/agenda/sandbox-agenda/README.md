@@ -12,3 +12,8 @@ You can modify the behaviour of components by implementing abstract service clas
 * Components and services for managing pools
 * Components and services for managing sandbox instances
 * Components and services for managing sandbox allocation and allocation stages
+
+## Backend contract changes
+
+* Creating a sandbox definition: the backend answers HTTP 422 (previously reported by the frontend as 500, and answered as 400 by the backend) when it cannot read the Git repository (wrong URL, missing revision, no access). `SandboxDefinitionEditConcreteService` shows the repository message for 422 only.
+* Creating a sandbox definition: the Git URL field applies the backend's URL check before submit. A URL must start with `https://` and end with `.git`, unless it contains `github.`, which the backend accepts without that check.
