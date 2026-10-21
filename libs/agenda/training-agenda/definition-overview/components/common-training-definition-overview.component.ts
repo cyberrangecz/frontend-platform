@@ -51,6 +51,7 @@ import { TrainingDefinitionSort } from '@crczp/training-api';
 export class CommonTrainingDefinitionOverviewComponent implements OnInit {
     readonly INIT_SORT_NAME: TrainingDefinitionSort = 'lastEdited';
     readonly INIT_SORT_DIR: SortDir = 'desc';
+    readonly PAGE_SIZE_OPTIONS = [10, 25, 50];
 
     trainingDefinitions$: Observable<TableModel<TrainingDefinition, TrainingDefinitionSort>>;
     /**

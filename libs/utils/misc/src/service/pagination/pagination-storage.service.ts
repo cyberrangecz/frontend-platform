@@ -1,7 +1,7 @@
 import { inject, Injectable, Provider, Type } from '@angular/core';
 import { milliseconds } from 'date-fns';
 import { PortalConfig } from '../../types/config';
-import { OffsetPaginationEvent, SortDir } from './pagination-model';
+import { MAX_PAGE_SIZE, OffsetPaginationEvent, SortDir } from './pagination-model';
 
 const PAGINATION_TTL = 30; //days
 
@@ -81,7 +81,7 @@ export class PaginationStorageService {
         this.registryService.cleanup();
         const registry = this.registryService.read();
         const entry = registry[this.storageKey];
-        return entry ? entry.pageSize : this.defaultPageSize;
+        return Math.min(entry ? entry.pageSize : this.defaultPageSize, MAX_PAGE_SIZE);
     }
 
     savePageSize(pageSize: number): void {

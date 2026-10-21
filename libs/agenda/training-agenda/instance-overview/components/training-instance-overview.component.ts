@@ -67,6 +67,7 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
 export class TrainingInstanceOverviewComponent {
     readonly INITIAL_SORT_NAME: TrainingInstanceSort = 'startTime';
     readonly INITIAL_SORT_DIR: SortDir = 'desc';
+    readonly PAGE_SIZE_OPTIONS = [10, 25, 50];
     instances$: Observable<TableModel<TrainingInstance, TrainingInstanceSort>>;
     /**
      * Text the training instances are currently filtered by

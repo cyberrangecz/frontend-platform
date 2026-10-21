@@ -12,6 +12,8 @@ import {
     SentinelBootstrapper,
     SentinelConfig,
 } from '@sentinel/common/dynamic-env';
+import { SENTINEL_TABLE_CONFIG } from '@sentinel/components/config';
+import { TABLE_PAGE_SIZE_OPTIONS } from '@crczp/utils';
 import { AppComponent } from './app/app.component';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
 import {
@@ -187,6 +189,13 @@ SentinelBootstrapper.bootstrapApplication('assets/config.json', AppComponent, {
         provideSentinelMarkdownEditorConfig({
             markdownParser: {},
         }),
+        {
+            provide: SENTINEL_TABLE_CONFIG,
+            useValue: {
+                loadingPosition: 'both',
+                pageSizeOptions: TABLE_PAGE_SIZE_OPTIONS,
+            },
+        },
         provideHttpCache(withLocalStorage()),
         provideRouter(
             withCacheBlockedRoute(APP_ROUTES),
