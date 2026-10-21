@@ -10,7 +10,7 @@ import {
     QueryParam
 } from '@crczp/api-common';
 import { OffsetPaginationEvent } from '@crczp/utils';
-import { BetaTester, Designer, Organizer, TrainingUser } from '@crczp/training-model';
+import { Designer, Organizer, TrainingUser } from '@crczp/training-model';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { UserMapper } from '../mappers/user/user-mapper';
@@ -175,72 +175,6 @@ export class UserApi {
                     .set('organizersRemoval', removals.toString()),
             },
         );
-    }
-
-    /**
-     * Sends http request to retrieve beta-testers of a training instance
-     * @param trainingInstanceId id of a training instance associated with retrieved beta-testers
-     * @param pagination requested pagination
-     * @param filters requested filtering
-     */
-    getBetaTesters(
-        trainingInstanceId: number,
-        pagination: OffsetPaginationEvent<UserRefSort>,
-        filters: QueryParam[] = [],
-    ): Observable<OffsetPaginatedResource<BetaTester>> {
-        const params = SentinelParamsMerger.merge([
-            ParamsBuilder.javaPaginationParams(pagination),
-            ParamsBuilder.queryParams(filters),
-        ]);
-        return this.http
-            .get<
-                JavaPaginatedResource<UserRefDTO>
-            >(`${this.trainingInstancesEndpointUri}/${trainingInstanceId}/beta-testers`, { params })
-            .pipe(map((resp) => this.paginatedUsersFromDTO(resp)));
-    }
-
-    /**
-     * Sends http request to retrieve designers associated with provided training definition
-     * @param trainingDefinitionId id of a training definition associated with retrieved designers
-     * @param pagination requested pagination
-     * @param filters requested filtering
-     */
-    getDesigners(
-        trainingDefinitionId: number,
-        pagination: OffsetPaginationEvent<UserRefSort>,
-        filters: QueryParam[] = [],
-    ): Observable<OffsetPaginatedResource<Designer>> {
-        const params = SentinelParamsMerger.merge([
-            ParamsBuilder.javaPaginationParams(pagination),
-            ParamsBuilder.queryParams(filters),
-        ]);
-        return this.http
-            .get<
-                JavaPaginatedResource<UserRefDTO>
-            >(`${this.trainingDefsEndpointUri}/${trainingDefinitionId}/designers`, { params })
-            .pipe(map((resp) => this.paginatedUsersFromDTO(resp)));
-    }
-
-    /**
-     * Sends http request to retrieve organizers of a training definition
-     * @param trainingDefinitionId id of a training definition associated with retrieved organizers
-     * @param pagination requested pagination
-     * @param filters requested filtering
-     */
-    getTrainingDefinitionOrganizers(
-        trainingDefinitionId: number,
-        pagination: OffsetPaginationEvent<UserRefSort>,
-        filters: QueryParam[] = [],
-    ): Observable<OffsetPaginatedResource<Organizer>> {
-        const params = SentinelParamsMerger.merge([
-            ParamsBuilder.javaPaginationParams(pagination),
-            ParamsBuilder.queryParams(filters),
-        ]);
-        return this.http
-            .get<
-                JavaPaginatedResource<UserRefDTO>
-            >(`${this.trainingDefsEndpointUri}/${trainingDefinitionId}/organizers`, { params })
-            .pipe(map((resp) => this.paginatedUsersFromDTO(resp)));
     }
 
     /**

@@ -11,20 +11,10 @@ import {
 } from '@crczp/training-model';
 import { Observable } from 'rxjs';
 import { OffsetPaginatedResource, QueryParam } from '@crczp/api-common';
-import { AccessedTrainingRunSort, TrainingRunSort } from '../sorts';
+import { AccessedTrainingRunSort } from '../sorts';
 import { OffsetPaginationEvent } from '@crczp/utils';
 
 export abstract class LinearRunApi {
-    /**
-     * Sends http request to retrieve all training runs on specified page of a pagination
-     * @param pagination requested pagination
-     * @param filters filters to be applied on resources
-     */
-    abstract getAll(
-        pagination: OffsetPaginationEvent<TrainingRunSort>,
-        filters?: QueryParam[],
-    ): Observable<OffsetPaginatedResource<TrainingRun>>;
-
     /**
      * Sends http request to retrieve training run by id
      * @param id id of training run which should be retrieved

@@ -41,7 +41,7 @@ import { TrainingRunInfoDTO } from '../../dto/training-run/training-run-info-dto
 import { TrainingRunInfoMapper } from '../../mappers/training-run/training-run-info-mapper';
 import { AnsweredLevelMapper } from '../../mappers/training-run/training-run-levels/answered-level-mapper';
 import { PortalConfig } from '@crczp/utils';
-import { AccessedTrainingRunSort, TrainingRunSort } from '../sorts';
+import { AccessedTrainingRunSort } from '../sorts';
 import { AnswerCheckResultMapper } from '../../mappers/training-run/answer-check-result-mapper';
 import { trainingRunBasicArrayMapper } from '../../mappers/training-run/training-run-basic-mapper';
 import { TrainingRunBasicDto } from '../../dto/training-run/training-run-basic-dto';
@@ -60,32 +60,6 @@ export class TrainingRunDefaultApi extends LinearRunApi {
 
     constructor() {
         super();
-    }
-
-    /**
-     * Sends http request to retrieve all training runs on specified page of a pagination
-     * @param pagination requested pagination
-     * @param filters filters to be applied on resources
-     */
-    getAll(
-        pagination: OffsetPaginationEvent<TrainingRunSort>,
-        filters: QueryParam[] = [],
-    ): Observable<OffsetPaginatedResource<TrainingRun>> {
-        const params = SentinelParamsMerger.merge([
-            ParamsBuilder.javaPaginationParams(pagination),
-            ParamsBuilder.queryParams(filters),
-        ]);
-        return this.http
-            .get<JavaPaginatedResource<TrainingRunDTO>>(this.apiUrl, { params })
-            .pipe(
-                map(
-                    (response) =>
-                        new OffsetPaginatedResource<TrainingRun>(
-                            TrainingRunMapper.fromDTOs(response.content),
-                            PaginationMapper.fromJavaDTO(response.pagination),
-                        ),
-                ),
-            );
     }
 
     /**

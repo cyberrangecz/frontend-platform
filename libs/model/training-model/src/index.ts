@@ -57,7 +57,6 @@ export * from './questions/event-answer';
 export * from './user-ref/training-user';
 export * from './user-ref/organizer';
 export * from './user-ref/designer';
-export * from './user-ref/beta-tester';
 
 // MITRE TECHNIQUES
 export * from './mitre-techniques/mitre-technique';
