@@ -70,7 +70,7 @@
                 <div formArrayName="choices" class="choices">
                     @if (choices.controls && choices.controls.length > 0) {
                         <div>
-                            @for (choice of choices.controls; track trackByFn(i); let i = $index) {
+                            @for (choice of choices.controls; track choice; let i = $index) {
                                 <div class="answer"
                                      [formGroupName]="i">
                                     <mat-form-field appearance="outline" (keydown.enter)="$event.preventDefault()">

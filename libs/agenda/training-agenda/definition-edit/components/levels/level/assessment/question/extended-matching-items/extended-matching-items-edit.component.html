@@ -86,7 +86,7 @@
                         }
                     </td>
 
-                    @for (option of options.controls; track trackByFn(i); let i = $index) {
+                    @for (option of options.controls; track option; let i = $index) {
                         <td formArrayName="options" class="emi-edit__cell">
                             <!-- OPTION NAME -->
                             <div [formGroupName]="i">
@@ -112,7 +112,7 @@
                     </td>
                 </tr>
                 <!-- STATEMENTS WITH RADIO BUTTONS -->
-                @for (statement of statements.controls; track trackByFn(i); let i = $index) {
+                @for (statement of statements.controls; track statement; let i = $index) {
                     <tr formArrayName="statements" class="emi-edit__row">
                         <td class="emi-edit__cell" [formGroupName]="i">
                             <!-- STATEMENT NAME -->
@@ -127,7 +127,7 @@
                         </td>
                         <!-- STATEMENT OPTIONS -->
                         <mat-radio-group>
-                            @for (option of getOptions(); track option; let j = $index) {
+                            @for (option of getOptions(); track $index; let j = $index) {
                                 <td class="emi-edit__cell">
                                     <mat-radio-button [disabled]="!isTest || !required"
                                                       [value]="{ x: i, y: j }"
@@ -165,11 +165,8 @@
                 question must have selected correct answers
             </mat-error>
         }
-        @if (options.hasError('whitespace')) {
-            <mat-error>Options cannot be empty</mat-error>
-        }
-        @if (statements.hasError('whitespace')) {
-            <mat-error>Statements cannot be empty</mat-error>
+        @for (message of textErrorMessages; track message) {
+            <mat-error>{{ message }}</mat-error>
         }
     </div>
 </form>

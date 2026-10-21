@@ -10,6 +10,16 @@ import {SentinelValidators} from '@sentinel/common';
 import {ExtendedMatchingItems, Question} from '@crczp/training-model';
 
 /**
+ * Longest text an EMI option or statement may hold
+ */
+export const EMI_TEXT_MAX_LENGTH = 255;
+
+/**
+ * Validators of the text of an EMI option or statement
+ */
+export const EMI_TEXT_VALIDATORS = [SentinelValidators.noWhitespace, Validators.maxLength(EMI_TEXT_MAX_LENGTH)];
+
+/**
  * Form control group for form in EMI edit component
  */
 export class ExtendedMatchingItemsFormGroup {
@@ -25,10 +35,7 @@ export class ExtendedMatchingItemsFormGroup {
                             new UntypedFormGroup({
                                 id: new UntypedFormControl(statement.id),
                                 order: new UntypedFormControl(statement.order),
-                                text: new UntypedFormControl(statement.text, [
-                                    SentinelValidators.noWhitespace,
-                                    Validators.maxLength(255),
-                                ]),
+                                text: new UntypedFormControl(statement.text, EMI_TEXT_VALIDATORS),
                                 correctOptionOrder: new UntypedFormControl(statement.correctOptionOrder),
                             }),
                     ),
@@ -39,10 +46,7 @@ export class ExtendedMatchingItemsFormGroup {
                             new UntypedFormGroup({
                                 id: new UntypedFormControl(option.id),
                                 order: new UntypedFormControl(option.order),
-                                text: new UntypedFormControl(option.text, [
-                                    SentinelValidators.noWhitespace,
-                                    Validators.maxLength(255),
-                                ]),
+                                text: new UntypedFormControl(option.text, EMI_TEXT_VALIDATORS),
                             }),
                     ),
                 ),

@@ -104,14 +104,6 @@ export class MultipleChoiceQuestionEditComponent implements OnChanges {
     }
 
     /**
-     * Helper method to improve *ngFor performance
-     * @param index
-     */
-    trackByFn(index: any): any {
-        return index;
-    }
-
-    /**
      * Changes internal state of the component and emits change event
      */
     questionChanged(): void {
