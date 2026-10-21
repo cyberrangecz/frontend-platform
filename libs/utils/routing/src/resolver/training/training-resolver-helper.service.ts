@@ -55,7 +55,7 @@ export class TrainingResolverHelperService extends CommonResolverHelperService {
     ): Observable<TrainingDefinitionWithLevels | null> {
         const definitionId = this.extractDefinitionId(route);
         if (!definitionId) {
-            this.emitFrontendError('No definition id found in route');
+            this.emitFrontendError(new Error('No definition id found in route'));
             return of(null);
         }
 
@@ -73,7 +73,7 @@ export class TrainingResolverHelperService extends CommonResolverHelperService {
     ): Observable<TrainingInstance | null> {
         const instanceId = this.extractInstanceId(route);
         if (!instanceId) {
-            this.emitFrontendError('No instance id found in route');
+            this.emitFrontendError(new Error('No instance id found in route'));
             return of(null);
         }
 

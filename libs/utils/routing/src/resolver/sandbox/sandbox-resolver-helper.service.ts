@@ -51,7 +51,7 @@ export class SandboxResolverHelperService extends CommonResolverHelperService {
     public getPool(route: ActivatedRouteSnapshot): Observable<Pool | null> {
         const poolId = this.extractPoolId(route);
         if (!poolId) {
-            this.emitFrontendError('No pool id found in route');
+            this.emitFrontendError(new Error('No pool id found in route'));
             return of(null);
         }
         return this.poolApi.getPool(+poolId).pipe(
@@ -68,7 +68,7 @@ export class SandboxResolverHelperService extends CommonResolverHelperService {
     ): Observable<SandboxDefinition | null> {
         const definitionId = this.extractDefinitionId(route);
         if (!definitionId) {
-            this.emitFrontendError('No sandbox definition id found in route');
+            this.emitFrontendError(new Error('No sandbox definition id found in route'));
             return of(null);
         }
 
@@ -87,7 +87,7 @@ export class SandboxResolverHelperService extends CommonResolverHelperService {
         const sandboxRequestId = this.extractSandboxRequestId(route);
 
         if (!sandboxRequestId) {
-            this.emitFrontendError('No allocation request id found in route');
+            this.emitFrontendError(new Error('No allocation request id found in route'));
             return of(null);
         }
         return this.allocationApi.get(+sandboxRequestId).pipe(

@@ -22,11 +22,11 @@ export class UserAndGroupResolverHelperService extends CommonResolverHelperServi
     public getGroup(route: ActivatedRouteSnapshot): Observable<Group | null> {
         const id = Routing.Utils.extractVariable('groupId', route);
         if (id === null) {
-            this.emitFrontendError('No group id found in route');
+            this.emitFrontendError(new Error('No group id found in route'));
             return of(null);
         }
         if (!UserAndGroupResolverHelperService.isNumericId(id)) {
-            this.emitFrontendError('Group id in route is not a number');
+            this.emitFrontendError(new Error('Group id in route is not a number'));
             return of(null);
         }
         return this.groupApi.get(Number(id)).pipe(
@@ -40,7 +40,7 @@ export class UserAndGroupResolverHelperService extends CommonResolverHelperServi
 
     public getUser(userId: string): Observable<User | null> {
         if (!UserAndGroupResolverHelperService.isNumericId(userId)) {
-            this.emitFrontendError('User id in route is not a number');
+            this.emitFrontendError(new Error('User id in route is not a number'));
             return of(null);
         }
         return this.userApi.get(Number(userId)).pipe(

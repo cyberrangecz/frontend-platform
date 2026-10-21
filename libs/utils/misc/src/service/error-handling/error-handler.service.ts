@@ -92,8 +92,7 @@ export class ErrorHandlerService implements ErrorHandler {
             notification.source = 'Sandbox Agenda';
         } else {
             notification.additionalInfo = [
-                'Failed with unsupported error message. Please report the following message to developers',
-                err?.message?.toString(),
+                `The request failed with HTTP ${err.status}. Report this to the platform developers.`,
             ];
         }
 

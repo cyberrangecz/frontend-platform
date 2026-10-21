@@ -275,7 +275,7 @@ export class TrainingDefinitionDefaultApi extends LinearTrainingDefinitionApi {
 
     /**
      * Sends the read file content for import. Content that is not well-formed JSON fails the
-     * returned stream with a message naming the syntax failure, without reaching the server.
+     * returned stream with a message stating the file is not well-formed JSON, without reaching the server.
      * @param content the text read from the selected file
      */
     private postReadDefinition(
@@ -284,16 +284,9 @@ export class TrainingDefinitionDefaultApi extends LinearTrainingDefinitionApi {
         let definition: unknown;
         try {
             definition = JSON.parse(content);
-        } catch (syntaxFailure) {
-            const detail =
-                syntaxFailure instanceof Error
-                    ? syntaxFailure.message
-                    : String(syntaxFailure);
+        } catch {
             return throwError(
-                () =>
-                    new Error(
-                        `The selected file is not well-formed JSON\n${detail}`,
-                    ),
+                () => new Error('The selected file is not well-formed JSON'),
             );
         }
         return this.http.post<TrainingDefinitionWithLevelsDTO>(
