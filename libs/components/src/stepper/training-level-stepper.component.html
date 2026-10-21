@@ -1,7 +1,9 @@
-<sentinel-stepper [selectable]="true"
-                  [stepperItems]="levelStepper"
-                  [activeIndex]="activeStep"
-                  (indexSelected)="activeStepChanged($event)"
-                  (selectedStepSwapped)="activeStepChanged($event)"
-                  (stepSwapped)="swapLevels($event)">
-</sentinel-stepper>
+@for (stepper of [levelStepper()]; track stepper) {
+    <sentinel-stepper [selectable]="true"
+                      [stepperItems]="stepper"
+                      [activeIndex]="activeStep()"
+                      (indexSelected)="activeStepChanged($event)"
+                      (selectedStepSwapped)="activeStepChanged($event)"
+                      (stepSwapped)="swapLevels($event)">
+    </sentinel-stepper>
+}

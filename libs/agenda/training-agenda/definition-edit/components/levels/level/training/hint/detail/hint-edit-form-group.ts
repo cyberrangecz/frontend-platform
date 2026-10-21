@@ -3,6 +3,11 @@ import {SentinelValidators} from '@sentinel/common';
 import {Hint} from '@crczp/training-model';
 
 /**
+ * Pattern accepting only whole non-negative numbers
+ */
+export const WHOLE_NUMBER_PATTERN = '^[0-9]*$';
+
+/**
  * Form control for hint edit component
  */
 export class HintEditFormGroup {
@@ -12,7 +17,11 @@ export class HintEditFormGroup {
         this.formGroup = new UntypedFormGroup({
             title: new UntypedFormControl(hint.title, SentinelValidators.noWhitespace),
             content: new UntypedFormControl(hint.content, SentinelValidators.noWhitespace),
-            hintPenalty: new UntypedFormControl(hint.penalty, [Validators.required, Validators.min(0)]),
+            hintPenalty: new UntypedFormControl(hint.penalty, [
+                Validators.required,
+                Validators.pattern(WHOLE_NUMBER_PATTERN),
+                Validators.min(0),
+            ]),
         });
     }
 

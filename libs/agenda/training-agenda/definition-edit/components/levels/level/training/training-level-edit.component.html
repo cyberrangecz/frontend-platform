@@ -140,50 +140,20 @@
           Variant Answers (requires a specific sandbox definition)
         </mat-checkbox>
 
-        <!-- ANSWER field -->
-        @if (!variantAnswers.value) {
-          <mat-form-field
-            (keydown.enter)="$event.preventDefault()"
-            appearance="outline"
-            hintLabel="Max 50 characters"
-            >
-            <mat-label>Correct Answer - Static</mat-label>
-            <input formControlName="answer" matInput maxlength="50" placeholder="Correct Answer - Static"/>
-            <crczp-clear-input-suffix [control]="answer" [clearedValue]="null" matSuffix />
-            <mat-hint align="end">{{ answer.value?.length || 0 }}/50</mat-hint>
-            @if (answer.hasError('whitespace')) {
-              <mat-error> Correct Answer - Static cannot be empty
-              </mat-error>
-            }
-          </mat-form-field>
-        }
-
-        <!-- VARIABLE NAME field -->
-        @if (variantAnswers.value) {
-          <mat-form-field
-            (keydown.enter)="$event.preventDefault()"
-            appearance="outline"
-            hintLabel="Max 50 characters"
-            >
-            <mat-label>Correct Answer - Variable Name</mat-label>
-            <input
-              formControlName="answerVariableName"
-              matInput
-              maxlength="50"
-              placeholder="Correct Answer - Variable Name"
-              />
-            <crczp-clear-input-suffix [control]="answerVariableName" [clearedValue]="null" matSuffix />
-            @if (variantAnswers) {
-              <mat-hint align="end">{{ answerVariableName.value?.length || 0 }}/50
-              </mat-hint>
-            }
-            @if (answerVariableName.hasError('whitespace')) {
-              <mat-error>
-                Correct Answers - Variable Name cannot be empty
-              </mat-error>
-            }
-          </mat-form-field>
-        }
+        <!-- ANSWER field, a fixed answer or a variable name depending on Variant Answers -->
+        <mat-form-field
+          (keydown.enter)="$event.preventDefault()"
+          appearance="outline"
+          hintLabel="Max 50 characters"
+          >
+          <mat-label>{{ answerLabel }}</mat-label>
+          <input formControlName="answer" matInput maxlength="50" [placeholder]="answerLabel"/>
+          <crczp-clear-input-suffix [control]="answer" [clearedValue]="null" matSuffix />
+          <mat-hint align="end">{{ answer.value?.length || 0 }}/50</mat-hint>
+          @if (answer.hasError('whitespace')) {
+            <mat-error>{{ answerLabel }} cannot be empty</mat-error>
+          }
+        </mat-form-field>
 
         <!-- SOLUTION PENALIZED field -->
         <mat-checkbox

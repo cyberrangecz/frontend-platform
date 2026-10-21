@@ -46,17 +46,9 @@ export class TrainingLevelEditFormGroup {
             ),
             variantAnswers: new UntypedFormControl(level.variantAnswers),
             answer: new UntypedFormControl(
-                { value: level.answer, disabled: level.variantAnswers },
-                [
-                    SentinelValidators.noWhitespace,
-                    Validators.maxLength(MAX_ANSWER),
-                ],
-            ),
-            answerVariableName: new UntypedFormControl(
-                {
-                    value: level.answerVariableName,
-                    disabled: !level.variantAnswers,
-                },
+                level.variantAnswers
+                    ? level.answerVariableName
+                    : level.answer,
                 [
                     SentinelValidators.noWhitespace,
                     Validators.maxLength(MAX_ANSWER),
@@ -72,10 +64,13 @@ export class TrainingLevelEditFormGroup {
             ),
             commandsRequired: new UntypedFormControl(level.commandsRequired),
         });
+        this.formGroup
+            .get('variantAnswers')
+            .valueChanges.subscribe(() => this.formGroup.get('answer').setValue(''));
     }
 
     /**
-     * Sets inserted form values from inputs to training level
+     * Sets inserted form values from inputs to training level. The single answer input fills the variable name when variant answers are on, otherwise the fixed answer; the other field is null.
      * @param level level which values should be filled
      */
     setToLevel(level: TrainingLevel): void {
@@ -89,13 +84,9 @@ export class TrainingLevelEditFormGroup {
             'incorrectAnswerLimit',
         ).value;
         level.variantAnswers = this.formGroup.get('variantAnswers').value;
-        level.answer = this.formGroup.get('answer').value;
-        level.answer = level.answer ? level.answer.trim() : level.answer;
-        level.answerVariableName =
-            this.formGroup.get('answerVariableName').value;
-        level.answerVariableName = level.answerVariableName
-            ? level.answerVariableName.trim()
-            : level.answerVariableName;
+        const answer = this.formGroup.get('answer').value?.trim();
+        level.answer = level.variantAnswers ? null : answer;
+        level.answerVariableName = level.variantAnswers ? answer : null;
         level.estimatedDuration = this.formGroup.get('estimatedDuration').value;
         level.minimalPossibleSolveTime = this.formGroup.get(
             'minimalPossibleSolveTime',

@@ -15,7 +15,7 @@
         <mat-label>Expected Commands</mat-label>
         <mat-chip-grid #chipList>
             @for (expectedCommand of expectedCommands; track expectedCommand) {
-                <mat-chip-row (removed)="remove(expectedCommand)" selected>
+                <mat-chip-row (removed)="remove(expectedCommand)">
                     {{ expectedCommand }}
                     <button matChipRemove>
                         <mat-icon>cancel</mat-icon>
