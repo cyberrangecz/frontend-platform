@@ -29,6 +29,7 @@ import {
     ECHARTS_CORE_PROVIDER,
     EchartsChartBase,
     LevelBasicView,
+    mergeSourceStatuses,
     PALETTE,
     renderRichTooltipHtml,
     resolveInstanceLevels,
@@ -193,9 +194,13 @@ export class CumulativeScoreChartComponent
 
     protected readonly status: Signal<ChartSourceStatus> = computed(() => {
         const resolved = this.resolvedLevels();
-        if (resolved === null) return 'loading';
-        if (this.source.status() === 'error') return 'error';
-        return resolved.levels.length === 0 ? 'empty' : 'ready';
+        const sourceStatus = this.source.status();
+        const merged = mergeSourceStatuses(
+            sourceStatus === 'idle' || sourceStatus === 'empty' ? 'ready' : sourceStatus,
+            resolved === null ? 'loading' : 'ready',
+        );
+        if (resolved === null || (merged !== 'ready' && merged !== 'refreshing')) return merged;
+        return resolved.levels.length === 0 ? 'empty' : merged;
     });
 
     private readonly points: Signal<readonly LevelPoint[]> = computed(() => {

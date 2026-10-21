@@ -10,7 +10,7 @@
                     </button>
                 }
                 @if (exportable()) {
-                    <button mat-icon-button type="button" (click)="download()" [matTooltip]="downloadTooltip()" aria-label="Download CSV">
+                    <button mat-icon-button type="button" [disabled]="renderMode() === 'skeleton' || renderMode() === 'error'" (click)="download()" [matTooltip]="downloadTooltip()" aria-label="Download CSV">
                         <mat-icon>download</mat-icon>
                     </button>
                 }
