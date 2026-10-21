@@ -1,5 +1,13 @@
-import {UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
+import {AbstractControl, UntypedFormControl, UntypedFormGroup, ValidationErrors, Validators} from '@angular/forms';
 import {Pool, SandboxDefinition} from '@crczp/sandbox-model';
+
+export const MAXIMUM_POOL_SIZE = 500;
+
+/** Flags a value that is not a whole number; an empty value passes. */
+function wholeNumberValidator(control: AbstractControl): ValidationErrors | null {
+    const value = control.value;
+    return value === null || value === '' || Number.isInteger(Number(value)) ? null : { wholeNumber: true };
+}
 
 export class PoolFormGroup {
     formGroup: UntypedFormGroup;
@@ -12,7 +20,9 @@ export class PoolFormGroup {
         this.formGroup = new UntypedFormGroup({
             poolSize: new UntypedFormControl(poolParams, [
                 Validators.required,
-                Validators.min(editMode ? pool.usedSize : 1),
+                Validators.min(editMode ? Math.max(1, pool.usedSize) : 1),
+                Validators.max(MAXIMUM_POOL_SIZE),
+                wholeNumberValidator,
             ]),
             sandboxDefinition: new UntypedFormControl(definitionParams, [Validators.required]),
             comment: new UntypedFormControl(comment, [Validators.maxLength(256)]),

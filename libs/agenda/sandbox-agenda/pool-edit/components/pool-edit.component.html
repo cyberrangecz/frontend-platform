@@ -25,16 +25,22 @@
                                     appearance="outline"
                                     class="multi-line-hint">
                         <mat-label>Sandbox Pool Size</mat-label>
-                        <input formControlName="poolSize" matInput min="1"
+                        <input formControlName="poolSize" matInput min="1" [max]="maximumPoolSize" step="1"
                                placeholder="Sandbox pool size" required type="number">
                         @if (poolSize.hasError('min')) {
                             <mat-error>
                                 Pool size must be a number greater than or equal to {{ getMinimumPoolSize() }}
-                                {{ editMode ? '(amount of currently allocated sandboxes)' : '' }}
+                                {{ editMode && pool.usedSize > 0 ? '(amount of currently allocated sandboxes)' : '' }}
                             </mat-error>
                         }
                         @if (poolSize.hasError('required')) {
                             <mat-error>This field is required</mat-error>
+                        }
+                        @if (poolSize.hasError('max')) {
+                            <mat-error>Pool size must be at most {{ maximumPoolSize }}</mat-error>
+                        }
+                        @if (poolSize.hasError('wholeNumber')) {
+                            <mat-error>Pool size must be a whole number</mat-error>
                         }
                     </mat-form-field>
 

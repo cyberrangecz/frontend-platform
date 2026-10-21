@@ -3,7 +3,7 @@ import { SentinelControlItem, SentinelControlsComponent } from '@sentinel/compon
 import { BehaviorSubject, combineLatest, defer, Observable, switchMap, tap } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { PoolEditService } from '../services/pool-edit.service';
-import { PoolFormGroup } from './pool-form-group';
+import { MAXIMUM_POOL_SIZE, PoolFormGroup } from './pool-form-group';
 import { AbstractControl, ReactiveFormsModule } from '@angular/forms';
 import { Pool, SandboxDefinition } from '@crczp/sandbox-model';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -170,12 +170,15 @@ export class PoolEditComponent implements OnInit {
         ];
     }
 
+    /** Highest pool size the form accepts. */
+    readonly maximumPoolSize = MAXIMUM_POOL_SIZE;
+
     /**
-     * Lowest pool size the form accepts: the count of already allocated sandboxes when editing,
-     * one when creating.
+     * Lowest pool size the form accepts: the larger of one and the count of already allocated
+     * sandboxes when editing, one when creating.
      */
     getMinimumPoolSize(): number {
-        return this.editMode ? this.pool.usedSize : 1;
+        return this.editMode ? Math.max(1, this.pool.usedSize) : 1;
     }
 
     sandboxDefinitionToDisplayString(
