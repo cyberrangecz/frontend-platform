@@ -1,7 +1,7 @@
 import { Router } from '@angular/router';
 import { PoolApi, PoolSort, SandboxDefinitionApi, SandboxDefinitionSort } from '@crczp/sandbox-api';
 import { TrainingDefinitionInfo, TrainingInstance } from '@crczp/training-model';
-import { BehaviorSubject, concat, forkJoin, from, Observable, timer } from 'rxjs';
+import { BehaviorSubject, concat, forkJoin, from, Observable, Subject, timer } from 'rxjs';
 import { filter, map, switchMap, tap, toArray } from 'rxjs/operators';
 import { OffsetPaginationEvent } from '@crczp/utils';
 import { Pool, SandboxDefinition } from '@crczp/sandbox-model';
@@ -53,6 +53,13 @@ export abstract class CommonTrainingInstanceEditService extends CommonTrainingIn
     public sandboxDefinitions$: Observable<
         OffsetPaginatedResource<SandboxDefinition>
     > = this.sandboxDefinitionsSubject$.asObservable();
+
+    private readonly savedSubject$ = new Subject<void>();
+
+    /**
+     * Emits as soon as the server has accepted the edited instance, before any follow-up reloads finish.
+     */
+    readonly saved$: Observable<void> = this.savedSubject$.asObservable();
 
     private loadingTracker = new LoadingTracker();
 
@@ -261,5 +268,6 @@ export abstract class CommonTrainingInstanceEditService extends CommonTrainingIn
         this.editModeSubject$.next(true);
         this.trainingInstanceSubject$.next(this.editedSnapshot);
         this.editedSnapshot = null;
+        this.savedSubject$.next();
     }
 }

@@ -1,4 +1,13 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, HostListener, inject, OnInit } from '@angular/core';
+import {
+    ChangeDetectionStrategy,
+    Component,
+    computed,
+    DestroyRef,
+    HostListener,
+    inject,
+    OnInit,
+    viewChild,
+} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import {
     SentinelControlItem,
@@ -10,7 +19,7 @@ import { filter, map, take } from 'rxjs/operators';
 import { UnsavedChangesTracker } from '@crczp/utils';
 import { TrainingInstanceChangeEvent } from '../model/events/training-instance-change-event';
 import { Pool, SandboxDefinition } from '@crczp/sandbox-model';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { SentinelUserAssignComponent, SentinelUserAssignService } from '@sentinel/components/user-assign';
 import {
     MatExpansionPanel,
@@ -67,6 +76,7 @@ export class TrainingInstanceEditOverviewComponent implements OnInit {
         'trainingInstanceDetails' | 'organizerAssignments'
     >();
     private readonly instanceValid$: Observable<boolean>;
+    private readonly instanceForm = viewChild(TrainingInstanceEditComponent);
     private destroyRef = inject(DestroyRef);
     private readonly activeRoute = inject(ActivatedRoute);
     private readonly editService = inject(CommonTrainingInstanceEditService);
@@ -90,6 +100,12 @@ export class TrainingInstanceEditOverviewComponent implements OnInit {
                 this.editService.set(data[TrainingInstance.name] || null),
             );
 
+        this.editService.saved$
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe(() =>
+                this.unsavedChanges.set('trainingInstanceDetails', false),
+            );
+
         this.trainingDefinitions$ =
             this.editService.releasedTrainingDefinitions$.pipe(
                 combineLatestWith(
@@ -109,7 +125,11 @@ export class TrainingInstanceEditOverviewComponent implements OnInit {
         this.refreshTrainingDefinitions();
         this.refreshPools();
         this.refreshSandboxDefinitions();
-        this.controls = this.createControls(saveDisabled$, this.instanceValid$);
+        this.controls = this.createControls(
+            saveDisabled$,
+            this.instanceValid$,
+            this.isUnchangedExistingInstance(),
+        );
     }
 
     ngOnInit(): void {
@@ -192,14 +212,38 @@ export class TrainingInstanceEditOverviewComponent implements OnInit {
             .subscribe();
     }
 
+    private isNewInstanceStartTimeStale(): boolean {
+        const form = this.instanceForm();
+        return !!form && !form.editMode && !form.revalidateStartTime();
+    }
+
+    /**
+     * Emits true while an existing instance is shown and its details form holds no edit.
+     */
+    private isUnchangedExistingInstance(): Observable<boolean> {
+        const detailsEdited$ = toObservable(
+            computed(() => this.unsavedChanges.has('trainingInstanceDetails')),
+        );
+        return combineLatest([this.editMode$, detailsEdited$]).pipe(
+            map(([editMode, detailsEdited]) => editMode && !detailsEdited),
+        );
+    }
+
     private createControls(
         saveDisabled$: Observable<boolean>,
         instanceValid$: Observable<boolean>,
+        unchangedExistingInstance$: Observable<boolean>,
     ): SentinelControlItem[] {
         const disabled$: Observable<boolean> = combineLatest([
             saveDisabled$,
             instanceValid$,
-        ]).pipe(map(([saveDisabled, valid]) => saveDisabled || !valid));
+            unchangedExistingInstance$,
+        ]).pipe(
+            map(
+                ([saveDisabled, valid, unchanged]) =>
+                    saveDisabled || !valid || unchanged,
+            ),
+        );
         return [
             new SentinelControlItem(
                 'save',
@@ -207,18 +251,19 @@ export class TrainingInstanceEditOverviewComponent implements OnInit {
                 'primary',
                 disabled$,
                 defer(() =>
-                    this.editService
-                        .save()
-                        .pipe(
-                            this.unsavedChanges.clearOnSuccess('trainingInstanceDetails'),
-                            switchMap((createdInstanceId) =>
-                                createdInstanceId === null
-                                    ? of(true)
-                                    : this.editService.navigateToInstanceEdit(
-                                          createdInstanceId,
-                                      ),
-                            ),
-                        ),
+                    this.isNewInstanceStartTimeStale()
+                        ? of(false)
+                        : this.editService
+                              .save()
+                              .pipe(
+                                  switchMap((createdInstanceId) =>
+                                      createdInstanceId === null
+                                          ? of(true)
+                                          : this.editService.navigateToInstanceEdit(
+                                                createdInstanceId,
+                                            ),
+                                  ),
+                              ),
                 ),
             ),
         ];

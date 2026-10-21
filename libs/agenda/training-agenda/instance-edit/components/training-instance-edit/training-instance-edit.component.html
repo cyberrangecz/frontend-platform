@@ -39,6 +39,9 @@
                     @if (startTime.hasError('dateInPast')) {
                         <mat-error>Start time cannot be in the past</mat-error>
                     }
+                    @if (startTime.hasError('startTimeTooFarInPast')) {
+                        <mat-error>Start time cannot be more than {{ startTimeGraceSeconds }} seconds in the past</mat-error>
+                    }
                 </mat-form-field>
 
                 <!-- END TIME field -->
