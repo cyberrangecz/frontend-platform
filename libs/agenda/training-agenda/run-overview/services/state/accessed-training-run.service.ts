@@ -75,11 +75,19 @@ export class AccessedTrainingRunService extends CrczpOffsetElementsPaginatedServ
         );
     }
 
+    /**
+     * Navigates to the access route with the whole token as one route parameter,
+     * whatever characters it holds.
+     */
     toAccessRun(token: string): Observable<any> {
+        const encodedToken = encodeURIComponent(token).replace(
+            /[()]/g,
+            (character) => `%${character.charCodeAt(0).toString(16).toUpperCase()}`,
+        );
         return from(
-            this.router.navigate([
-                Routing.RouteBuilder.run.linear.runToken(token).access.build(),
-            ]),
+            this.router.navigateByUrl(
+                Routing.RouteBuilder.run.linear.runToken(encodedToken).access.build(),
+            ),
         );
     }
 

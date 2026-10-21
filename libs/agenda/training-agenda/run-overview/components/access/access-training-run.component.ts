@@ -66,7 +66,7 @@ export class AccessTrainingRunComponent implements OnInit {
      * Emits event to access with inserted access token
      */
     access(): void {
-        const accessToken = this.accessTokenPrefix.value + '-' + this.accessTokenPin.value;
+        const accessToken = this.accessTokenPrefix.value.trim() + '-' + this.accessTokenPin.value.trim();
         this.accessToken.emit(accessToken);
     }
 

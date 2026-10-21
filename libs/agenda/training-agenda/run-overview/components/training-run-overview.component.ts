@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { AccessedTrainingRun } from '@crczp/training-model';
 import { SentinelTableComponent, TableLoadEvent } from '@sentinel/components/table';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { finalize, map } from 'rxjs/operators';
 import { AccessedTrainingRunTable } from '../model/accessed-training-run-table';
 import { AccessedTrainingRunService } from '../services/state/accessed-training-run.service';
 import { SentinelControlItem, SentinelControlsComponent } from '@sentinel/components/controls';
@@ -38,7 +38,7 @@ export class TrainingRunOverviewComponent implements OnInit {
     trainingRuns$: Observable<TableModel<AccessedTrainingRun, AccessedTrainingRunSort>>;
     hasError$: Observable<boolean>;
     tableIsLoading$: Observable<boolean>;
-    isLoading = false;
+    isLoading = signal(false);
     controls: SentinelControlItem[];
     destroyRef = inject(DestroyRef);
     private trainingRunOverviewService = inject(AccessedTrainingRunService);
@@ -67,11 +67,14 @@ export class TrainingRunOverviewComponent implements OnInit {
      * @param accessToken token to access the training run
      */
     access(accessToken: string): void {
-        this.isLoading = true;
+        this.isLoading.set(true);
         this.trainingRunOverviewService
             .toAccessRun(accessToken)
-            .pipe(takeUntilDestroyed(this.destroyRef))
-            .subscribe(() => (this.isLoading = false));
+            .pipe(
+                finalize(() => this.isLoading.set(false)),
+                takeUntilDestroyed(this.destroyRef),
+            )
+            .subscribe();
     }
 
     /**
