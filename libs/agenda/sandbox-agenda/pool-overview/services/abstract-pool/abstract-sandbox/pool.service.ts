@@ -29,6 +29,13 @@ export class PoolService {
     }
 
     /**
+     * Periodically reloads the pools with the latest requested pagination.
+     */
+    poll(): Observable<OffsetPaginatedResource<Pool>> {
+        return this.poolOverviewService.poll();
+    }
+
+    /**
      * Starts a sandbox instance allocation, informs about the result and updates list of pools or handles an error
      * @param pool a pool to be allocated with sandbox instances
      * @param count number of sandbox instances to be allocated

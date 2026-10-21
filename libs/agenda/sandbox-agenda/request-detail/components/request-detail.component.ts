@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { map, switchMap, tap } from 'rxjs/operators';
 import { RequestStagesService } from '../services/state/request-stages.service';
 import { StageAdapter } from '../model/adapters/stage-adapter';
-import { DestroyRef, inject } from '@angular/core';
+import { computed, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 
 /**
@@ -20,13 +20,14 @@ export abstract class RequestDetailComponent {
     private readonly STAGE_COUNT = 3;
     private request: Request;
     private activatedRoute = inject(ActivatedRoute);
-    protected fragmentIndex = toSignal(
+    private autoNavigated = false;
+    private stageFragmentIndex = toSignal(
         this.activatedRoute.fragment.pipe(
             takeUntilDestroyed(this.destroyRef),
-            map((fragment) => this.mapFragmentToIndex(fragment)),
+            map((fragment) => this.parseStageIndex(fragment)),
         ),
     );
-    private fragmentInitialized = false;
+    protected fragmentIndex = computed(() => this.stageFragmentIndex() ?? 0);
     private requestStagesService = inject(RequestStagesService);
     private previousStages: StageAdapter[] = [];
 
@@ -78,7 +79,7 @@ export abstract class RequestDetailComponent {
      * - index 2 => [1, 2, 0] (stages 2-3-1)
      */
     getCarouselOrder(): number[] {
-        const currentIndex = this.fragmentIndex() ?? 0;
+        const currentIndex = this.fragmentIndex();
         const totalStages = this.STAGE_COUNT;
         return [
             (currentIndex - 1 + totalStages) % totalStages,
@@ -104,7 +105,7 @@ export abstract class RequestDetailComponent {
      * @param stageIndex the actual stage index being displayed
      */
     isCarouselItemVisible(positionInView: number, stageIndex: number): boolean {
-        const currentIndex = this.fragmentIndex() ?? 0;
+        const currentIndex = this.fragmentIndex();
         // Center is always visible
         if (positionInView === 1) {
             return true;
@@ -128,7 +129,7 @@ export abstract class RequestDetailComponent {
             if (event.key === 'Tab') {
                 event.preventDefault();
                 event.stopPropagation();
-                this.navigateToStage((this.fragmentIndex() ?? 0) + 1);
+                this.navigateToStage(this.fragmentIndex() + 1);
             }
         };
 
@@ -156,7 +157,10 @@ export abstract class RequestDetailComponent {
             takeUntilDestroyed(this.destroyRef),
             tap((stages) => {
                 // No fragment was set in route, so we navigate to last running stage for convenience
-                if (!this.fragmentInitialized) {
+                if (
+                    this.stageFragmentIndex() === undefined &&
+                    !this.autoNavigated
+                ) {
                     this.updateLastCurrentStageIndex(stages);
                 }
 
@@ -170,15 +174,18 @@ export abstract class RequestDetailComponent {
         this.isLoading$ = this.requestStagesService.isLoading$;
     }
 
-    private mapFragmentToIndex(fragment: string | null): number {
-        if (fragment) {
-            const match = fragment.match(/^stage-(\d+)$/);
-            if (match) {
-                this.fragmentInitialized = true;
-                return parseInt(match[1], 10) - 1;
-            }
-        }
-        return 0;
+    /**
+     * Reads the stage index a `stage-N` fragment names, clamped to the stages that exist;
+     * undefined for any other fragment.
+     */
+    private parseStageIndex(fragment: string | null): number | undefined {
+        const stageNumber = fragment?.match(/^stage-(\d+)$/)?.[1];
+        return stageNumber === undefined
+            ? undefined
+            : Math.min(
+                  Math.max(parseInt(stageNumber, 10) - 1, 0),
+                  this.STAGE_COUNT - 1,
+              );
     }
 
     private updateLastCurrentStageIndex(stages: StageAdapter[]) {
@@ -191,7 +198,7 @@ export abstract class RequestDetailComponent {
             (stage) => !stage.hasFinished() || stage.hasFailed(),
         );
         if (currentStageIndex !== -1) {
-            this.fragmentInitialized = true;
+            this.autoNavigated = true;
             this.navigateToStage(currentStageIndex);
         }
     }
@@ -204,11 +211,11 @@ export abstract class RequestDetailComponent {
             return;
         }
         const currentHasFinished =
-            stages[this.fragmentIndex() ?? 0].hasFinished() &&
-            this.previousStages[this.fragmentIndex() ?? 0].isRunning();
+            stages[this.fragmentIndex()].hasFinished() &&
+            this.previousStages[this.fragmentIndex()].isRunning();
 
         if (currentHasFinished) {
-            this.navigateToStage((this.fragmentIndex() ?? 0) + 1);
+            this.navigateToStage(this.fragmentIndex() + 1);
         }
     }
 

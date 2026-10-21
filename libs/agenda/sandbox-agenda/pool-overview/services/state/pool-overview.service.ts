@@ -9,9 +9,9 @@ import {
 import { OffsetPaginationEvent } from '@crczp/utils';
 import { PoolApi, PoolSort } from '@crczp/sandbox-api';
 import { Pool } from '@crczp/sandbox-model';
-import { EMPTY, from, Observable } from 'rxjs';
-import { catchError, switchMap, tap } from 'rxjs/operators';
-import { ErrorHandlerService, LoadingTracker, NotificationService, PortalConfig } from '@crczp/utils';
+import { defer, EMPTY, from, Observable, Subject } from 'rxjs';
+import { catchError, retry, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { ErrorHandlerService, LoadingTracker, NotificationService, PollingService, PortalConfig } from '@crczp/utils';
 import { Routing } from '@crczp/routing-commons';
 import { CrczpOffsetElementsPaginatedService, OffsetPaginatedResource } from '@crczp/api-common';
 
@@ -26,9 +26,12 @@ export class PoolOverviewService extends CrczpOffsetElementsPaginatedService<Poo
     private router = inject(Router);
     private notificationService = inject(NotificationService);
     private errorHandler = inject(ErrorHandlerService);
+    private pollingService = inject(PollingService);
+    private portalConfig = inject(PortalConfig);
 
     private lastPagination: OffsetPaginationEvent<PoolSort>;
     private readonly loadingTracker = new LoadingTracker();
+    private readonly newerRequestStarted$ = new Subject<void>();
 
     override isLoading$ = this.loadingTracker.isLoading$;
 
@@ -44,20 +47,28 @@ export class PoolOverviewService extends CrczpOffsetElementsPaginatedService<Poo
         pagination: OffsetPaginationEvent<PoolSort>,
     ): Observable<OffsetPaginatedResource<Pool>> {
         this.lastPagination = pagination;
-        this.hasErrorSubject$.next(false);
-        return this.loadingTracker.trackRequest(() =>
-            this.poolApi.getPools(pagination).pipe(
-                tap(
-                    (paginatedPools) => {
-                        this.resourceSubject$.next(paginatedPools);
-                    },
-                    (err) => {
-                        this.errorHandler.emitAPIError(err, 'Fetching pools');
-                        this.hasErrorSubject$.next(true);
-                    },
-                ),
-            ),
-        );
+        return this.loadingTracker.trackRequest(() => {
+            this.newerRequestStarted$.next();
+            return this.fetchPools();
+        });
+    }
+
+    /**
+     * Periodically reloads the pools with the pagination of the latest getAll call, without
+     * raising the loading state, so rows of pools removed in the background disappear.
+     * Once reloading keeps failing, polling starts over after one period, so the table
+     * recovers when the backend answers again.
+     */
+    poll(): Observable<OffsetPaginatedResource<Pool>> {
+        const { pollingPeriodShortMs, retryCount } = this.portalConfig.polling;
+        return this.pollingService
+            .startPolling(
+                defer(() => this.fetchPools()),
+                pollingPeriodShortMs,
+                retryCount,
+                true,
+            )
+            .pipe(retry());
     }
 
     /**
@@ -221,6 +232,22 @@ export class PoolOverviewService extends CrczpOffsetElementsPaginatedService<Poo
             },
         );
         return dialogRef.afterClosed();
+    }
+
+    private fetchPools(): Observable<OffsetPaginatedResource<Pool>> {
+        this.hasErrorSubject$.next(false);
+        return this.poolApi.getPools(this.lastPagination).pipe(
+            takeUntil(this.newerRequestStarted$),
+            tap(
+                (paginatedPools) => {
+                    this.resourceSubject$.next(paginatedPools);
+                },
+                (err) => {
+                    this.errorHandler.emitAPIError(err, 'Fetching pools');
+                    this.hasErrorSubject$.next(true);
+                },
+            ),
+        );
     }
 
     private callApiToDelete(pool: Pool, forceDelete: boolean): Observable<any> {

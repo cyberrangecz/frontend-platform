@@ -62,6 +62,15 @@ export abstract class SandboxAllocationUnitsService {
     ): Observable<OffsetPaginatedResource<SandboxAllocationUnit>>;
 
     /**
+     * Fetches the sandbox allocation units once with the pagination last requested and publishes them
+     * to the units stream, adding no poll. Completes without a request when no units were loaded yet.
+     * @param poolId id of the pool to refresh; defaults to the pool last requested
+     */
+    abstract refresh(poolId?: number): Observable<
+        OffsetPaginatedResource<SandboxAllocationUnit>
+    >;
+
+    /**
      * Update an existing allocation unit.
      * @param unit a sandbox allocation unit to update
      */

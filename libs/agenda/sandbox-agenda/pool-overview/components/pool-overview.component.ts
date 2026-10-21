@@ -1,11 +1,12 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, OnInit, viewChild } from '@angular/core';
 import { SentinelControlItem, SentinelControlsComponent } from '@sentinel/components/controls';
 import { Pool, Resources } from '@crczp/sandbox-model';
 import { Row, SentinelCellDirective, SentinelTableComponent, TableLoadEvent } from '@sentinel/components/table';
 import { RouterLink } from '@angular/router';
 import { defer, Observable, of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { distinctUntilChanged, map, tap } from 'rxjs/operators';
 import { PoolTable } from '../model/pool-table';
+import { PoolRowAdapter } from '../model/pool-row-adapter';
 
 import {
     SandboxAllocationUnitsConcreteService,
@@ -77,6 +78,8 @@ export class PoolOverviewComponent implements OnInit {
     isLoading$: Observable<boolean>;
     resources$: Observable<Resources>;
     controls: SentinelControlItem[] = [];
+    private readonly sentinelTable =
+        viewChild<SentinelTableComponent<PoolRowAdapter, PoolSort, never, never>>(SentinelTableComponent);
     destroyRef = inject(DestroyRef);
     readonly DEFAULT_SORT_COLUMN: PoolSort = 'id';
     readonly DEFAULT_SORT_DIRECTION: SortDir = 'desc';
@@ -159,6 +162,10 @@ export class PoolOverviewComponent implements OnInit {
             pagination: this.initialPoolPagination,
         };
         this.pools$ = this.abstractPoolService.pools$.pipe(
+            distinctUntilChanged(
+                (previous, current) => previous === current,
+                (resource) => JSON.stringify(resource),
+            ),
             map(
                 (resource) =>
                     new PoolTable(
@@ -168,10 +175,26 @@ export class PoolOverviewComponent implements OnInit {
                         this.sandboxInstanceService,
                     ),
             ),
+            tap((poolTable) => this.keepExpandedPoolOpen(poolTable)),
         );
         this.hasError$ = this.abstractPoolService.poolsHasError$;
         this.isLoading$ = this.abstractPoolService.poolsIsLoading$;
         this.onLoadEvent(initialLoadEvent);
+        this.abstractPoolService.poll().pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
+    }
+
+    /**
+     * Points the table's expanded element at the rebuilt pool with the same id,
+     * so the expanded row survives a table rebuild. Collapses it when that pool left the page.
+     */
+    private keepExpandedPoolOpen(poolTable: PoolTable): void {
+        const expandedElement = this.sentinelTable()?.expandedElement;
+        const expandedPoolId = expandedElement?.()?.id;
+        if (expandedElement && expandedPoolId !== undefined) {
+            expandedElement.set(
+                poolTable.rows.find((row) => row.element.id === expandedPoolId)?.element,
+            );
+        }
     }
 
     private initControls() {

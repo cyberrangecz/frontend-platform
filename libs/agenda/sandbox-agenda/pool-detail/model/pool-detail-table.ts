@@ -116,7 +116,7 @@ export class PoolDetailTable extends TableModel<
                 'primary',
                 'Download user SSH config',
                 of(!data.buildFinished()),
-                defer(() => sandboxInstanceService.getUserSshAccess(data.uuid)),
+                defer(() => sandboxInstanceService.downloadUserSshAccess(data.uuid)),
             ),
             ...(vpnOffered
                 ? [

@@ -8,7 +8,6 @@ import {
 import { RequestStagesService } from '../services/state/request-stages.service';
 import { RequestDetailComponent } from './request-detail.component';
 import { AllocationStagesConcreteService } from '../services/state/allocation-stages-concrete.service';
-import { StagesDetailPollRegistry } from '../services/state/detail/stages-detail-poll-registry.service';
 import { RequestStageComponent } from './stage/request-stage.component';
 import { MatIcon } from '@angular/material/icon';
 import { MatCard } from '@angular/material/card';
@@ -27,7 +26,6 @@ import { OutputsService } from '../services/state/detail/outputs.service';
             provide: RequestStagesService,
             useClass: AllocationStagesConcreteService,
         },
-        StagesDetailPollRegistry,
         {
             provide: AllocationRequestDetailComponent.STAGE_LOG_SERVICES_TOKEN,
             useFactory: (injector: Injector) => ({
