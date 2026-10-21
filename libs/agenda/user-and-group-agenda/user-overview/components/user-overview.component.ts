@@ -40,7 +40,7 @@ import { TableEmptyStateDirective, TableModel } from '@crczp/components';
     ],
 })
 export class UserOverviewComponent implements OnInit {
-    readonly INIT_SORT_NAME: UserSort = 'familyName,givenName';
+    readonly INIT_SORT_NAME: UserSort = 'fullName';
     readonly INIT_SORT_DIR: SortDir = 'asc';
     destroyRef = inject(DestroyRef);
 

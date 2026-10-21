@@ -83,7 +83,6 @@ export type UserRefSort =
     | 'fullName'
     | 'givenName'
     | 'familyName'
-    | 'familyName,givenName'
     | 'mail'
     | 'status'
     | 'externalId';

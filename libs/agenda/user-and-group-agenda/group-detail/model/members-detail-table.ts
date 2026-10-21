@@ -11,7 +11,7 @@ export class MembersDetailTable extends TableModel<User, UserSort> {
     constructor(resource: OffsetPaginatedResource<User>) {
         const columns = [
             new Column<UserSort>('picture', 'picture', false),
-            new Column<UserSort>('name', 'name', true, 'familyName,givenName'),
+            new Column<UserSort>('name', 'name', true, 'fullName'),
             new Column<UserSort>('login', 'login', true, 'sub'),
             new Column<UserSort>('issuer', 'issuer', true, 'iss'),
         ];

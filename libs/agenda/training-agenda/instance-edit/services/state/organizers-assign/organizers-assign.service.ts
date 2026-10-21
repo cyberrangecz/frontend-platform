@@ -62,7 +62,7 @@ export class OrganizersAssignService extends SentinelUserAssignService {
         this.lastAssignedPagination = {
             ...pagination,
             page: 0,
-            sort: 'familyName,givenName',
+            sort: 'fullName',
         };
         this.lastAssignedFilter = filter;
         this.hasErrorSubject$.next(false);
@@ -106,7 +106,7 @@ export class OrganizersAssignService extends SentinelUserAssignService {
                 {
                     page: 0,
                     size: INFINITE_PAGE_SIZE,
-                    sort: 'familyName,givenName',
+                    sort: 'fullName',
                     sortDir: 'asc',
                 },
                 UserNameFilters.create(filter),

@@ -5,7 +5,6 @@ export type UserSort =
     | 'fullName'
     | 'givenName'
     | 'familyName'
-    | 'familyName,givenName'
     | 'mail'
     | 'status'
     | 'externalId';

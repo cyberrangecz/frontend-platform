@@ -50,7 +50,7 @@ import { TableEmptyStateDirective, TableModel } from '@crczp/components';
     ],
 })
 export class GroupUserAssignComponent implements OnInit {
-    readonly MEMBERS_OF_GROUP_INIT_SORT_NAME: UserSort = 'familyName,givenName';
+    readonly MEMBERS_OF_GROUP_INIT_SORT_NAME: UserSort = 'fullName';
     readonly MEMBERS_OF_GROUP_INIT_SORT_DIR: SortDir = 'asc';
     /**
      * Edited group-overview to assign to

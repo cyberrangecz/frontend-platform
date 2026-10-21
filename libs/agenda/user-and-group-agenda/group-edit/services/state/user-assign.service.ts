@@ -86,7 +86,7 @@ export class UserAssignService {
         return this.userApi
             .getUsersNotInGroup(
                 resourceId,
-                createInfinitePaginationEvent<UserSort>('familyName,givenName'),
+                createInfinitePaginationEvent<UserSort>('fullName'),
                 [new UserFilter(filterValue)],
             )
             .pipe(

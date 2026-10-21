@@ -27,7 +27,7 @@ export class GroupMemberTable extends TableModel<User, UserSort> {
         );
         const columns = [
             new Column<UserSort>('id', 'id', true, 'id'),
-            new Column<UserSort>('name', 'name', true, 'familyName,givenName'),
+            new Column<UserSort>('name', 'name', true, 'fullName'),
             new Column<UserSort>('login', 'login', true, 'sub'),
             new Column<UserSort>('issuer', 'issuer', true, 'iss'),
         ];

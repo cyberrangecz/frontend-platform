@@ -6,7 +6,11 @@ import { SentinelUserAssignService } from '@sentinel/components/user-assign';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
 import { UserNameFilters } from '@crczp/training-agenda/internal';
-import { ErrorHandlerService, PortalConfig } from '@crczp/utils';
+import {
+    ErrorHandlerService,
+    NotificationService,
+    PortalConfig,
+} from '@crczp/utils';
 import {
     createInfinitePaginationEvent,
     createPaginatedResource,
@@ -23,10 +27,11 @@ import {
 export class AuthorsAssignService extends SentinelUserAssignService {
     private userApi = inject(UserApi);
     private errorHandler = inject(ErrorHandlerService);
+    private notificationService = inject(NotificationService);
     private settings = inject(PortalConfig);
 
     private userPagination =
-        createInfinitePaginationEvent<UserRefSort>('familyName,givenName');
+        createInfinitePaginationEvent<UserRefSort>('fullName');
     private lastAssignedFilter: string;
     private assignedUsersSubject: BehaviorSubject<
         OffsetPaginatedResource<Designer>
@@ -99,7 +104,7 @@ export class AuthorsAssignService extends SentinelUserAssignService {
                 resourceId,
                 {
                     ...PaginationMapper.toOffsetPaginationEvent(pagination),
-                    sort: 'familyName,givenName',
+                    sort: 'fullName',
                 },
                 UserNameFilters.create(filter),
             )
@@ -132,7 +137,7 @@ export class AuthorsAssignService extends SentinelUserAssignService {
                 resourceId,
                 createPaginationEvent<UserRefSort>(
                     {
-                        sort: 'familyName,givenName',
+                        sort: 'fullName',
                     },
                     this.settings,
                 ),
@@ -218,6 +223,25 @@ export class AuthorsAssignService extends SentinelUserAssignService {
                     this.lastAssignedFilter,
                 ),
             ),
+            tap((assigned) =>
+                this.warnAboutKeptAuthors(usersIds, assigned.elements),
+            ),
         );
+    }
+
+    /**
+     * Warns when an author requested for removal is still assigned, which the backend
+     * causes by never removing the signed-in user.
+     */
+    private warnAboutKeptAuthors(
+        removedIds: number[],
+        assigned: Designer[],
+    ): void {
+        if (assigned.some((author) => removedIds.includes(author.id))) {
+            this.notificationService.emit(
+                'warning',
+                'You cannot remove yourself as a designer',
+            );
+        }
     }
 }
