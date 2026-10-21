@@ -1,0 +1,113 @@
+# Import document of the shared training definition every chain plays, in the shape the training
+# service import endpoint takes. The title is supplied by the suite when it imports.
+description: Shared training definition of the e2e suite run.
+prerequisites:
+  - A terminal
+outcomes:
+  - A finished training run
+levels:
+  - level_type: INFO_LEVEL
+    title: Briefing
+    estimated_duration: 1
+    content: This training is played by the e2e suite.
+
+  - level_type: ACCESS_LEVEL
+    title: Sandbox access
+    estimated_duration: 1
+    passkey: e2e-access
+    cloud_content: Connect to the sandbox, then submit e2e-access.
+    local_content: Start the local sandbox, then submit e2e-access.
+
+  - level_type: TRAINING_LEVEL
+    title: Find the first flag
+    estimated_duration: 5
+    content: Find the flag of the level "Find the first flag" and submit it.
+    solution: Submit e2e-flag-one.
+    solution_penalized: true
+    answer: e2e-flag-one
+    variant_answers: false
+    incorrect_answer_limit: 5
+    max_score: 20
+    hints: &training_hints
+      - title: Look around
+        content: List the home directory.
+        hint_penalty: 2
+        order: 0
+      - title: Read the file
+        content: The flag sits in flag.txt.
+        hint_penalty: 3
+        order: 1
+    attachments: []
+    mitre_techniques: []
+    expected_commands: []
+    commands_required: false
+
+  - level_type: TRAINING_LEVEL
+    title: Find the second flag
+    estimated_duration: 5
+    content: Find the flag of the level "Find the second flag" and submit it.
+    solution: Submit e2e-flag-two.
+    solution_penalized: true
+    answer: e2e-flag-two
+    variant_answers: false
+    incorrect_answer_limit: 5
+    max_score: 20
+    hints: *training_hints
+    attachments: []
+    mitre_techniques: []
+    expected_commands: []
+    commands_required: false
+
+  - level_type: TRAINING_LEVEL
+    title: Finding open ports
+    estimated_duration: 5
+    content: Scan the sandbox for open ports and submit the telnet port.
+    solution: Enter **`${ANSWER}`** as the answer.
+    solution_penalized: true
+    answer: null
+    variant_answers: true
+    answer_variable_name: telnet_port
+    incorrect_answer_limit: 5
+    max_score: 20
+    hints: *training_hints
+    attachments: []
+    mitre_techniques: []
+    expected_commands: []
+    commands_required: false
+
+  - level_type: ASSESSMENT_LEVEL
+    title: Final check
+    estimated_duration: 3
+    assessment_type: TEST
+    instructions: Answer every question.
+    questions:
+      - question_type: FFQ
+        order: 0
+        text: Which transport protocol is reliable?
+        points: 5
+        penalty: 0
+        answer_required: true
+        choices:
+          - { text: tcp, correct: true, order: 0 }
+      - question_type: MCQ
+        order: 1
+        text: Which protocol gives a remote shell?
+        points: 5
+        penalty: 0
+        answer_required: true
+        choices:
+          - { text: SSH, correct: true, order: 0 }
+          - { text: DNS, correct: false, order: 1 }
+          - { text: NTP, correct: false, order: 2 }
+      - question_type: EMI
+        order: 2
+        text: Match each port with its protocol.
+        points: 5
+        penalty: 0
+        answer_required: true
+        extended_matching_options:
+          - { text: SSH, order: 0 }
+          - { text: HTTP, order: 1 }
+        extended_matching_statements:
+          - { text: Port 22, order: 0, correct_option_order: 0 }
+          - { text: Port 80, order: 1, correct_option_order: 1 }

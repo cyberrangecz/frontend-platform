@@ -1,0 +1,15 @@
+{
+    "name": "cyberrangecz-platform-e2e",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
+    "projectType": "application",
+    "sourceRoot": "apps/cyberrangecz-platform-e2e/src",
+    "tags": [],
+    "targets": {
+        "wipe": {
+            "executor": "@nx/playwright:playwright",
+            "options": {
+                "config": "apps/cyberrangecz-platform-e2e/playwright.wipe.config.ts"
+            }
+        }
+    }
+}

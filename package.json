@@ -4,7 +4,6 @@
     "license": "MIT",
     "private": true,
     "scripts": {
-        "e2e:local": "E2E_DEPLOYED_ORIGIN_SPECS=off nx run cyberrangecz-platform-e2e:e2e"
     },
     "dependencies": {
         "@acrodata/code-editor": "^0.6.1",
