@@ -30,6 +30,8 @@ export class TrainingRun {
     id!: number;
     sandboxInstanceId!: string;
     sandboxInstanceAllocationId!: number;
+    /** Sandbox the run held before it was archived; unset for a run never archived. */
+    previousSandboxInstanceId?: string | null;
     trainingInstanceId!: number;
     trainingDefinitionId!: number;
     player!: TrainingUser;

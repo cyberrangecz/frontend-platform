@@ -11,6 +11,7 @@ export interface TrainingRunDTO {
     id?: number;
     sandbox_instance_ref_id?: string;
     sandbox_instance_allocation_id?: number;
+    previous_sandbox_instance_ref_id?: string | null;
     participant_ref: UserRefDTO;
     start_time?: Date;
     state?: TrainingRunDTOStateEnum;

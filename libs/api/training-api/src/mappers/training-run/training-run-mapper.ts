@@ -21,6 +21,7 @@ export class TrainingRunMapper {
         result.eventLogReference = dto.event_log_reference;
         result.sandboxInstanceId = dto.sandbox_instance_ref_id;
         result.sandboxInstanceAllocationId = dto.sandbox_instance_allocation_id;
+        result.previousSandboxInstanceId = dto.previous_sandbox_instance_ref_id;
         result.eventLogging = dto.event_logging_state;
         result.commandLogging = dto.command_logging_state;
         result.player = UserMapper.fromDTO(dto.participant_ref);
