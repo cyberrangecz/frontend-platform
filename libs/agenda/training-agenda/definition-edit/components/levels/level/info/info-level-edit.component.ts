@@ -43,6 +43,10 @@ export class InfoLevelEditComponent implements OnChanges {
     infoLevelConfigFormGroup: InfoLevelEditFormGroup;
     destroyRef = inject(DestroyRef);
 
+    get estimatedDuration(): AbstractControl {
+        return this.infoLevelConfigFormGroup.formGroup.get('estimatedDuration');
+    }
+
     get title(): AbstractControl {
         return this.infoLevelConfigFormGroup.formGroup.get('title');
     }

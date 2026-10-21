@@ -8,7 +8,7 @@ import {
 } from '@angular/forms';
 import {TrainingDefinitionWithLevels} from '@crczp/training-model';
 import {TrainingDefinitionChangeEvent} from '../../model/events/training-definition-change-event';
-import {TrainingDefinitionEditFormGroup} from './training-definition-edit-form-group';
+import {MINIMUM_LIST_ITEM_LENGTH, TrainingDefinitionEditFormGroup} from './training-definition-edit-form-group';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {MatError, MatFormField, MatInput, MatLabel, MatSuffix} from "@angular/material/input";
 import {MatCheckbox} from "@angular/material/checkbox";
@@ -42,10 +42,11 @@ import { CdkTextareaAutosize } from '@angular/cdk/text-field';
 })
 export class TrainingDefinitionEditComponent implements OnChanges {
     @Input() trainingDefinition: TrainingDefinitionWithLevels;
+    @Input() disabled = false;
     @Output() edited: EventEmitter<TrainingDefinitionChangeEvent> = new EventEmitter();
 
     trainingDefinitionEditFormGroup: TrainingDefinitionEditFormGroup;
-    freeFormValid = true;
+    readonly minimumListItemLength = MINIMUM_LIST_ITEM_LENGTH;
     destroyRef = inject(DestroyRef);
 
     get title(): AbstractControl {
@@ -69,40 +70,39 @@ export class TrainingDefinitionEditComponent implements OnChanges {
             this.trainingDefinitionEditFormGroup = new TrainingDefinitionEditFormGroup(this.trainingDefinition);
             this.setupOnFormChangedEvent();
         }
+        if ('trainingDefinition' in changes || 'disabled' in changes) {
+            const formGroup = this.trainingDefinitionEditFormGroup.formGroup;
+            if (this.disabled) {
+                formGroup.disable({emitEvent: false});
+            } else {
+                formGroup.enable({emitEvent: false});
+            }
+        }
     }
 
     /**
-     * Changes form state if change of prerequisites event is emitted from child component
+     * Replaces the prerequisites with the trimmed items emitted from child component
      * @param event form state change event emitted from child component
      */
     prerequisitesChange(event: UntypedFormGroup): void {
-        this.freeFormValid = event.valid;
-        this.prerequisites.clear();
-        event.value['items'].forEach((item) => {
-            item = item.trim();
-            (this.prerequisites as UntypedFormArray).push(
-                new UntypedFormControl(item.toString().length == 1 ? item + ' ' : item),
-            );
-        });
+        this.replaceItems(this.prerequisites, event.value['items']);
     }
 
     /**
-     * Changes form state if change of outcomes event is emitted from child component
+     * Replaces the outcomes with the trimmed items emitted from child component
      * @param event form state change event emitted from child component
      */
     outcomesChange(event: UntypedFormGroup): void {
-        this.freeFormValid = event.valid;
-        this.outcomes.clear();
-        event.value['items'].forEach((item) => {
-            item = item.trim();
-            (this.outcomes as UntypedFormArray).push(
-                new UntypedFormControl(item.toString().length == 1 ? item + ' ' : item),
-            );
-        });
+        this.replaceItems(this.outcomes, event.value['items']);
     }
 
     checkboxTouched(): void {
         this.title.markAsTouched();
+    }
+
+    private replaceItems(list: UntypedFormArray, items: string[]): void {
+        list.clear();
+        items.forEach((item) => list.push(new UntypedFormControl(item.trim())));
     }
 
     private setupOnFormChangedEvent() {
@@ -116,7 +116,7 @@ export class TrainingDefinitionEditComponent implements OnChanges {
         this.edited.emit(
             new TrainingDefinitionChangeEvent(
                 this.trainingDefinition,
-                this.trainingDefinitionEditFormGroup.formGroup.valid && this.freeFormValid,
+                this.trainingDefinitionEditFormGroup.formGroup.valid,
             ),
         );
     }

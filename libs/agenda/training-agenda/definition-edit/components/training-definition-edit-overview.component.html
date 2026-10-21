@@ -21,10 +21,19 @@
         <sentinel-controls
             [controls]="controls">
         </sentinel-controls>
+        @let blockReason = editingBlockReason$ | async;
+        @if (blockReason) {
+            <p class="editing-block-reason">
+                <mat-icon>lock</mat-icon>
+                <span>{{ blockReason }}</span>
+            </p>
+        }
         <mat-divider />
         <!-- EDIT TRAINING DEFINITION -->
         <crczp-training-definition-edit
             (edited)="onTrainingDefinitionChanged($event)"
+            [attr.inert]="blockReason ? '' : null"
+            [disabled]="blockReason !== null"
             [trainingDefinition]="trainingDefinition$ | async" />
 
         <mat-divider />
@@ -40,8 +49,9 @@
                 <mat-icon class="header-icon">games</mat-icon>
             </div>
             <crczp-level-overview (levelsCount)="onLevelsCountChanged($event)"
-                                  (unsavedLevels)="onUnsavedLevelsChanged($event)"
+                                  (hasUnsavedChanges)="onUnsavedLevelsChanged($event)"
                                   [editMode]="editMode$ | async"
+                                  [editingBlocked]="blockReason !== null"
                                   [trainingDefinition]="trainingDefinition$ | async" />
         </div>
     </ng-template>

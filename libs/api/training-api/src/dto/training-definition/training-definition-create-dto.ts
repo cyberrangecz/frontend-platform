@@ -1,5 +1,7 @@
+import { LevelUpdateDTO } from '../level/level-update-dto';
+
 /**
- * Training Definition to create.
+ * Training Definition to create, with its ordered levels. Levels carry no ids.
  */
 export class TrainingDefinitionCreateDTO {
     description?: string;
@@ -7,7 +9,7 @@ export class TrainingDefinitionCreateDTO {
     prerequisites?: string[];
     state?: TrainingDefinitionCreateDTOStateEnum;
     title?: string;
-    default_content?: boolean;
+    levels: LevelUpdateDTO[];
 }
 
 export type TrainingDefinitionCreateDTOStateEnum = 'RELEASED' | 'ARCHIVED' | 'UNRELEASED';

@@ -4,9 +4,6 @@ import {AbstractAssessmentAnswerDTO} from '../../../dto/level/assessment/abstrac
 import {ExtendedMatchingItemsMapper} from './extended-matching-items-mapper';
 import {FreeFormQuestionMapper} from './free-form-question-mapper';
 import {MultipleChoiceQuestionMapper} from './multiple-choice-question-mapper';
-import {FreeFormQuestionCreateDTO} from '../../../dto/level/assessment/free-form-question-dto';
-import {MultipleChoiceQuestionCreateDTO} from '../../../dto/level/assessment/multiple-choice-question-create-dto';
-import {ExtendedMatchingItemsDTO} from '../../../dto/level/assessment/extended-matching-items-dto';
 
 /**
  * @dynamic
@@ -63,7 +60,7 @@ export class QuestionMapper {
     }
 
     static toCreateDTO(question: Question): AbstractQuestionCreateDTO {
-        let questionDTO: FreeFormQuestionCreateDTO | MultipleChoiceQuestionCreateDTO | ExtendedMatchingItemsDTO;
+        let questionDTO: AbstractQuestionCreateDTO;
         if (question instanceof FreeFormQuestion) {
             questionDTO = FreeFormQuestionMapper.toCreateDTO(question);
         } else if (question instanceof MultipleChoiceQuestion) {
@@ -74,7 +71,7 @@ export class QuestionMapper {
             throw new TypeError("Unknown question type");
         }
 
-        if('id' in questionDTO) questionDTO.id = question.id;
+        if (question.id != null) questionDTO.id = question.id;
         questionDTO.answer_required = question.required;
         questionDTO.order = question.order;
         questionDTO.penalty = question.penalty;

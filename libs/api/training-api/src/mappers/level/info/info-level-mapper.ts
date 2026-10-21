@@ -14,6 +14,7 @@ export class InfoLevelMapper {
         const result = new InfoLevelUpdateDTOClass();
         result.id = level.id;
         result.title = level.title;
+        result.estimated_duration = level.estimatedDuration;
         result.content = level.content;
         return result;
     }

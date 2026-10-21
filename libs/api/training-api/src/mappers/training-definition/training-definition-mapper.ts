@@ -55,6 +55,8 @@ export class TrainingDefinitionMapper {
         target.state = TrainingDefinitionMapper.stateFromDTO(dto.state);
         target.lastEditTime = dto.last_edited;
         target.estimatedDuration = dto.estimated_duration;
+        target.instanceCount = dto.instance_count ?? 0;
+        target.version = dto.version ?? 0;
         target.lastEditBy = dto.last_edited_by;
         target.createdAt = dto.created_at;
     }
@@ -102,7 +104,6 @@ export class TrainingDefinitionMapper {
         trainingDefinition: TrainingDefinitionWithLevels,
     ): TrainingDefinitionUpdateDTO {
         const result = new TrainingDefinitionUpdateDTO();
-        result.id = trainingDefinition.id;
         result.description = trainingDefinition.description;
         result.prerequisites = trainingDefinition.prerequisites.filter(
             (prerequisite) => prerequisite.length > 1,
@@ -110,10 +111,9 @@ export class TrainingDefinitionMapper {
         result.outcomes = trainingDefinition.outcomes.filter(
             (outcome) => outcome.length > 1,
         );
-        result.state = TrainingDefinitionMapper.stateToDTO(
-            trainingDefinition.state,
-        );
         result.title = trainingDefinition.title;
+        result.version = trainingDefinition.version;
+        result.levels = LevelMapper.toUpdateDTOs(trainingDefinition.levels);
         return result;
     }
 
@@ -130,7 +130,7 @@ export class TrainingDefinitionMapper {
         result.description = trainingDefinition.description;
         result.state = TrainingDefinitionDTOStateEnum.UNRELEASED;
         result.title = trainingDefinition.title;
-        result.default_content = trainingDefinition.defaultContent;
+        result.levels = LevelMapper.toUpdateDTOs(trainingDefinition.levels);
         return result;
     }
 }

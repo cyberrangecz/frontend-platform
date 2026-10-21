@@ -26,7 +26,7 @@ import {
     SentinelControlItem,
     SentinelControlsComponent,
 } from '@sentinel/components/controls';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { LevelOverviewControls } from '../../../model/adapters/level-overview-controls';
 import { LevelEditService } from '../../../services/state/level/level-edit.service';
@@ -49,16 +49,18 @@ import { AbstractLevelEditComponent } from '../level/abstract-level-edit.compone
     ],
 })
 export class LevelOverviewComponent implements OnInit, OnChanges {
-    @Output() unsavedLevels: EventEmitter<Level[]> = new EventEmitter();
+    @Output() hasUnsavedChanges: EventEmitter<boolean> = new EventEmitter();
     @Output() levelsCount: EventEmitter<number> = new EventEmitter();
     @Input() trainingDefinition: TrainingDefinitionWithLevels;
     @Input() editMode: boolean;
+    @Input() editingBlocked = false;
     activeStep$: Observable<number>;
     stepperLevels: Observable<LevelStepperAdapter[]>;
     controls: SentinelControlItem[];
-    levelMovingInProgress: boolean;
     destroyRef = inject(DestroyRef);
     private levelService = inject(LevelEditService);
+    private editingBlockedSubject$ = new BehaviorSubject(false);
+    private editModeSubject$ = new BehaviorSubject(false);
 
     ngOnInit(): void {
         this.activeStep$ = this.levelService.activeStep$;
@@ -71,20 +73,24 @@ export class LevelOverviewComponent implements OnInit, OnChanges {
             ),
         );
 
-        this.levelService.unsavedLevels$
+        this.levelService.hasUnsavedChanges$
             .pipe(takeUntilDestroyed(this.destroyRef))
-            .subscribe((unsavedLevels) =>
-                this.unsavedLevels.emit(unsavedLevels),
+            .subscribe((hasUnsavedChanges) =>
+                this.hasUnsavedChanges.emit(hasUnsavedChanges),
             );
         this.initControl();
     }
 
     ngOnChanges(changes: SimpleChanges): void {
         if ('trainingDefinition' in changes) {
-            this.levelService.set(
-                this.trainingDefinition.id,
-                this.trainingDefinition.levels as Level[],
-            );
+            this.levelService.set(this.trainingDefinition.levels as Level[]);
+        }
+        if ('editMode' in changes) {
+            this.editModeSubject$.next(this.editMode);
+        }
+        if ('editingBlocked' in changes) {
+            this.levelService.setEditingBlocked(this.editingBlocked);
+            this.editingBlockedSubject$.next(this.editingBlocked);
         }
     }
 
@@ -101,19 +107,10 @@ export class LevelOverviewComponent implements OnInit, OnChanges {
      * @param event event of level move
      */
     onLevelMoved(event: LevelMoveEvent): void {
-        this.levelMovingInProgress = true;
-        this.levelService
-            .move(
-                event.stepperState.previousIndex,
-                event.stepperState.currentIndex,
-            )
-            .pipe(takeUntilDestroyed(this.destroyRef))
-            .subscribe(
-                () => {
-                    this.levelMovingInProgress = false;
-                },
-                () => (this.levelMovingInProgress = false),
-            );
+        this.levelService.move(
+            event.stepperState.previousIndex,
+            event.stepperState.currentIndex,
+        );
     }
 
     /**
@@ -125,12 +122,17 @@ export class LevelOverviewComponent implements OnInit, OnChanges {
     }
 
     private initControl() {
-        const deleteDisabled$ = this.levelService.levels$.pipe(
-            map((levels) => levels.length <= 0),
-        );
+        const addDisabled$ = combineLatest([
+            this.editModeSubject$,
+            this.editingBlockedSubject$,
+        ]).pipe(map(([editMode, blocked]) => blocked || !editMode));
+        const deleteDisabled$ = combineLatest([
+            this.levelService.levels$,
+            this.editingBlockedSubject$,
+        ]).pipe(map(([levels, blocked]) => blocked || levels.length <= 0));
         this.controls = LevelOverviewControls.create(
             this.levelService,
-            this.editMode,
+            addDisabled$,
             deleteDisabled$,
         );
     }

@@ -23,7 +23,7 @@ export const AssessmentLevelUpdateDTOTypeEnum = {
 };
 
 export class AssessmentLevelUpdateDTOClass implements AssessmentLevelUpdateDTO {
-    id: number;
+    id?: number;
     title: string;
     level_type: AbstractLevelDTOLevelTypeEnum = 'ASSESSMENT_LEVEL';
     type: AssessmentLevelUpdateDTOTypeEnum;

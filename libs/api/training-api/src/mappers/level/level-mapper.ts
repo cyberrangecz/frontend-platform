@@ -16,6 +16,7 @@ import {TrainingLevelMapper} from './training/training-level-mapper';
 import {InfoLevelMapper} from './info/info-level-mapper';
 import {AccessLevelMapper} from './access/access-level-mapper';
 import {AccessLevelDTO} from '../../dto/level/access/access-level-dto';
+import {LevelUpdateDTO} from '../../dto/level/level-update-dto';
 
 /**
  * @dynamic
@@ -90,12 +91,12 @@ export class LevelMapper {
         return dtos.map((dto) => this.fromBasicDTO(dto));
     }
 
-    static toUpdateDTOs(levels: Level[]): AbstractLevelDTO[] {
+    static toUpdateDTOs(levels: Level[]): LevelUpdateDTO[] {
         return levels.map((level) => this.toUpdateDTO(level));
     }
 
-    static toUpdateDTO(level: Level): AbstractLevelDTO {
-        let levelDTO: AbstractLevelDTO;
+    static toUpdateDTO(level: Level): LevelUpdateDTO {
+        let levelDTO: LevelUpdateDTO;
         switch (level.type) {
             case AbstractLevelTypeEnum.Training: {
                 levelDTO = TrainingLevelMapper.toUpdateDTO(level as TrainingLevel);

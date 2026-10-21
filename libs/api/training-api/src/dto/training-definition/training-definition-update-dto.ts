@@ -1,18 +1,14 @@
+import { LevelUpdateDTO } from '../level/level-update-dto';
+
 /**
- * Training Definition to update.
+ * Training definition fields and its complete ordered level list, written in one request.
+ * The state is not part of it; it changes through its own endpoint.
  */
 export class TrainingDefinitionUpdateDTO {
+    title: string;
     description?: string;
-    id?: number;
-    outcomes?: string[];
-    prerequisites?: string[];
-    state?: TrainingDefinitionUpdateDTOStateEnum;
-    title?: string;
+    prerequisites: string[];
+    outcomes: string[];
+    version: number;
+    levels: LevelUpdateDTO[];
 }
-
-export type TrainingDefinitionUpdateDTOStateEnum = 'RELEASED' | 'ARCHIVED' | 'UNRELEASED';
-export const TrainingDefinitionUpdateDTOStateEnum = {
-    RELEASED: 'RELEASED' as TrainingDefinitionUpdateDTOStateEnum,
-    ARCHIVED: 'ARCHIVED' as TrainingDefinitionUpdateDTOStateEnum,
-    UNRELEASED: 'UNRELEASED' as TrainingDefinitionUpdateDTOStateEnum,
-};

@@ -48,6 +48,10 @@ export class AccessLevelEditComponent implements OnChanges {
     accessLevelConfigFormGroup: AccessLevelEditFormGroup;
     destroyRef = inject(DestroyRef);
 
+    get estimatedDuration(): AbstractControl {
+        return this.accessLevelConfigFormGroup.formGroup.get('estimatedDuration');
+    }
+
     get title(): AbstractControl {
         return this.accessLevelConfigFormGroup.formGroup.get('title');
     }

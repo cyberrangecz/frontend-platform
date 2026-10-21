@@ -3,7 +3,8 @@ import {AbstractLevelDTOLevelTypeEnum} from '../abstract-level-dto';
 import { HintDTO } from './hint-dto';
 
 export interface TrainingLevelUpdateDto {
-    id: number;
+    id?: number;
+    title?: string;
     max_score?: number;
     content?: string;
     estimated_duration?: number;
@@ -16,19 +17,19 @@ export interface TrainingLevelUpdateDto {
     solution?: string;
     solution_penalized?: boolean;
     variant_answers?: boolean;
-    order: number;
     mitre_techniques: MitreTechniqueDTO[];
     expected_commands: string[];
+    commands_required?: boolean;
 }
 
 export class TrainingLevelUpdateDTOClass implements TrainingLevelUpdateDto {
+    id?: number;
     content: string;
     estimated_duration: number;
     minimal_possible_solve_time: number;
     answer: string;
     answer_variable_name: string;
     hints: HintDTO[];
-    id: number;
     incorrect_answer_limit: number;
     level_type: AbstractLevelDTOLevelTypeEnum = 'TRAINING_LEVEL';
     max_score: number;
@@ -36,7 +37,6 @@ export class TrainingLevelUpdateDTOClass implements TrainingLevelUpdateDto {
     solution_penalized: boolean;
     title: string;
     variant_answers: boolean;
-    order: number;
     mitre_techniques: MitreTechniqueDTO[];
     expected_commands: string[];
     commands_required: boolean;

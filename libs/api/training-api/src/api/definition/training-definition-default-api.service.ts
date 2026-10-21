@@ -14,29 +14,21 @@ import {
 import { OffsetPaginationEvent, PortalConfig } from '@crczp/utils';
 import {
     AbstractLevelBasic,
-    AccessLevel,
-    AssessmentLevel,
     HintBasic,
-    InfoLevel,
-    Level,
     TrainingDefinition,
     TrainingDefinitionBasic,
     TrainingDefinitionInfo,
     TrainingDefinitionStateEnum,
-    TrainingDefinitionWithLevels,
-    TrainingLevel
+    TrainingDefinitionWithLevels
 } from '@crczp/training-model';
 import { fromEvent, merge, Observable, throwError } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
-import { AssessmentLevelDTO } from '../../dto/level/assessment/assessment-level-dto';
-import { BasicLevelInfoDTO } from '../../dto/level/basic-level-info-dto';
-import { TrainingLevelDto } from '../../dto/level/training/training-level-dto';
-import { InfoLevelDTO } from '../../dto/level/info/info-level-dto';
 import {
     TrainingDefinitionDTO,
     TrainingDefinitionWithLevelsDTO
 } from '../../dto/training-definition/training-definition-dto';
-import { LevelMapper } from '../../mappers/level/level-mapper';
+import { TrainingDefinitionCreateDTO } from '../../dto/training-definition/training-definition-create-dto';
+import { TrainingDefinitionUpdateDTO } from '../../dto/training-definition/training-definition-update-dto';
 import { TrainingDefinitionInfoMapper } from '../../mappers/training-definition/training-definition-info-mapper';
 import { TrainingDefinitionMapper } from '../../mappers/training-definition/training-definition-mapper';
 import { LinearTrainingDefinitionApi } from './training-definition-api.service';
@@ -216,18 +208,6 @@ export class TrainingDefinitionDefaultApi extends LinearTrainingDefinitionApi {
     }
 
     /**
-     * Sends http request to retrieve level by id
-     * @param levelId id of level which should be retrieved
-     */
-    getLevel(levelId: number): Observable<Level> {
-        return this.http
-            .get<
-                TrainingLevelDto | InfoLevelDTO | AssessmentLevelDTO
-            >(`${this.trainingDefsEndpointUri}/${this.levelsUriExtension}/${levelId}`)
-            .pipe(map((response) => LevelMapper.fromDTO(response)));
-    }
-
-    /**
      * Sends request to download training definition json file.
      * @param id id of training definition which should be downloaded
      */
@@ -351,154 +331,43 @@ export class TrainingDefinitionDefaultApi extends LinearTrainingDefinitionApi {
     }
 
     /**
-     * Sends http request to update training definition
-     * @param trainingDefinition training definition to update
+     * Sends http request to overwrite a training definition and all its levels in one write.
+     * The levels sent are the complete ordered list; a level without an id is created and a stored
+     * level that is left out is deleted.
+     * @param trainingDefinition definition holding the edited fields, its levels and the version it was read at
      */
-    update(trainingDefinition: TrainingDefinitionWithLevels): Observable<number> {
-        return this.http.put<number>(
-            this.trainingDefsEndpointUri,
-            TrainingDefinitionMapper.toUpdateDTO(trainingDefinition),
-            { headers: this.createDefaultHeaders() },
-        );
+    update(
+        trainingDefinition: TrainingDefinitionWithLevels,
+    ): Observable<TrainingDefinitionWithLevels> {
+        return this.crczpHttp
+            .put<TrainingDefinitionUpdateDTO, TrainingDefinitionWithLevelsDTO>(
+                `${this.trainingDefsEndpointUri}/${trainingDefinition.id}`,
+                'Update training definition',
+            )
+            .withBody(TrainingDefinitionMapper.toUpdateDTO(trainingDefinition))
+            .withMapper((response) =>
+                TrainingDefinitionMapper.withLevelsFromDTO(response),
+            )
+            .execute();
     }
 
     /**
-     * Sends http request to create new training definition
-     * @param trainingDefinition training definition which should be created
+     * Sends http request to create new training definition together with its levels
+     * @param trainingDefinition training definition which should be created, its levels included
      */
     create(
         trainingDefinition: TrainingDefinitionWithLevels,
     ): Observable<TrainingDefinitionWithLevels> {
-        return this.http
-            .post<TrainingDefinitionWithLevelsDTO>(
+        return this.crczpHttp
+            .post<TrainingDefinitionCreateDTO, TrainingDefinitionWithLevelsDTO>(
                 this.trainingDefsEndpointUri,
-                TrainingDefinitionMapper.toCreateDTO(trainingDefinition),
-                { headers: this.createDefaultHeaders() },
+                'Create training definition',
             )
-            .pipe(map((resp) => TrainingDefinitionMapper.withLevelsFromDTO(resp)));
-    }
-
-    /**
-     * Sends http request to create new assessment level associated with training definition
-     * @param trainingDefinitionId id of training definition which should be associated with the new level
-     */
-    createAssessmentLevel(
-        trainingDefinitionId: number,
-    ): Observable<AssessmentLevel> {
-        return this.http
-            .post<BasicLevelInfoDTO>(
-                `${this.trainingDefsEndpointUri}/${trainingDefinitionId}/${this.levelsUriExtension}/ASSESSMENT`,
-                {},
-                { headers: this.createDefaultHeaders() },
+            .withBody(TrainingDefinitionMapper.toCreateDTO(trainingDefinition))
+            .withMapper((response) =>
+                TrainingDefinitionMapper.withLevelsFromDTO(response),
             )
-            .pipe(
-                map(
-                    (resp) => LevelMapper.fromBasicDTO(resp) as AssessmentLevel,
-                ),
-            );
-    }
-
-    /**
-     * Sends http request to create new training level associated with training definition
-     * @param trainingDefinitionId id of training definition which should be associated with the new level
-     */
-    createTrainingLevel(
-        trainingDefinitionId: number,
-    ): Observable<TrainingLevel> {
-        return this.http
-            .post<BasicLevelInfoDTO>(
-                `${this.trainingDefsEndpointUri}/${trainingDefinitionId}/${this.levelsUriExtension}/TRAINING`,
-                {},
-                { headers: this.createDefaultHeaders() },
-            )
-            .pipe(
-                map((resp) => LevelMapper.fromBasicDTO(resp) as TrainingLevel),
-            );
-    }
-
-    /**
-     * Sends http request to create new access level associated with training definition
-     * @param trainingDefinitionId id of training definition which should be associated with the new level
-     */
-    createAccessLevel(trainingDefinitionId: number): Observable<AccessLevel> {
-        return this.http
-            .post<BasicLevelInfoDTO>(
-                `${this.trainingDefsEndpointUri}/${trainingDefinitionId}/${this.levelsUriExtension}/ACCESS`,
-                {},
-                { headers: this.createDefaultHeaders() },
-            )
-            .pipe(map((resp) => LevelMapper.fromBasicDTO(resp) as AccessLevel));
-    }
-
-    /**
-     * Sends http request to create new info level associated with training definition
-     * @param trainingDefId id of training definition which should be associated with the new level
-     */
-    createInfoLevel(trainingDefId: number): Observable<InfoLevel> {
-        return this.http
-            .post<BasicLevelInfoDTO>(
-                `${this.trainingDefsEndpointUri}/${trainingDefId}/${this.levelsUriExtension}/INFO`,
-                {},
-                { headers: this.createDefaultHeaders() },
-            )
-            .pipe(map((resp) => LevelMapper.fromBasicDTO(resp) as InfoLevel));
-    }
-
-    /**
-     * Sends http request to delete level
-     * @param trainingDefinitionId id of training definition associated with the level which should be deleted
-     * @param levelId id of level which should be deleted
-     */
-    deleteLevel(
-        trainingDefinitionId: number,
-        levelId: number,
-    ): Observable<Level[]> {
-        // prettier-ignore
-        return this.http
-            .delete<BasicLevelInfoDTO[]>(
-                `${this.trainingDefsEndpointUri}/${trainingDefinitionId}/` +
-                `${this.levelsUriExtension}/${levelId}`,
-                { headers: this.createDefaultHeaders() }
-            )
-            .pipe(map((resp) => LevelMapper.fromBasicDTOs(resp)));
-    }
-
-    /**
-     * Sends http request to update training levels
-     * @param trainingDefinitionId id of training definition associated with the levels
-     * @param levels training levels which should be updated
-     */
-    updateTrainingDefinitionLevels(
-        trainingDefinitionId: number,
-        levels: Level[],
-    ): Observable<any> {
-        return this.http.put(
-            `${this.trainingDefsEndpointUri}/${trainingDefinitionId}/levels`,
-            LevelMapper.toUpdateDTOs(levels),
-            { headers: this.createDefaultHeaders() },
-        );
-    }
-
-    /**
-     * Sends http request to move level to new position (change order)
-     * @param trainingDefinitionId id of training definition associated with the level
-     * @param levelId id of a level which should be moved
-     * @param toPosition index of new position of a level
-     */
-    moveLevelTo(
-        trainingDefinitionId: number,
-        levelId: number,
-        toPosition: number,
-    ): Observable<Level[]> {
-        // prettier-ignore
-        return this.http
-            .put<BasicLevelInfoDTO[]>(
-                `${this.trainingDefsEndpointUri}/${trainingDefinitionId}/` +
-                `${this.levelsUriExtension}/${levelId}/move-to/${toPosition}`,
-                {},
-                { headers: this.createDefaultHeaders() }
-            )
-            .pipe(map((resp) => LevelMapper.fromBasicDTOs(resp)));
+            .execute();
     }
 
     private createDefaultHeaders() {

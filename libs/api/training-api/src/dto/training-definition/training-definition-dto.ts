@@ -11,6 +11,8 @@ export class TrainingDefinitionDTO {
     state?: TrainingDefinitionDTOStateEnum;
     title?: string;
     estimated_duration: number;
+    instance_count: number;
+    version: number;
     last_edited?: Date;
     last_edited_by?: string;
     created_at: Date;

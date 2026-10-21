@@ -16,6 +16,7 @@ export class AccessLevelMapper {
         const result = new AccessLevelUpdateDTOClass();
         result.id = level.id;
         result.title = level.title;
+        result.estimated_duration = level.estimatedDuration;
         result.passkey = level.passkey;
         result.cloud_content = level.cloudContent;
         result.local_content = level.localContent;
