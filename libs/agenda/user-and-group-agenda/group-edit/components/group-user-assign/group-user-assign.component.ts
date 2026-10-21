@@ -171,13 +171,19 @@ export class GroupUserAssignComponent implements OnInit {
     }
 
     /**
-     * Searches for groups to import
+     * Searches for groups to import, leaving out the edited group
      * @param filterValue search value
      */
     searchGroups(filterValue: string): void {
         this.userAssignService
             .getGroupsToImport(filterValue)
-            .pipe(map((resource) => resource.elements))
+            .pipe(
+                map((resource) =>
+                    resource.elements.filter(
+                        (group) => group.id !== this.group().id,
+                    ),
+                ),
+            )
             .subscribe((groups) => this.groups.set(groups));
     }
 
