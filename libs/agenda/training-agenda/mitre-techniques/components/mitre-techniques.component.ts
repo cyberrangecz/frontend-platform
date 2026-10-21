@@ -29,6 +29,7 @@ import { LogoSpinnerComponent } from '@crczp/components';
 })
 export class MitreTechniquesComponent implements OnInit {
     mitreTableHtml$: Observable<string>;
+    hasError$: Observable<boolean>;
     showSwitch: boolean;
     played: boolean;
     private mitreTechniquesOverviewService = inject(
@@ -42,6 +43,7 @@ export class MitreTechniquesComponent implements OnInit {
             this.played = data.showSwitch;
         });
         this.mitreTableHtml$ = this.mitreTechniquesOverviewService.resource$;
+        this.hasError$ = this.mitreTechniquesOverviewService.hasError$;
     }
 
     ngOnInit(): void {

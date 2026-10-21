@@ -14,7 +14,7 @@
         </div>
     }
     <div [innerHTML]="mitreTableHtml$ | async | safeHtml"></div>
-} @else {
+} @else if (!(hasError$ | async)) {
     <div class="wh-100 center p-8rem-t">
         <crczp-logo-spinner />
     </div>

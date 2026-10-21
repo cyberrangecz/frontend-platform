@@ -49,6 +49,7 @@ export class TopologyWrapperComponent implements OnInit {
                     'Topology component',
                 );
                 console.error(error);
+                this.topologyLoading.set(false);
             },
             complete: () => {
                 this.topologyLoading.set(false);
