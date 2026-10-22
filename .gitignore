@@ -48,3 +48,6 @@ vitest.config.*.timestamp*
 .hive
 
 .nx/migrate-runs
+
+# e2e suite credentials and tokens
+/apps/cyberrangecz-platform-e2e/.state/
