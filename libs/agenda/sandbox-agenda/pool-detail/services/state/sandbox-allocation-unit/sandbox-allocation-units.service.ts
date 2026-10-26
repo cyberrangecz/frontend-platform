@@ -1,6 +1,6 @@
-import { OffsetPaginationEvent } from '@crczp/utils';
+import { LoadingTracker, OffsetPaginationEvent } from '@crczp/utils';
 import { BehaviorSubject, map, Observable } from 'rxjs';
-import { SandboxAllocationUnit } from '@crczp/sandbox-model';
+import { SandboxAllocationUnit, UnitCancellation } from '@crczp/sandbox-model';
 import { SandboxAllocationUnitSort } from '@crczp/sandbox-api';
 import { OffsetPaginatedResource } from '@crczp/api-common';
 
@@ -51,6 +51,21 @@ export abstract class SandboxAllocationUnitsService {
         OffsetPaginatedResource<SandboxAllocationUnit>
     >;
 
+    private readonly deletionTracker = new LoadingTracker();
+
+    /**
+     * True while a delete or cancel request, or the refresh following it, is in flight.
+     */
+    readonly isDeleting$: Observable<boolean> = this.deletionTracker.isLoading$;
+
+    /**
+     * Runs a delete or cancel request so that it counts towards isDeleting$ until it completes, fails or is unsubscribed.
+     * @param request produces the request, subscribed to on demand
+     */
+    trackDeletion<T>(request: () => Observable<T>): Observable<T> {
+        return this.deletionTracker.trackRequest(request);
+    }
+
     /**
      * Gets all sandbox allocation units for pool with passed pagination and updates related observables or handles an error
      * @param poolId id of a pool associated with requests for sandbox allocation units for pool
@@ -100,24 +115,11 @@ export abstract class SandboxAllocationUnitsService {
     abstract cleanupUnlocked(poolId: number, force: boolean): Observable<any>;
 
     /**
-     * Cancels the allocations of a pool that have not started yet and removes their units.
+     * Asks to confirm stopping every unfinished allocation of a pool, then stops them.
+     * The confirmation counts the unfinished allocations among the units shown.
      * @param poolId id of the pool
      */
-    abstract cancelQueued(poolId: number): Observable<OffsetPaginatedResource<SandboxAllocationUnit>>;
-
-    /**
-     * Cancels the allocations of a pool whose first stage is running and removes their units from
-     * the database, leaving what the stage created in the cloud behind.
-     * @param poolId id of the pool
-     */
-    abstract forceCancelAllocation(poolId: number): Observable<OffsetPaginatedResource<SandboxAllocationUnit>>;
-
-    /**
-     * Cancels the unfinished cleanups of a pool and removes their units from the database, leaving
-     * what the cleanups have not removed from the cloud yet behind.
-     * @param poolId id of the pool
-     */
-    abstract forceCleanup(poolId: number): Observable<OffsetPaginatedResource<SandboxAllocationUnit>>;
+    abstract cancelAllocations(poolId: number): Observable<UnitCancellation[]>;
 
     /**
      * Initializes default resources with given pageSize

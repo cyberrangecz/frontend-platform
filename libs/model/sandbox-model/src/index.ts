@@ -53,3 +53,8 @@ export { Quota } from './resources/quota';
 // VM IMAGES
 export { VirtualImage } from './vm-images/virtual-image';
 export { OwnerSpecified } from './vm-images/owner-specified';
+
+// CANCELLATION
+export { StopPendingResult } from './pool-request/stop-pending-result';
+export { UnitCancellation } from './pool-request/unit-cancellation';
+export type { UnitCancellationAction } from './pool-request/unit-cancellation';

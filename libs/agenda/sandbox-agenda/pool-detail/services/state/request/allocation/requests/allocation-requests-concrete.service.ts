@@ -14,6 +14,7 @@ import { switchMap, tap } from 'rxjs/operators';
 import { AllocationRequestsService } from './allocation-requests.service';
 import { ErrorHandlerService, NotificationService, PortalConfig } from '@crczp/utils';
 import { OffsetPaginatedResource } from '@crczp/api-common';
+import { summarizeRequestCancellation } from '../../../../../model/allocation-cancellation';
 
 /**
  * Basic implementation of a layer between a component and an API service.
@@ -158,18 +159,21 @@ export class AllocationRequestsConcreteService extends AllocationRequestsService
 
     private callApiToCancel(request: Request): Observable<any> {
         return this.allocationRequestsApi.cancel(request.id).pipe(
-            tap(
-                () =>
-                    this.notificationService.emit(
-                        'success',
-                        `Allocation request ${request.id} cancelled`,
-                    ),
-                (err) =>
+            tap({
+                next: ({ stopPending }) => {
+                    const summary = summarizeRequestCancellation(
+                        'Allocation',
+                        request.id,
+                        stopPending,
+                    );
+                    this.notificationService.emit(summary.type, summary.title);
+                },
+                error: (err) =>
                     this.errorHandler.emitAPIError(
                         err,
                         'Cancelling allocation request ' + request.id,
                     ),
-            ),
+            }),
             switchMap(() =>
                 this.getAll(
                     this.lastPoolId,

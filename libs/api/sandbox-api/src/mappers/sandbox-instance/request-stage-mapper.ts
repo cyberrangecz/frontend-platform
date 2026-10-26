@@ -92,12 +92,16 @@ export class RequestStageMapper {
         stage.requestId = dto.request_id;
         stage.state = this.resolveStageState(dto);
         stage.errorMessage = dto.error_message;
+        stage.stopPending = dto.stop_pending ?? false;
 
         if (dto.start) {
             stage.start = new Date(dto.start);
         }
         if (dto.end) {
             stage.end = new Date(dto.end);
+        }
+        if (dto.stop_requested_at) {
+            stage.stopRequestedAt = new Date(dto.stop_requested_at);
         }
     }
 

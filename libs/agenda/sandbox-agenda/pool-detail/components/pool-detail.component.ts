@@ -14,7 +14,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatCard } from '@angular/material/card';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { OffsetPaginatedResource, PaginationMapper } from '@crczp/api-common';
-import { EditableCommentComponent } from '@crczp/sandbox-agenda/internal';
+import { BusyGuard, EditableCommentComponent } from '@crczp/sandbox-agenda/internal';
 import { SandboxAllocationUnitSort } from '@crczp/sandbox-api';
 import { Pool, RequestStageState, SandboxAllocationUnit } from '@crczp/sandbox-model';
 import {
@@ -25,7 +25,6 @@ import {
     providePaginationStorageService,
     SortDir,
 } from '@crczp/utils';
-import { SentinelAuthService } from '@sentinel/auth';
 import { SentinelControlItem, SentinelControlsComponent } from '@sentinel/components/controls';
 import { SentinelCellDirective, SentinelTableComponent, TableLoadEvent } from '@sentinel/components/table';
 import { Observable, of, Subscription } from 'rxjs';
@@ -103,11 +102,13 @@ export class PoolDetailComponent implements OnInit, AfterViewInit {
     private activeRoute = inject(ActivatedRoute);
     private changeDetectorRef = inject(ChangeDetectorRef);
     private readonly vpnOffered = inject(PortalConfig).sandboxAccess.vpn;
-    private readonly sandboxAdminRole = inject(PortalConfig).roleMapping.sandboxAdmin;
-    private readonly isSandboxAdmin = inject(SentinelAuthService)
-        .getRoles()
-        .some((role) => role.roleType === this.sandboxAdminRole);
     private subscription?: Subscription;
+    private readonly controlsDeleteGuard = new BusyGuard(
+        this.sandboxInstanceService.isDeleting$,
+    );
+    private readonly tableDeleteGuard = new BusyGuard(
+        this.sandboxInstanceService.isDeleting$,
+    );
 
     private readonly initSandboxPagination =
         this.paginationService.createPagination<SandboxAllocationUnitSort>(
@@ -117,6 +118,10 @@ export class PoolDetailComponent implements OnInit, AfterViewInit {
     private pagination = this.initSandboxPagination;
 
     ngOnInit(): void {
+        this.destroyRef.onDestroy(() => {
+            this.controlsDeleteGuard.release();
+            this.tableDeleteGuard.release();
+        });
         this.initTable();
         this.initControls();
     }
@@ -218,6 +223,7 @@ export class PoolDetailComponent implements OnInit, AfterViewInit {
                         this.mapToAbstractSandboxes(data),
                         this.sandboxInstanceService,
                         this.vpnOffered,
+                        this.tableDeleteGuard.renew(),
                     ),
             ),
         );
@@ -238,21 +244,15 @@ export class PoolDetailComponent implements OnInit, AfterViewInit {
     }
 
     private initControls() {
-        const sandboxes$ = this.sandboxInstanceService.allocationUnits$.pipe(
-            map((resource) => {
+        this.sandboxInstanceService.allocationUnits$
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe((resource) => {
                 this.controls = PoolDetailControls.create(
                     this.pool,
-                    resource.elements.map(
-                        (allocationUnit) => new AbstractSandbox(allocationUnit),
-                    ),
+                    this.mapToAbstractSandboxes(resource).elements,
                     this.sandboxInstanceService,
-                    this.isSandboxAdmin,
+                    this.controlsDeleteGuard.renew(),
                 );
-                return resource.elements.map(
-                    (allocationUnit) => new AbstractSandbox(allocationUnit),
-                );
-            }),
-        );
-        sandboxes$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
+            });
     }
 }

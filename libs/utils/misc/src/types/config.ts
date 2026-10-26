@@ -68,9 +68,7 @@ export class RoleMapping extends Z.class({
         .string()
         .nonempty()
         .default('ROLE_SANDBOX-SERVICE_ADMIN')
-        .describe(
-            'Role that may force the removal of stuck sandboxes; the sandbox service requires this one',
-        ),
+        .describe('Role which allows every action within sandbox service'),
 }) {}
 
 export class PortalConfig extends Z.class({

@@ -12,7 +12,8 @@ import {
     SandboxAllocationUnit,
     SandboxDefinition,
     SandboxInstance,
-    SandboxKeyPair
+    SandboxKeyPair,
+    UnitCancellation,
 } from '@crczp/sandbox-model';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -29,13 +30,10 @@ import { SandboxDefinitionMapper } from '../../mappers/sandbox-definition/sandbo
 import { SandboxAllocationUnitMapper } from '../../mappers/sandbox-instance/sandbox-allocation-unit-mapper';
 import { SandboxInstanceMapper } from '../../mappers/sandbox-instance/sandbox-instance-mapper';
 import { RequestDTO } from '../../dto/sandbox-instance/request-dto';
-import {
-    CancelledCountDTO,
-    ForceCancelledCountDTO,
-    ForceCleanedCountDTO,
-    PoolCleanupResultDTO,
-} from '../../dto/sandbox-instance/pool-maintenance-dto';
+import { PoolCleanupResultDTO } from '../../dto/sandbox-instance/pool-maintenance-dto';
 import { RequestMapper } from '../../mappers/sandbox-instance/request-mapper';
+import { PoolCancelAllocationsResultDTO } from '../../dto/sandbox-instance/cancellation-dto';
+import { CancellationMapper } from '../../mappers/sandbox-instance/cancellation-mapper';
 import {
     CRCZPHttpService,
     DjangoResourceDTO,
@@ -43,7 +41,7 @@ import {
     OffsetPaginatedResource,
     PaginationMapper,
     ParamsBuilder,
-    SKIPPED_ERROR_CODES
+    SKIPPED_ERROR_CODES,
 } from '@crczp/api-common';
 import { PortalConfig } from '@crczp/utils';
 import {
@@ -405,8 +403,9 @@ export class PoolApi {
                 {
                     params: ParamsBuilder.djangoPaginationParams(pagination),
                     context: new HttpContext().set(
-                        SKIPPED_ERROR_CODES, ignoredErrors || [],
-                    )
+                        SKIPPED_ERROR_CODES,
+                        ignoredErrors || [],
+                    ),
                 },
             )
             .pipe(
@@ -481,45 +480,19 @@ export class PoolApi {
     }
 
     /**
-     * Sends http request to cancel the allocations of the pool that have not started yet and remove
-     * their units. Allocations already building and built sandboxes are left alone.
+     * Sends http request to stop every unfinished allocation of the pool: queued units are removed,
+     * running builds are stopped and cleaned up.
+     * The server answers 201.
      * @param poolId id of a pool
-     * @returns the number of removed units
+     * @returns what was done to each unit that had an unfinished allocation
      */
-    cancelQueued(poolId: number): Observable<number> {
+    cancelAllocations(poolId: number): Observable<UnitCancellation[]> {
         return this.http
-            .post<CancelledCountDTO>(`${this.apiUrl}/${poolId}/cancel-queued`, {})
-            .pipe(map((response) => response.cancelled_count));
-    }
-
-    /**
-     * Sends http request to cancel the allocations of the pool whose first stage is running and
-     * remove their units from the database. What the stage created in the cloud stays there.
-     * @param poolId id of a pool
-     * @returns the number of removed units
-     */
-    forceCancelAllocation(poolId: number): Observable<number> {
-        return this.http
-            .post<ForceCancelledCountDTO>(
-                `${this.apiUrl}/${poolId}/force-cancel-allocation`,
+            .post<PoolCancelAllocationsResultDTO>(
+                `${this.apiUrl}/${poolId}/cancel-allocations`,
                 {},
             )
-            .pipe(map((response) => response.force_cancelled_count));
-    }
-
-    /**
-     * Sends http request to cancel the unfinished cleanups of the pool and remove their units from
-     * the database. What the cleanups have not removed from the cloud yet stays there.
-     * @param poolId id of a pool
-     * @returns the number of removed units
-     */
-    forceCleanup(poolId: number): Observable<number> {
-        return this.http
-            .post<ForceCleanedCountDTO>(
-                `${this.apiUrl}/${poolId}/force-cleanup`,
-                {},
-            )
-            .pipe(map((response) => response.force_cleaned_count));
+            .pipe(map((dto) => CancellationMapper.unitsFromDTO(dto)));
     }
 
     /**

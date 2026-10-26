@@ -17,6 +17,8 @@ export class PoolService {
     pools$: Observable<OffsetPaginatedResource<Pool>> =
         this.poolOverviewService.resource$;
     poolsIsLoading$: Observable<boolean> = this.poolOverviewService.isLoading$;
+    poolsIsDeleting$: Observable<boolean> =
+        this.poolOverviewService.isDeleting$;
     private lastPagination: OffsetPaginationEvent<PoolSort>;
 
     /**
@@ -53,7 +55,13 @@ export class PoolService {
     delete(pool: Pool): Observable<any> {
         return this.poolOverviewService
             .delete(pool)
-            .pipe(switchMap(() => this.getAll(this.lastPagination)));
+            .pipe(
+                switchMap(() =>
+                    this.poolOverviewService.trackDeletion(() =>
+                        this.getAll(this.lastPagination),
+                    ),
+                ),
+            );
     }
 
     /**

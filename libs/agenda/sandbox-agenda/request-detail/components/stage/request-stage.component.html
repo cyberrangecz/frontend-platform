@@ -79,7 +79,10 @@
             <h2 class="stage-order-number">
                 {{ getOrderNumber(stage()) }} / 3
             </h2>
-            <crczp-request-stage-state [stageState]="stage().state" />
+            <crczp-request-stage-state
+                [stageState]="stage().state"
+                [stopPending]="stage().stopPending"
+                [stopPendingSince]="stage().stopRequestedAt" />
         </div>
     </mat-card-header>
     <mat-card-content>

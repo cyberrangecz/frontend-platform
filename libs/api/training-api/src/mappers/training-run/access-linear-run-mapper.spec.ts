@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { SandboxWaitReasonEnum } from '@crczp/training-model';
 import { AccessLinearRunMapper } from './access-linear-run-mapper';
 import { AccessTrainingRunDTO } from '../../dto/training-run/access-training-run-dto';
-import { AbstractLevelDTO } from '../../dto/level/abstract-level-dto';
-import { BasicLevelInfoDTO } from '../../dto/level/basic-level-info-dto';
+import { AbstractLevelDTO, AbstractLevelDTOLevelTypeEnum } from '../../dto/level/abstract-level-dto';
+import { BasicLevelInfoDTOLevelTypeEnum } from '../../dto/level/basic-level-info-dto';
 import { TraineeSandboxDTO } from '../../dto/training-run/trainee-sandbox-dto';
 
 const INSTANCE_ID = 11;
@@ -65,7 +65,7 @@ describe('AccessLinearRunMapper', () => {
                 id: 21,
                 title: 'Welcome',
                 order: 0,
-                level_type: AbstractLevelDTO.LevelTypeEnum.INFO,
+                level_type: AbstractLevelDTOLevelTypeEnum.INFO,
                 content: 'Hello',
             } as AbstractLevelDTO,
             info_about_levels: [
@@ -73,7 +73,7 @@ describe('AccessLinearRunMapper', () => {
                     id: 21,
                     order: 0,
                     title: 'Welcome',
-                    level_type: BasicLevelInfoDTO.LevelTypeEnum.INFO,
+                    level_type: BasicLevelInfoDTOLevelTypeEnum.INFO,
                 },
             ],
             show_stepper_bar: true,
