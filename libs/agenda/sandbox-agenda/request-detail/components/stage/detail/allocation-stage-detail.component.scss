@@ -1,0 +1,16 @@
+:host {
+    display: block;
+    height: 100%;
+}
+
+.allocation-stage-detail-log {
+    display: block;
+    height: 100%;
+}
+
+.allocation-stage-detail-empty {
+    display: flex;
+    align-items: center;
+    min-height: 4rem;
+    color: var(--neutral-40);
+}

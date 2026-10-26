@@ -31,7 +31,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 })
 export class RequestStageComponent {
     stage = input.required<StageAdapter>();
-    height = input<string>('auto');
+    height = input<string>('100%');
     infoExpanded = signal<boolean>(false);
     protected readonly window = window;
 
