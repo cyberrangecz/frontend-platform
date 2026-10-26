@@ -6,10 +6,10 @@ import {
     Level,
     TrainingLevel,
 } from '@crczp/training-model';
-import {AbstractLevelDTO} from '../../../dto/level/abstract-level-dto';
+import {AbstractLevelDTO, AbstractLevelDTOLevelTypeEnum} from '../../../dto/level/abstract-level-dto';
 import {AccessLevelDTO} from '../../../dto/level/access/access-level-dto';
 import {AssessmentLevelDTO} from '../../../dto/level/assessment/assessment-level-dto';
-import {BasicLevelInfoDTO} from '../../../dto/level/basic-level-info-dto';
+import {BasicLevelInfoDTO, BasicLevelInfoDTOLevelTypeEnum} from '../../../dto/level/basic-level-info-dto';
 import {InfoLevelDTO} from '../../../dto/level/info/info-level-dto';
 import {TrainingLevelDto} from '../../../dto/level/training/training-level-dto';
 import {AccessLevelMapper} from '../../level/access/access-level-mapper';
@@ -25,19 +25,19 @@ export class AnsweredLevelMapper {
     static fromDTO(dto: AbstractLevelDTO): Level {
         let level: Level;
         switch (dto.level_type) {
-            case AbstractLevelDTO.LevelTypeEnum.TRAINING: {
+            case AbstractLevelDTOLevelTypeEnum.TRAINING: {
                 level = TrainingLevelMapper.fromDTO(dto as TrainingLevelDto);
                 break;
             }
-            case AbstractLevelDTO.LevelTypeEnum.INFO: {
+            case AbstractLevelDTOLevelTypeEnum.INFO: {
                 level = InfoLevelMapper.fromDTO(dto as InfoLevelDTO);
                 break;
             }
-            case AbstractLevelDTO.LevelTypeEnum.ASSESSMENT: {
+            case AbstractLevelDTOLevelTypeEnum.ASSESSMENT: {
                 level = AnsweredAssessmentLevelMapper.fromDTO(dto as AssessmentLevelDTO);
                 break;
             }
-            case AbstractLevelDTO.LevelTypeEnum.ACCESS: {
+            case AbstractLevelDTOLevelTypeEnum.ACCESS: {
                 level = AccessLevelMapper.fromDTO(dto as AccessLevelDTO);
                 break;
             }
@@ -59,22 +59,22 @@ export class AnsweredLevelMapper {
     static fromBasicDTO(dto: BasicLevelInfoDTO): Level {
         let level: Level;
         switch (dto.level_type) {
-            case BasicLevelInfoDTO.LevelTypeEnum.TRAINING: {
+            case BasicLevelInfoDTOLevelTypeEnum.TRAINING: {
                 level = new TrainingLevel();
                 level.type = AbstractLevelTypeEnum.Training;
                 break;
             }
-            case BasicLevelInfoDTO.LevelTypeEnum.INFO: {
+            case BasicLevelInfoDTOLevelTypeEnum.INFO: {
                 level = new InfoLevel();
                 level.type = AbstractLevelTypeEnum.Info;
                 break;
             }
-            case BasicLevelInfoDTO.LevelTypeEnum.ASSESSMENT: {
+            case BasicLevelInfoDTOLevelTypeEnum.ASSESSMENT: {
                 level = new AssessmentLevel();
                 level.type = AbstractLevelTypeEnum.Assessment;
                 break;
             }
-            case BasicLevelInfoDTO.LevelTypeEnum.ACCESS: {
+            case BasicLevelInfoDTOLevelTypeEnum.ACCESS: {
                 level = new AccessLevel();
                 level.type = AbstractLevelTypeEnum.Access;
                 break;

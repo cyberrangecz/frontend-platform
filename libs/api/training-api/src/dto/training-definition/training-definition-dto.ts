@@ -8,23 +8,22 @@ export class TrainingDefinitionDTO {
     id?: number;
     outcomes?: string[];
     prerequisites?: string[];
-    state?: TrainingDefinitionDTO.StateEnum;
+    state?: TrainingDefinitionDTOStateEnum;
     title?: string;
     estimated_duration: number;
+    instance_count: number;
+    version: number;
     last_edited?: Date;
     last_edited_by?: string;
     created_at: Date;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-namespace
-export namespace TrainingDefinitionDTO {
-    export type StateEnum = 'RELEASED' | 'ARCHIVED' | 'UNRELEASED';
-    export const StateEnum = {
-        RELEASED: 'RELEASED' as StateEnum,
-        ARCHIVED: 'ARCHIVED' as StateEnum,
-        UNRELEASED: 'UNRELEASED' as StateEnum,
-    };
-}
+export type TrainingDefinitionDTOStateEnum = 'RELEASED' | 'ARCHIVED' | 'UNRELEASED';
+export const TrainingDefinitionDTOStateEnum = {
+    RELEASED: 'RELEASED' as TrainingDefinitionDTOStateEnum,
+    ARCHIVED: 'ARCHIVED' as TrainingDefinitionDTOStateEnum,
+    UNRELEASED: 'UNRELEASED' as TrainingDefinitionDTOStateEnum,
+};
 
 /**
  * Training Definition DTO extended with the levels the definition is composed of.

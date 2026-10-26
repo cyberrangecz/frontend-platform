@@ -1,22 +1,14 @@
+import { LevelUpdateDTO } from '../level/level-update-dto';
+
 /**
- * Training Definition to update.
+ * Training definition fields and its complete ordered level list, written in one request.
+ * The state is not part of it; it changes through its own endpoint.
  */
 export class TrainingDefinitionUpdateDTO {
+    title: string;
     description?: string;
-    id?: number;
-    outcomes?: string[];
-    prerequisites?: string[];
-    state?: TrainingDefinitionUpdateDTO.StateEnum;
-    title?: string;
-}
-
-// eslint-disable-next-line @typescript-eslint/no-namespace
-export namespace TrainingDefinitionUpdateDTO {
-    export type StateEnum = 'PRIVATED' | 'RELEASED' | 'ARCHIVED' | 'UNRELEASED';
-    export const StateEnum = {
-        PRIVATED: 'PRIVATED' as StateEnum,
-        RELEASED: 'RELEASED' as StateEnum,
-        ARCHIVED: 'ARCHIVED' as StateEnum,
-        UNRELEASED: 'UNRELEASED' as StateEnum,
-    };
+    prerequisites: string[];
+    outcomes: string[];
+    version: number;
+    levels: LevelUpdateDTO[];
 }

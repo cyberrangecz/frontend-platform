@@ -1,10 +1,11 @@
 import {
-    Component,
-    computed,
-    inject,
-    input,
-    output,
-    signal,
+  Component,
+  computed,
+  inject,
+  input,
+  output,
+  signal,
+  ChangeDetectionStrategy
 } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
 import { Clipboard } from '@angular/cdk/clipboard';
@@ -27,6 +28,7 @@ const COPIED_FEEDBACK_MS = 1200;
     templateUrl: './vpn-guidance-panel.component.html',
     styleUrl: './vpn-guidance-panel.component.scss',
     imports: [NgTemplateOutlet, MatIcon, LogoSpinnerComponent],
+    changeDetection: ChangeDetectionStrategy.OnPush,
     host: {
         '[class.vpn-panel--awaiting]': 'awaitingCommand()',
         '[class.vpn-panel--compact]': 'compact()',
@@ -57,7 +59,7 @@ export class VpnGuidancePanelComponent {
     retry = output<void>();
 
     /** Emits when the panel is dismissed from within. */
-    close = output<void>();
+    dismissed = output<void>();
 
     protected readonly installDocumentationUrl =
         'https://docs.netbird.io/get-started/install';

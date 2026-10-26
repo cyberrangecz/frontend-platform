@@ -1,5 +1,6 @@
 import { UserRole } from '@crczp/user-and-group-model';
-import { Column, ExpandableSentinelTable, Row, RowExpand } from '@sentinel/components/table';
+import { Column, RowExpand } from '@sentinel/components/table';
+import { LinkedRow, TableModel } from '@crczp/components';
 import { RoleExpandComponent } from '../components/role-expand/role-expand.component';
 import { RoleSort } from '@crczp/user-and-group-api';
 import { OffsetPaginatedResource } from '@crczp/api-common';
@@ -7,12 +8,7 @@ import { OffsetPaginatedResource } from '@crczp/api-common';
 /**
  * @dynamic
  */
-export class RolesDetailTable extends ExpandableSentinelTable<
-    UserRole,
-    RoleExpandComponent,
-    null,
-    RoleSort
-> {
+export class RolesDetailTable extends TableModel<UserRole, RoleSort> {
     constructor(resource: OffsetPaginatedResource<UserRole>) {
         const columns = [
             new Column<RoleSort>('roleType', 'role type', true, 'roleType'),
@@ -32,8 +28,8 @@ export class RolesDetailTable extends ExpandableSentinelTable<
         this.pagination = resource.pagination;
     }
 
-    private static createRow(role: UserRole): Row<UserRole> {
-        const row = new Row(role);
+    private static createRow(role: UserRole): LinkedRow<UserRole> {
+        const row = new LinkedRow(role);
         return row;
     }
 }

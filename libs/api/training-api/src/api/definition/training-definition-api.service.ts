@@ -1,17 +1,12 @@
 import { OffsetPaginationEvent } from '@crczp/utils';
 import {
     AbstractLevelBasic,
-    AccessLevel,
-    AssessmentLevel,
     HintBasic,
-    InfoLevel,
-    Level,
     TrainingDefinition,
     TrainingDefinitionBasic,
     TrainingDefinitionInfo,
     TrainingDefinitionStateEnum,
-    TrainingDefinitionWithLevels,
-    TrainingLevel
+    TrainingDefinitionWithLevels
 } from '@crczp/training-model';
 import { Observable } from 'rxjs';
 import { OffsetPaginatedResource, QueryParam } from '@crczp/api-common';
@@ -55,12 +50,6 @@ export abstract class LinearTrainingDefinitionApi {
     ): Observable<any>;
 
     /**
-     * Sends http request to retrieve level by id
-     * @param levelId id of level which should be retrieved
-     */
-    abstract getLevel(levelId: number): Observable<Level>;
-
-    /**
      * Sends request to download training definition json file.
      * @param id id of training definition which should be downloaded
      */
@@ -87,82 +76,20 @@ export abstract class LinearTrainingDefinitionApi {
     abstract clone(id: number, title: string): Observable<number>;
 
     /**
-     * Sends http request to update training definition
+     * Sends http request to overwrite a training definition and all its levels in one write; resolves with the stored definition
      * @param trainingDefinition training definition to update
      */
     abstract update(
         trainingDefinition: TrainingDefinitionWithLevels,
-    ): Observable<number>;
+    ): Observable<TrainingDefinitionWithLevels>;
 
     /**
-     * Sends http request to create new training definition
+     * Sends http request to create a new training definition together with its levels
      * @param trainingDefinition training definition which should be created
      */
     abstract create(
         trainingDefinition: TrainingDefinitionWithLevels,
     ): Observable<TrainingDefinitionWithLevels>;
-
-    /**
-     * Sends http request to create new assessment level associated with training definition
-     * @param trainingDefinitionId id of training definition which should be associated with the new level
-     */
-    abstract createAssessmentLevel(
-        trainingDefinitionId: number,
-    ): Observable<AssessmentLevel>;
-
-    /**
-     * Sends http request to create new training level associated with training definition
-     * @param trainingDefinitionId id of training definition which should be associated with the new level
-     */
-    abstract createTrainingLevel(
-        trainingDefinitionId: number,
-    ): Observable<TrainingLevel>;
-
-    /**
-     * Sends http request to create new access level associated with training definition
-     * @param trainingDefinitionId id of training definition which should be associated with the new level
-     */
-    abstract createAccessLevel(
-        trainingDefinitionId: number,
-    ): Observable<AccessLevel>;
-
-    /**
-     * Sends http request to create new info level associated with training definition
-     * @param trainingDefId id of training definition which should be associated with the new level
-     */
-    abstract createInfoLevel(trainingDefId: number): Observable<InfoLevel>;
-
-    /**
-     * Sends http request to delete level
-     * @param trainingDefinitionId id of training definition associated with the level which should be deleted
-     * @param levelId id of level which should be deleted
-     */
-    abstract deleteLevel(
-        trainingDefinitionId: number,
-        levelId: number,
-    ): Observable<Level[]>;
-
-    /**
-     * Sends http request to update training definition levels
-     * @param trainingDefinitionId id of training definition associated with the levels
-     * @param levels training levels which should be updated
-     */
-    abstract updateTrainingDefinitionLevels(
-        trainingDefinitionId: number,
-        levels: Level[],
-    ): Observable<any>;
-
-    /**
-     * Sends http request to move level to new position (change order)
-     * @param trainingDefinitionId id of training definition associated with the level
-     * @param levelId id of a level which should be moved
-     * @param toPosition index of new position of a level
-     */
-    abstract moveLevelTo(
-        trainingDefinitionId: number,
-        levelId: number,
-        toPosition: number,
-    ): Observable<Level[]>;
 
     abstract fetchLevelsByIds(ids: number[]): Observable<AbstractLevelBasic[]>;
 

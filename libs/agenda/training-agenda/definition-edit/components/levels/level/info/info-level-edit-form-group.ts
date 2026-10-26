@@ -1,4 +1,4 @@
-import {UntypedFormControl, UntypedFormGroup} from '@angular/forms';
+import {UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {SentinelValidators} from '@sentinel/common';
 import {InfoLevel} from '@crczp/training-model';
 
@@ -12,6 +12,10 @@ export class InfoLevelEditFormGroup {
         this.formGroup = new UntypedFormGroup({
             title: new UntypedFormControl(level.title, SentinelValidators.noWhitespace),
             content: new UntypedFormControl(level.content, SentinelValidators.noWhitespace),
+            estimatedDuration: new UntypedFormControl(level.estimatedDuration, [
+                Validators.pattern('^[0-9]*$'),
+                Validators.min(0),
+            ]),
         });
     }
 
@@ -22,6 +26,7 @@ export class InfoLevelEditFormGroup {
     setToLevel(level: InfoLevel): void {
         level.title = this.formGroup.get('title').value;
         level.content = this.formGroup.get('content').value;
+        level.estimatedDuration = Number(this.formGroup.get('estimatedDuration').value);
         level.valid = this.formGroup.valid;
     }
 }

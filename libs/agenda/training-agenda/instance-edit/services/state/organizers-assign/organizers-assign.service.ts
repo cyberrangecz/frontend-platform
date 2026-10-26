@@ -7,7 +7,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
 import { UserNameFilters } from '@crczp/training-agenda/internal';
 import { ErrorHandlerService, InjectionTokens } from '@crczp/utils';
-import { createPaginatedResource, OffsetPaginatedResource } from '@crczp/api-common';
+import { createPaginatedResource, INFINITE_PAGE_SIZE, OffsetPaginatedResource } from '@crczp/api-common';
 
 /**
  * Organizer implementation of UserAssignService from user assign library.
@@ -62,7 +62,7 @@ export class OrganizersAssignService extends SentinelUserAssignService {
         this.lastAssignedPagination = {
             ...pagination,
             page: 0,
-            sort: 'givenName',
+            sort: 'fullName',
         };
         this.lastAssignedFilter = filter;
         this.hasErrorSubject$.next(false);
@@ -105,8 +105,8 @@ export class OrganizersAssignService extends SentinelUserAssignService {
                 resourceId,
                 {
                     page: 0,
-                    size: Number.MAX_SAFE_INTEGER,
-                    sort: 'givenName',
+                    size: INFINITE_PAGE_SIZE,
+                    sort: 'fullName',
                     sortDir: 'asc',
                 },
                 UserNameFilters.create(filter),

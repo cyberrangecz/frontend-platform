@@ -1,30 +1,52 @@
 import { DatePipe } from '@angular/common';
-import { Column, DeleteAction, Row, RowAction, SentinelTable } from '@sentinel/components/table';
+import { Column, DeleteAction, RowAction } from '@sentinel/components/table';
+import { LinkedRow, TableModel } from '@crczp/components';
 import { CheatingDetection, CheatingDetectionStateEnum } from '@crczp/training-model';
 import { CheatingDetectionRowAdapter } from './cheating-detection-row-adapter';
 import { CheatingDetectionService } from '../services/cheating-detection.service';
 import { defer, of } from 'rxjs';
 import { OffsetPaginatedResource } from '@crczp/api-common';
+import { CheatingDetectionSort } from '@crczp/training-api';
 
 /**
  * Helper class transforming paginated resource to class for common table component
  * @dynamic
  */
-export class CheatingDetectionTable extends SentinelTable<
+export class CheatingDetectionTable extends TableModel<
     CheatingDetectionRowAdapter,
-    string
+    CheatingDetectionSort
 > {
     constructor(
         resource: OffsetPaginatedResource<CheatingDetection>,
         service: CheatingDetectionService,
     ) {
         const columns = [
-            new Column<string>('id', 'id', false),
-            new Column<string>('executeTimeFormatted', 'executed at', false),
-            new Column<string>('executedBy', 'executed by', false),
-            new Column<string>('currentState', 'state', false),
-            new Column<string>('resultsFormatted', 'results', false),
-            new Column<string>('stages', 'stages', false),
+            new Column<CheatingDetectionSort>('id', 'id', true, 'id'),
+            new Column<CheatingDetectionSort>(
+                'executeTimeFormatted',
+                'executed at',
+                true,
+                'executeTime',
+            ),
+            new Column<CheatingDetectionSort>(
+                'executedBy',
+                'executed by',
+                true,
+                'executedBy',
+            ),
+            new Column<CheatingDetectionSort>(
+                'currentState',
+                'state',
+                true,
+                'currentState',
+            ),
+            new Column<CheatingDetectionSort>(
+                'resultsFormatted',
+                'results',
+                true,
+                'results',
+            ),
+            new Column<CheatingDetectionSort>('stages', 'stages', false),
         ];
         const rows = resource.elements.map((element) =>
             CheatingDetectionTable.createRow(element, service),
@@ -37,7 +59,7 @@ export class CheatingDetectionTable extends SentinelTable<
     private static createRow(
         element: CheatingDetection,
         service: CheatingDetectionService,
-    ): Row<CheatingDetectionRowAdapter> {
+    ): LinkedRow<CheatingDetectionRowAdapter> {
         const datePipe = new DatePipe('en-EN');
         const adapter = element as CheatingDetectionRowAdapter;
 
@@ -49,7 +71,7 @@ export class CheatingDetectionTable extends SentinelTable<
             adapter.executeTime,
         )}`;
         adapter.stages = this.requestStageResolver(element);
-        return new Row(adapter, this.createActions(element, service));
+        return new LinkedRow(adapter, this.createActions(element, service));
     }
 
     private static createActions(

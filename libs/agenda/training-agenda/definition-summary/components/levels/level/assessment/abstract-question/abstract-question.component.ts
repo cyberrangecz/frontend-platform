@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges, ChangeDetectionStrategy } from '@angular/core';
 import {
     ExtendedMatchingItems,
     FreeFormQuestion,
@@ -13,6 +13,7 @@ import { ExtendedMatchingQuestionDetailComponent } from './extended-matching-que
     selector: 'crczp-question-detail',
     templateUrl: './abstract-question.component.html',
     styleUrls: ['./abstract-question.component.css'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         FreeFormQuestionDetailComponent,
         MultipleChoiceQuestionDetailComponent,

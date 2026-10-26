@@ -1,7 +1,7 @@
 import { OffsetPaginationEvent } from '@crczp/utils';
 import { BehaviorSubject, map, Observable } from 'rxjs';
 import { SandboxAllocationUnit } from '@crczp/sandbox-model';
-import { AllocationRequestSort, SandboxInstanceSort } from '@crczp/sandbox-api';
+import { SandboxAllocationUnitSort } from '@crczp/sandbox-api';
 import { OffsetPaginatedResource } from '@crczp/api-common';
 
 export abstract class SandboxAllocationUnitsService {
@@ -15,7 +15,7 @@ export abstract class SandboxAllocationUnitsService {
      * @contract Needs to be updated in onManualResourceRefresh method
      * Last pagination used when requesting new data
      */
-    protected lastPagination: OffsetPaginationEvent<SandboxInstanceSort>;
+    protected lastPagination: OffsetPaginationEvent<SandboxAllocationUnitSort>;
     /**
      * True if server returned error response on the latest request, false otherwise
      * Change internally in extending service. Client should subscribe to the observable
@@ -58,8 +58,17 @@ export abstract class SandboxAllocationUnitsService {
      */
     abstract getAll(
         poolId: number,
-        pagination: OffsetPaginationEvent<AllocationRequestSort>,
+        pagination: OffsetPaginationEvent<SandboxAllocationUnitSort>,
     ): Observable<OffsetPaginatedResource<SandboxAllocationUnit>>;
+
+    /**
+     * Fetches the sandbox allocation units once with the pagination last requested and publishes them
+     * to the units stream, adding no poll. Completes without a request when no units were loaded yet.
+     * @param poolId id of the pool to refresh; defaults to the pool last requested
+     */
+    abstract refresh(poolId?: number): Observable<
+        OffsetPaginatedResource<SandboxAllocationUnit>
+    >;
 
     /**
      * Update an existing allocation unit.

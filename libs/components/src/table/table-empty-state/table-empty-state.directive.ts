@@ -42,7 +42,7 @@ export class TableEmptyStateDirective implements DoCheck {
 
     /** True while the table holds no rows and is neither loading them nor reporting a failure. */
     private isEmpty(): boolean {
-        return !this.table.isLoading && !this.table.hasError && this.table.data?.rows.length === 0;
+        return !this.table.isLoading() && !this.table.hasError() && this.table.rows().length === 0;
     }
 
     /** Renders the message row into the table body, keeping its content, span and placement current. */
@@ -57,7 +57,7 @@ export class TableEmptyStateDirective implements DoCheck {
             body.appendChild(rowElement);
         }
         this.row.setInput('message', this.message());
-        this.row.setInput('columnCount', this.table.displayedColumns.length);
+        this.row.setInput('columnCount', this.table.displayedColumns().length);
     }
 
     /** Removes the message row if one is currently rendered. */

@@ -1,5 +1,5 @@
 import {CheatingDetection, CheatingDetectionStateEnum} from '@crczp/training-model';
-import {CheatingDetectionDTO, CheatingDetectionDTOClass} from '../../dto/cheating-detection/cheating-detection-dto';
+import {CheatingDetectionDTO, CheatingDetectionDTOCheatingDetectionStateEnum, CheatingDetectionDTOClass} from '../../dto/cheating-detection/cheating-detection-dto';
 import {ForbiddenCommandMapper} from '../detection-event/forbidden-command-mapper';
 
 export class CheatingDetectionMapper {
@@ -50,30 +50,30 @@ export class CheatingDetectionMapper {
         return result;
     }
 
-    private static typeToDTO(type: CheatingDetectionStateEnum): CheatingDetectionDTO.CheatingDetectionStateEnum {
+    private static typeToDTO(type: CheatingDetectionStateEnum): CheatingDetectionDTOCheatingDetectionStateEnum {
         switch (type) {
             case CheatingDetectionStateEnum.Running:
-                return CheatingDetectionDTO.CheatingDetectionStateEnum.RUNNING;
+                return CheatingDetectionDTOCheatingDetectionStateEnum.RUNNING;
             case CheatingDetectionStateEnum.Queued:
-                return CheatingDetectionDTO.CheatingDetectionStateEnum.QUEUED;
+                return CheatingDetectionDTOCheatingDetectionStateEnum.QUEUED;
             case CheatingDetectionStateEnum.Disabled:
-                return CheatingDetectionDTO.CheatingDetectionStateEnum.DISABLED;
+                return CheatingDetectionDTOCheatingDetectionStateEnum.DISABLED;
             case CheatingDetectionStateEnum.Finished:
-                return CheatingDetectionDTO.CheatingDetectionStateEnum.FINISHED;
+                return CheatingDetectionDTOCheatingDetectionStateEnum.FINISHED;
             default:
                 console.error('Could not map CheatingDetectionStateEnum to any known DTO');
         }
     }
 
-    private static typeFromDTO(type: CheatingDetectionDTO.CheatingDetectionStateEnum): CheatingDetectionStateEnum {
+    private static typeFromDTO(type: CheatingDetectionDTOCheatingDetectionStateEnum): CheatingDetectionStateEnum {
         switch (type) {
-            case CheatingDetectionDTO.CheatingDetectionStateEnum.RUNNING:
+            case CheatingDetectionDTOCheatingDetectionStateEnum.RUNNING:
                 return CheatingDetectionStateEnum.Running;
-            case CheatingDetectionDTO.CheatingDetectionStateEnum.QUEUED:
+            case CheatingDetectionDTOCheatingDetectionStateEnum.QUEUED:
                 return CheatingDetectionStateEnum.Queued;
-            case CheatingDetectionDTO.CheatingDetectionStateEnum.DISABLED:
+            case CheatingDetectionDTOCheatingDetectionStateEnum.DISABLED:
                 return CheatingDetectionStateEnum.Disabled;
-            case CheatingDetectionDTO.CheatingDetectionStateEnum.FINISHED:
+            case CheatingDetectionDTOCheatingDetectionStateEnum.FINISHED:
                 return CheatingDetectionStateEnum.Finished;
             default:
                 console.error('Could not map CheatingDetectionStateEnum to any known type');

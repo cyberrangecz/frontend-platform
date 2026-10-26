@@ -9,7 +9,7 @@ import {
 } from '@sentinel/components/dialogs';
 import { OffsetPaginationEvent } from '@crczp/utils';
 import {
-    AllocationRequestSort,
+    SandboxAllocationUnitSort,
     PoolApi,
     SandboxAllocationUnitsApi,
     SandboxInstanceApi,
@@ -30,13 +30,15 @@ import {
 } from '../../../components/allocate-variable-sandboxes/allocate-variable-sandboxes-dialog.component';
 import { OffsetPaginatedResource } from '@crczp/api-common';
 
+type AllocationUnitsPage = OffsetPaginatedResource<SandboxAllocationUnit>;
+
+/** Status the sandbox service answers with while a sandbox's VPN access is not yet provisioned. */
+const VPN_NOT_PROVISIONED_STATUS = 425;
+
 /**
  * Basic implementation of a layer between a component and an API service.
  * Can get sandbox instances and perform various operations to modify them.
  */
-/** Status the sandbox service answers with while a sandbox's VPN access is not yet provisioned. */
-const VPN_NOT_PROVISIONED_STATUS = 425;
-
 @Injectable()
 export class SandboxInstanceService extends OffsetPaginatedElementsPollingService<
     SandboxInstance,
@@ -97,9 +99,8 @@ export class SandboxInstanceService extends OffsetPaginatedElementsPollingServic
      */
     getAllUnits(
         poolId: number,
-        pagination: OffsetPaginationEvent<AllocationRequestSort>,
+        pagination: OffsetPaginationEvent<SandboxAllocationUnitSort>,
     ): Observable<OffsetPaginatedResource<SandboxAllocationUnit>> {
-        this.lastPoolId = poolId;
         return this.allocationUnitsService.getAll(poolId, pagination);
     }
 
@@ -107,7 +108,7 @@ export class SandboxInstanceService extends OffsetPaginatedElementsPollingServic
      * Deletes a sandbox instance, informs about the result and updates list of requests or handles an error
      * @param sandboxInstance a sandbox instance to be deleted
      */
-    delete(sandboxInstance: SandboxInstance): Observable<any> {
+    delete(sandboxInstance: SandboxInstance): Observable<AllocationUnitsPage> {
         return this.displayConfirmationDialog(
             sandboxInstance.id,
             'Delete',
@@ -124,30 +125,12 @@ export class SandboxInstanceService extends OffsetPaginatedElementsPollingServic
      * Starts an allocation of a sandbox instance, informs about the result and updates list of requests or handles an error
      * @param poolId id of a pool in which the allocation will take place
      */
-    allocate(
-        poolId: number,
-    ): Observable<OffsetPaginatedResource<SandboxAllocationUnit>> {
-        return this.poolApi.allocateSandboxes(poolId).pipe(
-            tap(
-                () =>
-                    this.notificationService.emit(
-                        'success',
-                        `Allocation of pool ${poolId} started`,
-                    ),
-                (err) =>
-                    this.errorHandler.emitAPIError(
-                        err,
-                        `Allocating pool ${poolId}`,
-                    ),
-            ),
-            switchMap(() => {
-                this.lastPoolId = this.lastPoolId ?? poolId;
-                return this.getAllUnits(
-                    this.lastPoolId,
-                    this
-                        .lastPagination as OffsetPaginationEvent<AllocationRequestSort>,
-                );
-            }),
+    allocate(poolId: number): Observable<AllocationUnitsPage> {
+        return this.notifyThenRefresh(
+            this.poolApi.allocateSandboxes(poolId),
+            `Allocation of pool ${poolId} started`,
+            `Allocating pool ${poolId}`,
+            poolId,
         );
     }
 
@@ -160,37 +143,22 @@ export class SandboxInstanceService extends OffsetPaginatedElementsPollingServic
     allocateSpecified(
         poolId: number,
         total: number,
-    ): Observable<OffsetPaginatedResource<SandboxAllocationUnit>> {
+    ): Observable<AllocationUnitsPage> {
         if (total == 1) {
             return this.allocate(poolId);
         }
         return this.getNumberOfSandboxes(total).pipe(
             switchMap((response) =>
                 !!response && !!response.result
-                    ? this.poolApi
-                          .allocateSandboxes(poolId, response.result)
-                          .pipe(
-                              tap(
-                                  () =>
-                                      this.notificationService.emit(
-                                          'success',
-                                          `Allocation of specified sandboxes of pool ${poolId} started`,
-                                      ),
-                                  (err) =>
-                                      this.errorHandler.emitAPIError(
-                                          err,
-                                          `Allocating pool ${poolId}`,
-                                      ),
-                              ),
-                              switchMap(() => {
-                                  this.lastPoolId = this.lastPoolId ?? poolId;
-                                  return this.getAllUnits(
-                                      this.lastPoolId,
-                                      this
-                                          .lastPagination as OffsetPaginationEvent<AllocationRequestSort>,
-                                  );
-                              }),
-                          )
+                    ? this.notifyThenRefresh(
+                          this.poolApi.allocateSandboxes(
+                              poolId,
+                              response.result,
+                          ),
+                          `Allocation of specified sandboxes of pool ${poolId} started`,
+                          `Allocating pool ${poolId}`,
+                          poolId,
+                      )
                     : EMPTY,
             ),
         );
@@ -200,27 +168,11 @@ export class SandboxInstanceService extends OffsetPaginatedElementsPollingServic
      * Retries an allocation of a sandbox instance, informs about the result and updates list of requests or handles an error
      * @param unitId id of a unit for which retry will be performed
      */
-    retryAllocate(unitId: number): Observable<any> {
-        return this.sandboxAllocationUnitsApi.createRetryRequest(unitId).pipe(
-            tap(
-                () =>
-                    this.notificationService.emit(
-                        'success',
-                        `Allocation of sandbox ${unitId} started`,
-                    ),
-                (err) =>
-                    this.errorHandler.emitAPIError(
-                        err,
-                        `Allocating sandbox ${unitId}`,
-                    ),
-            ),
-            switchMap(() =>
-                this.getAllUnits(
-                    this.lastPoolId,
-                    this
-                        .lastPagination as OffsetPaginationEvent<AllocationRequestSort>,
-                ),
-            ),
+    retryAllocate(unitId: number): Observable<AllocationUnitsPage> {
+        return this.notifyThenRefresh(
+            this.sandboxAllocationUnitsApi.createRetryRequest(unitId),
+            `Allocation of sandbox ${unitId} started`,
+            `Allocating sandbox ${unitId}`,
         );
     }
 
@@ -229,7 +181,7 @@ export class SandboxInstanceService extends OffsetPaginatedElementsPollingServic
      * Informs about the result and updates list of requests or handles an error
      * @param allocationUnitId a sandbox instance to be unlocked represented by its id
      */
-    unlock(allocationUnitId: number): Observable<any> {
+    unlock(allocationUnitId: number): Observable<AllocationUnitsPage> {
         return this.displayConfirmationDialog(allocationUnitId, 'Unlock').pipe(
             switchMap((result) =>
                 result === SentinelDialogResultEnum.CONFIRMED
@@ -244,38 +196,22 @@ export class SandboxInstanceService extends OffsetPaginatedElementsPollingServic
      * Informs about the result and updates list of requests or handles an error
      * @param allocationUnitId a sandbox instance to be unlocked represented by its id
      */
-    lock(
-        allocationUnitId: number,
-    ): Observable<OffsetPaginatedResource<SandboxAllocationUnit>> {
-        return this.sandboxApi.lockSandbox(allocationUnitId).pipe(
-            tap(
-                () =>
-                    this.notificationService.emit(
-                        'success',
-                        `Sandbox ${allocationUnitId} was locked`,
-                    ),
-                (err) =>
-                    this.errorHandler.emitAPIError(
-                        err,
-                        `Locking sandbox ${allocationUnitId}`,
-                    ),
-            ),
-            switchMap(() =>
-                this.getAllUnits(
-                    this.lastPoolId,
-                    this
-                        .lastPagination as OffsetPaginationEvent<AllocationRequestSort>,
-                ),
-            ),
+    lock(allocationUnitId: number): Observable<AllocationUnitsPage> {
+        return this.notifyThenRefresh(
+            this.sandboxApi.lockSandbox(allocationUnitId),
+            `Sandbox ${allocationUnitId} was locked`,
+            `Locking sandbox ${allocationUnitId}`,
         );
     }
 
     /**
-     * Gets zip file that contains configurations, key and script for remote ssh access for user
+     * Gets zip file that contains configurations, key and script for remote ssh access for user.
+     * The request starts on the call and runs to its end whether or not the returned observable
+     * stays subscribed.
      * @param sandboxUuid id of the sandbox for which remote ssh access is demanded
      */
-    getUserSshAccess(sandboxUuid: string): Observable<boolean> {
-        return this.sandboxApi.getUserSshAccess(sandboxUuid).pipe(
+    downloadUserSshAccess(sandboxUuid: string): Observable<boolean> {
+        const download$ = this.sandboxApi.getUserSshAccess(sandboxUuid).pipe(
             catchError((err) => {
                 this.errorHandler.emitAPIError(
                     err,
@@ -283,14 +219,18 @@ export class SandboxInstanceService extends OffsetPaginatedElementsPollingServic
                 );
                 return EMPTY;
             }),
+            shareReplay(1),
         );
+        download$.subscribe();
+        return download$;
     }
 
     /**
      * Places the command connecting to a sandbox over VPN on the clipboard, reporting the outcome
      * as a notification. A sandbox reachable over no VPN is reported as such and nothing is
-     * placed on the clipboard. The clipboard write starts on the call itself, so the call must
-     * happen within the user gesture requesting the copy.
+     * placed on the clipboard. The lookup, the clipboard write and the reporting start on the call
+     * itself and run to their end whether or not the returned observable stays subscribed, so the
+     * call must happen within the user gesture requesting the copy.
      *
      * @param sandboxUuid uuid of the sandbox to be reached over VPN
      * @returns Observable emitting true once the command reached the clipboard
@@ -304,7 +244,7 @@ export class SandboxInstanceService extends OffsetPaginatedElementsPollingServic
             command$.pipe(filter((command) => command !== null)),
         );
 
-        return command$.pipe(
+        const outcome$ = command$.pipe(
             switchMap((command) =>
                 command === null
                     ? this.reportVpnUnavailable(sandboxUuid)
@@ -327,7 +267,10 @@ export class SandboxInstanceService extends OffsetPaginatedElementsPollingServic
                 }
                 return EMPTY;
             }),
+            shareReplay(1),
         );
+        outcome$.subscribe();
+        return outcome$;
     }
 
     /**
@@ -396,18 +339,11 @@ export class SandboxInstanceService extends OffsetPaginatedElementsPollingServic
      * @param poolId id of pool for which the cleanup request of units is created
      * @param force when set to true force delete is used
      */
-    cleanupMultiple(poolId: number, force: boolean): Observable<any> {
-        return this.allocationUnitsService
-            .cleanupMultiple(poolId, force)
-            .pipe(
-                switchMap(() =>
-                    this.getAllUnits(
-                        this.lastPoolId,
-                        this
-                            .lastPagination as OffsetPaginationEvent<AllocationRequestSort>,
-                    ),
-                ),
-            );
+    cleanupMultiple(
+        poolId: number,
+        force: boolean,
+    ): Observable<AllocationUnitsPage> {
+        return this.allocationUnitsService.cleanupMultiple(poolId, force);
     }
 
     /**
@@ -415,18 +351,11 @@ export class SandboxInstanceService extends OffsetPaginatedElementsPollingServic
      * @param poolId id of pool for which the cleanup request of units is created
      * @param force when set to true force delete is used
      */
-    cleanupFailed(poolId: number, force: boolean): Observable<any> {
-        return this.allocationUnitsService
-            .cleanupFailed(poolId, force)
-            .pipe(
-                switchMap(() =>
-                    this.getAllUnits(
-                        this.lastPoolId,
-                        this
-                            .lastPagination as OffsetPaginationEvent<AllocationRequestSort>,
-                    ),
-                ),
-            );
+    cleanupFailed(
+        poolId: number,
+        force: boolean,
+    ): Observable<AllocationUnitsPage> {
+        return this.allocationUnitsService.cleanupFailed(poolId, force);
     }
 
     /**
@@ -434,45 +363,22 @@ export class SandboxInstanceService extends OffsetPaginatedElementsPollingServic
      * @param poolId id of pool for which the cleanup request of units is created
      * @param force when set to true force delete is used
      */
-    cleanupUnlocked(poolId: number, force: boolean): Observable<any> {
-        return this.allocationUnitsService
-            .cleanupUnlocked(poolId, force)
-            .pipe(
-                switchMap(() =>
-                    this.getAllUnits(
-                        this.lastPoolId,
-                        this
-                            .lastPagination as OffsetPaginationEvent<AllocationRequestSort>,
-                    ),
-                ),
-            );
+    cleanupUnlocked(
+        poolId: number,
+        force: boolean,
+    ): Observable<AllocationUnitsPage> {
+        return this.allocationUnitsService.cleanupUnlocked(poolId, force);
     }
 
     /**
      * Starts cleanup for sandbox specified in @unitIds.
      * @param unitId allocation unit id which should be deleted
      */
-    createCleanup(unitId: number): Observable<any> {
-        return this.sandboxAllocationUnitsApi.createCleanupRequest(unitId).pipe(
-            tap(
-                () =>
-                    this.notificationService.emit(
-                        'success',
-                        `Sandbox ${unitId} was deleted`,
-                    ),
-                (err) =>
-                    this.errorHandler.emitAPIError(
-                        err,
-                        `Deleting sandbox ${unitId}`,
-                    ),
-            ),
-            switchMap(() =>
-                this.getAllUnits(
-                    this.lastPoolId,
-                    this
-                        .lastPagination as OffsetPaginationEvent<AllocationRequestSort>,
-                ),
-            ),
+    createCleanup(unitId: number): Observable<AllocationUnitsPage> {
+        return this.notifyThenRefresh(
+            this.sandboxAllocationUnitsApi.createCleanupRequest(unitId),
+            `Sandbox ${unitId} was deleted`,
+            `Deleting sandbox ${unitId}`,
         );
     }
 
@@ -581,56 +487,48 @@ export class SandboxInstanceService extends OffsetPaginatedElementsPollingServic
 
     private callApiToUnlock(
         allocationUnitId: number,
-    ): Observable<OffsetPaginatedResource<SandboxAllocationUnit>> {
-        return this.sandboxApi.unlockSandbox(allocationUnitId).pipe(
-            tap(
-                () =>
-                    this.notificationService.emit(
-                        'success',
-                        `Sandbox ${allocationUnitId} was unlocked`,
-                    ),
-                (err) =>
-                    this.errorHandler.emitAPIError(
-                        err,
-                        `Unlocking sandbox ${allocationUnitId}`,
-                    ),
-            ),
-            switchMap(() =>
-                this.getAllUnits(
-                    this.lastPoolId,
-                    this
-                        .lastPagination as OffsetPaginationEvent<AllocationRequestSort>,
-                ),
-            ),
+    ): Observable<AllocationUnitsPage> {
+        return this.notifyThenRefresh(
+            this.sandboxApi.unlockSandbox(allocationUnitId),
+            `Sandbox ${allocationUnitId} was unlocked`,
+            `Unlocking sandbox ${allocationUnitId}`,
         );
     }
 
     private callApiToDelete(
         sandboxInstance: SandboxInstance,
-    ): Observable<OffsetPaginatedResource<SandboxAllocationUnit>> {
-        return this.sandboxAllocationUnitsApi
-            .createCleanupRequest(sandboxInstance.allocationUnitId)
-            .pipe(
-                tap(
-                    () =>
-                        this.notificationService.emit(
-                            'success',
-                            `Sandbox ${sandboxInstance.id} was deleted`,
-                        ),
-                    (err) =>
-                        this.errorHandler.emitAPIError(
-                            err,
-                            `Deleting sandbox ${sandboxInstance.id}`,
-                        ),
-                ),
-                switchMap(() =>
-                    this.getAllUnits(
-                        this.lastPoolId,
-                        this
-                            .lastPagination as OffsetPaginationEvent<AllocationRequestSort>,
-                    ),
-                ),
-            );
+    ): Observable<AllocationUnitsPage> {
+        return this.notifyThenRefresh(
+            this.sandboxAllocationUnitsApi.createCleanupRequest(
+                sandboxInstance.allocationUnitId,
+            ),
+            `Sandbox ${sandboxInstance.id} was deleted`,
+            `Deleting sandbox ${sandboxInstance.id}`,
+        );
+    }
+
+    /**
+     * Reports the outcome of a request and, once it succeeds, refreshes the allocation units once.
+     * @param request$ request whose outcome is reported
+     * @param successMessage notification text shown when the request succeeds
+     * @param failureContext description of the request given to the error notification
+     * @param poolId pool whose units are refreshed; defaults to the pool last loaded
+     */
+    private notifyThenRefresh(
+        request$: Observable<unknown>,
+        successMessage: string,
+        failureContext: string,
+        poolId?: number,
+    ): Observable<AllocationUnitsPage> {
+        return request$.pipe(
+            tap({
+                next: () =>
+                    this.notificationService.emit('success', successMessage),
+                error: (err) =>
+                    this.errorHandler.emitAPIError(err, failureContext),
+            }),
+            switchMap(() => this.allocationUnitsService.refresh(poolId)),
+        );
     }
 
     private onGetAllError(err: HttpErrorResponse) {

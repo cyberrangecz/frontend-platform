@@ -1,5 +1,5 @@
 import {AbstractLevelTypeEnum, AssessmentLevel, AssessmentTypeEnum} from '@crczp/training-model';
-import {AssessmentLevelDTO} from '../../../dto/level/assessment/assessment-level-dto';
+import {AssessmentLevelDTO, AssessmentLevelDTOAssessmentTypeEnum} from '../../../dto/level/assessment/assessment-level-dto';
 import {
     AssessmentLevelUpdateDTO,
     AssessmentLevelUpdateDTOClass,
@@ -32,23 +32,23 @@ export class AssessmentLevelMapper {
         return result;
     }
 
-    private static typeFromDTO(type: AssessmentLevelDTO.AssessmentTypeEnum): AssessmentTypeEnum {
+    private static typeFromDTO(type: AssessmentLevelDTOAssessmentTypeEnum): AssessmentTypeEnum {
         switch (type) {
-            case AssessmentLevelDTO.AssessmentTypeEnum.TEST:
+            case AssessmentLevelDTOAssessmentTypeEnum.TEST:
                 return AssessmentTypeEnum.Test;
-            case AssessmentLevelDTO.AssessmentTypeEnum.QUESTIONNAIRE:
+            case AssessmentLevelDTOAssessmentTypeEnum.QUESTIONNAIRE:
                 return AssessmentTypeEnum.Questionnaire;
             default:
                 console.error('Could not map AssessmentType to any known type');
         }
     }
 
-    private static typeToDTO(type: AssessmentTypeEnum): AssessmentLevelDTO.AssessmentTypeEnum {
+    private static typeToDTO(type: AssessmentTypeEnum): AssessmentLevelDTOAssessmentTypeEnum {
         switch (type) {
             case AssessmentTypeEnum.Test:
-                return AssessmentLevelDTO.AssessmentTypeEnum.TEST;
+                return AssessmentLevelDTOAssessmentTypeEnum.TEST;
             case AssessmentTypeEnum.Questionnaire:
-                return AssessmentLevelDTO.AssessmentTypeEnum.QUESTIONNAIRE;
+                return AssessmentLevelDTOAssessmentTypeEnum.QUESTIONNAIRE;
             default:
                 console.error('Could not map AssessmentType to any known DTO');
         }

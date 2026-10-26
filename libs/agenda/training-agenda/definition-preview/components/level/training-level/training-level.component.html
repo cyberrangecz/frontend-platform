@@ -2,7 +2,7 @@
     <div class="content">
         <div class="left-panel">
             <div class="level-content">
-                <sentinel-markdown-view [markdown]="level?.content" />
+                <sentinel-markdown-view [markdown]="$safeNavigationMigration(level?.content)" />
                 <div class="hint-content">
                     <div>
                         <h2>Level hints:</h2>

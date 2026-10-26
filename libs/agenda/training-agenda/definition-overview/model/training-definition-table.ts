@@ -4,41 +4,46 @@ import {
     DeleteAction,
     DownloadAction,
     EditAction,
-    Row,
-    RowAction,
-    SentinelTable
+    RowAction
 } from '@sentinel/components/table';
+import { LinkedRow, TableModel } from '@crczp/components';
 import { defer, of } from 'rxjs';
 import { TrainingDefinitionService } from '../services/state/training-definition.service';
 import { TrainingDefinitionRowAdapter } from './training-definition-row-adapter';
 import { Routing } from '@crczp/routing-commons';
 import { Utils } from '@crczp/utils';
+import { TrainingDefinitionSort } from '@crczp/training-api';
 import { OffsetPaginatedResource } from '@crczp/api-common';
 
 /**
  * Helper class transforming paginated resource to class for common table component
  * @dynamic
  */
-export class TrainingDefinitionTable extends SentinelTable<
+export class TrainingDefinitionTable extends TableModel<
     TrainingDefinition,
-    string
+    TrainingDefinitionSort
 > {
     constructor(
         resource: OffsetPaginatedResource<TrainingDefinition>,
         service: TrainingDefinitionService,
     ) {
         const columns = [
-            new Column<string>('title', 'title', true),
-            new Column<string>(
+            new Column<TrainingDefinitionSort>('title', 'title', true, 'title'),
+            new Column<TrainingDefinitionSort>(
                 'duration',
                 'estimated duration',
                 true,
                 'estimatedDuration',
             ),
-            new Column<string>('createdAt', 'created at', true, 'createdAt'),
-            new Column<string>('lastEditTime', 'last edit', true, 'lastEdited'),
-            new Column<string>('lastEditBy', 'last edit by', false),
-            new Column<string>('state', 'state', true),
+            new Column<TrainingDefinitionSort>('createdAt', 'created at', true, 'createdAt'),
+            new Column<TrainingDefinitionSort>('lastEditTime', 'last edit', true, 'lastEdited'),
+            new Column<TrainingDefinitionSort>(
+                'lastEditBy',
+                'last edit by',
+                true,
+                'lastEditedBy',
+            ),
+            new Column<TrainingDefinitionSort>('state', 'state', true, 'state'),
         ];
 
         const rows = resource.elements.map((definition) =>
@@ -54,12 +59,12 @@ export class TrainingDefinitionTable extends SentinelTable<
     private static createRow(
         td: TrainingDefinition,
         service: TrainingDefinitionService,
-    ): Row<TrainingDefinition> {
+    ): LinkedRow<TrainingDefinition> {
         const adapter = td as TrainingDefinitionRowAdapter;
         adapter.duration = Utils.Date.formatDurationFull(
             td.estimatedDuration * 60,
         );
-        const row = new Row(
+        const row = new LinkedRow(
             adapter,
             TrainingDefinitionTable.createActions(adapter, service),
         );

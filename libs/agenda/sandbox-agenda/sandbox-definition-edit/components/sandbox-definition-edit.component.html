@@ -11,7 +11,11 @@
                        matInput
                        placeholder="https://git-service.com/path/to/sandbox-definitions/sandbox_name.git" required>
                 <crczp-clear-input-suffix [control]="gitUrl" matSuffix />
-                <mat-error>Git URL cannot be empty</mat-error>
+                @if (gitUrl.hasError('whitespace')) {
+                    <mat-error>Git URL cannot be empty</mat-error>
+                } @else if (gitUrl.hasError('gitUrlFormat')) {
+                    <mat-error>Git URL must start with https:// and end with .git</mat-error>
+                }
             </mat-form-field>
 
             <!-- REVISION field-->

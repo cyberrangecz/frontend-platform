@@ -1,4 +1,4 @@
-import {AbstractLevelDTO} from '../abstract-level-dto';
+import {AbstractLevelDTO, AbstractLevelDTOLevelTypeEnum} from '../abstract-level-dto';
 import {HintDTO} from './hint-dto';
 import {MitreTechniqueDTO} from '../../mitre-techniques/mitre-technique-dto';
 
@@ -8,7 +8,7 @@ export interface TrainingLevelDto extends AbstractLevelDTO {
     answer_variable_name: string;
     hints: HintDTO[];
     incorrect_answer_limit: number;
-    level_type: AbstractLevelDTO.LevelTypeEnum;
+    level_type: AbstractLevelDTOLevelTypeEnum;
     solution: string;
     solution_penalized: boolean;
     variant_answers: boolean;

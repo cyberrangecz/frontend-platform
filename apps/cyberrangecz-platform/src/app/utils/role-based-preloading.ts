@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { PreloadingStrategy, Route } from '@angular/router';
 import { Observable, of } from 'rxjs';
-import { RoleService } from '../services/role.service';
+import { RoleService } from '@crczp/utils';
 
 @Injectable({
     providedIn: 'root',

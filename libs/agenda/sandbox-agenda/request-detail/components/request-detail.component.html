@@ -21,7 +21,7 @@
                     [class.stage-indicator--selected]="i === fragmentIndex()"
                     class="stage-indicator" role="button"
                     tabindex="0">
-                    <img [src]="stage?.logoSrc" alt="stage logo">
+                    <img [src]="$safeNavigationMigration(stage?.logoSrc)" alt="stage logo">
                 </div>
             }
         </div>
@@ -30,6 +30,7 @@
             <div class="carousel">
                 @for (stageIndex of getCarouselOrder(); track stageIndex; let i = $index) {
                     <div (click)="onCarouselItemClick(i);"
+                         tabindex="0"
                          (keydown.enter)="onCarouselItemClick(i)"
                          (keydown.space)="onCarouselItemClick(i)"
                          [attr.data-position]="i"

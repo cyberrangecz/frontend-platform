@@ -35,9 +35,9 @@
             numeric
           </mat-error>
         }
-        @if (accessTokenPin.hasError('minLength') ||
-          accessTokenPin.hasError('maxLength')) {
-          <mat-error>PIN must contains 4 digits
+        @if (accessTokenPin.hasError('minlength') ||
+          accessTokenPin.hasError('maxlength')) {
+          <mat-error>PIN must contain 4 digits
           </mat-error>
         }
         @if (accessTokenPin.hasError('required')) {

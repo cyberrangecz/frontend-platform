@@ -4,6 +4,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { NotificationService } from '@crczp/utils';
+import { NgxSkeletonLoaderComponent, NgxSkeletonLoaderConfigTheme } from 'ngx-skeleton-loader';
 import { ChartSourceStatus } from '../data-source/chart-source.types';
 import { CsvExportable } from '../csv/csv-exportable';
 import { exportCsv } from '../csv/csv-export.util';
@@ -19,7 +20,14 @@ type PanelRenderMode = 'skeleton' | 'empty' | 'error' | 'content';
  */
 @Component({
     selector: 'crczp-chart-panel-shell',
-    imports: [MatCardModule, MatButtonModule, MatIconModule, MatTooltipModule, PanelPlaceholderComponent],
+    imports: [
+        MatCardModule,
+        MatButtonModule,
+        MatIconModule,
+        MatTooltipModule,
+        NgxSkeletonLoaderComponent,
+        PanelPlaceholderComponent,
+    ],
     templateUrl: './chart-panel-shell.component.html',
     styleUrl: './chart-panel-shell.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -30,6 +38,13 @@ type PanelRenderMode = 'skeleton' | 'empty' | 'error' | 'content';
 })
 export class ChartPanelShellComponent {
     private readonly notificationService = inject(NotificationService);
+
+    protected readonly skeletonTheme: NgxSkeletonLoaderConfigTheme = {
+        height: '100%',
+        margin: '0',
+        'border-radius': '8px',
+        'background-color': 'var(--neutral-95)',
+    };
 
     /** Panel title shown in the header bar; when omitted the header bar is not rendered. */
     readonly heading = input<string>();

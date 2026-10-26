@@ -13,6 +13,10 @@
         "@crczp/utils": "*",
         "@angular/forms": "*",
         "@crczp/routing-commons": "*",
+        "@crczp/api-common": "*",
+        "@crczp/components": "*",
+        "@angular/cdk": "*",
+        "@danielmoncada/angular-datetime-picker": "*",
         "vite": "*",
         "@analogjs/vite-plugin-angular": "*",
         "@nx/vite": "*"

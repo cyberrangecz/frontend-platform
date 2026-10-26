@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { AccessedTrainingRun } from '@crczp/training-model';
-import { SentinelTable, SentinelTableComponent, TableLoadEvent } from '@sentinel/components/table';
+import { SentinelTableComponent, TableLoadEvent } from '@sentinel/components/table';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { finalize, map } from 'rxjs/operators';
 import { AccessedTrainingRunTable } from '../model/accessed-training-run-table';
 import { AccessedTrainingRunService } from '../services/state/accessed-training-run.service';
 import { SentinelControlItem, SentinelControlsComponent } from '@sentinel/components/controls';
@@ -12,7 +12,8 @@ import { AsyncPipe } from '@angular/common';
 import { AccessTrainingRunComponent } from './access/access-training-run.component';
 import { createPaginationEvent, PaginationMapper } from '@crczp/api-common';
 import { AccessedTrainingRunSort } from '@crczp/training-api';
-import { TableEmptyStateDirective } from '@crczp/components';
+import { SortDir } from '@crczp/utils';
+import { TableEmptyStateDirective, TableModel } from '@crczp/components';
 
 /**
  * Main smart component of the trainee overview.
@@ -32,19 +33,22 @@ import { TableEmptyStateDirective } from '@crczp/components';
     providers: [AccessedTrainingRunService],
 })
 export class TrainingRunOverviewComponent implements OnInit {
-    trainingRuns$: Observable<SentinelTable<AccessedTrainingRun, string>>;
+    readonly INITIAL_SORT_NAME: AccessedTrainingRunSort = 'startTime';
+    readonly INITIAL_SORT_DIR: SortDir = 'desc';
+    trainingRuns$: Observable<TableModel<AccessedTrainingRun, AccessedTrainingRunSort>>;
     hasError$: Observable<boolean>;
     tableIsLoading$: Observable<boolean>;
-    isLoading = false;
+    isLoading = signal(false);
     controls: SentinelControlItem[];
     destroyRef = inject(DestroyRef);
     private trainingRunOverviewService = inject(AccessedTrainingRunService);
 
     private readonly initialRunPagination =
         createPaginationEvent<AccessedTrainingRunSort>({
-            sort: 'endTime',
-            sortDir: 'desc',
+            sort: this.INITIAL_SORT_NAME,
+            sortDir: this.INITIAL_SORT_DIR,
         });
+    private pagination = this.initialRunPagination;
 
     constructor() {
         const trainingRunOverviewService = this.trainingRunOverviewService;
@@ -63,11 +67,14 @@ export class TrainingRunOverviewComponent implements OnInit {
      * @param accessToken token to access the training run
      */
     access(accessToken: string): void {
-        this.isLoading = true;
+        this.isLoading.set(true);
         this.trainingRunOverviewService
             .toAccessRun(accessToken)
-            .pipe(takeUntilDestroyed(this.destroyRef))
-            .subscribe(() => (this.isLoading = false));
+            .pipe(
+                finalize(() => this.isLoading.set(false)),
+                takeUntilDestroyed(this.destroyRef),
+            )
+            .subscribe();
     }
 
     /**
@@ -76,11 +83,13 @@ export class TrainingRunOverviewComponent implements OnInit {
     loadAccessedTrainingRuns(
         loadEvent: TableLoadEvent<AccessedTrainingRunSort>,
     ): void {
+        if (loadEvent.pagination) {
+            this.pagination = PaginationMapper.toOffsetPaginationEvent(
+                loadEvent.pagination,
+            );
+        }
         this.trainingRunOverviewService
-            .getAll(
-                PaginationMapper.toOffsetPaginationEvent(loadEvent.pagination),
-                loadEvent.filter,
-            )
+            .getAll(this.pagination)
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe();
     }

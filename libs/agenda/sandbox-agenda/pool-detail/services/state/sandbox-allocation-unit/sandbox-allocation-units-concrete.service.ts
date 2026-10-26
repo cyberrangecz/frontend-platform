@@ -5,7 +5,7 @@ import { OffsetPaginationEvent } from '@crczp/utils';
 import {
     PoolApi,
     SandboxAllocationUnitsApi,
-    SandboxInstanceSort,
+    SandboxAllocationUnitSort,
 } from '@crczp/sandbox-api';
 import { SandboxAllocationUnit } from '@crczp/sandbox-model';
 import { map, switchMap, tap } from 'rxjs/operators';
@@ -57,18 +57,48 @@ export class SandboxAllocationUnitsConcreteService extends SandboxAllocationUnit
      */
     getAll(
         poolId: number,
-        pagination: OffsetPaginationEvent<SandboxInstanceSort>,
+        pagination: OffsetPaginationEvent<SandboxAllocationUnitSort>,
     ): Observable<OffsetPaginatedResource<SandboxAllocationUnit>> {
         this.lastPagination = pagination;
         this.lastPoolId = poolId;
         this.hasErrorSubject$.next(false);
-        const observable$: Observable<
-            OffsetPaginatedResource<SandboxAllocationUnit>
-        > = this.poolApi
+        return this.resourcePollingService
+            .startPolling(
+                this.fetchUnits(poolId, pagination),
+                this.poolPollingPeriod,
+                this.retryAttempts,
+            )
+            .pipe(tap({ error: (err) => this.onGetAllError(err) }));
+    }
+
+    /**
+     * Fetches the sandbox allocation units of a pool once with the pagination last requested and
+     * publishes them to the units stream. Starts no poll: the poll of getAll keeps running.
+     * Completes without a request when no units were loaded yet.
+     * @param poolId id of the pool to refresh; defaults to the pool last requested
+     */
+    refresh(
+        poolId: number = this.lastPoolId,
+    ): Observable<OffsetPaginatedResource<SandboxAllocationUnit>> {
+        return this.lastPagination
+            ? this.fetchUnits(poolId, this.lastPagination).pipe(
+                  tap({ error: (err) => this.onGetAllError(err) }),
+              )
+            : EMPTY;
+    }
+
+    private fetchUnits(
+        poolId: number,
+        pagination: OffsetPaginationEvent<SandboxAllocationUnitSort>,
+    ): Observable<OffsetPaginatedResource<SandboxAllocationUnit>> {
+        return this.poolApi
             .getPoolsSandboxAllocationUnits(poolId, pagination)
             .pipe(
                 combineLatestWith(
-                    this.poolApi.getPoolsSandboxes(poolId, pagination),
+                    this.poolApi.getPoolsSandboxes(poolId, {
+                        ...pagination,
+                        sort: 'allocation_unit_id',
+                    }),
                 ),
                 map(([units, sandboxes]) => {
                     units.elements.map((unit) => {
@@ -84,13 +114,6 @@ export class SandboxAllocationUnitsConcreteService extends SandboxAllocationUnit
                     this.initialFetchCompletedSubject$.next(true);
                 }),
             );
-        return this.resourcePollingService
-            .startPolling(
-                observable$,
-                this.poolPollingPeriod,
-                this.retryAttempts,
-            )
-            .pipe(tap({ error: (err) => this.onGetAllError(err) }));
     }
 
     /**
@@ -233,7 +256,7 @@ export class SandboxAllocationUnitsConcreteService extends SandboxAllocationUnit
                         `Creating cleanup request for pool ${poolId}`,
                     ),
             }),
-            switchMap(() => this.getAll(this.lastPoolId, this.lastPagination)),
+            switchMap(() => this.refresh(poolId)),
         );
     }
 }

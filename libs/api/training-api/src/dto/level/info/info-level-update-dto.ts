@@ -1,18 +1,20 @@
-import {AbstractLevelDTO} from '../abstract-level-dto';
+import {AbstractLevelDTOLevelTypeEnum} from '../abstract-level-dto';
 
 /**
- * Info Level to update.
+ * Info Level to write.
  */
 export interface InfoLevelUpdateDTO {
     id?: number;
     title?: string;
-    level_type?: AbstractLevelDTO.LevelTypeEnum;
+    level_type?: AbstractLevelDTOLevelTypeEnum;
+    estimated_duration?: number;
     content?: string;
 }
 
 export class InfoLevelUpdateDTOClass implements InfoLevelUpdateDTO {
-    id: number;
+    id?: number;
     title: string;
-    level_type: AbstractLevelDTO.LevelTypeEnum = 'INFO_LEVEL';
+    level_type: AbstractLevelDTOLevelTypeEnum = 'INFO_LEVEL';
+    estimated_duration: number;
     content: string;
 }

@@ -1,4 +1,4 @@
-import {AbstractQuestionDTO} from '../../../dto/level/assessment/abstact-question-dto';
+import {AbstractQuestionDTOQuestionTypeEnum} from '../../../dto/level/assessment/abstact-question-dto';
 import {
     FreeFormQuestionCreateDTO,
     FreeFormQuestionDTOClass,
@@ -23,7 +23,7 @@ export class FreeFormQuestionMapper {
 
     static toCreateDTO(question: FreeFormQuestion): FreeFormQuestionCreateDTO {
         const result = new FreeFormQuestionDTOClass();
-        result.question_type = AbstractQuestionDTO.QuestionTypeEnum.FFQ;
+        result.question_type = AbstractQuestionDTOQuestionTypeEnum.FFQ;
         result.choices = question.choices;
         return result;
     }

@@ -1,5 +1,5 @@
 import {TrainingRun, TrainingRunStateEnum} from '@crczp/training-model';
-import {TrainingRunDTO} from '../../dto/training-run/training-run-dto';
+import {TrainingRunDTO, TrainingRunDTOStateEnum} from '../../dto/training-run/training-run-dto';
 import {LevelMapper} from '../level/level-mapper';
 import {UserMapper} from '../user/user-mapper';
 
@@ -21,6 +21,7 @@ export class TrainingRunMapper {
         result.eventLogReference = dto.event_log_reference;
         result.sandboxInstanceId = dto.sandbox_instance_ref_id;
         result.sandboxInstanceAllocationId = dto.sandbox_instance_allocation_id;
+        result.previousSandboxInstanceId = dto.previous_sandbox_instance_ref_id;
         result.eventLogging = dto.event_logging_state;
         result.commandLogging = dto.command_logging_state;
         result.player = UserMapper.fromDTO(dto.participant_ref);
@@ -31,13 +32,13 @@ export class TrainingRunMapper {
         return result;
     }
 
-    private static resolveState(state: TrainingRunDTO.StateEnum): TrainingRunStateEnum {
+    private static resolveState(state: TrainingRunDTOStateEnum): TrainingRunStateEnum {
         switch (state) {
-            case TrainingRunDTO.StateEnum.RUNNING:
+            case TrainingRunDTOStateEnum.RUNNING:
                 return TrainingRunStateEnum.RUNNING;
-            case TrainingRunDTO.StateEnum.FINISHED:
+            case TrainingRunDTOStateEnum.FINISHED:
                 return TrainingRunStateEnum.FINISHED;
-            case TrainingRunDTO.StateEnum.ARCHIVED:
+            case TrainingRunDTOStateEnum.ARCHIVED:
                 return TrainingRunStateEnum.ARCHIVED;
             default: {
                 console.error(`Unsupported training run state of value: ${state}`);

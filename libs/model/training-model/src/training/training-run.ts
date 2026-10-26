@@ -1,7 +1,7 @@
 import { TrainingRunStateEnum } from '../enums/training-run-state.enum';
 import { Level } from '../level/level';
 import { TrainingUser } from '../user-ref/training-user';
-import { Z } from 'zod-class';
+import { Z } from '@crczp/zod-class';
 import { z } from 'zod';
 
 export class TrainingRunBasic extends Z.class({
@@ -21,18 +21,7 @@ export class TrainingRunBasic extends Z.class({
         picture: z.string(),
         mail: z.string(),
     }),
-}) {
-    declare id: number;
-    declare sandboxInstanceId: string | null;
-    declare trainingInstanceId: number;
-    declare trainingDefinitionId: number;
-    declare startTime: Date;
-    declare endTime: Date;
-    declare currentLevelId: number | null;
-    declare currentLevelOrder: number | null;
-    declare state: TrainingRunStateEnum;
-    declare participantRef: TrainingUser;
-}
+}) {}
 
 /**
  * Class representing training run
@@ -41,6 +30,8 @@ export class TrainingRun {
     id!: number;
     sandboxInstanceId!: string;
     sandboxInstanceAllocationId!: number;
+    /** Sandbox the run held before it was archived; unset for a run never archived. */
+    previousSandboxInstanceId?: string | null;
     trainingInstanceId!: number;
     trainingDefinitionId!: number;
     player!: TrainingUser;

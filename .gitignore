@@ -46,3 +46,5 @@ vite.config.*.timestamp*
 vitest.config.*.timestamp*
 
 .hive
+
+.nx/migrate-runs

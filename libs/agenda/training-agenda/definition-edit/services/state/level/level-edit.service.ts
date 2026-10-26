@@ -1,14 +1,11 @@
-/**
- * Service handling editing of training definition's levels and related operations.
- * Serves as a layer between component and API service
- * Subscribe to levels$, activeStep$ and activeLevelCanBeSaved$ to receive latest data updates.
- */
 import {AbstractLevelTypeEnum, Level} from '@crczp/training-model';
 import {BehaviorSubject, Observable} from 'rxjs';
 
+/**
+ * Holds the levels of the edited training definition and applies add, delete, move and edit locally.
+ * The levels reach the backend only through the save of the whole definition.
+ */
 export abstract class LevelEditService {
-    protected trainingDefinitionId: number;
-
     protected levelsSubject$: BehaviorSubject<Level[]> = new BehaviorSubject([]);
     /**
      * All currently edited levels of training definition
@@ -22,28 +19,28 @@ export abstract class LevelEditService {
      */
     activeStep$ = this.activeStepSubject$.asObservable();
 
-    protected levelsSaveDisabledSubject$: BehaviorSubject<boolean> = new BehaviorSubject(true);
-    /**
-     * True if levels are valid and can be saved, false otherwise
-     */
-    levelsSaveDisabled$: Observable<boolean> = this.levelsSaveDisabledSubject$.asObservable();
-
     protected levelsValidSubject$: BehaviorSubject<boolean> = new BehaviorSubject(true);
     /**
      * True if all levels are valid, false otherwise
      */
     levelsValid$: Observable<boolean> = this.levelsValidSubject$.asObservable();
 
-    protected unsavedLevelsSubject$: BehaviorSubject<Level[]> = new BehaviorSubject([]);
-
-    unsavedLevels$: Observable<Level[]> = this.unsavedLevelsSubject$.asObservable();
+    protected hasUnsavedChangesSubject$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+    /**
+     * True while the levels differ from the last saved state, false otherwise
+     */
+    hasUnsavedChanges$: Observable<boolean> = this.hasUnsavedChangesSubject$.asObservable();
 
     /**
-     * Initiates service with levels and related training definition id
-     * @param trainingDefinitionId id of training definition
-     * @param levels all levels associated with training definition id
+     * Initiates service with the saved levels and discards unsaved changes
+     * @param levels all levels of the training definition as last saved
      */
-    abstract set(trainingDefinitionId: number, levels: Level[]): void;
+    abstract set(levels: Level[]): void;
+
+    /**
+     * Levels in their current order, unsaved changes included
+     */
+    abstract getLevels(): Level[];
 
     abstract getLevelsCount(): number;
 
@@ -62,25 +59,26 @@ export abstract class LevelEditService {
     abstract navigateToPreviousLevel(): void;
 
     /**
-     * Creates new level with default values based on passed level type
+     * Appends a new level with placeholder values based on passed level type and selects it
      * @param levelType enum of possible level types
      */
     abstract add(levelType: AbstractLevelTypeEnum): Observable<Level>;
 
     /**
-     * Saves changes in edited levels and optionally informs on result of the operation
-     */
-    abstract saveUnsavedLevels(): Observable<any>;
-
-    /**
-     * Displays dialog to delete selected level and displays alert with result of the operation
+     * Displays dialog to delete selected level and removes the level once confirmed
      */
     abstract deleteSelected(): Observable<Level[]>;
 
     /**
-     * Moves level from index to a new one. Updates optimistically and rollback is performed on error
+     * Moves level from index to a new one
      * @param fromIndex current index of level
      * @param toIndex new index of level
      */
-    abstract move(fromIndex: number, toIndex: number): Observable<any>;
+    abstract move(fromIndex: number, toIndex: number): void;
+
+    /**
+     * Makes add, delete and move leave the levels untouched while editing is blocked
+     * @param blocked true when the definition cannot be edited
+     */
+    abstract setEditingBlocked(blocked: boolean): void;
 }

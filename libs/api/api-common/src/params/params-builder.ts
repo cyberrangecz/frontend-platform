@@ -46,27 +46,21 @@ export class ParamsBuilder {
     }
 
     /**
-     * Transforms requested pagination object to http params in sandbox microservice format (PYTHON API)
+     * Transforms requested pagination object to http params in sandbox microservice format (PYTHON API).
+     * A missing page or page size falls back to the first page of the default size, a missing sort
+     * direction to ascending.
      * @param pagination requested pagination
      */
     static djangoPaginationParams<T extends Record<string, never>>(
-        pagination: OffsetPaginationEvent<Extract<keyof T, string>>,
+        pagination: OffsetPaginationEvent<Extract<keyof T, string>> | undefined,
     ): HttpParams {
-        if (pagination) {
-            if (pagination.sort) {
-                return new HttpParams()
-                    .set('page', (pagination.page + 1).toString()) // + 1 because sandbox microservice pages starts with 1 instead of 0
-                    .set('page_size', pagination.size.toString())
-                    .set('sort_by', pagination.sort)
-                    .set('order', pagination.sortDir);
-            } else {
-                return new HttpParams()
-                    .set('page', (pagination.page + 1).toString()) // + 1 because sandbox microservice pages starts with 1 instead of 0
-                    .set('page_size', pagination.size.toString());
-            }
-        }
-        return new HttpParams()
-            .set('page', '1') // 1 because sandbox microservice pages starts with 1
-            .set('page_size', '10');
+        const params = new HttpParams()
+            .set('page', ((pagination?.page ?? 0) + 1).toString()) // + 1 because sandbox microservice pages starts with 1 instead of 0
+            .set('page_size', (pagination?.size ?? 10).toString());
+        return pagination?.sort
+            ? params
+                  .set('sort_by', pagination.sort)
+                  .set('order', pagination.sortDir ?? 'asc')
+            : params;
     }
 }

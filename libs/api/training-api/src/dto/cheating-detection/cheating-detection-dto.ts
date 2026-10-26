@@ -9,27 +9,24 @@ export interface CheatingDetectionDTO {
     execute_time: Date;
     proximity_threshold?: number;
     id: number;
-    current_state: CheatingDetectionDTO.CheatingDetectionStateEnum;
+    current_state: CheatingDetectionDTOCheatingDetectionStateEnum;
     results: number;
-    answer_similarity_state: CheatingDetectionDTO.CheatingDetectionStateEnum;
-    location_similarity_state: CheatingDetectionDTO.CheatingDetectionStateEnum;
-    time_proximity_state: CheatingDetectionDTO.CheatingDetectionStateEnum;
-    minimal_solve_time_state: CheatingDetectionDTO.CheatingDetectionStateEnum;
-    no_commands_state: CheatingDetectionDTO.CheatingDetectionStateEnum;
-    forbidden_commands_state: CheatingDetectionDTO.CheatingDetectionStateEnum;
+    answer_similarity_state: CheatingDetectionDTOCheatingDetectionStateEnum;
+    location_similarity_state: CheatingDetectionDTOCheatingDetectionStateEnum;
+    time_proximity_state: CheatingDetectionDTOCheatingDetectionStateEnum;
+    minimal_solve_time_state: CheatingDetectionDTOCheatingDetectionStateEnum;
+    no_commands_state: CheatingDetectionDTOCheatingDetectionStateEnum;
+    forbidden_commands_state: CheatingDetectionDTOCheatingDetectionStateEnum;
     forbidden_commands?: ForbiddenCommandDTO[];
 }
 
-// eslint-disable-next-line @typescript-eslint/no-namespace
-export namespace CheatingDetectionDTO {
-    export type CheatingDetectionStateEnum = 'QUEUED' | 'RUNNING' | 'FINISHED' | 'DISABLED';
-    export const CheatingDetectionStateEnum = {
-        QUEUED: 'QUEUED' as CheatingDetectionStateEnum,
-        RUNNING: 'RUNNING' as CheatingDetectionStateEnum,
-        FINISHED: 'FINISHED' as CheatingDetectionStateEnum,
-        DISABLED: 'DISABLED' as CheatingDetectionStateEnum,
-    };
-}
+export type CheatingDetectionDTOCheatingDetectionStateEnum = 'QUEUED' | 'RUNNING' | 'FINISHED' | 'DISABLED';
+export const CheatingDetectionDTOCheatingDetectionStateEnum = {
+    QUEUED: 'QUEUED' as CheatingDetectionDTOCheatingDetectionStateEnum,
+    RUNNING: 'RUNNING' as CheatingDetectionDTOCheatingDetectionStateEnum,
+    FINISHED: 'FINISHED' as CheatingDetectionDTOCheatingDetectionStateEnum,
+    DISABLED: 'DISABLED' as CheatingDetectionDTOCheatingDetectionStateEnum,
+};
 
 export class CheatingDetectionDTOClass implements CheatingDetectionDTO {
     training_instance_id: number;
@@ -37,13 +34,13 @@ export class CheatingDetectionDTOClass implements CheatingDetectionDTO {
     execute_time: Date;
     proximity_threshold?: number;
     id: number;
-    current_state: CheatingDetectionDTO.CheatingDetectionStateEnum;
+    current_state: CheatingDetectionDTOCheatingDetectionStateEnum;
     results: number;
-    answer_similarity_state: CheatingDetectionDTO.CheatingDetectionStateEnum;
-    location_similarity_state: CheatingDetectionDTO.CheatingDetectionStateEnum;
-    time_proximity_state: CheatingDetectionDTO.CheatingDetectionStateEnum;
-    minimal_solve_time_state: CheatingDetectionDTO.CheatingDetectionStateEnum;
-    no_commands_state: CheatingDetectionDTO.CheatingDetectionStateEnum;
-    forbidden_commands_state: CheatingDetectionDTO.CheatingDetectionStateEnum;
+    answer_similarity_state: CheatingDetectionDTOCheatingDetectionStateEnum;
+    location_similarity_state: CheatingDetectionDTOCheatingDetectionStateEnum;
+    time_proximity_state: CheatingDetectionDTOCheatingDetectionStateEnum;
+    minimal_solve_time_state: CheatingDetectionDTOCheatingDetectionStateEnum;
+    no_commands_state: CheatingDetectionDTOCheatingDetectionStateEnum;
+    forbidden_commands_state: CheatingDetectionDTOCheatingDetectionStateEnum;
     forbidden_commands?: ForbiddenCommandDTO[];
 }

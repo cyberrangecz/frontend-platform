@@ -1,13 +1,14 @@
 import {
-    Component,
-    ElementRef,
-    input,
-    OnChanges,
-    signal,
-    SimpleChanges,
-    viewChild,
+  Component,
+  ElementRef,
+  input,
+  OnChanges,
+  signal,
+  SimpleChanges,
+  viewChild,
+  ChangeDetectionStrategy
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { Network } from 'vis-network';
 import { ClickOutsideDirective } from '@crczp/utils';
 
@@ -18,8 +19,9 @@ export interface ContextMenuItem {
 
 @Component({
     selector: 'crczp-context-menu',
-    imports: [CommonModule, ClickOutsideDirective],
+    imports: [ClickOutsideDirective],
     templateUrl: './context-menu.html',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     styleUrl: './context-menu.scss',
 })
 export class ContextMenu implements OnChanges {
@@ -49,6 +51,11 @@ export class ContextMenu implements OnChanges {
 
     hideContextMenu(): void {
         this.visible.set(false);
+    }
+
+    activateItem(item: ContextMenuItem): void {
+        item.action();
+        this.hideContextMenu();
     }
 
     onOutsideClick(): void {

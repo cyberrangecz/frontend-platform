@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, Input, OnInit, signal, WritableSignal } from '@angular/core';
+import { Component, DestroyRef, inject, Input, OnInit, signal, WritableSignal, ChangeDetectionStrategy } from '@angular/core';
 import { timer } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatIcon } from '@angular/material/icon';
@@ -8,6 +8,7 @@ import { Utils } from '@crczp/utils';
     selector: 'crczp-table-countdown',
     templateUrl: './table-countdown.component.html',
     styleUrl: './table-countdown.component.css',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [MatIcon],
 })
 export class TableCountdownComponent implements OnInit {

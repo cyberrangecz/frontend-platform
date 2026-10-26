@@ -52,6 +52,9 @@
           [formName]="'Notes for instructors'"
           [formData]="prerequisites">
         </sentinel-free-form>
+        @if (prerequisites.hasError('itemTooShort')) {
+          <mat-error class="definition-list-error">Notes must be at least {{ minimumListItemLength }} characters.</mat-error>
+        }
 
         <!-- OUTCOMES field-->
         <sentinel-free-form (itemsChange)="outcomesChange($event)"
@@ -59,6 +62,9 @@
           [formName]="'Learning outcomes'"
           [formData]="outcomes">
         </sentinel-free-form>
+        @if (outcomes.hasError('itemTooShort')) {
+          <mat-error class="definition-list-error">Outcomes must be at least {{ minimumListItemLength }} characters.</mat-error>
+        }
       </div>
     </div>
   </form>

@@ -1,81 +1,110 @@
 <div class="content">
     <sentinel-controls [controls]="controls" />
+    @let table = instances$ | async;
+    @if (table?.filterable) {
+        <sentinel-filter-free-input
+            (filterChange)="onFilter($event)"
+            (filterCleared)="onFilter('')"
+            [label]="table.filterLabel"
+            [placeholder]="table.filterLabel"
+            [value]="filter" />
+    }
     <sentinel-table
         (tableLoad)="onInstancesLoadEvent($event)"
-        [data]="instances$ | async"
+        [columns]="table?.columns ?? []"
         [defaultSortDirection]="INITIAL_SORT_DIR"
         [defaultSortName]="INITIAL_SORT_NAME"
         [displayedActionsCount]="9"
-        [hasError]="hasError$ | async"
-        [isLoading]="isLoading$ | async"
+        [hasError]="!!(hasError$ | async)"
+        [isLoading]="!!(isLoading$ | async)"
+        [pageSizeOptions]="PAGE_SIZE_OPTIONS"
+        [pagination]="table?.pagination"
+        [rows]="table?.rows ?? []"
+        [selectable]="!!table?.selectable"
         [titlecasedActions]="false"
         crczpTableEmptyState="No training instances have been created yet">
-        <ng-container *sentinelRow="'startTime'; template: startTime" />
-        <ng-container *sentinelRow="'endTime'; template: endTime" />
-        <ng-container *sentinelRow="'expiresIn'; template: instanceCountdown" />
-        <ng-container *sentinelRow="'accessToken'; template: accessToken" />
-        <ng-container *sentinelRow="'poolSize'; template: poolSize" />
+        <ng-template [sentinelCellType]="table?.rows" let-row sentinelCell="title">
+            <a [routerLink]="row.links.get('title')">{{ row.element.title }}</a>
+        </ng-template>
+
+        <ng-template [sentinelCellType]="table?.rows" let-row sentinelCell="tdTitle">
+            @if (row.links.get('tdTitle'); as definitionLink) {
+                <a [routerLink]="definitionLink">{{ row.element.tdTitle }}</a>
+            } @else {
+                {{ row.element.tdTitle }}
+            }
+        </ng-template>
+
+        <ng-template [sentinelCellType]="table?.rows" let-row sentinelCell="poolTitle">
+            @if (row.links.get('poolTitle'); as poolLink) {
+                <a [routerLink]="poolLink">{{ row.element.poolTitle }}</a>
+            } @else {
+                {{ row.element.poolTitle }}
+            }
+        </ng-template>
+
+        <ng-template [sentinelCellType]="table?.rows" let-row sentinelCell="startTime">
+            <crczp-table-date-cell [displayedDate]="row.element.startTime" [showTimeWhenPossible]="true" />
+        </ng-template>
+
+        <ng-template [sentinelCellType]="table?.rows" let-row sentinelCell="endTime">
+            <crczp-table-date-cell [displayedDate]="row.element.endTime" [showTimeWhenPossible]="true" />
+        </ng-template>
+
+        <ng-template [sentinelCellType]="table?.rows" let-row sentinelCell="expiresIn">
+            <crczp-table-countdown [endTime]="row.element.endTime" />
+        </ng-template>
+
+        <ng-template [sentinelCellType]="table?.rows" let-row sentinelCell="accessToken">
+            @if (castToPoolSize(row.element.poolSize | async); as poolSize) {
+                <div
+                    class="access-token-container"
+                    matTooltip="{{ getAccessTokenTooltip(poolSize, row.element.localEnvironment) }}"
+                >
+                    <button
+                        (click)="onCopyToken()"
+                        [cdkCopyToClipboard]="row.element.accessToken"
+                        [disabled]="tokenCopyDisabled(poolSize, row.element.localEnvironment)"
+                        class="token-button"
+                        color="primary"
+                        mat-button
+                    >
+                        {{ row.element.accessToken }}
+                    </button>
+                    @if (!row.element.localEnvironment && 'error' in poolSize) {
+                        <mat-icon color="warn">error</mat-icon>
+                    } @else if (!row.element.localEnvironment && getFreePoolSize(poolSize) <= 0) {
+                        <mat-icon class="warning">warning</mat-icon>
+                    }
+                </div>
+            } @else {
+                <mat-progress-spinner diameter="20" mode="indeterminate" />
+            }
+        </ng-template>
+
+        <ng-template [sentinelCellType]="table?.rows" let-row sentinelCell="poolSize">
+            @if (castToPoolSize(row.element.poolSize | async); as poolSize) {
+                <div>
+                    @if ('error' in poolSize) {
+                        @if (row.element.poolTitle !== 'Local') {
+                            <mat-icon [matTooltip]="'Given pool does not exist.'"
+                                      class="warn">warning
+                            </mat-icon>
+                        }
+                    } @else {
+                        <div>
+                            <span>{{poolSize.total}} ({{poolSize.total - poolSize.used}} free)</span>
+                        </div>
+                    }
+                    @if (row.element.poolTitle === 'Local') {
+                        <div>
+                            <span>N/A</span>
+                        </div>
+                    }
+                </div>
+            } @else {
+                <mat-progress-spinner diameter="20" mode="indeterminate" />
+            }
+        </ng-template>
     </sentinel-table>
 </div>
-
-<ng-template #instanceCountdown let-row>
-    <crczp-table-countdown [endTime]="row.element.endTime" />
-</ng-template>
-<ng-template #startTime let-row>
-    <crczp-table-date-cell [displayedDate]="row.element.startTime" [showTimeWhenPossible]="true" />
-</ng-template>
-<ng-template #endTime let-row>
-    <crczp-table-date-cell [displayedDate]="row.element.endTime" [showTimeWhenPossible]="true" />
-</ng-template>
-
-<ng-template #accessToken let-row>
-    @if (castToPoolSize(row.element.poolSize | async); as poolSize) {
-        <div
-            class="access-token-container"
-            matTooltip="{{ getAccessTokenTooltip(poolSize, row.element.localEnvironment) }}"
-        >
-            <button
-                (click)="onCopyToken()"
-                [cdkCopyToClipboard]="row.element.accessToken"
-                [disabled]="tokenCopyDisabled(poolSize, row.element.localEnvironment)"
-                class="token-button"
-                color="primary"
-                mat-button
-            >
-                {{ row.element.accessToken }}
-            </button>
-            @if (!row.element.localEnvironment && 'error' in poolSize) {
-                <mat-icon color="warn">error</mat-icon>
-            } @else if (!row.element.localEnvironment && getFreePoolSize(poolSize) <= 0) {
-                <mat-icon class="warning">warning</mat-icon>
-            }
-        </div>
-    } @else {
-        <mat-progress-spinner diameter="20" mode="indeterminate" />
-    }
-</ng-template>
-
-<ng-template #poolSize let-row>
-    @if (castToPoolSize(row.element.poolSize | async); as poolSize) {
-        <div>
-            @if ('error' in poolSize) {
-                @if (row.element.poolTitle !== 'Local') {
-                    <mat-icon [matTooltip]="'Given pool does not exist.'"
-                              class="warn">warning
-                    </mat-icon>
-                }
-            } @else {
-                <div>
-                    <span>{{poolSize.total}} ({{poolSize.total - poolSize.used}} free)</span>
-                </div>
-            }
-            @if (row.element.poolTitle === 'Local') {
-                <div>
-                    <span>N/A</span>
-                </div>
-            }
-        </div>
-    } @else {
-        <mat-progress-spinner diameter="20" mode="indeterminate" />
-    }
-</ng-template>

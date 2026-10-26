@@ -16,9 +16,8 @@ import {
     UntypedFormControl,
     UntypedFormGroup
 } from '@angular/forms';
-import { SentinelValidators } from '@sentinel/common';
 import { ExtendedMatchingItems, Question } from '@crczp/training-model';
-import { ExtendedMatchingItemsFormGroup } from './extended-matching-items-form-group';
+import { EMI_TEXT_MAX_LENGTH, EMI_TEXT_VALIDATORS, ExtendedMatchingItemsFormGroup } from './extended-matching-items-form-group';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Subscription } from 'rxjs';
 import { MatError, MatFormField, MatInput, MatLabel, MatSuffix } from '@angular/material/input';
@@ -57,7 +56,6 @@ export class ExtendedMatchingItemsEditComponent implements OnChanges {
     @Input() isTest: boolean;
     @Input() required: boolean;
     @Output() questionChange: EventEmitter<ExtendedMatchingItems> = new EventEmitter();
-    columnLimitReached = false;
 
     OPTIONS_BOUNDS_MAXIMUM = 8;
     extendedMatchingQuestionFormGroup: ExtendedMatchingItemsFormGroup;
@@ -76,6 +74,20 @@ export class ExtendedMatchingItemsEditComponent implements OnChanges {
 
     get statements(): UntypedFormArray {
         return this.extendedMatchingQuestionFormGroup.formGroup.get('statements') as UntypedFormArray;
+    }
+
+    get columnLimitReached(): boolean {
+        return this.options.length >= this.OPTIONS_BOUNDS_MAXIMUM;
+    }
+
+    /**
+     * Messages naming every option and statement whose text is blank or too long
+     */
+    get textErrorMessages(): string[] {
+        return [
+            ...this.describeTextErrors('Option', this.options),
+            ...this.describeTextErrors('Statement', this.statements),
+        ];
     }
 
     get score(): AbstractControl {
@@ -108,14 +120,6 @@ export class ExtendedMatchingItemsEditComponent implements OnChanges {
             this.checkState();
             this.onRequiredChanged();
         }
-    }
-
-    /**
-     * Helper method to improve performance of *ngFor directive
-     * @param index
-     */
-    trackByFn(index: any): any {
-        return index;
     }
 
     /**
@@ -192,7 +196,7 @@ export class ExtendedMatchingItemsEditComponent implements OnChanges {
             new UntypedFormGroup({
                 id: new UntypedFormControl(null),
                 order: new UntypedFormControl(this.statements.length),
-                text: new UntypedFormControl('', SentinelValidators.noWhitespace),
+                text: new UntypedFormControl('', EMI_TEXT_VALIDATORS),
                 correctOptionOrder: new UntypedFormControl(),
             }),
         );
@@ -207,10 +211,9 @@ export class ExtendedMatchingItemsEditComponent implements OnChanges {
             new UntypedFormGroup({
                 id: new UntypedFormControl(null),
                 order: new UntypedFormControl(this.options.length),
-                text: new UntypedFormControl('', SentinelValidators.noWhitespace),
+                text: new UntypedFormControl('', EMI_TEXT_VALIDATORS),
             }),
         );
-        this.columnLimitReached = this.options.length == this.OPTIONS_BOUNDS_MAXIMUM;
         this.questionChanged();
     }
 
@@ -244,6 +247,19 @@ export class ExtendedMatchingItemsEditComponent implements OnChanges {
             } else if (correctOptionOrder.value && correctOptionOrder.value > optionIndex) {
                 correctOptionOrder.setValue(correctOptionOrder.value - 1);
             }
+        });
+    }
+
+    private describeTextErrors(label: string, entries: UntypedFormArray): string[] {
+        return entries.controls.flatMap((entry, index) => {
+            const text = entry.get('text');
+            if (text.hasError('whitespace')) {
+                return [`${label} ${index + 1} cannot be empty`];
+            }
+            if (text.hasError('maxlength')) {
+                return [`${label} ${index + 1} cannot be longer than ${EMI_TEXT_MAX_LENGTH} characters`];
+            }
+            return [];
         });
     }
 

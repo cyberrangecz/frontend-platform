@@ -1,4 +1,4 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { MitreTechnique } from '@crczp/training-model';
 import { Observable } from 'rxjs';
@@ -6,14 +6,12 @@ import { MitreTechniquesListDTO } from '../dto/mitre-techniques/mitre-techniques
 import { MitreTechniquesListMapper } from '../mappers/mitre-techniques/mitre-techniques-list-mapper';
 import { PortalConfig } from '@crczp/utils';
 import { CRCZPHttpService } from '@crczp/api-common';
-import { withCache } from '@ngneat/cashew';
 
 /**
  * Service abstracting http communication with training definition endpoints.
  */
 @Injectable()
 export class MitreTechniquesApi {
-    private readonly http = inject(HttpClient);
     private readonly httpService = inject(CRCZPHttpService);
 
     private readonly mitreTechniquesEndpointUri: string;
@@ -32,19 +30,13 @@ export class MitreTechniquesApi {
      * @param played get mitre techniques only for played trainings
      */
     getMitreTechniques(played: boolean): Observable<string> {
-        const params = new HttpParams().append('played', played);
-        return this.http.get(this.mitreTechniquesEndpointUri, {
-            params: params,
-            responseType: 'text',
-            ...(played
-                ? {}
-                : {
-                      context: withCache({
-                          storage: 'localStorage',
-                          ttl: 7.2e6, // 2h
-                      }),
-                  }),
-        });
+        const request = this.httpService
+            .get(this.mitreTechniquesEndpointUri, 'Fetching MITRE Matrix')
+            .withParams(new HttpParams().append('played', played));
+        if (!played) {
+            request.withCache('2h');
+        }
+        return request.asText().execute();
     }
 
     /**

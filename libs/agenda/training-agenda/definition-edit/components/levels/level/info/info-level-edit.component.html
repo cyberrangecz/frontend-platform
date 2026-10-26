@@ -11,6 +11,17 @@
             }
         </mat-form-field>
 
+        <!-- ESTIMATED DURATION field -->
+        <mat-form-field appearance="outline"
+                        hintLabel="Number in minutes, 0 or greater."
+                        (keydown.enter)="$event.preventDefault()">
+            <mat-label>Estimated duration in minutes</mat-label>
+            <input formControlName="estimatedDuration" matInput maxlength="9" placeholder="Estimated duration in minutes">
+            @if (estimatedDuration.hasError('pattern') || estimatedDuration.hasError('min')) {
+                <mat-error>Estimated duration must be a whole number of minutes, 0 or greater</mat-error>
+            }
+        </mat-form-field>
+
         <!-- CONTENT filed -->
         <h3>Content</h3>
         <sentinel-markdown-editor (contentChange)="this.content.setValue($event);"

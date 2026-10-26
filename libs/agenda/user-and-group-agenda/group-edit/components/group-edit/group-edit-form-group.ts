@@ -10,7 +10,10 @@ export class GroupEditFormGroup {
 
     constructor(group: Group) {
         this.formGroup = new UntypedFormGroup({
-            name: new UntypedFormControl(group.name, SentinelValidators.noWhitespace),
+            name: new UntypedFormControl(
+                {value: group.name, disabled: group.canBeDeleted === false},
+                SentinelValidators.noWhitespace,
+            ),
             description: new UntypedFormControl(group.description, SentinelValidators.noWhitespace),
             expirationDate: new UntypedFormControl(
                 group.expirationDate,

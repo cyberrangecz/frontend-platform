@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, ChangeDetectionStrategy} from '@angular/core';
 import {MatCard, MatCardContent, MatCardSubtitle, MatCardTitle} from "@angular/material/card";
 import {SentinelAuthProviderListComponent} from "@sentinel/auth/components";
 
@@ -6,6 +6,7 @@ import {SentinelAuthProviderListComponent} from "@sentinel/auth/components";
     selector: 'crczp-login',
     templateUrl: './login.component.html',
     styleUrls: ['./login.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         MatCardSubtitle,
         MatCardTitle,

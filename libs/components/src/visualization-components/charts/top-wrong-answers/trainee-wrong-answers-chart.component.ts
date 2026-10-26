@@ -4,7 +4,7 @@ import { NgxEchartsDirective } from 'ngx-echarts';
 
 import { ChartPanelShellComponent, ECHARTS_CORE_PROVIDER, isRunSelected, QuerySource } from '../shared';
 import { SegmentedToggleComponent } from '../../../segmented-toggle/segmented-toggle.component';
-import { createTopWrongAnswersSource, WrongAnswerRow } from './top-wrong-answers-source';
+import { createTraineeWrongAnswersSource, WrongAnswerRow } from './top-wrong-answers-source';
 import { WrongAnswersChartBase } from './wrong-answers-chart-base.directive';
 
 /**
@@ -28,7 +28,7 @@ export class TraineeWrongAnswersChartComponent extends WrongAnswersChartBase {
 
     /** Wrong-answer rows scoped to the selected run. */
     protected readonly source: QuerySource<readonly WrongAnswerRow[]> =
-        createTopWrongAnswersSource(this.instanceId, this.runId);
+        createTraineeWrongAnswersSource(this.instanceId, this.runId);
 
     protected readonly heading = 'Wrong answers';
 

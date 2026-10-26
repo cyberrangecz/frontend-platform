@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, input, OnInit, signal } from '@angular/core';
+import { Component, DestroyRef, inject, input, OnInit, signal, ChangeDetectionStrategy } from '@angular/core';
 import { Topology } from '@crczp/sandbox-model';
 import { TopologyApi } from '@crczp/sandbox-api';
 import { ErrorHandlerService } from '@crczp/utils';
@@ -15,6 +15,7 @@ export type TopologySource = SandboxInstanceSource | SandboxDefinitionSource;
     selector: 'crczp-topology-wrapper',
     templateUrl: './topology-wrapper.component.html',
     styleUrl: './topology-wrapper.component.css',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [TopologyComponent, LogoSpinnerComponent, MatIcon],
 })
 export class TopologyWrapperComponent implements OnInit {
@@ -48,6 +49,7 @@ export class TopologyWrapperComponent implements OnInit {
                     'Topology component',
                 );
                 console.error(error);
+                this.topologyLoading.set(false);
             },
             complete: () => {
                 this.topologyLoading.set(false);

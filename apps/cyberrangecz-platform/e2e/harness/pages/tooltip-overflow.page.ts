@@ -1,10 +1,10 @@
+import { NgComponentOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import {
-    renderRichTooltipHtml,
-    RichTooltipComponent,
-    RichTooltipModel,
-} from '@crczp/components';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { DomSanitizer } from '@angular/platform-browser';
+import type { RichTooltipModel } from '@crczp/components';
+import { from } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 /** Title long enough to wrap well beyond the clamp ceiling, including an unbreakable token. */
 const LONG_TITLE =
@@ -41,12 +41,14 @@ const TOOLTIP_MODEL: RichTooltipModel = {
     selector: 'crczp-tooltip-overflow',
     standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [RichTooltipComponent],
+    imports: [NgComponentOutlet],
     template: `
-        <section data-testid="echarts-tooltip" [innerHTML]="echartsHtml"></section>
-        <section data-testid="dom-tooltip">
-            <crczp-rich-tooltip [content]="model" />
-        </section>
+        @if (tooltips(); as loaded) {
+            <section data-testid="echarts-tooltip" [innerHTML]="loaded.echartsHtml"></section>
+            <section data-testid="dom-tooltip">
+                <ng-container *ngComponentOutlet="loaded.component; inputs: { content: model }" />
+            </section>
+        }
     `,
     styles: [
         `
@@ -65,8 +67,21 @@ export class TooltipOverflowPage {
     /** Shared model also handed to the DOM-overlay tooltip component. */
     protected readonly model = TOOLTIP_MODEL;
 
-    /** ECharts tooltip surface as trusted HTML, mirroring how ECharts injects the formatter output. */
-    protected readonly echartsHtml: SafeHtml = inject(DomSanitizer).bypassSecurityTrustHtml(
-        renderRichTooltipHtml(TOOLTIP_MODEL),
+    private readonly sanitizer = inject(DomSanitizer);
+
+    /**
+     * Both tooltip surfaces, available once the components library has loaded: the ECharts surface
+     * as trusted HTML, mirroring how ECharts injects the formatter output, and the DOM-overlay
+     * component class.
+     */
+    protected readonly tooltips = toSignal(
+        from(import('@crczp/components')).pipe(
+            map((components) => ({
+                echartsHtml: this.sanitizer.bypassSecurityTrustHtml(
+                    components.renderRichTooltipHtml(TOOLTIP_MODEL),
+                ),
+                component: components.RichTooltipComponent,
+            })),
+        ),
     );
 }

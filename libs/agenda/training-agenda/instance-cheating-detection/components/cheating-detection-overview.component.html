@@ -1,19 +1,21 @@
 <div>
     <sentinel-controls [controls]="topControls" />
+    @let table = cheatingDetections$ | async;
     <sentinel-table (tableLoad)="onLoadEvent($event)"
-                    [data]="cheatingDetections$ | async"
+                    [columns]="table?.columns ?? []"
                     [defaultSortDirection]="INIT_SORT_DIR"
                     [defaultSortName]="INIT_SORT_NAME"
                     [displayedActionsCount]="4"
-                    [hasError]="hasError$ | async"
-                    [isLoading]="isLoading$ | async"
+                    [hasError]="!!(hasError$ | async)"
+                    [isLoading]="!!(isLoading$ | async)"
+                    [pagination]="table?.pagination"
+                    [rows]="table?.rows ?? []"
+                    [selectable]="!!table?.selectable"
                     crczpTableEmptyState="No cheating detections have been run yet">
-        <ng-container *sentinelRow="'stages'; template: stagesTemplate" />
+        <ng-template [sentinelCellType]="table?.rows" let-row sentinelCell="stages">
+            <crczp-stage-overview [stages]="row.element.stages"
+                                  [unitId]="row.element.unitId">
+            </crczp-stage-overview>
+        </ng-template>
     </sentinel-table>
-
-    <ng-template #stagesTemplate let-row>
-        <crczp-stage-overview [stages]="row.element.stages"
-                              [unitId]="row.element.unitId">
-        </crczp-stage-overview>
-    </ng-template>
 </div>

@@ -2,7 +2,9 @@
     "name": "@crczp/training-model",
     "version": "0.0.1",
     "peerDependencies": {
-        "@angular/common": "*"
+        "@angular/common": "*",
+        "@crczp/zod-class": "*",
+        "zod": "*"
     },
     "sideEffects": false
 }

@@ -139,14 +139,6 @@ export class FreeFormQuestionEditComponent implements OnChanges {
     }
 
     /**
-     * Helper method to improve *ngFor performance
-     * @param index
-     */
-    trackByFn(index: any): any {
-        return index;
-    }
-
-    /**
      * Changes internal state of component if required attribute of answer was changed
      */
     onRequiredChanged(): void {

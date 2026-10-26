@@ -62,11 +62,9 @@
         border-radius: 1rem;
     }
 
-    &--skeleton {
+    > ngx-skeleton-loader {
+        display: block;
         height: 100%;
-        border-radius: 8px;
-        background: var(--neutral-95);
-        animation: panel-skeleton-pulse 1.4s ease-in-out infinite;
     }
 }
 
@@ -74,14 +72,4 @@
     flex: initial;
     min-height: auto;
     overflow: visible;
-}
-
-@keyframes panel-skeleton-pulse {
-    0%,
-    100% {
-        opacity: 1;
-    }
-    50% {
-        opacity: 0.5;
-    }
 }

@@ -1,12 +1,16 @@
 import { inject, Injectable } from '@angular/core';
-import { OffsetPaginationEvent, PaginationBase } from '@crczp/utils';
+import { PaginationBase } from '@crczp/utils';
 import { UserApi, UserRefSort } from '@crczp/training-api';
 import { Designer } from '@crczp/training-model';
 import { SentinelUserAssignService } from '@sentinel/components/user-assign';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
 import { UserNameFilters } from '@crczp/training-agenda/internal';
-import { ErrorHandlerService, PortalConfig } from '@crczp/utils';
+import {
+    ErrorHandlerService,
+    NotificationService,
+    PortalConfig,
+} from '@crczp/utils';
 import {
     createInfinitePaginationEvent,
     createPaginatedResource,
@@ -23,10 +27,11 @@ import {
 export class AuthorsAssignService extends SentinelUserAssignService {
     private userApi = inject(UserApi);
     private errorHandler = inject(ErrorHandlerService);
+    private notificationService = inject(NotificationService);
     private settings = inject(PortalConfig);
 
     private userPagination =
-        createInfinitePaginationEvent<UserRefSort>('givenName');
+        createInfinitePaginationEvent<UserRefSort>('fullName');
     private lastAssignedFilter: string;
     private assignedUsersSubject: BehaviorSubject<
         OffsetPaginatedResource<Designer>
@@ -97,9 +102,10 @@ export class AuthorsAssignService extends SentinelUserAssignService {
         return this.userApi
             .getAuthors(
                 resourceId,
-                PaginationMapper.toOffsetPaginationEvent(
-                    pagination,
-                ) as OffsetPaginationEvent<UserRefSort>,
+                {
+                    ...PaginationMapper.toOffsetPaginationEvent(pagination),
+                    sort: 'fullName',
+                },
                 UserNameFilters.create(filter),
             )
             .pipe(
@@ -131,7 +137,7 @@ export class AuthorsAssignService extends SentinelUserAssignService {
                 resourceId,
                 createPaginationEvent<UserRefSort>(
                     {
-                        sort: 'givenName',
+                        sort: 'fullName',
                     },
                     this.settings,
                 ),
@@ -217,6 +223,25 @@ export class AuthorsAssignService extends SentinelUserAssignService {
                     this.lastAssignedFilter,
                 ),
             ),
+            tap((assigned) =>
+                this.warnAboutKeptAuthors(usersIds, assigned.elements),
+            ),
         );
+    }
+
+    /**
+     * Warns when an author requested for removal is still assigned, which the backend
+     * causes by never removing the signed-in user.
+     */
+    private warnAboutKeptAuthors(
+        removedIds: number[],
+        assigned: Designer[],
+    ): void {
+        if (assigned.some((author) => removedIds.includes(author.id))) {
+            this.notificationService.emit(
+                'warning',
+                'You cannot remove yourself as a designer',
+            );
+        }
     }
 }

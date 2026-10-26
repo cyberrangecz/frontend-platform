@@ -4,9 +4,13 @@
             <div>
                 <div
                     (click)="infoExpanded.set(!infoExpanded())"
+                    (keydown.enter)="infoExpanded.set(!infoExpanded())"
+                    (keydown.space)="infoExpanded.set(!infoExpanded())"
                     (crczpClickOutside)="infoExpanded.set(false)"
                     [class.allocation-title--expanded]="infoExpanded()"
                     class="allocation-title"
+                    role="button"
+                    tabindex="0"
                 >
                     <img [src]="stage().logoSrc" alt="stage logo" class="stage-logo">
                     <h2 class="allocation-title-text">{{ stage().title }}</h2>

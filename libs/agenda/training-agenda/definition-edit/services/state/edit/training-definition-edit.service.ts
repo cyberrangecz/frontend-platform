@@ -26,6 +26,11 @@ export abstract class TrainingDefinitionEditService {
      */
     abstract saveDisabled$: Observable<boolean>;
 
+    /**
+     * True while a save request is in flight
+     */
+    abstract saving$: Observable<boolean>;
+
     protected definitionValidSubject$: BehaviorSubject<boolean> = new BehaviorSubject(true);
     /**
      * True if it training definition is in valid state, false otherwise
@@ -39,7 +44,7 @@ export abstract class TrainingDefinitionEditService {
     abstract set(trainingDefinition: TrainingDefinitionWithLevels): void;
 
     /**
-     * Persists the edited training definition together with its unsaved levels,
+     * Persists the edited training definition together with all its levels in one request,
      * creating the definition when none is being edited yet.
      *
      * @returns Identifier of the newly created definition, null when an existing one was updated.
@@ -47,7 +52,7 @@ export abstract class TrainingDefinitionEditService {
     abstract save(): Observable<number | null>;
 
     /**
-     * Updated saveDisabled$ and saved snapshot of edited training definition
+     * Updates saveDisabled$ and definitionValid$ from the state of the edited training definition
      * @param changeEvent training definition object and its validity
      */
     abstract change(changeEvent: TrainingDefinitionChangeEvent): void;

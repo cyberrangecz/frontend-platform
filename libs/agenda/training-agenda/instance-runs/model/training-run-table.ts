@@ -1,19 +1,21 @@
 import { DatePipe } from '@angular/common';
 import { TrainingInstance, TrainingRun, TrainingRunStateEnum } from '@crczp/training-model';
-import { Column, DeleteAction, Row, RowAction, SentinelTable } from '@sentinel/components/table';
+import { Column, DeleteAction, RowAction } from '@sentinel/components/table';
+import { LinkedRow, TableModel } from '@crczp/components';
 import { defer, of } from 'rxjs';
 import { TrainingRunService } from '../services/runs/training-run.service';
 import { TrainingRunRowAdapter } from './training-run-row-adapter';
 import { Utils } from '@crczp/utils';
+import { TrainingRunSort } from '@crczp/training-api';
 import { OffsetPaginatedResource } from '@crczp/api-common';
 
 /**
  * Helper class transforming paginated resource to class for common table component
  * @dynamic
  */
-export class TrainingRunTable extends SentinelTable<
+export class TrainingRunTable extends TableModel<
     TrainingRunRowAdapter,
-    string
+    TrainingRunSort
 > {
     constructor(
         resource: OffsetPaginatedResource<TrainingRun>,
@@ -21,15 +23,25 @@ export class TrainingRunTable extends SentinelTable<
         trainingInstance: TrainingInstance,
     ) {
         const columns = [
-            new Column<string>('playerName', 'player', false),
-            new Column<string>('startTimeFormatted', 'start time', false),
-            new Column<string>('endTimeFormatted', 'end time', false),
-            new Column<string>('state', 'run state', false),
-            new Column<string>('duration', 'duration', false),
-            new Column<string>('sandboxInstanceId', 'sandbox id', false),
-            new Column<string>('playerEmail', 'email', false),
-            new Column<string>('eventLogging', 'event logging', false),
-            new Column<string>('commandLogging', 'command logging', false),
+            new Column<TrainingRunSort>('playerName', 'player', false),
+            new Column<TrainingRunSort>(
+                'startTimeFormatted',
+                'start time',
+                true,
+                'startTime',
+            ),
+            new Column<TrainingRunSort>(
+                'endTimeFormatted',
+                'end time',
+                true,
+                'endTime',
+            ),
+            new Column<TrainingRunSort>('state', 'run state', true, 'state'),
+            new Column<TrainingRunSort>('duration', 'duration', false),
+            new Column<TrainingRunSort>('sandboxInstanceId', 'sandbox id', false),
+            new Column<TrainingRunSort>('playerEmail', 'email', false),
+            new Column<TrainingRunSort>('eventLogging', 'event logging', false),
+            new Column<TrainingRunSort>('commandLogging', 'command logging', false),
         ];
         const rows = resource.elements.map((element) => {
             element.trainingInstanceId = trainingInstance.id;
@@ -49,7 +61,7 @@ export class TrainingRunTable extends SentinelTable<
         element: TrainingRun,
         service: TrainingRunService,
         instance: TrainingInstance,
-    ): Row<TrainingRunRowAdapter> {
+    ): LinkedRow<TrainingRunRowAdapter> {
         const datePipe = new DatePipe('en-EN');
         const adapter = element as TrainingRunRowAdapter;
         adapter.playerName = adapter.player.name;
@@ -65,7 +77,7 @@ export class TrainingRunTable extends SentinelTable<
             adapter.endTimeFormatted = '-';
             adapter.duration = '-';
         }
-        return new Row(adapter, this.createActions(element, service, instance));
+        return new LinkedRow(adapter, this.createActions(element, service, instance));
     }
 
     private static createActions(

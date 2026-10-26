@@ -6,6 +6,7 @@ import {
 import { TrainingDefinitionCreateDTO } from '../../dto/training-definition/training-definition-create-dto';
 import {
     TrainingDefinitionDTO,
+    TrainingDefinitionDTOStateEnum,
     TrainingDefinitionWithLevelsDTO,
 } from '../../dto/training-definition/training-definition-dto';
 import { TrainingDefinitionUpdateDTO } from '../../dto/training-definition/training-definition-update-dto';
@@ -54,19 +55,21 @@ export class TrainingDefinitionMapper {
         target.state = TrainingDefinitionMapper.stateFromDTO(dto.state);
         target.lastEditTime = dto.last_edited;
         target.estimatedDuration = dto.estimated_duration;
+        target.instanceCount = dto.instance_count ?? 0;
+        target.version = dto.version ?? 0;
         target.lastEditBy = dto.last_edited_by;
         target.createdAt = dto.created_at;
     }
 
     static stateFromDTO(
-        stateDTO: TrainingDefinitionDTO.StateEnum,
+        stateDTO: TrainingDefinitionDTOStateEnum,
     ): TrainingDefinitionStateEnum {
         switch (stateDTO) {
-            case TrainingDefinitionDTO.StateEnum.ARCHIVED:
+            case TrainingDefinitionDTOStateEnum.ARCHIVED:
                 return TrainingDefinitionStateEnum.Archived;
-            case TrainingDefinitionDTO.StateEnum.RELEASED:
+            case TrainingDefinitionDTOStateEnum.RELEASED:
                 return TrainingDefinitionStateEnum.Released;
-            case TrainingDefinitionDTO.StateEnum.UNRELEASED:
+            case TrainingDefinitionDTOStateEnum.UNRELEASED:
                 return TrainingDefinitionStateEnum.Unreleased;
             default: {
                 console.error(
@@ -80,14 +83,14 @@ export class TrainingDefinitionMapper {
 
     static stateToDTO(
         state: TrainingDefinitionStateEnum,
-    ): TrainingDefinitionDTO.StateEnum {
+    ): TrainingDefinitionDTOStateEnum {
         switch (state) {
             case TrainingDefinitionStateEnum.Unreleased:
-                return TrainingDefinitionDTO.StateEnum.UNRELEASED;
+                return TrainingDefinitionDTOStateEnum.UNRELEASED;
             case TrainingDefinitionStateEnum.Released:
-                return TrainingDefinitionDTO.StateEnum.RELEASED;
+                return TrainingDefinitionDTOStateEnum.RELEASED;
             case TrainingDefinitionStateEnum.Archived:
-                return TrainingDefinitionDTO.StateEnum.ARCHIVED;
+                return TrainingDefinitionDTOStateEnum.ARCHIVED;
             default: {
                 console.error(
                     `Attribute "state" of TrainingDefinitionWithLevels with value ${state} does not match any of the TrainingDefinitionWithLevelsDTO states`,
@@ -101,7 +104,6 @@ export class TrainingDefinitionMapper {
         trainingDefinition: TrainingDefinitionWithLevels,
     ): TrainingDefinitionUpdateDTO {
         const result = new TrainingDefinitionUpdateDTO();
-        result.id = trainingDefinition.id;
         result.description = trainingDefinition.description;
         result.prerequisites = trainingDefinition.prerequisites.filter(
             (prerequisite) => prerequisite.length > 1,
@@ -109,10 +111,9 @@ export class TrainingDefinitionMapper {
         result.outcomes = trainingDefinition.outcomes.filter(
             (outcome) => outcome.length > 1,
         );
-        result.state = TrainingDefinitionMapper.stateToDTO(
-            trainingDefinition.state,
-        );
         result.title = trainingDefinition.title;
+        result.version = trainingDefinition.version;
+        result.levels = LevelMapper.toUpdateDTOs(trainingDefinition.levels);
         return result;
     }
 
@@ -127,9 +128,9 @@ export class TrainingDefinitionMapper {
             (outcome) => outcome.length > 1,
         );
         result.description = trainingDefinition.description;
-        result.state = TrainingDefinitionDTO.StateEnum.UNRELEASED;
+        result.state = TrainingDefinitionDTOStateEnum.UNRELEASED;
         result.title = trainingDefinition.title;
-        result.default_content = trainingDefinition.defaultContent;
+        result.levels = LevelMapper.toUpdateDTOs(trainingDefinition.levels);
         return result;
     }
 }

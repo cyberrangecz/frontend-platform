@@ -3,6 +3,8 @@
         <mat-card appearance="outlined">
             <crczp-training-run-overview
                 (TableLoadEvent)="onTrainingRunsLoadEvent($event)"
+                [defaultSortDirection]="INITIAL_SORT_DIR"
+                [defaultSortName]="INITIAL_SORT_NAME"
                 [hasError]="trainingRunsHasError$ | async"
                 [isLoading]="loadingTrainingRuns$ | async"
                 [trainingRuns]="trainingRuns$ | async"

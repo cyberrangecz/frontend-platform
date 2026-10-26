@@ -53,3 +53,8 @@
     justify-content: flex-start;
     flex-direction: column;
 }
+
+.definition-list-error {
+    color: var(--error-40);
+    font-size: 0.75rem;
+}

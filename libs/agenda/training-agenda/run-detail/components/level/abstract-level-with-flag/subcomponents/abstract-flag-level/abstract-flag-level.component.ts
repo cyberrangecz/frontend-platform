@@ -1,10 +1,11 @@
 import {
-    Component,
-    DestroyRef,
-    inject,
-    input,
-    output,
-    signal,
+  Component,
+  DestroyRef,
+  inject,
+  input,
+  output,
+  signal,
+  ChangeDetectionStrategy
 } from '@angular/core';
 import { AsyncPipe } from '@angular/common';
 import { MatButton } from '@angular/material/button';
@@ -19,6 +20,7 @@ import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
     selector: 'crczp-abstract-flag-level',
     templateUrl: './abstract-flag-level.component.html',
     styleUrl: './abstract-flag-level.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         AsyncPipe,
         MatButton,

@@ -9,13 +9,12 @@
                     (levelMove)="onLevelMoved($event)"
                     [activeStep]="activeStep$ | async"
                     [levels]="stepperLevels | async"
-                    [movingInProgress]="levelMovingInProgress"
                 />
                 <mat-divider />
                 <crczp-level-edit
                     (levelChange)="onActiveLevelChanged($event)"
+                    [attr.inert]="editingBlocked ? '' : null"
                     [level]="(stepperLevels | async)[activeStep$ | async].level"
-                    [mitreTechniquesList]="mitreTechniquesList"
                 />
             </div>
         } @else {

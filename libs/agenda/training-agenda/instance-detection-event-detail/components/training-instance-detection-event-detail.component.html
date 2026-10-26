@@ -5,12 +5,12 @@
                 <div class="data-field">
                     <mat-icon class="material-icons-round"> schedule</mat-icon>
                     <div class="icon-label">Detection Run At</div>
-                    <div class="value-field">{{ this.detectionRunTime() | date }}</div>
+                    <div class="value-field">{{ detectionRunTime(detectionEvent.detectedAt) | date }}</div>
                 </div>
                 <div class="data-field">
                     <mat-icon class="material-icons-round"> view_comfy</mat-icon>
                     <div class="icon-label">Type of Event</div>
-                    <div class="value-field">{{ this.eventTypeFormatted }}</div>
+                    <div class="value-field">{{ eventTypeLabel(detectionEvent.detectionEventType) }}</div>
                 </div>
                 <div class="data-field">
                     <mat-icon class="material-icons-round"> edit_calendar</mat-icon>
@@ -76,11 +76,18 @@
         <mat-divider />
         <div class="content">
             <h1>Participants</h1>
+            @let participantTable = participants$ | async;
             <sentinel-table
-                [data]="participants$ | async"
+                (tableLoad)="onLoadEventParticipants($event)"
+                [defaultSortDirection]="INITIAL_SORT_DIR"
+                [defaultSortName]="PARTICIPANT_INITIAL_SORT_NAME"
+                [columns]="participantTable?.columns ?? []"
                 [displayedActionsCount]="4"
-                [hasError]="participantTableHasError$ | async"
-                [isLoading]="participantTableIsLoading$ | async"
+                [hasError]="!!(participantTableHasError$ | async)"
+                [isLoading]="!!(participantTableIsLoading$ | async)"
+                [pagination]="participantTable?.pagination"
+                [rows]="participantTable?.rows ?? []"
+                [selectable]="!!participantTable?.selectable"
                 crczpTableEmptyState="No participants in this detection event"
             >
             </sentinel-table>
@@ -91,11 +98,18 @@
                     <div class="content">
                         <h1>Forbidden Commands in {{ detectionEvent.levelTitle }}</h1>
                         <div class="forbidden-commands-table">
+                            @let forbiddenCommandTable = forbiddenCommands$ | async;
                             <sentinel-table
-                                [data]="forbiddenCommands$ | async"
+                                (tableLoad)="onLoadEventForbiddenCommands($event)"
+                                [defaultSortDirection]="INITIAL_SORT_DIR"
+                                [defaultSortName]="FORBIDDEN_COMMAND_INITIAL_SORT_NAME"
+                                [columns]="forbiddenCommandTable?.columns ?? []"
                                 [displayedActionsCount]="4"
-                                [hasError]="forbiddenCommandsTableHasError$ | async"
-                                [isLoading]="forbiddenCommandsTableIsLoading$ | async"
+                                [hasError]="!!(forbiddenCommandsTableHasError$ | async)"
+                                [isLoading]="!!(forbiddenCommandsTableIsLoading$ | async)"
+                                [pagination]="forbiddenCommandTable?.pagination"
+                                [rows]="forbiddenCommandTable?.rows ?? []"
+                                [selectable]="!!forbiddenCommandTable?.selectable"
                                 crczpTableEmptyState="No forbidden commands were detected"
                             >
                             </sentinel-table>

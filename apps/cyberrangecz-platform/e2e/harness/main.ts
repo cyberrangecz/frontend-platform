@@ -1,7 +1,6 @@
 import { importProvidersFrom } from '@angular/core';
 import { bootstrapApplication } from '@angular/platform-browser';
-import { provideAnimations } from '@angular/platform-browser/animations';
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http';
 import { provideRouter, withHashLocation } from '@angular/router';
 import { provideSentinelNotifications } from '@sentinel/layout/notification';
 import {
@@ -16,8 +15,7 @@ import { harnessRoutes } from './harness.routes';
 
 bootstrapApplication(HarnessComponent, {
     providers: [
-        provideAnimations(),
-        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClient(withXhr(), withInterceptorsFromDi()),
         provideTestPortalConfig(),
         provideSentinelNotifications(),
         importProvidersFrom(TrainingApiModule),

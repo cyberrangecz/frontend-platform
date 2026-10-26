@@ -11,12 +11,10 @@ import {
 } from '@angular/core';
 import {AbstractControl, ReactiveFormsModule, Validators} from '@angular/forms';
 import {Hint} from '@crczp/training-model';
-import {HintEditFormGroup} from './hint-edit-form-group';
+import {HintEditFormGroup, WHOLE_NUMBER_PATTERN} from './hint-edit-form-group';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {SentinelMarkdownEditorComponent} from "@sentinel/components/markdown-editor";
 import {MatError, MatFormField, MatInput, MatLabel, MatSuffix} from "@angular/material/input";
-import {MatIconButton} from "@angular/material/button";
-import {MatIcon} from "@angular/material/icon";
 import { ClearInputSuffixComponent } from '@crczp/utils';
 
 @Component({
@@ -92,6 +90,11 @@ export class HintDetailEditComponent implements OnChanges {
 
     private calculateMaxPenalty() {
         this.maxHintPenalty = this.levelMaxScore - (this.hintsPenaltySum - this.hint.penalty);
-        this.hintPenalty.setValidators([Validators.required, Validators.min(0), Validators.max(this.maxHintPenalty)]);
+        this.hintPenalty.setValidators([
+            Validators.required,
+            Validators.pattern(WHOLE_NUMBER_PATTERN),
+            Validators.min(0),
+            Validators.max(this.maxHintPenalty),
+        ]);
     }
 }

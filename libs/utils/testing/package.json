@@ -2,8 +2,9 @@
     "name": "@crczp/test-utils",
     "peerDependencies": {
         "@angular/core": "*",
-        "zod": "*",
-        "zod-class": "*"
+        "@crczp/utils": "*",
+        "jsdom": "*",
+        "tslib": "*"
     },
     "sideEffects": false
 }

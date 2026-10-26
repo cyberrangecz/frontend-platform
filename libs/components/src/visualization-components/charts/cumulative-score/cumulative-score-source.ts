@@ -14,9 +14,8 @@ import { createQuerySource, QuerySource } from '../shared';
 /** Cumulative score at the moment a level is cleared. */
 export interface CompletedLevelScore {
     /**
-     * Cumulative total score at the end of this level. The level_completed event carries
-     * the running totals from BEFORE this level (they are accumulated only afterwards), so
-     * this level's own `actual_score_in_level` is added back to reach the true end-of-level total.
+     * Cumulative total score at the end of this level. The level_completed event carries the
+     * running totals already including the completed level's own score.
      */
     readonly cumulativeScore: number;
 }
@@ -41,7 +40,6 @@ interface CompletedRow {
     readonly timestamp: number;
     readonly total_training_level_score: number;
     readonly total_assessment_level_score: number;
-    readonly actual_score_in_level: number;
 }
 
 /** One distinct level order to level type pairing from level_started. */
@@ -93,7 +91,6 @@ function buildCumulativeScoreQuery(
                 timestamp: levelCompletedTable.timestamp,
                 total_training_level_score: levelCompletedTable.total_training_level_score,
                 total_assessment_level_score: levelCompletedTable.total_assessment_level_score,
-                actual_score_in_level: levelCompletedTable.actual_score_in_level,
             })
             .from(levelCompletedTable)
             .where(
@@ -146,10 +143,7 @@ function toCumulativeScoreVm(aggregate: CumulativeScoreAggregate): CumulativeSco
         if (latest === undefined || row.timestamp > latest) {
             latestTimestampByOrder.set(row.level_order, row.timestamp);
             completedByOrder.set(row.level_order, {
-                cumulativeScore:
-                    row.total_training_level_score +
-                    row.total_assessment_level_score +
-                    row.actual_score_in_level,
+                cumulativeScore: row.total_training_level_score + row.total_assessment_level_score,
             });
         }
     }

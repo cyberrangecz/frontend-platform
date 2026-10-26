@@ -5,23 +5,15 @@ import {
 } from './pagination-storage.service';
 import { TestBed } from '@angular/core/testing';
 import { runInInjectionContext } from '@angular/core';
-import { PortalConfig } from '../../types/config';
+
+const DEFAULT_PAGE_SIZE = 10;
 
 describe('Pagination should load', () => {
     let createComponent: () => PaginationStorageService;
 
     beforeEach(() => {
         localStorage.clear();
-        TestBed.configureTestingModule({
-            providers: [
-                {
-                    provide: PortalConfig,
-                    useValue: {
-                        DEFAULT_PAGE_SIZE: 10,
-                    },
-                },
-            ],
-        });
+        TestBed.configureTestingModule({});
 
         createComponent = () =>
             runInInjectionContext(
@@ -30,7 +22,7 @@ describe('Pagination should load', () => {
                     new PaginationStorageService(
                         'key',
                         new PaginationRegistryService(),
-                        10,
+                        DEFAULT_PAGE_SIZE,
                     ),
             );
     });
@@ -44,12 +36,11 @@ describe('Pagination should load', () => {
         expect(component).toBeDefined();
         expect(component.loadPageSize()).toBeDefined();
         expect(component.savePageSize).toBeDefined();
-        expect(component.DEFAULT_PAGE_SIZE).toBeDefined();
     });
 
     it('should return default page size', () => {
         const component = createComponent();
-        expect(component.loadPageSize()).toBe(component.DEFAULT_PAGE_SIZE);
+        expect(component.loadPageSize()).toBe(DEFAULT_PAGE_SIZE);
     });
 
     it('should set and get page size', () => {

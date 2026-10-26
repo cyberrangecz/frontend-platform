@@ -15,7 +15,7 @@ import { MatCard } from '@angular/material/card';
 import { TrainingInstanceInfoComponent } from './info/training-instance-info.component';
 import { TrainingInstanceRunsComponent } from './runs/training-instance-runs.component';
 import { AsyncPipe } from '@angular/common';
-import { NotificationService, PaginationStorageService, providePaginationStorageService } from '@crczp/utils';
+import { NotificationService, PaginationStorageService, providePaginationStorageService, SortDir } from '@crczp/utils';
 import { Routing } from '@crczp/routing-commons';
 import { PaginationMapper } from '@crczp/api-common';
 import { TrainingRunSort } from '@crczp/training-api';
@@ -53,6 +53,8 @@ export class TrainingInstanceSummaryComponent implements OnInit {
     trainingInstanceAccessTokenLink: string;
     trainingInstancePoolIdLink: string;
     trainingDefinitionLink: string;
+    readonly INITIAL_SORT_NAME: TrainingRunSort = 'startTime';
+    readonly INITIAL_SORT_DIR: SortDir = 'desc';
     destroyRef = inject(DestroyRef);
     private activeRoute = inject(ActivatedRoute);
     private trainingInstanceSummaryService = inject(
@@ -65,9 +67,10 @@ export class TrainingInstanceSummaryComponent implements OnInit {
 
     private readonly initialRunPagination =
         this.paginationService.createPagination<TrainingRunSort>(
-            'endTime',
-            'asc',
+            this.INITIAL_SORT_NAME,
+            this.INITIAL_SORT_DIR,
         );
+    private pagination = this.initialRunPagination;
 
     ngOnInit(): void {
         this.trainingInstance$ = this.activeRoute.data.pipe(
@@ -85,16 +88,16 @@ export class TrainingInstanceSummaryComponent implements OnInit {
      * @param event reload data event emitted from table
      */
     onTrainingRunTableLoadEvent(event: TableLoadEvent<TrainingRunSort>): void {
-        this.paginationService.savePageSize(event.pagination.size);
+        if (event.pagination) {
+            this.pagination = PaginationMapper.toOffsetPaginationEvent(
+                event.pagination,
+            );
+        }
+        this.paginationService.savePageSize(this.pagination.size);
         this.trainingInstance$
             .pipe(
                 switchMap((ti) =>
-                    this.trainingRunService.getAll(
-                        ti.id,
-                        PaginationMapper.toOffsetPaginationEvent(
-                            event.pagination,
-                        ),
-                    ),
+                    this.trainingRunService.getAll(ti.id, this.pagination),
                 ),
                 takeUntilDestroyed(this.destroyRef),
             )
@@ -132,10 +135,10 @@ export class TrainingInstanceSummaryComponent implements OnInit {
             .instanceId(trainingInstance.id)
             .access_token.build()}`;
         this.trainingInstancePoolIdLink = `/${Routing.RouteBuilder.pool
-            .poolId(trainingInstance.id)
+            .poolId(trainingInstance.poolId)
             .build()}`;
         this.trainingDefinitionLink = `/${Routing.RouteBuilder.linear_definition
-            .definitionId(trainingInstance.id)
+            .definitionId(trainingInstance.trainingDefinition.id)
             .detail.build()}`;
         this.hasStarted$ = this.trainingInstanceSummaryService.hasStarted$;
     }

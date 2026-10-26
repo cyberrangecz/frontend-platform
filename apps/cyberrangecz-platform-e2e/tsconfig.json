@@ -1,0 +1,16 @@
+{
+    "extends": "../../tsconfig.base.json",
+    "compilerOptions": {
+        "target": "es2022",
+        "module": "preserve",
+        "moduleResolution": "bundler",
+        "lib": ["es2023", "dom"],
+        "types": ["node"],
+        "strict": true,
+        "noEmit": true,
+        "resolveJsonModule": true,
+        "esModuleInterop": true,
+        "ignoreDeprecations": "6.0"
+    },
+    "include": ["*.ts", "src/**/*.ts"]
+}

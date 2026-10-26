@@ -8,6 +8,8 @@ const testDTO = {
             name: 'router',
             os_type: 'linux',
             gui_access: false,
+            is_accessible: true,
+            ip: null,
             subnets: [
                 {
                     name: 'server-switch',
@@ -17,6 +19,7 @@ const testDTO = {
                             name: 'server',
                             os_type: 'linux',
                             gui_access: false,
+                            is_accessible: true,
                             ip: '192.168.20.5',
                         },
                     ],
@@ -29,6 +32,7 @@ const testDTO = {
                             name: 'client',
                             os_type: 'linux',
                             gui_access: false,
+                            is_accessible: true,
                             ip: '192.168.30.5',
                         },
                     ],

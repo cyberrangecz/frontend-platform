@@ -1,9 +1,9 @@
 import { inject, Injectable } from '@angular/core';
 import { OffsetPaginationEvent } from '@crczp/utils';
 import { LinearRunApi, LinearTrainingInstanceApi, TrainingRunSort } from '@crczp/training-api';
-import { TrainingRun } from '@crczp/training-model';
-import { EMPTY, Observable, of } from 'rxjs';
-import { switchMap, tap } from 'rxjs/operators';
+import { TrainingRun, TrainingRunStateEnum } from '@crczp/training-model';
+import { EMPTY, Observable, of, throwError } from 'rxjs';
+import { catchError, defaultIfEmpty, switchMap, tap } from 'rxjs/operators';
 import { SandboxAllocationUnitsApi, SandboxInstanceApi } from '@crczp/sandbox-api';
 import { MatDialog } from '@angular/material/dialog';
 import {
@@ -78,14 +78,15 @@ export class TrainingRunService extends OffsetPaginatedElementsPollingService<
             ),
             switchMap(() => this.callApiToDeleteRun(trainingRun)),
             switchMap(() =>
+                localEnvironment
+                    ? of(undefined)
+                    : this.callApiToDeleteSandbox(trainingRun).pipe(
+                          defaultIfEmpty(undefined),
+                      ),
+            ),
+            switchMap(() =>
                 this.getAll(this.lastTrainingInstanceId, this.lastPagination),
             ),
-            switchMap(() => {
-                if (localEnvironment) {
-                    return of();
-                }
-                return this.callApiToDeleteSandbox(trainingRun);
-            }),
         );
     }
 
@@ -117,7 +118,7 @@ export class TrainingRunService extends OffsetPaginatedElementsPollingService<
             {
                 data: new SentinelConfirmationDialogConfig(
                     'Delete Sandbox Instance',
-                    `Do you want to delete sandbox instance and training run of player "${trainingRun?.player?.name}"?`,
+                    this.deleteConfirmationMessage(trainingRun),
                     'Cancel',
                     'Delete',
                 ),
@@ -126,9 +127,25 @@ export class TrainingRunService extends OffsetPaginatedElementsPollingService<
         return dialogRef.afterClosed();
     }
 
+    private deleteConfirmationMessage(trainingRun: TrainingRun): string {
+        const playerName = trainingRun?.player?.name;
+        return trainingRun.state === TrainingRunStateEnum.ARCHIVED
+            ? `Delete the archived training run of player "${playerName}" and its previous sandbox instance? Archiving the run kept the sandbox instance; this deletes it.`
+            : `Do you want to delete sandbox instance and training run of player "${playerName}"?`;
+    }
+
     private callApiToDeleteSandbox(trainingRun: TrainingRun): Observable<any> {
+        const sandboxId =
+            trainingRun.sandboxInstanceId ??
+            trainingRun.previousSandboxInstanceId;
+        if (!sandboxId) {
+            return EMPTY;
+        }
         let sandboxToDelete: SandboxInstance;
-        return this.sandboxApi.getSandbox(trainingRun.sandboxInstanceId).pipe(
+        return this.sandboxApi.getSandbox(sandboxId).pipe(
+            catchError((error) =>
+                error?.status === 404 ? EMPTY : throwError(() => error),
+            ),
             tap((sandbox) => (sandboxToDelete = sandbox)),
             switchMap(() =>
                 this.sandboxApi.unlockSandbox(sandboxToDelete.allocationUnitId),

@@ -22,8 +22,6 @@
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
         "importHelpers": true,
-        "incremental": true,
-        "tsBuildInfoFile": ".angular/cache/.tsbuildinfo",
         "lib": ["es2020", "dom"],
         "module": "esnext",
         "moduleResolution": "bundler",
@@ -164,12 +162,18 @@
             ],
             "@crczp/utils": ["libs/utils/misc/src/index.ts"],
             "@crczp/echarts-utils": ["libs/utils/echarts/src/index.ts"],
-            "@crczp/test-utils": ["libs/utils/testing/src/index.ts"]
+            "@crczp/test-utils": ["libs/utils/testing/src/index.ts"],
+            "@crczp/zod-class": ["libs/utils/zod-class/src/index.ts"]
         },
         "rootDir": ".",
         "skipDefaultLibCheck": true,
         "skipLibCheck": true,
         "sourceMap": true,
-        "target": "es2015"
+        "target": "es2015",
+        "strict": false,
+        "noUncheckedSideEffectImports": false,
+        "types": ["*"],
+        "esModuleInterop": false,
+        "ignoreDeprecations": "6.0"
     }
 }

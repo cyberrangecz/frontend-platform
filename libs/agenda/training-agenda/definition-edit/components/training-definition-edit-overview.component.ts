@@ -5,10 +5,10 @@ import {
     SentinelControlItem,
     SentinelControlsComponent
 } from '@sentinel/components/controls';
-import { Level, MitreTechnique, TrainingDefinitionWithLevels } from '@crczp/training-model';
+import { TrainingDefinitionStateEnum, TrainingDefinitionWithLevels } from '@crczp/training-model';
 import { combineLatest, defer, Observable, of, switchMap } from 'rxjs';
 import { filter, map, tap } from 'rxjs/operators';
-import { UnsavedChangesTracker } from '@crczp/utils';
+import { PortalConfig, UnsavedChangesTracker } from '@crczp/utils';
 import { TrainingDefinitionChangeEvent } from '../model/events/training-definition-change-event';
 import { TrainingDefinitionEditService } from '../services/state/edit/training-definition-edit.service';
 import { SentinelUserAssignComponent, SentinelUserAssignService } from '@sentinel/components/user-assign';
@@ -78,19 +78,17 @@ export class TrainingDefinitionEditOverviewComponent implements OnInit {
     tdTitle$: Observable<string>;
     levelsCount = -1;
     saveDisabled$: Observable<boolean>;
-    levelSaveDisabled$: Observable<boolean>;
+    editingBlockReason$: Observable<string | null>;
     protected readonly unsavedChanges = new UnsavedChangesTracker<
         'trainingDefinition' | 'levels' | 'authors'
     >();
-    defaultPaginationSize: number;
+    readonly defaultPaginationSize = inject(PortalConfig).defaultPageSize;
     controls: SentinelControlItem[];
-    mitreTechniques$: Observable<MitreTechnique[]>;
     destroyRef = inject(DestroyRef);
     private activeRoute = inject(ActivatedRoute);
     private router = inject(Router);
     private editService = inject(TrainingDefinitionEditService);
     private levelEditService = inject(LevelEditService);
-    private mitreTechniquesService = inject(MitreTechniquesService);
     private authorsAssignService = inject(SentinelUserAssignService);
 
     constructor() {
@@ -99,16 +97,18 @@ export class TrainingDefinitionEditOverviewComponent implements OnInit {
             map((td) => td.title),
         );
         this.saveDisabled$ = this.editService.saveDisabled$;
-        this.mitreTechniques$ = this.mitreTechniquesService.mitreTechniques$;
-        this.mitreTechniquesService
-            .getAll()
-            .pipe(takeUntilDestroyed(this.destroyRef))
-            .subscribe();
         const valid$: Observable<boolean> = combineLatest([
             this.editService.definitionValid$,
             this.levelEditService.levelsValid$,
         ]).pipe(map((valid) => valid[0] && valid[1]));
-        this.levelSaveDisabled$ = this.levelEditService.levelsSaveDisabled$;
+        this.editingBlockReason$ = combineLatest([
+            this.editService.editMode$,
+            this.editService.trainingDefinition$,
+        ]).pipe(
+            map(([editMode, definition]) =>
+                editMode ? this.describeEditingBlock(definition) : null,
+            ),
+        );
         this.activeRoute.data
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe((data) =>
@@ -120,20 +120,53 @@ export class TrainingDefinitionEditOverviewComponent implements OnInit {
     }
 
     /**
+     * Names why a saved definition cannot be edited, or null when it can.
+     *
+     * @param definition Stored definition shown in the editor.
+     */
+    private describeEditingBlock(
+        definition: TrainingDefinitionWithLevels,
+    ): string | null {
+        if (!definition.state) {
+            return null;
+        }
+        if (definition.state !== TrainingDefinitionStateEnum.Unreleased) {
+            return `Editing is disabled: the definition is ${definition.state.toLowerCase()}.`;
+        }
+        if (definition.instanceCount > 0) {
+            return definition.instanceCount === 1
+                ? 'Editing is disabled: 1 training instance uses this definition.'
+                : `Editing is disabled: ${definition.instanceCount} training instances use this definition.`;
+        }
+        return null;
+    }
+
+    /**
      * Builds the Save control, enabled only while the definition and levels are
-     * both valid and either has changes to persist.
+     * both valid, either has changes to persist, no save is running and editing is not blocked.
      *
      * @param valid$ Combined validity of the definition and its levels.
      */
     private buildControls(valid$: Observable<boolean>): SentinelControlItem[] {
         const saveDisabled$: Observable<boolean> = combineLatest([
             this.saveDisabled$,
-            this.levelSaveDisabled$,
+            this.levelEditService.hasUnsavedChanges$,
             valid$,
+            this.editingBlockReason$,
+            this.editService.saving$,
         ]).pipe(
             map(
-                ([definitionSaveDisabled, levelSaveDisabled, valid]) =>
-                    (definitionSaveDisabled && levelSaveDisabled) || !valid,
+                ([
+                    definitionSaveDisabled,
+                    levelsUnsaved,
+                    valid,
+                    blockReason,
+                    saving,
+                ]) =>
+                    (definitionSaveDisabled && !levelsUnsaved) ||
+                    !valid ||
+                    saving ||
+                    blockReason !== null,
             ),
         );
         return [
@@ -209,11 +242,11 @@ export class TrainingDefinitionEditOverviewComponent implements OnInit {
     }
 
     /**
-     * Changes state of the component when one of the levels is saved
-     * @param unsavedLevels unsaved levels emitted from child component
+     * Changes state of the component when the levels gain or lose unsaved changes
+     * @param hasUnsavedChanges true if the levels differ from the saved ones, false otherwise
      */
-    onUnsavedLevelsChanged(unsavedLevels: Level[]): void {
-        this.unsavedChanges.set('levels', unsavedLevels.length > 0);
+    onUnsavedLevelsChanged(hasUnsavedChanges: boolean): void {
+        this.unsavedChanges.set('levels', hasUnsavedChanges);
     }
 
     /**

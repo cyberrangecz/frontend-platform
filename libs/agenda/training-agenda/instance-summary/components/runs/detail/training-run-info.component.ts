@@ -1,43 +1,57 @@
-import { Component, HostBinding, inject, Input, OnInit } from '@angular/core';
+import { Component, HostBinding, inject, Input, OnInit, ChangeDetectionStrategy, signal } from '@angular/core';
 import { TrainingRun, TrainingRunInfo } from '@crczp/training-model';
 import { TrainingRunSummaryService } from '../../../services/state/runs/training-run-summary.service';
-import {
-    SentinelTable,
-    SentinelTableComponent,
-} from '@sentinel/components/table';
+import { SentinelTableComponent, TableColumnVisibilityService } from '@sentinel/components/table';
 import { TrainingInfoTable } from '../../../model/training-info-table';
 import { take } from 'rxjs/operators';
-import { TableEmptyStateDirective } from '@crczp/components';
+import { TableEmptyStateDirective, TableModel } from '@crczp/components';
+import { NgxSkeletonLoaderComponent, NgxSkeletonLoaderConfigTheme } from 'ngx-skeleton-loader';
 
 @Component({
     selector: 'crczp-training-run-info',
     templateUrl: './training-run-info.component.html',
     styleUrls: ['./training-run-info.component.css'],
-    providers: [TrainingRunSummaryService],
-    imports: [SentinelTableComponent, TableEmptyStateDirective],
+    providers: [TrainingRunSummaryService, TableColumnVisibilityService],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [SentinelTableComponent, TableEmptyStateDirective, NgxSkeletonLoaderComponent],
 })
 export class TrainingRunInfoComponent implements OnInit {
     @HostBinding('style.width') width = '100%';
-    @Input() data: TrainingRun;
-    info: SentinelTable<TrainingRunInfo, string>;
-    hasError = false;
+    @Input() sentinelExpandData: TrainingRun;
+    protected readonly info = signal<TableModel<TrainingRunInfo, string> | undefined>(undefined);
+    protected readonly hasError = signal(false);
+    protected readonly isLoading = signal(true);
+    protected readonly skeletonTheme: NgxSkeletonLoaderConfigTheme = {
+        height: 'var(--space-5xl)',
+        margin: '0',
+        'border-radius': 'var(--space-md)',
+        'background-color': 'var(--neutral-95)',
+    };
     private trainingRunService = inject(TrainingRunSummaryService);
 
     ngOnInit(): void {
-        this.trainingRunService.getInfo(this.data.id).subscribe(
-            (res) => {
-                this.info = new TrainingInfoTable(res);
-                this.hasError = false;
-            },
-            () => (this.hasError = true),
-        );
+        this.loadInfo();
     }
 
-    /**
-     * Gets new data for table
-     * @param loadEvent event emitted by table component to get new data
-     */
+    /** Reloads the table data on a table load request, such as the error state's try again. */
     onLoadEvent(): void {
-        this.trainingRunService.getInfo(this.data.id).pipe(take(1)).subscribe();
+        this.loadInfo();
+    }
+
+    private loadInfo(): void {
+        this.trainingRunService
+            .getInfo(this.sentinelExpandData.id)
+            .pipe(take(1))
+            .subscribe({
+                next: (res) => {
+                    this.info.set(new TrainingInfoTable(res));
+                    this.hasError.set(false);
+                    this.isLoading.set(false);
+                },
+                error: () => {
+                    this.hasError.set(true);
+                    this.isLoading.set(false);
+                },
+            });
     }
 }

@@ -1,11 +1,12 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
-import { SentinelRowDirective, SentinelTableComponent, TableLoadEvent } from '@sentinel/components/table';
+import { SentinelCellDirective, SentinelTableComponent, TableLoadEvent } from '@sentinel/components/table';
 import { MatRipple } from '@angular/material/core';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TrainingRunTable } from '../../model/training-run-table';
 import { TrainingRunSort } from '@crczp/training-api';
 import { TableEmptyStateDirective } from '@crczp/components';
+import { SortDir } from '@crczp/utils';
 
 /**
  * Component displaying training runs and its state in real time.
@@ -19,7 +20,7 @@ import { TableEmptyStateDirective } from '@crczp/components';
         SentinelTableComponent,
         MatRipple,
         MatIcon,
-        SentinelRowDirective,
+        SentinelCellDirective,
         MatTooltip,
         TableEmptyStateDirective,
     ],
@@ -28,6 +29,8 @@ export class TrainingRunOverviewComponent {
     @Input() trainingRuns: TrainingRunTable;
     @Input() hasError: boolean;
     @Input() isLoading: boolean;
+    @Input() defaultSortName: TrainingRunSort;
+    @Input() defaultSortDirection: SortDir;
 
     @Output() TableLoadEvent: EventEmitter<TableLoadEvent<TrainingRunSort>> =
         new EventEmitter();

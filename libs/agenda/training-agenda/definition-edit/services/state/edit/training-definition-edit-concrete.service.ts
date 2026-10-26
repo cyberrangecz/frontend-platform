@@ -1,11 +1,12 @@
 import { inject, Injectable } from '@angular/core';
 import { LinearTrainingDefinitionApi } from '@crczp/training-api';
 import { TrainingDefinitionWithLevels } from '@crczp/training-model';
-import { combineLatest, concat, Observable } from 'rxjs';
-import { map, tap, toArray } from 'rxjs/operators';
+import { combineLatest, Observable } from 'rxjs';
+import { map, tap } from 'rxjs/operators';
 import { TrainingDefinitionChangeEvent } from '../../../model/events/training-definition-change-event';
 import { TrainingDefinitionEditService } from './training-definition-edit.service';
 import { LevelEditService } from '../level/level-edit.service';
+import { createDefaultLevels } from '../level/new-level.factory';
 import { ErrorHandlerService, LoadingTracker, NotificationService } from '@crczp/utils';
 
 /**
@@ -20,10 +21,10 @@ export class TrainingDefinitionEditConcreteService extends TrainingDefinitionEdi
     private notificationService = inject(NotificationService);
     private levelEditService = inject(LevelEditService);
 
-    private editedSnapshot: TrainingDefinitionWithLevels;
     private loadingTracker = new LoadingTracker();
+    public saving$ = this.loadingTracker.isLoading$;
     public saveDisabled$ = combineLatest(
-        this.loadingTracker.isLoading$,
+        this.saving$,
         this.saveDisabledSubject$,
     ).pipe(map(([loading, invalid]) => loading || invalid));
 
@@ -41,87 +42,79 @@ export class TrainingDefinitionEditConcreteService extends TrainingDefinitionEdi
     }
 
     save(): Observable<number | null> {
-        if (this.editModeSubject$.getValue()) {
-            // checks if TD was edited if not only levels are updated
-            if (this.editedSnapshot) {
-                return concat(
-                    this.update(),
-                    this.levelEditService.saveUnsavedLevels(),
-                ).pipe(
-                    toArray(),
-                    map(() => null),
-                );
-            } else {
-                return this.levelEditService
-                    .saveUnsavedLevels()
-                    .pipe(map(() => null));
-            }
-        }
-        return this.create();
+        return this.editModeSubject$.getValue() ? this.update() : this.create();
     }
 
     /**
-     * Updated saveDisabled$ and saved snapshot of edited training definition
+     * Updates the validity state of the edited training definition
      * @param changeEvent training definition object and its validity
      */
     change(changeEvent: TrainingDefinitionChangeEvent): void {
         this.definitionValidSubject$.next(changeEvent.isValid);
         this.saveDisabledSubject$.next(!changeEvent.isValid);
-        this.editedSnapshot = changeEvent.trainingDefinition;
     }
 
     private setEditMode(trainingDefinition: TrainingDefinitionWithLevels) {
         this.editModeSubject$.next(trainingDefinition !== null);
     }
 
-    private update(): Observable<number> {
+    private update(): Observable<null> {
+        const definition = this.trainingDefinitionSubject$.getValue();
+        definition.levels = this.levelEditService.getLevels();
         return this.loadingTracker.trackRequest(() =>
-            this.api.update(this.editedSnapshot).pipe(
-                tap(
-                    () => {
+            this.api.update(definition).pipe(
+                tap({
+                    next: (saved) => {
                         this.notificationService.emit(
                             'success',
                             'Changes were saved',
                         );
-                        this.onSaved();
+                        this.onSaved(saved);
                     },
-                    (err) =>
+                    error: (err) =>
                         this.errorHandler.emitAPIError(
                             err,
-                            'Editing training definition',
+                            'Saving training definition',
                         ),
-                ),
+                }),
+                map(() => null),
             ),
         );
     }
 
     private create(): Observable<number> {
+        const definition = this.trainingDefinitionSubject$.getValue();
+        definition.levels = definition.defaultContent
+            ? createDefaultLevels()
+            : [];
         return this.loadingTracker.trackRequest(() =>
-            this.api.create(this.editedSnapshot).pipe(
-                tap(
-                    (createdTrainingDefinition) => {
-                        this.editedSnapshot.id = createdTrainingDefinition.id;
+            this.api.create(definition).pipe(
+                tap({
+                    next: (created) => {
                         this.notificationService.emit(
                             'success',
                             'Training was created',
                         );
-                        this.onSaved();
+                        this.onSaved(created);
                     },
-                    (err) =>
+                    error: (err) =>
                         this.errorHandler.emitAPIError(
                             err,
                             'Creating training definition',
                         ),
-                ),
-                map((td) => td.id),
+                }),
+                map((created) => created.id),
             ),
         );
     }
 
-    private onSaved() {
+    /**
+     * Replaces the edited definition with the stored one, so ids of levels and their nested items and the
+     * version come from the server.
+     */
+    private onSaved(saved: TrainingDefinitionWithLevels) {
+        this.trainingDefinitionSubject$.next(saved);
         this.editModeSubject$.next(true);
         this.saveDisabledSubject$.next(true);
-        this.trainingDefinitionSubject$.next(this.editedSnapshot);
-        this.editedSnapshot = null;
     }
 }

@@ -1,13 +1,19 @@
 <div class="content">
-    <crczp-access-training-run (accessToken)="access($event)" [isLoading]="isLoading" />
+    <crczp-access-training-run (accessToken)="access($event)" [isLoading]="isLoading()" />
     <div class="table-container">
         <sentinel-controls [controls]="controls"
                            [titlecased]="false" />
+        @let table = trainingRuns$ | async;
         <sentinel-table
             (tableLoad)="loadAccessedTrainingRuns($event)"
-            [data]="trainingRuns$ | async"
-            [hasError]="hasError$ | async"
-            [isLoading]="tableIsLoading$ | async"
+            [columns]="table?.columns ?? []"
+            [defaultSortDirection]="INITIAL_SORT_DIR"
+            [defaultSortName]="INITIAL_SORT_NAME"
+            [hasError]="!!(hasError$ | async)"
+            [isLoading]="!!(tableIsLoading$ | async)"
+            [pagination]="table?.pagination"
+            [rows]="table?.rows ?? []"
+            [selectable]="!!table?.selectable"
             crczpTableEmptyState="You have not accessed any training runs yet"
         >
         </sentinel-table>

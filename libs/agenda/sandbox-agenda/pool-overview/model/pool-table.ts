@@ -3,11 +3,10 @@ import {
     Column,
     DeleteAction,
     EditAction,
-    ExpandableSentinelTable,
-    Row,
     RowAction,
     RowExpand
 } from '@sentinel/components/table';
+import { LinkedRow, TableModel } from '@crczp/components';
 import { defer, Observable, of } from 'rxjs';
 import { PoolRowAdapter } from './pool-row-adapter';
 import { SandboxInstanceService } from '@crczp/sandbox-agenda/pool-detail';
@@ -21,12 +20,7 @@ import { OffsetPaginatedResource } from '@crczp/api-common';
  * Helper class transforming paginated resource to class for common table component
  * @dynamic
  */
-export class PoolTable extends ExpandableSentinelTable<
-    PoolRowAdapter,
-    PoolExpandDetailComponent,
-    null,
-    PoolSort
-> {
+export class PoolTable extends TableModel<PoolRowAdapter, PoolSort> {
     constructor(
         data: OffsetPaginatedResource<Pool>,
         resources: Observable<Resources>,
@@ -47,16 +41,16 @@ export class PoolTable extends ExpandableSentinelTable<
                 'createdByName',
                 'Created by',
                 true,
-                'created_by',
+                'created_by_id',
             ),
             new Column<PoolSort>(
                 'sandboxDefinitionNameAndRevision',
                 'Sandbox definition (revision)',
                 true,
-                'definition',
+                'definition_id',
             ),
-            new Column<PoolSort>('comment', 'Notes and comments', false),
-            new Column<PoolSort>('lockState', 'State', true, 'lock'),
+            new Column<PoolSort>('comment', 'Notes and comments', true, 'comment'),
+            new Column<PoolSort>('lockState', 'State', false),
             new Column<PoolSort>('usedAndMaxSize', 'Size', true, 'max_size'),
             new Column<PoolSort>(
                 'resourcesUtilization',
@@ -74,7 +68,7 @@ export class PoolTable extends ExpandableSentinelTable<
         resources: Observable<Resources>,
         poolService: PoolService,
         sandboxInstanceService: SandboxInstanceService,
-    ): Row<PoolRowAdapter> {
+    ): LinkedRow<PoolRowAdapter> {
         const rowAdapter = pool as PoolRowAdapter;
         rowAdapter.title = `Pool ${rowAdapter.id}`;
         rowAdapter.createdByName = pool.createdBy.fullName;
@@ -91,9 +85,9 @@ export class PoolTable extends ExpandableSentinelTable<
             `${(pool.hardwareUsage.ram * 100).toFixed(1)}% / ` +
             `${(pool.hardwareUsage.port * 100).toFixed(1)}% / ` +
             `${(pool.hardwareUsage.network * 100).toFixed(1)}%`;
-        resources.subscribe((data) => (rowAdapter.resources = data));
+        rowAdapter.resources$ = resources;
 
-        const row = new Row(
+        const row = new LinkedRow(
             rowAdapter,
             this.createActions(pool, poolService, sandboxInstanceService),
         );

@@ -9,6 +9,7 @@ import {
     OnChanges,
     OnInit,
     Output,
+    signal,
     SimpleChanges
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
@@ -71,7 +72,9 @@ export class HintsOverviewComponent implements OnInit, OnChanges {
     hintsHasErrors: boolean;
     penaltySum: number;
     selectedStep: number;
-    stepperHints: SentinelStepper<HintStepperAdapter> = { items: [] };
+    readonly stepperHints = signal<SentinelStepper<HintStepperAdapter>>({
+        items: [],
+    });
     controls: SentinelControlItem[];
     destroyRef = inject(DestroyRef);
     private deleteDisabledSubject$: BehaviorSubject<boolean> =
@@ -88,14 +91,18 @@ export class HintsOverviewComponent implements OnInit, OnChanges {
         }
         if ('hints' in changes) {
             this.deleteDisabledSubject$.next(this.hints.length <= 0);
-            this.stepperHints.items = this.hints.map(
-                (hint) => new HintStepperAdapter(hint),
+            this.stepperHints.set({
+                items: this.hints.map((hint) => new HintStepperAdapter(hint)),
+            });
+            this.selectedStep = Math.max(
+                0,
+                Math.min(this.selectedStep, this.hints.length - 1),
             );
             this.setInitialHintPenaltySum();
             this.calculateHasError();
         }
-        if (this.stepperHints.items.length > 0) {
-            this.stepperHints.items[this.selectedStep].state =
+        if (this.stepperHints().items.length > 0) {
+            this.stepperHints().items[this.selectedStep].state =
                 StepStateEnum.ACTIVE;
         }
     }
@@ -104,19 +111,21 @@ export class HintsOverviewComponent implements OnInit, OnChanges {
      * Creates new hint with default values
      */
     addHint(): Observable<void> {
-        if (this.stepperHints.items.length >= 1) {
-            this.stepperHints.items[this.selectedStep].state =
+        if (this.stepperHints().items.length >= 1) {
+            this.stepperHints().items[this.selectedStep].state =
                 StepStateEnum.SELECTABLE;
         }
         const hint = new Hint();
         hint.title = 'New hint';
         hint.penalty = 0;
         hint.content = 'Write hint content here...';
-        hint.order = this.stepperHints.items.length;
+        hint.order = this.stepperHints().items.length;
         const hintStepperAdapter = new HintStepperAdapter(hint);
         hintStepperAdapter.state = StepStateEnum.ACTIVE;
-        this.stepperHints.items.push(hintStepperAdapter);
-        this.selectedStep = this.stepperHints.items.length - 1;
+        this.stepperHints.set({
+            items: [...this.stepperHints().items, hintStepperAdapter],
+        });
+        this.selectedStep = this.stepperHints().items.length - 1;
         this.onHintsChanged();
         return EMPTY;
     }
@@ -125,7 +134,7 @@ export class HintsOverviewComponent implements OnInit, OnChanges {
      * Displays confirmation dialog window, if confirmed, deletes given active hint from list of hints
      */
     deleteActiveHint(): Observable<void> {
-        const hint = this.stepperHints.items[this.selectedStep];
+        const hint = this.stepperHints().items[this.selectedStep];
         const index = this.selectedStep;
         const dialogRef = this.dialog.open(
             SentinelConfirmationDialogComponent,
@@ -144,7 +153,11 @@ export class HintsOverviewComponent implements OnInit, OnChanges {
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe((result) => {
                 if (result === SentinelDialogResultEnum.CONFIRMED) {
-                    this.stepperHints.items.splice(index, 1);
+                    this.stepperHints.set({
+                        items: this.stepperHints().items.filter(
+                            (_, itemIndex) => itemIndex !== index,
+                        ),
+                    });
                     this.changeSelectedStepAfterRemoving(index);
                     this.onOrderUpdate();
                 }
@@ -157,8 +170,8 @@ export class HintsOverviewComponent implements OnInit, OnChanges {
      * @param index index of active hint
      */
     onActiveHintChanged(index: number): void {
-        if (index !== this.selectedStep && this.stepperHints.items.length > 0) {
-            this.stepperHints.items[this.selectedStep].state =
+        if (index !== this.selectedStep && this.stepperHints().items.length > 0) {
+            this.stepperHints().items[this.selectedStep].state =
                 StepStateEnum.SELECTABLE;
             this.selectedStep = index;
         }
@@ -168,8 +181,8 @@ export class HintsOverviewComponent implements OnInit, OnChanges {
      * Updates order of stepper items to match order of the hints
      */
     onOrderUpdate(): void {
-        this.stepperHints.items.forEach((hint, index) => {
-            this.stepperHints.items[index].hint.order = index;
+        this.stepperHints().items.forEach((hint, index) => {
+            this.stepperHints().items[index].hint.order = index;
         });
         this.onHintsChanged();
     }
@@ -179,11 +192,12 @@ export class HintsOverviewComponent implements OnInit, OnChanges {
      */
     onHintsChanged(hint: Hint = null): void {
         if (hint) {
-            this.stepperHints.items[this.selectedStep].hint = hint;
+            this.stepperHints().items[this.selectedStep].hint = hint;
+            this.stepperHints.set({ items: [...this.stepperHints().items] });
         }
         this.calculateHintPenaltySum();
         this.calculateHasError();
-        this.hintsChange.emit(this.stepperHints.items.map((item) => item.hint));
+        this.hintsChange.emit(this.stepperHints().items.map((item) => item.hint));
     }
 
     /**
@@ -196,9 +210,9 @@ export class HintsOverviewComponent implements OnInit, OnChanges {
         } else {
             this.selectedStep--;
         }
-        this.onActiveHintChanged(this.stepperHints.items.length - 1);
-        if (this.stepperHints.items.length > 0) {
-            this.stepperHints.items[this.stepperHints.items.length - 1].state =
+        this.onActiveHintChanged(this.stepperHints().items.length - 1);
+        if (this.stepperHints().items.length > 0) {
+            this.stepperHints().items[this.stepperHints().items.length - 1].state =
                 StepStateEnum.ACTIVE;
         }
     }
@@ -227,7 +241,7 @@ export class HintsOverviewComponent implements OnInit, OnChanges {
      */
     private calculateHintPenaltySum() {
         let hintsPenaltySum = 0;
-        this.stepperHints.items.forEach((item) => {
+        this.stepperHints().items.forEach((item) => {
             hintsPenaltySum += item.hint.penalty;
         });
         this.penaltySum = hintsPenaltySum;

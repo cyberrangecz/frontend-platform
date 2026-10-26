@@ -36,7 +36,7 @@ async function evictByTtl(
         .groupBy(watermarkTable.instance_id);
 
     const stale = watermarks
-        .filter((entry) => entry.lastSynced !== null && Number(entry.lastSynced) < ttlBoundary)
+        .filter((entry) => entry.lastSynced !== null && Number(entry.lastSynced) <= ttlBoundary)
         .sort((a, b) => Number(a.lastSynced ?? 0) - Number(b.lastSynced ?? 0));
 
     for (const { instanceId } of stale) {

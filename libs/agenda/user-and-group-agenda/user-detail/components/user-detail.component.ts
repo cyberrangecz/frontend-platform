@@ -1,11 +1,11 @@
 import {
-    Component,
-    DestroyRef,
-    inject,
-    OnInit,
-    ViewChild,
+  Component,
+  inject,
+  ViewChild,
+  ChangeDetectionStrategy
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { map } from 'rxjs/operators';
 import { User } from '@crczp/user-and-group-model';
 import {
     MatAccordion,
@@ -14,7 +14,7 @@ import {
     MatExpansionPanelHeader,
     MatExpansionPanelTitle,
 } from '@angular/material/expansion';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { MatCard } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -34,23 +34,14 @@ import { MatButton } from '@angular/material/button';
         MatTooltip,
         MatExpansionPanelHeader,
     ],
+    changeDetection: ChangeDetectionStrategy.OnPush,
     styleUrls: ['./user-detail.component.css'],
 })
-export class UserDetailComponent implements OnInit {
+export class UserDetailComponent {
     @ViewChild(MatAccordion) accordion: MatAccordion;
-    user: User;
-    destroyRef = inject(DestroyRef);
     private activeRoute = inject(ActivatedRoute);
-
-    ngOnInit(): void {
-        this.initTable();
-    }
-
-    private initTable() {
-        this.activeRoute.data
-            .pipe(takeUntilDestroyed(this.destroyRef))
-            .subscribe((data) => {
-                this.user = data[User.name];
-            });
-    }
+    protected readonly currentUser = toSignal(
+        this.activeRoute.data.pipe(map((data) => data[User.name] as User)),
+        { requireSync: true },
+    );
 }

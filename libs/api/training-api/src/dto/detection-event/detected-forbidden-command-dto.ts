@@ -1,15 +1,12 @@
 export interface DetectedForbiddenCommandDTO {
     command: string;
-    type: DetectedForbiddenCommandDTO.DetectedForbiddenCommandTypeEnum;
+    type: DetectedForbiddenCommandDTODetectedForbiddenCommandTypeEnum;
     hostname: string;
     occurred_at: Date;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-namespace
-export namespace DetectedForbiddenCommandDTO {
-    export type DetectedForbiddenCommandTypeEnum = 'BASH' | 'MSF';
-    export const DetectedForbiddenCommandTypeEnum = {
-        BASH: 'BASH' as DetectedForbiddenCommandTypeEnum,
-        MSF: 'MSF' as DetectedForbiddenCommandTypeEnum,
-    };
-}
+export type DetectedForbiddenCommandDTODetectedForbiddenCommandTypeEnum = 'BASH' | 'MSF';
+export const DetectedForbiddenCommandDTODetectedForbiddenCommandTypeEnum = {
+    BASH: 'BASH' as DetectedForbiddenCommandDTODetectedForbiddenCommandTypeEnum,
+    MSF: 'MSF' as DetectedForbiddenCommandDTODetectedForbiddenCommandTypeEnum,
+};

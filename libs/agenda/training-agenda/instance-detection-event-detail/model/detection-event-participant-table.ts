@@ -1,25 +1,43 @@
-import { Column, Row, SentinelTable } from '@sentinel/components/table';
+import { Column } from '@sentinel/components/table';
+import { LinkedRow, TableModel } from '@crczp/components';
 import { DetectionEventParticipant } from '@crczp/training-model';
 import { DetectionEventParticipantRowAdapter } from './detection-event-participant-row-adapter';
 import { DatePipe } from '@angular/common';
 import { OffsetPaginatedResource } from '@crczp/api-common';
+import { DetectionEventParticipantSort } from '@crczp/training-api';
 
 /**
  * @dynamic
  */
-export class DetectionEventParticipantTable extends SentinelTable<
+export class DetectionEventParticipantTable extends TableModel<
     DetectionEventParticipantRowAdapter,
-    string
+    DetectionEventParticipantSort
 > {
     constructor(resource: OffsetPaginatedResource<DetectionEventParticipant>) {
         const columns = [
-            new Column<string>('participantName', 'name', false),
-            new Column<string>('occurredAtFormatted', 'occurred at', false),
-            new Column<string>('ipAddress', 'ip address', false),
-            new Column<string>(
+            new Column<DetectionEventParticipantSort>(
+                'participantName',
+                'name',
+                true,
+                'participantName',
+            ),
+            new Column<DetectionEventParticipantSort>(
+                'occurredAtFormatted',
+                'occurred at',
+                true,
+                'occurredAt',
+            ),
+            new Column<DetectionEventParticipantSort>(
+                'ipAddress',
+                'ip address',
+                true,
+                'ipAddress',
+            ),
+            new Column<DetectionEventParticipantSort>(
                 'solvedInTimeFormatted',
                 'solved in time (seconds)',
-                false,
+                true,
+                'solvedInTime',
             ),
         ];
         const rows = resource.elements.map((element) =>
@@ -32,13 +50,13 @@ export class DetectionEventParticipantTable extends SentinelTable<
 
     private static createRow(
         element: DetectionEventParticipant,
-    ): Row<DetectionEventParticipantRowAdapter> {
+    ): LinkedRow<DetectionEventParticipantRowAdapter> {
         const datePipe = new DatePipe('en-EN');
         const adapter = element as DetectionEventParticipantRowAdapter;
         adapter.occurredAtFormatted = `${datePipe.transform(adapter.occurredAt, 'medium')}`;
         adapter.solvedInTimeFormatted =
             adapter.solvedInTime == null ? '' : adapter.solvedInTime.toString();
 
-        return new Row(adapter);
+        return new LinkedRow(adapter);
     }
 }

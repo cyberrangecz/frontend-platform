@@ -6,12 +6,15 @@
         "@sentinel/common": "*",
         "@crczp/training-model": "*",
         "@crczp/api-common": "*",
-    "rxjs": "~7.8.0",
-    "@crczp/utils": "*",
-    "@ngneat/cashew": "^5.1.0",
-    "vite": "^6.3.0",
-    "@analogjs/vite-plugin-angular": "1.17.1",
-    "@nx/vite": "21.2.1"
+        "rxjs": "*",
+        "@crczp/utils": "*",
+        "@ngneat/cashew": "*",
+        "file-saver": "*",
+        "zod": "*",
+        "@crczp/zod-class": "*",
+        "vite": "*",
+        "@analogjs/vite-plugin-angular": "*",
+        "@nx/vite": "*"
     },
     "sideEffects": false
 }

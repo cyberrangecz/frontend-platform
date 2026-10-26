@@ -1,5 +1,6 @@
 import { UserRole } from '@crczp/user-and-group-model';
-import { Column, Row, SentinelTable } from '@sentinel/components/table';
+import { Column } from '@sentinel/components/table';
+import { LinkedRow, TableModel } from '@crczp/components';
 import { defer, of } from 'rxjs';
 import { RoleDeleteAction } from './role-delete-action';
 import { RoleAssignService } from '../../services/state/role-assign.service';
@@ -9,7 +10,7 @@ import { OffsetPaginatedResource } from '@crczp/api-common';
 /**
  * Class creating data source for role table
  */
-export class GroupRolesTable extends SentinelTable<UserRole, RoleSort> {
+export class GroupRolesTable extends TableModel<UserRole, RoleSort> {
     constructor(
         resource: OffsetPaginatedResource<UserRole>,
         groupId: number,
@@ -21,14 +22,13 @@ export class GroupRolesTable extends SentinelTable<UserRole, RoleSort> {
                 'microserviceId',
                 'microservice id',
                 false,
-                'idOfMicroservice',
             ),
             new Column<RoleSort>('roleType', 'role type', true, 'roleType'),
             new Column<RoleSort>('microserviceName', 'microservice name', false),
         ];
         const rows = resource.elements.map(
             (role) =>
-                new Row(role, [
+                new LinkedRow(role, [
                     new RoleDeleteAction(
                         of(false),
                         defer(() => service.unassign(groupId, [role])),

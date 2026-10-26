@@ -1,6 +1,6 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {Component, EventEmitter, Input, Output, ChangeDetectionStrategy} from '@angular/core';
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
-import {MatChipGrid, MatChipInput, MatChipInputEvent, MatChipRow} from '@angular/material/chips';
+import {MatChipGrid, MatChipInput, MatChipInputEvent, MatChipRemove, MatChipRow} from '@angular/material/chips';
 import {
     MatExpansionPanel,
     MatExpansionPanelDescription,
@@ -14,6 +14,7 @@ import {MatIcon} from "@angular/material/icon";
     selector: 'crczp-expected-commands-select',
     templateUrl: './expected-commands-select.component.html',
     styleUrls: ['./expected-commands-select.component.css'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         MatExpansionPanel,
         MatExpansionPanelHeader,
@@ -23,6 +24,7 @@ import {MatIcon} from "@angular/material/icon";
         MatFormField,
         MatChipGrid,
         MatChipRow,
+        MatChipRemove,
         MatIcon,
         MatChipInput
     ]
@@ -34,12 +36,10 @@ export class ExpectedCommandsSelectComponent {
     readonly separatorKeysCodes = [ENTER, COMMA] as const;
 
     add(event: MatChipInputEvent) {
-        const value = (event.value || '').trim();
-        if (value) {
-            this.expectedCommands.push(value);
+        if (this.addIfNew(event.value)) {
+            this.expectedCommandsChange.emit(this.expectedCommands);
         }
         event.chipInput?.clear();
-        this.expectedCommandsChange.emit(this.expectedCommands);
     }
 
     remove(expectedCommand: string) {
@@ -53,13 +53,21 @@ export class ExpectedCommandsSelectComponent {
 
     paste(event: ClipboardEvent): void {
         event.preventDefault();
-        event.clipboardData
+        const addedCommands = event.clipboardData
             .getData('Text')
             .split(/;|,|\n/)
-            .forEach((value) => {
-                if (value.trim()) {
-                    this.expectedCommands.push(value.trim());
-                }
-            });
+            .map((value) => this.addIfNew(value));
+        if (addedCommands.includes(true)) {
+            this.expectedCommandsChange.emit(this.expectedCommands);
+        }
+    }
+
+    private addIfNew(command: string | undefined): boolean {
+        const trimmedCommand = (command || '').trim();
+        if (!trimmedCommand || this.expectedCommands.includes(trimmedCommand)) {
+            return false;
+        }
+        this.expectedCommands.push(trimmedCommand);
+        return true;
     }
 }

@@ -1,19 +1,18 @@
 import {
     ChangeDetectionStrategy,
     Component,
-    EventEmitter,
+    computed,
+    effect,
     inject,
-    Input,
-    OnChanges,
-    Output,
-    SimpleChanges
+    input,
+    output,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import {
     SentinelStepper,
     SentinelStepperComponent,
     StepperStateChange,
-    StepStateEnum
+    StepStateEnum,
 } from '@sentinel/components/stepper';
 import { LevelStepperAdapter } from './level-stepper-adapter';
 import { LevelMoveEvent } from './level-move-event';
@@ -28,26 +27,33 @@ import { LevelMoveEvent } from './level-move-event';
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [SentinelStepperComponent],
 })
-export class TrainingLevelStepperComponent implements OnChanges {
+export class TrainingLevelStepperComponent {
     dialog = inject(MatDialog);
 
-    @Input() levels: LevelStepperAdapter[];
-    @Input() movingInProgress: boolean;
-    @Input() activeStep: number;
-    @Output() activeStepChange: EventEmitter<number> = new EventEmitter();
-    @Output() levelMove: EventEmitter<LevelMoveEvent> = new EventEmitter();
-    @Output() initialLevels: EventEmitter<LevelStepperAdapter[]> =
-        new EventEmitter();
+    readonly levels = input.required<LevelStepperAdapter[]>();
+    readonly movingInProgress = input<boolean>();
+    readonly activeStep = input.required<number>();
+    readonly activeStepChange = output<number>();
+    readonly levelMove = output<LevelMoveEvent>();
+    readonly initialLevels = output<LevelStepperAdapter[]>();
 
-    levelStepper: SentinelStepper<LevelStepperAdapter> = { items: [] };
+    /**
+     * Stepper model holding the current levels; a new object for every new level list.
+     */
+    protected readonly levelStepper = computed<
+        SentinelStepper<LevelStepperAdapter>
+    >(() => ({ items: this.levels() }));
 
-    private previousActiveStep = -1;
-
-    ngOnChanges(changes: SimpleChanges): void {
-        if ('levels' in changes) {
-            this.levelStepper.items = this.levels;
-        }
-        this.changeSelectedStep(this.activeStep);
+    constructor() {
+        effect(() => {
+            const activeStep = this.activeStep();
+            this.levelStepper().items.forEach((item, index) => {
+                item.state =
+                    index === activeStep
+                        ? StepStateEnum.ACTIVE
+                        : StepStateEnum.SELECTABLE;
+            });
+        });
     }
 
     /**
@@ -64,17 +70,5 @@ export class TrainingLevelStepperComponent implements OnChanges {
      */
     swapLevels(event: StepperStateChange): void {
         this.levelMove.emit(new LevelMoveEvent(event));
-    }
-
-    private changeSelectedStep(index: number) {
-        if (
-            this.previousActiveStep >= 0 &&
-            this.previousActiveStep < this.levelStepper.items.length
-        ) {
-            this.levelStepper.items[this.previousActiveStep].state =
-                StepStateEnum.SELECTABLE;
-        }
-        this.levelStepper.items[index].state = StepStateEnum.ACTIVE;
-        this.previousActiveStep = this.activeStep;
     }
 }

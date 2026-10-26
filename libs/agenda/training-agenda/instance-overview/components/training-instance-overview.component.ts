@@ -1,12 +1,9 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
 import { SentinelControlItem, SentinelControlsComponent } from '@sentinel/components/controls';
 import { TrainingInstance } from '@crczp/training-model';
-import {
-    SentinelRowDirective,
-    SentinelTable,
-    SentinelTableComponent,
-    TableLoadEvent
-} from '@sentinel/components/table';
+import { SentinelCellDirective, SentinelTableComponent, TableLoadEvent } from '@sentinel/components/table';
+import { SentinelFilterFreeInputComponent } from '@sentinel/components/filters';
+import { RouterLink } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { TrainingInstanceOverviewControls } from '../model/adapters/training-instance-overview-controls';
@@ -18,8 +15,19 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { CdkCopyToClipboard } from '@angular/cdk/clipboard';
-import { TableCountdownComponent, TableDateCellComponent, TableEmptyStateDirective } from '@crczp/components';
-import { NotificationService, PaginationStorageService, providePaginationStorageService } from '@crczp/utils';
+import {
+    TableCountdownComponent,
+    TableDateCellComponent,
+    TableEmptyStateDirective,
+    TableModel
+} from '@crczp/components';
+import {
+    NotificationService,
+    PaginationStorageService,
+    providePaginationStorageService,
+    RoleService,
+    SortDir,
+} from '@crczp/utils';
 import { PaginationMapper } from '@crczp/api-common';
 import { TrainingInstanceSort } from '@crczp/training-api';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
@@ -36,7 +44,9 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
         SentinelControlsComponent,
         SentinelTableComponent,
         AsyncPipe,
-        SentinelRowDirective,
+        SentinelCellDirective,
+        SentinelFilterFreeInputComponent,
+        RouterLink,
         TableDateCellComponent,
         MatTooltip,
         MatButton,
@@ -55,9 +65,14 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
     ],
 })
 export class TrainingInstanceOverviewComponent {
-    readonly INITIAL_SORT_NAME = 'startTime';
-    readonly INITIAL_SORT_DIR = 'desc';
-    instances$: Observable<SentinelTable<TrainingInstance, string>>;
+    readonly INITIAL_SORT_NAME: TrainingInstanceSort = 'startTime';
+    readonly INITIAL_SORT_DIR: SortDir = 'desc';
+    readonly PAGE_SIZE_OPTIONS = [10, 25, 50];
+    instances$: Observable<TableModel<TrainingInstance, TrainingInstanceSort>>;
+    /**
+     * Text the training instances are currently filtered by
+     */
+    filter = '';
     hasError$: Observable<boolean>;
     isLoading$: Observable<boolean>;
     destroyRef = inject(DestroyRef);
@@ -65,11 +80,13 @@ export class TrainingInstanceOverviewComponent {
     private service = inject(TrainingInstanceOverviewService);
     private paginationService = inject(PaginationStorageService);
     private notificationService = inject(NotificationService);
+    private roleService = inject(RoleService);
     private readonly initialInstancePagination =
         this.paginationService.createPagination<TrainingInstanceSort>(
             this.INITIAL_SORT_NAME,
             this.INITIAL_SORT_DIR,
         );
+    private pagination = this.initialInstancePagination;
 
     constructor() {
         this.controls = TrainingInstanceOverviewControls.create(this.service);
@@ -79,14 +96,23 @@ export class TrainingInstanceOverviewComponent {
     onInstancesLoadEvent(
         loadEvent: TableLoadEvent<TrainingInstanceSort>,
     ): void {
-        this.paginationService.savePageSize(loadEvent.pagination.size);
-        this.service
-            .getAll(
-                PaginationMapper.toOffsetPaginationEvent(loadEvent.pagination),
-                loadEvent.filter,
-            )
-            .pipe(takeUntilDestroyed(this.destroyRef))
-            .subscribe();
+        if (loadEvent.pagination) {
+            this.pagination = PaginationMapper.toOffsetPaginationEvent(
+                loadEvent.pagination,
+            );
+        }
+        this.paginationService.savePageSize(this.pagination.size);
+        this.load();
+    }
+
+    /**
+     * Reloads the training instances from the first page, filtered by the given text
+     * @param filter text to filter training instances by, empty for no filter
+     */
+    onFilter(filter: string): void {
+        this.filter = filter;
+        this.pagination = { ...this.pagination, page: 0 };
+        this.load();
     }
 
     onCopyToken(): void {
@@ -136,6 +162,13 @@ export class TrainingInstanceOverviewComponent {
         return poolSize.total - poolSize.used;
     }
 
+    private load(): void {
+        this.service
+            .getAll(this.pagination, this.filter || undefined)
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe();
+    }
+
     private initTable() {
         const initLoadEvent: TableLoadEvent<TrainingInstanceSort> = {
             pagination: this.initialInstancePagination,
@@ -143,7 +176,11 @@ export class TrainingInstanceOverviewComponent {
         this.instances$ = this.service.resource$.pipe(
             map(
                 (instances) =>
-                    new TrainingInstanceTable(instances, this.service),
+                    new TrainingInstanceTable(
+                        instances,
+                        this.service,
+                        this.roleService.hasRole('trainingDesigner'),
+                    ),
             ),
         );
         this.hasError$ = this.service.hasError$;

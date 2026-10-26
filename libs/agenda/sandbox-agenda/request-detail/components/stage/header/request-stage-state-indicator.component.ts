@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 import { RequestStageState } from '@crczp/sandbox-model';
 import { MatIcon } from '@angular/material/icon';
 
@@ -6,6 +6,7 @@ import { MatIcon } from '@angular/material/icon';
     selector: 'crczp-request-stage-state',
     templateUrl: './request-stage-state-indicator.component.html',
     styleUrls: ['./request-stage-state-indicator.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [MatIcon, MatIcon],
 })
 export class RequestStageStateIndicator {

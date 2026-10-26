@@ -5,9 +5,10 @@ import { RawEventRow } from '../cache/cache.interface';
  * Maps raw HTTP event DTOs returned by the training-instances events endpoint to RawEventRow records
  * suitable for insertion into the local SQLite cache.
  *
- * The DTO carries snake_case field names (enforced via @JsonProperty on the Java side), with three
+ * The DTO carries snake_case field names (enforced via @JsonProperty on the Java side), with these
  * exceptions that require explicit transformation:
- *  - `timestamp` arrives as an offset-free UTC ISO-8601 LocalDateTime string and must be converted to epoch ms.
+ *  - `timestamp`, and `start_time` / `end_time` where present, arrive as UTC ISO-8601 strings with a `Z`
+ *    designator and must be converted to epoch ms.
  *  - `level` (no @JsonProperty) must be renamed to `level_id` to match the cache schema column.
  *  - `event_id` carries the source Elasticsearch document id and is renamed to `id`, the cache primary key.
  *
@@ -31,19 +32,25 @@ export function mapToRawEventRows(
     return dtos.map((dto) => mapToRawEventRow(dto, eventType, instanceId));
 }
 
+function toEpochMilliseconds(value: unknown): number {
+    return parseISO(value as string).getTime();
+}
+
 function mapToRawEventRow(
     dto: Record<string, unknown>,
     eventType: string,
     instanceId: number,
 ): RawEventRow {
-    const { event_id, timestamp, level, type: _type, sandbox_id, ...rest } = dto;
+    const { event_id, timestamp, start_time, end_time, level, type: _type, sandbox_id, ...rest } = dto;
     return {
         ...rest,
+        ...(start_time !== undefined && { start_time: toEpochMilliseconds(start_time) }),
+        ...(end_time !== undefined && { end_time: toEpochMilliseconds(end_time) }),
         ...(event_id !== undefined && { id: event_id as string }),
         type: eventType,
         instance_id: instanceId,
         sandbox_id: sandbox_id as string,
-        timestamp: typeof timestamp === 'number' ? timestamp : parseISO(`${timestamp}Z`).getTime(), // Backend emits UTC instants as offset-free LocalDateTime; append 'Z' so it parses as UTC, not browser-local.
+        timestamp: toEpochMilliseconds(timestamp),
         ...(level !== undefined && { level_id: level }),
     };
 }

@@ -3,4 +3,12 @@
     "compilerOptions": {
         "declarationMap": false
     },
+    "angularCompilerOptions": {
+      "extendedDiagnostics": {
+        "checks": {
+          "nullishCoalescingNotNullable": "suppress",
+          "optionalChainNotNullable": "suppress"
+        }
+      }
+    },
 }

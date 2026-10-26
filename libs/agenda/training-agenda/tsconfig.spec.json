@@ -8,7 +8,8 @@
             "vite/client",
             "node",
             "vitest"
-        ]
+        ],
+        "isolatedModules": true
     },
     "include": [
         "vite.config.ts",
@@ -25,7 +26,5 @@
         "src/**/*.spec.jsx",
         "src/**/*.d.ts"
     ],
-    "files": [
-        "src/test-setup.ts"
-    ]
+    "files": ["src/test-setup.ts"]
 }

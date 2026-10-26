@@ -25,21 +25,23 @@
     <mat-divider />
 
     <!--     HINT stepper-->
-    @if (stepperHints.items && stepperHints.items.length > 0) {
+    @if (stepperHints().items.length > 0) {
         <div class="hint-stepper">
-            <sentinel-stepper (indexSelected)="onActiveHintChanged($event)"
-                              (selectedStepSwapped)="onActiveHintChanged($event)"
-                              (stepSwapped)="onOrderUpdate()"
-                              [activeIndex]="selectedStep"
-                              [selectable]="true"
-                              [stepperItems]="stepperHints">
-            </sentinel-stepper>
+            @for (stepper of [stepperHints()]; track stepper) {
+                <sentinel-stepper (indexSelected)="onActiveHintChanged($event)"
+                                  (selectedStepSwapped)="onActiveHintChanged($event)"
+                                  (stepSwapped)="onOrderUpdate()"
+                                  [activeIndex]="selectedStep"
+                                  [selectable]="true"
+                                  [stepperItems]="stepper">
+                </sentinel-stepper>
+            }
             <div>
                 <mat-divider />
                 <ng-template>Hint {{ selectedStep + 1 }}</ng-template>
                 <div class="step-content">
                     <crczp-hint-edit (hintChange)="onHintsChanged($event)"
-                                     [hint]="stepperHints.items[selectedStep].hint"
+                                     [hint]="stepperHints().items[selectedStep].hint"
                                      [hintsPenaltySum]="penaltySum"
                                      [levelMaxScore]="levelMaxScore"
                                      [order]="selectedStep" />

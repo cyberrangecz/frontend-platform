@@ -1,8 +1,7 @@
 import { AccessTrainingRunInfo, TrainingLevel } from '@crczp/training-model';
-import { AbstractLevelDTO } from '../../dto/level/abstract-level-dto';
+import { AbstractLevelDTOLevelTypeEnum } from '../../dto/level/abstract-level-dto';
 import { AccessTrainingRunDTO } from '../../dto/training-run/access-training-run-dto';
 import { LevelMapper } from '../level/level-mapper';
-import LevelTypeEnum = AbstractLevelDTO.LevelTypeEnum;
 
 export class AccessLinearRunMapper {
     static fromDTO(dto: AccessTrainingRunDTO): AccessTrainingRunInfo {
@@ -23,14 +22,14 @@ export class AccessLinearRunMapper {
 
         if (
             dto.taken_solution &&
-            dto.abstract_level_dto.level_type === LevelTypeEnum.TRAINING
+            dto.abstract_level_dto.level_type === AbstractLevelDTOLevelTypeEnum.TRAINING
         ) {
             (currentLevel as TrainingLevel).solution = dto.taken_solution;
         }
         if (
             dto.taken_hints &&
             dto.taken_hints.length > 0 &&
-            dto.abstract_level_dto.level_type === LevelTypeEnum.TRAINING
+            dto.abstract_level_dto.level_type === AbstractLevelDTOLevelTypeEnum.TRAINING
         ) {
             (currentLevel as TrainingLevel).hints = (
                 currentLevel as TrainingLevel

@@ -1,10 +1,11 @@
-import { Column, Row, SentinelTable } from '@sentinel/components/table';
+import { Column } from '@sentinel/components/table';
+import { LinkedRow, TableModel } from '@crczp/components';
 import { TrainingRunInfo } from '@crczp/training-model';
 
 /**
  * @dynamic
  */
-export class TrainingInfoTable extends SentinelTable<TrainingRunInfo, string> {
+export class TrainingInfoTable extends TableModel<TrainingRunInfo, string> {
     constructor(resource: TrainingRunInfo[]) {
         const columns = [
             new Column<string>('levelId', 'level id', false),
@@ -20,10 +21,10 @@ export class TrainingInfoTable extends SentinelTable<TrainingRunInfo, string> {
         this.filterable = false;
     }
 
-    static createRow(element: TrainingRunInfo): Row<TrainingRunInfo> {
+    static createRow(element: TrainingRunInfo): LinkedRow<TrainingRunInfo> {
         element.variableName = element.variableName
             ? element.variableName
             : '-';
-        return new Row(element);
+        return new LinkedRow(element);
     }
 }

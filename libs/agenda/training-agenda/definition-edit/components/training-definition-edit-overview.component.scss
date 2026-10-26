@@ -50,3 +50,11 @@ mat-expansion-panel {
 ::ng-deep .mat-mdc-dialog-container .mdc-dialog__surface {
     padding: 8px;
 }
+
+.editing-block-reason {
+    display: flex;
+    align-items: center;
+    gap: var(--space-lg);
+    margin: var(--space-xs) 0;
+    color: var(--mat-sys-on-surface-variant);
+}

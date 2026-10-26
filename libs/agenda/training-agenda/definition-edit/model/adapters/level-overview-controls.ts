@@ -20,7 +20,7 @@ export class LevelOverviewControls {
 
     static create(
         service: LevelEditService,
-        editMode: boolean,
+        addDisabled$: Observable<boolean>,
         deleteDisabled$: Observable<boolean>,
     ): SentinelControlItem[] {
         return [
@@ -28,7 +28,7 @@ export class LevelOverviewControls {
                 this.ADD_ACTION_ID,
                 'Add',
                 'primary',
-                of(!editMode),
+                addDisabled$,
                 this.createAddExpandedMenuControlButtons(service),
             ),
             new SentinelControlItem(

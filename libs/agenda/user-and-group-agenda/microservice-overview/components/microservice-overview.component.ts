@@ -2,7 +2,8 @@ import { RegisterControlItem } from '@crczp/user-and-group-agenda/internal';
 import { MicroserviceTable } from '../model/table/microservice-table';
 import { MicroserviceOverviewService } from '../services/microservice-overview.service';
 import { Microservice } from '@crczp/user-and-group-model';
-import { OffsetPaginationEvent } from '@crczp/utils';
+import { OffsetPaginationEvent, SortDir } from '@crczp/utils';
+import { SentinelFilterFreeInputComponent } from '@sentinel/components/filters';
 import {
     ChangeDetectionStrategy,
     Component,
@@ -12,7 +13,6 @@ import {
 } from '@angular/core';
 import { defer, Observable, of } from 'rxjs';
 import {
-    SentinelTable,
     SentinelTableComponent,
     TableLoadEvent,
 } from '@sentinel/components/table';
@@ -28,7 +28,7 @@ import {
     providePaginationStorageService,
 } from '@crczp/utils';
 import { MicroserviceSort } from '@crczp/user-and-group-api';
-import { TableEmptyStateDirective } from '@crczp/components';
+import { TableEmptyStateDirective, TableModel } from '@crczp/components';
 
 @Component({
     selector: 'crczp-microservice-overview',
@@ -36,6 +36,7 @@ import { TableEmptyStateDirective } from '@crczp/components';
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         SentinelTableComponent,
+        SentinelFilterFreeInputComponent,
         SentinelControlsComponent,
         AsyncPipe,
         TableEmptyStateDirective,
@@ -49,12 +50,16 @@ import { TableEmptyStateDirective } from '@crczp/components';
     ],
 })
 export class MicroserviceOverviewComponent implements OnInit {
-    readonly INIT_SORT_NAME = 'name';
-    readonly INIT_SORT_DIR = 'asc';
+    readonly INIT_SORT_NAME: MicroserviceSort = 'name';
+    readonly INIT_SORT_DIR: SortDir = 'asc';
     /**
      * Data for microservices table component
      */
-    microservices$: Observable<SentinelTable<Microservice, string>>;
+    microservices$: Observable<TableModel<Microservice, MicroserviceSort>>;
+    /**
+     * Text the microservices are currently filtered by
+     */
+    filter = '';
     /**
      * True if error was thrown while getting data for microservies table, false otherwise
      */
@@ -72,6 +77,8 @@ export class MicroserviceOverviewComponent implements OnInit {
             this.INIT_SORT_NAME,
             this.INIT_SORT_DIR,
         );
+    private pagination: OffsetPaginationEvent<MicroserviceSort> =
+        this.initPagination;
 
     ngOnInit(): void {
         const initialLoadEvent: TableLoadEvent<string> = {
@@ -93,12 +100,27 @@ export class MicroserviceOverviewComponent implements OnInit {
      * @param event event emitted from table component
      */
     onTableLoadEvent(event: TableLoadEvent<string>): void {
-        this.paginationService.savePageSize(event.pagination.size);
+        if (event.pagination) {
+            this.pagination =
+                event.pagination as OffsetPaginationEvent<MicroserviceSort>;
+        }
+        this.paginationService.savePageSize(this.pagination.size);
+        this.load();
+    }
+
+    /**
+     * Reloads the microservices from the first page, filtered by the given text
+     * @param filter text to filter microservices by, empty for no filter
+     */
+    onFilter(filter: string): void {
+        this.filter = filter;
+        this.pagination = { ...this.pagination, page: 0 };
+        this.load();
+    }
+
+    private load(): void {
         this.microserviceService
-            .getAll(
-                event.pagination as OffsetPaginationEvent<MicroserviceSort>,
-                event.filter,
-            )
+            .getAll(this.pagination, this.filter || undefined)
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe();
     }

@@ -9,6 +9,7 @@ import {
     SegmentedToggleComponent,
     SegmentedToggleOption,
 } from '@crczp/components';
+import { TrainingInstance } from '@crczp/training-model';
 import { AggregatedViewComponent } from './views/aggregated-view.component';
 import { IndividualViewComponent } from './views/individual-view.component';
 import { AssessmentViewComponent } from './views/assessment-view.component';
@@ -78,8 +79,14 @@ export class AnalysisDashboardComponent {
     readonly instanceId = input.required<InstanceId, InstanceId | string | number>({
         transform: (value) => asInstanceId(Number(value)),
     });
-    // #TODO: derive instanceName from instanceId via event-query-engine once entity resolution is wired
     readonly instanceName = input<string>('');
+
+    private readonly routeData = toSignal(this.route.data, { requireSync: true });
+
+    /** Instance title: the explicit input when given, else the title of the instance the route resolved. */
+    protected readonly displayedInstanceName = computed<string>(
+        () => this.instanceName() || (this.routeData()[TrainingInstance.name] as TrainingInstance | undefined)?.title || '',
+    );
 
     private readonly fragment = toSignal(this.route.fragment, { requireSync: true });
 

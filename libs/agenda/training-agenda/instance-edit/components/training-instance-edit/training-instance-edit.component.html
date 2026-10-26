@@ -20,6 +20,7 @@
                 >
                     <mat-label>Start Time</mat-label>
                     <input
+                        [errorStateMatcher]="dateErrorStateMatcher"
                         [max]="endTime.value"
                         [min]="now"
                         [owlDateTime]="startTimePicker"
@@ -38,6 +39,9 @@
                     @if (startTime.hasError('dateInPast')) {
                         <mat-error>Start time cannot be in the past</mat-error>
                     }
+                    @if (startTime.hasError('startTimeTooFarInPast')) {
+                        <mat-error>Start time cannot be more than {{ startTimeGraceSeconds }} seconds in the past</mat-error>
+                    }
                 </mat-form-field>
 
                 <!-- END TIME field -->
@@ -49,6 +53,7 @@
                 >
                     <mat-label>End Time</mat-label>
                     <input
+                        [errorStateMatcher]="dateErrorStateMatcher"
                         [min]="startTime.value || now"
                         [owlDateTime]="endTimePicker"
                         formControlName="endTime"
@@ -150,7 +155,7 @@
                     <span class="resource-select__bottom_text resource-select__bottom_text--error">
       This field is required
     </span>
-                } @else if (trainingDefinition.value) {
+                } @else if (trainingDefinition.value && canOpenTrainingDefinition) {
                     <a class="resource-select__bottom_text subtext-link"
                        mat-button
                        [routerLink]="getTrainingDefinitionUrl(trainingDefinition.value.id)"

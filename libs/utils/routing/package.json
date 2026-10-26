@@ -8,16 +8,17 @@
     "dependencies": {
         "tslib": "^2.3.0",
         "rxjs": "~7.8.0",
-        "@angular/router": "20.0.6",
+        "@angular/router": "^22.0.0",
         "@angular/material": "*",
         "@sentinel/components": "*",
         "@crczp/utils": "0.0.1",
-        "@angular/core": "20.0.6",
+        "@angular/core": "^22.0.0",
         "@crczp/sandbox-model": "0.0.1",
         "@crczp/sandbox-api": "*",
         "@crczp/training-model": "0.0.1",
         "@crczp/training-api": "*",
         "@crczp/user-and-group-model": "0.0.1",
-        "@crczp/user-and-group-api": "1.1.0"
+        "@crczp/user-and-group-api": "1.1.0",
+        "@angular/common": "^22.0.0"
     }
 }

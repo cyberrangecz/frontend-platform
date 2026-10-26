@@ -1,13 +1,14 @@
 import {
-    Component,
-    ElementRef,
-    EventEmitter,
-    HostListener,
-    inject,
-    Input,
-    OnChanges,
-    OnInit,
-    Output,
+  Component,
+  ElementRef,
+  EventEmitter,
+  HostListener,
+  inject,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+  ChangeDetectionStrategy
 } from '@angular/core';
 import { CommentFormGroup, MAXIMUM_COMMENT_LENGTH } from './comment-form-group';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -29,6 +30,7 @@ import { MatIconModule } from '@angular/material/icon';
         MatFabButton,
     ],
     templateUrl: './editable-comment.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     styleUrls: ['./editable-comment.component.css'],
 })
 export class EditableCommentComponent implements OnInit, OnChanges {

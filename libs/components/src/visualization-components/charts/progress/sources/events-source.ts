@@ -245,7 +245,7 @@ function buildEventsQuery(
  * stores `hint_id`, `hint_title`, and `hint_penalty_points` directly, which
  * map 1:1 to `HintBasic.id`, `HintBasic.title`, and `HintBasic.penalty`.
  *
- * Uses `HintBasic.parse()` (zod-class static factory) so the returned
+ * Uses `HintBasic.parse()` (schema-backed class factory) so the returned
  * instance passes any downstream `instanceof HintBasic` checks.
  *
  * Per the HANDOFF lock: `hint.content` is permanently out of scope; the

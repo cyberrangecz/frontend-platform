@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { AbstractLevelDTO } from '../abstract-level-dto';
+import {AbstractLevelDTOLevelTypeEnum} from '../abstract-level-dto';
 import { idSchema } from '../../shared-schemas';
 
 export const InfoLevelBasicDtoSchema = z.object({
@@ -8,7 +8,7 @@ export const InfoLevelBasicDtoSchema = z.object({
     order: z.number().nonnegative().int(),
     estimated_duration: z.number().nonnegative(),
     max_score: z.number().nonnegative(),
-    level_type: z.literal(AbstractLevelDTO.LevelTypeEnum.INFO),
+    level_type: z.literal(AbstractLevelDTOLevelTypeEnum.INFO),
 });
 
 export type InfoLevelBasicDto = z.infer<typeof InfoLevelBasicDtoSchema>;

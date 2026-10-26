@@ -25,6 +25,7 @@
         "src/test-setup.ts"
     ],
     "include": [
-        "src/**/*.ts"
+        "src/**/*.ts",
+        "dummy.ts"
     ]
 }

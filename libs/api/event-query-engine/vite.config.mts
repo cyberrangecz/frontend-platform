@@ -5,7 +5,7 @@ import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
 import { createTestConfig } from '../../../vitest.shared';
 
 export default defineConfig(() => ({
-    root: __dirname,
+    root: import.meta.dirname,
     cacheDir: '../../../node_modules/.vite/libs/api/event-query-engine',
     plugins: [angular(), nxViteTsPaths()],
     test: createTestConfig('../../../coverage/libs/api/event-query-engine', {

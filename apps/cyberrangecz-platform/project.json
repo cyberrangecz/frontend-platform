@@ -8,7 +8,7 @@
     "implicitDependencies": ["theme"],
     "targets": {
         "build": {
-            "executor": "@angular-devkit/build-angular:application",
+            "executor": "@angular/build:application",
             "outputs": ["{options.outputPath}"],
             "dependsOn": ["theme:build"],
             "options": {
@@ -71,7 +71,7 @@
         },
         "serve": {
             "dependsOn": ["theme:build"],
-            "executor": "@angular-devkit/build-angular:dev-server",
+            "executor": "@angular/build:dev-server",
             "configurations": {
                 "production": {
                     "buildTarget": "cyberrangecz-platform:build:production"
@@ -84,7 +84,7 @@
             "defaultConfiguration": "development"
         },
         "extract-i18n": {
-            "executor": "@angular-devkit/build-angular:extract-i18n",
+            "executor": "@angular/build:extract-i18n",
             "options": {
                 "buildTarget": "cyberrangecz-platform:build"
             }
@@ -93,7 +93,7 @@
             "executor": "@nx/eslint:lint"
         },
         "test": {
-            "executor": "@nx/vite:test",
+            "executor": "@nx/vitest:test",
             "outputs": ["{options.reportsDirectory}"],
             "options": {
                 "reportsDirectory": "../../coverage/apps/cyberrangecz-platform",
@@ -110,11 +110,12 @@
             }
         },
         "build-e2e": {
-            "executor": "@angular-devkit/build-angular:application",
+            "executor": "@angular/build:application",
             "outputs": ["{options.outputPath}"],
             "dependsOn": ["theme:build"],
             "options": {
                 "outputPath": "dist/apps/cyberrangecz-platform-e2e",
+                "externalDependencies": ["jsdom"],
                 "index": "apps/cyberrangecz-platform/e2e/harness/index.html",
                 "browser": "apps/cyberrangecz-platform/e2e/harness/main.ts",
                 "polyfills": ["zone.js"],
@@ -145,7 +146,7 @@
             "defaultConfiguration": "development"
         },
         "serve-e2e": {
-            "executor": "@angular-devkit/build-angular:dev-server",
+            "executor": "@angular/build:dev-server",
             "options": {
                 "port": 4300,
                 "host": "localhost",
@@ -163,7 +164,9 @@
         },
         "e2e": {
             "executor": "@nx/playwright:playwright",
-            "outputs": ["{workspaceRoot}/dist/.playwright/apps/cyberrangecz-platform"],
+            "outputs": [
+                "{workspaceRoot}/dist/.playwright/apps/cyberrangecz-platform"
+            ],
             "options": {
                 "config": "apps/cyberrangecz-platform/e2e/playwright.config.ts"
             }

@@ -1,6 +1,14 @@
 import { UntypedFormControl, UntypedFormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { SentinelValidators } from '@sentinel/common';
 import { TrainingInstance } from '@crczp/training-model';
+import { isBefore, subSeconds } from 'date-fns';
+
+/**
+ * Seconds before the current time that a new training instance may still start.
+ */
+export const START_TIME_GRACE_SECONDS = 30;
+
+const DEFAULT_ACCESS_TOKEN_PREFIX = 'access';
 
 /**
  * Training instance edit form group control
@@ -8,10 +16,24 @@ import { TrainingInstance } from '@crczp/training-model';
 export class TrainingInstanceFormGroup {
     formGroup: UntypedFormGroup;
 
-    constructor(trainingInstance: TrainingInstance) {
+    /**
+     * @param trainingInstance training instance whose values fill the form
+     * @param editMode true for an existing instance, whose stored values are kept as they are;
+     * false for a new one, which starts now and with the default access token prefix
+     */
+    constructor(trainingInstance: TrainingInstance, editMode: boolean) {
         this.formGroup = new UntypedFormGroup(
             {
-                startTime: new UntypedFormControl(trainingInstance.startTime),
+                startTime: new UntypedFormControl(
+                    editMode
+                        ? trainingInstance.startTime
+                        : (trainingInstance.startTime ?? new Date()),
+                    [
+                        editMode
+                            ? this.dateValidator
+                            : this.startTimeGraceValidator,
+                    ],
+                ),
                 endTime: new UntypedFormControl(trainingInstance.endTime, [
                     Validators.required,
                     this.dateValidator,
@@ -24,13 +46,18 @@ export class TrainingInstanceFormGroup {
                     [Validators.required]
                 ),
                 accessTokenPrefix: new UntypedFormControl(
-                    this.getTokenPrefix(trainingInstance.accessToken),
+                    editMode
+                        ? this.getTokenPrefix(trainingInstance.accessToken)
+                        : (this.getTokenPrefix(trainingInstance.accessToken) ??
+                          DEFAULT_ACCESS_TOKEN_PREFIX),
                     [SentinelValidators.noWhitespace]
                 ),
                 localEnvironment: new UntypedFormControl(
                     trainingInstance.localEnvironment
                 ),
-                backwardMode: new UntypedFormControl(false),
+                backwardMode: new UntypedFormControl(
+                    trainingInstance.backwardMode,
+                ),
                 showStepperBar: new UntypedFormControl(
                     trainingInstance.showStepperBar
                 ),
@@ -108,7 +135,7 @@ export class TrainingInstanceFormGroup {
             : Date.now();
         const endTime = control.get('endTime').value;
         if (startTime && endTime && startTime.valueOf() > endTime.valueOf()) {
-            error = { c: true };
+            error = { startTimeAfterEndTime: true };
         }
         return error ? error : null;
     };
@@ -122,6 +149,14 @@ export class TrainingInstanceFormGroup {
         }
         return error ? error : null;
     };
+
+    private startTimeGraceValidator: ValidatorFn = (
+        control: UntypedFormControl
+    ): ValidationErrors | null =>
+        control.value &&
+        isBefore(control.value, subSeconds(Date.now(), START_TIME_GRACE_SECONDS))
+            ? { startTimeTooFarInPast: true }
+            : null;
 
     /**
      * Validator for pool and sandbox definition selection

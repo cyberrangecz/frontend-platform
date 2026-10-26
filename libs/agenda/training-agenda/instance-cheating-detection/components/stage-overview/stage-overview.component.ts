@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, ChangeDetectionStrategy} from '@angular/core';
 import {CheatingDetectionStateEnum} from '@crczp/training-model';
 import {SelectedStage} from '../../model/selected-stage';
 import {MatIcon} from "@angular/material/icon";
@@ -10,6 +10,7 @@ import {NgClass} from "@angular/common";
     selector: 'crczp-stage-overview',
     templateUrl: './stage-overview.component.html',
     styleUrls: ['./stage-overview.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         MatIcon,
         MatTooltip,

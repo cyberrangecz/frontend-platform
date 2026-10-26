@@ -7,7 +7,11 @@ import { map, tap } from 'rxjs/operators';
 import { OffsetPaginationEvent } from '@crczp/utils';
 import { ErrorHandlerService, LoadingTracker, PortalConfig } from '@crczp/utils';
 import { Routing } from '@crczp/routing-commons';
-import { CrczpOffsetElementsPaginatedService, OffsetPaginatedResource, QueryParam } from '@crczp/api-common';
+import {
+    CrczpOffsetElementsPaginatedService,
+    OffsetPaginatedResource,
+    QueryParam,
+} from '@crczp/api-common';
 
 /**
  * Basic implementation of layer between component and API service.
@@ -41,11 +45,10 @@ export class AccessedTrainingRunService extends CrczpOffsetElementsPaginatedServ
      */
     getAll(
         pagination: OffsetPaginationEvent<AccessedTrainingRunSort>,
-        filter: string,
+        filter?: string,
     ): Observable<OffsetPaginatedResource<AccessedTrainingRun>> {
         this.hasErrorSubject$.next(false);
         const filters = filter ? [new QueryParam('title', filter)] : [];
-        pagination.size = Number.MAX_SAFE_INTEGER;
         return this.loadingTracker.trackRequest(() =>
             this.trainingApi.getAccessed(pagination, filters).pipe(
                 tap(
@@ -72,11 +75,19 @@ export class AccessedTrainingRunService extends CrczpOffsetElementsPaginatedServ
         );
     }
 
+    /**
+     * Navigates to the access route with the whole token as one route parameter,
+     * whatever characters it holds.
+     */
     toAccessRun(token: string): Observable<any> {
+        const encodedToken = encodeURIComponent(token).replace(
+            /[()]/g,
+            (character) => `%${character.charCodeAt(0).toString(16).toUpperCase()}`,
+        );
         return from(
-            this.router.navigate([
-                Routing.RouteBuilder.run.linear.runToken(token).access.build(),
-            ]),
+            this.router.navigateByUrl(
+                Routing.RouteBuilder.run.linear.runToken(encodedToken).access.build(),
+            ),
         );
     }
 

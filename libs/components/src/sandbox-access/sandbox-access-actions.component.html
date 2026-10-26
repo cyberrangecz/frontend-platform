@@ -6,7 +6,7 @@
     >
         @if (vpnPanelOpen()) {
             <crczp-vpn-guidance-panel
-                (close)="closeVpnPanel()"
+                (dismissed)="closeVpnPanel()"
                 (retry)="onVpnRetryRequested()"
                 [connectCommand]="vpnConnectCommand()"
                 [failed]="vpnFailed()"

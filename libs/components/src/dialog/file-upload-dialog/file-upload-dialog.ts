@@ -1,5 +1,5 @@
-import { Component, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
+
 import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -19,14 +19,14 @@ export interface FileUploadDialogConfig {
     selector: 'crczp-file-upload-dialog',
     standalone: true,
     imports: [
-        CommonModule,
-        MatDialogModule,
-        MatButtonModule,
-        MatIconModule,
-        ReactiveFormsModule,
-        NgxFileDragDropComponent,
-    ],
+    MatDialogModule,
+    MatButtonModule,
+    MatIconModule,
+    ReactiveFormsModule,
+    NgxFileDragDropComponent
+],
     templateUrl: './file-upload-dialog.html',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     styleUrl: './file-upload-dialog.scss',
 })
 export class FileUploadDialog {

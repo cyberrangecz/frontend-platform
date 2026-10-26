@@ -22,10 +22,14 @@ export class UserAndGroupResolverHelperService extends CommonResolverHelperServi
     public getGroup(route: ActivatedRouteSnapshot): Observable<Group | null> {
         const id = Routing.Utils.extractVariable('groupId', route);
         if (id === null) {
-            this.emitFrontendError('No group id found in route');
+            this.emitFrontendError(new Error('No group id found in route'));
             return of(null);
         }
-        return this.groupApi.get(+id).pipe(
+        if (!UserAndGroupResolverHelperService.isNumericId(id)) {
+            this.emitFrontendError(new Error('Group id in route is not a number'));
+            return of(null);
+        }
+        return this.groupApi.get(Number(id)).pipe(
             take(1),
             catchError((err) => {
                 this.emitApiError(err, 'Resolving group from path');
@@ -35,14 +39,21 @@ export class UserAndGroupResolverHelperService extends CommonResolverHelperServi
     }
 
     public getUser(userId: string): Observable<User | null> {
-        const id = Number(userId);
-        return this.userApi.get(id).pipe(
+        if (!UserAndGroupResolverHelperService.isNumericId(userId)) {
+            this.emitFrontendError(new Error('User id in route is not a number'));
+            return of(null);
+        }
+        return this.userApi.get(Number(userId)).pipe(
             take(1),
             catchError((err) => {
                 this.emitApiError(err, 'Resolving user from path');
                 return of(null);
             })
         );
+    }
+
+    private static isNumericId(id: string): boolean {
+        return /^\d+$/.test(id);
     }
 
     public groupOverviewUrl(): UrlTree {

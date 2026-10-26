@@ -10,4 +10,7 @@
         }
     ],
     "extends": "../../tsconfig.libs.json",
+    "compilerOptions": {
+        "ignoreDeprecations": "6.0"
+    }
 }

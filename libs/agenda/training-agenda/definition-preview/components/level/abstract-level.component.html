@@ -1,5 +1,5 @@
 <h1>{{ level?.title }}</h1>
-@switch (level?.type) {
+@switch ($safeNavigationMigration(level?.type)) {
     @case (levelTypes.Assessment) {
         <crczp-assessment-level [level]="$any(level)"/>
     }

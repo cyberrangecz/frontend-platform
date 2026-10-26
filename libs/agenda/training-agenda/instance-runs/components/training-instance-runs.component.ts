@@ -10,7 +10,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatCard } from '@angular/material/card';
 import { TrainingRunOverviewComponent } from './training-run-overview/training-run-overview.component';
 import { AsyncPipe } from '@angular/common';
-import { PaginationStorageService, providePaginationStorageService } from '@crczp/utils';
+import { PaginationStorageService, providePaginationStorageService, SortDir } from '@crczp/utils';
 import { OffsetPaginatedResource, PaginationMapper } from '@crczp/api-common';
 import { TrainingRunSort } from '@crczp/training-api';
 
@@ -33,6 +33,8 @@ export class TrainingInstanceRunsComponent implements OnInit {
     trainingRuns$: Observable<TrainingRunTable>;
     trainingRunsHasError$: Observable<boolean>;
     loadingTrainingRuns$: Observable<boolean>;
+    readonly INITIAL_SORT_NAME: TrainingRunSort = 'startTime';
+    readonly INITIAL_SORT_DIR: SortDir = 'desc';
     destroyRef = inject(DestroyRef);
     private activeRoute = inject(ActivatedRoute);
     private paginationService = inject(PaginationStorageService);
@@ -41,9 +43,10 @@ export class TrainingInstanceRunsComponent implements OnInit {
 
     private readonly initialRunPagination =
         this.paginationService.createPagination<TrainingRunSort>(
-            'endTime',
-            'asc',
+            this.INITIAL_SORT_NAME,
+            this.INITIAL_SORT_DIR,
         );
+    private pagination = this.initialRunPagination;
 
     ngOnInit(): void {
         this.trainingInstance$ = this.activeRoute.data.pipe(
@@ -57,12 +60,14 @@ export class TrainingInstanceRunsComponent implements OnInit {
     }
 
     onTrainingRunsLoadEvent(loadEvent: TableLoadEvent<TrainingRunSort>): void {
-        this.paginationService.savePageSize(loadEvent.pagination.size);
+        if (loadEvent.pagination) {
+            this.pagination = PaginationMapper.toOffsetPaginationEvent(
+                loadEvent.pagination,
+            );
+        }
+        this.paginationService.savePageSize(this.pagination.size);
         this.trainingRunService
-            .getAll(
-                this.trainingInstance.id,
-                PaginationMapper.toOffsetPaginationEvent(loadEvent.pagination),
-            )
+            .getAll(this.trainingInstance.id, this.pagination)
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe();
     }

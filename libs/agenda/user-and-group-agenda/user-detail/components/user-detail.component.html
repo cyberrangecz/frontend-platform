@@ -1,3 +1,4 @@
+@let user = currentUser();
 <mat-card appearance="outlined" class="info-card">
   <div class="left-panel">
     <img [alt]="user.name" class="user-picture" src="{{'data:image/png;base64,'+user.picture}}"/>

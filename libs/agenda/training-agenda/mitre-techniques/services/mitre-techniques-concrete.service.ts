@@ -11,6 +11,7 @@ export class MitreTechniquesOverviewConcreteService extends MitreTechniquesOverv
     private errorHandler = inject(ErrorHandlerService);
 
     getMitreTechniques(played: boolean): Observable<string> {
+        this.hasErrorSubject$.next(false);
         return this.mitreTechniquesApi.getMitreTechniques(played).pipe(
             tap(
                 (resource) => {

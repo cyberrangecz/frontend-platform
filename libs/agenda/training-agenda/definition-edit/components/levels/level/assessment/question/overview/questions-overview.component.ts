@@ -229,6 +229,7 @@ export class QuestionsOverviewComponent implements OnInit, OnChanges {
             order: 1,
         });
         newMcq.required = this.isTest;
+        newMcq.valid = !this.isTest;
         const questionStepperAdapter = new QuestionStepperAdapter(newMcq);
         questionStepperAdapter.state = StepStateEnum.ACTIVE;
         this.stepperQuestions.items.push(questionStepperAdapter);
@@ -247,6 +248,7 @@ export class QuestionsOverviewComponent implements OnInit, OnChanges {
         }
         const newEmi = new ExtendedMatchingItems('New Extended Matching Items');
         newEmi.required = this.isTest;
+        newEmi.valid = !this.isTest;
         newEmi.extendedMatchingStatements.push({
             id: null,
             text: 'Statement 1',

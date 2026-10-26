@@ -1,3 +1,9 @@
+/** Largest page size a paginated table starts with or takes from storage. */
+export const MAX_PAGE_SIZE = 100;
+
+/** Page sizes every paginated table offers unless it sets its own list. */
+export const TABLE_PAGE_SIZE_OPTIONS = [10, 25, 50, MAX_PAGE_SIZE];
+
 export type PaginationType = 'offset' | 'cursor';
 
 export type SortDir = 'asc' | 'desc';

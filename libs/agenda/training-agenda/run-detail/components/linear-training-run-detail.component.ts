@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { AccessTrainingRunInfo } from '@crczp/training-model';
 import { AbstractTrainingRunService } from '../services/training-run/abstract-training-run.service';
@@ -9,6 +9,7 @@ import { TrainingRunComponent } from './training-run.component';
     imports: [TrainingRunComponent],
     templateUrl: './generic-training-run-detail.component.html',
     styleUrl: './generic-training-run-detail.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [
         {
             provide: AccessTrainingRunInfo,

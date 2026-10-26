@@ -1,5 +1,5 @@
 import {AbstractLevelTypeEnum, AssessmentLevel, AssessmentTypeEnum} from '@crczp/training-model';
-import {AssessmentLevelDTO} from '../../../../dto/level/assessment/assessment-level-dto';
+import {AssessmentLevelDTO, AssessmentLevelDTOAssessmentTypeEnum} from '../../../../dto/level/assessment/assessment-level-dto';
 import {AnsweredAssessmentQuestionMapper} from './answered-assessment-question-mapper';
 
 export class AnsweredAssessmentLevelMapper {
@@ -15,11 +15,11 @@ export class AnsweredAssessmentLevelMapper {
         return result;
     }
 
-    private static typeFromDTO(type: AssessmentLevelDTO.AssessmentTypeEnum): AssessmentTypeEnum {
+    private static typeFromDTO(type: AssessmentLevelDTOAssessmentTypeEnum): AssessmentTypeEnum {
         switch (type) {
-            case AssessmentLevelDTO.AssessmentTypeEnum.TEST:
+            case AssessmentLevelDTOAssessmentTypeEnum.TEST:
                 return AssessmentTypeEnum.Test;
-            case AssessmentLevelDTO.AssessmentTypeEnum.QUESTIONNAIRE:
+            case AssessmentLevelDTOAssessmentTypeEnum.QUESTIONNAIRE:
                 return AssessmentTypeEnum.Questionnaire;
             default:
                 console.error('Could not map AssessmentType to any known type');

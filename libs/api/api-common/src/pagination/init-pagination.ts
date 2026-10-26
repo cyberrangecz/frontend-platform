@@ -1,7 +1,14 @@
-import { OffsetPaginationEvent, SortDir } from '@crczp/utils';
+import { MAX_PAGE_SIZE, OffsetPaginationEvent, SortDir } from '@crczp/utils';
 import { inject } from '@angular/core';
 import { PortalConfig } from '@crczp/utils';
 import { OffsetPaginatedResource } from './offset-paginated-resource';
+
+/** Page size that asks for as many elements of a list as one request may hold; never capped. */
+export const INFINITE_PAGE_SIZE = 10_000;
+
+function tableDefaultPageSize(config: PortalConfig): number {
+    return Math.min(config.defaultPageSize, MAX_PAGE_SIZE);
+}
 
 export type InitPaginationOptions<Sort> = {
     sort?: Sort;
@@ -34,8 +41,8 @@ export function createPaginationEvent<Sort>(
     const pageSize = options.pageSize
         ? options.pageSize
         : config
-          ? config.defaultPageSize
-          : inject(PortalConfig).defaultPageSize;
+          ? tableDefaultPageSize(config)
+          : tableDefaultPageSize(inject(PortalConfig));
     return {
         page: 0,
         size: pageSize,
@@ -69,8 +76,8 @@ export function createPaginatedResource<T>(
     const initialSizeNonNull = initialSize
         ? initialSize
         : config
-          ? config.defaultPageSize
-          : inject(PortalConfig).defaultPageSize;
+          ? tableDefaultPageSize(config)
+          : tableDefaultPageSize(inject(PortalConfig));
     return {
         elements: [],
         pagination: {
@@ -86,7 +93,7 @@ export function createPaginatedResource<T>(
 /**
  * Create an `OffsetPaginationEvent` configured for "infinite" pagination.
  *
- * The returned event uses `Number.MAX_SAFE_INTEGER` as the page size to
+ * The returned event uses `INFINITE_PAGE_SIZE` as the page size to
  * effectively request a single large page. `page` is set to 0. `sort` and
  * `sortDir` are optional and passed through if provided.
  *
@@ -102,23 +109,23 @@ export function createInfinitePaginationEvent<Sort>(
     return createPaginationEvent<Sort>({
         sort: sort,
         sortDir: sortDir,
-        pageSize: Number.MAX_SAFE_INTEGER,
+        pageSize: INFINITE_PAGE_SIZE,
     });
 }
 
 /**
  * Create an empty `PaginatedResource` configured for "infinite" pagination.
  *
- * The returned resource uses `Number.MAX_SAFE_INTEGER` as the pagination size
+ * The returned resource uses `INFINITE_PAGE_SIZE` as the pagination size
  * to represent an effectively unbounded page. Elements are initialized to an
  * empty array and counts are set to zero.
  *
  * @template T - type of the resource elements
  * @returns initialized empty `PaginatedResource<T>` with `size` set to
- * `Number.MAX_SAFE_INTEGER`
+ * `INFINITE_PAGE_SIZE`
  */
 export function createInfinitePaginatedResource<
     T,
 >(): OffsetPaginatedResource<T> {
-    return createPaginatedResource<T>(Number.MAX_SAFE_INTEGER);
+    return createPaginatedResource<T>(INFINITE_PAGE_SIZE);
 }

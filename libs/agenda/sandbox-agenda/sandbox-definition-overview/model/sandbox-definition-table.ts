@@ -1,5 +1,6 @@
 import { SandboxDefinition } from '@crczp/sandbox-model';
-import { Column, DeleteAction, ExpandableSentinelTable, Row, RowAction, RowExpand } from '@sentinel/components/table';
+import { Column, DeleteAction, RowAction, RowExpand } from '@sentinel/components/table';
+import { LinkedRow, TableModel } from '@crczp/components';
 import { defer, of } from 'rxjs';
 import {
     SandboxDefinitionDetailComponent
@@ -12,12 +13,7 @@ import { OffsetPaginatedResource } from '@crczp/api-common';
 /**
  * Helper class transforming paginated resource to class for common table component
  */
-export class SandboxDefinitionTable extends ExpandableSentinelTable<
-    SandboxDefinition,
-    SandboxDefinitionDetailComponent,
-    null,
-    SandboxDefinitionSort
-> {
+export class SandboxDefinitionTable extends TableModel<SandboxDefinition, SandboxDefinitionSort> {
     constructor(
         resource: OffsetPaginatedResource<SandboxDefinition>,
         service: SandboxDefinitionOverviewService,
@@ -33,7 +29,8 @@ export class SandboxDefinitionTable extends ExpandableSentinelTable<
             new Column<SandboxDefinitionSort>(
                 'createdByName',
                 'Created by',
-                false,
+                true,
+                'created_by_id',
             ),
         ];
         const rows = resource.elements.map((element) =>
@@ -49,7 +46,7 @@ export class SandboxDefinitionTable extends ExpandableSentinelTable<
     private static createRow(
         sandboxDefinition: SandboxDefinition,
         service: SandboxDefinitionOverviewService,
-    ): Row<SandboxDefinitionRowAdapter> {
+    ): LinkedRow<SandboxDefinitionRowAdapter> {
         const actions = [
             new RowAction(
                 'topology',
@@ -70,12 +67,8 @@ export class SandboxDefinitionTable extends ExpandableSentinelTable<
         rowAdapter.createdByName = sandboxDefinition.createdBy.fullName;
         rowAdapter.titleWithRevision =
             sandboxDefinition.title + ' (' + sandboxDefinition.rev + ')';
-        const row = new Row(rowAdapter, actions);
-        row.addLink(
-            'titleWithRevision',
-            this.parseUrl(sandboxDefinition.url),
-            '_blank',
-        );
+        const row = new LinkedRow(rowAdapter, actions);
+        row.addLink('titleWithRevision', this.parseUrl(sandboxDefinition.url));
         return row;
     }
 

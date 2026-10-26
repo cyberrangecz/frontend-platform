@@ -6,13 +6,10 @@ import {
     Output,
 } from '@angular/core';
 import { TrainingRun } from '@crczp/training-model';
-import {
-    SentinelTable,
-    SentinelTableComponent,
-    TableLoadEvent,
-} from '@sentinel/components/table';
+import { SentinelTableComponent, TableLoadEvent } from '@sentinel/components/table';
 import { TrainingRunSort } from '@crczp/training-api';
-import { TableEmptyStateDirective } from '@crczp/components';
+import { TableEmptyStateDirective, TableModel } from '@crczp/components';
+import { SortDir } from '@crczp/utils';
 
 @Component({
     selector: 'crczp-training-instance-runs',
@@ -22,9 +19,11 @@ import { TableEmptyStateDirective } from '@crczp/components';
     imports: [SentinelTableComponent, TableEmptyStateDirective],
 })
 export class TrainingInstanceRunsComponent {
-    @Input() trainingRuns: SentinelTable<TrainingRun, TrainingRunSort>;
+    @Input() trainingRuns: TableModel<TrainingRun, TrainingRunSort>;
     @Input() hasError: boolean;
     @Input() isLoading: boolean;
+    @Input() defaultSortName: TrainingRunSort;
+    @Input() defaultSortDirection: SortDir;
 
     @Output() TableLoadEvent: EventEmitter<TableLoadEvent<TrainingRunSort>> =
         new EventEmitter();

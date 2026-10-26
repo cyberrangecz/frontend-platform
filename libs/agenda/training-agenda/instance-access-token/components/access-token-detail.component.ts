@@ -4,7 +4,7 @@ import { TrainingInstance } from '@crczp/training-model';
 import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { AsyncPipe, TitleCasePipe } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 
 /**
  * Displays access token of training instance for presentational purposes (to display on projector etc.)
@@ -14,7 +14,7 @@ import { AsyncPipe, TitleCasePipe } from '@angular/common';
     templateUrl: './access-token-detail.component.html',
     styleUrls: ['./access-token-detail.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [AsyncPipe, TitleCasePipe],
+    imports: [AsyncPipe],
 })
 export class AccessTokenDetailComponent {
     trainingInstance$: Observable<TrainingInstance>;

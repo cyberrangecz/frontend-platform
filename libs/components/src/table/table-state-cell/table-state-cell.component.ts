@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, input, ChangeDetectionStrategy } from '@angular/core';
 import { Utils } from '@crczp/utils';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -7,6 +7,7 @@ import { MatTooltip } from '@angular/material/tooltip';
     selector: 'crczp-table-state-cell',
     imports: [MatIcon, MatTooltip],
     templateUrl: './table-state-cell.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     styleUrl: './table-state-cell.component.css',
 })
 export class TableStateCellComponent {

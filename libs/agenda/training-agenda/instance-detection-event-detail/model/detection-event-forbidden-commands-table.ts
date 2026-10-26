@@ -1,22 +1,44 @@
-import { Column, Row, SentinelTable } from '@sentinel/components/table';
+import { Column } from '@sentinel/components/table';
+import { LinkedRow, TableModel } from '@crczp/components';
 import { DetectedForbiddenCommand, DetectedForbiddenCommandTypeEnum } from '@crczp/training-model';
 import { DatePipe } from '@angular/common';
 import { DetectionEventForbiddenCommandsRowAdapter } from './detection-event-forbidden-commands-row-adapter';
 import { OffsetPaginatedResource } from '@crczp/api-common';
+import { DetectedForbiddenCommandSort } from '@crczp/training-api';
 
 /**
  * @dynamic
  */
-export class DetectionEventForbiddenCommandsTable extends SentinelTable<
+export class DetectionEventForbiddenCommandsTable extends TableModel<
     DetectionEventForbiddenCommandsRowAdapter,
-    string
+    DetectedForbiddenCommandSort
 > {
     constructor(resource: OffsetPaginatedResource<DetectedForbiddenCommand>) {
         const columns = [
-            new Column<string>('command', 'command', false),
-            new Column<string>('typeFormatted', 'type', false),
-            new Column<string>('hostname', 'hostname', false),
-            new Column<string>('occurredAtFormatted', 'occurred At', false),
+            new Column<DetectedForbiddenCommandSort>(
+                'command',
+                'command',
+                true,
+                'command',
+            ),
+            new Column<DetectedForbiddenCommandSort>(
+                'typeFormatted',
+                'type',
+                true,
+                'type',
+            ),
+            new Column<DetectedForbiddenCommandSort>(
+                'hostname',
+                'hostname',
+                true,
+                'hostname',
+            ),
+            new Column<DetectedForbiddenCommandSort>(
+                'occurredAtFormatted',
+                'occurred At',
+                true,
+                'occurredAt',
+            ),
         ];
         const rows = resource.elements.map((element) =>
             DetectionEventForbiddenCommandsTable.createRow(element),
@@ -28,13 +50,13 @@ export class DetectionEventForbiddenCommandsTable extends SentinelTable<
 
     private static createRow(
         element: DetectedForbiddenCommand,
-    ): Row<DetectionEventForbiddenCommandsRowAdapter> {
+    ): LinkedRow<DetectionEventForbiddenCommandsRowAdapter> {
         const datePipe = new DatePipe('en-EN');
         const adapter = element as DetectionEventForbiddenCommandsRowAdapter;
         adapter.occurredAtFormatted = `${datePipe.transform(adapter.occurredAt, 'medium')}`;
         adapter.typeFormatted = this.evaluateCommandTypeString(adapter.type);
 
-        return new Row(adapter);
+        return new LinkedRow(adapter);
     }
 
     private static evaluateCommandTypeString(

@@ -18,6 +18,8 @@
             <crczp-training-instance-runs
                 (TableLoadEvent)="onTrainingRunTableLoadEvent($event)"
                 (rowExpanded)="onTrainingRunTableRowExpand($event)"
+                [defaultSortDirection]="INITIAL_SORT_DIR"
+                [defaultSortName]="INITIAL_SORT_NAME"
                 [hasError]="trainingRunsHasError$ | async"
                 [isLoading]="trainingRunsIsLoading$ | async"
                 [trainingRuns]="trainingRuns$ | async"

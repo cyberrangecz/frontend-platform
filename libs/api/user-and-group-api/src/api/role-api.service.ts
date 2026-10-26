@@ -1,15 +1,20 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { SentinelParamsMerger } from '@sentinel/common';
 import { OffsetPaginationEvent } from '@crczp/utils';
 import { User, UserRole } from '@crczp/user-and-group-model';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
 import { RoleDTO } from '../DTO/role/role-dto';
 import { UserAndGroupUserDTO } from '../DTO/user/user-dto.model';
 import { RoleMapper } from '../mappers/role-mapper';
 import { UserMapper } from '../mappers/user.mapper';
-import { JavaPaginatedResource, OffsetPaginatedResource, ParamsBuilder, QueryParam } from '@crczp/api-common';
+import {
+    CRCZPHttpService,
+    JavaPaginatedResource,
+    OffsetPaginatedResource,
+    ParamsBuilder,
+    QueryParam,
+} from '@crczp/api-common';
 import { PortalConfig } from '@crczp/utils';
 import { RoleSort, UserSort } from './sort';
 
@@ -18,7 +23,7 @@ import { RoleSort, UserSort } from './sort';
  */
 @Injectable()
 export class RoleApi {
-    private readonly http = inject(HttpClient);
+    private readonly http = inject(CRCZPHttpService);
 
     private readonly apiUrl =
         inject(PortalConfig).basePaths.userAndGroup + '/roles';
@@ -37,8 +42,14 @@ export class RoleApi {
             ParamsBuilder.queryParams(filters),
         ]);
         return this.http
-            .get<JavaPaginatedResource<RoleDTO>>(this.apiUrl, { params })
-            .pipe(map((resp) => RoleMapper.mapPaginatedRolesDTOtoRoles(resp)));
+            .get<JavaPaginatedResource<RoleDTO>>(
+                this.apiUrl,
+                'Fetching roles',
+            )
+            .withParams(params)
+            .withCache('12h')
+            .withMapper((resp) => RoleMapper.mapPaginatedRolesDTOtoRoles(resp))
+            .execute();
     }
 
     /**
@@ -57,10 +68,13 @@ export class RoleApi {
             ParamsBuilder.queryParams(filters),
         ]);
         return this.http
-            .get<
-                JavaPaginatedResource<RoleDTO>
-            >(`${this.apiUrl}/not-in-group/${groupId}`, { params })
-            .pipe(map((resp) => RoleMapper.mapPaginatedRolesDTOtoRoles(resp)));
+            .get<JavaPaginatedResource<RoleDTO>>(
+                `${this.apiUrl}/not-in-group/${groupId}`,
+                'Fetching roles not in group',
+            )
+            .withParams(params)
+            .withMapper((resp) => RoleMapper.mapPaginatedRolesDTOtoRoles(resp))
+            .execute();
     }
 
     /**
@@ -69,8 +83,9 @@ export class RoleApi {
      */
     get(id: number): Observable<UserRole> {
         return this.http
-            .get<RoleDTO>(`${this.apiUrl}/${id}`)
-            .pipe(map((resp) => RoleMapper.mapRoleDTOToRole(resp)));
+            .get<RoleDTO>(`${this.apiUrl}/${id}`, 'Fetching role')
+            .withMapper((resp) => RoleMapper.mapRoleDTOToRole(resp))
+            .execute();
     }
 
     /**
@@ -91,11 +106,11 @@ export class RoleApi {
         return this.http
             .get<JavaPaginatedResource<UserAndGroupUserDTO>>(
                 `${this.apiUrl}/${id}/users`,
-                {
-                    params,
-                },
+                'Fetching users of role',
             )
-            .pipe(map((resp) => UserMapper.mapUserDTOsToUsers(resp)));
+            .withParams(params)
+            .withMapper((resp) => UserMapper.mapUserDTOsToUsers(resp))
+            .execute();
     }
 
     /**
@@ -118,11 +133,11 @@ export class RoleApi {
         return this.http
             .get<JavaPaginatedResource<UserAndGroupUserDTO>>(
                 `${this.apiUrl}/users`,
-                {
-                    params,
-                },
+                'Fetching users of role type',
             )
-            .pipe(map((resp) => UserMapper.mapUserDTOsToUsers(resp)));
+            .withParams(params)
+            .withMapper((resp) => UserMapper.mapUserDTOsToUsers(resp))
+            .execute();
     }
 
     /**
@@ -147,9 +162,12 @@ export class RoleApi {
             typeParam,
         ]);
         return this.http
-            .get<
-                JavaPaginatedResource<UserAndGroupUserDTO>
-            >(`${this.apiUrl}/users-not-with-ids`, { params })
-            .pipe(map((resp) => UserMapper.mapUserDTOsToUsers(resp)));
+            .get<JavaPaginatedResource<UserAndGroupUserDTO>>(
+                `${this.apiUrl}/users-not-with-ids`,
+                'Fetching users without given ids',
+            )
+            .withParams(params)
+            .withMapper((resp) => UserMapper.mapUserDTOsToUsers(resp))
+            .execute();
     }
 }

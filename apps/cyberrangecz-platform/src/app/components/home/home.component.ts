@@ -1,10 +1,11 @@
 import {
-    Component,
-    computed,
-    DestroyRef,
-    inject,
-    OnInit,
-    signal,
+  Component,
+  computed,
+  DestroyRef,
+  inject,
+  OnInit,
+  signal,
+  ChangeDetectionStrategy
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { SentinelAuthService, UserRole } from '@sentinel/auth';
@@ -23,6 +24,7 @@ import { ValidPath } from '@crczp/routing-commons';
     selector: 'crczp-home',
     templateUrl: './home.component.html',
     styleUrls: ['./home.component.css'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [PortalAgendaContainerComponent],
 })
 export class HomeComponent implements OnInit {

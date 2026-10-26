@@ -1,4 +1,4 @@
-<mat-expansion-panel>
+<mat-expansion-panel (opened)="loadTechniques()">
     <mat-expansion-panel-header>
         <mat-panel-title> MITRE ATT&CK Techniques</mat-panel-title>
         <mat-panel-description>
@@ -13,7 +13,7 @@
     </mat-expansion-panel-header>
     <mat-form-field appearance="outline" class="chip-list">
         <mat-label>Techniques</mat-label>
-        <mat-chip-grid #chipList [formControl]="chipListCtrl">
+        <mat-chip-grid #chipList>
             @for (mitreTechnique of mitreTechniques; track mitreTechnique) {
                 <mat-chip-row
                     (removed)="remove(mitreTechnique)"
@@ -28,29 +28,36 @@
             <input
                 #techniqueInput
                 (input)="onInput($event)"
-                (matChipInputTokenEnd)="add($event)"
-                (paste)="paste($event)"
                 [matAutocomplete]="auto"
-                [matChipInputAddOnBlur]="true"
+                [matChipInputAddOnBlur]="false"
                 [matChipInputFor]="chipList"
-                [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                [matChipInputSeparatorKeyCodes]="[]"
                 matInput
                 placeholder="New technique..."
             />
         </mat-chip-grid>
         <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
-            @for (mitreTechnique of filteredTechniquesList; track mitreTechnique) {
-                <mat-option [value]="mitreTechnique">
+            @for (mitreTechnique of filteredTechniquesList(); track mitreTechnique) {
+                <mat-option [value]="mitreTechnique" [disabled]="isSelected(mitreTechnique)">
                     {{ mitreTechnique.techniqueKey }} - {{ mitreTechnique.techniqueName }}
                 </mat-option>
             }
         </mat-autocomplete>
         <mat-hint
-        >Techniques must be in format: &#60;TACTIC_ID.TECHNIQUE_ID&#62;. Ids of tactics and techniques can be found on
+        >Pick a technique from the suggestions. Ids of tactics and techniques can be found on
             https://attack.mitre.org/matrices/enterprise/
         </mat-hint>
-        @if (chipListCtrl.hasError('wrongFormat')) {
-            <mat-error> Wrong format!</mat-error>
-        }
     </mat-form-field>
+    @switch (loadState()) {
+        @case ('loading') {
+            <p class="technique-load-status">Loading MITRE technique index</p>
+        }
+        @case ('failed') {
+            <div class="technique-load-status technique-load-status--failed">
+                <mat-icon>error</mat-icon>
+                <span>MITRE technique index failed to load. Techniques cannot be added until the index loads.</span>
+                <button mat-button type="button" (click)="loadTechniques()">Retry</button>
+            </div>
+        }
+    }
 </mat-expansion-panel>

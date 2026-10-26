@@ -1,7 +1,6 @@
 import {
     enableProdMode,
     ErrorHandler,
-    importProvidersFrom,
     inject,
     Injectable,
     provideAppInitializer,
@@ -13,18 +12,17 @@ import {
     SentinelBootstrapper,
     SentinelConfig,
 } from '@sentinel/common/dynamic-env';
+import { SENTINEL_TABLE_CONFIG } from '@sentinel/components/config';
+import { TABLE_PAGE_SIZE_OPTIONS } from '@crczp/utils';
 import { AppComponent } from './app/app.component';
-import {
-    BrowserAnimationsModule,
-    provideAnimations,
-} from '@angular/platform-browser/animations';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
 import {
-    HTTP_INTERCEPTORS,
-    HttpClient,
-    provideHttpClient,
-    withInterceptors,
-    withInterceptorsFromDi,
+  HTTP_INTERCEPTORS,
+  HttpClient,
+  provideHttpClient,
+  withInterceptors,
+  withInterceptorsFromDi,
+  withXhr
 } from '@angular/common/http';
 import { loadingInterceptor } from './app/services/http-interceptors/loading-interceptor';
 import { tokenRefreshInterceptor } from './app/services/http-interceptors/token-refresh-interceptor';
@@ -62,7 +60,6 @@ import {
     PortalConfig,
 } from '@crczp/utils';
 import { provideNativeDateAdapter } from '@angular/material/core';
-import { RoleService } from './app/services/role.service';
 import { APP_ROUTES } from './app/app-routes';
 import { provideSentinelMarkdownEditorConfig } from '@sentinel/components/markdown-editor';
 import {
@@ -147,8 +144,6 @@ if (environment.production) {
 
 SentinelBootstrapper.bootstrapApplication('assets/config.json', AppComponent, {
     providers: [
-        importProvidersFrom(BrowserAnimationsModule),
-        provideAnimations(),
         provideNativeDateAdapter(),
         appConfigProvider,
         {
@@ -169,7 +164,7 @@ SentinelBootstrapper.bootstrapApplication('assets/config.json', AppComponent, {
             useClass: UnauthorizedInterceptor,
             multi: true,
         },
-        provideHttpClient(
+        provideHttpClient(withXhr(), 
             withInterceptorsFromDi(),
             withInterceptors([
                 tokenRefreshInterceptor,
@@ -183,7 +178,6 @@ SentinelBootstrapper.bootstrapApplication('assets/config.json', AppComponent, {
             useFactory: () => inject(PortalConfig).authConfig,
             deps: [PortalConfig],
         },
-        RoleService,
         {
             provide: SentinelAuthorizationStrategy,
             useClass: SentinelUagAuthorizationStrategy,
@@ -195,6 +189,13 @@ SentinelBootstrapper.bootstrapApplication('assets/config.json', AppComponent, {
         provideSentinelMarkdownEditorConfig({
             markdownParser: {},
         }),
+        {
+            provide: SENTINEL_TABLE_CONFIG,
+            useValue: {
+                loadingPosition: 'both',
+                pageSizeOptions: TABLE_PAGE_SIZE_OPTIONS,
+            },
+        },
         provideHttpCache(withLocalStorage()),
         provideRouter(
             withCacheBlockedRoute(APP_ROUTES),

@@ -1,14 +1,14 @@
 import { Router } from '@angular/router';
 import { PoolApi, PoolSort, SandboxDefinitionApi, SandboxDefinitionSort } from '@crczp/sandbox-api';
 import { TrainingDefinitionInfo, TrainingInstance } from '@crczp/training-model';
-import { BehaviorSubject, concat, forkJoin, from, Observable, timer } from 'rxjs';
+import { BehaviorSubject, concat, forkJoin, from, Observable, Subject, timer } from 'rxjs';
 import { filter, map, switchMap, tap, toArray } from 'rxjs/operators';
 import { OffsetPaginationEvent } from '@crczp/utils';
 import { Pool, SandboxDefinition } from '@crczp/sandbox-model';
 import { ErrorHandlerService, LoadingTracker, NotificationService, PortalConfig } from '@crczp/utils';
 import { LinearTrainingDefinitionApi, LinearTrainingInstanceApi, TrainingDefinitionSort } from '@crczp/training-api';
 import { CommonTrainingInstanceSnapshotService } from './common-training-instance-snapshot.service';
-import { createPaginatedResource, OffsetPaginatedResource, QueryParam } from '@crczp/api-common';
+import { createPaginatedResource, INFINITE_PAGE_SIZE, OffsetPaginatedResource, QueryParam } from '@crczp/api-common';
 
 /**
  * Basic implementation of layer between component and API service.
@@ -29,9 +29,8 @@ export abstract class CommonTrainingInstanceEditService extends CommonTrainingIn
     );
     editMode$: Observable<boolean> = this.editModeSubject$.asObservable();
 
-    private readonly EMPTY_RESOURCE = createPaginatedResource<any>(
-        Number.MAX_SAFE_INTEGER,
-    );
+    private readonly EMPTY_RESOURCE =
+        createPaginatedResource<any>(INFINITE_PAGE_SIZE);
     protected releasedTrainingDefinitionsSubject: BehaviorSubject<
         OffsetPaginatedResource<TrainingDefinitionInfo>
     > = new BehaviorSubject(this.EMPTY_RESOURCE);
@@ -54,6 +53,13 @@ export abstract class CommonTrainingInstanceEditService extends CommonTrainingIn
     public sandboxDefinitions$: Observable<
         OffsetPaginatedResource<SandboxDefinition>
     > = this.sandboxDefinitionsSubject$.asObservable();
+
+    private readonly savedSubject$ = new Subject<void>();
+
+    /**
+     * Emits as soon as the server has accepted the edited instance, before any follow-up reloads finish.
+     */
+    readonly saved$: Observable<void> = this.savedSubject$.asObservable();
 
     private loadingTracker = new LoadingTracker();
 
@@ -205,20 +211,20 @@ export abstract class CommonTrainingInstanceEditService extends CommonTrainingIn
         }
         const definitionPagination: OffsetPaginationEvent<TrainingDefinitionSort> =
             {
-                size: Number.MAX_SAFE_INTEGER,
+                size: INFINITE_PAGE_SIZE,
                 page: 0,
                 sort: 'title',
                 sortDir: 'asc',
             };
         const sandboxDefinitionPagination: OffsetPaginationEvent<SandboxDefinitionSort> =
             {
-                size: Number.MAX_SAFE_INTEGER,
+                size: INFINITE_PAGE_SIZE,
                 page: 0,
                 sort: 'name',
                 sortDir: 'asc',
             };
         const poolPagination: OffsetPaginationEvent<PoolSort> = {
-            size: Number.MAX_SAFE_INTEGER,
+            size: INFINITE_PAGE_SIZE,
             page: 0,
             sort: 'id',
             sortDir: 'asc',
@@ -262,5 +268,6 @@ export abstract class CommonTrainingInstanceEditService extends CommonTrainingIn
         this.editModeSubject$.next(true);
         this.trainingInstanceSubject$.next(this.editedSnapshot);
         this.editedSnapshot = null;
+        this.savedSubject$.next();
     }
 }

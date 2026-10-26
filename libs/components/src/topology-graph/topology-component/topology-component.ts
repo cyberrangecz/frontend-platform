@@ -1,14 +1,15 @@
 import { CommonModule } from '@angular/common';
 import {
-    AfterViewInit,
-    Component,
-    effect,
-    ElementRef,
-    HostListener,
-    inject,
-    input,
-    signal,
-    ViewChild,
+  AfterViewInit,
+  Component,
+  effect,
+  ElementRef,
+  HostListener,
+  inject,
+  input,
+  signal,
+  ViewChild,
+  ChangeDetectionStrategy
 } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
 import { MatTab, MatTabGroup, MatTabLabel } from '@angular/material/tabs';
@@ -42,6 +43,7 @@ import { TopologySynchronizerService } from './topology-synchronizer.service';
     ],
     providers: [TopologyIconsService, TopologyNodeSvgService],
     templateUrl: './topology-component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     styleUrl: './topology-component.scss',
 })
 export class TopologyComponent implements AfterViewInit {
@@ -56,17 +58,12 @@ export class TopologyComponent implements AfterViewInit {
     synchronizerService = inject(TopologySynchronizerService);
     router = inject(Router);
 
-    collapsed = false;
     @ViewChild('topologyTabsDiv') topologyTabsDiv: ElementRef<HTMLDivElement>;
     protected tabs = signal<OpenConsoleEvent[]>([]);
     protected readonly window = window;
     protected focusSubject = new Subject<number>();
 
     constructor() {
-        this.synchronizerService.topologyCollapsed$.subscribe(
-            (collapsed) => (this.collapsed = collapsed),
-        );
-
         this.synchronizerService.topologyDimensions$.subscribe(
             ({ width, height }) => {
                 if (this.topologyTabsDiv) {
@@ -187,7 +184,6 @@ export class TopologyComponent implements AfterViewInit {
                 },
             ),
         );
-        console.info('Opening console in new window:', url);
         window.open(url, '_blank');
     }
 }

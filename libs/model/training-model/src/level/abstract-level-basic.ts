@@ -1,4 +1,4 @@
-import { Z } from 'zod-class';
+import { Z } from '@crczp/zod-class';
 import { z } from 'zod';
 import { AbstractLevelTypeEnum } from '../enums/abstract-level-type.enum';
 
@@ -14,11 +14,4 @@ export class AbstractLevelBasic extends Z.class({
     estimatedDuration: z.number(),
     maxScore: z.number(),
     type: z.nativeEnum(AbstractLevelTypeEnum),
-}) {
-    declare id: number;
-    declare title: string;
-    declare order: number;
-    declare estimatedDuration: number;
-    declare maxScore: number;
-    declare type: AbstractLevelTypeEnum;
-}
+}) {}

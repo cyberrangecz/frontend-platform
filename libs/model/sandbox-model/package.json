@@ -1,4 +1,8 @@
 {
     "name": "@crczp/sandbox-model",
+    "peerDependencies": {
+        "@crczp/zod-class": "*",
+        "zod": "*"
+    },
     "sideEffects": false
 }

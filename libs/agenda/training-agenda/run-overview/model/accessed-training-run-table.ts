@@ -1,30 +1,37 @@
 import { AccessedTrainingRun, TraineeAccessTrainingRunActionEnum } from '@crczp/training-model';
-import { Column, Row, RowAction, SentinelTable } from '@sentinel/components/table';
+import { Column, RowAction } from '@sentinel/components/table';
+import { LinkedRow, TableModel } from '@crczp/components';
 import { defer, of } from 'rxjs';
 import { AccessedTrainingRunService } from '../services/state/accessed-training-run.service';
 import { AccessedTrainingRunRowAdapter } from './accessed-training-run-row-adapter';
 import { OffsetPaginatedResource } from '@crczp/api-common';
+import { AccessedTrainingRunSort } from '@crczp/training-api';
 
 /**
  * Helper class transforming paginated resource to class for common table component
  * @dynamic
  */
-export class AccessedTrainingRunTable extends SentinelTable<
+export class AccessedTrainingRunTable extends TableModel<
     AccessedTrainingRunRowAdapter,
-    string
+    AccessedTrainingRunSort
 > {
     constructor(
         resource: OffsetPaginatedResource<AccessedTrainingRun>,
         service: AccessedTrainingRunService,
     ) {
         const columns = [
-            new Column<string>('trainingInstanceTitle', 'title', false),
-            new Column<string>(
+            new Column<AccessedTrainingRunSort>(
+                'trainingInstanceTitle',
+                'title',
+                true,
+                'trainingInstance.title',
+            ),
+            new Column<AccessedTrainingRunSort>(
                 'trainingInstanceFormattedDuration',
                 'Time slot',
                 false,
             ),
-            new Column<string>('completedLevels', 'Completed Levels', false),
+            new Column<AccessedTrainingRunSort>('completedLevels', 'Completed Levels', false),
         ];
 
         const sortByInstanceDateAndState = (
@@ -56,9 +63,9 @@ export class AccessedTrainingRunTable extends SentinelTable<
     private static createRow(
         accessedTrainingRun: AccessedTrainingRun,
         service: AccessedTrainingRunService,
-    ): Row<AccessedTrainingRunRowAdapter> {
+    ): LinkedRow<AccessedTrainingRunRowAdapter> {
         const adapter = accessedTrainingRun as AccessedTrainingRunRowAdapter;
-        return new Row(adapter, this.createActions(adapter, service));
+        return new LinkedRow(adapter, this.createActions(adapter, service));
     }
 
     private static createActions(

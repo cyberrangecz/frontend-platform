@@ -14,7 +14,7 @@ import {
 } from '@angular/core';
 import { TrainingDefinitionInfo, TrainingInstance, TrainingTypeEnum } from '@crczp/training-model';
 import { TrainingInstanceChangeEvent } from '../../model/events/training-instance-change-event';
-import { TrainingInstanceFormGroup } from './training-instance-form-group';
+import { START_TIME_GRACE_SECONDS, TrainingInstanceFormGroup } from './training-instance-form-group';
 import { AbstractControl, ReactiveFormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Pool, SandboxDefinition } from '@crczp/sandbox-model';
@@ -29,12 +29,13 @@ import {
 import { AsyncPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { MatButton } from '@angular/material/button';
+import { ErrorStateMatcher } from '@angular/material/core';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatIcon } from '@angular/material/icon';
 import { OwlDateTimeModule, OwlNativeDateTimeModule } from '@danielmoncada/angular-datetime-picker';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { MatError, MatFormField, MatHint, MatInput, MatLabel, MatSuffix } from '@angular/material/input';
-import { ClearInputSuffixComponent, InjectionTokens } from '@crczp/utils';
+import { ClearInputSuffixComponent, InjectionTokens, RoleService } from '@crczp/utils';
 
 /**
  * Component for creating new or editing existing training instance
@@ -87,7 +88,15 @@ export class TrainingInstanceEditComponent implements OnChanges, AfterViewInit {
     @ViewChild('poolSelect', { static: false, read: ElementRef })
     poolSelect: ElementRef;
     now: Date;
+    readonly dateErrorStateMatcher: ErrorStateMatcher = {
+        isErrorState: (control) =>
+            !!control &&
+            (control.touched || control.dirty) &&
+            (control.invalid ||
+                !!control.parent?.hasError('startTimeAfterEndTime')),
+    };
     trainingInstanceFormGroup: TrainingInstanceFormGroup;
+    protected readonly startTimeGraceSeconds = START_TIME_GRACE_SECONDS;
     protected readonly TrainingTypeEnum = TrainingTypeEnum;
     private trainingDefinitionsSubject = new BehaviorSubject<
         TrainingDefinitionInfo[]
@@ -105,6 +114,8 @@ export class TrainingInstanceEditComponent implements OnChanges, AfterViewInit {
     private poolSearchStringSubject = new BehaviorSubject<string>('');
     private readonly destroyRef = inject(DestroyRef);
     private readonly trainingType = inject(InjectionTokens.TrainingType);
+    protected readonly canOpenTrainingDefinition =
+        inject(RoleService).hasRole('trainingDesigner');
 
     get startTime(): AbstractControl {
         return this.trainingInstanceFormGroup.formGroup.get('startTime');
@@ -216,6 +227,17 @@ export class TrainingInstanceEditComponent implements OnChanges, AfterViewInit {
             });
     }
 
+    /**
+     * Re-runs the start time check of a new instance against the current time and shows its error.
+     *
+     * @returns true when the start time is acceptable
+     */
+    revalidateStartTime(): boolean {
+        this.startTime.markAsTouched();
+        this.startTime.updateValueAndValidity();
+        return this.startTime.valid;
+    }
+
     revalidate() {
         this.trainingDefinition.updateValueAndValidity();
         this.trainingInstanceFormGroup.formGroup.updateValueAndValidity();
@@ -238,13 +260,11 @@ export class TrainingInstanceEditComponent implements OnChanges, AfterViewInit {
         if ('trainingInstance' in changes) {
             this.trainingInstanceFormGroup = new TrainingInstanceFormGroup(
                 this.trainingInstance,
+                this.editMode,
             );
             this.setupOnFormChangedEvent();
         }
         if ('hasStarted' in changes && this.hasStarted) {
-            this.trainingInstanceFormGroup.disable();
-        }
-        if ('editMode' in changes && changes.editMode.currentValue) {
             this.trainingInstanceFormGroup.disable();
         }
     }

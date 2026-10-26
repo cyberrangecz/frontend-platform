@@ -1,4 +1,4 @@
-import { Component, input, output } from '@angular/core';
+import { Component, input, output, ChangeDetectionStrategy } from '@angular/core';
 import { Hint } from '@crczp/training-model';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatButton } from '@angular/material/button';
@@ -7,6 +7,7 @@ import { MatButton } from '@angular/material/button';
     selector: 'crczp-answer-form-hints',
     templateUrl: './answer-form-hints.component.html',
     styleUrl: './answer-form-hints.component.css',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [MatTooltip, MatButton],
 })
 export class AnswerFormHintsComponent {

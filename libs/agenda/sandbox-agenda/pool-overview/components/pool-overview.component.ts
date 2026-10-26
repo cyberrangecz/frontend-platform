@@ -1,10 +1,12 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, OnInit, viewChild } from '@angular/core';
 import { SentinelControlItem, SentinelControlsComponent } from '@sentinel/components/controls';
 import { Pool, Resources } from '@crczp/sandbox-model';
-import { Row, SentinelRowDirective, SentinelTableComponent, TableLoadEvent } from '@sentinel/components/table';
+import { Row, SentinelCellDirective, SentinelTableComponent, TableLoadEvent } from '@sentinel/components/table';
+import { RouterLink } from '@angular/router';
 import { defer, Observable, of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { distinctUntilChanged, map, tap } from 'rxjs/operators';
 import { PoolTable } from '../model/pool-table';
+import { PoolRowAdapter } from '../model/pool-row-adapter';
 
 import {
     SandboxAllocationUnitsConcreteService,
@@ -23,7 +25,7 @@ import { PoolService } from '../services/abstract-pool/abstract-sandbox/pool.ser
 import { SandboxResourcesConcreteService } from '../services/resources/sandbox-resources-concrete.service';
 import { QuotasComponent } from './quotas/quotas.component';
 import { AsyncPipe } from '@angular/common';
-import { PaginationStorageService, PollingService, providePaginationStorageService } from '@crczp/utils';
+import { OffsetPaginationEvent, PaginationStorageService, PollingService, providePaginationStorageService, SortDir } from '@crczp/utils';
 import { PaginationMapper } from '@crczp/api-common';
 import { PoolSort } from '@crczp/sandbox-api';
 import { TableEmptyStateDirective, TableStateCellComponent } from '@crczp/components';
@@ -42,9 +44,10 @@ import { TableEmptyStateDirective, TableStateCellComponent } from '@crczp/compon
         EditableCommentComponent,
         QuotasComponent,
         AsyncPipe,
-        SentinelRowDirective,
+        SentinelCellDirective,
         TableStateCellComponent,
         TableEmptyStateDirective,
+        RouterLink,
     ],
     providers: [
         PollingService,
@@ -75,9 +78,11 @@ export class PoolOverviewComponent implements OnInit {
     isLoading$: Observable<boolean>;
     resources$: Observable<Resources>;
     controls: SentinelControlItem[] = [];
+    private readonly sentinelTable =
+        viewChild<SentinelTableComponent<PoolRowAdapter, PoolSort, never, never>>(SentinelTableComponent);
     destroyRef = inject(DestroyRef);
-    readonly DEFAULT_SORT_COLUMN = 'id';
-    readonly DEFAULT_SORT_DIRECTION = 'asc';
+    readonly DEFAULT_SORT_COLUMN: PoolSort = 'id';
+    readonly DEFAULT_SORT_DIRECTION: SortDir = 'desc';
     private sandboxResourcesService = inject(SandboxResourcesService);
     private abstractPoolService = inject(PoolService);
     private sandboxInstanceService = inject(SandboxInstanceService);
@@ -87,7 +92,9 @@ export class PoolOverviewComponent implements OnInit {
     private readonly initialPoolPagination =
         this.paginationService.createPagination<PoolSort>(
             this.DEFAULT_SORT_COLUMN,
+            this.DEFAULT_SORT_DIRECTION,
         );
+    private pagination = this.initialPoolPagination;
 
     constructor() {
         this.resources$ = this.sandboxResourcesService.resources$;
@@ -114,11 +121,12 @@ export class PoolOverviewComponent implements OnInit {
      * @param loadEvent load data event from table component
      */
     onLoadEvent(loadEvent: TableLoadEvent<PoolSort>): void {
-        this.paginationService.savePageSize(loadEvent.pagination.size);
+        if (loadEvent.pagination) {
+            this.pagination = loadEvent.pagination as OffsetPaginationEvent<PoolSort>;
+        }
+        this.paginationService.savePageSize(this.pagination.size);
         this.abstractPoolService
-            .getAll(
-                PaginationMapper.toOffsetPaginationEvent(loadEvent.pagination),
-            )
+            .getAll(PaginationMapper.toOffsetPaginationEvent(this.pagination))
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe();
     }
@@ -154,6 +162,10 @@ export class PoolOverviewComponent implements OnInit {
             pagination: this.initialPoolPagination,
         };
         this.pools$ = this.abstractPoolService.pools$.pipe(
+            distinctUntilChanged(
+                (previous, current) => previous === current,
+                (resource) => JSON.stringify(resource),
+            ),
             map(
                 (resource) =>
                     new PoolTable(
@@ -163,10 +175,26 @@ export class PoolOverviewComponent implements OnInit {
                         this.sandboxInstanceService,
                     ),
             ),
+            tap((poolTable) => this.keepExpandedPoolOpen(poolTable)),
         );
         this.hasError$ = this.abstractPoolService.poolsHasError$;
         this.isLoading$ = this.abstractPoolService.poolsIsLoading$;
         this.onLoadEvent(initialLoadEvent);
+        this.abstractPoolService.poll().pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
+    }
+
+    /**
+     * Points the table's expanded element at the rebuilt pool with the same id,
+     * so the expanded row survives a table rebuild. Collapses it when that pool left the page.
+     */
+    private keepExpandedPoolOpen(poolTable: PoolTable): void {
+        const expandedElement = this.sentinelTable()?.expandedElement;
+        const expandedPoolId = expandedElement?.()?.id;
+        if (expandedElement && expandedPoolId !== undefined) {
+            expandedElement.set(
+                poolTable.rows.find((row) => row.element.id === expandedPoolId)?.element,
+            );
+        }
     }
 
     private initControls() {

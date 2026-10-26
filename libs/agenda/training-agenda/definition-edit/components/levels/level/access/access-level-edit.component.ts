@@ -17,7 +17,6 @@ import {SentinelMarkdownEditorComponent} from "@sentinel/components/markdown-edi
 import {MatError, MatFormField, MatHint, MatInput, MatLabel, MatSuffix} from "@angular/material/input";
 import {MatIcon} from "@angular/material/icon";
 import {MatTooltip} from "@angular/material/tooltip";
-import {MatIconButton} from "@angular/material/button";
 import { ClearInputSuffixComponent } from '@crczp/utils';
 
 /**
@@ -48,6 +47,10 @@ export class AccessLevelEditComponent implements OnChanges {
 
     accessLevelConfigFormGroup: AccessLevelEditFormGroup;
     destroyRef = inject(DestroyRef);
+
+    get estimatedDuration(): AbstractControl {
+        return this.accessLevelConfigFormGroup.formGroup.get('estimatedDuration');
+    }
 
     get title(): AbstractControl {
         return this.accessLevelConfigFormGroup.formGroup.get('title');

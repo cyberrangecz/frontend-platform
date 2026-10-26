@@ -12,6 +12,17 @@
       }
     </mat-form-field>
 
+    <!-- ESTIMATED DURATION field -->
+    <mat-form-field appearance="outline"
+      hintLabel="Number in minutes, 0 or greater."
+      (keydown.enter)="$event.preventDefault()">
+      <mat-label>Estimated duration in minutes</mat-label>
+      <input matInput placeholder="Estimated duration in minutes" formControlName="estimatedDuration" maxlength="9">
+      @if (estimatedDuration.hasError('pattern') || estimatedDuration.hasError('min')) {
+        <mat-error>Estimated duration must be a whole number of minutes, 0 or greater</mat-error>
+      }
+    </mat-form-field>
+
     <!-- PASSKEY filed -->
     <mat-form-field
       class="passkey-field"

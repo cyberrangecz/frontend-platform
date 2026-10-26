@@ -29,11 +29,11 @@
     }
     <div class="data-field markdown-data">
         <div class="key-field">Content:</div>
-        <sentinel-markdown-view [markdown]="level?.content" />
+        <sentinel-markdown-view [markdown]="$safeNavigationMigration(level?.content)" />
     </div>
     <div class="data-field markdown-data">
         <div class="key-field">Solution:</div>
-        <sentinel-markdown-view [markdown]="level?.solution" />
+        <sentinel-markdown-view [markdown]="$safeNavigationMigration(level?.solution)" />
     </div>
 
     <div class="data-field markdown-data">
@@ -47,7 +47,7 @@
                     <div>
                         <div class="data-field markdown-data">
                             <div class="key-field">Content:</div>
-                            <sentinel-markdown-view [markdown]="hint?.content" />
+                            <sentinel-markdown-view [markdown]="$safeNavigationMigration(hint?.content)" />
                         </div>
                         <div class="data-field">
                             <div class="key-field">Penalty:</div>

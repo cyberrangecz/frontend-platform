@@ -1,4 +1,4 @@
-import {Component, Input} from '@angular/core';
+import {Component, Input, ChangeDetectionStrategy} from '@angular/core';
 import {MultipleChoiceQuestion} from '@crczp/training-model';
 import {MatIcon} from "@angular/material/icon";
 import {MatTooltip} from "@angular/material/tooltip";
@@ -7,6 +7,7 @@ import {MatTooltip} from "@angular/material/tooltip";
     selector: 'crczp-multiple-choice-question-detail',
     templateUrl: './multiple-choice-question-detail.component.html',
     styleUrls: ['./multiple-choice-question-detail.component.css'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         MatIcon,
         MatTooltip

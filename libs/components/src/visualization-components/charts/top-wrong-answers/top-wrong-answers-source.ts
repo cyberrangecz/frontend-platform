@@ -102,37 +102,48 @@ function buildTopWrongAnswersQuery(
 
 /**
  * Creates a live-polling {@link QuerySource} emitting the raw wrong-answer submission
- * rows. Aggregation into per-level ranked bars is done by the component so the same
- * rows also feed the per-submission CSV export. Polls on the dashboard cadence,
- * participates in the pause gate, and stops past the instance end.
- *
- * Two scopes, selected by whether `runId` is supplied:
- * - omitted → every run on the instance (the aggregated dashboard view);
- * - supplied → a single run. A non-positive run id (no trainee selected yet) yields
- *   no rows rather than falling back to every run.
+ * rows of every run on the instance (the aggregated dashboard view). Aggregation into
+ * per-level ranked bars is done by the component so the same rows also feed the
+ * per-submission CSV export. Polls on the dashboard cadence, participates in the pause
+ * gate, and stops past the instance end.
  *
  * Must be called inside an Angular injection context.
  *
  * @param instanceId Reactive signal carrying the training instance ID.
- * @param runId      Reactive signal carrying the selected run ID, or null when none is
- *                   selected; omit entirely for the instance-wide aggregated scope.
  * @returns          Query source whose vm emits the raw wrong-answer rows, or null
  *                   before the first emission.
  */
 export function createTopWrongAnswersSource(
     instanceId: Signal<number>,
-    runId?: Signal<number | null>,
 ): QuerySource<readonly WrongAnswerRow[]> {
-    if (runId === undefined) {
-        return createQuerySource<WrongAnswerRow, readonly WrongAnswerRow[]>({
-            instanceId,
-            eventTypes: [PlatformEventType.WRONG_ANSWER_SUBMITTED],
-            live: true,
-            query: (db, ctx) => buildTopWrongAnswersQuery(db, ctx.instanceId, 0),
-            map: (rows) => rows,
-            isEmpty: (rows) => rows.length === 0,
-        });
-    }
+    return createQuerySource<WrongAnswerRow, readonly WrongAnswerRow[]>({
+        instanceId,
+        eventTypes: [PlatformEventType.WRONG_ANSWER_SUBMITTED],
+        live: true,
+        query: (db, ctx) => buildTopWrongAnswersQuery(db, ctx.instanceId, 0),
+        map: (rows) => rows,
+        isEmpty: (rows) => rows.length === 0,
+    });
+}
+
+/**
+ * Creates a live-polling {@link QuerySource} emitting the raw wrong-answer submission
+ * rows of a single run. Polls on the dashboard cadence, participates in the pause gate,
+ * and stops past the instance end. A non-positive run id (no trainee selected yet)
+ * yields no rows rather than falling back to every run.
+ *
+ * Must be called inside an Angular injection context.
+ *
+ * @param instanceId Reactive signal carrying the training instance ID.
+ * @param runId      Reactive signal carrying the selected run ID, or null when none is
+ *                   selected.
+ * @returns          Query source whose vm emits the raw wrong-answer rows, or null
+ *                   before the first emission.
+ */
+export function createTraineeWrongAnswersSource(
+    instanceId: Signal<number>,
+    runId: Signal<number | null>,
+): QuerySource<readonly WrongAnswerRow[]> {
     const runIdParam = computed(() => runId() ?? 0);
     return createQuerySource<WrongAnswerRow, readonly WrongAnswerRow[], number>({
         instanceId,

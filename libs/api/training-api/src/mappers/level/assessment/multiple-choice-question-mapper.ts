@@ -1,5 +1,5 @@
 import {MultipleChoiceQuestion, QuestionTypeEnum} from '@crczp/training-model';
-import {AbstractQuestionDTO} from '../../../dto/level/assessment/abstact-question-dto';
+import {AbstractQuestionDTOQuestionTypeEnum} from '../../../dto/level/assessment/abstact-question-dto';
 import {
     MultipleChoiceQuestionCreateDTO,
     MultipleChoiceQuestionCreateDTOClass,
@@ -24,7 +24,7 @@ export class MultipleChoiceQuestionMapper {
 
     static toCreateDTO(question: MultipleChoiceQuestion): MultipleChoiceQuestionCreateDTO {
         const questionDTO = new MultipleChoiceQuestionCreateDTOClass();
-        questionDTO.question_type = AbstractQuestionDTO.QuestionTypeEnum.MCQ;
+        questionDTO.question_type = AbstractQuestionDTOQuestionTypeEnum.MCQ;
         questionDTO.choices = question.choices;
         return questionDTO;
     }

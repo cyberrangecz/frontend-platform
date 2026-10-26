@@ -1,4 +1,4 @@
-import {AbstractQuestionCreateDTO, AbstractQuestionDTO} from './abstact-question-dto';
+import {AbstractQuestionCreateDTO, AbstractQuestionDTOQuestionTypeEnum} from './abstact-question-dto';
 import {QuestionChoice} from '@crczp/training-model';
 import {QuestionChoiceDTO} from './question-choice-dto';
 
@@ -8,7 +8,7 @@ export interface FreeFormQuestionCreateDTO extends AbstractQuestionCreateDTO {
 
 export class FreeFormQuestionDTOClass implements FreeFormQuestionCreateDTO {
     text: string;
-    question_type: AbstractQuestionDTO.QuestionTypeEnum;
+    question_type: AbstractQuestionDTOQuestionTypeEnum;
     answer_required: boolean;
     order: number;
     penalty?: number;

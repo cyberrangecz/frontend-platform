@@ -1,12 +1,27 @@
 <sentinel-controls [controls]="controls">
 </sentinel-controls>
+@let table = groups$ | async;
+@if (table?.filterable) {
+    <sentinel-filter-free-input
+        (filterChange)="onFilter($event)"
+        (filterCleared)="onFilter('')"
+        [label]="table.filterLabel"
+        [placeholder]="table.filterLabel"
+        [value]="filter" />
+}
 <sentinel-table
     (rowSelection)="onGroupSelected($event)"
     (tableLoad)="onTableLoadEvent($event)"
-    [data]="groups$ | async"
+    [columns]="table?.columns ?? []"
     [defaultSortDirection]="INIT_SORT_DIR"
     [defaultSortName]="INIT_SORT_NAME"
-    [hasError]="groupsHasError$ | async"
-    [isLoading]="isLoading$ | async"
+    [hasError]="!!(groupsHasError$ | async)"
+    [isLoading]="!!(isLoading$ | async)"
+    [pagination]="table?.pagination"
+    [rows]="table?.rows ?? []"
+    [selectable]="!!table?.selectable"
     crczpTableEmptyState="No groups have been created yet">
+    <ng-template [sentinelCellType]="table?.rows" let-row sentinelCell="name">
+        <a [routerLink]="row.links.get('name')">{{ row.element.name }}</a>
+    </ng-template>
 </sentinel-table>

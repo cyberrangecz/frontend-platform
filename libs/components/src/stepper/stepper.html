@@ -10,6 +10,7 @@
             <!-- Step Node -->
             <div
                 (click)="onStepClick($index)"
+                role="presentation"
                 (mouseenter)="mouseHoveringStep.emit($index)"
                 (mouseleave)="mouseHoveringStep.emit(null)"
                 [ngClass]="{

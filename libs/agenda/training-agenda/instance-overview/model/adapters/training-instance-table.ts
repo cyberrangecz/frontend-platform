@@ -1,5 +1,6 @@
 import { TrainingInstance } from '@crczp/training-model';
-import { Column, DeleteAction, EditAction, Row, RowAction, SentinelTable } from '@sentinel/components/table';
+import { Column, DeleteAction, EditAction, RowAction } from '@sentinel/components/table';
+import { LinkedRow, TableModel } from '@crczp/components';
 import { defer, of, startWith } from 'rxjs';
 import { TrainingInstanceOverviewService } from '../../services/state/training-instance-overview.service';
 import { TrainingInstanceRowAdapter } from './training-instance-row-adapter';
@@ -11,16 +12,17 @@ import { OffsetPaginatedResource } from '@crczp/api-common';
 /**
  * @dynamic
  */
-export class TrainingInstanceTable extends SentinelTable<
+export class TrainingInstanceTable extends TableModel<
     TrainingInstanceRowAdapter,
     TrainingInstanceSort
 > {
     constructor(
         resource: OffsetPaginatedResource<TrainingInstance>,
         service: TrainingInstanceOverviewService,
+        canOpenTrainingDefinition: boolean,
     ) {
         const columns = [
-            new Column<TrainingInstanceSort>('title', 'Title', true),
+            new Column<TrainingInstanceSort>('title', 'Title', true, 'title'),
             new Column<TrainingInstanceSort>(
                 'startTime',
                 'Start Time',
@@ -42,7 +44,8 @@ export class TrainingInstanceTable extends SentinelTable<
             new Column<TrainingInstanceSort>(
                 'lastEditBy',
                 'Last Edit By',
-                false,
+                true,
+                'lastEditedBy',
             ),
             new Column<TrainingInstanceSort>(
                 'poolTitle',
@@ -59,7 +62,11 @@ export class TrainingInstanceTable extends SentinelTable<
             ),
         ];
         const rows = resource.elements.map((element) =>
-            TrainingInstanceTable.createRow(element, service),
+            TrainingInstanceTable.createRow(
+                element,
+                service,
+                canOpenTrainingDefinition,
+            ),
         );
         super(rows, columns);
         this.pagination = resource.pagination;
@@ -71,7 +78,8 @@ export class TrainingInstanceTable extends SentinelTable<
     private static createRow(
         ti: TrainingInstance,
         service: TrainingInstanceOverviewService,
-    ): Row<TrainingInstanceRowAdapter> {
+        canOpenTrainingDefinition: boolean,
+    ): LinkedRow<TrainingInstanceRowAdapter> {
         const adapter = ti as TrainingInstanceRowAdapter;
         adapter.tdTitle = adapter.trainingDefinition.title;
         if (adapter.hasPool()) {
@@ -81,7 +89,7 @@ export class TrainingInstanceTable extends SentinelTable<
         } else {
             adapter.poolTitle = '-';
         }
-        const row = new Row(adapter, this.createActions(ti, service));
+        const row = new LinkedRow(adapter, this.createActions(ti, service));
 
         row.addLink(
             'title',
@@ -89,12 +97,14 @@ export class TrainingInstanceTable extends SentinelTable<
                 .instanceId(ti.id)
                 .detail.build(),
         );
-        row.addLink(
-            'tdTitle',
-            Routing.RouteBuilder.linear_definition
-                .definitionId(ti.trainingDefinition.id)
-                .detail.build(),
-        );
+        if (canOpenTrainingDefinition) {
+            row.addLink(
+                'tdTitle',
+                Routing.RouteBuilder.linear_definition
+                    .definitionId(ti.trainingDefinition.id)
+                    .detail.build(),
+            );
+        }
         if (ti.hasPool()) {
             row.element.poolSize = service.getPoolSize(ti.poolId).pipe(
                 shareReplay({ bufferSize: 1, refCount: false }),

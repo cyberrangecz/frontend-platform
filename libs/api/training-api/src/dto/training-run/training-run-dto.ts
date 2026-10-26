@@ -11,21 +11,19 @@ export interface TrainingRunDTO {
     id?: number;
     sandbox_instance_ref_id?: string;
     sandbox_instance_allocation_id?: number;
+    previous_sandbox_instance_ref_id?: string | null;
     participant_ref: UserRefDTO;
     start_time?: Date;
-    state?: TrainingRunDTO.StateEnum;
+    state?: TrainingRunDTOStateEnum;
     definition_id: number;
     instance_id: number;
     event_logging_state?: boolean;
     command_logging_state?: boolean;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-namespace
-export namespace TrainingRunDTO {
-    export type StateEnum = 'RUNNING' | 'FINISHED' | 'ARCHIVED';
-    export const StateEnum = {
-        RUNNING: 'RUNNING' as StateEnum,
-        FINISHED: 'FINISHED' as StateEnum,
-        ARCHIVED: 'ARCHIVED' as StateEnum,
-    };
-}
+export type TrainingRunDTOStateEnum = 'RUNNING' | 'FINISHED' | 'ARCHIVED';
+export const TrainingRunDTOStateEnum = {
+    RUNNING: 'RUNNING' as TrainingRunDTOStateEnum,
+    FINISHED: 'FINISHED' as TrainingRunDTOStateEnum,
+    ARCHIVED: 'ARCHIVED' as TrainingRunDTOStateEnum,
+};

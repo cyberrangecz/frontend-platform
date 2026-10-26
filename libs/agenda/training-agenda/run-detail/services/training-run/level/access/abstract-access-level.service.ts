@@ -73,7 +73,7 @@ export abstract class AbstractAccessLevelService {
     }
 
     protected displayWrongAnswerNotification(
-        answerCheck: AnswerCheckResult,
+        _answerCheck: AnswerCheckResult,
     ): void {
         this.notificationService
             .emit(SentinelNotificationTypeEnum.Warning, 'Incorrect passkey')

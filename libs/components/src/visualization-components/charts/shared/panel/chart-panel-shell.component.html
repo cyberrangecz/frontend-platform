@@ -10,7 +10,7 @@
                     </button>
                 }
                 @if (exportable()) {
-                    <button mat-icon-button type="button" (click)="download()" [matTooltip]="downloadTooltip()" aria-label="Download CSV">
+                    <button mat-icon-button type="button" [disabled]="renderMode() === 'skeleton' || renderMode() === 'error'" (click)="download()" [matTooltip]="downloadTooltip()" aria-label="Download CSV">
                         <mat-icon>download</mat-icon>
                     </button>
                 }
@@ -21,7 +21,7 @@
     <div class="panel-body">
         @switch (renderMode()) {
             @case ('skeleton') {
-                <div class="panel-body--skeleton" aria-busy="true"></div>
+                <ngx-skeleton-loader animation="pulse" [theme]="skeletonTheme" />
             }
             @case ('empty') {
                 <crczp-panel-placeholder variant="empty" [message]="emptyMessage()" />

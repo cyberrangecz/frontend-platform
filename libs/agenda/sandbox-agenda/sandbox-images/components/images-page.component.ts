@@ -13,12 +13,14 @@ import { VmImageSort } from '@crczp/sandbox-api';
 import {
     PaginationStorageService,
     providePaginationStorageService,
+    SortDir,
 } from '@crczp/utils';
 import { OffsetPaginationEvent } from '@crczp/utils';
 import {
     SentinelTableComponent,
     TableLoadEvent,
 } from '@sentinel/components/table';
+import { SentinelFilterFreeInputComponent } from '@sentinel/components/filters';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { VirtualImagesTable } from '../models/virtual-images-table';
@@ -33,6 +35,7 @@ import { TableEmptyStateDirective } from '@crczp/components';
     imports: [
         MatCheckbox,
         SentinelTableComponent,
+        SentinelFilterFreeInputComponent,
         AsyncPipe,
         TableEmptyStateDirective,
     ],
@@ -50,17 +53,22 @@ export class ImagesPageComponent implements OnInit {
     isLoadingImages$: Observable<boolean> = of();
     guiAccess = false;
     crczpImages = false;
+    /**
+     * Text the images are currently filtered by
+     */
+    filter = '';
     destroyRef = inject(DestroyRef);
-    readonly DEFAULT_SORT_COLUMN = 'name';
-    readonly DEFAULT_SORT_DIRECTION = 'asc';
+    readonly DEFAULT_SORT_COLUMN: VmImageSort = 'name';
+    readonly DEFAULT_SORT_DIRECTION: SortDir = 'asc';
     private vmImagesService = inject(VMImagesService);
     private paginationService = inject(PaginationStorageService);
-    private lastFilter = '';
 
     private readonly initialImagesPagination =
         this.paginationService.createPagination<VmImageSort>(
             this.DEFAULT_SORT_COLUMN,
+            this.DEFAULT_SORT_DIRECTION,
         );
+    private pagination = this.initialImagesPagination;
 
     constructor() {
         const vmImagesService = this.vmImagesService;
@@ -73,12 +81,28 @@ export class ImagesPageComponent implements OnInit {
     }
 
     onTableLoadEvent(loadEvent: TableLoadEvent<VmImageSort>): void {
-        this.paginationService.savePageSize(loadEvent.pagination.size);
-        this.lastFilter = loadEvent.filter;
+        if (loadEvent.pagination) {
+            this.pagination = loadEvent.pagination as OffsetPaginationEvent<VmImageSort>;
+        }
+        this.paginationService.savePageSize(this.pagination.size);
         this.getAvailableImages(
-            PaginationMapper.toOffsetPaginationEvent(loadEvent.pagination),
+            PaginationMapper.toOffsetPaginationEvent(this.pagination),
             true,
-            loadEvent.filter,
+            this.filter || undefined,
+        );
+    }
+
+    /**
+     * Reloads the images from the first page, filtered by the given text
+     * @param filter text to filter images by, empty for no filter
+     */
+    onFilter(filter: string): void {
+        this.filter = filter;
+        this.pagination = { ...this.pagination, page: 0 };
+        this.getAvailableImages(
+            PaginationMapper.toOffsetPaginationEvent(this.pagination),
+            true,
+            this.filter || undefined,
         );
     }
 
@@ -87,7 +111,7 @@ export class ImagesPageComponent implements OnInit {
         this.getAvailableImages(
             this.initialImagesPagination,
             true,
-            this.lastFilter,
+            this.filter || undefined,
         );
     }
 
@@ -96,14 +120,17 @@ export class ImagesPageComponent implements OnInit {
         this.getAvailableImages(
             this.initialImagesPagination,
             true,
-            this.lastFilter,
+            this.filter || undefined,
         );
     }
 
     initialTableLoadEvent(loadEvent: TableLoadEvent<VmImageSort>): void {
-        this.paginationService.savePageSize(loadEvent.pagination.size);
+        if (loadEvent.pagination) {
+            this.pagination = loadEvent.pagination as OffsetPaginationEvent<VmImageSort>;
+        }
+        this.paginationService.savePageSize(this.pagination.size);
         this.getAvailableImages(
-            PaginationMapper.toOffsetPaginationEvent(loadEvent.pagination),
+            PaginationMapper.toOffsetPaginationEvent(this.pagination),
             false,
         );
     }

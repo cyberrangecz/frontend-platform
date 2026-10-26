@@ -1,11 +1,11 @@
 <div (wheel)="onWheel($event)" class="dial-container">
-    <div (click)="selectIndex(-1)" class="dial-item prev">
+    <button (click)="selectIndex(-1)" class="dial-item prev" type="button">
         {{ visibleItems().prev?.label || '' }}
-    </div>
+    </button>
     <div class="dial-item current">
         {{ visibleItems().current?.label || '' }}
     </div>
-    <div (click)="selectIndex(1)" class="dial-item next">
+    <button (click)="selectIndex(1)" class="dial-item next" type="button">
         {{ visibleItems().next?.label || '' }}
-    </div>
+    </button>
 </div>

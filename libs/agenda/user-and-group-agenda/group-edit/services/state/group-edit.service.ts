@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { GroupApi } from '@crczp/user-and-group-api';
 import { Group } from '@crczp/user-and-group-model';
-import { BehaviorSubject, Observable, ReplaySubject } from 'rxjs';
+import { BehaviorSubject, EMPTY, Observable, ReplaySubject } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { GroupChangedEvent } from '../../model/group-changed-event';
 import { ErrorHandlerService, NotificationService } from '@crczp/utils';
@@ -68,6 +68,9 @@ export class GroupEditService {
      * @returns Identifier of the newly created group, null when an existing one was updated.
      */
     save(): Observable<number | null> {
+        if (this.saveDisabledSubject$.getValue()) {
+            return EMPTY;
+        }
         this.saveDisabledSubject$.next(true);
         return this.editModeSubject$.getValue()
             ? this.update().pipe(map(() => null))
@@ -80,6 +83,9 @@ export class GroupEditService {
      * @returns Identifier of the newly created group.
      */
     createAndEdit(): Observable<number> {
+        if (this.saveDisabledSubject$.getValue()) {
+            return EMPTY;
+        }
         this.saveDisabledSubject$.next(true);
         return this.create();
     }

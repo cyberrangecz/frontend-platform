@@ -6,13 +6,21 @@
         [style.top.px]="position().y"
         class="context-menu"
     >
-        <ul>
+        <ul role="menu">
             @for (item of menuData(); track item.label) {
-                <li (click)="item.action(); hideContextMenu()">
+                <li (click)="activateItem(item)"
+                    (keydown.enter)="activateItem(item)"
+                    (keydown.space)="activateItem(item); $event.preventDefault()"
+                    role="menuitem"
+                    tabindex="0">
                     <span class="label">{{ item.label }}</span>
                 </li>
             } @empty {
-                <li (click)="hideContextMenu()">
+                <li (click)="hideContextMenu()"
+                    (keydown.enter)="hideContextMenu()"
+                    (keydown.space)="hideContextMenu(); $event.preventDefault()"
+                    role="menuitem"
+                    tabindex="0">
                     <span class="label">No actions available</span>
                 </li>
             }

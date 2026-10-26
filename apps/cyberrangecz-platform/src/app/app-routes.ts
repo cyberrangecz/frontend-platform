@@ -1,12 +1,15 @@
 import { HomeComponent } from './components/home/home.component';
 import { LoginComponent } from './components/login/login.component';
 import {
-    sentinelAuthGuard,
     sentinelAuthGuardWithLogin,
-    sentinelNegativeAuthGuard,
 } from '@sentinel/auth';
 import { ValidRouterConfig } from '@crczp/routing-commons';
-import { RoleGuards, soleAgendaGuard } from './utils/guards';
+import {
+    authGuardKeepingRequestedRoute,
+    loginPageGuard,
+    RoleGuards,
+    soleAgendaGuard,
+} from './utils/guards';
 
 export const APP_ROUTES: ValidRouterConfig<''> = [
     {
@@ -158,7 +161,7 @@ export const APP_ROUTES: ValidRouterConfig<''> = [
     },
     {
         path: 'notifications',
-        canActivate: [sentinelAuthGuard],
+        canActivate: [authGuardKeepingRequestedRoute],
         loadChildren: () =>
             import('./modules/notifications/notifications-routing.module').then(
                 (m) => m.NotificationsRoutingModule,
@@ -174,12 +177,12 @@ export const APP_ROUTES: ValidRouterConfig<''> = [
             import('@crczp/components').then(
                 (m) => m.ConsoleFullscreenWrapperComponent,
             ),
-        canActivate: [sentinelAuthGuardWithLogin],
+        canActivate: [authGuardKeepingRequestedRoute],
     },
     {
         path: 'login',
         component: LoginComponent,
-        canActivate: [sentinelNegativeAuthGuard],
+        canActivate: [loginPageGuard],
     },
     {
         path: 'home',

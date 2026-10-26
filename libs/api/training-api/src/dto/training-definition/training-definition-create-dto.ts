@@ -1,22 +1,20 @@
+import { LevelUpdateDTO } from '../level/level-update-dto';
+
 /**
- * Training Definition to create.
+ * Training Definition to create, with its ordered levels. Levels carry no ids.
  */
 export class TrainingDefinitionCreateDTO {
     description?: string;
     outcomes?: string[];
     prerequisites?: string[];
-    state?: TrainingDefinitionCreateDTO.StateEnum;
+    state?: TrainingDefinitionCreateDTOStateEnum;
     title?: string;
-    default_content?: boolean;
+    levels: LevelUpdateDTO[];
 }
 
-// eslint-disable-next-line @typescript-eslint/no-namespace
-export namespace TrainingDefinitionCreateDTO {
-    export type StateEnum = 'PRIVATED' | 'RELEASED' | 'ARCHIVED' | 'UNRELEASED';
-    export const StateEnum = {
-        PRIVATED: 'PRIVATED' as StateEnum,
-        RELEASED: 'RELEASED' as StateEnum,
-        ARCHIVED: 'ARCHIVED' as StateEnum,
-        UNRELEASED: 'UNRELEASED' as StateEnum,
-    };
-}
+export type TrainingDefinitionCreateDTOStateEnum = 'RELEASED' | 'ARCHIVED' | 'UNRELEASED';
+export const TrainingDefinitionCreateDTOStateEnum = {
+    RELEASED: 'RELEASED' as TrainingDefinitionCreateDTOStateEnum,
+    ARCHIVED: 'ARCHIVED' as TrainingDefinitionCreateDTOStateEnum,
+    UNRELEASED: 'UNRELEASED' as TrainingDefinitionCreateDTOStateEnum,
+};

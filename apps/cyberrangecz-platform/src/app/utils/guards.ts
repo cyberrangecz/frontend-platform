@@ -1,11 +1,16 @@
 import { filter, map, switchMap, take, tap } from 'rxjs/operators';
-import { SentinelAuthService, sentinelAuthGuardWithLogin, User } from '@sentinel/auth';
+import {
+    NAVIGATE_AFTER_LOGIN_KEY,
+    SentinelAuthService,
+    SentinelLoginNavigationService,
+    sentinelAuthGuardWithLogin,
+    User,
+} from '@sentinel/auth';
 import { inject } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivateFn, Router, RouterStateSnapshot } from '@angular/router';
-import { RoleKey, RoleService } from '../services/role.service';
 import { from, Observable, of } from 'rxjs';
 import { ValidPath } from '@crczp/routing-commons';
-import { Utils } from '@crczp/utils';
+import { RoleKey, RoleService, Utils } from '@crczp/utils';
 import { NavConfigFactory } from './nav-config-factory';
 
 /**
@@ -28,6 +33,41 @@ function canActivateToObservable(
 }
 
 /**
+ * Lets a logged-in user through and sends any other user to sign in.
+ * While the stored tokens are invalid, the requested address is saved so the
+ * user returns to it after signing in instead of landing on the home page.
+ */
+export const authGuardKeepingRequestedRoute: CanActivateFn = (
+    _route: ActivatedRouteSnapshot,
+    state: RouterStateSnapshot,
+) => {
+    if (!inject(SentinelAuthService).hasValidTokens()) {
+        inject(SentinelLoginNavigationService).setNavigateAfterLoginRoute(
+            state.url,
+        );
+    }
+    return sentinelAuthGuardWithLogin();
+};
+
+/**
+ * Keeps a signed-in user off the login page. Sends the user to the same-app path carried by the
+ * login address, then to the stored requested route, then to the home page. A target that is not
+ * a path beginning with a single slash is ignored. Lets a user without valid tokens through.
+ */
+export const loginPageGuard: CanActivateFn = (route: ActivatedRouteSnapshot) => {
+    if (!inject(SentinelAuthService).hasValidTokens()) {
+        return true;
+    }
+    const loginNavigationService = inject(SentinelLoginNavigationService);
+    const target = route.queryParamMap.get(NAVIGATE_AFTER_LOGIN_KEY);
+    if (target && /^\/(?![/\\])/.test(target)) {
+        loginNavigationService.clearNavigateAfterLoginRoute();
+        return inject(Router).parseUrl(target);
+    }
+    return from(loginNavigationService.navigateToRequestedPage());
+};
+
+/**
  * Creates a guard that redirects to the given path if the user is not logged in
  * or does not fulfill supplied predicate.
  *
@@ -40,9 +80,14 @@ function guardBuilder(
     defaultPath: ValidPath = 'home',
     loginPath: ValidPath = 'login',
 ): CanActivateFn {
-    return (_route: ActivatedRouteSnapshot, _state: RouterStateSnapshot) => {
+    return (route: ActivatedRouteSnapshot, state: RouterStateSnapshot) => {
         const router = inject(Router);
-        return canActivateToObservable(sentinelAuthGuardWithLogin()).pipe(
+        return canActivateToObservable(
+            authGuardKeepingRequestedRoute(route, state) as
+                | boolean
+                | Promise<boolean>
+                | Observable<boolean>,
+        ).pipe(
             tap((isLoggedIn) => {
                 if (!isLoggedIn) {
                     console.warn('You must be logged in to access this route');

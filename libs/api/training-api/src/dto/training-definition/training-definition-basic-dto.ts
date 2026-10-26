@@ -1,4 +1,4 @@
-import { Z } from 'zod-class';
+import { Z } from '@crczp/zod-class';
 import { z } from 'zod';
 import { LevelBasicDtoSchema } from '../level/level-basic-dto';
 import { idSchema } from '../shared-schemas';

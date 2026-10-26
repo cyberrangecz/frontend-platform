@@ -2,7 +2,7 @@
  * Class representing training instance of a definition.
  */
 import {TrainingDefinitionWithLevels} from './training-definition';
-import { Z } from 'zod-class';
+import { Z } from '@crczp/zod-class';
 import { z } from 'zod';
 
 export class TrainingInstanceBasic extends Z.class({
@@ -11,13 +11,7 @@ export class TrainingInstanceBasic extends Z.class({
     startTime: z.coerce.date(),
     endTime: z.coerce.date(),
     trainingDefinitionId: z.number(),
-}) {
-    declare id: number;
-    declare title: string;
-    declare startTime: Date;
-    declare endTime: Date;
-    declare trainingDefinitionId: number;
-}
+}) {}
 
 export class TrainingInstance {
     id!: number;

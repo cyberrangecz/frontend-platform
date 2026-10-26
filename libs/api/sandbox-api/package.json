@@ -9,6 +9,9 @@
         "@crczp/api-common": "*",
         "@crczp/utils": "*",
         "@ngneat/cashew": "*",
+        "file-saver": "*",
+        "@crczp/zod-class": "*",
+        "zod": "*",
         "vite": "*",
         "@analogjs/vite-plugin-angular": "*",
         "@nx/vite": "*"

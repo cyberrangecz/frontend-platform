@@ -1,5 +1,5 @@
 import {ExtendedMatchingItems, ExtendedMatchingOption, ExtendedMatchingStatement, QuestionTypeEnum} from '@crczp/training-model';
-import {AbstractQuestionDTO} from '../../../dto/level/assessment/abstact-question-dto';
+import {AbstractQuestionDTOQuestionTypeEnum} from '../../../dto/level/assessment/abstact-question-dto';
 import {ExtendedMatchingItemsAnswerDTO} from '../../../dto/level/assessment/extended-matching-items-answer-dto';
 import {ExtendedMatchingItemsDTO} from '../../../dto/level/assessment/extended-matching-items-dto';
 import {ExtendedMatchingStatementDTO} from '../../../dto/level/assessment/extended-matching-statement-dto';
@@ -44,7 +44,7 @@ export class ExtendedMatchingItemsMapper {
 
     static toCreateDTO(question: ExtendedMatchingItems): ExtendedMatchingItemsDTO {
         const questionDTO = new ExtendedMatchingItemsDTO();
-        questionDTO.question_type = AbstractQuestionDTO.QuestionTypeEnum.EMI;
+        questionDTO.question_type = AbstractQuestionDTOQuestionTypeEnum.EMI;
         questionDTO.extended_matching_options = question.extendedMatchingOptions;
         questionDTO.extended_matching_statements = question.extendedMatchingStatements.map(
             (ems) => new ExtendedMatchingStatementDTO(ems.id, ems.order, ems.text, ems.correctOptionOrder),

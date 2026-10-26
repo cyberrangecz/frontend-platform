@@ -2,7 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { SandboxInstanceApi } from '@crczp/sandbox-api';
 import { SandboxVpnCommand } from '@crczp/sandbox-model';
-import { PortalConfig } from '@crczp/utils';
+import { ErrorHandlerService, PortalConfig } from '@crczp/utils';
 import {
     BehaviorSubject,
     defer,
@@ -20,6 +20,7 @@ import {
 @Injectable()
 export class SandboxAccessService {
     private readonly sandboxApi = inject(SandboxInstanceApi);
+    private readonly errorHandler = inject(ErrorHandlerService);
     private readonly pollingPeriod =
         inject(PortalConfig).polling.pollingPeriodLongMs;
 
@@ -44,7 +45,13 @@ export class SandboxAccessService {
     readonly isProvisioning$ = this.isProvisioningSubject$.asObservable();
 
     getSshConfigFile(sandboxInstanceId: string) {
-        this.sandboxApi.getUserSshAccess(sandboxInstanceId).subscribe();
+        this.sandboxApi.getUserSshAccess(sandboxInstanceId).subscribe({
+            error: (err) =>
+                this.errorHandler.emitAPIError(
+                    err,
+                    `User SSH Access for sandbox: ${sandboxInstanceId}`,
+                ),
+        });
     }
 
     /**
