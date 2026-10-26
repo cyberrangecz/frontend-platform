@@ -1,5 +1,6 @@
-import { Injectable, Signal, signal } from '@angular/core';
-import { Utils } from '@crczp/utils';
+import { computed, Injectable, Signal, signal } from '@angular/core';
+import { PreferenceStore, Utils } from '@crczp/utils';
+import { z } from 'zod';
 import { EventKind } from '../types/event.types';
 import { TraineeId } from '../types/ids.types';
 import { LagState } from '../types/lag-state.types';
@@ -13,8 +14,12 @@ import {
 } from '../types/ui-state.types';
 import { ProgressUiStateService } from './progress-ui-state.interface.service';
 
-/** localStorage key under which the X-axis scale mode preference persists. */
-const AXIS_MODE_STORAGE_KEY = 'crczp.progress.axis-mode';
+/** Persisted X-axis scale mode preference. */
+const AXIS_MODE_PREFERENCE = new PreferenceStore(
+    'crczp.progress.axis-mode',
+    z.object({ axisMode: z.enum(AXIS_MODES) }),
+    { axisMode: DEFAULT_AXIS_MODE },
+);
 
 /**
  * Component-scoped concrete implementation of {@link ProgressUiStateService}.
@@ -25,7 +30,6 @@ const AXIS_MODE_STORAGE_KEY = 'crczp.progress.axis-mode';
  */
 @Injectable()
 export class ProgressUiStateServiceImpl extends ProgressUiStateService {
-    private readonly axisModeSignal = signal<AxisMode>(this.readPersistedAxisMode());
     private readonly favoritesSignal = signal<ReadonlySet<TraineeId>>(new Set<TraineeId>());
     private readonly sortCriterionSignal = signal<SortCriterion>(DEFAULT_SORT_CRITERION);
     private readonly sortDirectionSignal = signal<SortDirection>('ASC');
@@ -35,7 +39,7 @@ export class ProgressUiStateServiceImpl extends ProgressUiStateService {
     private readonly eventTypeFilterSignal = signal<ReadonlySet<EventKind>>(new Set<EventKind>());
     private readonly highlightedTraineeSignal = signal<TraineeId | null>(null);
 
-    readonly axisMode: Signal<AxisMode> = this.axisModeSignal.asReadonly();
+    readonly axisMode: Signal<AxisMode> = computed(() => AXIS_MODE_PREFERENCE.value().axisMode);
     readonly favorites: Signal<ReadonlySet<TraineeId>> = this.favoritesSignal.asReadonly();
     readonly sortCriterion: Signal<SortCriterion> = this.sortCriterionSignal.asReadonly();
     readonly sortDirection: Signal<SortDirection> = this.sortDirectionSignal.asReadonly();
@@ -47,39 +51,7 @@ export class ProgressUiStateServiceImpl extends ProgressUiStateService {
 
     /** Sets the X-axis scale mode and persists it for the next reload. */
     override setAxisMode(mode: AxisMode): void {
-        this.axisModeSignal.set(mode);
-        this.persistAxisMode(mode);
-    }
-
-    /**
-     * Reads the persisted axis mode, falling back to the default when none is
-     * stored, the stored value is unrecognised, or localStorage is unavailable.
-     *
-     * @returns The axis mode to start from.
-     */
-    private readPersistedAxisMode(): AxisMode {
-        try {
-            const stored = localStorage.getItem(AXIS_MODE_STORAGE_KEY);
-            return (AXIS_MODES as readonly string[]).includes(stored ?? '')
-                ? (stored as AxisMode)
-                : DEFAULT_AXIS_MODE;
-        } catch {
-            return DEFAULT_AXIS_MODE;
-        }
-    }
-
-    /**
-     * Writes the axis mode to localStorage; does nothing when localStorage is
-     * unavailable.
-     *
-     * @param mode - The axis mode to persist.
-     */
-    private persistAxisMode(mode: AxisMode): void {
-        try {
-            localStorage.setItem(AXIS_MODE_STORAGE_KEY, mode);
-        } catch {
-            // localStorage unavailable; the mode is not persisted.
-        }
+        AXIS_MODE_PREFERENCE.update({ axisMode: mode });
     }
 
     /** Flips `trainee` in the favourites set. */

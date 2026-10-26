@@ -17,9 +17,10 @@ import { format } from 'date-fns';
 import { ECElementEvent, EChartsCoreOption } from 'echarts/core';
 import { NgxEchartsDirective } from 'ngx-echarts';
 import { lastValueFrom } from 'rxjs';
+import { z } from 'zod';
 
 import { EntityResolverService, EntityType } from '@crczp/event-query-engine';
-import { CategoricalColorPair, Utils } from '@crczp/utils';
+import { CategoricalColorPair, PreferenceStore, Utils } from '@crczp/utils';
 
 import { SegmentedToggleComponent, SegmentedToggleOption } from '../../../segmented-toggle/segmented-toggle.component';
 
@@ -55,29 +56,15 @@ const VISIBLE_ROW_COUNT = 18;
 /** Separator used in the encoded y-axis category value `"<index>|<label>"`. */
 const CATEGORY_KEY_SEPARATOR = '|';
 
-/** localStorage key under which the last-used fold/unfold default is persisted. */
-const EXPANSION_DEFAULT_STORAGE_KEY = 'crczp.commands-chart.expansion-default';
-
 /** Global fold/unfold mode governing whether tool variants are shown across all levels. */
-type ExpansionMode = 'expanded' | 'collapsed';
+const EXPANSION_MODE_SCHEMA = z.enum(['expanded', 'collapsed']);
 
-/**
- * Reads the persisted fold/unfold mode from localStorage.
- *
- * @returns The stored mode, or 'collapsed' when absent or unrecognized.
- */
-function readExpansionDefault(): ExpansionMode {
-    return localStorage.getItem(EXPANSION_DEFAULT_STORAGE_KEY) === 'expanded' ? 'expanded' : 'collapsed';
-}
-
-/**
- * Persists the fold/unfold mode to localStorage so it carries across chart instances.
- *
- * @param value The mode to store.
- */
-function writeExpansionDefault(value: ExpansionMode): void {
-    localStorage.setItem(EXPANSION_DEFAULT_STORAGE_KEY, value);
-}
+/** Persisted fold/unfold default carried across chart instances. */
+const EXPANSION_PREFERENCE = new PreferenceStore(
+    'crczp.commands-chart.expansion-default',
+    z.object({ expansionMode: EXPANSION_MODE_SCHEMA }),
+    { expansionMode: 'collapsed' },
+);
 
 /**
  * A single bar displayed in the chart. Either a tool-total header row or a
@@ -218,7 +205,7 @@ export class CommandsChartComponent extends EchartsChartBase implements ChartPan
      * and updated by the expansion toggle; it governs each level the user navigates to,
      * so a single expand/collapse choice carries across the whole timeline.
      */
-    protected readonly expansionMode = signal<ExpansionMode>(readExpansionDefault());
+    protected readonly expansionMode = computed(() => EXPANSION_PREFERENCE.value().expansionMode);
 
     /**
      * Tool names whose expansion is flipped relative to {@link expansionMode} for the
@@ -714,11 +701,13 @@ export class CommandsChartComponent extends EchartsChartBase implements ChartPan
      * @param value The selected mode value from the segmented toggle.
      */
     protected onExpansionModeChanged(value: string): void {
-        const mode = value as ExpansionMode;
-        this.expansionMode.set(mode);
+        const parsedMode = EXPANSION_MODE_SCHEMA.safeParse(value);
+        if (!parsedMode.success) {
+            return;
+        }
         this.toolOverrides.set(new Set<string>());
         this.scrollStartIndex.set(0);
-        writeExpansionDefault(mode);
+        EXPANSION_PREFERENCE.update({ expansionMode: parsedMode.data });
     }
 
     /**
