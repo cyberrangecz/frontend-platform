@@ -1,13 +1,13 @@
 import { inject, Injectable } from '@angular/core';
 import { SandboxAllocationUnitsService } from './sandbox-allocation-units.service';
-import { BehaviorSubject, combineLatestWith, EMPTY, Observable } from 'rxjs';
+import { BehaviorSubject, combineLatestWith, defer, EMPTY, Observable } from 'rxjs';
 import { OffsetPaginationEvent } from '@crczp/utils';
 import {
     PoolApi,
     SandboxAllocationUnitsApi,
     SandboxAllocationUnitSort,
 } from '@crczp/sandbox-api';
-import { SandboxAllocationUnit } from '@crczp/sandbox-model';
+import { SandboxAllocationUnit, UnitCancellation } from '@crczp/sandbox-model';
 import { map, switchMap, tap } from 'rxjs/operators';
 import { HttpErrorResponse } from '@angular/common/http';
 import {
@@ -27,6 +27,12 @@ import {
     OffsetPaginatedResource,
 } from '@crczp/api-common';
 import { emitPoolCleanupResult } from '@crczp/sandbox-agenda/internal';
+import { AbstractSandbox } from '../../../model/abstract-sandbox';
+import {
+    describeAllocationCancelPreview,
+    previewAllocationCancellation,
+    summarizeAllocationCancellation,
+} from '../../../model/allocation-cancellation';
 
 @Injectable()
 export class SandboxAllocationUnitsConcreteService extends SandboxAllocationUnitsService {
@@ -188,58 +194,48 @@ export class SandboxAllocationUnitsConcreteService extends SandboxAllocationUnit
     }
 
     /**
-     * Cancels the allocations of a pool that have not started yet and removes their units.
+     * Asks to confirm stopping every unfinished allocation of a pool, then stops them and reports
+     * the outcome in a notification. Emits what was done to each unit; reloading the units is left to the caller.
+     * The confirmation counts the unfinished allocations among the units shown.
      * @param poolId id of the pool
      */
-    cancelQueued(poolId: number): Observable<OffsetPaginatedResource<SandboxAllocationUnit>> {
-        return this.removeStuckUnits(
-            poolId,
-            'Cancel Queued Allocations',
-            `Do you want to cancel the allocations of pool ${poolId} that have not started yet? Sandboxes being built and built ones stay.`,
-            'Cancel Allocations',
-            this.poolApi.cancelQueued(poolId),
-            (count) =>
-                count === 0
-                    ? 'No allocation was waiting to start'
-                    : `Cancelled ${count} queued allocation${count === 1 ? '' : 's'}`,
-        );
-    }
-
-    /**
-     * Cancels the allocations of a pool whose first stage is running and removes their units from
-     * the database, leaving what the stage created in the cloud behind.
-     * @param poolId id of the pool
-     */
-    forceCancelAllocation(poolId: number): Observable<OffsetPaginatedResource<SandboxAllocationUnit>> {
-        return this.removeStuckUnits(
-            poolId,
-            'Force Cancel Allocations',
-            `Do you want to cancel the allocations of pool ${poolId} whose first stage is running and remove their sandboxes from the database? What the stage has already created in the cloud stays there and has to be deleted by hand.`,
-            'Force Cancel',
-            this.poolApi.forceCancelAllocation(poolId),
-            (count) =>
-                count === 0
-                    ? 'No allocation was in its first stage'
-                    : `Removed ${count} sandbox${count === 1 ? '' : 'es'} whose allocation was in its first stage; delete their cloud resources by hand`,
-        );
-    }
-
-    /**
-     * Cancels the unfinished cleanups of a pool and removes their units from the database, leaving
-     * what the cleanups have not removed from the cloud yet behind.
-     * @param poolId id of the pool
-     */
-    forceCleanup(poolId: number): Observable<OffsetPaginatedResource<SandboxAllocationUnit>> {
-        return this.removeStuckUnits(
-            poolId,
-            'Force Cleanup',
-            `Do you want to stop the unfinished cleanups of pool ${poolId} and remove their sandboxes from the database? What the cleanups have not removed from the cloud yet stays there and has to be deleted by hand.`,
-            'Force Cleanup',
-            this.poolApi.forceCleanup(poolId),
-            (count) =>
-                count === 0
-                    ? 'No cleanup was unfinished'
-                    : `Removed ${count} sandbox${count === 1 ? '' : 'es'} whose cleanup was unfinished; delete what is left of them in the cloud by hand`,
+    cancelAllocations(poolId: number): Observable<UnitCancellation[]> {
+        return defer(() => {
+            const confirmation = describeAllocationCancelPreview(
+                poolId,
+                previewAllocationCancellation(
+                    this.unitsSubject$.value.elements.map(
+                        (unit) => new AbstractSandbox(unit),
+                    ),
+                ),
+            );
+            return this.dialog
+                .open(SentinelConfirmationDialogComponent, {
+                    data: new SentinelConfirmationDialogConfig(
+                        confirmation.title,
+                        confirmation.consequences,
+                        'Keep allocations',
+                        'Cancel allocations',
+                    ),
+                })
+                .afterClosed();
+        }).pipe(
+            switchMap((result) =>
+                result === SentinelDialogResultEnum.CONFIRMED
+                    ? this.poolApi.cancelAllocations(poolId)
+                    : EMPTY,
+            ),
+            tap({
+                next: (units) => {
+                    const summary = summarizeAllocationCancellation(units);
+                    this.notificationService.emit(summary.type, summary.title);
+                },
+                error: (err) =>
+                    this.errorHandler.emitAPIError(
+                        err,
+                        `Cancelling allocations of pool ${poolId}`,
+                    ),
+            }),
         );
     }
 
@@ -272,51 +268,6 @@ export class SandboxAllocationUnitsConcreteService extends SandboxAllocationUnit
         return dialogRef.afterClosed();
     }
 
-    /**
-     * Asks to confirm a pool maintenance action, then runs it and reports how many units it
-     * removed.
-     */
-    private removeStuckUnits(
-        poolId: number,
-        title: string,
-        question: string,
-        confirmLabel: string,
-        request$: Observable<number>,
-        describeResult: (removedCount: number) => string,
-    ): Observable<OffsetPaginatedResource<SandboxAllocationUnit>> {
-        const dialogRef = this.dialog.open(
-            SentinelConfirmationDialogComponent,
-            {
-                data: new SentinelConfirmationDialogConfig(
-                    title,
-                    question,
-                    'Cancel',
-                    confirmLabel,
-                ),
-            },
-        );
-        return dialogRef.afterClosed().pipe(
-            switchMap((result) =>
-                result === SentinelDialogResultEnum.CONFIRMED
-                    ? request$
-                    : EMPTY,
-            ),
-            tap({
-                next: (removedCount) =>
-                    this.notificationService.emit(
-                        'success',
-                        describeResult(removedCount),
-                    ),
-                error: (err) =>
-                    this.errorHandler.emitAPIError(
-                        err,
-                        `${title} in pool ${poolId}`,
-                    ),
-            }),
-            switchMap(() => this.getAll(this.lastPoolId, this.lastPagination)),
-        );
-    }
-
     private onGetAllError(err: HttpErrorResponse) {
         this.errorHandler.emitAPIError(err, 'Fetching allocation units');
         this.hasErrorSubject$.next(true);
@@ -324,23 +275,29 @@ export class SandboxAllocationUnitsConcreteService extends SandboxAllocationUnit
     }
 
     private callApiToCleanupMultiple(poolId: number, force: boolean): any {
-        return this.handleApiRequests(
-            this.poolApi.createMultipleCleanupRequests(poolId, force),
-            poolId,
+        return this.trackDeletion(() =>
+            this.handleApiRequests(
+                this.poolApi.createMultipleCleanupRequests(poolId, force),
+                poolId,
+            ),
         );
     }
 
     private callApiToCleanupFailed(poolId: number, force: boolean): any {
-        return this.handleApiRequests(
-            this.poolApi.createFailedCleanupRequests(poolId, force),
-            poolId,
+        return this.trackDeletion(() =>
+            this.handleApiRequests(
+                this.poolApi.createFailedCleanupRequests(poolId, force),
+                poolId,
+            ),
         );
     }
 
     private callApiToCleanupUnlocked(poolId: number, force: boolean): any {
-        return this.handleApiRequests(
-            this.poolApi.createUnlockedCleanupRequests(poolId, force),
-            poolId,
+        return this.trackDeletion(() =>
+            this.handleApiRequests(
+                this.poolApi.createUnlockedCleanupRequests(poolId, force),
+                poolId,
+            ),
         );
     }
 

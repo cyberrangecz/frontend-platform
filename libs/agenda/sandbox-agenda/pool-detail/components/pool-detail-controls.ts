@@ -5,6 +5,7 @@ import {
 } from '@sentinel/components/controls';
 import {Pool} from '@crczp/sandbox-model';
 import {defer, of} from 'rxjs';
+import {DisabledWhileBusy} from '@crczp/sandbox-agenda/internal';
 import {AbstractSandbox} from '../model/abstract-sandbox';
 import {SandboxInstanceService} from '../services/state/sandbox-instance/sandbox-instance.service';
 
@@ -17,23 +18,14 @@ export class PoolDetailControls {
     static readonly DELETE_FAILED_ACTION_ID = 'delete_failed';
     static readonly DELETE_ALL_ACTION_ID = 'delete_all';
     static readonly DELETE_UNLOCKED_ACTION_ID = 'delete_unlocked';
-    static readonly CANCEL_QUEUED_ACTION_ID = 'cancel_queued';
-    static readonly FORCE_CANCEL_ALLOCATION_ACTION_ID = 'force_cancel_allocation';
-    static readonly FORCE_CLEANUP_ACTION_ID = 'force_cleanup';
+    static readonly CANCEL_ALLOCATIONS_ACTION_ID = 'cancel_allocations';
 
-    /**
-     * @param isSandboxAdmin true if the user may force the removal of stuck sandboxes, which
-     * leaves their cloud resources behind
-     */
     static create(
         pool: Pool,
         sandboxes: AbstractSandbox[],
         sandboxInstanceService: SandboxInstanceService,
-        isSandboxAdmin: boolean,
+        disabledWhileBusy: DisabledWhileBusy,
     ): SentinelControlItem[] {
-        // The stuck sandboxes these actions remove may be on another page than the one shown, so
-        // the actions stay enabled; the sandbox service removes only the ones that are stuck.
-        const noSandboxShown = sandboxes.length === 0;
         const deleteActions = [
             {
                 id: this.DELETE_ALL_ACTION_ID,
@@ -56,32 +48,7 @@ export class PoolDetailControls {
                 action: () => sandboxInstanceService.cleanupUnlocked(pool.id, true),
                 icon: 'delete_outline',
             },
-            {
-                id: this.CANCEL_QUEUED_ACTION_ID,
-                label: 'Cancel Queued',
-                disabled: noSandboxShown,
-                action: () => sandboxInstanceService.cancelQueued(pool.id),
-                icon: 'pause_circle_outline',
-            },
         ];
-        if (isSandboxAdmin) {
-            deleteActions.push(
-                {
-                    id: this.FORCE_CANCEL_ALLOCATION_ACTION_ID,
-                    label: 'Force Cancel Allocation',
-                    disabled: noSandboxShown,
-                    action: () => sandboxInstanceService.forceCancelAllocation(pool.id),
-                    icon: 'cancel',
-                },
-                {
-                    id: this.FORCE_CLEANUP_ACTION_ID,
-                    label: 'Force Cleanup',
-                    disabled: noSandboxShown,
-                    action: () => sandboxInstanceService.forceCleanup(pool.id),
-                    icon: 'delete_sweep',
-                },
-            );
-        }
         return [
             new SentinelControlItem(
                 this.ALLOCATE_SOME_ACTION_ID,
@@ -95,18 +62,26 @@ export class PoolDetailControls {
                 'Delete',
                 'warn',
                 // Open while any of its actions applies
-                of(deleteActions.every((deleteAction) => deleteAction.disabled)),
+                disabledWhileBusy(deleteActions.every((deleteAction) => deleteAction.disabled)),
                 deleteActions.map(
                     (deleteAction) =>
                         new SentinelControlMenuItem(
                             deleteAction.id,
                             deleteAction.label,
                             'warn',
-                            of(deleteAction.disabled),
+                            disabledWhileBusy(deleteAction.disabled),
                             defer(deleteAction.action),
                             deleteAction.icon,
                         ),
                 ),
+            ),
+            new SentinelControlItem(
+                this.CANCEL_ALLOCATIONS_ACTION_ID,
+                'Cancel all allocations',
+                'warn',
+                // Units on another page may still be building, so only an empty pool disables it.
+                disabledWhileBusy(sandboxes.length === 0),
+                defer(() => sandboxInstanceService.cancelAllocations(pool.id)),
             ),
         ];
     }

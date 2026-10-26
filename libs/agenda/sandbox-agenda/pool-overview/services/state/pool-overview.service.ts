@@ -33,8 +33,14 @@ export class PoolOverviewService extends CrczpOffsetElementsPaginatedService<Poo
     private lastPagination: OffsetPaginationEvent<PoolSort>;
     private readonly loadingTracker = new LoadingTracker();
     private readonly newerRequestStarted$ = new Subject<void>();
+    private readonly deletionTracker = new LoadingTracker();
 
     override isLoading$ = this.loadingTracker.isLoading$;
+
+    /**
+     * True while a pool delete request, or the list refresh following it, is in flight.
+     */
+    readonly isDeleting$ = this.deletionTracker.isLoading$;
 
     constructor() {
         super(inject(PortalConfig).defaultPageSize);
@@ -98,6 +104,14 @@ export class PoolOverviewService extends CrczpOffsetElementsPaginatedService<Poo
                     ),
             ),
         );
+    }
+
+    /**
+     * Runs a request so that it counts towards isDeleting$ until it completes, fails or is unsubscribed.
+     * @param request produces the request, subscribed to on demand
+     */
+    trackDeletion<T>(request: () => Observable<T>): Observable<T> {
+        return this.deletionTracker.trackRequest(request);
     }
 
     /**
@@ -251,22 +265,24 @@ export class PoolOverviewService extends CrczpOffsetElementsPaginatedService<Poo
         );
     }
 
-    private callApiToDelete(pool: Pool, forceDelete: boolean): Observable<any> {
-        return this.poolApi.deletePool(pool.id, forceDelete).pipe(
-            tap(
-                (skippedUnitIds) =>
-                    emitPoolCleanupResult(
-                        this.notificationService,
-                        skippedUnitIds.length === 0
-                            ? `Pool ${pool.id} was deleted`
-                            : `Pool ${pool.id} was not deleted`,
-                        skippedUnitIds,
-                    ),
-                (err) =>
-                    this.errorHandler.emitAPIError(
-                        err,
-                        `Deleting pool ${pool.id}`,
-                    ),
+    private callApiToDelete(pool: Pool, forceDelete: boolean): Observable<number[]> {
+        return this.trackDeletion(() =>
+            this.poolApi.deletePool(pool.id, forceDelete).pipe(
+                tap({
+                    next: (skippedUnitIds) =>
+                        emitPoolCleanupResult(
+                            this.notificationService,
+                            skippedUnitIds.length === 0
+                                ? `Pool ${pool.id} was deleted`
+                                : `Pool ${pool.id} was not deleted`,
+                            skippedUnitIds,
+                        ),
+                    error: (err) =>
+                        this.errorHandler.emitAPIError(
+                            err,
+                            `Deleting pool ${pool.id}`,
+                        ),
+                }),
             ),
         );
     }

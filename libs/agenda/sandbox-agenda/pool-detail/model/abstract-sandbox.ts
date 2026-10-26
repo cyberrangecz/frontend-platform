@@ -35,6 +35,14 @@ export class AbstractSandbox {
         );
     }
 
+    /** True while the allocation has not started: every stage still waits in the queue. */
+    public allocationQueued(): boolean {
+        return (
+            this.allocationRunning() &&
+            this.allocationRequest.stages.every((stage) => stage === RequestStageState.QUEUED)
+        );
+    }
+
     public cleanupRunning(): boolean {
         return (
             this.cleanupExists() &&
