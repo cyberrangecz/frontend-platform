@@ -12,7 +12,7 @@ function toChunks<T>(arr: T[], chunkSize: number): T[][] {
     return arr.length === 0
         ? []
         : [arr.slice(0, chunkSize)].concat(
-              this.toChunks(arr.slice(chunkSize), chunkSize),
+              toChunks(arr.slice(chunkSize), chunkSize),
           );
 }
 
