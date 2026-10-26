@@ -16,7 +16,13 @@ import {
 } from '../support/pages/pool/log-view-page';
 import { locateChainSandbox, type ChainSandbox } from '../support/pages/pool/review-sandbox';
 import { readChainRecord } from '../support/shared-fixture';
-import { captureDownload, dismissErrorDialogs, waitForNotification, waitForPageReady } from '../support/ui';
+import {
+    captureDownload,
+    dismissErrorDialog,
+    errorDialog,
+    waitForNotification,
+    waitForPageReady,
+} from '../support/ui';
 
 test.use({ account: 'sandboxOrganizer', userAgent: USER_AGENTS.linux });
 
@@ -24,6 +30,9 @@ const RAW_RESULT_LINE = 'ok: [host1] => {"changed": false, "msg": "done"}';
 const LONG_ANSIBLE_LOG = `${ANSIBLE_LOG}\n${numberedLog('Padding', 300)}`;
 const LONG_WRAPPING_LINE = Array.from({ length: 120 }, (_, index) => `word${index}`).join(' ');
 const POLLING_TIMEOUT_MILLISECONDS = 60_000;
+/** Distance from the end of the log, in pixels, within which the log view follows new rows. */
+const FOLLOWING_DISTANCE = 32;
+const LOGGING_ERROR_LINE = '[LOGGING ERROR]: Failed to refresh logs.';
 /** Width of the side menu a maximized log view leaves visible. */
 const SIDE_MENU_WIDTH = 140;
 /** Narrowest viewport at which a maximized log view leaves the side menu visible. */
@@ -509,59 +518,75 @@ test.describe('pool.pool-id.sandbox-instance.request-id log view', () => {
     });
 
     test.describe('polling a running stage', () => {
-        test('appends new rows without moving a scrolled-up reader and shows one error line that the next success clears', async ({
+        test('appends new rows without moving a scrolled-up reader, reports a failure streak once and clears its error line on the next success', async ({
             page,
         }) => {
             test.setTimeout(180_000);
             await page.unrouteAll({ behavior: 'ignoreErrors' });
             const opened = numberedLog('Poll', 400);
-            const gates = [createGate(), createGate()];
+            const rowsAppended = createGate();
+            const firstFailure = createGate();
+            const recovery = createGate();
+            const recoveryRequested = createGate();
             await mockStageOutputs(page, async ({ callIndex }) => {
-                if (callIndex === 0) {
-                    return { content: opened, rows: 400 };
+                switch (callIndex) {
+                    case 0:
+                        return { content: opened, rows: 400 };
+                    case 1:
+                        await rowsAppended.promise;
+                        return { content: 'EXTRA row A\nEXTRA row B', rows: 402 };
+                    case 2:
+                        await firstFailure.promise;
+                        return 'fail';
+                    case 3:
+                        return 'fail';
+                    case 4:
+                        recoveryRequested.resolve();
+                        await recovery.promise;
+                        return { content: '', rows: 402 };
+                    default:
+                        return { content: '', rows: 402 };
                 }
-                if (callIndex === 1) {
-                    await gates[0]!.promise;
-                    return { content: 'EXTRA row A\nEXTRA row B', rows: 402 };
-                }
-                if (callIndex === 2) {
-                    await gates[1]!.promise;
-                    return 'fail';
-                }
-                return { content: '', rows: 402 };
             });
             await mockRunningStage(page, 'terraform');
             const logView = await openStage(page, 1);
 
             async function copiedNow(): Promise<string> {
-                await dismissErrorDialogs(page, { within: 500 });
                 const before = (await copiedTexts(page)).length;
                 await logView.button('Copy to clipboard').click();
                 await expect.poll(async () => (await copiedTexts(page)).length).toBe(before + 1);
                 return (await copiedTexts(page)).at(-1)!;
             }
+            const distanceFromEnd = () =>
+                logView.scroller.evaluate((element) => element.scrollHeight - element.scrollTop - element.clientHeight);
 
+            await expect.poll(distanceFromEnd, { message: 'the opened log shows its end' }).toBeLessThanOrEqual(FOLLOWING_DISTANCE);
             await logView.scroller.evaluate((element) => (element.scrollTop = 2000));
-            await expect.poll(() => logView.topLine()).not.toContain('line 0001');
+            await expect.poll(() => logView.topLine()).toMatch(/^Poll line \d{4}$/);
+            expect(await logView.topLine()).not.toBe('Poll line 0001');
+            expect(await distanceFromEnd(), 'the reader left the end of the log').toBeGreaterThan(FOLLOWING_DISTANCE);
             const topLine = await logView.topLine();
             const scrollTop = await logView.scroller.evaluate((element) => element.scrollTop);
 
-            gates[0]!.resolve();
+            rowsAppended.resolve();
             await expect
                 .poll(copiedNow, { timeout: POLLING_TIMEOUT_MILLISECONDS })
                 .toMatch(/EXTRA row B$/);
             expect(await logView.topLine()).toBe(topLine);
             expect(await logView.scroller.evaluate((element) => element.scrollTop)).toBe(scrollTop);
 
-            gates[1]!.resolve();
-            await expect
-                .poll(async () => (await copiedNow()).split('[LOGGING ERROR]: Failed to refresh logs.').length - 1, {
-                    timeout: POLLING_TIMEOUT_MILLISECONDS,
-                })
-                .toBe(1);
+            firstFailure.resolve();
+            await expect(errorDialog(page)).toBeVisible({ timeout: POLLING_TIMEOUT_MILLISECONDS });
+            await dismissErrorDialog(page);
+            await expect(errorDialog(page)).toHaveCount(0);
+            await recoveryRequested.promise;
+            await expect(errorDialog(page), 'the second failure in a row opens no dialog').toHaveCount(0);
+            expect((await copiedNow()).split(LOGGING_ERROR_LINE).length - 1).toBe(1);
+
+            recovery.resolve();
             await expect
                 .poll(copiedNow, { timeout: POLLING_TIMEOUT_MILLISECONDS })
-                .not.toContain('[LOGGING ERROR]');
+                .not.toContain(LOGGING_ERROR_LINE);
             expect(await logView.topLine()).toBe(topLine);
         });
     });
