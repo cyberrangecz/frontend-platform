@@ -1,175 +1,185 @@
 import { EditorView } from '@codemirror/view';
 
+/** Line height of the log text, relative to its font size. */
+export const LOG_LINE_HEIGHT = '1.6';
+
 export const crczpCodeEditorTheme = EditorView.theme(
     {
         '&': {
-            backgroundColor: 'var(--neutral-99)',
-            color: 'var(--neutral-10)',
-            fontSize: '14px',
-            fontFamily: '"Roboto Mono", "Courier New", monospace',
+            backgroundColor: 'var(--log-background)',
+            color: 'var(--log-foreground)',
+            fontSize: 'var(--log-font-size, 14px)',
+            fontFamily: 'var(--log-font-family, "Roboto Mono", "Courier New", monospace)',
         },
         '.cm-content': {
-            caretColor: 'var(--primary-40)',
+            caretColor: 'var(--log-cursor)',
             padding: '8px 0',
         },
         '.cm-cursor, .cm-dropCursor': {
-            borderLeftColor: 'var(--primary-40)',
+            borderLeftColor: 'var(--log-cursor)',
             borderLeftWidth: '2px',
         },
         '&.cm-focused .cm-cursor': {
-            borderLeftColor: 'var(--primary-40)',
+            borderLeftColor: 'var(--log-cursor)',
         },
         '.cm-activeLine': {
-            backgroundColor: 'rgba(75,126,255,0.05)',
+            backgroundColor: 'var(--log-active-line-background)',
         },
         '.cm-selectionBackground': {
-            backgroundColor: 'var(--primary-85)',
+            backgroundColor: 'var(--log-selection-background)',
         },
         '&.cm-focused .cm-selectionBackground': {
-            backgroundColor: 'var(--primary-85)',
+            backgroundColor: 'var(--log-selection-background)',
         },
         '::selection': {
-            backgroundColor: 'var(--primary-85)',
+            color: 'var(--log-selection-foreground, currentColor)',
+            backgroundColor: 'var(--log-selection-background)',
         },
         '&.cm-focused ::selection': {
-            backgroundColor: 'var(--primary-75)',
+            color: 'var(--log-selection-foreground, currentColor)',
+            backgroundColor: 'var(--log-selection-background)',
         },
         '.cm-gutters': {
-            backgroundColor: 'var(--neutral-98)',
-            color: 'var(--neutral-50)',
+            backgroundColor: 'var(--log-gutter-background)',
+            color: 'var(--log-gutter-foreground)',
             border: 'none',
-            borderRight: '1px solid var(--neutral-90)',
+            borderRight:
+                '1px solid color-mix(in srgb, var(--log-gutter-foreground) 30%, transparent)',
         },
         '.cm-activeLineGutter': {
-            backgroundColor: 'var(--neutral-95)',
-            color: 'var(--primary-40)',
+            backgroundColor: 'var(--log-active-line-background)',
+            color: 'var(--log-foreground)',
         },
         '.cm-lineNumbers .cm-gutterElement': {
             padding: '0 8px 0 16px',
             minWidth: '40px',
         },
         '.cm-scroller': {
-            fontFamily: '"Roboto Mono", "Courier New", monospace',
-            lineHeight: '1.6',
+            fontFamily: 'var(--log-font-family, "Roboto Mono", "Courier New", monospace)',
+            lineHeight: LOG_LINE_HEIGHT,
         },
         '.cm-line': {
             padding: '0 16px',
         },
-        // Search panel styling
         '.cm-panels': {
-            backgroundColor: 'var(--neutral-98)',
-            color: 'var(--neutral-10)',
+            fontFamily: 'inherit',
+            backgroundColor: 'color-mix(in srgb, var(--log-foreground) 8%, var(--log-background))',
+            color: 'var(--log-foreground)',
             border: 'none',
-            borderBottom: '1px solid var(--neutral-90)',
+            borderBottom: '1px solid color-mix(in srgb, var(--log-foreground) 20%, var(--log-background))',
         },
         '.cm-panel.cm-search': {
             display: 'flex',
+            flexWrap: 'wrap',
             alignItems: 'center',
-            gap: '12px',
-            padding: '12px 16px',
-            backgroundColor: 'var(--neutral-98)',
+            gap: 'var(--space-xs) var(--space-md)',
+            padding: 'var(--space-md) var(--space-xl)',
+            fontSize: 'var(--font-size-lg)',
         },
-        // Search input
+        '.cm-panel.cm-search br': {
+            display: 'none',
+        },
+        '.cm-panel.cm-search input, .cm-panel.cm-search button, .cm-panel.cm-search label': {
+            margin: '0',
+            fontFamily: 'inherit',
+            fontSize: 'var(--font-size-lg)',
+        },
         '.cm-textfield': {
+            boxSizing: 'border-box',
+            minWidth: '12rem',
             backgroundColor: 'transparent',
-            color: 'var(--neutral-10)',
-            border: 'none',
-            borderBottom: '1px solid var(--neutral-70)',
-            borderRadius: '0',
-            padding: '4px',
-            fontSize: '14px',
+            color: 'var(--log-foreground)',
+            border: '1px solid color-mix(in srgb, var(--log-foreground) 50%, var(--log-background))',
+            borderRadius: 'var(--space-3xs)',
+            padding: 'var(--space-xs) var(--space-md)',
             outline: 'none',
-            transition: 'border-bottom-color 0.2s ease',
+            transition: 'border-color 0.2s ease, box-shadow 0.2s ease',
+        },
+        '.cm-textfield:hover': {
+            borderColor: 'var(--log-foreground)',
         },
         '.cm-textfield:focus': {
-            borderBottom: '1px solid var(--primary-40)',
-            outline: 'none',
-            backgroundColor: 'rgba(75,126,255,0.1)',
+            borderColor: 'var(--log-ansi-4)',
+            boxShadow: 'inset 0 0 0 1px var(--log-ansi-4)',
         },
         '.cm-textfield::placeholder': {
-            color: 'var(--neutral-60)',
+            color: 'color-mix(in srgb, var(--log-foreground) 70%, var(--log-background))',
         },
-        // Buttons
         '.cm-button': {
-            backgroundColor: 'var(--primary-40)',
+            backgroundColor: 'transparent',
             backgroundImage: 'none',
-            color: 'white',
-            border: 'none',
+            color: 'var(--log-ansi-4)',
+            border: '1px solid color-mix(in srgb, var(--log-foreground) 30%, var(--log-background))',
             borderRadius: '1rem',
-            padding: '6px 16px',
-            fontSize: '12px',
-            fontWeight: '500',
-            textTransform: 'uppercase',
-            letterSpacing: '0.5px',
+            padding: 'var(--space-2xs) var(--space-xl)',
+            fontWeight: 'var(--font-weight-medium)',
+            textTransform: 'none',
             cursor: 'pointer',
             transition: 'background-color 0.2s ease',
         },
         '.cm-button:hover': {
-            backgroundColor: 'var(--primary-30)',
+            backgroundColor: 'color-mix(in srgb, var(--log-ansi-4) 14%, transparent)',
             backgroundImage: 'none',
         },
         '.cm-button:active': {
-            backgroundColor: 'var(--primary-20)',
+            backgroundColor: 'color-mix(in srgb, var(--log-ansi-4) 22%, transparent)',
             backgroundImage: 'none',
         },
-        // Close button styling
+        '.cm-button:focus-visible, .cm-panel.cm-search [name="close"]:focus-visible': {
+            outline: '2px solid var(--log-ansi-4)',
+            outlineOffset: '2px',
+        },
         '.cm-panel.cm-search [name="close"]': {
-            backgroundColor: 'transparent',
-            backgroundImage: 'none',
-            color: 'var(--neutral-30)',
-            border: 'none',
-            borderRadius: '50%',
-            letterSpacing: '0',
-            width: '32px',
-            height: '32px',
-            padding: '0',
-            top: '12px',
-            fontSize: '28px',
-            cursor: 'pointer',
+            position: 'static',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
+            width: '2rem',
+            height: '2rem',
             marginLeft: 'auto',
+            padding: '0',
+            backgroundColor: 'transparent',
+            backgroundImage: 'none',
+            color: 'var(--log-foreground)',
+            border: 'none',
+            borderRadius: '50%',
+            fontSize: 'var(--font-size-5xl)',
+            lineHeight: '1',
+            cursor: 'pointer',
             transition: 'background-color 0.2s ease',
         },
         '.cm-panel.cm-search [name="close"]:hover': {
-            backgroundColor: 'var(--neutral-90)',
-            backgroundImage: 'none',
+            backgroundColor: 'color-mix(in srgb, var(--log-foreground) 16%, var(--log-background))',
         },
         '.cm-panel.cm-search [name="close"]:active': {
-            backgroundColor: 'var(--neutral-85)',
-            backgroundImage: 'none',
+            backgroundColor: 'color-mix(in srgb, var(--log-foreground) 26%, var(--log-background))',
         },
-        // Checkbox labels
         '.cm-panel.cm-search label': {
             display: 'inline-flex',
-            alignItems: 'flex-end',
-            gap: '6px',
-            color: 'var(--neutral-10)',
-            fontSize: '12px',
+            alignItems: 'center',
+            gap: 'var(--space-xs)',
+            color: 'var(--log-foreground)',
             cursor: 'pointer',
             userSelect: 'none',
-            margin: '0',
         },
         '.cm-panel.cm-search input[type="checkbox"]': {
-            width: '16px',
-            height: '16px',
-            margin: '0',
+            width: 'var(--font-size-xl)',
+            height: 'var(--font-size-xl)',
             cursor: 'pointer',
-            accentColor: 'var(--primary-40)',
+            accentColor: 'var(--log-ansi-4)',
         },
-        // Hide line breaks in search panel
-        '.cm-panel.cm-search br': {
-            display: 'none',
+        '.cm-panel.cm-search input[type="checkbox"]:focus-visible': {
+            outline: '2px solid var(--log-ansi-4)',
+            outlineOffset: '2px',
         },
         // Search match highlighting
         '.cm-searchMatch': {
-            backgroundColor: 'var(--warning-90)',
-            outline: '1px solid var(--warning-70)',
+            backgroundColor: 'color-mix(in srgb, var(--log-ansi-3) 35%, var(--log-background))',
+            outline: '1px solid color-mix(in srgb, var(--log-ansi-3) 60%, var(--log-background))',
         },
         '.cm-searchMatch-selected': {
-            backgroundColor: 'var(--warning-80)',
-            outline: '2px solid var(--warning-60)',
+            backgroundColor: 'color-mix(in srgb, var(--log-ansi-3) 55%, var(--log-background))',
+            outline: '2px solid var(--log-ansi-3)',
         },
         // Scrollbar styling
         '.cm-scroller::-webkit-scrollbar': {
@@ -177,18 +187,18 @@ export const crczpCodeEditorTheme = EditorView.theme(
             height: '12px',
         },
         '.cm-scroller::-webkit-scrollbar-track': {
-            backgroundColor: 'var(--neutral-95)',
+            backgroundColor: 'color-mix(in srgb, var(--log-foreground) 6%, var(--log-background))',
         },
         '.cm-scroller::-webkit-scrollbar-thumb': {
-            backgroundColor: 'var(--primary-80)',
+            backgroundColor: 'color-mix(in srgb, var(--log-foreground) 55%, var(--log-background))',
             borderRadius: '6px',
-            border: '2px solid var(--neutral-95)',
+            border: '2px solid color-mix(in srgb, var(--log-foreground) 6%, var(--log-background))',
         },
         '.cm-scroller::-webkit-scrollbar-thumb:hover': {
-            backgroundColor: 'var(--primary-70)',
+            backgroundColor: 'color-mix(in srgb, var(--log-foreground) 70%, var(--log-background))',
         },
         '.cm-scroller::-webkit-scrollbar-corner': {
-            backgroundColor: 'var(--neutral-95)',
+            backgroundColor: 'color-mix(in srgb, var(--log-foreground) 6%, var(--log-background))',
         },
     },
     { dark: false },

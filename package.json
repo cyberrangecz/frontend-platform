@@ -3,8 +3,7 @@
     "version": "3.8.0",
     "license": "MIT",
     "private": true,
-    "scripts": {
-    },
+    "scripts": {},
     "dependencies": {
         "@acrodata/code-editor": "^0.6.1",
         "@angular/cdk": "~22.2.0",
@@ -15,10 +14,12 @@
         "@angular/material": "~22.2.0",
         "@angular/platform-browser": "~22.2.0",
         "@angular/router": "~22.2.0",
+        "@codemirror/language": "6.13.1",
         "@codemirror/search": "^6.7.2",
         "@danielmoncada/angular-datetime-picker": "^22.0.0",
         "@dushixiang/guacamole-common-js": "^1.6.0-fix",
         "@json2csv/plainjs": "^7.0.8",
+        "@lezer/highlight": "1.2.5",
         "@ngneat/cashew": "^5.3.0",
         "@sentinel/auth": "22.0.0",
         "@sentinel/common": "22.1.2",

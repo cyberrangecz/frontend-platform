@@ -1,0 +1,26 @@
+:host {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4xs);
+    max-width: 16rem;
+    padding: var(--space-3xs) var(--space-xs);
+    border-radius: var(--mat-sys-corner-extra-small);
+    background: var(--neutral-100);
+    color: var(--neutral-0);
+    box-shadow: 0 1px 4px rgb(0 0 0 / 16%);
+    font-family: var(--mat-sys-body-small-font);
+    font-size: var(--font-size-sm);
+    line-height: 1.4;
+    pointer-events: none;
+    animation: fadeIn 120ms ease-out;
+}
+
+.tooltip-shortcut {
+    color: var(--neutral-40);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    :host {
+        animation: none;
+    }
+}

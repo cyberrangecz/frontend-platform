@@ -1,0 +1,97 @@
+<div (keydown.escape)="dismiss($event)"
+     aria-label="Log appearance"
+     class="settings-panel"
+     role="group">
+    <div class="settings-presets">
+        <span class="settings-title" id="log-preset-label">Colour preset</span>
+        <div (cdkListboxValueChange)="selectPreset($event.value)"
+             [cdkListboxValue]="[settings().presetId]"
+             aria-labelledby="log-preset-label"
+             cdkListbox
+             class="settings-preset-list">
+            @for (group of presetGroups; track group.key) {
+                <div [attr.aria-labelledby]="'log-preset-group-' + group.key" role="group">
+                    <div [id]="'log-preset-group-' + group.key" class="settings-preset-group">
+                        {{ group.label }}
+                    </div>
+                    @for (option of group.options; track option.preset.id) {
+                        <div (focus)="selectPreset([option.preset.id])"
+                             [attr.aria-label]="option.preset.label"
+                             [cdkOptionTypeaheadLabel]="option.preset.label"
+                             [cdkOption]="option.preset.id"
+                             class="settings-preset">
+                            {{ option.name }}
+                            <mat-icon aria-hidden="true" class="settings-preset-scheme">{{ option.icon }}</mat-icon>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="settings-font">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <mat-label>Font family</mat-label>
+            <mat-select (openedChange)="onFontListToggled($event)"
+                        (valueChange)="selectFontFamily($event)"
+                        [value]="settings().fontFamily">
+                @for (family of fontFamilies(); track family) {
+                    <mat-option [value]="family">{{ family }}</mat-option>
+                }
+            </mat-select>
+        </mat-form-field>
+
+        <div class="settings-slider">
+            <div class="settings-slider-header">
+                <span class="settings-title" id="log-font-size-label">Font size</span>
+                <span class="settings-value">{{ settings().fontSize }} px</span>
+            </div>
+            <mat-slider [max]="fontSizeRange.max"
+                        [min]="fontSizeRange.min"
+                        [step]="fontSizeRange.step"
+                        showTickMarks>
+                <input (valueChange)="selectFontSize($event)"
+                       [value]="settings().fontSize"
+                       aria-labelledby="log-font-size-label"
+                       matSliderThumb>
+            </mat-slider>
+        </div>
+
+        <div class="settings-slider">
+            <div class="settings-slider-header">
+                <span class="settings-title" id="log-font-weight-label">Font weight</span>
+                <span class="settings-value">{{ settings().fontWeight }}</span>
+            </div>
+            <mat-slider [max]="fontWeightRange.max"
+                        [min]="fontWeightRange.min"
+                        [step]="fontWeightRange.step"
+                        showTickMarks>
+                <input (valueChange)="selectFontWeight($event)"
+                       [value]="settings().fontWeight"
+                       aria-labelledby="log-font-weight-label"
+                       matSliderThumb>
+            </mat-slider>
+        </div>
+    </div>
+
+    <div class="settings-level">
+        <span class="settings-title" id="log-highlight-level-label">Highlighting level</span>
+        <mat-slider [displayWith]="describeLevel"
+                    [max]="levelIndexRange.max"
+                    [min]="levelIndexRange.min"
+                    [step]="levelIndexRange.step"
+                    showTickMarks>
+            <input (valueChange)="changeLevel($event)"
+                   [value]="levelIndex()"
+                   aria-labelledby="log-highlight-level-label"
+                   matSliderThumb>
+        </mat-slider>
+        <div aria-hidden="true" class="settings-level-labels">
+            @for (label of levelLabels; track label) {
+                <span>{{ label }}</span>
+            }
+        </div>
+    </div>
+
+    <button (click)="reset()" class="settings-reset" mat-button type="button">Reset to defaults</button>
+</div>
