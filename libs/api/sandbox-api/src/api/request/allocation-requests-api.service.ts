@@ -78,10 +78,18 @@ export class AllocationRequestsApi {
             );
     }
 
+    /**
+     * Sends http request to retrieve the outputs a stage wrote from a row on.
+     * @param stageType type of the stage whose outputs are retrieved
+     * @param requestId id of the request associated with the stage
+     * @param fromRow first row to retrieve
+     * @param expectedErrors HTTP status codes whose failure opens no error notification
+     */
     getStageOutputs(
         stageType: RequestStageType,
         requestId: number,
         fromRow?: number,
+        expectedErrors: number[] = [],
     ): Observable<LogOutput> {
         return this.httpService
             .get<LogOutputDTO>(
@@ -89,6 +97,7 @@ export class AllocationRequestsApi {
 
                 'Fetching networking ansible outputs',
             )
+            .setExpectedErrors(expectedErrors)
             .withParams(fromRow !== null ? { from_row: fromRow } : {})
             .withReceiveMapper(logOutputMapper)
             .execute();

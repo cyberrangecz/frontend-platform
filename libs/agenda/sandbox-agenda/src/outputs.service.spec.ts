@@ -22,6 +22,7 @@ function stageInState(state: RequestStageState): StageAdapter {
 describe('OutputsService', () => {
     let contentRequests: Subject<LogOutput>[];
     let contentRequestOffsets: number[];
+    let contentRequestExpectedErrors: number[][];
     let stage$: Subject<StageAdapter>;
     let service: OutputsService;
     let states: OutputsState[];
@@ -30,6 +31,7 @@ describe('OutputsService', () => {
         vi.useFakeTimers();
         contentRequests = [];
         contentRequestOffsets = [];
+        contentRequestExpectedErrors = [];
         stage$ = new Subject<StageAdapter>();
 
         const fakeApi = {
@@ -37,10 +39,12 @@ describe('OutputsService', () => {
                 _type: RequestStageType,
                 _requestId: number,
                 fromRow: number,
+                expectedErrors: number[],
             ): Observable<LogOutput> => {
                 const answer = new Subject<LogOutput>();
                 contentRequests.push(answer);
                 contentRequestOffsets.push(fromRow);
+                contentRequestExpectedErrors.push(expectedErrors);
                 return answer;
             },
         };
@@ -213,6 +217,34 @@ describe('OutputsService', () => {
             content: 'a\nb',
             rows: 2,
         });
+    });
+
+    it('lets only the first of consecutive failed polls open an error notification', () => {
+        startPolling(RequestStageState.RUNNING);
+        contentRequest(0).next({ content: 'a', rows: 1 } as LogOutput);
+        contentRequest(0).complete();
+        vi.advanceTimersByTime(POLLING_PERIOD_MS);
+        contentRequest(1).error(new Error('unavailable'));
+        vi.advanceTimersByTime(POLLING_PERIOD_MS);
+        contentRequest(2).error(new Error('unavailable'));
+        vi.advanceTimersByTime(POLLING_PERIOD_MS);
+        contentRequest(3).next({ content: 'b', rows: 2 } as LogOutput);
+        contentRequest(3).complete();
+        vi.advanceTimersByTime(POLLING_PERIOD_MS);
+
+        const silencedRequests = contentRequestExpectedErrors.map(
+            (expectedErrors) => expectedErrors.includes(500) && expectedErrors.includes(0),
+        );
+        expect(silencedRequests).toEqual([false, false, true, true, false]);
+    });
+
+    it('lets the first failed poll of a new request open an error notification', () => {
+        startPolling(RequestStageState.RUNNING, 1);
+        contentRequest(0).error(new Error('unavailable'));
+
+        startPolling(RequestStageState.RUNNING, 2);
+
+        expect(contentRequestExpectedErrors.at(-1)).toEqual([]);
     });
 
     it('polls a stage in retry', () => {

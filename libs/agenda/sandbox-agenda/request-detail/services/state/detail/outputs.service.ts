@@ -43,6 +43,12 @@ export const OUTPUTS_NOT_FETCHED: OutputsNotFetched = { status: 'not-fetched' };
 
 const OUTPUTS_LOADING: OutputsLoading = { status: 'loading' };
 
+/** HTTP status codes of a failed outputs request: network failures, client and server errors. */
+const FAILURE_STATUS_CODES = [
+    0,
+    ...Array.from({ length: 200 }, (_, offset) => 400 + offset),
+];
+
 @Injectable()
 export class OutputsService {
     private readonly api = inject(AllocationRequestsApi);
@@ -53,6 +59,7 @@ export class OutputsService {
     private currentRequestId: number | null = null;
     private confirmedContent = '';
     private confirmedRows = 0;
+    private isFailureReported = false;
 
     /** Emits the log state, starting with the not-fetched state. */
     public readonly log$: Observable<OutputsState> =
@@ -65,7 +72,8 @@ export class OutputsService {
      * Fetches the outputs of a stage once it leaves the queue, and keeps
      * fetching one answer after another while it runs. A stage that is not
      * running is fetched once per state change, which picks up the final rows.
-     * The log accumulates in {@link log$}.
+     * The log accumulates in {@link log$}. Only the first of consecutive failed
+     * fetches opens an error notification; every one shows the error line.
      *
      * @param stage$ Emits the current stage.
      * @param requestId ID of the request the stage belongs to.
@@ -104,6 +112,7 @@ export class OutputsService {
         this.currentRequestId = requestId;
         this.confirmedContent = '';
         this.confirmedRows = 0;
+        this.isFailureReported = false;
         this.stateSubject.next(OUTPUTS_NOT_FETCHED);
     }
 
@@ -116,12 +125,14 @@ export class OutputsService {
                 this.stageType,
                 requestId,
                 this.fetchedRows(),
+                this.isFailureReported ? FAILURE_STATUS_CODES : [],
             );
         }).pipe(
             filter(() => this.currentRequestId === requestId),
             tap((output) => this.appendOutput(output)),
             catchError(() => {
                 if (this.currentRequestId === requestId) {
+                    this.isFailureReported = true;
                     this.appendErrorLine();
                 }
                 return EMPTY;
@@ -138,6 +149,7 @@ export class OutputsService {
         const separator = this.confirmedContent && rowsArrived ? '\n' : '';
         this.confirmedContent += separator + output.content;
         this.confirmedRows = output.rows;
+        this.isFailureReported = false;
         this.stateSubject.next({
             status: 'fetched',
             content: this.confirmedContent,
