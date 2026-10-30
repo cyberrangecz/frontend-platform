@@ -1,0 +1,163 @@
+@use 'sass:math';
+
+$gutter-width: 40px;
+$line-padding: 16px;
+
+$scroll-duration: 1.6s;
+$pause-duration: 0.5s;
+$grow-duration: 0.8s;
+$build-grow-duration: 0.3s;
+$notice-line-height: 32px;
+$step-duration: $scroll-duration + $pause-duration + $grow-duration;
+$scroll-end: math.percentage(math.div($scroll-duration, $step-duration));
+$grow-start: math.percentage(math.div($scroll-duration + $pause-duration, $step-duration));
+
+:host {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    display: flex;
+    overflow: hidden;
+    background: var(--log-background);
+    font-size: var(--log-font-size, 14px);
+
+    &.skeleton-waiting {
+        visibility: hidden;
+    }
+}
+
+.skeleton-gutter {
+    flex: 0 0 $gutter-width;
+    background: var(--log-gutter-background);
+    border-right: 1px solid color-mix(in srgb, var(--log-gutter-foreground) 30%, transparent);
+}
+
+.skeleton-viewport {
+    position: relative;
+    flex: 1 1 0;
+    margin-top: var(--skeleton-content-padding-top);
+    font-family: var(--log-font-family, 'Roboto Mono', 'Courier New', monospace);
+    overflow: hidden;
+}
+
+.skeleton-scroll {
+    position: absolute;
+    inset: 0;
+
+    :host(.skeleton-looping) & {
+        animation: skeleton-scroll $step-duration infinite;
+    }
+}
+
+.skeleton-strip {
+    position: absolute;
+    inset-inline: 0;
+    bottom: calc(var(--skeleton-sample-rows) * -1lh);
+
+    :host(.skeleton-looping) & {
+        animation: skeleton-advance calc(var(--skeleton-sample-rows) * #{$step-duration})
+            steps(var(--skeleton-sample-rows)) infinite;
+    }
+}
+
+.skeleton-row {
+    display: flex;
+    align-items: center;
+    height: 1lh;
+    padding-inline-start: calc(#{$line-padding} + var(--skeleton-row-indent) * 1ch);
+
+    &--pending {
+        visibility: hidden;
+    }
+
+    &--growing ngx-skeleton-loader {
+        transform-origin: left;
+        animation: skeleton-build-grow $build-grow-duration ease-out backwards;
+    }
+}
+
+.skeleton-cover {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: calc(#{$line-padding} + var(--skeleton-widest-row) * 1ch);
+    height: 1lh;
+    background: var(--log-background);
+    transform-origin: right;
+
+    :host(.skeleton-looping) & {
+        animation: skeleton-grow $step-duration infinite;
+    }
+}
+
+.skeleton-notice {
+    position: absolute;
+    top: var(--space-xs);
+    right: var(--space-sm);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2xs);
+    padding: var(--space-3xs) var(--space-sm) var(--space-3xs) var(--space-3xs);
+    background: var(--background);
+    border-radius: var(--mat-sys-corner-small);
+    color: var(--mat-sys-on-surface-variant);
+    font-size: var(--font-size-4xl);
+    font-weight: 500;
+    line-height: $notice-line-height;
+    animation: skeleton-notice-fade-in $build-grow-duration ease-out backwards;
+}
+
+@keyframes skeleton-notice-fade-in {
+    from {
+        opacity: 0;
+    }
+}
+
+@keyframes skeleton-scroll {
+    0% {
+        transform: translateY(0);
+        animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1);
+    }
+    #{$scroll-end},
+    100% {
+        transform: translateY(-1lh);
+    }
+}
+
+@keyframes skeleton-advance {
+    to {
+        transform: translateY(calc(var(--skeleton-sample-rows) * -1lh));
+    }
+}
+
+@keyframes skeleton-grow {
+    0%,
+    #{$grow-start} {
+        transform: scaleX(1);
+        animation-timing-function: ease-out;
+    }
+    100% {
+        transform: scaleX(0);
+    }
+}
+
+@keyframes skeleton-build-grow {
+    from {
+        transform: scaleX(0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    :host(.skeleton-looping) .skeleton-scroll,
+    :host(.skeleton-looping) .skeleton-strip {
+        animation: none;
+    }
+
+    .skeleton-cover {
+        display: none;
+    }
+
+    .skeleton-notice {
+        animation: none;
+    }
+}

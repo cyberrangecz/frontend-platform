@@ -77,6 +77,7 @@ listed as a leftover and fails its test.
 | `E2E_DEPLOYED_ORIGIN` | unset | The URL of the deployed frontend, on which the page specs whose file name matches `microservice.*spec.ts` run. Unset drops those specs together with the sign-in they need. |
 | `E2E_ADMIN_LOGIN` | unset | Sign-in name of the administrator the wipe uses, such as `user-30`. Unset means a person signs in by hand in a headed browser, also under `CI`. An empty value counts as unset. |
 | `E2E_ADMIN_PASSWORD` | unset | Password of that administrator. Meant for CI. Never printed or logged. An empty value counts as unset. |
+| `E2E_SESSION_KEEP_ALIVE_MINUTES` | `4` | Minutes between two refreshes of every saved account's session during a run. Keep it below the realm's SSO Session Idle. |
 | `CI` | unset | Any non-empty value makes the suite config refuse `test.only`, and makes the wipe fail at once when `E2E_ADMIN_LOGIN` is set but no password is found. |
 
 Wipe sign-in, by what is set:
@@ -140,11 +141,25 @@ writes are mode 600 and folders mode 700.
 
 ## Token refresh
 
-The identity provider's realm gives access tokens a short lifespan. The suite reads each saved
-storage state once per worker and, when its tokens are about to expire, exchanges the saved refresh
-token for new ones and gives the browser context the new set. The saved files are not rewritten.
-API clients and browser contexts of one account share one refresh. Nothing needs to be done by
-hand.
+The identity provider's realm gives access tokens a short lifespan. When an account's saved tokens
+are about to expire, the suite exchanges the saved refresh token for new ones, gives the browser
+context the new set and saves it back to the account's storage state file, so every worker starts
+from the newest tokens. API clients and browser contexts of one account in one worker share one
+refresh. Nothing needs to be done by hand.
+
+The suite does not need the `offline_access` scope. Its refresh tokens belong to each account's
+sign-in session, which ends when it idles past the realm's SSO Session Idle, reaches SSO Session
+Max, or is logged out. Two mechanisms keep the run going:
+
+- While the run lasts, the global setup refreshes every saved account every
+  `E2E_SESSION_KEEP_ALIVE_MINUTES`, so no session idles out.
+- When the identity provider refuses a refresh token with `invalid_grant`, the worker takes a newer
+  refresh token another worker saved, or signs the account in again in a browser of its own with
+  the password from `credentials.json` and saves the new storage state over the old one.
+
+Neither mechanism signs an account in again on its own: the keep-alive skips an ended session, and
+the logout spec reads its account's refresh token without the renewal, so a session it ended stays
+ended.
 
 ## Retries and infrastructure outages
 

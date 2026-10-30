@@ -3,7 +3,7 @@ import { test as base, type Page, type TestInfo } from '@playwright/test';
 import { VISUAL_CHECK_ATTACHMENT, type VisualCheckRecord } from '../reporting/visual-check';
 import { accountFor, type AccountRole, type BrowserKey } from './accounts';
 import { type Api, createApi } from './api/api-client';
-import { tokenSourceFor } from './api/token-source';
+import { tokenSourceFor } from './account-sessions';
 import { AttemptLedger } from './attempt-ledger';
 import { freshStorageState } from './fresh-storage-state';
 import { originUrl } from './environment';
@@ -13,7 +13,7 @@ import {
     waitForInfrastructure,
 } from './infrastructure-outage';
 import { readSharedFixture, type SharedFixture } from './shared-fixture';
-import { type Origin, statePaths, type StorageStateObject } from './state-files';
+import type { Origin, StorageStateObject } from './state-files';
 import { StaticAssetCache } from './static-asset-cache';
 import { trackLoadActivity } from './ui/loading-window';
 
@@ -70,7 +70,7 @@ async function storageStateFor(
 ): Promise<StorageStateObject | undefined> {
     return role === 'anonymous'
         ? undefined
-        : freshStorageState(statePaths.storageState(accountFor(role, browser), origin));
+        : freshStorageState(accountFor(role, browser), origin);
 }
 
 const VISUAL_CHECK_HOLD_MILLISECONDS = 3_000;
@@ -183,7 +183,7 @@ export const test = base.extend<TestFixtures & TestOptions, WorkerFixtures>({
     apiAs: [
         async ({ browserKey }, use) => {
             await use((role) =>
-                createApi(tokenSourceFor(statePaths.storageState(accountFor(role, browserKey)))),
+                createApi(tokenSourceFor(accountFor(role, browserKey))),
             );
         },
         { scope: 'worker' },

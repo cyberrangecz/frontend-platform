@@ -1,55 +1,111 @@
-<div [class.fullscreen]="isMaximized()" class="content-wrapper wh-100">
+<div [attr.aria-label]="isMaximized() ? 'Log view' : null"
+     [attr.aria-modal]="isMaximized() ? true : null"
+     [attr.role]="isMaximized() ? 'dialog' : null"
+     [cdkTrapFocusAutoCapture]="isMaximized()"
+     [cdkTrapFocus]="isMaximized()"
+     [class.fullscreen]="isMaximized()"
+     class="content-wrapper wh-100">
     <div [class.controls-header--fullscreen]="isMaximized()"
          class="controls-header">
-        <button (click)="toggleFullscreen()"
-                [matTooltipPosition]="'above'"
-                [matTooltip]="isMaximized() ? 'Minimize' : 'Maximize'"
-                [style.color]="isMaximized() ? 'crimson' : 'var(--primary-50)'"
+        <button (click)="runAction('fullscreen')"
+                aria-label="Fullscreen"
+                [attr.aria-pressed]="isMaximized()"
+                [crczpLogViewTooltip]="isMaximized() ? 'Exit fullscreen' : 'Fullscreen'"
+                [crczpLogViewTooltipShortcut]="shortcuts.fullscreen"
                 mat-icon-button
         >
             <mat-icon>{{ isMaximized() ? 'fullscreen_exit' : 'fullscreen' }}</mat-icon>
         </button>
-        <button (click)="lineWrapping.set(!lineWrapping())"
-                [matTooltipPosition]="'above'"
-                [matTooltip]="lineWrapping() ? 'Disable Line Wrap' : 'Enable Line Wrap'" mat-icon-button>
-            <mat-icon>wrap_text</mat-icon>
+        <button (click)="runAction('lineWrap')"
+                [attr.aria-pressed]="lineWrapping()"
+                [crczpLogViewTooltipShortcut]="shortcuts.lineWrap"
+                aria-label="Line wrap"
+                crczpLogViewTooltip="Line wrap"
+                mat-icon-button>
+            <mat-icon>{{ lineWrapping() ? 'wrap_text' : 'format_align_left' }}</mat-icon>
         </button>
-        <button (click)="copyToClipboard()"
-                [matTooltipPosition]="'above'"
-                [matTooltip]="'Copy to Clipboard'"
+        <button (click)="runAction('copy')"
+                [crczpLogViewTooltipShortcut]="shortcuts.copy"
+                [disabled]="!hasShownText()"
+                aria-label="Copy to clipboard"
+                crczpLogViewTooltip="Copy to clipboard"
                 mat-icon-button
         >
             <mat-icon>content_copy</mat-icon>
         </button>
-        <button (click)="openSearch();alignBottom()"
-                [matTooltipPosition]="'above'"
-                [matTooltip]="'Search in Log'"
+        <button (click)="runAction('download')"
+                [crczpLogViewTooltipShortcut]="shortcuts.download"
+                [disabled]="!hasShownText()"
+                aria-label="Download log"
+                crczpLogViewTooltip="Download log"
+                mat-icon-button
+        >
+            <mat-icon>download</mat-icon>
+        </button>
+        <button (click)="runAction('search')"
+                [crczpLogViewTooltipShortcut]="shortcuts.search"
+                [disabled]="loading()"
+                aria-label="Search log"
+                crczpLogViewTooltip="Search log"
                 mat-icon-button
         >
             <mat-icon>search</mat-icon>
         </button>
-        <button (click)="scrollToTop()"
-                [matTooltipPosition]="'above'"
-                [matTooltip]="'Scroll to Top'"
+        <button (click)="runAction('scrollToTop')"
+                [crczpLogViewTooltipShortcut]="shortcuts.scrollToTop"
+                aria-label="Scroll to top"
+                crczpLogViewTooltip="Scroll to top"
                 mat-icon-button
         >
             <mat-icon>keyboard_double_arrow_up</mat-icon>
         </button>
-        <button (click)="scrollToBottom();alignBottom()"
-                [matTooltipPosition]="'above'"
-                [matTooltip]="'Scroll to Bottom'"
+        <button (click)="runAction('scrollToEnd')"
+                [crczpLogViewTooltipShortcut]="shortcuts.scrollToEnd"
+                aria-label="Scroll to end"
+                crczpLogViewTooltip="Scroll to end"
                 mat-icon-button
         >
             <mat-icon>keyboard_double_arrow_down</mat-icon>
         </button>
+        @if (canPrettifyJson()) {
+            <button (click)="runAction('prettifyJson')"
+                    [attr.aria-pressed]="isJsonPrettified()"
+                    [crczpLogViewTooltipShortcut]="shortcuts.prettifyJson"
+                    aria-label="Prettify JSON"
+                    crczpLogViewTooltip="Prettify JSON"
+                    mat-icon-button>
+                <mat-icon>{{ isJsonPrettified() ? 'data_object' : 'code_off' }}</mat-icon>
+            </button>
+        }
+        <div class="log-settings-anchor">
+            <button #settingsButton
+                    (click)="toggleSettings()"
+                    (keydown.escape)="closeSettingsOnEscape($event)"
+                    [attr.aria-expanded]="isSettingsOpen()"
+                    [crczpLogViewTooltipShortcut]="shortcuts.settings"
+                    aria-controls="log-view-settings"
+                    aria-haspopup="true"
+                    aria-label="Appearance settings"
+                    crczpLogViewTooltip="Appearance settings"
+                    [crczpLogViewTooltipSuppressed]="isSettingsOpen()"
+                    mat-icon-button>
+                <mat-icon>{{ isSettingsOpen() ? 'close' : 'format_color_text' }}</mat-icon>
+            </button>
+            @if (isSettingsOpen()) {
+                <crczp-log-view-settings-panel (dismissed)="closeSettings()"
+                                               class="log-settings-popup"
+                                               id="log-view-settings"/>
+            }
+        </div>
     </div>
-    <div #codeContainer>
+    <div #codeContainer class="code-container">
         <code-editor #codeEditor
                      [extensions]="extensions()"
-                     [lineWrapping]="lineWrapping()"
-                     [readonly]="readonly()"
                      [style.height]="appliedHeight()"
-                     [value]="value()"
+                     setup="minimal"
         ></code-editor>
+        @if (loading()) {
+            <crczp-log-view-skeleton [sample]="skeletonSample()"/>
+        }
     </div>
 </div>

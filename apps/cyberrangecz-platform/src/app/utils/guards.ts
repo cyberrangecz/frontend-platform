@@ -1,4 +1,4 @@
-import { filter, map, switchMap, take, tap } from 'rxjs/operators';
+import { defaultIfEmpty, filter, map, switchMap, take, tap } from 'rxjs/operators';
 import {
     NAVIGATE_AFTER_LOGIN_KEY,
     SentinelAuthService,
@@ -69,7 +69,8 @@ export const loginPageGuard: CanActivateFn = (route: ActivatedRouteSnapshot) => 
 
 /**
  * Creates a guard that redirects to the given path if the user is not logged in
- * or does not fulfill supplied predicate.
+ * or does not fulfill supplied predicate. A check that ends without an answer, as
+ * when signing in redirects to the identity provider, cancels the navigation.
  *
  * @param permissionsPredicate function that returns an observable indicating if the user fulfills conditions
  * @param defaultPath path to redirect to if the user does not have permissions
@@ -113,6 +114,7 @@ function guardBuilder(
                     }),
                 );
             }),
+            defaultIfEmpty(false),
         );
     };
 }

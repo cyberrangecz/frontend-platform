@@ -80,7 +80,7 @@ const RING_FLASH: Readonly<Record<string, FlashValue>> = {
  * surface already reads from is lent rather than drawn over, so the flash inherits the
  * outline's shape, its thickness and every break in it without restating any of them.
  */
-const FLASH_SURFACES = [
+const FLASH_SURFACES: readonly FlashSurfaceSpec[] = [
     {
         carrier: 'mat-form-field',
         parts: [
@@ -109,7 +109,21 @@ const FLASH_SURFACES = [
             },
         ],
     },
-] as const;
+];
+
+/** One part of a surface as declared: the selectors it acts on, where the carrier stands in for a null selector. */
+type FlashPartSpec = {
+    written: string | null;
+    drawn: string | null;
+    eased: readonly string[];
+    styles: Readonly<Record<string, FlashValue>>;
+};
+
+/** A host ancestor the flash is looked up on, with the parts drawn within it. */
+type FlashSurfaceSpec = {
+    carrier: string;
+    parts: readonly FlashPartSpec[];
+};
 
 /** One part of a surface, resolved to the elements it acts on. */
 type FlashPart = {

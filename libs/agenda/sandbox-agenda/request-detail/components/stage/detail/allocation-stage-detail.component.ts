@@ -1,58 +1,77 @@
 import {
     ChangeDetectionStrategy,
     Component,
-    DestroyRef,
+    computed,
     inject,
     input,
-    OnChanges,
-    SimpleChanges,
 } from '@angular/core';
-import { Observable } from 'rxjs';
-import { AsyncPipe } from '@angular/common';
-import { search } from '@codemirror/search';
+import { merge } from 'rxjs';
+import {
+    distinctUntilChanged,
+    ignoreElements,
+    switchMap,
+} from 'rxjs/operators';
 import { StageAdapter } from '../../../model/adapters/stage-adapter';
-import { LogView } from '@crczp/components';
+import { LogView, SyntaxHighlighting } from '@crczp/components';
 import { AllocationRequestDetailComponent } from '../../allocation-request-detail.component';
-import { OutputsService } from '../../../services/state/detail/outputs.service';
-import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
+import { OUTPUTS_NOT_FETCHED } from '../../../services/state/detail/outputs.service';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
     selector: 'crczp-allocation-stage-detail',
     templateUrl: './allocation-stage-detail.component.html',
-    styleUrls: ['./allocation-stage-detail.component.css'],
+    styleUrl: './allocation-stage-detail.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [AsyncPipe, LogView],
+    imports: [LogView],
 })
-export class AllocationStageDetailComponent implements OnChanges {
-    stage = input.required<StageAdapter>();
-    height = input<CSSStyleDeclaration['height']>('100%');
-    outputs$: Observable<string>;
-    destroyRef = inject(DestroyRef);
-    stage$ = toObservable(this.stage);
-    protected readonly search = search;
-    private readonly outputServicesDict = inject(
+export class AllocationStageDetailComponent {
+    readonly stage = input.required<StageAdapter>();
+    readonly height = input<CSSStyleDeclaration['height']>('100%');
+
+    private readonly outputServices = inject(
         AllocationRequestDetailComponent.STAGE_LOG_SERVICES_TOKEN,
     );
 
-    ngOnChanges(changes: SimpleChanges): void {
-        if (
-            this.stage() &&
-            'stage' in changes &&
-            changes['stage'].firstChange
-        ) {
-            this.outputs$ = this.outputServicesDict[
-                this.stage().type
-            ].log$.pipe(takeUntilDestroyed(this.destroyRef));
-            this.startPollingOutputs(
-                this.outputServicesDict[this.stage().type],
-            );
-        }
+    protected readonly outputsState = toSignal(this.observeOutputs(), {
+        initialValue: OUTPUTS_NOT_FETCHED,
+    });
+
+    protected readonly syntaxHighlighting = computed<SyntaxHighlighting>(() =>
+        this.stage().isAnsibleStage() ? 'ansible' : 'terraform',
+    );
+
+    /** File name of the downloaded log: the stage title in kebab case, then the request id. */
+    protected readonly logFileName = computed(() => {
+        const { title, requestId } = this.stage();
+        const stageName = title
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/^-+|-+$/g, '');
+        return `${stageName}-request-${requestId}.log`;
+    });
+
+    protected isStageSettled(): boolean {
+        const stage = this.stage();
+        return stage.hasFinished() || stage.hasFailed();
     }
 
-    startPollingOutputs(service: OutputsService) {
-        service
-            .pollUntilComplete(this.stage$, this.stage().requestId)
-            .pipe(takeUntilDestroyed(this.destroyRef))
-            .subscribe();
+    private observeOutputs() {
+        const stage$ = toObservable(this.stage);
+        return stage$.pipe(
+            distinctUntilChanged(
+                (previous, current) =>
+                    previous.type === current.type &&
+                    previous.requestId === current.requestId,
+            ),
+            switchMap(({ type, requestId }) => {
+                const service = this.outputServices[type];
+                return merge(
+                    service.log$,
+                    service
+                        .pollUntilComplete(stage$, requestId)
+                        .pipe(ignoreElements()),
+                );
+            }),
+        );
     }
 }

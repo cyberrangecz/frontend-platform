@@ -1,0 +1,135 @@
+:host {
+    display: block;
+}
+
+.settings-panel {
+    display: grid;
+    grid-template-columns: 13rem 15rem;
+    grid-template-areas:
+        'presets font'
+        'level level'
+        'reset reset';
+    gap: var(--space-xl) var(--space-2xl);
+    padding: var(--space-xl);
+    box-sizing: border-box;
+    background: var(--neutral-99);
+    border: 1px solid var(--neutral-90);
+    border-radius: var(--mat-sys-corner-small);
+    box-shadow: 0 4px 16px rgb(0 0 0 / 20%);
+    color: var(--neutral-10);
+}
+
+.settings-title {
+    font-size: var(--font-size-sm);
+}
+
+.settings-presets {
+    grid-area: presets;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3xs);
+    min-height: 0;
+}
+
+.settings-preset-list {
+    position: relative;
+    flex: 1 1 0;
+    min-height: 15rem;
+    contain: size;
+    overflow-y: auto;
+    border: 1px solid var(--neutral-80);
+    border-radius: var(--mat-sys-corner-extra-small);
+    outline: none;
+
+    &:focus-visible {
+        border-color: var(--primary-40);
+    }
+}
+
+.settings-preset-list > [role='group']:not(:first-child) {
+    border-top: 1px solid var(--neutral-90);
+}
+
+.settings-preset-group {
+    padding: var(--space-xs) var(--space-xs) var(--space-3xs);
+    font-size: var(--font-size-xs);
+    font-style: italic;
+    font-weight: var(--font-weight-semibold);
+    color: var(--primary-40);
+}
+
+.settings-preset {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2xs);
+    padding: var(--space-2xs) var(--space-xs);
+    font-size: var(--font-size-md);
+    cursor: pointer;
+    outline: none;
+
+    &:hover {
+        background: var(--neutral-95);
+    }
+
+    &[aria-selected='true'] {
+        background: var(--primary-90);
+        color: var(--primary-10);
+    }
+}
+
+.settings-preset-scheme {
+    width: 1rem;
+    height: 1rem;
+    font-size: 1rem;
+    color: var(--neutral-40);
+}
+
+.settings-font {
+    grid-area: font;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+
+    mat-form-field {
+        width: 100%;
+    }
+}
+
+.settings-slider,
+.settings-level {
+    display: flex;
+    flex-direction: column;
+
+    mat-slider {
+        width: auto;
+        margin: 0 var(--space-xs);
+    }
+}
+
+.settings-slider-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+}
+
+.settings-value {
+    font-size: var(--font-size-sm);
+    font-variant-numeric: tabular-nums;
+    color: var(--neutral-40);
+}
+
+.settings-level {
+    grid-area: level;
+    padding-inline: 2rem;
+}
+
+.settings-level-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: var(--font-size-sm);
+}
+
+.settings-reset {
+    grid-area: reset;
+    justify-self: end;
+}

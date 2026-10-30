@@ -104,14 +104,78 @@ test.describe('pool.pool-id.sandbox-instance.request-id', () => {
         await expect(page.locator('.carousel-item[data-position="2"]')).not.toHaveClass(/carousel-item--hidden/);
     });
 
-    test('cycles through the stages with the Tab key and wraps from the last to the first', async ({ page }) => {
-        await openRequest(page, '#stage-1');
-        await page.keyboard.press('Tab');
-        await expect(page).toHaveURL(/#stage-2$/);
-        await page.keyboard.press('Tab');
-        await expect(page).toHaveURL(/#stage-3$/);
-        await page.keyboard.press('Tab');
-        await expect(page).toHaveURL(/#stage-1$/);
+    test.describe('keyboard', () => {
+        test('cycles through the stages with the Right arrow and wraps from the last to the first', async ({
+            page,
+        }) => {
+            await openRequest(page, '#stage-1');
+            await page.keyboard.press('ArrowRight');
+            await expect(page).toHaveURL(/#stage-2$/);
+            await page.keyboard.press('ArrowRight');
+            await expect(page).toHaveURL(/#stage-3$/);
+            await page.keyboard.press('ArrowRight');
+            await expect(page).toHaveURL(/#stage-1$/);
+        });
+
+        test('cycles backwards with the Left arrow and wraps from the first to the last', async ({ page }) => {
+            await openRequest(page, '#stage-1');
+            await page.keyboard.press('ArrowLeft');
+            await expect(page).toHaveURL(/#stage-3$/);
+            await page.keyboard.press('ArrowLeft');
+            await expect(page).toHaveURL(/#stage-2$/);
+            await expect(selectedStage(page).getByRole('heading', { name: '2 / 3' })).toBeVisible();
+        });
+
+        test('never switches the stage with the Tab key and keeps focus out of the side stages', async ({ page }) => {
+            await openRequest(page, '#stage-2');
+            for (let press = 0; press < 12; press++) {
+                await page.keyboard.press('Tab');
+                await expect(page).toHaveURL(/#stage-2$/);
+                expect(
+                    await page.evaluate(() => document.activeElement?.closest('[inert]') !== null),
+                    'focus inside an inert side stage',
+                ).toBe(false);
+            }
+        });
+
+        test('keeps the stage when an arrow is pressed together with a modifier', async ({ page }) => {
+            await openRequest(page, '#stage-2');
+            await page.keyboard.press('Shift+ArrowRight');
+            await page.keyboard.press('Alt+ArrowLeft');
+            await expect(page).toHaveURL(/#stage-2$/);
+        });
+
+        test('keeps the stage when an arrow is pressed inside the log editor', async ({ page }) => {
+            await openRequest(page, '#stage-2');
+            await selectedStage(page).locator('.cm-content').click();
+            await page.keyboard.press('ArrowRight');
+            await page.keyboard.press('ArrowLeft');
+            await expect(page).toHaveURL(/#stage-2$/);
+        });
+
+        test('keeps the stage when an arrow is pressed inside the log search field', async ({ page }) => {
+            await openRequest(page, '#stage-2');
+            await selectedStage(page).getByRole('button', { name: 'Search log', exact: true }).click();
+            const field = selectedStage(page).locator('.cm-search').getByRole('textbox').first();
+            await field.fill('ab');
+            await page.keyboard.press('ArrowLeft');
+            await page.keyboard.press('ArrowRight');
+            await expect(field).toBeFocused();
+            await expect(page).toHaveURL(/#stage-2$/);
+        });
+
+        test('keeps the stage when an arrow is pressed inside a text field', async ({ page }) => {
+            await openRequest(page, '#stage-2');
+            await page.evaluate(() => {
+                const field = document.createElement('input');
+                field.id = 'arrow-probe';
+                document.body.appendChild(field);
+                field.focus();
+            });
+            await page.keyboard.press('ArrowRight');
+            await page.keyboard.press('ArrowLeft');
+            await expect(page).toHaveURL(/#stage-2$/);
+        });
     });
 
     for (const { fragment, stage, description } of [

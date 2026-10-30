@@ -1,0 +1,26 @@
+@if (phase() !== 'waiting') {
+    <div class="skeleton-gutter"></div>
+    <div class="skeleton-viewport">
+        <div class="skeleton-scroll">
+            <div class="skeleton-strip">
+                @for (row of rows(); track $index) {
+                    <div
+                        [style.--skeleton-row-indent]="row.indent"
+                        [class.skeleton-row--growing]="row.status === 'growing'"
+                        [class.skeleton-row--pending]="row.status === 'pending'"
+                        class="skeleton-row"
+                    >
+                        @if (row.rectangle) {
+                            <ngx-skeleton-loader [theme]="row.rectangle" animation="progress"/>
+                        }
+                    </div>
+                }
+            </div>
+            <div class="skeleton-cover"></div>
+        </div>
+    </div>
+    <div class="skeleton-notice">
+        <crczp-logo-spinner size="md"/>
+        Loading
+    </div>
+}

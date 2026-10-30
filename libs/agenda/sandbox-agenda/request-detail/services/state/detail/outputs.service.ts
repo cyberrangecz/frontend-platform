@@ -7,173 +7,150 @@ import { BehaviorSubject, defer, EMPTY, Observable } from 'rxjs';
 import { AllocationRequestsApi } from '@crczp/sandbox-api';
 import { inject, Injectable } from '@angular/core';
 import {
-    delay,
+    catchError,
     distinctUntilChanged,
     filter,
-    finalize,
+    ignoreElements,
     map,
     repeat,
     switchMap,
-    takeWhile,
     tap,
 } from 'rxjs/operators';
 import { StageAdapter } from '../../../model/adapters/stage-adapter';
 import { PortalConfig } from '@crczp/utils';
+import { LOGGING_ERROR_MARKER } from '@crczp/components';
+
+/** State of a stage log before its first fetch is sent. */
+export interface OutputsNotFetched {
+    readonly status: 'not-fetched';
+}
+
+/** State of a stage log while its first fetch is waiting for an answer. */
+export interface OutputsLoading {
+    readonly status: 'loading';
+}
+
+/** State of a stage log after at least one fetch has answered. */
+export interface OutputsFetched {
+    readonly status: 'fetched';
+    readonly content: string;
+    readonly rows: number;
+}
+
+export type OutputsState = OutputsNotFetched | OutputsLoading | OutputsFetched;
+
+export const OUTPUTS_NOT_FETCHED: OutputsNotFetched = { status: 'not-fetched' };
+
+const OUTPUTS_LOADING: OutputsLoading = { status: 'loading' };
 
 @Injectable()
 export class OutputsService {
-    private api = inject(AllocationRequestsApi);
-    private config = inject(PortalConfig);
-
-    private logsSubject = new BehaviorSubject<LogOutput>({
-        content: '',
-        rows: 0,
-    });
-
-    public log$ = this.logsSubject
-        .asObservable()
-        .pipe(map((log) => log.content));
-
+    private readonly api = inject(AllocationRequestsApi);
+    private readonly config = inject(PortalConfig);
+    private readonly stateSubject = new BehaviorSubject<OutputsState>(
+        OUTPUTS_NOT_FETCHED,
+    );
     private currentRequestId: number | null = null;
-    private isPolling = false;
-    private isFetching = false;
+    private confirmedContent = '';
+    private confirmedRows = 0;
+
+    /** Emits the log state, starting with the not-fetched state. */
+    public readonly log$: Observable<OutputsState> =
+        this.stateSubject.asObservable();
 
     // eslint-disable-next-line @angular-eslint/prefer-inject
-    constructor(private stageType: RequestStageType) {}
+    constructor(private readonly stageType: RequestStageType) {}
 
     /**
-     * Polls the outputs of a given stage until it is complete (or failed).
+     * Fetches the outputs of a stage once it leaves the queue, and keeps
+     * fetching one answer after another while it runs. A stage that is not
+     * running is fetched once per state change, which picks up the final rows.
+     * The log accumulates in {@link log$}.
      *
-     * Gradually fetches and appends logs to the logsSubject.
-     * Each emission contains the full log content so far.
-     *
-     * @param stage$ Observable emitting the current stage status
-     * @param requestId ID of the request
-     * @returns Observable emitting the full log content as a string
+     * @param stage$ Emits the current stage.
+     * @param requestId ID of the request the stage belongs to.
+     * @returns Observable that emits nothing and runs until `stage$` completes.
      */
     public pollUntilComplete(
         stage$: Observable<StageAdapter>,
         requestId: number,
-    ): Observable<string> {
-        // If switching to a new request, reset the logs
-        if (this.currentRequestId !== requestId) {
-            this.currentRequestId = requestId;
-            this.logsSubject.next({ content: '', rows: 0 });
-            this.isPolling = false;
-        }
-
-        const pollingPeriod = this.config.polling.pollingPeriodShortMs;
-
-        // Create observable that only emits when state changes
-        const state$ = stage$.pipe(
-            map((stage) => {
-                return stage.state;
-            }),
-            distinctUntilChanged(),
-        );
-
-        return state$.pipe(
-            filter((state) => state !== RequestStageState.QUEUED),
-            switchMap((state) => {
-                // If RUNNING, start periodic polling
-                if (state === RequestStageState.RUNNING) {
-                    if (!this.isPolling) {
-                        this.isPolling = true;
-                    }
-
-                    // Use defer to create a new observable for each poll cycle
-                    // The delay will only start AFTER the API call completes
-                    return defer(() =>
-                        this.fetchOutputsObservable(requestId),
-                    ).pipe(
-                        delay(pollingPeriod),
-                        repeat(), // Repeat (used like this to start next poll only after previous finishes)
-                        takeWhile(() => this.isPolling), // Stop when isPolling becomes false
-                        switchMap(() => this.log$),
-                    );
-                }
-
-                this.isPolling = false;
-
-                // Fetch once for non-running states if not yet fetched
-                if (this.logsSubject.value.rows === 0) {
-                    this.fetchOutputs(requestId);
-                }
-
-                return this.log$;
-            }),
-        );
+    ): Observable<never> {
+        return defer(() => {
+            this.switchRequest(requestId);
+            return stage$.pipe(
+                map((stage) => stage.state),
+                distinctUntilChanged(),
+                filter((state) => state !== RequestStageState.QUEUED),
+                switchMap((state) =>
+                    state === RequestStageState.RUNNING ||
+                    state === RequestStageState.RETRY
+                        ? this.fetchOutputs(requestId).pipe(
+                              repeat({
+                                  delay: this.config.polling
+                                      .pollingPeriodShortMs,
+                              }),
+                          )
+                        : this.fetchOutputs(requestId),
+                ),
+                ignoreElements(),
+            );
+        });
     }
 
-    private fetchOutputs(requestId: number): void {
-        // Additional safeguard for duplicate requests
-        if (this.isFetching) {
+    private switchRequest(requestId: number): void {
+        if (this.currentRequestId === requestId) {
             return;
         }
-
-        this.isFetching = true;
-        this.api
-            .getStageOutputs(
-                this.stageType,
-                requestId,
-                this.logsSubject.value.rows,
-            )
-            .subscribe({
-                next: (logs) => {
-                    this.appendOutput(logs);
-                    this.isFetching = false;
-                },
-                error: () => {
-                    this.appendOutput({
-                        content: '[LOGGING ERROR]: Failed to refresh logs.\n',
-                        rows: this.logsSubject.value.rows,
-                    });
-                    this.isFetching = false;
-                },
-            });
+        this.currentRequestId = requestId;
+        this.confirmedContent = '';
+        this.confirmedRows = 0;
+        this.stateSubject.next(OUTPUTS_NOT_FETCHED);
     }
 
-    private fetchOutputsObservable(requestId: number): Observable<LogOutput> {
-        // Additional safeguard for duplicate requests
-        if (this.isFetching) {
-            return EMPTY;
-        }
-
-        this.isFetching = true;
-        return this.api
-            .getStageOutputs(
+    private fetchOutputs(requestId: number): Observable<LogOutput> {
+        return defer(() => {
+            if (this.stateSubject.value.status === 'not-fetched') {
+                this.stateSubject.next(OUTPUTS_LOADING);
+            }
+            return this.api.getStageOutputs(
                 this.stageType,
                 requestId,
-                this.logsSubject.value.rows,
-            )
-            .pipe(
-                tap({
-                    next: (logs) => {
-                        this.appendOutput(logs);
-                        this.isFetching = false;
-                    },
-                    error: () => {
-                        const { content, rows } = this.logsSubject.value;
-                        this.appendOutput({
-                            content: `${content ? '\n' : ''}[LOGGING ERROR]: Failed to refresh logs.`,
-                            rows,
-                        });
-                        this.isFetching = false;
-                    },
-                }),
-                finalize(() => {
-                    this.isFetching = false;
-                }),
+                this.fetchedRows(),
             );
+        }).pipe(
+            filter(() => this.currentRequestId === requestId),
+            tap((output) => this.appendOutput(output)),
+            catchError(() => {
+                if (this.currentRequestId === requestId) {
+                    this.appendErrorLine();
+                }
+                return EMPTY;
+            }),
+        );
+    }
+
+    private fetchedRows(): number {
+        return this.confirmedRows;
     }
 
     private appendOutput(output: LogOutput): void {
-        const stored = this.logsSubject.value;
-        const rowsArrived = output.rows > stored.rows;
-        const separator = stored.content && rowsArrived ? '\n' : '';
-        this.logsSubject.next({
-            content: stored.content + separator + output.content,
-            rows: output.rows,
+        const rowsArrived = output.rows > this.confirmedRows;
+        const separator = this.confirmedContent && rowsArrived ? '\n' : '';
+        this.confirmedContent += separator + output.content;
+        this.confirmedRows = output.rows;
+        this.stateSubject.next({
+            status: 'fetched',
+            content: this.confirmedContent,
+            rows: this.confirmedRows,
+        });
+    }
+
+    private appendErrorLine(): void {
+        const separator = this.confirmedContent ? '\n' : '';
+        this.stateSubject.next({
+            status: 'fetched',
+            content: `${this.confirmedContent}${separator}${LOGGING_ERROR_MARKER} Failed to refresh logs.`,
+            rows: this.confirmedRows,
         });
     }
 }

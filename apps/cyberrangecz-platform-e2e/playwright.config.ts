@@ -1,4 +1,4 @@
-import { defineConfig, devices, type Project } from '@playwright/test';
+import { defineConfig, devices, type PlaywrightTestOptions, type PlaywrightWorkerOptions, type Project } from '@playwright/test';
 import { BROWSER_KEYS, type BrowserKey } from './src/support/accounts';
 import { environment } from './src/support/environment';
 import type { SuiteOptions } from './src/support/fixtures';
@@ -8,8 +8,8 @@ const OUTPUT_ROOT = '../../dist/.playwright/apps/cyberrangecz-platform-e2e';
 /** Page specs that run on the deployed origin instead of the application origin. */
 const DEPLOYED_ORIGIN_SPECS = /microservice\.[\w.-]*spec\.ts$/;
 
-const DEVICES: Record<BrowserKey, (typeof devices)[string]> = {
-    chromium: { ...devices['Desktop Chrome'], permissions: ['clipboard-read', 'clipboard-write'] },
+const DEVICES: Record<BrowserKey, Partial<PlaywrightTestOptions & PlaywrightWorkerOptions>> = {
+    chromium: { ...devices['Desktop Chrome'], permissions: ['clipboard-read', 'clipboard-write', 'local-fonts'] },
     firefox: devices['Desktop Firefox'],
     webkit: devices['Desktop Safari'],
 };
@@ -106,9 +106,10 @@ function browserProjects(browser: BrowserKey): Project<SuiteOptions>[] {
  */
 export default defineConfig<SuiteOptions>({
     outputDir: `${OUTPUT_ROOT}/test-output`,
+    globalSetup: './src/setup/session-keep-alive.ts',
     fullyParallel: true,
     workers: '25%',
-    forbidOnly: Boolean(process.env['CI']),
+    forbidOnly: process.env['CI'] === 'true',
     retries: 2,
     timeout: 120_000,
     expect: { timeout: 15_000 },

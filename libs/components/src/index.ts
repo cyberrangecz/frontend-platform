@@ -11,6 +11,7 @@ export * from './table/table-model/table-model';
 export * from './logo-spinner/logo-spinner.component';
 export * from './segmented-toggle/segmented-toggle.component';
 export * from './log-view/log-view.component';
+export * from './log-view/logging-error-marker';
 export * from './stepper/stepper';
 export * from './topology-graph/index';
 export * from './visualization-components/index';

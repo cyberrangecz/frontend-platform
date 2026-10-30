@@ -17,11 +17,22 @@
     background: var(--neutral-98);
     z-index: 2;
     min-height: 48px;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
 
     &--fullscreen {
         border-bottom: 2px solid var(--primary-60);
     }
+}
+
+.log-settings-anchor {
+    margin-left: auto;
+}
+
+.log-settings-popup {
+    position: absolute;
+    top: 48px;
+    right: 8px;
+    z-index: 3;
 }
 
 .control-button {
@@ -48,9 +59,16 @@ code-editor {
         }
 
         .cm-content {
-            font-family: 'Roboto Mono', 'Courier New', monospace;
+            font-family: var(--log-font-family, 'Roboto Mono', 'Courier New', monospace);
+            font-weight: var(--log-font-weight, 400);
         }
     }
+}
+
+.code-container {
+    position: relative;
+    flex: 1 1 0;
+    min-height: 0;
 }
 
 .fullscreen {
@@ -58,8 +76,8 @@ code-editor {
     top: 0 !important;
     left: 0 !important;
     width: 100% !important;
-    height: 100vh !important;
-    z-index: 10000 !important;
+    height: 100dvh !important;
+    z-index: 900 !important;
     overflow: visible !important;
     background: var(--neutral-99) !important;
 
@@ -72,4 +90,8 @@ code-editor {
 
 ::ng-deep body.fullscreen-active {
     overflow: hidden !important;
+}
+
+.controls-header button {
+    color: var(--primary-50);
 }

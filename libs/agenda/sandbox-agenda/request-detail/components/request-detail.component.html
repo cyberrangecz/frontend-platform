@@ -7,48 +7,50 @@
             </button>
         </mat-card>
     }
-    @if (stages?.length > 0) {
-        <!-- Stage indicators -->
-        <div class="stage-indicators">
-            @for (stage of stages; track trackByFn(stage); let i = $index) {
-                <div
-                    (click)="navigateToStage(i)"
-                    (keydown.enter)="navigateToStage(i)"
-                    (keydown.space)="navigateToStage(i)"
-                    [class.stage-indicator--completed]="stage.hasFinished()"
-                    [class.stage-indicator--failed]="stage.hasFailed()"
-                    [class.stage-indicator--running]="stage.isRunning()"
-                    [class.stage-indicator--selected]="i === fragmentIndex()"
-                    class="stage-indicator" role="button"
-                    tabindex="0">
-                    <img [src]="$safeNavigationMigration(stage?.logoSrc)" alt="stage logo">
-                </div>
-            }
-        </div>
-
-        <div class="carousel-container">
-            <div class="carousel">
-                @for (stageIndex of getCarouselOrder(); track stageIndex; let i = $index) {
-                    <div (click)="onCarouselItemClick(i);"
-                         tabindex="0"
-                         (keydown.enter)="onCarouselItemClick(i)"
-                         (keydown.space)="onCarouselItemClick(i)"
-                         [attr.data-position]="i"
-                         [class.carousel-item--hidden]="!isCarouselItemVisible(i, stageIndex)"
-                         class="carousel-item">
-                        <crczp-request-stage
-                            [height]="'calc(100vh - 550px)'"
-                            [stage]="stages[stageIndex]"
-                            class="stage-detail-panel"
-                        />
+    @if (stages.length > 0) {
+        <div class="stage-view">
+            <!-- Stage indicators -->
+            <div class="stage-indicators">
+                @for (stage of stages; track trackByFn(stage); let i = $index) {
+                    <div
+                        (click)="navigateToStage(i)"
+                        (keydown.enter)="navigateToStage(i)"
+                        (keydown.space)="navigateToStage(i)"
+                        [class.stage-indicator--completed]="stage.hasFinished()"
+                        [class.stage-indicator--failed]="stage.hasFailed()"
+                        [class.stage-indicator--running]="stage.isRunning()"
+                        [class.stage-indicator--selected]="i === fragmentIndex()"
+                        class="stage-indicator" role="button"
+                        tabindex="0">
+                        <img [src]="$safeNavigationMigration(stage?.logoSrc)" alt="stage logo">
                     </div>
                 }
             </div>
-        </div>
 
-    }
-} @else {
-    @if ((isLoading$ | async) === false) {
+            <div class="carousel-container">
+                <div class="carousel">
+                    @for (stage of stages; track trackByFn(stage); let stageIndex = $index) {
+                        <div (click)="onCarouselItemClick(getCarouselPosition(stageIndex))"
+                             (keydown.enter)="onCarouselItemClick(getCarouselPosition(stageIndex))"
+                             (keydown.space)="onCarouselItemClick(getCarouselPosition(stageIndex))"
+                             [attr.tabindex]="getCarouselPosition(stageIndex) === 1 ? 0 : -1"
+                             [attr.aria-label]="describeStage(stage, stageIndex, stages.length)"
+                             role="group"
+                             [attr.data-position]="getCarouselPosition(stageIndex)"
+                             [style.order]="getCarouselPosition(stageIndex)"
+                             [class.carousel-item--hidden]="!isCarouselItemVisible(getCarouselPosition(stageIndex), stageIndex)"
+                             class="carousel-item">
+                            <crczp-request-stage
+                                [attr.inert]="getCarouselPosition(stageIndex) === 1 ? null : ''"
+                                [stage]="stage"
+                                class="stage-detail-panel"
+                            />
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    } @else if ((isLoading$ | async) === false) {
         <h2>Request has no stages</h2>
     }
 }

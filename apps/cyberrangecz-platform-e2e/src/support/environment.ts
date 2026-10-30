@@ -17,6 +17,8 @@ export const environment = {
     adminLogin: process.env['E2E_ADMIN_LOGIN'] || undefined,
     /** Password of that administrator account; unset means the credentials state file supplies it. */
     adminPassword: process.env['E2E_ADMIN_PASSWORD'] || undefined,
+    /** Minutes between two refreshes that keep every saved account's identity provider session from going idle. */
+    sessionKeepAliveMinutes: Number(process.env['E2E_SESSION_KEEP_ALIVE_MINUTES'] || 4),
     issuer: oidcConfig.issuer,
     discoveryUrl: `${oidcConfig.issuer}/.well-known/openid-configuration`,
     clientId: oidcConfig.clientId,

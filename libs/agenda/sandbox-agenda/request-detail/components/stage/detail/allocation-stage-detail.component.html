@@ -1,13 +1,15 @@
-@if (outputs$ | async) {
+@let outputs = outputsState();
+@if (outputs.status === 'loading' || (outputs.status === 'fetched' && outputs.content)) {
     <crczp-log-view
+        [downloadFileName]="logFileName()"
         [height]="height()"
+        [loading]="outputs.status === 'loading'"
         [readonly]="true"
-        [value]="outputs$ | async"
-        class="code-viewer-wrapper"
+        shortcutScope="document"
+        [syntaxHighlighting]="syntaxHighlighting()"
+        [value]="outputs.status === 'fetched' ? outputs.content : undefined"
+        class="allocation-stage-detail-log"
     />
-
-} @else {
-    <ng-template>
-        Stage has no outputs
-    </ng-template>
+} @else if (outputs.status === 'fetched' && isStageSettled()) {
+    <div class="allocation-stage-detail-empty">Stage has no outputs</div>
 }
