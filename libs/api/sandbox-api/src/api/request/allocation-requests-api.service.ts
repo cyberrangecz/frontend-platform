@@ -5,18 +5,21 @@ import {
     LogOutput,
     NetworkingAnsibleAllocationStage,
     RequestStageType,
+    StopPendingResult,
     TerraformAllocationStage,
-    UserAnsibleAllocationStage
+    UserAnsibleAllocationStage,
 } from '@crczp/sandbox-model';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { CancellationMapper } from '../../mappers/sandbox-instance/cancellation-mapper';
+import { StopPendingResultDTO } from '../../dto/sandbox-instance/cancellation-dto';
 import { RequestStageMapper } from '../../mappers/sandbox-instance/request-stage-mapper';
 import {
     CRCZPHttpService,
     DjangoResourceDTO,
     OffsetPaginatedResource,
     PaginationMapper,
-    ParamsBuilder
+    ParamsBuilder,
 } from '@crczp/api-common';
 import { AnsibleAllocationStageDTO } from '../../dto/sandbox-instance/stages/ansible-allocation-stage-dto';
 import { TerraformAllocationStageDTO } from '../../dto/sandbox-instance/stages/terraform-allocation-stage-dto';
@@ -55,9 +58,15 @@ export class AllocationRequestsApi {
     /**
      * Sends http request to cancel allocation request
      * @param requestId id of the request to cancel
+     * @returns whether the stop is still pending, its end not confirmed yet
      */
-    cancel(requestId: number): Observable<any> {
-        return this.http.patch(`${this.apiUrl}/${requestId}/cancel`, {});
+    cancel(requestId: number): Observable<StopPendingResult> {
+        return this.http
+            .patch<StopPendingResultDTO>(
+                `${this.apiUrl}/${requestId}/cancel`,
+                {},
+            )
+            .pipe(map((dto) => CancellationMapper.stopPendingFromDTO(dto)));
     }
 
     /**
@@ -78,10 +87,18 @@ export class AllocationRequestsApi {
             );
     }
 
+    /**
+     * Sends http request to retrieve the outputs a stage wrote from a row on.
+     * @param stageType type of the stage whose outputs are retrieved
+     * @param requestId id of the request associated with the stage
+     * @param fromRow first row to retrieve
+     * @param expectedErrors HTTP status codes whose failure opens no error notification
+     */
     getStageOutputs(
         stageType: RequestStageType,
         requestId: number,
         fromRow?: number,
+        expectedErrors: number[] = [],
     ): Observable<LogOutput> {
         return this.httpService
             .get<LogOutputDTO>(
@@ -89,6 +106,7 @@ export class AllocationRequestsApi {
 
                 'Fetching networking ansible outputs',
             )
+            .setExpectedErrors(expectedErrors)
             .withParams(fromRow !== null ? { from_row: fromRow } : {})
             .withReceiveMapper(logOutputMapper)
             .execute();

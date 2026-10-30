@@ -5,4 +5,6 @@ export class RequestStageDTO {
     end: Date;
     failed: boolean;
     error_message: string;
+    stop_pending: boolean;
+    stop_requested_at: Date | null;
 }

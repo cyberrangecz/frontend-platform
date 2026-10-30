@@ -16,6 +16,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { SandboxResourcesService } from '../services/resources/sandbox-resources.service';
 import {
+    BusyGuard,
     EditableCommentComponent,
     SandboxDefinitionOverviewConcreteService,
     SandboxDefinitionOverviewService
@@ -88,6 +89,9 @@ export class PoolOverviewComponent implements OnInit {
     private sandboxInstanceService = inject(SandboxInstanceService);
     private paginationService = inject(PaginationStorageService);
     private changeDetectorRef = inject(ChangeDetectorRef);
+    private readonly poolDeleteGuard = new BusyGuard(
+        this.abstractPoolService.poolsIsDeleting$,
+    );
 
     private readonly initialPoolPagination =
         this.paginationService.createPagination<PoolSort>(
@@ -98,6 +102,7 @@ export class PoolOverviewComponent implements OnInit {
 
     constructor() {
         this.resources$ = this.sandboxResourcesService.resources$;
+        this.destroyRef.onDestroy(() => this.poolDeleteGuard.release());
     }
 
     getPoolStateIcon(row: Row<Pool>) {
@@ -173,6 +178,7 @@ export class PoolOverviewComponent implements OnInit {
                         this.resources$,
                         this.abstractPoolService,
                         this.sandboxInstanceService,
+                        this.poolDeleteGuard.renew(),
                     ),
             ),
             tap((poolTable) => this.keepExpandedPoolOpen(poolTable)),

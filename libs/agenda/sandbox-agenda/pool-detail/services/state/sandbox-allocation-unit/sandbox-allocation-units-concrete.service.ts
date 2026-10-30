@@ -1,13 +1,13 @@
 import { inject, Injectable } from '@angular/core';
 import { SandboxAllocationUnitsService } from './sandbox-allocation-units.service';
-import { BehaviorSubject, combineLatestWith, EMPTY, Observable } from 'rxjs';
+import { BehaviorSubject, combineLatestWith, defer, EMPTY, Observable } from 'rxjs';
 import { OffsetPaginationEvent } from '@crczp/utils';
 import {
     PoolApi,
     SandboxAllocationUnitsApi,
     SandboxAllocationUnitSort,
 } from '@crczp/sandbox-api';
-import { SandboxAllocationUnit } from '@crczp/sandbox-model';
+import { SandboxAllocationUnit, UnitCancellation } from '@crczp/sandbox-model';
 import { map, switchMap, tap } from 'rxjs/operators';
 import { HttpErrorResponse } from '@angular/common/http';
 import {
@@ -26,6 +26,13 @@ import {
     createPaginatedResource,
     OffsetPaginatedResource,
 } from '@crczp/api-common';
+import { emitPoolCleanupResult } from '@crczp/sandbox-agenda/internal';
+import { AbstractSandbox } from '../../../model/abstract-sandbox';
+import {
+    describeAllocationCancelPreview,
+    previewAllocationCancellation,
+    summarizeAllocationCancellation,
+} from '../../../model/allocation-cancellation';
 
 @Injectable()
 export class SandboxAllocationUnitsConcreteService extends SandboxAllocationUnitsService {
@@ -187,6 +194,52 @@ export class SandboxAllocationUnitsConcreteService extends SandboxAllocationUnit
     }
 
     /**
+     * Asks to confirm stopping every unfinished allocation of a pool, then stops them and reports
+     * the outcome in a notification. Emits what was done to each unit; reloading the units is left to the caller.
+     * The confirmation counts the unfinished allocations among the units shown.
+     * @param poolId id of the pool
+     */
+    cancelAllocations(poolId: number): Observable<UnitCancellation[]> {
+        return defer(() => {
+            const confirmation = describeAllocationCancelPreview(
+                poolId,
+                previewAllocationCancellation(
+                    this.unitsSubject$.value.elements.map(
+                        (unit) => new AbstractSandbox(unit),
+                    ),
+                ),
+            );
+            return this.dialog
+                .open(SentinelConfirmationDialogComponent, {
+                    data: new SentinelConfirmationDialogConfig(
+                        confirmation.title,
+                        confirmation.consequences,
+                        'Keep allocations',
+                        'Cancel allocations',
+                    ),
+                })
+                .afterClosed();
+        }).pipe(
+            switchMap((result) =>
+                result === SentinelDialogResultEnum.CONFIRMED
+                    ? this.poolApi.cancelAllocations(poolId)
+                    : EMPTY,
+            ),
+            tap({
+                next: (units) => {
+                    const summary = summarizeAllocationCancellation(units);
+                    this.notificationService.emit(summary.type, summary.title);
+                },
+                error: (err) =>
+                    this.errorHandler.emitAPIError(
+                        err,
+                        `Cancelling allocations of pool ${poolId}`,
+                    ),
+            }),
+        );
+    }
+
+    /**
      * Initializes default resources with given pageSize
      * @param pageSize size of a page for pagination
      */
@@ -222,33 +275,43 @@ export class SandboxAllocationUnitsConcreteService extends SandboxAllocationUnit
     }
 
     private callApiToCleanupMultiple(poolId: number, force: boolean): any {
-        return this.handleApiRequests(
-            this.poolApi.createMultipleCleanupRequests(poolId, force),
-            poolId,
+        return this.trackDeletion(() =>
+            this.handleApiRequests(
+                this.poolApi.createMultipleCleanupRequests(poolId, force),
+                poolId,
+            ),
         );
     }
 
     private callApiToCleanupFailed(poolId: number, force: boolean): any {
-        return this.handleApiRequests(
-            this.poolApi.createFailedCleanupRequests(poolId, force),
-            poolId,
+        return this.trackDeletion(() =>
+            this.handleApiRequests(
+                this.poolApi.createFailedCleanupRequests(poolId, force),
+                poolId,
+            ),
         );
     }
 
     private callApiToCleanupUnlocked(poolId: number, force: boolean): any {
-        return this.handleApiRequests(
-            this.poolApi.createUnlockedCleanupRequests(poolId, force),
-            poolId,
+        return this.trackDeletion(() =>
+            this.handleApiRequests(
+                this.poolApi.createUnlockedCleanupRequests(poolId, force),
+                poolId,
+            ),
         );
     }
 
-    private handleApiRequests(request: Observable<any>, poolId: number): any {
+    private handleApiRequests(
+        request: Observable<number[]>,
+        poolId: number,
+    ): any {
         return request.pipe(
             tap({
-                next: () =>
-                    this.notificationService.emit(
-                        'success',
+                next: (skippedUnitIds) =>
+                    emitPoolCleanupResult(
+                        this.notificationService,
                         `Cleanup request for pool ${poolId}`,
+                        skippedUnitIds,
                     ),
                 error: (err) =>
                     this.errorHandler.emitAPIError(

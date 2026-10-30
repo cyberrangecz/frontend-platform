@@ -64,6 +64,11 @@ export class RoleMapping extends Z.class({
     trainingTrainee: z.string().nonempty(),
     sandboxDesigner: z.string().nonempty(),
     sandboxOrganizer: z.string().nonempty(),
+    sandboxAdmin: z
+        .string()
+        .nonempty()
+        .default('ROLE_SANDBOX-SERVICE_ADMIN')
+        .describe('Role which allows every action within sandbox service'),
 }) {}
 
 export class PortalConfig extends Z.class({
@@ -73,6 +78,14 @@ export class PortalConfig extends Z.class({
         .boolean()
         .nullish()
         .describe('Enable local mode if true'),
+
+    enableTraineeSandboxAllocation: z
+        .boolean()
+        .nullish()
+        .describe(
+            'Let trainees of training instances that are not managed allocate their own sandboxes. ' +
+                'Turn it on together with single.sandbox.per.user.enabled of the training service.',
+        ),
 
     defaultPageSize: z
         .number(requiredField('Default page size field is required'))

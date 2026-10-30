@@ -59,15 +59,25 @@ export async function mockStageOutputs(page: Page, responder: OutputResponder): 
     });
 }
 
-/** Makes the backend report a stage kind as running, so the stage view keeps polling its outputs. */
+/**
+ * Makes the backend report a stage kind as running, so the stage view keeps polling its outputs.
+ * The stage is fetched from the backend once; every later request of it is answered from that copy.
+ */
 export async function mockRunningStage(page: Page, kind: StageKind): Promise<void> {
+    let runningStageBody: Promise<string> | undefined;
     await page.route(STAGE_URL, async (route) => {
         if (!route.request().url().endsWith(`/${kind}`)) {
             return route.fallback();
         }
-        const response = await route.fetch();
-        const stage = (await response.json()) as Record<string, unknown>;
-        return fulfilWithCors(route, { status: 200, body: JSON.stringify({ ...stage, end: null, failed: false }) });
+        runningStageBody ??= route
+            .fetch()
+            .then((response) => response.json() as Promise<Record<string, unknown>>)
+            .then((stage) => JSON.stringify({ ...stage, end: null, failed: false }))
+            .catch((error: unknown) => {
+                runningStageBody = undefined;
+                throw error;
+            });
+        return fulfilWithCors(route, { status: 200, body: await runningStageBody });
     });
 }
 

@@ -9,14 +9,15 @@ import {
 } from '@sentinel/components/dialogs';
 import { OffsetPaginationEvent } from '@crczp/utils';
 import {
-    SandboxAllocationUnitSort,
+    AllocationRequestsApi,
     PoolApi,
+    SandboxAllocationUnitSort,
     SandboxAllocationUnitsApi,
     SandboxInstanceApi,
     SandboxInstanceSort
 } from '@crczp/sandbox-api';
 import { SandboxAllocationUnit, SandboxInstance } from '@crczp/sandbox-model';
-import { EMPTY, firstValueFrom, from, Observable, of } from 'rxjs';
+import { defer, EMPTY, firstValueFrom, from, Observable, of } from 'rxjs';
 import { catchError, filter, map, shareReplay, switchMap, tap } from 'rxjs/operators';
 import { SandboxAllocationUnitsService } from '../sandbox-allocation-unit/sandbox-allocation-units.service';
 import { ErrorHandlerService, NotificationService, PortalConfig } from '@crczp/utils';
@@ -29,6 +30,8 @@ import {
     AllocateVariableSandboxesDialogComponent
 } from '../../../components/allocate-variable-sandboxes/allocate-variable-sandboxes-dialog.component';
 import { OffsetPaginatedResource } from '@crczp/api-common';
+import { AbstractSandbox } from '../../../model/abstract-sandbox';
+import { summarizeRequestCancellation } from '../../../model/allocation-cancellation';
 
 type AllocationUnitsPage = OffsetPaginatedResource<SandboxAllocationUnit>;
 
@@ -47,7 +50,11 @@ export class SandboxInstanceService extends OffsetPaginatedElementsPollingServic
     private sandboxApi = inject(SandboxInstanceApi);
     private poolApi = inject(PoolApi);
     private sandboxAllocationUnitsApi = inject(SandboxAllocationUnitsApi);
+    private allocationRequestsApi = inject(AllocationRequestsApi);
     private allocationUnitsService = inject(SandboxAllocationUnitsService);
+
+    public readonly isDeleting$: Observable<boolean> =
+        this.allocationUnitsService.isDeleting$;
 
     public allocationUnits$: Observable<
         OffsetPaginatedResource<SandboxAllocationUnit>
@@ -371,15 +378,81 @@ export class SandboxInstanceService extends OffsetPaginatedElementsPollingServic
     }
 
     /**
+     * Asks to confirm stopping every unfinished allocation of the pool, then stops them and
+     * refreshes the units.
+     * @param poolId id of the pool
+     */
+    cancelAllocations(
+        poolId: number,
+    ): Observable<OffsetPaginatedResource<SandboxAllocationUnit>> {
+        return this.allocationUnitsService.trackDeletion(() =>
+            this.refreshUnitsAfter(
+                this.allocationUnitsService.cancelAllocations(poolId),
+            ),
+        );
+    }
+
+    /**
+     * Asks to confirm stopping the unfinished allocation of one unit, then cancels its allocation
+     * request, informs about the result and refreshes the units.
+     * @param unit unit whose allocation is cancelled
+     */
+    cancelBuild(
+        unit: AbstractSandbox,
+    ): Observable<OffsetPaginatedResource<SandboxAllocationUnit>> {
+        const requestId = unit.allocationRequest.id;
+        const cancellation$ = defer(() =>
+            this.dialog
+                .open(SentinelConfirmationDialogComponent, {
+                    data: new SentinelConfirmationDialogConfig(
+                        `Cancel build of sandbox ${unit.id}?`,
+                        `Allocation request ${requestId} is stopped. Other allocations of the pool continue.`,
+                        'Keep build',
+                        'Cancel build',
+                    ),
+                })
+                .afterClosed(),
+        ).pipe(
+            switchMap((result) =>
+                result === SentinelDialogResultEnum.CONFIRMED
+                    ? this.allocationRequestsApi.cancel(requestId)
+                    : EMPTY,
+            ),
+            tap({
+                next: ({ stopPending }) => {
+                    const summary = summarizeRequestCancellation(
+                        'Allocation',
+                        requestId,
+                        stopPending,
+                    );
+                    this.notificationService.emit(summary.type, summary.title);
+                },
+                error: (err) =>
+                    this.errorHandler.emitAPIError(
+                        err,
+                        `Cancelling allocation request ${requestId}`,
+                    ),
+            }),
+        );
+        return this.allocationUnitsService.trackDeletion(() =>
+            this.refreshUnitsAfter(cancellation$),
+        );
+    }
+
+    private refreshUnitsAfter(
+        action$: Observable<unknown>,
+    ): Observable<OffsetPaginatedResource<SandboxAllocationUnit>> {
+        return action$.pipe(
+            switchMap(() => this.allocationUnitsService.refresh()),
+        );
+    }
+
+    /**
      * Starts cleanup for sandbox specified in @unitIds.
      * @param unitId allocation unit id which should be deleted
      */
     createCleanup(unitId: number): Observable<AllocationUnitsPage> {
-        return this.notifyThenRefresh(
-            this.sandboxAllocationUnitsApi.createCleanupRequest(unitId),
-            `Sandbox ${unitId} was deleted`,
-            `Deleting sandbox ${unitId}`,
-        );
+        return this.deleteUnit(unitId, unitId);
     }
 
     /**
@@ -498,12 +571,30 @@ export class SandboxInstanceService extends OffsetPaginatedElementsPollingServic
     private callApiToDelete(
         sandboxInstance: SandboxInstance,
     ): Observable<AllocationUnitsPage> {
-        return this.notifyThenRefresh(
-            this.sandboxAllocationUnitsApi.createCleanupRequest(
-                sandboxInstance.allocationUnitId,
+        return this.deleteUnit(
+            sandboxInstance.allocationUnitId,
+            sandboxInstance.id,
+        );
+    }
+
+    /**
+     * Deletes an allocation unit so that the request and the refresh following it count towards
+     * the deletion state of the units, and informs about the result.
+     * @param allocationUnitId id of the allocation unit to delete
+     * @param shownId id of the sandbox named in the notifications
+     */
+    private deleteUnit(
+        allocationUnitId: number,
+        shownId: number | string,
+    ): Observable<AllocationUnitsPage> {
+        return this.allocationUnitsService.trackDeletion(() =>
+            this.notifyThenRefresh(
+                this.sandboxAllocationUnitsApi.createCleanupRequest(
+                    allocationUnitId,
+                ),
+                `Sandbox ${shownId} was deleted`,
+                `Deleting sandbox ${shownId}`,
             ),
-            `Sandbox ${sandboxInstance.id} was deleted`,
-            `Deleting sandbox ${sandboxInstance.id}`,
         );
     }
 

@@ -1,5 +1,7 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
-import { AccessedTrainingRun } from '@crczp/training-model';
+import { ActivatedRoute } from '@angular/router';
+import { MatIcon } from '@angular/material/icon';
+import { AccessedTrainingRun, SandboxWaitReasonEnum, TraineeSandbox } from '@crczp/training-model';
 import { SentinelTableComponent, TableLoadEvent } from '@sentinel/components/table';
 import { Observable } from 'rxjs';
 import { finalize, map } from 'rxjs/operators';
@@ -14,6 +16,21 @@ import { createPaginationEvent, PaginationMapper } from '@crczp/api-common';
 import { AccessedTrainingRunSort } from '@crczp/training-api';
 import { SortDir } from '@crczp/utils';
 import { TableEmptyStateDirective, TableModel } from '@crczp/components';
+import { TrainingResolverHelperService } from '@crczp/routing-commons';
+import { OwnSandboxesComponent } from './own-sandboxes/own-sandboxes.component';
+
+const SANDBOX_WAIT_MESSAGES: Record<SandboxWaitReasonEnum, string> = {
+    [SandboxWaitReasonEnum.PREPARING]:
+        'Your sandbox is not ready yet. Once it is, enter the access token again or resume the training run below.',
+    [SandboxWaitReasonEnum.FAILED]:
+        'Your sandbox failed. Remove it, then enter the access token again to get a new one.',
+    [SandboxWaitReasonEnum.REMOVING]:
+        'Your sandbox is being removed. Once it is gone, enter the access token again to get a new one.',
+    [SandboxWaitReasonEnum.BLOCKED]:
+        'You can have only one sandbox at a time. Remove your other sandbox, or wait until its removal finishes, then enter the access token again.',
+    [SandboxWaitReasonEnum.MISSING]:
+        'This training run has no sandbox any more. Enter the access token again to get a new one.',
+};
 
 /**
  * Main smart component of the trainee overview.
@@ -29,6 +46,8 @@ import { TableEmptyStateDirective, TableModel } from '@crczp/components';
         SentinelControlsComponent,
         SentinelTableComponent,
         TableEmptyStateDirective,
+        MatIcon,
+        OwnSandboxesComponent,
     ],
     providers: [AccessedTrainingRunService],
 })
@@ -38,10 +57,14 @@ export class TrainingRunOverviewComponent implements OnInit {
     trainingRuns$: Observable<TableModel<AccessedTrainingRun, AccessedTrainingRunSort>>;
     hasError$: Observable<boolean>;
     tableIsLoading$: Observable<boolean>;
+    ownSandboxes$: Observable<TraineeSandbox[]>;
+    /** Why the trainee was sent back here to wait for their sandbox, if they were */
+    sandboxWaitMessage$: Observable<string | undefined>;
     isLoading = signal(false);
     controls: SentinelControlItem[];
     destroyRef = inject(DestroyRef);
     private trainingRunOverviewService = inject(AccessedTrainingRunService);
+    private route = inject(ActivatedRoute);
 
     private readonly initialRunPagination =
         createPaginationEvent<AccessedTrainingRunSort>({
@@ -60,6 +83,7 @@ export class TrainingRunOverviewComponent implements OnInit {
 
     ngOnInit(): void {
         this.initTable();
+        this.initOwnSandboxes();
     }
 
     /**
@@ -74,6 +98,17 @@ export class TrainingRunOverviewComponent implements OnInit {
                 finalize(() => this.isLoading.set(false)),
                 takeUntilDestroyed(this.destroyRef),
             )
+            .subscribe(() => {
+                // Accessing may have created a run and a sandbox while keeping the trainee here
+                this.loadPage();
+                this.trainingRunOverviewService.refreshOwnSandboxes();
+            });
+    }
+
+    removeOwnSandbox(sandbox: TraineeSandbox): void {
+        this.trainingRunOverviewService
+            .removeOwnSandbox(sandbox)
+            .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe();
     }
 
@@ -88,6 +123,10 @@ export class TrainingRunOverviewComponent implements OnInit {
                 loadEvent.pagination,
             );
         }
+        this.loadPage();
+    }
+
+    private loadPage(): void {
         this.trainingRunOverviewService
             .getAll(this.pagination)
             .pipe(takeUntilDestroyed(this.destroyRef))
@@ -111,6 +150,24 @@ export class TrainingRunOverviewComponent implements OnInit {
         this.hasError$ = this.trainingRunOverviewService.hasError$;
         this.tableIsLoading$ = this.trainingRunOverviewService.isLoading$;
         this.loadAccessedTrainingRuns(initialLoadEvent);
+    }
+
+    private initOwnSandboxes() {
+        this.ownSandboxes$ = this.trainingRunOverviewService.ownSandboxes$;
+        this.sandboxWaitMessage$ = this.route.queryParamMap.pipe(
+            map(
+                (params) =>
+                    SANDBOX_WAIT_MESSAGES[
+                        params.get(
+                            TrainingResolverHelperService.SANDBOX_WAIT_PARAM,
+                        ) as SandboxWaitReasonEnum
+                    ],
+            ),
+        );
+        this.trainingRunOverviewService
+            .watchOwnSandboxes()
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe();
     }
 
 }

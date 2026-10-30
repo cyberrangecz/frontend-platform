@@ -4,6 +4,7 @@ import { LinkedRow, TableModel } from '@crczp/components';
 import { defer, of } from 'rxjs';
 import { PoolDetailRowAdapter } from './pool-detail-row-adapter';
 import { CleanupRequestsService } from '../services/state/request/cleanup/cleanup-requests.service';
+import { DisabledWhileBusy } from '@crczp/sandbox-agenda/internal';
 import { AbstractSandbox } from './abstract-sandbox';
 import { SandboxInstanceService } from '../services/state/sandbox-instance/sandbox-instance.service';
 import { DatePipe } from '@angular/common';
@@ -22,6 +23,7 @@ export class PoolDetailTable extends TableModel<
         resource: OffsetPaginatedResource<AbstractSandbox>,
         sandboxInstanceService: SandboxInstanceService,
         vpnOffered: boolean,
+        disabledWhileBusy: DisabledWhileBusy,
     ) {
         const columns = [
             new Column<SandboxAllocationUnitSort>('name', 'name', true, 'id'),
@@ -47,6 +49,7 @@ export class PoolDetailTable extends TableModel<
                 element,
                 sandboxInstanceService,
                 vpnOffered,
+                disabledWhileBusy,
             ),
         );
         super(rows, columns);
@@ -57,6 +60,7 @@ export class PoolDetailTable extends TableModel<
         data: AbstractSandbox,
         sandboxInstanceService: SandboxInstanceService,
         vpnOffered: boolean,
+        disabledWhileBusy: DisabledWhileBusy,
     ): LinkedRow<PoolDetailRowAdapter> {
         const rowAdapter = new PoolDetailRowAdapter();
         const dateFormatter = new DatePipe('en-US');
@@ -73,7 +77,7 @@ export class PoolDetailTable extends TableModel<
         rowAdapter.stages = this.requestStageResolver(data);
         const row = new LinkedRow(
             rowAdapter,
-            this.createActions(data, sandboxInstanceService, vpnOffered),
+            this.createActions(data, sandboxInstanceService, vpnOffered, disabledWhileBusy),
         );
         if (!data.cleanupRunning()) {
             row.addLink(
@@ -91,12 +95,22 @@ export class PoolDetailTable extends TableModel<
         data: AbstractSandbox,
         sandboxInstanceService: SandboxInstanceService,
         vpnOffered: boolean,
+        disabledWhileBusy: DisabledWhileBusy,
     ): RowAction[] {
         return [
             new DeleteAction(
                 'Delete sandbox instance',
-                of(data.cleanupRunning() || data.locked),
+                disabledWhileBusy(data.cleanupRunning() || data.locked),
                 defer(() => sandboxInstanceService.createCleanup(data.id)),
+            ),
+            new RowAction(
+                'cancel_build',
+                'Cancel build',
+                'cancel',
+                'warn',
+                'Cancel build',
+                disabledWhileBusy(!data.allocationRunning()),
+                defer(() => sandboxInstanceService.cancelBuild(data)),
             ),
             new RowAction(
                 'topology',

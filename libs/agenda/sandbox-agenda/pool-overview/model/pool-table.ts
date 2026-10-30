@@ -8,6 +8,7 @@ import {
 } from '@sentinel/components/table';
 import { LinkedRow, TableModel } from '@crczp/components';
 import { defer, Observable, of } from 'rxjs';
+import { DisabledWhileBusy } from '@crczp/sandbox-agenda/internal';
 import { PoolRowAdapter } from './pool-row-adapter';
 import { SandboxInstanceService } from '@crczp/sandbox-agenda/pool-detail';
 import { PoolExpandDetailComponent } from '../components/pool-expand-detail/pool-expand-detail.component';
@@ -26,6 +27,7 @@ export class PoolTable extends TableModel<PoolRowAdapter, PoolSort> {
         resources: Observable<Resources>,
         poolService: PoolService,
         sandboxInstanceService: SandboxInstanceService,
+        disabledWhileBusy: DisabledWhileBusy,
     ) {
         const rows = data.elements.map((element) =>
             PoolTable.createRow(
@@ -33,6 +35,7 @@ export class PoolTable extends TableModel<PoolRowAdapter, PoolSort> {
                 resources,
                 poolService,
                 sandboxInstanceService,
+                disabledWhileBusy,
             ),
         );
         const columns = [
@@ -68,6 +71,7 @@ export class PoolTable extends TableModel<PoolRowAdapter, PoolSort> {
         resources: Observable<Resources>,
         poolService: PoolService,
         sandboxInstanceService: SandboxInstanceService,
+        disabledWhileBusy: DisabledWhileBusy,
     ): LinkedRow<PoolRowAdapter> {
         const rowAdapter = pool as PoolRowAdapter;
         rowAdapter.title = `Pool ${rowAdapter.id}`;
@@ -89,7 +93,12 @@ export class PoolTable extends TableModel<PoolRowAdapter, PoolSort> {
 
         const row = new LinkedRow(
             rowAdapter,
-            this.createActions(pool, poolService, sandboxInstanceService),
+            this.createActions(
+                pool,
+                poolService,
+                sandboxInstanceService,
+                disabledWhileBusy,
+            ),
         );
         row.addLink(
             'title',
@@ -102,6 +111,7 @@ export class PoolTable extends TableModel<PoolRowAdapter, PoolSort> {
         pool: Pool,
         abstractPoolService: PoolService,
         sandboxInstanceService: SandboxInstanceService,
+        disabledWhileBusy: DisabledWhileBusy,
     ): RowAction[] {
         return [
             new EditAction(
@@ -134,7 +144,7 @@ export class PoolTable extends TableModel<PoolRowAdapter, PoolSort> {
             ),
             new DeleteAction(
                 'Delete Pool',
-                of(pool.lockState == 'locked'),
+                disabledWhileBusy(pool.lockState === 'locked'),
                 defer(() => abstractPoolService.delete(pool)),
             ),
             this.createLockAction(pool, abstractPoolService),

@@ -10,6 +10,8 @@ export abstract class RequestStage {
     requestId!: number;
     state!: RequestStageState;
     errorMessage!: string;
+    stopPending!: boolean;
+    stopRequestedAt?: Date;
     start!: Date;
     end!: Date;
 
