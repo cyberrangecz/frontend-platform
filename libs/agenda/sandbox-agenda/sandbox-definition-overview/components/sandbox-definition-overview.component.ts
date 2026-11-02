@@ -26,7 +26,7 @@ import {
 } from '@crczp/utils';
 import { PaginationMapper } from '@crczp/api-common';
 import { SandboxDefinitionSort } from '@crczp/sandbox-api';
-import { TableEmptyStateDirective } from '@crczp/components';
+import { TableEmptyStateDirective, TablePanelComponent } from '@crczp/components';
 
 @Component({
     selector: 'crczp-sandbox-definition-overview',
@@ -35,6 +35,7 @@ import { TableEmptyStateDirective } from '@crczp/components';
     imports: [
         SentinelControlsComponent,
         SentinelTableComponent,
+        TablePanelComponent,
         SentinelCellDirective,
         AsyncPipe,
         TableEmptyStateDirective,

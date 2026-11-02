@@ -3,7 +3,6 @@ import { SortDir } from '@crczp/utils';
 import { SentinelControlItem, SentinelControlsComponent } from '@sentinel/components/controls';
 import { Group, UserRole } from '@crczp/user-and-group-model';
 import { SentinelTableComponent, TableLoadEvent } from '@sentinel/components/table';
-import { SentinelFilterFreeInputComponent } from '@sentinel/components/filters';
 import {
     SentinelResourceSelectorComponent,
     SentinelResourceSelectorMapping
@@ -20,7 +19,7 @@ import { RoleAssignService } from '../../services/state/role-assign.service';
 import { OffsetPaginationEvent, PaginationStorageService, providePaginationStorageService } from '@crczp/utils';
 import { OffsetPaginatedResource, PaginationMapper } from '@crczp/api-common';
 import { RoleSort } from '@crczp/user-and-group-api';
-import { TableEmptyStateDirective, TableModel } from '@crczp/components';
+import { TableEmptyStateDirective, TablePanelComponent, TableModel } from '@crczp/components';
 
 /**
  * Component for role assignment to edited group-overview
@@ -40,7 +39,7 @@ import { TableEmptyStateDirective, TableModel } from '@crczp/components';
         MatIcon,
         SentinelResourceSelectorComponent,
         SentinelTableComponent,
-        SentinelFilterFreeInputComponent,
+        TablePanelComponent,
         AsyncPipe,
         SentinelControlsComponent,
         TableEmptyStateDirective,

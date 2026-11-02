@@ -20,55 +20,43 @@
 </mat-card>
 <mat-card appearance="outlined" class="members-card">
     @let membersTable = members$ | async;
-    @if (membersTable?.filterable) {
-        <sentinel-filter-free-input
-            (filterChange)="onMembersFilter($event)"
-            (filterCleared)="onMembersFilter('')"
-            [label]="membersTable.filterLabel"
-            [placeholder]="membersTable.filterLabel"
-            [value]="membersFilter" />
-    }
-    <sentinel-table
-        (tableLoad)="onMembersLoadEvent($event)"
-        [columns]="membersTable?.columns ?? []"
-        [defaultSortDirection]="INIT_SORT_DIR"
-        [defaultSortName]="INIT_MEMBERS_SORT_NAME"
-        [elevation]="0"
-        [hasError]="!!(membersTableHasError$ | async)"
-        [isLoading]="!!(isLoadingMembers$ | async)"
-        [pagination]="membersTable?.pagination"
-        [rows]="membersTable?.rows ?? []"
-        [selectable]="!!membersTable?.selectable"
-        crczpTableEmptyState="No members in this group"
-    >
-        <ng-template [sentinelCellType]="membersTable?.rows" let-row sentinelCell="picture">
-            <img [alt]="row.element.name" class="user-picture" src="{{'data:image/png;base64,'+row.element.picture}}" />
-        </ng-template>
-    </sentinel-table>
+    <crczp-table-panel (filterChange)="onMembersFilter($event)" [filterLabel]="membersTable?.filterLabel ?? ''" [filterValue]="membersFilter">
+        <sentinel-table
+            (tableLoad)="onMembersLoadEvent($event)"
+            [columns]="membersTable?.columns ?? []"
+            [defaultSortDirection]="INIT_SORT_DIR"
+            [defaultSortName]="INIT_MEMBERS_SORT_NAME"
+            [elevation]="0"
+            [hasError]="!!(membersTableHasError$ | async)"
+            [isLoading]="!!(isLoadingMembers$ | async)"
+            [pagination]="membersTable?.pagination"
+            [rows]="membersTable?.rows ?? []"
+            [selectable]="!!membersTable?.selectable"
+            crczpTableEmptyState="No members in this group"
+        >
+            <ng-template [sentinelCellType]="membersTable?.rows" let-row sentinelCell="picture">
+                <img [alt]="row.element.name" class="user-picture" src="{{'data:image/png;base64,'+row.element.picture}}" />
+            </ng-template>
+        </sentinel-table>
+    </crczp-table-panel>
 </mat-card>
 <mat-card appearance="outlined" class="roles-card">
     @let rolesTable = roles$ | async;
-    @if (rolesTable?.filterable) {
-        <sentinel-filter-free-input
-            (filterChange)="onRolesFilter($event)"
-            (filterCleared)="onRolesFilter('')"
-            [label]="rolesTable.filterLabel"
-            [placeholder]="rolesTable.filterLabel"
-            [value]="rolesFilter" />
-    }
-    <sentinel-table
-        (tableLoad)="onRolesLoadEvent($event)"
-        [columns]="rolesTable?.columns ?? []"
-        [defaultSortDirection]="INIT_SORT_DIR"
-        [defaultSortName]="INIT_ROLES_SORT_NAME"
-        [elevation]="0"
-        [expand]="rolesTable?.expand"
-        [hasError]="!!(rolesTableHasError$ | async)"
-        [isLoading]="!!(isLoadingRoles$ | async)"
-        [pagination]="rolesTable?.pagination"
-        [rows]="rolesTable?.rows ?? []"
-        [selectable]="!!rolesTable?.selectable"
-        crczpTableEmptyState="No roles assigned to this group"
-    >
-    </sentinel-table>
+    <crczp-table-panel (filterChange)="onRolesFilter($event)" [filterLabel]="rolesTable?.filterLabel ?? ''" [filterValue]="rolesFilter">
+        <sentinel-table
+            (tableLoad)="onRolesLoadEvent($event)"
+            [columns]="rolesTable?.columns ?? []"
+            [defaultSortDirection]="INIT_SORT_DIR"
+            [defaultSortName]="INIT_ROLES_SORT_NAME"
+            [elevation]="0"
+            [expand]="rolesTable?.expand"
+            [hasError]="!!(rolesTableHasError$ | async)"
+            [isLoading]="!!(isLoadingRoles$ | async)"
+            [pagination]="rolesTable?.pagination"
+            [rows]="rolesTable?.rows ?? []"
+            [selectable]="!!rolesTable?.selectable"
+            crczpTableEmptyState="No roles assigned to this group"
+        >
+        </sentinel-table>
+    </crczp-table-panel>
 </mat-card>

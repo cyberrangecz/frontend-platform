@@ -1,16 +1,18 @@
 <div>
     @let table = detectionEvents$ | async;
-    <sentinel-table
-        (tableLoad)="onLoadEvent($event)"
-        [columns]="table?.columns ?? []"
-        [defaultSortDirection]="INIT_SORT_DIR"
-        [defaultSortName]="INIT_SORT_NAME"
-        [displayedActionsCount]="1"
-        [hasError]="!!(hasError$ | async)"
-        [isLoading]="!!(isLoading$ | async)"
-        [pagination]="table?.pagination"
-        [rows]="table?.rows ?? []"
-        [selectable]="!!table?.selectable"
-        crczpTableEmptyState="No detection events for this training instance"
-    />
+    <crczp-table-panel>
+        <sentinel-table
+            (tableLoad)="onLoadEvent($event)"
+            [columns]="table?.columns ?? []"
+            [defaultSortDirection]="INIT_SORT_DIR"
+            [defaultSortName]="INIT_SORT_NAME"
+            [displayedActionsCount]="1"
+            [hasError]="!!(hasError$ | async)"
+            [isLoading]="!!(isLoading$ | async)"
+            [pagination]="table?.pagination"
+            [rows]="table?.rows ?? []"
+            [selectable]="!!table?.selectable"
+            crczpTableEmptyState="No detection events for this training instance"
+        />
+    </crczp-table-panel>
 </div>

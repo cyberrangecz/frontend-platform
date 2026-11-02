@@ -15,7 +15,7 @@ import { AccessTrainingRunComponent } from './access/access-training-run.compone
 import { createPaginationEvent, PaginationMapper } from '@crczp/api-common';
 import { AccessedTrainingRunSort } from '@crczp/training-api';
 import { SortDir } from '@crczp/utils';
-import { TableEmptyStateDirective, TableModel } from '@crczp/components';
+import { TableEmptyStateDirective, TablePanelComponent, TableModel } from '@crczp/components';
 import { TrainingResolverHelperService } from '@crczp/routing-commons';
 import { OwnSandboxesComponent } from './own-sandboxes/own-sandboxes.component';
 
@@ -45,6 +45,7 @@ const SANDBOX_WAIT_MESSAGES: Record<SandboxWaitReasonEnum, string> = {
         AccessTrainingRunComponent,
         SentinelControlsComponent,
         SentinelTableComponent,
+        TablePanelComponent,
         TableEmptyStateDirective,
         MatIcon,
         OwnSandboxesComponent,

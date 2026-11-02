@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, Component, DestroyRef, inject, input, OnInit, 
 import { SentinelControlItem, SentinelControlsComponent } from '@sentinel/components/controls';
 import { Group, User } from '@crczp/user-and-group-model';
 import { SentinelTableComponent, TableLoadEvent } from '@sentinel/components/table';
-import { SentinelFilterFreeInputComponent } from '@sentinel/components/filters';
 import {
     SentinelResourceSelectorComponent,
     SentinelResourceSelectorMapping
@@ -19,7 +18,7 @@ import { UserSort } from '@crczp/user-and-group-api';
 import { AsyncPipe } from '@angular/common';
 import { PaginationMapper } from '@crczp/api-common';
 import { GroupMemberTable } from '../../model/table/group-member-table';
-import { TableEmptyStateDirective, TableModel } from '@crczp/components';
+import { TableEmptyStateDirective, TablePanelComponent, TableModel } from '@crczp/components';
 
 /**
  * Component for user assignment to groups
@@ -40,7 +39,7 @@ import { TableEmptyStateDirective, TableModel } from '@crczp/components';
         MatCardSubtitle,
         AsyncPipe,
         SentinelTableComponent,
-        SentinelFilterFreeInputComponent,
+        TablePanelComponent,
         SentinelResourceSelectorComponent,
         TableEmptyStateDirective,
     ],

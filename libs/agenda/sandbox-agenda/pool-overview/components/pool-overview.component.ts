@@ -29,7 +29,7 @@ import { AsyncPipe } from '@angular/common';
 import { OffsetPaginationEvent, PaginationStorageService, PollingService, providePaginationStorageService, SortDir } from '@crczp/utils';
 import { PaginationMapper } from '@crczp/api-common';
 import { PoolSort } from '@crczp/sandbox-api';
-import { TableEmptyStateDirective, TableStateCellComponent } from '@crczp/components';
+import { TableEmptyStateDirective, TablePanelComponent, TableStateCellComponent } from '@crczp/components';
 
 /**
  * Smart component of sandbox pool overview page
@@ -42,6 +42,7 @@ import { TableEmptyStateDirective, TableStateCellComponent } from '@crczp/compon
     imports: [
         SentinelControlsComponent,
         SentinelTableComponent,
+        TablePanelComponent,
         EditableCommentComponent,
         QuotasComponent,
         AsyncPipe,

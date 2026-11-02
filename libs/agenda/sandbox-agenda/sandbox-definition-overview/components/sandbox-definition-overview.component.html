@@ -1,18 +1,20 @@
-<sentinel-controls [controls]="controls" />
 @let table = sandboxDefinitions$ | async;
-<sentinel-table
-    (tableLoad)="onLoadEvent($event)"
-    [columns]="table?.columns ?? []"
-    [defaultSortDirection]="DEFAULT_SORT_DIRECTION"
-    [defaultSortName]="DEFAULT_SORT_COLUMN"
-    [expand]="table?.expand"
-    [hasError]="!!(hasError$ | async)"
-    [isLoading]="!!(isLoading$ | async)"
-    [pagination]="table?.pagination"
-    [rows]="table?.rows ?? []"
-    [selectable]="!!table?.selectable"
-    crczpTableEmptyState="No sandbox definitions have been created yet">
-    <ng-template [sentinelCellType]="table?.rows" let-row sentinelCell="titleWithRevision">
-        <a [href]="row.links.get('titleWithRevision')" target="_blank">{{ row.element.titleWithRevision }}</a>
-    </ng-template>
-</sentinel-table>
+<crczp-table-panel>
+    <sentinel-controls [controls]="controls" [withMargin]="false" tablePanelActions />
+    <sentinel-table
+        (tableLoad)="onLoadEvent($event)"
+        [columns]="table?.columns ?? []"
+        [defaultSortDirection]="DEFAULT_SORT_DIRECTION"
+        [defaultSortName]="DEFAULT_SORT_COLUMN"
+        [expand]="table?.expand"
+        [hasError]="!!(hasError$ | async)"
+        [isLoading]="!!(isLoading$ | async)"
+        [pagination]="table?.pagination"
+        [rows]="table?.rows ?? []"
+        [selectable]="!!table?.selectable"
+        crczpTableEmptyState="No sandbox definitions have been created yet">
+        <ng-template [sentinelCellType]="table?.rows" let-row sentinelCell="titleWithRevision">
+            <a [href]="row.links.get('titleWithRevision')" target="_blank">{{ row.element.titleWithRevision }}</a>
+        </ng-template>
+    </sentinel-table>
+</crczp-table-panel>

@@ -99,7 +99,7 @@ test.describe('run.overview', () => {
         test('has no filter above the table', async ({ page }) => {
             const runOverview = new RunOverviewPage(page);
             await runOverview.open();
-            await expect(page.locator('sentinel-filter-free-input')).toHaveCount(0);
+            await expect(page.locator('crczp-table-panel .panel-filter')).toHaveCount(0);
         });
     });
 

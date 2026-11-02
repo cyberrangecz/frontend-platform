@@ -13,7 +13,6 @@ import {
     SentinelTableComponent,
     TableLoadEvent,
 } from '@sentinel/components/table';
-import { SentinelFilterFreeInputComponent } from '@sentinel/components/filters';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -28,7 +27,7 @@ import { OffsetPaginationEvent, SortDir } from '@crczp/utils';
 import { map } from 'rxjs/operators';
 import { MembersDetailTable } from '../model/members-detail-table';
 import { RolesDetailTable } from '../model/roles-detail-table';
-import { TableEmptyStateDirective, TableModel } from '@crczp/components';
+import { TableEmptyStateDirective, TablePanelComponent, TableModel } from '@crczp/components';
 
 @Component({
     selector: 'crczp-group-detail',
@@ -38,11 +37,11 @@ import { TableEmptyStateDirective, TableModel } from '@crczp/components';
     imports: [
         CommonModule,
         SentinelTableComponent,
+        TablePanelComponent,
         SentinelCellDirective,
         MatCardModule,
         MatIconModule,
         MatTooltipModule,
-        SentinelFilterFreeInputComponent,
         TableEmptyStateDirective,
     ],
     providers: [MembersDetailService, RolesDetailService],
