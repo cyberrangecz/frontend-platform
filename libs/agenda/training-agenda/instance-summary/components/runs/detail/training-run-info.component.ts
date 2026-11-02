@@ -4,7 +4,7 @@ import { TrainingRunSummaryService } from '../../../services/state/runs/training
 import { SentinelTableComponent, TableColumnVisibilityService } from '@sentinel/components/table';
 import { TrainingInfoTable } from '../../../model/training-info-table';
 import { take } from 'rxjs/operators';
-import { TableEmptyStateDirective, TableModel } from '@crczp/components';
+import { TableEmptyStateDirective, TablePanelComponent, TableModel } from '@crczp/components';
 import { NgxSkeletonLoaderComponent, NgxSkeletonLoaderConfigTheme } from 'ngx-skeleton-loader';
 
 @Component({
@@ -13,7 +13,7 @@ import { NgxSkeletonLoaderComponent, NgxSkeletonLoaderConfigTheme } from 'ngx-sk
     styleUrls: ['./training-run-info.component.css'],
     providers: [TrainingRunSummaryService, TableColumnVisibilityService],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [SentinelTableComponent, TableEmptyStateDirective, NgxSkeletonLoaderComponent],
+    imports: [SentinelTableComponent, TableEmptyStateDirective, TablePanelComponent, NgxSkeletonLoaderComponent],
 })
 export class TrainingRunInfoComponent implements OnInit {
     @HostBinding('style.width') width = '100%';

@@ -2,7 +2,6 @@ import { Component, DestroyRef, inject, OnInit, ChangeDetectionStrategy } from '
 import { SentinelControlItem, SentinelControlsComponent } from '@sentinel/components/controls';
 import { TrainingDefinition, TrainingDefinitionStateEnum } from '@crczp/training-model';
 import { SentinelCellDirective, SentinelTableComponent, TableLoadEvent } from '@sentinel/components/table';
-import { SentinelFilterFreeInputComponent } from '@sentinel/components/filters';
 import { RouterLink } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -15,6 +14,7 @@ import {
     TableDateCellComponent,
     TableEmptyStateDirective,
     TableModel,
+    TablePanelComponent,
     TableStateCellComponent
 } from '@crczp/components';
 import { FileUploadProgressService, OffsetPaginationEvent, PaginationStorageService, SortDir } from '@crczp/utils';
@@ -33,11 +33,11 @@ import { TrainingDefinitionSort } from '@crczp/training-api';
         SentinelControlsComponent,
         SentinelTableComponent,
         SentinelCellDirective,
-        SentinelFilterFreeInputComponent,
         RouterLink,
         TableDateCellComponent,
         TableStateCellComponent,
         TableEmptyStateDirective,
+        TablePanelComponent,
     ],
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [

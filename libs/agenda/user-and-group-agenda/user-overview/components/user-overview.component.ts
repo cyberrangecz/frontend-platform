@@ -3,7 +3,6 @@ import { OffsetPaginationEvent, SortDir } from '@crczp/utils';
 import { SentinelControlItem, SentinelControlsComponent } from '@sentinel/components/controls';
 import { User } from '@crczp/user-and-group-model';
 import { SentinelCellDirective, SentinelTableComponent, TableLoadEvent } from '@sentinel/components/table';
-import { SentinelFilterFreeInputComponent } from '@sentinel/components/filters';
 import { RouterLink } from '@angular/router';
 import { defer, Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -14,7 +13,7 @@ import { UserOverviewService } from '../services/user-overview.service';
 import { AsyncPipe } from '@angular/common';
 import { FileUploadProgressService, PaginationStorageService, providePaginationStorageService } from '@crczp/utils';
 import { UserSort } from '@crczp/user-and-group-api';
-import { TableEmptyStateDirective, TableModel } from '@crczp/components';
+import { TableEmptyStateDirective, TablePanelComponent, TableModel } from '@crczp/components';
 
 /**
  * Main smart component of user overview page
@@ -27,8 +26,8 @@ import { TableEmptyStateDirective, TableModel } from '@crczp/components';
     imports: [
         AsyncPipe,
         SentinelTableComponent,
+        TablePanelComponent,
         SentinelCellDirective,
-        SentinelFilterFreeInputComponent,
         SentinelControlsComponent,
         TableEmptyStateDirective,
         RouterLink,

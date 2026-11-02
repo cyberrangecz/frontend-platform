@@ -8,7 +8,7 @@ import {
 import { TrainingRun } from '@crczp/training-model';
 import { SentinelTableComponent, TableLoadEvent } from '@sentinel/components/table';
 import { TrainingRunSort } from '@crczp/training-api';
-import { TableEmptyStateDirective, TableModel } from '@crczp/components';
+import { TableEmptyStateDirective, TablePanelComponent, TableModel } from '@crczp/components';
 import { SortDir } from '@crczp/utils';
 
 @Component({
@@ -16,7 +16,7 @@ import { SortDir } from '@crczp/utils';
     templateUrl: './training-instance-runs.component.html',
     styleUrls: ['./training-instance-runs.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [SentinelTableComponent, TableEmptyStateDirective],
+    imports: [SentinelTableComponent, TableEmptyStateDirective, TablePanelComponent],
 })
 export class TrainingInstanceRunsComponent {
     @Input() trainingRuns: TableModel<TrainingRun, TrainingRunSort>;

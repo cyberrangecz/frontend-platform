@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit } from '
 import { SentinelControlItem, SentinelControlsComponent } from '@sentinel/components/controls';
 import { Group } from '@crczp/user-and-group-model';
 import { SentinelCellDirective, SentinelTableComponent, TableLoadEvent } from '@sentinel/components/table';
-import { SentinelFilterFreeInputComponent } from '@sentinel/components/filters';
 import { RouterLink } from '@angular/router';
 import { defer, Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -14,7 +13,7 @@ import { AsyncPipe } from '@angular/common';
 import { OffsetPaginationEvent, PaginationStorageService, providePaginationStorageService, SortDir } from '@crczp/utils';
 import { PaginationMapper } from '@crczp/api-common';
 import { GroupSort } from '@crczp/user-and-group-api';
-import { TableEmptyStateDirective, TableModel } from '@crczp/components';
+import { TableEmptyStateDirective, TablePanelComponent, TableModel } from '@crczp/components';
 
 /**
  * Main smart component of group-overview overview page
@@ -32,8 +31,8 @@ import { TableEmptyStateDirective, TableModel } from '@crczp/components';
     ],
     imports: [
         SentinelTableComponent,
+        TablePanelComponent,
         SentinelCellDirective,
-        SentinelFilterFreeInputComponent,
         SentinelControlsComponent,
         AsyncPipe,
         TableEmptyStateDirective,

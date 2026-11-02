@@ -12,7 +12,7 @@ import { PaginationMapper } from '@crczp/api-common';
 import { DetectionEventOverviewService } from '../services/detection-event-overview.service';
 import { AbstractDetectionEventSort } from '@crczp/training-api';
 import { Routing } from '@crczp/routing-commons';
-import { TableEmptyStateDirective, TableModel } from '@crczp/components';
+import { TableEmptyStateDirective, TablePanelComponent, TableModel } from '@crczp/components';
 
 /**
  * Main component of training instance detection event.
@@ -21,7 +21,7 @@ import { TableEmptyStateDirective, TableModel } from '@crczp/components';
     selector: 'crczp-training-instance-detection-event',
     templateUrl: './training-instance-detection-event.component.html',
     styleUrls: ['./training-instance-detection-event.component.css'],
-    imports: [AsyncPipe, SentinelTableComponent, TableEmptyStateDirective],
+    imports: [AsyncPipe, SentinelTableComponent, TableEmptyStateDirective, TablePanelComponent],
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [
         providePaginationStorageService(

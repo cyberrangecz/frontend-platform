@@ -36,7 +36,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatDivider } from '@angular/material/divider';
 import { MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
 import { OffsetPaginationEvent, PaginationStorageService, providePaginationStorageService, SortDir } from '@crczp/utils';
-import { TableEmptyStateDirective, TableModel } from '@crczp/components';
+import { TableEmptyStateDirective, TablePanelComponent, TableModel } from '@crczp/components';
 import { createInfinitePaginationEvent, PaginationMapper } from '@crczp/api-common';
 import { DetectedForbiddenCommandSort, DetectionEventParticipantSort } from '@crczp/training-api';
 
@@ -71,6 +71,7 @@ import { DetectedForbiddenCommandSort, DetectionEventParticipantSort } from '@cr
         AsyncPipe,
         MatDivider,
         SentinelTableComponent,
+        TablePanelComponent,
         MatExpansionPanel,
         MatExpansionPanelHeader,
         MatExpansionPanelTitle,

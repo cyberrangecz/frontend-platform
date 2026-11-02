@@ -33,26 +33,31 @@ sentinel-markdown-editor {
 }
 
 .local-content-info {
-    border: 1px solid #e0e0e0;
+    border: 1px solid var(--neutral-variant-80);
     border-radius: 5px;
-    margin-bottom: 10px;
+    margin-bottom: var(--space-sm);
     overflow: hidden
 }
 
 .local-content-info-head {
     display: flex;
-    padding: 10px;
-    background-color: #3f51b5;
-    color: white;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-sm);
+    background-color: var(--primary);
+    color: var(--primary-100);
 }
 
 .local-content-info-head h4 {
-    margin-left: 10px;
-    margin-bottom: 0;
+    margin: 0;
 }
 
 .local-content-info-content {
-    padding: 10px 10px 0 10px;
+    padding: var(--space-sm) var(--space-sm) 0;
+}
+
+.local-content-info-variable {
+    background-color: var(--neutral-90);
 }
 
 

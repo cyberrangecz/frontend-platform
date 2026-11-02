@@ -2,7 +2,7 @@
   <form [formGroup]="trainingLevelConfigFormGroup.formGroup">
     <div class="panel-wrapper">
       <div class="left-panel">
-        <!-- TITLE filed -->
+        <!-- TITLE field -->
         <mat-form-field (keydown.enter)="$event.preventDefault()" appearance="outline">
           <mat-label>Title</mat-label>
           <input formControlName="title" matInput maxlength="255" placeholder="Title" required/>
@@ -46,7 +46,7 @@
               min="0"
               placeholder="Minimal Possible Solve Time in Minutes"
               />
-            @if (minimalPossibleSolveTime.hasError('pattern') || estimatedDuration.hasError('min')) {
+            @if (minimalPossibleSolveTime.hasError('pattern') || minimalPossibleSolveTime.hasError('min')) {
               <mat-error
                 >
                 Minimal Possible Solve Time must be a number greater than or equal to 0
@@ -76,7 +76,7 @@
           <div class="content-info-content">
             <p>
               Display an actual value of the answer in the solution content by using the variable
-              <strong style="background: #d8d8d8">{{ '${ANSWER}' }}</strong>,
+              <strong class="content-info-variable">{{ '${ANSWER}' }}</strong>,
               that will be resolved and replaced in displayed solution during the training run.
             </p>
           </div>
@@ -93,9 +93,10 @@
       </div>
 
       <div class="right-panel">
-        <!-- MAX SCORE filed -->
+        <!-- MAX SCORE field -->
         <mat-form-field
           appearance="outline"
+          subscriptSizing="dynamic"
                     hintLabel="Number in range from 0
           to 100"
           >
@@ -115,6 +116,7 @@
         <!-- INCORRECT ANSWER LIMIT field -->
         <mat-form-field
           appearance="outline"
+          subscriptSizing="dynamic"
                     hintLabel="1 to 100. If the limit
           will be overreached, solution will be displayed automatically."
           >
@@ -144,6 +146,7 @@
         <mat-form-field
           (keydown.enter)="$event.preventDefault()"
           appearance="outline"
+          subscriptSizing="dynamic"
           hintLabel="Max 50 characters"
           >
           <mat-label>{{ answerLabel }}</mat-label>
@@ -158,39 +161,38 @@
         <!-- SOLUTION PENALIZED field -->
         <mat-checkbox
           formControlName="solutionPenalized"
-                    matTooltip="Penalty
-          for displaying the solution"
-          >Solution Penalized (trainee will get 0 points for the level)
-          </mat-checkbox
+          matTooltip="Penalty for displaying the solution"
           >
+          Solution Penalized (trainee will get 0 points for the level)
+        </mat-checkbox>
 
-          <!-- COMMANDS REQUIRED field -->
-          <mat-checkbox
-            formControlName="commandsRequired"
-            matTooltip="Indicates if level can be completed without using commands or not"
-            >Is any command required to complete the level?
-            </mat-checkbox
-            >
-          </div>
-        </div>
-
-        <!--HINTS component -->
-        <crczp-hints-overview
-          (hintsChange)="hintsChanged($event)"
-          [hints]="level.hints"
-          [levelId]="level.id"
-          [levelMaxScore]="level.maxScore"
+        <!-- COMMANDS REQUIRED field -->
+        <mat-checkbox
+          formControlName="commandsRequired"
+          matTooltip="Indicates if level can be completed without using commands or not"
           >
-        </crczp-hints-overview>
-
-        <crczp-mitre-technique-select
-          (mitreTechniquesChange)="mitreTechniquesChanged($event)"
-          [mitreTechniques]="level.mitreTechniques"
-          />
-
-        <crczp-expected-commands-select
-          (expectedCommandsChange)="expectedCommandsChanged($event)"
-          [expectedCommands]="level.expectedCommands"
-          />
-      </form>
+          Is any command required to complete the level?
+        </mat-checkbox>
+      </div>
     </div>
+
+    <!--HINTS component -->
+    <crczp-hints-overview
+      (hintsChange)="hintsChanged($event)"
+      [hints]="level.hints"
+      [levelId]="level.id"
+      [levelMaxScore]="level.maxScore"
+      >
+    </crczp-hints-overview>
+
+    <crczp-mitre-technique-select
+      (mitreTechniquesChange)="mitreTechniquesChanged($event)"
+      [mitreTechniques]="level.mitreTechniques"
+      />
+
+    <crczp-expected-commands-select
+      (expectedCommandsChange)="expectedCommandsChanged($event)"
+      [expectedCommands]="level.expectedCommands"
+      />
+  </form>
+</div>

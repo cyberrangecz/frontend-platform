@@ -11,6 +11,12 @@ sentinel-markdown-editor sentinel-markdown-view {
     font-size: 1rem;
 }
 
+/* A family list rather than the bare generic keeps code at the size the markdown styles set,
+   instead of the browser's smaller monospace base size. */
+sentinel-markdown-view code {
+    font-family: monospace, monospace;
+}
+
 markdown ::ng-deep img {
     max-width: 100%;
     display: block;

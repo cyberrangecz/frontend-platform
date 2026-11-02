@@ -29,12 +29,9 @@
     border-radius: 0.75rem 0.75rem 0 0;
 }
 
-mat-icon {
-    font-size: 35px !important;
+.portal-item-container .mat-icon {
+    font-size: 35px;
     color: var(--primary-40);
-}
-
-.mat-icon {
     height: 35px;
     width: 35px;
     margin: 0;

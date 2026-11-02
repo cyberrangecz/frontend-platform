@@ -1,0 +1,63 @@
+<div class="panel-toolbar">
+    @if (filterLabel()) {
+        <mat-form-field appearance="outline" class="panel-filter" subscriptSizing="dynamic">
+            <input
+                (input)="onFilterInput(filterInput.value)"
+                [attr.aria-label]="filterLabel()"
+                [placeholder]="filterLabel()"
+                [value]="filterText()"
+                #filterInput
+                matInput />
+            <div class="panel-filter-suffix" matSuffix>
+                @if (filterText()) {
+                    <button (click)="onFilterInput('')" aria-label="Clear filter" mat-icon-button type="button">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                } @else {
+                    <mat-icon>search</mat-icon>
+                }
+            </div>
+        </mat-form-field>
+    }
+    <div class="panel-actions">
+        <ng-content select="[tablePanelActions]" />
+    </div>
+</div>
+<div class="panel-table">
+    <ng-content />
+    @if (showColumnMenu()) {
+        <div class="panel-columns-toggle">
+            <button
+                [disabled]="table().hasError()"
+                [matMenuTriggerFor]="columnMenu"
+                aria-label="Visible columns"
+                mat-icon-button
+                matTooltip="Visible columns"
+                type="button">
+                <mat-icon>settings</mat-icon>
+            </button>
+        </div>
+        <mat-menu #columnMenu="matMenu" xPosition="before">
+            <div class="panel-columns">
+                @for (column of visibility.viewColumns(); track column.id) {
+                    @if (!visibility.isInputHidden(column.id)) {
+                        @let label = column.labelSig();
+                        <button
+                            (click)="visibility.toggleColumnVisibility(column.id); $event.stopPropagation()"
+                            [disabled]="visibility.isLastVisibleColumn(column.id)"
+                            mat-menu-item
+                            type="button">
+                            <mat-checkbox
+                                (change)="visibility.toggleColumnVisibility(column.id)"
+                                (click)="$event.stopPropagation()"
+                                [checked]="!visibility.userHiddenColumnIds().includes(column.id)"
+                                [disabled]="visibility.isLastVisibleColumn(column.id)">
+                                {{ table().titlecasedColumnHeaders() ? (label | titlecase) : label }}
+                            </mat-checkbox>
+                        </button>
+                    }
+                }
+            </div>
+        </mat-menu>
+    }
+</div>

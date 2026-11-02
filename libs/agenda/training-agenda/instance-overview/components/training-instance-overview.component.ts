@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular
 import { SentinelControlItem, SentinelControlsComponent } from '@sentinel/components/controls';
 import { TrainingInstance } from '@crczp/training-model';
 import { SentinelCellDirective, SentinelTableComponent, TableLoadEvent } from '@sentinel/components/table';
-import { SentinelFilterFreeInputComponent } from '@sentinel/components/filters';
 import { RouterLink } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -19,6 +18,7 @@ import {
     TableCountdownComponent,
     TableDateCellComponent,
     TableEmptyStateDirective,
+    TablePanelComponent,
     TableModel
 } from '@crczp/components';
 import {
@@ -44,9 +44,9 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
     imports: [
         SentinelControlsComponent,
         SentinelTableComponent,
+        TablePanelComponent,
         AsyncPipe,
         SentinelCellDirective,
-        SentinelFilterFreeInputComponent,
         RouterLink,
         TableDateCellComponent,
         MatTooltip,

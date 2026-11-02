@@ -282,11 +282,11 @@ export class SentinelTable {
 }
 
 /**
- * The text filter that sits above a table (`sentinel-filter-free-input`); it is not a child of the
- * table. Pass the filter's label when a page has several.
+ * The text filter in the toolbar of the panel that frames a table (`crczp-table-panel`); it is not
+ * a child of the table. Pass the filter's label when a page has several.
  */
 export function tableFilterInput(scope: Scope, label?: TextMatcher): Locator {
-    const filter = scope.locator('sentinel-filter-free-input');
+    const filter = scope.locator('crczp-table-panel .panel-filter');
     return label === undefined
         ? filter.getByRole('textbox')
         : filter.getByRole('textbox', { name: label });

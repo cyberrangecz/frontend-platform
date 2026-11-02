@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { TableEmptyStateDirective } from '@crczp/components';
+import { TableEmptyStateDirective, TablePanelComponent } from '@crczp/components';
 import {
     AfterViewInit,
     ChangeDetectionStrategy,
@@ -78,6 +78,7 @@ import { StageOverviewComponent } from './stage-overview/stage-overview.componen
         SentinelControlsComponent,
         MatCard,
         SentinelTableComponent,
+        TablePanelComponent,
         StageOverviewComponent,
         EditableCommentComponent,
         AsyncPipe,

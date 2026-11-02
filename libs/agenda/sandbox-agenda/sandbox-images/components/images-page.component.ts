@@ -20,12 +20,11 @@ import {
     SentinelTableComponent,
     TableLoadEvent,
 } from '@sentinel/components/table';
-import { SentinelFilterFreeInputComponent } from '@sentinel/components/filters';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { VirtualImagesTable } from '../models/virtual-images-table';
 import { VMImagesService } from '../services/v-m-images.service';
-import { TableEmptyStateDirective } from '@crczp/components';
+import { TableEmptyStateDirective, TablePanelComponent } from '@crczp/components';
 
 @Component({
     selector: 'crczp-images-page',
@@ -35,7 +34,7 @@ import { TableEmptyStateDirective } from '@crczp/components';
     imports: [
         MatCheckbox,
         SentinelTableComponent,
-        SentinelFilterFreeInputComponent,
+        TablePanelComponent,
         AsyncPipe,
         TableEmptyStateDirective,
     ],

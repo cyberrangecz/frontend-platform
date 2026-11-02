@@ -5,7 +5,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TrainingRunTable } from '../../model/training-run-table';
 import { TrainingRunSort } from '@crczp/training-api';
-import { TableEmptyStateDirective } from '@crczp/components';
+import { TableEmptyStateDirective, TablePanelComponent } from '@crczp/components';
 import { SortDir } from '@crczp/utils';
 
 /**
@@ -18,6 +18,7 @@ import { SortDir } from '@crczp/utils';
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         SentinelTableComponent,
+        TablePanelComponent,
         MatRipple,
         MatIcon,
         SentinelCellDirective,

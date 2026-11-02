@@ -1,15 +1,17 @@
 <div class="detail-container">
     @if (!isLoading()) {
-        <sentinel-table
-            (tableLoad)="onLoadEvent()"
-            [columns]="info()?.columns ?? []"
-            [hasError]="hasError()"
-            [pagination]="info()?.pagination"
-            [rows]="info()?.rows ?? []"
-            [selectable]="!!info()?.selectable"
-            crczpTableEmptyState="No information available for this training run"
-        >
-        </sentinel-table>
+        <crczp-table-panel>
+            <sentinel-table
+                (tableLoad)="onLoadEvent()"
+                [columns]="info()?.columns ?? []"
+                [hasError]="hasError()"
+                [pagination]="info()?.pagination"
+                [rows]="info()?.rows ?? []"
+                [selectable]="!!info()?.selectable"
+                crczpTableEmptyState="No information available for this training run"
+            >
+            </sentinel-table>
+        </crczp-table-panel>
     } @else {
         <ngx-skeleton-loader animation="pulse" [theme]="skeletonTheme" />
     }

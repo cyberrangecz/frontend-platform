@@ -3,7 +3,6 @@ import { MicroserviceTable } from '../model/table/microservice-table';
 import { MicroserviceOverviewService } from '../services/microservice-overview.service';
 import { Microservice } from '@crczp/user-and-group-model';
 import { OffsetPaginationEvent, SortDir } from '@crczp/utils';
-import { SentinelFilterFreeInputComponent } from '@sentinel/components/filters';
 import {
     ChangeDetectionStrategy,
     Component,
@@ -28,7 +27,7 @@ import {
     providePaginationStorageService,
 } from '@crczp/utils';
 import { MicroserviceSort } from '@crczp/user-and-group-api';
-import { TableEmptyStateDirective, TableModel } from '@crczp/components';
+import { TableEmptyStateDirective, TablePanelComponent, TableModel } from '@crczp/components';
 
 @Component({
     selector: 'crczp-microservice-overview',
@@ -36,7 +35,7 @@ import { TableEmptyStateDirective, TableModel } from '@crczp/components';
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         SentinelTableComponent,
-        SentinelFilterFreeInputComponent,
+        TablePanelComponent,
         SentinelControlsComponent,
         AsyncPipe,
         TableEmptyStateDirective,
