@@ -1,5 +1,5 @@
 h3 {
-    color: #3f51b5;
+    color: var(--primary);
 }
 
 
@@ -24,6 +24,6 @@ mat-card {
 }
 
 sentinel-markdown-view {
-    color: #3f51b5;
+    color: var(--primary);
 }
 
