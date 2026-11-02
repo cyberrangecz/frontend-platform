@@ -1,6 +1,8 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { ErrorHandler, inject, Injectable, isDevMode } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import {
+    NotificationErrorDialogComponent,
     SentinelNotification,
     SentinelNotificationResult,
     SentinelNotificationService,
@@ -18,6 +20,7 @@ import { Event, NavigationError, Router } from '@angular/router';
 export class ErrorHandlerService implements ErrorHandler {
     private config = inject(PortalConfig);
     private notificationService = inject(SentinelNotificationService);
+    private dialog = inject(MatDialog);
     private router = inject(Router);
 
     private navigationErrorSubject = new Subject<NavigationError>();
@@ -46,7 +49,7 @@ export class ErrorHandlerService implements ErrorHandler {
             ],
         };
 
-        return this.safeEmit(this.notificationService, 'emit', notification);
+        return this.displayWithoutStoring(notification);
     }
 
     emitAPIError(
@@ -129,6 +132,29 @@ export class ErrorHandlerService implements ErrorHandler {
         } catch {
             return of(false);
         }
+    }
+
+    /**
+     * Shows an error notification in the Sentinel error dialog without adding it to the
+     * notification history. Skipped while another dialog is open.
+     *
+     * @returns Whether the user confirmed the notification's action.
+     */
+    private displayWithoutStoring(
+        notification: SentinelNotification,
+    ): Observable<boolean> {
+        if (this.dialog.openDialogs.length > 0) {
+            return of(false);
+        }
+        return this.dialog
+            .open(NotificationErrorDialogComponent, {
+                data: notification,
+                disableClose: true,
+            })
+            .afterClosed()
+            .pipe(
+                map((result) => result === SentinelNotificationResult.CONFIRMED),
+            );
     }
 
     private setupNavigationErrorHandling(): void {

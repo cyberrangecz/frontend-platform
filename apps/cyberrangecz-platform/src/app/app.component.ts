@@ -15,6 +15,7 @@ import { Utils } from '@crczp/utils';
 import { CommonModule } from '@angular/common';
 import { SentinelLayout1Component } from '@sentinel/layout/layout1';
 import { ToolbarComponent } from '@sentinel/layout/common-components';
+import { SignInStatusComponent } from './components/sign-in-status/sign-in-status.component';
 
 /**
  * Main component serving as wrapper for layout and router outlet
@@ -30,6 +31,7 @@ import { ToolbarComponent } from '@sentinel/layout/common-components';
         RouterOutlet,
         SentinelLayout1Component,
         ToolbarComponent,
+        SignInStatusComponent,
     ],
 })
 export class AppComponent implements OnInit, AfterViewInit {

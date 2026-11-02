@@ -1,8 +1,5 @@
 import { HomeComponent } from './components/home/home.component';
 import { LoginComponent } from './components/login/login.component';
-import {
-    sentinelAuthGuardWithLogin,
-} from '@sentinel/auth';
 import { ValidRouterConfig } from '@crczp/routing-commons';
 import {
     authGuardKeepingRequestedRoute,
@@ -187,7 +184,7 @@ export const APP_ROUTES: ValidRouterConfig<''> = [
     {
         path: 'home',
         component: HomeComponent,
-        canActivate: [sentinelAuthGuardWithLogin, soleAgendaGuard],
+        canActivate: [authGuardKeepingRequestedRoute, soleAgendaGuard],
     },
     {
         path: 'logout',

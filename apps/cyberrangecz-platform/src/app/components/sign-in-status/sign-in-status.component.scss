@@ -1,0 +1,16 @@
+$skeleton-sidebar-width: 140px;
+
+.signin-overlay {
+    animation: none;
+}
+
+.signin-version {
+    position: absolute;
+    bottom: 10px;
+    left: 0;
+    width: $skeleton-sidebar-width - 1px;
+    font-size: 16px;
+    line-height: 20px;
+    text-align: center;
+    color: var(--neutral-100);
+}

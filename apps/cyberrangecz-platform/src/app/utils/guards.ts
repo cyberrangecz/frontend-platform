@@ -33,21 +33,31 @@ function canActivateToObservable(
 }
 
 /**
- * Lets a logged-in user through and sends any other user to sign in.
- * While the stored tokens are invalid, the requested address is saved so the
- * user returns to it after signing in instead of landing on the home page.
+ * Saves the requested address while the stored tokens are invalid, then runs the Sentinel sign-in
+ * check. Emits nothing when signing in leaves the application for the identity provider.
  */
-export const authGuardKeepingRequestedRoute: CanActivateFn = (
-    _route: ActivatedRouteSnapshot,
+function signInKeepingRequestedRoute(
     state: RouterStateSnapshot,
-) => {
+): Observable<boolean> {
     if (!inject(SentinelAuthService).hasValidTokens()) {
         inject(SentinelLoginNavigationService).setNavigateAfterLoginRoute(
             state.url,
         );
     }
-    return sentinelAuthGuardWithLogin();
-};
+    return canActivateToObservable(sentinelAuthGuardWithLogin());
+}
+
+/**
+ * Lets a logged-in user through and sends any other user to sign in.
+ * While the stored tokens are invalid, the requested address is saved so the
+ * user returns to it after signing in instead of landing on the home page.
+ * A check that ends without an answer, as when signing in redirects to the
+ * identity provider, cancels the navigation.
+ */
+export const authGuardKeepingRequestedRoute: CanActivateFn = (
+    _route: ActivatedRouteSnapshot,
+    state: RouterStateSnapshot,
+) => signInKeepingRequestedRoute(state).pipe(defaultIfEmpty(false));
 
 /**
  * Keeps a signed-in user off the login page. Sends the user to the same-app path carried by the
@@ -81,14 +91,9 @@ function guardBuilder(
     defaultPath: ValidPath = 'home',
     loginPath: ValidPath = 'login',
 ): CanActivateFn {
-    return (route: ActivatedRouteSnapshot, state: RouterStateSnapshot) => {
+    return (_route: ActivatedRouteSnapshot, state: RouterStateSnapshot) => {
         const router = inject(Router);
-        return canActivateToObservable(
-            authGuardKeepingRequestedRoute(route, state) as
-                | boolean
-                | Promise<boolean>
-                | Observable<boolean>,
-        ).pipe(
+        return signInKeepingRequestedRoute(state).pipe(
             tap((isLoggedIn) => {
                 if (!isLoggedIn) {
                     console.warn('You must be logged in to access this route');
