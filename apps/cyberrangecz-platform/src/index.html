@@ -10,49 +10,56 @@
 
         .loading-container {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            inset: 0;
             background: #ffffff;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
             font-family: 'Inter', sans-serif;
             z-index: 9999;
         }
 
+        .loading-content {
+            position: absolute;
+            inset: 90px 0 0 0;
+            display: grid;
+            place-items: center;
+        }
+
+        @media (width < 720px) {
+            .loading-content {
+                left: 140px;
+            }
+        }
+
+        .loading-mark {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+        }
+
         .loading-logo {
-            font-size: 3rem;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 2rem;
-            font-family: "Inter", sans-serif;
+            width: 200px;
             height: 200px;
-            z-index: 999;
         }
 
         .loader {
             width: fit-content;
+            white-space: nowrap;
             font-weight: bold;
             font-family: monospace;
             font-size: 30px;
             background: linear-gradient(135deg, #0000 calc(50% - 0.5em), #000 0 calc(50% + 0.5em), #0000 0) right/300% 100%;
             animation: l22 2s infinite;
             border-radius: 1rem;
-            z-index: 999;
         }
 
         .loader::before {
-            content: "Loading...";
+            content: attr(data-label);
             color: #0000;
             padding: 0 5px;
             background: inherit;
             background-image: linear-gradient(135deg, #000 calc(50% - 0.5em), #fff 0 calc(50% + 0.5em), #000 0);
             -webkit-background-clip: text;
             background-clip: text;
-            z-index: 999;
         }
 
         @keyframes l22 {
@@ -67,16 +74,6 @@
             width: 140px;
             height: 100%;
             background: linear-gradient(147deg, #03031f 0%, #141f64 250%);
-            animation: sidebarPulse 2.5s infinite;
-        }
-
-        @keyframes sidebarPulse {
-            0% {
-                background: linear-gradient(147deg, #03031f 0%, #141f64 100%);
-            }
-            100% {
-                background: linear-gradient(512deg, #03031f 0%, #141f64 100%);
-            }
         }
 
         .toolbar-top {
@@ -85,19 +82,8 @@
             right: 0;
             width: calc(100% - 140px);
             height: 50px;
-            background: linear-gradient(90deg, #4045ea 0%, #6a7cff 100%);
+            background: #4045ea;
             box-shadow: 0 3px 5px -1px #0003, 0 6px 10px #00000024, 0 1px 18px #0000001f;
-            overflow: visible;
-            animation: toolbarTopAnim 2.5s infinite alternate;
-        }
-
-        @keyframes toolbarTopAnim {
-            0% {
-                background: linear-gradient(90deg, #4045ea 0%, #6a7cff 100%);
-            }
-            100% {
-                background: linear-gradient(270deg, #6a7cff 0%, #4045ea 100%);
-            }
         }
 
         .toolbar-bottom {
@@ -106,27 +92,13 @@
             right: 0;
             width: calc(100% - 140px);
             height: 40px;
-            background: linear-gradient(90deg, #4045ea 0%, #6a7cff 100%);
-            overflow: visible;
-            animation: toolbarBottomAnim 2.5s infinite;
-        }
-
-        @keyframes toolbarBottomAnim {
-            0% {
-                background: linear-gradient(90deg, #4045ea 0%, #7a86ea 100%);
-            }
-            100% {
-                background: linear-gradient(270deg, #7a86ea 0%, #4045ea 100%);
-            }
+            background: #4045ea;
         }
 
         .layout-overlay {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            overflow: visible;
+            inset: 0;
+            color: #ffffff;
             animation: fadeIn 0.5s ease-in-out forwards;
         }
 
@@ -138,21 +110,43 @@
                 opacity: 1;
             }
         }
+
+        .loading-sidebar-logo {
+            position: absolute;
+            top: 24px;
+            left: 30.5px;
+            width: 75px;
+            height: 75px;
+            filter: brightness(100);
+        }
+
+        .loading-notifications {
+            position: absolute;
+            top: 13px;
+            right: 24px;
+            width: 24px;
+            height: 24px;
+            fill: currentColor;
+        }
     </style>
 </head>
 <body>
 <crczp-app-root class="mat-typography">
-    <div class="loading-container">
-        <div class="loading-alignment">
-            <img alt="CyberRangeᶜᶻ Platform" class="loading-logo" src="./assets/logo/logo-black.svg" />
-            <div class="loader-container">
-                <div class="loader"></div>
+    <div aria-label="Loading" class="loading-container" role="status">
+        <div class="loading-content">
+            <div class="loading-mark">
+                <img alt="CyberRangeᶜᶻ Platform" class="loading-logo" src="./assets/logo/logo-black.svg" />
+                <div class="loader" data-label="Loading..."></div>
             </div>
         </div>
         <div class="layout-overlay">
             <div class="sidebar"></div>
             <div class="toolbar-bottom"></div>
             <div class="toolbar-top"></div>
+            <img alt="" class="loading-sidebar-logo" src="./assets/logo/logo-black.svg" />
+            <svg aria-hidden="true" class="loading-notifications" viewBox="0 0 24 24">
+                <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z" />
+            </svg>
         </div>
     </div>
 </crczp-app-root>

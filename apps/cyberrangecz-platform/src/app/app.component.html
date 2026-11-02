@@ -1,4 +1,6 @@
-@if (!hideSidebar()) {
+@if (authService.isLoggingIn()) {
+    <crczp-sign-in-status [version]="version" />
+} @else if (!hideSidebar()) {
     <sentinel-layout1 (login)="onLogin()"
                       (logout)="onLogout()"
                       [agendaContainers]="agendaContainers$ | async"
