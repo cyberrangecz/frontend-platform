@@ -57,7 +57,7 @@ async function allocateThroughDialog(page: Page, detail: PoolDetailPage, poolId:
     const dialog = await AllocateDialog.openFrom(page, detail.allocateButton);
     await expect(dialog.sizeInput).toHaveValue(String(POOL_SIZE));
     const allocation = await dialog.allocate(poolId);
-    expect(allocation.status(), 'status of the allocation request').toBe(200);
+    expect(allocation.status(), 'status of the allocation request').toBe(201);
     await expect(dialog.root).toBeHidden();
 }
 

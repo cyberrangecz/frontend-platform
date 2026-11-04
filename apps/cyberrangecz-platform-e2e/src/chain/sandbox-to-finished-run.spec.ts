@@ -77,14 +77,15 @@ test.describe.serial('sandbox chain to a finished training run', () => {
             await dialog.allocateButton.click();
         }
         const response = await allocationResponse;
-        expect(response.status()).toBe(200);
+        expect(response.status()).toBe(201);
         if (sendsCount) {
             expect(new URL(response.request().url()).searchParams.get('count')).toBe('1');
         }
-        const units = (await response.json()).results as AllocationUnitRecord[];
-        expect(units, 'exactly one allocation unit created').toHaveLength(1);
+        const units = (await response.json()) as AllocationUnitRecord[];
+        expect(units[0], 'an allocation unit created').toBeDefined();
         allocationUnitId = units[0]!.id;
         writeChainRecord(browserKey, { poolId: shared.pool.id, allocationUnitId });
+        expect(units, 'exactly one allocation unit created').toHaveLength(1);
 
         await waitForNotification(page, /Allocation of (specified sandboxes of )?pool \d+/);
         await expect(poolPage.rowOf(allocationUnitId)).toBeVisible({ timeout: 60_000 });
