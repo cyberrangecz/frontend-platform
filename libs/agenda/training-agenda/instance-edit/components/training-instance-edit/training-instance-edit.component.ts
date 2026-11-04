@@ -266,7 +266,6 @@ export class TrainingInstanceEditComponent implements OnChanges, AfterViewInit {
             this.trainingInstanceFormGroup = new TrainingInstanceFormGroup(
                 this.trainingInstance,
                 this.editMode,
-                !this.traineeSandboxAllocationAllowed,
             );
             this.setupOnFormChangedEvent();
         }

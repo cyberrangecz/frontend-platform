@@ -57,11 +57,11 @@ test.describe('Trainee sandbox allocation — organizer side', () => {
         expect(configuration.enableTraineeSandboxAllocation).toBe(true);
     });
 
-    test('create form shows the Managed toggle, off by default', async ({ page }) => {
+    test('create form shows the Managed toggle, on by default', async ({ page }) => {
         await page.goto('/linear-instance/create');
         const managed = page.getByRole('switch', { name: 'Managed' });
         await expect(managed).toBeVisible();
-        await expect(managed).not.toBeChecked();
+        await expect(managed).toBeChecked();
     });
 
     test('create form hides the Managed toggle for a local instance', async ({ page }) => {
@@ -77,16 +77,16 @@ test.describe('Trainee sandbox allocation — organizer side', () => {
 
     test('edit page of a started instance keeps the Managed toggle disabled', async ({ page }) => {
         const row = await openInstanceRow(page, STARTED_TITLE);
-        await row.getByRole('button', { name: 'create' }).click();
+        await row.getByRole('button').filter({ hasText: /^\s*create\s*$/ }).click();
 
         await expect(page.getByRole('switch', { name: 'Managed' })).toBeDisabled();
     });
 
-    test('edit page of an instance that has not started keeps the Managed toggle disabled', async ({ page }) => {
+    test('edit page of an instance that has not started lets the Managed toggle change', async ({ page }) => {
         const row = await openInstanceRow(page, FUTURE_TITLE);
-        await row.getByRole('button', { name: 'create' }).click();
+        await row.getByRole('button').filter({ hasText: /^\s*create\s*$/ }).click();
 
-        await expect(page.getByRole('switch', { name: 'Managed' })).toBeDisabled();
+        await expect(page.getByRole('switch', { name: 'Managed' })).toBeEnabled();
     });
 
     test('access token of a not managed instance is copyable without a free sandbox', async ({ page, context }) => {
@@ -109,16 +109,16 @@ test.describe('Trainee sandbox allocation — organizer side', () => {
 
         await expect(row.locator('.access-token-container button')).toBeDisabled();
         await row.locator('.access-token-container').hover();
-        await expect(page.getByRole('tooltip')).toHaveText(NO_FREE_SANDBOX_TOOLTIP);
+        await expect(page.locator('.mat-mdc-tooltip')).toHaveText(NO_FREE_SANDBOX_TOOLTIP);
     });
 
-    test('the managed toggle of the create form can be switched on', async ({ page }) => {
+    test('the managed toggle of the create form can be switched off', async ({ page }) => {
         await page.goto('/linear-instance/create');
         const managed = page.getByRole('switch', { name: 'Managed' });
 
         await managed.click();
 
-        await expect(managed).toBeChecked();
+        await expect(managed).not.toBeChecked();
     });
 
     test('the training API reports the managed flag of the not managed and the managed instance', async ({ page }) => {
@@ -139,6 +139,6 @@ test.describe('Trainee sandbox allocation — organizer side', () => {
 
         await row.locator('.access-token-container').hover();
 
-        await expect(page.getByRole('tooltip').filter({ hasText: NO_FREE_SANDBOX_TOOLTIP })).toHaveCount(0);
+        await expect(page.locator('.mat-mdc-tooltip').filter({ hasText: NO_FREE_SANDBOX_TOOLTIP })).toHaveCount(0);
     });
 });
