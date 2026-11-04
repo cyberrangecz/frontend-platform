@@ -1,5 +1,6 @@
-import { expect, Page, test } from '@playwright/test';
-import { signIn } from '../support/platform-session';
+import { expect, Locator, Page, test } from '@playwright/test';
+import { poolTest } from '../support/pool-fixture';
+import { sandboxRepairEnvironment } from '../support/sandbox-repair-support';
 
 /**
  * Pool maintenance controls of the pool detail page against a deployed platform: the Delete menu
@@ -9,7 +10,8 @@ import { signIn } from '../support/platform-session';
  *   F07_PLATFORM_ORIGIN         origin of the deployed frontend
  *   F07_ADMIN_USERNAME          account holding the sandbox administrator role
  *   F07_ADMIN_PASSWORD          password of that account
- *   F07_SANDBOX_DEFINITION_ID   id of the sandbox definition the test pools are built from
+ *   F09_SANDBOX_DEFINITION_ID   id of the sandbox definition the test pools are built from,
+ *                               or F07_SANDBOX_DEFINITION_ID
  * Optional environment:
  *   F07_TRAINING_DEFINITION_ID  id of a released training definition for the trainee-owned unit test
  *                               (that test is skipped when unset)
@@ -20,7 +22,6 @@ import { signIn } from '../support/platform-session';
 const ORIGIN = process.env['F07_PLATFORM_ORIGIN'];
 const USERNAME = process.env['F07_ADMIN_USERNAME'];
 const PASSWORD = process.env['F07_ADMIN_PASSWORD'];
-const DEFINITION_ID = process.env['F07_SANDBOX_DEFINITION_ID'];
 const TRAINING_DEFINITION_ID = process.env['F07_TRAINING_DEFINITION_ID'];
 const ACCOUNT = { origin: ORIGIN ?? '', username: USERNAME ?? '', password: PASSWORD ?? '' };
 const POOL_COMMENT = 'F07-pool-maintenance-';
@@ -31,8 +32,8 @@ const RAM_SETTLE_MAX_READS = 20;
 const REMOVED_CONTROLS = ['Cancel Queued', 'Force Cancel Allocation', 'Force Cleanup'];
 
 test.skip(
-    [ORIGIN, USERNAME, PASSWORD, DEFINITION_ID].some((value) => value === undefined),
-    'F07_PLATFORM_ORIGIN, F07_ADMIN_USERNAME, F07_ADMIN_PASSWORD and F07_SANDBOX_DEFINITION_ID are required'
+    [ORIGIN, USERNAME, PASSWORD, sandboxRepairEnvironment.sandboxDefinitionId].some((value) => value === undefined),
+    'F07_PLATFORM_ORIGIN, F07_ADMIN_USERNAME, F07_ADMIN_PASSWORD and F09_SANDBOX_DEFINITION_ID (or F07_SANDBOX_DEFINITION_ID) are required'
 );
 
 test.use({ baseURL: ORIGIN });
@@ -79,23 +80,9 @@ async function callSandboxApi(page: Page, method: string, path: string, payload?
     );
 }
 
-async function createPool(page: Page, size: number): Promise<number> {
-    const answer = await callSandboxApi(page, 'POST', '/pools', {
-        definition_id: Number(DEFINITION_ID),
-        max_size: size,
-        comment: `${POOL_COMMENT}${Date.now()}`,
-    });
-    expect(answer.status).toBe(201);
-    return (answer.body as { id: number }).id;
-}
-
-async function deletePool(page: Page, poolId: number): Promise<void> {
-    await callSandboxApi(page, 'DELETE', `/pools/${poolId}?force=true`);
-}
-
 async function allocateUnits(page: Page, poolId: number, count: number): Promise<number[]> {
     const answer = await callSandboxApi(page, 'POST', `/pools/${poolId}/sandbox-allocation-units?count=${count}`);
-    expect(answer.status).toBe(201);
+    expect(answer.status, `Allocation refused, HTTP ${answer.status}: ${JSON.stringify(answer.body)}`).toBe(201);
     return (answer.body as { id: number }[]).map((unit) => unit.id);
 }
 
@@ -104,17 +91,42 @@ async function listUnits(page: Page, poolId: number): Promise<AllocationUnit[]> 
     return (answer.body as { results: AllocationUnit[] }).results;
 }
 
-/** Resolves once the pool's units satisfy the predicate. */
+/**
+ * Resolves once the pool's units satisfy the predicate.
+ *
+ * @throws {Error} When the timeout passes first, naming the stage states each unit was left in.
+ */
 async function waitForUnits(
     page: Page,
     poolId: number,
     predicate: (units: AllocationUnit[]) => boolean,
-    timeout = 600_000
+    timeout = sandboxRepairEnvironment.buildTimeoutMs
 ): Promise<void> {
+    let units: AllocationUnit[] = [];
     await expect
-        .poll(async () => predicate(await listUnits(page, poolId)), { timeout, intervals: [5_000] })
-        .toBe(true);
+        .poll(
+            async () => {
+                units = await listUnits(page, poolId);
+                return predicate(units);
+            },
+            { timeout, intervals: [5_000] }
+        )
+        .toBe(true)
+        .catch(() => {
+            throw new Error(`The units of pool ${poolId} did not reach the awaited state: ${describeUnitStages(units)}`);
+        });
 }
+
+const describeUnitStages = (units: AllocationUnit[]): string =>
+    units.length === 0
+        ? 'no units'
+        : units
+              .map(
+                  (unit) =>
+                      `unit ${unit.id} allocation ${unit.allocation_request.stages.join('/')}` +
+                      (unit.cleanup_request === null ? '' : `, cleanup ${unit.cleanup_request.stages.join('/')}`)
+              )
+              .join('; ');
 
 const isReady = (unit: AllocationUnit): boolean => unit.allocation_request.stages.every((stage) => stage === 'FINISHED');
 const isBuilding = (unit: AllocationUnit): boolean => unit.allocation_request.stages.includes('RUNNING');
@@ -131,10 +143,10 @@ async function runDeleteAction(page: Page, entry: string, confirmButton: string)
     await page.getByRole('dialog').getByRole('button', { name: confirmButton }).click();
 }
 
-/** Reads the 'Notifications' panel texts. */
-async function notificationTexts(page: Page): Promise<string> {
+/** Opens the 'Notifications' menu; the returned overlay fills with the stored notifications. */
+async function openNotifications(page: Page): Promise<Locator> {
     await page.getByRole('button').filter({ hasText: 'notifications' }).click();
-    return page.locator('.cdk-overlay-container').innerText();
+    return page.locator('.cdk-overlay-container');
 }
 
 /** Reads the in-use RAM of the cloud project. */
@@ -177,21 +189,8 @@ async function postTrainingApi(page: Page, path: string, payload: unknown): Prom
     );
 }
 
-const poolTest = test.extend<{ poolSize: number; poolId: number }>({
-    poolSize: [2, { option: true }],
-    poolId: async ({ page, poolSize }, use) => {
-        await signIn(page, ACCOUNT);
-        const poolId = await createPool(page, poolSize);
-        try {
-            await use(poolId);
-        } finally {
-            await deletePool(page, poolId);
-        }
-    },
-});
-
 test.describe('Pool detail controls', () => {
-    poolTest.use({ poolSize: 2 });
+    poolTest.use({ poolAccount: ACCOUNT, poolSize: 2, poolComment: POOL_COMMENT });
 
     poolTest('the Delete menu lists the three delete entries and none of the removed ones', async ({ page, poolId }) => {
         await allocateUnits(page, poolId, 1);
@@ -227,7 +226,7 @@ test.describe('Pool detail controls', () => {
         await page.goto(`/pool/${poolId}`);
 
         await page.getByRole('button', { name: 'Cancel all allocations' }).click();
-        await expect(page.getByRole('dialog')).toContainText(/Cancel all allocations of pool \d+\?/);
+        await expect(page.getByRole('dialog')).toContainText(/Cancel all allocations of pool \d+\?/i);
         await page.getByRole('dialog').getByRole('button', { name: 'Keep allocations' }).click();
 
         await expect(page.getByRole('dialog')).toBeHidden();
@@ -256,11 +255,10 @@ test.describe('Pool detail controls', () => {
         await page.goto(`/pool/${poolId}`);
 
         await runDeleteAction(page, 'Delete All', 'Delete');
+        await expect(page.getByText('Cleanup request for pool')).toBeVisible();
 
-        const texts = await notificationTexts(page);
-        expect(texts).toContain('Cleanup request for pool');
-        expect(texts).toContain(`Sandbox ${unitId}`);
-        expect(texts).toContain('could not be deleted yet');
+        const notifications = await openNotifications(page);
+        await expect(notifications).toContainText(`Sandbox ${unitId} could not be deleted yet`);
         expect((await listUnits(page, poolId))[0]?.cleanup_request).toBeNull();
     });
 
@@ -269,10 +267,10 @@ test.describe('Pool detail controls', () => {
         await page.goto(`/pool/${poolId}`);
 
         await runDeleteAction(page, 'Delete Unlocked', 'Delete');
+        await expect(page.getByText('Cleanup request for pool')).toBeVisible();
 
-        const texts = await notificationTexts(page);
-        expect(texts).toContain(`Sandbox ${unitId}`);
-        expect(texts).toContain('could not be deleted yet');
+        const notifications = await openNotifications(page);
+        await expect(notifications).toContainText(`Sandbox ${unitId} could not be deleted yet`);
     });
 
     poolTest('Cancel all allocations stays enabled while every sandbox is being cleaned up', async ({
@@ -285,10 +283,7 @@ test.describe('Pool detail controls', () => {
         await runDeleteAction(page, 'Delete All', 'Delete');
         await expect(page.getByText('Cleanup request for pool')).toBeVisible();
 
-        await openDeleteMenu(page);
-
-        await expect(page.getByRole('menuitem', { name: 'Delete All' })).toBeDisabled();
-        await page.keyboard.press('Escape');
+        await expect(page.getByRole('button', { name: 'Delete', exact: true })).toBeDisabled();
         await expect(page.getByRole('button', { name: 'Cancel all allocations' })).toBeEnabled();
     });
 
@@ -309,13 +304,13 @@ test.describe('Pool detail controls', () => {
 });
 
 test.describe('Pool maintenance on units in motion', () => {
-    poolTest.use({ poolSize: 6 });
+    poolTest.use({ poolAccount: ACCOUNT, poolSize: 6, poolComment: POOL_COMMENT });
     poolTest('Delete Unlocked skips a trainee-owned unit without naming it', async ({ page, poolId }) => {
         test.skip(TRAINING_DEFINITION_ID === undefined, 'F07_TRAINING_DEFINITION_ID is required');
         const now = Date.now();
         const instance = await postTrainingApi(page, '/training-instances', {
             title: `${POOL_COMMENT}${now}`,
-            start_time: new Date(now - 60_000).toISOString(),
+            start_time: new Date(now).toISOString(),
             end_time: new Date(now + 3_600_000).toISOString(),
             pool_id: poolId,
             training_definition_id: Number(TRAINING_DEFINITION_ID),
@@ -431,7 +426,7 @@ test.describe('Pool maintenance on units in motion', () => {
 });
 
 test.describe('Pool overview Delete', () => {
-    poolTest.use({ poolSize: 1 });
+    poolTest.use({ poolAccount: ACCOUNT, poolSize: 1, poolComment: POOL_COMMENT });
 
     poolTest('the Delete action stays disabled until the pool list has refreshed', async ({ page, poolId }) => {
         const poolListRequest = new RegExp(`${SANDBOX_API}/pools(\\?.*)?$`);

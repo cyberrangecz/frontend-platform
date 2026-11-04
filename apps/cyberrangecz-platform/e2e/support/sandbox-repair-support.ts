@@ -93,13 +93,61 @@ export async function createPool(page: Page, size: number, comment: string): Pro
     return (answer.body as { id: number }).id;
 }
 
+/**
+ * Removes the pool and every sandbox in it. Unfinished allocations are cancelled first, since the
+ * sandbox service refuses to clean up a sandbox whose first stage is running; the pool is deleted
+ * once every cleanup ended.
+ *
+ * @throws {Error} When a cleanup failed or the units outlive the build timeout, naming each unit
+ * left with its cleanup error, such as the cloud resources the cleanup could not delete.
+ */
 export async function deletePool(page: Page, poolId: number): Promise<void> {
+    await callSandboxApi(page, 'POST', `/pools/${poolId}/cancel-allocations`);
     await callSandboxApi(page, 'DELETE', `/pools/${poolId}?force=true`);
+    let units: AllocationUnit[] = [];
+    await expect
+        .poll(
+            async () => {
+                const answer = await callSandboxApi(page, 'GET', `/pools/${poolId}/sandbox-allocation-units?page_size=50`);
+                units = answer.status === 404 ? [] : (answer.body as { results: AllocationUnit[] }).results;
+                return units.length === 0 || units.some(hasFailedCleanup);
+            },
+            { timeout: sandboxRepairEnvironment.buildTimeoutMs, intervals: [5_000] }
+        )
+        .toBe(true)
+        .catch(() => undefined);
+    if (units.length > 0) {
+        throw new Error(`Pool ${poolId} kept units after its cleanup: ${await describeCleanups(page, units)}`);
+    }
+    await callSandboxApi(page, 'DELETE', `/pools/${poolId}`);
+}
+
+const hasFailedCleanup = (unit: AllocationUnit): boolean =>
+    unit.cleanup_request?.stages.some(stage => stage === 'FAILED') ?? false;
+
+/** Describes each unit by the error its cleanup stage recorded, or by its cleanup stage states. */
+async function describeCleanups(page: Page, units: AllocationUnit[]): Promise<string> {
+    const descriptions = await Promise.all(
+        units.map(async unit => {
+            if (unit.cleanup_request === null) {
+                return `unit ${unit.id}: no cleanup started`;
+            }
+            const stage = await callSandboxApi(page, 'GET', `/cleanup-requests/${unit.cleanup_request.id}/stages/terraform`);
+            const errorMessage = (stage.body as { error_message?: string | null }).error_message;
+            return `unit ${unit.id}: ${errorMessage ?? `cleanup stages ${unit.cleanup_request.stages.join(', ')}`}`;
+        })
+    );
+    return descriptions.join('; ');
+}
+
+/** Describes a refused API call by its status and response body. */
+function describeAnswer(answer: ApiAnswer): string {
+    return `HTTP ${answer.status}: ${typeof answer.body === 'string' ? answer.body : JSON.stringify(answer.body)}`;
 }
 
 export async function allocateUnits(page: Page, poolId: number, count: number): Promise<void> {
     const answer = await callSandboxApi(page, 'POST', `/pools/${poolId}/sandbox-allocation-units?count=${count}`);
-    expect(answer.status).toBe(201);
+    expect(answer.status, `Allocation refused, ${describeAnswer(answer)}`).toBe(201);
 }
 
 export async function listUnits(page: Page, poolId: number): Promise<AllocationUnit[]> {

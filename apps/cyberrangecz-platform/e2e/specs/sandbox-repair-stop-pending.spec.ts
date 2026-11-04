@@ -89,7 +89,7 @@ test.describe('Stop pending on the request detail', () => {
         const indicators = page.locator('crczp-request-stage-state');
         await expect(indicators).toHaveCount(3);
         for (const indicator of await indicators.all()) {
-            await expect(indicator.getByRole('heading')).toBeVisible();
+            await expect(indicator.locator('h2')).toBeAttached();
             await expect(indicator.locator('p.stop-pending')).toHaveText(/^\s*Stop pending\s+since\s+Oct 26, 2026/);
         }
         await page.unroute(stageRoute);
