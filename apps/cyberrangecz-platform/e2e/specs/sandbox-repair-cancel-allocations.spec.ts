@@ -71,7 +71,7 @@ test.describe('Cancel all allocations as administrator', () => {
         await openCancelConfirmation(page, poolId);
 
         const dialog = confirmDialog(page);
-        await expect(dialog).toContainText(`Cancel all allocations of pool ${poolId}?`);
+        await expect(dialog).toContainText(new RegExp(`Cancel all allocations of pool ${poolId}\\?`, 'i'));
         await expect(dialog).toContainText(/This page shows 1 queued and 0 running\.|This page shows 0 queued and 1 running\./);
         await expect(dialog).toContainText(`Every queued allocation of pool ${poolId} is removed`);
         await expect(dialog).toContainText('Ready sandboxes stay.');

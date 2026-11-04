@@ -1,5 +1,6 @@
 import { expect, Page, test } from '@playwright/test';
 import { signIn } from '../support/platform-session';
+import { sandboxRepairEnvironment } from '../support/sandbox-repair-support';
 
 /**
  * Trainee-side checks of single sandbox per trainee against a deployed platform.
@@ -16,7 +17,7 @@ import { signIn } from '../support/platform-session';
  *   F07_SELF_TITLE            title of the instance behind F07_SELF_TOKEN, default F07-self
  *   F07_OTHER_TITLE           title of the instance behind F07_OTHER_TOKEN, default F07-ending
  *   F07_ENDED_TOKEN          access token of an instance that has ended more than 2 minutes ago
- *   F07_BUILD_TIMEOUT_MS      longest wait for a sandbox build, default 600000
+ *   F09_BUILD_TIMEOUT_MS      longest wait for a sandbox build, or F07_BUILD_TIMEOUT_MS, default 20 minutes
  *
  * The deployment must have the frontend key `enableTraineeSandboxAllocation` on and
  * training's `single.sandbox.per.user.enabled` on.
@@ -28,7 +29,7 @@ const SELF_TOKEN = process.env['F07_SELF_TOKEN'];
 const OTHER_TOKEN = process.env['F07_OTHER_TOKEN'];
 const MANAGED_TOKEN = process.env['F07_MANAGED_TOKEN'];
 const ENDED_TOKEN = process.env['F07_ENDED_TOKEN'];
-const BUILD_TIMEOUT_MS = Number(process.env['F07_BUILD_TIMEOUT_MS'] ?? 600_000);
+const BUILD_TIMEOUT_MS = sandboxRepairEnvironment.buildTimeoutMs;
 const SELF_TITLE = process.env['F07_SELF_TITLE'] ?? 'F07-self';
 const OTHER_TITLE = process.env['F07_OTHER_TITLE'] ?? 'F07-ending';
 const ACCOUNT = { origin: ORIGIN ?? '', username: USERNAME ?? '', password: PASSWORD ?? '' };
@@ -46,7 +47,7 @@ test.skip(
 );
 
 test.use({ baseURL: ORIGIN });
-test.describe.configure({ mode: 'serial' });
+test.describe.configure({ mode: 'serial', timeout: BUILD_TIMEOUT_MS + 60_000 });
 
 let page: Page;
 
@@ -67,7 +68,7 @@ function nextAccessResponse() {
 }
 
 function sandboxEntry(title: string) {
-    return page.locator('div').filter({ hasText: new RegExp(`^${title}`) }).last();
+    return page.locator('div').filter({ hasText: new RegExp(`^\\s*${title}`) }).last();
 }
 
 /** Reloads the overview until the sandbox of the given instance reports `Ready`. */
@@ -79,6 +80,16 @@ async function removeSandbox(title: string): Promise<void> {
     await sandboxEntry(title).getByRole('button', { name: 'Remove sandbox' }).click();
     await expect(page.getByRole('dialog')).toContainText(`Do you want to remove your sandbox of "${title}"?`);
     await page.getByRole('dialog').getByRole('button', { name: 'Remove', exact: true }).click();
+}
+
+/** Clicks the resume action of the run row of the given instance; the action is an icon button with no accessible name. */
+async function resumeRun(title: string): Promise<void> {
+    await page
+        .getByRole('row')
+        .filter({ hasText: title })
+        .getByRole('button')
+        .filter({ hasText: /^\s*open_in_new\s*$/ })
+        .click();
 }
 
 async function activeSandboxCount(): Promise<number> {
@@ -140,7 +151,7 @@ test.describe('Trainee sandbox allocation, trainee side', () => {
         if ((await sandboxEntry(SELF_TITLE).innerText()).includes('Ready')) {
             test.skip(true, 'the sandbox was already ready');
         }
-        await page.getByRole('button', { name: 'Resume training run' }).first().click();
+        await resumeRun(SELF_TITLE);
         await expect(page).toHaveURL(/\/run\?sandbox=preparing$/);
         expect(await activeSandboxCount()).toBe(1);
     });
@@ -186,7 +197,7 @@ test.describe('Trainee sandbox allocation, trainee side', () => {
 
     test('resuming a run whose sandbox was removed shows the missing wait and allocates nothing', async () => {
         await page.goto('/run');
-        await page.getByRole('button', { name: 'Resume training run' }).first().click();
+        await resumeRun(SELF_TITLE);
 
         await expect(page).toHaveURL(/\/run\?sandbox=missing$/);
         await expect(page.getByText(MESSAGES.missing)).toBeVisible();

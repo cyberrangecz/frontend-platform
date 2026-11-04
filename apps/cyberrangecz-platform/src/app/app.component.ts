@@ -1,4 +1,5 @@
-import { AfterViewInit, Component, inject, OnInit, signal, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject, OnInit, signal, ChangeDetectionStrategy } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { SentinelAuthService } from '@sentinel/auth';
 import { AgendaContainer } from '@sentinel/layout';
@@ -34,8 +35,7 @@ import { SignInStatusComponent } from './components/sign-in-status/sign-in-statu
         SignInStatusComponent,
     ],
 })
-export class AppComponent implements OnInit, AfterViewInit {
-    title$: Observable<string>;
+export class AppComponent implements OnInit {
     agendaContainers$: Observable<AgendaContainer[]>;
     notificationRoute: ValidPath = 'notifications';
     version = '';
@@ -44,6 +44,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     protected readonly authService = inject(SentinelAuthService);
     private readonly router = inject(Router);
     private readonly activatedRoute = inject(ActivatedRoute);
+    protected readonly title = toSignal(this.getTitleFromRouter());
 
     constructor() {
         this.activatedRoute.queryParams.subscribe((params) => {
@@ -52,7 +53,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
 
     ngOnInit(): void {
-        this.title$ = this.getTitleFromRouter();
         this.agendaContainers$ = this.authService.activeUser$.pipe(
             filter((user) => user != null),
             map((user) =>
@@ -62,12 +62,6 @@ export class AppComponent implements OnInit, AfterViewInit {
 
         this.version =
             PortalDynamicEnvironment.getConfig().version || packagejson.version;
-    }
-
-    ngAfterViewInit(): void {
-        this.router.events
-            .pipe(filter((event) => event instanceof NavigationEnd))
-            .subscribe();
     }
 
     onLogin(): void {

@@ -19,14 +19,11 @@ export class TrainingInstanceFormGroup {
     /**
      * @param trainingInstance training instance whose values fill the form
      * @param editMode true for an existing instance, whose stored values are kept as they are;
-     * false for a new one, which starts now and with the default access token prefix
-     * @param defaultManaged whether a new instance is managed; where trainees cannot allocate their
-     * own sandboxes, it is, so that letting them later does not change instances created before
+     * false for a new one, which starts now, with the default access token prefix, and managed
      */
     constructor(
         trainingInstance: TrainingInstance,
         editMode: boolean,
-        defaultManaged = false,
     ) {
         this.formGroup = new UntypedFormGroup(
             {
@@ -68,7 +65,7 @@ export class TrainingInstanceFormGroup {
                     trainingInstance.showStepperBar
                 ),
                 managed: new UntypedFormControl(
-                    trainingInstance.managed ?? defaultManaged
+                    trainingInstance.managed ?? true
                 ),
                 poolId: new UntypedFormControl(trainingInstance.poolId),
                 sandboxDefinitionId: new UntypedFormControl(

@@ -21,6 +21,7 @@ const HARNESS_URL = `https://localhost:${HARNESS_PORT}`;
  */
 export default defineConfig({
     testDir: './specs',
+    globalSetup: './support/cloud-usage-audit.ts',
     fullyParallel: true,
     forbidOnly: Boolean(process.env['CI']),
     retries: process.env['CI'] !== undefined ? 2 : 0,

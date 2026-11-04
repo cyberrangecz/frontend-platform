@@ -12,15 +12,23 @@ function isSignedInUrl(url: URL, origin: string): boolean {
     return url.origin === origin && !url.pathname.startsWith('/login');
 }
 
-async function waitForApplicationTokens(page: Page, timeout: number): Promise<void> {
-    await page.waitForFunction(() => localStorage.getItem('refresh_token') !== null, null, {
-        timeout,
-    });
+/**
+ * Resolves once the application holds its tokens and has finished its post-login navigation,
+ * so a storage state saved afterwards carries no pending redirect.
+ */
+async function waitForCompletedSignIn(page: Page, timeout: number): Promise<void> {
+    await page.waitForFunction(
+        () =>
+            localStorage.getItem('refresh_token') !== null &&
+            localStorage.getItem('sentinelAuthNavigateAfterLogin') === null,
+        null,
+        { timeout },
+    );
 }
 
 /**
  * Signs a fresh browser context in through the application's login page and the Keycloak form,
- * resolving once the application holds its tokens.
+ * resolving once the application holds its tokens and has finished its post-login navigation.
  */
 export async function signIn(page: Page, origin: string, credentials: Credentials): Promise<void> {
     await page.goto(`${origin}/login`);
@@ -32,12 +40,12 @@ export async function signIn(page: Page, origin: string, credentials: Credential
     await page.waitForURL((url) => isSignedInUrl(url, origin), {
         timeout: SIGN_IN_TIMEOUT_MILLISECONDS,
     });
-    await waitForApplicationTokens(page, SIGN_IN_TIMEOUT_MILLISECONDS);
+    await waitForCompletedSignIn(page, SIGN_IN_TIMEOUT_MILLISECONDS);
 }
 
 /**
  * Opens the application's login page and waits for a person to sign in by hand, resolving once
- * the application holds its tokens.
+ * the application holds its tokens and has finished its post-login navigation.
  */
 export async function waitForManualSignIn(
     page: Page,
@@ -46,5 +54,5 @@ export async function waitForManualSignIn(
 ): Promise<void> {
     await page.goto(`${origin}/login`);
     await page.waitForURL((url) => isSignedInUrl(url, origin), { timeout });
-    await waitForApplicationTokens(page, timeout);
+    await waitForCompletedSignIn(page, timeout);
 }

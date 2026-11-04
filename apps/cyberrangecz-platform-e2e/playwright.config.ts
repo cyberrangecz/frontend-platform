@@ -1,9 +1,16 @@
+import { availableParallelism } from 'node:os';
 import { defineConfig, devices, type PlaywrightTestOptions, type PlaywrightWorkerOptions, type Project } from '@playwright/test';
 import { BROWSER_KEYS, type BrowserKey } from './src/support/accounts';
 import { environment } from './src/support/environment';
 import type { SuiteOptions } from './src/support/fixtures';
 
 const OUTPUT_ROOT = '../../dist/.playwright/apps/cyberrangecz-platform-e2e';
+
+const WORKER_CPU_SHARE = 0.25;
+const MINIMUM_WORKERS = 2;
+
+/** Parallel workers: the share of the available CPUs given to the suite, never fewer than the minimum. */
+const WORKER_COUNT = Math.max(MINIMUM_WORKERS, Math.floor(availableParallelism() * WORKER_CPU_SHARE));
 
 /** Page specs that run on the deployed origin instead of the application origin. */
 const DEPLOYED_ORIGIN_SPECS = /microservice\.[\w.-]*spec\.ts$/;
@@ -108,7 +115,7 @@ export default defineConfig<SuiteOptions>({
     outputDir: `${OUTPUT_ROOT}/test-output`,
     globalSetup: './src/setup/session-keep-alive.ts',
     fullyParallel: true,
-    workers: '25%',
+    workers: WORKER_COUNT,
     forbidOnly: process.env['CI'] === 'true',
     retries: 2,
     timeout: 120_000,

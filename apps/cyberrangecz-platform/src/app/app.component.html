@@ -15,7 +15,7 @@
                 <span class="username">{{ (authService.activeUser$ | async).nameWithAcademicTitles }}</span>
             }
         </div>
-        @if (title$ | async; as title) {
+        @if (title(); as title) {
             <h1>{{ title }}</h1>
         }
         <router-outlet />
