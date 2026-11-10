@@ -1,5 +1,4 @@
-vi.mock('@crczp/components', () => ({ LOGGING_ERROR_MARKER: '[error]' }));
-
+import { HttpErrorResponse } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { Observable, Subject } from 'rxjs';
 import { AllocationRequestsApi } from '@crczp/sandbox-api';
@@ -9,6 +8,7 @@ import {
     RequestStageType,
 } from '@crczp/sandbox-model';
 import { provideTestPortalConfig } from '@crczp/test-utils';
+import { NotificationService } from '@crczp/utils';
 import { OutputsService, OutputsState } from '../request-detail/services/state/detail/outputs.service';
 import { StageAdapter } from '../request-detail/model/adapters/stage-adapter';
 
@@ -26,6 +26,7 @@ describe('OutputsService', () => {
     let stage$: Subject<StageAdapter>;
     let service: OutputsService;
     let states: OutputsState[];
+    let emitNotification: ReturnType<typeof vi.fn>;
 
     beforeEach(() => {
         vi.useFakeTimers();
@@ -33,6 +34,7 @@ describe('OutputsService', () => {
         contentRequestOffsets = [];
         contentRequestExpectedErrors = [];
         stage$ = new Subject<StageAdapter>();
+        emitNotification = vi.fn();
 
         const fakeApi = {
             getStageOutputs: (
@@ -55,6 +57,10 @@ describe('OutputsService', () => {
                     polling: { pollingPeriodShortMs: POLLING_PERIOD_MS },
                 }),
                 { provide: AllocationRequestsApi, useValue: fakeApi },
+                {
+                    provide: NotificationService,
+                    useValue: { emit: emitNotification },
+                },
                 {
                     provide: OutputsService,
                     useFactory: () =>
@@ -132,16 +138,47 @@ describe('OutputsService', () => {
         });
     });
 
-    it('replaces loading with the error line when the first fetch fails', () => {
+    it('replaces loading with the failure text and a warning toast when the first fetch fails', () => {
         startPolling(RequestStageState.FINISHED);
 
-        contentRequest(0).error(new Error('unavailable'));
+        contentRequest(0).error(new HttpErrorResponse({ status: 503 }));
 
         expect(lastState()).toEqual({
             status: 'fetched',
-            content: '[error] Failed to refresh logs.',
+            content: 'Failed to fetch logs',
             rows: 0,
         });
+        expect(emitNotification).toHaveBeenCalledExactlyOnceWith(
+            'warning',
+            'Stage log refresh failed',
+            ['HTTP 503 from the sandbox service. Refreshing...'],
+        );
+    });
+
+    it('replaces the failure text with the first answer of a later poll', () => {
+        startPolling(RequestStageState.RUNNING);
+        contentRequest(0).error(new Error('unavailable'));
+        vi.advanceTimersByTime(POLLING_PERIOD_MS);
+
+        contentRequest(1).next({ content: 'a', rows: 1 } as LogOutput);
+
+        expect(lastState()).toEqual({
+            status: 'fetched',
+            content: 'a',
+            rows: 1,
+        });
+    });
+
+    it('names a missing response in the warning toast', () => {
+        startPolling(RequestStageState.FINISHED);
+
+        contentRequest(0).error(new HttpErrorResponse({ status: 0 }));
+
+        expect(emitNotification).toHaveBeenCalledExactlyOnceWith(
+            'warning',
+            'Stage log refresh failed',
+            ['No response from the sandbox service. Refreshing...'],
+        );
     });
 
     it('stays loading when the stage changes state before the first answer', () => {
@@ -187,22 +224,25 @@ describe('OutputsService', () => {
         expect(lastState().status).toBe('fetched');
     });
 
-    it('shows one error line for repeated failed polls', () => {
+    it('leaves the log unchanged on failed polls', () => {
         startPolling(RequestStageState.RUNNING);
         contentRequest(0).next({ content: 'a', rows: 1 } as LogOutput);
         contentRequest(0).complete();
+        const statesBeforeFailures = states.length;
         vi.advanceTimersByTime(POLLING_PERIOD_MS);
         contentRequest(1).error(new Error('unavailable'));
         vi.advanceTimersByTime(POLLING_PERIOD_MS);
         contentRequest(2).error(new Error('unavailable'));
 
-        expect(lastState()).toMatchObject({
-            content: 'a\n[error] Failed to refresh logs.',
+        expect(states).toHaveLength(statesBeforeFailures);
+        expect(lastState()).toEqual({
+            status: 'fetched',
+            content: 'a',
             rows: 1,
         });
     });
 
-    it('drops the error line once a later poll succeeds', () => {
+    it('appends the next answer directly after failed polls', () => {
         startPolling(RequestStageState.RUNNING);
         contentRequest(0).next({ content: 'a', rows: 1 } as LogOutput);
         contentRequest(0).complete();
@@ -219,7 +259,20 @@ describe('OutputsService', () => {
         });
     });
 
-    it('lets only the first of consecutive failed polls open an error notification', () => {
+    it('keeps every failed fetch away from the error dialog', () => {
+        startPolling(RequestStageState.RUNNING);
+        contentRequest(0).error(new Error('unavailable'));
+        vi.advanceTimersByTime(POLLING_PERIOD_MS);
+
+        expect(contentRequestExpectedErrors).toHaveLength(2);
+        for (const expectedErrors of contentRequestExpectedErrors) {
+            expect(expectedErrors).toEqual(
+                expect.arrayContaining([0, 400, 404, 500, 503, 599]),
+            );
+        }
+    });
+
+    it('shows one warning toast per streak of failed polls', () => {
         startPolling(RequestStageState.RUNNING);
         contentRequest(0).next({ content: 'a', rows: 1 } as LogOutput);
         contentRequest(0).complete();
@@ -227,24 +280,31 @@ describe('OutputsService', () => {
         contentRequest(1).error(new Error('unavailable'));
         vi.advanceTimersByTime(POLLING_PERIOD_MS);
         contentRequest(2).error(new Error('unavailable'));
+
+        expect(emitNotification).toHaveBeenCalledTimes(1);
+
         vi.advanceTimersByTime(POLLING_PERIOD_MS);
         contentRequest(3).next({ content: 'b', rows: 2 } as LogOutput);
         contentRequest(3).complete();
         vi.advanceTimersByTime(POLLING_PERIOD_MS);
+        contentRequest(4).error(new Error('unavailable'));
 
-        const silencedRequests = contentRequestExpectedErrors.map(
-            (expectedErrors) => expectedErrors.includes(500) && expectedErrors.includes(0),
+        expect(emitNotification).toHaveBeenCalledTimes(2);
+        expect(emitNotification).toHaveBeenLastCalledWith(
+            'warning',
+            'Stage log refresh failed',
+            ['Refreshing...'],
         );
-        expect(silencedRequests).toEqual([false, false, true, true, false]);
     });
 
-    it('lets the first failed poll of a new request open an error notification', () => {
+    it('shows a warning toast for the first failed poll of a new request', () => {
         startPolling(RequestStageState.RUNNING, 1);
         contentRequest(0).error(new Error('unavailable'));
 
         startPolling(RequestStageState.RUNNING, 2);
+        contentRequest(1).error(new Error('unavailable'));
 
-        expect(contentRequestExpectedErrors.at(-1)).toEqual([]);
+        expect(emitNotification).toHaveBeenCalledTimes(2);
     });
 
     it('polls a stage in retry', () => {

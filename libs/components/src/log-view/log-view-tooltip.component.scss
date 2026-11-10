@@ -8,15 +8,14 @@
     background: var(--neutral-100);
     color: var(--neutral-0);
     box-shadow: 0 1px 4px rgb(0 0 0 / 16%);
-    font-family: var(--mat-sys-body-small-font);
-    font-size: var(--font-size-sm);
-    line-height: 1.4;
+    font: var(--mat-sys-body-small);
     pointer-events: none;
     animation: fadeIn 120ms ease-out;
 }
 
 .tooltip-shortcut {
     color: var(--neutral-40);
+    font: var(--mat-sys-label-small);
 }
 
 @media (prefers-reduced-motion: reduce) {

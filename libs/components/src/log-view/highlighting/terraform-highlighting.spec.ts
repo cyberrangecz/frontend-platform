@@ -1,4 +1,3 @@
-import { LOGGING_ERROR_MARKER } from '../logging-error-marker';
 import { medianRunTime, tokenizerFor } from './highlighting-testing';
 import { terraformSupport } from './terraform-highlighting';
 
@@ -140,14 +139,6 @@ describe('terraformSupport', () => {
             ).toEqual([
                 'warning:Warning: Argument is deprecated',
                 'diagnosticContext:  on provider.tf line 3:',
-            ]);
-        });
-
-        it('colours the line marking a log that failed to load as an error', () => {
-            const line = `${LOGGING_ERROR_MARKER} Failed to refresh logs.`;
-
-            expect(tokenize(`apply finished\n${line}`)).toEqual([
-                `error:${line}`,
             ]);
         });
 
