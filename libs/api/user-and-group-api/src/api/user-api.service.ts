@@ -3,7 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { ResponseHeaderContentDispositionReader, SentinelParamsMerger } from '@sentinel/common';
 import { OffsetPaginationEvent } from '@crczp/utils';
 import { User, UserRole } from '@crczp/user-and-group-model';
-import { fromEvent, mergeMap, Observable } from 'rxjs';
+import { fromEvent, mergeMap, Observable, take } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { RoleDTO } from '../DTO/role/role-dto';
 import { UserAndGroupUserDTO } from '../DTO/user/user-dto.model';
@@ -194,6 +194,7 @@ export class UserApi {
     importUsers(file: File): Observable<any> {
         const fileReader = new FileReader();
         const fileRead$ = fromEvent(fileReader, 'load').pipe(
+            take(1),
             mergeMap(() => {
                 const jsonBody = JSON.parse(fileReader.result as string);
                 return this.http.post<any>(this.apiUrl, jsonBody);

@@ -10,10 +10,40 @@
             (valueChanged)="onValueChange($event)"
             [formControl]="fileFormControl"
             [multiple]="isMultipleFileMode()"
+            [accept]="data.accept ?? '*'"
             activeBorderColor="#3F51B5"
             class="file-drop-zone"
         >
         </ngx-file-drag-drop>
+        @if (isReading() && data.preview) {
+            <mat-progress-bar class="file-upload-dialog-progress" mode="indeterminate"></mat-progress-bar>
+        }
+        @if (data.preview) {
+            <div class="file-upload-dialog-previews">
+                @for (inspection of inspections(); track inspection.file) {
+                    <section class="file-upload-dialog-preview">
+                        @if (isMultipleFileMode()) {
+                            <h3 class="file-upload-dialog-preview-title">{{ inspection.file.name }}</h3>
+                        }
+                        @if (inspection.rejection) {
+                            <p class="file-upload-dialog-rejection" role="alert">
+                                <mat-icon class="file-upload-dialog-rejection-icon">error</mat-icon>
+                                <span>{{ inspection.rejection }}</span>
+                            </p>
+                        } @else {
+                            @for (entity of inspection.shownEntities; track $index) {
+                                <ng-container
+                                    *ngComponentOutlet="data.preview.cardComponent; inputs: { entity: entity }"
+                                />
+                            }
+                            @if (inspection.hiddenEntityCount > 0) {
+                                <p class="file-upload-dialog-more">and {{ inspection.hiddenEntityCount }} more</p>
+                            }
+                        }
+                    </section>
+                }
+            </div>
+        }
     </mat-dialog-content>
     <div class="hflex wh-100 flex-nowrap">
         <button (click)="cancel()"
@@ -21,7 +51,7 @@
                 color="warn"
                 mat-button>Cancel
         </button>
-        <button (click)="confirm()" [disabled]="!filesUploaded()"
+        <button (click)="confirm()" [disabled]="!canUpload()"
                 class="bottom-button bottom-button--right"
                 mat-button>
             Confirm

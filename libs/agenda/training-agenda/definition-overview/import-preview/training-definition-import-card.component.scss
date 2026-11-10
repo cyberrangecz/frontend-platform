@@ -1,0 +1,90 @@
+.training-definition-import-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--mat-sys-outline-variant);
+    border-radius: var(--mat-sys-corner-medium);
+    background: var(--mat-sys-surface-container-low);
+    color: var(--mat-sys-on-surface);
+}
+
+.training-definition-import-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.75rem;
+}
+
+.training-definition-import-card-title {
+    margin: 0;
+    font: var(--mat-sys-title-medium);
+    overflow-wrap: anywhere;
+}
+
+.training-definition-import-card-badge {
+    flex-shrink: 0;
+    padding: 0.125rem 0.5rem;
+    border-radius: var(--mat-sys-corner-full);
+    background: var(--mat-sys-surface-container-highest);
+    color: var(--mat-sys-on-surface-variant);
+    font: var(--mat-sys-label-small);
+    white-space: nowrap;
+
+    &--archive {
+        background: var(--mat-sys-secondary-container);
+        color: var(--mat-sys-on-secondary-container);
+    }
+}
+
+.training-definition-import-card-summary {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem 1.5rem;
+}
+
+.training-definition-import-card-levels {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.training-definition-import-card-level {
+    display: flex;
+    align-items: baseline;
+    gap: 0.25rem;
+}
+
+.training-definition-import-card-level-count {
+    font: var(--mat-sys-title-small);
+}
+
+.training-definition-import-card-level-label {
+    color: var(--mat-sys-on-surface-variant);
+    font: var(--mat-sys-body-small);
+}
+
+.training-definition-import-card-detail {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0;
+    color: var(--mat-sys-on-surface-variant);
+    font: var(--mat-sys-body-medium);
+}
+
+.training-definition-import-card-icon {
+    width: 1.125rem;
+    height: 1.125rem;
+    color: var(--mat-sys-on-surface-variant);
+    font-size: 1.125rem;
+
+    &--level {
+        align-self: center;
+    }
+}

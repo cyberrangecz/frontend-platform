@@ -12,13 +12,14 @@ import {
     TrainingDefinitionWithLevels,
     TrainingDefinitionStateEnum
 } from '@crczp/training-model';
-import { EMPTY, from, Observable } from 'rxjs';
-import { filter, map, switchMap, take, tap } from 'rxjs/operators';
+import { EMPTY, from, Observable, of } from 'rxjs';
+import { catchError, concatMap, filter, map, switchMap, take, tap, toArray } from 'rxjs/operators';
 import { CloneDialogComponent } from '../../components/clone-dialog/clone-dialog.component';
 import { inject, Injectable } from '@angular/core';
 import { ErrorHandlerService, FileUploadProgressService, LoadingTracker, NotificationService, PortalConfig } from '@crczp/utils';
 import { Routing } from '@crczp/routing-commons';
 import { FileUploadDialog } from '@crczp/components';
+import { TrainingDefinitionImportPreview } from '../../import-preview/training-definition-import-preview';
 import { LinearTrainingDefinitionApi, TrainingDefinitionSort } from '@crczp/training-api';
 import { CrczpOffsetElementsPaginatedService, OffsetPaginatedResource, QueryParam } from '@crczp/api-common';
 
@@ -176,45 +177,60 @@ export class TrainingDefinitionService extends CrczpOffsetElementsPaginatedServi
     }
 
     /**
-     * Creates a new training definition by uploading a training definition description JSON file.
-     * Informs about the result and updates list of training definitions or handles an error
+     * Creates training definitions by uploading the picked JSON or ZIP files, one request per file
+     * in pick order. A failed file is reported by name and does not stop the files after it.
      */
     upload(): Observable<OffsetPaginatedResource<TrainingDefinition>> {
         const dialogRef = FileUploadDialog.open(this.dialog, {
-            title: 'Upload Training definition',
-            mode: 'single',
+            title: 'Upload training definitions',
+            subtitle: 'Select one or more .json or .zip files',
+            accept: '.json,.zip',
+            preview: new TrainingDefinitionImportPreview(),
+            mode: 'multiple',
         });
         return dialogRef.afterClosed().pipe(
             take(1),
-            filter((value) => value !== undefined && value !== null),
+            filter((files: File[] | null | undefined) => !!files?.length),
             tap(() => this.fileUploadProgressService.start()),
-            switchMap((file) => this.api.upload(file as File)),
-            tap(
-                () => {
-                    this.notificationService.emit(
-                        'success',
-                        'Training definition was uploaded',
-                    );
-                    this.fileUploadProgressService.finish();
-                    dialogRef.close();
-                },
-                (err) => {
-                    this.fileUploadProgressService.finish();
-                    if (err instanceof HttpErrorResponse) {
-                        this.errorHandler.emitAPIError(
-                            err,
-                            'Uploading training definition',
-                        );
-                    } else {
-                        this.errorHandler.emitFrontendErrorNotification(
-                            err instanceof Error ? err.message : String(err),
-                            'Uploading training definition',
-                        );
-                    }
-                    dialogRef.close();
-                },
+            switchMap((files) =>
+                from(files as File[]).pipe(
+                    concatMap((file) => this.uploadFile(file)),
+                    toArray(),
+                ),
             ),
+            tap((outcomes) => {
+                this.fileUploadProgressService.finish();
+                this.emitUploadSuccess(outcomes.filter(Boolean).length);
+            }),
             switchMap(() => this.getAll(this.lastPagination, this.lastFilters)),
+        );
+    }
+
+    private uploadFile(file: File): Observable<boolean> {
+        return this.api.upload(file).pipe(
+            map(() => true),
+            catchError((err) => {
+                const operation = `Uploading training definition ${file.name}`;
+                if (err instanceof HttpErrorResponse) {
+                    this.errorHandler.emitAPIError(err, operation);
+                } else {
+                    this.errorHandler.emitFrontendErrorNotification(
+                        err instanceof Error ? err.message : String(err),
+                        operation,
+                    );
+                }
+                return of(false);
+            }),
+        );
+    }
+
+    private emitUploadSuccess(uploadedFileCount: number): void {
+        if (uploadedFileCount === 0) return;
+        this.notificationService.emit(
+            'success',
+            uploadedFileCount === 1
+                ? 'Training definition was uploaded'
+                : `${uploadedFileCount} training definitions were uploaded`,
         );
     }
 
