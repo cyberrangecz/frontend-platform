@@ -7,6 +7,8 @@ const DOWNLOAD_START_MILLISECONDS = 30_000;
 export interface CapturedDownload {
     /** File name the browser offered. */
     fileName: string;
+    /** File bytes as downloaded. */
+    bytes: Buffer;
     /** File content decoded as UTF-8. */
     content: string;
     /** File size in bytes. */
@@ -29,6 +31,7 @@ export async function captureDownload(
     const buffer = await readFile(path);
     return {
         fileName: download.suggestedFilename(),
+        bytes: buffer,
         content: buffer.toString('utf-8'),
         size: buffer.length,
     };

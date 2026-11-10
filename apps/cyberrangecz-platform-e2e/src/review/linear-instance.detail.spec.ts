@@ -22,7 +22,7 @@ interface RunAnswerPayload {
     level_id: number;
     level_title: string;
     level_order: number;
-    correct_answer: string;
+    correct_answer?: string;
     variable_name?: string;
 }
 
@@ -256,7 +256,13 @@ test.describe('linear-instance.detail (run dependent parts)', () => {
             const row = nested.rowByText(answer.level_title).first();
             await expect(await nested.cell(row, /^level id$/i)).toHaveText(String(answer.level_id));
             await expect(await nested.cell(row, /^level order$/i)).toHaveText(String(answer.level_order));
-            await expect(await nested.cell(row, /^correct answer$/i)).toHaveText(answer.correct_answer);
+            if (answer.level_title === SHARED_TRAINING_LEVEL_TITLES.assessment) {
+                expect(answer.correct_answer, 'an assessment has no correct answer').toBeUndefined();
+                await expect(await nested.cell(row, /^correct answer$/i)).toHaveText('');
+            } else {
+                expect(answer.correct_answer, `correct answer of ${answer.level_title}`).toBeDefined();
+                await expect(await nested.cell(row, /^correct answer$/i)).toHaveText(answer.correct_answer!);
+            }
             await expect(await nested.cell(row, /^variable name$/i)).toHaveText(answer.variable_name ?? '-');
         }
         await checkpoint(page, 'run expanded to level answers');

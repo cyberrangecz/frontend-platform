@@ -13,12 +13,13 @@ import {
     requireDefinitionByTitle,
 } from '../../support/pages/training-definition/training-definition-data';
 import { FILTER_SETTLE_TIMEOUT_MILLISECONDS } from '../../support/time';
-import { SHARED_TRAINING_LEVEL_ORDER, sharedTrainingImport } from '../../support/scenario/shared-training-loader';
+import {
+    SHARED_TRAINING_LEVEL_ORDER,
+    trainingImportWithoutAttachments,
+} from '../../support/scenario/shared-training-loader';
 import {
     captureDownload,
     ConfirmationDialog,
-    dismissErrorDialog,
-    errorDialog,
     FileUploadDialog,
     openDialog,
     pageTitle,
@@ -303,9 +304,12 @@ test.describe('linear-definition', () => {
             await dialog.chooseFiles({
                 name: 'definition.json',
                 mimeType: 'application/json',
-                buffer: Buffer.from(JSON.stringify(sharedTrainingImport(title))),
+                buffer: Buffer.from(JSON.stringify(trainingImportWithoutAttachments(title))),
             });
             await expect(dialog.chosenFiles).toHaveCount(1);
+            await expect(dialog.definitionCards).toHaveCount(1);
+            await expect(dialog.definitionCards.first()).toContainText(title);
+            await expect(dialog.definitionCards.first()).toContainText('JSON');
             await expect(dialog.confirmButton).toBeEnabled();
             await dialog.confirmButton.click();
             expect((await waitForNotification(page, 'Training definition was uploaded')).kind).toBe('success');
@@ -315,7 +319,7 @@ test.describe('linear-definition', () => {
             await expect(overview.rowOf(title)).toBeVisible();
         });
 
-        test('reports an invalid JSON file with a meaningful message and creates nothing', async ({
+        test('rejects an invalid JSON file in the dialog with its reason and uploads nothing', async ({
             page,
             checkpoint,
         }) => {
@@ -328,14 +332,13 @@ test.describe('linear-definition', () => {
                 mimeType: 'application/json',
                 buffer: Buffer.from('{ this is not json'),
             });
-            await dialog.confirmButton.click();
-            await expect(errorDialog(page)).toBeVisible();
-            await checkpoint(page, 'invalid file error');
-            await expect(errorDialog(page)).not.toContainText(/Unknown error|Unexpected token|JSON\.parse/i);
-            await dismissErrorDialog(page);
+            await expect(dialog.rejections).toHaveText(/The file is not well-formed JSON/);
+            await expect(dialog.definitionCards).toHaveCount(0);
+            await expect(dialog.confirmButton).toBeDisabled();
+            await checkpoint(page, 'invalid file rejected');
         });
 
-        test('rejects a definition file without a title', async ({ page }) => {
+        test('rejects a definition file without a title in the dialog', async ({ page }) => {
             const overview = new DefinitionOverviewPage(page);
             await overview.goto();
             await overview.uploadButton.click();
@@ -345,9 +348,8 @@ test.describe('linear-definition', () => {
                 mimeType: 'application/json',
                 buffer: Buffer.from(JSON.stringify({ description: 'no title', levels: [] })),
             });
-            await dialog.confirmButton.click();
-            await expect(errorDialog(page)).toBeVisible();
-            await dismissErrorDialog(page);
+            await expect(dialog.rejections).toHaveText(/The file has no definition title/);
+            await expect(dialog.confirmButton).toBeDisabled();
         });
     });
 
@@ -451,8 +453,11 @@ test.describe('linear-definition', () => {
             await dialog.getByRole('textbox', { name: 'Title' }).fill(cloneTitle);
             await dialog.getByRole('button', { name: 'Clone', exact: true }).click();
             await waitForNotification(page, 'Training definition was cloned');
-            await overview.filterBy(cloneTitle);
-            await expect(overview.rowOf(cloneTitle)).toBeVisible();
+            await expect(async () => {
+                await overview.goto();
+                await overview.filterBy(cloneTitle);
+                await expect(overview.rowOf(cloneTitle)).toBeVisible({ timeout: 3_000 });
+            }).toPass();
             await expect(overview.table.rows.first().locator('b')).toHaveCount(0);
         });
 

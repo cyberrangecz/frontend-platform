@@ -46,6 +46,25 @@ async function importUser(
     await expect(dialog.root).toHaveCount(0);
 }
 
+/**
+ * Asserts that two reads of one column, taken in opposite sort directions, list the distinct values
+ * both reads contain in exactly opposite order. Consecutive equal values are collapsed first, since
+ * rows tied on the sorted column, such as users without an email, may appear in any number and order.
+ * Values present in only one read, such as a user another test creates between the reads, are left
+ * out of the comparison.
+ */
+function expectOppositeOrder<Value>(ascending: Value[], descending: Value[]): void {
+    const collapseRuns = (values: Value[]): Value[] =>
+        values.filter((value, index) => index === 0 || value !== values[index - 1]);
+    const distinctAscending = collapseRuns(ascending);
+    const distinctDescending = collapseRuns(descending);
+    const inAscending = new Set(distinctAscending);
+    const inDescending = new Set(distinctDescending);
+    const sharedAscending = distinctAscending.filter((value) => inDescending.has(value));
+    const sharedDescending = distinctDescending.filter((value) => inAscending.has(value));
+    expect(sharedDescending).toEqual([...sharedAscending].reverse());
+}
+
 test.describe('user.overview', () => {
     test.describe('access', () => {
         for (const role of ROLES_WITHOUT_ADMINISTRATION) {
@@ -139,7 +158,7 @@ test.describe('user.overview', () => {
             expect(ascending).toEqual([...ascending].sort((left, right) => left - right));
             await overview.table.sortTo('Id', 'descending');
             const descending = (await overview.table.columnTexts('Id')).map(Number);
-            expect(descending).toEqual([...ascending].reverse());
+            expectOppositeOrder(ascending, descending);
         });
 
         for (const header of ['Login', 'Email']) {
@@ -151,7 +170,7 @@ test.describe('user.overview', () => {
                 const ascending = await overview.table.columnTexts(header);
                 await overview.table.sortTo(header, 'descending');
                 const descending = await overview.table.columnTexts(header);
-                expect(descending).toEqual([...ascending].reverse());
+                expectOppositeOrder(ascending, descending);
             });
         }
 
@@ -317,13 +336,152 @@ test.describe('user.overview', () => {
             await dialog.chooseFiles({
                 name: 'users.json',
                 mimeType: 'application/json',
-                buffer: Buffer.from('[]'),
+                buffer: Buffer.from(JSON.stringify({ users: [{ sub: 'first-preview', iss: 'https://issuer.example' }] })),
             });
             await expect(dialog.chosenFiles).toHaveCount(1);
             await expect(dialog.confirmButton).toBeEnabled();
             await dialog.cancelButton.click();
             await expect(dialog.root).toHaveCount(0);
             expect(importRequests).toHaveLength(0);
+        });
+
+        test('shows one preview card per listed user', async ({ page }) => {
+            const overview = new UserOverviewPage(page);
+            await overview.open();
+            await overview.importButton.click();
+            const dialog = new FileUploadDialog(page);
+            await dialog.chooseFiles({
+                name: 'users.json',
+                mimeType: 'application/json',
+                buffer: Buffer.from(
+                    JSON.stringify({
+                        users: [
+                            { sub: 'first-preview', iss: 'https://issuer.example', full_name: 'First Preview' },
+                            { sub: 'second-preview', iss: 'https://issuer.example' },
+                        ],
+                    }),
+                ),
+            });
+            await expect(dialog.userCards).toHaveCount(2);
+            await expect(dialog.userCards.first()).toContainText('First Preview');
+            await expect(dialog.userCards.last()).toContainText('second-preview');
+            await expect(dialog.confirmButton).toBeEnabled();
+        });
+
+        test('shows the subject and issuer on each card, falling back to the subject as the name', async ({
+            page,
+        }) => {
+            const overview = new UserOverviewPage(page);
+            await overview.open();
+            await overview.importButton.click();
+            const dialog = new FileUploadDialog(page);
+            await dialog.chooseFiles({
+                name: 'users.json',
+                mimeType: 'application/json',
+                buffer: Buffer.from(
+                    JSON.stringify({
+                        users: [
+                            { sub: 'named-preview', iss: 'https://issuer.example', full_name: 'Named Preview' },
+                            { sub: 'unnamed-preview', iss: 'https://issuer.example' },
+                        ],
+                    }),
+                ),
+            });
+            await expect(dialog.userCards.first().locator('.user-import-card-name')).toHaveText('Named Preview');
+            await expect(dialog.userCards.first().locator('.user-import-card-identity')).toHaveText(
+                'named-preview · https://issuer.example',
+            );
+            await expect(dialog.userCards.last().locator('.user-import-card-name')).toHaveText('unnamed-preview');
+            await expect(dialog.userCards.last().locator('.user-import-card-identity')).toHaveText(
+                'unnamed-preview · https://issuer.example',
+            );
+        });
+
+        test('shows the first 50 cards and counts the users beyond them', async ({ page }) => {
+            const overview = new UserOverviewPage(page);
+            await overview.open();
+            await overview.importButton.click();
+            const dialog = new FileUploadDialog(page);
+            const users = Array.from({ length: 53 }, (_, index) => ({
+                sub: `bulk-preview-${index}`,
+                iss: 'https://issuer.example',
+            }));
+            await dialog.chooseFiles({
+                name: 'users.json',
+                mimeType: 'application/json',
+                buffer: Buffer.from(JSON.stringify({ users })),
+            });
+            await expect(dialog.userCards).toHaveCount(50);
+            await expect(dialog.root).toContainText('and 3 more');
+            await expect(dialog.confirmButton).toBeEnabled();
+        });
+
+        test('rejects a file that is not well-formed JSON, leaving Confirm disabled', async ({ page }) => {
+            const overview = new UserOverviewPage(page);
+            await overview.open();
+            await overview.importButton.click();
+            const dialog = new FileUploadDialog(page);
+            await dialog.chooseFiles({
+                name: 'broken.json',
+                mimeType: 'application/json',
+                buffer: Buffer.from('{ this is not json'),
+            });
+            await expect(dialog.rejections).toHaveText(/The file is not well-formed JSON/);
+            await expect(dialog.userCards).toHaveCount(0);
+            await expect(dialog.confirmButton).toBeDisabled();
+        });
+
+        test('imports every user its cards list', async ({ page, apiAs, uniqueName }) => {
+            const api = apiAs('userAdministrator').userAndGroup;
+            const issuer = (await findUserBySubject(api, MEMBER_SUBJECTS[0]))?.iss;
+            expect(issuer, 'the seed user carries an issuer').toBeTruthy();
+            const logins = [uniqueName('import-card-a'), uniqueName('import-card-b')];
+            const overview = new UserOverviewPage(page);
+            await overview.open();
+            await overview.importButton.click();
+            const dialog = new FileUploadDialog(page);
+            await dialog.chooseFiles({
+                name: 'users.json',
+                mimeType: 'application/json',
+                buffer: Buffer.from(
+                    JSON.stringify({
+                        users: logins.map((login) => ({ sub: login, iss: issuer, full_name: `${login} Imported` })),
+                    }),
+                ),
+            });
+            await expect(dialog.userCards).toHaveCount(2);
+            await dialog.confirmButton.click();
+            expect((await waitForNotification(page, 'Users were imported')).kind).toBe('success');
+            await expect(dialog.root).toHaveCount(0);
+            for (const login of logins) {
+                expect(await findUserBySubject(api, login), `${login} was imported`).toBeDefined();
+            }
+        });
+
+        test('rejects a file without users and a user without an issuer, leaving Confirm disabled', async ({ page }) => {
+            const overview = new UserOverviewPage(page);
+            await overview.open();
+            await overview.importButton.click();
+            const dialog = new FileUploadDialog(page);
+            await dialog.chooseFiles({
+                name: 'empty.json',
+                mimeType: 'application/json',
+                buffer: Buffer.from('[]'),
+            });
+            await expect(dialog.rejections).toHaveText(/The file lists no users/);
+            await expect(dialog.confirmButton).toBeDisabled();
+            await dialog.cancelButton.click();
+            await expect(dialog.root).toHaveCount(0);
+
+            await overview.importButton.click();
+            await dialog.chooseFiles({
+                name: 'no-issuer.json',
+                mimeType: 'application/json',
+                buffer: Buffer.from(JSON.stringify({ users: [{ sub: 'first-preview' }] })),
+            });
+            await expect(dialog.rejections).toHaveText(/User 1 has no subject or issuer/);
+            await expect(dialog.userCards).toHaveCount(0);
+            await expect(dialog.confirmButton).toBeDisabled();
         });
     });
 

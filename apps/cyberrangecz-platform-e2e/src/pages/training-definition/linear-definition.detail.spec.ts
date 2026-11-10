@@ -200,7 +200,7 @@ test.describe('linear-definition.detail', () => {
             await expect(dataField(panel, 'Answer:')).toContainText('e2e-flag-one');
             await expect(dataField(panel, 'Points')).toContainText('20');
             await expect(dataField(panel, 'Incorrect Answer Limit')).toContainText('5');
-            await expect(dataField(panel, 'Solution Penalized')).toContainText(/true/i);
+            await expect(dataField(panel, 'Solution reveal grants 0 points')).toContainText(/true/i);
             await expect(panel).toContainText('Look around');
             await expect(panel).toContainText('Read the file');
             await expect(panel).toContainText('Submit e2e-flag-one.');
