@@ -1,0 +1,47 @@
+@use '../styles/presentation' as presentation;
+
+:host {
+    --markdown-editor-block-size: 100%;
+    --markdown-editor-min-block-size: 0;
+
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    box-sizing: border-box;
+    block-size: 100%;
+    overflow: hidden;
+}
+
+.dialog-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-md);
+    box-sizing: border-box;
+    min-block-size: calc(2 * var(--space-xl));
+    padding-inline: var(--space-xl) var(--space-xs);
+}
+
+.dialog-title {
+    margin: 0;
+    font: var(--mat-sys-title-large);
+}
+
+.dialog-close {
+    @include presentation.centered-icon-button;
+    flex: none;
+}
+
+.dialog-frame {
+    border: none;
+    border-block-start: 1px solid var(--mat-sys-outline-variant);
+    border-radius: 0;
+
+    &:focus-within {
+        border-color: var(--mat-sys-outline-variant);
+        box-shadow: none;
+    }
+}
+
+::ng-deep .editor-dialog-panel .mat-mdc-dialog-container .mdc-dialog__surface {
+    padding: 0;
+}

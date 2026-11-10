@@ -1,0 +1,27 @@
+@let stored = metadata();
+<button
+    mat-icon-button
+    type="button"
+    class="audio-toggle"
+    [attr.aria-disabled]="preparing() || null"
+    [attr.aria-label]="toggleLabel()"
+    (click)="toggle()"
+>
+    @for (icon of [toggleIcon()]; track icon) {
+        <mat-icon class="audio-toggle-icon" aria-hidden="true">{{ icon }}</mat-icon>
+    }
+</button>
+<crczp-media-waveform class="audio-wave" [playback]="playback" [scene]="scene()" />
+<span class="audio-text">
+    <span class="audio-name" [title]="stored.fileName">{{ label() || stored.fileName }}</span>
+    <span class="audio-time">{{ timeLabel() }}</span>
+    @if (playback.state() === 'downloading') {
+        <progress class="audio-progress" max="1" [value]="download.progress()" [attr.aria-label]="'Downloading ' + stored.fileName"></progress>
+    }
+    @if (playback.state() === 'failed') {
+        <span class="audio-error" role="alert">
+            Could not load {{ stored.fileName }}.
+            <button mat-stroked-button type="button" (click)="playback.toggle()">Retry</button>
+        </span>
+    }
+</span>

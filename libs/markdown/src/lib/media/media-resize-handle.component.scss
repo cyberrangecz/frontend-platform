@@ -1,0 +1,51 @@
+@use '../styles/presentation' as presentation;
+@use 'media-tokens' as tokens;
+
+:host {
+    position: relative;
+    display: grid;
+    width: tokens.$resize-handle-size;
+    height: tokens.$resize-handle-size;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--mat-sys-surface-container-lowest);
+    color: var(--mat-sys-on-surface-variant);
+    cursor: nwse-resize;
+    touch-action: none;
+    user-select: none;
+    outline: none;
+    transition:
+        background-color tokens.$duration-quick ease,
+        color tokens.$duration-quick ease,
+        scale tokens.$duration-base presentation.$ease-decelerate;
+
+    box-shadow: tokens.$floating-shadow;
+
+    &:hover {
+        background: color-mix(in srgb, var(--mat-sys-primary) 10%, var(--mat-sys-surface-container-lowest));
+        color: var(--mat-sys-primary);
+    }
+
+    &:focus-visible {
+        @include tokens.focus-ring(tokens.$floating-shadow);
+    }
+}
+
+:host(.resize-handle--active) {
+    background: var(--mat-sys-primary);
+    color: var(--mat-sys-on-primary);
+    scale: 1.125;
+}
+
+.resize-handle-grip {
+    width: var(--font-size-xl);
+    height: var(--font-size-xl);
+    font-size: var(--font-size-xl);
+    rotate: -45deg;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    :host {
+        transition: none;
+    }
+}

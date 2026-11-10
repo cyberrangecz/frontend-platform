@@ -1,0 +1,62 @@
+@let stored = metadata();
+<div
+    #frame
+    class="video-frame"
+    [style.--video-frame-width]="frameWidth()"
+    [style.--video-frame-ratio]="aspectRatio()"
+    [style.--video-frame-poster]="poster.url() ? 'url(' + poster.url() + ')' : null"
+>
+    <video
+        class="video-player"
+        #player
+        playsinline
+        [hidden]="covered()"
+        [attr.aria-label]="label() || stored.fileName"
+        (click)="playback.toggle()"
+    ></video>
+    @if (covered()) {
+        @if (poster.url(); as posterUrl) {
+            <img class="video-poster" draggable="false" alt="" [src]="posterUrl" />
+        } @else {
+            <div class="video-placeholder" aria-hidden="true"></div>
+        }
+        @if (playback.state() === 'downloading') {
+            <progress class="video-progress" max="1" [value]="download.progress()" [attr.aria-label]="'Downloading ' + stored.fileName"></progress>
+        }
+        <span class="video-meta">{{ stored.size | crczpByteSize }}@if (duration(); as length) { · {{ length }}}</span>
+        @if (playback.state() === 'failed') {
+            <div class="video-error" role="alert">
+                <span>Could not load {{ stored.fileName }}.</span>
+                <button mat-stroked-button type="button" (click)="playback.toggle()">Retry</button>
+            </div>
+        }
+    } @else {
+        <crczp-video-controls
+            class="video-controls"
+            [playback]="playback"
+            [media]="player"
+            [fullscreenTarget]="frame"
+            [fileName]="stored.fileName"
+            [forming]="forming()"
+            [downloadUrl]="download.url()"
+        />
+    }
+    @if (covered() || forming()) {
+        <span class="video-action" [inert]="forming()">
+            <button
+                mat-icon-button
+                type="button"
+                class="video-toggle"
+                #coverToggle
+                [attr.aria-disabled]="playback.state() === 'downloading' || null"
+                [attr.aria-label]="toggleLabel()"
+                (click)="playback.toggle()"
+            >
+                <mat-icon aria-hidden="true">{{ toggleIcon() }}</mat-icon>
+            </button>
+        </span>
+    }
+    @if (strandsDrawn()) {
+        <canvas #strands class="video-strands" aria-hidden="true"></canvas>
+    }
+</div>

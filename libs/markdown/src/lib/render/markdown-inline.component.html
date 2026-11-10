@@ -1,0 +1,53 @@
+@for (token of tokens(); track $index) {
+    @switch (token.type) {
+        @case ('text') {
+            @if (token.tokens?.length) {
+                <crczp-markdown-inline [tokens]="token.tokens" />
+            } @else {
+                <ng-container>{{ token.text }}</ng-container>
+            }
+        }
+        @case ('escape') {
+            <ng-container>{{ token.text }}</ng-container>
+        }
+        @case ('strong') {
+            <strong><crczp-markdown-inline [tokens]="token.tokens" /></strong>
+        }
+        @case ('em') {
+            <em><crczp-markdown-inline [tokens]="token.tokens" /></em>
+        }
+        @case ('del') {
+            <del><crczp-markdown-inline [tokens]="token.tokens" /></del>
+        }
+        @case ('codespan') {
+            <code class="inline-code">{{ token.text }}</code>
+        }
+        @case ('br') {
+            <br />
+        }
+        @case ('link') {
+            @if (isAttachment(token)) {
+                <!-- shown as its own attachment card -->
+            } @else if (isSafeUrl(token.href)) {
+                <a class="inline-link" [href]="token.href" target="_blank" rel="noopener noreferrer">
+                    <crczp-markdown-inline [tokens]="token.tokens" />
+                </a>
+            } @else {
+                <crczp-markdown-inline [tokens]="token.tokens" />
+            }
+        }
+        @case ('image') {
+            @if (isAttachment(token)) {
+                <!-- shown as its own attachment card -->
+            } @else if (isSafeUrl(token.href)) {
+                <img class="inline-image" [src]="token.href" [alt]="token.text" loading="lazy" />
+            } @else {
+                <ng-container>{{ token.text }}</ng-container>
+            }
+        }
+        @case ('checkbox') {}
+        @default {
+            <ng-container>{{ token.raw }}</ng-container>
+        }
+    }
+}

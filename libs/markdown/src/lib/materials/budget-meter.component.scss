@@ -1,0 +1,68 @@
+@use '../styles/presentation' as presentation;
+
+$bar-thickness: var(--space-3xs);
+
+:host {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    min-width: 0;
+}
+
+.budget-bar {
+    flex: 1;
+    min-width: 0;
+    height: $bar-thickness;
+    overflow: hidden;
+    border-radius: $bar-thickness;
+    background: var(--mat-sys-surface-container-highest);
+}
+
+.budget-fill {
+    display: block;
+    max-width: 100%;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--mat-sys-primary);
+    transition:
+        width 360ms presentation.$ease-emphasized,
+        background-color 240ms ease;
+
+    &--near {
+        background: var(--mat-sys-tertiary);
+    }
+
+    &--over {
+        background: var(--mat-sys-error);
+    }
+}
+
+.budget-figures {
+    display: flex;
+    gap: var(--space-3xs);
+    color: var(--mat-sys-on-surface-variant);
+    font-size: var(--font-size-xs);
+    font-variant-numeric: tabular-nums;
+    line-height: 1.2;
+    white-space: nowrap;
+}
+
+.budget-used {
+    color: var(--mat-sys-on-surface);
+    font-weight: var(--font-weight-medium);
+}
+
+.budget-used--over,
+.budget-excess {
+    color: var(--mat-sys-error);
+}
+
+.budget-excess {
+    font-weight: var(--font-weight-medium);
+
+    &::before {
+        content: '·';
+        margin-inline-end: var(--space-3xs);
+        color: var(--mat-sys-on-surface-variant);
+    }
+}

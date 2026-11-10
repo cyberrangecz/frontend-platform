@@ -1,0 +1,57 @@
+@let missing = reference();
+<span class="missing-icon" aria-hidden="true"><mat-icon>link_off</mat-icon></span>
+<span class="missing-text">
+    <span class="missing-title">This file is unavailable</span>
+    @if (failure(); as failed) {
+        <span class="missing-detail">
+            @if (forbidden()) {
+                You can't open this file (HTTP {{ failed.status }}).
+            } @else {
+                This file could not be loaded ({{ failed.status ? 'HTTP ' + failed.status : 'no response' }}).
+            }
+        </span>
+    } @else if (actions) {
+        <span class="missing-detail">
+            No stored file has hash <code class="missing-hash" [title]="missing.hash">{{ shortHash() }}</code>.
+        </span>
+    } @else {
+        <span class="missing-detail">This file could not be loaded. Let your instructor know.</span>
+    }
+    @if (retryable() || actions) {
+        <span class="missing-actions">
+            @if (retryable()) {
+                <button mat-stroked-button type="button" class="missing-action" (click)="retry.emit()">
+                    <mat-icon>refresh</mat-icon>
+                    Retry
+                </button>
+            }
+            @if (actions; as cardActions) {
+                <button
+                    #chooseButton
+                    mat-stroked-button
+                    type="button"
+                    class="missing-action"
+                    [attr.aria-expanded]="pickerSession.picking()"
+                    (click)="pickerSession.toggle()"
+                >
+                    <mat-icon>find_replace</mat-icon>
+                    Choose a file
+                </button>
+                <button mat-button type="button" class="missing-action missing-action--remove" (click)="cardActions.remove(missing)">
+                    <mat-icon>delete</mat-icon>
+                    Remove from level
+                </button>
+            }
+        </span>
+    }
+</span>
+@if (pickerSession.picking()) {
+    <crczp-material-picker
+        class="missing-picker"
+        role="group"
+        aria-label="Choose a file"
+        [label]="missing.label"
+        (picked)="pickerSession.picked($event)"
+        (closed)="pickerSession.closed($event)"
+    />
+}

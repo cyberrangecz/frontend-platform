@@ -1,0 +1,17 @@
+<div matSnackBarLabel class="snackbar-label">{{ data.message }}</div>
+<div matSnackBarActions>
+    <button
+        matButton
+        matSnackBarAction
+        type="button"
+        class="snackbar-undo"
+        [style.--snackbar-countdown-duration.ms]="data.durationMilliseconds"
+        (click)="snackBarReference.dismissWithAction()"
+    >
+        <svg class="snackbar-countdown" viewBox="0 0 20 20" aria-hidden="true">
+            <circle class="snackbar-countdown-track" cx="10" cy="10" r="7" />
+            <circle class="snackbar-countdown-arc" cx="10" cy="10" r="7" pathLength="100" />
+        </svg>
+        Undo
+    </button>
+</div>

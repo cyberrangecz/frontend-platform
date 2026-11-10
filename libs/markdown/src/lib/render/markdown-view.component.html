@@ -1,0 +1,14 @@
+@for (item of items(); track $index) {
+    @if (item.type === 'section') {
+        <details class="view-details">
+            <summary class="view-summary">{{ item.summary }}</summary>
+            <div class="view-details-body">
+                @for (block of item.blocks; track $index) {
+                    <crczp-markdown-block [token]="block.token" />
+                }
+            </div>
+        </details>
+    } @else {
+        <crczp-markdown-block [token]="item.block.token" />
+    }
+}

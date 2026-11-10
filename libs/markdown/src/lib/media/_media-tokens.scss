@@ -1,0 +1,74 @@
+/// Duration of colour and background feedback to a hover, press or focus.
+$duration-quick: 120ms;
+/// Duration of a small move, a fade or a state change of one control.
+$duration-base: 200ms;
+/// Duration of a reveal or an expansion that changes a card's size or content.
+$duration-slow: 320ms;
+
+/// Leading of an icon glyph set alone in its box.
+$line-height-tight: 1;
+/// Leading of the titles and detail lines of the cards.
+$line-height-normal: 1.35;
+/// Leading of a small label laid over a picture or beside a control.
+$line-height-relaxed: 1.5;
+/// Leading of a code view, as a multiple of its font size.
+$line-height-code: 1.6;
+
+/// Space between a card's edge and its leading icon tile, above and below it, and from the
+/// last element to the trailing edge.
+$card-inset-leading: var(--space-xs);
+$card-inset-block: var(--space-xs);
+$card-inset-trailing: var(--space-md);
+/// Space between a card's icon tile and its text.
+$card-icon-gap: var(--space-md);
+
+/// The padding shared by the file, audio and unavailable-file cards.
+@mixin card-inset {
+    padding: $card-inset-block $card-inset-trailing $card-inset-block $card-inset-leading;
+}
+
+/// The box-shadow layers of a surface floating over a picture or a card.
+$floating-shadow:
+    0 var(--space-3xs) var(--space-md) color-mix(in srgb, var(--mat-sys-shadow) 18%, transparent),
+    0 var(--space-4xs) var(--space-3xs) color-mix(in srgb, var(--mat-sys-shadow) 10%, transparent);
+
+/// Diameter of the resize handle of a media card.
+$resize-handle-size: calc(2 * var(--space-xl));
+/// Space between a small card's bottom edge and the resize handle hanging below it.
+$resize-handle-gap: var(--space-3xs);
+
+/// Space between a card's edge and the toolbar or the resize handle inset into it.
+$inset-edge: var(--space-xs);
+/// Side of one action button of the hover toolbar.
+$toolbar-action-size: calc(2 * var(--space-lg));
+/// Height of the hover toolbar: one action button and its padding.
+$toolbar-height: calc(#{$toolbar-action-size} + 2 * var(--space-4xs));
+/// Width of the hover toolbar of a resizable card: its replace, reset size and remove buttons,
+/// the gaps between them and its padding.
+$toolbar-width: calc(3 * #{$toolbar-action-size} + 4 * var(--space-4xs));
+/// Smallest shown width of a card that keeps the toolbar inside its picture; a card shown
+/// narrower keeps the toolbar and the resize handle outside its corners.
+$inset-minimum-width: calc(#{$toolbar-width} + 2 * #{$inset-edge});
+/// Smallest shown height of a card that keeps the toolbar and the resize handle inside its
+/// picture without one covering the other.
+$inset-minimum-height: calc(#{$toolbar-height} + #{$resize-handle-gap} + #{$resize-handle-size} + 2 * #{$inset-edge});
+
+/// Size of the play toggle of the video's playback bar, the tallest control of its footer.
+$video-toggle-size: calc(2 * var(--space-2xl));
+/// Height of a video's playback bar above its card's bottom edge, with room for the seek track
+/// and a gap; a control floating over the video stays above it.
+$video-bar-clearance: calc(#{$video-toggle-size} + var(--space-xs) + var(--space-md));
+
+/// Width of the focus ring of a control floating over a picture, and of the halo inside it.
+$focus-ring-width: 2px;
+/// A surface halo between a floating control and its focus ring, which keeps the ring visible on
+/// light, dark and blue pictures alike.
+$focus-halo: 0 0 0 $focus-ring-width var(--mat-sys-surface-container-lowest);
+
+/// The primary focus ring of a control floating over a picture, with the surface halo inside it
+/// and an optional shadow beneath.
+@mixin focus-ring($shadow: null) {
+    outline: $focus-ring-width solid var(--mat-sys-primary);
+    outline-offset: $focus-ring-width;
+    box-shadow: $focus-halo, $shadow;
+}

@@ -1,0 +1,10 @@
+<div class="editor-header">
+    <ng-content select="[crczpMarkdownLabel]" />
+</div>
+<crczp-markdown-editor-frame
+    expandable
+    [markdown]="markdown()"
+    [readonly]="disabled()"
+    (markdownChange)="edit($event)"
+    (expand)="expand()"
+/>

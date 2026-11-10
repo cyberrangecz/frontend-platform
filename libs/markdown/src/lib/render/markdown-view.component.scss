@@ -1,0 +1,77 @@
+@use '../styles/presentation' as presentation;
+
+:host {
+    display: block;
+    flex: 1 1 auto;
+    min-width: 0;
+    line-height: 1.6;
+    overflow-wrap: break-word;
+}
+
+.view-details {
+    margin: 0 0 var(--space-xl);
+
+    &:first-child {
+        margin-top: 0;
+    }
+
+    &:last-child {
+        margin-bottom: 0;
+    }
+}
+
+.view-summary {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    width: fit-content;
+    padding: var(--space-3xs) var(--space-xs) var(--space-3xs) var(--space-3xs);
+    border-radius: var(--space-xs);
+    color: var(--mat-sys-primary);
+    font-weight: var(--font-weight-medium);
+    list-style: none;
+    cursor: pointer;
+    user-select: none;
+
+    transition: background-color 120ms ease;
+
+    &::-webkit-details-marker {
+        display: none;
+    }
+
+    &::before {
+        content: '';
+        flex: none;
+        width: var(--space-2xs);
+        height: var(--space-2xs);
+        margin: 0 var(--space-3xs) 0 var(--space-xs);
+        border-right: 2px solid currentColor;
+        border-bottom: 2px solid currentColor;
+        transform: rotate(-45deg);
+
+        transition: transform 200ms presentation.$ease-emphasized;
+    }
+
+    &:hover {
+        background: color-mix(in srgb, var(--mat-sys-primary) 6%, transparent);
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--mat-sys-primary);
+        outline-offset: 0;
+    }
+
+    .view-details[open] > &::before {
+        transform: rotate(45deg);
+    }
+}
+
+.view-details-body {
+    margin: var(--space-xs) 0 0 calc(var(--space-xs) + var(--space-3xs));
+    padding: var(--space-xs) 0 var(--space-xs) var(--space-xl);
+    border-left: var(--space-4xs) solid var(--mat-sys-outline-variant);
+
+    .view-details[open] > & {
+        @include presentation.reveal(240ms);
+    }
+}

@@ -1,0 +1,6 @@
+<select #field class="suffix-select" aria-label="Filter by file suffix" (change)="choose(field.selectedIndex)">
+    <option [selected]="value() === null">All</option>
+    @for (suffix of suffixes(); track suffix) {
+        <option [selected]="value() === suffix">{{ labelOf(suffix) }}</option>
+    }
+</select>

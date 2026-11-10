@@ -1,0 +1,98 @@
+@let block = token();
+@switch (block.type) {
+    @case ('heading') {
+        @switch (block.depth) {
+            @case (1) {
+                <h1 class="block-heading block-heading--1"><crczp-markdown-inline [tokens]="block.tokens" /></h1>
+            }
+            @case (2) {
+                <h2 class="block-heading block-heading--2"><crczp-markdown-inline [tokens]="block.tokens" /></h2>
+            }
+            @case (3) {
+                <h3 class="block-heading block-heading--3"><crczp-markdown-inline [tokens]="block.tokens" /></h3>
+            }
+            @default {
+                <h4 class="block-heading block-heading--4"><crczp-markdown-inline [tokens]="block.tokens" /></h4>
+            }
+        }
+    }
+    @case ('list') {
+        @if (block.ordered) {
+            <ol class="block-list" [attr.start]="block.start || null">
+                @for (item of block.items; track $index) {
+                    <li [class.block-task]="item.task">
+                        @if (item.task) {
+                            <input type="checkbox" class="block-task-box" disabled [checked]="item.checked" />
+                        }
+                        @for (child of item.tokens; track $index) {
+                            <crczp-markdown-block [token]="child" />
+                        }
+                    </li>
+                }
+            </ol>
+        } @else {
+            <ul class="block-list">
+                @for (item of block.items; track $index) {
+                    <li [class.block-task]="item.task">
+                        @if (item.task) {
+                            <input type="checkbox" class="block-task-box" disabled [checked]="item.checked" />
+                        }
+                        @for (child of item.tokens; track $index) {
+                            <crczp-markdown-block [token]="child" />
+                        }
+                    </li>
+                }
+            </ul>
+        }
+    }
+    @case ('code') {
+        <pre class="block-code"><code>{{ block.text }}</code></pre>
+    }
+    @case ('blockquote') {
+        <blockquote class="block-quote">
+            @for (child of block.tokens; track $index) {
+                <crczp-markdown-block [token]="child" />
+            }
+        </blockquote>
+    }
+    @case ('hr') {
+        <hr class="block-rule" />
+    }
+    @case ('table') {
+        <div class="block-scroll">
+            <table class="block-table">
+                <thead>
+                    <tr>
+                        @for (cell of block.header; track $index) {
+                            <th [style.text-align]="cell.align"><crczp-markdown-inline [tokens]="cell.tokens" /></th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (row of block.rows; track $index) {
+                        <tr>
+                            @for (cell of row; track $index) {
+                                <td [style.text-align]="cell.align"><crczp-markdown-inline [tokens]="cell.tokens" /></td>
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    @case ('html') {
+        @if (!closesSection()) {
+            <p class="block-paragraph">{{ block.text }}</p>
+        }
+    }
+    @default {
+        @if (paragraph(); as parts) {
+            @if (parts.inline.length) {
+                <p class="block-paragraph" [class.block-paragraph--tight]="block.type === 'text'"><crczp-markdown-inline [tokens]="parts.inline" /></p>
+            }
+            @for (reference of parts.media; track reference.hash + $index) {
+                <crczp-attachment-media [reference]="reference" />
+            }
+        }
+    }
+}
