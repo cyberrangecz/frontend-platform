@@ -3,7 +3,7 @@ import {InfoLevel} from '@crczp/training-model';
 import {MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle} from "@angular/material/expansion";
 import {MatIcon} from "@angular/material/icon";
 import {MatTooltip} from "@angular/material/tooltip";
-import {SentinelMarkdownViewComponent} from "@sentinel/components/markdown-view";
+import { MarkdownViewComponent } from '@crczp/markdown';
 
 @Component({
     selector: 'crczp-info-level-detail',
@@ -16,7 +16,7 @@ import {SentinelMarkdownViewComponent} from "@sentinel/components/markdown-view"
         MatExpansionPanelHeader,
         MatExpansionPanel,
         MatTooltip,
-        SentinelMarkdownViewComponent
+        MarkdownViewComponent
     ]
 })
 export class InfoLevelDetailComponent {

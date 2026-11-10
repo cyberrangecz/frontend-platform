@@ -12,8 +12,9 @@ import {
 import {AccessLevel} from '@crczp/training-model';
 import {AccessLevelEditFormGroup} from './access-level-edit-form-group';
 import {AbstractControl, ReactiveFormsModule} from '@angular/forms';
+import {Subscription} from 'rxjs';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {SentinelMarkdownEditorComponent} from "@sentinel/components/markdown-editor";
+import {MarkdownEditorComponent} from "@crczp/markdown";
 import {MatError, MatFormField, MatHint, MatInput, MatLabel, MatSuffix} from "@angular/material/input";
 import {MatIcon} from "@angular/material/icon";
 import {MatTooltip} from "@angular/material/tooltip";
@@ -29,7 +30,7 @@ import { ClearInputSuffixComponent } from '@crczp/utils';
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         ClearInputSuffixComponent,
-        SentinelMarkdownEditorComponent,
+        MarkdownEditorComponent,
         MatError,
         MatIcon,
         MatTooltip,
@@ -47,6 +48,7 @@ export class AccessLevelEditComponent implements OnChanges {
 
     accessLevelConfigFormGroup: AccessLevelEditFormGroup;
     destroyRef = inject(DestroyRef);
+    private formGroupValueChangesSubscription?: Subscription;
 
     get estimatedDuration(): AbstractControl {
         return this.accessLevelConfigFormGroup.formGroup.get('estimatedDuration');
@@ -72,7 +74,8 @@ export class AccessLevelEditComponent implements OnChanges {
         if ('level' in changes) {
             this.accessLevelConfigFormGroup = new AccessLevelEditFormGroup(this.level);
             this.title.markAsTouched();
-            this.accessLevelConfigFormGroup.formGroup.valueChanges
+            this.formGroupValueChangesSubscription?.unsubscribe();
+            this.formGroupValueChangesSubscription = this.accessLevelConfigFormGroup.formGroup.valueChanges
                 .pipe(takeUntilDestroyed(this.destroyRef))
                 .subscribe(() => {
                     this.accessLevelConfigFormGroup.setToLevel(this.level);

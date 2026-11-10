@@ -3,7 +3,10 @@ import {
     TrainingDefinitionWithLevels,
     TrainingDefinitionStateEnum,
 } from '@crczp/training-model';
-import { TrainingDefinitionCreateDTO } from '../../dto/training-definition/training-definition-create-dto';
+import {
+    TrainingDefinitionCreateDTO,
+    TrainingDefinitionCreateDTOStateEnum,
+} from '../../dto/training-definition/training-definition-create-dto';
 import {
     TrainingDefinitionDTO,
     TrainingDefinitionDTOStateEnum,
@@ -11,10 +14,8 @@ import {
 } from '../../dto/training-definition/training-definition-dto';
 import { TrainingDefinitionUpdateDTO } from '../../dto/training-definition/training-definition-update-dto';
 import { LevelMapper } from '../level/level-mapper';
+import { TrainingMaterialMapper } from './training-material-mapper';
 
-/**
- * @dynamic
- */
 export class TrainingDefinitionMapper {
     static fromDTO(dto: TrainingDefinitionDTO): TrainingDefinition {
         const result = new TrainingDefinition();
@@ -106,14 +107,15 @@ export class TrainingDefinitionMapper {
         const result = new TrainingDefinitionUpdateDTO();
         result.description = trainingDefinition.description;
         result.prerequisites = trainingDefinition.prerequisites.filter(
-            (prerequisite) => prerequisite.length > 1,
+            (prerequisite) => prerequisite.length > 0,
         );
         result.outcomes = trainingDefinition.outcomes.filter(
-            (outcome) => outcome.length > 1,
+            (outcome) => outcome.length > 0,
         );
         result.title = trainingDefinition.title;
         result.version = trainingDefinition.version;
         result.levels = LevelMapper.toUpdateDTOs(trainingDefinition.levels);
+        result.materials = TrainingMaterialMapper.toDTOs(trainingDefinition.materials);
         return result;
     }
 
@@ -122,15 +124,16 @@ export class TrainingDefinitionMapper {
     ): TrainingDefinitionCreateDTO {
         const result = new TrainingDefinitionCreateDTO();
         result.prerequisites = trainingDefinition.prerequisites.filter(
-            (prerequisite) => prerequisite.length > 1,
+            (prerequisite) => prerequisite.length > 0,
         );
         result.outcomes = trainingDefinition.outcomes.filter(
-            (outcome) => outcome.length > 1,
+            (outcome) => outcome.length > 0,
         );
         result.description = trainingDefinition.description;
-        result.state = TrainingDefinitionDTOStateEnum.UNRELEASED;
+        result.state = TrainingDefinitionCreateDTOStateEnum.UNRELEASED;
         result.title = trainingDefinition.title;
         result.levels = LevelMapper.toUpdateDTOs(trainingDefinition.levels);
+        result.materials = TrainingMaterialMapper.toDTOs(trainingDefinition.materials);
         return result;
     }
 }

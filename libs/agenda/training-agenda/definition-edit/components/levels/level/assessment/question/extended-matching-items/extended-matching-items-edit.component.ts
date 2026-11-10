@@ -25,7 +25,7 @@ import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatIcon } from '@angular/material/icon';
-import { SentinelMarkdownEditorComponent } from '@sentinel/components/markdown-editor';
+import { MarkdownEditorComponent } from '@crczp/markdown';
 
 /**
  * Component for editing a question of type Extended Matching Items
@@ -47,7 +47,7 @@ import { SentinelMarkdownEditorComponent } from '@sentinel/components/markdown-e
         ReactiveFormsModule,
         MatLabel,
         MatFormField,
-        SentinelMarkdownEditorComponent,
+        MarkdownEditorComponent,
         MatButton
     ]
 })

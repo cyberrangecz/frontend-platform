@@ -13,6 +13,7 @@ import {Hint, MitreTechnique, TrainingLevel} from '@crczp/training-model';
 import {TrainingLevelEditFormGroup} from './training-level-edit-form-group';
 import {AbstractControl, ReactiveFormsModule} from '@angular/forms';
 import {SentinelControlItemSignal} from '@sentinel/components/controls';
+import {Subscription} from 'rxjs';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {ExpectedCommandsSelectComponent} from "./expected-commands/expected-commands-select.component";
 import {MitreTechniqueSelectComponent} from "./mitre-technique/mitre-technique-select.component";
@@ -20,7 +21,7 @@ import {HintsOverviewComponent} from "./hint/overview/hints-overview.component";
 import {MatCheckbox} from "@angular/material/checkbox";
 import {MatTooltip} from "@angular/material/tooltip";
 import {MatError, MatFormField, MatHint, MatInput, MatLabel, MatSuffix} from "@angular/material/input";
-import {SentinelMarkdownEditorComponent} from "@sentinel/components/markdown-editor";
+import {MarkdownEditorComponent} from "@crczp/markdown";
 import {MatIcon} from "@angular/material/icon";
 import { ClearInputSuffixComponent } from '@crczp/utils';
 
@@ -45,7 +46,7 @@ import { ClearInputSuffixComponent } from '@crczp/utils';
         MatLabel,
         MatError,
         MatIcon,
-        SentinelMarkdownEditorComponent,
+        MarkdownEditorComponent,
         MatInput,
         MatHint
     ]
@@ -56,6 +57,7 @@ export class TrainingLevelEditComponent implements OnChanges {
     trainingLevelConfigFormGroup: TrainingLevelEditFormGroup;
     controls: SentinelControlItemSignal[];
     destroyRef = inject(DestroyRef);
+    private formGroupValueChangesSubscription?: Subscription;
 
     get title(): AbstractControl {
         return this.trainingLevelConfigFormGroup.formGroup.get('title');
@@ -115,7 +117,8 @@ export class TrainingLevelEditComponent implements OnChanges {
         if ('level' in changes) {
             this.trainingLevelConfigFormGroup = new TrainingLevelEditFormGroup(this.level);
             this.setFormsAsTouched();
-            this.trainingLevelConfigFormGroup.formGroup.valueChanges
+            this.formGroupValueChangesSubscription?.unsubscribe();
+            this.formGroupValueChangesSubscription = this.trainingLevelConfigFormGroup.formGroup.valueChanges
                 .pipe(takeUntilDestroyed(this.destroyRef))
                 .subscribe(() => {
                     this.trainingLevelConfigFormGroup.setToLevel(this.level);

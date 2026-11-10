@@ -18,21 +18,6 @@ import {TrainingLevelComponent} from './training-level/training-level.component'
 import {InfoLevelComponent} from './info-level/info-level.component';
 import {LevelMaterialModule} from './level-material.module';
 import {AccessLevelComponent} from './access-level/access-level.component';
-import {MarkedOptions, SentinelMarkdownViewModule} from '@sentinel/components/markdown-view';
-
-const markdownParserConfig = {
-    markedOptions: {
-        provide: MarkedOptions,
-        useValue: {
-            gfm: true,
-            tables: true,
-            breaks: false,
-            pedantic: false,
-            smartLists: true,
-            smartypants: false,
-        },
-    },
-};
 
 /**
  * Module containing training run level component declarations and necessary imports for the components
@@ -40,7 +25,6 @@ const markdownParserConfig = {
 @NgModule({
     imports: [
         CommonModule,
-        SentinelMarkdownViewModule.forRoot(markdownParserConfig),
         TopologyGraphModule,
         FormsModule,
         LevelMaterialModule,

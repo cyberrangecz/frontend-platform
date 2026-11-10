@@ -8,51 +8,64 @@ div .spacer {
     flex: 1 1 auto;
 }
 
-div .panel-wrapper {
-    display: flex;
-    flex-direction: row;
+.level-fields {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    align-items: start;
+    column-gap: var(--space-xl);
+    row-gap: var(--space-xs);
 }
 
-div .left-panel {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 3;
-    margin-right: 30px
+.level-fields-item--full {
+    grid-column: 1 / -1;
 }
 
-div .right-panel {
+.answer-row {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    column-gap: var(--space-xl);
+}
+
+.answer-field {
+    flex: 1 1 24rem;
+    max-width: 50%;
+    min-width: 0;
+}
+
+.answer-options {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    column-gap: var(--space-md);
+    flex: 0 1 auto;
+    max-width: 100%;
+    padding-block-start: var(--space-xs);
+}
+
+.level-texts {
     display: flex;
     flex-direction: column;
-    flex-grow: 1;
-    gap: var(--space-xl);
-    margin-left: 30px;
 }
 
 sentinel-controls {
     margin-left: -10px;
 }
 
-sentinel-markdown-editor.mrkdwn-content {
+crczp-markdown-editor {
     margin-bottom: 20px;
-    height: 30vh;
 }
 
-sentinel-markdown-editor.mrkdwn-solution {
-    margin-bottom: 20px;
-    height: 30vh;
+@media screen and (max-width: 1100px) {
+    .level-fields {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
 }
 
-@media screen and (max-width: 800px) {
-    div .panel-wrapper {
-        flex-direction: column;
-    }
-
-    div .left-panel {
-        margin-right: 0;
-    }
-
-    div .right-panel {
-        margin-left: 0;
+@media screen and (max-width: 640px) {
+    .level-fields {
+        grid-template-columns: minmax(0, 1fr);
     }
 }
 
@@ -67,15 +80,6 @@ sentinel-markdown-editor.mrkdwn-solution {
 
 .panel-description-error mat-icon {
     margin-right: 5px;
-}
-
-.time-configuration-container {
-    display: flex;
-    column-gap: 50px;
-}
-
-.time-configuration-container mat-form-field {
-    flex-grow: 1;
 }
 
 .content-info {

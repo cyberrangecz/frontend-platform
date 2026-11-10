@@ -24,9 +24,7 @@
 
         <!-- CONTENT filed -->
         <h3>Content</h3>
-        <sentinel-markdown-editor (contentChange)="this.content.setValue($event);"
-                                  [content]="content.value"
-                                  [sentinel-markdown-file-upload]="false"/>
+        <crczp-markdown-editor formControlName="content" />
         @if (content.hasError('whitespace')) {
             <mat-error>Content cannot be empty</mat-error>
         }

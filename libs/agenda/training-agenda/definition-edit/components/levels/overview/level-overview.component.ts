@@ -31,6 +31,7 @@ import { map, tap } from 'rxjs/operators';
 import { LevelOverviewControls } from '../../../model/adapters/level-overview-controls';
 import { LevelEditService } from '../../../services/state/level/level-edit.service';
 import { AbstractLevelEditComponent } from '../level/abstract-level-edit.component';
+import { LevelEditingBlockDirective } from './level-editing-block.directive';
 
 /**
  * Smart component for level stepper and level edit components
@@ -45,6 +46,7 @@ import { AbstractLevelEditComponent } from '../level/abstract-level-edit.compone
         SentinelControlsComponent,
         MatDivider,
         AbstractLevelEditComponent,
+        LevelEditingBlockDirective,
         TrainingLevelStepperComponent,
     ],
 })

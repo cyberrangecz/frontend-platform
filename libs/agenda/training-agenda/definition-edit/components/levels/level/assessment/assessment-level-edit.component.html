@@ -1,75 +1,68 @@
 <div class="content">
     <form [formGroup]="assessmentFormGroup.formGroup">
-        <div class="panel-wrapper">
-            <div class="left-panel">
-                <!-- TITLE field -->
-                <mat-form-field (keydown.enter)="$event.preventDefault()"
-                                appearance="outline">
-                    <mat-label>Title</mat-label>
-                    <input formControlName="title" matInput maxlength="255" placeholder="Title" required>
-                    <crczp-clear-input-suffix [control]="title" matSuffix />
-                    @if (title.hasError('whitespace')) {
-                        <mat-error>Title cannot be empty</mat-error>
-                    }
-                </mat-form-field>
+        <div class="level-fields">
+            <!-- TITLE field -->
+            <mat-form-field (keydown.enter)="$event.preventDefault()"
+                            appearance="outline"
+                            class="level-fields-item--full">
+                <mat-label>Title</mat-label>
+                <input formControlName="title" matInput maxlength="255" placeholder="Title" required>
+                <crczp-clear-input-suffix [control]="title" matSuffix />
+                @if (title.hasError('whitespace')) {
+                    <mat-error>Title cannot be empty</mat-error>
+                }
+            </mat-form-field>
 
-                <div class="time-configuration-container">
-                    <!-- ESTIMATED DURATION field -->
-                    <mat-form-field appearance="outline" hintLabel="Number in minutes greater than or equal to 1.">
-                        <mat-label>Estimated Duration in Minutes</mat-label>
-                        <input
-                            formControlName="estimatedDuration"
-                            matInput
-                            maxlength="9"
-                            min="1"
-                            placeholder="Estimated Duration in Minutes"
-                        />
-                        @if (estimatedDuration.hasError('pattern') || estimatedDuration.hasError('min')) {
-                            <mat-error>
-                                Estimated Duration must be a number greater than or equal to 1
-                            </mat-error>
-                        }
-                    </mat-form-field>
+            <!-- ESTIMATED DURATION field -->
+            <mat-form-field appearance="outline">
+                <mat-label>Estimated Duration in Minutes</mat-label>
+                <input
+                    formControlName="estimatedDuration"
+                    matInput
+                    maxlength="9"
+                    min="1"
+                    placeholder="Estimated Duration in Minutes"
+                />
+                @if (estimatedDuration.hasError('pattern') || estimatedDuration.hasError('min')) {
+                    <mat-error>
+                        Estimated Duration must be a number greater than or equal to 1
+                    </mat-error>
+                }
+            </mat-form-field>
 
-                    <!-- MINIMAL POSSIBLE SOLVE TIME field -->
-                    <mat-form-field
-                        appearance="outline"
-                        hintLabel="Number in minutes greater than or equal to 0."
+            <!-- MINIMAL POSSIBLE SOLVE TIME field -->
+            <mat-form-field appearance="outline">
+                <mat-label>Minimal Possible Solve Time in Minutes</mat-label>
+                <input
+                    formControlName="minimalPossibleSolveTime"
+                    matInput
+                    maxlength="9"
+                    min="0"
+                    placeholder="Minimal Possible Solve Time in Minutes"
+                />
+                @if (minimalPossibleSolveTime.hasError('pattern') || minimalPossibleSolveTime.hasError('min')) {
+                    <mat-error
                     >
-                        <mat-label>Minimal Possible Solve Time in Minutes</mat-label>
-                        <input
-                            formControlName="minimalPossibleSolveTime"
-                            matInput
-                            maxlength="9"
-                            min="0"
-                            placeholder="Minimal Possible Solve Time in Minutes"
-                        />
-                        @if (minimalPossibleSolveTime.hasError('pattern') || estimatedDuration.hasError('min')) {
-                            <mat-error
-                            >
-                                Minimal Possible Solve Time must be a number greater than or equal to 0
-                            </mat-error>
-                        }
-                    </mat-form-field>
-                </div>
+                        Minimal Possible Solve Time must be a number greater than or equal to 0
+                    </mat-error>
+                }
+            </mat-form-field>
 
-                <!-- INSTRUCTIONS field -->
-                <h3>Instructions</h3>
-                <sentinel-markdown-editor (contentChange)="instructions.setValue($event)"
-                                          [content]="instructions.value"
-                                          [sentinel-markdown-file-upload]="false"
-                                          class="mrkdwn-content"/>
+            <!-- QUESTIONNAIRE / TEST toggle -->
+            <div class="level-fields-item--wide test-toggle-wrapper">
+                <span class="test-toggle-right-margin">Questionnaire</span>
+                <mat-slide-toggle
+                    formControlName="isTest"
+                    matTooltip="Switching to questionnaire will delete your answers">
+                </mat-slide-toggle>
+                <span class="test-toggle-left-margin">Test</span>
             </div>
-            <div class="right-panel">
-                <div class="test-toggle-wrapper">
-                    <span class="test-toggle-right-margin">Questionnaire</span>
-                    <mat-slide-toggle
-                        formControlName="isTest"
-                        matTooltip="Switching to questionnaire will delete your answers">
-                    </mat-slide-toggle>
-                    <span class="test-toggle-left-margin">Test</span>
-                </div>
-            </div>
+        </div>
+
+        <div class="level-texts">
+            <!-- INSTRUCTIONS field -->
+            <h3>Instructions</h3>
+            <crczp-markdown-editor label="Instructions" formControlName="instructions" />
         </div>
 
         <!-- QUESTIONS component -->

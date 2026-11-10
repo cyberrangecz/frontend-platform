@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
 import {TrainingLevel} from '@crczp/training-model';
-import {SentinelMarkdownViewComponent} from "@sentinel/components/markdown-view";
+import { MarkdownViewComponent } from '@crczp/markdown';
 import {MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle} from "@angular/material/expansion";
 import {MatIcon} from "@angular/material/icon";
 import {MatTooltip} from "@angular/material/tooltip";
@@ -11,7 +11,7 @@ import {MatTooltip} from "@angular/material/tooltip";
     styleUrls: ['./training-level-detail.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
-        SentinelMarkdownViewComponent,
+        MarkdownViewComponent,
         MatExpansionPanel,
         MatExpansionPanelHeader,
         MatExpansionPanelTitle,

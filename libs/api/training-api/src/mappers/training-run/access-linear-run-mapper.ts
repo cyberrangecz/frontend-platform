@@ -9,6 +9,7 @@ export class AccessLinearRunMapper {
         const result = new AccessTrainingRunInfo();
         result.trainingRunId = dto.training_run_id;
         result.instanceId = dto.instance_id;
+        result.trainingDefinitionId = dto.definition_id;
         result.trainingInstanceTitle = dto.training_instance_title;
         result.managed = dto.managed;
         result.sandboxInstanceId = dto.sandbox_instance_ref_id;

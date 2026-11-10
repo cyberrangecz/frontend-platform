@@ -1,6 +1,7 @@
+@import "../../../../../../internal/question-layout.css";
+
 h2 {
     color: #4355b7;
-    margin: 0;
 }
 
 p.required-note {
@@ -8,7 +9,6 @@ p.required-note {
 }
 
 table {
-    margin-top: 10px;
     max-width: 100%;
     overflow-x: auto;
     align-items: center;
@@ -41,6 +41,6 @@ td, th {
     word-break: break-word;
 }
 
-sentinel-markdown-view {
+crczp-markdown-view {
     color: #3f51b5;
 }

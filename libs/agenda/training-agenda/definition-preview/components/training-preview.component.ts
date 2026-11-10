@@ -6,6 +6,10 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { SentinelStepperComponent } from '@sentinel/components/stepper';
 import { AbstractLevelComponent } from './level/abstract-level.component';
 import { LevelStepperAdapter } from '@crczp/components';
+import {
+    SHOWN_DEFINITION_ATTACHMENTS,
+    ShownDefinitionAttachmentSource,
+} from '@crczp/training-agenda/internal';
 
 /**
  * Main component of training run preview.
@@ -16,16 +20,20 @@ import { LevelStepperAdapter } from '@crczp/components';
     styleUrls: ['./training-preview.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [SentinelStepperComponent, AbstractLevelComponent],
+    providers: SHOWN_DEFINITION_ATTACHMENTS,
 })
 export class TrainingPreviewComponent implements OnInit {
     activeLevel: Level;
     levels: Level[];
     stepper: TrainingPreviewStepper;
     private activeRoute = inject(ActivatedRoute);
+    private readonly attachments = inject(ShownDefinitionAttachmentSource);
 
     constructor() {
         this.activeRoute.data.pipe(takeUntilDestroyed()).subscribe((data) => {
-            this.levels = data[TrainingDefinitionWithLevels.name].levels;
+            const definition: TrainingDefinitionWithLevels = data[TrainingDefinitionWithLevels.name];
+            this.levels = definition.levels;
+            this.attachments.show(definition.id);
         });
     }
 

@@ -9,6 +9,7 @@ import {
     OnChanges,
     OnInit,
     Output,
+    computed,
     signal,
     SimpleChanges
 } from '@angular/core';
@@ -75,6 +76,15 @@ export class HintsOverviewComponent implements OnInit, OnChanges {
     readonly stepperHints = signal<SentinelStepper<HintStepperAdapter>>({
         items: [],
     });
+    /**
+     * Identifies the stepper contents the stepper has to be re-created for: the count and titles
+     * of the hints, not their other content.
+     */
+    protected readonly stepperKey = computed(() =>
+        this.stepperHints()
+            .items.map(({ title }) => title)
+            .join('\u0001') + `\u0002${this.stepperHints().items.length}`,
+    );
     controls: SentinelControlItem[];
     destroyRef = inject(DestroyRef);
     private deleteDisabledSubject$: BehaviorSubject<boolean> =

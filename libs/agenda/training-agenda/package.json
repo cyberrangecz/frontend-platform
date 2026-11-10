@@ -13,6 +13,7 @@
         "@angular/forms": "*",
         "@angular/cdk": "*",
         "@crczp/training-api": "*",
+        "@crczp/markdown": "*",
         "@crczp/routing-commons": "*",
         "@crczp/api-common": "*",
         "@crczp/components": "*",

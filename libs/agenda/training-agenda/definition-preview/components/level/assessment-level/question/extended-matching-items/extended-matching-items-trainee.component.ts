@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
 import {ExtendedMatchingItems} from '@crczp/training-model';
 import {MatRadioButton, MatRadioGroup} from "@angular/material/radio";
-import {SentinelMarkdownViewComponent} from "@sentinel/components/markdown-view";
+import { MarkdownViewComponent } from '@crczp/markdown';
 
 @Component({
     selector: 'crczp-trainee-extended-matching-items',
@@ -11,7 +11,7 @@ import {SentinelMarkdownViewComponent} from "@sentinel/components/markdown-view"
     imports: [
         MatRadioGroup,
         MatRadioButton,
-        SentinelMarkdownViewComponent
+        MarkdownViewComponent
     ]
 })
 export class ExtendedMatchingItemsTraineeComponent {
