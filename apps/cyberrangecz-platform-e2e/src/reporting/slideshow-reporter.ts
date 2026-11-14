@@ -63,7 +63,7 @@ export default class SlideshowReporter implements Reporter {
             JSON.stringify({ segments, visualChecks }, null, 2),
         );
         writeFileSync(join(this.outputFolder, 'index.html'), renderSlideshowPage(segments));
-        console.log(`Slideshow: ${join(this.outputFolder, 'index.html')}`);
+        process.stdout.write(`Slideshow: ${join(this.outputFolder, 'index.html')}\n`);
     }
 
     private toClip(

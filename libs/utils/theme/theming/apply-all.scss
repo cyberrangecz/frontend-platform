@@ -19,6 +19,8 @@
     @include mat.color-variants-backwards-compatibility(theme.$theme);
     @include mat.all-component-themes(theme.$theme);
     @include mat.system-level-colors(theme.$theme);
+    @include mat.system-level-typography(theme.$theme);
+    @include mat.system-level-shape(theme.$theme);
     @include sentinel-components.all-component-themes(theme.$theme);
     @include layout.sentinel-layout-theme(theme.$theme);
     @include sentinel-layout-sidebar.sidebar-page-layout-theme(theme.$theme);

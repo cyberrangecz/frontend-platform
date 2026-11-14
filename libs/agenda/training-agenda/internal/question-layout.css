@@ -1,0 +1,7 @@
+h2 {
+    margin: 0 0 var(--space-md);
+}
+
+p.required-note {
+    margin: 0 0 var(--space-md);
+}

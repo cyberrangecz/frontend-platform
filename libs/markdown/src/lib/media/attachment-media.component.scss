@@ -1,0 +1,138 @@
+@use '../styles/presentation' as presentation;
+@use 'media-tokens' as tokens;
+
+:host {
+    container-type: inline-size;
+    display: flow-root;
+    margin: var(--space-2xl) 0;
+    outline: none;
+}
+
+:host(.attachment-media--scrolling) {
+    overflow-x: auto;
+}
+
+.attachment-frame {
+    position: relative;
+    width: fit-content;
+    max-width: 100%;
+    border-radius: presentation.$card-radius;
+
+    &--wide {
+        width: auto;
+    }
+
+    &--resizable:not(.attachment-frame--inset) {
+        margin-bottom: calc(#{tokens.$resize-handle-size} + #{tokens.$resize-handle-gap});
+    }
+
+    &--resizable:not(.attachment-frame--inset)::after {
+        content: '';
+        position: absolute;
+        inset-inline: 0;
+        top: 100%;
+        height: calc(#{tokens.$resize-handle-size} + #{tokens.$resize-handle-gap});
+    }
+
+    :host(:focus-visible) & {
+        outline: tokens.$focus-ring-width solid var(--mat-sys-primary);
+        outline-offset: var(--space-3xs);
+    }
+}
+
+/// Takes the size a card must be shown at to use the inset layout, which the component reads in px.
+.attachment-inset-probe {
+    position: absolute;
+    width: tokens.$inset-minimum-width;
+    height: tokens.$inset-minimum-height;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.attachment-toolbar {
+    position: absolute;
+    z-index: 1;
+    top: calc(-1 * var(--space-2xl));
+    right: tokens.$inset-edge;
+    transition:
+        opacity tokens.$duration-base ease,
+        transform tokens.$duration-base presentation.$ease-decelerate;
+
+    .attachment-frame--inset > & {
+        top: tokens.$inset-edge;
+    }
+
+    @media (hover: hover) {
+        opacity: 0;
+        transform: translateY(calc(-1 * var(--space-3xs)));
+        pointer-events: none;
+    }
+}
+
+.attachment-resize {
+    position: absolute;
+    z-index: 1;
+    right: tokens.$inset-edge;
+    bottom: tokens.$inset-edge;
+    transition: opacity tokens.$duration-base ease;
+
+    .attachment-frame--playback-bar > & {
+        bottom: tokens.$video-bar-clearance;
+    }
+
+    .attachment-frame:not(.attachment-frame--inset) > & {
+        top: calc(100% + #{tokens.$resize-handle-gap});
+        right: 0;
+        bottom: auto;
+    }
+
+    @media (hover: hover) {
+        opacity: 0;
+        pointer-events: none;
+    }
+}
+
+/// The toolbar and the resize control in view while the pointer is over the card, while keyboard
+/// focus is on or within it, while the picker is open and while a resize is in progress.
+.attachment-frame:hover > .attachment-toolbar,
+.attachment-frame:hover > .attachment-resize,
+:host(:focus-visible) .attachment-frame > .attachment-toolbar,
+:host(:focus-visible) .attachment-frame > .attachment-resize,
+.attachment-frame:has(:focus-visible) > .attachment-toolbar,
+.attachment-frame:has(:focus-visible) > .attachment-resize,
+.attachment-frame--picking > .attachment-toolbar,
+.attachment-resize.size-control--resizing {
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+}
+
+.attachment-picker {
+    width: 24rem;
+    max-width: calc(100vw - 2 * var(--space-xl));
+    border-radius: presentation.$card-radius;
+    background: var(--mat-sys-surface-container-lowest);
+    transform-origin: top right;
+
+    box-shadow: tokens.$floating-shadow;
+
+    animation: attachment-picker-in tokens.$duration-base presentation.$ease-decelerate both;
+}
+
+@keyframes attachment-picker-in {
+    from {
+        opacity: 0;
+        transform: translateY(calc(-1 * var(--space-xs))) scale(0.98);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .attachment-toolbar,
+    .attachment-resize {
+        transition: none;
+    }
+
+    .attachment-picker {
+        animation: none;
+    }
+}

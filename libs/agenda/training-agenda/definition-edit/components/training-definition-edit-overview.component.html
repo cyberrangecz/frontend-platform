@@ -7,7 +7,7 @@
         </mat-panel-title>
         <mat-panel-description>
             <span class="spacer"></span>
-            @if (unsavedChanges.has('trainingDefinition') || unsavedChanges.has('levels')) {
+            @if (unsavedChanges.has('trainingDefinition') || unsavedChanges.has('levels') || unsavedChanges.has('materials')) {
                 <div class="panel-description-error">
                     <mat-icon color="warn">warning</mat-icon>
                     <mat-error>Changes are not saved</mat-error>

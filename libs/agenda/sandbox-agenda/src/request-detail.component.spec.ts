@@ -1,4 +1,4 @@
-vi.mock('@crczp/components', () => ({ LOGGING_ERROR_MARKER: '[error]' }));
+vi.mock('@crczp/components', () => ({}));
 vi.mock('../request-detail/components/stage/request-stage.component', async () => {
     const { Component } = await import('@angular/core');
     class RequestStageComponent {}

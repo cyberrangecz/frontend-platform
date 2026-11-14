@@ -19,3 +19,6 @@ export * from './api/cheating-detection-api.service';
 export * from './api/detection-event-api.service';
 
 export * from './api/sorts';
+export * from './api/definition/training-attachment-api.service';
+export * from './api/definition/attachment-url-cache.service';
+export * from './api/definition/attachment-store-eviction.service';

@@ -17,6 +17,29 @@ This project unifies theme, styles, fonts, icons, and other assets for CyberRang
 | `--primary`                 |                                                                  | Primary color, equivalent to `--primary-40`    |
 | `--background`              |                                                                  | Background color, equivalent to `--neutral-98` |
 
+### Shape variables
+
+The theme emits Material's system shape tokens on `:root` next to its colour tokens, through `mat.system-level-shape`.
+Use them for `border-radius` instead of literal values.
+
+| Variable name                                                                                          | description                  |
+|--------------------------------------------------------------------------------------------------------|------------------------------|
+| `--mat-sys-corner-<size>`                                                                              | `none`, `extra-small`, `small`, `medium`, `large`, `extra-large`, `full` corner radius |
+
+### Typography variables
+
+The theme emits Material's system typography tokens on `:root` next to its colour and shape tokens, through
+`mat.system-level-typography`. Every role uses the theme's Inter font family. Set text with the whole role through the
+`font` shorthand, e.g. `font: var(--mat-sys-title-small)`; a `font-weight`, `font-style` or `font-variant-numeric`
+adjustment goes after it, since the shorthand resets them.
+
+| Variable name                          | description                                                                                         |
+|----------------------------------------|-----------------------------------------------------------------------------------------------------|
+| `--mat-sys-<role>-<size>`              | Full `font` value; role `display`, `headline`, `title`, `body`, `label`, size `large`, `medium`, `small` |
+| `--mat-sys-<role>-<size>-<property>`   | One part of a role; property `font`, `size`, `weight`, `line-height`, `tracking`                    |
+
+Titles take `title-*`, running text `body-*`, and captions, badges and other meta text `label-*` or `body-small`.
+
 ### Color classes
 
 | Variable name           | options                                                  | description                                                                  |

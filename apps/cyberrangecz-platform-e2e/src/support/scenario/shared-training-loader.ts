@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { parse } from 'yaml';
 import { z } from 'zod';
+import { ATTACHMENTS, referencesOf } from './attachment-fixtures';
 
 const hintSchema = z.looseObject({
     title: z.string(),
@@ -46,6 +47,9 @@ const levelSchema = z.discriminatedUnion('level_type', [
         questions: z.array(questionSchema),
     }),
 ]);
+
+/** The files the shared training's info level embeds for the trainee to see. */
+export const TRAINEE_ATTACHMENTS = [ATTACHMENTS.image, ATTACHMENTS.audio, ATTACHMENTS.video, ATTACHMENTS.text];
 
 const documentSchema = z.looseObject({ levels: z.array(levelSchema) });
 
@@ -163,7 +167,23 @@ export const SHARED_TRAINING_QUESTION_POINTS = [...assessmentQuestions]
     .sort((left, right) => left.order - right.order)
     .map((question) => question.points);
 
-/** Builds the import body of the shared training definition under the given title. */
-export function sharedTrainingImport(title: string) {
+/** The definition document of the shared training under the given title, holding no file references. */
+export function trainingImportWithoutAttachments(title: string) {
     return { ...trainingDocument, title };
+}
+
+/**
+ * Builds the import document of the shared training definition under the given title. Its info
+ * levels reference the trainee attachment files, which an import supplies in a ZIP archive.
+ */
+export function sharedTrainingImport(title: string) {
+    return {
+        ...trainingDocument,
+        title,
+        levels: trainingDocument.levels.map((level) =>
+            level.level_type === 'INFO_LEVEL'
+                ? { ...level, content: `${String(level.content)}\n\n${referencesOf(TRAINEE_ATTACHMENTS)}` }
+                : level,
+        ),
+    };
 }

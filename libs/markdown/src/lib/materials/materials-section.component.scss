@@ -1,0 +1,143 @@
+@use '../styles/presentation' as presentation;
+
+$rule-color: var(--mat-sys-outline-variant);
+$open-surface: var(--mat-sys-surface-container-lowest);
+$panel-corner: var(--space-md);
+
+:host {
+    display: flex;
+    align-self: stretch;
+}
+
+.section-field {
+    display: grid;
+    flex: 1;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-areas:
+        'icon title chevron'
+        'icon meter chevron';
+    align-content: center;
+    align-items: center;
+    column-gap: var(--space-sm);
+    row-gap: var(--space-3xs);
+    box-sizing: border-box;
+    padding: 0 var(--space-sm) 0 var(--space-md);
+    border: none;
+    background: transparent;
+    box-shadow: -1px 0 0 $rule-color;
+    color: var(--mat-sys-on-surface);
+    font: inherit;
+    text-align: start;
+    cursor: pointer;
+    transition:
+        background-color 140ms ease,
+        box-shadow 140ms ease;
+
+    &:hover {
+        background: color-mix(in srgb, var(--mat-sys-on-surface) 4%, transparent);
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--mat-sys-primary);
+        outline-offset: -2px;
+    }
+
+    &--open,
+    &--open:hover {
+        background: $open-surface;
+    }
+
+    :host(.section--file-over) & {
+        background: color-mix(in srgb, var(--mat-sys-primary) 10%, $open-surface);
+        outline: 2px dashed var(--mat-sys-primary);
+        outline-offset: -2px;
+    }
+}
+
+.section-icon {
+    grid-area: icon;
+    color: var(--mat-sys-primary);
+    transition: transform 200ms presentation.$ease-emphasized;
+
+    :host(.section--file-over) & {
+        transform: translateY(var(--space-3xs));
+    }
+}
+
+.section-title {
+    display: flex;
+    grid-area: title;
+    align-items: baseline;
+    gap: var(--space-xs);
+    min-width: 0;
+    white-space: nowrap;
+}
+
+.section-label {
+    overflow: hidden;
+    font-size: var(--font-size-md);
+    font-weight: var(--font-weight-medium);
+    line-height: 1.2;
+    text-overflow: ellipsis;
+}
+
+.section-count {
+    flex: none;
+    color: var(--mat-sys-on-surface-variant);
+    font-size: var(--font-size-sm);
+    font-variant-numeric: tabular-nums;
+}
+
+.section-chevron {
+    grid-area: chevron;
+    color: var(--mat-sys-on-surface-variant);
+    transition: transform 200ms presentation.$ease-emphasized;
+
+    .section-field--open & {
+        transform: rotate(180deg);
+    }
+}
+
+.section-meter {
+    grid-area: meter;
+}
+
+.section-panel {
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    width: 100%;
+    max-height: min(30rem, 60dvh);
+    overflow: hidden;
+    border-radius: 0 0 $panel-corner $panel-corner;
+    background: $open-surface;
+    box-shadow:
+        -1px 0 0 $rule-color,
+        1px 0 0 $rule-color,
+        0 1px 0 $rule-color,
+        0 var(--space-xs) var(--space-xl) color-mix(in srgb, var(--mat-sys-shadow) 14%, transparent),
+        0 var(--space-4xs) var(--space-3xs) color-mix(in srgb, var(--mat-sys-shadow) 8%, transparent);
+    animation: section-panel-roll 220ms presentation.$ease-decelerate both;
+}
+
+@keyframes section-panel-roll {
+    from {
+        clip-path: inset(0 calc(-1 * var(--space-3xl)) 100% calc(-1 * var(--space-3xl)));
+    }
+    to {
+        clip-path: inset(0 calc(-1 * var(--space-3xl)) calc(-1 * var(--space-3xl)) calc(-1 * var(--space-3xl)));
+    }
+}
+
+.section-content {
+    flex: 1 1 auto;
+    min-height: 0;
+    animation: section-content-in 200ms ease 60ms both;
+}
+
+@keyframes section-content-in {
+    from {
+        opacity: 0;
+        transform: translateY(calc(-1 * var(--space-xs)));
+    }
+}

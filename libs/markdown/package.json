@@ -1,0 +1,28 @@
+{
+    "name": "@crczp/markdown",
+    "version": "0.0.1",
+    "peerDependencies": {
+        "@angular/common": "^22.0.0",
+        "@angular/core": "^22.0.0",
+        "@angular/material": "*",
+        "@angular/cdk": "*",
+        "@crczp/components": "*",
+        "@crczp/utils": "*",
+        "@sentinel/components": "*",
+        "marked": "*",
+        "rxjs": "*",
+        "vite": "*",
+        "@analogjs/vite-plugin-angular": "*",
+        "@nx/vite": "*",
+        "@acrodata/code-editor": "*",
+        "@codemirror/lang-markdown": "*",
+        "@codemirror/language": "*",
+        "@codemirror/language-data": "*",
+        "@codemirror/state": "*",
+        "@codemirror/view": "*",
+        "@lezer/highlight": "*",
+        "ngx-skeleton-loader": "*",
+        "@angular/forms": "^22.0.0"
+    },
+    "sideEffects": false
+}

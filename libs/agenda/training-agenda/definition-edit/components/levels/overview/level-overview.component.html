@@ -13,7 +13,7 @@
                 <mat-divider />
                 <crczp-level-edit
                     (levelChange)="onActiveLevelChanged($event)"
-                    [attr.inert]="editingBlocked ? '' : null"
+                    [crczpLevelEditingBlock]="editingBlocked"
                     [level]="(stepperLevels | async)[activeStep$ | async].level"
                 />
             </div>

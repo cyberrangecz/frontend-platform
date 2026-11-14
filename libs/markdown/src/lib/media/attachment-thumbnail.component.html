@@ -1,0 +1,5 @@
+@if (pictureUrl(); as url) {
+    <img class="thumbnail-picture" alt="" draggable="false" [src]="url" />
+} @else {
+    <mat-icon class="thumbnail-icon" aria-hidden="true">{{ icon() }}</mat-icon>
+}

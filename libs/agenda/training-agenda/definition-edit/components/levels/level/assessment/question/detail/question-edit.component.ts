@@ -10,7 +10,7 @@ import {
 import {ExtendedMatchingItems, FreeFormQuestion, MultipleChoiceQuestion, Question} from '@crczp/training-model';
 import {QuestionChangeEvent} from '../../../../../../model/events/question-change-event';
 import {MatCard, MatCardActions, MatCardContent, MatCardHeader, MatCardTitle} from "@angular/material/card";
-import {SentinelMarkdownViewComponent} from "@sentinel/components/markdown-view";
+import { MarkdownViewComponent } from '@crczp/markdown';
 import {MatCheckbox} from "@angular/material/checkbox";
 import {FormsModule} from "@angular/forms";
 import {MultipleChoiceQuestionEditComponent} from "../multiple-choice-question/multiple-choice-question-edit.component";
@@ -30,7 +30,7 @@ import {MatButton} from "@angular/material/button";
         MatCard,
         MatCardHeader,
         MatCardTitle,
-        SentinelMarkdownViewComponent,
+        MarkdownViewComponent,
         MatCheckbox,
         FormsModule,
         MatCardContent,

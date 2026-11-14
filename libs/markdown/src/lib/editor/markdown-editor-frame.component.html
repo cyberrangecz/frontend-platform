@@ -1,0 +1,64 @@
+<div class="editor-frame">
+    <header
+        class="editor-strip"
+        [class.editor-strip--readonly]="readonly()"
+    >
+        <mat-button-toggle-group
+            hideSingleSelectionIndicator
+            class="editor-mode"
+            aria-label="Editing mode"
+            [value]="editingView.view()"
+            (change)="editingView.set($event.value)"
+        >
+            <mat-button-toggle value="raw">
+                <mat-icon>code</mat-icon>
+                Raw
+            </mat-button-toggle>
+            <mat-button-toggle value="preview">
+                <mat-icon>visibility</mat-icon>
+                Preview
+            </mat-button-toggle>
+        </mat-button-toggle-group>
+        <crczp-format-toolbar
+            class="editor-format"
+            [attr.inert]="readonly() ? '' : null"
+        />
+        @if (hasMaterials) {
+            <crczp-materials-section
+                class="editor-materials"
+                [attr.inert]="readonly() ? '' : null"
+            />
+        }
+        @if (expandable()) {
+            <button
+                mat-icon-button
+                type="button"
+                class="editor-expand"
+                aria-label="Expand editor"
+                matTooltip="Expand editor"
+                (click)="expand.emit()"
+            >
+                <mat-icon>open_in_full</mat-icon>
+            </button>
+        }
+    </header>
+
+    <section
+        class="editor-content"
+        [class.editor-content--raw]="editingView.view() === 'raw'"
+        [class.editor-content--contained]="editingView.view() === 'preview' && !readonly()"
+    >
+        @if (editingView.view() === 'preview') {
+            @if (readonly()) {
+                <crczp-markdown-view [markdown]="markdown()" />
+            } @else {
+                <crczp-live-preview [(markdown)]="markdown" />
+            }
+        } @else {
+            <crczp-raw-editor
+                [(markdown)]="markdown"
+                [readonly]="readonly()"
+            />
+        }
+    </section>
+</div>

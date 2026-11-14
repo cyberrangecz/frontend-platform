@@ -16,9 +16,9 @@ import {
     switchMap,
     tap,
 } from 'rxjs/operators';
+import { HttpErrorResponse } from '@angular/common/http';
 import { StageAdapter } from '../../../model/adapters/stage-adapter';
-import { PortalConfig } from '@crczp/utils';
-import { LOGGING_ERROR_MARKER } from '@crczp/components';
+import { NotificationService, PortalConfig } from '@crczp/utils';
 
 /** State of a stage log before its first fetch is sent. */
 export interface OutputsNotFetched {
@@ -49,10 +49,24 @@ const FAILURE_STATUS_CODES = [
     ...Array.from({ length: 200 }, (_, offset) => 400 + offset),
 ];
 
+/** Log text shown when the first fetch of a stage log fails. */
+const FIRST_FETCH_FAILURE_TEXT = 'Failed to fetch logs';
+
+/** Toast line naming why an outputs request failed. */
+function describeFailure(error: unknown): string {
+    if (!(error instanceof HttpErrorResponse)) {
+        return 'Refreshing...';
+    }
+    return error.status === 0
+        ? 'No response from the sandbox service. Refreshing...'
+        : `HTTP ${error.status} from the sandbox service. Refreshing...`;
+}
+
 @Injectable()
 export class OutputsService {
     private readonly api = inject(AllocationRequestsApi);
     private readonly config = inject(PortalConfig);
+    private readonly notificationService = inject(NotificationService);
     private readonly stateSubject = new BehaviorSubject<OutputsState>(
         OUTPUTS_NOT_FETCHED,
     );
@@ -73,7 +87,7 @@ export class OutputsService {
      * fetching one answer after another while it runs. A stage that is not
      * running is fetched once per state change, which picks up the final rows.
      * The log accumulates in {@link log$}. Only the first of consecutive failed
-     * fetches opens an error notification; every one shows the error line.
+     * fetches shows a warning toast; a failed fetch leaves the log as it is.
      *
      * @param stage$ Emits the current stage.
      * @param requestId ID of the request the stage belongs to.
@@ -125,15 +139,14 @@ export class OutputsService {
                 this.stageType,
                 requestId,
                 this.fetchedRows(),
-                this.isFailureReported ? FAILURE_STATUS_CODES : [],
+                FAILURE_STATUS_CODES,
             );
         }).pipe(
             filter(() => this.currentRequestId === requestId),
             tap((output) => this.appendOutput(output)),
-            catchError(() => {
+            catchError((error: unknown) => {
                 if (this.currentRequestId === requestId) {
-                    this.isFailureReported = true;
-                    this.appendErrorLine();
+                    this.reportFailure(error);
                 }
                 return EMPTY;
             }),
@@ -150,18 +163,34 @@ export class OutputsService {
         this.confirmedContent += separator + output.content;
         this.confirmedRows = output.rows;
         this.isFailureReported = false;
+        this.publishConfirmedLog();
+    }
+
+    /**
+     * Ends the loading state with a log naming the failure, and shows a warning toast for the
+     * first failure since the last successful fetch.
+     */
+    private reportFailure(error: unknown): void {
+        if (this.stateSubject.value.status === 'loading') {
+            this.stateSubject.next({
+                status: 'fetched',
+                content: FIRST_FETCH_FAILURE_TEXT,
+                rows: 0,
+            });
+        }
+        if (this.isFailureReported) {
+            return;
+        }
+        this.isFailureReported = true;
+        this.notificationService.emit('warning', 'Stage log refresh failed', [
+            describeFailure(error),
+        ]);
+    }
+
+    private publishConfirmedLog(): void {
         this.stateSubject.next({
             status: 'fetched',
             content: this.confirmedContent,
-            rows: this.confirmedRows,
-        });
-    }
-
-    private appendErrorLine(): void {
-        const separator = this.confirmedContent ? '\n' : '';
-        this.stateSubject.next({
-            status: 'fetched',
-            content: `${this.confirmedContent}${separator}${LOGGING_ERROR_MARKER} Failed to refresh logs.`,
             rows: this.confirmedRows,
         });
     }

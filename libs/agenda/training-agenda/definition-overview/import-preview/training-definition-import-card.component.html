@@ -1,0 +1,33 @@
+<article class="training-definition-import-card">
+    <header class="training-definition-import-card-header">
+        <h3 class="training-definition-import-card-title">{{ entity().title }}</h3>
+        <span
+            class="training-definition-import-card-badge"
+            [class.training-definition-import-card-badge--archive]="entity().format === 'ZIP'"
+        >{{ entity().format }} · {{ entity().fileBytes | crczpByteSize }}</span>
+    </header>
+    <div class="training-definition-import-card-summary">
+        <ul class="training-definition-import-card-levels">
+            @for (level of levelCounts(); track level.label) {
+                <li class="training-definition-import-card-level">
+                    <mat-icon class="training-definition-import-card-icon training-definition-import-card-icon--level">{{ level.icon }}</mat-icon>
+                    <span class="training-definition-import-card-level-count">{{ level.count }}</span>
+                    <span class="training-definition-import-card-level-label">{{ level.label }}</span>
+                </li>
+            }
+        </ul>
+        <p class="training-definition-import-card-detail">
+            <mat-icon class="training-definition-import-card-icon">schedule</mat-icon>
+            <span>{{ duration() }}</span>
+        </p>
+    </div>
+    @if (entity().attachments; as attachments) {
+        <p class="training-definition-import-card-detail">
+            <mat-icon class="training-definition-import-card-icon">attach_file</mat-icon>
+            <span>
+                {{ attachments.count }} {{ attachments.count === 1 ? 'attachment' : 'attachments' }},
+                {{ attachments.totalBytes | crczpByteSize }}
+            </span>
+        </p>
+    }
+</article>

@@ -1,6 +1,7 @@
+@import "../../../../../../internal/question-layout.css";
+
 h2 {
     color: #4355b7;
-    margin: 0;
 }
 
 p.required-note {
@@ -18,11 +19,15 @@ mat-checkbox {
     margin: 5px 0;
 }
 
+mat-checkbox:first-child {
+    margin-top: 0;
+}
+
 /* TODO(mdc-migration): The following rule targets internal classes of checkbox that may no longer apply for the MDC version. */
 ::ng-deep .mat-checkbox-layout {
     white-space: normal !important;
 }
 
-sentinel-markdown-view {
+crczp-markdown-view {
     color: #3f51b5;
 }

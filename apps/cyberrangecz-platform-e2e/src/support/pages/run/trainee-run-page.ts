@@ -15,7 +15,25 @@ export class TraineeRunPage {
     }
 
     get markdown(): Locator {
-        return this.page.locator('sentinel-markdown-view').first();
+        return this.page.locator('crczp-markdown-view').first();
+    }
+
+    /** The image card of the level content. */
+    get attachmentImage(): Locator {
+        return this.markdown.locator('crczp-image-media img');
+    }
+
+    get audioCard(): Locator {
+        return this.markdown.locator('crczp-audio-media');
+    }
+
+    get videoCard(): Locator {
+        return this.markdown.locator('crczp-video-media');
+    }
+
+    /** The text file card with its collapsible code preview. */
+    get textCard(): Locator {
+        return this.markdown.locator('crczp-text-media');
     }
 
     get stepLabels(): Locator {

@@ -1,0 +1,214 @@
+@use '../styles/presentation' as presentation;
+
+$control-height: calc(2 * var(--space-lg));
+/// Corner rounding of every control in the actions area, matching the outlined button's own shape.
+$control-shape: var(--mat-sys-corner-full);
+/// Resting outline of the filter controls, matching the outlined button's own outline.
+$control-outline-color: var(--mat-sys-outline);
+$control-hover-outline-color: var(--mat-sys-on-surface);
+/// Side padding of the filter controls, which keeps their content clear of the rounded ends.
+$control-padding-inline: var(--space-2xs);
+
+:host {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    color: var(--mat-sys-on-surface);
+    font-size: var(--font-size-md);
+}
+
+.panel-actions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    padding: var(--space-sm);
+    box-shadow: inset 0 -1px 0 var(--mat-sys-outline-variant);
+}
+
+.panel-browse {
+    --mat-button-outlined-container-height: #{$control-height};
+    --mat-button-outlined-label-text-size: var(--font-size-md);
+    --mat-button-outlined-label-text-tracking: 0;
+
+    flex: none;
+}
+
+.panel-filters {
+    display: flex;
+    gap: var(--space-xs);
+}
+
+.panel-filter {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    gap: var(--space-3xs);
+    box-sizing: border-box;
+    min-width: 0;
+    min-height: $control-height;
+    padding: 0 $control-padding-inline;
+    border: 1px solid $control-outline-color;
+    border-radius: $control-shape;
+    background: var(--mat-sys-surface);
+    cursor: text;
+    transition:
+        border-color 120ms ease,
+        box-shadow 120ms ease;
+
+    &:hover {
+        border-color: $control-hover-outline-color;
+    }
+
+    &:focus-within {
+        border-color: var(--mat-sys-primary);
+        box-shadow: 0 0 0 1px var(--mat-sys-primary);
+    }
+}
+
+.panel-suffix {
+    --suffix-filter-container-shape: #{$control-shape};
+    --suffix-filter-padding-inline: #{$control-padding-inline};
+    --suffix-filter-outline-color: #{$control-outline-color};
+    --suffix-filter-hover-outline-color: #{$control-hover-outline-color};
+}
+
+.panel-filter-icon {
+    flex: none;
+    width: var(--font-size-2xl);
+    height: var(--font-size-2xl);
+    color: var(--mat-sys-on-surface-variant);
+    font-size: var(--font-size-2xl);
+    transition: color 120ms ease;
+
+    .panel-filter:focus-within & {
+        color: var(--mat-sys-primary);
+    }
+}
+
+.panel-filter-input {
+    flex: 1;
+    min-width: 0;
+    padding: 0;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: var(--mat-sys-on-surface);
+    font: inherit;
+
+    &::placeholder {
+        color: var(--mat-sys-on-surface-variant);
+        opacity: 0.8;
+    }
+}
+
+.panel-list {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: var(--space-4xs);
+    min-height: 0;
+    margin: 0;
+    padding: var(--space-2xs);
+    overflow-y: auto;
+    list-style: none;
+    scrollbar-color: var(--mat-sys-outline-variant) transparent;
+    scrollbar-width: thin;
+}
+
+.panel-row {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-2xs) var(--space-3xs) var(--space-2xs) var(--space-2xs);
+    border-radius: var(--space-xs);
+    cursor: grab;
+    transition:
+        background-color 100ms ease,
+        opacity 120ms ease;
+
+    &:hover {
+        background: color-mix(in srgb, var(--mat-sys-on-surface) 5%, transparent);
+    }
+
+    &:active {
+        cursor: grabbing;
+        background: color-mix(in srgb, var(--mat-sys-primary) 10%, transparent);
+    }
+}
+
+.panel-thumbnail {
+    flex: none;
+}
+
+.panel-text {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: var(--space-4xs);
+    min-width: 0;
+}
+
+.panel-name {
+    overflow: hidden;
+    line-height: 1.3;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.panel-meta {
+    color: var(--mat-sys-on-surface-variant);
+    font-size: var(--font-size-sm);
+    font-variant-numeric: tabular-nums;
+}
+
+.panel-meta--failed {
+    color: var(--mat-sys-error);
+}
+
+.panel-progress {
+    --mat-progress-bar-track-height: var(--space-3xs);
+    --mat-progress-bar-active-indicator-height: var(--space-3xs);
+}
+
+.panel-retry {
+    flex: none;
+}
+
+.panel-remove {
+    @include presentation.centered-icon-button;
+    --mat-icon-button-state-layer-size: #{$control-height};
+    --mat-icon-button-icon-size: var(--font-size-xl);
+    --mat-icon-button-icon-color: var(--mat-sys-on-surface-variant);
+
+    flex: none;
+    padding: 0;
+    transition:
+        opacity 120ms ease,
+        color 120ms ease;
+
+    @media (hover: hover) {
+        .panel-row:not(:hover, :focus-within) & {
+            opacity: 0;
+        }
+    }
+
+    &:hover {
+        --mat-icon-button-state-layer-color: var(--mat-sys-error);
+
+        color: var(--mat-sys-error);
+    }
+
+    mat-icon {
+        width: var(--font-size-xl);
+        height: var(--font-size-xl);
+        font-size: var(--font-size-xl);
+    }
+}
+
+.panel-empty {
+    margin: 0;
+    padding: var(--space-lg) var(--space-md);
+    color: var(--mat-sys-on-surface-variant);
+    text-align: center;
+}

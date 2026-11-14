@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { SentinelMarkdownViewComponent } from '@sentinel/components/markdown-view';
+import { MarkdownViewComponent } from '@crczp/markdown';
 import { MatButton } from '@angular/material/button';
 import { AbstractTrainingRunService } from '../../../services/training-run/abstract-training-run.service';
 import { Observable } from 'rxjs';
@@ -13,7 +13,7 @@ import { isLoading } from '@sentinel/common/utils';
     templateUrl: './info-level.component.html',
     styleUrls: ['./info-level.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [SentinelMarkdownViewComponent, MatButton, AsyncPipe],
+    imports: [MarkdownViewComponent, MatButton, AsyncPipe],
 })
 /**
  * Component to display training run's level of type INFO. Only displays markdown and allows user to continue immediately.

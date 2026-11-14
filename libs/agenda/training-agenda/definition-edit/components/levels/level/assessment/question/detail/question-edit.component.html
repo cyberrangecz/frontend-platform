@@ -3,7 +3,7 @@
         <mat-card-title>
             <h3>Question {{ index + 1 }}:</h3>
             <h3>
-                <sentinel-markdown-view [markdown]="question.title"/>
+                <crczp-markdown-view [markdown]="question.title"/>
             </h3>
         </mat-card-title>
         <span class="spacer"></span>
@@ -45,7 +45,7 @@
         }
     </mat-card-content>
     <mat-card-actions align="end">
-        <button (click)="onDelete(index)" color="warn" mat-flat-button>Delete</button>
+        <button type="button" (click)="onDelete(index)" color="warn" mat-flat-button>Delete</button>
     </mat-card-actions>
 </mat-card>
 

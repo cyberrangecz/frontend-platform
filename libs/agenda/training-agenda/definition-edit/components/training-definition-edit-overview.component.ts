@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, HostListener, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, effect, HostListener, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Routing } from '@crczp/routing-commons';
 import {
@@ -7,7 +7,7 @@ import {
 } from '@sentinel/components/controls';
 import { TrainingDefinitionStateEnum, TrainingDefinitionWithLevels } from '@crczp/training-model';
 import { combineLatest, defer, Observable, of, switchMap } from 'rxjs';
-import { filter, map, tap } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 import { PortalConfig, UnsavedChangesTracker } from '@crczp/utils';
 import { TrainingDefinitionChangeEvent } from '../model/events/training-definition-change-event';
 import { TrainingDefinitionEditService } from '../services/state/edit/training-definition-edit.service';
@@ -20,7 +20,9 @@ import { LevelEditService } from '../services/state/level/level-edit.service';
 import { LevelEditConcreteService } from '../services/state/level/level-edit-concrete.service';
 import { MitreTechniquesService } from '../services/state/mitre-techniques/mitre-techniques.service';
 import { MitreTechniquesConcreteService } from '../services/state/mitre-techniques/mitre-techniques-concrete.service';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { provideDefinitionMaterials } from '../services/state/materials/definition-materials.providers';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
+import { DefinitionTrainingMaterials } from '@crczp/training-agenda/internal';
 import {
     MatExpansionPanel,
     MatExpansionPanelContent,
@@ -55,6 +57,7 @@ import { createInfinitePaginationEvent } from '@crczp/api-common';
             provide: MitreTechniquesService,
             useClass: MitreTechniquesConcreteService,
         },
+        ...provideDefinitionMaterials(),
     ],
     imports: [
         MatIcon,
@@ -75,12 +78,11 @@ import { createInfinitePaginationEvent } from '@crczp/api-common';
 export class TrainingDefinitionEditOverviewComponent implements OnInit {
     trainingDefinition$: Observable<TrainingDefinitionWithLevels>;
     editMode$: Observable<boolean>;
-    tdTitle$: Observable<string>;
     levelsCount = -1;
     saveDisabled$: Observable<boolean>;
     editingBlockReason$: Observable<string | null>;
     protected readonly unsavedChanges = new UnsavedChangesTracker<
-        'trainingDefinition' | 'levels' | 'authors'
+        'trainingDefinition' | 'levels' | 'authors' | 'materials'
     >();
     readonly defaultPaginationSize = inject(PortalConfig).defaultPageSize;
     controls: SentinelControlItem[];
@@ -89,13 +91,14 @@ export class TrainingDefinitionEditOverviewComponent implements OnInit {
     private router = inject(Router);
     private editService = inject(TrainingDefinitionEditService);
     private levelEditService = inject(LevelEditService);
+    private materials = inject(DefinitionTrainingMaterials);
+    private materialsUnsaved$ = toObservable(this.materials.hasUnsavedChanges);
+    private transfersSettled$ = toObservable(this.materials.transfersSettled);
     private authorsAssignService = inject(SentinelUserAssignService);
 
     constructor() {
+        effect(() => this.unsavedChanges.set('materials', this.materials.hasUnsavedChanges()));
         this.trainingDefinition$ = this.editService.trainingDefinition$;
-        this.tdTitle$ = this.editService.trainingDefinition$.pipe(
-            map((td) => td.title),
-        );
         this.saveDisabled$ = this.editService.saveDisabled$;
         const valid$: Observable<boolean> = combineLatest([
             this.editService.definitionValid$,
@@ -114,9 +117,8 @@ export class TrainingDefinitionEditOverviewComponent implements OnInit {
             .subscribe((data) =>
                 this.editService.set(data[TrainingDefinitionWithLevels.name] || null),
             );
-        this.editMode$ = this.editService.editMode$.pipe(
-            tap(() => (this.controls = this.buildControls(valid$))),
-        );
+        this.editMode$ = this.editService.editMode$;
+        this.controls = this.buildControls(valid$);
     }
 
     /**
@@ -143,17 +145,22 @@ export class TrainingDefinitionEditOverviewComponent implements OnInit {
 
     /**
      * Builds the Save control, enabled only while the definition and levels are
-     * both valid, either has changes to persist, no save is running and editing is not blocked.
+     * both valid, either has changes to persist, no save is running, every picked file is stored
+     * and editing is not blocked.
      *
      * @param valid$ Combined validity of the definition and its levels.
      */
     private buildControls(valid$: Observable<boolean>): SentinelControlItem[] {
         const saveDisabled$: Observable<boolean> = combineLatest([
             this.saveDisabled$,
-            this.levelEditService.hasUnsavedChanges$,
+            combineLatest([
+                this.levelEditService.hasUnsavedChanges$,
+                this.materialsUnsaved$,
+            ]).pipe(map(([levelsUnsaved, materialsUnsaved]) => levelsUnsaved || materialsUnsaved)),
             valid$,
             this.editingBlockReason$,
             this.editService.saving$,
+            this.transfersSettled$,
         ]).pipe(
             map(
                 ([
@@ -162,10 +169,12 @@ export class TrainingDefinitionEditOverviewComponent implements OnInit {
                     valid,
                     blockReason,
                     saving,
+                    transfersSettled,
                 ]) =>
                     (definitionSaveDisabled && !levelsUnsaved) ||
                     !valid ||
                     saving ||
+                    !transfersSettled ||
                     blockReason !== null,
             ),
         );
@@ -198,23 +207,21 @@ export class TrainingDefinitionEditOverviewComponent implements OnInit {
     ngOnInit(): void {
         this.editMode$
             .pipe(
-                takeUntilDestroyed(this.destroyRef),
                 filter((editMode) => editMode),
                 switchMap(() => this.editService.trainingDefinition$),
-                takeUntilDestroyed(this.destroyRef),
                 filter(
                     (trainingDefinition) =>
                         !!trainingDefinition && !!trainingDefinition.id,
                 ),
-            )
-            .subscribe((trainingDefinition) =>
-                this.authorsAssignService
-                    .getAssigned(
+                switchMap((trainingDefinition) =>
+                    this.authorsAssignService.getAssigned(
                         trainingDefinition.id,
                         createInfinitePaginationEvent('familyName'),
-                    )
-                    .subscribe(),
-            );
+                    ),
+                ),
+                takeUntilDestroyed(this.destroyRef),
+            )
+            .subscribe();
     }
 
     /**

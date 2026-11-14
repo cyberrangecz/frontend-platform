@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@angular/core';
 import {ExtendedMatchingItems, Question} from '@crczp/training-model';
-import {SentinelMarkdownViewComponent} from "@sentinel/components/markdown-view";
+import { MarkdownViewComponent } from '@crczp/markdown';
 import {NgClass} from "@angular/common";
 import {MatRadioButton, MatRadioGroup} from "@angular/material/radio";
 
@@ -10,7 +10,7 @@ import {MatRadioButton, MatRadioGroup} from "@angular/material/radio";
     styleUrls: ['./extended-matching-items-trainee.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
-    SentinelMarkdownViewComponent,
+    MarkdownViewComponent,
     NgClass,
     MatRadioGroup,
     MatRadioButton

@@ -1,0 +1,218 @@
+@use '../styles/presentation' as presentation;
+@use 'media-tokens' as tokens;
+
+$toggle-size: tokens.$video-toggle-size;
+$button-size: calc(2 * var(--space-xl));
+$track-height: var(--space-3xs);
+$handle-size: var(--space-md);
+/// Scale of the halo Material draws around a slider handle on hover, focus and press, at a fixed
+/// radius; sized so the halo spreads past the handle's edge half as far as Material's.
+$handle-halo-scale: 0.625;
+/// How long the footer waits after the seek line has formed before it appears.
+$footer-delay: 500ms;
+/// Black shade of the given strength, the building block of the controls vignette.
+@function shade($strength) {
+    @return color-mix(in srgb, var(--neutral-0) $strength, transparent);
+}
+/// Corner shadow that is densest at the given bottom corner and fades out in eased steps, so it
+/// dissolves smoothly instead of ending on a visible line.
+@function corner-shadow($corner-x) {
+    @return radial-gradient(
+        ellipse 75% 100% at $corner-x 100%,
+        shade(66%) 0%,
+        shade(56%) 12%,
+        shade(42%) 28%,
+        shade(27%) 45%,
+        shade(14%) 62%,
+        shade(5%) 80%,
+        shade(1%) 92%,
+        transparent 100%
+    );
+}
+/// Vignette of the controls: two corner shadows deepen both edges while a faint, softly drooping
+/// shade under the centre joins them.
+$controls-vignette:
+    corner-shadow(0%),
+    corner-shadow(100%),
+    radial-gradient(
+        ellipse 60% 100% at 50% 100%,
+        shade(30%) 0%,
+        shade(23%) 20%,
+        shade(14%) 45%,
+        shade(6%) 70%,
+        shade(1%) 90%,
+        transparent 100%
+    );
+
+/// Colour of the played part and the handle of the seek and volume sliders: the saturated theme
+/// primary that the audio card draws its played waveform in.
+$slider-ink: var(--mat-sys-primary);
+
+:host {
+    container-type: inline-size;
+    display: block;
+    padding: var(--space-xl) var(--space-sm) var(--space-xs);
+    background: $controls-vignette;
+    color: var(--neutral-100);
+
+    --mat-icon-button-state-layer-size: #{$button-size};
+    --mat-icon-button-icon-color: var(--neutral-100);
+    --mat-icon-button-state-layer-color: var(--neutral-100);
+
+    --mat-slider-active-track-color: #{$slider-ink};
+    --mat-slider-inactive-track-color: #{presentation.$video-track-ink};
+    --mat-slider-active-track-height: #{$track-height};
+    --mat-slider-inactive-track-height: #{$track-height};
+    --mat-slider-handle-color: #{$slider-ink};
+    --mat-slider-hover-handle-color: #{$slider-ink};
+    --mat-slider-focus-handle-color: #{$slider-ink};
+    --mat-slider-handle-width: #{$handle-size};
+    --mat-slider-handle-height: #{$handle-size};
+    --mat-slider-handle-elevation: 0 0 0 2px var(--neutral-100);
+    --mat-slider-hover-state-layer-color: color-mix(in srgb, #{$slider-ink} 24%, transparent);
+    --mat-slider-focus-state-layer-color: color-mix(in srgb, #{$slider-ink} 32%, transparent);
+    --mat-slider-ripple-color: #{$slider-ink};
+}
+
+.controls-footer {
+    min-width: min(var(--controls-minimum-width), 100%);
+    display: flex;
+    align-items: center;
+    gap: var(--space-3xs);
+
+    transition:
+        opacity tokens.$duration-base ease $footer-delay,
+        visibility 0s $footer-delay;
+
+    :host(.controls--forming) & {
+        visibility: hidden;
+        opacity: 0;
+        transition: none;
+    }
+}
+
+.controls-footer > :not(.controls-spacer) {
+    flex: none;
+}
+
+crczp-download-icon {
+    --mat-sys-primary: var(--neutral-100);
+}
+
+.controls-spacer {
+    flex: 1 1 0;
+    min-width: 0;
+}
+
+.controls-toggle,
+.controls-button,
+.controls-option {
+    @include presentation.centered-icon-button;
+
+    width: $button-size;
+    height: $button-size;
+    padding: 0;
+
+    &:focus-visible {
+        outline: 2px solid var(--neutral-100);
+        outline-offset: var(--space-4xs);
+    }
+}
+
+.controls-toggle {
+    --mat-icon-button-state-layer-size: #{$toggle-size};
+    --mat-icon-button-icon-color: var(--mat-sys-on-primary);
+    --mat-icon-button-state-layer-color: var(--mat-sys-on-primary);
+
+    width: $toggle-size;
+    height: $toggle-size;
+    margin-right: var(--space-xs);
+    background: var(--mat-sys-primary);
+
+    transition:
+        transform tokens.$duration-base presentation.$ease-emphasized,
+        scale tokens.$duration-slow presentation.$ease-emphasized $footer-delay;
+
+    &:active {
+        transform: scale(0.94);
+    }
+
+    :host(.controls--forming) & {
+        scale: 0;
+        transition: none;
+    }
+}
+
+.controls-option {
+    color: var(--neutral-100);
+    font-size: var(--font-size-3xl);
+
+    &:active {
+        transform: scale(0.94);
+    }
+}
+
+.controls-rate {
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-semibold);
+    font-variant-numeric: tabular-nums;
+    line-height: tokens.$line-height-tight;
+}
+
+.controls-seek,
+.controls-volume {
+    min-width: 0;
+}
+
+.controls-seek {
+    display: block;
+    margin: calc(-1 * var(--space-sm)) 0 calc(-1 * var(--space-xs));
+}
+
+.controls-seek,
+.controls-volume {
+    ::ng-deep .mat-ripple-element {
+        scale: $handle-halo-scale;
+    }
+
+    ::ng-deep .mdc-slider__track--inactive {
+        opacity: 1;
+    }
+}
+
+.controls-seek ::ng-deep {
+    .mdc-slider__track {
+        :host(.controls--forming) & {
+            visibility: hidden;
+        }
+    }
+
+    .mdc-slider__thumb-knob {
+        transform-origin: 0 0;
+
+        transition: scale tokens.$duration-slow presentation.$ease-emphasized;
+
+        :host(.controls--forming) & {
+            scale: 0;
+        }
+    }
+}
+
+.controls-volume {
+    flex: none;
+    width: calc(5 * var(--space-xl));
+    margin: 0 var(--space-xs);
+
+    @container (max-width: 18rem) {
+        display: none;
+    }
+}
+
+.controls-time {
+    padding: 0 var(--space-xs);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    font-variant-numeric: tabular-nums;
+    line-height: tokens.$line-height-relaxed;
+    white-space: nowrap;
+}

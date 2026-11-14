@@ -28,7 +28,16 @@ export class AttemptLedger {
      * Safe to run repeatedly; a pool that is already gone counts as removed.
      */
     async removeEarlierAttempts(sandbox: ApiClient): Promise<void> {
-        for (const entry of this.read().filter(({ attempt }) => attempt < this.attempt)) {
+        await this.removePools(sandbox, ({ attempt }) => attempt < this.attempt);
+    }
+
+    /** Removes every pool the running attempt recorded, with the same guarantees as removeEarlierAttempts. */
+    async removeRunningAttempt(sandbox: ApiClient): Promise<void> {
+        await this.removePools(sandbox, ({ attempt }) => attempt === this.attempt);
+    }
+
+    private async removePools(sandbox: ApiClient, selected: (entry: RecordedPool) => boolean): Promise<void> {
+        for (const entry of this.read().filter(selected)) {
             await removePool(sandbox, entry.poolId);
             this.write(this.read().filter((candidate) => candidate.poolId !== entry.poolId));
         }

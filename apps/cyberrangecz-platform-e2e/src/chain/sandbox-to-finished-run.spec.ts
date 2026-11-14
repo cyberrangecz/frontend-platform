@@ -7,6 +7,7 @@ import { TraineeRunPage } from '../support/pages/run/trainee-run-page';
 import { AllocateDialog, waitForAllocationResponse } from '../support/pages/pool/allocate-dialog';
 import { type AllocationUnitRecord, keepOrRemoveAllocationUnit } from '../support/pages/pool/pool-data';
 import { PoolDetailPage } from '../support/pages/pool/pool-detail-page';
+import { ATTACHMENTS } from '../support/scenario/attachment-fixtures';
 import {
     SHARED_TRAINING_ANSWERS,
     SHARED_TRAINING_HINTS,
@@ -216,6 +217,15 @@ test.describe.serial('sandbox chain to a finished training run', () => {
             await expect(run.levelTitle).toHaveText(SHARED_TRAINING_LEVEL_ORDER[0]!);
             await expect(run.markdown).toContainText('This training is played by the e2e suite.');
             await expect(run.topologyToggle).toHaveCount(0);
+            await expect(run.attachmentImage).toBeVisible();
+            await expect
+                .poll(() => run.attachmentImage.evaluate((image: HTMLImageElement) => image.naturalWidth))
+                .toBeGreaterThan(0);
+            await expect(run.audioCard.getByRole('button', { name: /play/i })).toBeVisible();
+            await expect(run.audioCard.getByRole('slider', { name: 'Seek' })).toBeVisible();
+            await expect(run.videoCard).toBeVisible();
+            await expect(run.textCard).toContainText(ATTACHMENTS.text.fileName);
+            await expect(run.textCard).toContainText('mode: attachment');
             await checkpoint(page, 'info level');
             await run.button('Next').click();
         });

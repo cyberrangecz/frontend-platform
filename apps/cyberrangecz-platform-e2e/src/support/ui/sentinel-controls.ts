@@ -19,6 +19,20 @@ export function bulkDeleteControl(scope: Scope): Locator {
     return control(scope, /^Delete( \(\d+\))?$/);
 }
 
+/**
+ * Clicks a control twice the way a quick double-click does: the second click lands once the page
+ * has rendered the frame after the first, so a control that guards itself by re-rendering gets
+ * that one frame and no more. Both clicks run inside the page, so no test-side delay can push the
+ * second one past the answer to the first.
+ */
+export async function doubleClickAfterRender(controlLocator: Locator): Promise<void> {
+    await controlLocator.evaluate(async (element: HTMLElement) => {
+        element.click();
+        await new Promise((rendered) => requestAnimationFrame(() => requestAnimationFrame(rendered)));
+        element.click();
+    });
+}
+
 /** Reads whether a control is disabled. */
 export async function isControlDisabled(controlLocator: Locator): Promise<boolean> {
     return controlLocator.isDisabled();

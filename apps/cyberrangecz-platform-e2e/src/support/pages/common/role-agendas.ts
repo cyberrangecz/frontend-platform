@@ -119,6 +119,7 @@ export const AGENDAS_OF_ROLE: Record<AccountRole, readonly AgendaKey[]> = {
     sandboxOrganizer: ['trainingRun', 'pool', 'images'],
     userAdministrator: ['trainingRun', 'groups', 'users', 'microservices'],
     trainee: ['trainingRun'],
+    chainTrainee: ['trainingRun'],
 };
 
 /** Roles that reach more than one agenda and therefore stay on the home page. */
@@ -126,7 +127,8 @@ export const MULTI_AGENDA_ROLES = (Object.keys(AGENDAS_OF_ROLE) as AccountRole[]
     (role) => AGENDAS_OF_ROLE[role].length > 1,
 );
 
-export const ALL_ROLES = Object.keys(AGENDAS_OF_ROLE) as AccountRole[];
+/** Roles the page specs sign in as; the chain trainee plays the shared training only and holds the trainee's agendas. */
+export const ALL_ROLES = (Object.keys(AGENDAS_OF_ROLE) as AccountRole[]).filter((role) => role !== 'chainTrainee');
 
 /** Whether the backends refuse the agenda's requests from the local origin, so its checks run on the deployed origin only. */
 export function isDeployedOriginAgenda(agenda: Agenda): boolean {

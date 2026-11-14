@@ -1,9 +1,5 @@
 import { tokenColor } from '../log-token-slots';
-import { LOGGING_ERROR_MARKER } from '../logging-error-marker';
-import {
-    defineRuleHighlighting,
-    literalPatternSource,
-} from './rule-highlighting';
+import { defineRuleHighlighting } from './rule-highlighting';
 import { MUTED_TOKEN_STYLE, VALUE_TOKEN_STYLES } from './shared-token-styles';
 
 /**
@@ -48,13 +44,6 @@ export const terraformSupport = defineRuleHighlighting({
         output: {
             rules: [
                 { pattern: /Error: .*/, token: 'error', atLineStart: true },
-                {
-                    pattern: new RegExp(
-                        `${literalPatternSource(LOGGING_ERROR_MARKER)}(?: .*)?`,
-                    ),
-                    token: 'error',
-                    atLineStart: true,
-                },
                 {
                     pattern: /Warning: .*|Warnings:$/,
                     token: 'warning',

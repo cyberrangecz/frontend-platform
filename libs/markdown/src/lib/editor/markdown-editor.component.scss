@@ -1,0 +1,11 @@
+:host {
+    display: block;
+}
+
+.editor-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-md);
+    margin-block-end: var(--space-xs);
+}

@@ -1,4 +1,5 @@
 import { LevelUpdateDTO } from '../level/level-update-dto';
+import { TrainingMaterialDTO } from './training-material-dto';
 
 /**
  * Training definition fields and its complete ordered level list, written in one request.
@@ -11,4 +12,5 @@ export class TrainingDefinitionUpdateDTO {
     outcomes: string[];
     version: number;
     levels: LevelUpdateDTO[];
+    materials: TrainingMaterialDTO[];
 }

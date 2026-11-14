@@ -14,6 +14,7 @@ import {
 } from '@sentinel/common/dynamic-env';
 import { SENTINEL_TABLE_CONFIG } from '@sentinel/components/config';
 import { TABLE_PAGE_SIZE_OPTIONS } from '@crczp/utils';
+import { AttachmentStoreEviction } from '@crczp/training-api';
 import { AppComponent } from './app/app.component';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
 import {
@@ -61,7 +62,6 @@ import {
 } from '@crczp/utils';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { APP_ROUTES } from './app/app-routes';
-import { provideSentinelMarkdownEditorConfig } from '@sentinel/components/markdown-editor';
 import {
     CACHE_CLAIM,
     CacheService,
@@ -186,9 +186,6 @@ SentinelBootstrapper.bootstrapApplication('assets/config.json', AppComponent, {
         LoadingService,
         NotificationService,
         TokenRefreshService,
-        provideSentinelMarkdownEditorConfig({
-            markdownParser: {},
-        }),
         {
             provide: SENTINEL_TABLE_CONFIG,
             useValue: {
@@ -211,6 +208,7 @@ SentinelBootstrapper.bootstrapApplication('assets/config.json', AppComponent, {
             ),
         ),
         { provide: CACHE_CLAIM, useValue: cacheClaim },
+        provideAppInitializer(() => void inject(AttachmentStoreEviction)),
         provideAppInitializer(() => {
             const cache = inject(CacheService);
             const claim = inject(CACHE_CLAIM);

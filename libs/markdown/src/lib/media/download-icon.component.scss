@@ -1,0 +1,43 @@
+@use '../styles/presentation' as presentation;
+@use 'media-tokens' as tokens;
+
+:host {
+    display: grid;
+    place-items: center;
+}
+
+.download-icon-arrow,
+.download-icon-check {
+    grid-area: 1 / 1;
+    width: 1em;
+    height: 1em;
+    font-size: inherit;
+    transition:
+        opacity tokens.$duration-base presentation.$ease-emphasized,
+        transform tokens.$duration-base presentation.$ease-emphasized;
+}
+
+.download-icon-check {
+    color: var(--mat-sys-primary);
+    opacity: 0;
+    transform: rotate(-90deg) scale(0.4);
+}
+
+:host(.download-icon--confirmed) {
+    .download-icon-arrow {
+        opacity: 0;
+        transform: rotate(90deg) scale(0.4);
+    }
+
+    .download-icon-check {
+        opacity: 1;
+        transform: none;
+        animation: download-icon-pulse 450ms tokens.$duration-base presentation.$ease-decelerate;
+    }
+}
+
+@keyframes download-icon-pulse {
+    50% {
+        transform: scale(1.3);
+    }
+}

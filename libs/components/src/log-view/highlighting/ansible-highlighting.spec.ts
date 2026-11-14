@@ -1,5 +1,4 @@
 import { formatJsonInText } from '../format-json-fragments';
-import { LOGGING_ERROR_MARKER } from '../logging-error-marker';
 import { ANSIBLE_RESULT_START, ansibleSupport } from './ansible-highlighting';
 import { medianRunTime, tokenizerFor } from './highlighting-testing';
 
@@ -195,7 +194,6 @@ describe('ansibleSupport', () => {
         it.each([
             "ERROR! the role 'foo' was not found in /etc/ansible/roles",
             '[ERROR]: Task failed: Module failed: No package matching nginx',
-            `${LOGGING_ERROR_MARKER} Failed to refresh logs.`,
             'E: Unable to locate package nginx',
         ])('colours the whole error line %s', (line) => {
             expect(tokenize(line)).toEqual([`errorLine:${line}`]);

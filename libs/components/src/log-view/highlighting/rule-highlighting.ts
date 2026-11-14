@@ -75,13 +75,6 @@ export interface RuleHighlightingState<Mode extends string> {
 const PLAIN_TEXT_RUN = /\s+|[\p{L}\p{N}_]+|[^]/uy;
 
 /**
- * Pattern source matching the text character for character.
- */
-export function literalPatternSource(text: string): string {
-    return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}
-
-/**
  * Turns a pattern into one that matches only at the position set as its last index.
  */
 function anchorAtPosition(pattern: RegExp): RegExp {

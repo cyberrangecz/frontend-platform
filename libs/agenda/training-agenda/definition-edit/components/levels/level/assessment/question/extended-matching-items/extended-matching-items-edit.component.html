@@ -4,11 +4,7 @@
             <!-- TITLE field-->
             <h3>Title</h3>
             <div class="emi-edit__question-text">
-                <sentinel-markdown-editor
-                    (contentChange)="title.setValue($event)"
-                    [content]="title.value"
-                    [sentinel-markdown-file-upload]="false"
-                />
+                <crczp-markdown-editor label="Question" formControlName="title" />
                 @if (title.hasError('whitespace')) {
                     <mat-error>Title cannot be empty</mat-error>
                 }
@@ -67,7 +63,7 @@
                     <td class="emi-edit__cell"></td>
                     @for (option of options.controls; track option; let i = $index) {
                         <td class="emi-edit__cell">
-                            <button matSuffix mat-icon-button aria-label="Delete
+                            <button type="button" matSuffix mat-icon-button aria-label="Delete
               option" color="warn" matTooltip="Delete option"
                                     (click)="deleteOption(i)">
                                 <mat-icon>remove_circle</mat-icon>
@@ -79,7 +75,7 @@
                 <tr class="emi-edit__row">
                     <td class="emi-edit__cell">
                         @if (isTest) {
-                            <button [disabled]="!isCheckedAnyOption()"
+                            <button type="button" [disabled]="!isCheckedAnyOption()"
                                     mat-flat-button color="warn" (click)="clearAnswers()" class="emi-edit__clear-button">Clear
                                 Answers
                             </button>
@@ -103,7 +99,7 @@
                     <!-- ADD OPTION BUTTON -->
                     <td class="emi-edit__cell emi-edit__cell--last">
                         @if (!columnLimitReached) {
-                            <button matSuffix mat-icon-button aria-label="Add option"
+                            <button type="button" matSuffix mat-icon-button aria-label="Add option"
                                     color="primary" matTooltip="Add option"
                                     (click)="addOption()">
                                 <mat-icon>add_circle</mat-icon>
@@ -138,7 +134,7 @@
                         </mat-radio-group>
                         <!-- DELETE STATEMENT BUTTON -->
                         <td class="emi-edit__cell emi-edit__cell--last">
-                            <button matSuffix mat-icon-button aria-label="Delete statement"
+                            <button type="button" matSuffix mat-icon-button aria-label="Delete statement"
                                     color="warn" matTooltip="Delete statement"
                                     (click)="deleteStatement(i)">
                                 <mat-icon>remove_circle</mat-icon>
@@ -149,7 +145,7 @@
                 <!-- ADD STATEMENT BUTTON -->
                 <tr class="emi-edit__row emi-edit__row--last">
                     <td class="emi-edit__cell emi-edit__cell--add-statement">
-                        <button (click)="addStatement()" aria-label="Add new
+                        <button type="button" (click)="addStatement()" aria-label="Add new
               statement" color="primary" mat-icon-button matSuffix
                                 matTooltip="Add new statement">
                             <mat-icon>add_circle</mat-icon>
