@@ -15,6 +15,9 @@ type DocumentSummary = Pick<
     'title' | 'levelCounts' | 'estimatedDurationMinutes'
 >;
 
+const ADAPTIVE_DEPRECATION_REJECTION =
+    'Adaptive training has been deprecated in version v2026.08 and can no longer be imported';
+
 const titleSchema = z.object({ title: nonBlankStringSchema });
 const levelsSchema = z.object({ levels: z.array(z.unknown()) });
 
@@ -24,12 +27,20 @@ const levelTypeSchema = z.object({
 
 const levelDurationSchema = z.object({ estimated_duration: z.number().int().min(0) });
 
+function hasPhases(document: unknown): boolean {
+    return typeof document === 'object' && document !== null && 'phases' in document;
+}
+
 /**
  * Reads the title, level kinds and total duration of a parsed definition document.
- * Checks only that these fields are present and of the expected type. The duration is the sum
+ * Checks only that these fields are present and of the expected type. A document with phases is
+ * an adaptive definition and is rejected as such, whatever else it holds. The duration is the sum
  * of the level durations; the document's own duration is ignored, as the server does.
  */
 export function summarizeDefinitionDocument(document: unknown): DocumentSummary | { rejection: string } {
+    if (hasPhases(document)) {
+        return { rejection: ADAPTIVE_DEPRECATION_REJECTION };
+    }
     const title = titleSchema.safeParse(document);
     if (!title.success) {
         return { rejection: 'The file has no definition title' };
