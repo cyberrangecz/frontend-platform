@@ -48,6 +48,12 @@ export class PoolDetailPage {
         await this.deleteMenuEntry(label).click();
     }
 
+    /** Opens the Delete menu, chooses one of its entries and confirms the entry's dialog. */
+    async confirmDeleteMenuEntry(label: DeleteMenuLabel): Promise<void> {
+        await this.chooseDeleteMenuEntry(label);
+        await this.page.getByRole('dialog').getByRole('button', { name: 'Delete', exact: true }).click();
+    }
+
     /** Runs the Lock, Unlock or Delete action of a sandbox row. */
     async clickSandboxAction(row: Locator, action: 'Lock' | 'Unlock' | 'Delete'): Promise<void> {
         const icon = { Lock: 'lock', Unlock: 'lock_open', Delete: 'delete' }[action];

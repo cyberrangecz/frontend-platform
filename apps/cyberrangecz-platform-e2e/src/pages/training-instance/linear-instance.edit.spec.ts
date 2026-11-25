@@ -248,11 +248,14 @@ test.describe('linear-instance.edit', () => {
             await form.openEdit(instance.id);
             await form.showStepperBarToggle.click();
             await expect(form.backwardModeToggle).toBeDisabled();
+            await expect(form.managedToggle).toBeEnabled();
+            await form.managedToggle.click();
             await form.save();
             await waitForNotification(page, 'Training instance was successfully saved');
             const stored = await readInstance(apiAs('trainingOrganizer').training, instance.id);
             expect(stored.show_stepper_bar).toBe(false);
             expect(stored.backward_mode).toBe(false);
+            expect(stored.managed).toBe(false);
         });
 
         test('locks the start time, the prefix and the toggles once the instance has started', async ({
@@ -267,6 +270,7 @@ test.describe('linear-instance.edit', () => {
             await expect(form.accessTokenPrefixInput).toBeDisabled();
             await expect(form.showStepperBarToggle).toBeDisabled();
             await expect(form.backwardModeToggle).toBeDisabled();
+            await expect(form.managedToggle).toBeDisabled();
             await expect(form.titleInput).toBeEnabled();
             await expect(form.endTimeInput).toBeEnabled();
         });

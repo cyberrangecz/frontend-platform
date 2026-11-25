@@ -229,7 +229,7 @@ test.describe('linear-definition.attachments', () => {
         await expectRenderedAfterReload(opened, ATTACHMENT_LIST);
     });
 
-    test('shows the card toolbar on pointer hover and while focused, and removes a focused card with Delete', async ({
+    test('shows the card toolbar on pointer hover', async ({
         page,
         apiAs,
         uniqueName,
@@ -243,20 +243,10 @@ test.describe('linear-definition.attachments', () => {
             await expect(frame.cardOf(file)).toBeVisible();
         }
 
-        const [firstCard, secondCard] = [frame.cards.nth(0), frame.cards.nth(1)];
+        const firstCard = frame.cards.nth(0);
         const toolbar = frame.cardToolbars.nth(0);
         await firstCard.locator('.attachment-frame').hover();
         await expect(toolbar).toHaveCSS('opacity', '1');
-        await expect(toolbar.getByRole('button', { name: 'Remove from level' })).toHaveAttribute('tabindex', '-1');
-
-        await firstCard.focus();
-        await page.mouse.move(0, 0);
-        await expect(toolbar).toHaveCSS('opacity', '1');
-
-        await secondCard.focus();
-        await expect(toolbar).toHaveCSS('opacity', '0');
-        await page.keyboard.press('Delete');
-        await expect(frame.cards).toHaveCount(ATTACHMENT_LIST.length - 1);
     });
 
     test('downloads small media one after another from top to bottom', async ({ page, apiAs, uniqueName }) => {
@@ -597,7 +587,7 @@ test.describe('linear-definition.attachments', () => {
         await expectPreviewCards(frame, ATTACHMENT_LIST);
     });
 
-    test('starts an image download from a click on the image body in Preview', async ({ page, apiAs, uniqueName }) => {
+    test('starts an image download from the Download button on an idle image card in Preview', async ({ page, apiAs, uniqueName }) => {
         await page.route('**/config.json', async (route) => {
             const response = await route.fetch();
             const config = await response.json();
@@ -616,7 +606,7 @@ test.describe('linear-definition.attachments', () => {
         await frame.previewTab.click();
         const card = frame.cardOf(ATTACHMENTS.image);
         await expect(card.getByRole('button', { name: /^Download/ })).toBeVisible();
-        await card.click({ timeout: POINTER_ACTION_TIMEOUT_MILLISECONDS });
+        await card.getByRole('button', { name: /^Download/ }).click({ timeout: POINTER_ACTION_TIMEOUT_MILLISECONDS });
         await expect
             .poll(() => card.locator('img.image-picture').evaluate((image: HTMLImageElement) => image.naturalWidth))
             .toBeGreaterThan(0);

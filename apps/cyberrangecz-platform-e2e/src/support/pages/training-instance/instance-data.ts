@@ -34,6 +34,7 @@ export interface StoredInstance {
     show_stepper_bar: boolean;
     backward_mode: boolean;
     local_environment: boolean;
+    managed: boolean;
     training_definition: { id: number; title: string };
 }
 
@@ -46,6 +47,8 @@ export interface NewTrainingInstance {
     accessTokenPrefix: string;
     trainingDefinitionId: number;
     poolId: number;
+    /** Whether trainees enter only sandboxes an organiser allocated; left out, the backend's default applies. */
+    managed?: boolean;
 }
 
 /** The part of a created training instance the creation answers with. */
@@ -66,6 +69,7 @@ export function createTrainingInstance(
         local_environment: false,
         show_stepper_bar: true,
         backward_mode: true,
+        managed: instance.managed,
     });
 }
 

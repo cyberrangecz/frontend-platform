@@ -194,12 +194,28 @@ export interface MaterialDto {
     height: number | null;
 }
 
+interface MaterialAnswer {
+    hash: string;
+    file_name: string;
+    media_type: string;
+    duration_seconds?: number;
+    width?: number;
+    height?: number;
+}
+
 /** The training materials a definition stores, with the media metadata the server holds for each. */
 export async function fetchMaterials(api: Api, definitionId: number): Promise<MaterialDto[]> {
-    const list = await api.training.get<{ materials: MaterialDto[] }>(
+    const list = await api.training.get<{ materials: MaterialAnswer[] }>(
         `/training-definitions/${definitionId}/attachments`,
     );
-    return list.materials;
+    return list.materials.map((material) => ({
+        hash: material.hash,
+        fileName: material.file_name,
+        mediaType: material.media_type,
+        durationSeconds: material.duration_seconds ?? null,
+        width: material.width ?? null,
+        height: material.height ?? null,
+    }));
 }
 
 /** The hashes of the training materials a definition stores, placed in content or not. */

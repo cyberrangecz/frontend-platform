@@ -26,6 +26,8 @@ export const environment = {
     adminPassword: process.env['E2E_ADMIN_PASSWORD'] || undefined,
     /** Minutes between two refreshes that keep every saved account's identity provider session from going idle. */
     sessionKeepAliveMinutes: Number(process.env['E2E_SESSION_KEEP_ALIVE_MINUTES'] || 4),
+    /** Longest wait for one sandbox build or cleanup in the sandbox maintenance and trainee allocation specs. */
+    sandboxBuildTimeoutMilliseconds: Number(process.env['E2E_SANDBOX_BUILD_TIMEOUT_MINUTES'] || 20) * 60_000,
     get issuer() {
         return requiredVariable('E2E_ISSUER');
     },

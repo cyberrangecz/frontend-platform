@@ -1,0 +1,4 @@
+// Keeps icons at full size beside text that wraps in a flex row.
+.mat-icon {
+    flex-shrink: 0;
+}

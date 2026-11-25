@@ -142,14 +142,6 @@ export class LogView {
         await this.button('Line wrap').focus();
     }
 
-    /** Gives a toolbar button keyboard-origin focus by focusing it, then tabbing away from it and back. */
-    async focusWithKeyboard(name: string): Promise<void> {
-        await this.button(name).focus();
-        await this.page.keyboard.press('Shift+Tab');
-        await this.page.keyboard.press('Tab');
-        await expect(this.button(name)).toBeFocused();
-    }
-
     /** Value of an inline custom property the host carries, such as `--log-token-error`. */
     hostVariable(name: string): Promise<string> {
         return this.host.evaluate((element, property) => element.style.getPropertyValue(property).trim(), name);

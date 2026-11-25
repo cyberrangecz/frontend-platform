@@ -9,6 +9,7 @@ import {
     fetchDefinition,
     fetchDefinitionByTitle,
     fetchDefinitionDetailByTitle,
+    importDefinitionBody,
     importFullDefinition,
     requireDefinitionByTitle,
 } from '../../support/pages/training-definition/training-definition-data';
@@ -484,7 +485,7 @@ test.describe('linear-definition', () => {
         }) => {
             const api = apiAs('trainingDesigner');
             const title = uniqueName('download');
-            const definition = await importFullDefinition(api, title);
+            const definition = await importDefinitionBody(api, trainingImportWithoutAttachments(title));
             const overview = new DefinitionOverviewPage(page);
             await overview.goto();
             const row = await overview.findRow(title);

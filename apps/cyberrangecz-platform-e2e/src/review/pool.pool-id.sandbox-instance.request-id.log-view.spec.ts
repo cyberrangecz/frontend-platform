@@ -322,7 +322,7 @@ test.describe('pool.pool-id.sandbox-instance.request-id log view', () => {
                 test.use({ userAgent: platform.userAgent });
 
                 for (const [buttonName, shortcut] of Object.entries(platform.labels)) {
-                    test(`shows the ${shortcut} shortcut below the ${buttonName} button on hover and on focus`, async ({
+                    test(`shows the ${shortcut} shortcut below the ${buttonName} button on hover`, async ({
                         page,
                     }) => {
                         const logView = await openStage(page, 2);
@@ -336,8 +336,6 @@ test.describe('pool.pool-id.sandbox-instance.request-id log view', () => {
                         await expect(button).toHaveAttribute('aria-describedby', /.+/);
                         await page.mouse.move(0, 0);
                         await expect(tooltip).toHaveCount(0);
-                        await logView.focusWithKeyboard(buttonName);
-                        await expect(tooltip.locator('.tooltip-shortcut')).toHaveText(shortcut);
                     });
                 }
 

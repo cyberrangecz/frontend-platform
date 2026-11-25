@@ -111,9 +111,10 @@ test.describe('linear-instance.create', () => {
     });
 
     test.describe('toggles', () => {
-        test('starts with the stepper bar shown and backward mode on', async ({ page }) => {
+        test('starts with the stepper bar shown, backward mode on and the instance managed', async ({ page }) => {
             const form = new InstanceFormPage(page);
             await form.openCreate();
+            await expect(form.managedToggle).toBeChecked();
             await expect(form.showStepperBarToggle).toBeChecked();
             await expect(form.backwardModeToggle).toBeChecked();
             await expect(form.backwardModeToggle).toBeEnabled();
@@ -304,6 +305,7 @@ test.describe('linear-instance.create', () => {
             expect(stored?.training_definition.id).toBe(shared.trainingDefinition.id);
             expect(stored?.show_stepper_bar).toBe(true);
             expect(stored?.backward_mode).toBe(true);
+            expect(stored?.managed).toBe(true);
         });
 
         test('stores the toggles that were changed', async ({ page, apiAs, shared, createOwnPool, uniqueName }) => {
@@ -317,11 +319,14 @@ test.describe('linear-instance.create', () => {
             await form.chooseResource(form.trainingDefinitionSelector, shared.trainingDefinition.title);
             await form.chooseResource(form.poolSelector, new RegExp(`^Pool ${poolId} - `));
             await form.backwardModeToggle.click();
+            await form.managedToggle.click();
+            await expect(form.managedToggle).not.toBeChecked();
             await form.save();
             await waitForNotification(page, 'Training instance was created');
             const stored = await findInstanceByTitle(apiAs('trainingOrganizer').training, title);
             expect(stored?.backward_mode).toBe(false);
             expect(stored?.show_stepper_bar).toBe(true);
+            expect(stored?.managed).toBe(false);
         });
 
         test('stores a title with special characters as literal text', async ({

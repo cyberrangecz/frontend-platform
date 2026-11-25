@@ -9,6 +9,8 @@ import { captureDownload, errorDialog, notificationPopups, pageTitle } from '../
 
 test.use({ account: 'sandboxOrganizer' });
 
+const REMOVED_DELETE_MENU_ENTRIES = ['Cancel Queued', 'Force Cancel Allocation', 'Force Cleanup'];
+
 test.describe('pool.pool-id (allocated sandboxes)', () => {
     let own: ChainSandbox;
     let detail: PoolDetailPage;
@@ -59,10 +61,15 @@ test.describe('pool.pool-id (allocated sandboxes)', () => {
         await expect(detail.deleteMenuButton).toBeEnabled();
     });
 
-    test('opens the delete menu with Delete All, Delete Failed and Delete Unlocked', async ({ page }) => {
+    test('opens the delete menu with Delete All, Delete Failed and Delete Unlocked and none of the removed entries', async ({
+        page,
+    }) => {
         await detail.deleteMenuButton.click();
         for (const label of ['Delete All', 'Delete Failed', 'Delete Unlocked']) {
             await expect(page.getByRole('menuitem', { name: label })).toBeVisible();
+        }
+        for (const label of REMOVED_DELETE_MENU_ENTRIES) {
+            await expect(page.getByRole('menuitem', { name: label })).toHaveCount(0);
         }
         await page.keyboard.press('Escape');
     });
@@ -153,8 +160,12 @@ test.describe('pool.pool-id (allocated sandboxes)', () => {
         await expect(detail.table.headerCell(/^name$/i)).toHaveAttribute('aria-sort', 'ascending');
     });
 
-    test('keeps the sandbox name sortable by its id', async () => {
+    test('keeps the sandbox name sortable by its id', async ({ page }) => {
+        const sortedAnswer = page.waitForResponse(
+            (response) => /\/pools\/\d+\/sandboxes\?/.test(response.url()) && response.url().includes('sort_by='),
+        );
         await detail.table.sortBy(/^name$/i);
+        expect((await sortedAnswer).status()).toBe(200);
         await expect(detail.table.headerCell(/^name$/i)).toHaveAttribute('aria-sort', 'descending');
         await expect(detail.table.rows.first()).toBeVisible();
     });

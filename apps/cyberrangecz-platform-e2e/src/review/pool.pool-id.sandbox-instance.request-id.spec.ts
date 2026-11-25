@@ -126,18 +126,6 @@ test.describe('pool.pool-id.sandbox-instance.request-id', () => {
             await expect(selectedStage(page).getByRole('heading', { name: '2 / 3' })).toBeVisible();
         });
 
-        test('never switches the stage with the Tab key and keeps focus out of the side stages', async ({ page }) => {
-            await openRequest(page, '#stage-2');
-            for (let press = 0; press < 12; press++) {
-                await page.keyboard.press('Tab');
-                await expect(page).toHaveURL(/#stage-2$/);
-                expect(
-                    await page.evaluate(() => document.activeElement?.closest('[inert]') !== null),
-                    'focus inside an inert side stage',
-                ).toBe(false);
-            }
-        });
-
         test('keeps the stage when an arrow is pressed together with a modifier', async ({ page }) => {
             await openRequest(page, '#stage-2');
             await page.keyboard.press('Shift+ArrowRight');

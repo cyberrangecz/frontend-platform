@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpContext, HttpHeaders, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { ResponseHeaderContentDispositionReader, SentinelParamsMerger } from '@sentinel/common';
 import { saveAs } from 'file-saver';
@@ -6,6 +6,7 @@ import {
     CRCZPHttpService,
     handleJsonError,
     JavaPaginatedResource,
+    SKIPPED_ERROR_CODES,
     OffsetPaginatedResource,
     PaginationMapper,
     ParamsBuilder,
@@ -26,6 +27,7 @@ import { defer, fromEvent, merge, Observable, of, throwError } from 'rxjs';
 import { map, mergeMap, switchMap, take } from 'rxjs/operators';
 import { multipartBodyOf } from '../../mappers/training-definition/attachment-multipart';
 import { withAttachmentSaveMessages } from './attachment-save-error';
+import { REPORTED_FAILURE_STATUSES } from './training-attachment-api.service';
 import {
     TrainingDefinitionDTO,
     TrainingDefinitionWithLevelsDTO
@@ -45,6 +47,9 @@ import { trainingDefinitionBasicArrayMapper } from '../../mappers/training-defin
 import { hintBasicArrayMapper } from '../../mappers/level/training/hint-basic-mapper';
 
 const ZIP_MEDIA_TYPE = 'application/zip';
+
+/** Marks an import request whose failure the caller reports by file name, so no global error dialog precedes it. */
+const IMPORT_REQUEST_CONTEXT = new HttpContext().set(SKIPPED_ERROR_CODES, REPORTED_FAILURE_STATUSES);
 
 function isZipFile(file: File): boolean {
     return file.type === ZIP_MEDIA_TYPE || file.name.toLowerCase().endsWith('.zip');
@@ -268,7 +273,10 @@ export class TrainingDefinitionDefaultApi extends LinearTrainingDefinitionApi {
         return this.http.post<TrainingDefinitionWithLevelsDTO>(
             `${this.trainingImportEndpointUri}/${this.trainingDefinitionUriExtension}`,
             file,
-            { headers: new HttpHeaders().set('Content-Type', ZIP_MEDIA_TYPE) },
+            {
+                headers: new HttpHeaders().set('Content-Type', ZIP_MEDIA_TYPE),
+                context: IMPORT_REQUEST_CONTEXT,
+            },
         );
     }
 
@@ -319,6 +327,7 @@ export class TrainingDefinitionDefaultApi extends LinearTrainingDefinitionApi {
         return this.http.post<TrainingDefinitionWithLevelsDTO>(
             `${this.trainingImportEndpointUri}/${this.trainingDefinitionUriExtension}`,
             definition,
+            { context: IMPORT_REQUEST_CONTEXT },
         );
     }
 

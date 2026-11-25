@@ -326,8 +326,9 @@ test.describe('linear-definition.archive', () => {
                     mimeType: 'application/json',
                     buffer: Buffer.from(JSON.stringify(documentLasting(title, minutes))),
                 });
-                await expect(dialog.definitionCards.first()).toContainText(title);
-                await expect(dialog.definitionCards.first().locator('.training-definition-import-card-detail span')).toHaveText(text);
+                const card = dialog.definitionCards.filter({ hasText: title });
+                await expect(card).toHaveCount(1);
+                await expect(card.locator('.training-definition-import-card-detail span')).toHaveText(text);
             }
         });
 
@@ -461,6 +462,8 @@ test.describe('linear-definition.archive', () => {
             });
             await expect(dialog.rejections).toHaveCount(1);
             await expect(dialog.confirmButton).toBeDisabled();
+
+            await dialog.removeFile('broken.zip');
 
             await dialog.chooseFiles({
                 name: `${title}.zip`,

@@ -17,7 +17,10 @@ The suite runs as Playwright projects chained by dependencies. Project names are
 | pages | `chromium`, `firefox`, `webkit` | `src/pages/<area>/` | Every page of the app, grouped into the areas common, sandbox-definition, pool, training-definition, training-instance and user-and-group: inputs, validation, tables (sort, filter, paging), dialogs and role guards. |
 | chain | `<browser>-chain` | `src/chain/` | One trainee per browser allocates a sandbox and plays the shared training to a finished run, the variant-answer level included. |
 | pool-actions | `chromium-pool-actions` | `src/pool-actions/` | Chromium only. In a pool of its own, the sandbox organiser allocates, locks, unlocks and deletes sandboxes through each confirmation, then deletes the pool. |
-| review | `<browser>-runs-ready`, `<browser>-review` | `src/review/` | `runs-ready` (`runs-ready.setup.ts`) waits until all three chains left a run. The review then has the organiser go through the three runs: results, runs, cheating detection, pool and sandbox pages, topology, console. It checks the exact score of every level, assessment included, worked out from the shared training and the training service's scoring rules. |
+| cloud usage audit | `cloud-usage-audit`, `cloud-usage-audit-teardown` | `src/setup/cloud-usage.*.ts` | Set up before the sandbox maintenance and trainee allocation projects only: records the cloud usage no sandbox accounts for (the cloud project's usage less every pool's estimated usage) in `.state/cloud-usage-baseline.json`. Its teardown runs once both projects have ended and expects that usage back within 10 minutes. The tolerance per resource is `0.0005 × limit` for every estimated pool, plus 0.1 of RAM for every virtual machine the pools account for; a pool whose estimate is missing counts as none. |
+| sandbox maintenance | `chromium-sandbox-maintenance` | `src/sandbox-maintenance/` | Chromium only, one worker, one test at a time, against real builds on the shared sandbox definition. One serial chain owns a pool of 4 and walks it from empty through allocation, the pool detail's Delete menu and Cancel all allocations to the cleanup of its last sandbox, the pool overview's Delete of the emptied pool and the cloud RAM's return to its level before the chain; every step that needs a sandbox in a given build state checks that state first and fails naming the state it found. Each other test owns a pool of its own: Cancel all allocations as a training organiser, the Cancel build row action with the Stop pending marker and a forced pool deletion of building units. The Stop pending line of every stage is checked read-only on a finished request of the shared pool, its stage answers stubbed. |
+| trainee allocation | `chromium-trainee-allocation` | `src/trainee-allocation/` | Chromium only. The training organiser checks the runtime setting and the access token of a not managed instance (the Managed toggle itself is covered by the instance create and edit specs); the Chromium page trainee allocates its own sandbox by entering access tokens, is blocked from a second one, sees the sandbox organiser's Delete Unlocked on that pool skip it while removing the organiser's own sandbox, removes it, finishes a run and enters a managed and an ended instance. |
+| review | `<browser>-runs-ready`, `<browser>-review` | `src/review/` | `runs-ready` (`runs-ready.setup.ts`) waits until all three chains left a run. The review then has the organiser go through the three runs: results, runs, cheating detection, pool and sandbox pages, topology, console. It checks the exact score of every level, assessment included, worked out from the shared training and the training service's scoring rules. On the analysis dashboard it also checks the local event cache (the first visit fetches every event, a reload resumes from the cached events, rapid reloads leave it working) and that rich tooltips clamp a long trainee name and answer within their surface; the long texts are put into the page's own answers from the training service. |
 | destructive | `<browser>-destructive` | `src/destructive/` | Archives and deletes one run. Runs as the teardown of `runs-ready`, once every review has ended, whatever the review results. |
 | logout | `<browser>-logout` | `src/logout/` | Each browser's trainee logs out, after that browser's pages and review have ended. |
 
@@ -59,7 +62,9 @@ depends on run first, so `chromium` also runs `auth` and `shared`:
     npx playwright test -c apps/cyberrangecz-platform-e2e/playwright.config.ts --project=chromium
     npx playwright test -c apps/cyberrangecz-platform-e2e/playwright.config.ts --project=chromium src/pages/common/home.spec.ts
 
-Project names: `auth`, `shared`, `chromium`, `firefox`, `webkit`, `chromium-pool-actions`, and
+Project names: `auth`, `shared`, `chromium`, `firefox`, `webkit`, `chromium-pool-actions`,
+`cloud-usage-audit`, `cloud-usage-audit-teardown`, `chromium-sandbox-maintenance`,
+`chromium-trainee-allocation`, and
 for each browser `<browser>-chain`, `<browser>-runs-ready`, `<browser>-review`,
 `<browser>-destructive` and `<browser>-logout`.
 
@@ -82,6 +87,7 @@ listed as a leftover and fails its test.
 | `E2E_USER_AND_GROUP_API_ROOT` | required | Root URL of the user-and-group REST API. |
 | `E2E_ADMIN_LOGIN` | unset | Sign-in name of the administrator the wipe uses, such as `user-30`. Unset means a person signs in by hand in a headed browser, also under `CI`. An empty value counts as unset. |
 | `E2E_ADMIN_PASSWORD` | unset | Password of that administrator. Meant for CI. Never printed or logged. An empty value counts as unset. |
+| `E2E_SANDBOX_BUILD_TIMEOUT_MINUTES` | `20` | Longest wait for one sandbox build or cleanup in the sandbox maintenance and trainee allocation specs. A sandbox maintenance test may take twice as long, its pool's removal included. |
 | `E2E_SESSION_KEEP_ALIVE_MINUTES` | `4` | Minutes between two refreshes of every saved account's session during a run. Keep it below the realm's SSO Session Idle. |
 | `CI` | unset | Any non-empty value makes the suite config refuse `test.only`, and makes the wipe fail at once when `E2E_ADMIN_LOGIN` is set but no password is found. |
 
@@ -143,6 +149,7 @@ writes are mode 600 and folders mode 700.
 | `shared.json` | `shared` | The shared fixture: the entities the later projects use. |
 | `chain-<browser>.json` | `<browser>-chain` | The record of that browser's chain, read by its review and teardown. |
 | `attempts/<project>-<spec file>.json` | specs that create removable entities | The pools each attempt of that spec file created and the attempt number, read by the reset before a retry. |
+| `cloud-usage-baseline.json` | `cloud-usage-audit` | The cloud usage no sandbox accounted for before the sandbox maintenance and trainee allocation projects, read by the audit's teardown. |
 
 ## Token refresh
 
@@ -180,8 +187,31 @@ The config retries a failed test twice.
 - Retry reset: a spec that creates removable entities records them through the `attemptLedger`
   fixture. Before a retried test, the fixture removes what earlier attempts of that spec file
   recorded, so the retry starts clean; removal is safe to repeat. Today the pool actions spec
-  records its pool, and the chain removes its allocation only when it failed, otherwise a retry
-  reuses it. The destructive spec creates nothing removable and runs without retries.
+  records its pool, the sandbox maintenance specs and the trainee run spec record theirs, and the
+  chain removes its allocation only when it failed, otherwise a retry reuses it. The destructive
+  spec creates nothing removable and runs without retries.
+
+## Sandbox removal
+
+Sandboxes are a limited cloud resource, so they are the one thing specs remove besides what a
+deletion test deletes. Each sandbox maintenance test removes its pool after the test with every
+sandbox in it, and the serial chain removes its pool after its last step, whatever the steps'
+results: it cancels the unfinished allocations, deletes the pool with force, waits until every
+cleanup has ended, then deletes the pool if it is still there; a cleanup that fails or outlasts
+`E2E_SANDBOX_BUILD_TIMEOUT_MINUTES` fails the test, naming each unit left and its cleanup error.
+In the trainee run spec, the organiser's sandbox beside the trainee's is removed by the Delete
+Unlocked it checks, and the trainee's own sandbox by the trainee's removal and finished run.
+Training instances, definitions and the trainee allocation pools stay for the wipe.
+
+## Sandbox maintenance and trainee allocation requirements
+
+- The cloud project needs room for 4 sandboxes for the sandbox maintenance specs, and for 3 for
+  the trainee allocation specs (the trainee's own, the organiser's beside it and the managed
+  instance's), besides what the chains build at the same time.
+- The frontend's runtime configuration must have `enableTraineeSandboxAllocation` on and
+  `enableLocalMode` off, and the training service's `single.sandbox.per.user.enabled` must be on.
+- The trainee allocation run spec plays as the Chromium page trainee (`user-8`), which must own no
+  sandbox when it starts; the wipe removes every sandbox.
 
 ## Output
 

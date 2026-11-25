@@ -9,7 +9,9 @@ import {
     captureDownload,
     errorDialog,
     expectNoErrorDialog,
+    hoverTooltipTrigger,
     pageTitle,
+    visibleTooltip,
     waitForNotification,
     expectUrlWhileLoading,
 } from '../../support/ui';
@@ -87,6 +89,8 @@ test.describe('linear-instance', () => {
         const row = await overview.showOnly(instance.title);
         const tokenCell = await overview.table.cell(row, 'Access Token');
         await expect(tokenCell.getByRole('button', { name: instance.accessToken })).toBeDisabled();
+        await hoverTooltipTrigger(page, tokenCell.locator('.access-token-container'));
+        await expect(visibleTooltip(page)).toHaveText('Cannot copy access token because there is no free sandbox.');
     });
 
     test('offers no link to the training definition, which the organizer cannot open', async ({

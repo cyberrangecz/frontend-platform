@@ -19,8 +19,8 @@ const NOT_FOUND = 404;
 const UNAUTHORIZED = 401;
 const HIGHEST_HTTP_STATUS = 599;
 
-/** Every failure status of a transfer the caller reports itself, so no global error dialog repeats it; unauthorized stays with the sign-in handling. */
-const REPORTED_FAILURE_STATUSES = [0, ...Array.from({ length: HIGHEST_HTTP_STATUS - 399 }, (_, index) => index + 400)].filter(
+/** Every failure status of a request the caller reports itself, so no global error dialog repeats it; unauthorized stays with the sign-in handling. */
+export const REPORTED_FAILURE_STATUSES = [0, ...Array.from({ length: HIGHEST_HTTP_STATUS - 399 }, (_, index) => index + 400)].filter(
     (status) => status !== UNAUTHORIZED,
 );
 

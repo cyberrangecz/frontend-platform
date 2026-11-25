@@ -58,7 +58,7 @@ test.describe('login', () => {
             await login.providerButton.click();
             await expect(page).toHaveURL(IDENTITY_PROVIDER_URL, { timeout: 30_000 });
             await expect(page.getByLabel(/username or email/i)).toBeVisible();
-            await expect(page.getByLabel(/^password$/i)).toBeVisible();
+            await expect(page.getByRole('textbox', { name: 'Password', exact: true })).toBeVisible();
             await checkpoint(page, 'identity provider form');
         });
 

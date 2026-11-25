@@ -316,8 +316,8 @@ test.describe('user.overview', () => {
             await overview.open();
             await overview.importButton.click();
             const dialog = new FileUploadDialog(page);
-            await expect(dialog.title).toHaveText('Import Users');
-            await expect(dialog.root).toContainText('Select a file to import users');
+            await expect(dialog.title).toHaveText('Import users');
+            await expect(dialog.root).toContainText('Select one or more files to import users');
             await expect(dialog.confirmButton).toBeDisabled();
             await checkpoint(page, 'import dialog');
         });
