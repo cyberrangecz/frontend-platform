@@ -1,18 +1,18 @@
 export { EVENT_CACHE_DB } from './lib/cache/impl/sqlite-cache.service';
-export { CacheService, EventCacheDb, RawEventRow, WatermarkEntry } from './lib/cache/cache.interface';
-export { EntityType, EntityValueType, ResolveEntities, ResolveEntitiesSafe } from './lib/entity-resolver/entity-type';
+export { CacheService, type EventCacheDb, type RawEventRow, type WatermarkEntry } from './lib/cache/cache.interface';
+export { EntityType, type EntityValueType, type ResolveEntities, type ResolveEntitiesSafe } from './lib/entity-resolver/entity-type';
 export { EntityResolverService } from './lib/entity-resolver/entity-resolver.service';
 export { provideEntityResolverService } from './lib/entity-resolver/provide-entity-resolver';
-export { EntityFetchApi, FetchResult } from './lib/entity-resolver/entity-fetch-api.service';
+export { EntityFetchApi, type FetchResult } from './lib/entity-resolver/entity-fetch-api.service';
 export { EntityResolverServiceImpl } from './lib/entity-resolver/impl/entity-resolver.service';
-export { BatchFetcher, EntityRegistryEntry, ENTITY_REGISTRY } from './lib/entity-resolver/impl/entity-registry';
-export { EventFetchApi, EventFetchParams } from './lib/sync/event-fetch-api';
+export { type BatchFetcher, type EntityRegistryEntry, ENTITY_REGISTRY } from './lib/entity-resolver/impl/entity-registry';
+export { EventFetchApi, type EventFetchParams } from './lib/sync/event-fetch-api';
 export { CacheSyncService } from './lib/sync/sync.interface';
 export { SyncService } from './lib/sync/impl/sync.service';
 export { DataBrokerService } from './lib/broker/broker.interface';
 export { provideDataBroker, provideEventBroker, provideEventCache } from './lib/broker/provide-event-broker';
-export { createSqliteEventDb, CreateSqliteEventDbOptions } from './lib/broker/create-sqlite-event-db';
-export { CACHE_CLAIM, CacheClaim, requestSingleTabClaim } from './lib/single-tab/single-tab-claim';
+export { createSqliteEventDb, type CreateSqliteEventDbOptions } from './lib/broker/create-sqlite-event-db';
+export { CACHE_CLAIM, type CacheClaim, requestSingleTabClaim } from './lib/single-tab/single-tab-claim';
 export { CACHE_BLOCKED_PATH, singleTabCacheGuard, withCacheBlockedRoute } from './lib/single-tab/single-tab-cache.guard';
 export { CacheBlockedComponent } from './lib/single-tab/cache-blocked.component';
 export { makeCacheDb } from './lib/integration/sqlite-test-db';
@@ -20,7 +20,7 @@ export type { TestCacheDb } from './lib/integration/sqlite-test-db';
 export {
     initSqliteCacheWorker,
     openSahPoolDatabase,
-    SahPoolDatabaseOptions,
+    type SahPoolDatabaseOptions,
 } from './lib/cache/impl/init-sqlite-cache-worker';
 export {
     assessmentAnswersTable,
