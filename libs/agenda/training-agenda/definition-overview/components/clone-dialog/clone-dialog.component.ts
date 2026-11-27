@@ -9,7 +9,6 @@ import {
 import {TrainingDefinition} from '@crczp/training-model';
 import {CloneDialogFormGroup} from './clone-dialog-form-group';
 import {AbstractControl, ReactiveFormsModule} from '@angular/forms';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {TitleCasePipe} from "@angular/common";
 import {MatError, MatFormField, MatInput, MatLabel, MatSuffix} from "@angular/material/input";
 import {MatButton} from "@angular/material/button";
@@ -43,14 +42,10 @@ export class CloneDialogComponent {
     data = inject<TrainingDefinition>(MAT_DIALOG_DATA);
 
     cloneDialogFormGroup: CloneDialogFormGroup;
-    valid = true;
 
     constructor() {
         this.cloneDialogFormGroup = new CloneDialogFormGroup();
         this.clonedDefinitionTitle.setValue('Clone of ' + this.data.title);
-        this.cloneDialogFormGroup.formGroup.valueChanges
-            .pipe(takeUntilDestroyed())
-            .subscribe(() => (this.valid = this.cloneDialogFormGroup.formGroup.valid));
     }
 
     get clonedDefinitionTitle(): AbstractControl {
