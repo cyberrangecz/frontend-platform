@@ -23,7 +23,6 @@
         "@crczp/sandbox-model": "*",
         "@sentinel/layout": "*",
         "@sentinel/auth": "*",
-        "angular-file": "*",
         "@danielmoncada/angular-datetime-picker": "*",
         "@angular/platform-browser": "*",
         "vite": "*",
