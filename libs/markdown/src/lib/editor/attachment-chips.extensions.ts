@@ -1,5 +1,6 @@
 import { ApplicationRef, ComponentRef, createComponent, EnvironmentInjector, Injector } from '@angular/core';
-import { EditorState, Extension } from '@codemirror/state';
+import { ensureSyntaxTree, syntaxTree } from '@codemirror/language';
+import { EditorState, Extension, Line } from '@codemirror/state';
 import { Decoration, DecorationSet, EditorView, MatchDecorator, ViewPlugin, ViewUpdate, WidgetType } from '@codemirror/view';
 import { ATTACHMENT_REFERENCE_PATTERN, referencePartsOf } from '../attachment/attachment-reference-grammar';
 import { attachmentReferencesIn, blockAfterReferenceLine, changeBetween, lineWithSeparatedReferences, TextChange } from '../model/attachment-references';
@@ -70,7 +71,7 @@ class AttachmentChipWidget extends WidgetType {
 
 /**
  * Puts the caret after the reference a chip stands for, opening a blank block after it when no
- * text follows.
+ * text follows and the editor is not read-only.
  */
 function placeCaretAfterChip(chip: HTMLElement): void {
     const editor = chip.closest<HTMLElement>('.cm-editor');
@@ -84,6 +85,11 @@ function placeCaretAfterChip(chip: HTMLElement): void {
     if (!reference) {
         return;
     }
+    if (view.state.readOnly) {
+        view.dispatch({ selection: { anchor: reference.to }, scrollIntoView: true });
+        view.focus();
+        return;
+    }
     const markdown = view.state.doc.toString();
     const opened = blockAfterReferenceLine(markdown, line.to);
     const change = opened && changeBetween(markdown, opened.markdown);
@@ -95,9 +101,27 @@ function placeCaretAfterChip(chip: HTMLElement): void {
     view.focus();
 }
 
+/** How long, in milliseconds, a change may wait for the syntax tree to reach the line it touched. */
+const PARSE_BUDGET_MS = 20;
+
 /**
- * Splits every line holding an attachment reference together with other text, or another
- * reference, so each reference stands on a line of its own. It acts on the lines a change touched.
+ * Whether a line belongs to a paragraph standing at the top level of the document, outside any
+ * list, quote, table or code.
+ */
+function isTopLevelParagraphLine(state: EditorState, line: Line, referenceFrom: number): boolean {
+    const tree = ensureSyntaxTree(state, line.to, PARSE_BUDGET_MS) ?? syntaxTree(state);
+    for (let node = tree.resolveInner(referenceFrom, 1); node.parent; node = node.parent) {
+        if (node.name === 'Paragraph') {
+            return node.parent.name === 'Document';
+        }
+    }
+    return false;
+}
+
+/**
+ * Splits every line of a top-level paragraph holding an attachment reference together with other
+ * text, or another reference, so each reference stands on a line of its own. It acts on the lines
+ * a change touched.
  */
 const referencesOnOwnLine = EditorState.transactionFilter.of((transaction) => {
     if (!transaction.docChanged) {
@@ -109,7 +133,8 @@ const referencesOnOwnLine = EditorState.transactionFilter.of((transaction) => {
         for (let number = newDoc.lineAt(fromB).number; number <= newDoc.lineAt(toB).number; number++) {
             const line = newDoc.line(number);
             const separated = line.text.includes('attachment:') ? lineWithSeparatedReferences(line.text) : null;
-            if (separated !== null) {
+            const firstReference = separated === null ? undefined : attachmentReferencesIn(line.text, line.from)[0];
+            if (separated !== null && firstReference && isTopLevelParagraphLine(transaction.state, line, firstReference.from)) {
                 changes.set(line.from, { from: line.from, to: line.to, insert: separated });
             }
         }

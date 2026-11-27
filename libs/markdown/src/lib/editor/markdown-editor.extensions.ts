@@ -1,4 +1,4 @@
-import { markdown } from '@codemirror/lang-markdown';
+import { markdown, markdownLanguage } from '@codemirror/lang-markdown';
 import { HighlightStyle, syntaxHighlighting } from '@codemirror/language';
 import { languages } from '@codemirror/language-data';
 import { Extension } from '@codemirror/state';
@@ -50,7 +50,7 @@ const markdownHighlighting = syntaxHighlighting(
 /** Markdown language with wrapped lines, the page theme and syntax colours. */
 export const markdownEditorExtensions: Extension = [
     EditorView.lineWrapping,
-    markdown({ codeLanguages: languages }),
+    markdown({ base: markdownLanguage, codeLanguages: languages }),
     markdownEditorTheme,
     markdownHighlighting,
 ];
