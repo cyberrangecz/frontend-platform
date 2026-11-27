@@ -14,12 +14,6 @@ describe('markdown blocks', () => {
         expect(blocks.map((block) => [block.start, block.end])).toEqual([[0, 3], [5, 9]]);
     });
 
-    it('keeps source ranges for text with carriage return line endings', () => {
-        const markdown = '# A\r\n\r\nfirst\r\nline\r\n\r\nnext';
-        const blocks = markdownBlocksOf(markdown);
-        expect(blocks.map((block) => markdown.slice(block.start, block.end))).toEqual(['# A', 'first\r\nline', 'next']);
-    });
-
     it('keeps source ranges after a repeated link definition', () => {
         const markdown = '[x]: http://a\n[x]: http://b\n\nafter';
         const blocks = markdownBlocksOf(markdown);

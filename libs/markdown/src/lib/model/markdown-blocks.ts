@@ -33,46 +33,22 @@ const referenceOffsets = new WeakMap<Token, number>();
 const CONNECTIVE_PATTERN = /^[\s,;&+/–—-]*(?:(?:and|or)[\s,;&+/–—-]*)*$/i;
 
 /**
- * Lexes markdown into its top-level blocks, with source ranges shifted by an offset. The ranges
- * follow the markdown as given, whatever line endings it uses and whichever lines the lexer emits
- * no token for.
+ * Lexes line feed markdown into its top-level blocks, with source ranges shifted by an offset. The
+ * ranges follow the markdown as given, whichever lines the lexer emits no token for.
  */
 export function markdownBlocksOf(markdown: string, offset = 0): MarkdownBlock[] {
-    const source = lineFeedTextOf(markdown);
     const blocks: MarkdownBlock[] = [];
     let position = 0;
     for (const token of markdownParser.lexer(markdown)) {
-        const start = tokenStart(source.text, token.raw, position);
+        const start = tokenStart(markdown, token.raw, position);
         position = start + token.raw.length;
         if (token.type !== 'space') {
-            const blockStart = source.originalOffset(start);
-            const blockEnd = source.originalOffset(start + token.raw.trimEnd().length);
-            recordReferenceOffsets(token, markdown.slice(blockStart, blockEnd));
-            blocks.push({ token: token as Tokens.Generic, start: offset + blockStart, end: offset + blockEnd });
+            const end = start + token.raw.trimEnd().length;
+            recordReferenceOffsets(token, markdown.slice(start, end));
+            blocks.push({ token: token as Tokens.Generic, start: offset + start, end: offset + end });
         }
     }
     return blocks;
-}
-
-/** Markdown with every line ending turned into a line feed, as the lexer reads it, and the way back to offsets of the markdown as given. */
-interface LineFeedText {
-    readonly text: string;
-    originalOffset(position: number): number;
-}
-
-function lineFeedTextOf(markdown: string): LineFeedText {
-    if (!markdown.includes('\r')) {
-        return { text: markdown, originalOffset: (position) => position };
-    }
-    const origins: number[] = [];
-    for (let index = 0; index < markdown.length; index++) {
-        origins.push(index);
-        if (markdown[index] === '\r' && markdown[index + 1] === '\n') {
-            index++;
-        }
-    }
-    origins.push(markdown.length);
-    return { text: markdown.replace(/\r\n?/g, '\n'), originalOffset: (position) => origins[position] };
 }
 
 /**
