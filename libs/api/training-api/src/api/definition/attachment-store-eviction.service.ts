@@ -12,7 +12,8 @@ export const ATTACHMENT_EVICTION_GRACE_MS = 30_000;
  * Only the oldest open window evicts, re-checking whenever the open windows change, and only a
  * definition it has seen listed by no window for the grace period, so a reloading window or a
  * newcomer still announcing itself keeps its bytes. Caches named without a user are deleted once
- * at creation, and every user's caches are deleted when the active user signs out.
+ * at creation, the caches of every other user are deleted whenever a user is signed in, and every
+ * user's caches are deleted when the active user signs out.
  */
 @Injectable({ providedIn: 'root' })
 export class AttachmentStoreEviction {
@@ -22,8 +23,10 @@ export class AttachmentStoreEviction {
 
     constructor() {
         this.store.clearUnscoped().subscribe();
-        inject(SentinelAuthService)
-            .activeUser$.pipe(
+        const activeUser$ = inject(SentinelAuthService).activeUser$;
+        activeUser$.pipe(filter((user) => user !== undefined)).subscribe(() => this.store.clearOtherUsers().subscribe());
+        activeUser$
+            .pipe(
                 pairwise(),
                 filter(([previous, current]) => previous !== undefined && current === undefined),
             )

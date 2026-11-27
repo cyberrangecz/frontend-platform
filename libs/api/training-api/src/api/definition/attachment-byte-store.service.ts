@@ -78,6 +78,14 @@ export class AttachmentByteStore {
         return this.deleteCachesWhere((name) => name.startsWith(STORE_NAME_PREFIX));
     }
 
+    /** Deletes the caches of every user except the signed-in one; completes without a value once done or failed. */
+    clearOtherUsers(): Observable<never> {
+        const prefix = this.userPrefix();
+        return prefix
+            ? this.deleteCachesWhere((name) => name.startsWith(STORE_NAME_PREFIX) && !name.startsWith(prefix))
+            : EMPTY;
+    }
+
     /** Deletes the caches named without a user; completes without a value once done or failed. */
     clearUnscoped(): Observable<never> {
         return this.deleteCachesWhere((name) => LEGACY_STORE_NAME.test(name));
