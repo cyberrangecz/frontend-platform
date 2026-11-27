@@ -128,6 +128,22 @@ export function changeBetween(before: string, after: string): TextChange {
     return { from: start, to: before.length - end, insert: after.slice(start, after.length - end) };
 }
 
+/**
+ * Where an offset of one text stands in another text made from it by one change: an offset
+ * before the change keeps its place, one after it shifts with it, and one inside it moves to the
+ * end of the text the change put in.
+ */
+export function mappedOffset(before: string, after: string, offset: number): number {
+    const change = changeBetween(before, after);
+    if (offset <= change.from) {
+        return offset;
+    }
+    if (offset >= change.to) {
+        return offset + change.insert.length - (change.to - change.from);
+    }
+    return change.from + change.insert.length;
+}
+
 /** The markdown that inlines a file into content: an image reference named after the file, at the default size. */
 export function referenceMarkdownOf({ fileName, hash }: { readonly fileName: string; readonly hash: string }): string {
     return referenceMarkdown({ label: fileName, hash, image: true });

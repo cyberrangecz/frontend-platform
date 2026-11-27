@@ -1,10 +1,14 @@
 import { Injectable } from '@angular/core';
+import { EditorView } from '@codemirror/view';
 import { AttachmentMetadata } from '../attachment/attachment-source';
 
-/** What an in-page drag carries: a stored material to inline, or the range of the markdown source holding a reference to move. */
+/**
+ * What an in-page drag carries: a stored material to inline, or the range of an editor's markdown
+ * source holding a reference to move within that editor.
+ */
 export type AttachmentDrag =
     | { readonly kind: 'material'; readonly material: AttachmentMetadata }
-    | { readonly kind: 'source'; readonly from: number; readonly to: number };
+    | { readonly kind: 'source'; readonly editor: EditorView; readonly from: number; readonly to: number };
 
 const ATTACHMENT_DRAG_TYPE = 'application/x-crczp-attachment';
 

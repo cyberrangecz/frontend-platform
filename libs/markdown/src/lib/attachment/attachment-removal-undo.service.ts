@@ -9,9 +9,15 @@ const UNDO_DURATION_MS = 6000;
 export class AttachmentRemovalUndo {
     private readonly snackBar = inject(MatSnackBar);
 
-    /** Shows the removal in a snackbar; choosing Undo runs the restore action once. */
-    offer(restore: () => void, message = 'Attachment removed'): void {
+    /**
+     * Shows the removal in a snackbar; choosing Undo runs the restore action once.
+     *
+     * @returns A function that closes the snackbar.
+     */
+    offer(restore: () => void, message = 'Attachment removed'): () => void {
         const data: RemovalUndoSnackbarData = { message, durationMilliseconds: UNDO_DURATION_MS };
-        this.snackBar.openFromComponent(RemovalUndoSnackbarComponent, { data, duration: UNDO_DURATION_MS }).onAction().subscribe(restore);
+        const snackBarRef = this.snackBar.openFromComponent(RemovalUndoSnackbarComponent, { data, duration: UNDO_DURATION_MS });
+        snackBarRef.onAction().subscribe(restore);
+        return () => snackBarRef.dismiss();
     }
 }

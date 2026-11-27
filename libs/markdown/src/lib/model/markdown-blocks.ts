@@ -7,7 +7,7 @@ export interface MediaReference extends AttachmentTarget {
     readonly label: string;
     /** The reference's markdown as written in the source. */
     readonly raw: string;
-    /** Where the reference starts in its paragraph's markdown. */
+    /** Where the reference starts in the markdown of the top-level block holding it. */
     readonly offset: number;
 }
 
@@ -26,24 +26,110 @@ export interface MarkdownBlock {
 
 const markdownParser = new Marked({ gfm: true, breaks: false, pedantic: false });
 
+/** Where each link or image token lexed by markdownBlocksOf starts in the source of its top-level block. */
+const referenceOffsets = new WeakMap<Token, number>();
+
 /** Words and punctuation that only join references, such as the "and" in "[a] and [b]". */
 const CONNECTIVE_PATTERN = /^[\s,;&+/–—-]*(?:(?:and|or)[\s,;&+/–—-]*)*$/i;
 
-/** Lexes markdown into its top-level blocks, with source ranges shifted by an offset. */
+/**
+ * Lexes markdown into its top-level blocks, with source ranges shifted by an offset. The ranges
+ * follow the markdown as given, whatever line endings it uses and whichever lines the lexer emits
+ * no token for.
+ */
 export function markdownBlocksOf(markdown: string, offset = 0): MarkdownBlock[] {
+    const source = lineFeedTextOf(markdown);
     const blocks: MarkdownBlock[] = [];
-    let position = offset;
+    let position = 0;
     for (const token of markdownParser.lexer(markdown)) {
-        const start = position;
-        position += token.raw.length;
+        const start = tokenStart(source.text, token.raw, position);
+        position = start + token.raw.length;
         if (token.type !== 'space') {
-            blocks.push({ token: token as Tokens.Generic, start, end: start + token.raw.trimEnd().length });
+            const blockStart = source.originalOffset(start);
+            const blockEnd = source.originalOffset(start + token.raw.trimEnd().length);
+            recordReferenceOffsets(token, markdown.slice(blockStart, blockEnd));
+            blocks.push({ token: token as Tokens.Generic, start: offset + blockStart, end: offset + blockEnd });
         }
     }
     return blocks;
 }
 
-/** The attachment an inline token references, or undefined when it references none; the offset is where the token starts in its paragraph. */
+/** Markdown with every line ending turned into a line feed, as the lexer reads it, and the way back to offsets of the markdown as given. */
+interface LineFeedText {
+    readonly text: string;
+    originalOffset(position: number): number;
+}
+
+function lineFeedTextOf(markdown: string): LineFeedText {
+    if (!markdown.includes('\r')) {
+        return { text: markdown, originalOffset: (position) => position };
+    }
+    const origins: number[] = [];
+    for (let index = 0; index < markdown.length; index++) {
+        origins.push(index);
+        if (markdown[index] === '\r' && markdown[index + 1] === '\n') {
+            index++;
+        }
+    }
+    origins.push(markdown.length);
+    return { text: markdown.replace(/\r\n?/g, '\n'), originalOffset: (position) => origins[position] };
+}
+
+/**
+ * Where a token's markdown starts in the text: at the position, or at the start of a later line
+ * when lines the lexer emits no token for, such as a repeated link definition, come first.
+ */
+function tokenStart(text: string, raw: string, position: number): number {
+    for (let lineStart = position; lineStart < text.length; ) {
+        if (text.startsWith(raw, lineStart)) {
+            return lineStart;
+        }
+        const lineEnd = text.indexOf('\n', lineStart);
+        if (lineEnd < 0) {
+            break;
+        }
+        lineStart = lineEnd + 1;
+    }
+    return position;
+}
+
+/**
+ * Records where each link and image inside a block, nested ones included, starts in the block's
+ * source. Tokens are matched to the source in order, so text before a reference, such as the same
+ * reference written in a code span, is passed over first.
+ */
+function recordReferenceOffsets(block: Token, source: string): void {
+    if (!source.includes('attachment:')) {
+        return;
+    }
+    let cursor = 0;
+    const visit = (token: Token): void => {
+        const isReference = token.type === 'link' || token.type === 'image';
+        const children = childTokensOf(token);
+        if (!isReference && children.length > 0) {
+            children.forEach(visit);
+            return;
+        }
+        const at = typeof token.raw === 'string' ? source.indexOf(token.raw, cursor) : -1;
+        if (at < 0) {
+            return;
+        }
+        if (isReference) {
+            referenceOffsets.set(token, at);
+        }
+        cursor = at + token.raw.length;
+    };
+    visit(block);
+}
+
+function childTokensOf(token: Token): readonly Token[] {
+    if (token.type === 'list') {
+        return (token as Tokens.List).items;
+    }
+    return 'tokens' in token && Array.isArray(token.tokens) ? token.tokens : [];
+}
+
+/** The attachment an inline token references, or undefined when it references none; the offset is where the token starts in its block. */
 export function mediaReferenceOf(token: Token, offset: number): MediaReference | undefined {
     if (token.type !== 'link' && token.type !== 'image') {
         return undefined;
@@ -62,7 +148,7 @@ export function paragraphPartsOf(tokens: readonly Token[]): ParagraphParts {
     const inline: Token[] = [];
     let offset = 0;
     for (const token of tokens) {
-        const reference = mediaReferenceOf(token, offset);
+        const reference = mediaReferenceOf(token, referenceOffsets.get(token) ?? offset);
         if (reference) {
             media.push(reference);
         } else {

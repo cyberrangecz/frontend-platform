@@ -1,3 +1,4 @@
+import { Tokens } from 'marked';
 import { groupSections, markdownBlocksOf, paragraphPartsOf } from './markdown-blocks';
 
 describe('markdown blocks', () => {
@@ -11,6 +12,25 @@ describe('markdown blocks', () => {
     it('keeps the source range of each block', () => {
         const blocks = markdownBlocksOf('# A\n\ntext\n');
         expect(blocks.map((block) => [block.start, block.end])).toEqual([[0, 3], [5, 9]]);
+    });
+
+    it('keeps source ranges for text with carriage return line endings', () => {
+        const markdown = '# A\r\n\r\nfirst\r\nline\r\n\r\nnext';
+        const blocks = markdownBlocksOf(markdown);
+        expect(blocks.map((block) => markdown.slice(block.start, block.end))).toEqual(['# A', 'first\r\nline', 'next']);
+    });
+
+    it('keeps source ranges after a repeated link definition', () => {
+        const markdown = '[x]: http://a\n[x]: http://b\n\nafter';
+        const blocks = markdownBlocksOf(markdown);
+        expect(markdown.slice(blocks.at(-1)?.start, blocks.at(-1)?.end)).toBe('after');
+    });
+
+    it('measures a nested reference from the start of its top-level block', () => {
+        const markdown = '> quote `![a](attachment:abc)`\n> and ![a](attachment:abc)';
+        const [block] = markdownBlocksOf(markdown);
+        const { media } = paragraphPartsOf((block.token.tokens?.[0] as Tokens.Generic | undefined)?.tokens ?? []);
+        expect(media.map((reference) => markdown.startsWith(reference.raw, reference.offset) && reference.offset)).toEqual([markdown.lastIndexOf('![a]')]);
     });
 });
 

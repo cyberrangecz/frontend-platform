@@ -1,5 +1,5 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { afterNextRender, ChangeDetectionStrategy, Component, computed, DestroyRef, ElementRef, inject, Injector, model, signal, viewChild } from '@angular/core';
+import { afterNextRender, ChangeDetectionStrategy, Component, computed, DestroyRef, effect, ElementRef, inject, Injector, model, signal, untracked, viewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -14,8 +14,8 @@ import { RemovedAttachment } from '../editor/attachment-removal.extensions';
 import { BlockEditorExit, BlockSelectionGrowth, BlockSourceEditorComponent, CaretPlacement } from '../editor/block-source-editor.component';
 import { ATTACHMENT_CARDS, cardOfKind } from '../media/attachment-cards';
 import { FocusStep } from '../media/media-item-actions';
-import { insertBlock, referenceMarkdownOf, trailingNewlines } from '../model/attachment-references';
-import { MarkdownEdit, relabelReference, relinkReference, removeReference, resizeReference, restoreRemoved, revertEdit } from '../model/level-edits';
+import { insertBlock, mappedOffset, referenceMarkdownOf, trailingNewlines } from '../model/attachment-references';
+import { MarkdownEdit, relabelReference, relinkReference, removeReference, resizeReference, revertEdit } from '../model/level-edits';
 import { isMediaOnlyBlock, MarkdownBlock, markdownBlocksOf, MediaReference } from '../model/markdown-blocks';
 import { MarkdownBlockComponent } from '../render/markdown-block.component';
 import { PreviewBlockDirective } from './preview-block.directive';
@@ -103,6 +103,10 @@ export class LivePreviewComponent {
     private readonly session = signal<EditSession | null>(null);
     private readonly openSections = signal<ReadonlySet<string>>(new Set());
     private sessionCount = 0;
+    /** The markdown as it stood right after the latest edit that offered an undo. */
+    private markdownAfterRemoval: string | null = null;
+    /** Closes the open undo snackbar, if any. */
+    private closeRemovalUndo: (() => void) | null = null;
     /** The block a pointer drag started on while the button is held; a drag onto other blocks opens them together. */
     protected dragOrigin: SourceSpan | null = null;
 
@@ -134,6 +138,16 @@ export class LivePreviewComponent {
     });
 
     constructor() {
+        effect(() => {
+            const markdown = this.markdown();
+            untracked(() => {
+                if (this.markdownAfterRemoval !== null && markdown !== this.markdownAfterRemoval) {
+                    this.closeRemovalUndo?.();
+                    this.closeRemovalUndo = null;
+                    this.markdownAfterRemoval = null;
+                }
+            });
+        });
         afterNextRender(() => {
             const page = this.page().nativeElement;
             page.addEventListener('keydown', this.onFileBlockKeydown, true);
@@ -309,10 +323,16 @@ export class LivePreviewComponent {
         if (session?.id !== sessionId) {
             return;
         }
-        const offset = session.start + removed.from;
-        this.removalUndo.offer(() => {
-            this.replaceMarkdown(restoreRemoved(this.markdown(), offset, removed.text));
-            this.focusEntryAfterRender(session.start);
+        const start = session.start + removed.from;
+        this.markdownAfterRemoval = null;
+        queueMicrotask(() => (this.markdownAfterRemoval = this.markdown()));
+        this.closeRemovalUndo = this.removalUndo.offer(() => {
+            const markdownAfterRemoval = this.markdownAfterRemoval;
+            const restored = markdownAfterRemoval === null ? null : revertEdit(this.markdown(), { markdown: markdownAfterRemoval, start, removed: removed.text, replacement: '' });
+            if (restored !== null) {
+                this.replaceMarkdown(restored);
+                this.focusEntryAfterRender(session.start);
+            }
         });
     }
 
@@ -421,11 +441,27 @@ export class LivePreviewComponent {
         if (drag?.kind === 'material') {
             this.insertReferences([drag.material], gap.offset);
         } else {
+            const markdownAtDrop = this.markdown();
             this.intake
                 ?.take(Array.from(event.dataTransfer?.files ?? []))
                 .pipe(takeUntilDestroyed(this.destroyRef))
-                .subscribe((taken) => this.insertReferences(taken, gap.offset));
+                .subscribe((taken) => this.insertReferences(taken, this.blockBoundaryAfterChange(markdownAtDrop, gap.offset)));
         }
+    }
+
+    /**
+     * Where a block boundary of the markdown as it was stands now: shifted past any change made
+     * since, and moved to the start of the next block when it has come to lie inside a block.
+     */
+    private blockBoundaryAfterChange(markdownBefore: string, offset: number): number {
+        const markdown = this.markdown();
+        const mapped = mappedOffset(markdownBefore, markdown, offset);
+        const blocks = markdownBlocksOf(markdown);
+        const index = blocks.findIndex((block) => block.end > mapped);
+        if (index < 0 || mapped <= blocks[index].start) {
+            return mapped;
+        }
+        return blocks[index + 1]?.start ?? markdown.length;
     }
 
     /** Whether a drag carries a stored material, or files from outside the browser that the materials can take. */
@@ -523,8 +559,15 @@ export class LivePreviewComponent {
         (card ?? block)?.focus();
     }
 
-    /** Puts an edit of the block's references into the content, hands focus back to the block's first card when asked to, and offers to undo it when a message is given. */
+    /**
+     * Puts an edit of the block's references into the content, hands focus back to the block's
+     * first card when asked to, and offers to undo it when a message is given. An edit that changes
+     * nothing is dropped.
+     */
     private commitEdit(block: MarkdownBlock, edit: MarkdownEdit, undoMessage?: string, refocus = true): void {
+        if (edit.markdown === this.markdown()) {
+            return;
+        }
         this.replaceMarkdown(edit.markdown);
         if (refocus) {
             this.focusEntryAfterRender(block.start);
@@ -541,7 +584,8 @@ export class LivePreviewComponent {
     }
 
     private offerUndo(message: string, edit: MarkdownEdit): void {
-        this.removalUndo.offer(() => this.restore(edit), message);
+        this.markdownAfterRemoval = edit.markdown;
+        this.closeRemovalUndo = this.removalUndo.offer(() => this.restore(edit), message);
     }
 
     private restore(edit: MarkdownEdit): void {

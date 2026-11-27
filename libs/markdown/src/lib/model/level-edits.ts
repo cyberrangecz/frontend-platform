@@ -19,10 +19,13 @@ const LEADING_CONNECTIVE = /^[\s,;&+/–—-]*(?:\b(?:and|or)\b[\s,;&+/–—-]*
 
 /**
  * Takes one attachment reference out of its block, with the words that joined it to its
- * neighbours. The whole block goes, up to the next one, when nothing else is left of it.
+ * neighbours. A reference nested in a list or a blockquote leaves only its own line, the line
+ * going too when nothing but its list marker or quote marker is left. The whole block goes, up to
+ * the next one, when nothing else is left of it.
  */
 export function removeReference(markdown: string, block: MarkdownBlock, reference: Pick<MediaReference, 'raw' | 'offset'>): MarkdownEdit {
-    const remaining = withoutReference(markdown.slice(block.start, block.end), reference);
+    const blockMarkdown = markdown.slice(block.start, block.end);
+    const remaining = block.token.type === 'paragraph' ? withoutReference(blockMarkdown, reference) : withoutNestedReference(blockMarkdown, reference);
     if (remaining) {
         return { markdown: markdown.slice(0, block.start) + remaining + markdown.slice(block.end), start: block.start, removed: markdown.slice(block.start, block.end), replacement: remaining };
     }
@@ -68,19 +71,60 @@ function rewriteReference(markdown: string, block: MarkdownBlock, reference: Med
     };
 }
 
-/** Puts text taken out of the markdown back at its offset, or at the end when the markdown has since become shorter. */
-export function restoreRemoved(markdown: string, offset: number, text: string): string {
-    const at = Math.min(offset, markdown.length);
-    return markdown.slice(0, at) + text + markdown.slice(at);
-}
-
-/** Undoes an edit, as long as the text it put in is still in place; null when it is not. */
+/** Undoes an edit while the markdown is still exactly what the edit made; null once anything has changed since. */
 export function revertEdit(markdown: string, edit: MarkdownEdit): string | null {
-    const replacementEnd = edit.start + edit.replacement.length;
-    if (markdown.slice(edit.start, replacementEnd) !== edit.replacement) {
+    if (markdown !== edit.markdown) {
         return null;
     }
-    return markdown.slice(0, edit.start) + edit.removed + markdown.slice(replacementEnd);
+    return markdown.slice(0, edit.start) + edit.removed + markdown.slice(edit.start + edit.replacement.length);
+}
+
+/**
+ * A list or blockquote block without one reference, taken out of its line together with the words
+ * joining it there. A line left with nothing but its markers is taken out whole.
+ */
+function withoutNestedReference(blockMarkdown: string, { raw, offset }: Pick<MediaReference, 'raw' | 'offset'>): string {
+    if (!blockMarkdown.startsWith(raw, offset)) {
+        return blockMarkdown;
+    }
+    const lineStart = blockMarkdown.lastIndexOf('\n', offset - 1) + 1;
+    const newline = blockMarkdown.indexOf('\n', offset + raw.length);
+    const lineEnd = newline < 0 ? blockMarkdown.length : newline;
+    const line = blockMarkdown.slice(lineStart, lineEnd);
+    const markers = containerMarkersLength(line);
+    const content = withoutReference(line.slice(markers), { raw, offset: offset - lineStart - markers });
+    if (content) {
+        return blockMarkdown.slice(0, lineStart) + line.slice(0, markers) + content + blockMarkdown.slice(lineEnd);
+    }
+    return lineStart === 0 ? blockMarkdown.slice(lineEnd + 1) : blockMarkdown.slice(0, lineStart - 1) + blockMarkdown.slice(lineEnd);
+}
+
+/** How long the run of indentation, quote markers, list markers and task boxes opening a line is. */
+function containerMarkersLength(line: string): number {
+    let position = 0;
+    for (let previous = -1; previous !== position; ) {
+        previous = position;
+        while (line[position] === ' ' || line[position] === '\t') {
+            position++;
+        }
+        if (line[position] === '>') {
+            position++;
+            continue;
+        }
+        let markerEnd = position;
+        while (markerEnd - position < 9 && line[markerEnd] >= '0' && line[markerEnd] <= '9') {
+            markerEnd++;
+        }
+        const ordered = markerEnd > position && (line[markerEnd] === '.' || line[markerEnd] === ')');
+        const bullet = markerEnd === position && (line[position] === '-' || line[position] === '+' || line[position] === '*');
+        const afterMarker = ordered || bullet ? markerEnd + 1 : position;
+        if (afterMarker > position && (line[afterMarker] === ' ' || line[afterMarker] === '\t' || afterMarker === line.length)) {
+            position = afterMarker;
+        } else if (/^\[[ xX]\](?:[ \t]|$)/.test(line.slice(position, position + 4))) {
+            position += 3;
+        }
+    }
+    return position;
 }
 
 function withoutReference(blockMarkdown: string, { raw, offset }: Pick<MediaReference, 'raw' | 'offset'>): string {

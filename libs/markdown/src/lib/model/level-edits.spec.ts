@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { markdownBlocksOf } from './markdown-blocks';
-import { relabelReference, relinkReference, removeReference, resizeReference, restoreRemoved, revertEdit } from './level-edits';
+import { relabelReference, relinkReference, removeReference, resizeReference, revertEdit } from './level-edits';
 import { paragraphPartsOf } from './markdown-blocks';
 
 const IMAGE = '![diagram](attachment:aaa)';
@@ -63,9 +63,10 @@ describe('level edits', () => {
         expect(revertEdit(edit.markdown, edit)).toBe(markdown);
     });
 
-    it('puts removed text back at its offset, clamped to the end', () => {
-        expect(restoreRemoved('ab', 1, 'X')).toBe('aXb');
-        expect(restoreRemoved('ab', 9, 'X')).toBe('abX');
+    it('refuses to revert a removal once the markdown has changed', () => {
+        const markdown = `Intro\n\n${IMAGE}\n\nOutro`;
+        const edit = removeReference(markdown, markdownBlocksOf(markdown)[1], { raw: IMAGE, offset: 0 });
+        expect(revertEdit(`New\n\n${edit.markdown}`, edit)).toBeNull();
     });
 });
 
@@ -113,6 +114,35 @@ describe('edits of a reference in a block of several', () => {
         const markdown = `  ${IMAGE_LINE}\n\nText`;
         const { block, references } = mediaReferencesOf(markdown);
         expect(resizeReference(markdown, block, references[0], 300).markdown).toBe('  ![a](attachment:aaa?maxWidth=300)\n\nText');
+    });
+});
+
+describe('edits of a reference nested in a list or a blockquote', () => {
+    const IMAGE_LINE = '![a](attachment:aaa)';
+
+    function nestedReferenceOf(markdown: string) {
+        const [block] = markdownBlocksOf(markdown);
+        const item = block.token.type === 'list' ? block.token['items'][0] : block.token;
+        return { block, reference: paragraphPartsOf(item.tokens[0].tokens ?? []).media[0] };
+    }
+
+    it('resizes a reference inside a list item', () => {
+        const markdown = `- one\n- see ${IMAGE_LINE}`;
+        const [block] = markdownBlocksOf(markdown);
+        const reference = paragraphPartsOf(block.token['items'][1].tokens[0].tokens ?? []).media[0];
+        expect(resizeReference(markdown, block, reference, 300).markdown).toBe('- one\n- see ![a](attachment:aaa?maxWidth=300)');
+    });
+
+    it('removes a reference from its quote line, keeping the quote marker', () => {
+        const markdown = `> see ${IMAGE_LINE}\n> more`;
+        const { block, reference } = nestedReferenceOf(markdown);
+        expect(removeReference(markdown, block, reference).markdown).toBe('> see\n> more');
+    });
+
+    it('drops a list item left with nothing but its marker', () => {
+        const markdown = `- ${IMAGE_LINE}\n- two`;
+        const { block, reference } = nestedReferenceOf(markdown);
+        expect(removeReference(markdown, block, reference).markdown).toBe('- two');
     });
 });
 
