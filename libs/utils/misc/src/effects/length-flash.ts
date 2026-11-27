@@ -99,11 +99,11 @@ const FLASH_SURFACES: readonly FlashSurfaceSpec[] = [
         ],
     },
     {
-        carrier: 'sentinel-markdown-editor',
+        carrier: 'crczp-markdown-editor',
         parts: [
             {
                 written: null,
-                drawn: '.mrkdwn-editor',
+                drawn: '.editor-frame',
                 eased: ['outline-color'],
                 styles: OUTLINE_COLOR_FLASH,
             },

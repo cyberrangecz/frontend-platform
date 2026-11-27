@@ -1,0 +1,48 @@
+$countdown-size: var(--font-size-xl);
+
+:host {
+    display: flex;
+    align-items: center;
+}
+
+.snackbar-label {
+    flex: 1 1 auto;
+}
+
+.snackbar-undo {
+    --mat-button-text-label-text-tracking: 0;
+
+    gap: var(--space-2xs);
+}
+
+.snackbar-countdown {
+    flex: none;
+    width: $countdown-size;
+    height: $countdown-size;
+    margin-inline-start: calc(-1 * var(--space-3xs));
+    transform: rotate(-90deg);
+}
+
+.snackbar-countdown-track,
+.snackbar-countdown-arc {
+    fill: none;
+    stroke-width: 2.5;
+}
+
+.snackbar-countdown-track {
+    stroke: currentColor;
+    opacity: 0.25;
+}
+
+.snackbar-countdown-arc {
+    stroke: currentColor;
+    stroke-dasharray: 100;
+    stroke-linecap: round;
+    animation: snackbar-countdown-drain var(--snackbar-countdown-duration) linear both;
+}
+
+@keyframes snackbar-countdown-drain {
+    to {
+        stroke-dashoffset: 100;
+    }
+}

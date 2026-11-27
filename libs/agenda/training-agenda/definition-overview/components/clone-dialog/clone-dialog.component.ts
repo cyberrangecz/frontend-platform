@@ -11,7 +11,6 @@ import {CloneDialogFormGroup} from './clone-dialog-form-group';
 import {AbstractControl, ReactiveFormsModule} from '@angular/forms';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {TitleCasePipe} from "@angular/common";
-import {SentinelShortStringPipe} from "@sentinel/common/pipes";
 import {MatError, MatFormField, MatInput, MatLabel, MatSuffix} from "@angular/material/input";
 import {MatButton} from "@angular/material/button";
 import { ClearInputSuffixComponent } from '@crczp/utils';
@@ -27,7 +26,6 @@ import { ClearInputSuffixComponent } from '@crczp/utils';
     imports: [
         ClearInputSuffixComponent,
         TitleCasePipe,
-        SentinelShortStringPipe,
         MatDialogContent,
         MatDialogTitle,
         ReactiveFormsModule,

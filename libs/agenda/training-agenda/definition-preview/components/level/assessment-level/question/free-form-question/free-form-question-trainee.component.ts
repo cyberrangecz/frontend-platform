@@ -3,7 +3,7 @@ import {FreeFormQuestion} from '@crczp/training-model';
 import {MatIconButton} from "@angular/material/button";
 import {FormsModule} from "@angular/forms";
 import {MatFormField, MatInput, MatLabel, MatSuffix} from "@angular/material/input";
-import {SentinelMarkdownViewComponent} from "@sentinel/components/markdown-view";
+import { MarkdownViewComponent } from '@crczp/markdown';
 import {MatIcon} from "@angular/material/icon";
 
 @Component({
@@ -19,7 +19,7 @@ import {MatIcon} from "@angular/material/icon";
         MatInput,
         MatLabel,
         MatFormField,
-        SentinelMarkdownViewComponent
+        MarkdownViewComponent
     ]
 })
 /**

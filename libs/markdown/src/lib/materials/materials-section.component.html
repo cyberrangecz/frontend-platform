@@ -1,0 +1,37 @@
+<button
+    #field
+    #origin="cdkOverlayOrigin"
+    cdkOverlayOrigin
+    type="button"
+    class="section-field"
+    aria-haspopup="dialog"
+    aria-controls="materials-section-panel"
+    [class.section-field--open]="open()"
+    [attr.aria-expanded]="open()"
+    [attr.aria-label]="accessibleName()"
+    (click)="toggle()"
+>
+    <mat-icon class="section-icon">perm_media</mat-icon>
+    <span class="section-title">
+        <span class="section-label">Training materials</span>
+        <span class="section-count">{{ countText() }}</span>
+    </span>
+    <mat-icon class="section-chevron">expand_more</mat-icon>
+    <crczp-budget-meter class="section-meter" aria-hidden="true" [usedBytes]="store.usedBytes()" [limitBytes]="store.budgetBytes()" />
+</button>
+
+<ng-template
+    cdkConnectedOverlay
+    [cdkConnectedOverlayOrigin]="origin"
+    [cdkConnectedOverlayOpen]="open()"
+    [cdkConnectedOverlayPositions]="positions"
+    [cdkConnectedOverlayWidth]="panelWidth()"
+    (attach)="onPanelAttached()"
+    (detach)="collapse()"
+    (overlayKeydown)="onPanelKeydown($event)"
+    (overlayOutsideClick)="onOutsideClick($event)"
+>
+    <div id="materials-section-panel" class="section-panel" role="dialog" aria-label="Training materials" cdkTrapFocus>
+        <crczp-materials-panel class="section-content" (materialDragStarted)="onMaterialDragStarted()" />
+    </div>
+</ng-template>

@@ -10,6 +10,7 @@ import { ObjectUtils } from './utils/functions/object-utils';
 import { ColorUtils } from './utils/functions/color-utils';
 import { StringUtils } from './utils/functions/string-utils';
 
+export * from './utils/functions/import-document';
 export * from './rxjs/unique';
 export * from './rxjs/tresholdBufferPipe';
 export * from './utils/classes/loading-tracker';
@@ -24,6 +25,7 @@ export * from './service/pagination/pagination-storage.service';
 export * from './service/progress/file-upload-progress.service';
 export * from './service/role/role.service';
 export * from './service/api/polling.service';
+export * from './service/windows/open-windows.service';
 export * from './types/config';
 export * from './types/unit-values';
 export * from './types/sentinel-auth-config.zod';

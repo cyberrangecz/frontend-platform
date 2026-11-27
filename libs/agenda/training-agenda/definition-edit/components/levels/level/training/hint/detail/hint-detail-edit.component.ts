@@ -12,8 +12,9 @@ import {
 import {AbstractControl, ReactiveFormsModule, Validators} from '@angular/forms';
 import {Hint} from '@crczp/training-model';
 import {HintEditFormGroup, WHOLE_NUMBER_PATTERN} from './hint-edit-form-group';
+import {Subscription} from 'rxjs';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {SentinelMarkdownEditorComponent} from "@sentinel/components/markdown-editor";
+import {MarkdownEditorComponent} from "@crczp/markdown";
 import {MatError, MatFormField, MatInput, MatLabel, MatSuffix} from "@angular/material/input";
 import { ClearInputSuffixComponent } from '@crczp/utils';
 
@@ -25,8 +26,7 @@ import { ClearInputSuffixComponent } from '@crczp/utils';
     imports: [
         ClearInputSuffixComponent,
         MatError,
-        SentinelMarkdownEditorComponent,
-        MatError,
+        MarkdownEditorComponent,
         MatLabel,
         MatSuffix,
         MatFormField,
@@ -47,6 +47,7 @@ export class HintDetailEditComponent implements OnChanges {
     maxHintPenalty: number;
     hintConfigurationFormGroup: HintEditFormGroup;
     destroyRef = inject(DestroyRef);
+    private formGroupValueChangesSubscription?: Subscription;
 
     get title(): AbstractControl {
         return this.hintConfigurationFormGroup.formGroup.get('title');
@@ -83,7 +84,8 @@ export class HintDetailEditComponent implements OnChanges {
     }
 
     private subscribeFormChanges() {
-        this.hintConfigurationFormGroup.formGroup.valueChanges
+        this.formGroupValueChangesSubscription?.unsubscribe();
+        this.formGroupValueChangesSubscription = this.hintConfigurationFormGroup.formGroup.valueChanges
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe(() => this.onHintChanged());
     }
@@ -96,5 +98,6 @@ export class HintDetailEditComponent implements OnChanges {
             Validators.min(0),
             Validators.max(this.maxHintPenalty),
         ]);
+        this.hintPenalty.updateValueAndValidity({emitEvent: false});
     }
 }

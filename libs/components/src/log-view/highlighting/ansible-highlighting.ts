@@ -1,9 +1,7 @@
 import { tokenColor } from '../log-token-slots';
-import { LOGGING_ERROR_MARKER } from '../logging-error-marker';
 import {
     defineRuleHighlighting,
     HighlightRule,
-    literalPatternSource,
     TokenStyle,
 } from './rule-highlighting';
 import { MUTED_TOKEN_STYLE, VALUE_TOKEN_STYLES } from './shared-token-styles';
@@ -80,14 +78,11 @@ const BANNER_RULES: readonly AnsibleRule[] = [
 ];
 
 /**
- * Errors, warnings and deprecations printed outside task results, the line marking a log that
- * failed to load included.
+ * Errors, warnings and deprecations printed outside task results.
  */
 const MESSAGE_RULES: readonly AnsibleRule[] = [
     {
-        pattern: new RegExp(
-            String.raw`(?:ERROR!|\[ERROR\]:|E:|${literalPatternSource(LOGGING_ERROR_MARKER)})(?: .*|(?!\S))`,
-        ),
+        pattern: /(?:ERROR!|\[ERROR\]:|E:)(?: .*|(?!\S))/,
         token: 'errorLine',
         atLineStart: true,
     },

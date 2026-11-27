@@ -2,6 +2,7 @@ import { OffsetPaginationEvent } from '@crczp/utils';
 import {
     AbstractLevelBasic,
     HintBasic,
+    PendingAttachmentUpload,
     TrainingDefinition,
     TrainingDefinitionBasic,
     TrainingDefinitionInfo,
@@ -78,17 +79,21 @@ export abstract class LinearTrainingDefinitionApi {
     /**
      * Sends http request to overwrite a training definition and all its levels in one write; resolves with the stored definition
      * @param trainingDefinition training definition to update
+     * @param pendingUploads files picked and not stored yet; the save is multipart when there are any
      */
     abstract update(
         trainingDefinition: TrainingDefinitionWithLevels,
+        pendingUploads?: readonly PendingAttachmentUpload[],
     ): Observable<TrainingDefinitionWithLevels>;
 
     /**
      * Sends http request to create a new training definition together with its levels
      * @param trainingDefinition training definition which should be created
+     * @param pendingUploads files picked and not stored yet; the save is multipart when there are any
      */
     abstract create(
         trainingDefinition: TrainingDefinitionWithLevels,
+        pendingUploads?: readonly PendingAttachmentUpload[],
     ): Observable<TrainingDefinitionWithLevels>;
 
     abstract fetchLevelsByIds(ids: number[]): Observable<AbstractLevelBasic[]>;

@@ -6,12 +6,11 @@ import {
 } from '../support/pages/review/cheating-detection';
 import { expect, test } from '../support/pages/review/review-test';
 import { CheatingDetectionCreatePage } from '../support/pages/training-instance/cheating-detection-create.page';
-import { waitForNotification } from '../support/ui';
+import { doubleClickAfterRender, waitForNotification } from '../support/ui';
 
 const DETECTION_RESPONSE_TIMEOUT_MILLISECONDS = 60_000;
 const COMMAND_OFFSET_FROM_FORM_THRESHOLD = 100;
 const DOUBLE_CLICK_OFFSET_FROM_FORM_THRESHOLD = 200;
-const DOUBLE_CLICK_INTERVAL_MILLISECONDS = 80;
 const RETRY_OFFSET_FROM_FORM_THRESHOLD = 1000;
 
 function thresholdOf(formThreshold: number, offset: number, attempt: number): number {
@@ -68,16 +67,8 @@ test.describe('linear-instance.cheating-detection.create (detections that run ag
     }, testInfo) => {
         const threshold = thresholdOf(CHEATING_THRESHOLDS[browserKey].form, DOUBLE_CLICK_OFFSET_FROM_FORM_THRESHOLD, testInfo.retry);
         await create.enableTimeProximity(threshold);
-        const box = await create.createControl.boundingBox();
-        if (!box) {
-            throw new Error('The Create control has no layout box to click');
-        }
-        const centerX = box.x + box.width / 2;
-        const centerY = box.y + box.height / 2;
         const startedNotification = waitForNotification(page, 'Cheating Detection started executing', { timeout: DETECTION_RESPONSE_TIMEOUT_MILLISECONDS });
-        await page.mouse.click(centerX, centerY);
-        await page.waitForTimeout(DOUBLE_CLICK_INTERVAL_MILLISECONDS);
-        await page.mouse.click(centerX, centerY);
+        await doubleClickAfterRender(create.createControl);
         await startedNotification;
         await expect(page).toHaveURL(/\/cheating-detection$/);
         const api = apiAs('trainingOrganizer');

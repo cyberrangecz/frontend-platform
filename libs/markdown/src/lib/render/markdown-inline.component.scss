@@ -1,0 +1,45 @@
+@use '../styles/presentation' as presentation;
+
+strong {
+    font-weight: var(--font-weight-semibold);
+}
+
+del {
+    color: var(--mat-sys-on-surface-variant);
+}
+
+.inline-code {
+    padding: 0.1em var(--space-3xs);
+    border-radius: var(--space-3xs);
+    background: var(--mat-sys-surface-container-high);
+    font-family: presentation.$monospace;
+    font-size: 0.875em;
+    overflow-wrap: anywhere;
+}
+
+.inline-link {
+    border-radius: var(--space-4xs);
+    color: var(--mat-sys-primary);
+    text-decoration: underline;
+    text-decoration-color: color-mix(in srgb, currentColor 40%, transparent);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+
+    transition: text-decoration-color 120ms ease;
+
+    &:hover {
+        text-decoration-color: currentColor;
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--mat-sys-primary);
+        outline-offset: var(--space-4xs);
+    }
+}
+
+.inline-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--space-xs);
+    vertical-align: middle;
+}

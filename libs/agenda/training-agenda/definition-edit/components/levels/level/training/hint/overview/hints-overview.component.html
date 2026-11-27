@@ -27,7 +27,7 @@
     <!--     HINT stepper-->
     @if (stepperHints().items.length > 0) {
         <div class="hint-stepper">
-            @for (stepper of [stepperHints()]; track stepper) {
+            @for (stepper of [stepperHints()]; track stepperKey()) {
                 <sentinel-stepper (indexSelected)="onActiveHintChanged($event)"
                                   (selectedStepSwapped)="onActiveHintChanged($event)"
                                   (stepSwapped)="onOrderUpdate()"

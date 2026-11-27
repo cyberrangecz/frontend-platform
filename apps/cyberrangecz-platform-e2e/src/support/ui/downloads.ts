@@ -7,6 +7,8 @@ const DOWNLOAD_START_MILLISECONDS = 30_000;
 export interface CapturedDownload {
     /** File name the browser offered. */
     fileName: string;
+    /** File bytes as downloaded. */
+    bytes: Buffer;
     /** File content decoded as UTF-8. */
     content: string;
     /** File size in bytes. */
@@ -29,6 +31,7 @@ export async function captureDownload(
     const buffer = await readFile(path);
     return {
         fileName: download.suggestedFilename(),
+        bytes: buffer,
         content: buffer.toString('utf-8'),
         size: buffer.length,
     };
@@ -43,7 +46,7 @@ export function parseCsv(text: string): string[][] {
     let row: string[] = [];
     let cell = '';
     let quoted = false;
-    const source = text.replace(/^﻿/, '');
+    const source = text.replace(/^\uFEFF/, '');
     for (let index = 0; index < source.length; index++) {
         const character = source[index];
         if (quoted) {

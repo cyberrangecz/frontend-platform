@@ -4,8 +4,8 @@
     margin: 20px;
 }
 
-sentinel-markdown-editor {
-    height: 40vh;
+crczp-markdown-editor {
+    margin-bottom: 20px;
 }
 
 @media screen and (max-width: 800px) {

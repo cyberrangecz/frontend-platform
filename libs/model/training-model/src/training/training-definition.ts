@@ -3,6 +3,7 @@ import { z } from 'zod';
 import {formatDate} from '@angular/common';
 import {TrainingDefinitionStateEnum} from '../enums/training-definition-state.enum';
 import {Level} from '../level/level';
+import {TrainingMaterial} from './training-material';
 
 /** Basic read-only training definition data safe for all roles. Subset of {@link TrainingDefinitionWithLevels}. */
 export class TrainingDefinitionBasic extends Z.class({
@@ -59,4 +60,6 @@ export class TrainingDefinition {
  */
 export class TrainingDefinitionWithLevels extends TrainingDefinition {
     levels: Level[] = [];
+    /** The files the levels' content may reference; every referenced file is among them. */
+    materials: TrainingMaterial[] = [];
 }

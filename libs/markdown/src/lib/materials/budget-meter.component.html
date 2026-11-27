@@ -1,0 +1,23 @@
+<div
+    class="budget-bar"
+    role="meter"
+    aria-label="Attachment budget"
+    aria-valuemin="0"
+    [attr.aria-valuemax]="limitBytes()"
+    [attr.aria-valuenow]="usedBytes()"
+    [attr.aria-valuetext]="valueText()"
+>
+    <span
+        class="budget-fill"
+        [class.budget-fill--near]="nearLimit()"
+        [class.budget-fill--over]="over()"
+        [style.width.%]="usedShare()"
+    ></span>
+</div>
+<span class="budget-figures">
+    <span class="budget-used" [class.budget-used--over]="over()">{{ usedBytes() | crczpByteSize }}</span>
+    <span class="budget-limit">of {{ limitBytes() | crczpByteSize }}</span>
+    @if (over()) {
+        <span class="budget-excess">{{ remainder() | crczpByteSize }} over</span>
+    }
+</span>

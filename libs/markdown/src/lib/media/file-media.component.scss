@@ -1,0 +1,99 @@
+@use '../styles/presentation' as presentation;
+@use 'media-tokens' as tokens;
+
+:host {
+    @include presentation.card-surface;
+
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: tokens.$card-icon-gap;
+    min-width: min(100cqi, calc(20 * var(--space-xl)));
+    max-width: 100%;
+    line-height: tokens.$line-height-normal;
+
+    @include tokens.card-inset;
+}
+
+.file-icon {
+    @include presentation.icon-tile;
+
+    :host(.file-media--loaded) & {
+        background: var(--mat-sys-primary-container);
+        color: var(--mat-sys-on-primary-container);
+    }
+
+    transition:
+        background-color tokens.$duration-base ease,
+        color tokens.$duration-base ease;
+}
+
+.file-text {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    gap: var(--space-4xs);
+    min-width: 0;
+}
+
+.file-name {
+    color: var(--mat-sys-on-surface);
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-medium);
+    overflow-wrap: anywhere;
+}
+
+.file-meta,
+.file-error {
+    overflow: hidden;
+    font-size: var(--font-size-md);
+    font-variant-numeric: tabular-nums;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.file-meta {
+    color: var(--mat-sys-on-surface-variant);
+
+    :host(.file-media--error) & {
+        display: none;
+    }
+}
+
+.file-error {
+    color: var(--mat-sys-error);
+}
+
+.file-progress {
+    @include presentation.visually-hidden;
+}
+
+.file-trailing {
+    display: grid;
+    flex: none;
+    align-items: center;
+    justify-items: end;
+    min-inline-size: min(calc(7 * var(--space-xl)), 30cqi);
+}
+
+.file-action {
+    position: relative;
+    display: grid;
+    flex: none;
+    place-items: center;
+}
+
+.file-button {
+    @include presentation.centered-icon-button;
+    color: var(--mat-sys-primary);
+
+    &[aria-disabled='true'] {
+        cursor: progress;
+    }
+}
+
+.file-ring {
+    position: absolute;
+    inset: var(--space-4xs);
+    color: var(--mat-sys-primary);
+}

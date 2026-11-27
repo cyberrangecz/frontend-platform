@@ -1,0 +1,128 @@
+@use '../styles/presentation' as presentation;
+@use 'media-tokens' as tokens;
+
+$readout-padding-block: var(--space-3xs);
+$readout-padding-inline: var(--space-sm);
+/// Half the readout's height, which rounds its ends into a pill.
+$readout-radius: calc(var(--font-size-sm) * tokens.$line-height-relaxed / 2 + $readout-padding-block);
+/// Space between the readout and the handle.
+$readout-gap: var(--space-xs);
+
+/// The readout in view and under the pointer.
+@mixin readout-shown {
+    opacity: 1;
+    translate: 0 -50%;
+    pointer-events: auto;
+}
+
+:host {
+    position: relative;
+    display: grid;
+}
+
+.size-readout {
+    position: absolute;
+    top: 50%;
+    right: 100%;
+    margin-right: $readout-gap;
+    isolation: isolate;
+    border-radius: $readout-radius;
+    background: var(--mat-sys-inverse-surface);
+    color: var(--mat-sys-inverse-on-surface);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    line-height: tokens.$line-height-relaxed;
+    white-space: nowrap;
+    opacity: 0;
+    translate: $readout-gap -50%;
+    pointer-events: none;
+    transition:
+        opacity tokens.$duration-base ease,
+        translate tokens.$duration-base presentation.$ease-decelerate,
+        color tokens.$duration-base ease;
+
+    box-shadow: tokens.$floating-shadow;
+
+    /// The field's surface, faded in over the readout's own while the readout is editable.
+    &::before {
+        content: '';
+        position: absolute;
+        z-index: -1;
+        inset: 0;
+        border-radius: inherit;
+        background: var(--mat-sys-surface-container-lowest);
+        opacity: 0;
+        transition: opacity tokens.$duration-base ease;
+    }
+
+    /// Spans the gap to the handle, so the pointer stays over the control on its way to the readout.
+    &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 100%;
+        width: $readout-gap;
+    }
+
+    :host(:hover) &,
+    :host(:has(:focus-visible)) &,
+    :host(.size-control--resizing) & {
+        @include readout-shown;
+    }
+
+    @media (hover: none) {
+        @include readout-shown;
+    }
+
+    &:has(:focus-visible) {
+        @include tokens.focus-ring(tokens.$floating-shadow);
+    }
+
+    &--editing {
+        color: var(--mat-sys-on-surface);
+
+        @include readout-shown;
+
+        &::before {
+            opacity: 1;
+        }
+    }
+}
+
+.size-readout-content {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-4xs);
+    margin: 0;
+    padding: $readout-padding-block $readout-padding-inline;
+    border: none;
+    border-radius: inherit;
+    background: none;
+    color: inherit;
+    font: inherit;
+    cursor: text;
+    outline: none;
+}
+
+.size-readout-number {
+    box-sizing: content-box;
+    width: calc(var(--size-readout-characters) * 1ch);
+    height: 1lh;
+    margin: 0;
+    padding: 0;
+    border: none;
+    background: none;
+    color: inherit;
+    font: inherit;
+    font-variant-numeric: tabular-nums;
+    text-align: end;
+    outline: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .size-readout,
+    .size-readout::before {
+        transition: none;
+    }
+}

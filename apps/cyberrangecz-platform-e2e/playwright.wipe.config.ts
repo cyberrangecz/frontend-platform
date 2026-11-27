@@ -10,6 +10,7 @@ const OUTPUT_ROOT = '../../dist/.playwright/apps/cyberrangecz-platform-e2e/wipe'
  */
 export default defineConfig({
     testDir: './src/wipe',
+    globalSetup: './src/wipe/require-environment.ts',
     outputDir: `${OUTPUT_ROOT}/test-output`,
     workers: 1,
     retries: 0,

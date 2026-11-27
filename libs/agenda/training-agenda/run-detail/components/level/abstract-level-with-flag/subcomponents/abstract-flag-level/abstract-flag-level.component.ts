@@ -10,7 +10,7 @@ import {
 import { AsyncPipe } from '@angular/common';
 import { MatButton } from '@angular/material/button';
 import { FloatingAnswerFormComponent } from '../answer-floating-form/floating-answer-form.component';
-import { SentinelMarkdownViewComponent } from '@sentinel/components/markdown-view';
+import { MarkdownViewComponent } from '@crczp/markdown';
 import { HintContentComponent } from '../hint-content/hint-content.component';
 import { AbstractTrainingRunService } from '../../../../../services/training-run/abstract-training-run.service';
 import { Hint } from '@crczp/training-model';
@@ -25,7 +25,7 @@ import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
         AsyncPipe,
         MatButton,
         FloatingAnswerFormComponent,
-        SentinelMarkdownViewComponent,
+        MarkdownViewComponent,
         HintContentComponent,
     ],
 })

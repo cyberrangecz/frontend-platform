@@ -1,0 +1,124 @@
+@use '../styles/presentation' as presentation;
+@use 'media-tokens' as tokens;
+
+$toggle-size: calc(2 * var(--space-2xl));
+
+:host {
+    @include presentation.card-surface;
+
+    position: relative;
+    display: grid;
+    grid-template-columns: auto minmax(calc(8 * var(--space-xl)), 2fr) minmax(calc(9 * var(--space-xl)), 1fr);
+    grid-template-areas: 'toggle wave text';
+    align-items: center;
+    gap: var(--space-3xs) tokens.$card-icon-gap;
+    width: calc(32 * var(--space-xl));
+    max-width: 100%;
+    line-height: tokens.$line-height-normal;
+
+    @include tokens.card-inset;
+}
+
+@container (max-width: 24rem) {
+    :host {
+        grid-template-columns: auto minmax(0, 1fr);
+        grid-template-areas:
+            'toggle text'
+            'toggle wave';
+    }
+}
+
+:host(.audio-media--failed) {
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas: 'toggle text';
+}
+
+.audio-toggle {
+    grid-area: toggle;
+    --mat-icon-button-state-layer-size: #{$toggle-size};
+    --mat-icon-button-icon-color: var(--mat-sys-on-primary);
+    --mat-icon-button-state-layer-color: var(--mat-sys-on-primary);
+
+    display: grid;
+    place-items: center;
+    width: $toggle-size;
+    height: $toggle-size;
+    padding: 0;
+    background: var(--mat-sys-primary);
+
+    transition:
+        transform tokens.$duration-base presentation.$ease-emphasized,
+        background-color tokens.$duration-base ease;
+
+    &:not([aria-disabled='true']):active {
+        transform: scale(0.94);
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--mat-sys-primary);
+        outline-offset: var(--space-4xs);
+    }
+
+    :host(.audio-media--failed) & {
+        background: var(--mat-sys-error);
+
+        --mat-icon-button-icon-color: var(--mat-sys-on-error);
+    }
+}
+
+.audio-toggle-icon {
+    animation: audio-toggle-icon-arrival tokens.$duration-slow presentation.$ease-emphasized backwards;
+
+    @keyframes audio-toggle-icon-arrival {
+        from {
+            opacity: 0;
+            scale: 0.6;
+        }
+    }
+}
+
+.audio-wave {
+    --media-waveform-played-ink: var(--mat-sys-primary);
+    --media-waveform-rest-ink: var(--mat-sys-outline-variant);
+
+    grid-area: wave;
+    height: calc(2 * var(--space-2xl));
+    border-radius: var(--space-xs);
+
+    :host(.audio-media--failed) & {
+        display: none;
+    }
+}
+
+.audio-text {
+    grid-area: text;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4xs);
+    min-width: 0;
+}
+
+.audio-name {
+    color: var(--mat-sys-on-surface);
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-medium);
+    overflow-wrap: anywhere;
+}
+
+.audio-time {
+    color: var(--mat-sys-on-surface-variant);
+    font-size: var(--font-size-md);
+    font-variant-numeric: tabular-nums;
+
+    :host(.audio-media--failed) & {
+        display: none;
+    }
+}
+
+.audio-progress {
+    @include presentation.visually-hidden;
+}
+
+.audio-error {
+    @include presentation.error-line;
+}

@@ -1,0 +1,14 @@
+{
+    "extends": "./tsconfig.lib.json",
+    "compilerOptions": {
+        "declarationMap": false
+    },
+    "angularCompilerOptions": {
+      "extendedDiagnostics": {
+        "checks": {
+          "nullishCoalescingNotNullable": "suppress",
+          "optionalChainNotNullable": "suppress"
+        }
+      }
+    }
+}

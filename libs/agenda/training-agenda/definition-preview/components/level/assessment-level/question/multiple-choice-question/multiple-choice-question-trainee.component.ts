@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
 import {MultipleChoiceQuestion} from '@crczp/training-model';
-import {SentinelMarkdownViewComponent} from "@sentinel/components/markdown-view";
+import { MarkdownViewComponent } from '@crczp/markdown';
 import {MatCheckbox} from "@angular/material/checkbox";
 
 @Component({
@@ -9,7 +9,7 @@ import {MatCheckbox} from "@angular/material/checkbox";
     styleUrls: ['./multiple-choice-question-trainee.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
-        SentinelMarkdownViewComponent,
+        MarkdownViewComponent,
         MatCheckbox
     ]
 })

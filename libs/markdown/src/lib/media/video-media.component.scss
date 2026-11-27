@@ -1,0 +1,240 @@
+@use '../styles/presentation' as presentation;
+@use 'media-tokens' as tokens;
+
+$toggle-size: calc(2 * var(--space-5xl));
+/// How long the strands take to collapse into the playback bar once the file has arrived.
+$collapse-duration: 1300ms;
+
+/// Colour saturation of the picture, lowered while the file downloads.
+@property --video-media-saturation {
+    syntax: '<number>';
+    inherits: true;
+    initial-value: 1;
+}
+
+:host {
+    --video-media-saturation: 1;
+
+    display: block;
+
+    transition: --video-media-saturation $collapse-duration ease-in-out;
+}
+
+:host(.video-media--downloading) {
+    --video-media-saturation: 0.6;
+
+    transition-duration: 480ms;
+}
+
+.video-frame {
+    position: relative;
+    box-sizing: border-box;
+    width: var(--video-frame-width, min(100cqi, calc(32 * var(--space-xl))));
+    max-width: 100%;
+    aspect-ratio: var(--video-frame-ratio, 16 / 9);
+    overflow: hidden;
+    border-radius: presentation.$card-radius;
+    background: var(--neutral-10);
+
+    &::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: var(--video-frame-poster, none) center / cover no-repeat;
+        filter: saturate(var(--video-media-saturation));
+    }
+
+    :host([data-poster='loading']) & {
+        @include presentation.shimmer;
+    }
+
+    &:fullscreen {
+        width: 100%;
+        height: 100%;
+        aspect-ratio: auto;
+        border-radius: 0;
+        background: var(--neutral-0);
+
+        &::before {
+            content: none;
+        }
+    }
+}
+
+.video-controls {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+
+    animation: video-controls-arrival $collapse-duration presentation.$ease-decelerate backwards;
+    transition:
+        opacity tokens.$duration-base ease,
+        transform tokens.$duration-base presentation.$ease-emphasized;
+
+    :host(.video-media--playing:not(.video-media--forming)) .video-frame:not(:hover, :focus-within) & {
+        opacity: 0;
+        transform: translateY(var(--space-xs));
+    }
+
+    @keyframes video-controls-arrival {
+        from {
+            opacity: 0;
+        }
+    }
+}
+
+.video-strands {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: 0 none presentation.$video-track-ink;
+    outline: 0 none var(--neutral-0);
+    color: presentation.$video-played-ink;
+    pointer-events: none;
+}
+
+.video-player {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: saturate(var(--video-media-saturation));
+
+    @include presentation.reveal(tokens.$duration-slow);
+}
+
+.video-player[hidden] {
+    display: none;
+}
+
+.video-poster,
+.video-placeholder {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: saturate(var(--video-media-saturation));
+}
+
+.video-poster {
+    @include presentation.reveal(tokens.$duration-slow);
+}
+
+.video-placeholder {
+    background:
+        radial-gradient(circle at 18% 12%, color-mix(in srgb, var(--neutral-100) 24%, transparent), transparent 55%),
+        radial-gradient(circle at 88% 96%, color-mix(in srgb, var(--neutral-0) 30%, transparent), transparent 60%),
+        linear-gradient(135deg, var(--media-placeholder-from), var(--media-placeholder-to));
+
+    @include presentation.reveal(tokens.$duration-slow);
+}
+
+.video-action {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    display: grid;
+    width: $toggle-size;
+    height: $toggle-size;
+    place-items: center;
+    transform: translate(-50%, -50%);
+
+    :host(.video-media--failed) & {
+        display: none;
+    }
+
+    :host(.video-media--forming) & {
+        pointer-events: none;
+        animation: video-action-departure $collapse-duration presentation.$ease-emphasized forwards;
+    }
+
+    @keyframes video-action-departure {
+        to {
+            opacity: 0;
+            scale: 0.6;
+        }
+    }
+}
+
+.video-toggle {
+    @include presentation.centered-icon-button;
+    --mat-icon-button-state-layer-size: #{$toggle-size};
+    --mat-icon-button-icon-size: var(--font-size-5xl);
+    --mat-icon-button-icon-color: var(--mat-sys-on-primary);
+    --mat-icon-button-state-layer-color: var(--mat-sys-on-primary);
+
+    width: $toggle-size;
+    height: $toggle-size;
+    padding: 0;
+    background: var(--mat-sys-primary);
+
+    box-shadow: tokens.$floating-shadow;
+
+    mat-icon {
+        width: var(--font-size-5xl);
+        height: var(--font-size-5xl);
+        font-size: var(--font-size-5xl);
+    }
+
+    transition:
+        transform tokens.$duration-base presentation.$ease-emphasized,
+        background-color tokens.$duration-base ease;
+
+    &:not([aria-disabled='true']):hover {
+        transform: scale(1.06);
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--neutral-100);
+        outline-offset: var(--space-4xs);
+    }
+}
+
+.video-progress {
+    @include presentation.visually-hidden;
+}
+
+.video-meta {
+    position: absolute;
+    right: var(--space-md);
+    bottom: var(--space-md);
+    padding: var(--space-4xs) var(--space-xs);
+    border-radius: var(--space-3xs);
+    background: color-mix(in srgb, var(--neutral-0) 58%, transparent);
+    color: var(--neutral-100);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    font-variant-numeric: tabular-nums;
+    line-height: tokens.$line-height-relaxed;
+
+    transition: transform 420ms presentation.$ease-emphasized;
+
+    :host(.video-media--downloading) & {
+        transform: translateY(calc(-1 * var(--space-2xl)));
+    }
+}
+
+.video-error {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-md);
+    padding: var(--space-xl);
+    background: color-mix(in srgb, var(--neutral-0) 66%, transparent);
+    color: var(--neutral-100);
+    font-size: var(--font-size-md);
+    text-align: center;
+
+    button {
+        --mat-button-outlined-label-text-color: var(--neutral-100);
+        --mat-button-outlined-outline-color: color-mix(in srgb, var(--neutral-100) 60%, transparent);
+    }
+}

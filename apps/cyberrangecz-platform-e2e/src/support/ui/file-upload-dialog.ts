@@ -28,6 +28,21 @@ export class FileUploadDialog {
         return this.dropZone.locator('mat-chip');
     }
 
+    /** The reason a rejected file shows, one per rejected file. */
+    get rejections(): Locator {
+        return this.root.locator('.file-upload-dialog-rejection');
+    }
+
+    /** The preview cards of definitions to import. */
+    get definitionCards(): Locator {
+        return this.root.locator('.training-definition-import-card');
+    }
+
+    /** The preview cards of users to import. */
+    get userCards(): Locator {
+        return this.root.locator('.user-import-card');
+    }
+
     /** The Cancel button. */
     get cancelButton(): Locator {
         return this.root.getByRole('button', { name: 'Cancel', exact: true });

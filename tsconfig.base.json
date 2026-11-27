@@ -31,6 +31,7 @@
             "@crczp/event-query-engine": [
                 "libs/api/event-query-engine/src/index.ts"
             ],
+            "@crczp/markdown": ["libs/markdown/src/index.ts"],
             "@crczp/mixins": ["libs/mixins/src/index.ts"],
             "@crczp/routing-commons": ["libs/utils/routing/src/index.ts"],
             "@crczp/sandbox-agenda": [

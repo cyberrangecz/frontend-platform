@@ -10,6 +10,7 @@ import { EMPTY, Observable, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { LevelEditService } from './level-edit.service';
 import { createNewLevel } from './new-level.factory';
+import { markdownTextsOf, withTransformedMarkdown } from '../../../model/level-markdown-texts';
 
 /**
  * Keeps the levels of the edited training definition in memory and applies every change to them locally.
@@ -105,6 +106,17 @@ export class LevelEditConcreteService extends LevelEditService {
 
     setEditingBlocked(blocked: boolean): void {
         this.editingBlocked = blocked;
+    }
+
+    rewriteTexts(transform: (markdown: string) => string): void {
+        const levels = this.levelsSubject$.getValue();
+        const rewritten = levels.map((level) => withTransformedMarkdown(level, transform));
+        const changed = rewritten.some(
+            (level, index) => JSON.stringify(markdownTextsOf(level)) !== JSON.stringify(markdownTextsOf(levels[index])),
+        );
+        if (changed) {
+            this.applyChange(rewritten);
+        }
     }
 
     private displayDialogToDelete(

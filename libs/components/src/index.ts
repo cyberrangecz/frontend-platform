@@ -1,6 +1,8 @@
 export * from './dialog/loading-dialog/loading-dialog-options';
 export * from './dialog/loading-dialog/loading-dialog.component';
 export * from './dialog/file-upload-dialog/file-upload-dialog';
+export * from './dialog/file-upload-dialog/file-import-preview';
+export * from './dialog/file-upload-dialog/file-reading';
 export * from './table/table-date-cell/table-date-cell.component';
 export * from './table/table-date-cell/table-date-cell-sync.service';
 export * from './table/table-state-cell/table-state-cell.component';
@@ -12,7 +14,6 @@ export * from './table/table-model/table-model';
 export * from './logo-spinner/logo-spinner.component';
 export * from './segmented-toggle/segmented-toggle.component';
 export * from './log-view/log-view.component';
-export * from './log-view/logging-error-marker';
 export * from './stepper/stepper';
 export * from './topology-graph/index';
 export * from './visualization-components/index';

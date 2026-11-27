@@ -1,0 +1,35 @@
+/// Styling hooks a host page may set on the element:
+/// `--suffix-filter-container-shape` rounds the select's corners,
+/// `--suffix-filter-padding-inline` sets its side padding,
+/// `--suffix-filter-outline-color` and `--suffix-filter-hover-outline-color` colour its resting and hovered border.
+:host {
+    display: flex;
+    flex: none;
+}
+
+.suffix-select {
+    box-sizing: border-box;
+    min-height: calc(2 * var(--space-lg));
+    max-width: 6rem;
+    padding: 0 var(--suffix-filter-padding-inline, var(--space-3xs));
+    border: 1px solid var(--suffix-filter-outline-color, var(--mat-sys-outline-variant));
+    border-radius: var(--suffix-filter-container-shape, var(--space-xs));
+    background: var(--mat-sys-surface);
+    color: var(--mat-sys-on-surface);
+    font: inherit;
+    font-size: var(--font-size-sm);
+    cursor: pointer;
+    transition:
+        border-color 120ms ease,
+        box-shadow 120ms ease;
+
+    &:hover {
+        border-color: var(--suffix-filter-hover-outline-color, var(--mat-sys-outline));
+    }
+
+    &:focus-visible {
+        border-color: var(--mat-sys-primary);
+        outline: none;
+        box-shadow: 0 0 0 1px var(--mat-sys-primary);
+    }
+}

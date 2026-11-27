@@ -1,8 +1,8 @@
 <div class="content">
   <!-- TITLE-->
   <h2>
-    <sentinel-markdown-view [markdown]="'Question ' + index.toString() + ':'"/>
-    <sentinel-markdown-view [markdown]="question.title"/>
+    <crczp-markdown-view [markdown]="'Question ' + index.toString() + ':'"/>
+    <crczp-markdown-view [markdown]="question.title"/>
   </h2>
   @if (question.required) {
     <p class="required-note">Answer required</p>

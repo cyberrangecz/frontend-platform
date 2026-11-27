@@ -1,0 +1,11 @@
+@use '../styles/presentation' as presentation;
+
+:host {
+    display: block;
+    box-sizing: border-box;
+    width: min(100%, calc(20 * var(--space-xl)));
+    height: calc(2 * var(--space-2xl) + 2 * var(--space-xs));
+    border-radius: var(--space-sm);
+
+    @include presentation.shimmer;
+}

@@ -269,6 +269,10 @@ export const test = base.extend<TestFixtures & TestOptions, WorkerFixtures>({
                 await ledger.removeEarlierAttempts(apiAs('sandboxOrganizer').sandbox);
             }
             await use(ledger);
+            const failed = testInfo.status === 'failed' || testInfo.status === 'timedOut';
+            if (failed && testInfo.retry === testInfo.project.retries) {
+                await ledger.removeRunningAttempt(apiAs('sandboxOrganizer').sandbox);
+            }
         },
         { auto: true, timeout: 20 * 60_000 },
     ],

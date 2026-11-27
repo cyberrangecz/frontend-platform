@@ -1,0 +1,51 @@
+@use '../styles/presentation' as presentation;
+@use 'media-tokens' as tokens;
+
+:host {
+    display: block;
+    pointer-events: none;
+}
+
+.ring-graphic {
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    transform: rotate(-90deg);
+}
+
+.ring-track,
+.ring-arc {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 3;
+}
+
+.ring-track {
+    opacity: 0.24;
+}
+
+.ring-arc {
+    stroke-dasharray: 1;
+    stroke-linecap: round;
+
+    transition: stroke-dashoffset tokens.$duration-base linear;
+
+    :host(.progress-ring--indeterminate) & {
+        stroke-dasharray: 0.25 0.75;
+        stroke-dashoffset: 0;
+    }
+}
+
+:host(.progress-ring--indeterminate) .ring-graphic {
+    animation: ring-spin 1s linear infinite;
+}
+
+@keyframes ring-spin {
+    from {
+        transform: rotate(-90deg);
+    }
+    to {
+        transform: rotate(270deg);
+    }
+}

@@ -1,0 +1,215 @@
+@use '../styles/presentation' as presentation;
+@use 'media-tokens' as tokens;
+
+$code-line: calc(#{tokens.$line-height-code} * var(--font-size-md));
+$code-padding: var(--space-sm);
+
+:host {
+    @include presentation.card-surface;
+
+    display: block;
+    overflow: hidden;
+    line-height: tokens.$line-height-normal;
+}
+
+.text-header {
+    display: flex;
+    align-items: center;
+    gap: tokens.$card-icon-gap;
+    padding: tokens.$card-inset-block var(--space-xs) tokens.$card-inset-block tokens.$card-inset-leading;
+    border-bottom: 1px solid var(--mat-sys-outline-variant);
+    background: var(--mat-sys-surface-container-low);
+}
+
+.text-icon {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: calc(2 * var(--space-lg));
+    height: calc(2 * var(--space-lg));
+    border-radius: var(--space-xs);
+    background: var(--mat-sys-surface-container-highest);
+    color: var(--mat-sys-on-surface-variant);
+
+    mat-icon {
+        width: var(--font-size-xl);
+        height: var(--font-size-xl);
+        font-size: var(--font-size-xl);
+    }
+}
+
+.text-heading {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.text-title {
+    color: var(--mat-sys-on-surface);
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-medium);
+    overflow-wrap: anywhere;
+}
+
+.text-meta {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-2xs);
+    min-width: 0;
+    color: var(--mat-sys-on-surface-variant);
+    font-size: var(--font-size-md);
+    white-space: nowrap;
+}
+
+.text-file {
+    overflow: hidden;
+    font-family: presentation.$monospace;
+    text-overflow: ellipsis;
+}
+
+.text-separator {
+    color: var(--mat-sys-outline);
+}
+
+.text-confirmation {
+    flex: none;
+    color: var(--mat-sys-primary);
+    font-weight: var(--font-weight-medium);
+}
+
+.text-figure {
+    flex: none;
+    font-variant-numeric: tabular-nums;
+}
+
+.text-actions {
+    display: flex;
+    flex: none;
+    align-items: center;
+}
+
+.text-action {
+    @include presentation.centered-icon-button;
+    --mat-icon-button-state-layer-size: calc(2 * var(--space-lg));
+    --mat-icon-button-icon-size: var(--font-size-xl);
+
+    padding: 0;
+    color: var(--mat-sys-on-surface-variant);
+
+    mat-icon {
+        width: var(--font-size-xl);
+        height: var(--font-size-xl);
+        font-size: var(--font-size-xl);
+    }
+}
+
+.text-body {
+    position: relative;
+    overflow: hidden;
+
+    transition: max-height tokens.$duration-slow presentation.$ease-emphasized;
+
+    &--collapsible {
+        max-height: calc(8 * #{$code-line} + #{$code-padding});
+    }
+
+    &--settled {
+        max-height: none;
+    }
+
+    &--collapsible::after {
+        content: '';
+        position: absolute;
+        inset: auto 0 0;
+        height: calc(3 * #{$code-line});
+        background: linear-gradient(to bottom, transparent, var(--mat-sys-surface-container-lowest));
+        pointer-events: none;
+
+        transition: opacity tokens.$duration-base ease;
+    }
+
+    &--expanded::after {
+        opacity: 0;
+    }
+}
+
+.text-code {
+    display: block;
+
+    @include presentation.reveal(tokens.$duration-slow);
+}
+
+.text-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-3xs);
+    width: 100%;
+    padding: var(--space-xs);
+    border: none;
+    border-top: 1px solid var(--mat-sys-outline-variant);
+    background: transparent;
+    color: var(--mat-sys-primary);
+    font: inherit;
+    font-size: var(--font-size-md);
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+
+    transition: background-color tokens.$duration-quick ease;
+
+    &:hover {
+        background: color-mix(in srgb, var(--mat-sys-primary) 6%, transparent);
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--mat-sys-primary);
+        outline-offset: -2px;
+    }
+}
+
+.text-toggle-icon {
+    width: var(--font-size-xl);
+    height: var(--font-size-xl);
+    font-size: var(--font-size-xl);
+
+    transition: transform tokens.$duration-base ease;
+
+    [aria-expanded='true'] & {
+        transform: rotate(180deg);
+    }
+}
+
+.text-skeleton {
+    padding: var(--space-md) var(--space-xl) var(--space-3xs);
+}
+
+.text-notice {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-md);
+    padding: var(--space-md) var(--space-md) var(--space-md) var(--space-xl);
+    color: var(--mat-sys-on-surface-variant);
+    font-size: var(--font-size-md);
+}
+
+.text-notice-message {
+    min-width: 0;
+
+    :host(.text-media--error) & {
+        color: var(--mat-sys-error);
+    }
+}
+
+.text-notice-action {
+    flex: none;
+    --mat-button-outlined-container-height: calc(2 * var(--space-lg));
+}
+
+.text-progress {
+    @include presentation.progress-bar;
+
+    margin-top: var(--space-xs);
+}

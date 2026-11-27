@@ -15,14 +15,17 @@ import { OffsetPaginationEvent, PortalConfig } from '@crczp/utils';
 import {
     AbstractLevelBasic,
     HintBasic,
+    PendingAttachmentUpload,
     TrainingDefinition,
     TrainingDefinitionBasic,
     TrainingDefinitionInfo,
     TrainingDefinitionStateEnum,
     TrainingDefinitionWithLevels
 } from '@crczp/training-model';
-import { fromEvent, merge, Observable, throwError } from 'rxjs';
-import { map, mergeMap } from 'rxjs/operators';
+import { defer, fromEvent, merge, Observable, of, throwError } from 'rxjs';
+import { map, mergeMap, switchMap, take } from 'rxjs/operators';
+import { multipartBodyOf } from '../../mappers/training-definition/attachment-multipart';
+import { withAttachmentSaveMessages } from './attachment-save-error';
 import {
     TrainingDefinitionDTO,
     TrainingDefinitionWithLevelsDTO
@@ -40,6 +43,12 @@ import { HintBasicDto } from '../../dto/level/training/training-level-basic-dto'
 import { levelBasicArrayMapper } from '../../mappers/level/level-basic-mapper';
 import { trainingDefinitionBasicArrayMapper } from '../../mappers/training-definition/training-definition-basic-mapper';
 import { hintBasicArrayMapper } from '../../mappers/level/training/hint-basic-mapper';
+
+const ZIP_MEDIA_TYPE = 'application/zip';
+
+function isZipFile(file: File): boolean {
+    return file.type === ZIP_MEDIA_TYPE || file.name.toLowerCase().endsWith('.zip');
+}
 
 /**
  * Service abstracting http communication with training definition endpoints.
@@ -208,11 +217,12 @@ export class TrainingDefinitionDefaultApi extends LinearTrainingDefinitionApi {
     }
 
     /**
-     * Sends request to download training definition json file.
+     * Sends request to download the exported training definition: a ZIP when the definition has
+     * attachments, a JSON file otherwise. The file is saved under the name the server gives.
      * @param id id of training definition which should be downloaded
      */
     download(id: number): Observable<boolean> {
-        const headers = new HttpHeaders().set('Accept', 'application/json');
+        const headers = new HttpHeaders().set('Accept', `${ZIP_MEDIA_TYPE}, application/json`);
 
         return this.http
             .get(
@@ -230,7 +240,9 @@ export class TrainingDefinitionDefaultApi extends LinearTrainingDefinitionApi {
                         resp.body!,
                         ResponseHeaderContentDispositionReader.getFilenameFromResponse(
                             resp,
-                            'training-definition.json',
+                            resp.headers.get('Content-Type')?.includes(ZIP_MEDIA_TYPE)
+                                ? 'training-definition.zip'
+                                : 'training-definition.json',
                         ),
                     );
                     return true;
@@ -239,13 +251,30 @@ export class TrainingDefinitionDefaultApi extends LinearTrainingDefinitionApi {
     }
 
     /**
-     * Sends http request to upload training definition json file,
-     * Converts training definition file to a JSON object and sends it to provided url.
+     * Sends http request to upload a training definition file.
+     * A ZIP file is sent unchanged as raw bytes; a JSON file is converted to a JSON object first.
      * A file the browser cannot read fails the returned stream with a message naming the read
      * failure, so the caller is released instead of awaiting a result that never arrives.
-     * @param file json file to be uploaded
+     * @param file json or zip file to be uploaded
      */
     upload(file: File): Observable<TrainingDefinitionWithLevels> {
+        return defer(() => (isZipFile(file) ? this.postArchive(file) : this.readAndPostDefinition(file))).pipe(
+            take(1),
+            map((resp) => TrainingDefinitionMapper.withLevelsFromDTO(resp)),
+        );
+    }
+
+    private postArchive(file: File): Observable<TrainingDefinitionWithLevelsDTO> {
+        return this.http.post<TrainingDefinitionWithLevelsDTO>(
+            `${this.trainingImportEndpointUri}/${this.trainingDefinitionUriExtension}`,
+            file,
+            { headers: new HttpHeaders().set('Content-Type', ZIP_MEDIA_TYPE) },
+        );
+    }
+
+    private readAndPostDefinition(
+        file: File,
+    ): Observable<TrainingDefinitionWithLevelsDTO> {
         const fileReader = new FileReader();
         const fileRead$ = merge(
             fromEvent(fileReader, 'load').pipe(
@@ -268,9 +297,7 @@ export class TrainingDefinitionDefaultApi extends LinearTrainingDefinitionApi {
             ),
         );
         fileReader.readAsText(file);
-        return fileRead$.pipe(
-            map((resp) => TrainingDefinitionMapper.withLevelsFromDTO(resp)),
-        );
+        return fileRead$;
     }
 
     /**
@@ -331,17 +358,29 @@ export class TrainingDefinitionDefaultApi extends LinearTrainingDefinitionApi {
      */
     update(
         trainingDefinition: TrainingDefinitionWithLevels,
+        pendingUploads: readonly PendingAttachmentUpload[] = [],
     ): Observable<TrainingDefinitionWithLevels> {
-        return this.crczpHttp
-            .put<TrainingDefinitionUpdateDTO, TrainingDefinitionWithLevelsDTO>(
-                `${this.trainingDefsEndpointUri}/${trainingDefinition.id}`,
-                'Update training definition',
-            )
-            .withBody(TrainingDefinitionMapper.toUpdateDTO(trainingDefinition))
-            .withMapper((response) =>
-                TrainingDefinitionMapper.withLevelsFromDTO(response),
-            )
-            .execute();
+        return this.saveBody(
+            TrainingDefinitionMapper.toUpdateDTO(trainingDefinition),
+            pendingUploads,
+        ).pipe(
+            switchMap((body) =>
+                this.crczpHttp
+                    .put<
+                        TrainingDefinitionUpdateDTO | FormData,
+                        TrainingDefinitionWithLevelsDTO
+                    >(
+                        `${this.trainingDefsEndpointUri}/${trainingDefinition.id}`,
+                        'Update training definition',
+                    )
+                    .withBody(body)
+                    .withMapper((response) =>
+                        TrainingDefinitionMapper.withLevelsFromDTO(response),
+                    )
+                    .execute(),
+            ),
+            withAttachmentSaveMessages(),
+        );
     }
 
     /**
@@ -350,21 +389,38 @@ export class TrainingDefinitionDefaultApi extends LinearTrainingDefinitionApi {
      */
     create(
         trainingDefinition: TrainingDefinitionWithLevels,
+        pendingUploads: readonly PendingAttachmentUpload[] = [],
     ): Observable<TrainingDefinitionWithLevels> {
-        return this.crczpHttp
-            .post<TrainingDefinitionCreateDTO, TrainingDefinitionWithLevelsDTO>(
-                this.trainingDefsEndpointUri,
-                'Create training definition',
-            )
-            .withBody(TrainingDefinitionMapper.toCreateDTO(trainingDefinition))
-            .withMapper((response) =>
-                TrainingDefinitionMapper.withLevelsFromDTO(response),
-            )
-            .execute();
+        return this.saveBody(
+            TrainingDefinitionMapper.toCreateDTO(trainingDefinition),
+            pendingUploads,
+        ).pipe(
+            switchMap((body) =>
+                this.crczpHttp
+                    .post<
+                        TrainingDefinitionCreateDTO | FormData,
+                        TrainingDefinitionWithLevelsDTO
+                    >(this.trainingDefsEndpointUri, 'Create training definition')
+                    .withBody(body)
+                    .withMapper((response) =>
+                        TrainingDefinitionMapper.withLevelsFromDTO(response),
+                    )
+                    .execute(),
+            ),
+            withAttachmentSaveMessages(),
+        );
+    }
+
+    private saveBody<Definition>(
+        definition: Definition,
+        pendingUploads: readonly PendingAttachmentUpload[],
+    ): Observable<Definition | FormData> {
+        return pendingUploads.length > 0
+            ? multipartBodyOf(definition, pendingUploads)
+            : of(definition);
     }
 
     private createDefaultHeaders() {
-        const httpHeaderAccepts: string[] = ['*/*', 'application/json'];
-        return new HttpHeaders().set('Accept', httpHeaderAccepts);
+        return new HttpHeaders().set('Accept', '*/*');
     }
 }

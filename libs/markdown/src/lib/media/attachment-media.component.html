@@ -1,0 +1,77 @@
+@switch (state()) {
+    @case ('loading') {
+        <crczp-media-placeholder />
+    }
+    @case ('ready') {
+        <div
+            #frame
+            class="attachment-frame"
+            [class.attachment-frame--wide]="layout().width === 'fill'"
+            [class.attachment-frame--inset]="sizing.inset()"
+            [class.attachment-frame--playback-bar]="layout().clearsPlaybackBar"
+            [class.attachment-frame--picking]="pickerSession.picking()"
+            [class.attachment-frame--resizable]="!!actions && sizable()"
+            [style.min-width.px]="sizing.minimumWidth()"
+        >
+            <span #insetProbe class="attachment-inset-probe" aria-hidden="true"></span>
+            <ng-container
+                [ngComponentOutlet]="card()"
+                [ngComponentOutletInputs]="cardInputs()"
+            />
+            @if (actions; as cardActions) {
+                <crczp-media-toolbar
+                    #toolbarOrigin="cdkOverlayOrigin"
+                    cdkOverlayOrigin
+                    class="attachment-toolbar"
+                    [replacing]="pickerSession.picking()"
+                    [sizable]="sizable()"
+                    [resettable]="!!reference().maxWidth"
+                    (replace)="pickerSession.toggle()"
+                    (resetSize)="saveWidth(undefined)"
+                    (remove)="cardActions.remove(reference())"
+                />
+                @if (sizable()) {
+                    <crczp-media-size-control
+                        class="attachment-resize"
+                        [width]="sizing.previewWidth() ?? sizing.displayedWidth()"
+                        [limits]="sizing.cardLimits()"
+                        [resizing]="sizing.previewWidth() !== null"
+                        (widthTyped)="saveWidth($event)"
+                    >
+                        <crczp-media-resize-handle
+                            [currentWidth]="sizing.frameWidth"
+                            [limits]="sizing.columnLimits()"
+                            [shownWidth]="sizing.displayedWidth()"
+                            [heightPerWidth]="sizing.heightPerWidth()"
+                            (preview)="sizing.previewWidth.set($event)"
+                            (resized)="saveWidth($event)"
+                        />
+                    </crczp-media-size-control>
+                }
+                <ng-template
+                    cdkConnectedOverlay
+                    cdkConnectedOverlayHasBackdrop
+                    cdkConnectedOverlayDisableClose
+                    cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+                    [cdkConnectedOverlayOrigin]="toolbarOrigin"
+                    [cdkConnectedOverlayOpen]="pickerSession.picking()"
+                    [cdkConnectedOverlayPositions]="pickerPositions"
+                    (backdropClick)="picker()?.close()"
+                >
+                    <crczp-material-picker
+                        cdkTrapFocus
+                        class="attachment-picker"
+                        role="dialog"
+                        aria-label="Replace file"
+                        [label]="reference().label"
+                        (picked)="pickerSession.picked($event)"
+                        (closed)="pickerSession.closed($event)"
+                    />
+                </ng-template>
+            }
+        </div>
+    }
+    @default {
+        <crczp-missing-media [reference]="reference()" [failure]="failure()" (retry)="retryFacts()" />
+    }
+}

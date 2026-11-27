@@ -27,7 +27,7 @@ import {MatError, MatFormField, MatInput, MatLabel, MatSuffix} from "@angular/ma
 import {MatIcon} from "@angular/material/icon";
 import {MatTooltip} from "@angular/material/tooltip";
 import {MatCheckbox, MatCheckboxChange} from "@angular/material/checkbox";
-import {SentinelMarkdownEditorComponent} from "@sentinel/components/markdown-editor";
+import {MarkdownEditorComponent} from "@crczp/markdown";
 
 /**
  * Component for editing a question of type Multiple Choice Question
@@ -48,7 +48,7 @@ import {SentinelMarkdownEditorComponent} from "@sentinel/components/markdown-edi
         MatFormField,
         MatCheckbox,
         ReactiveFormsModule,
-        SentinelMarkdownEditorComponent,
+        MarkdownEditorComponent,
         MatButton
     ]
 })

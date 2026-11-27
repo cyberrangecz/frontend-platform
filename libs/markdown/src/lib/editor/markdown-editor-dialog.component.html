@@ -1,0 +1,7 @@
+<header class="dialog-header">
+    <h2 class="dialog-title">{{ data.title }}</h2>
+    <button mat-icon-button type="button" class="dialog-close" aria-label="Close editor" matTooltip="Close editor" mat-dialog-close>
+        <mat-icon>close</mat-icon>
+    </button>
+</header>
+<crczp-markdown-editor-frame class="dialog-frame" [markdown]="data.markdown()" [readonly]="data.readonly()" (markdownChange)="data.edit($event)" />

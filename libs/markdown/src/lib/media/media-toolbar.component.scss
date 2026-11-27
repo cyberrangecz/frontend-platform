@@ -1,0 +1,46 @@
+@use '../styles/presentation' as presentation;
+@use 'media-tokens' as tokens;
+
+$action-size: tokens.$toolbar-action-size;
+
+:host {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-4xs);
+    padding: var(--space-4xs);
+    border-radius: calc($action-size / 2 + var(--space-4xs));
+    background: var(--mat-sys-surface-container-lowest);
+
+    box-shadow: tokens.$floating-shadow;
+}
+
+.toolbar-action {
+    @include presentation.centered-icon-button;
+    --mat-icon-button-state-layer-size: #{$action-size};
+    --mat-icon-button-icon-size: var(--font-size-xl);
+    --mat-icon-button-icon-color: var(--mat-sys-on-surface-variant);
+
+    padding: 0;
+    transition: color tokens.$duration-quick ease;
+
+    &:hover {
+        color: var(--mat-sys-primary);
+    }
+
+    &[aria-expanded='true'] {
+        color: var(--mat-sys-primary);
+        background: color-mix(in srgb, var(--mat-sys-primary) 12%, transparent);
+    }
+
+    &--remove:hover {
+        --mat-icon-button-state-layer-color: var(--mat-sys-error);
+
+        color: var(--mat-sys-error);
+    }
+
+    mat-icon {
+        width: var(--font-size-xl);
+        height: var(--font-size-xl);
+        font-size: var(--font-size-xl);
+    }
+}

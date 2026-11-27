@@ -1,0 +1,42 @@
+<div class="toolbar-group">
+    <button
+        mat-icon-button
+        type="button"
+        class="toolbar-control"
+        aria-label="Add header text"
+        matTooltip="Add header text"
+        [disabled]="!target.available()"
+        [matMenuTriggerFor]="headingMenu"
+        [matMenuTriggerRestoreFocus]="false"
+    >
+        <mat-icon>format_size</mat-icon>
+    </button>
+</div>
+<mat-menu #headingMenu="matMenu" class="format-toolbar-menu" (closed)="target.focus()">
+    @for (heading of headings; track heading.level) {
+        <button mat-menu-item type="button" (click)="target.apply(heading)">
+            <span class="toolbar-heading toolbar-heading--{{ heading.level }}">Heading {{ heading.level }}</span>
+            @if (heading.keyLabel) {
+                <span class="toolbar-heading-key">{{ heading.keyLabel }}</span>
+            }
+        </button>
+    }
+</mat-menu>
+@for (group of groups; track $index) {
+    <div class="toolbar-group">
+        @for (action of group; track action.icon) {
+            <button
+                mat-icon-button
+                type="button"
+                class="toolbar-control"
+                [attr.aria-label]="action.label"
+                [attr.aria-keyshortcuts]="action.keyLabel?.replace('Ctrl', 'Control') ?? null"
+                [matTooltip]="tooltipOf(action)"
+                [disabled]="!target.available()"
+                (click)="target.apply(action)"
+            >
+                <mat-icon>{{ action.icon }}</mat-icon>
+            </button>
+        }
+    </div>
+}

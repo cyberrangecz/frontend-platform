@@ -1,7 +1,8 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, Injector } from '@angular/core';
+import { DefinitionTrainingMaterials } from '@crczp/training-agenda/internal';
 import { LinearTrainingDefinitionApi } from '@crczp/training-api';
 import { TrainingDefinitionWithLevels } from '@crczp/training-model';
-import { combineLatest, Observable } from 'rxjs';
+import { combineLatest, EMPTY, Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { TrainingDefinitionChangeEvent } from '../../../model/events/training-definition-change-event';
 import { TrainingDefinitionEditService } from './training-definition-edit.service';
@@ -20,13 +21,14 @@ export class TrainingDefinitionEditConcreteService extends TrainingDefinitionEdi
     private errorHandler = inject(ErrorHandlerService);
     private notificationService = inject(NotificationService);
     private levelEditService = inject(LevelEditService);
+    private injector = inject(Injector);
 
     private loadingTracker = new LoadingTracker();
     public saving$ = this.loadingTracker.isLoading$;
-    public saveDisabled$ = combineLatest(
+    public saveDisabled$ = combineLatest([
         this.saving$,
         this.saveDisabledSubject$,
-    ).pipe(map(([loading, invalid]) => loading || invalid));
+    ]).pipe(map(([loading, invalid]) => loading || invalid));
 
     /**
      * Sets training definition as currently edited
@@ -39,9 +41,15 @@ export class TrainingDefinitionEditConcreteService extends TrainingDefinitionEdi
             td = new TrainingDefinitionWithLevels();
         }
         this.trainingDefinitionSubject$.next(td);
+        if (td.id) {
+            this.materials().reload().subscribe();
+        }
     }
 
     save(): Observable<number | null> {
+        if (!this.materials().loadedForSave()) {
+            return EMPTY;
+        }
         return this.editModeSubject$.getValue() ? this.update() : this.create();
     }
 
@@ -54,6 +62,10 @@ export class TrainingDefinitionEditConcreteService extends TrainingDefinitionEdi
         this.saveDisabledSubject$.next(!changeEvent.isValid);
     }
 
+    private materials(): DefinitionTrainingMaterials {
+        return this.injector.get(DefinitionTrainingMaterials);
+    }
+
     private setEditMode(trainingDefinition: TrainingDefinitionWithLevels) {
         this.editModeSubject$.next(trainingDefinition !== null);
     }
@@ -61,8 +73,9 @@ export class TrainingDefinitionEditConcreteService extends TrainingDefinitionEdi
     private update(): Observable<null> {
         const definition = this.trainingDefinitionSubject$.getValue();
         definition.levels = this.levelEditService.getLevels();
+        definition.materials = this.materials().materialsToSave();
         return this.loadingTracker.trackRequest(() =>
-            this.api.update(definition).pipe(
+            this.api.update(definition, this.materials().pendingUploads()).pipe(
                 tap({
                     next: (saved) => {
                         this.notificationService.emit(
@@ -87,8 +100,9 @@ export class TrainingDefinitionEditConcreteService extends TrainingDefinitionEdi
         definition.levels = definition.defaultContent
             ? createDefaultLevels()
             : [];
+        definition.materials = this.materials().materialsToSave();
         return this.loadingTracker.trackRequest(() =>
-            this.api.create(definition).pipe(
+            this.api.create(definition, this.materials().pendingUploads()).pipe(
                 tap({
                     next: (created) => {
                         this.notificationService.emit(
@@ -116,5 +130,6 @@ export class TrainingDefinitionEditConcreteService extends TrainingDefinitionEdi
         this.trainingDefinitionSubject$.next(saved);
         this.editModeSubject$.next(true);
         this.saveDisabledSubject$.next(true);
+        this.materials().reload().subscribe();
     }
 }

@@ -4,7 +4,7 @@ import {FormsModule} from "@angular/forms";
 
 import {MatFormField, MatInput, MatLabel, MatSuffix} from "@angular/material/input";
 import {MatIconButton} from "@angular/material/button";
-import {SentinelMarkdownViewComponent} from "@sentinel/components/markdown-view";
+import { MarkdownViewComponent } from '@crczp/markdown';
 import {MatIcon} from "@angular/material/icon";
 
 @Component({
@@ -20,7 +20,7 @@ import {MatIcon} from "@angular/material/icon";
     MatFormField,
     MatLabel,
     MatIcon,
-    SentinelMarkdownViewComponent
+    MarkdownViewComponent
 ]
 })
 /**

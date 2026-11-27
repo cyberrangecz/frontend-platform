@@ -1,9 +1,9 @@
 import { Component, input, ChangeDetectionStrategy } from '@angular/core';
-import { SentinelMarkdownViewComponent } from '@sentinel/components/markdown-view';
+import { MarkdownViewComponent } from '@crczp/markdown';
 
 @Component({
     selector: 'crczp-hint-content',
-    imports: [SentinelMarkdownViewComponent],
+    imports: [MarkdownViewComponent],
     templateUrl: './hint-content.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
     styleUrl: './hint-content.component.scss',

@@ -12,6 +12,7 @@ This library contains miscellaneous utilities for the platform.
 - **pagination-storage.service**: Service for storing pagination state.
 - **file-upload-progress.service**: Service for tracking file upload progress.
 - **polling.service**: Service for API polling.
+- **open-windows.service**: Every open tab of the app, synced across tabs: path, title, visibility, focus and the JSON values each tab publishes.
 - **title-case-except.pipe**: Pipe uppercasing first letters of words except for prepositions.
 - **PortalConfig**: Type definition for platform configuration together with Zod validation.
 - **Utils.Date**: Utility functions for date operations.

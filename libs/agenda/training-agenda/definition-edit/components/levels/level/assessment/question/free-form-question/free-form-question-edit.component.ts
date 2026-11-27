@@ -25,9 +25,12 @@ import {Subscription} from 'rxjs';
 import {MatError, MatFormField, MatInput, MatLabel, MatSuffix} from "@angular/material/input";
 import {MatButton} from "@angular/material/button";
 import {MatIcon} from "@angular/material/icon";
-import {SentinelMarkdownEditorComponent} from "@sentinel/components/markdown-editor";
+import {MarkdownEditorComponent} from "@crczp/markdown";
 import { ClearInputSuffixComponent } from '@crczp/utils';
 
+/**
+ * Component for editing a question of type Free Form
+ */
 @Component({
     selector: 'crczp-free-form-question-edit',
     templateUrl: './free-form-question-edit.component.html',
@@ -43,23 +46,18 @@ import { ClearInputSuffixComponent } from '@crczp/utils';
         ReactiveFormsModule,
         MatFormField,
         MatLabel,
-        SentinelMarkdownEditorComponent
+        MarkdownEditorComponent
     ]
 })
-/**
- * Component for editing a question of type Free Form
- */
 export class FreeFormQuestionEditComponent implements OnChanges {
     @Input() question: FreeFormQuestion;
     @Input() isTest: boolean;
     @Input() required: boolean;
     @Output() questionChange: EventEmitter<FreeFormQuestion> = new EventEmitter();
 
-    freeFormValid: boolean;
     freeFormQuestionFormGroup: FreeFormQuestionFormGroup;
     maxQuestionScore = Question.MAX_QUESTION_SCORE;
     maxQuestionPenalty = Question.MAX_QUESTION_PENALTY;
-    freeFormChoices: UntypedFormArray;
     destroyRef = inject(DestroyRef);
     private formGroupValueChangesSubscription?: Subscription;
 

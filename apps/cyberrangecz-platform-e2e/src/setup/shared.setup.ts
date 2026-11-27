@@ -2,6 +2,7 @@ import { ACCOUNT_KEYS, ACCOUNTS, type AccountKey } from '../support/accounts';
 import { test as setup } from '../support/fixtures';
 import { createPoolOnDefinition } from '../support/pages/pool/pool-data';
 import { createTrainingInstance } from '../support/pages/training-instance/instance-data';
+import { importDefinitionBody } from '../support/pages/training-definition/training-definition-data';
 import { sharedTrainingImport } from '../support/scenario/shared-training-loader';
 import { type SharedFixture, writeSharedFixture } from '../support/shared-fixture';
 import { DAY_MILLISECONDS, fromNow } from '../support/time';
@@ -65,12 +66,9 @@ setup('create the shared sandbox, pool, training definition and instance', async
     );
 
     const trainingDefinition = await setup.step('import and release the training definition', async () => {
-        const training = apiAs('trainingDesigner').training;
-        const imported = await training.post<{ id: number; title: string }>(
-            '/imports/training-definitions',
-            sharedTrainingImport(`e2e-shared-training-${stamp}`),
-        );
-        await training.put(`/training-definitions/${imported.id}/states/RELEASED`);
+        const designer = apiAs('trainingDesigner');
+        const imported = await importDefinitionBody(designer, sharedTrainingImport(`e2e-shared-training-${stamp}`));
+        await designer.training.put(`/training-definitions/${imported.id}/states/RELEASED`);
         return imported;
     });
 

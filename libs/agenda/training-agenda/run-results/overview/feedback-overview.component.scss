@@ -31,7 +31,7 @@
         justify-content: center;
         background: var(--mat-sys-surface-container-highest);
         color: var(--mat-sys-on-surface-variant);
-        font-size: var(--font-size-4xl);
+        font: var(--mat-sys-headline-small);
         font-weight: var(--font-weight-semibold);
         line-height: 1;
         text-transform: uppercase;
@@ -47,7 +47,7 @@
 
 .feedback-card__name {
     color: var(--mat-sys-on-surface);
-    font-size: var(--font-size-3xl);
+    font: var(--mat-sys-title-large);
     font-weight: var(--font-weight-semibold);
     overflow: hidden;
     text-overflow: ellipsis;
@@ -56,7 +56,7 @@
 
 .feedback-card__contact {
     color: var(--mat-sys-on-surface-variant);
-    font-size: var(--font-size-lg);
+    font: var(--mat-sys-body-medium);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -78,7 +78,7 @@
 
 .feedback-card__stat-label {
     color: var(--mat-sys-on-surface-variant);
-    font-size: var(--font-size-xs);
+    font: var(--mat-sys-label-small);
     font-weight: var(--font-weight-semibold);
     letter-spacing: 0.06em;
     text-transform: uppercase;
@@ -86,9 +86,9 @@
 
 .feedback-card__stat-value {
     color: var(--mat-sys-on-surface);
-    font-size: var(--font-size-3xl);
+    font: var(--mat-sys-title-large);
     font-weight: var(--font-weight-semibold);
-    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
 }
 
 .feedback-card__state {
@@ -97,4 +97,5 @@
     justify-content: center;
     min-height: 6rem;
     color: var(--mat-sys-on-surface-variant);
+    font: var(--mat-sys-body-medium);
 }

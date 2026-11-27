@@ -27,7 +27,6 @@
     <mat-form-field
       class="passkey-field"
       appearance="outline"
-      hintLabel="Max 50 characters"
       (keydown.enter)="$event.preventDefault()"
       >
       <mat-label>Passkey</mat-label>
@@ -56,9 +55,7 @@
         >help
       </mat-icon>
     </div>
-    <sentinel-markdown-editor [sentinel-markdown-file-upload]="false"
-      (contentChange)="this.cloudContent.setValue($event);"
-      [content]="cloudContent.value"/>
+    <crczp-markdown-editor label="Cloud content" formControlName="cloudContent" />
     @if (cloudContent.hasError('whitespace')) {
       <mat-error>Cloud Content cannot be empty</mat-error>
     }
@@ -93,9 +90,7 @@
         </p>
       </div>
     </div>
-    <sentinel-markdown-editor [sentinel-markdown-file-upload]="false"
-      (contentChange)="this.localContent.setValue($event);"
-      [content]="localContent.value"/>
+    <crczp-markdown-editor label="Local content" formControlName="localContent" />
     @if (localContent.hasError('whitespace')) {
       <mat-error>Local Content cannot be empty</mat-error>
     }

@@ -1,0 +1,98 @@
+@let stored = metadata();
+<header class="text-header">
+    <span class="text-icon" aria-hidden="true"><mat-icon>article</mat-icon></span>
+    <span class="text-heading">
+        <span class="text-title" [title]="title()">{{ title() }}</span>
+        <span class="text-meta">
+            @if (separateFileName(); as fileName) {
+                <span class="text-file" [title]="fileName">{{ fileName }}</span>
+                <span class="text-separator" aria-hidden="true">·</span>
+            }
+            <span>{{ typeLabel() }}</span>
+            <span class="text-separator" aria-hidden="true">·</span>
+            <span class="text-figure">{{ stored.size | crczpByteSize }}</span>
+            @if (state() === 'loaded') {
+                <span class="text-separator" aria-hidden="true">·</span>
+                <span class="text-figure">{{ lineCount() === 1 ? '1 line' : lineCount() + ' lines' }}</span>
+            }
+            @if (copied() || confirmation.active()) {
+                <span class="text-separator" aria-hidden="true">·</span>
+                <span class="text-confirmation">{{ copied() ? 'Copied to clipboard' : 'Saved to your device' }}</span>
+            }
+        </span>
+    </span>
+    <span class="text-actions">
+        <button
+            mat-icon-button
+            type="button"
+            class="text-action"
+            [attr.aria-label]="copied() ? 'Copied' : 'Copy'"
+            [matTooltip]="copied() ? 'Copied' : 'Copy file contents'"
+            [disabled]="state() !== 'loaded'"
+            (click)="copy()"
+        >
+            <mat-icon>{{ copied() ? 'check' : 'content_copy' }}</mat-icon>
+        </button>
+        <button
+            mat-icon-button
+            type="button"
+            class="text-action"
+            aria-label="Download"
+            [matTooltip]="downloadTooltip()"
+            (click)="saveFile()"
+        >
+            <crczp-download-icon [confirmed]="confirmation.active()" />
+        </button>
+    </span>
+</header>
+
+@switch (state()) {
+    @case ('loaded') {
+        <div
+            #body
+            class="text-body"
+            [class.text-body--collapsible]="collapsible()"
+            [class.text-body--expanded]="expanded()"
+            [class.text-body--settled]="settled()"
+            [style.max-height.px]="expandedHeight()"
+            (transitionend)="onBodyTransitionEnd($event)"
+        >
+            <code-editor
+                class="text-code"
+                setup="minimal"
+                [readonly]="true"
+                [value]="shownText()"
+                [languages]="languages"
+                [language]="language()"
+                [extensions]="extensions"
+            />
+        </div>
+        @if (collapsible()) {
+            <button type="button" class="text-toggle" [attr.aria-expanded]="expanded()" (click)="toggleExpanded()">
+                <mat-icon class="text-toggle-icon">expand_more</mat-icon>
+                {{ expanded() ? 'Show less' : 'Expand all ' + lineCount() + ' lines' }}
+            </button>
+        }
+    }
+    @case ('loading') {
+        <div class="text-skeleton" role="status" aria-label="Loading the file preview">
+            <ngx-skeleton-loader count="4" animation="pulse" [theme]="skeletonTheme" />
+            <progress class="text-progress" max="1" [attr.value]="download.progress()" [attr.aria-label]="'Downloading ' + stored.fileName"></progress>
+        </div>
+    }
+    @case ('waiting') {
+        <div class="text-notice">
+            <span class="text-notice-message">This file is large, so its preview loads only when you ask.</span>
+            <button mat-stroked-button type="button" class="text-notice-action" (click)="load()">
+                <mat-icon>visibility</mat-icon>
+                Load preview
+            </button>
+        </div>
+    }
+    @case ('error') {
+        <div class="text-notice" role="alert">
+            <span class="text-notice-message">The preview could not load.</span>
+            <button mat-stroked-button type="button" class="text-notice-action" (click)="load()">Retry</button>
+        </div>
+    }
+}

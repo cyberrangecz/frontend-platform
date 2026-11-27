@@ -6,9 +6,9 @@ export function labelPattern(label: string): RegExp {
     return new RegExp(`^\\s*${label.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s*\\*?\\s*$`);
 }
 
-/** The text area of the nth markdown editor inside a scope. */
+/** The editable text of the nth markdown editor, shown in its raw mode inside a scope. */
 function markdownTextarea(scope: Locator, index: number): Locator {
-    return scope.locator('sentinel-markdown-editor').nth(index).locator('textarea');
+    return scope.locator('crczp-markdown-editor').nth(index).locator('.cm-content');
 }
 
 /** Level types the level overview can add. */
@@ -303,12 +303,12 @@ export class TrainingLevelForm {
         return this.root.getByRole('textbox', { name: /Correct Answer - Variable Name/ });
     }
 
-    get solutionPenalized(): Locator {
-        return this.root.getByRole('checkbox', { name: /Solution Penalized/ });
+    get solutionRevealGrantsZeroPoints(): Locator {
+        return this.root.getByRole('checkbox', { name: /Solution reveal grants 0 points/ });
     }
 
     get commandsRequired(): Locator {
-        return this.root.getByRole('checkbox', { name: /Is any command required/ });
+        return this.root.getByRole('checkbox', { name: /Commands required/ });
     }
 
     /** Validation messages of the level's own fields. */

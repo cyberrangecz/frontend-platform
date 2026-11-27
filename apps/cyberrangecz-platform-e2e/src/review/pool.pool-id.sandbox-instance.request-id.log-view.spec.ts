@@ -18,7 +18,6 @@ import { locateChainSandbox, type ChainSandbox } from '../support/pages/pool/rev
 import { readChainRecord } from '../support/shared-fixture';
 import {
     captureDownload,
-    dismissErrorDialog,
     errorDialog,
     waitForNotification,
     waitForPageReady,
@@ -32,7 +31,6 @@ const LONG_WRAPPING_LINE = Array.from({ length: 120 }, (_, index) => `word${inde
 const POLLING_TIMEOUT_MILLISECONDS = 60_000;
 /** Distance from the end of the log, in pixels, within which the log view follows new rows. */
 const FOLLOWING_DISTANCE = 32;
-const LOGGING_ERROR_LINE = '[LOGGING ERROR]: Failed to refresh logs.';
 /** Width of the side menu a maximized log view leaves visible. */
 const SIDE_MENU_WIDTH = 140;
 /** Narrowest viewport at which a maximized log view leaves the side menu visible. */
@@ -518,7 +516,7 @@ test.describe('pool.pool-id.sandbox-instance.request-id log view', () => {
     });
 
     test.describe('polling a running stage', () => {
-        test('appends new rows without moving a scrolled-up reader, reports a failure streak once and clears its error line on the next success', async ({
+        test('appends new rows without moving a scrolled-up reader, and reports failed refreshes with a warning toast that leaves the log unchanged', async ({
             page,
         }) => {
             test.setTimeout(180_000);
@@ -543,9 +541,9 @@ test.describe('pool.pool-id.sandbox-instance.request-id log view', () => {
                     case 4:
                         recoveryRequested.resolve();
                         await recovery.promise;
-                        return { content: '', rows: 402 };
+                        return { content: 'EXTRA row C', rows: 403 };
                     default:
-                        return { content: '', rows: 402 };
+                        return { content: '', rows: 403 };
                 }
             });
             await mockRunningStage(page, 'terraform');
@@ -576,18 +574,20 @@ test.describe('pool.pool-id.sandbox-instance.request-id log view', () => {
             expect(await logView.scroller.evaluate((element) => element.scrollTop)).toBe(scrollTop);
 
             firstFailure.resolve();
-            await expect(errorDialog(page)).toBeVisible({ timeout: POLLING_TIMEOUT_MILLISECONDS });
-            await dismissErrorDialog(page);
-            await expect(errorDialog(page)).toHaveCount(0);
+            const toast = await waitForNotification(page, 'Stage log refresh failed', {
+                timeout: POLLING_TIMEOUT_MILLISECONDS,
+            });
+            expect(toast.kind).toBe('warning');
             await recoveryRequested.promise;
-            await expect(errorDialog(page), 'the second failure in a row opens no dialog').toHaveCount(0);
-            expect((await copiedNow()).split(LOGGING_ERROR_LINE).length - 1).toBe(1);
+            await expect(errorDialog(page), 'a failed refresh opens no dialog').toHaveCount(0);
+            expect(await copiedNow()).toMatch(/EXTRA row B$/);
 
             recovery.resolve();
             await expect
                 .poll(copiedNow, { timeout: POLLING_TIMEOUT_MILLISECONDS })
-                .not.toContain(LOGGING_ERROR_LINE);
+                .toMatch(/EXTRA row B\nEXTRA row C$/);
             expect(await logView.topLine()).toBe(topLine);
+            expect(await logView.scroller.evaluate((element) => element.scrollTop)).toBe(scrollTop);
         });
     });
 

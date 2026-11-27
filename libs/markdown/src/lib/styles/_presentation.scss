@@ -1,0 +1,155 @@
+$monospace: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+
+/// The corner radius of the media cards.
+$card-radius: var(--space-sm);
+
+/// Ink of a video's downloaded strands and of the played part and handle of its playback bar.
+$video-played-ink: var(--primary-80);
+/// Ink of the line a video's strands run along, which becomes the unplayed track of its playback bar.
+$video-track-ink: color-mix(in srgb, var(--neutral-100) 36%, transparent);
+
+$ease-emphasized: cubic-bezier(0.2, 0, 0, 1);
+$ease-decelerate: cubic-bezier(0.05, 0.7, 0.1, 1);
+
+/// The framed surface shared by the file, audio and text cards.
+@mixin card-surface {
+    box-sizing: border-box;
+    border-radius: $card-radius;
+    background: var(--mat-sys-surface-container-lowest);
+    outline: 1px solid var(--mat-sys-outline-variant);
+    outline-offset: -1px;
+}
+
+/// A square tile holding a card's type icon.
+@mixin icon-tile {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: calc(2 * var(--space-2xl));
+    height: calc(2 * var(--space-2xl));
+    border-radius: var(--space-xs);
+    background: var(--mat-sys-surface-container-highest);
+    color: var(--mat-sys-on-surface-variant);
+
+    mat-icon {
+        width: var(--font-size-3xl);
+        height: var(--font-size-3xl);
+        font-size: var(--font-size-3xl);
+    }
+}
+
+/// Centres an icon button's glyph in its box at any size, where the inline layout of the
+/// default button leaves the glyph above or below the middle.
+@mixin centered-icon-button {
+    display: grid;
+    place-items: center;
+}
+
+/// A loading surface with a light band sweeping across it.
+@mixin shimmer {
+    background-color: var(--mat-sys-surface-container-high);
+    background-image: linear-gradient(
+        100deg,
+        transparent 30%,
+        color-mix(in srgb, var(--mat-sys-surface-container-lowest) 55%, transparent) 50%,
+        transparent 70%
+    );
+    background-repeat: no-repeat;
+    background-size: 200% 100%;
+    background-position: 150% 0;
+
+    animation: presentation-shimmer 1.6s ease-in-out infinite;
+
+    @keyframes presentation-shimmer {
+        to {
+            background-position: -50% 0;
+        }
+    }
+}
+
+/// Fades an element in as it appears.
+@mixin reveal($duration: 320ms) {
+    animation: presentation-reveal $duration $ease-decelerate both;
+
+    @keyframes presentation-reveal {
+        from {
+            opacity: 0;
+        }
+    }
+}
+
+/// A thin primary bar for a native progress element, sweeping while its total is unknown.
+@mixin progress-bar {
+    appearance: none;
+    display: block;
+    width: 100%;
+    height: var(--space-3xs);
+    overflow: hidden;
+    border: 0;
+    border-radius: var(--space-3xs);
+    background: color-mix(in srgb, var(--mat-sys-primary) 16%, transparent);
+    color: var(--mat-sys-primary);
+
+    &::-webkit-progress-bar {
+        background: transparent;
+    }
+
+    &::-webkit-progress-value {
+        border-radius: inherit;
+        background: var(--mat-sys-primary);
+        transition: inline-size 160ms linear;
+    }
+
+    &::-moz-progress-bar {
+        border-radius: inherit;
+        background: var(--mat-sys-primary);
+    }
+
+    &:indeterminate {
+        background-image: linear-gradient(90deg, transparent, var(--mat-sys-primary), transparent);
+        background-repeat: no-repeat;
+        background-size: 40% 100%;
+        background-position: 50% 0;
+
+        &::-webkit-progress-bar {
+            background: transparent;
+        }
+
+        &::-moz-progress-bar {
+            background: transparent;
+        }
+
+        animation: presentation-sweep 1.2s $ease-emphasized infinite;
+    }
+
+    @keyframes presentation-sweep {
+        from {
+            background-position: -60% 0;
+        }
+        to {
+            background-position: 160% 0;
+        }
+    }
+}
+
+/// Keeps an element for assistive technology while drawing nothing.
+@mixin visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+}
+
+/// A short failure line in the error colour, with its retry action beside it.
+@mixin error-line {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-xs) var(--space-md);
+    color: var(--mat-sys-error);
+    font-size: var(--font-size-md);
+
+    --mat-button-outlined-container-height: calc(2 * var(--space-lg));
+}

@@ -1,0 +1,69 @@
+<div class="panel-actions">
+    <button mat-stroked-button type="button" class="panel-browse" cdkFocusInitial [disabled]="adding()" (click)="picker.click()">
+        <mat-icon>upload_file</mat-icon>
+        {{ adding() ? 'Hashing files…' : 'Browse files' }}
+    </button>
+    <input #picker type="file" multiple hidden (change)="onFilesPicked(picker)" />
+    @if (hasMaterials()) {
+        <div class="panel-filters">
+            <label class="panel-filter">
+                <mat-icon class="panel-filter-icon" aria-hidden="true">search</mat-icon>
+                <input
+                    #filterField
+                    type="search"
+                    class="panel-filter-input"
+                    placeholder="Filter by file name"
+                    aria-label="Filter training materials"
+                    [value]="filter()"
+                    (input)="filter.set(filterField.value)"
+                />
+            </label>
+            <crczp-suffix-filter class="panel-suffix" [suffixes]="suffixes()" [(value)]="suffix" />
+        </div>
+    }
+</div>
+
+@if (hasMaterials()) {
+    @if (candidates().length > 0) {
+        <ul class="panel-list" aria-label="Training materials">
+            @for (material of candidates(); track material.hash) {
+                <li class="panel-row" draggable="true" (dragstart)="onRowDragStart($event, material)">
+                    <crczp-attachment-thumbnail class="panel-thumbnail" [metadata]="material" />
+                    <span class="panel-text">
+                        <span class="panel-name" crczpOverflowTooltip>{{ material.fileName }}</span>
+                        @let transfer = transferOf(material);
+                        @if (transfer?.status === 'failed') {
+                            <span class="panel-meta panel-meta--failed" role="alert">{{ transfer?.message }}</span>
+                        } @else {
+                            <span class="panel-meta">{{ typeOf(material) }} · {{ material.size | crczpByteSize }}</span>
+                        }
+                        @if (transfer?.status === 'uploading') {
+                            <mat-progress-bar
+                                class="panel-progress"
+                                [attr.aria-label]="'Uploading ' + material.fileName"
+                                [mode]="transfer?.progress ? 'determinate' : 'indeterminate'"
+                                [value]="(transfer?.progress ?? 0) * 100"
+                            />
+                        }
+                    </span>
+                    @if (transfer?.status === 'failed') {
+                        <button mat-button type="button" class="panel-retry" (click)="store.retry(material.hash)">Retry</button>
+                    }
+                    <button
+                        mat-icon-button
+                        type="button"
+                        class="panel-remove"
+                        [attr.aria-label]="'Remove ' + material.fileName"
+                        (click)="remove(material)"
+                    >
+                        <mat-icon>delete</mat-icon>
+                    </button>
+                </li>
+            }
+        </ul>
+    } @else {
+        <p class="panel-empty">No stored file matches the filter.</p>
+    }
+} @else {
+    <p class="panel-empty">No training materials yet. Browse files to add the first one.</p>
+}

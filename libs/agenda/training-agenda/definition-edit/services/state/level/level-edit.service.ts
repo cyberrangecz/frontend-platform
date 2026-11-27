@@ -81,4 +81,12 @@ export abstract class LevelEditService {
      * @param blocked true when the definition cannot be edited
      */
     abstract setEditingBlocked(blocked: boolean): void;
+
+    /**
+     * Passes every markdown text of every level through the transform and replaces the levels with
+     * copies holding the results, so the open level editors show the new texts. Changes nothing when
+     * no text differs.
+     * @param transform maps a markdown text to its replacement
+     */
+    abstract rewriteTexts(transform: (markdown: string) => string): void;
 }

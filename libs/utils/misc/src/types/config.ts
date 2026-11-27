@@ -201,6 +201,25 @@ export class PortalConfig extends Z.class({
         .prefault({})
         .describe('Access methods offered for reaching sandbox machines'),
 
+    attachments: z
+        .object({
+            autoDownloadMaxSize: z
+                .string()
+                .refine(isNumberWithByteSizeUnit, {
+                    message: `Attachment auto-download max size must be a byte size. ${BYTE_SIZE_UNITS_LEGEND}`,
+                })
+                .default('50MB')
+                .transform(parseByteSizeToBytes)
+                .describe(
+                    'Attachments smaller than this size download by themselves when their card renders; larger ones wait for a click. Defaults to 50 MiB.',
+                ),
+        })
+        .transform(({ autoDownloadMaxSize }) => ({
+            autoDownloadLimitBytes: autoDownloadMaxSize,
+        }))
+        .prefault({})
+        .describe('Level attachment behaviour'),
+
     authConfig: sentinelAuthConfigSchema.describe(
         'Sentinel authentication config',
     ),

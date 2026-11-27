@@ -8,6 +8,8 @@ import { TraineeSandbox } from './trainee-sandbox';
  */
 export class AccessTrainingRunInfo {
     trainingRunId!: number;
+    /** The training definition the run's instance was created from. */
+    trainingDefinitionId?: number;
     sandboxInstanceId?: string;
     sandboxDefinitionId?: number;
     currentLevelId!: number;

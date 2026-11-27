@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
 import {TrainingLevel} from '@crczp/training-model';
-import {SentinelMarkdownViewComponent} from "@sentinel/components/markdown-view";
+import { MarkdownViewComponent } from '@crczp/markdown';
 
 @Component({
     selector: 'crczp-training-level',
@@ -8,7 +8,7 @@ import {SentinelMarkdownViewComponent} from "@sentinel/components/markdown-view"
     styleUrls: ['./training-level.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
-        SentinelMarkdownViewComponent
+        MarkdownViewComponent
     ]
 })
 /**

@@ -3,11 +3,7 @@
     <!-- TITLE field-->
     <h3>Title</h3>
     <div class="question-text">
-      <sentinel-markdown-editor
-        [sentinel-markdown-file-upload]="false"
-        (contentChange)="title.setValue($event)"
-        [content]="title.value"
-        />
+      <crczp-markdown-editor label="Question" formControlName="title" />
       @if (title.hasError('whitespace')) {
         <mat-error>Title cannot be empty</mat-error>
       }
@@ -71,9 +67,9 @@
         }
 
         <div class="answer-controls">
-          <button (click)="addChoice()" mat-button color="primary">Add choice</button>
+          <button type="button" (click)="addChoice()" mat-button color="primary">Add choice</button>
           @if (isTest) {
-            <button mat-button color="warn" (click)="clearCorrectChoices()" class="clear-answers">
+            <button type="button" mat-button color="warn" (click)="clearCorrectChoices()" class="clear-answers">
               Clear answers
             </button>
           }
@@ -94,7 +90,7 @@
                   </mat-error>
                 }
               </mat-form-field>
-              <button
+              <button type="button"
                 matSuffix
                 mat-icon-button
                 aria-label="Delete option"

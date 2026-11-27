@@ -1,0 +1,13 @@
+/* A number input whose steps are drawn for it stands without the browser's own
+   spinner, which no Material input or form-field setting reaches and only these two
+   declarations remove. Keyed on the class the stepper states on the input it draws for,
+   so an input that draws no chevrons of its own keeps whatever the browser gives it. */
+
+input[type='number'].crczp-number-stepper {
+    appearance: textfield;
+}
+
+input[type='number'].crczp-number-stepper::-webkit-inner-spin-button,
+input[type='number'].crczp-number-stepper::-webkit-outer-spin-button {
+    display: none;
+}

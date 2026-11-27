@@ -1,0 +1,33 @@
+<ng-content />
+@if (width() !== null && limits()) {
+    <div class="size-readout" [class.size-readout--editing]="editing()" [style.--size-readout-characters]="characters()">
+        @if (editing()) {
+            <label class="size-readout-content">
+                <input
+                    #widthField
+                    class="size-readout-number"
+                    type="text"
+                    inputmode="numeric"
+                    autocomplete="off"
+                    aria-label="Width in px"
+                    [value]="openedWidth()"
+                    (input)="draft.set(widthField.value)"
+                    (keydown)="onFieldKeydown($event, widthField)"
+                    (blur)="save(widthField)"
+                />
+                <span class="size-readout-unit" aria-hidden="true">px</span>
+            </label>
+        } @else {
+            <button
+                #readoutButton
+                type="button"
+                class="size-readout-content"
+                [attr.aria-label]="'Edit width, ' + width() + ' px'"
+                (click)="startEditing()"
+            >
+                <span class="size-readout-number">{{ width() }}</span>
+                <span class="size-readout-unit">px</span>
+            </button>
+        }
+    </div>
+}

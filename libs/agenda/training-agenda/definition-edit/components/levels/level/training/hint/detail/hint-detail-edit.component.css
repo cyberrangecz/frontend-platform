@@ -33,9 +33,8 @@ mat-form-field {
     width: 100%;
 }
 
-sentinel-markdown-editor {
+crczp-markdown-editor {
     margin-bottom: 20px;
-    height: 30vh;
 }
 
 @media screen and (max-width: 800px) {

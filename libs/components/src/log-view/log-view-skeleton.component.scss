@@ -7,7 +7,6 @@ $scroll-duration: 1.6s;
 $pause-duration: 0.5s;
 $grow-duration: 0.8s;
 $build-grow-duration: 0.3s;
-$notice-line-height: 32px;
 $step-duration: $scroll-duration + $pause-duration + $grow-duration;
 $scroll-end: math.percentage(math.div($scroll-duration, $step-duration));
 $grow-start: math.percentage(math.div($scroll-duration + $pause-duration, $step-duration));
@@ -101,9 +100,8 @@ $grow-start: math.percentage(math.div($scroll-duration + $pause-duration, $step-
     background: var(--background);
     border-radius: var(--mat-sys-corner-small);
     color: var(--mat-sys-on-surface-variant);
-    font-size: var(--font-size-4xl);
-    font-weight: 500;
-    line-height: $notice-line-height;
+    font: var(--mat-sys-headline-small);
+    font-weight: var(--font-weight-medium);
     animation: skeleton-notice-fade-in $build-grow-duration ease-out backwards;
 }
 

@@ -39,6 +39,9 @@ $content-height: calc(100vh - 35rem);
     height: 100%;
 }
 
+.hints {
+    margin-top: var(--space-md);
+}
 
 /* Breakpoint for wrapping avatar */
 @media screen and (max-width: 1400px) {

@@ -6,7 +6,7 @@ interface ImmediateFailureOptions {
     logFile?: string;
 }
 
-const ANSI_ESCAPE = /\u001b\[[0-9;]*m/g;
+const ANSI_ESCAPE = new RegExp(`${String.fromCharCode(27)}\\[[0-9;]*m`, 'g');
 
 /**
  * Reports every failed attempt the moment its test ends: the error goes to standard error and,

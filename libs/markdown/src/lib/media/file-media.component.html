@@ -1,0 +1,45 @@
+@let stored = metadata();
+<span class="file-icon" aria-hidden="true"><mat-icon>insert_drive_file</mat-icon></span>
+<span class="file-text">
+    <span class="file-name" [title]="stored.fileName">{{ stored.fileName }}</span>
+    <span class="file-meta">
+        @if (confirmation.active()) {
+            Saved to your device
+        } @else {
+            {{ typeLabel() }} · {{ stored.size | crczpByteSize }}
+        }
+    </span>
+    @if (download.state() === 'loading') {
+        <progress class="file-progress" max="1" [value]="download.progress()" [attr.aria-label]="'Downloading ' + stored.fileName"></progress>
+    }
+    @if (download.state() === 'error') {
+        <span class="file-error" role="alert">Download failed. Use the retry button.</span>
+    }
+</span>
+<span class="file-trailing">
+    <span class="file-action">
+        <button
+            mat-icon-button
+            type="button"
+            class="file-button"
+            [attr.aria-label]="actionLabel()"
+            [attr.aria-disabled]="download.state() === 'loading' || null"
+            (click)="startDownload()"
+        >
+            @switch (download.state()) {
+                @case ('loading') {
+                    <mat-icon aria-hidden="true">downloading</mat-icon>
+                }
+                @case ('error') {
+                    <mat-icon aria-hidden="true">refresh</mat-icon>
+                }
+                @default {
+                    <crczp-download-icon [confirmed]="confirmation.active()" />
+                }
+            }
+        </button>
+        @if (download.state() === 'loading') {
+            <crczp-progress-ring class="file-ring" [progress]="download.progress()" />
+        }
+    </span>
+</span>

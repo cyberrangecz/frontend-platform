@@ -12,6 +12,7 @@ import { GroupEditPage } from '../../support/pages/user-and-group/group-pages';
 import {
     breadcrumbEntries,
     ConfirmationDialog,
+    doubleClickAfterRender,
     errorDialog,
     pageTitle,
     pickerDay,
@@ -267,7 +268,7 @@ test.describe('group.create', () => {
                     requests.push(request.url());
                 }
             });
-            await form.saveButton('create').dblclick();
+            await doubleClickAfterRender(form.saveButton('create'));
             await waitForNotification(page, 'Group was created');
             expect(requests).toHaveLength(1);
             const matching = await findGroups(apiAs('userAdministrator').userAndGroup, name);

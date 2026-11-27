@@ -531,7 +531,7 @@ test.describe('linear-definition.edit', () => {
             await expect(form.incorrectAnswerLimit).toHaveValue('5');
             await expect(form.staticAnswer).toHaveValue('e2e-flag-one');
             await expect(form.variantAnswers).not.toBeChecked();
-            await expect(form.solutionPenalized).toBeChecked();
+            await expect(form.solutionRevealGrantsZeroPoints).toBeChecked();
             await expect(form.commandsRequired).not.toBeChecked();
             await checkpoint(page, 'training level loaded');
         });
@@ -547,7 +547,7 @@ test.describe('linear-definition.edit', () => {
             await form.points.fill('40');
             await form.incorrectAnswerLimit.fill('7');
             await form.staticAnswer.fill('new-answer');
-            await form.solutionPenalized.uncheck();
+            await form.solutionRevealGrantsZeroPoints.uncheck();
             await form.commandsRequired.check();
             await saveAndWait(editor);
             const level = await levelByTitle(api, definition.id, 'Training renamed');
@@ -1033,7 +1033,7 @@ test.describe('linear-definition.edit', () => {
             const form = editor.assessmentLevel;
             await expect(form.title).toHaveValue(TITLES.assessment);
             await expect(form.estimatedDuration).toHaveValue('3');
-            await expect(form.instructions).toHaveValue('Answer every question.');
+            await expect(form.instructions).toHaveText('Answer every question.');
             await expect(form.testSwitch).toBeChecked();
             await checkpoint(page, 'assessment level loaded');
         });

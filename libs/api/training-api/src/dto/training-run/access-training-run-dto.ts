@@ -12,6 +12,7 @@ export interface AccessTrainingRunDTO {
     info_about_levels?: BasicLevelInfoDTO[];
     /** Absent when another sandbox of the trainee keeps them from getting a run */
     training_run_id?: number;
+    definition_id?: number;
     sandbox_instance_ref_id: string;
     sandbox_definition_id: number;
     show_stepper_bar: boolean;

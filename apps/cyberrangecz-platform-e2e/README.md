@@ -1,9 +1,9 @@
 # cyberrangecz-platform-e2e
 
 Playwright e2e suite of the platform frontend. It drives the app at `https://localhost:4200`
-against the backends named in `apps/cyberrangecz-platform/public/config.json`, in Chromium,
-Firefox and WebKit. Specs assert state and components only. No origin of the deployed platform is
-written into this directory; every origin and API root is read from that app config.
+against the backends named by the `E2E_*` variables below, in Chromium, Firefox and WebKit. Specs
+assert state and components only. No origin of the deployed platform is written into this
+directory; every origin, API root and sign-in setting is read from environment variables.
 
 ## What it covers
 
@@ -75,6 +75,11 @@ listed as a leftover and fails its test.
 |---|---|---|
 | `E2E_APPLICATION_ORIGIN` | `https://localhost:4200` | The URL the app under test is served from. Read by the suite and the wipe. |
 | `E2E_DEPLOYED_ORIGIN` | unset | The URL of the deployed frontend, on which the page specs whose file name matches `microservice.*spec.ts` run. Unset drops those specs together with the sign-in they need. |
+| `E2E_ISSUER` | required | OIDC issuer URL, for example `https://<identity-provider>/realms/<realm>`. The run fails at start when it is unset. |
+| `E2E_CLIENT_ID` | required | OIDC client id the suite signs in with. |
+| `E2E_TRAINING_API_ROOT` | required | Root URL of the training REST API, for example `https://<host>/training/api/v1`. |
+| `E2E_SANDBOX_API_ROOT` | required | Root URL of the sandbox REST API. |
+| `E2E_USER_AND_GROUP_API_ROOT` | required | Root URL of the user-and-group REST API. |
 | `E2E_ADMIN_LOGIN` | unset | Sign-in name of the administrator the wipe uses, such as `user-30`. Unset means a person signs in by hand in a headed browser, also under `CI`. An empty value counts as unset. |
 | `E2E_ADMIN_PASSWORD` | unset | Password of that administrator. Meant for CI. Never printed or logged. An empty value counts as unset. |
 | `E2E_SESSION_KEEP_ALIVE_MINUTES` | `4` | Minutes between two refreshes of every saved account's session during a run. Keep it below the realm's SSO Session Idle. |

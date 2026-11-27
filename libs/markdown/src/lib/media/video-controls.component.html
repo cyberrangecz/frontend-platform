@@ -1,0 +1,76 @@
+@let player = playback();
+<mat-slider class="controls-seek" min="0" max="1" step="0.001" [displayWith]="describeSeekValue">
+    <input
+        matSliderThumb
+        #seekInput
+        aria-label="Seek"
+        [value]="player.positionFraction()"
+        (input)="player.seekToFraction(seekInput.valueAsNumber)"
+        (keydown)="player.handleKey($event)"
+    />
+</mat-slider>
+<div class="controls-footer" #footer>
+    <button mat-icon-button type="button" class="controls-toggle" #toggleButton [attr.aria-label]="toggleLabel()" (click)="player.toggle()">
+        <mat-icon aria-hidden="true">{{ toggleIcon() }}</mat-icon>
+    </button>
+    <button
+        mat-icon-button
+        type="button"
+        class="controls-button controls-mute"
+        #muteButton
+        [attr.aria-label]="audible() ? 'Mute' : 'Unmute'"
+        (click)="toggleMute()"
+    >
+        <mat-icon aria-hidden="true">{{ volumeIcon() }}</mat-icon>
+    </button>
+    <mat-slider class="controls-volume" min="0" max="1" step="0.05" [displayWith]="describeVolume">
+        <input matSliderThumb #volumeInput aria-label="Volume" [value]="volume()" (input)="changeVolume(volumeInput.valueAsNumber)" />
+    </mat-slider>
+    <span class="controls-time">{{ timeLabel() }}</span>
+    <span class="controls-spacer" #spacer></span>
+    @for (option of shownOptions(); track option.id) {
+        <button
+            mat-icon-button
+            type="button"
+            class="controls-option controls-option--{{ option.id }}"
+            [attr.aria-label]="option.label"
+            (click)="option.run()"
+        >
+            @switch (option.id) {
+                @case ('speed') {
+                    <span class="controls-rate" aria-hidden="true">{{ rateText() }}</span>
+                }
+                @case ('download') {
+                    <crczp-download-icon [confirmed]="confirmation.active()" />
+                }
+                @default {
+                    <mat-icon aria-hidden="true">{{ option.icon }}</mat-icon>
+                }
+            }
+        </button>
+    }
+    @if (overflowOptions().length) {
+        <button mat-icon-button type="button" class="controls-option controls-option--more" aria-label="More options" [matMenuTriggerFor]="overflowMenu">
+            <mat-icon aria-hidden="true">more_vert</mat-icon>
+        </button>
+        <mat-menu #overflowMenu="matMenu" xPosition="before" yPosition="above">
+            @for (option of overflowOptions(); track option.id) {
+                <button mat-menu-item type="button" (click)="option.run()">
+                    <mat-icon aria-hidden="true">{{ option.icon }}</mat-icon>
+                    <span>{{ option.label }}</span>
+                </button>
+            }
+        </mat-menu>
+    }
+    @if (fullscreenAvailable) {
+        <button
+            mat-icon-button
+            type="button"
+            class="controls-button controls-fullscreen"
+            [attr.aria-label]="fullscreen() ? 'Exit full screen' : 'Full screen'"
+            (click)="toggleFullscreen()"
+        >
+            <mat-icon aria-hidden="true">{{ fullscreen() ? 'fullscreen_exit' : 'fullscreen' }}</mat-icon>
+        </button>
+    }
+</div>

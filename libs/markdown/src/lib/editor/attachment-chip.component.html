@@ -1,0 +1,14 @@
+<span
+    class="chip"
+    [class.chip--missing]="state() === 'missing'"
+    [class.chip--loading]="state() === 'loading'"
+    [crczpRichTooltip]="tooltip()"
+>
+    @if (thumbnailUrl(); as url) {
+        <img class="chip-thumbnail" alt="" draggable="false" [src]="url" />
+    } @else {
+        <mat-icon class="chip-icon" aria-hidden="true">{{ icon() }}</mat-icon>
+    }
+    <span class="chip-name">{{ name() }}</span>
+    <span class="chip-detail">{{ detail() }}</span>
+</span>

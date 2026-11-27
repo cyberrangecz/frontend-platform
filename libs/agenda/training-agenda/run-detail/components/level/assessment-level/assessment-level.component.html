@@ -1,7 +1,7 @@
 @let isBacktracked = (runService.runInfo$.observeProperty().isBacktracked.$() | async);
 <div class="container">
     <div class="level-content">
-        <sentinel-markdown-view [markdown]="(level$|async).instructions" />
+        <crczp-markdown-view [markdown]="(level$|async).instructions" />
         <!-- QUESTIONS -->
         <div class="questions">
             @for (question of (level$|async).questions; track question; let i = $index) {

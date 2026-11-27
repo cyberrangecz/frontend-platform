@@ -30,6 +30,7 @@ export * from './training/access-training-run-info';
 export * from './training/accessed-training-run';
 export * from './training/training-definition-info';
 export * from './training/training-definition';
+export * from './training/training-material';
 export * from './training/training-instance';
 export * from './training/training-instance-score-report';
 export * from './training/training-run';

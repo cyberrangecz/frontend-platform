@@ -8,11 +8,12 @@ import {
 import { OffsetPaginationEvent } from '@crczp/utils';
 import { UserApi, UserSort } from '@crczp/user-and-group-api';
 import { User } from '@crczp/user-and-group-model';
-import { EMPTY, Observable } from 'rxjs';
-import { map, switchMap, take, tap } from 'rxjs/operators';
+import { EMPTY, from, Observable, of } from 'rxjs';
+import { catchError, concatMap, map, switchMap, take, tap, toArray } from 'rxjs/operators';
 import { SelectablePaginatedService, UserFilter } from '@crczp/user-and-group-agenda/internal';
 import { ErrorHandlerService, FileUploadProgressService, LoadingTracker, NotificationService, PortalConfig } from '@crczp/utils';
 import { FileUploadDialog, FileUploadDialogConfig } from '@crczp/components';
+import { UsersImportPreview } from '../import-preview/users-import-preview';
 import { OffsetPaginatedResource } from '@crczp/api-common';
 
 /**
@@ -124,43 +125,59 @@ export class UserOverviewService extends SelectablePaginatedService<User> {
     }
 
     /**
-     * Import users
+     * Imports users from the picked files, one request per file in pick order.
+     * A failed file is reported by name and does not stop the files after it.
      */
     importUsers(): Observable<any> {
         const dialogConfig: FileUploadDialogConfig = {
-            title: 'Import Users',
-            subtitle: 'Select a file to import users',
-            fileTypeFilters: ['json', 'text'],
-            mode: 'single',
+            title: 'Import users',
+            subtitle: 'Select one or more files to import users',
+            preview: new UsersImportPreview(),
+            mode: 'multiple',
         };
         const dialogRef = FileUploadDialog.open(this.dialog, dialogConfig);
         return dialogRef.afterClosed().pipe(
             take(1),
-            switchMap((file: File | null) => {
-                if (!file) return EMPTY;
+            switchMap((files: File[] | null) => {
+                if (!files?.length) return EMPTY;
                 this.fileUploadProgressService.start();
-                return this.api.importUsers(file).pipe(
-                    tap(
-                        () => {
-                            this.notificationService.emit(
-                                'success',
-                                'Users were imported',
-                            );
-                            this.fileUploadProgressService.finish();
-                        },
-                        (err) => {
-                            this.fileUploadProgressService.finish();
-                            this.errorHandler.emitAPIError(
-                                err,
-                                'Importing users',
-                            );
-                        },
-                    ),
+                return from(files).pipe(
+                    concatMap((file) => this.importFile(file)),
+                    toArray(),
+                    tap((outcomes) => {
+                        this.fileUploadProgressService.finish();
+                        this.emitImportSuccess(
+                            outcomes.filter(Boolean).length,
+                        );
+                    }),
                     switchMap(() =>
                         this.getAll(this.lastPagination, this.lastFilter),
                     ),
                 );
             }),
+        );
+    }
+
+    private importFile(file: File): Observable<boolean> {
+        return this.api.importUsers(file).pipe(
+            map(() => true),
+            catchError((err) => {
+                this.errorHandler.emitAPIError(
+                    err,
+                    `Importing users from ${file.name}`,
+                );
+                return of(false);
+            }),
+        );
+    }
+
+    private emitImportSuccess(importedFileCount: number): void {
+        if (importedFileCount === 0) return;
+        this.notificationService.emit(
+            'success',
+            importedFileCount === 1
+                ? 'Users were imported'
+                : `Users were imported from ${importedFileCount} files`,
         );
     }
 

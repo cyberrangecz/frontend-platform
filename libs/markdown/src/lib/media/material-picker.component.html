@@ -1,0 +1,52 @@
+<div class="picker-header">
+    <label class="picker-label">
+        <span class="picker-label-text">Label</span>
+        <input
+            #labelField
+            type="text"
+            class="picker-field picker-label-input"
+            [value]="draftLabel()"
+            (input)="draftLabel.set(labelField.value)"
+            (keydown.enter)="close()"
+        />
+    </label>
+    <button #browseButton mat-button type="button" class="picker-browse" [disabled]="adding()" (click)="fileInput.click()">
+        <mat-icon>upload_file</mat-icon>
+        {{ adding() ? 'Hashing file…' : 'Browse files' }}
+    </button>
+    <input #fileInput type="file" hidden (change)="onFilePicked(fileInput)" />
+</div>
+
+@if (hasMaterials()) {
+    <div class="picker-filters">
+        <label class="picker-field picker-filter">
+            <mat-icon class="picker-filter-icon" aria-hidden="true">search</mat-icon>
+            <input
+                #filterField
+                type="search"
+                class="picker-filter-input"
+                placeholder="Filter by file name"
+                aria-label="Filter training materials"
+                [value]="filter()"
+                (input)="filter.set(filterField.value)"
+                (keydown.arrowdown)="focusOptions($event)"
+            />
+        </label>
+        <crczp-suffix-filter [suffixes]="suffixes()" [(value)]="suffix" />
+    </div>
+    @if (candidates().length > 0) {
+        <ul cdkListbox class="picker-options" aria-label="Training materials" (cdkListboxValueChange)="pick($event.value[0])">
+            @for (material of candidates(); track material.hash) {
+                <li class="picker-option" [cdkOption]="material">
+                    <crczp-attachment-thumbnail [metadata]="material" />
+                    <span class="picker-option-name" crczpOverflowTooltip>{{ material.fileName }}</span>
+                    <span class="picker-option-meta">{{ typeOf(material) }} · {{ material.size | crczpByteSize }}</span>
+                </li>
+            }
+        </ul>
+    } @else {
+        <p class="picker-empty">No stored file matches the filter.</p>
+    }
+} @else {
+    <p class="picker-empty">No training materials yet. Browse files to add one.</p>
+}

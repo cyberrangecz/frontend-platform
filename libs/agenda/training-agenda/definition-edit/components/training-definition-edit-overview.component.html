@@ -7,7 +7,7 @@
         </mat-panel-title>
         <mat-panel-description>
             <span class="spacer"></span>
-            @if (unsavedChanges.has('trainingDefinition') || unsavedChanges.has('levels')) {
+            @if (unsavedChanges.has('trainingDefinition') || unsavedChanges.has('levels') || unsavedChanges.has('materials')) {
                 <div class="panel-description-error">
                     <mat-icon color="warn">warning</mat-icon>
                     <mat-error>Changes are not saved</mat-error>
@@ -26,6 +26,13 @@
             <p class="editing-block-reason">
                 <mat-icon>lock</mat-icon>
                 <span>{{ blockReason }}</span>
+            </p>
+        }
+        @if (materials.loadStatus() === 'failed') {
+            <p class="editing-block-reason">
+                <mat-icon>error</mat-icon>
+                <span>Training materials could not be loaded. Save is disabled until they load.</span>
+                <button type="button" mat-button (click)="reloadMaterials()">Reload materials</button>
             </p>
         }
         <mat-divider />

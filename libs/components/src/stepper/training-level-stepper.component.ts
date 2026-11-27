@@ -1,11 +1,15 @@
 import {
     ChangeDetectionStrategy,
+    ChangeDetectorRef,
     Component,
     computed,
     effect,
     inject,
+    Injector,
     input,
     output,
+    untracked,
+    viewChild,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import {
@@ -37,22 +41,40 @@ export class TrainingLevelStepperComponent {
     readonly levelMove = output<LevelMoveEvent>();
     readonly initialLevels = output<LevelStepperAdapter[]>();
 
+    protected readonly stepperStructure = computed(() =>
+        this.levels()
+            .map(({ id, icon }) => `${id}\u0000${icon}`)
+            .join('\u0001'),
+    );
+
     /**
-     * Stepper model holding the current levels; a new object for every new level list.
+     * Stepper model holding the current levels. The stepper reads its model once, so the model is
+     * a new object only when the ids, icons or order of the levels change; a new level list of the
+     * same structure is swapped into the existing model.
      */
     protected readonly levelStepper = computed<
         SentinelStepper<LevelStepperAdapter>
-    >(() => ({ items: this.levels() }));
+    >(() => {
+        this.stepperStructure();
+        return { items: [...untracked(this.levels)] };
+    });
+
+    private readonly stepperInjector = viewChild(SentinelStepperComponent, {
+        read: Injector,
+    });
 
     constructor() {
         effect(() => {
             const activeStep = this.activeStep();
-            this.levelStepper().items.forEach((item, index) => {
+            const { items } = this.levelStepper();
+            items.splice(0, items.length, ...this.levels());
+            items.forEach((item, index) => {
                 item.state =
                     index === activeStep
                         ? StepStateEnum.ACTIVE
                         : StepStateEnum.SELECTABLE;
             });
+            this.stepperInjector()?.get(ChangeDetectorRef).markForCheck();
         });
     }
 

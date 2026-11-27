@@ -16,7 +16,7 @@ import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {Subscription} from 'rxjs';
 import {QuestionsOverviewComponent} from "./question/overview/questions-overview.component";
 import {MatSlideToggle} from "@angular/material/slide-toggle";
-import {SentinelMarkdownEditorComponent} from "@sentinel/components/markdown-editor";
+import {MarkdownEditorComponent} from "@crczp/markdown";
 import {MatError, MatFormField, MatInput, MatLabel, MatSuffix} from "@angular/material/input";
 import {MatTooltip} from "@angular/material/tooltip";
 import { ClearInputSuffixComponent } from '@crczp/utils';
@@ -34,7 +34,7 @@ import { ClearInputSuffixComponent } from '@crczp/utils';
         QuestionsOverviewComponent,
         MatSlideToggle,
         MatTooltip,
-        SentinelMarkdownEditorComponent,
+        MarkdownEditorComponent,
         MatError,
         MatInput,
         MatLabel,

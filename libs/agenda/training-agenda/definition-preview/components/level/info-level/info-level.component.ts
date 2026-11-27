@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, Output, ViewChild} from '@angular/core';
 import {InfoLevel} from '@crczp/training-model';
-import {SentinelMarkdownViewComponent} from "@sentinel/components/markdown-view";
+import { MarkdownViewComponent } from '@crczp/markdown';
 import {NgStyle} from "@angular/common";
 
 @Component({
@@ -9,7 +9,7 @@ import {NgStyle} from "@angular/common";
     styleUrls: ['./info-level.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
-        SentinelMarkdownViewComponent,
+        MarkdownViewComponent,
         NgStyle
     ]
 })

@@ -1,0 +1,39 @@
+<button
+    mat-icon-button
+    type="button"
+    tabindex="-1"
+    class="toolbar-action"
+    aria-label="Replace file"
+    matTooltip="Replace file (Enter)"
+    aria-haspopup="dialog"
+    [attr.aria-expanded]="replacing()"
+    (click)="replace.emit()"
+>
+    <mat-icon>find_replace</mat-icon>
+</button>
+@if (sizable()) {
+    <button
+        mat-icon-button
+        type="button"
+        tabindex="-1"
+        class="toolbar-action"
+        aria-label="Reset size"
+        disabledInteractive
+        [matTooltip]="resettable() ? 'Reset size' : 'No saved size to reset'"
+        [disabled]="!resettable()"
+        (click)="resettable() && resetSize.emit()"
+    >
+        <mat-icon>aspect_ratio</mat-icon>
+    </button>
+}
+<button
+    mat-icon-button
+    type="button"
+    tabindex="-1"
+    class="toolbar-action toolbar-action--remove"
+    aria-label="Remove from level"
+    matTooltip="Remove from level (Delete)"
+    (click)="remove.emit()"
+>
+    <mat-icon>delete</mat-icon>
+</button>

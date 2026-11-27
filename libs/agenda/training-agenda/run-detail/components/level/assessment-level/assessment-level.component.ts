@@ -15,7 +15,7 @@ import {
 import { TraineeQuestionComponent } from './question/trainee-question.component';
 
 import { LinearAssessmentLevelService } from '../../../services/training-run/level/assessment/linear-assessment-level.service';
-import { SentinelMarkdownViewComponent } from '@sentinel/components/markdown-view';
+import { MarkdownViewComponent } from '@crczp/markdown';
 import { MatDivider } from '@angular/material/divider';
 
 import { MatButton } from '@angular/material/button';
@@ -32,7 +32,7 @@ import { combineLatest } from 'rxjs';
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [LinearAssessmentLevelService],
     imports: [
-        SentinelMarkdownViewComponent,
+        MarkdownViewComponent,
         MatDivider,
         TraineeQuestionComponent,
         MatButton,

@@ -1,0 +1,129 @@
+<div
+    class="preview-frame"
+    [style.max-width.%]="widthPercent()"
+>
+    <div
+        class="preview-guides"
+        [class.preview-guides--resizing]="resizing()"
+    >
+        @for (side of ['start', 'end']; track side) {
+            <div
+                class="preview-hairline"
+                [class.preview-hairline--end]="side === 'end'"
+                role="separator"
+                aria-orientation="vertical"
+                [attr.aria-label]="side === 'end' ? 'Preview width, right edge' : 'Preview width, left edge'"
+                tabindex="0"
+                [attr.aria-valuemin]="widthBounds.min"
+                [attr.aria-valuemax]="widthBounds.max"
+                [attr.aria-valuenow]="widthPercent()"
+                (pointerdown)="onHairlinePointerDown($event)"
+                (pointermove)="onHairlinePointerMove($event)"
+                (pointerup)="onHairlinePointerEnd()"
+                (pointercancel)="onHairlinePointerEnd()"
+                (keydown)="onHairlineKeydown($event, side === 'end' ? 'end' : 'start')"
+            ></div>
+        }
+    </div>
+    <article
+        #page
+        class="preview-page"
+        (dragstart)="$event.preventDefault()"
+    >
+        @for (item of items(); track item.key) {
+            @if (item.type === 'details') {
+                <details
+                    class="preview-details"
+                    [attr.data-offset]="item.opener.block.start"
+                    [open]="isOpen(item)"
+                    (toggle)="onSectionToggle(item, $event)"
+                >
+                    <summary class="preview-summary">
+                        <mat-icon
+                            class="preview-summary-chevron"
+                            aria-hidden="true"
+                        >
+                            chevron_right
+                        </mat-icon>
+                        <span class="preview-summary-text">
+                            {{ item.summary }}
+                        </span>
+                        <button
+                            mat-icon-button
+                            type="button"
+                            class="preview-summary-edit"
+                            aria-label="Edit markdown"
+                            matTooltip="Edit markdown"
+                            (click)="$event.preventDefault(); edit(item.opener.block)"
+                        >
+                            <mat-icon>edit</mat-icon>
+                        </button>
+                    </summary>
+                    <div class="preview-details-body">
+                        @for (child of item.children; track child.key) {
+                            <ng-container *ngTemplateOutlet="entry; context: { $implicit: child }" />
+                        }
+                    </div>
+                </details>
+            } @else {
+                <ng-container *ngTemplateOutlet="entry; context: { $implicit: item }" />
+            }
+        }
+        <div
+            class="preview-tail"
+            role="button"
+            tabindex="0"
+            aria-label="Write at the end of the level"
+            [attr.data-offset]="markdown().length"
+            (mousedown)="onTailActivate($event)"
+            (keydown.enter)="onTailActivate($event)"
+        >
+            @if (items().length === 0) {
+                <p class="preview-empty">The level has no content yet. Click or press Enter here to start writing.</p>
+            }
+        </div>
+        @if (dropGap() ?? insertGap(); as gap) {
+            <div
+                class="preview-drop-line"
+                [class.preview-drop-line--insert]="!dropGap()"
+                aria-hidden="true"
+                [style.top.px]="gap.top"
+                (mousedown)="onInsertSlotMousedown($event, gap)"
+            ></div>
+        }
+    </article>
+</div>
+
+<ng-template
+    #entry
+    let-entry
+>
+    @if (entry.type === 'block') {
+        <div
+            class="preview-block"
+            [attr.tabindex]="entry.mediaOnly ? null : 0"
+            [crczpPreviewBlock]="entry.block"
+            [attr.data-offset]="entry.block.start"
+            [attr.data-spacing]="spacingOf(entry.block.token.raw)"
+            [class.preview-block--media]="entry.mediaOnly"
+            (mousedown)="onBlockMousedown($event, entry)"
+            (keydown.enter)="onBlockEnter($event, entry)"
+        >
+            <crczp-markdown-block [token]="entry.block.token" />
+        </div>
+    } @else {
+        <crczp-block-source-editor
+            class="preview-editor"
+            data-active-block
+            [attr.data-offset]="entry.session.start"
+            [attr.data-spacing]="spacingOf(entry.session.initialText)"
+            [text]="entry.session.initialText"
+            [caret]="entry.session.caret"
+            [selection]="entry.session.selection ?? null"
+            (textChange)="onEditorText(entry.session.id, $event)"
+            (exit)="onEditorExit(entry.session.id, $event)"
+            (attachmentRemoved)="onAttachmentRemoved(entry.session.id, $event)"
+            (growSelection)="onEditorGrowth(entry.session.id, $event)"
+        />
+    }
+</ng-template>

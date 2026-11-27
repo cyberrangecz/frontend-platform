@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
 import {AssessmentLevel} from '@crczp/training-model';
 import {TraineeQuestionComponent} from "./question/trainee-question.component";
 import {MatDivider} from "@angular/material/divider";
-import {SentinelMarkdownViewComponent} from "@sentinel/components/markdown-view";
+import { MarkdownViewComponent } from '@crczp/markdown';
 
 @Component({
     selector: 'crczp-assessment-level',
@@ -12,7 +12,7 @@ import {SentinelMarkdownViewComponent} from "@sentinel/components/markdown-view"
     imports: [
         TraineeQuestionComponent,
         MatDivider,
-        SentinelMarkdownViewComponent
+        MarkdownViewComponent
     ]
 })
 export class AssessmentLevelComponent {

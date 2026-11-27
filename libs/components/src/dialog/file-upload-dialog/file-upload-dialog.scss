@@ -20,6 +20,7 @@
 .dialog-subtitle {
     margin: 0 0 2rem;
     color: var(--mat-sys-on-surface-variant);
+    font: var(--mat-sys-body-medium);
     text-align: center;
 }
 
@@ -38,3 +39,46 @@
 }
 
 
+
+.file-upload-dialog-progress {
+    margin-top: 1rem;
+}
+
+.file-upload-dialog-previews {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+.file-upload-dialog-preview {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.file-upload-dialog-preview-title {
+    margin: 0;
+    color: var(--mat-sys-on-surface-variant);
+    font: var(--mat-sys-title-small);
+    overflow-wrap: anywhere;
+}
+
+.file-upload-dialog-rejection {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0.75rem 1rem;
+    border-radius: var(--mat-sys-corner-medium);
+    background: var(--mat-sys-error-container);
+    color: var(--mat-sys-on-error-container);
+    font: var(--mat-sys-body-medium);
+}
+
+.file-upload-dialog-more {
+    margin: 0;
+    color: var(--mat-sys-on-surface-variant);
+    font: var(--mat-sys-body-small);
+    text-align: center;
+}

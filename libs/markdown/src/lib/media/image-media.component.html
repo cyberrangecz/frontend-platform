@@ -1,0 +1,54 @@
+@let stored = metadata();
+<button #downloadButtonProbe class="image-download-probe" mat-flat-button type="button" inert>
+    <mat-icon aria-hidden="true">download</mat-icon>
+    <span>Download</span>
+</button>
+<div
+    class="image-frame"
+    [class.image-frame--unsized]="!shownWidth()"
+    [style.width.px]="shownWidth()"
+    [style.aspect-ratio]="aspectRatio()"
+>
+    @if (thumbnailShown()) {
+        <img class="image-thumbnail" draggable="false" alt="" [src]="poster.url()" />
+    }
+    @if (download.state() === 'loaded') {
+        <img
+            class="image-picture"
+            draggable="false"
+            decoding="async"
+            [src]="download.url()"
+            [alt]="label() || stored.fileName"
+            #picture
+            (load)="pictureLoaded(picture)"
+        />
+    }
+    @if (download.state() === 'idle') {
+        <button class="image-download" mat-flat-button type="button">
+            <mat-icon aria-hidden="true">download</mat-icon>
+            <span class="image-download-label">Download</span>
+            <span class="image-download-size"> {{ stored.size | crczpByteSize }}</span>
+        </button>
+    }
+    @switch (download.state()) {
+        @case ('error') {
+            <div class="image-error" role="alert">
+                <mat-icon class="image-error-icon" aria-hidden="true">broken_image</mat-icon>
+                <span>Could not load {{ stored.fileName }}.</span>
+                <button mat-stroked-button type="button" (click)="download.retry()">Retry</button>
+            </div>
+        }
+        @case ('loading') {
+            <span class="image-busy">
+                <mat-icon class="image-busy-icon" aria-hidden="true">downloading</mat-icon>
+                <crczp-progress-ring class="image-ring" [progress]="download.progress()" />
+            </span>
+            <progress
+                class="image-progress"
+                max="1"
+                [attr.value]="download.progress()"
+                [attr.aria-label]="'Loading ' + stored.fileName"
+            ></progress>
+        }
+    }
+</div>

@@ -1,153 +1,99 @@
 <div class="content">
   <form [formGroup]="trainingLevelConfigFormGroup.formGroup">
-    <div class="panel-wrapper">
-      <div class="left-panel">
-        <!-- TITLE field -->
-        <mat-form-field (keydown.enter)="$event.preventDefault()" appearance="outline">
-          <mat-label>Title</mat-label>
-          <input formControlName="title" matInput maxlength="255" placeholder="Title" required/>
-          <crczp-clear-input-suffix [control]="title" matSuffix />
-          @if (title.hasError('whitespace')) {
-            <mat-error>Title cannot be empty</mat-error>
-          }
-        </mat-form-field>
-
-        <div class="time-configuration-container">
-          <!-- ESTIMATED DURATION field -->
-          <mat-form-field
-            appearance="outline"
-            hintLabel="Number in minutes greater than or equal to 1."
-            >
-            <mat-label>Estimated Duration in Minutes</mat-label>
-            <input
-              formControlName="estimatedDuration"
-              matInput
-              maxlength="9"
-              min="1"
-              placeholder="Estimated Duration in Minutes"
-              />
-            @if (estimatedDuration.hasError('pattern') || estimatedDuration.hasError('min')) {
-              <mat-error>
-                Estimated Duration must be a number greater than or equal to 1
-              </mat-error>
-            }
-          </mat-form-field>
-
-          <!-- MINIMAL POSSIBLE SOLVE TIME field -->
-          <mat-form-field
-            appearance="outline"
-            hintLabel="Number in minutes greater than or equal to 0."
-            >
-            <mat-label>Minimal Possible Solve Time in Minutes</mat-label>
-            <input
-              formControlName="minimalPossibleSolveTime"
-              matInput
-              maxlength="9"
-              min="0"
-              placeholder="Minimal Possible Solve Time in Minutes"
-              />
-            @if (minimalPossibleSolveTime.hasError('pattern') || minimalPossibleSolveTime.hasError('min')) {
-              <mat-error
-                >
-                Minimal Possible Solve Time must be a number greater than or equal to 0
-              </mat-error>
-            }
-          </mat-form-field>
-        </div>
-
-        <!--CONTENT field -->
-        <h3>Content</h3>
-        <sentinel-markdown-editor
-          (contentChange)="content.setValue($event)"
-          [content]="content.value"
-          [sentinel-markdown-file-upload]="false"
-          class="mrkdwn-content"
-          />
-        @if (content.hasError('whitespace')) {
-          <mat-error>Content cannot be empty</mat-error>
+    <div class="level-fields">
+      <!-- TITLE field -->
+      <mat-form-field
+        (keydown.enter)="$event.preventDefault()"
+        appearance="outline"
+        class="level-fields-item--full"
+        >
+        <mat-label>Title</mat-label>
+        <input formControlName="title" matInput maxlength="255" placeholder="Title" required/>
+        <crczp-clear-input-suffix [control]="title" matSuffix />
+        @if (title.hasError('whitespace')) {
+          <mat-error>Title cannot be empty</mat-error>
         }
-        <!--SOLUTION field -->
-        <h3>Solution</h3>
-        <div class="content-info">
-          <div class="content-info-head">
-            <mat-icon>tips_and_updates</mat-icon>
-            <h4>Use Placeholder Variable</h4>
-          </div>
-          <div class="content-info-content">
-            <p>
-              Display an actual value of the answer in the solution content by using the variable
-              <strong class="content-info-variable">{{ '${ANSWER}' }}</strong>,
-              that will be resolved and replaced in displayed solution during the training run.
-            </p>
-          </div>
-        </div>
-        <sentinel-markdown-editor
-          (contentChange)="solution.setValue($event)"
-          [content]="solution.value"
-          [sentinel-markdown-file-upload]="false"
-          class="mrkdwn-solution"
+      </mat-form-field>
+
+      <!-- ESTIMATED DURATION field -->
+      <mat-form-field appearance="outline">
+        <mat-label>Estimated Duration in Minutes</mat-label>
+        <input
+          formControlName="estimatedDuration"
+          matInput
+          maxlength="9"
+          min="1"
+          placeholder="Estimated Duration in Minutes"
           />
-        @if (solution.hasError('whitespace')) {
-          <mat-error>Solution cannot be empty</mat-error>
+        @if (estimatedDuration.hasError('pattern') || estimatedDuration.hasError('min')) {
+          <mat-error>
+            Estimated Duration must be a number greater than or equal to 1
+          </mat-error>
         }
-      </div>
+      </mat-form-field>
 
-      <div class="right-panel">
-        <!-- MAX SCORE field -->
-        <mat-form-field
-          appearance="outline"
-          subscriptSizing="dynamic"
-                    hintLabel="Number in range from 0
-          to 100"
-          >
-          <mat-label>Points for the Level</mat-label>
-          <input
-            formControlName="maxScore"
-            matInput
-            max="100"
-            min="0"
-            placeholder="Points for the level"
-            required
-            type="number"
-            />
-          <mat-error>Maximal score must be a number in range from 0 to 100</mat-error>
-        </mat-form-field>
+      <!-- MINIMAL POSSIBLE SOLVE TIME field -->
+      <mat-form-field appearance="outline">
+        <mat-label>Minimal Possible Solve Time in Minutes</mat-label>
+        <input
+          formControlName="minimalPossibleSolveTime"
+          matInput
+          maxlength="9"
+          min="0"
+          placeholder="Minimal Possible Solve Time in Minutes"
+          />
+        @if (minimalPossibleSolveTime.hasError('pattern') || minimalPossibleSolveTime.hasError('min')) {
+          <mat-error
+            >
+            Minimal Possible Solve Time must be a number greater than or equal to 0
+          </mat-error>
+        }
+      </mat-form-field>
 
-        <!-- INCORRECT ANSWER LIMIT field -->
-        <mat-form-field
-          appearance="outline"
-          subscriptSizing="dynamic"
-                    hintLabel="1 to 100. If the limit
-          will be overreached, solution will be displayed automatically."
-          >
-          <mat-label>Incorrect Answer Limit</mat-label>
-          <input
-            formControlName="incorrectAnswerLimit"
-            matInput
-            max="100"
-            min="1"
-            placeholder="Incorrect Answer Limit"
-            required
-            type="number"
-            />
-          <mat-error>Incorrect answer limit must be in range of 1 to 100</mat-error>
-        </mat-form-field>
+      <!-- MAX SCORE field -->
+      <mat-form-field
+        appearance="outline"
+        hintLabel="Number in range from 0
+        to 100"
+        >
+        <mat-label>Points for the Level</mat-label>
+        <input
+          formControlName="maxScore"
+          matInput
+          max="100"
+          min="0"
+          placeholder="Points for the level"
+          required
+          type="number"
+          />
+        <mat-error>Maximal score must be a number in range from 0 to 100</mat-error>
+      </mat-form-field>
 
-        <!-- SHOW VARIANT ANSWERS checkbox -->
-        <mat-checkbox
-          formControlName="variantAnswers"
-          labelPosition="after"
-          matTooltip="Requires a sandbox definition with defined variables which will be generated uniquely for each sandbox."
-          >
-          Variant Answers (requires a specific sandbox definition)
-        </mat-checkbox>
+      <!-- INCORRECT ANSWER LIMIT field -->
+      <mat-form-field
+        appearance="outline"
+        subscriptSizing="dynamic"
+        hintLabel="Upon exceeding, solution is revealed automatically"
+        >
+        <mat-label>Incorrect Answer Limit</mat-label>
+        <input
+          formControlName="incorrectAnswerLimit"
+          matInput
+          max="100"
+          min="1"
+          placeholder="Incorrect Answer Limit"
+          required
+          type="number"
+          />
+        <mat-error>Incorrect answer limit must be in range of 1 to 100</mat-error>
+      </mat-form-field>
 
+      <div class="answer-row">
         <!-- ANSWER field, a fixed answer or a variable name depending on Variant Answers -->
         <mat-form-field
           (keydown.enter)="$event.preventDefault()"
           appearance="outline"
-          subscriptSizing="dynamic"
-          hintLabel="Max 50 characters"
+          class="answer-field"
           >
           <mat-label>{{ answerLabel }}</mat-label>
           <input formControlName="answer" matInput maxlength="50" [placeholder]="answerLabel"/>
@@ -158,22 +104,61 @@
           }
         </mat-form-field>
 
-        <!-- SOLUTION PENALIZED field -->
-        <mat-checkbox
-          formControlName="solutionPenalized"
-          matTooltip="Penalty for displaying the solution"
-          >
-          Solution Penalized (trainee will get 0 points for the level)
-        </mat-checkbox>
+        <div class="answer-options">
+          <!-- SHOW VARIANT ANSWERS checkbox -->
+          <mat-checkbox
+            formControlName="variantAnswers"
+            labelPosition="after"
+            matTooltip="Requires a sandbox definition with defined variables which will be generated uniquely for each sandbox."
+            >
+            Variant Answers
+          </mat-checkbox>
 
-        <!-- COMMANDS REQUIRED field -->
-        <mat-checkbox
-          formControlName="commandsRequired"
-          matTooltip="Indicates if level can be completed without using commands or not"
-          >
-          Is any command required to complete the level?
-        </mat-checkbox>
+          <!-- SOLUTION PENALIZED field -->
+          <mat-checkbox
+            formControlName="solutionPenalized"
+            matTooltip="Penalty for displaying the solution"
+            >
+            Solution reveal grants 0 points
+          </mat-checkbox>
+
+          <!-- COMMANDS REQUIRED field -->
+          <mat-checkbox
+            formControlName="commandsRequired"
+            matTooltip="The level must be completed with commands. Cheating detection warns about levels solved without them, when cheating detection is configured."
+            >
+            Commands required
+          </mat-checkbox>
+        </div>
       </div>
+    </div>
+
+    <div class="level-texts">
+      <!--CONTENT field -->
+      <h3>Content</h3>
+      <crczp-markdown-editor formControlName="content" />
+      @if (content.hasError('whitespace')) {
+        <mat-error>Content cannot be empty</mat-error>
+      }
+      <!--SOLUTION field -->
+      <h3>Solution</h3>
+      <div class="content-info">
+        <div class="content-info-head">
+          <mat-icon>tips_and_updates</mat-icon>
+          <h4>Use Placeholder Variable</h4>
+        </div>
+        <div class="content-info-content">
+          <p>
+            Display an actual value of the answer in the solution content by using the variable
+            <strong class="content-info-variable">{{ '${ANSWER}' }}</strong>,
+            that will be resolved and replaced in displayed solution during the training run.
+          </p>
+        </div>
+      </div>
+      <crczp-markdown-editor label="Solution" formControlName="solution" />
+      @if (solution.hasError('whitespace')) {
+        <mat-error>Solution cannot be empty</mat-error>
+      }
     </div>
 
     <!--HINTS component -->

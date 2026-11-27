@@ -1,8 +1,8 @@
 <div class="container">
     <div class="level-content">
         <div class="left-panel round-scrollbar">
-            <sentinel-markdown-view [markdown]="levelContent()" />
-            <div class="vflex g-1rem">
+            <crczp-markdown-view [markdown]="levelContent()" />
+            <div class="vflex g-1rem hints">
                 @for (hint of activeHints(); track hint.id) {
                     <crczp-hint-content [hintText]="hint.content" [hintTitle]="hint.title" />
                 }

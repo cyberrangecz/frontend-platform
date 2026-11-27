@@ -1,0 +1,158 @@
+@use '../styles/presentation' as presentation;
+
+$strip-height: calc(3 * var(--space-xl));
+$rule-color: var(--mat-sys-outline-variant);
+$tab-indicator: var(--space-4xs);
+
+:host {
+    container-type: inline-size;
+    display: block;
+    box-sizing: border-box;
+    block-size: var(--markdown-editor-block-size, 524px);
+    min-block-size: var(--markdown-editor-min-block-size, 524px);
+    overflow: hidden;
+    border: 1px solid $rule-color;
+    border-radius: var(--space-md);
+    background: var(--mat-sys-surface-container-lowest);
+    transition:
+        border-color 160ms ease,
+        box-shadow 160ms ease;
+
+    &:focus-within {
+        border-color: var(--mat-sys-primary);
+        box-shadow: 0 0 0 1px var(--mat-sys-primary);
+    }
+}
+
+.editor-frame {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    block-size: 100%;
+}
+
+.editor-strip {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr auto;
+    grid-template-rows: $strip-height;
+    grid-template-areas: 'mode format materials expand';
+    align-items: center;
+    background: var(--mat-sys-surface-container-low);
+    box-shadow: inset 0 -1px 0 $rule-color;
+}
+
+.editor-mode {
+    --mat-button-toggle-height: #{$strip-height};
+    --mat-button-toggle-shape: 0;
+    --mat-button-toggle-divider-color: transparent;
+    --mat-button-toggle-background-color: transparent;
+    --mat-button-toggle-text-color: var(--mat-sys-on-surface-variant);
+    --mat-button-toggle-selected-state-background-color: transparent;
+    --mat-button-toggle-selected-state-text-color: var(--mat-sys-primary);
+    --mat-button-toggle-label-text-size: var(--font-size-lg);
+    --mat-button-toggle-label-text-weight: var(--font-weight-medium);
+    --mat-button-toggle-label-text-tracking: 0;
+
+    grid-area: mode;
+    justify-self: start;
+    align-self: stretch;
+    border: none;
+    border-radius: 0;
+
+    .mat-button-toggle {
+        box-shadow: inset 0 0 0 $rule-color;
+        transition:
+            color 160ms ease,
+            box-shadow 200ms presentation.$ease-emphasized;
+    }
+
+    .mat-button-toggle + .mat-button-toggle {
+        border-inline-start: none;
+    }
+
+    .mat-button-toggle-checked {
+        box-shadow: inset 0 calc(-1 * $tab-indicator) 0 var(--mat-sys-primary);
+    }
+
+    mat-icon {
+        width: var(--font-size-2xl);
+        height: var(--font-size-2xl);
+        margin-inline-end: var(--space-2xs);
+        font-size: var(--font-size-2xl);
+        vertical-align: text-bottom;
+    }
+}
+
+.editor-format {
+    grid-area: format;
+}
+
+.editor-strip--readonly {
+    .editor-format,
+    .editor-materials {
+        opacity: 0.38;
+    }
+}
+
+.editor-materials {
+    grid-area: materials;
+    justify-self: end;
+    align-self: stretch;
+    min-inline-size: min(16rem, 40cqi);
+}
+
+.editor-expand {
+    @include presentation.centered-icon-button;
+    --mat-icon-button-icon-color: var(--mat-sys-on-surface-variant);
+
+    grid-area: expand;
+    align-self: center;
+    margin-inline: var(--space-3xs);
+}
+
+@container (max-width: 64rem) {
+    .editor-strip {
+        grid-template-columns: 1fr auto auto;
+        grid-template-rows: $strip-height auto;
+        grid-template-areas:
+            'mode materials expand'
+            'format format format';
+    }
+
+    .editor-format {
+        align-self: stretch;
+        min-block-size: $strip-height;
+        box-shadow: inset 0 1px 0 $rule-color;
+    }
+}
+
+@container (max-width: 36rem) {
+    .editor-strip {
+        grid-template-columns: 1fr auto;
+        grid-template-rows: $strip-height auto auto;
+        grid-template-areas:
+            'mode expand'
+            'materials materials'
+            'format format';
+    }
+
+    .editor-materials {
+        justify-self: stretch;
+        box-sizing: border-box;
+        min-inline-size: 0;
+        min-block-size: $strip-height;
+        border-block-start: 1px solid $rule-color;
+    }
+}
+
+.editor-content {
+    overflow-y: auto;
+    scrollbar-gutter: stable both-edges;
+    scrollbar-color: var(--mat-sys-outline-variant) transparent;
+    scrollbar-width: thin;
+
+    &--raw,
+    &--contained {
+        overflow: hidden;
+        scrollbar-gutter: auto;
+    }
+}

@@ -10,6 +10,15 @@ export interface RequestOptions {
     body?: unknown;
 }
 
+/** A binary answer with the headers a caller dispatches on. */
+export interface BinaryAnswer {
+    /** Media type of the answer without parameters, lowercase. */
+    contentType: string;
+    /** Value of the Content-Disposition header, empty when the answer has none. */
+    contentDisposition: string;
+    bytes: Buffer;
+}
+
 /** A REST call that answered with a status outside 2xx. */
 export class ApiError extends Error {
     constructor(
@@ -93,6 +102,52 @@ export class ApiClient {
             throw new ApiError('GET', url, response.status(), text);
         }
         return text;
+    }
+
+    /**
+     * Downloads a body that is not JSON, naming the media types the caller can take in `accept`.
+     * A status outside 2xx throws an `ApiError`.
+     */
+    async getBinary(path: string, accept: string, query?: Query): Promise<BinaryAnswer> {
+        const url = `${environment.apiRoots[this.service]}${path}${queryString(query)}`;
+        const context = await requestContext();
+        const response = await context.get(url, {
+            headers: { Authorization: `Bearer ${await this.tokens.accessToken()}`, Accept: accept },
+            failOnStatusCode: false,
+        });
+        const bytes = await response.body();
+        if (!response.ok()) {
+            throw new ApiError('GET', url, response.status(), bytes.toString('utf-8'));
+        }
+        return {
+            contentType: (response.headers()['content-type'] ?? '').split(';')[0].trim().toLowerCase(),
+            contentDisposition: response.headers()['content-disposition'] ?? '',
+            bytes,
+        };
+    }
+
+    /**
+     * Posts raw bytes under the given Content-Type and parses a JSON answer. A status outside
+     * 2xx throws an `ApiError` carrying the status and the server's reason.
+     */
+    async postBytes<T>(path: string, bytes: Uint8Array, contentType: string): Promise<T> {
+        const url = `${environment.apiRoots[this.service]}${path}`;
+        const context = await requestContext();
+        const response = await context.fetch(url, {
+            method: 'POST',
+            headers: {
+                Authorization: `Bearer ${await this.tokens.accessToken()}`,
+                Accept: 'application/json',
+                'Content-Type': contentType,
+            },
+            data: Buffer.from(bytes),
+            failOnStatusCode: false,
+        });
+        const text = await response.text();
+        if (!response.ok()) {
+            throw new ApiError('POST', url, response.status(), text);
+        }
+        return (text ? JSON.parse(text) : undefined) as T;
     }
 
     get<T>(path: string, query?: Query): Promise<T> {

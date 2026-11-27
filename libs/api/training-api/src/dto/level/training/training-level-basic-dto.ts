@@ -15,8 +15,6 @@ export const MitreTechniqueDtoSchema = z.object({
     technique_key: z.string(),
 });
 
-export type MitreTechniqueDto = z.infer<typeof MitreTechniqueDtoSchema>;
-
 export const TrainingLevelBasicDtoSchema = z.object({
     id: idSchema,
     title: z.string().min(1),

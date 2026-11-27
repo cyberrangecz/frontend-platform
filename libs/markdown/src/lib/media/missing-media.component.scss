@@ -1,0 +1,91 @@
+@use '../styles/presentation' as presentation;
+@use 'media-tokens' as tokens;
+
+:host {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: tokens.$card-icon-gap;
+    box-sizing: border-box;
+    max-width: 100%;
+    border: 1px dashed color-mix(in srgb, var(--mat-sys-error) 60%, transparent);
+    border-radius: presentation.$card-radius;
+    background: color-mix(in srgb, var(--mat-sys-error) 5%, var(--mat-sys-surface-container-lowest));
+    line-height: tokens.$line-height-normal;
+
+    @include tokens.card-inset;
+}
+
+.missing-icon {
+    @include presentation.icon-tile;
+
+    background: color-mix(in srgb, var(--mat-sys-error) 12%, transparent);
+    color: var(--mat-sys-error);
+}
+
+.missing-text {
+    display: flex;
+    flex: 1 1 0;
+    flex-direction: column;
+    gap: var(--space-4xs);
+    min-width: 0;
+    min-height: calc(2 * var(--space-2xl));
+    justify-content: center;
+}
+
+.missing-title {
+    color: var(--mat-sys-on-surface);
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-medium);
+}
+
+.missing-detail {
+    color: var(--mat-sys-on-surface-variant);
+    font-size: var(--font-size-md);
+}
+
+.missing-hash {
+    padding: 0 var(--space-3xs);
+    border-radius: var(--space-3xs);
+    background: var(--mat-sys-surface-container-high);
+    font-family: presentation.$monospace;
+    font-size: var(--font-size-sm);
+}
+
+.missing-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+    margin-top: var(--space-xs);
+}
+
+.missing-action {
+    --mat-button-outlined-container-height: calc(2 * var(--space-xl));
+    --mat-button-text-container-height: calc(2 * var(--space-xl));
+    --mat-button-outlined-label-text-size: var(--font-size-md);
+    --mat-button-text-label-text-size: var(--font-size-md);
+    --mat-button-outlined-outline-color: color-mix(in srgb, var(--mat-sys-error) 40%, var(--mat-sys-outline-variant));
+
+    &[aria-expanded='true'] {
+        background: color-mix(in srgb, var(--mat-sys-primary) 10%, transparent);
+    }
+
+    &--remove {
+        --mat-button-text-label-text-color: var(--mat-sys-error);
+        --mat-button-text-state-layer-color: var(--mat-sys-error);
+    }
+}
+
+.missing-picker {
+    flex: 1 1 100%;
+    outline: 1px solid var(--mat-sys-outline-variant);
+    outline-offset: -1px;
+    animation: missing-picker-in tokens.$duration-base presentation.$ease-decelerate both;
+}
+
+@keyframes missing-picker-in {
+    from {
+        opacity: 0;
+        transform: translateY(calc(-1 * var(--space-xs)));
+    }
+}
