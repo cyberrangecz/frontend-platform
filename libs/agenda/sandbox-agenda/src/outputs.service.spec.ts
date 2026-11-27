@@ -272,6 +272,21 @@ describe('OutputsService', () => {
         }
     });
 
+    it('leaves 401 and 403 to the error dialog and stops polling on them', () => {
+        for (const status of [401, 403]) {
+            contentRequests.length = 0;
+            contentRequestExpectedErrors.length = 0;
+            emitNotification.mockClear();
+            startPolling(RequestStageState.RUNNING, status);
+            contentRequest(0).error(new HttpErrorResponse({ status }));
+            vi.advanceTimersByTime(POLLING_PERIOD_MS * 3);
+
+            expect(contentRequestExpectedErrors[0]).not.toContain(status);
+            expect(contentRequests).toHaveLength(1);
+            expect(emitNotification).not.toHaveBeenCalled();
+        }
+    });
+
     it('shows one warning toast per streak of failed polls', () => {
         startPolling(RequestStageState.RUNNING);
         contentRequest(0).next({ content: 'a', rows: 1 } as LogOutput);

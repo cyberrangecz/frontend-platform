@@ -3,7 +3,7 @@ import {
     RequestStageState,
     RequestStageType,
 } from '@crczp/sandbox-model';
-import { BehaviorSubject, defer, EMPTY, Observable } from 'rxjs';
+import { BehaviorSubject, defer, EMPTY, Observable, timer } from 'rxjs';
 import { AllocationRequestsApi } from '@crczp/sandbox-api';
 import { inject, Injectable } from '@angular/core';
 import {
@@ -43,11 +43,18 @@ export const OUTPUTS_NOT_FETCHED: OutputsNotFetched = { status: 'not-fetched' };
 
 const OUTPUTS_LOADING: OutputsLoading = { status: 'loading' };
 
-/** HTTP status codes of a failed outputs request: network failures, client and server errors. */
+/** HTTP status codes answering a refused request, which the global error handler reports. */
+const REFUSAL_STATUS_CODES: readonly number[] = [401, 403];
+
+/** HTTP status codes of a failed outputs request that polling reports itself: network failures, and client and server errors other than refusals. */
 const FAILURE_STATUS_CODES = [
     0,
     ...Array.from({ length: 200 }, (_, offset) => 400 + offset),
-];
+].filter((statusCode) => !REFUSAL_STATUS_CODES.includes(statusCode));
+
+function isRefusal(error: unknown): boolean {
+    return error instanceof HttpErrorResponse && REFUSAL_STATUS_CODES.includes(error.status);
+}
 
 /** Log text shown when the first fetch of a stage log fails. */
 const FIRST_FETCH_FAILURE_TEXT = 'Failed to fetch logs';
@@ -74,6 +81,7 @@ export class OutputsService {
     private confirmedContent = '';
     private confirmedRows = 0;
     private isFailureReported = false;
+    private isPollingRefused = false;
 
     /** Emits the log state, starting with the not-fetched state. */
     public readonly log$: Observable<OutputsState> =
@@ -87,7 +95,9 @@ export class OutputsService {
      * fetching one answer after another while it runs. A stage that is not
      * running is fetched once per state change, which picks up the final rows.
      * The log accumulates in {@link log$}. Only the first of consecutive failed
-     * fetches shows a warning toast; a failed fetch leaves the log as it is.
+     * fetches shows a warning toast; a failed fetch leaves the log as it is. A
+     * 401 or 403 answer is left to the global error handler and ends the polling
+     * of the current stage state.
      *
      * @param stage$ Emits the current stage.
      * @param requestId ID of the request the stage belongs to.
@@ -103,17 +113,23 @@ export class OutputsService {
                 map((stage) => stage.state),
                 distinctUntilChanged(),
                 filter((state) => state !== RequestStageState.QUEUED),
-                switchMap((state) =>
-                    state === RequestStageState.RUNNING ||
-                    state === RequestStageState.RETRY
+                switchMap((state) => {
+                    this.isPollingRefused = false;
+                    return state === RequestStageState.RUNNING ||
+                        state === RequestStageState.RETRY
                         ? this.fetchOutputs(requestId).pipe(
                               repeat({
-                                  delay: this.config.polling
-                                      .pollingPeriodShortMs,
+                                  delay: () =>
+                                      this.isPollingRefused
+                                          ? EMPTY
+                                          : timer(
+                                                this.config.polling
+                                                    .pollingPeriodShortMs,
+                                            ),
                               }),
                           )
-                        : this.fetchOutputs(requestId),
-                ),
+                        : this.fetchOutputs(requestId);
+                }),
                 ignoreElements(),
             );
         });
@@ -127,6 +143,7 @@ export class OutputsService {
         this.confirmedContent = '';
         this.confirmedRows = 0;
         this.isFailureReported = false;
+        this.isPollingRefused = false;
         this.stateSubject.next(OUTPUTS_NOT_FETCHED);
     }
 
@@ -168,7 +185,7 @@ export class OutputsService {
 
     /**
      * Ends the loading state with a log naming the failure, and shows a warning toast for the
-     * first failure since the last successful fetch.
+     * first failure since the last successful fetch. A refusal shows no toast and stops polling.
      */
     private reportFailure(error: unknown): void {
         if (this.stateSubject.value.status === 'loading') {
@@ -177,6 +194,10 @@ export class OutputsService {
                 content: FIRST_FETCH_FAILURE_TEXT,
                 rows: 0,
             });
+        }
+        if (isRefusal(error)) {
+            this.isPollingRefused = true;
+            return;
         }
         if (this.isFailureReported) {
             return;
