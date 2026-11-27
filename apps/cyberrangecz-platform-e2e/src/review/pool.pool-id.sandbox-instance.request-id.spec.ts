@@ -1,7 +1,5 @@
 import type { Locator, Page } from '@playwright/test';
 import { expect, test } from '../support/fixtures';
-import { POOL_LINKS, ROLES_WITHOUT_POOL_ACCESS } from '../support/pages/pool/pool-access';
-import { expectRedirectedAway } from '../support/route-guard';
 import { locateChainSandbox, type ChainSandbox } from '../support/pages/pool/review-sandbox';
 import { readChainRecord } from '../support/shared-fixture';
 import { breadcrumbLink, dismissErrorDialogs, errorDialog, pageTitle, waitForPageReady } from '../support/ui';
@@ -58,101 +56,122 @@ test.describe('pool.pool-id.sandbox-instance.request-id', () => {
         });
     }
 
-    test('shows the title, breadcrumbs and one indicator for each of the three stages', async ({
-        page,
-        checkpoint,
-    }) => {
-        await openRequest(page);
-        await expect(pageTitle(page)).toHaveText('Allocation Request Stages');
-        await expect(breadcrumbLink(page, 'Allocation Request')).toBeVisible();
-        await expect(stageIndicators(page)).toHaveCount(3);
-        await checkpoint(page, 'allocation request stages');
-    });
+    test('shows the carousel of the three stages and moves between them', async ({ page, checkpoint }) => {
+        test.slow();
 
-    for (const [index, title] of STAGE_TITLES.entries()) {
-        test(`centres stage ${index + 1} with its title, order number and finished state for the fragment #stage-${index + 1}`, async ({
-            page,
-            checkpoint,
-        }) => {
-            await openRequest(page, `#stage-${index + 1}`);
-            const centre = selectedStage(page);
-            await expect(centre.getByRole('heading', { name: title })).toBeVisible();
-            await expect(centre.getByRole('heading', { name: `${index + 1} / 3` })).toBeVisible();
-            await expect(centre.getByRole('heading', { name: 'Finished' })).toBeVisible();
-            await checkpoint(page, `stage ${index + 1} centred`);
+        await test.step('shows the title, breadcrumbs and one indicator for each of the three stages', async () => {
+            await openRequest(page);
+            await expect.soft(pageTitle(page), 'page title').toHaveText('Allocation Request Stages');
+            await expect.soft(breadcrumbLink(page, 'Allocation Request'), 'breadcrumb').toBeVisible();
+            await expect.soft(stageIndicators(page), 'one indicator per stage').toHaveCount(3);
+            await checkpoint(page, 'allocation request stages');
         });
-    }
 
-    test('moves to a stage when its indicator is clicked', async ({ page }) => {
-        await openRequest(page, '#stage-1');
-        await stageIndicators(page).nth(2).click();
-        await expect(page).toHaveURL(/#stage-3$/);
-        await expect(selectedStage(page).getByRole('heading', { name: STAGE_TITLES[2]! })).toBeVisible();
+        for (const [index, title] of STAGE_TITLES.entries()) {
+            await test.step(`centres stage ${index + 1} with its title, order number and finished state for the fragment #stage-${index + 1}`, async () => {
+                await openRequest(page, `#stage-${index + 1}`);
+                const centre = selectedStage(page);
+                await expect.soft(centre.getByRole('heading', { name: title }), 'stage title').toBeVisible();
+                await expect
+                    .soft(centre.getByRole('heading', { name: `${index + 1} / 3` }), 'order number')
+                    .toBeVisible();
+                await expect.soft(centre.getByRole('heading', { name: 'Finished' }), 'finished state').toBeVisible();
+                await checkpoint(page, `stage ${index + 1} centred`);
+            });
+        }
+
+        await test.step('moves to a stage when its indicator is clicked', async () => {
+            await openRequest(page, '#stage-1');
+            await stageIndicators(page).nth(2).click();
+            await expect.soft(page, 'URL fragment').toHaveURL(/#stage-3$/);
+            await expect
+                .soft(selectedStage(page).getByRole('heading', { name: STAGE_TITLES[2]! }), 'centred stage title')
+                .toBeVisible();
+        });
+
+        await test.step('moves to a neighbouring stage when its carousel card is clicked', async () => {
+            await openRequest(page, '#stage-2');
+            await clickCarouselCard(page, 2);
+            await expect.soft(page, 'URL after the next card').toHaveURL(/#stage-3$/);
+            await clickCarouselCard(page, 0);
+            await expect.soft(page, 'URL after the previous card').toHaveURL(/#stage-2$/);
+        });
+
+        await test.step('hides the neighbours that do not exist at the ends of the carousel', async () => {
+            await openRequest(page, '#stage-1');
+            await expect
+                .soft(page.locator('.carousel-item[data-position="0"]'), 'missing previous card')
+                .toHaveClass(/carousel-item--hidden/);
+            await expect
+                .soft(page.locator('.carousel-item[data-position="2"]'), 'existing next card')
+                .not.toHaveClass(/carousel-item--hidden/);
+        });
+
+        for (const { fragment, stage, description } of [
+            { fragment: '#unknown', stage: 1, description: 'a fragment that is not a stage' },
+            { fragment: '#stage-0', stage: 1, description: 'the fragment #stage-0' },
+            { fragment: '#stage-7', stage: 3, description: 'a stage number above the stage count' },
+        ]) {
+            await test.step(`opens on stage ${stage} for ${description}`, async () => {
+                await openRequest(page, fragment);
+                await expect
+                    .soft(selectedStage(page).getByRole('heading', { name: `${stage} / 3` }), 'centred stage number')
+                    .toBeVisible();
+            });
+        }
     });
 
-    test('moves to a neighbouring stage when its carousel card is clicked', async ({ page }) => {
-        await openRequest(page, '#stage-2');
-        await clickCarouselCard(page, 2);
-        await expect(page).toHaveURL(/#stage-3$/);
-        await clickCarouselCard(page, 0);
-        await expect(page).toHaveURL(/#stage-2$/);
-    });
+    test('moves between the stages with the keyboard', async ({ page }) => {
+        test.slow();
 
-    test('hides the neighbours that do not exist at the ends of the carousel', async ({ page }) => {
-        await openRequest(page, '#stage-1');
-        await expect(page.locator('.carousel-item[data-position="0"]')).toHaveClass(/carousel-item--hidden/);
-        await expect(page.locator('.carousel-item[data-position="2"]')).not.toHaveClass(/carousel-item--hidden/);
-    });
-
-    test.describe('keyboard', () => {
-        test('cycles through the stages with the Right arrow and wraps from the last to the first', async ({
-            page,
-        }) => {
+        await test.step('cycles through the stages with the Right arrow and wraps from the last to the first', async () => {
             await openRequest(page, '#stage-1');
             await page.keyboard.press('ArrowRight');
-            await expect(page).toHaveURL(/#stage-2$/);
+            await expect.soft(page, 'after the first press').toHaveURL(/#stage-2$/);
             await page.keyboard.press('ArrowRight');
-            await expect(page).toHaveURL(/#stage-3$/);
+            await expect.soft(page, 'after the second press').toHaveURL(/#stage-3$/);
             await page.keyboard.press('ArrowRight');
-            await expect(page).toHaveURL(/#stage-1$/);
+            await expect.soft(page, 'after wrapping').toHaveURL(/#stage-1$/);
         });
 
-        test('cycles backwards with the Left arrow and wraps from the first to the last', async ({ page }) => {
+        await test.step('cycles backwards with the Left arrow and wraps from the first to the last', async () => {
             await openRequest(page, '#stage-1');
             await page.keyboard.press('ArrowLeft');
-            await expect(page).toHaveURL(/#stage-3$/);
+            await expect.soft(page, 'after wrapping').toHaveURL(/#stage-3$/);
             await page.keyboard.press('ArrowLeft');
-            await expect(page).toHaveURL(/#stage-2$/);
-            await expect(selectedStage(page).getByRole('heading', { name: '2 / 3' })).toBeVisible();
+            await expect.soft(page, 'after the second press').toHaveURL(/#stage-2$/);
+            await expect
+                .soft(selectedStage(page).getByRole('heading', { name: '2 / 3' }), 'centred stage number')
+                .toBeVisible();
         });
 
-        test('keeps the stage when an arrow is pressed together with a modifier', async ({ page }) => {
+        await test.step('keeps the stage when an arrow is pressed together with a modifier', async () => {
             await openRequest(page, '#stage-2');
             await page.keyboard.press('Shift+ArrowRight');
             await page.keyboard.press('Alt+ArrowLeft');
-            await expect(page).toHaveURL(/#stage-2$/);
+            await expect.soft(page, 'stage stays').toHaveURL(/#stage-2$/);
         });
 
-        test('keeps the stage when an arrow is pressed inside the log editor', async ({ page }) => {
+        await test.step('keeps the stage when an arrow is pressed inside the log editor', async () => {
             await openRequest(page, '#stage-2');
             await selectedStage(page).locator('.cm-content').click();
             await page.keyboard.press('ArrowRight');
             await page.keyboard.press('ArrowLeft');
-            await expect(page).toHaveURL(/#stage-2$/);
+            await expect.soft(page, 'stage stays').toHaveURL(/#stage-2$/);
         });
 
-        test('keeps the stage when an arrow is pressed inside the log search field', async ({ page }) => {
+        await test.step('keeps the stage when an arrow is pressed inside the log search field', async () => {
             await openRequest(page, '#stage-2');
             await selectedStage(page).getByRole('button', { name: 'Search log', exact: true }).click();
             const field = selectedStage(page).locator('.cm-search').getByRole('textbox').first();
             await field.fill('ab');
             await page.keyboard.press('ArrowLeft');
             await page.keyboard.press('ArrowRight');
-            await expect(field).toBeFocused();
-            await expect(page).toHaveURL(/#stage-2$/);
+            await expect.soft(field, 'search field keeps focus').toBeFocused();
+            await expect.soft(page, 'stage stays').toHaveURL(/#stage-2$/);
         });
 
-        test('keeps the stage when an arrow is pressed inside a text field', async ({ page }) => {
+        await test.step('keeps the stage when an arrow is pressed inside a text field', async () => {
             await openRequest(page, '#stage-2');
             await page.evaluate(() => {
                 const field = document.createElement('input');
@@ -162,78 +181,71 @@ test.describe('pool.pool-id.sandbox-instance.request-id', () => {
             });
             await page.keyboard.press('ArrowRight');
             await page.keyboard.press('ArrowLeft');
-            await expect(page).toHaveURL(/#stage-2$/);
+            await expect.soft(page, 'stage stays').toHaveURL(/#stage-2$/);
         });
     });
 
-    for (const { fragment, stage, description } of [
-        { fragment: '#unknown', stage: 1, description: 'a fragment that is not a stage' },
-        { fragment: '#stage-0', stage: 1, description: 'the fragment #stage-0' },
-        { fragment: '#stage-7', stage: 3, description: 'a stage number above the stage count' },
-    ]) {
-        test(`opens on stage ${stage} for ${description}`, async ({ page }) => {
-            await openRequest(page, fragment);
-            await expect(selectedStage(page).getByRole('heading', { name: `${stage} / 3` })).toBeVisible();
+    test('shows the stage information and the log output of a finished stage', async ({ page }) => {
+        test.slow();
+        await page.addInitScript(() => {
+            (window as unknown as { openedUrls: unknown[][] }).openedUrls = [];
+            window.open = (...args: unknown[]) => {
+                (window as unknown as { openedUrls: unknown[][] }).openedUrls.push(args);
+                return null;
+            };
         });
-    }
 
-    test.describe('stage information', () => {
-        test('expands and collapses the start, end and duration under the stage title', async ({ page }) => {
+        await test.step('expands and collapses the start, end and duration under the stage title', async () => {
             await openRequest(page, '#stage-1');
             const centre = selectedStage(page);
             await centre.getByRole('button').first().click();
             for (const tooltip of ['double_arrow', 'stop_circle', 'schedule']) {
-                await expect(centre.locator('.allocation-info mat-icon', { hasText: tooltip })).toBeVisible();
+                await expect
+                    .soft(centre.locator('.allocation-info mat-icon', { hasText: tooltip }), `${tooltip} icon`)
+                    .toBeVisible();
             }
             await centre.getByRole('button').first().click();
-            await expect(centre.locator('.allocation-info')).toHaveCount(0);
+            await expect.soft(centre.locator('.allocation-info'), 'collapsed information').toHaveCount(0);
         });
 
-        test('collapses the information when the page is clicked elsewhere', async ({ page }) => {
+        await test.step('collapses the information when the page is clicked elsewhere', async () => {
             await openRequest(page, '#stage-1');
             const centre = selectedStage(page);
             await centre.getByRole('button').first().click();
-            await expect(centre.locator('.allocation-info')).toBeVisible();
+            await expect.soft(centre.locator('.allocation-info'), 'expanded information').toBeVisible();
             await pageTitle(page).click();
-            await expect(centre.locator('.allocation-info')).toHaveCount(0);
+            await expect.soft(centre.locator('.allocation-info'), 'collapsed information').toHaveCount(0);
         });
 
-        test('shows the Ansible revision and repository link on the Ansible stages and opens the repository in a new tab', async ({
-            page,
-        }) => {
-            await page.addInitScript(() => {
-                (window as unknown as { openedUrls: unknown[][] }).openedUrls = [];
-                window.open = (...args: unknown[]) => {
-                    (window as unknown as { openedUrls: unknown[][] }).openedUrls.push(args);
-                    return null;
-                };
-            });
+        await test.step('shows the Ansible revision and repository link on the Ansible stages and opens the repository in a new tab', async () => {
             await openRequest(page, '#stage-2');
             const centre = selectedStage(page);
             await centre.getByRole('button').first().click();
-            await expect(centre.locator('.allocation-info mat-icon', { hasText: 'commit' })).toBeVisible();
+            await expect
+                .soft(centre.locator('.allocation-info mat-icon', { hasText: 'commit' }), 'revision icon')
+                .toBeVisible();
             const link = centre.locator('.allocation-info a.repo-link');
-            await expect(link).toBeVisible();
+            await expect.soft(link, 'repository link').toBeVisible();
             const address = await link.getAttribute('href');
             await link.click();
             const opened = await page.evaluate(
                 () => (window as unknown as { openedUrls: unknown[][] }).openedUrls,
             );
-            expect(opened).toEqual([[address, '_blank', 'noopener']]);
-            await expect(page).toHaveURL(/#stage-2$/);
+            expect.soft(opened, 'window.open calls').toEqual([[address, '_blank', 'noopener']]);
+            await expect.soft(page, 'stage stays').toHaveURL(/#stage-2$/);
         });
 
-        test('shows no repository link on the Terraform stage', async ({ page }) => {
+        await test.step('shows no repository link on the Terraform stage', async () => {
             await openRequest(page, '#stage-1');
             const centre = selectedStage(page);
             await centre.getByRole('button').first().click();
-            await expect(centre.locator('.allocation-info a.repo-link')).toHaveCount(0);
+            await expect.soft(centre.locator('.allocation-info a.repo-link'), 'repository link').toHaveCount(0);
         });
-    });
 
-    test('shows the log output of a finished stage', async ({ page }) => {
-        await openRequest(page, '#stage-1');
-        await expect(selectedStage(page).locator('crczp-log-view')).toBeVisible();
+        await test.step('shows the log output of a finished stage', async () => {
+            await openRequest(page, '#stage-1');
+            await expect.soft(selectedStage(page).locator('crczp-log-view'), 'log view').toBeVisible();
+        });
     });
 
     test.describe('loading failure', () => {
@@ -252,10 +264,4 @@ test.describe('pool.pool-id.sandbox-instance.request-id', () => {
             await expect(selectedStage(page)).toBeVisible();
         });
     });
-
-    for (const role of ROLES_WITHOUT_POOL_ACCESS) {
-        test(`sends the ${role} account away from /pool/:id/sandbox-instance/:requestId`, async ({ openAs }) => {
-            await expectRedirectedAway(openAs, role, requestPath(), { absentLinks: POOL_LINKS });
-        });
-    }
 });

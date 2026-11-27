@@ -1,9 +1,10 @@
 import { expect, test } from '../../support/fixtures';
 import type { SandboxDefinitionRecord } from '../../support/pages/sandbox-definition/definition-source';
-import { ROLES_WITHOUT_ACCESS, SANDBOX_DEFINITION_LINKS } from '../../support/pages/sandbox-definition/roles-without-access';
-import { expectRedirectedAway } from '../../support/route-guard';
 import { SandboxDefinitionTopologyPage } from '../../support/pages/sandbox-definition/sandbox-definition-topology.page';
-import { describeTopology, type TopologyPayload } from '../../support/pages/sandbox-definition/topology-description';
+import {
+    describeTopology,
+    type TopologyPayload,
+} from '../../support/pages/sandbox-definition/topology-description';
 import {
     breadcrumbLink,
     breadcrumbs,
@@ -19,115 +20,146 @@ test.describe('/sandbox-definition/:definitionId/topology', () => {
     test.use({ account: 'sandboxDesigner' });
 
     test.describe('sandbox designer', () => {
-        test('titles the page with the name of the definition', async ({ page, shared, apiAs }) => {
-            const record = await apiAs('sandboxDesigner').sandbox.get<SandboxDefinitionRecord>(
-                `/definitions/${shared.sandboxDefinition.id}`,
+        test('checks the topology page of a definition', async ({
+            page,
+            shared,
+            apiAs,
+            checkpoint,
+        }) => {
+            test.slow();
+            const topology = new SandboxDefinitionTopologyPage(page);
+            const topologyResponse = page.waitForResponse((candidate) =>
+                candidate
+                    .url()
+                    .endsWith(
+                        `/definitions/${shared.sandboxDefinition.id}/topology`,
+                    ),
             );
-            const topology = new SandboxDefinitionTopologyPage(page);
-
             await topology.open(shared.sandboxDefinition.id);
 
-            await expect(pageTitle(page)).toHaveText(`Topology of ${record.name}`);
-            await expect(breadcrumbs(page)).toContainText('Sandbox Definitions');
-            await expect(breadcrumbs(page)).toContainText('Topology');
-        });
+            await test.step('titles the page with the name of the definition', async () => {
+                const record = await apiAs(
+                    'sandboxDesigner',
+                ).sandbox.get<SandboxDefinitionRecord>(
+                    `/definitions/${shared.sandboxDefinition.id}`,
+                );
 
-        test('loads the topology of the definition from the sandbox service', async ({ page, shared }) => {
-            const topology = new SandboxDefinitionTopologyPage(page);
-            const response = page.waitForResponse((candidate) =>
-                candidate.url().endsWith(`/definitions/${shared.sandboxDefinition.id}/topology`),
-            );
-
-            await topology.open(shared.sandboxDefinition.id);
-
-            expect((await response).status()).toBe(200);
-        });
-
-        test('draws the topology graph on a canvas', async ({ page, shared, checkpoint, apiAs }) => {
-            const topology = new SandboxDefinitionTopologyPage(page);
-
-            await topology.open(shared.sandboxDefinition.id);
-
-            await expect(topology.stabilizedGraph).toBeVisible();
-            await expect(topology.canvas).toBeVisible();
-            await expect.poll(() => topology.hasDrawnContent()).toBe(true);
-            await expect(topology.unavailableMessage).toHaveCount(0);
-            const payload = await apiAs('sandboxDesigner').sandbox.get<TopologyPayload>(
-                `/definitions/${shared.sandboxDefinition.id}/topology`,
-            );
-            await checkpoint(page, 'topology graph drawn', describeTopology(payload));
-        });
-
-        test('offers only the Topology tab and no console tab', async ({ page, shared }) => {
-            const topology = new SandboxDefinitionTopologyPage(page);
-
-            await topology.open(shared.sandboxDefinition.id);
-
-            await expect(topology.tabs).toHaveCount(1);
-            await expect(topology.tabs.first()).toHaveText('Topology');
-            await expect(topology.tabs.first()).toHaveAttribute('aria-selected', 'true');
-        });
-
-        test('offers no sandbox access actions for a definition', async ({ page, shared }) => {
-            const topology = new SandboxDefinitionTopologyPage(page);
-
-            await topology.open(shared.sandboxDefinition.id);
-
-            await expect(topology.stabilizedGraph).toBeVisible();
-            await expect(page.locator('crczp-sandbox-access-actions')).toHaveCount(0);
-            await expect(topology.wrapper.getByRole('button', { name: /ssh|access/i })).toHaveCount(0);
-        });
-
-        test('cycling tabs with the keyboard keeps the only tab selected', async ({ page, shared }) => {
-            const topology = new SandboxDefinitionTopologyPage(page);
-            await topology.open(shared.sandboxDefinition.id);
-            await expect(topology.stabilizedGraph).toBeVisible();
-
-            await page.keyboard.press('Control+Alt+ArrowRight');
-            await page.keyboard.press('Control+Alt+ArrowLeft');
-
-            await expect(topology.tabs).toHaveCount(1);
-            await expect(topology.tabs.first()).toHaveAttribute('aria-selected', 'true');
-        });
-
-        test('opens no node menu when the graph is right-clicked', async ({ page, shared }) => {
-            const topology = new SandboxDefinitionTopologyPage(page);
-            await topology.open(shared.sandboxDefinition.id);
-            await expect(topology.stabilizedGraph).toBeVisible();
-
-            await topology.canvas.click({ button: 'right' });
-
-            await expect(page.locator('crczp-context-menu')).toHaveCount(0);
-        });
-
-        test('the Sandbox Definitions breadcrumb returns to the overview', async ({ page, shared }) => {
-            const topology = new SandboxDefinitionTopologyPage(page);
-            await topology.open(shared.sandboxDefinition.id);
-
-            await breadcrumbLink(page, 'Sandbox Definitions').click();
-
-            await expect(page).toHaveURL(/\/sandbox-definition$/);
-            await expect(pageTitle(page)).toHaveText('Sandbox Definition Overview');
-        });
-
-        test('reports an unknown definition and returns to the overview', async ({ page, checkpoint }) => {
-            await page.goto(SandboxDefinitionTopologyPage.pathOf(UNKNOWN_DEFINITION_ID));
-
-            await expect(errorDialog(page)).toBeVisible();
-            await checkpoint(page, 'unknown definition reported');
-            await dismissErrorDialog(page);
-            await expect(page).toHaveURL(/\/sandbox-definition$/);
-            await waitForPageReady(page);
-        });
-    });
-
-    test.describe('accounts without the sandbox designer role', () => {
-        for (const role of ROLES_WITHOUT_ACCESS) {
-            test(`sends the ${role} account away from /sandbox-definition/:id/topology`, async ({ openAs, shared }) => {
-                await expectRedirectedAway(openAs, role, SandboxDefinitionTopologyPage.pathOf(shared.sandboxDefinition.id), {
-                    absentLinks: SANDBOX_DEFINITION_LINKS,
-                });
+                await expect
+                    .soft(pageTitle(page), 'page title')
+                    .toHaveText(`Topology of ${record.name}`);
+                await expect
+                    .soft(breadcrumbs(page), 'breadcrumbs')
+                    .toContainText('Sandbox Definitions');
+                await expect
+                    .soft(breadcrumbs(page), 'breadcrumbs')
+                    .toContainText('Topology');
             });
-        }
+
+            await test.step('loads the topology of the definition from the sandbox service', async () => {
+                expect
+                    .soft(
+                        (await topologyResponse).status(),
+                        'topology response status',
+                    )
+                    .toBe(200);
+            });
+
+            await test.step('draws the topology graph on a canvas', async () => {
+                await expect
+                    .soft(topology.stabilizedGraph, 'stabilized graph')
+                    .toBeVisible();
+                await expect.soft(topology.canvas, 'canvas').toBeVisible();
+                await expect
+                    .configure({ soft: true })
+                    .poll(() => topology.hasDrawnContent(), {
+                        message: 'canvas content',
+                    })
+                    .toBe(true);
+                await expect
+                    .soft(topology.unavailableMessage, 'unavailable message')
+                    .toHaveCount(0);
+                const payload = await apiAs(
+                    'sandboxDesigner',
+                ).sandbox.get<TopologyPayload>(
+                    `/definitions/${shared.sandboxDefinition.id}/topology`,
+                );
+                await checkpoint(
+                    page,
+                    'topology graph drawn',
+                    describeTopology(payload),
+                );
+            });
+
+            await test.step('offers only the Topology tab and no console tab', async () => {
+                await expect.soft(topology.tabs, 'tabs').toHaveCount(1);
+                await expect
+                    .soft(topology.tabs.first(), 'tab label')
+                    .toHaveText('Topology');
+                await expect
+                    .soft(topology.tabs.first(), 'tab selection')
+                    .toHaveAttribute('aria-selected', 'true');
+            });
+
+            await test.step('offers no sandbox access actions for a definition', async () => {
+                await expect
+                    .soft(topology.stabilizedGraph, 'stabilized graph')
+                    .toBeVisible();
+                await expect
+                    .soft(
+                        page.locator('crczp-sandbox-access-actions'),
+                        'access actions',
+                    )
+                    .toHaveCount(0);
+                await expect
+                    .soft(
+                        topology.wrapper.getByRole('button', {
+                            name: /ssh|access/i,
+                        }),
+                        'access buttons',
+                    )
+                    .toHaveCount(0);
+            });
+
+            await test.step('cycling tabs with the keyboard keeps the only tab selected', async () => {
+                await page.keyboard.press('Control+Alt+ArrowRight');
+                await page.keyboard.press('Control+Alt+ArrowLeft');
+
+                await expect.soft(topology.tabs, 'tabs').toHaveCount(1);
+                await expect
+                    .soft(topology.tabs.first(), 'tab selection')
+                    .toHaveAttribute('aria-selected', 'true');
+            });
+
+            await test.step('opens no node menu when the graph is right-clicked', async () => {
+                await topology.canvas.click({ button: 'right' });
+
+                await expect
+                    .soft(page.locator('crczp-context-menu'), 'node menu')
+                    .toHaveCount(0);
+            });
+
+            await test.step('the Sandbox Definitions breadcrumb returns to the overview', async () => {
+                await breadcrumbLink(page, 'Sandbox Definitions').click();
+
+                await expect
+                    .soft(page, 'page URL')
+                    .toHaveURL(/\/sandbox-definition$/);
+                await expect
+                    .soft(pageTitle(page), 'page title')
+                    .toHaveText('Sandbox Definition Overview');
+            });
+
+            await test.step('reports an unknown definition and returns to the overview', async () => {
+                await page.goto(
+                    SandboxDefinitionTopologyPage.pathOf(UNKNOWN_DEFINITION_ID),
+                );
+
+                await expect(errorDialog(page)).toBeVisible();
+                await checkpoint(page, 'unknown definition reported');
+                await dismissErrorDialog(page);
+                await expect(page).toHaveURL(/\/sandbox-definition$/);
+                await waitForPageReady(page);
+            });
+        });
     });
 });

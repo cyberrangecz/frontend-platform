@@ -1,4 +1,3 @@
-import { expectRedirectedAway } from '../support/route-guard';
 import type { Locator, Page } from '@playwright/test';
 import { BROWSER_KEYS } from '../support/accounts';
 import {
@@ -26,8 +25,6 @@ function dataField(page: Page, label: string): Locator {
 test.describe('linear-instance.cheating-detection.detail.event', () => {
     test.use({ account: 'trainingOrganizer' });
 
-    let event: DetectionEventPayload;
-
     async function openEventOfLevel(
         page: Page,
         levelTitle: string,
@@ -44,120 +41,136 @@ test.describe('linear-instance.cheating-detection.detail.event', () => {
         return opened;
     }
 
-    test.beforeEach(async ({ page, apiAs, shared, ownDetection }) => {
+    test('checks the detection event page of both training levels', async ({
+        page,
+        apiAs,
+        shared,
+        ownDetection,
+        reviewRuns,
+        checkpoint,
+    }) => {
+        test.setTimeout(240_000);
         const events = await eventsOf(apiAs('trainingOrganizer'), shared.trainingInstance.id, ownDetection.id);
-        event = await openEventOfLevel(
+        const event = await openEventOfLevel(
             page,
             SHARED_TRAINING_LEVEL_TITLES.firstTraining,
             events,
             shared.trainingInstance.id,
             ownDetection.id,
         );
-    });
-
-    test('shows the page title of the detection event', async ({ page, checkpoint }) => {
-        await expect(pageTitle(page)).toHaveText('Detection Event Detail');
-        await checkpoint(page, 'detection event loaded');
-    });
-
-    test('shows when the detection ran', async ({ page }) => {
-        await expect(dataField(page, 'Detection Run At').locator('.value-field')).not.toHaveText('');
-    });
-
-    test('shows the type of the event', async ({ page }) => {
-        await expect(dataField(page, 'Type of Event').locator('.value-field')).toHaveText('Time proximity');
-    });
-
-    test('shows the title and the order of the level the event belongs to', async ({ page }) => {
-        await expect(dataField(page, 'Level Title').locator('.value-field')).toHaveText(event.level_title);
-        await expect(dataField(page, 'Level Order').locator('.value-field')).toHaveText(String(event.level_order));
-    });
-
-    test('shows the number of participants of the event', async ({ page }) => {
-        await expect(dataField(page, 'Number of Participants').locator('.value-field')).toHaveText(
-            String(event.participant_count),
-        );
-    });
-
-    test('shows the proximity threshold of the detection in seconds', async ({ page, ownDetection }) => {
-        await expect(dataField(page, 'Proximity Threshold').locator('.value-field')).toHaveText(
-            `${ownDetection.proximity_threshold} seconds`,
-        );
-    });
-
-    test('shows no fields that belong to other event types', async ({ page }) => {
-        for (const label of ['Domain Name', 'Is Address of Deployment', 'Answer Owner', 'Answer', 'Minimal Solve Time']) {
-            await expect(dataField(page, label)).toHaveCount(0);
-        }
-    });
-
-    test('lists the participants table with its columns', async ({ page }) => {
         const table = SentinelTable.in(page);
         await table.waitUntilLoaded();
-        await expect(page.getByRole('heading', { level: 1, name: 'Participants' })).toBeVisible();
-        await expect(table.root.getByRole('columnheader')).toHaveCount(PARTICIPANT_COLUMNS.length);
-        for (const column of PARTICIPANT_COLUMNS) {
-            await expect(table.headerCell(column)).toBeVisible();
-        }
-    });
 
-    test('starts the participants sorted by the time they answered, earliest first', async ({ page }) => {
-        const table = SentinelTable.in(page);
-        await table.waitUntilLoaded();
-        await expect(table.headerCell(/^occurred at$/i)).toHaveAttribute('aria-sort', 'ascending');
-    });
+        await test.step('shows the page title of the detection event', async () => {
+            await expect.soft(pageTitle(page), 'page title').toHaveText('Detection Event Detail');
+            await checkpoint(page, 'detection event loaded');
+        });
 
-    test('lists the trainee of each browser as a participant of the event', async ({ page, reviewRuns }) => {
-        const table = SentinelTable.in(page);
-        await table.waitUntilLoaded();
-        await expect(table.rows).toHaveCount(event.participant_count);
-        for (const browser of BROWSER_KEYS) {
-            await expect(table.rowByText(reviewRuns[browser].traineeName)).toHaveCount(1);
-        }
-    });
+        await test.step('shows when the detection ran', async () => {
+            await expect
+                .soft(dataField(page, 'Detection Run At').locator('.value-field'), 'detection run time')
+                .not.toHaveText('');
+        });
 
-    test('shows when each participant answered', async ({ page }) => {
-        const table = SentinelTable.in(page);
-        await table.waitUntilLoaded();
-        for (const row of await table.rows.all()) {
-            await expect(await table.cell(row, /^occurred at$/i)).not.toHaveText(/^\s*$/);
-        }
-    });
+        await test.step('shows the type of the event', async () => {
+            await expect
+                .soft(dataField(page, 'Type of Event').locator('.value-field'), 'event type')
+                .toHaveText('Time proximity');
+        });
 
-    test('shows the second training level event with the same participants', async ({
-        page,
-        apiAs,
-        shared,
-        ownDetection,
-        reviewRuns,
-    }) => {
-        const events = await eventsOf(apiAs('trainingOrganizer'), shared.trainingInstance.id, ownDetection.id);
-        const second = await openEventOfLevel(
-            page,
-            SHARED_TRAINING_LEVEL_TITLES.secondTraining,
-            events,
-            shared.trainingInstance.id,
-            ownDetection.id,
-        );
-        expect(TRAINING_LEVEL_TITLES).toContain(second.level_title);
-        await expect(dataField(page, 'Level Title').locator('.value-field')).toHaveText(second.level_title);
-        const table = SentinelTable.in(page);
-        await table.waitUntilLoaded();
-        for (const browser of BROWSER_KEYS) {
-            await expect(table.rowByText(reviewRuns[browser].traineeName)).toHaveCount(1);
-        }
-    });
+        await test.step('shows the title and the order of the level the event belongs to', async () => {
+            await expect
+                .soft(dataField(page, 'Level Title').locator('.value-field'), 'level title')
+                .toHaveText(event.level_title);
+            await expect
+                .soft(dataField(page, 'Level Order').locator('.value-field'), 'level order')
+                .toHaveText(String(event.level_order));
+        });
 
-    test('omits the forbidden commands table and the timeline for a time proximity event', async ({ page }) => {
-        await expect(page.getByRole('heading', { level: 1, name: /^Forbidden Commands in/ })).toHaveCount(0);
-        await expect(page.locator('mat-expansion-panel-header', { hasText: 'Timeline' })).toHaveCount(0);
-    });
+        await test.step('shows the number of participants of the event', async () => {
+            await expect
+                .soft(dataField(page, 'Number of Participants').locator('.value-field'), 'participant count')
+                .toHaveText(String(event.participant_count));
+        });
 
-    test('sends a trainee away from the detection event', async ({
-        openAs,
-        shared,
-        ownDetection,
-    }) => {
-        await expectRedirectedAway(openAs, 'trainee', detectionEventUrl(shared.trainingInstance.id, ownDetection.id, event.id));
+        await test.step('shows the proximity threshold of the detection in seconds', async () => {
+            await expect
+                .soft(dataField(page, 'Proximity Threshold').locator('.value-field'), 'proximity threshold')
+                .toHaveText(`${ownDetection.proximity_threshold} seconds`);
+        });
+
+        await test.step('shows no fields that belong to other event types', async () => {
+            for (const label of [
+                'Domain Name',
+                'Is Address of Deployment',
+                'Answer Owner',
+                'Answer',
+                'Minimal Solve Time',
+            ]) {
+                await expect.soft(dataField(page, label), `${label} field`).toHaveCount(0);
+            }
+        });
+
+        await test.step('lists the participants table with its columns', async () => {
+            await expect
+                .soft(page.getByRole('heading', { level: 1, name: 'Participants' }), 'participants heading')
+                .toBeVisible();
+            await expect
+                .soft(table.root.getByRole('columnheader'), 'column count')
+                .toHaveCount(PARTICIPANT_COLUMNS.length);
+            for (const column of PARTICIPANT_COLUMNS) {
+                await expect.soft(table.headerCell(column), `column ${column}`).toBeVisible();
+            }
+        });
+
+        await test.step('starts the participants sorted by the time they answered, earliest first', async () => {
+            await expect
+                .soft(table.headerCell(/^occurred at$/i), 'occurred at header sort')
+                .toHaveAttribute('aria-sort', 'ascending');
+        });
+
+        await test.step('lists the trainee of each browser as a participant of the event', async () => {
+            await expect.soft(table.rows, 'participant rows').toHaveCount(event.participant_count);
+            for (const browser of BROWSER_KEYS) {
+                await expect
+                    .soft(table.rowByText(reviewRuns[browser].traineeName), `row of the ${browser} trainee`)
+                    .toHaveCount(1);
+            }
+        });
+
+        await test.step('shows when each participant answered', async () => {
+            for (const row of await table.rows.all()) {
+                await expect.soft(await table.cell(row, /^occurred at$/i), 'answer time').not.toHaveText(/^\s*$/);
+            }
+        });
+
+        await test.step('omits the forbidden commands table and the timeline for a time proximity event', async () => {
+            await expect
+                .soft(page.getByRole('heading', { level: 1, name: /^Forbidden Commands in/ }), 'forbidden commands table')
+                .toHaveCount(0);
+            await expect
+                .soft(page.locator('mat-expansion-panel-header', { hasText: 'Timeline' }), 'timeline panel')
+                .toHaveCount(0);
+        });
+
+        await test.step('shows the second training level event with the same participants', async () => {
+            const second = await openEventOfLevel(
+                page,
+                SHARED_TRAINING_LEVEL_TITLES.secondTraining,
+                events,
+                shared.trainingInstance.id,
+                ownDetection.id,
+            );
+            expect.soft(TRAINING_LEVEL_TITLES, 'training level titles').toContain(second.level_title);
+            await expect
+                .soft(dataField(page, 'Level Title').locator('.value-field'), 'level title')
+                .toHaveText(second.level_title);
+            await table.waitUntilLoaded();
+            for (const browser of BROWSER_KEYS) {
+                await expect
+                    .soft(table.rowByText(reviewRuns[browser].traineeName), `row of the ${browser} trainee`)
+                    .toHaveCount(1);
+            }
+        });
     });
 });

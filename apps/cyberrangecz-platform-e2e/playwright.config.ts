@@ -12,6 +12,12 @@ const MINIMUM_WORKERS = 2;
 /** Parallel workers: the share of the available CPUs given to the suite, never fewer than the minimum. */
 const WORKER_COUNT = Math.max(MINIMUM_WORKERS, Math.floor(availableParallelism() * WORKER_CPU_SHARE));
 
+/**
+ * Tag of a test that opens no page and calls only API clients. Only the Chromium projects run
+ * such tests; the other browsers would repeat the same requests.
+ */
+const API_ONLY_TAG = /@api\b/;
+
 /** Page specs that run on the deployed origin instead of the application origin. */
 const DEPLOYED_ORIGIN_SPECS = /microservice\.[\w.-]*spec\.ts$/;
 
@@ -36,6 +42,13 @@ const SANDBOX_DEFINITION_ORDER = SANDBOX_DEFINITION_SPECS.flatMap((spec) =>
 );
 
 const allOf = (suffix: string) => BROWSER_KEYS.map((browser) => `${browser}-${suffix}`);
+
+/**
+ * Title of the sandbox maintenance test that reads a ready sandbox of the shared pool, which only
+ * the chains allocate. It runs in its own project after the chains, not with the other
+ * maintenance tests.
+ */
+const SHARED_POOL_READ_TEST = /every stage of a request with a pending stop shows the Stop pending line/;
 
 /** The browser's sandbox definition projects, chained in one run order across all browsers. */
 function sandboxDefinitionProjects(browser: BrowserKey): Project<SuiteOptions>[] {
@@ -64,11 +77,11 @@ const lastSandboxDefinitionProject = (browser: BrowserKey) =>
  * Projects of one browser: its page specs, its sandbox chain, the confirmation that every
  * chain left a run, the multi-trainee review, the destructive teardown that runs once every
  * review has ended, whatever the reviews' results, and the trainee's logout after its pages and
- * review.
+ * review. Every project of a browser other than Chromium skips the tests tagged as API only.
  */
 function browserProjects(browser: BrowserKey): Project<SuiteOptions>[] {
     const use = { ...DEVICES[browser], browserKey: browser };
-    return [
+    const projects: Project<SuiteOptions>[] = [
         {
             name: browser,
             testDir: './src/pages',
@@ -80,7 +93,7 @@ function browserProjects(browser: BrowserKey): Project<SuiteOptions>[] {
             use,
         },
         ...sandboxDefinitionProjects(browser),
-        { name: `${browser}-chain`, testDir: './src/chain', dependencies: ['shared'], use },
+        { name: `${browser}-chain`, testDir: './src/chain', dependencies: ['shared', 'chromium-trainee-allocation'], use },
         {
             name: `${browser}-runs-ready`,
             testDir: './src/review',
@@ -104,6 +117,7 @@ function browserProjects(browser: BrowserKey): Project<SuiteOptions>[] {
             use,
         },
     ];
+    return browser === 'chromium' ? projects : projects.map((project) => ({ ...project, grepInvert: API_ONLY_TAG }));
 }
 
 /**
@@ -126,6 +140,7 @@ export default defineConfig<SuiteOptions>({
         ['./src/reporting/slideshow-reporter.ts', { outputFolder: `${OUTPUT_ROOT}/slideshow` }],
         ['./src/reporting/retry-warning-reporter.ts'],
         ['./src/reporting/immediate-failure-reporter.ts', { logFile: `${OUTPUT_ROOT}/failures.log` }],
+        ['./src/reporting/step-report-reporter.ts', { reportFile: `${OUTPUT_ROOT}/step-failures.json` }],
     ],
     use: {
         ignoreHTTPSErrors: true,
@@ -133,7 +148,7 @@ export default defineConfig<SuiteOptions>({
         navigationTimeout: 45_000,
         video: 'on',
         screenshot: 'on',
-        trace: 'retain-on-failure',
+        trace: 'on-first-retry',
     },
     projects: [
         {
@@ -153,7 +168,7 @@ export default defineConfig<SuiteOptions>({
         {
             name: 'chromium-pool-actions',
             testDir: './src/pool-actions',
-            dependencies: ['shared'],
+            dependencies: ['shared', 'chromium-trainee-allocation'],
             use: { ...DEVICES.chromium, browserKey: 'chromium' },
         },
         {
@@ -174,6 +189,16 @@ export default defineConfig<SuiteOptions>({
             name: 'chromium-sandbox-maintenance',
             testDir: './src/sandbox-maintenance',
             dependencies: ['shared', 'cloud-usage-audit'],
+            grepInvert: SHARED_POOL_READ_TEST,
+            fullyParallel: false,
+            workers: 1,
+            use: { ...DEVICES.chromium, browserKey: 'chromium' },
+        },
+        {
+            name: 'chromium-sandbox-maintenance-shared-pool',
+            testDir: './src/sandbox-maintenance',
+            grep: SHARED_POOL_READ_TEST,
+            dependencies: ['shared', ...allOf('chain')],
             fullyParallel: false,
             workers: 1,
             use: { ...DEVICES.chromium, browserKey: 'chromium' },
@@ -181,7 +206,7 @@ export default defineConfig<SuiteOptions>({
         {
             name: 'chromium-trainee-allocation',
             testDir: './src/trainee-allocation',
-            dependencies: ['shared', 'cloud-usage-audit'],
+            dependencies: ['shared', 'cloud-usage-audit', 'chromium-sandbox-maintenance'],
             fullyParallel: false,
             use: { ...DEVICES.chromium, browserKey: 'chromium' },
         },

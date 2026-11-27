@@ -10,6 +10,7 @@ import {
     SHOWN_DEFINITION_ATTACHMENTS,
     ShownDefinitionAttachmentSource,
 } from '@crczp/training-agenda/internal';
+import { PreviewAnswerStore } from './level/assessment-level/question/preview-answer-store';
 
 /**
  * Main component of training run preview.
@@ -20,7 +21,7 @@ import {
     styleUrls: ['./training-preview.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [SentinelStepperComponent, AbstractLevelComponent],
-    providers: SHOWN_DEFINITION_ATTACHMENTS,
+    providers: [...SHOWN_DEFINITION_ATTACHMENTS, PreviewAnswerStore],
 })
 export class TrainingPreviewComponent implements OnInit {
     activeLevel: Level;

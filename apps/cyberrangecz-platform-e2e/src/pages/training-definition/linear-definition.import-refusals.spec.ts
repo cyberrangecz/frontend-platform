@@ -1,4 +1,3 @@
-import type { Page } from '@playwright/test';
 import { ApiError, type Api } from '../../support/api/api-client';
 import { expect, test } from '../../support/fixtures';
 import { DefinitionOverviewPage } from '../../support/pages/training-definition/definition-overview.page';
@@ -7,12 +6,21 @@ import {
     fetchDefinitionDetailByTitle,
 } from '../../support/pages/training-definition/training-definition-data';
 import { trainingImportWithoutAttachments } from '../../support/scenario/shared-training-loader';
-import { errorDialog, FileUploadDialog } from '../../support/ui';
+import {
+    dismissErrorDialog,
+    errorDialog,
+    FileUploadDialog,
+} from '../../support/ui';
 
 const IMPORT_HEADLINE = /The training definition could not be imported/;
-const ADAPTIVE_DEPRECATION = /Adaptive training has been deprecated in version v2026\.08/;
-const UNRECOGNIZED_FIELD_NAME = /Field "name" in the top level of the file is not a recognized field/;
-const NOT_A_DEFINITION_FORM = /The submitted content does not have the required form/;
+const ADAPTIVE_DEPRECATION =
+    /Adaptive training has been deprecated in version v2026\.08/;
+const UNRECOGNIZED_PHASES_FIELD =
+    /Field "phases" in the top level of the file is not a recognized field/;
+const UNRECOGNIZED_FIELD_NAME =
+    /Field "name" in the top level of the file is not a recognized field/;
+const NOT_A_DEFINITION_FORM =
+    /The submitted content does not have the required form/;
 const NO_REQUEST_OBSERVATION_MILLISECONDS = 1_000;
 const IMPORT_PATH = '/imports/training-definitions';
 
@@ -26,7 +34,12 @@ function adaptiveDocument(title: string) {
         state: 'UNRELEASED',
         estimated_duration: 10,
         phases: [
-            { title: 'Info', phase_type: 'INFO', order: 0, content: '# Demo summary' },
+            {
+                title: 'Info',
+                phase_type: 'INFO',
+                order: 0,
+                content: '# Demo summary',
+            },
             {
                 title: 'Pre-game assessment',
                 phase_type: 'QUESTIONNAIRE',
@@ -43,7 +56,14 @@ function adaptiveDocument(title: string) {
                         ],
                     },
                 ],
-                phase_relations: [{ order: 0, question_orders: [0], success_rate: 50, phase_order: 3 }],
+                phase_relations: [
+                    {
+                        order: 0,
+                        question_orders: [0],
+                        success_rate: 50,
+                        phase_order: 3,
+                    },
+                ],
             },
             {
                 title: 'Get access',
@@ -80,7 +100,10 @@ function adaptiveDocument(title: string) {
 
 /** A document that passes the import dialog's preview and carries one extra field at the root. */
 function documentWithUnknownRootField(title: string) {
-    return { ...trainingImportWithoutAttachments(title), unknown_root_field: 'x' } satisfies Record<string, unknown>;
+    return {
+        ...trainingImportWithoutAttachments(title),
+        unknown_root_field: 'x',
+    } satisfies Record<string, unknown>;
 }
 
 /** A document that passes the import dialog's preview and carries one extra field on its level. */
@@ -88,7 +111,13 @@ function documentWithUnknownLevelField(title: string) {
     return {
         ...trainingImportWithoutAttachments(title),
         levels: [
-            { level_type: 'INFO_LEVEL', title: 'Briefing', estimated_duration: 1, content: 'x', unknown_level_field: 1 },
+            {
+                level_type: 'INFO_LEVEL',
+                title: 'Briefing',
+                estimated_duration: 1,
+                content: 'x',
+                unknown_level_field: 1,
+            },
         ],
     } satisfies Record<string, unknown>;
 }
@@ -112,7 +141,10 @@ function documentWithWrongValueType(title: string) {
 }
 
 /** Asserts an import answered 400 with an error message matching every given rule. */
-async function expectRefusal(attempt: Promise<unknown>, ...reasons: RegExp[]): Promise<void> {
+async function expectRefusal(
+    attempt: Promise<unknown>,
+    ...reasons: RegExp[]
+): Promise<void> {
     const refusal = await attempt.then(
         () => undefined,
         (error: unknown) => error,
@@ -134,45 +166,66 @@ async function expectNothingStored(api: Api, title: string): Promise<void> {
 test.describe('linear-definition.import-refusals', () => {
     test.use({ account: 'trainingDesigner' });
 
-    test.describe('API', () => {
-        test('refuses an adaptive definition as deprecated and stores nothing', async ({ apiAs, uniqueName }) => {
+    test.describe('API', { tag: '@api' }, () => {
+        test('refuses an adaptive definition by naming its phases field and stores nothing', async ({
+            apiAs,
+            uniqueName,
+        }) => {
             const api = apiAs('trainingDesigner');
             const title = uniqueName('refusal-adaptive');
             await expectRefusal(
                 api.training.post(IMPORT_PATH, adaptiveDocument(title)),
                 IMPORT_HEADLINE,
-                ADAPTIVE_DEPRECATION,
+                UNRECOGNIZED_PHASES_FIELD,
             );
             await expectNothingStored(api, title);
         });
 
-        test('refuses an unknown root field by naming it and stores nothing', async ({ apiAs, uniqueName }) => {
+        test('refuses an unknown root field by naming it and stores nothing', async ({
+            apiAs,
+            uniqueName,
+        }) => {
             const api = apiAs('trainingDesigner');
             const title = uniqueName('refusal-root-field');
             await expectRefusal(
-                api.training.post(IMPORT_PATH, documentWithUnknownRootField(title)),
+                api.training.post(
+                    IMPORT_PATH,
+                    documentWithUnknownRootField(title),
+                ),
                 IMPORT_HEADLINE,
                 /unknown_root_field/,
             );
             await expectNothingStored(api, title);
         });
 
-        test('refuses an unknown level field by naming it and stores nothing', async ({ apiAs, uniqueName }) => {
+        test('refuses an unknown level field by naming it and stores nothing', async ({
+            apiAs,
+            uniqueName,
+        }) => {
             const api = apiAs('trainingDesigner');
             const title = uniqueName('refusal-level-field');
             await expectRefusal(
-                api.training.post(IMPORT_PATH, documentWithUnknownLevelField(title)),
+                api.training.post(
+                    IMPORT_PATH,
+                    documentWithUnknownLevelField(title),
+                ),
                 IMPORT_HEADLINE,
                 /unknown_level_field/,
             );
             await expectNothingStored(api, title);
         });
 
-        test('refuses a wrong value type by naming the field and stores nothing', async ({ apiAs, uniqueName }) => {
+        test('refuses a wrong value type by naming the field and stores nothing', async ({
+            apiAs,
+            uniqueName,
+        }) => {
             const api = apiAs('trainingDesigner');
             const title = uniqueName('refusal-wrong-type');
             await expectRefusal(
-                api.training.post(IMPORT_PATH, documentWithWrongValueType(title)),
+                api.training.post(
+                    IMPORT_PATH,
+                    documentWithWrongValueType(title),
+                ),
                 IMPORT_HEADLINE,
                 /incorrect_answer_limit/,
             );
@@ -186,76 +239,119 @@ test.describe('linear-definition.import-refusals', () => {
             const api = apiAs('trainingDesigner');
             const title = uniqueName('refusal-unrelated-keys');
             await expectRefusal(
-                api.training.post(IMPORT_PATH, { title, name: 'not a definition', items: [1, 2, 3] }),
+                api.training.post(IMPORT_PATH, {
+                    title,
+                    name: 'not a definition',
+                    items: [1, 2, 3],
+                }),
                 IMPORT_HEADLINE,
                 UNRECOGNIZED_FIELD_NAME,
             );
             await expectNothingStored(api, title);
         });
 
-        test('refuses a JSON array as not having the required form', async ({ apiAs }) => {
+        test('refuses a JSON array as not having the required form', async ({
+            apiAs,
+        }) => {
             await expectRefusal(
-                apiAs('trainingDesigner').training.post(IMPORT_PATH, [{ title: 'in a list' }]),
+                apiAs('trainingDesigner').training.post(IMPORT_PATH, [
+                    { title: 'in a list' },
+                ]),
                 IMPORT_HEADLINE,
                 NOT_A_DEFINITION_FORM,
             );
         });
 
-        test('imports a definition carrying the tolerated legacy fields', async ({ apiAs, uniqueName }) => {
+        test('imports a definition carrying the tolerated legacy fields', async ({
+            apiAs,
+            uniqueName,
+        }) => {
             const api = apiAs('trainingDesigner');
             const title = uniqueName('refusal-legacy-fields');
             const document = {
                 ...trainingImportWithoutAttachments(title),
-                starting_level: 0,
-                prerequisities: ['A terminal'],
+                show_stepper_bar: true,
+                variant_sandboxes: false,
+                state: 'UNRELEASED',
+                estimated_duration: 33,
                 levels: [
                     {
-                        id: 1,
-                        max_score: 0,
+                        order: 0,
                         level_type: 'INFO_LEVEL',
                         title: 'Briefing',
                         estimated_duration: 1,
                         content: 'legacy shaped',
                     },
+                    {
+                        order: 1,
+                        level_type: 'TRAINING_LEVEL',
+                        title: 'Flag',
+                        estimated_duration: 3,
+                        answer: '--help',
+                        content: 'legacy shaped',
+                        solution: 'The flag is the suffix `--help`.',
+                        solution_penalized: false,
+                        incorrect_answer_limit: 10,
+                        attachments: [],
+                        max_score: 10,
+                        variant_answers: false,
+                        reference_solution: [],
+                        commands_required: false,
+                    },
                 ],
             };
             await api.training.post(IMPORT_PATH, document);
             const stored = await fetchDefinitionDetailByTitle(api, title);
-            expect(stored.levels?.map((level) => level.title)).toEqual(['Briefing']);
+            expect(stored.levels?.map((level) => level.title)).toEqual([
+                'Briefing',
+                'Flag',
+            ]);
         });
     });
 
-    test.describe('import dialog', () => {
-        async function openDialog(page: Page): Promise<FileUploadDialog> {
-            const overview = new DefinitionOverviewPage(page);
+    test('checks the import dialog refusals', async ({
+        page,
+        apiAs,
+        uniqueName,
+    }) => {
+        test.slow();
+        const importRequests: string[] = [];
+        page.on('request', (request) => {
+            if (
+                request.method() === 'POST' &&
+                request.url().includes(IMPORT_PATH)
+            ) {
+                importRequests.push(request.url());
+            }
+        });
+        const overview = new DefinitionOverviewPage(page);
+        const dialog = new FileUploadDialog(page);
+        const openFreshDialog = async (): Promise<void> => {
             await overview.goto();
             await overview.uploadButton.click();
-            return new FileUploadDialog(page);
-        }
+            await expect(dialog.root).toBeVisible();
+        };
 
-        function recordImportRequests(page: Page): string[] {
-            const importRequests: string[] = [];
-            page.on('request', (request) => {
-                if (request.method() === 'POST' && request.url().includes(IMPORT_PATH)) {
-                    importRequests.push(request.url());
-                }
-            });
-            return importRequests;
-        }
-
-        test('rejects an adaptive definition file as deprecated and sends nothing', async ({ page, uniqueName }) => {
-            const importRequests = recordImportRequests(page);
-            const dialog = await openDialog(page);
+        await test.step('rejects an adaptive definition file as deprecated and sends nothing', async () => {
+            await openFreshDialog();
             await dialog.chooseFiles({
                 name: 'adaptive.json',
                 mimeType: 'application/json',
-                buffer: Buffer.from(JSON.stringify(adaptiveDocument(uniqueName('refusal-ui-adaptive')))),
+                buffer: Buffer.from(
+                    JSON.stringify(
+                        adaptiveDocument(uniqueName('refusal-ui-adaptive')),
+                    ),
+                ),
             });
-            await expect(dialog.rejections).toHaveText(ADAPTIVE_DEPRECATION);
-            await expect(dialog.definitionCards).toHaveCount(0);
-            await expect(dialog.confirmButton).toBeDisabled();
+            await expect
+                .soft(dialog.rejections, 'rejection')
+                .toHaveText(ADAPTIVE_DEPRECATION);
+            await expect.soft(dialog.definitionCards, 'cards').toHaveCount(0);
+            await expect.soft(dialog.confirmButton, 'Confirm').toBeDisabled();
             await page.waitForTimeout(NO_REQUEST_OBSERVATION_MILLISECONDS);
-            expect(importRequests, 'no import request was sent').toHaveLength(0);
+            expect
+                .soft(importRequests, 'no import request was sent')
+                .toHaveLength(0);
         });
 
         const serverRefusals = [
@@ -276,27 +372,34 @@ test.describe('linear-definition.import-refusals', () => {
             },
         ];
         for (const { name, document, field } of serverRefusals) {
-            test(`shows the server's line naming the problem for a file with ${name} and stores nothing`, async ({
-                page,
-                apiAs,
-                uniqueName,
-            }) => {
+            await test.step(`shows the server's line naming the problem for a file with ${name} and stores nothing`, async () => {
                 const title = uniqueName('refusal-ui-server');
-                const dialog = await openDialog(page);
+                await openFreshDialog();
                 await dialog.chooseFiles({
                     name: `${title}.json`,
                     mimeType: 'application/json',
                     buffer: Buffer.from(JSON.stringify(document(title))),
                 });
-                await expect(dialog.definitionCards).toHaveCount(1);
-                await expect(dialog.rejections).toHaveCount(0);
+                await expect
+                    .soft(dialog.definitionCards, 'cards')
+                    .toHaveCount(1);
+                await expect
+                    .soft(dialog.rejections, 'rejections')
+                    .toHaveCount(0);
                 await dialog.confirmButton.click();
 
                 const errors = errorDialog(page);
-                await expect(errors).toBeVisible();
-                await expect(errors).toContainText(`Uploading training definition ${title}.json`);
-                await expect(errors).toContainText(IMPORT_HEADLINE);
-                await expect(errors).toContainText(field);
+                await expect.soft(errors, 'error dialog').toBeVisible();
+                await expect
+                    .soft(errors, 'error headline')
+                    .toContainText(
+                        `Uploading training definition ${title}.json`,
+                    );
+                await expect
+                    .soft(errors, 'import headline')
+                    .toContainText(IMPORT_HEADLINE);
+                await expect.soft(errors, 'named field').toContainText(field);
+                await dismissErrorDialog(page);
                 await expectNothingStored(apiAs('trainingDesigner'), title);
             });
         }

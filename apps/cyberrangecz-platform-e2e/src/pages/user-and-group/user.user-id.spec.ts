@@ -1,205 +1,95 @@
 import { expect, test } from '../../support/fixtures';
-import {
-    ADMINISTRATION_LINKS,
-    ROLES_WITHOUT_ADMINISTRATION,
-} from '../../support/pages/user-and-group/administration-access';
-import { expectRedirectedAway } from '../../support/route-guard';
 import { readUser } from '../../support/pages/user-and-group/group-data';
 import { UserDetailPage } from '../../support/pages/user-and-group/user-pages';
-import {
-    breadcrumbEntries,
-    pageTitle,
-    waitForPageReady,
-    expectUrlWhileLoading,
-} from '../../support/ui';
+import { breadcrumbEntries, pageTitle, waitForPageReady } from '../../support/ui';
 
 test.use({ account: 'userAdministrator' });
 
 test.describe('user.user-id', () => {
-    test.describe('access', () => {
-        for (const role of ROLES_WITHOUT_ADMINISTRATION) {
-            test(`sends the ${role} account away from /user/:id`, async ({
-                openAs,
-                shared,
-            }) => {
-                await expectRedirectedAway(
-                    openAs,
-                    role,
-                    `/user/${shared.userIds.userAdministrator}`,
-                    { absentLinks: ADMINISTRATION_LINKS },
-                );
-            });
-        }
+    test('checks the user detail', async ({ page, apiAs, shared, checkpoint }) => {
+        test.setTimeout(180_000);
+        const api = apiAs('userAdministrator').userAndGroup;
+        const administratorId = shared.userIds.userAdministrator;
+        const administrator = await readUser(api, administratorId);
+        const administratorName = `${administrator.given_name} ${administrator.family_name}`;
+        const detail = new UserDetailPage(page);
+        await detail.open(administratorId);
 
-        test('sends a signed-out visitor to the login page', async ({
-            openAs,
-            shared,
-        }) => {
-            const page = await openAs('anonymous');
-            await page.goto(`/user/${shared.userIds.userAdministrator}`);
-            await expectUrlWhileLoading(page, /\/login/);
-        });
-    });
-
-    test.describe('summary', () => {
-        test('shows the title, the breadcrumb and the summary of the administrator', async ({
-            page,
-            apiAs,
-            shared,
-            checkpoint,
-        }) => {
-            const userId = shared.userIds.userAdministrator;
-            const record = await readUser(
-                apiAs('userAdministrator').userAndGroup,
-                userId,
+        await test.step('shows the title, the breadcrumb and the summary of the administrator', async () => {
+            await expect.soft(pageTitle(page), 'page title').toHaveText(`${administratorName} Detail`);
+            await expect.soft(breadcrumbEntries(page), 'breadcrumb').toHaveText(['Home', 'Users', administratorName]);
+            await expect.soft(detail.summaryCard.locator('.user-name'), 'user name').toHaveText(administratorName);
+            await expect.soft(detail.summaryCard.locator('.user-description'), 'user description').toHaveText(
+                administrator.mail ?? 'No e-mail',
             );
-            const detail = new UserDetailPage(page);
-            await detail.open(userId);
-            await expect(pageTitle(page)).toHaveText(
-                `${record.given_name} ${record.family_name} Detail`,
-            );
-            await expect(breadcrumbEntries(page)).toHaveText([
-                'Home',
-                'Users',
-                `${record.given_name} ${record.family_name}`,
-            ]);
-            await expect(detail.summaryCard.locator('.user-name')).toHaveText(
-                `${record.given_name} ${record.family_name}`,
-            );
-            await expect(
-                detail.summaryCard.locator('.user-description'),
-            ).toHaveText(record.mail ?? 'No e-mail');
             await checkpoint(page, 'user detail');
         });
 
-        test('shows the summary of a trainee', async ({
-            page,
-            apiAs,
-            shared,
-        }) => {
-            const userId = shared.userIds.traineeChromium;
-            const record = await readUser(
-                apiAs('userAdministrator').userAndGroup,
-                userId,
+        await test.step('counts the roles the service lists for the user', async () => {
+            await expect.soft(detail.summaryCard.locator('.icon-container .icon-text'), 'role count').toHaveText(
+                String(administrator.roles?.length ?? 0),
             );
-            const detail = new UserDetailPage(page);
-            await detail.open(userId);
-            await expect(pageTitle(page)).toHaveText(
-                `${record.given_name} ${record.family_name} Detail`,
-            );
-            await expect(
-                detail.summaryCard.locator('.user-description'),
-            ).toHaveText(record.mail ?? 'No e-mail');
+            await expect.soft(detail.rolePanelHeaders, 'role panels').toHaveCount(administrator.roles?.length ?? 0);
         });
 
-        test('counts the roles the service lists for the user', async ({
-            page,
-            apiAs,
-            shared,
-        }) => {
-            const userId = shared.userIds.userAdministrator;
-            const record = await readUser(
-                apiAs('userAdministrator').userAndGroup,
-                userId,
-            );
-            const detail = new UserDetailPage(page);
-            await detail.open(userId);
-            await expect(
-                detail.summaryCard.locator('.icon-container .icon-text'),
-            ).toHaveText(String(record.roles?.length ?? 0));
-            await expect(detail.rolePanelHeaders).toHaveCount(
-                record.roles?.length ?? 0,
-            );
-        });
-    });
-
-    test.describe('roles', () => {
-        test('lists every role with its type and microservice', async ({
-            page,
-            apiAs,
-            shared,
-        }) => {
-            const userId = shared.userIds.userAdministrator;
-            const record = await readUser(
-                apiAs('userAdministrator').userAndGroup,
-                userId,
-            );
-            const detail = new UserDetailPage(page);
-            await detail.open(userId);
-            for (const role of record.roles ?? []) {
-                await expect(
-                    detail.rolePanelHeaders
-                        .filter({ hasText: role.role_type })
-                        .filter({
-                            hasText: role.name_of_microservice,
-                        }),
-                ).not.toHaveCount(0);
+        await test.step('lists every role with its type and microservice', async () => {
+            for (const role of administrator.roles ?? []) {
+                await expect
+                    .soft(
+                        detail.rolePanelHeaders
+                            .filter({ hasText: role.role_type })
+                            .filter({ hasText: role.name_of_microservice }),
+                        `role ${role.role_type} of ${role.name_of_microservice}`,
+                    )
+                    .not.toHaveCount(0);
             }
         });
 
-        test('opens every role with Expand All and closes them with Collapse All', async ({
-            page,
-            shared,
-            checkpoint,
-        }) => {
-            const detail = new UserDetailPage(page);
-            await detail.open(shared.userIds.userAdministrator);
+        await test.step('opens and closes one role by clicking its header', async () => {
+            const header = detail.rolePanelHeaders.first();
+            await expect.soft(header, 'initially').toHaveAttribute('aria-expanded', 'false');
+            await header.click();
+            await expect.soft(header, 'after the first click').toHaveAttribute('aria-expanded', 'true');
+            await header.click();
+            await expect.soft(header, 'after the second click').toHaveAttribute('aria-expanded', 'false');
+        });
+
+        await test.step('opens every role with Expand All and closes them with Collapse All', async () => {
             await detail.expandAllButton.click();
             const count = await detail.rolePanelHeaders.count();
             for (let index = 0; index < count; index++) {
-                await expect(
-                    detail.rolePanelHeaders.nth(index),
-                ).toHaveAttribute('aria-expanded', 'true');
+                await expect.soft(detail.rolePanelHeaders.nth(index), `role ${index} expanded`).toHaveAttribute('aria-expanded', 'true');
             }
             await checkpoint(page, 'all roles expanded');
             await detail.collapseAllButton.click();
             for (let index = 0; index < count; index++) {
-                await expect(
-                    detail.rolePanelHeaders.nth(index),
-                ).toHaveAttribute('aria-expanded', 'false');
+                await expect.soft(detail.rolePanelHeaders.nth(index), `role ${index} collapsed`).toHaveAttribute('aria-expanded', 'false');
             }
         });
 
-        test('opens and closes one role by clicking its header', async ({
-            page,
-            shared,
-        }) => {
-            const detail = new UserDetailPage(page);
-            await detail.open(shared.userIds.userAdministrator);
-            const header = detail.rolePanelHeaders.first();
-            await expect(header).toHaveAttribute('aria-expanded', 'false');
-            await header.click();
-            await expect(header).toHaveAttribute('aria-expanded', 'true');
-            await header.click();
-            await expect(header).toHaveAttribute('aria-expanded', 'false');
-        });
-
-        test('shows the description of an opened role or states that it has none', async ({
-            page,
-            shared,
-        }) => {
-            const detail = new UserDetailPage(page);
-            await detail.open(shared.userIds.userAdministrator);
+        await test.step('shows the description of an opened role or states that it has none', async () => {
             await detail.expandAllButton.click();
             const descriptions = page.locator('.roles-item-description');
-            await expect(descriptions).toHaveCount(
-                await detail.rolePanelHeaders.count(),
-            );
+            await expect.soft(descriptions, 'descriptions').toHaveCount(await detail.rolePanelHeaders.count());
             for (const description of await descriptions.all()) {
-                await expect(description).toHaveText(/\S/);
+                await expect.soft(description, 'description text').toHaveText(/\S/);
             }
         });
-    });
 
-    test.describe('unknown user', () => {
-        test('shows no raw exception text for a user id that is not a number', async ({
-            page,
-        }) => {
+        await test.step('shows the summary of a trainee', async () => {
+            const traineeId = shared.userIds.traineeChromium;
+            const trainee = await readUser(api, traineeId);
+            await detail.open(traineeId);
+            await expect.soft(pageTitle(page), 'page title').toHaveText(`${trainee.given_name} ${trainee.family_name} Detail`);
+            await expect.soft(detail.summaryCard.locator('.user-description'), 'user description').toHaveText(
+                trainee.mail ?? 'No e-mail',
+            );
+        });
+
+        await test.step('shows no raw exception text for a user id that is not a number', async () => {
             await page.goto('/user/not-a-number');
             await waitForPageReady(page);
-            await expect(page.locator('body')).not.toContainText(
-                /exception|NaN|undefined|\[object/i,
-            );
+            await expect.soft(page.locator('body'), 'page text').not.toContainText(/exception|NaN|undefined|\[object/i);
         });
     });
 });

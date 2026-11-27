@@ -5,6 +5,8 @@ import { breadcrumbEntries, dismissErrorDialog, errorDialog, pageTitle } from '.
 
 const UNKNOWN_PREFIX = 'e2e-no-such-token';
 const PIN = '1234';
+const softExpect = expect.configure({ soft: true });
+const MERGED_TEST_TIMEOUT_MILLISECONDS = 300_000;
 
 /** Records the access token of every request that tries to enter a run, and keeps it from reaching the backend. */
 async function interceptAccessRequests(page: Page): Promise<string[]> {
@@ -22,280 +24,252 @@ async function interceptAccessRequests(page: Page): Promise<string[]> {
 test.describe('run.overview', () => {
     test.use({ account: 'trainee' });
 
-    test('shows the page title and the breadcrumbs', async ({ page, checkpoint }) => {
+    test('page and accessible runs table', async ({ page, apiAs, checkpoint }) => {
+        test.setTimeout(MERGED_TEST_TIMEOUT_MILLISECONDS);
         const runOverview = new RunOverviewPage(page);
         await runOverview.open();
-        await expect(pageTitle(page)).toHaveText('Training Run Overview');
-        await expect(breadcrumbEntries(page)).toHaveText([/^Home/, 'Training Runs']);
-        await checkpoint(page, 'run overview');
-    });
 
-    test.describe('accessible runs table', () => {
-        test('shows the columns Title, Time Slot and Completed Levels, with Actions once there are runs', async ({
-            page,
-        }) => {
-            const runOverview = new RunOverviewPage(page);
-            await runOverview.open();
-            await runOverview.table.waitUntilLoaded();
-            const columns = ['Title', 'Time Slot', 'Completed Levels'];
-            const hasRuns = (await runOverview.table.rows.count()) > 0;
-            await expect(runOverview.table.root.getByRole('columnheader')).toHaveText(
-                hasRuns ? [...columns, 'Actions'] : columns,
-            );
+        await test.step('shows the page title and the breadcrumbs', async () => {
+            await expect.soft(pageTitle(page), 'page title').toHaveText('Training Run Overview');
+            await expect.soft(breadcrumbEntries(page), 'breadcrumbs').toHaveText([/^Home/, 'Training Runs']);
+            await checkpoint(page, 'run overview');
         });
 
-        test('lists the runs the backend reports as accessible, or the empty message', async ({
-            page,
-            apiAs,
-            checkpoint,
-        }) => {
-            const runOverview = new RunOverviewPage(page);
-            await expect(async () => {
-                await runOverview.open();
-                await runOverview.table.waitUntilLoaded();
-                const accessibleRuns = await apiAs('trainee').training.getAll<unknown>('/training-runs/accessible');
-                if (accessibleRuns.length === 0) {
-                    await expect(runOverview.table.emptyState).toContainText('You have not accessed any training runs yet', {
-                        timeout: 2_000,
-                    });
-                } else {
-                    await expect(runOverview.table.rows).toHaveCount(accessibleRuns.length, { timeout: 2_000 });
-                }
-            }).toPass();
+        await test.step('shows the columns Title, Time Slot and Completed Levels, with Actions once there are runs', async () => {
+            const columns = ['Title', 'Time Slot', 'Completed Levels'];
+            const hasRuns = (await runOverview.table.rows.count()) > 0;
+            await expect
+                .soft(runOverview.table.root.getByRole('columnheader'), 'column headers')
+                .toHaveText(hasRuns ? [...columns, 'Actions'] : columns);
+        });
+
+        await test.step('lists the runs the backend reports as accessible, or the empty message', async () => {
+            await expect
+                .soft(async () => {
+                    await runOverview.open();
+                    const accessibleRuns = await apiAs('trainee').training.getAll<unknown>('/training-runs/accessible');
+                    if (accessibleRuns.length === 0) {
+                        await expect(runOverview.table.emptyState).toContainText('You have not accessed any training runs yet', {
+                            timeout: 2_000,
+                        });
+                    } else {
+                        await expect(runOverview.table.rows).toHaveCount(accessibleRuns.length, { timeout: 2_000 });
+                    }
+                }, 'runs table against the accessible runs of the backend')
+                .toPass({ timeout: 30_000 });
             await checkpoint(page, 'runs table');
         });
 
-        test('enables exactly one of Resume and Access Results on every row', async ({ page }) => {
-            const runOverview = new RunOverviewPage(page);
-            await runOverview.open();
-            await runOverview.table.waitUntilLoaded();
+        await test.step('enables exactly one of Resume and Access Results on every row', async () => {
             for (const row of await runOverview.table.rows.all()) {
                 const resume = runOverview.table.rowAction(row, 'open_in_new');
                 const results = runOverview.table.rowAction(row, 'assessment');
-                await expect(resume).toHaveCount(1);
-                await expect(results).toHaveCount(1);
-                expect((await resume.isEnabled()) !== (await results.isEnabled())).toBe(true);
+                await expect.soft(resume, 'Resume action of the row').toHaveCount(1);
+                await expect.soft(results, 'Access Results action of the row').toHaveCount(1);
+                expect
+                    .soft((await resume.isEnabled()) !== (await results.isEnabled()), 'exactly one action is enabled')
+                    .toBe(true);
             }
         });
 
-        test('shows the paginator range matching the listed rows', async ({ page }) => {
-            const runOverview = new RunOverviewPage(page);
-            await runOverview.open();
-            await runOverview.table.waitUntilLoaded();
+        await test.step('shows the paginator range matching the listed rows', async () => {
             const rowCount = await runOverview.table.rows.count();
-            await expect(runOverview.table.rangeLabel).toHaveText(
-                rowCount === 0 ? /^\s*0 of 0\s*$/ : new RegExp(`^\\s*1 – ${rowCount} of ${rowCount}\\s*$`),
-            );
+            await expect
+                .soft(runOverview.table.rangeLabel, 'paginator range')
+                .toHaveText(rowCount === 0 ? /^\s*0 of 0\s*$/ : new RegExp(`^\\s*1 – ${rowCount} of ${rowCount}\\s*$`));
         });
 
-        test('offers page sizes in the paginator', async ({ page }) => {
-            const runOverview = new RunOverviewPage(page);
-            await runOverview.open();
-            await runOverview.table.waitUntilLoaded();
+        await test.step('offers page sizes in the paginator', async () => {
             await runOverview.table.openPageSizeList();
-            await expect(page.getByRole('option')).toHaveText(['10', '15', '25', '50', '100']);
+            await expect.soft(page.getByRole('option'), 'page size options').toHaveText(['10', '15', '25', '50', '100']);
+            await page.keyboard.press('Escape');
+            await expect(page.getByRole('option')).toHaveCount(0);
         });
 
-        test('has no filter above the table', async ({ page }) => {
-            const runOverview = new RunOverviewPage(page);
-            await runOverview.open();
-            await expect(page.locator('crczp-table-panel .panel-filter')).toHaveCount(0);
+        await test.step('has no filter above the table', async () => {
+            await expect.soft(page.locator('crczp-table-panel .panel-filter'), 'filter above the table').toHaveCount(0);
+        });
+
+        await test.step('opens the MITRE ATT&CK Techniques page from the control above the table', async () => {
+            await runOverview.mitreControl.click();
+            await expect.soft(page, 'address after the MITRE control').toHaveURL(/\/mitre-techniques$/);
         });
     });
 
-    test('opens the MITRE ATT&CK Techniques page from the control above the table', async ({ page }) => {
+    test('access token form', async ({ page, checkpoint }) => {
+        test.setTimeout(MERGED_TEST_TIMEOUT_MILLISECONDS);
         const runOverview = new RunOverviewPage(page);
         await runOverview.open();
-        await runOverview.mitreControl.click();
-        await expect(page).toHaveURL(/\/mitre-techniques$/);
-    });
 
-    test.describe('access token form', () => {
-        test('starts empty with the Access button disabled', async ({ page, checkpoint }) => {
-            const runOverview = new RunOverviewPage(page);
-            await runOverview.open();
-            await expect(runOverview.prefixInput).toHaveValue('');
-            await expect(runOverview.pinInput).toHaveValue('');
-            await expect(runOverview.accessButton).toBeDisabled();
-            await expect(runOverview.fieldErrors).toHaveCount(0);
+        const clearFields = async (): Promise<void> => {
+            await runOverview.prefixInput.fill('');
+            await runOverview.pinInput.fill('');
+        };
+        const fieldError = (message: string) => runOverview.fieldErrors.filter({ hasText: message });
+
+        await test.step('starts empty with the Access button disabled', async () => {
+            await expect.soft(runOverview.prefixInput, 'prefix field').toHaveValue('');
+            await expect.soft(runOverview.pinInput, 'PIN field').toHaveValue('');
+            await expect.soft(runOverview.accessButton, 'Access button').toBeDisabled();
+            await expect.soft(runOverview.fieldErrors, 'validation messages').toHaveCount(0);
             await checkpoint(page, 'empty form');
         });
 
-        test('enables Access once a prefix and a 4 digit PIN are entered', async ({ page }) => {
-            const runOverview = new RunOverviewPage(page);
-            await runOverview.open();
-            await runOverview.fillToken(UNKNOWN_PREFIX, PIN);
-            await expect(runOverview.accessButton).toBeEnabled();
-        });
-
-        test('keeps Access disabled with a PIN but no prefix', async ({ page }) => {
-            const runOverview = new RunOverviewPage(page);
-            await runOverview.open();
-            await runOverview.pinInput.fill(PIN);
-            await expect(runOverview.accessButton).toBeDisabled();
-        });
-
-        test('keeps Access disabled with a prefix but no PIN', async ({ page }) => {
-            const runOverview = new RunOverviewPage(page);
-            await runOverview.open();
-            await runOverview.prefixInput.fill(UNKNOWN_PREFIX);
-            await expect(runOverview.accessButton).toBeDisabled();
-        });
-
-        test('rejects an empty prefix with a message', async ({ page }) => {
-            const runOverview = new RunOverviewPage(page);
-            await runOverview.open();
+        await test.step('rejects an empty prefix with a message', async () => {
             await runOverview.touch('prefix');
-            await expect(runOverview.fieldErrors.filter({ hasText: 'Prefix cannot be empty' })).toBeVisible();
+            await expect.soft(fieldError('Prefix cannot be empty'), 'empty prefix message').toBeVisible();
         });
 
-        test('rejects a whitespace-only prefix with a message', async ({ page }) => {
-            const runOverview = new RunOverviewPage(page);
-            await runOverview.open();
-            await runOverview.fillToken('   ', PIN);
-            await runOverview.touch('prefix');
-            await expect(runOverview.fieldErrors.filter({ hasText: 'Prefix cannot be empty' })).toBeVisible();
-            await expect(runOverview.accessButton).toBeDisabled();
-        });
-
-        test('rejects an empty PIN with a message', async ({ page }) => {
-            const runOverview = new RunOverviewPage(page);
-            await runOverview.open();
+        await test.step('rejects an empty PIN with a message', async () => {
             await runOverview.touch('pin');
-            await expect(runOverview.fieldErrors.filter({ hasText: 'PIN cannot be empty' })).toBeVisible();
+            await expect.soft(fieldError('PIN cannot be empty'), 'empty PIN message').toBeVisible();
         });
 
-        test('rejects a PIN with letters as not numeric', async ({ page }) => {
-            const runOverview = new RunOverviewPage(page);
-            await runOverview.open();
+        await test.step('enables Access once a prefix and a 4 digit PIN are entered', async () => {
+            await runOverview.fillToken(UNKNOWN_PREFIX, PIN);
+            await expect.soft(runOverview.accessButton, 'Access button').toBeEnabled();
+        });
+
+        await test.step('keeps Access disabled with a PIN but no prefix', async () => {
+            await clearFields();
+            await runOverview.pinInput.fill(PIN);
+            await expect.soft(runOverview.accessButton, 'Access button').toBeDisabled();
+        });
+
+        await test.step('keeps Access disabled with a prefix but no PIN', async () => {
+            await clearFields();
             await runOverview.prefixInput.fill(UNKNOWN_PREFIX);
+            await expect.soft(runOverview.accessButton, 'Access button').toBeDisabled();
+        });
+
+        await test.step('rejects a whitespace-only prefix with a message', async () => {
+            await runOverview.fillToken(UNKNOWN_PREFIX, PIN);
+            await expect.soft(fieldError('Prefix cannot be empty'), 'empty prefix message gone').toHaveCount(0);
+            await runOverview.prefixInput.fill('   ');
+            await runOverview.touch('prefix');
+            await expect.soft(fieldError('Prefix cannot be empty'), 'empty prefix message').toBeVisible();
+            await expect.soft(runOverview.accessButton, 'Access button').toBeDisabled();
+        });
+
+        await test.step('rejects a PIN with letters as not numeric', async () => {
+            await runOverview.fillToken(UNKNOWN_PREFIX, PIN);
+            await expect.soft(fieldError('PIN must be numeric'), 'numeric message gone').toHaveCount(0);
             await runOverview.pinInput.fill('ab12');
             await runOverview.touch('pin');
-            await expect(runOverview.fieldErrors.filter({ hasText: 'PIN must be numeric' })).toBeVisible();
-            await expect(runOverview.accessButton).toBeDisabled();
+            await expect.soft(fieldError('PIN must be numeric'), 'numeric message').toBeVisible();
+            await expect.soft(runOverview.accessButton, 'Access button').toBeDisabled();
         });
 
-        test('rejects a PIN shorter than 4 digits with a message', async ({ page }) => {
-            const runOverview = new RunOverviewPage(page);
-            await runOverview.open();
-            await runOverview.prefixInput.fill(UNKNOWN_PREFIX);
+        await test.step('rejects a PIN shorter than 4 digits with a message', async () => {
+            await runOverview.fillToken(UNKNOWN_PREFIX, PIN);
+            await expect.soft(fieldError('PIN must contain 4 digits'), 'length message gone').toHaveCount(0);
             await runOverview.pinInput.fill('12');
             await runOverview.touch('pin');
-            await expect(runOverview.fieldErrors.filter({ hasText: 'PIN must contain 4 digits' })).toBeVisible();
-            await expect(runOverview.accessButton).toBeDisabled();
+            await expect.soft(fieldError('PIN must contain 4 digits'), 'length message').toBeVisible();
+            await expect.soft(runOverview.accessButton, 'Access button').toBeDisabled();
         });
 
-        test('stops accepting digits after the 4th of the PIN', async ({ page }) => {
-            const runOverview = new RunOverviewPage(page);
-            await runOverview.open();
+        await test.step('stops accepting digits after the 4th of the PIN', async () => {
+            await clearFields();
             await runOverview.pinInput.pressSequentially('123456');
-            await expect(runOverview.pinInput).toHaveValue('1234');
+            await expect.soft(runOverview.pinInput, 'PIN field').toHaveValue('1234');
         });
 
-        test('clears the prefix with its clear button', async ({ page }) => {
-            const runOverview = new RunOverviewPage(page);
-            await runOverview.open();
-            await expect(runOverview.clearButtonOf('prefix')).toHaveCount(0);
+        await test.step('clears the prefix with its clear button', async () => {
+            await clearFields();
+            await expect.soft(runOverview.clearButtonOf('prefix'), 'prefix clear button while empty').toHaveCount(0);
             await runOverview.prefixInput.fill(UNKNOWN_PREFIX);
             await runOverview.clearButtonOf('prefix').click();
-            await expect(runOverview.prefixInput).toHaveValue('');
-            await expect(runOverview.clearButtonOf('prefix')).toHaveCount(0);
+            await expect.soft(runOverview.prefixInput, 'prefix field').toHaveValue('');
+            await expect.soft(runOverview.clearButtonOf('prefix'), 'prefix clear button after clearing').toHaveCount(0);
         });
 
-        test('clears the PIN with its clear button', async ({ page }) => {
-            const runOverview = new RunOverviewPage(page);
-            await runOverview.open();
-            await expect(runOverview.clearButtonOf('pin')).toHaveCount(0);
+        await test.step('clears the PIN with its clear button', async () => {
+            await clearFields();
+            await expect.soft(runOverview.clearButtonOf('pin'), 'PIN clear button while empty').toHaveCount(0);
             await runOverview.pinInput.fill(PIN);
             await runOverview.clearButtonOf('pin').click();
-            await expect(runOverview.pinInput).toHaveValue('');
-            await expect(runOverview.accessButton).toBeDisabled();
+            await expect.soft(runOverview.pinInput, 'PIN field').toHaveValue('');
+            await expect.soft(runOverview.accessButton, 'Access button').toBeDisabled();
         });
 
-        test('splits a pasted full token into prefix and PIN', async ({ page }) => {
-            const runOverview = new RunOverviewPage(page);
-            await runOverview.open();
+        await test.step('splits a pasted full token into prefix and PIN', async () => {
+            await clearFields();
             await runOverview.paste('prefix', `${UNKNOWN_PREFIX}-${PIN}`);
-            await expect(runOverview.prefixInput).toHaveValue(UNKNOWN_PREFIX);
-            await expect(runOverview.pinInput).toHaveValue(PIN);
-            await expect(runOverview.accessButton).toBeEnabled();
-            await expect(runOverview.accessButton).toBeFocused();
+            await expect.soft(runOverview.prefixInput, 'prefix field').toHaveValue(UNKNOWN_PREFIX);
+            await expect.soft(runOverview.pinInput, 'PIN field').toHaveValue(PIN);
+            await expect.soft(runOverview.accessButton, 'Access button').toBeEnabled();
+            await expect.soft(runOverview.accessButton, 'Access button focus').toBeFocused();
         });
 
-        test('splits a full token pasted into the PIN field the same way', async ({ page }) => {
-            const runOverview = new RunOverviewPage(page);
-            await runOverview.open();
+        await test.step('splits a full token pasted into the PIN field the same way', async () => {
+            await clearFields();
             await runOverview.paste('pin', `${UNKNOWN_PREFIX}-${PIN}`);
-            await expect(runOverview.prefixInput).toHaveValue(UNKNOWN_PREFIX);
-            await expect(runOverview.pinInput).toHaveValue(PIN);
+            await expect.soft(runOverview.prefixInput, 'prefix field').toHaveValue(UNKNOWN_PREFIX);
+            await expect.soft(runOverview.pinInput, 'PIN field').toHaveValue(PIN);
         });
 
-        test('trims whitespace around a pasted token parts', async ({ page }) => {
-            const runOverview = new RunOverviewPage(page);
-            await runOverview.open();
+        await test.step('trims whitespace around a pasted token parts', async () => {
+            await clearFields();
             await runOverview.paste('prefix', `  ${UNKNOWN_PREFIX} - ${PIN}  `);
-            await expect(runOverview.prefixInput).toHaveValue(UNKNOWN_PREFIX);
-            await expect(runOverview.pinInput).toHaveValue(PIN);
+            await expect.soft(runOverview.prefixInput, 'prefix field').toHaveValue(UNKNOWN_PREFIX);
+            await expect.soft(runOverview.pinInput, 'PIN field').toHaveValue(PIN);
         });
 
-        test('moves focus to the PIN field when a dash is typed in the prefix', async ({ page }) => {
-            const runOverview = new RunOverviewPage(page);
-            await runOverview.open();
+        await test.step('moves focus to the PIN field when a dash is typed in the prefix', async () => {
+            await clearFields();
             await runOverview.prefixInput.pressSequentially('abc-');
-            await expect(runOverview.pinInput).toBeFocused();
-            await expect(runOverview.prefixInput).toHaveValue('abc');
+            await expect.soft(runOverview.pinInput, 'PIN field focus').toBeFocused();
+            await expect.soft(runOverview.prefixInput, 'prefix field').toHaveValue('abc');
         });
+    });
 
-        test('sends prefix and PIN joined by a dash when Access is clicked', async ({ page }) => {
-            const sentTokens = await interceptAccessRequests(page);
-            const runOverview = new RunOverviewPage(page);
-            await runOverview.open();
+    test('access token submission', async ({ page, shared, checkpoint }) => {
+        test.setTimeout(MERGED_TEST_TIMEOUT_MILLISECONDS);
+        const runOverview = new RunOverviewPage(page);
+        await runOverview.open();
+
+        await test.step('reports an unknown token in an error dialog and stays on the overview', async () => {
             await runOverview.fillToken(UNKNOWN_PREFIX, PIN);
             await runOverview.accessButton.click();
-            await expect.poll(() => sentTokens).toEqual([`${UNKNOWN_PREFIX}-${PIN}`]);
+            await expect.soft(errorDialog(page), 'error dialog').toContainText('no active training session');
+            await checkpoint(page, 'unknown token');
+            await dismissErrorDialog(page);
+            await expect.soft(page, 'address after the rejection').toHaveURL(/\/run$/);
+            await expect.soft(pageTitle(page), 'page title after the rejection').toHaveText('Training Run Overview');
         });
 
-        test('sends accented and markup characters of a prefix unchanged', async ({ page }) => {
-            const sentTokens = await interceptAccessRequests(page);
-            const runOverview = new RunOverviewPage(page);
+        await test.step('allows another attempt after a rejected token without editing a field', async () => {
+            await runOverview.accessButton.click();
+            await dismissErrorDialog(page);
+            await expect.soft(runOverview.accessButton, 'Access button').toBeEnabled();
+        });
+
+        const sentTokens = await interceptAccessRequests(page);
+
+        await test.step('sends prefix and PIN joined by a dash when Access is clicked', async () => {
             await runOverview.open();
+            sentTokens.length = 0;
+            await runOverview.fillToken(UNKNOWN_PREFIX, PIN);
+            await runOverview.accessButton.click();
+            await softExpect.poll(() => sentTokens, { message: 'token sent' }).toEqual([`${UNKNOWN_PREFIX}-${PIN}`]);
+        });
+
+        await test.step('sends accented and markup characters of a prefix unchanged', async () => {
+            await runOverview.open();
+            sentTokens.length = 0;
             await runOverview.fillToken('Žluťoučký kůň<b>x</b>', PIN);
             await runOverview.accessButton.click();
-            await expect.poll(() => sentTokens).toEqual([`Žluťoučký kůň<b>x</b>-${PIN}`]);
+            await softExpect.poll(() => sentTokens, { message: 'token sent' }).toEqual([`Žluťoučký kůň<b>x</b>-${PIN}`]);
         });
 
-        test('sends a token without the whitespace typed around its prefix', async ({ page, shared }) => {
-            const sentTokens = await interceptAccessRequests(page);
-            const runOverview = new RunOverviewPage(page);
+        await test.step('sends a token without the whitespace typed around its prefix', async () => {
             await runOverview.open();
+            sentTokens.length = 0;
             const [prefix, pin] = shared.trainingInstance.accessToken.split(/-(?=[^-]*$)/);
             await runOverview.fillToken(`  ${prefix}  `, pin ?? PIN);
             await runOverview.accessButton.click();
-            await expect.poll(() => sentTokens).toEqual([shared.trainingInstance.accessToken]);
-        });
-
-        test('reports an unknown token in an error dialog and stays on the overview', async ({
-            page,
-            checkpoint,
-        }) => {
-            const runOverview = new RunOverviewPage(page);
-            await runOverview.open();
-            await runOverview.fillToken(UNKNOWN_PREFIX, PIN);
-            await runOverview.accessButton.click();
-            await expect(errorDialog(page)).toContainText('no active training session');
-            await checkpoint(page, 'unknown token');
-            await dismissErrorDialog(page);
-            await expect(page).toHaveURL(/\/run$/);
-            await expect(pageTitle(page)).toHaveText('Training Run Overview');
-        });
-
-        test('allows another attempt after a rejected token without editing a field', async ({ page }) => {
-            const runOverview = new RunOverviewPage(page);
-            await runOverview.open();
-            await runOverview.fillToken(UNKNOWN_PREFIX, PIN);
-            await runOverview.accessButton.click();
-            await dismissErrorDialog(page);
-            await expect(runOverview.accessButton).toBeEnabled();
+            await softExpect.poll(() => sentTokens, { message: 'token sent' }).toEqual([shared.trainingInstance.accessToken]);
         });
     });
 });

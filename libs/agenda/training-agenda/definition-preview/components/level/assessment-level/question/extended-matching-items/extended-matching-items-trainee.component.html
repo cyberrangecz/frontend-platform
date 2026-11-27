@@ -24,10 +24,11 @@
                 class="inner"
             >
                 <td>{{ statement.text }}</td>
-                <mat-radio-group>
+                <mat-radio-group [value]="chosenOptionIndexes().get(i)"
+                                (change)="chooseOption(i, $event.value)">
                     @for (option of question.extendedMatchingOptions; track option; let j = $index) {
                         <td>
-                            <mat-radio-button [value]="{ x: i, y: j }"/>
+                            <mat-radio-button [value]="j"/>
                         </td>
                     }
                 </mat-radio-group>

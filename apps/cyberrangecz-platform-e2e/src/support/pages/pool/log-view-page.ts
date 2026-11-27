@@ -126,13 +126,14 @@ export class LogView {
         return (await this.host.locator('.cm-line').allInnerTexts()).join('\n');
     }
 
-    /** The text of the first rendered line that reaches into the scroller's visible area. */
+    /** The text of the first rendered line that reaches into the scroller's visible area, empty while no rendered line does. */
     topLine(): Promise<string> {
         return this.scroller.evaluate((scroller) => {
-            const scrollerTop = scroller.getBoundingClientRect().top;
-            const visibleLine = Array.from(scroller.querySelectorAll('.cm-line')).find(
-                (line) => line.getBoundingClientRect().bottom > scrollerTop + 1,
-            );
+            const { top: scrollerTop, bottom: scrollerBottom } = scroller.getBoundingClientRect();
+            const visibleLine = Array.from(scroller.querySelectorAll('.cm-line')).find((line) => {
+                const { top, bottom } = line.getBoundingClientRect();
+                return bottom > scrollerTop + 1 && top < scrollerBottom;
+            });
             return (visibleLine?.textContent ?? '').trim();
         });
     }
@@ -185,11 +186,12 @@ export class LogView {
         );
     }
 
-    /** Scrolls the log to its top, then asserts that a token is drawn in a palette slot's colour once the view has settled. */
+    /** Scrolls the log to its top, then softly asserts that a token is drawn in a palette slot's colour once the view has settled. */
     async expectTokenSlot(lineText: string, token: string, slot: number | 'foreground'): Promise<void> {
         await this.button('Scroll to top').click();
         const expectedColour = await this.slotColour(slot);
         await expect
+            .configure({ soft: true })
             .poll(() => this.tokenColour(lineText, token), { message: `colour of "${token}"` })
             .toBe(expectedColour);
     }

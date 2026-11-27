@@ -35,7 +35,7 @@ import {
 import { MatIcon } from '@angular/material/icon';
 import { MatError } from '@angular/material/input';
 
-type HintStepperContents = SentinelStepper<HintStepperAdapter> & { key: string };
+type HintStepperContents = SentinelStepper<HintStepperAdapter> & { key: number };
 
 /**
  * Main hint edit component. Contains stepper to navigate through existing hints and controls to create new hints
@@ -75,13 +75,15 @@ export class HintsOverviewComponent implements OnInit, OnChanges {
     penaltySum: number;
     selectedStep: number;
     /**
-     * Stepper contents with the key of the stepper instance showing them. The key is fixed when
-     * the contents are set and differs only when the count or titles of the hints differ.
+     * Stepper contents with the key of the stepper instance showing them. Every replacement of
+     * the contents carries a new key, so the stepper that is dragged always holds the contents
+     * that are read back.
      */
     readonly stepperHints = signal<HintStepperContents>({
         items: [],
-        key: '',
+        key: 0,
     });
+    private stepperKeyCounter = 0;
     controls: SentinelControlItem[];
     destroyRef = inject(DestroyRef);
     private deleteDisabledSubject$: BehaviorSubject<boolean> =
@@ -98,9 +100,11 @@ export class HintsOverviewComponent implements OnInit, OnChanges {
         }
         if ('hints' in changes) {
             this.deleteDisabledSubject$.next(this.hints.length <= 0);
-            this.setStepperItems(
-                this.hints.map((hint) => new HintStepperAdapter(hint)),
-            );
+            if (!this.showsCurrentHints()) {
+                this.setStepperItems(
+                    this.hints.map((hint) => new HintStepperAdapter(hint)),
+                );
+            }
             this.selectedStep = Math.max(
                 0,
                 Math.min(this.selectedStep, this.hints.length - 1),
@@ -200,8 +204,12 @@ export class HintsOverviewComponent implements OnInit, OnChanges {
      */
     onHintsChanged(hint: Hint = null): void {
         if (hint) {
-            this.stepperHints().items[this.selectedStep].hint = hint;
-            this.setStepperItems([...this.stepperHints().items]);
+            const adapter = this.stepperHints().items[this.selectedStep];
+            const previousTitle = adapter.title;
+            adapter.hint = hint;
+            if (adapter.title !== previousTitle) {
+                this.setStepperItems([...this.stepperHints().items]);
+            }
         }
         this.calculateHintPenaltySum();
         this.calculateHasError();
@@ -209,12 +217,21 @@ export class HintsOverviewComponent implements OnInit, OnChanges {
     }
 
     /**
-     * Replaces the stepper contents and keys them by the count and titles of the items at this
-     * moment; titles change in place, so the key has to be a snapshot.
+     * Replaces the stepper contents, which re-creates the stepper showing them.
      */
     private setStepperItems(items: HintStepperAdapter[]): void {
-        const titles = items.map(({ title }) => title).join('\u0001');
-        this.stepperHints.set({ items, key: `${items.length}\u0002${titles}` });
+        this.stepperHints.set({ items, key: ++this.stepperKeyCounter });
+    }
+
+    /**
+     * Tells whether the stepper items already wrap the given hints in the given order.
+     */
+    private showsCurrentHints(): boolean {
+        const { items } = this.stepperHints();
+        return (
+            items.length === this.hints.length &&
+            items.every((item, index) => item.hint === this.hints[index])
+        );
     }
 
     /**

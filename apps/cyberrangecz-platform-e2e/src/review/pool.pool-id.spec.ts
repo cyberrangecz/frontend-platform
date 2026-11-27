@@ -1,3 +1,4 @@
+import type { Request, Response } from '@playwright/test';
 import { expect, test } from '../support/fixtures';
 import { answerConfirmation, blockSandboxChanges, poolConfirmations } from '../support/pages/pool/pool-confirmation';
 import { listAllocationUnits, snapshotAllocationUnits } from '../support/pages/pool/pool-data';
@@ -21,208 +22,208 @@ test.describe('pool.pool-id (allocated sandboxes)', () => {
         await detail.open(shared.pool.id);
     });
 
-    test('lists the sandboxes of the shared pool with their allocation units', async ({
+    test('shows the sandboxes of the shared pool with their attributes, menus and sorting', async ({
         apiAs,
         shared,
         checkpoint,
         page,
     }) => {
-        const units = await listAllocationUnits(apiAs('sandboxOrganizer').sandbox, shared.pool.id);
-        await expect(pageTitle(page)).toHaveText(`Pool ${shared.pool.id}`);
-        await expect(detail.table.rows).toHaveCount(units.length);
-        await expect(detail.rowOf(own.allocationUnit.id)).toBeVisible();
-        await checkpoint(page, 'pool detail with sandboxes');
-    });
-
-    test('shows the finished build of the own sandbox with three completed stages', async () => {
+        test.slow();
+        const sandboxClient = apiAs('sandboxOrganizer').sandbox;
+        const units = await listAllocationUnits(sandboxClient, shared.pool.id);
+        const ownUnit = units.find((candidate) => candidate.id === own.allocationUnit.id);
         const row = detail.rowOf(own.allocationUnit.id);
-        await expect(row).toContainText('build finished');
-        await expect(detail.stageIcons(row)).toHaveText(['check', 'check', 'check']);
+
+        await test.step('lists the sandboxes of the shared pool with their allocation units', async () => {
+            await expect.soft(pageTitle(page), 'page title names the pool').toHaveText(`Pool ${shared.pool.id}`);
+            await expect.soft(detail.table.rows, 'one row per allocation unit').toHaveCount(units.length);
+            await expect.soft(row, 'row of the own sandbox').toBeVisible();
+            await checkpoint(page, 'pool detail with sandboxes');
+        });
+
+        await test.step('shows the finished build of the own sandbox with three completed stages', async () => {
+            await expect.soft(row, 'build state').toContainText('build finished');
+            await expect.soft(detail.stageIcons(row), 'stage icons').toHaveText(['check', 'check', 'check']);
+        });
+
+        await test.step('shows the lock state of the own sandbox as the backend reports it', async () => {
+            await expect
+                .soft(await detail.table.cell(row, /^lock$/i), 'lock cell')
+                .toHaveText(ownUnit?.locked ? 'locked' : 'unlocked');
+        });
+
+        await test.step('enables Allocate only while the pool has free capacity and enables Delete with sandboxes present', async () => {
+            if (units.length < shared.pool.maxSize) {
+                await expect.soft(detail.allocateButton, 'Allocate with free capacity').toBeEnabled();
+            } else {
+                await expect.soft(detail.allocateButton, 'Allocate without free capacity').toBeDisabled();
+            }
+            await expect.soft(detail.deleteMenuButton, 'Delete menu').toBeEnabled();
+        });
+
+        await test.step('opens the delete menu with Delete All, Delete Failed and Delete Unlocked and none of the removed entries', async () => {
+            await detail.deleteMenuButton.click();
+            for (const label of ['Delete All', 'Delete Failed', 'Delete Unlocked']) {
+                await expect.soft(page.getByRole('menuitem', { name: label }), `${label} entry`).toBeVisible();
+            }
+            for (const label of REMOVED_DELETE_MENU_ENTRIES) {
+                await expect.soft(page.getByRole('menuitem', { name: label }), `${label} entry`).toHaveCount(0);
+            }
+            await page.keyboard.press('Escape');
+        });
+
+        await test.step('enables Delete Failed only while a sandbox of the pool shows a failed allocation', async () => {
+            const anyFailed = (await detail.table.rows.filter({ hasText: 'allocation failed' }).count()) > 0;
+            await detail.deleteMenuButton.click();
+            const entry = page.getByRole('menuitem', { name: 'Delete Failed' });
+            if (anyFailed) {
+                await expect.soft(entry, 'Delete Failed with a failed allocation').toBeEnabled();
+            } else {
+                await expect.soft(entry, 'Delete Failed without a failed allocation').toBeDisabled();
+            }
+            await page.keyboard.press('Escape');
+        });
+
+        await test.step('offers either Lock or Unlock and disables Delete for a locked sandbox', async () => {
+            await expect
+                .soft(detail.table.rowAction(row, ownUnit?.locked ? 'lock_open' : 'lock'), 'lock row action')
+                .toBeEnabled();
+            const deleteAction = detail.table.rowAction(row, 'delete');
+            if (ownUnit?.locked) {
+                await expect.soft(deleteAction, 'Delete of a locked sandbox').toBeDisabled();
+            } else {
+                await expect.soft(deleteAction, 'Delete of an unlocked sandbox').toBeEnabled();
+            }
+        });
+
+        await test.step('starts sorted by the sandbox name ascending', async () => {
+            await expect
+                .soft(detail.table.headerCell(/^name$/i), 'initial name sort')
+                .toHaveAttribute('aria-sort', 'ascending');
+        });
+
+        await test.step('offers sorting by the notes and comments and the creator, not by the lock', async () => {
+            await expectColumnSortability(
+                detail.table,
+                [/^name$/i, /^notes and comments$/i, /^created by$/i],
+                [/^lock$/i, /^created$/i, /^state$/i, /^stages$/i],
+            );
+        });
+
+        await test.step('keeps the sandbox name sortable by its id', async () => {
+            const sortedAnswer = page.waitForResponse(
+                (response) => /\/pools\/\d+\/sandboxes\?/.test(response.url()) && response.url().includes('sort_by='),
+            );
+            await detail.table.sortBy(/^name$/i);
+            expect.soft((await sortedAnswer).status(), 'sorted request status').toBe(200);
+            await expect
+                .soft(detail.table.headerCell(/^name$/i), 'name sort after click')
+                .toHaveAttribute('aria-sort', 'descending');
+            await expect.soft(detail.table.rows.first(), 'first row').toBeVisible();
+        });
     });
 
-    test('shows the lock state of the own sandbox as the backend reports it', async ({ apiAs, shared }) => {
-        const unit = (await listAllocationUnits(apiAs('sandboxOrganizer').sandbox, shared.pool.id)).find(
-            (candidate) => candidate.id === own.allocationUnit.id,
-        );
-        const row = detail.rowOf(own.allocationUnit.id);
-        await expect(await detail.table.cell(row, /^lock$/i)).toHaveText(unit?.locked ? 'locked' : 'unlocked');
-    });
-
-    test('enables Allocate only while the pool has free capacity and enables Delete with sandboxes present', async ({
+    test('runs the row actions of the own sandbox and keeps every sandbox when confirmations are cancelled', async ({
+        page,
         apiAs,
         shared,
     }) => {
-        const units = await listAllocationUnits(apiAs('sandboxOrganizer').sandbox, shared.pool.id);
-        if (units.length < shared.pool.maxSize) {
-            await expect(detail.allocateButton).toBeEnabled();
-        } else {
-            await expect(detail.allocateButton).toBeDisabled();
-        }
-        await expect(detail.deleteMenuButton).toBeEnabled();
-    });
-
-    test('opens the delete menu with Delete All, Delete Failed and Delete Unlocked and none of the removed entries', async ({
-        page,
-    }) => {
-        await detail.deleteMenuButton.click();
-        for (const label of ['Delete All', 'Delete Failed', 'Delete Unlocked']) {
-            await expect(page.getByRole('menuitem', { name: label })).toBeVisible();
-        }
-        for (const label of REMOVED_DELETE_MENU_ENTRIES) {
-            await expect(page.getByRole('menuitem', { name: label })).toHaveCount(0);
-        }
-        await page.keyboard.press('Escape');
-    });
-
-    test('enables Delete Failed only while a sandbox of the pool shows a failed allocation', async ({ page }) => {
-        const anyFailed = (await detail.table.rows.filter({ hasText: 'allocation failed' }).count()) > 0;
-        await detail.deleteMenuButton.click();
-        const entry = page.getByRole('menuitem', { name: 'Delete Failed' });
-        if (anyFailed) {
-            await expect(entry).toBeEnabled();
-        } else {
-            await expect(entry).toBeDisabled();
-        }
-    });
-
-    test('opens the allocation request stages when the name of a sandbox is clicked', async ({ page, shared }) => {
-        await detail.rowOf(own.allocationUnit.id).getByRole('link').click();
-        await expect(page).toHaveURL(
-            new RegExp(`/pool/${shared.pool.id}/sandbox-instance/${own.allocationRequestId}(#.*)?$`),
-        );
-    });
-
-    test('opens the allocation request stages when a stage icon is clicked', async ({ page, shared }) => {
+        test.slow();
+        const sandboxClient = apiAs('sandboxOrganizer').sandbox;
         const row = detail.rowOf(own.allocationUnit.id);
-        await detail.stageIcons(row).nth(1).click();
-        await expect(page).toHaveURL(
-            new RegExp(`/pool/${shared.pool.id}/sandbox-instance/${own.allocationRequestId}#stage-2$`),
-        );
-    });
 
-    test('opens the topology of the own sandbox through the topology row action', async ({ page, shared }) => {
-        const action = detail.table.rowAction(detail.rowOf(own.allocationUnit.id), 'device_hub');
-        await expect(action).toBeEnabled();
-        await action.click();
-        await expect(page).toHaveURL(
-            new RegExp(`/pool/${shared.pool.id}/sandbox-instance/${own.sandboxUuid}/topology$`),
-        );
-    });
-
-    test('downloads a non-empty user SSH config through the row action', async ({ page }) => {
-        const action = detail.table.rowAction(detail.rowOf(own.allocationUnit.id), 'vpn_key');
-        await expect(action).toBeEnabled();
-        const isSshAccessUrl = (url: string) => url.includes(`/${own.sandboxUuid}/user-ssh-access`);
-        const failedRequests: string[] = [];
-        const nonSuccessStatuses: number[] = [];
-        page.on('requestfailed', (request) => {
-            if (isSshAccessUrl(request.url())) {
-                failedRequests.push(request.failure()?.errorText ?? 'unknown failure');
+        await test.step('downloads a non-empty user SSH config through the row action', async () => {
+            const action = detail.table.rowAction(row, 'vpn_key');
+            await expect(action).toBeEnabled();
+            const isSshAccessUrl = (url: string) => url.includes(`/${own.sandboxUuid}/user-ssh-access`);
+            const failedRequests: string[] = [];
+            const nonSuccessStatuses: number[] = [];
+            const recordFailure = (request: Request) => {
+                if (isSshAccessUrl(request.url())) {
+                    failedRequests.push(request.failure()?.errorText ?? 'unknown failure');
+                }
+            };
+            const recordStatus = (response: Response) => {
+                if (isSshAccessUrl(response.url()) && response.status() !== 200) {
+                    nonSuccessStatuses.push(response.status());
+                }
+            };
+            page.on('requestfailed', recordFailure);
+            page.on('response', recordStatus);
+            try {
+                const download = await captureDownload(page, () => action.click()).catch((error: unknown) => {
+                    expect(failedRequests, 'failed or cancelled user SSH access request').toEqual([]);
+                    throw error;
+                });
+                expect(nonSuccessStatuses, 'non-200 statuses of the user SSH access request').toEqual([]);
+                expect(download.size).toBeGreaterThan(0);
+                await expect(errorDialog(page)).toHaveCount(0);
+            } finally {
+                page.off('requestfailed', recordFailure);
+                page.off('response', recordStatus);
             }
         });
-        page.on('response', (response) => {
-            if (isSshAccessUrl(response.url()) && response.status() !== 200) {
-                nonSuccessStatuses.push(response.status());
-            }
-        });
-        const download = await captureDownload(page, () => action.click()).catch((error: unknown) => {
-            expect(failedRequests, 'failed or cancelled user SSH access request').toEqual([]);
-            throw error;
-        });
-        expect(nonSuccessStatuses, 'non-200 statuses of the user SSH access request').toEqual([]);
-        expect(download.size).toBeGreaterThan(0);
-        await expect(errorDialog(page)).toHaveCount(0);
-    });
 
-    test('reports the outcome of the copy VPN command row action without an error', async ({ page }) => {
-        const action = detail.table.rowAction(detail.rowOf(own.allocationUnit.id), 'vpn_lock');
-        await expect(action).toBeEnabled();
-        await action.click();
-        await expect(notificationPopups(page).first()).toBeVisible();
-        await expect(errorDialog(page)).toHaveCount(0);
-    });
-
-    test('offers either Lock or Unlock and disables Delete for a locked sandbox', async ({ apiAs, shared }) => {
-        const unit = (await listAllocationUnits(apiAs('sandboxOrganizer').sandbox, shared.pool.id)).find(
-            (candidate) => candidate.id === own.allocationUnit.id,
-        );
-        const row = detail.rowOf(own.allocationUnit.id);
-        await expect(detail.table.rowAction(row, unit?.locked ? 'lock_open' : 'lock')).toBeEnabled();
-        const deleteAction = detail.table.rowAction(row, 'delete');
-        if (unit?.locked) {
-            await expect(deleteAction).toBeDisabled();
-        } else {
-            await expect(deleteAction).toBeEnabled();
-        }
-    });
-
-    test('starts sorted by the sandbox name ascending', async () => {
-        await expect(detail.table.headerCell(/^name$/i)).toHaveAttribute('aria-sort', 'ascending');
-    });
-
-    test('keeps the sandbox name sortable by its id', async ({ page }) => {
-        const sortedAnswer = page.waitForResponse(
-            (response) => /\/pools\/\d+\/sandboxes\?/.test(response.url()) && response.url().includes('sort_by='),
-        );
-        await detail.table.sortBy(/^name$/i);
-        expect((await sortedAnswer).status()).toBe(200);
-        await expect(detail.table.headerCell(/^name$/i)).toHaveAttribute('aria-sort', 'descending');
-        await expect(detail.table.rows.first()).toBeVisible();
-    });
-
-    test('offers sorting by the notes and comments and the creator, not by the lock', async () => {
-        await expectColumnSortability(
-            detail.table,
-            [/^name$/i, /^notes and comments$/i, /^created by$/i],
-            [/^lock$/i, /^created$/i, /^state$/i, /^stages$/i],
-        );
-    });
-
-    test.describe('confirmations that are cancelled', () => {
-        test.beforeEach(async ({ page }) => {
-            await blockSandboxChanges(page);
+        await test.step('reports the outcome of the copy VPN command row action without an error', async () => {
+            const action = detail.table.rowAction(row, 'vpn_lock');
+            await expect(action).toBeEnabled();
+            await action.click();
+            await expect(notificationPopups(page).first()).toBeVisible();
+            await expect(errorDialog(page)).toHaveCount(0);
         });
 
-        test('cancels the unlock confirmation of the own sandbox while it is locked and keeps it locked', async ({
-            page,
-            apiAs,
-            shared,
-        }) => {
-            const sandbox = apiAs('sandboxOrganizer').sandbox;
-            const before = await snapshotAllocationUnits(sandbox, shared.pool.id);
-            const row = detail.rowOf(own.allocationUnit.id);
+        await test.step('opens the allocation request stages when the name of a sandbox is clicked', async () => {
+            await row.getByRole('link').click();
+            await expect(page).toHaveURL(
+                new RegExp(`/pool/${shared.pool.id}/sandbox-instance/${own.allocationRequestId}(#.*)?$`),
+            );
+            await detail.open(shared.pool.id);
+        });
+
+        await test.step('opens the allocation request stages when a stage icon is clicked', async () => {
+            await detail.stageIcons(row).nth(1).click();
+            await expect(page).toHaveURL(
+                new RegExp(`/pool/${shared.pool.id}/sandbox-instance/${own.allocationRequestId}#stage-2$`),
+            );
+            await detail.open(shared.pool.id);
+        });
+
+        await test.step('opens the topology of the own sandbox through the topology row action', async () => {
+            const action = detail.table.rowAction(row, 'device_hub');
+            await expect(action).toBeEnabled();
+            await action.click();
+            await expect(page).toHaveURL(
+                new RegExp(`/pool/${shared.pool.id}/sandbox-instance/${own.sandboxUuid}/topology$`),
+            );
+            await detail.open(shared.pool.id);
+        });
+
+        await blockSandboxChanges(page);
+
+        await test.step('cancels the unlock confirmation of the own sandbox while it is locked and keeps it locked', async () => {
+            const before = await snapshotAllocationUnits(sandboxClient, shared.pool.id);
             if (before[own.allocationUnit.id]?.locked) {
                 await detail.clickSandboxAction(row, 'Unlock');
                 await answerConfirmation(page, poolConfirmations.unlockSandbox(own.allocationUnit.id), 'cancel');
             } else {
                 await expect(detail.table.rowAction(row, 'lock_open')).toHaveCount(0);
             }
-            expect(await snapshotAllocationUnits(sandbox, shared.pool.id)).toEqual(before);
+            expect(await snapshotAllocationUnits(sandboxClient, shared.pool.id)).toEqual(before);
             await expect(await detail.table.cell(row, /^lock$/i)).toHaveText(
                 before[own.allocationUnit.id]?.locked ? 'locked' : 'unlocked',
             );
         });
 
-        test('cancels the Delete All confirmation and keeps every sandbox of the pool', async ({
-            page,
-            apiAs,
-            shared,
-        }) => {
-            const sandbox = apiAs('sandboxOrganizer').sandbox;
-            const before = await snapshotAllocationUnits(sandbox, shared.pool.id);
+        await test.step('cancels the Delete All confirmation and keeps every sandbox of the pool', async () => {
+            const before = await snapshotAllocationUnits(sandboxClient, shared.pool.id);
             await detail.chooseDeleteMenuEntry('Delete All');
             await answerConfirmation(page, poolConfirmations.deleteAllSandboxes(shared.pool.id), 'cancel');
-            expect(await snapshotAllocationUnits(sandbox, shared.pool.id)).toEqual(before);
-            await expect(detail.rowOf(own.allocationUnit.id)).toBeVisible();
+            expect(await snapshotAllocationUnits(sandboxClient, shared.pool.id)).toEqual(before);
+            await expect(row).toBeVisible();
         });
 
-        test('cancels the Delete Unlocked confirmation and keeps every sandbox of the pool', async ({
-            page,
-            apiAs,
-            shared,
-        }) => {
-            const sandbox = apiAs('sandboxOrganizer').sandbox;
-            const before = await snapshotAllocationUnits(sandbox, shared.pool.id);
+        await test.step('cancels the Delete Unlocked confirmation and keeps every sandbox of the pool', async () => {
+            const before = await snapshotAllocationUnits(sandboxClient, shared.pool.id);
             await detail.deleteMenuButton.click();
             if (Object.values(before).some((unit) => !unit.locked)) {
                 await detail.deleteMenuEntry('Delete Unlocked').click();
@@ -231,8 +232,8 @@ test.describe('pool.pool-id (allocated sandboxes)', () => {
                 await expect(detail.deleteMenuEntry('Delete Unlocked')).toBeDisabled();
                 await page.keyboard.press('Escape');
             }
-            expect(await snapshotAllocationUnits(sandbox, shared.pool.id)).toEqual(before);
-            await expect(detail.rowOf(own.allocationUnit.id)).toBeVisible();
+            expect(await snapshotAllocationUnits(sandboxClient, shared.pool.id)).toEqual(before);
+            await expect(row).toBeVisible();
         });
     });
 });

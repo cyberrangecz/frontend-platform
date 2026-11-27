@@ -21,31 +21,35 @@ test.describe('console.sandbox-instance.sandbox-instance-id.console.node-id', ()
     test.describe('as the sandbox organizer', () => {
         test.use({ account: 'sandboxOrganizer' });
 
-        test('connects to the console of an accessible host', async ({ page, checkpoint }) => {
-            await page.goto(consolePath());
-            await expect(page.locator('crczp-console-view')).toBeVisible();
-            await expect(page.locator('crczp-guacamole-status')).toContainText('Connected', {
-                timeout: CONNECTION_TIMEOUT_MILLISECONDS,
-            });
-            await expect(page.locator('crczp-console-view canvas').first()).toBeVisible();
-            await checkpoint(
-                page,
-                'console connected',
-                `Remote console of host ${hostName} with the status Connected and the host's remote display drawn on the canvas, not blank`,
-            );
-        });
+        test('connects to the console of an accessible host and reports no connection for a missing node', async ({
+            page,
+            checkpoint,
+        }) => {
+            test.setTimeout(180_000);
 
-        test('renders the remote display of the host', async ({ page }) => {
-            await page.goto(consolePath());
-            await expect(page.locator('crczp-console-view canvas').first()).toBeVisible({
-                timeout: CONNECTION_TIMEOUT_MILLISECONDS,
+            await test.step('connects to the console of an accessible host', async () => {
+                await page.goto(consolePath());
+                await expect(page.locator('crczp-console-view')).toBeVisible();
+                await expect(page.locator('crczp-guacamole-status')).toContainText('Connected', {
+                    timeout: CONNECTION_TIMEOUT_MILLISECONDS,
+                });
+                await expect(page.locator('crczp-console-view canvas').first()).toBeVisible();
+                await checkpoint(
+                    page,
+                    'console connected',
+                    `Remote console of host ${hostName} with the status Connected and the host's remote display drawn on the canvas, not blank`,
+                );
             });
-        });
 
-        test('reports no connection for a node that does not exist', async ({ page }) => {
-            await page.goto(`/console/sandbox-instance/${own.sandboxUuid}/console/no-such-node`);
-            await expect(page.locator('crczp-guacamole-status')).toHaveText(/Tunnel closed|Disconnected/, {
-                timeout: 30_000,
+            await test.step('renders the remote display of the host', async () => {
+                await expect(page.locator('crczp-console-view canvas').first()).toBeVisible();
+            });
+
+            await test.step('reports no connection for a node that does not exist', async () => {
+                await page.goto(`/console/sandbox-instance/${own.sandboxUuid}/console/no-such-node`);
+                await expect(page.locator('crczp-guacamole-status')).toHaveText(/Tunnel closed|Disconnected/, {
+                    timeout: 30_000,
+                });
             });
         });
     });

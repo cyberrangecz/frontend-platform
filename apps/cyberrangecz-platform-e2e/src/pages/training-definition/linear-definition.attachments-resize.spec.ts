@@ -28,21 +28,39 @@ const VIDEO_MINIMUM_WIDTH = 352;
 const SMALL_IMAGE = { width: 200, height: 150 };
 const COMPACT_IMAGE = { width: 160, height: 80 };
 const LARGE_IMAGE = { width: 600, height: 300 };
-const SMALL_IMAGE_FIXTURE = imageFixtureOfSize(SMALL_IMAGE.width, SMALL_IMAGE.height);
-const COMPACT_IMAGE_FIXTURE = imageFixtureOfSize(COMPACT_IMAGE.width, COMPACT_IMAGE.height);
-const LARGE_IMAGE_FIXTURE = imageFixtureOfSize(LARGE_IMAGE.width, LARGE_IMAGE.height);
+const SMALL_IMAGE_FIXTURE = imageFixtureOfSize(
+    SMALL_IMAGE.width,
+    SMALL_IMAGE.height,
+);
+const COMPACT_IMAGE_FIXTURE = imageFixtureOfSize(
+    COMPACT_IMAGE.width,
+    COMPACT_IMAGE.height,
+);
+const LARGE_IMAGE_FIXTURE = imageFixtureOfSize(
+    LARGE_IMAGE.width,
+    LARGE_IMAGE.height,
+);
 const STORED_VIDEO_WIDTH = 320;
 const STORED_VIDEO_HEIGHT = 240;
 const SAVED_SMALL_IMAGE_WIDTH = 180;
 
-const STORED_DIMENSIONS_BY_HASH = new Map<string, { width: number; height: number }>([
+const STORED_DIMENSIONS_BY_HASH = new Map<
+    string,
+    { width: number; height: number }
+>([
     [SMALL_IMAGE_FIXTURE.hash, SMALL_IMAGE],
     [COMPACT_IMAGE_FIXTURE.hash, COMPACT_IMAGE],
     [LARGE_IMAGE_FIXTURE.hash, LARGE_IMAGE],
-    [ATTACHMENTS.video.hash, { width: STORED_VIDEO_WIDTH, height: STORED_VIDEO_HEIGHT }],
+    [
+        ATTACHMENTS.video.hash,
+        { width: STORED_VIDEO_WIDTH, height: STORED_VIDEO_HEIGHT },
+    ],
 ]);
 
-function storedDimensionsOf({ hash }: AttachmentFixture): { width?: number; height?: number } {
+function storedDimensionsOf({ hash }: AttachmentFixture): {
+    width?: number;
+    height?: number;
+} {
     return STORED_DIMENSIONS_BY_HASH.get(hash) ?? {};
 }
 
@@ -68,11 +86,18 @@ async function openInfoEditorInPreview(
     files: readonly AttachmentFixture[],
 ): Promise<Opened> {
     await page.setViewportSize(WIDE_VIEWPORT);
-    const definition = await importDefinitionBody(api, definitionWithInfoLevel(title, content), files, storedDimensionsOf);
+    const definition = await importDefinitionBody(
+        api,
+        definitionWithInfoLevel(title, content),
+        files,
+        storedDimensionsOf,
+    );
     const editor = new DefinitionEditorPage(page);
     await editor.gotoEdit(definition.id);
     await editor.openLevel(0);
-    const frame = new MarkdownEditorFrame(editor.infoLevel.root.locator('crczp-markdown-editor-frame').first());
+    const frame = new MarkdownEditorFrame(
+        editor.infoLevel.root.locator('crczp-markdown-editor-frame').first(),
+    );
     await frame.previewTab.click();
     await expect(frame.previewPage).toBeVisible();
     await expect(frame.cards).toHaveCount(1);
@@ -87,13 +112,19 @@ function handleOf(frame: MarkdownEditorFrame): Locator {
     return frame.cards.first().locator('crczp-media-resize-handle');
 }
 
+/** The rendered width of the element, NaN while it has no box, which a polling assertion treats as not yet matching. */
 async function widthOf(locator: Locator): Promise<number> {
-    return (await locator.boundingBox())!.width;
+    return (await locator.boundingBox())?.width ?? Number.NaN;
 }
 
-async function expectWidthNear(locator: Locator, expected: number): Promise<void> {
+async function expectWidthNear(
+    locator: Locator,
+    expected: number,
+): Promise<void> {
     await expect
-        .poll(async () => Math.abs((await widthOf(locator)) - expected), { message: `width of the frame near ${expected}` })
+        .poll(async () => Math.abs((await widthOf(locator)) - expected), {
+            message: `width of the frame near ${expected}`,
+        })
         .toBeLessThanOrEqual(ROUNDING_TOLERANCE_PIXELS);
 }
 
@@ -111,12 +142,16 @@ async function settledWidthOf(locator: Locator): Promise<number> {
     return widthOf(locator);
 }
 
-async function settledBoxOf(locator: Locator): Promise<NonNullable<Awaited<ReturnType<Locator['boundingBox']>>>> {
+async function settledBoxOf(
+    locator: Locator,
+): Promise<NonNullable<Awaited<ReturnType<Locator['boundingBox']>>>> {
     let previous = '';
     await expect
         .poll(async () => {
             const box = await locator.boundingBox();
-            const current = box ? `${box.x},${box.y},${box.width},${box.height}` : '';
+            const current = box
+                ? `${box.x},${box.y},${box.width},${box.height}`
+                : '';
             const settled = current !== '' && current === previous;
             previous = current;
             return settled;
@@ -125,10 +160,18 @@ async function settledBoxOf(locator: Locator): Promise<NonNullable<Awaited<Retur
     return (await locator.boundingBox())!;
 }
 
-async function toolbarOffsetOf(frame: MarkdownEditorFrame, button: Locator): Promise<{ fromRight: number; fromTop: number }> {
-    const frameBox = await settledBoxOf(frame.cards.first().locator('.attachment-frame'));
+async function toolbarOffsetOf(
+    frame: MarkdownEditorFrame,
+    button: Locator,
+): Promise<{ fromRight: number; fromTop: number }> {
+    const frameBox = await settledBoxOf(
+        frame.cards.first().locator('.attachment-frame'),
+    );
     const buttonBox = await settledBoxOf(button);
-    return { fromRight: frameBox.x + frameBox.width - buttonBox.x, fromTop: buttonBox.y - frameBox.y };
+    return {
+        fromRight: frameBox.x + frameBox.width - buttonBox.x,
+        fromTop: buttonBox.y - frameBox.y,
+    };
 }
 
 async function revealHandle(frame: MarkdownEditorFrame): Promise<void> {
@@ -152,16 +195,25 @@ async function expectHandleLimits(frame: MarkdownEditorFrame): Promise<void> {
 }
 
 /** The `max N px` the attachment chip of the Raw source shows once it has settled, undefined when the reference has no saved width. */
-async function rawMaxWidth(frame: MarkdownEditorFrame): Promise<number | undefined> {
+async function rawMaxWidth(
+    frame: MarkdownEditorFrame,
+): Promise<number | undefined> {
     await showRaw(frame);
-    await expect(frame.rawChips.first()).toBeVisible();
-    const match = /max (\d+) px/.exec(await frame.rawChips.first().innerText());
+    const chip = frame.rawChips.first();
+    await expect(chip).toBeVisible();
+    await expect(chip.locator('.chip-detail')).not.toBeEmpty();
+    const match = /max (\d+) px/.exec(await chip.innerText());
     return match ? Number(match[1]) : undefined;
 }
 
-async function expectRawMaxWidthNear(frame: MarkdownEditorFrame, expected: number): Promise<number> {
+async function expectRawMaxWidthNear(
+    frame: MarkdownEditorFrame,
+    expected: number,
+): Promise<number> {
     await expect
-        .poll(async () => Math.abs(((await rawMaxWidth(frame)) ?? Number.NaN) - expected))
+        .poll(async () =>
+            Math.abs(((await rawMaxWidth(frame)) ?? Number.NaN) - expected),
+        )
         .toBeLessThanOrEqual(ROUNDING_TOLERANCE_PIXELS);
     return (await rawMaxWidth(frame))!;
 }
@@ -174,17 +226,30 @@ async function limitsOf(handle: Locator): Promise<HandleLimits> {
 }
 
 /** The pointer movement that changes a card's width by `growth` along its diagonal, whose height per width is `heightPerWidth`. */
-function diagonalOf(growth: number, heightPerWidth: number): { deltaX: number; deltaY: number } {
+function diagonalOf(
+    growth: number,
+    heightPerWidth: number,
+): { deltaX: number; deltaY: number } {
     return { deltaX: growth, deltaY: growth * heightPerWidth };
 }
 
 /** Drags the handle with the pointer, reporting the limits it announced before the release. */
-async function dragHandle(page: Page, handle: Locator, { deltaX, deltaY = 0 }: { deltaX: number; deltaY?: number }): Promise<HandleLimits> {
+async function dragHandle(
+    page: Page,
+    handle: Locator,
+    { deltaX, deltaY = 0 }: { deltaX: number; deltaY?: number },
+): Promise<HandleLimits> {
     const box = (await handle.boundingBox())!;
     const startX = box.x + box.width / 2;
     const startY = box.y + box.height / 2;
-    const targetX = Math.min(Math.max(startX + deltaX, 1), WIDE_VIEWPORT.width - 1);
-    const targetY = Math.min(Math.max(startY + deltaY, 1), WIDE_VIEWPORT.height - 1);
+    const targetX = Math.min(
+        Math.max(startX + deltaX, 1),
+        WIDE_VIEWPORT.width - 1,
+    );
+    const targetY = Math.min(
+        Math.max(startY + deltaY, 1),
+        WIDE_VIEWPORT.height - 1,
+    );
     await page.mouse.move(startX, startY);
     await page.mouse.down();
     await page.mouse.move(targetX, targetY, { steps: DRAG_STEPS });
@@ -205,7 +270,9 @@ async function storedContent(api: Api, definitionId: number): Promise<string> {
 }
 
 /** Focuses the handle, which starts a resize session, and reads the limits it announces. */
-async function focusedLimitsOf(frame: MarkdownEditorFrame): Promise<HandleLimits> {
+async function focusedLimitsOf(
+    frame: MarkdownEditorFrame,
+): Promise<HandleLimits> {
     await revealHandle(frame);
     const handle = handleOf(frame);
     await handle.focus();
@@ -234,15 +301,25 @@ test.describe('linear-definition.attachments-resize', () => {
         const growth = 60;
 
         await revealHandle(frame);
-        await dragHandle(page, handleOf(frame), diagonalOf(growth, SMALL_IMAGE.height / SMALL_IMAGE.width));
+        await dragHandle(
+            page,
+            handleOf(frame),
+            diagonalOf(growth, SMALL_IMAGE.height / SMALL_IMAGE.width),
+        );
 
         await expectWidthNear(imageFrame, startWidth + growth);
         const written = await expectRawMaxWidthNear(frame, startWidth + growth);
         await saveAndWait(editor);
-        expect(await storedContent(api, definitionId)).toContain(`attachment:${SMALL_IMAGE_FIXTURE.hash}?maxWidth=${written}`);
+        expect(await storedContent(api, definitionId)).toContain(
+            `attachment:${SMALL_IMAGE_FIXTURE.hash}?maxWidth=${written}`,
+        );
     });
 
-    test('lets the vertical pointer axis drive the width on the locked aspect ratio', async ({ page, apiAs, uniqueName }) => {
+    test('lets the vertical pointer axis drive the width on the locked aspect ratio', async ({
+        page,
+        apiAs,
+        uniqueName,
+    }) => {
         const api = apiAs('trainingDesigner');
         const { frame } = await openInfoEditorInPreview(
             page,
@@ -255,30 +332,17 @@ test.describe('linear-definition.attachments-resize', () => {
         const startWidth = Math.round(await settledWidthOf(imageFrame));
         const heightPerWidth = SMALL_IMAGE.height / SMALL_IMAGE.width;
         const verticalTravel = 60;
-        const expectedGrowth = (verticalTravel * heightPerWidth) / (1 + heightPerWidth ** 2);
+        const expectedGrowth =
+            (verticalTravel * heightPerWidth) / (1 + heightPerWidth ** 2);
 
         await revealHandle(frame);
-        await dragHandle(page, handleOf(frame), { deltaX: 0, deltaY: verticalTravel });
+        await dragHandle(page, handleOf(frame), {
+            deltaX: 0,
+            deltaY: verticalTravel,
+        });
 
         await expectWidthNear(imageFrame, startWidth + expectedGrowth);
         await expectRawMaxWidthNear(frame, startWidth + expectedGrowth);
-    });
-
-    test('announces the slider value and range without focus', async ({ page, apiAs, uniqueName }) => {
-        const api = apiAs('trainingDesigner');
-        const { frame } = await openInfoEditorInPreview(
-            page,
-            api,
-            uniqueName('resize-aria'),
-            referenceWithMaxWidth(SMALL_IMAGE_FIXTURE, SAVED_SMALL_IMAGE_WIDTH),
-            [SMALL_IMAGE_FIXTURE],
-        );
-        const handle = handleOf(frame);
-
-        await expect(handle).toHaveAttribute('aria-valuemin', /^\d+$/);
-        await expect(handle).toHaveAttribute('aria-valuemax', /^\d+$/);
-        await expect(handle).toHaveAttribute('aria-valuenow', String(SAVED_SMALL_IMAGE_WIDTH));
-        await expect(handle).not.toBeFocused();
     });
 
     test('changes the width with the arrow keys and Home and End, commits with Enter and drops the change with Escape', async ({
@@ -286,6 +350,7 @@ test.describe('linear-definition.attachments-resize', () => {
         apiAs,
         uniqueName,
     }) => {
+        test.slow();
         const api = apiAs('trainingDesigner');
         const { frame } = await openInfoEditorInPreview(
             page,
@@ -303,7 +368,10 @@ test.describe('linear-definition.attachments-resize', () => {
         await handle.press('ArrowRight');
         await expectWidthNear(imageFrame, startWidth + 2 * KEY_STEP_PIXELS);
         await handle.press('Enter');
-        const committed = await expectRawMaxWidthNear(frame, startWidth + 2 * KEY_STEP_PIXELS);
+        const committed = await expectRawMaxWidthNear(
+            frame,
+            startWidth + 2 * KEY_STEP_PIXELS,
+        );
         await showPreview(frame);
         await expectHandleLimits(frame);
 
@@ -311,7 +379,7 @@ test.describe('linear-definition.attachments-resize', () => {
         await expectWidthNear(imageFrame, committed - KEY_STEP_PIXELS);
         await handle.press('Escape');
         await expectWidthNear(imageFrame, committed);
-        expect(await rawMaxWidth(frame)).toBe(committed);
+        expect(await expectRawMaxWidthNear(frame, committed)).toBe(committed);
         await showPreview(frame);
         await expectHandleLimits(frame);
 
@@ -330,7 +398,11 @@ test.describe('linear-definition.attachments-resize', () => {
         expect(await expectRawMaxWidthNear(frame, minimum)).toBe(minimum);
     });
 
-    test('removes the parameter with Reset size', async ({ page, apiAs, uniqueName }) => {
+    test('announces the slider value and removes the parameter with Reset size', async ({
+        page,
+        apiAs,
+        uniqueName,
+    }) => {
         const api = apiAs('trainingDesigner');
         const { frame } = await openInfoEditorInPreview(
             page,
@@ -339,29 +411,63 @@ test.describe('linear-definition.attachments-resize', () => {
             referenceWithMaxWidth(SMALL_IMAGE_FIXTURE, SAVED_SMALL_IMAGE_WIDTH),
             [SMALL_IMAGE_FIXTURE],
         );
+        const handle = handleOf(frame);
         const imageFrame = mediaFrameOf(frame, IMAGE_FRAME);
-        await expectWidthNear(imageFrame, SAVED_SMALL_IMAGE_WIDTH);
 
-        await revealHandle(frame);
-        const resetButton = frame.cards.first().getByRole('button', { name: 'Reset size' });
-        const replaceButton = frame.cards.first().getByRole('button', { name: 'Replace file' });
-        await expect(resetButton).toBeEnabled();
-        const offsetBefore = await toolbarOffsetOf(frame, replaceButton);
-        await resetButton.click();
+        await test.step('announces the slider value and range without focus', async () => {
+            await expect
+                .soft(handle, 'minimum')
+                .toHaveAttribute('aria-valuemin', /^\d+$/);
+            await expect
+                .soft(handle, 'maximum')
+                .toHaveAttribute('aria-valuemax', /^\d+$/);
+            await expect
+                .soft(handle, 'value')
+                .toHaveAttribute(
+                    'aria-valuenow',
+                    String(SAVED_SMALL_IMAGE_WIDTH),
+                );
+            await expect.soft(handle, 'focus').not.toBeFocused();
+        });
 
-        await expectWidthNear(imageFrame, SMALL_IMAGE.width);
-        await expect.poll(() => rawMaxWidth(frame)).toBeUndefined();
-        await expect(frame.rawContent).not.toContainText('maxWidth');
-        await showPreview(frame);
-        await revealHandle(frame);
-        await expect(resetButton).toBeVisible();
-        await expect(resetButton).toBeDisabled();
-        const offsetAfter = await toolbarOffsetOf(frame, replaceButton);
-        expect(offsetAfter.fromRight).toBeCloseTo(offsetBefore.fromRight, 0);
-        expect(offsetAfter.fromTop).toBeCloseTo(offsetBefore.fromTop, 0);
+        await test.step('removes the parameter with Reset size', async () => {
+            await expectWidthNear(imageFrame, SAVED_SMALL_IMAGE_WIDTH);
+
+            await revealHandle(frame);
+            const resetButton = frame.cards
+                .first()
+                .getByRole('button', { name: 'Reset size' });
+            const replaceButton = frame.cards
+                .first()
+                .getByRole('button', { name: 'Replace file' });
+            await expect.soft(resetButton, 'Reset size before').toBeEnabled();
+            const offsetBefore = await toolbarOffsetOf(frame, replaceButton);
+            await resetButton.click();
+
+            await expectWidthNear(imageFrame, SMALL_IMAGE.width);
+            await expect.poll(() => rawMaxWidth(frame)).toBeUndefined();
+            await expect
+                .soft(frame.rawContent, 'raw content')
+                .not.toContainText('maxWidth');
+            await showPreview(frame);
+            await revealHandle(frame);
+            await expect.soft(resetButton, 'Reset size after').toBeVisible();
+            await expect.soft(resetButton, 'Reset size after').toBeDisabled();
+            const offsetAfter = await toolbarOffsetOf(frame, replaceButton);
+            expect
+                .soft(offsetAfter.fromRight, 'toolbar offset from the right')
+                .toBeCloseTo(offsetBefore.fromRight, 0);
+            expect
+                .soft(offsetAfter.fromTop, 'toolbar offset from the top')
+                .toBeCloseTo(offsetBefore.fromTop, 0);
+        });
     });
 
-    test('keeps Reset size in the toolbar, disabled, while no width is saved', async ({ page, apiAs, uniqueName }) => {
+    test('keeps Reset size in the toolbar, disabled, while no width is saved', async ({
+        page,
+        apiAs,
+        uniqueName,
+    }) => {
         const api = apiAs('trainingDesigner');
         const { frame } = await openInfoEditorInPreview(
             page,
@@ -373,10 +479,16 @@ test.describe('linear-definition.attachments-resize', () => {
 
         await revealHandle(frame);
 
-        await expect(frame.cards.first().getByRole('button', { name: 'Reset size' })).toBeDisabled();
+        await expect(
+            frame.cards.first().getByRole('button', { name: 'Reset size' }),
+        ).toBeDisabled();
     });
 
-    test('puts the handle outside the corner of a small card and over the corner of a larger one', async ({ page, apiAs, uniqueName }) => {
+    test('puts the handle outside the corner of a small card and over the corner of a larger one', async ({
+        page,
+        apiAs,
+        uniqueName,
+    }) => {
         const api = apiAs('trainingDesigner');
         const compact = await openInfoEditorInPreview(
             page,
@@ -387,9 +499,16 @@ test.describe('linear-definition.attachments-resize', () => {
         );
         await settledWidthOf(mediaFrameOf(compact.frame, IMAGE_FRAME));
         await revealHandle(compact.frame);
-        const compactFrameBox = (await mediaFrameOf(compact.frame, IMAGE_FRAME).boundingBox())!;
+        const compactFrameBox = (await mediaFrameOf(
+            compact.frame,
+            IMAGE_FRAME,
+        ).boundingBox())!;
         const compactHandleBox = (await handleOf(compact.frame).boundingBox())!;
-        expect(compactHandleBox.y).toBeGreaterThanOrEqual(compactFrameBox.y + compactFrameBox.height - ROUNDING_TOLERANCE_PIXELS);
+        expect(compactHandleBox.y).toBeGreaterThanOrEqual(
+            compactFrameBox.y +
+                compactFrameBox.height -
+                ROUNDING_TOLERANCE_PIXELS,
+        );
 
         const larger = await openInfoEditorInPreview(
             page,
@@ -400,9 +519,16 @@ test.describe('linear-definition.attachments-resize', () => {
         );
         await settledWidthOf(mediaFrameOf(larger.frame, IMAGE_FRAME));
         await revealHandle(larger.frame);
-        const largerFrameBox = (await mediaFrameOf(larger.frame, IMAGE_FRAME).boundingBox())!;
+        const largerFrameBox = (await mediaFrameOf(
+            larger.frame,
+            IMAGE_FRAME,
+        ).boundingBox())!;
         const largerHandleBox = (await handleOf(larger.frame).boundingBox())!;
-        expect(largerHandleBox.y + largerHandleBox.height).toBeLessThanOrEqual(largerFrameBox.y + largerFrameBox.height + ROUNDING_TOLERANCE_PIXELS);
+        expect(largerHandleBox.y + largerHandleBox.height).toBeLessThanOrEqual(
+            largerFrameBox.y +
+                largerFrameBox.height +
+                ROUNDING_TOLERANCE_PIXELS,
+        );
     });
 
     test('caps a resize at the editor column and leaves a saved width alone when the column narrows', async ({
@@ -440,30 +566,6 @@ test.describe('linear-definition.attachments-resize', () => {
         expect(await rawMaxWidth(frame)).toBe(saved);
     });
 
-    test('keeps a video at its minimum width in a narrower column and scrolls the card sideways, not the preview', async ({
-        page,
-        apiAs,
-        uniqueName,
-    }) => {
-        const api = apiAs('trainingDesigner');
-        const { frame } = await openInfoEditorInPreview(
-            page,
-            api,
-            uniqueName('resize-scroll'),
-            ATTACHMENTS.video.reference,
-            [ATTACHMENTS.video],
-        );
-        await page.setViewportSize(NARROWER_THAN_VIDEO_MINIMUM_VIEWPORT);
-
-        const videoFrame = mediaFrameOf(frame, VIDEO_FRAME);
-        await expect.poll(async () => widthOf(videoFrame)).toBeGreaterThanOrEqual(VIDEO_MINIMUM_WIDTH - ROUNDING_TOLERANCE_PIXELS);
-        await expectWidthNear(videoFrame, VIDEO_MINIMUM_WIDTH);
-        const scrollsSideways = await frame.cards.first().evaluate((element) => element.scrollWidth > element.clientWidth);
-        const pageScrollsSideways = await frame.previewPage.evaluate((element) => element.scrollWidth > element.clientWidth);
-        expect(scrollsSideways).toBe(true);
-        expect(pageScrollsSideways).toBe(false);
-    });
-
     test('keeps a dragged width inside the minimum and the larger of twice the natural width and the minimum', async ({
         page,
         apiAs,
@@ -481,8 +583,13 @@ test.describe('linear-definition.attachments-resize', () => {
         const startWidth = Math.round(await settledWidthOf(imageFrame));
 
         await revealHandle(frame);
-        const upperLimits = await dragHandle(page, handleOf(frame), { deltaX: WIDE_VIEWPORT.width });
-        const maximum = Math.max(MAXIMUM_SCALE * SMALL_IMAGE.width, upperLimits.minimum);
+        const upperLimits = await dragHandle(page, handleOf(frame), {
+            deltaX: WIDE_VIEWPORT.width,
+        });
+        const maximum = Math.max(
+            MAXIMUM_SCALE * SMALL_IMAGE.width,
+            upperLimits.minimum,
+        );
         expect(upperLimits.maximum).toBe(maximum);
         expect(await expectRawMaxWidthNear(frame, maximum)).toBe(maximum);
         await showPreview(frame);
@@ -490,16 +597,24 @@ test.describe('linear-definition.attachments-resize', () => {
         await expectWidthNear(imageFrame, maximum);
 
         await revealHandle(frame);
-        const lowerLimits = await dragHandle(page, handleOf(frame), { deltaX: -WIDE_VIEWPORT.width });
+        const lowerLimits = await dragHandle(page, handleOf(frame), {
+            deltaX: -WIDE_VIEWPORT.width,
+        });
         expect(lowerLimits.minimum).toBeGreaterThan(0);
         expect(lowerLimits.minimum).toBeLessThanOrEqual(startWidth);
-        expect(await expectRawMaxWidthNear(frame, lowerLimits.minimum)).toBe(lowerLimits.minimum);
+        expect(await expectRawMaxWidthNear(frame, lowerLimits.minimum)).toBe(
+            lowerLimits.minimum,
+        );
         await showPreview(frame);
         await expectHandleLimits(frame);
         await expectWidthNear(imageFrame, lowerLimits.minimum);
     });
 
-    test('shows a video stored narrower than the video minimum scaled up to it', async ({ page, apiAs, uniqueName }) => {
+    test('keeps a video stored narrower than the video minimum at that minimum', async ({
+        page,
+        apiAs,
+        uniqueName,
+    }) => {
         const api = apiAs('trainingDesigner');
         const { frame } = await openInfoEditorInPreview(
             page,
@@ -509,17 +624,52 @@ test.describe('linear-definition.attachments-resize', () => {
             [ATTACHMENTS.video],
         );
         const videoFrame = mediaFrameOf(frame, VIDEO_FRAME);
-        const { minimum, maximum } = await focusedLimitsOf(frame);
 
-        expect(minimum).toBeGreaterThan(STORED_VIDEO_WIDTH);
-        expect(maximum).toBe(Math.max(MAXIMUM_SCALE * STORED_VIDEO_WIDTH, minimum));
-        await expectWidthNear(videoFrame, minimum);
+        await test.step('shows a video stored narrower than the video minimum scaled up to it', async () => {
+            const { minimum, maximum } = await focusedLimitsOf(frame);
 
-        await showRaw(frame);
-        await expect(frame.rawContent).not.toContainText('maxWidth');
+            expect.soft(minimum, 'minimum').toBeGreaterThan(STORED_VIDEO_WIDTH);
+            expect
+                .soft(maximum, 'maximum')
+                .toBe(Math.max(MAXIMUM_SCALE * STORED_VIDEO_WIDTH, minimum));
+            await expectWidthNear(videoFrame, minimum);
+
+            await showRaw(frame);
+            await expect
+                .soft(frame.rawContent, 'raw content')
+                .not.toContainText('maxWidth');
+            await showPreview(frame);
+        });
+
+        await test.step('keeps a video at its minimum width in a narrower column and scrolls the card sideways, not the preview', async () => {
+            await page.setViewportSize(NARROWER_THAN_VIDEO_MINIMUM_VIEWPORT);
+
+            await expect
+                .poll(async () => widthOf(videoFrame))
+                .toBeGreaterThanOrEqual(
+                    VIDEO_MINIMUM_WIDTH - ROUNDING_TOLERANCE_PIXELS,
+                );
+            await expectWidthNear(videoFrame, VIDEO_MINIMUM_WIDTH);
+            const scrollsSideways = await frame.cards
+                .first()
+                .evaluate(
+                    (element) => element.scrollWidth > element.clientWidth,
+                );
+            const pageScrollsSideways = await frame.previewPage.evaluate(
+                (element) => element.scrollWidth > element.clientWidth,
+            );
+            expect.soft(scrollsSideways, 'card scrolls sideways').toBe(true);
+            expect
+                .soft(pageScrollsSideways, 'preview scrolls sideways')
+                .toBe(false);
+        });
     });
 
-    test('scales a video up to the minimum however small a width is saved for it', async ({ page, apiAs, uniqueName }) => {
+    test('scales a video up to the minimum however small a width is saved for it', async ({
+        page,
+        apiAs,
+        uniqueName,
+    }) => {
         const api = apiAs('trainingDesigner');
         const { frame } = await openInfoEditorInPreview(
             page,
@@ -534,7 +684,11 @@ test.describe('linear-definition.attachments-resize', () => {
         expect(minimum).toBeGreaterThan(100);
     });
 
-    test('clamps a hand-written out-of-range maxWidth when it is rendered', async ({ page, apiAs, uniqueName }) => {
+    test('clamps a hand-written out-of-range maxWidth when it is rendered', async ({
+        page,
+        apiAs,
+        uniqueName,
+    }) => {
         const api = apiAs('trainingDesigner');
         const tooWide = await openInfoEditorInPreview(
             page,
@@ -543,9 +697,15 @@ test.describe('linear-definition.attachments-resize', () => {
             referenceWithMaxWidth(SMALL_IMAGE_FIXTURE, 100_000),
             [SMALL_IMAGE_FIXTURE],
         );
-        const { minimum: imageMinimum, maximum: imageMaximum } = await focusedLimitsOf(tooWide.frame);
-        expect(imageMaximum).toBe(Math.max(MAXIMUM_SCALE * SMALL_IMAGE.width, imageMinimum));
-        await expectWidthNear(mediaFrameOf(tooWide.frame, IMAGE_FRAME), imageMaximum);
+        const { minimum: imageMinimum, maximum: imageMaximum } =
+            await focusedLimitsOf(tooWide.frame);
+        expect(imageMaximum).toBe(
+            Math.max(MAXIMUM_SCALE * SMALL_IMAGE.width, imageMinimum),
+        );
+        await expectWidthNear(
+            mediaFrameOf(tooWide.frame, IMAGE_FRAME),
+            imageMaximum,
+        );
 
         const tooNarrow = await openInfoEditorInPreview(
             page,
@@ -555,7 +715,10 @@ test.describe('linear-definition.attachments-resize', () => {
             [SMALL_IMAGE_FIXTURE],
         );
         const narrowLimits = await focusedLimitsOf(tooNarrow.frame);
-        await expectWidthNear(mediaFrameOf(tooNarrow.frame, IMAGE_FRAME), narrowLimits.minimum);
+        await expectWidthNear(
+            mediaFrameOf(tooNarrow.frame, IMAGE_FRAME),
+            narrowLimits.minimum,
+        );
         expect(narrowLimits.minimum).toBeGreaterThan(1);
 
         const videoTooWide = await openInfoEditorInPreview(
@@ -566,62 +729,97 @@ test.describe('linear-definition.attachments-resize', () => {
             [ATTACHMENTS.video],
         );
         const videoLimits = await focusedLimitsOf(videoTooWide.frame);
-        const videoWidth = await settledWidthOf(mediaFrameOf(videoTooWide.frame, VIDEO_FRAME));
-        expect(videoWidth).toBeLessThanOrEqual(videoLimits.maximum + ROUNDING_TOLERANCE_PIXELS);
-        expect(videoWidth).toBeGreaterThanOrEqual(videoLimits.minimum - ROUNDING_TOLERANCE_PIXELS);
+        const videoWidth = await settledWidthOf(
+            mediaFrameOf(videoTooWide.frame, VIDEO_FRAME),
+        );
+        expect(videoWidth).toBeLessThanOrEqual(
+            videoLimits.maximum + ROUNDING_TOLERANCE_PIXELS,
+        );
+        expect(videoWidth).toBeGreaterThanOrEqual(
+            videoLimits.minimum - ROUNDING_TOLERANCE_PIXELS,
+        );
     });
 
-    test.describe('rendering of a saved maxWidth', () => {
+    test('renders a saved maxWidth on a wide, a narrow and a narrower than the video minimum viewport', async ({
+        page,
+        apiAs,
+        uniqueName,
+    }) => {
+        test.slow();
         const SAVED_IMAGE_WIDTH = 400;
         const SAVED_VIDEO_WIDTH = 2 * STORED_VIDEO_WIDTH;
-
-        async function openSavedDefinitionPreview(page: Page, api: Api, title: string): Promise<Locator> {
-            const content = [
-                referenceWithMaxWidth(LARGE_IMAGE_FIXTURE, SAVED_IMAGE_WIDTH),
-                referenceWithMaxWidth(ATTACHMENTS.video, SAVED_VIDEO_WIDTH),
-            ].join('\n\n');
-            const definition = await importDefinitionBody(
-                api,
-                definitionWithInfoLevel(title, content),
-                [LARGE_IMAGE_FIXTURE, ATTACHMENTS.video],
-                storedDimensionsOf,
-            );
+        const content = [
+            referenceWithMaxWidth(LARGE_IMAGE_FIXTURE, SAVED_IMAGE_WIDTH),
+            referenceWithMaxWidth(ATTACHMENTS.video, SAVED_VIDEO_WIDTH),
+        ].join('\n\n');
+        const definition = await importDefinitionBody(
+            apiAs('trainingDesigner'),
+            definitionWithInfoLevel(uniqueName('resize-render'), content),
+            [LARGE_IMAGE_FIXTURE, ATTACHMENTS.video],
+            storedDimensionsOf,
+        );
+        const openSavedDefinitionPreview = async (viewport: {
+            width: number;
+            height: number;
+        }): Promise<Locator> => {
+            await page.setViewportSize(viewport);
             await page.goto(`/linear-definition/${definition.id}/preview`);
             await waitForPageReady(page);
-            const markdown = page.locator('crczp-abstract-level crczp-markdown-view').first();
+            const markdown = page
+                .locator('crczp-abstract-level crczp-markdown-view')
+                .first();
             await expect(markdown.locator(IMAGE_FRAME)).toBeVisible();
             await expect(markdown.locator(VIDEO_FRAME)).toBeVisible();
             return markdown;
-        }
+        };
 
-        test('shows a saved maxWidth at that width on a wide viewport', async ({ page, apiAs, uniqueName }) => {
-            await page.setViewportSize(WIDE_VIEWPORT);
-            const markdown = await openSavedDefinitionPreview(page, apiAs('trainingDesigner'), uniqueName('resize-render-wide'));
+        await test.step('shows a saved maxWidth at that width on a wide viewport', async () => {
+            const markdown = await openSavedDefinitionPreview(WIDE_VIEWPORT);
             const available = await widthOf(markdown);
 
-            await expectWidthNear(markdown.locator(IMAGE_FRAME), Math.min(SAVED_IMAGE_WIDTH, available));
-            await expectWidthNear(markdown.locator(VIDEO_FRAME), Math.min(SAVED_VIDEO_WIDTH, available));
+            await expectWidthNear(
+                markdown.locator(IMAGE_FRAME),
+                Math.min(SAVED_IMAGE_WIDTH, available),
+            );
+            await expectWidthNear(
+                markdown.locator(VIDEO_FRAME),
+                Math.min(SAVED_VIDEO_WIDTH, available),
+            );
         });
 
-        test('shrinks a saved maxWidth to fit a narrow viewport', async ({ page, apiAs, uniqueName }) => {
-            await page.setViewportSize(NARROW_VIEWPORT);
-            const markdown = await openSavedDefinitionPreview(page, apiAs('trainingDesigner'), uniqueName('resize-render-narrow'));
+        await test.step('shrinks a saved maxWidth to fit a narrow viewport', async () => {
+            const markdown = await openSavedDefinitionPreview(NARROW_VIEWPORT);
             const available = await widthOf(markdown);
 
-            expect(available).toBeLessThan(SAVED_IMAGE_WIDTH);
+            expect
+                .soft(available, 'available width')
+                .toBeLessThan(SAVED_IMAGE_WIDTH);
             await expectWidthNear(markdown.locator(IMAGE_FRAME), available);
-            await expectWidthNear(markdown.locator(VIDEO_FRAME), Math.max(available, VIDEO_MINIMUM_WIDTH));
+            await expectWidthNear(
+                markdown.locator(VIDEO_FRAME),
+                Math.max(available, VIDEO_MINIMUM_WIDTH),
+            );
         });
 
-        test('keeps a video at its minimum width below it and scrolls its card sideways', async ({ page, apiAs, uniqueName }) => {
-            await page.setViewportSize(NARROWER_THAN_VIDEO_MINIMUM_VIEWPORT);
-            const markdown = await openSavedDefinitionPreview(page, apiAs('trainingDesigner'), uniqueName('resize-render-scroll'));
+        await test.step('keeps a video at its minimum width below it and scrolls its card sideways', async () => {
+            const markdown = await openSavedDefinitionPreview(
+                NARROWER_THAN_VIDEO_MINIMUM_VIEWPORT,
+            );
 
-            expect(await widthOf(markdown)).toBeLessThan(VIDEO_MINIMUM_WIDTH);
-            await expectWidthNear(markdown.locator(VIDEO_FRAME), VIDEO_MINIMUM_WIDTH);
-            const card = markdown.locator(`crczp-attachment-media:has(${VIDEO_FRAME})`);
-            const scrollsSideways = await card.evaluate((element) => element.scrollWidth > element.clientWidth);
-            expect(scrollsSideways).toBe(true);
+            expect
+                .soft(await widthOf(markdown), 'available width')
+                .toBeLessThan(VIDEO_MINIMUM_WIDTH);
+            await expectWidthNear(
+                markdown.locator(VIDEO_FRAME),
+                VIDEO_MINIMUM_WIDTH,
+            );
+            const card = markdown.locator(
+                `crczp-attachment-media:has(${VIDEO_FRAME})`,
+            );
+            const scrollsSideways = await card.evaluate(
+                (element) => element.scrollWidth > element.clientWidth,
+            );
+            expect.soft(scrollsSideways, 'card scrolls sideways').toBe(true);
         });
     });
 });

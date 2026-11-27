@@ -33,150 +33,138 @@ async function downloadPanelCsv(
     return { download, records: parseCsvRecords(download.content) };
 }
 
+const MERGED_TEST_TIMEOUT_MILLISECONDS = 300_000;
+
 test.describe('run.overview, run.linear.results and run.linear.resume of the finished run', () => {
     test.use({ account: 'chainTrainee' });
 
-    test('lists the finished run with its results action enabled and resume disabled', async ({
-        page,
-        shared,
-        checkpoint,
-    }) => {
+    test('finished run: overview and results', async ({ page, shared, browserKey, checkpoint }) => {
+        test.setTimeout(MERGED_TEST_TIMEOUT_MILLISECONDS);
+        const runId = readChainRecord(browserKey).trainingRunId;
+        const result = expectedResultOf(browserKey);
         const overview = new RunOverviewPage(page);
         await overview.open();
-        const row = overview.rowOf(shared.trainingInstance.title);
-        await expect(row).toHaveCount(1);
-        await expect(await overview.table.cell(row, /Completed Levels/i)).toHaveText(
-            `${LEVEL_COUNT}/${LEVEL_COUNT}`,
-        );
-        await expect(overview.resultsAction(row)).toBeEnabled();
-        await expect(overview.resumeAction(row)).toBeDisabled();
-        await checkpoint(page, 'finished run listed');
-    });
 
-    test('opens the results from the Access Results action', async ({
-        page,
-        shared,
-        browserKey,
-    }) => {
-        const overview = new RunOverviewPage(page);
-        await overview.open();
-        await overview.resultsAction(overview.rowOf(shared.trainingInstance.title)).click();
-        await expect(page).toHaveURL(
-            new RegExp(`/run/linear/${readChainRecord(browserKey).trainingRunId}/results$`),
-        );
-    });
-
-    test.describe('results page', () => {
-        test.beforeEach(async ({ page, browserKey }) => {
-            await page.goto(`/run/linear/${readChainRecord(browserKey).trainingRunId}/results`);
-            await waitForPageReady(page);
+        await test.step('lists the finished run with its results action enabled and resume disabled', async () => {
+            const row = overview.rowOf(shared.trainingInstance.title);
+            await expect.soft(row, 'row of the finished run').toHaveCount(1);
+            await expect
+                .soft(await overview.table.cell(row, /Completed Levels/i), 'completed levels')
+                .toHaveText(`${LEVEL_COUNT}/${LEVEL_COUNT}`);
+            await expect.soft(overview.resultsAction(row), 'Access Results action').toBeEnabled();
+            await expect.soft(overview.resumeAction(row), 'Resume action').toBeDisabled();
+            await checkpoint(page, 'finished run listed');
         });
 
-        test('shows the three dashboard sections', async ({ page, checkpoint }) => {
+        await test.step('opens the results from the Access Results action', async () => {
+            await overview.resultsAction(overview.rowOf(shared.trainingInstance.title)).click();
+            await expect.soft(page, 'address of the results').toHaveURL(new RegExp(`/run/linear/${runId}/results$`));
+        });
+
+        await page.goto(`/run/linear/${runId}/results`);
+        await waitForPageReady(page);
+
+        await test.step('shows the three dashboard sections', async () => {
             for (const label of ['Standing among trainees', 'Score & time', 'Run timeline']) {
-                await expect(page.getByRole('heading', { name: label, exact: true })).toBeVisible();
+                await expect
+                    .soft(page.getByRole('heading', { name: label, exact: true }), `dashboard section ${label}`)
+                    .toBeVisible();
             }
             await checkpoint(page, 'results dashboard');
         });
 
-        test('shows every visualization to the trainee', async ({ page, browserKey, checkpoint }) => {
+        await test.step('shows every visualization to the trainee', async () => {
             for (const selector of CHART_SELECTORS) {
-                await expect(page.locator(selector)).toBeVisible();
+                await expect.soft(page.locator(selector), `visualization ${selector}`).toBeVisible();
             }
-            const result = expectedResultOf(browserKey);
             await checkpointCharts(page, checkpoint, {
                 ...standingChartShows(result),
                 ...ownRunChartShows(result),
             });
         });
 
-        test('shows the trainee identity and the run statistics in the feedback card', async ({
-            page,
-            browserKey,
-        }) => {
+        await test.step('shows the trainee identity and the run statistics in the feedback card', async () => {
             const play = TRAINEE_PLAYS[browserKey];
             const card = page.locator('crczp-feedback-overview');
-            await expect(card).not.toContainText('Feedback data could not be loaded');
-            await expect(card).not.toContainText('No data for this run');
-            const statistic = (label: string) =>
-                card.locator('.feedback-card__stat').filter({ hasText: label });
-            await expect(card).toContainText(ACCOUNTS[accountFor('chainTrainee', browserKey)].subject);
-            await expect(statistic('Levels solved')).toContainText(`${LEVEL_COUNT}/${LEVEL_COUNT}`);
-            await expect(statistic('Wrong')).toContainText(String(expectedResultOf(browserKey).wrongAnswers));
-            await expect(statistic('Hints')).toContainText(String(play.hintsOnFirstTraining));
-            await expect(statistic('Solutions')).toContainText(String(expectedResultOf(browserKey).solutions));
-            await expect(statistic('Score').locator('.feedback-card__stat-value')).toHaveText(
-                String(expectedResultOf(browserKey).totalScore),
-            );
+            await expect.soft(card, 'feedback card load error').not.toContainText('Feedback data could not be loaded');
+            await expect.soft(card, 'feedback card without data').not.toContainText('No data for this run');
+            const statistic = (label: string) => card.locator('.feedback-card__stat').filter({ hasText: label });
+            await expect
+                .soft(card, 'trainee identity')
+                .toContainText(ACCOUNTS[accountFor('chainTrainee', browserKey)].subject);
+            await expect.soft(statistic('Levels solved'), 'levels solved').toContainText(`${LEVEL_COUNT}/${LEVEL_COUNT}`);
+            await expect.soft(statistic('Wrong'), 'wrong answers').toContainText(String(result.wrongAnswers));
+            await expect.soft(statistic('Hints'), 'hints').toContainText(String(play.hintsOnFirstTraining));
+            await expect.soft(statistic('Solutions'), 'solutions').toContainText(String(result.solutions));
+            await expect
+                .soft(statistic('Score').locator('.feedback-card__stat-value'), 'score')
+                .toHaveText(String(result.totalScore));
             for (const label of ['Percentile', 'Elapsed']) {
-                await expect(statistic(label)).toBeVisible();
+                await expect.soft(statistic(label), `${label} statistic`).toBeVisible();
             }
         });
 
-        test('downloads the own cumulative score level by level', async ({ page, browserKey }) => {
-            const runId = readChainRecord(browserKey).trainingRunId;
-            const expected = expectedResultOf(browserKey);
+        await test.step('downloads the own cumulative score level by level', async () => {
             const { download, records } = await downloadPanelCsv(page, 'Cumulative score');
-            expect(download.fileName).toBe(`cumulative-score-run-${runId}.csv`);
-            for (const level of expected.levelScores) {
+            expect.soft(download.fileName, 'file name').toBe(`cumulative-score-run-${runId}.csv`);
+            for (const level of result.levelScores) {
                 const record = records.find((candidate) => candidate['Title'] === level.title);
-                expect(record?.['Gained this level'], `score of ${level.title}`).toBe(String(level.score));
-                expect(record?.['Level max'], `maximum of ${level.title}`).toBe(String(level.maximum));
+                expect.soft(record?.['Gained this level'], `score of ${level.title}`).toBe(String(level.score));
+                expect.soft(record?.['Level max'], `maximum of ${level.title}`).toBe(String(level.maximum));
             }
-            expect(records.at(-1)?.['Cumulative max']).toBe(String(MAXIMUM_TOTAL_SCORE));
-            expect(records.at(-1)?.['Actual cumulative']).toBe(String(expected.totalScore));
+            expect.soft(records.at(-1)?.['Cumulative max'], 'cumulative maximum').toBe(String(MAXIMUM_TOTAL_SCORE));
+            expect.soft(records.at(-1)?.['Actual cumulative'], 'actual cumulative').toBe(String(result.totalScore));
         });
 
-        test('downloads the own points earned against the time per level', async ({ page, browserKey }) => {
-            const runId = readChainRecord(browserKey).trainingRunId;
+        await test.step('downloads the own points earned against the time per level', async () => {
             const { download, records } = await downloadPanelCsv(page, 'Time vs score per level');
-            expect(download.fileName).toBe(`time-vs-score-run-${runId}.csv`);
-            for (const level of expectedResultOf(browserKey).levelScores) {
+            expect.soft(download.fileName, 'file name').toBe(`time-vs-score-run-${runId}.csv`);
+            for (const level of result.levelScores) {
                 const record = records.find((candidate) => candidate['Title'] === level.title);
-                expect(record?.['Points earned'], `score of ${level.title}`).toBe(String(level.score));
+                expect.soft(record?.['Points earned'], `score of ${level.title}`).toBe(String(level.score));
             }
         });
 
-        test('names no other trainee on the page', async ({ page }) => {
+        await test.step('names no other trainee on the page', async () => {
             const ownName = (await page.locator('.feedback-card__name').innerText()).trim();
             const names = (await page.locator('body').innerText()).match(/User\d+ Generated/g) ?? [];
-            expect(names.filter((name) => name !== ownName)).toEqual([]);
+            expect.soft(names.filter((name) => name !== ownName), 'names of other trainees').toEqual([]);
         });
     });
 
-    test('refuses to resume the finished run', async ({ page, browserKey }) => {
-        await page.goto(`/run/linear/${readChainRecord(browserKey).trainingRunId}/resume`);
-        await expect(page).toHaveURL(/\/run$/);
-        await expect(page.locator('crczp-abstract-level')).toHaveCount(0);
-    });
+    test("resume guards and another trainee's run", async ({ page, apiAs, browserKey }) => {
+        test.setTimeout(MERGED_TEST_TIMEOUT_MILLISECONDS);
+        const other = BROWSER_KEYS.find((candidate) => candidate !== browserKey)!;
+        const otherRunId = readChainRecord(other).trainingRunId!;
 
-    test.describe("another trainee's run", () => {
-        function otherRunId(browserKey: (typeof BROWSER_KEYS)[number]): number {
-            const other = BROWSER_KEYS.find((candidate) => candidate !== browserKey)!;
-            return readChainRecord(other).trainingRunId!;
-        }
-
-        test('is refused by the backend', async ({ apiAs, browserKey }) => {
-            const error = await apiAs('chainTrainee')
-                .training.get(`/training-runs/${otherRunId(browserKey)}`)
-                .catch((reason: unknown) => reason);
-            expect(error).toBeInstanceOf(ApiError);
-            expect((error as ApiError).status).toBe(403);
+        await test.step('refuses to resume the finished run', async () => {
+            await page.goto(`/run/linear/${readChainRecord(browserKey).trainingRunId}/resume`);
+            await expect.soft(page, 'address after the resume attempt').toHaveURL(/\/run$/);
+            await expect.soft(page.locator('crczp-abstract-level'), 'level of the finished run').toHaveCount(0);
         });
 
-        test('cannot be resumed', async ({ page, browserKey }) => {
-            await page.goto(`/run/linear/${otherRunId(browserKey)}/resume`);
-            await expect(page).toHaveURL(/\/run$/);
-            await expect(page.locator('crczp-abstract-level')).toHaveCount(0);
-        });
+        await test.step("another trainee's run", async () => {
+            await test.step('is refused by the backend', async () => {
+                const error = await apiAs('chainTrainee')
+                    .training.get(`/training-runs/${otherRunId}`)
+                    .catch((reason: unknown) => reason);
+                expect.soft(error, 'refusal of the other run').toBeInstanceOf(ApiError);
+                expect.soft((error as ApiError | undefined)?.status, 'status of the refusal').toBe(403);
+            });
 
-        test('shows no results of the other trainee', async ({ page, browserKey }) => {
-            const other = BROWSER_KEYS.find((candidate) => candidate !== browserKey)!;
-            await page.goto(`/run/linear/${otherRunId(browserKey)}/results`);
-            await waitForPageReady(page);
-            await expect(page.locator('body')).not.toContainText(
-                ACCOUNTS[accountFor('chainTrainee', other)].subject,
-            );
+            await test.step('cannot be resumed', async () => {
+                await page.goto(`/run/linear/${otherRunId}/resume`);
+                await expect.soft(page, 'address after the resume attempt').toHaveURL(/\/run$/);
+                await expect.soft(page.locator('crczp-abstract-level'), 'level of the other run').toHaveCount(0);
+            });
+
+            await test.step('shows no results of the other trainee', async () => {
+                await page.goto(`/run/linear/${otherRunId}/results`);
+                await waitForPageReady(page);
+                await expect
+                    .soft(page.locator('body'), 'results of the other trainee')
+                    .not.toContainText(ACCOUNTS[accountFor('chainTrainee', other)].subject);
+            });
         });
     });
 });

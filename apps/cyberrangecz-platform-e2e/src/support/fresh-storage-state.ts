@@ -25,8 +25,9 @@ function storedTokensAreFresh(state: StorageStateObject): boolean {
  */
 export async function freshStorageState(account: AccountKey, origin: Origin): Promise<StorageStateObject> {
     const path = statePaths.storageState(account, origin);
-    if (storedTokensAreFresh(readStorageState(path))) {
-        return readStorageState(path);
+    const saved = readStorageState(path);
+    if (storedTokensAreFresh(saved)) {
+        return saved;
     }
     const tokens = await tokenSourceFor(account, origin).tokens();
     return withTokens(readStorageState(path), tokens);

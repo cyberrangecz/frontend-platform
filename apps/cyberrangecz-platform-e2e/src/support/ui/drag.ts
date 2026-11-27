@@ -1,10 +1,11 @@
-import type { Locator } from '@playwright/test';
+import { expect, type Locator } from '@playwright/test';
 import { pageOf } from './scope';
 
 const DRAG_MOVE_STEPS = 10;
 const DRAG_START_OFFSET = 8;
 const BOX_SAMPLE_INTERVAL_MILLISECONDS = 100;
 const BOX_SETTLE_TIMEOUT_MILLISECONDS = 10_000;
+const OPEN_DIALOG_SELECTOR = '.cdk-overlay-container .mat-mdc-dialog-container';
 
 type Box = NonNullable<Awaited<ReturnType<Locator['boundingBox']>>>;
 
@@ -36,9 +37,13 @@ function sameBox(first: Box, second: Box): boolean {
 /**
  * Drags an element onto another with the mouse the way a user does: press on the source, move in
  * several steps so a drag-and-drop library recognises the gesture, then release over the target.
+ * A dialog still closing would receive the mouse press instead of the source, so the drag starts
+ * once no dialog is left on the page.
  */
 export async function dragWithMouse(source: Locator, target: Locator): Promise<void> {
-    const mouse = pageOf(source).mouse;
+    const page = pageOf(source);
+    await expect(page.locator(OPEN_DIALOG_SELECTOR)).toHaveCount(0, { timeout: BOX_SETTLE_TIMEOUT_MILLISECONDS });
+    const mouse = page.mouse;
     await settledBoxOf(target);
     const sourceBox = await settledBoxOf(source);
     const targetBox = await settledBoxOf(target);
