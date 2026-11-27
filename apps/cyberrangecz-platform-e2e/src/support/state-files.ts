@@ -18,6 +18,7 @@ export const statePaths = {
         resolve(STATE_DIRECTORY, 'storage', `${origin}-${account}.json`),
     chain: (browser: BrowserKey) => resolve(STATE_DIRECTORY, `chain-${browser}.json`),
     attemptLedger: (scope: string) => resolve(STATE_DIRECTORY, 'attempts', `${scope}.json`),
+    cloudUsageBaseline: resolve(STATE_DIRECTORY, 'cloud-usage-baseline.json'),
 };
 
 /** Reads a JSON state file, failing with the stage that should have produced it. */

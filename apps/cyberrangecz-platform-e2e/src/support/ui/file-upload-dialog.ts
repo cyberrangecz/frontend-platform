@@ -28,6 +28,11 @@ export class FileUploadDialog {
         return this.dropZone.locator('mat-chip');
     }
 
+    /** Removes a chosen file through the remove icon of its chip. */
+    async removeFile(fileName: string): Promise<void> {
+        await this.chosenFiles.filter({ hasText: fileName }).locator('mat-icon').click();
+    }
+
     /** The reason a rejected file shows, one per rejected file. */
     get rejections(): Locator {
         return this.root.locator('.file-upload-dialog-rejection');

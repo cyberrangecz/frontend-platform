@@ -13,10 +13,10 @@
     (keydown.enter)="$event.preventDefault()">
     <mat-label>Answer</mat-label>
     <input matInput placeholder="Answer"
-      [required]="question.required" [(ngModel)]="answer">
-    @if (answer) {
+      [required]="question.required" [ngModel]="answer()" (ngModelChange)="answer.set($event)">
+    @if (answer()) {
       <button matSuffix mat-icon-button type="button"
-        aria-label="Clear" (click)="answer='';">
+        aria-label="Clear" (click)="answer.set('')">
         <mat-icon>close</mat-icon>
       </button>
     }

@@ -10,6 +10,7 @@ import {
     waitForPageReady,
 } from '../../support/ui';
 
+const MERGED_TEST_TIMEOUT_MILLISECONDS = 300_000;
 const REJECTED_TOKEN_NOTIFICATION = /Resource Not Found|no active training/;
 
 test.describe('notifications', () => {
@@ -24,40 +25,46 @@ test.describe('notifications', () => {
         await dismissErrorDialog(runOverview.page);
     }
 
-    test('records an error in the bell history', async ({ page, checkpoint }) => {
-        const runOverview = new RunOverviewPage(page);
-        await recordRejectedTokenNotification(runOverview);
-        await openNotificationMenu(page);
-        await expect(notificationMenu(page).getByText(REJECTED_TOKEN_NOTIFICATION).first()).toBeVisible();
-        await checkpoint(page, 'bell history');
-    });
+    test('notification history', async ({ page, checkpoint }) => {
+        test.setTimeout(MERGED_TEST_TIMEOUT_MILLISECONDS);
+        await recordRejectedTokenNotification(new RunOverviewPage(page));
 
-    test('opens the notifications page from the bell history', async ({ page }) => {
-        const runOverview = new RunOverviewPage(page);
-        await recordRejectedTokenNotification(runOverview);
-        await openNotificationMenu(page);
-        await page.getByRole('link', { name: 'Show All' }).click();
-        await expect(page).toHaveURL(/\/notifications$/);
-        await expect(pageTitle(page)).toHaveText('Notifications');
-        await expect(page.getByText(REJECTED_TOKEN_NOTIFICATION).first()).toBeVisible();
-        await expect(breadcrumbEntries(page)).toHaveText([/^Home/, 'Notifications']);
-    });
+        await test.step('records an error in the bell history', async () => {
+            await openNotificationMenu(page);
+            await expect
+                .soft(notificationMenu(page).getByText(REJECTED_TOKEN_NOTIFICATION).first(), 'error in the bell history')
+                .toBeVisible();
+            await checkpoint(page, 'bell history');
+        });
 
-    test('opens the detail of a notification from the notifications page', async ({ page }) => {
-        const runOverview = new RunOverviewPage(page);
-        await recordRejectedTokenNotification(runOverview);
-        await openNotificationMenu(page);
-        await page.getByRole('link', { name: 'Show All' }).click();
-        await page.getByText(REJECTED_TOKEN_NOTIFICATION).first().click();
-        await expect(page).toHaveURL(/\/notifications\/[^/]+$/);
-        await expect(page.getByText(REJECTED_TOKEN_NOTIFICATION).first()).toBeVisible();
-        await expect(breadcrumbEntries(page)).toHaveText([/^Home/, /^Notifications/, 'Detail']);
-    });
+        await test.step('opens the notifications page from the bell history', async () => {
+            await page.getByRole('link', { name: 'Show All' }).click();
+            await expect.soft(page, 'address of the notifications page').toHaveURL(/\/notifications$/);
+            await expect.soft(pageTitle(page), 'page title').toHaveText('Notifications');
+            await expect
+                .soft(page.getByText(REJECTED_TOKEN_NOTIFICATION).first(), 'error on the notifications page')
+                .toBeVisible();
+            await expect
+                .soft(breadcrumbEntries(page), 'breadcrumbs')
+                .toHaveText([/^Home/, 'Notifications']);
+        });
 
-    test('opens the notifications page when its address is loaded directly', async ({ page }) => {
-        await page.goto('/notifications');
-        await waitForPageReady(page);
-        await expect(page).toHaveURL(/\/notifications$/);
-        await expect(pageTitle(page)).toHaveText('Notifications');
+        await test.step('opens the detail of a notification from the notifications page', async () => {
+            await page.getByText(REJECTED_TOKEN_NOTIFICATION).first().click();
+            await expect.soft(page, 'address of the notification detail').toHaveURL(/\/notifications\/[^/]+$/);
+            await expect
+                .soft(page.getByText(REJECTED_TOKEN_NOTIFICATION).first(), 'error in the detail')
+                .toBeVisible();
+            await expect
+                .soft(breadcrumbEntries(page), 'breadcrumbs of the detail')
+                .toHaveText([/^Home/, /^Notifications/, 'Detail']);
+        });
+
+        await test.step('opens the notifications page when its address is loaded directly', async () => {
+            await page.goto('/notifications');
+            await waitForPageReady(page);
+            await expect.soft(page, 'address of the notifications page').toHaveURL(/\/notifications$/);
+            await expect.soft(pageTitle(page), 'page title').toHaveText('Notifications');
+        });
     });
 });

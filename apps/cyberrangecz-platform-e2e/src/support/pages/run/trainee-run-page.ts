@@ -18,9 +18,13 @@ export class TraineeRunPage {
         return this.page.locator('crczp-markdown-view').first();
     }
 
-    /** The image card of the level content. */
+    get imageCard(): Locator {
+        return this.markdown.locator('crczp-image-media');
+    }
+
+    /** The downloaded picture of the image card; absent until the file has been downloaded. */
     get attachmentImage(): Locator {
-        return this.markdown.locator('crczp-image-media img');
+        return this.imageCard.locator('img.image-picture');
     }
 
     get audioCard(): Locator {

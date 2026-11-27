@@ -36,6 +36,7 @@ $surround: color-mix(
     box-sizing: border-box;
     block-size: 100%;
     overflow-y: auto;
+    scrollbar-gutter: stable;
     scrollbar-color: var(--mat-sys-outline-variant) transparent;
     scrollbar-width: thin;
     padding: $page-padding;

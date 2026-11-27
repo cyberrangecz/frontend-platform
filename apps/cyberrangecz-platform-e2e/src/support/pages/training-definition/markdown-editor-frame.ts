@@ -1,9 +1,9 @@
 import type { Locator, Page } from '@playwright/test';
-import { pageOf } from '../../ui';
+import { type DropEdge, edgeY, pageOf } from '../../ui';
 import type { AttachmentFixture } from '../../scenario/attachment-fixtures';
 
-/** Drags files in from outside the browser onto an element, the way the OS file manager does. */
-export async function dropFiles(target: Locator, files: readonly AttachmentFixture[]): Promise<void> {
+/** Drags files in from outside the browser onto an element, the way the OS file manager does, at the given edge of it. */
+export async function dropFiles(target: Locator, files: readonly AttachmentFixture[], edge: DropEdge = 'middle'): Promise<void> {
     const box = await target.boundingBox();
     if (box === null) {
         throw new Error('The drop target must be visible');
@@ -21,7 +21,7 @@ export async function dropFiles(target: Locator, files: readonly AttachmentFixtu
         }
         return transfer;
     }, entries);
-    const init = { dataTransfer, clientX: box.x + box.width / 2, clientY: box.y + box.height / 2 };
+    const init = { dataTransfer, clientX: box.x + box.width / 2, clientY: edgeY(box, edge) };
     await target.dispatchEvent('dragenter', init);
     await target.dispatchEvent('dragover', init);
     await target.dispatchEvent('drop', init);

@@ -11,7 +11,8 @@
   <!-- OPTIONS -->
   <div class="checkboxes">
     @for (option of question.choices; track option; let i = $index) {
-      <mat-checkbox>
+      <mat-checkbox [checked]="selectedChoiceIndexes().has(i)"
+                    (change)="toggleChoice(i, $event.checked)">
         {{ option.text }}
       </mat-checkbox>
     }

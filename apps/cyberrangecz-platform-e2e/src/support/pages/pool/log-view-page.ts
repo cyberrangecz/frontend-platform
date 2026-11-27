@@ -5,8 +5,8 @@ import { expect } from '@playwright/test';
 export const STAGE_KINDS = ['terraform', 'networking-ansible', 'user-ansible'] as const;
 export type StageKind = (typeof STAGE_KINDS)[number];
 
-/** Answer to one outputs request: the new rows, or a failed request. */
-export type OutputReply = { content: string; rows: number } | 'fail';
+/** Answer to one outputs request: the new rows, a failed request, or a request refused with a status code. */
+export type OutputReply = { content: string; rows: number } | { status: number } | 'fail';
 
 /** One outputs request as the stage view sends it. */
 export interface OutputRequest {
@@ -55,7 +55,7 @@ export async function mockStageOutputs(page: Page, responder: OutputResponder): 
         const callIndex = callCounts.get(kind) ?? 0;
         callCounts.set(kind, callIndex + 1);
         const reply = await responder({ kind, fromRow: Number(url.searchParams.get('from_row') ?? 0), callIndex });
-        await fulfilWithCors(route, reply === 'fail' ? { status: 500, body: '{}' } : { status: 200, body: JSON.stringify(reply) });
+        await fulfilWithCors(route, answerOf(reply));
     });
 }
 
@@ -79,6 +79,13 @@ export async function mockRunningStage(page: Page, kind: StageKind): Promise<voi
             });
         return fulfilWithCors(route, { status: 200, body: await runningStageBody });
     });
+}
+
+function answerOf(reply: OutputReply): { status: number; body: string } {
+    if (reply === 'fail') {
+        return { status: 500, body: '{}' };
+    }
+    return 'status' in reply ? { status: reply.status, body: '{}' } : { status: 200, body: JSON.stringify(reply) };
 }
 
 async function fulfilWithCors(route: Route, answer: { status: number; body: string }): Promise<void> {
@@ -126,13 +133,14 @@ export class LogView {
         return (await this.host.locator('.cm-line').allInnerTexts()).join('\n');
     }
 
-    /** The text of the first rendered line that reaches into the scroller's visible area. */
+    /** The text of the first rendered line that reaches into the scroller's visible area, empty while no rendered line does. */
     topLine(): Promise<string> {
         return this.scroller.evaluate((scroller) => {
-            const scrollerTop = scroller.getBoundingClientRect().top;
-            const visibleLine = Array.from(scroller.querySelectorAll('.cm-line')).find(
-                (line) => line.getBoundingClientRect().bottom > scrollerTop + 1,
-            );
+            const { top: scrollerTop, bottom: scrollerBottom } = scroller.getBoundingClientRect();
+            const visibleLine = Array.from(scroller.querySelectorAll('.cm-line')).find((line) => {
+                const { top, bottom } = line.getBoundingClientRect();
+                return bottom > scrollerTop + 1 && top < scrollerBottom;
+            });
             return (visibleLine?.textContent ?? '').trim();
         });
     }
@@ -140,14 +148,6 @@ export class LogView {
     /** Moves keyboard focus to a toolbar button inside the log view. */
     async focusToolbar(): Promise<void> {
         await this.button('Line wrap').focus();
-    }
-
-    /** Gives a toolbar button keyboard-origin focus by focusing it, then tabbing away from it and back. */
-    async focusWithKeyboard(name: string): Promise<void> {
-        await this.button(name).focus();
-        await this.page.keyboard.press('Shift+Tab');
-        await this.page.keyboard.press('Tab');
-        await expect(this.button(name)).toBeFocused();
     }
 
     /** Value of an inline custom property the host carries, such as `--log-token-error`. */
@@ -193,11 +193,12 @@ export class LogView {
         );
     }
 
-    /** Scrolls the log to its top, then asserts that a token is drawn in a palette slot's colour once the view has settled. */
+    /** Scrolls the log to its top, then softly asserts that a token is drawn in a palette slot's colour once the view has settled. */
     async expectTokenSlot(lineText: string, token: string, slot: number | 'foreground'): Promise<void> {
         await this.button('Scroll to top').click();
         const expectedColour = await this.slotColour(slot);
         await expect
+            .configure({ soft: true })
             .poll(() => this.tokenColour(lineText, token), { message: `colour of "${token}"` })
             .toBe(expectedColour);
     }

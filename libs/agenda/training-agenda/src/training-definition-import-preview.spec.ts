@@ -54,6 +54,16 @@ describe('TrainingDefinitionImportPreview', () => {
             ['malformed JSON', '{not json', 'The file is not well-formed JSON'],
             ['a missing title', { ...definitionDocument, title: '' }, 'The file has no definition title'],
             ['missing levels', { title: 'x' }, 'The file has no list of levels'],
+            [
+                'an adaptive definition, which takes precedence over missing levels',
+                { title: 'x', phases: [{ phase_type: 'INFO' }] },
+                'Adaptive training has been deprecated in version v2026.08 and can no longer be imported',
+            ],
+            [
+                'an adaptive definition that is otherwise a complete valid definition',
+                { ...definitionDocument, phases: [{ phase_type: 'INFO' }] },
+                'Adaptive training has been deprecated in version v2026.08 and can no longer be imported',
+            ],
             ['an unknown level type', { title: 'x', levels: [{ level_type: 'OTHER' }] }, 'Level 1 has no known level type'],
             [
                 'a level without duration',

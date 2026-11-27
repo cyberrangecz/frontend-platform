@@ -1,24 +1,29 @@
 import { appendFileSync, mkdirSync, writeFileSync } from 'node:fs';
-import { dirname } from 'node:path';
+import { dirname, resolve } from 'node:path';
 import type { FullConfig, Reporter, TestCase, TestResult } from '@playwright/test/reporter';
+import { failedStepsOf, formatFailedStep, stripAnsi } from './step-outcomes';
 
 interface ImmediateFailureOptions {
+    /** Plain-text file receiving the failures, relative to the config. */
     logFile?: string;
 }
 
-const ANSI_ESCAPE = new RegExp(`${String.fromCharCode(27)}\\[[0-9;]*m`, 'g');
-
 /**
- * Reports every failed attempt the moment its test ends: the error goes to standard error and,
- * with `logFile` set, is appended to that file as plain text.
+ * Reports every failed attempt the moment its test ends: the failed steps, each with the first
+ * line of its error, then the full error go to standard error and, with `logFile` set, are
+ * appended to that file as plain text.
  */
 export default class ImmediateFailureReporter implements Reporter {
+    private logFile = '';
+
     constructor(private readonly options: ImmediateFailureOptions = {}) {}
 
-    onBegin(_config: FullConfig): void {
+    onBegin(config: FullConfig): void {
         if (this.options.logFile) {
-            mkdirSync(dirname(this.options.logFile), { recursive: true });
-            writeFileSync(this.options.logFile, '');
+            const configFolder = config.configFile ? dirname(config.configFile) : config.rootDir;
+            this.logFile = resolve(configFolder, this.options.logFile);
+            mkdirSync(dirname(this.logFile), { recursive: true });
+            writeFileSync(this.logFile, '');
         }
     }
 
@@ -33,12 +38,13 @@ export default class ImmediateFailureReporter implements Reporter {
             '',
             `FAILED (${result.status}, attempt ${result.retry + 1}): ${title}`,
             `  at ${location}`,
+            ...failedStepsOf(result).map((step) => formatFailedStep(step, result.retry + 1)),
             errors,
             '',
         ].join('\n');
         console.error(entry);
-        if (this.options.logFile) {
-            appendFileSync(this.options.logFile, entry.replace(ANSI_ESCAPE, '') + '\n');
+        if (this.logFile) {
+            appendFileSync(this.logFile, stripAnsi(entry) + '\n');
         }
     }
 

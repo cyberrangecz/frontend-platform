@@ -15,9 +15,13 @@ The suite runs as Playwright projects chained by dependencies. Project names are
 | setup | `auth` | `src/setup/` | Signs every account in and saves its storage state. |
 | setup | `shared` | `src/setup/` | Creates the shared training definition (from `src/resources/shared-training.yaml`), the sandbox definition, the pool and the instance. |
 | pages | `chromium`, `firefox`, `webkit` | `src/pages/<area>/` | Every page of the app, grouped into the areas common, sandbox-definition, pool, training-definition, training-instance and user-and-group: inputs, validation, tables (sort, filter, paging), dialogs and role guards. |
-| chain | `<browser>-chain` | `src/chain/` | One trainee per browser allocates a sandbox and plays the shared training to a finished run, the variant-answer level included. |
-| pool-actions | `chromium-pool-actions` | `src/pool-actions/` | Chromium only. In a pool of its own, the sandbox organiser allocates, locks, unlocks and deletes sandboxes through each confirmation, then deletes the pool. |
-| review | `<browser>-runs-ready`, `<browser>-review` | `src/review/` | `runs-ready` (`runs-ready.setup.ts`) waits until all three chains left a run. The review then has the organiser go through the three runs: results, runs, cheating detection, pool and sandbox pages, topology, console. It checks the exact score of every level, assessment included, worked out from the shared training and the training service's scoring rules. |
+| chain | `<browser>-chain` | `src/chain/` | Starts after the trainee allocation project has ended. One trainee per browser allocates a sandbox and plays the shared training to a finished run, the variant-answer level included. |
+| pool-actions | `chromium-pool-actions` | `src/pool-actions/` | Chromium only, starts after the trainee allocation project has ended. In a pool of its own, the sandbox organiser allocates, locks, unlocks and deletes sandboxes through each confirmation, then deletes the pool. |
+| cloud usage audit | `cloud-usage-audit`, `cloud-usage-audit-teardown` | `src/setup/cloud-usage.*.ts` | Set up before the sandbox maintenance and trainee allocation projects only (it needs no sandbox, so it runs at the start): records the cloud usage no sandbox accounts for (the cloud project's usage less every pool's estimated usage) in `.state/cloud-usage-baseline.json`. Its teardown runs once the projects after it have ended, the chains, the pool actions and the shared pool project included, and expects that usage back within 10 minutes. The tolerance per resource is `0.0005 × limit` for every estimated pool, plus 0.1 of RAM for every virtual machine the pools account for; a pool whose estimate is missing counts as none. |
+| sandbox maintenance | `chromium-sandbox-maintenance` | `src/sandbox-maintenance/` | Chromium only, starts first of the sandbox projects (after `shared` and the cloud usage audit), one worker, one test at a time, against real builds on the shared sandbox definition. One serial chain owns a pool of 4 and walks it from empty through allocation, the pool detail's Delete menu and Cancel all allocations to the cleanup of its last sandbox, the pool overview's Delete of the emptied pool and the cloud RAM's return to its level before the chain; every step that needs a sandbox in a given build state checks that state first and fails naming the state it found. Each other test owns a pool of its own: Cancel all allocations as a training organiser, the Cancel build row action with the Stop pending marker and a forced pool deletion of building units. |
+| sandbox maintenance, shared pool | `chromium-sandbox-maintenance-shared-pool` | `src/sandbox-maintenance/` | Chromium only, starts after the three chain projects have ended, one worker. It holds the one test of the Stop pending spec that checks the Stop pending line of every stage read-only on a ready sandbox's request of the shared pool, which only the chains allocate, its stage answers stubbed. The test is picked out by its title (`SHARED_POOL_READ_TEST` in `playwright.config.ts`): this project selects it with `grep`, the maintenance project skips it with `grepInvert`. It allocates no sandbox. |
+| trainee allocation | `chromium-trainee-allocation` | `src/trainee-allocation/` | Chromium only, starts after the sandbox maintenance project has ended; the chains and the pool actions start after it. The training organiser checks the runtime setting and the access token of a not managed instance (the Managed toggle itself is covered by the instance create and edit specs); the Chromium page trainee allocates its own sandbox by entering access tokens, is blocked from a second one, sees the sandbox organiser's Delete Unlocked on that pool skip it while removing the organiser's own sandbox, removes it, finishes a run and enters a managed and an ended instance. |
+| review | `<browser>-runs-ready`, `<browser>-review` | `src/review/` | `runs-ready` (`runs-ready.setup.ts`) waits until all three chains left a run. The review then has the organiser go through the three runs: results, runs, cheating detection, pool and sandbox pages, topology, console. It checks the exact score of every level, assessment included, worked out from the shared training and the training service's scoring rules. On the analysis dashboard it also checks the local event cache (the first visit fetches every event, a reload resumes from the cached events, rapid reloads leave it working) and that rich tooltips clamp a long trainee name and answer within their surface; the long texts are put into the page's own answers from the training service. |
 | destructive | `<browser>-destructive` | `src/destructive/` | Archives and deletes one run. Runs as the teardown of `runs-ready`, once every review has ended, whatever the review results. |
 | logout | `<browser>-logout` | `src/logout/` | Each browser's trainee logs out, after that browser's pages and review have ended. |
 
@@ -59,7 +63,9 @@ depends on run first, so `chromium` also runs `auth` and `shared`:
     npx playwright test -c apps/cyberrangecz-platform-e2e/playwright.config.ts --project=chromium
     npx playwright test -c apps/cyberrangecz-platform-e2e/playwright.config.ts --project=chromium src/pages/common/home.spec.ts
 
-Project names: `auth`, `shared`, `chromium`, `firefox`, `webkit`, `chromium-pool-actions`, and
+Project names: `auth`, `shared`, `chromium`, `firefox`, `webkit`, `chromium-pool-actions`,
+`cloud-usage-audit`, `cloud-usage-audit-teardown`, `chromium-sandbox-maintenance`, `chromium-sandbox-maintenance-shared-pool`,
+`chromium-trainee-allocation`, and
 for each browser `<browser>-chain`, `<browser>-runs-ready`, `<browser>-review`,
 `<browser>-destructive` and `<browser>-logout`.
 
@@ -82,6 +88,7 @@ listed as a leftover and fails its test.
 | `E2E_USER_AND_GROUP_API_ROOT` | required | Root URL of the user-and-group REST API. |
 | `E2E_ADMIN_LOGIN` | unset | Sign-in name of the administrator the wipe uses, such as `user-30`. Unset means a person signs in by hand in a headed browser, also under `CI`. An empty value counts as unset. |
 | `E2E_ADMIN_PASSWORD` | unset | Password of that administrator. Meant for CI. Never printed or logged. An empty value counts as unset. |
+| `E2E_SANDBOX_BUILD_TIMEOUT_MINUTES` | `20` | Longest wait for one sandbox build or cleanup in the sandbox maintenance and trainee allocation specs. A sandbox maintenance test may take twice as long, its pool's removal included. |
 | `E2E_SESSION_KEEP_ALIVE_MINUTES` | `4` | Minutes between two refreshes of every saved account's session during a run. Keep it below the realm's SSO Session Idle. |
 | `CI` | unset | Any non-empty value makes the suite config refuse `test.only`, and makes the wipe fail at once when `E2E_ADMIN_LOGIN` is set but no password is found. |
 
@@ -143,6 +150,7 @@ writes are mode 600 and folders mode 700.
 | `shared.json` | `shared` | The shared fixture: the entities the later projects use. |
 | `chain-<browser>.json` | `<browser>-chain` | The record of that browser's chain, read by its review and teardown. |
 | `attempts/<project>-<spec file>.json` | specs that create removable entities | The pools each attempt of that spec file created and the attempt number, read by the reset before a retry. |
+| `cloud-usage-baseline.json` | `cloud-usage-audit` | The cloud usage no sandbox accounted for before the sandbox maintenance and trainee allocation projects, read by the audit's teardown. |
 
 ## Token refresh
 
@@ -180,8 +188,31 @@ The config retries a failed test twice.
 - Retry reset: a spec that creates removable entities records them through the `attemptLedger`
   fixture. Before a retried test, the fixture removes what earlier attempts of that spec file
   recorded, so the retry starts clean; removal is safe to repeat. Today the pool actions spec
-  records its pool, and the chain removes its allocation only when it failed, otherwise a retry
-  reuses it. The destructive spec creates nothing removable and runs without retries.
+  records its pool, the sandbox maintenance specs and the trainee run spec record theirs, and the
+  chain removes its allocation only when it failed, otherwise a retry reuses it. The destructive
+  spec creates nothing removable and runs without retries.
+
+## Sandbox removal
+
+Sandboxes are a limited cloud resource, so they are the one thing specs remove besides what a
+deletion test deletes. Each sandbox maintenance test removes its pool after the test with every
+sandbox in it, and the serial chain removes its pool after its last step, whatever the steps'
+results: it cancels the unfinished allocations, deletes the pool with force, waits until every
+cleanup has ended, then deletes the pool if it is still there; a cleanup that fails or outlasts
+`E2E_SANDBOX_BUILD_TIMEOUT_MINUTES` fails the test, naming each unit left and its cleanup error.
+In the trainee run spec, the organiser's sandbox beside the trainee's is removed by the Delete
+Unlocked it checks, and the trainee's own sandbox by the trainee's removal and finished run.
+Training instances, definitions and the trainee allocation pools stay for the wipe.
+
+## Sandbox maintenance and trainee allocation requirements
+
+- The cloud project needs room for 4 sandboxes for the sandbox maintenance specs, and for 3 for
+  the trainee allocation specs (the trainee's own, the organiser's beside it and the managed
+  instance's), besides the 3 the chains keep. The sandbox projects run in sequence: maintenance (at most 4), then trainee allocation (at most 3), then the 3 chains and the pool actions together (the 3 the chains keep plus 2 of the pool actions), then the shared pool project, which allocates none and reads a sandbox a chain kept. The suite holds at most 5 sandboxes at once, in the chains and pool actions stage. Other usage on the same cloud counts against its limits on top of that. The page, sandbox definition and review projects need none and run alongside them.
+- The frontend's runtime configuration must have `enableTraineeSandboxAllocation` on and
+  `enableLocalMode` off, and the training service's `single.sandbox.per.user.enabled` must be on.
+- The trainee allocation run spec plays as the Chromium page trainee (`user-8`), which must own no
+  sandbox when it starts; the wipe removes every sandbox.
 
 ## Output
 
@@ -194,8 +225,78 @@ Results go under `dist/.playwright/apps/cyberrangecz-platform-e2e/`:
   is held still from, and what it should show. Specs never assert canvas content; an agent
   reviews the videos against that list. The folder is rebuilt on every run;
 - `test-output/`: raw clips, screenshots and traces. Every test records video and a final
-  screenshot; traces are kept for failures;
+  screenshot; a trace is recorded only for the first retry of a failed test;
+- `failures.log`: every failed attempt, written when it ends: the header
+  `FAILED (<status>, attempt <n>): <title>`, one `STEP FAILED (attempt <n>): <step path>: <first
+  error line>` line for every failed step, then the full errors;
+- `step-failures.json`: for every failed attempt that failed in a step, `{ test, attempt, status,
+  steps: [{ path, message }] }`, one record per attempt, so retries stay apart;
 - `wipe/`: the wipe's own report and test output.
+
+## Merged tests and steps
+
+A merged test replaces several one-check tests. Each old test becomes a `test.step(...)` titled
+with the old test's title; related steps may nest, and `checkpoint(...)` calls sit inside them.
+
+- Use `expect.soft` for content assertions inside a read-only battery, so one run reports every
+  step that is wrong. Give a soft assertion a message (`expect.soft(value, 'what is checked')`);
+  without one the report shows only the matcher.
+- Give a long test `test.setTimeout(...)` or `test.slow()`; the default timeout is 120 s. Retries
+  are 2, so a red merged test reruns from its first step.
+- Known defects are merged like any other test: the step fails and so does the test.
+- A test that opens no page and calls only API clients carries the `@api` tag (see API-only tests).
+- Role-access specs (`access.spec.ts` or `*.access.spec.ts` of a page area) hold one test per role
+  that visits every guarded path of the area with `expectEachRedirectedAway`; signed-out visitors
+  use `expectEachSentToLogin`.
+- A step that depends on stored settings or earlier edits starts from a state it sets itself
+  (restores a valid value, clears storage and reloads), so a failed step does not break the next.
+- After a save inside a merged test, wait for the previous popup to go away before waiting for the
+  next one, so a stale notification cannot satisfy the wait.
+- Cheating detections are created once per spec; a retry reuses the detection with the same
+  threshold (`findDetectionByThreshold`). The four submit steps of
+  `linear-instance.cheating-detection.create.spec.ts` share one started instance, since the
+  backend accepts several detections on one instance.
+- Destructive or navigating steps (logout, delete, leaving the page) are the last steps.
+
+### Failure and duration records by step
+
+- Every failed step is listed, not only the first: a soft assertion that fails inside a step is
+  listed under that step, and a thrown error under the innermost `test.step` around it, as the
+  titles of the enclosing steps joined by ` > `, outermost first. An error outside any step shows
+  as `(outside any step)`. Example from `failures.log`:
+
+      FAILED (failed, attempt 1): chromium > pool/pool.overview.spec.ts > pool overview > checks the whole table
+        at .../pool.overview.spec.ts:20
+      STEP FAILED (attempt 1): the table sorts by size > descending: Expected 3 rows, got 2
+      STEP FAILED (attempt 1): the table pages > next page: locator.click: Timeout 20000ms exceeded.
+
+- `.state/test-durations.jsonl` (written by `playwright.remote.config.ts`) keeps, besides the line
+  per test `{"test", "seconds"}`, one line per passed step `{"test", "step", "seconds"}` with the
+  step path as above. Only the test lines feed the time estimate; sort the step lines by
+  `seconds` to find slow steps. Older files without step lines read as before.
+- The deploy tool `e2e` selects by full test title, matched literally once per browser project;
+  it cannot select a step. To rerun a merged test give its title (the test title in the header
+  line, without the project) as `test`. Locally use `--grep` on that title with the project, for
+  example `npx playwright test -c apps/cyberrangecz-platform-e2e/playwright.config.ts
+  --project=chromium --grep 'checks the whole table'`. The step to look at is the path in the
+  `STEP FAILED` line or `step-failures.json`; the HTML report shows the same steps in the test's
+  tree. All steps of the test rerun.
+- The Teams card and `e2e_status`/`e2e_logs` read the list reporter's lines and the header and
+  first lines of each `failures.log` entry, so the first `STEP FAILED` lines reach the card.
+
+## API-only tests
+
+A test that never opens a page and calls only API clients (`apiAs`) runs once, in the Chromium
+projects, not again in Firefox and WebKit. Tag it by giving its `test` or `test.describe` the tag
+`@api`:
+
+    test.describe('unknown sort', { tag: '@api' }, () => { ... });
+
+Every project of a browser other than Chromium sets `grepInvert: /@api\b/` in
+`playwright.config.ts`, so tagged tests are not listed there. A test that opens a page in any step
+must not carry the tag. Tagged today: `src/pages/common/unknown-sort.spec.ts`,
+`src/pages/training-definition/linear-definition.archive.spec.ts` (export, refused ZIP imports) and
+`src/pages/training-definition/linear-definition.import-refusals.spec.ts` (API).
 
 ## Platform requirements
 

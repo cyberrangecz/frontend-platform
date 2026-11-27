@@ -261,10 +261,7 @@ export const test = base.extend<TestFixtures & TestOptions, WorkerFixtures>({
 
     attemptLedger: [
         async ({ apiAs }, use, testInfo) => {
-            const ledger = new AttemptLedger(
-                `${testInfo.project.name}-${basename(testInfo.file)}`,
-                testInfo.retry,
-            );
+            const ledger = attemptLedgerOf(testInfo);
             if (testInfo.retry > 0) {
                 await ledger.removeEarlierAttempts(apiAs('sandboxOrganizer').sandbox);
             }
@@ -298,9 +295,22 @@ export const test = base.extend<TestFixtures & TestOptions, WorkerFixtures>({
     ],
 
     uniqueName: async ({ browserKey, shared }, use, testInfo) => {
-        const attemptSuffix = testInfo.retry > 0 ? `-retry${testInfo.retry}` : '';
-        await use((purpose) => `e2e-${browserKey}-${purpose}-${shared.runStamp}${attemptSuffix}`);
+        await use((purpose) => entityName(purpose, browserKey, shared, testInfo));
     },
 });
+
+/**
+ * Name for an entity a test or a hook creates: browser, purpose, run stamp and, on a retried
+ * attempt, the attempt number. The `uniqueName` fixture names entities the same way.
+ */
+export function entityName(purpose: string, browserKey: BrowserKey, shared: SharedFixture, testInfo: TestInfo): string {
+    const attemptSuffix = testInfo.retry > 0 ? `-retry${testInfo.retry}` : '';
+    return `e2e-${browserKey}-${purpose}-${shared.runStamp}${attemptSuffix}`;
+}
+
+/** The attempt ledger of the running attempt of a spec file, the one the `attemptLedger` fixture holds. */
+export function attemptLedgerOf(testInfo: TestInfo): AttemptLedger {
+    return new AttemptLedger(`${testInfo.project.name}-${basename(testInfo.file)}`, testInfo.retry);
+}
 
 export { expect } from '@playwright/test';

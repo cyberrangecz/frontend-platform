@@ -2,6 +2,7 @@ import { expect, type Locator, type Page } from '@playwright/test';
 import {
     bulkDeleteControl,
     control,
+    dateTimePicker,
     expansionPanel,
     expansionPanelHeader,
     fieldErrors,
@@ -299,11 +300,38 @@ export class GroupEditPage {
         await this.descriptionInput.fill(description);
     }
 
-    /** Picks the 15th day of next month in the expiration date picker. */
+    /**
+     * Picks the 15th day of next month in the expiration date picker. The calendar re-renders its cells in
+     * place after the month changes, so the day is clicked only once its cell is labelled with next month.
+     */
     async pickExpirationNextMonth(): Promise<void> {
+        const today = new Date();
+        const nextMonthName = new Intl.DateTimeFormat('en-US', { month: 'long' }).format(
+            new Date(today.getFullYear(), today.getMonth() + 1, 1),
+        );
         await openDateTimePicker(this.form, 'Expiration Date');
         await pickerNextMonth(this.page).click();
-        await pickerDay(this.page, 15).click();
+        const day = pickerDay(this.page, 15);
+        await expect(day).toHaveAttribute('aria-label', new RegExp(`^${nextMonthName} 15,`));
+        await day.click();
+    }
+
+    /**
+     * Presses Escape on the open expiration picker once its opening animation has finished. The picker ignores
+     * a close request until that animation ends, so an earlier Escape is lost. A finished animation without a
+     * fill effect drops out of the list, so an empty list counts as finished.
+     */
+    async dismissExpirationPicker(): Promise<void> {
+        const picker = dateTimePicker(this.page);
+        await expect
+            .poll(() =>
+                picker.evaluate((element) => {
+                    const animations = element.getAnimations({ subtree: true });
+                    return animations.every(({ playState }) => playState === 'finished');
+                }),
+            )
+            .toBe(true);
+        await this.page.keyboard.press('Escape');
     }
 
     get unsavedMembersWarning(): Locator {

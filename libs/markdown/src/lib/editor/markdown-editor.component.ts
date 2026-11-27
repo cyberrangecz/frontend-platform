@@ -12,6 +12,9 @@ const EXPANDED_VIEWPORT_HEIGHT_SHARE = '90dvh';
 /** Panel class the expanded editor's styles hook onto. */
 const EXPANDED_PANEL_CLASS = 'editor-dialog-panel';
 
+/** Text with every carriage return and line feed pair, and every lone carriage return, turned into a line feed. */
+const lineFeedsOf = (text: string): string => text.replace(/\r\n?/g, '\n');
+
 /**
  * Markdown editor usable with reactive and template-driven forms. The frame's expand button opens the
  * editor alone in a large dialog that edits the same value. Content projected as
@@ -42,7 +45,7 @@ export class MarkdownEditorComponent implements ControlValueAccessor {
     protected onTouched: () => void = () => undefined;
 
     writeValue(markdown: string | null): void {
-        this.markdown.set(markdown ?? '');
+        this.markdown.set(lineFeedsOf(markdown ?? ''));
     }
 
     registerOnChange(onChange: (markdown: string) => void): void {

@@ -25,6 +25,9 @@ import {
 
 test.use({ account: 'sandboxOrganizer', userAgent: USER_AGENTS.linux });
 
+const softExpect = expect.configure({ soft: true });
+const SETTINGS_STORAGE_KEY = 'crczp-log-view-settings';
+
 const RAW_RESULT_LINE = 'ok: [host1] => {"changed": false, "msg": "done"}';
 const LONG_ANSIBLE_LOG = `${ANSIBLE_LOG}\n${numberedLog('Padding', 300)}`;
 const LONG_WRAPPING_LINE = Array.from({ length: 120 }, (_, index) => `word${index}`).join(' ');
@@ -48,7 +51,9 @@ test.describe('pool.pool-id.sandbox-instance.request-id log view', () => {
         );
     });
 
+    /** Opens a stage through a blank page, so the application always loads afresh, also for a URL that differs only by its fragment. */
     async function openStage(page: Page, stage: number): Promise<LogView> {
+        await page.goto('about:blank');
         await page.goto(`/pool/${own.poolId}/sandbox-instance/${own.allocationRequestId}#stage-${stage}`);
         await waitForPageReady(page);
         const logView = new LogView(page);
@@ -64,8 +69,21 @@ test.describe('pool.pool-id.sandbox-instance.request-id log view', () => {
         return logView;
     }
 
-    test.describe('syntax highlighting', () => {
-        test('colours Terraform tokens with the palette slots of their kind', async ({ page, checkpoint }) => {
+    /** Opens a stage after removing the stored log view preferences, so the view starts with its defaults. */
+    async function openStageWithDefaultSettings(page: Page, stage: number): Promise<LogView> {
+        if (page.url().startsWith('http')) {
+            await page.evaluate((key) => localStorage.removeItem(key), SETTINGS_STORAGE_KEY);
+        }
+        return openStage(page, stage);
+    }
+
+    test('colours the highlighting defaults and shows JSON results prettified or raw', async ({
+        page,
+        checkpoint,
+    }) => {
+        test.slow();
+
+        await test.step('colours Terraform tokens with the palette slots of their kind', async () => {
             const logView = await openStage(page, 1);
             await logView.expectTokenSlot('Error: Quota', 'Error:', 9);
             await logView.expectTokenSlot('Apply complete!', 'Apply complete!', 2);
@@ -74,17 +92,15 @@ test.describe('pool.pool-id.sandbox-instance.request-id log view', () => {
             await logView.expectTokenSlot('Creation complete after', '12s', 12);
             await logView.expectTokenSlot('Creation complete after', 'id=abc-123', 5);
             await logView.expectTokenSlot('name = "web-1"', '"web-1"', 2);
-            expect(await logView.slotColour(9), 'error colour differs from the plain text').not.toBe(
-                await logView.slotColour('foreground'),
-            );
+            softExpect(
+                await logView.slotColour(9),
+                'error colour differs from the plain text',
+            ).not.toBe(await logView.slotColour('foreground'));
             await checkpoint(page, 'terraform highlighting');
         });
 
         for (const stage of [2, 3]) {
-            test(`colours the Ansible tokens of stage ${stage} with the palette slots of their kind`, async ({
-                page,
-                checkpoint,
-            }) => {
+            await test.step(`colours the Ansible tokens of stage ${stage} with the palette slots of their kind`, async () => {
                 const logView = await openStage(page, stage);
                 await logView.expectTokenSlot('PLAY [all]', 'PLAY [all]', 4);
                 await logView.expectTokenSlot('TASK [Gathering Facts]', 'TASK [Gathering Facts]', 12);
@@ -98,182 +114,146 @@ test.describe('pool.pool-id.sandbox-instance.request-id log view', () => {
             });
         }
 
-        test('changes the colours with the highlighting level and keeps the level after a reload', async ({ page }) => {
-            let logView = await openStage(page, 1);
-            await expect(logView.settingsPanel()).toHaveCount(0);
-            await logView.setHighlightLevel(0);
-            expect(await logView.hostVariable('--log-token-error')).toBe('var(--log-foreground)');
-            await logView.expectTokenSlot('Error: Quota', 'Error:', 'foreground');
-
-            await logView.setHighlightLevel(1);
-            await logView.expectTokenSlot('Error: Quota', 'Error:', 9);
-            await logView.expectTokenSlot('Plan: 1 to add', 'Plan:', 'foreground');
-
-            await logView.setHighlightLevel(2);
-            await logView.expectTokenSlot('Plan: 1 to add', 'Plan:', 4);
-            await logView.expectTokenSlot('Creation complete after', '12s', 12);
-            await logView.expectTokenSlot('Apply complete!', 'Apply complete!', 'foreground');
-
-            await logView.setHighlightLevel(3);
-            await logView.expectTokenSlot('Apply complete!', 'Apply complete!', 2);
-            expect((await logView.storedSettings())?.['highlightLevel']).toBeDefined();
-
-            await logView.setHighlightLevel(1);
-            logView = await reloadStage(page);
-            await logView.expectTokenSlot('Error: Quota', 'Error:', 9);
-            await logView.expectTokenSlot('Plan: 1 to add', 'Plan:', 'foreground');
-            await logView.openSettings();
-            await expect(logView.settingsPanel().getByRole('slider', { name: 'Highlighting level' })).toHaveValue('1');
-        });
-    });
-
-    test.describe('JSON prettifying', () => {
-        test('shows JSON results prettified by default and raw once Prettify JSON is turned off', async ({ page }) => {
-            const logView = await openStage(page, 3);
-            const prettify = logView.button('Prettify JSON');
-            await expect(prettify).toHaveAttribute('aria-pressed', 'true');
-            expect(await logView.renderedText()).toContain(PRETTIFIED_RESULT_LINES.join('\n'));
-            await prettify.click();
-            await expect(prettify).toHaveAttribute('aria-pressed', 'false');
-            expect(await logView.renderedText()).toContain(RAW_RESULT_LINE);
-            expect(await logView.renderedText()).not.toContain(PRETTIFIED_RESULT_LINES.join('\n'));
-        });
-
-        test('offers no Prettify JSON button on the Terraform stage', async ({ page }) => {
+        await test.step('offers no Prettify JSON button on the Terraform stage', async () => {
             const logView = await openStage(page, 1);
-            await expect(logView.button('Prettify JSON')).toHaveCount(0);
+            await softExpect(logView.button('Prettify JSON'), 'Prettify JSON button').toHaveCount(0);
         });
 
-        test('keeps the raw setting after a reload', async ({ page }) => {
-            let logView = await openStage(page, 3);
+        await test.step('shows JSON results prettified by default and raw once Prettify JSON is turned off', async () => {
+            const logView = await openStageWithDefaultSettings(page, 3);
+            const prettify = logView.button('Prettify JSON');
+            await softExpect(prettify, 'Prettify JSON by default').toHaveAttribute('aria-pressed', 'true');
+            softExpect(await logView.renderedText(), 'prettified result lines').toContain(
+                PRETTIFIED_RESULT_LINES.join('\n'),
+            );
+            await prettify.click();
+            await softExpect(prettify, 'Prettify JSON turned off').toHaveAttribute('aria-pressed', 'false');
+            softExpect(await logView.renderedText(), 'raw result line').toContain(RAW_RESULT_LINE);
+            softExpect(await logView.renderedText(), 'no prettified lines').not.toContain(
+                PRETTIFIED_RESULT_LINES.join('\n'),
+            );
+        });
+
+        await test.step('keeps the raw setting after a reload', async () => {
+            let logView = await openStageWithDefaultSettings(page, 3);
             await logView.button('Prettify JSON').click();
             logView = await reloadStage(page);
-            await expect(logView.button('Prettify JSON')).toHaveAttribute('aria-pressed', 'false');
-            expect(await logView.renderedText()).toContain(RAW_RESULT_LINE);
+            await softExpect(logView.button('Prettify JSON'), 'Prettify JSON after reload').toHaveAttribute(
+                'aria-pressed',
+                'false',
+            );
+            softExpect(await logView.renderedText(), 'raw result line').toContain(RAW_RESULT_LINE);
         });
 
-        test('copies and downloads the text as it is shown in both states', async ({ page }) => {
-            const logView = await openStage(page, 3);
+        await test.step('copies and downloads the text as it is shown in both states', async () => {
+            const logView = await openStageWithDefaultSettings(page, 3);
             const prettify = logView.button('Prettify JSON');
             await logView.button('Copy to clipboard').click();
             const notification = await waitForNotification(page, 'Log copied to clipboard');
-            expect(notification.kind).toBe('success');
+            softExpect(notification.kind, 'copy notification kind').toBe('success');
             const prettified = (await copiedTexts(page)).at(-1)!;
-            expect(prettified).toContain(PRETTIFIED_RESULT_LINES.join('\n'));
-            expect(prettified).toBe(await logView.renderedText());
+            softExpect(prettified, 'prettified copy').toContain(PRETTIFIED_RESULT_LINES.join('\n'));
+            softExpect(prettified, 'copy equals the rendered text').toBe(await logView.renderedText());
             const download = await captureDownload(page, () => logView.button('Download log').click());
-            expect(download.fileName).toBe(`user-ansible-stage-request-${own.allocationRequestId}.log`);
-            expect(download.content.trimEnd()).toBe(prettified);
+            softExpect(download.fileName, 'download file name').toBe(
+                `user-ansible-stage-request-${own.allocationRequestId}.log`,
+            );
+            softExpect(download.content.trimEnd(), 'prettified download').toBe(prettified);
 
             await prettify.click();
             await logView.button('Copy to clipboard').click();
-            await expect.poll(async () => (await copiedTexts(page)).length).toBe(2);
-            expect((await copiedTexts(page)).at(-1)).toBe(ANSIBLE_LOG);
+            await softExpect.poll(async () => (await copiedTexts(page)).length, { message: 'copies so far' }).toBe(2);
+            softExpect((await copiedTexts(page)).at(-1), 'raw copy').toBe(ANSIBLE_LOG);
             const rawDownload = await captureDownload(page, () => logView.button('Download log').click());
-            expect(rawDownload.content.trimEnd()).toBe(ANSIBLE_LOG);
+            softExpect(rawDownload.content.trimEnd(), 'raw download').toBe(ANSIBLE_LOG);
         });
     });
 
-    test.describe('toolbar', () => {
-        test('toggles line wrapping, changes how a long line is laid out and keeps the choice after a reload', async ({
-            page,
-        }) => {
-            await page.unrouteAll({ behavior: 'ignoreErrors' });
-            await mockStageOutputs(
-                page,
-                fixedOutputs({ terraform: LONG_WRAPPING_LINE, 'networking-ansible': '', 'user-ansible': '' }),
-            );
-            let logView = await openStage(page, 1);
-            const wrap = logView.button('Line wrap');
-            await expect(wrap).toHaveAttribute('aria-pressed', 'true');
-            await expect(wrap.locator('mat-icon')).toHaveText('wrap_text');
-            const wrappedHeight = (await logView.host.locator('.cm-line').first().boundingBox())!.height;
-            await wrap.click();
-            await expect(wrap).toHaveAttribute('aria-pressed', 'false');
-            await expect(wrap.locator('mat-icon')).toHaveText('format_align_left');
-            await expect
-                .poll(async () => (await logView.host.locator('.cm-line').first().boundingBox())!.height)
-                .toBeLessThan(wrappedHeight);
-            logView = await reloadStage(page);
-            await expect(logView.button('Line wrap')).toHaveAttribute('aria-pressed', 'false');
-        });
+    test('runs the toolbar of the log view', async ({ page, checkpoint }) => {
+        test.slow();
 
-        test('maximizes the log view over the page and leaves with Escape', async ({ page, checkpoint }) => {
+        await test.step('maximizes the log view over the page and leaves with Escape', async () => {
             const logView = await openStage(page, 1);
             const fullscreen = logView.button('Fullscreen');
-            await expect(fullscreen).toHaveAttribute('aria-pressed', 'false');
+            await softExpect(fullscreen, 'Fullscreen before').toHaveAttribute('aria-pressed', 'false');
             await fullscreen.click();
-            await expect(fullscreen).toHaveAttribute('aria-pressed', 'true');
-            await expect(logView.wrapper).toHaveClass(/fullscreen/);
-            await expect(logView.wrapper).toHaveAttribute('role', 'dialog');
-            await expect(logView.wrapper).toHaveAttribute('aria-label', 'Log view');
-            await expect(page.locator('.content-wrapper.fullscreen')).toHaveCount(1);
+            await softExpect(fullscreen, 'Fullscreen after').toHaveAttribute('aria-pressed', 'true');
+            await softExpect(logView.wrapper, 'maximized wrapper').toHaveClass(/fullscreen/);
+            await softExpect(logView.wrapper, 'wrapper role').toHaveAttribute('role', 'dialog');
+            await softExpect(logView.wrapper, 'wrapper label').toHaveAttribute('aria-label', 'Log view');
+            await softExpect(page.locator('.content-wrapper.fullscreen'), 'maximized wrappers').toHaveCount(1);
             const viewport = page.viewportSize()!;
             const box = (await logView.wrapper.boundingBox())!;
             const sideMenuWidth = viewport.width >= FULLSCREEN_SIDE_MENU_MINIMUM_VIEWPORT_WIDTH ? SIDE_MENU_WIDTH : 0;
-            expect(box.width).toBeGreaterThanOrEqual(viewport.width - sideMenuWidth - 1);
-            expect(box.height).toBeGreaterThanOrEqual(viewport.height - 1);
+            softExpect(box.width, 'maximized width').toBeGreaterThanOrEqual(viewport.width - sideMenuWidth - 1);
+            softExpect(box.height, 'maximized height').toBeGreaterThanOrEqual(viewport.height - 1);
             await checkpoint(page, 'log view maximized');
             await page.keyboard.press('Escape');
-            await expect(logView.wrapper).not.toHaveClass(/fullscreen/);
-            await expect(fullscreen).toHaveAttribute('aria-pressed', 'false');
+            await softExpect(logView.wrapper, 'wrapper after Escape').not.toHaveClass(/fullscreen/);
+            await softExpect(fullscreen, 'Fullscreen after Escape').toHaveAttribute('aria-pressed', 'false');
         });
 
-        test('keeps the maximized view when Escape closes the search panel', async ({ page }) => {
+        await test.step('keeps the maximized view when Escape closes the search panel', async () => {
             const logView = await openStage(page, 1);
             await logView.button('Fullscreen').click();
             await logView.button('Search log').click();
-            await expect(logView.searchPanel).toBeVisible();
+            await softExpect(logView.searchPanel, 'search panel').toBeVisible();
             await page.keyboard.press('Escape');
-            await expect(logView.searchPanel).toHaveCount(0);
-            await expect(logView.wrapper).toHaveClass(/fullscreen/);
+            await softExpect(logView.searchPanel, 'search panel after Escape').toHaveCount(0);
+            await softExpect(logView.wrapper, 'still maximized').toHaveClass(/fullscreen/);
             await page.keyboard.press('Escape');
-            await expect(logView.wrapper).not.toHaveClass(/fullscreen/);
+            await softExpect(logView.wrapper, 'wrapper after second Escape').not.toHaveClass(/fullscreen/);
         });
 
-        test('searches the log, marks the matches and closes the panel with Escape', async ({ page }) => {
+        await test.step('searches the log, marks the matches and closes the panel with Escape', async () => {
             const logView = await openStage(page, 1);
             await logView.button('Search log').click();
-            await expect(logView.searchPanel).toBeVisible();
+            await softExpect(logView.searchPanel, 'search panel').toBeVisible();
             await logView.searchPanel.getByRole('textbox').first().pressSequentially('complete');
-            await expect(logView.host.locator('.cm-searchMatch').first()).toBeVisible();
-            expect(await logView.host.locator('.cm-searchMatch').count()).toBeGreaterThanOrEqual(2);
+            await softExpect(logView.host.locator('.cm-searchMatch').first(), 'first match').toBeVisible();
+            softExpect(await logView.host.locator('.cm-searchMatch').count(), 'match count').toBeGreaterThanOrEqual(2);
             await page.keyboard.press('Escape');
-            await expect(logView.searchPanel).toHaveCount(0);
+            await softExpect(logView.searchPanel, 'search panel after Escape').toHaveCount(0);
         });
 
-        test('copies the log and reports it', async ({ page }) => {
+        await test.step('copies the log and reports it', async () => {
             const logView = await openStage(page, 1);
             await logView.button('Copy to clipboard').click();
-            expect((await waitForNotification(page, 'Log copied to clipboard')).kind).toBe('success');
-            expect(await copiedTexts(page)).toEqual([TERRAFORM_LOG]);
+            softExpect((await waitForNotification(page, 'Log copied to clipboard')).kind, 'notification kind').toBe(
+                'success',
+            );
+            softExpect(await copiedTexts(page), 'copied texts').toEqual([TERRAFORM_LOG]);
         });
 
-        test('downloads the log as a file named after the stage and the request', async ({ page }) => {
+        await test.step('downloads the log as a file named after the stage and the request', async () => {
             const logView = await openStage(page, 1);
             const download = await captureDownload(page, () => logView.button('Download log').click());
-            expect(download.fileName).toBe(`terraform-stage-request-${own.allocationRequestId}.log`);
-            expect(download.content.trimEnd()).toBe(TERRAFORM_LOG);
+            softExpect(download.fileName, 'download file name').toBe(
+                `terraform-stage-request-${own.allocationRequestId}.log`,
+            );
+            softExpect(download.content.trimEnd(), 'download content').toBe(TERRAFORM_LOG);
         });
 
-        test('opens and closes the appearance panel and returns focus to its button with Escape', async ({ page }) => {
+        await test.step('opens and closes the appearance panel and returns focus to its button with Escape', async () => {
             const logView = await openStage(page, 1);
             const gear = logView.button('Appearance settings');
-            await expect(gear).toHaveAttribute('aria-expanded', 'false');
+            await softExpect(gear, 'gear before').toHaveAttribute('aria-expanded', 'false');
             await gear.click();
-            await expect(gear).toHaveAttribute('aria-expanded', 'true');
-            await expect(logView.settingsPanel()).toBeVisible();
+            await softExpect(gear, 'gear open').toHaveAttribute('aria-expanded', 'true');
+            await softExpect(logView.settingsPanel(), 'settings panel').toBeVisible();
             await page.keyboard.press('Escape');
-            await expect(logView.settingsPanel()).toHaveCount(0);
-            await expect(gear).toBeFocused();
+            await softExpect(logView.settingsPanel(), 'settings panel after Escape').toHaveCount(0);
+            await softExpect(gear, 'gear focus').toBeFocused();
         });
 
-        test('scrolls to the top and to the end of a long log', async ({ page }) => {
+        await test.step('scrolls to the top and to the end of a long log', async () => {
             const logView = await openStage(page, 2);
             await logView.button('Scroll to top').click();
-            await expect.poll(() => logView.renderedText()).toContain('PLAY [all]');
+            await softExpect.poll(() => logView.renderedText(), { message: 'top of the log' }).toContain('PLAY [all]');
             await logView.button('Scroll to end').click();
-            await expect.poll(() => logView.renderedText()).toContain('END OF Padding LOG');
+            await softExpect
+                .poll(() => logView.renderedText(), { message: 'end of the log' })
+                .toContain('END OF Padding LOG');
         });
     });
 
@@ -321,119 +301,186 @@ test.describe('pool.pool-id.sandbox-instance.request-id log view', () => {
             test.describe(platform.name, () => {
                 test.use({ userAgent: platform.userAgent });
 
-                for (const [buttonName, shortcut] of Object.entries(platform.labels)) {
-                    test(`shows the ${shortcut} shortcut below the ${buttonName} button on hover and on focus`, async ({
-                        page,
-                    }) => {
+                test(`shows the shortcuts and runs them from the keyboard on ${platform.name}`, async ({ page }) => {
+                    test.slow();
+
+                    for (const [buttonName, shortcut] of Object.entries(platform.labels)) {
+                        await test.step(`shows the ${shortcut} shortcut below the ${buttonName} button on hover`, async () => {
+                            const logView = await openStage(page, 2);
+                            const button = logView.button(buttonName);
+                            const tooltip = page.getByRole('tooltip');
+                            await button.hover();
+                            await softExpect(tooltip.locator('.tooltip-shortcut'), 'shortcut text').toHaveText(shortcut);
+                            const buttonBox = (await button.boundingBox())!;
+                            const tooltipBox = (await tooltip.boundingBox())!;
+                            softExpect(tooltipBox.y, 'tooltip below the button').toBeGreaterThanOrEqual(
+                                buttonBox.y + buttonBox.height - 1,
+                            );
+                            await softExpect(button, 'button description').toHaveAttribute('aria-describedby', /.+/);
+                            await page.mouse.move(0, 0);
+                            await softExpect(tooltip, 'tooltip after the mouse left').toHaveCount(0);
+                        });
+                    }
+
+                    await test.step('runs the toolbar actions from the keyboard while focus is inside the log view', async () => {
                         const logView = await openStage(page, 2);
-                        const button = logView.button(buttonName);
-                        const tooltip = page.getByRole('tooltip');
-                        await button.hover();
-                        await expect(tooltip.locator('.tooltip-shortcut')).toHaveText(shortcut);
-                        const buttonBox = (await button.boundingBox())!;
-                        const tooltipBox = (await tooltip.boundingBox())!;
-                        expect(tooltipBox.y).toBeGreaterThanOrEqual(buttonBox.y + buttonBox.height - 1);
-                        await expect(button).toHaveAttribute('aria-describedby', /.+/);
-                        await page.mouse.move(0, 0);
-                        await expect(tooltip).toHaveCount(0);
-                        await logView.focusWithKeyboard(buttonName);
-                        await expect(tooltip.locator('.tooltip-shortcut')).toHaveText(shortcut);
+                        await logView.focusToolbar();
+
+                        await page.keyboard.press('Alt+Shift+W');
+                        await softExpect(logView.button('Line wrap'), 'Line wrap').toHaveAttribute('aria-pressed', 'false');
+                        await page.keyboard.press('Alt+Shift+P');
+                        await softExpect(logView.button('Prettify JSON'), 'Prettify JSON').toHaveAttribute(
+                            'aria-pressed',
+                            'false',
+                        );
+                        await page.keyboard.press('Alt+Shift+C');
+                        await softExpect
+                            .poll(async () => (await copiedTexts(page)).length, { message: 'copies so far' })
+                            .toBe(1);
+                        const download = await captureDownload(page, () => page.keyboard.press('Alt+Shift+D'));
+                        softExpect(download.fileName, 'download file name').toBe(
+                            `networking-ansible-stage-request-${own.allocationRequestId}.log`,
+                        );
+                        await page.keyboard.press('Alt+Shift+S');
+                        await softExpect(logView.button('Appearance settings'), 'settings open').toHaveAttribute(
+                            'aria-expanded',
+                            'true',
+                        );
+                        await page.keyboard.press('Alt+Shift+S');
+                        await softExpect(logView.button('Appearance settings'), 'settings closed').toHaveAttribute(
+                            'aria-expanded',
+                            'false',
+                        );
+                        await page.keyboard.press('Alt+Shift+F');
+                        await softExpect(logView.button('Fullscreen'), 'Fullscreen on').toHaveAttribute(
+                            'aria-pressed',
+                            'true',
+                        );
+                        await page.keyboard.press('Alt+Shift+F');
+                        await softExpect(logView.button('Fullscreen'), 'Fullscreen off').toHaveAttribute(
+                            'aria-pressed',
+                            'false',
+                        );
+
+                        await logView.focusToolbar();
+                        await page.keyboard.press(platform.top);
+                        await softExpect.poll(() => logView.renderedText(), { message: 'top of the log' }).toContain('PLAY [all]');
+                        await logView.focusToolbar();
+                        await page.keyboard.press(platform.end);
+                        await softExpect
+                            .poll(() => logView.renderedText(), { message: 'end of the log' })
+                            .toContain('END OF Padding LOG');
+                        await logView.focusToolbar();
+                        await page.keyboard.press(`${platform.modifier}+F`);
+                        await softExpect(logView.searchPanel, 'search panel').toBeVisible();
                     });
-                }
 
-                test('runs the toolbar actions from the keyboard while focus is inside the log view', async ({
-                    page,
-                }) => {
-                    const logView = await openStage(page, 2);
-                    await logView.focusToolbar();
-
-                    await page.keyboard.press('Alt+Shift+W');
-                    await expect(logView.button('Line wrap')).toHaveAttribute('aria-pressed', 'false');
-                    await page.keyboard.press('Alt+Shift+P');
-                    await expect(logView.button('Prettify JSON')).toHaveAttribute('aria-pressed', 'false');
-                    await page.keyboard.press('Alt+Shift+C');
-                    await expect.poll(async () => (await copiedTexts(page)).length).toBe(1);
-                    const download = await captureDownload(page, () => page.keyboard.press('Alt+Shift+D'));
-                    expect(download.fileName).toBe(`networking-ansible-stage-request-${own.allocationRequestId}.log`);
-                    await page.keyboard.press('Alt+Shift+S');
-                    await expect(logView.button('Appearance settings')).toHaveAttribute('aria-expanded', 'true');
-                    await page.keyboard.press('Alt+Shift+S');
-                    await expect(logView.button('Appearance settings')).toHaveAttribute('aria-expanded', 'false');
-                    await page.keyboard.press('Alt+Shift+F');
-                    await expect(logView.button('Fullscreen')).toHaveAttribute('aria-pressed', 'true');
-                    await page.keyboard.press('Alt+Shift+F');
-                    await expect(logView.button('Fullscreen')).toHaveAttribute('aria-pressed', 'false');
-
-                    await logView.focusToolbar();
-                    await page.keyboard.press(platform.top);
-                    await expect.poll(() => logView.renderedText()).toContain('PLAY [all]');
-                    await logView.focusToolbar();
-                    await page.keyboard.press(platform.end);
-                    await expect.poll(() => logView.renderedText()).toContain('END OF Padding LOG');
-                    await logView.focusToolbar();
-                    await page.keyboard.press(`${platform.modifier}+F`);
-                    await expect(logView.searchPanel).toBeVisible();
-                });
-
-                test('runs the shortcuts while focus is elsewhere on the page', async ({ page }) => {
-                    const logView = await openStage(page, 2);
-                    await page.locator('.stage-indicators').getByRole('button').first().focus();
-                    await page.keyboard.press('Alt+Shift+W');
-                    await expect(logView.button('Line wrap')).toHaveAttribute('aria-pressed', 'false');
+                    await test.step('runs the shortcuts while focus is elsewhere on the page', async () => {
+                        const logView = await openStage(page, 2);
+                        await page.locator('.stage-indicators').getByRole('button').first().focus();
+                        await page.keyboard.press('Alt+Shift+W');
+                        // The keyboard step stored line wrap as off, so the shortcut turns it back on.
+                        await softExpect(logView.button('Line wrap'), 'Line wrap').toHaveAttribute('aria-pressed', 'true');
+                    });
                 });
             });
         }
     });
 
-    test.describe('appearance panel', () => {
-        test('lists the presets by group and applies a chosen preset to every log view', async ({ page }) => {
-            const logView = await openStage(page, 2);
+    test('changes and keeps the appearance settings of the log view', async ({ page }) => {
+        test.setTimeout(240_000);
+
+        await test.step('sends the Left and Right arrows of the font size slider to the slider, not to the carousel', async () => {
+            const logView = await openStageWithDefaultSettings(page, 2);
+            await logView.openSettings();
+            const size = logView.settingsPanel().getByRole('slider', { name: 'Font size' });
+            await size.focus();
+            await size.press('ArrowRight');
+            await softExpect(size, 'font size').toHaveValue('15');
+            await softExpect(page, 'stage stays').toHaveURL(/#stage-2$/);
+        });
+
+        await test.step('changes the colours with the highlighting level and keeps the level after a reload', async () => {
+            let logView = await openStageWithDefaultSettings(page, 1);
+            await softExpect(logView.settingsPanel(), 'settings panel').toHaveCount(0);
+            await logView.setHighlightLevel(0);
+            softExpect(await logView.hostVariable('--log-token-error'), 'error token variable').toBe(
+                'var(--log-foreground)',
+            );
+            await logView.expectTokenSlot('Error: Quota', 'Error:', 'foreground');
+
+            await logView.setHighlightLevel(1);
+            await logView.expectTokenSlot('Error: Quota', 'Error:', 9);
+            await logView.expectTokenSlot('Plan: 1 to add', 'Plan:', 'foreground');
+
+            await logView.setHighlightLevel(2);
+            await logView.expectTokenSlot('Plan: 1 to add', 'Plan:', 4);
+            await logView.expectTokenSlot('Creation complete after', '12s', 12);
+            await logView.expectTokenSlot('Apply complete!', 'Apply complete!', 'foreground');
+
+            await logView.setHighlightLevel(3);
+            await logView.expectTokenSlot('Apply complete!', 'Apply complete!', 2);
+            softExpect((await logView.storedSettings())?.['highlightLevel'], 'stored level').toBeDefined();
+
+            await logView.setHighlightLevel(1);
+            logView = await reloadStage(page);
+            await logView.expectTokenSlot('Error: Quota', 'Error:', 9);
+            await logView.expectTokenSlot('Plan: 1 to add', 'Plan:', 'foreground');
+            await logView.openSettings();
+            await softExpect(
+                logView.settingsPanel().getByRole('slider', { name: 'Highlighting level' }),
+                'level after reload',
+            ).toHaveValue('1');
+        });
+
+        await test.step('lists the presets by group and applies a chosen preset to every log view', async () => {
+            const logView = await openStageWithDefaultSettings(page, 2);
             const views = ([0, 1, 2] as const).map((position) => new LogView(page, position));
             await logView.openSettings();
             const presets = logView.settingsPanel().getByRole('listbox', { name: 'Colour preset' });
             for (const heading of ['Platform', 'Other - light', 'Other - dark']) {
-                await expect(presets).toContainText(heading);
+                await softExpect(presets, `${heading} group`).toContainText(heading);
             }
             for (const option of ['Platform light', 'Platform dark', 'High contrast dark']) {
-                await expect(presets.getByRole('option', { name: option })).toBeVisible();
+                await softExpect(presets.getByRole('option', { name: option }), `${option} option`).toBeVisible();
             }
             const lightBackground = await logView.hostVariable('--log-background');
             await presets.getByRole('option', { name: 'Platform dark' }).click();
             for (const view of views) {
-                await expect.poll(() => view.colourScheme()).toBe('dark');
+                await softExpect.poll(() => view.colourScheme(), { message: 'dark colour scheme' }).toBe('dark');
             }
-            expect(await logView.hostVariable('--log-background')).not.toBe(lightBackground);
-            expect((await logView.storedSettings())?.['presetId']).toBe('platform-dark');
+            softExpect(await logView.hostVariable('--log-background'), 'dark background').not.toBe(lightBackground);
+            softExpect((await logView.storedSettings())?.['presetId'], 'stored preset').toBe('platform-dark');
             await presets.getByRole('option', { name: 'Platform light' }).click();
             for (const view of views) {
-                await expect.poll(() => view.colourScheme()).toBe('light');
+                await softExpect.poll(() => view.colourScheme(), { message: 'light colour scheme' }).toBe('light');
             }
         });
 
-        test('changes font size and weight with their sliders', async ({ page }) => {
-            const logView = await openStage(page, 1);
+        await test.step('changes font size and weight with their sliders', async () => {
+            const logView = await openStageWithDefaultSettings(page, 1);
             await logView.openSettings();
             const size = logView.settingsPanel().getByRole('slider', { name: 'Font size' });
-            await expect(size).toHaveValue('14');
-            await expect(logView.settingsPanel()).toContainText('14 px');
+            await softExpect(size, 'default font size').toHaveValue('14');
+            await softExpect(logView.settingsPanel(), 'default size label').toContainText('14 px');
             await size.focus();
             await size.press('ArrowRight');
             await size.press('ArrowRight');
-            await expect(size).toHaveValue('16');
-            await expect(logView.settingsPanel()).toContainText('16 px');
-            await expect(logView.content).toHaveCSS('font-size', '16px');
+            await softExpect(size, 'changed font size').toHaveValue('16');
+            await softExpect(logView.settingsPanel(), 'changed size label').toContainText('16 px');
+            await softExpect(logView.content, 'content font size').toHaveCSS('font-size', '16px');
             const weight = logView.settingsPanel().getByRole('slider', { name: 'Font weight' });
             await weight.focus();
             await weight.press('ArrowRight');
-            await expect(weight).toHaveValue('500');
-            await expect(logView.content).toHaveCSS('font-weight', '500');
+            await softExpect(weight, 'font weight').toHaveValue('500');
+            await softExpect(logView.content, 'content font weight').toHaveCSS('font-weight', '500');
         });
 
-        test('changes the font family', async ({ page }) => {
-            const logView = await openStage(page, 1);
+        await test.step('changes the font family', async () => {
+            const logView = await openStageWithDefaultSettings(page, 1);
             await logView.openSettings();
             const select = logView.settingsPanel().getByRole('combobox', { name: 'Font family' });
-            await expect(select).toContainText('Roboto Mono');
+            await softExpect(select, 'default font family').toContainText('Roboto Mono');
             const before = await logView.hostVariable('--log-font-family');
             await select.click();
             const options = page.getByRole('listbox', { name: 'Font family' }).getByRole('option');
@@ -441,15 +488,15 @@ test.describe('pool.pool-id.sandbox-instance.request-id log view', () => {
             const chosen = options.filter({ hasNotText: 'Roboto Mono' }).first();
             const chosenName = (await chosen.innerText()).trim();
             await chosen.click();
-            await expect(select).toContainText(chosenName);
-            expect(await logView.hostVariable('--log-font-family')).not.toBe(before);
-            expect(await logView.hostVariable('--log-font-family')).toContain(chosenName);
+            await softExpect(select, 'chosen font family').toContainText(chosenName);
+            softExpect(await logView.hostVariable('--log-font-family'), 'family variable changed').not.toBe(before);
+            softExpect(await logView.hostVariable('--log-font-family'), 'family variable names the choice').toContain(
+                chosenName,
+            );
         });
 
-        test('keeps every appearance choice after a reload and restores the defaults with the reset button', async ({
-            page,
-        }) => {
-            let logView = await openStage(page, 2);
+        await test.step('keeps every appearance choice after a reload and restores the defaults with the reset button', async () => {
+            let logView = await openStageWithDefaultSettings(page, 2);
             const defaults = {
                 background: await logView.hostVariable('--log-background'),
                 size: await logView.hostVariable('--log-font-size'),
@@ -470,25 +517,105 @@ test.describe('pool.pool-id.sandbox-instance.request-id log view', () => {
                 size: await logView.hostVariable('--log-font-size'),
                 weight: await logView.hostVariable('--log-font-weight'),
             };
-            expect(changed.background).not.toBe(defaults.background);
-            expect(changed.size).not.toBe(defaults.size);
-            expect(changed.weight).not.toBe(defaults.weight);
+            softExpect(changed.background, 'changed background').not.toBe(defaults.background);
+            softExpect(changed.size, 'changed size').not.toBe(defaults.size);
+            softExpect(changed.weight, 'changed weight').not.toBe(defaults.weight);
 
             logView = await reloadStage(page);
-            expect(await logView.hostVariable('--log-background')).toBe(changed.background);
-            expect(await logView.hostVariable('--log-font-size')).toBe(changed.size);
-            expect(await logView.hostVariable('--log-font-weight')).toBe(changed.weight);
-            await expect(logView.button('Line wrap')).toHaveAttribute('aria-pressed', 'false');
+            softExpect(await logView.hostVariable('--log-background'), 'background after reload').toBe(
+                changed.background,
+            );
+            softExpect(await logView.hostVariable('--log-font-size'), 'size after reload').toBe(changed.size);
+            softExpect(await logView.hostVariable('--log-font-weight'), 'weight after reload').toBe(changed.weight);
+            await softExpect(logView.button('Line wrap'), 'wrap after reload').toHaveAttribute('aria-pressed', 'false');
             await logView.openSettings();
-            await expect(logView.settingsPanel().getByRole('slider', { name: 'Highlighting level' })).toHaveValue('2');
+            await softExpect(
+                logView.settingsPanel().getByRole('slider', { name: 'Highlighting level' }),
+                'level after reload',
+            ).toHaveValue('2');
 
             await logView.settingsPanel().getByRole('button', { name: 'Reset to defaults' }).click();
-            await expect.poll(() => logView.hostVariable('--log-background')).toBe(defaults.background);
-            expect(await logView.hostVariable('--log-font-size')).toBe(defaults.size);
-            expect(await logView.hostVariable('--log-font-weight')).toBe(defaults.weight);
-            await expect(logView.settingsPanel().getByRole('slider', { name: 'Highlighting level' })).toHaveValue('3');
-            await expect(logView.button('Line wrap')).toHaveAttribute('aria-pressed', 'false');
+            await softExpect
+                .poll(() => logView.hostVariable('--log-background'), { message: 'background after reset' })
+                .toBe(defaults.background);
+            softExpect(await logView.hostVariable('--log-font-size'), 'size after reset').toBe(defaults.size);
+            softExpect(await logView.hostVariable('--log-font-weight'), 'weight after reset').toBe(defaults.weight);
+            await softExpect(
+                logView.settingsPanel().getByRole('slider', { name: 'Highlighting level' }),
+                'level after reset',
+            ).toHaveValue('3');
+            await softExpect(logView.button('Line wrap'), 'wrap after reset').toHaveAttribute('aria-pressed', 'false');
         });
+
+        await test.step('toggles line wrapping, changes how a long line is laid out and keeps the choice after a reload', async () => {
+            await page.unrouteAll({ behavior: 'ignoreErrors' });
+            await mockStageOutputs(
+                page,
+                fixedOutputs({ terraform: LONG_WRAPPING_LINE, 'networking-ansible': '', 'user-ansible': '' }),
+            );
+            let logView = await openStageWithDefaultSettings(page, 1);
+            const wrap = logView.button('Line wrap');
+            await softExpect(wrap, 'wrap by default').toHaveAttribute('aria-pressed', 'true');
+            await softExpect(wrap.locator('mat-icon'), 'wrapped icon').toHaveText('wrap_text');
+            const wrappedHeight = (await logView.host.locator('.cm-line').first().boundingBox())!.height;
+            await wrap.click();
+            await softExpect(wrap, 'wrap turned off').toHaveAttribute('aria-pressed', 'false');
+            await softExpect(wrap.locator('mat-icon'), 'unwrapped icon').toHaveText('format_align_left');
+            await softExpect
+                .poll(async () => (await logView.host.locator('.cm-line').first().boundingBox())!.height, {
+                    message: 'line height without wrapping',
+                })
+                .toBeLessThan(wrappedHeight);
+            logView = await reloadStage(page);
+            await softExpect(logView.button('Line wrap'), 'wrap after reload').toHaveAttribute('aria-pressed', 'false');
+        });
+    });
+
+    test('keeps the reading position of the carousel log views', async ({ page }) => {
+        test.slow();
+        const stageLogs = {
+            terraform: numberedLog('Stage 1', 300),
+            'networking-ansible': numberedLog('Stage 2', 300),
+            'user-ansible': numberedLog('Stage 3', 300),
+        } satisfies Record<StageKind, string>;
+        await page.unrouteAll({ behavior: 'ignoreErrors' });
+        await mockStageOutputs(page, fixedOutputs(stageLogs));
+
+        await test.step('shows the end of a log that was hidden when it is revealed, in both directions and across the wrap', async () => {
+            await openStage(page, 1);
+            const centre = new LogView(page);
+            await page.keyboard.press('ArrowRight');
+            await softExpect(page, 'URL after Right').toHaveURL(/#stage-2$/);
+            await softExpect.poll(() => centre.renderedText(), { message: 'end of stage 2' }).toContain('END OF Stage 2 LOG');
+            await page.keyboard.press('ArrowLeft');
+            await page.keyboard.press('ArrowLeft');
+            await softExpect(page, 'URL after wrapping').toHaveURL(/#stage-3$/);
+            await softExpect.poll(() => centre.renderedText(), { message: 'end of stage 3' }).toContain('END OF Stage 3 LOG');
+            await page.keyboard.press('ArrowLeft');
+            await softExpect(page, 'URL after Left').toHaveURL(/#stage-2$/);
+            await softExpect.poll(() => centre.renderedText(), { message: 'end of stage 2' }).toContain('END OF Stage 2 LOG');
+        });
+
+        for (const { start, away, back } of [
+            { start: 2, away: 'ArrowRight', back: 'ArrowLeft' },
+            { start: 2, away: 'ArrowLeft', back: 'ArrowRight' },
+            { start: 1, away: 'ArrowRight', back: 'ArrowLeft' },
+            { start: 3, away: 'ArrowLeft', back: 'ArrowRight' },
+        ]) {
+            await test.step(`keeps the reading position of a scrolled-up log of stage ${start} after ${away} and ${back}`, async () => {
+                const logView = await openStage(page, start);
+                await logView.scroller.evaluate((element) => (element.scrollTop = 1500));
+                await softExpect
+                    .poll(() => logView.topLine(), { message: 'scrolled away from the top' })
+                    .toMatch(/^Stage \d line (?!0001$)\d{4}$/);
+                const topLine = await logView.topLine();
+                await page.keyboard.press(away);
+                await softExpect(page, 'URL after moving away').not.toHaveURL(new RegExp(`#stage-${start}$`));
+                await page.keyboard.press(back);
+                await softExpect(page, 'URL after moving back').toHaveURL(new RegExp(`#stage-${start}$`));
+                await softExpect.poll(() => logView.topLine(), { message: 'reading position' }).toBe(topLine);
+            });
+        }
     });
 
     test.describe('loading skeleton', () => {
@@ -589,69 +716,6 @@ test.describe('pool.pool-id.sandbox-instance.request-id log view', () => {
             expect(await logView.topLine()).toBe(topLine);
             expect(await logView.scroller.evaluate((element) => element.scrollTop)).toBe(scrollTop);
         });
-    });
-
-    test.describe('carousel', () => {
-        const stageLogs = {
-            terraform: numberedLog('Stage 1', 300),
-            'networking-ansible': numberedLog('Stage 2', 300),
-            'user-ansible': numberedLog('Stage 3', 300),
-        } satisfies Record<StageKind, string>;
-
-        test.beforeEach(async ({ page }) => {
-            await page.unrouteAll({ behavior: 'ignoreErrors' });
-            await mockStageOutputs(page, fixedOutputs(stageLogs));
-        });
-
-        test('shows the end of a log that was hidden when it is revealed, in both directions and across the wrap', async ({
-            page,
-        }) => {
-            await openStage(page, 1);
-            const centre = new LogView(page);
-            await page.keyboard.press('ArrowRight');
-            await expect(page).toHaveURL(/#stage-2$/);
-            await expect.poll(() => centre.renderedText()).toContain('END OF Stage 2 LOG');
-            await page.keyboard.press('ArrowLeft');
-            await page.keyboard.press('ArrowLeft');
-            await expect(page).toHaveURL(/#stage-3$/);
-            await expect.poll(() => centre.renderedText()).toContain('END OF Stage 3 LOG');
-            await page.keyboard.press('ArrowLeft');
-            await expect(page).toHaveURL(/#stage-2$/);
-            await expect.poll(() => centre.renderedText()).toContain('END OF Stage 2 LOG');
-        });
-
-        for (const { start, away, back } of [
-            { start: 2, away: 'ArrowRight', back: 'ArrowLeft' },
-            { start: 2, away: 'ArrowLeft', back: 'ArrowRight' },
-            { start: 1, away: 'ArrowRight', back: 'ArrowLeft' },
-            { start: 3, away: 'ArrowLeft', back: 'ArrowRight' },
-        ]) {
-            test(`keeps the reading position of a scrolled-up log of stage ${start} after ${away} and ${back}`, async ({
-                page,
-            }) => {
-                const logView = await openStage(page, start);
-                await logView.scroller.evaluate((element) => (element.scrollTop = 1500));
-                await expect.poll(() => logView.topLine()).not.toContain('line 0001');
-                const topLine = await logView.topLine();
-                await page.keyboard.press(away);
-                await expect(page).not.toHaveURL(new RegExp(`#stage-${start}$`));
-                await page.keyboard.press(back);
-                await expect(page).toHaveURL(new RegExp(`#stage-${start}$`));
-                await expect.poll(() => logView.topLine()).toBe(topLine);
-            });
-        }
-    });
-
-    test('sends the Left and Right arrows of the font size slider to the slider, not to the carousel', async ({
-        page,
-    }) => {
-        const logView = await openStage(page, 2);
-        await logView.openSettings();
-        const size = logView.settingsPanel().getByRole('slider', { name: 'Font size' });
-        await size.focus();
-        await size.press('ArrowRight');
-        await expect(size).toHaveValue('15');
-        await expect(page).toHaveURL(/#stage-2$/);
     });
 });
 

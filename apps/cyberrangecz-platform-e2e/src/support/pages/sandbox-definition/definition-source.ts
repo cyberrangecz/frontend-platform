@@ -7,15 +7,9 @@ export interface DefinitionSource {
     rev: string;
 }
 
-/** What a test creates, deletes or tries to duplicate; every purpose owns one repository and revision. */
+/** What a test creates or deletes; every purpose owns one repository and revision. */
 export type DefinitionPurpose =
-    | 'create'
-    | 'enterSubmit'
-    | 'trimmed'
-    | 'duplicate'
-    | 'unsaved'
-    | 'cancelDelete'
-    | 'delete';
+    'create' | 'enterSubmit' | 'trimmed' | 'unsaved' | 'delete';
 
 interface Repository {
     name: string;
@@ -26,9 +20,7 @@ const REPOSITORIES: Record<DefinitionPurpose, Repository> = {
     create: { name: 'library-demo-training', rev: 'no_os_type' },
     enterSubmit: { name: 'library-demo-training-adaptive', rev: 'v1.0.0' },
     trimmed: { name: 'library-secret-laboratory', rev: 'master' },
-    duplicate: { name: 'library-junior-hacker-adaptive', rev: 'v1.0.0' },
     unsaved: { name: 'library-demo-training', rev: 'v1.0.0' },
-    cancelDelete: { name: 'library-locust-3302', rev: 'v1.0.0' },
     delete: { name: 'library-junior-hacker', rev: 'v1.0.0' },
 };
 
@@ -39,15 +31,24 @@ const REPOSITORIES: Record<DefinitionPurpose, Repository> = {
  * seeded definitions use it.
  */
 const URL_SPELLINGS: Record<BrowserKey, (repositoryName: string) => string> = {
-    chromium: (repositoryName) => `https://github.com/cyberrangecz/${repositoryName}`,
-    firefox: (repositoryName) => `https://github.com/CyberRangeCZ/${repositoryName}.git`,
-    webkit: (repositoryName) => `https://github.com/CyberRangeCZ/${repositoryName}`,
+    chromium: (repositoryName) =>
+        `https://github.com/cyberrangecz/${repositoryName}`,
+    firefox: (repositoryName) =>
+        `https://github.com/CyberRangeCZ/${repositoryName}.git`,
+    webkit: (repositoryName) =>
+        `https://github.com/CyberRangeCZ/${repositoryName}`,
 };
 
 /** The repository and revision a browser uses for a purpose. */
-export function definitionSourceFor(browser: BrowserKey, purpose: DefinitionPurpose): DefinitionSource {
+export function definitionSourceFor(
+    browser: BrowserKey,
+    purpose: DefinitionPurpose,
+): DefinitionSource {
     const repository = REPOSITORIES[purpose];
-    return { url: URL_SPELLINGS[browser](repository.name), rev: repository.rev };
+    return {
+        url: URL_SPELLINGS[browser](repository.name),
+        rev: repository.rev,
+    };
 }
 
 /** A sandbox definition as the sandbox service answers it. */
@@ -63,9 +64,11 @@ export async function findDefinitions(
     sandbox: ApiClient,
     source: DefinitionSource,
 ): Promise<SandboxDefinitionRecord[]> {
-    const definitions = await sandbox.getAll<SandboxDefinitionRecord>('/definitions');
+    const definitions =
+        await sandbox.getAll<SandboxDefinitionRecord>('/definitions');
     return definitions.filter(
-        (definition) => definition.url === source.url && definition.rev === source.rev,
+        (definition) =>
+            definition.url === source.url && definition.rev === source.rev,
     );
 }
 
@@ -82,14 +85,19 @@ export function createDefinition(
  * Fails with a message naming the source when the service refuses, for example because a pool
  * still uses the definition.
  */
-export async function removeDefinitions(sandbox: ApiClient, source: DefinitionSource): Promise<void> {
+export async function removeDefinitions(
+    sandbox: ApiClient,
+    source: DefinitionSource,
+): Promise<void> {
     for (const definition of await findDefinitions(sandbox, source)) {
-        await sandbox.delete(`/definitions/${definition.id}`).catch((cause: unknown) => {
-            throw new Error(
-                `Definition ${definition.id} of ${source.url} at ${source.rev} cannot be deleted before the test registers it again; a pool may still use it`,
-                { cause },
-            );
-        });
+        await sandbox
+            .delete(`/definitions/${definition.id}`)
+            .catch((cause: unknown) => {
+                throw new Error(
+                    `Definition ${definition.id} of ${source.url} at ${source.rev} cannot be deleted before the test registers it again; a pool may still use it`,
+                    { cause },
+                );
+            });
     }
 }
 
@@ -107,22 +115,32 @@ export async function ensureDefinition(
  * deletes. The first is the seed spelling the shared definition uses.
  */
 export const FILLER_SOURCES: readonly DefinitionSource[] = [
-    { url: 'https://github.com/cyberrangecz/library-demo-training.git', rev: 'master' },
+    {
+        url: 'https://github.com/cyberrangecz/library-demo-training.git',
+        rev: 'master',
+    },
     ...[
         { name: 'library-demo-training-adaptive', rev: 'master' },
         { name: 'library-junior-hacker-adaptive', rev: 'master' },
         { name: 'library-secret-laboratory', rev: 'v1.0.0' },
         { name: 'library-secret-laboratory', rev: 'v1.1.0' },
         { name: 'library-secret-laboratory', rev: 'v1.1.1' },
-    ].map((repository) => ({ url: `https://github.com/cyberrangecz/${repository.name}`, rev: repository.rev })),
+    ].map((repository) => ({
+        url: `https://github.com/cyberrangecz/${repository.name}`,
+        rev: repository.rev,
+    })),
 ];
 
 /**
  * Fails with a message naming the wipe fillers and the create specs when the sandbox service
  * holds no more than the given number of definitions.
  */
-export async function ensureMoreDefinitionsThan(sandbox: ApiClient, count: number): Promise<void> {
-    const registered = await sandbox.getAll<SandboxDefinitionRecord>('/definitions');
+export async function ensureMoreDefinitionsThan(
+    sandbox: ApiClient,
+    count: number,
+): Promise<void> {
+    const registered =
+        await sandbox.getAll<SandboxDefinitionRecord>('/definitions');
     if (registered.length <= count) {
         throw new Error(
             `The sandbox service holds ${registered.length} definitions, ${count + 1} are needed; the wipe registers the filler definitions and the create specs register one definition per purpose and browser; run the wipe, then the create specs`,

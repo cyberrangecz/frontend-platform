@@ -1,5 +1,5 @@
 import type { Locator, Page } from '@playwright/test';
-import { control, SentinelTable, waitForPageReady } from '../../ui';
+import { control, SentinelTable, waitForPageReady, wholeText } from '../../ui';
 
 type TokenField = 'prefix' | 'pin';
 
@@ -84,6 +84,28 @@ export class RunOverviewPage {
     /** The table row of the run whose training instance has the given title. */
     rowOf(instanceTitle: string): Locator {
         return this.table.rowByText(instanceTitle);
+    }
+
+    /** The table row of the run whose training instance title is exactly the given title. */
+    exactRowOf(instanceTitle: string): Promise<Locator> {
+        return this.table.rowByColumnValue('title', wholeText(instanceTitle));
+    }
+
+    /** The card listing the trainee's own sandboxes, shown while the trainee has one. */
+    get ownSandboxes(): Locator {
+        return this.page.locator('crczp-own-sandboxes');
+    }
+
+    /** The entry of the trainee's own sandbox of the training instance titled exactly so. */
+    ownSandboxOf(instanceTitle: string): Locator {
+        return this.ownSandboxes.locator('.own-sandbox').filter({
+            has: this.page.locator('.own-sandbox-title', { hasText: wholeText(instanceTitle) }),
+        });
+    }
+
+    /** The Remove sandbox button of an own sandbox entry. */
+    removeSandboxButton(entry: Locator): Locator {
+        return entry.getByRole('button', { name: 'Remove sandbox' });
     }
 
     /** The row's Resume action (icon-only button). */

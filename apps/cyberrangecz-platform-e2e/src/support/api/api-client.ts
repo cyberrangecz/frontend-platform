@@ -8,6 +8,27 @@ export type Query = Record<string, QueryValue | undefined>;
 export interface RequestOptions {
     query?: Query;
     body?: unknown;
+    /** Headers sent beside the bearer token and the Accept header. */
+    headers?: Record<string, string>;
+}
+
+/** An answer of any status, its body parsed as JSON when it is JSON and kept as text otherwise. */
+export interface ApiAnswer {
+    status: number;
+    body: unknown;
+}
+
+/** Describes an answer by its status and body. */
+export function describeAnswer(answer: ApiAnswer): string {
+    return `HTTP ${answer.status}: ${typeof answer.body === 'string' ? answer.body : JSON.stringify(answer.body)}`;
+}
+
+function parseBody(text: string): unknown {
+    try {
+        return JSON.parse(text);
+    } catch {
+        return text;
+    }
 }
 
 /** A binary answer with the headers a caller dispatches on. */
@@ -71,22 +92,37 @@ export class ApiClient {
 
     /** Sends one request and parses a JSON answer; an empty answer resolves to undefined. */
     async send<T>(method: string, path: string, options: RequestOptions = {}): Promise<T> {
+        const { url, status, text } = await this.fetch(method, path, options);
+        if (status < 200 || status >= 300) {
+            throw new ApiError(method, url, status, text);
+        }
+        return (text ? JSON.parse(text) : undefined) as T;
+    }
+
+    /** Sends one request and answers its status and body whatever the status, for callers that judge the status themselves. */
+    async answer(method: string, path: string, options: RequestOptions = {}): Promise<ApiAnswer> {
+        const { status, text } = await this.fetch(method, path, options);
+        return { status, body: text ? parseBody(text) : undefined };
+    }
+
+    private async fetch(
+        method: string,
+        path: string,
+        options: RequestOptions,
+    ): Promise<{ url: string; status: number; text: string }> {
         const url = `${environment.apiRoots[this.service]}${path}${queryString(options.query)}`;
         const context = await requestContext();
         const response = await context.fetch(url, {
             method,
             headers: {
+                ...options.headers,
                 Authorization: `Bearer ${await this.tokens.accessToken()}`,
                 Accept: 'application/json',
             },
             data: options.body,
             failOnStatusCode: false,
         });
-        const text = await response.text();
-        if (!response.ok()) {
-            throw new ApiError(method, url, response.status(), text);
-        }
-        return (text ? JSON.parse(text) : undefined) as T;
+        return { url, status: response.status(), text: await response.text() };
     }
 
     /** Sends one request and answers the raw body text, for non-JSON downloads. */

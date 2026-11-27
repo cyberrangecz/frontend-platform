@@ -200,6 +200,14 @@ test.describe.serial('sandbox chain to a finished training run', () => {
         const play = TRAINEE_PLAYS[browserKey];
         const answers = SHARED_TRAINING_ANSWERS;
         const page = await openAs('chainTrainee');
+        await page.route('**/config.json', async (route) => {
+            const response = await route.fetch();
+            const config = await response.json();
+            await route.fulfill({
+                response,
+                json: { ...config, attachments: { ...config.attachments, autoDownloadMaxSize: '1B' } },
+            });
+        });
 
         await test.step('resumes the run from the overview', async () => {
             const overview = new RunOverviewPage(page);
@@ -217,6 +225,8 @@ test.describe.serial('sandbox chain to a finished training run', () => {
             await expect(run.levelTitle).toHaveText(SHARED_TRAINING_LEVEL_ORDER[0]!);
             await expect(run.markdown).toContainText('This training is played by the e2e suite.');
             await expect(run.topologyToggle).toHaveCount(0);
+            await expect(run.imageCard).toHaveAttribute('data-state', 'idle');
+            await run.imageCard.getByRole('button', { name: /download/i }).click();
             await expect(run.attachmentImage).toBeVisible();
             await expect
                 .poll(() => run.attachmentImage.evaluate((image: HTMLImageElement) => image.naturalWidth))
@@ -224,7 +234,11 @@ test.describe.serial('sandbox chain to a finished training run', () => {
             await expect(run.audioCard.getByRole('button', { name: /play/i })).toBeVisible();
             await expect(run.audioCard.getByRole('slider', { name: 'Seek' })).toBeVisible();
             await expect(run.videoCard).toBeVisible();
+            await run.videoCard.getByRole('button', { name: `Download and play ${ATTACHMENTS.video.fileName}` }).click();
+            await expect(run.videoCard).toHaveAttribute('data-state', /^(ready|playing)$/);
             await expect(run.textCard).toContainText(ATTACHMENTS.text.fileName);
+            await expect(run.textCard).toHaveAttribute('data-state', 'waiting');
+            await run.textCard.getByRole('button', { name: 'Load preview' }).click();
             await expect(run.textCard).toContainText('mode: attachment');
             await checkpoint(page, 'info level');
             await run.button('Next').click();
@@ -237,11 +251,13 @@ test.describe.serial('sandbox chain to a finished training run', () => {
             await expect(run.markdown).toContainText(
                 `Connect to the sandbox, then submit ${answers.accessPasskey}.`,
             );
+            const stabilizedGraph = page.locator('crczp-run-topology-wrapper crczp-topology-graph .graph-stabilized');
             await expect(run.topologyToggle).toBeVisible();
             await expect(run.topologyToggle.locator('mat-icon')).toHaveText('chevron_right');
+            await expect(stabilizedGraph).toBeVisible();
             await run.topologyToggle.click();
             await expect(run.topologyToggle.locator('mat-icon')).toHaveText('polyline');
-            await expect(page.locator('crczp-run-topology-wrapper crczp-topology-graph .graph-stabilized')).toBeVisible();
+            await expect(stabilizedGraph).toBeVisible();
             const topology = await apiAs('sandboxDesigner').sandbox.get<TopologyPayload>(
                 `/definitions/${shared.sandboxDefinition.id}/topology`,
             );

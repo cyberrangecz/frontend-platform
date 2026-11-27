@@ -30,7 +30,9 @@ crczp-markdown-editor {
 }
 
 .test-toggle-wrapper {
-    align-self: center;
+    display: flex;
+    align-items: center;
+    height: var(--mat-form-field-container-height);
 }
 
 .test-toggle-left-margin {

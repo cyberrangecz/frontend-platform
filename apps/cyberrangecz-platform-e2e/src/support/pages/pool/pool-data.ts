@@ -161,14 +161,40 @@ async function ignoringNotFound(action: () => Promise<unknown>): Promise<void> {
 }
 
 /**
+ * Waits until the first stage of the unit's allocation has finished or failed, the earliest
+ * moment the sandbox service accepts a cleanup. Resolves with the current unit, or undefined
+ * once it is gone.
+ */
+export async function waitUntilCleanable(
+    sandbox: ApiClient,
+    unit: AllocationUnitRecord,
+): Promise<AllocationUnitRecord | undefined> {
+    const deadline = Date.now() + REMOVAL_WAIT_MILLISECONDS;
+    let current: AllocationUnitRecord | undefined = unit;
+    while (current && !['FINISHED', 'FAILED'].includes(current.allocation_request.stages[0])) {
+        if (Date.now() >= deadline) {
+            throw new Error(`Allocation unit ${unit.id} did not finish its first stage within the wait`);
+        }
+        await new Promise((resolve) => setTimeout(resolve, REMOVAL_POLL_MILLISECONDS));
+        current = await findAllocationUnit(sandbox, unit.pool_id, unit.id);
+    }
+    return current;
+}
+
+/**
  * Unlocks an allocation unit and requests the removal of its sandbox, unless a removal is already
- * under way. Safe to repeat and when the unit is already gone.
+ * under way. A unit whose first allocation stage is still queued or running is awaited first, as
+ * the sandbox service refuses its cleanup. Safe to repeat and when the unit is already gone.
  */
 export async function requestAllocationUnitRemoval(
     sandbox: ApiClient,
-    unit: AllocationUnitRecord,
+    initialUnit: AllocationUnitRecord,
 ): Promise<void> {
-    if (unit.cleanup_request) {
+    if (initialUnit.cleanup_request) {
+        return;
+    }
+    const unit = await waitUntilCleanable(sandbox, initialUnit);
+    if (!unit || unit.cleanup_request) {
         return;
     }
     await ignoringNotFound(async () => {
@@ -219,15 +245,15 @@ export async function keepOrRemoveAllocationUnit(
 }
 
 /**
- * Removes a pool with every sandbox of it: unlocks the sandboxes, requests their removal, waits
- * until none is left, then unlocks and deletes the pool. Safe to repeat and when the pool is
- * already gone.
+ * Removes a pool with every sandbox of it: cancels unfinished allocations, unlocks the sandboxes,
+ * requests their removal, waits until none is left, then unlocks and deletes the pool. Safe to repeat and when the pool is already gone.
  */
 export async function removePool(sandbox: ApiClient, poolId: number): Promise<void> {
     const pool = (await listPools(sandbox)).find((candidate) => candidate.id === poolId);
     if (!pool) {
         return;
     }
+    await sandbox.answer('POST', `/pools/${poolId}/cancel-allocations`);
     for (const unit of await listAllocationUnits(sandbox, poolId)) {
         await requestAllocationUnitRemoval(sandbox, unit);
     }

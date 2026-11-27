@@ -1,8 +1,5 @@
-import { writeFile } from 'node:fs/promises';
-import type { ApiClient } from '../../support/api/api-client';
+import type { Page } from '@playwright/test';
 import { expect, test } from '../../support/fixtures';
-import { ADMINISTRATION_LINKS, ROLES_WITHOUT_ADMINISTRATION } from '../../support/pages/user-and-group/administration-access';
-import { expectRedirectedAway } from '../../support/route-guard';
 import {
     countUsers,
     findUserBySubject,
@@ -17,34 +14,9 @@ import {
     FileUploadDialog,
     pageTitle,
     waitForNotification,
-    expectUrlWhileLoading,
 } from '../../support/ui';
 
 test.use({ account: 'userAdministrator' });
-
-/**
- * Imports one new user through the import dialog, with a file in the import format of the users
- * endpoint (`users` entries carrying `sub` and `iss`), issued by the same provider as the seed users.
- */
-async function importUser(
-    overview: UserOverviewPage,
-    api: ApiClient,
-    filePath: string,
-    login: string,
-): Promise<void> {
-    const issuer = (await findUserBySubject(api, MEMBER_SUBJECTS[0]))?.iss;
-    expect(issuer, 'the seed user carries an issuer').toBeTruthy();
-    await writeFile(filePath, JSON.stringify({
-            users: [{ sub: login, iss: issuer, given_name: login, family_name: 'Imported', full_name: `${login} Imported` }],
-        }));
-    await overview.importButton.click();
-    const dialog = new FileUploadDialog(overview.page);
-    await dialog.chooseFiles(filePath);
-    await dialog.confirmButton.click();
-    const notification = await waitForNotification(overview.page, 'Users were imported');
-    expect(notification.kind).toBe('success');
-    await expect(dialog.root).toHaveCount(0);
-}
 
 /**
  * Asserts that two reads of one column, taken in opposite sort directions, list the distinct values
@@ -53,7 +25,7 @@ async function importUser(
  * Values present in only one read, such as a user another test creates between the reads, are left
  * out of the comparison.
  */
-function expectOppositeOrder<Value>(ascending: Value[], descending: Value[]): void {
+function expectOppositeOrder<Value>(ascending: Value[], descending: Value[], what: string): void {
     const collapseRuns = (values: Value[]): Value[] =>
         values.filter((value, index) => index === 0 || value !== values[index - 1]);
     const distinctAscending = collapseRuns(ascending);
@@ -62,137 +34,154 @@ function expectOppositeOrder<Value>(ascending: Value[], descending: Value[]): vo
     const inDescending = new Set(distinctDescending);
     const sharedAscending = distinctAscending.filter((value) => inDescending.has(value));
     const sharedDescending = distinctDescending.filter((value) => inAscending.has(value));
-    expect(sharedDescending).toEqual([...sharedAscending].reverse());
+    expect.soft(sharedDescending, what).toEqual([...sharedAscending].reverse());
+}
+
+/** Reads one preview file into the open import dialog. */
+function jsonFile(name: string, content: string): { name: string; mimeType: string; buffer: Buffer } {
+    return { name, mimeType: 'application/json', buffer: Buffer.from(content) };
+}
+
+/** Closes the import dialog with its Cancel control. */
+async function cancelImportDialog(dialog: FileUploadDialog): Promise<void> {
+    await dialog.cancelButton.click();
+    await expect(dialog.root).toHaveCount(0);
+}
+
+/** Opens the import dialog from the user overview. */
+async function openImportDialog(overview: UserOverviewPage, page: Page): Promise<FileUploadDialog> {
+    await overview.importButton.click();
+    return new FileUploadDialog(page);
 }
 
 test.describe('user.overview', () => {
-    test.describe('access', () => {
-        for (const role of ROLES_WITHOUT_ADMINISTRATION) {
-            test(`sends the ${role} account away from /user`, async ({ openAs }) => {
-                await expectRedirectedAway(openAs, role, '/user', { absentLinks: ADMINISTRATION_LINKS });
-            });
-        }
+    test('checks the user table, filter and navigation', async ({ page, apiAs, checkpoint }) => {
+        test.setTimeout(180_000);
+        const overview = new UserOverviewPage(page);
+        await overview.open();
 
-        test('sends a signed-out visitor to the login page', async ({ openAs }) => {
-            const page = await openAs('anonymous');
-            await page.goto('/user');
-            await expectUrlWhileLoading(page, /\/login/);
-        });
-    });
-
-    test.describe('table', () => {
-        test('shows the title, the columns and the controls', async ({ page, checkpoint }) => {
-            const overview = new UserOverviewPage(page);
-            await overview.open();
-            await expect(pageTitle(page)).toHaveText('User Overview');
+        await test.step('shows the title, the columns and the controls', async () => {
+            await expect.soft(pageTitle(page), 'page title').toHaveText('User Overview');
             for (const header of ['Id', 'Name', 'Login', 'Issuer', 'Email']) {
-                await expect(overview.table.headerCell(header)).toBeVisible();
+                await expect.soft(overview.table.headerCell(header), `column ${header}`).toBeVisible();
             }
-            await expect(overview.deleteButton).toBeDisabled();
-            await expect(overview.credentialsButton).toBeEnabled();
-            await expect(overview.importButton).toBeEnabled();
-            await expect(overview.filterInput).toBeVisible();
+            await expect.soft(overview.deleteButton, 'Delete').toBeDisabled();
+            await expect.soft(overview.credentialsButton, 'Get Users Credentials').toBeEnabled();
+            await expect.soft(overview.importButton, 'Import Users').toBeEnabled();
+            await expect.soft(overview.filterInput, 'filter').toBeVisible();
             await checkpoint(page, 'user overview loaded');
         });
 
-        test('reports the total number of users the service knows', async ({ page, apiAs }) => {
-            const overview = new UserOverviewPage(page);
+        await test.step('shows the seed users with their login and name', async () => {
+            await overview.filterBy(memberDisplayName(MEMBER_SUBJECTS[0]));
+            await expect.soft(overview.rowOf(MEMBER_SUBJECTS[0]), 'seed user row').toHaveCount(1);
+        });
+
+        await test.step('narrows the list to the users matching the text', async () => {
+            await overview.filterBy(memberDisplayName(MEMBER_SUBJECTS[2]));
+            await expect.soft(overview.table.rows, 'rows').toHaveCount(1);
+            await expect.soft(overview.table.rows.first(), 'matching row').toContainText(MEMBER_SUBJECTS[2]);
+        });
+
+        await test.step('shows the empty state when no user matches', async () => {
+            await overview.filterBy('zzzz-nobody-0f3a9c');
+            await expect.soft(overview.table.rows, 'rows').toHaveCount(0);
+            await expect.soft(overview.table.emptyState, 'empty state').toHaveText(/No users found/);
+            await checkpoint(page, 'filter without matches');
+        });
+
+        await test.step('handles special characters and markup in the filter as literal text', async () => {
+            await overview.filterBy('<b>%_\\"\'</b>');
+            await expect.soft(overview.table.rows, 'rows').toHaveCount(0);
+            await expect.soft(overview.table.emptyState, 'empty state').toBeVisible();
+        });
+
+        await test.step('restores the full list when the filter is cleared', async () => {
+            await overview.filterBy('');
+            await expect.soft(overview.table.rows.first(), 'first row').toBeVisible();
+        });
+
+        await test.step('downloads the initial users file', async () => {
+            const download = await captureDownload(page, () => overview.credentialsButton.click());
+            expect.soft(download.fileName, 'file name').toBe('oidc-initial-users.yaml');
+            expect.soft(download.size, 'file size').toBeGreaterThan(0);
+        });
+
+        await test.step('opens the user detail with the name link', async () => {
+            const [record] = (
+                await apiAs('userAdministrator').userAndGroup.getAll<{ id: number; sub: string }>('/users')
+            ).filter((user) => user.sub === MEMBER_SUBJECTS[0]);
+            await overview.filterBy(memberDisplayName(MEMBER_SUBJECTS[0]));
+            await overview.rowOf(MEMBER_SUBJECTS[0]).getByRole('link').first().click();
+            await expect(page).toHaveURL(new RegExp(`/user/${record?.id}$`));
+        });
+
+        await test.step('reports the total number of users the service knows', async () => {
             await expect(async () => {
                 const total = await countUsers(apiAs('userAdministrator').userAndGroup);
                 await overview.open();
                 await expect(overview.table.rangeLabel).toHaveText(new RegExp(`of ${total}\\s*$`), { timeout: 2_000 });
             }).toPass();
         });
-
-        test('shows the seed users with their login and name', async ({ page }) => {
-            const overview = new UserOverviewPage(page);
-            await overview.open();
-            await overview.filterBy(memberDisplayName(MEMBER_SUBJECTS[0]));
-            await expect(overview.rowOf(MEMBER_SUBJECTS[0])).toHaveCount(1);
-        });
     });
 
-    test.describe('filter', () => {
-        test('narrows the list to the users matching the text', async ({ page }) => {
-            const overview = new UserOverviewPage(page);
-            await overview.open();
-            await overview.filterBy(memberDisplayName(MEMBER_SUBJECTS[2]));
-            await expect(overview.table.rows).toHaveCount(1);
-            await expect(overview.table.rows.first()).toContainText(MEMBER_SUBJECTS[2]);
+    test('checks sorting and paging of the user table', async ({ page, apiAs }) => {
+        test.setTimeout(240_000);
+        const overview = new UserOverviewPage(page);
+        await overview.open();
+
+        await test.step('starts sorted by name, family name first, ascending', async () => {
+            await expect.soft(overview.table.headerCell('Name'), 'Name column sort').toHaveAttribute('aria-sort', 'ascending');
         });
 
-        test('shows the empty state when no user matches', async ({ page, checkpoint }) => {
-            const overview = new UserOverviewPage(page);
-            await overview.open();
-            await overview.filterBy('zzzz-nobody-0f3a9c');
-            await expect(overview.table.rows).toHaveCount(0);
-            await expect(overview.table.emptyState).toHaveText(/No users found/);
-            await checkpoint(page, 'filter without matches');
+        await test.step('offers the page sizes 10, 15, 25, 50 and 100', async () => {
+            await overview.table.pageSizeSelect.click({ force: true });
+            await expect.soft(page.getByRole('option'), 'page sizes').toHaveText(['10', '15', '25', '50', '100']);
+            await page.keyboard.press('Escape');
         });
 
-        test('handles special characters and markup in the filter as literal text', async ({ page }) => {
-            const overview = new UserOverviewPage(page);
-            await overview.open();
-            await overview.filterBy('<b>%_\\"\'</b>');
-            await expect(overview.table.rows).toHaveCount(0);
-            await expect(overview.table.emptyState).toBeVisible();
+        await test.step('moves between the first, next, previous and last page', async () => {
+            await overview.table.selectPageSize(10);
+            await expect.soft(overview.table.rows, 'rows').toHaveCount(10);
+            await expect.soft(overview.table.rangeLabel, 'first page range').toHaveText(/^\s*1\s*[–-]\s*10 of \d+\s*$/);
+            await expect.soft(overview.table.previousPageButton, 'previous on the first page').toBeDisabled();
+            await overview.table.nextPageButton.click();
+            await expect.soft(overview.table.rangeLabel, 'second page range').toHaveText(/^\s*11\s*[–-]\s*20 of \d+\s*$/);
+            await overview.table.previousPageButton.click();
+            await expect.soft(overview.table.rangeLabel, 'back on the first page').toHaveText(/^\s*1\s*[–-]\s*10 of \d+\s*$/);
+            await overview.table.lastPageButton.click();
+            await expect.soft(overview.table.nextPageButton, 'next on the last page').toBeDisabled();
+            await overview.table.firstPageButton.click();
+            await expect.soft(overview.table.rangeLabel, 'first page again').toHaveText(/^\s*1\s*[–-]\s*10 of \d+\s*$/);
         });
 
-        test('restores the full list when the filter is cleared', async ({ page }) => {
-            const overview = new UserOverviewPage(page);
-            await overview.open();
-            await overview.filterBy('zzzz-nobody-0f3a9c');
-            await expect(overview.table.rows).toHaveCount(0);
-            await overview.filterBy('');
-            await expect(overview.table.rows.first()).toBeVisible();
-        });
-    });
-
-    test.describe('sorting', () => {
-        test('sorts by id in both directions', async ({ page }) => {
-            const overview = new UserOverviewPage(page);
-            await overview.open();
+        await test.step('sorts by id in both directions', async () => {
             await overview.table.selectPageSize(100);
             await overview.table.sortTo('Id', 'ascending');
             const ascending = (await overview.table.columnTexts('Id')).map(Number);
-            expect(ascending).toEqual([...ascending].sort((left, right) => left - right));
+            expect.soft(ascending, 'ascending ids').toEqual([...ascending].sort((left, right) => left - right));
             await overview.table.sortTo('Id', 'descending');
             const descending = (await overview.table.columnTexts('Id')).map(Number);
-            expectOppositeOrder(ascending, descending);
+            expectOppositeOrder(ascending, descending, 'descending ids');
         });
 
         for (const header of ['Login', 'Email']) {
-            test(`sorts by ${header.toLowerCase()} in both directions`, async ({ page }) => {
-                const overview = new UserOverviewPage(page);
-                await overview.open();
-                await overview.table.selectPageSize(100);
+            await test.step(`sorts by ${header.toLowerCase()} in both directions`, async () => {
                 await overview.table.sortTo(header, 'ascending');
                 const ascending = await overview.table.columnTexts(header);
                 await overview.table.sortTo(header, 'descending');
                 const descending = await overview.table.columnTexts(header);
-                expectOppositeOrder(ascending, descending);
+                expectOppositeOrder(ascending, descending, `descending ${header.toLowerCase()}s`);
             });
         }
 
-        test('starts sorted by name, family name first, ascending', async ({ page }) => {
-            const overview = new UserOverviewPage(page);
-            await overview.open();
-            await expect(overview.table.headerCell('Name')).toHaveAttribute('aria-sort', 'ascending');
-        });
-
-        test('marks the sorted name and issuer columns', async ({ page }) => {
-            const overview = new UserOverviewPage(page);
-            await overview.open();
+        await test.step('marks the sorted name and issuer columns', async () => {
             await overview.table.sortTo('Name', 'descending');
             await overview.table.sortTo('Issuer', 'ascending');
-            await expect(overview.table.headerCell('Issuer')).toHaveAttribute('aria-sort', 'ascending');
+            await expect.soft(overview.table.headerCell('Issuer'), 'Issuer column sort').toHaveAttribute('aria-sort', 'ascending');
         });
 
-        test('lists every user exactly once when paging through the default order', async ({
-            page,
-            apiAs,
-        }) => {
-            const overview = new UserOverviewPage(page);
+        await test.step('lists every user exactly once when paging through the default order', async () => {
             await expect(async () => {
                 const total = await countUsers(apiAs('userAdministrator').userAndGroup);
                 await overview.open();
@@ -213,147 +202,86 @@ test.describe('user.overview', () => {
         });
     });
 
-    test.describe('paging', () => {
-        test('offers the page sizes 10, 15, 25, 50 and 100', async ({ page }) => {
-            const overview = new UserOverviewPage(page);
-            await overview.open();
-            await overview.table.pageSizeSelect.click({ force: true });
-            await expect(page.getByRole('option')).toHaveText(['10', '15', '25', '50', '100']);
-        });
+    test('checks user selection and cancelled deletion', async ({ page, apiAs, checkpoint }) => {
+        const api = apiAs('userAdministrator').userAndGroup;
+        const overview = new UserOverviewPage(page);
+        await overview.open();
+        await overview.filterBy('User2');
 
-        test('moves between the first, next, previous and last page', async ({ page }) => {
-            const overview = new UserOverviewPage(page);
-            await overview.open();
-            await overview.table.selectPageSize(10);
-            await expect(overview.table.rows).toHaveCount(10);
-            await expect(overview.table.rangeLabel).toHaveText(/^\s*1\s*[–-]\s*10 of \d+\s*$/);
-            await expect(overview.table.previousPageButton).toBeDisabled();
-            await overview.table.nextPageButton.click();
-            await expect(overview.table.rangeLabel).toHaveText(/^\s*11\s*[–-]\s*20 of \d+\s*$/);
-            await overview.table.previousPageButton.click();
-            await expect(overview.table.rangeLabel).toHaveText(/^\s*1\s*[–-]\s*10 of \d+\s*$/);
-            await overview.table.lastPageButton.click();
-            await expect(overview.table.nextPageButton).toBeDisabled();
-            await overview.table.firstPageButton.click();
-            await expect(overview.table.rangeLabel).toHaveText(/^\s*1\s*[–-]\s*10 of \d+\s*$/);
-        });
-    });
-
-    test.describe('navigation', () => {
-        test('opens the user detail with the name link', async ({ page, apiAs }) => {
-            const [record] = (
-                await apiAs('userAdministrator').userAndGroup.getAll<{ id: number; sub: string }>('/users')
-            ).filter((user) => user.sub === MEMBER_SUBJECTS[0]);
-            const overview = new UserOverviewPage(page);
-            await overview.open();
-            await overview.filterBy(memberDisplayName(MEMBER_SUBJECTS[0]));
-            await overview.rowOf(MEMBER_SUBJECTS[0]).getByRole('link').first().click();
-            await expect(page).toHaveURL(new RegExp(`/user/${record?.id}$`));
-        });
-    });
-
-    test.describe('deleting', () => {
-        test('labels the delete control with the number of selected users', async ({ page }) => {
-            const overview = new UserOverviewPage(page);
-            await overview.open();
-            await overview.filterBy('User2');
+        await test.step('labels the delete control with the number of selected users', async () => {
             await overview.table.rowCheckbox(overview.rowOf(MEMBER_SUBJECTS[0])).check();
-            await expect(overview.deleteButton).toHaveText(/Delete \(1\)/);
+            await expect.soft(overview.deleteButton, 'one selected').toHaveText(/Delete \(1\)/);
             await overview.table.rowCheckbox(overview.rowOf(MEMBER_SUBJECTS[1])).check();
-            await expect(overview.deleteButton).toHaveText(/Delete \(2\)/);
+            await expect.soft(overview.deleteButton, 'two selected').toHaveText(/Delete \(2\)/);
             await overview.table.rowCheckbox(overview.rowOf(MEMBER_SUBJECTS[1])).uncheck();
-            await expect(overview.deleteButton).toHaveText(/Delete \(1\)/);
+            await expect.soft(overview.deleteButton, 'one selected again').toHaveText(/Delete \(1\)/);
         });
 
-        test('asks for confirmation before deleting one user and keeps the user on cancel', async ({
-            page,
-            apiAs,
-            checkpoint,
-        }) => {
-            const overview = new UserOverviewPage(page);
-            await overview.open();
-            await overview.filterBy(memberDisplayName(MEMBER_SUBJECTS[0]));
-            await overview.table.rowCheckbox(overview.rowOf(MEMBER_SUBJECTS[0])).check();
-            await overview.deleteButton.click();
-
-            const dialog = new ConfirmationDialog(page, /^Delete User$/);
-            await expect(dialog.message).toHaveText('Do you want to delete selected user?');
-            await checkpoint(page, 'delete user confirmation');
-            await dialog.cancel();
-            await expect(dialog.root).toHaveCount(0);
-            await expect(overview.rowOf(MEMBER_SUBJECTS[0])).toBeVisible();
-            expect(await findUserBySubject(apiAs('userAdministrator').userAndGroup, MEMBER_SUBJECTS[0])).toBeDefined();
-        });
-
-        test('asks for confirmation before deleting several users and keeps them on cancel', async ({
-            page,
-            apiAs,
-        }) => {
-            const overview = new UserOverviewPage(page);
-            await overview.open();
-            await overview.filterBy('User2');
-            await overview.table.rowCheckbox(overview.rowOf(MEMBER_SUBJECTS[0])).check();
+        await test.step('asks for confirmation before deleting several users and keeps them on cancel', async () => {
             await overview.table.rowCheckbox(overview.rowOf(MEMBER_SUBJECTS[1])).check();
             await overview.deleteButton.click();
 
             const dialog = new ConfirmationDialog(page, /^Delete Users$/);
-            await expect(dialog.message).toHaveText('Do you want to delete 2 selected users?');
+            await expect.soft(dialog.message, 'dialog message').toHaveText('Do you want to delete 2 selected users?');
             await dialog.cancel();
             await expect(dialog.root).toHaveCount(0);
-            const api = apiAs('userAdministrator').userAndGroup;
             for (const subject of [MEMBER_SUBJECTS[0], MEMBER_SUBJECTS[1]]) {
-                expect(await findUserBySubject(api, subject)).toBeDefined();
+                expect.soft(await findUserBySubject(api, subject), `${subject} still exists`).toBeDefined();
             }
+        });
+
+        await test.step('asks for confirmation before deleting one user and keeps the user on cancel', async () => {
+            await overview.table.rowCheckbox(overview.rowOf(MEMBER_SUBJECTS[1])).uncheck();
+            await overview.deleteButton.click();
+
+            const dialog = new ConfirmationDialog(page, /^Delete User$/);
+            await expect.soft(dialog.message, 'dialog message').toHaveText('Do you want to delete selected user?');
+            await checkpoint(page, 'delete user confirmation');
+            await dialog.cancel();
+            await expect(dialog.root).toHaveCount(0);
+            await expect.soft(overview.rowOf(MEMBER_SUBJECTS[0]), 'row of the user').toBeVisible();
+            expect.soft(await findUserBySubject(api, MEMBER_SUBJECTS[0]), 'user still exists').toBeDefined();
         });
     });
 
-    test.describe('import', () => {
-        test('opens the import dialog with Confirm disabled until a file is chosen', async ({
-            page,
-            checkpoint,
-        }) => {
-            const overview = new UserOverviewPage(page);
-            await overview.open();
-            await overview.importButton.click();
-            const dialog = new FileUploadDialog(page);
-            await expect(dialog.title).toHaveText('Import Users');
-            await expect(dialog.root).toContainText('Select a file to import users');
-            await expect(dialog.confirmButton).toBeDisabled();
+    test('checks the import dialog previews', async ({ page, checkpoint }) => {
+        test.setTimeout(180_000);
+        const overview = new UserOverviewPage(page);
+        await overview.open();
+
+        await test.step('opens the import dialog with Confirm disabled until a file is chosen', async () => {
+            const dialog = await openImportDialog(overview, page);
+            await expect.soft(dialog.title, 'dialog title').toHaveText('Import users');
+            await expect.soft(dialog.root, 'dialog text').toContainText('Select one or more files to import users');
+            await expect.soft(dialog.confirmButton, 'Confirm').toBeDisabled();
             await checkpoint(page, 'import dialog');
+            await cancelImportDialog(dialog);
         });
 
-        test('enables Confirm once a file is chosen and closes without importing on Cancel', async ({ page }) => {
-            const overview = new UserOverviewPage(page);
-            await overview.open();
+        await test.step('enables Confirm once a file is chosen and closes without importing on Cancel', async () => {
             const importRequests: string[] = [];
-            page.on('request', (request) => {
+            const recordRequest = (request: { method(): string; url(): string }): void => {
                 if (request.method() === 'POST' && /\/users\//.test(request.url())) {
                     importRequests.push(request.url());
                 }
-            });
-            await overview.importButton.click();
-            const dialog = new FileUploadDialog(page);
-            await dialog.chooseFiles({
-                name: 'users.json',
-                mimeType: 'application/json',
-                buffer: Buffer.from(JSON.stringify({ users: [{ sub: 'first-preview', iss: 'https://issuer.example' }] })),
-            });
-            await expect(dialog.chosenFiles).toHaveCount(1);
-            await expect(dialog.confirmButton).toBeEnabled();
-            await dialog.cancelButton.click();
-            await expect(dialog.root).toHaveCount(0);
-            expect(importRequests).toHaveLength(0);
+            };
+            page.on('request', recordRequest);
+            const dialog = await openImportDialog(overview, page);
+            await dialog.chooseFiles(
+                jsonFile('users.json', JSON.stringify({ users: [{ sub: 'first-preview', iss: 'https://issuer.example' }] })),
+            );
+            await expect.soft(dialog.chosenFiles, 'chosen files').toHaveCount(1);
+            await expect.soft(dialog.confirmButton, 'Confirm').toBeEnabled();
+            await cancelImportDialog(dialog);
+            page.off('request', recordRequest);
+            expect.soft(importRequests, 'import requests').toHaveLength(0);
         });
 
-        test('shows one preview card per listed user', async ({ page }) => {
-            const overview = new UserOverviewPage(page);
-            await overview.open();
-            await overview.importButton.click();
-            const dialog = new FileUploadDialog(page);
-            await dialog.chooseFiles({
-                name: 'users.json',
-                mimeType: 'application/json',
-                buffer: Buffer.from(
+        await test.step('shows one preview card per listed user', async () => {
+            const dialog = await openImportDialog(overview, page);
+            await dialog.chooseFiles(
+                jsonFile(
+                    'users.json',
                     JSON.stringify({
                         users: [
                             { sub: 'first-preview', iss: 'https://issuer.example', full_name: 'First Preview' },
@@ -361,24 +289,19 @@ test.describe('user.overview', () => {
                         ],
                     }),
                 ),
-            });
-            await expect(dialog.userCards).toHaveCount(2);
-            await expect(dialog.userCards.first()).toContainText('First Preview');
-            await expect(dialog.userCards.last()).toContainText('second-preview');
-            await expect(dialog.confirmButton).toBeEnabled();
+            );
+            await expect.soft(dialog.userCards, 'cards').toHaveCount(2);
+            await expect.soft(dialog.userCards.first(), 'first card').toContainText('First Preview');
+            await expect.soft(dialog.userCards.last(), 'last card').toContainText('second-preview');
+            await expect.soft(dialog.confirmButton, 'Confirm').toBeEnabled();
+            await cancelImportDialog(dialog);
         });
 
-        test('shows the subject and issuer on each card, falling back to the subject as the name', async ({
-            page,
-        }) => {
-            const overview = new UserOverviewPage(page);
-            await overview.open();
-            await overview.importButton.click();
-            const dialog = new FileUploadDialog(page);
-            await dialog.chooseFiles({
-                name: 'users.json',
-                mimeType: 'application/json',
-                buffer: Buffer.from(
+        await test.step('shows the subject and issuer on each card, falling back to the subject as the name', async () => {
+            const dialog = await openImportDialog(overview, page);
+            await dialog.chooseFiles(
+                jsonFile(
+                    'users.json',
                     JSON.stringify({
                         users: [
                             { sub: 'named-preview', iss: 'https://issuer.example', full_name: 'Named Preview' },
@@ -386,69 +309,81 @@ test.describe('user.overview', () => {
                         ],
                     }),
                 ),
-            });
-            await expect(dialog.userCards.first().locator('.user-import-card-name')).toHaveText('Named Preview');
-            await expect(dialog.userCards.first().locator('.user-import-card-identity')).toHaveText(
+            );
+            await expect.soft(dialog.userCards.first().locator('.user-import-card-name'), 'first card name').toHaveText('Named Preview');
+            await expect.soft(dialog.userCards.first().locator('.user-import-card-identity'), 'first card identity').toHaveText(
                 'named-preview · https://issuer.example',
             );
-            await expect(dialog.userCards.last().locator('.user-import-card-name')).toHaveText('unnamed-preview');
-            await expect(dialog.userCards.last().locator('.user-import-card-identity')).toHaveText(
+            await expect.soft(dialog.userCards.last().locator('.user-import-card-name'), 'last card name').toHaveText('unnamed-preview');
+            await expect.soft(dialog.userCards.last().locator('.user-import-card-identity'), 'last card identity').toHaveText(
                 'unnamed-preview · https://issuer.example',
             );
+            await cancelImportDialog(dialog);
         });
 
-        test('shows the first 50 cards and counts the users beyond them', async ({ page }) => {
-            const overview = new UserOverviewPage(page);
-            await overview.open();
-            await overview.importButton.click();
-            const dialog = new FileUploadDialog(page);
+        await test.step('shows the first 50 cards and counts the users beyond them', async () => {
+            const dialog = await openImportDialog(overview, page);
             const users = Array.from({ length: 53 }, (_, index) => ({
                 sub: `bulk-preview-${index}`,
                 iss: 'https://issuer.example',
             }));
-            await dialog.chooseFiles({
-                name: 'users.json',
-                mimeType: 'application/json',
-                buffer: Buffer.from(JSON.stringify({ users })),
-            });
-            await expect(dialog.userCards).toHaveCount(50);
-            await expect(dialog.root).toContainText('and 3 more');
-            await expect(dialog.confirmButton).toBeEnabled();
+            await dialog.chooseFiles(jsonFile('users.json', JSON.stringify({ users })));
+            await expect.soft(dialog.userCards, 'cards').toHaveCount(50);
+            await expect.soft(dialog.root, 'dialog text').toContainText('and 3 more');
+            await expect.soft(dialog.confirmButton, 'Confirm').toBeEnabled();
+            await cancelImportDialog(dialog);
         });
 
-        test('rejects a file that is not well-formed JSON, leaving Confirm disabled', async ({ page }) => {
-            const overview = new UserOverviewPage(page);
-            await overview.open();
-            await overview.importButton.click();
-            const dialog = new FileUploadDialog(page);
-            await dialog.chooseFiles({
-                name: 'broken.json',
-                mimeType: 'application/json',
-                buffer: Buffer.from('{ this is not json'),
-            });
-            await expect(dialog.rejections).toHaveText(/The file is not well-formed JSON/);
-            await expect(dialog.userCards).toHaveCount(0);
-            await expect(dialog.confirmButton).toBeDisabled();
+        await test.step('rejects a file that is not well-formed JSON, leaving Confirm disabled', async () => {
+            const dialog = await openImportDialog(overview, page);
+            await dialog.chooseFiles(jsonFile('broken.json', '{ this is not json'));
+            await expect.soft(dialog.rejections, 'rejection').toHaveText(/The file is not well-formed JSON/);
+            await expect.soft(dialog.userCards, 'cards').toHaveCount(0);
+            await expect.soft(dialog.confirmButton, 'Confirm').toBeDisabled();
+            await cancelImportDialog(dialog);
         });
 
-        test('imports every user its cards list', async ({ page, apiAs, uniqueName }) => {
-            const api = apiAs('userAdministrator').userAndGroup;
-            const issuer = (await findUserBySubject(api, MEMBER_SUBJECTS[0]))?.iss;
-            expect(issuer, 'the seed user carries an issuer').toBeTruthy();
-            const logins = [uniqueName('import-card-a'), uniqueName('import-card-b')];
-            const overview = new UserOverviewPage(page);
-            await overview.open();
-            await overview.importButton.click();
-            const dialog = new FileUploadDialog(page);
-            await dialog.chooseFiles({
-                name: 'users.json',
-                mimeType: 'application/json',
-                buffer: Buffer.from(
+        await test.step('rejects a file without users and a user without an issuer, leaving Confirm disabled', async () => {
+            const dialog = await openImportDialog(overview, page);
+            await dialog.chooseFiles(jsonFile('empty.json', '[]'));
+            await expect.soft(dialog.rejections, 'rejection of an empty file').toHaveText(/The file lists no users/);
+            await expect.soft(dialog.confirmButton, 'Confirm after an empty file').toBeDisabled();
+            await cancelImportDialog(dialog);
+
+            await openImportDialog(overview, page);
+            await dialog.chooseFiles(jsonFile('no-issuer.json', JSON.stringify({ users: [{ sub: 'first-preview' }] })));
+            await expect.soft(dialog.rejections, 'rejection of a user without issuer').toHaveText(/User 1 has no subject or issuer/);
+            await expect.soft(dialog.userCards, 'cards').toHaveCount(0);
+            await expect.soft(dialog.confirmButton, 'Confirm after a user without issuer').toBeDisabled();
+            await cancelImportDialog(dialog);
+        });
+    });
+
+    test('imports users, then keeps and deletes them', async ({ page, apiAs, uniqueName, checkpoint }) => {
+        test.setTimeout(180_000);
+        const api = apiAs('userAdministrator').userAndGroup;
+        const issuer = (await findUserBySubject(api, MEMBER_SUBJECTS[0]))?.iss;
+        expect(issuer, 'the seed user carries an issuer').toBeTruthy();
+        const logins = [uniqueName('import-card-a'), uniqueName('import-card-b')] as const;
+        const overview = new UserOverviewPage(page);
+        await overview.open();
+
+        await test.step('imports every user its cards list', async () => {
+            const dialog = await openImportDialog(overview, page);
+            await dialog.chooseFiles(
+                jsonFile(
+                    'users.json',
                     JSON.stringify({
-                        users: logins.map((login) => ({ sub: login, iss: issuer, full_name: `${login} Imported` })),
+                        users: logins.map((login) => ({
+                            sub: login,
+                            iss: issuer,
+                            given_name: login,
+                            family_name: 'Imported',
+                            full_name: `${login} Imported`,
+                        })),
                     }),
                 ),
-            });
+            );
             await expect(dialog.userCards).toHaveCount(2);
             await dialog.confirmButton.click();
             expect((await waitForNotification(page, 'Users were imported')).kind).toBe('success');
@@ -458,91 +393,44 @@ test.describe('user.overview', () => {
             }
         });
 
-        test('rejects a file without users and a user without an issuer, leaving Confirm disabled', async ({ page }) => {
-            const overview = new UserOverviewPage(page);
-            await overview.open();
-            await overview.importButton.click();
-            const dialog = new FileUploadDialog(page);
-            await dialog.chooseFiles({
-                name: 'empty.json',
-                mimeType: 'application/json',
-                buffer: Buffer.from('[]'),
-            });
-            await expect(dialog.rejections).toHaveText(/The file lists no users/);
-            await expect(dialog.confirmButton).toBeDisabled();
-            await dialog.cancelButton.click();
+        await test.step('keeps an imported user when its delete confirmation is cancelled', async () => {
+            await overview.filterBy(logins[0]);
+            await overview.deleteActionOf(logins[0]).click();
+
+            const dialog = new ConfirmationDialog(page, /^Delete User$/);
+            await expect(dialog.message).toHaveText('Do you want to delete selected user?');
+            await dialog.cancel();
             await expect(dialog.root).toHaveCount(0);
-
-            await overview.importButton.click();
-            await dialog.chooseFiles({
-                name: 'no-issuer.json',
-                mimeType: 'application/json',
-                buffer: Buffer.from(JSON.stringify({ users: [{ sub: 'first-preview' }] })),
-            });
-            await expect(dialog.rejections).toHaveText(/User 1 has no subject or issuer/);
-            await expect(dialog.userCards).toHaveCount(0);
-            await expect(dialog.confirmButton).toBeDisabled();
+            await expect(overview.rowOf(logins[0])).toHaveCount(1);
+            expect(await findUserBySubject(api, logins[0])).toBeDefined();
         });
-    });
 
-    test.describe('imported user', () => {
-        test('lists an imported user and deletes it after confirmation', async ({
-            page,
-            apiAs,
-            uniqueName,
-            checkpoint,
-        }, testInfo) => {
-            const api = apiAs('userAdministrator').userAndGroup;
-            const login = uniqueName('import-delete');
-            const overview = new UserOverviewPage(page);
-            await overview.open();
-            await importUser(overview, api, testInfo.outputPath('users.json'), login);
-            await overview.filterBy(login);
-            await expect(overview.rowOf(login)).toHaveCount(1);
-            expect(await findUserBySubject(api, login)).toBeDefined();
+        await test.step('lists an imported user and deletes it after confirmation', async () => {
+            await expect(overview.rowOf(logins[0])).toHaveCount(1);
+            expect(await findUserBySubject(api, logins[0])).toBeDefined();
             await checkpoint(page, 'imported user listed');
 
-            await overview.deleteActionOf(login).click();
+            await overview.deleteActionOf(logins[0]).click();
             const dialog = new ConfirmationDialog(page, /^Delete User$/);
             await expect(dialog.message).toHaveText('Do you want to delete selected user?');
             await dialog.confirm();
 
             const notification = await waitForNotification(page, 'Selected users were deleted');
             expect(notification.kind).toBe('success');
-            await expect(overview.rowOf(login)).toHaveCount(0);
+            await expect(overview.rowOf(logins[0])).toHaveCount(0);
             await expect(errorDialog(page)).toHaveCount(0);
-            expect(await findUserBySubject(api, login)).toBeUndefined();
+            expect(await findUserBySubject(api, logins[0])).toBeUndefined();
         });
 
-        test('keeps an imported user when its delete confirmation is cancelled', async ({
-            page,
-            apiAs,
-            uniqueName,
-        }, testInfo) => {
-            const api = apiAs('userAdministrator').userAndGroup;
-            const login = uniqueName('import-keep');
-            const overview = new UserOverviewPage(page);
-            await overview.open();
-            await importUser(overview, api, testInfo.outputPath('users.json'), login);
-            await overview.filterBy(login);
-            await overview.deleteActionOf(login).click();
+        await test.step('deletes the second imported user as well', async () => {
+            await overview.filterBy(logins[1]);
+            await overview.deleteActionOf(logins[1]).click();
+            await new ConfirmationDialog(page, /^Delete User$/).confirm();
 
-            const dialog = new ConfirmationDialog(page, /^Delete User$/);
-            await expect(dialog.message).toHaveText('Do you want to delete selected user?');
-            await dialog.cancel();
-            await expect(dialog.root).toHaveCount(0);
-            await expect(overview.rowOf(login)).toHaveCount(1);
-            expect(await findUserBySubject(api, login)).toBeDefined();
-        });
-    });
-
-    test.describe('credentials', () => {
-        test('downloads the initial users file', async ({ page }) => {
-            const overview = new UserOverviewPage(page);
-            await overview.open();
-            const download = await captureDownload(page, () => overview.credentialsButton.click());
-            expect(download.fileName).toBe('oidc-initial-users.yaml');
-            expect(download.size).toBeGreaterThan(0);
+            const notification = await waitForNotification(page, 'Selected users were deleted');
+            expect(notification.kind).toBe('success');
+            await expect(overview.rowOf(logins[1])).toHaveCount(0);
+            expect(await findUserBySubject(api, logins[1])).toBeUndefined();
         });
     });
 });

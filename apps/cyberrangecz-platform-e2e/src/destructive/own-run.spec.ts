@@ -16,6 +16,7 @@ interface OwnRunPayload {
 }
 
 const BACKEND_STATE_TIMEOUT_MILLISECONDS = 40_000;
+const MERGED_TEST_TIMEOUT_MILLISECONDS = 300_000;
 const BACKEND_STATE_INTERVALS = [1_000, 2_000, 4_000];
 
 test.describe('own run of the browser (destructive)', () => {
@@ -27,7 +28,10 @@ test.describe('own run of the browser (destructive)', () => {
 
     test.beforeEach(({ browserKey, shared }) => {
         const record = findChainRecordOfPool(browserKey, shared.pool.id);
-        expect(record, `chain record of the ${browserKey} browser for this suite run`).toBeDefined();
+        test.skip(
+            record === undefined,
+            `the ${browserKey} chain left no record for this suite run, so it did not run and has already failed or been skipped`,
+        );
         expect(record?.trainingRunId, 'training run the browser played').toBeDefined();
         runId = record?.trainingRunId as number;
         runAllocationUnitId = record?.trainingRunAllocationUnitId;
@@ -60,61 +64,63 @@ test.describe('own run of the browser (destructive)', () => {
         }
     }
 
-    test('archives the run and shows it as archived on the runs page', async ({ page, apiAs, shared, checkpoint }) => {
+    test('archives the run, then deletes it with its sandbox', async ({ page, apiAs, shared, checkpoint }) => {
+        test.setTimeout(MERGED_TEST_TIMEOUT_MILLISECONDS);
         const api = apiAs('trainingOrganizer');
-        await api.training.patch(`/training-runs/${runId}/archive`);
-        const run = await readOwnRun(api, shared.trainingInstance.id);
-        expect(run?.state).toBe('ARCHIVED');
-        await page.goto(`/linear-instance/${shared.trainingInstance.id}/runs`);
         const table = SentinelTable.in(page);
-        await table.waitUntilLoaded();
-        const row = table.rowByText(run?.participant_ref.full_name ?? '');
-        await expect(await table.cell(row, /^run state$/i)).toHaveText(/archived/i);
-        await checkpoint(page, 'own run archived');
-    });
+        let run: OwnRunPayload | undefined;
 
-    test('deletes the archived run with its sandbox through the runs page', async ({
-        page,
-        apiAs,
-        shared,
-        checkpoint,
-    }) => {
-        const api = apiAs('trainingOrganizer');
-        const run = await readOwnRun(api, shared.trainingInstance.id);
-        expect(run, 'archived run still listed before the delete').toBeDefined();
-        expect(runAllocationUnitId, 'sandbox the platform assigned to the run').toBeDefined();
-        const playerName = run?.participant_ref.full_name ?? '';
-        await page.goto(`/linear-instance/${shared.trainingInstance.id}/runs`);
-        const table = SentinelTable.in(page);
-        await table.waitUntilLoaded();
-        await table.rowAction(table.rowByText(playerName), 'delete').click();
-        const dialog = new ConfirmationDialog(page, 'Delete Sandbox Instance');
-        await expect(dialog.message).toHaveText(
-            `Delete the archived training run of player "${playerName}" and its previous sandbox instance? Archiving the run kept the sandbox instance; this deletes it.`,
-        );
-        await dialog.confirm();
-        await expect(
-            notificationPopups(page).filter({ hasText: 'Deleting of sandbox instance started' }),
-        ).toBeVisible();
-        await expect(errorDialog(page)).toHaveCount(0);
-        await expect(table.rowByText(playerName)).toHaveCount(0);
-        await checkpoint(page, 'own run deleted');
+        await test.step('archives the run and shows it as archived on the runs page', async () => {
+            await api.training.patch(`/training-runs/${runId}/archive`);
+            run = await readOwnRun(api, shared.trainingInstance.id);
+            expect(run?.state).toBe('ARCHIVED');
+            await page.goto(`/linear-instance/${shared.trainingInstance.id}/runs`);
+            await table.waitUntilLoaded();
+            const row = table.rowByText(run?.participant_ref.full_name ?? '');
+            await expect(await table.cell(row, /^run state$/i)).toHaveText(/archived/i);
+            await checkpoint(page, 'own run archived');
+        });
 
-        await expect(async () => {
-            expect(await readOwnRun(api, shared.trainingInstance.id)).toBeUndefined();
-        }).toPass({ timeout: BACKEND_STATE_TIMEOUT_MILLISECONDS, intervals: BACKEND_STATE_INTERVALS });
-        await expect
-            .poll(() => statusOfRun(api), {
-                timeout: BACKEND_STATE_TIMEOUT_MILLISECONDS,
-                intervals: BACKEND_STATE_INTERVALS,
-            })
-            .toBe(404);
-        await expect(async () => {
-            const removalStarted = await sandboxRemovalStarted(
-                apiAs('sandboxOrganizer'),
-                runAllocationUnitId as number,
+        await test.step('deletes the archived run with its sandbox through the runs page', async () => {
+            expect(run, 'archived run still listed before the delete').toBeDefined();
+            expect(runAllocationUnitId, 'sandbox the platform assigned to the run').toBeDefined();
+            const playerName = run?.participant_ref.full_name ?? '';
+            await table.rowAction(table.rowByText(playerName), 'delete').click();
+            const dialog = new ConfirmationDialog(page, 'Delete Sandbox Instance');
+            await expect(dialog.message).toHaveText(
+                `Delete the archived training run of player "${playerName}" and its previous sandbox instance? Archiving the run kept the sandbox instance; this deletes it.`,
             );
-            expect(removalStarted, 'sandbox of the deleted run is being removed').toBe(true);
-        }).toPass({ timeout: BACKEND_STATE_TIMEOUT_MILLISECONDS, intervals: BACKEND_STATE_INTERVALS });
+            await dialog.confirm();
+            await expect(
+                notificationPopups(page).filter({ hasText: 'Deleting of sandbox instance started' }),
+            ).toBeVisible();
+            await expect(errorDialog(page)).toHaveCount(0);
+            await expect(table.rowByText(playerName)).toHaveCount(0);
+            await checkpoint(page, 'own run deleted');
+
+            const outcomes = await Promise.allSettled([
+                expect(async () => {
+                    expect(await readOwnRun(api, shared.trainingInstance.id)).toBeUndefined();
+                }).toPass({ timeout: BACKEND_STATE_TIMEOUT_MILLISECONDS, intervals: BACKEND_STATE_INTERVALS }),
+                expect
+                    .poll(() => statusOfRun(api), {
+                        timeout: BACKEND_STATE_TIMEOUT_MILLISECONDS,
+                        intervals: BACKEND_STATE_INTERVALS,
+                    })
+                    .toBe(404),
+                expect(async () => {
+                    const removalStarted = await sandboxRemovalStarted(
+                        apiAs('sandboxOrganizer'),
+                        runAllocationUnitId as number,
+                    );
+                    expect(removalStarted, 'sandbox of the deleted run is being removed').toBe(true);
+                }).toPass({ timeout: BACKEND_STATE_TIMEOUT_MILLISECONDS, intervals: BACKEND_STATE_INTERVALS }),
+            ]);
+            for (const outcome of outcomes) {
+                if (outcome.status === 'rejected') {
+                    throw outcome.reason;
+                }
+            }
+        });
     });
 });

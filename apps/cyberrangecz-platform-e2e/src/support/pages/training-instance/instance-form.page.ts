@@ -91,6 +91,10 @@ export class InstanceFormPage {
         return slideToggle(this.page, 'Backward Mode');
     }
 
+    get managedToggle(): Locator {
+        return slideToggle(this.page, 'Managed');
+    }
+
     get localEnvironmentToggle(): Locator {
         return slideToggle(this.page, 'Local Environment');
     }

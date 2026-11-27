@@ -17,5 +17,5 @@
 <div class="actions" mat-dialog-actions>
   <button mat-button color="warn" cdkFocusInitial (click)="cancel()">Cancel</button>
   <span class="spacer"></span>
-  <button mat-button color="primary" [disabled]="!valid" (click)="confirm()">Clone</button>
+  <button mat-button color="primary" [disabled]="cloneDialogFormGroup.formGroup.invalid" (click)="confirm()">Clone</button>
 </div>

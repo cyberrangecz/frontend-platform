@@ -22,9 +22,9 @@ export class UserAssign {
         return new UserAssign(scope.locator('sentinel-user-assign').first());
     }
 
-    /** The search input of the users that can be added. */
+    /** The search input of the users that can be added; its open suggestion list holds checkboxes, which this locator excludes. */
     get searchInput(): Locator {
-        return this.root.locator('sentinel-resource-selector input');
+        return this.root.locator('sentinel-resource-selector').getByRole('combobox');
     }
 
     /** The suggestion of the open search list whose text (name and login) matches. */
