@@ -34,13 +34,24 @@ function sameBox(first: Box, second: Box): boolean {
     return first.x === second.x && first.y === second.y && first.width === second.width && first.height === second.height;
 }
 
+/** Which part of a drop target a pointer aims at: its middle, or the quarter at its top or bottom. */
+export type DropEdge = 'top' | 'middle' | 'bottom';
+
+const EDGE_FRACTIONS: Record<DropEdge, number> = { top: 0.25, middle: 0.5, bottom: 0.75 };
+
+/** The vertical position of a drop edge within a box. */
+export function edgeY(box: { y: number; height: number }, edge: DropEdge): number {
+    return box.y + box.height * EDGE_FRACTIONS[edge];
+}
+
 /**
  * Drags an element onto another with the mouse the way a user does: press on the source, move in
- * several steps so a drag-and-drop library recognises the gesture, then release over the target.
+ * several steps so a drag-and-drop library recognises the gesture, then release over the target
+ * at the given edge of it, the middle by default.
  * A dialog still closing would receive the mouse press instead of the source, so the drag starts
  * once no dialog is left on the page.
  */
-export async function dragWithMouse(source: Locator, target: Locator): Promise<void> {
+export async function dragWithMouse(source: Locator, target: Locator, edge: DropEdge = 'middle'): Promise<void> {
     const page = pageOf(source);
     await expect(page.locator(OPEN_DIALOG_SELECTOR)).toHaveCount(0, { timeout: BOX_SETTLE_TIMEOUT_MILLISECONDS });
     const mouse = page.mouse;
@@ -48,7 +59,7 @@ export async function dragWithMouse(source: Locator, target: Locator): Promise<v
     const sourceBox = await settledBoxOf(source);
     const targetBox = await settledBoxOf(target);
     const sourceCenter = { x: sourceBox.x + sourceBox.width / 2, y: sourceBox.y + sourceBox.height / 2 };
-    const targetCenter = { x: targetBox.x + targetBox.width / 2, y: targetBox.y + targetBox.height / 2 };
+    const targetCenter = { x: targetBox.x + targetBox.width / 2, y: edgeY(targetBox, edge) };
     await mouse.move(sourceCenter.x, sourceCenter.y);
     await mouse.down();
     await mouse.move(sourceCenter.x + DRAG_START_OFFSET, sourceCenter.y + DRAG_START_OFFSET);

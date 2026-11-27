@@ -5,8 +5,8 @@ import { expect } from '@playwright/test';
 export const STAGE_KINDS = ['terraform', 'networking-ansible', 'user-ansible'] as const;
 export type StageKind = (typeof STAGE_KINDS)[number];
 
-/** Answer to one outputs request: the new rows, or a failed request. */
-export type OutputReply = { content: string; rows: number } | 'fail';
+/** Answer to one outputs request: the new rows, a failed request, or a request refused with a status code. */
+export type OutputReply = { content: string; rows: number } | { status: number } | 'fail';
 
 /** One outputs request as the stage view sends it. */
 export interface OutputRequest {
@@ -55,7 +55,7 @@ export async function mockStageOutputs(page: Page, responder: OutputResponder): 
         const callIndex = callCounts.get(kind) ?? 0;
         callCounts.set(kind, callIndex + 1);
         const reply = await responder({ kind, fromRow: Number(url.searchParams.get('from_row') ?? 0), callIndex });
-        await fulfilWithCors(route, reply === 'fail' ? { status: 500, body: '{}' } : { status: 200, body: JSON.stringify(reply) });
+        await fulfilWithCors(route, answerOf(reply));
     });
 }
 
@@ -79,6 +79,13 @@ export async function mockRunningStage(page: Page, kind: StageKind): Promise<voi
             });
         return fulfilWithCors(route, { status: 200, body: await runningStageBody });
     });
+}
+
+function answerOf(reply: OutputReply): { status: number; body: string } {
+    if (reply === 'fail') {
+        return { status: 500, body: '{}' };
+    }
+    return 'status' in reply ? { status: reply.status, body: '{}' } : { status: 200, body: JSON.stringify(reply) };
 }
 
 async function fulfilWithCors(route: Route, answer: { status: number; body: string }): Promise<void> {

@@ -11,6 +11,14 @@ import {
 import { DefinitionEditorPage } from '../../support/pages/training-definition/definition-editor.page';
 import { DefinitionOverviewPage } from '../../support/pages/training-definition/definition-overview.page';
 import {
+    frameOf,
+    infoContentOf,
+    openExisting,
+    openInfoEditor,
+    type OpenedInfoEditor,
+    saveAndWait,
+} from '../../support/pages/training-definition/attachment-editor-session';
+import {
     dropFiles,
     MarkdownEditorFrame,
 } from '../../support/pages/training-definition/markdown-editor-frame';
@@ -18,7 +26,6 @@ import {
     definitionWithInfoLevel,
     exportDefinitionAnswer,
     fetchMaterials,
-    fetchDefinition,
     fetchDefinitionByTitle,
     fetchMaterialHashes,
     importDefinitionBody,
@@ -48,58 +55,6 @@ const POINTER_ACTION_TIMEOUT_MILLISECONDS = 5_000;
 const PIXELS_PER_REM = 16;
 const TWO_ROW_MAXIMUM_REM = 64;
 const THREE_ROW_MAXIMUM_REM = 36;
-
-interface Opened {
-    editor: DefinitionEditorPage;
-    frame: MarkdownEditorFrame;
-    definitionId: number;
-}
-
-async function infoContentOf(api: Api, definitionId: number): Promise<string> {
-    const level = (await fetchDefinition(api, definitionId)).levels?.[0];
-    return String(level?.['content'] ?? '');
-}
-
-function frameOf(editor: DefinitionEditorPage): MarkdownEditorFrame {
-    return new MarkdownEditorFrame(
-        editor.infoLevel.root.locator('crczp-markdown-editor-frame').first(),
-    );
-}
-
-async function openInfoEditor(
-    page: DefinitionEditorPage['page'],
-    api: Api,
-    title: string,
-    content: string,
-    files: readonly AttachmentFixture[] = [],
-): Promise<Opened> {
-    const definition = await importDefinitionBody(
-        api,
-        definitionWithInfoLevel(title, content),
-        files,
-    );
-    return openExisting(page, definition.id);
-}
-
-async function openExisting(
-    page: DefinitionEditorPage['page'],
-    definitionId: number,
-): Promise<Opened> {
-    const editor = new DefinitionEditorPage(page);
-    await editor.gotoEdit(definitionId);
-    await editor.openLevel(0);
-    const frame = frameOf(editor);
-    await frame.rawTab.click();
-    await expect(frame.rawTab).toBeChecked();
-    await expect(frame.rawContent).toBeVisible();
-    return { editor, frame, definitionId };
-}
-
-async function saveAndWait(editor: DefinitionEditorPage): Promise<void> {
-    await expect(editor.saveButton).toBeEnabled();
-    await editor.saveButton.click();
-    await waitForNotification(editor.page, /saved/i);
-}
 
 async function expectContentReferences(
     api: Api,
@@ -168,7 +123,7 @@ async function expectPreviewCards(
 }
 
 async function expectRenderedAfterReload(
-    opened: Opened,
+    opened: OpenedInfoEditor,
     files: readonly AttachmentFixture[],
 ) {
     const { editor, definitionId } = opened;
