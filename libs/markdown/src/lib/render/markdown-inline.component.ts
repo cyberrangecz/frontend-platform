@@ -1,12 +1,12 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { Tokens } from 'marked';
 import { attachmentHashOf } from '../attachment/attachment-reference-grammar';
-
-const SAFE_URL_PATTERN = /^(?:https?:|mailto:)/i;
+import { inlineSegmentsOf } from './inline-html';
 
 /**
- * Renders inline markdown tokens through Angular bindings, so no author HTML reaches the DOM.
- * Attachment references draw nothing; the block renderer shows each as its own card.
+ * Renders inline markdown tokens through Angular bindings. Author HTML is written through the
+ * innerHTML binding, so Angular's HTML sanitizer cleans it. Attachment references draw nothing;
+ * the block renderer shows each as its own card.
  */
 @Component({
     selector: 'crczp-markdown-inline',
@@ -17,11 +17,9 @@ const SAFE_URL_PATTERN = /^(?:https?:|mailto:)/i;
 export class MarkdownInlineComponent {
     readonly tokens = input.required<readonly Tokens.Generic[]>();
 
+    protected readonly segments = computed(() => inlineSegmentsOf(this.tokens()));
+
     protected isAttachment(token: Tokens.Generic): boolean {
         return attachmentHashOf(token['href']) !== undefined;
-    }
-
-    protected isSafeUrl(href: string | undefined): boolean {
-        return !!href && SAFE_URL_PATTERN.test(href);
     }
 }

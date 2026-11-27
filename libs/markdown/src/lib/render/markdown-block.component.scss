@@ -12,6 +12,11 @@
     margin-bottom: 0;
 }
 
+.block-html {
+    margin: 0 0 var(--space-xl);
+    overflow-x: auto;
+}
+
 .block-paragraph,
 .block-list,
 .block-code,

@@ -82,7 +82,7 @@
     }
     @case ('html') {
         @if (!closesSection()) {
-            <p class="block-paragraph">{{ block.text }}</p>
+            <div class="block-html" [innerHTML]="block.text"></div>
         }
     }
     @default {
