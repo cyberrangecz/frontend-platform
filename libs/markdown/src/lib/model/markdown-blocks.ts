@@ -82,8 +82,39 @@ export function paragraphPartsOf(tokens: readonly Token[]): ParagraphParts {
 
 const DETAILS_OPENING_PATTERN = /^\s*<details[\s>]/i;
 const DETAILS_CLOSING_PATTERN = /^\s*<\/details>\s*$/i;
-const SUMMARY_PATTERN = /<summary[^>]*>([\s\S]*?)(?:<\/summary>|$)/i;
+const SUMMARY_OPENING_PATTERN = /<summary/i;
+const SUMMARY_CLOSING_PATTERN = /<\/summary>/i;
 const DEFAULT_SUMMARY = 'Details';
+
+/**
+ * The HTML after the first summary opening tag, up to its closing tag or the end; empty when the
+ * HTML holds no complete summary opening tag.
+ */
+function summaryContentOf(html: string): string {
+    const opening = SUMMARY_OPENING_PATTERN.exec(html);
+    const contentStart = opening ? html.indexOf('>', opening.index) + 1 : 0;
+    if (contentStart === 0) {
+        return '';
+    }
+    const content = html.slice(contentStart);
+    const closing = SUMMARY_CLOSING_PATTERN.exec(content);
+    return closing ? content.slice(0, closing.index) : content;
+}
+
+/** HTML with every tag, from an opening angle bracket to the next closing one, taken out. */
+function withoutTags(html: string): string {
+    let text = '';
+    let position = 0;
+    for (let tagStart = html.indexOf('<'); tagStart >= 0; tagStart = html.indexOf('<', position)) {
+        const tagEnd = html.indexOf('>', tagStart);
+        if (tagEnd < 0) {
+            break;
+        }
+        text += html.slice(position, tagStart);
+        position = tagEnd + 1;
+    }
+    return text + html.slice(position);
+}
 
 /**
  * The summary of a collapsible section a block opens, or null when the block opens none. A
@@ -94,7 +125,7 @@ export function detailsSummaryOf(token: Tokens.Generic): string | null {
     if (token.type !== 'html' || !DETAILS_OPENING_PATTERN.test(token.raw) || token.raw.includes('</details>')) {
         return null;
     }
-    const summary = (SUMMARY_PATTERN.exec(token.raw)?.[1] ?? '').replace(/<[^>]*>/g, '').trim();
+    const summary = withoutTags(summaryContentOf(token.raw)).trim();
     return summary || DEFAULT_SUMMARY;
 }
 

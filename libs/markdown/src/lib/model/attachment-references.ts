@@ -1,4 +1,4 @@
-import { AttachmentReferenceParts, ATTACHMENT_REFERENCE_PATTERN, referenceMarkdown, referencePartsOf } from '../attachment/attachment-reference-grammar';
+import { AttachmentReferenceParts, findAttachmentReferences, referenceMarkdown } from '../attachment/attachment-reference-grammar';
 
 /** A replacement of the text between two offsets. */
 export interface TextChange {
@@ -15,11 +15,7 @@ export interface AttachmentReferenceSpan extends AttachmentReferenceParts {
 
 /** The attachment references in a text, in order, with ranges shifted by an offset. */
 export function attachmentReferencesIn(text: string, offset = 0): AttachmentReferenceSpan[] {
-    return Array.from(text.matchAll(ATTACHMENT_REFERENCE_PATTERN), (match) => ({
-        from: offset + match.index,
-        to: offset + match.index + match[0].length,
-        ...referencePartsOf(match),
-    }));
+    return findAttachmentReferences(text).map(({ index, length, ...parts }) => ({ from: offset + index, to: offset + index + length, ...parts }));
 }
 
 /**
@@ -41,7 +37,11 @@ export function lineWithSeparatedReferences(line: string): string | null {
 
 /** How many newline characters a text ends with. */
 export function trailingNewlines(text: string): number {
-    return /\n*$/.exec(text)?.[0].length ?? 0;
+    let count = 0;
+    while (text[text.length - 1 - count] === '\n') {
+        count++;
+    }
+    return count;
 }
 
 /** How many newline characters a text starts with. */

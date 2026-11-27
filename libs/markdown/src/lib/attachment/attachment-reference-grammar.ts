@@ -20,6 +20,72 @@ const MAX_WIDTH_PARAMETER_PATTERN = /^maxWidth=([1-9]\d*)$/;
  */
 export const ATTACHMENT_REFERENCE_PATTERN = /!?\[((?:\\.|[^\]\\\n])*)\]\(attachment:([^\s)?]+(?:\?[^\s)]*)?)\)/g;
 
+/** An attachment reference found in a text: where it starts, how long it is, and its target and label. */
+export interface FoundAttachmentReference extends AttachmentReferenceParts {
+    readonly index: number;
+    readonly length: number;
+}
+
+const LINE_TERMINATORS = '\n\r\u2028\u2029';
+const TARGET_PREFIX = '](attachment:';
+const HASH_STOP_PATTERN = /[\s)?]/;
+const QUERY_STOP_PATTERN = /[\s)]/;
+
+/**
+ * For each position of a text, where a reference label starting there ends: at a closing bracket,
+ * a line feed, a backslash with no escapable character after it, or the end of the text.
+ */
+function labelEndsOf(text: string): Int32Array {
+    const ends = new Int32Array(text.length + 1).fill(text.length);
+    for (let position = text.length - 1; position >= 0; position--) {
+        const character = text[position];
+        if (character === '\\') {
+            const escaped = text[position + 1];
+            ends[position] = escaped !== undefined && !LINE_TERMINATORS.includes(escaped) ? ends[position + 2] : position;
+        } else {
+            ends[position] = character === ']' || character === '\n' ? position : ends[position + 1];
+        }
+    }
+    return ends;
+}
+
+/** For each position of a text, the first position at or after it holding a character the pattern matches, or the text length. */
+function stopsOf(text: string, stopPattern: RegExp): Int32Array {
+    const stops = new Int32Array(text.length + 1).fill(text.length);
+    for (let position = text.length - 1; position >= 0; position--) {
+        stops[position] = stopPattern.test(text[position]) ? position : stops[position + 1];
+    }
+    return stops;
+}
+
+/**
+ * The attachment references in a text, in order: the same references {@link ATTACHMENT_REFERENCE_PATTERN}
+ * matches, found in time linear in the text length.
+ */
+export function findAttachmentReferences(text: string): FoundAttachmentReference[] {
+    const labelEnds = labelEndsOf(text);
+    const hashStops = stopsOf(text, HASH_STOP_PATTERN);
+    const queryStops = stopsOf(text, QUERY_STOP_PATTERN);
+    const references: FoundAttachmentReference[] = [];
+    let searchStart = 0;
+    for (let open = text.indexOf('['); open >= 0; open = text.indexOf('[', Math.max(open + 1, searchStart))) {
+        const labelEnd = labelEnds[open + 1];
+        if (!text.startsWith(TARGET_PREFIX, labelEnd)) {
+            continue;
+        }
+        const targetStart = labelEnd + TARGET_PREFIX.length;
+        const hashEnd = hashStops[targetStart];
+        const targetEnd = text[hashEnd] === '?' ? queryStops[hashEnd + 1] : hashEnd;
+        if (hashEnd === targetStart || text[targetEnd] !== ')') {
+            continue;
+        }
+        const index = open > searchStart && text[open - 1] === '!' ? open - 1 : open;
+        references.push({ index, length: targetEnd + 1 - index, ...partsOf(text.slice(open + 1, labelEnd), text.slice(targetStart, targetEnd)) });
+        searchStart = targetEnd + 1;
+    }
+    return references;
+}
+
 /** The saved display width in a reference's query, undefined when the query holds no positive integer `maxWidth` parameter. */
 export function maxWidthOf(query: string | null | undefined): number | undefined {
     const match = query
@@ -61,9 +127,14 @@ export function unescapeReferenceLabel(source: string): string {
     return source.replace(/\\([!-/:-@[-`{-~])/g, '$1');
 }
 
+/** The target and label of a reference, from the source between its brackets and the text after `attachment:`. */
+function partsOf(labelSource: string, targetText: string): AttachmentReferenceParts {
+    return { ...targetOfText(targetText), label: unescapeReferenceLabel(labelSource) };
+}
+
 /** The target and label of a match of {@link ATTACHMENT_REFERENCE_PATTERN}. */
 export function referencePartsOf(match: RegExpMatchArray): AttachmentReferenceParts {
-    return { ...targetOfText(match[2]), label: unescapeReferenceLabel(match[1]) };
+    return partsOf(match[1], match[2]);
 }
 
 /** The markdown of one reference, an image or a link, carrying its saved display width when it has one. */
