@@ -140,3 +140,44 @@ describe('DefinitionTrainingMaterials uploads on pick', () => {
         expect(materials.pendingUploads().map((upload) => upload.hash)).toEqual([hash]);
     });
 });
+
+describe('DefinitionTrainingMaterials load gate', () => {
+    function materialsListing(list: () => Observable<{ materials: AttachmentSummary[]; budgetBytes: number }>): DefinitionTrainingMaterials {
+        const api = { list: vi.fn(list) } as unknown as TrainingAttachmentApi;
+        return new DefinitionTrainingMaterials(api, levelTexts(), () => DEFINITION_ID);
+    }
+
+    it('blocks a save until the first load succeeds', () => {
+        const materials = materialsListing(() => of({ materials: [], budgetBytes: 100 }));
+        expect(materials.loadedForSave()).toBe(false);
+
+        materials.reload().subscribe();
+
+        expect(materials.loadStatus()).toBe('loaded');
+        expect(materials.loadedForSave()).toBe(true);
+    });
+
+    it('keeps a save blocked after a failed load and allows it after a retry succeeds', () => {
+        let attempt = 0;
+        const materials = materialsListing(() =>
+            attempt++ === 0 ? throwError(() => new HttpErrorResponse({ status: 500 })) : of({ materials: [], budgetBytes: 100 }),
+        );
+
+        materials.reload().subscribe();
+        expect(materials.loadStatus()).toBe('failed');
+        expect(materials.loadedForSave()).toBe(false);
+
+        materials.reload().subscribe();
+        expect(materials.loadedForSave()).toBe(true);
+    });
+
+    it('refuses a file larger than the whole budget before reading it', async () => {
+        const materials = materialsListing(() => of({ materials: [], budgetBytes: 3 }));
+        materials.reload().subscribe();
+        const file = new File(['hello'], 'notes.txt', { type: 'text/plain' });
+        const read = vi.spyOn(file, 'arrayBuffer');
+
+        await expect(firstValueFrom(materials.add(file))).rejects.toThrow();
+        expect(read).not.toHaveBeenCalled();
+    });
+});

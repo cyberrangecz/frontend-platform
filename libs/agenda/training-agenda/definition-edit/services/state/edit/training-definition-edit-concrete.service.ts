@@ -2,7 +2,7 @@ import { inject, Injectable, Injector } from '@angular/core';
 import { DefinitionTrainingMaterials } from '@crczp/training-agenda/internal';
 import { LinearTrainingDefinitionApi } from '@crczp/training-api';
 import { TrainingDefinitionWithLevels } from '@crczp/training-model';
-import { combineLatest, Observable } from 'rxjs';
+import { combineLatest, EMPTY, Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { TrainingDefinitionChangeEvent } from '../../../model/events/training-definition-change-event';
 import { TrainingDefinitionEditService } from './training-definition-edit.service';
@@ -47,6 +47,9 @@ export class TrainingDefinitionEditConcreteService extends TrainingDefinitionEdi
     }
 
     save(): Observable<number | null> {
+        if (!this.materials().loadedForSave()) {
+            return EMPTY;
+        }
         return this.editModeSubject$.getValue() ? this.update() : this.create();
     }
 

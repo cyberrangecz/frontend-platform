@@ -32,6 +32,7 @@ import {
 } from '@angular/material/expansion';
 import { MatIcon } from '@angular/material/icon';
 import { MatError } from '@angular/material/input';
+import { MatButton } from '@angular/material/button';
 import { MatDivider } from '@angular/material/divider';
 import { TrainingDefinitionEditComponent } from './definition/training-definition-edit.component';
 import { LevelOverviewComponent } from './levels/overview/level-overview.component';
@@ -60,6 +61,7 @@ import { createInfinitePaginationEvent } from '@crczp/api-common';
         ...provideDefinitionMaterials(),
     ],
     imports: [
+        MatButton,
         MatIcon,
         MatError,
         MatExpansionPanelDescription,
@@ -91,9 +93,10 @@ export class TrainingDefinitionEditOverviewComponent implements OnInit {
     private router = inject(Router);
     private editService = inject(TrainingDefinitionEditService);
     private levelEditService = inject(LevelEditService);
-    private materials = inject(DefinitionTrainingMaterials);
+    protected readonly materials = inject(DefinitionTrainingMaterials);
     private materialsUnsaved$ = toObservable(this.materials.hasUnsavedChanges);
     private transfersSettled$ = toObservable(this.materials.transfersSettled);
+    private materialsLoadedForSave$ = toObservable(this.materials.loadedForSave);
     private authorsAssignService = inject(SentinelUserAssignService);
 
     constructor() {
@@ -145,8 +148,8 @@ export class TrainingDefinitionEditOverviewComponent implements OnInit {
 
     /**
      * Builds the Save control, enabled only while the definition and levels are
-     * both valid, either has changes to persist, no save is running, every picked file is stored
-     * and editing is not blocked.
+     * both valid, either has changes to persist, no save is running, every picked file is stored,
+     * the stored materials are loaded and editing is not blocked.
      *
      * @param valid$ Combined validity of the definition and its levels.
      */
@@ -161,6 +164,7 @@ export class TrainingDefinitionEditOverviewComponent implements OnInit {
             this.editingBlockReason$,
             this.editService.saving$,
             this.transfersSettled$,
+            this.materialsLoadedForSave$,
         ]).pipe(
             map(
                 ([
@@ -170,11 +174,13 @@ export class TrainingDefinitionEditOverviewComponent implements OnInit {
                     blockReason,
                     saving,
                     transfersSettled,
+                    materialsLoaded,
                 ]) =>
                     (definitionSaveDisabled && !levelsUnsaved) ||
                     !valid ||
                     saving ||
                     !transfersSettled ||
+                    !materialsLoaded ||
                     blockReason !== null,
             ),
         );
@@ -202,6 +208,11 @@ export class TrainingDefinitionEditOverviewComponent implements OnInit {
                 ),
             ),
         ];
+    }
+
+    /** Reads the stored materials of the edited definition again after a failed read. */
+    reloadMaterials(): void {
+        this.materials.reload().subscribe();
     }
 
     ngOnInit(): void {

@@ -11,7 +11,10 @@ import {
 } from '@crczp/markdown';
 import { TrainingAttachmentApi } from '@crczp/training-api';
 import { AttachmentSummary, AttachmentUploadEvent, PendingAttachmentUpload, TrainingMaterial } from '@crczp/training-model';
-import { EMPTY, finalize, map, Observable, of, Subscription, switchMap, tap } from 'rxjs';
+import { catchError, defer, EMPTY, finalize, map, Observable, of, Subscription, switchMap, tap } from 'rxjs';
+
+/** Progress of reading a definition's stored materials from the server. */
+export type MaterialsLoadStatus = 'loading' | 'loaded' | 'failed';
 
 /** The markdown texts of every level of a definition, readable and rewritable as a whole. */
 export abstract class DefinitionLevelTexts {
@@ -35,6 +38,7 @@ export class DefinitionTrainingMaterials extends TrainingMaterials {
     private readonly stored = signal<readonly AttachmentSummary[]>([]);
     private readonly storedBudgetBytes = signal(Number.POSITIVE_INFINITY);
     private readonly storedChanged = signal(false);
+    private readonly loadStatusState = signal<MaterialsLoadStatus>('loading');
     private readonly transferStates = signal<ReadonlyMap<string, MaterialTransfer>>(new Map());
     private readonly runningTransfers = new Map<string, Subscription>();
 
@@ -42,6 +46,12 @@ export class DefinitionTrainingMaterials extends TrainingMaterials {
 
     /** Whether every picked file is stored: none is being sent and none failed. */
     readonly transfersSettled = computed(() => this.transferStates().size === 0);
+
+    /** Whether the stored materials were read from the server: loading, loaded, or failed on the last read. */
+    readonly loadStatus = this.loadStatusState.asReadonly();
+
+    /** Whether a save may send the materials: the definition has no stored materials yet, or the last read of them succeeded. */
+    readonly loadedForSave = computed(() => this.definitionId() === undefined || this.loadStatusState() === 'loaded');
 
     /** Whether the materials differ from the last load: files are pending, or a file was stored or removed since. */
     readonly hasUnsavedChanges = computed(() => this.pending.list().length > 0 || this.storedChanged());
@@ -72,14 +82,21 @@ export class DefinitionTrainingMaterials extends TrainingMaterials {
         return this.pending.list().map(uploadOf);
     }
 
-    /** Reads the stored materials and the budget from the server and drops the pending files that are neither being sent nor failed. */
+    /**
+     * Reads the stored materials and the budget from the server and drops the pending files that are neither being sent nor failed.
+     * A failed read leaves the load status failed and completes without emitting; reloading again retries it.
+     */
     reload(): Observable<void> {
         const definitionId = this.definitionId();
         if (definitionId === undefined) {
             return EMPTY;
         }
-        return this.api.list(definitionId).pipe(
+        return defer(() => {
+            this.loadStatusState.set('loading');
+            return this.api.list(definitionId);
+        }).pipe(
             tap(({ materials, budgetBytes }) => {
+                this.loadStatusState.set('loaded');
                 this.stored.set(materials);
                 this.storedBudgetBytes.set(budgetBytes);
                 this.storedChanged.set(false);
@@ -89,6 +106,10 @@ export class DefinitionTrainingMaterials extends TrainingMaterials {
                     .forEach(({ metadata }) => this.pending.remove(metadata.hash));
             }),
             map(() => undefined),
+            catchError(() => {
+                this.loadStatusState.set('failed');
+                return EMPTY;
+            }),
         );
     }
 

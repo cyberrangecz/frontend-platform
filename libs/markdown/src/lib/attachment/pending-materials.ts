@@ -29,10 +29,14 @@ export class PendingMaterials {
     }
 
     /**
-     * Hashes and measures a file, then holds it as pending. A file already stored or pending
-     * emits its existing metadata; a new one the quota cannot hold errors with a MaterialRefusedError.
+     * Refuses a file larger than the whole budget before reading it; otherwise hashes and measures it,
+     * then holds it as pending. A file already stored or pending emits its existing metadata; a new
+     * one the quota cannot hold errors with a MaterialRefusedError.
      */
     add(file: File, stored: StoredMaterialsQuota): Observable<AttachmentMetadata> {
+        if (file.size > stored.budgetBytes) {
+            return throwError(() => new MaterialRefusedError(refusalText(file, this.spareBytes(stored))));
+        }
         return captureMaterial(file).pipe(
             switchMap((captured) => {
                 const known = this.find(captured.metadata.hash)?.metadata;
@@ -42,7 +46,7 @@ export class PendingMaterials {
                 if (stored.hashes.has(captured.metadata.hash)) {
                     return of(captured.metadata);
                 }
-                const spare = stored.budgetBytes - stored.bytes - this.usedBytes();
+                const spare = this.spareBytes(stored);
                 if (captured.metadata.size > spare) {
                     return throwError(() => new MaterialRefusedError(refusalText(file, spare)));
                 }
@@ -50,6 +54,10 @@ export class PendingMaterials {
                 return of(captured.metadata);
             }),
         );
+    }
+
+    private spareBytes(stored: StoredMaterialsQuota): number {
+        return stored.budgetBytes - stored.bytes - this.usedBytes();
     }
 
     remove(hash: string): void {

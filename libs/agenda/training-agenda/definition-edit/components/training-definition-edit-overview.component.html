@@ -28,6 +28,13 @@
                 <span>{{ blockReason }}</span>
             </p>
         }
+        @if (materials.loadStatus() === 'failed') {
+            <p class="editing-block-reason">
+                <mat-icon>error</mat-icon>
+                <span>Training materials could not be loaded. Save is disabled until they load.</span>
+                <button type="button" mat-button (click)="reloadMaterials()">Reload materials</button>
+            </p>
+        }
         <mat-divider />
         <!-- EDIT TRAINING DEFINITION -->
         <crczp-training-definition-edit
