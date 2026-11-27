@@ -41,12 +41,16 @@ async function removeRawChip(frame: MarkdownEditorFrame, file: AttachmentFixture
 
 /** Removes a card in Preview with the keyboard. */
 async function removePreviewCard(frame: MarkdownEditorFrame, cardIndex: number): Promise<void> {
-    await frame.cards.nth(cardIndex).focus();
+    const card = frame.cards.nth(cardIndex);
+    await expect(card).toHaveAttribute('tabindex', '0');
+    await card.focus();
+    await expect(card).toBeFocused();
     await frame.page.keyboard.press('Delete');
 }
 
 async function typeAtEndOfRaw(frame: MarkdownEditorFrame, typed: string): Promise<void> {
     await frame.rawContent.focus();
+    await expect(frame.rawContent).toBeFocused();
     await frame.page.keyboard.press('Control+End');
     await frame.page.keyboard.type(typed);
 }
@@ -182,6 +186,8 @@ test.describe('linear-definition.attachments edits', () => {
             await expect(frame.rawChips.filter({ hasText: image.fileName })).toHaveCount(1);
             await undoButton(page).click();
             await expect(frame.rawChips).toHaveCount(2);
+            await expect(frame.rawChips.filter({ hasText: other.fileName })).toHaveCount(1);
+            await expect(frame.rawContent).toContainText('Closing text');
 
             await typeAtEndOfRaw(frame, '!');
             await saveAndWait(editor);
@@ -213,7 +219,7 @@ test.describe('linear-definition.attachments edits', () => {
     });
 
     test.describe('Preview', () => {
-        test('removes a card from text with carriage return line endings and leaves the text around it as written', async ({
+        test('converts carriage return line endings to line feeds and removes the card', async ({
             page,
             apiAs,
             uniqueName,
@@ -234,7 +240,7 @@ test.describe('linear-definition.attachments edits', () => {
 
             await saveAndWait(editor);
             expect(await infoContentOf(api, definitionId)).toBe(
-                ['Intro', image.reference, 'Middle', 'Outro'].join('\r\n\r\n'),
+                ['Intro', image.reference, 'Middle', 'Outro'].join('\n\n'),
             );
         });
 

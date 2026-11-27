@@ -572,6 +572,7 @@ test.describe('linear-definition', () => {
 
         await test.step('refuses a whitespace-only title', async () => {
             await titleInput.fill('   ');
+            await expect(titleInput, 'typed whitespace title').toHaveValue('   ');
             await titleInput.blur();
             await expect
                 .soft(dialog.getByText('Title cannot be empty'), 'title error')

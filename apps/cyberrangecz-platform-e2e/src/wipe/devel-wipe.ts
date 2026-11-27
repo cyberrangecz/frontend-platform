@@ -1,5 +1,6 @@
 import { type Api, ApiError } from '../support/api/api-client';
 import { ensureDefinition, FILLER_SOURCES } from '../support/pages/sandbox-definition/definition-source';
+import { type AllocationUnitRecord as AllocationUnit, waitUntilCleanable } from '../support/pages/pool/pool-data';
 import type { LeftoverReport } from './leftover-report';
 
 /** Groups the wipe never deletes. */
@@ -24,11 +25,6 @@ interface TrainingDefinition extends Identified {
 interface Pool extends Identified {
     lock_id: number | null;
     comment?: string;
-}
-
-interface AllocationUnit extends Identified {
-    locked: boolean;
-    cleanup_request: { id: number; stages: string[] } | null;
 }
 
 interface GroupView extends Identified {
@@ -76,6 +72,7 @@ export class DevelWipe {
     async removeSandboxes(timeoutMilliseconds: number): Promise<void> {
         const pools = await this.api.sandbox.getAll<Pool>('/pools');
         for (const pool of pools) {
+            await this.api.sandbox.answer('POST', `/pools/${pool.id}/cancel-allocations`);
             for (const unit of await this.units(pool.id)) {
                 await this.requestRemoval(unit);
             }
@@ -203,13 +200,19 @@ export class DevelWipe {
 
     /**
      * Unlocks a sandbox and asks for its removal. A unit whose removal already started, for
-     * example after its training run was deleted, is left to finish.
+     * example after its training run was deleted, is left to finish. A unit whose first
+     * allocation stage is still queued or running is awaited first, as the sandbox service
+     * refuses its cleanup.
      */
     private async requestRemoval(unit: AllocationUnit): Promise<void> {
         if (unit.cleanup_request) {
             return;
         }
         await this.report.attempt({ kind: 'sandbox allocation unit', id: unit.id }, async () => {
+            const cleanable = await waitUntilCleanable(this.api.sandbox, unit);
+            if (!cleanable || cleanable.cleanup_request) {
+                return;
+            }
             if (unit.locked) {
                 await this.ignoringNotFound(() =>
                     this.api.sandbox.delete(`/sandbox-allocation-units/${unit.id}/lock`),
